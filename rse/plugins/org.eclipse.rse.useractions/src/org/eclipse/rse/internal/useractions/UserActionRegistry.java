@@ -113,7 +113,6 @@ public class UserActionRegistry {
 	 * @return <code>true</code> if the user action context exists, <code>false</code> otherwise.
 	 */
 	public boolean containsUserActionContext(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionContext context) {
-		
 		Map map = getUserActionContextMap(profile);
 		List list = getUserActionContexts(map, configuration);
 		return list.contains(context);
@@ -127,7 +126,6 @@ public class UserActionRegistry {
 	 * @return <code>true</code> if the user action context exists, <code>false</code> otherwise.
 	 */
 	public boolean containsUserActionModel(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionContext context) {
-		
 		Map map = getUserActionModelMap(profile);
 		List list = getUserActionModels(map, configuration);
 		return list.contains(context);
@@ -140,7 +138,6 @@ public class UserActionRegistry {
 	 * @param context the user action context.
 	 */
 	public void addUserActionContext(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionContext context) {
-		
 		Map map = getUserActionContextMap(profile);
 		List list = getUserActionContexts(map, configuration);
 		list.add(context);
@@ -153,7 +150,6 @@ public class UserActionRegistry {
 	 * @param model the user action model.
 	 */
 	public void addUserActionModel(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionModel model) {
-		
 		Map map = getUserActionModelMap(profile);
 		List list = getUserActionModels(map, configuration);
 		list.add(model);
@@ -166,7 +162,6 @@ public class UserActionRegistry {
 	 * @param context the user action context.
 	 */
 	public void removeUserActionContext(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionContext context) {
-		
 		Map map = getUserActionContextMap(profile);
 		List list = getUserActionContexts(map, configuration);
 		list.remove(context);
@@ -179,7 +174,6 @@ public class UserActionRegistry {
 	 * @param model the user action model.
 	 */
 	public void removeUserActionModel(ISystemProfile profile, ISubSystemConfiguration configuration, IUserActionModel model) {
-		
 		Map map = getUserActionModelMap(profile);
 		List list = getUserActionModels(map, configuration);
 		list.remove(model);

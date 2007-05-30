@@ -141,29 +141,4 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	{
 		return viewer;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#showActionBar()
-	 */
-	public boolean showActionBar()
-	{
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#showButtonBar()
-	 */
-	public boolean showButtonBar()
-	{
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#showActions()
-	 */
-	public boolean showActions()
-	{
-		return false;
-	}           
-	
 }

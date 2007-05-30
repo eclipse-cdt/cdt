@@ -36,15 +36,5 @@ public class SystemResolveFilterStringAPIProviderImpl extends SystemTestFilterSt
 		super(subsystem, filterString);
 	} // end constructor
 	
-
-    /**
-     * Return true to show the button bar above the viewer.
-     * The tool bar contains "Get List" and "Refresh" buttons and is typicall
-     * shown in dialogs that list only remote system objects.
-     */
-    public boolean showButtonBar()
-    {
-    	return false;
-    } // end showButtonBar()
      
 } // end class SystemResolveFilterStringAPIProviderImpl

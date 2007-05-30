@@ -104,36 +104,6 @@ public abstract class SystemAbstractAPIProvider
     	return viewer;
     }
 
-    /**
-     * Return true to show the action bar (ie, toolbar) above the viewer.
-     * The action bar contains connection actions, predominantly.
-     * We return false
-     */
-    public boolean showActionBar()
-    {
-    	return false;
-    }
-    
-    /**
-     * Return true to show the button bar above the viewer.
-     * The tool bar contains "Get List" and "Refresh" buttons and is typically
-     * shown in dialogs that list only remote system objects.
-     * We return false.
-     */
-    public boolean showButtonBar()
-    {
-    	return false;
-    }	
-    
-    /**
-     * Return true to show right-click popup actions on objects in the tree.
-     * We return false.
-     */
-    public boolean showActions()
-    {
-    	return false;
-    }
-
 	private void initMsgObjects()
 	{
 		nullObject     = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_EMPTY),ISystemMessageObject.MSGTYPE_EMPTY, null);

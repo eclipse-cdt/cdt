@@ -469,36 +469,6 @@ public class SystemSelectRemoteObjectAPIProviderImpl
 	{
 		return true;		
 	}
-
-    /**
-     * Return true to show the action bar (ie, toolbar) above the viewer.
-     * The action bar contains connection actions, predominantly.
-     * We return false.
-     */
-    public boolean showActionBar()
-    {
-    	return false;
-    }
-    
-    /**
-     * Return true to show the button bar above the viewer.
-     * The tool bar contains "Get List" and "Refresh" buttons and is typically
-     * shown in dialogs that list only remote system objects.
-     * We return false.
-     */
-    public boolean showButtonBar()
-    {
-    	return false;
-    }
-    
-    /**
-     * Return true to show right-click popup actions on objects in the tree.
-     * We return true.
-     */
-    public boolean showActions()
-    {
-    	return true;
-    }
     
 	/**
 	 * Return true if we are listing connections or not, so we know whether we are interested in 

@@ -115,14 +115,4 @@ public class SystemViewAPIProviderForFilterPools
 	{
 		return false;
 	}
-
-    /**
-     * Return true to show right-click popup actions on objects in the tree.
-     * We return true.
-     */
-    public boolean showActions()
-    {
-    	return true;
-    }
-
 }

@@ -76,32 +76,6 @@ public class SystemEmptyListAPIProviderImpl
 		return false;		
 	}
 
-    /**
-     * Return true to show the action bar (ie, toolbar) above the viewer.
-     * The action bar contains connection actions, predominantly.
-     */
-    public boolean showActionBar()
-    {
-    	return false;
-    }
-    /**
-     * Return true to show the button bar above the viewer.
-     * The tool bar contains "Get List" and "Refresh" buttons and is typicall
-     * shown in dialogs that list only remote system objects.
-     */
-    public boolean showButtonBar()
-    {
-    	return true;
-    }	
-    /**
-     * Return true to show right-click popup actions on objects in the tree.
-     */
-    public boolean showActions()
-    {
-    	return false;
-    }
-    
-
 
     // ----------------------------------
     // OUR OWN METHODS...    

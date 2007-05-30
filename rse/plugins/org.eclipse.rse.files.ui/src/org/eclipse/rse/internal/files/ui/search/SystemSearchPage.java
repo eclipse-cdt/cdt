@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [182024] Folder field only initialized if selection supports search
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -877,9 +878,10 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 					
 					IRemoteFile remoteFile = (IRemoteFile)obj;
 					boolean supportsArchiveManagement = remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
+					boolean supportsSearch = remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsSearch();
 					
 					// if it's a file, but not an archive, get the file name, connection info, and parent folder name
-					if (remoteFile.isFile() && !remoteFile.isArchive()) {
+					if (supportsSearch && remoteFile.isFile() && !remoteFile.isArchive()) {
 						fileName = remoteFile.getName();
 						IHost conn = remoteFile.getSystemConnection();
 						profileName = conn.getSystemProfileName();
@@ -887,7 +889,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 						folderName = remoteFile.getParentPath();
 					}
 					// otherwise if it's a folder or an archive, get the connection info and the name
-					else if (remoteFile.isDirectory() || (remoteFile.isArchive() && supportsArchiveManagement)) {
+					else if (supportsSearch && (remoteFile.isDirectory() || (remoteFile.isArchive() && supportsArchiveManagement))) {
 						IHost conn = remoteFile.getSystemConnection();
 						profileName = conn.getSystemProfileName();
 						connectionName = conn.getAliasName();

@@ -14,6 +14,7 @@
  * Javier Montalvo Orús (Symbian) - patch for bug 163103 - NPE in filters
  * Martin Oberhuber (Wind River) - fix 168586 - isCaseSensitive() on Windows
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Kevin Doyle (IBM) - [182221] Throwing Proper Exceptions on create file/folder
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -53,6 +54,7 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
+import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
 public class LocalFileService extends AbstractFileService implements IFileService, ILocalService
 {
@@ -830,9 +832,14 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				}
 				catch (Exception e)
 				{				
+					throw new RemoteFileSecurityException(e);
 				}
 			}
-		}	
+		}
+		else
+		{
+			throw new RemoteFileIOException(new IOException());
+		}
 		return new LocalHostFile(fileToCreate);
 	}
 
@@ -883,8 +890,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			}
 			else
 			{
-				folderToCreate.mkdirs();
+				if(!folderToCreate.mkdirs())
+					throw new RemoteFileSecurityException(new IOException());
 			}
+		}
+		else
+		{
+			throw new RemoteFileIOException(new IOException());
 		}
 		return new LocalHostFile(folderToCreate);
 	}

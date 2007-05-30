@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -16,6 +17,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
@@ -30,6 +33,13 @@ public class SymbolTab extends AbstractLangsListTab {
     	tc = new TableColumn(table, SWT.LEFT);
     	tc.setText(UIMessages.getString("SymbolTab.1")); //$NON-NLS-1$
     	tc.setWidth(130);
+    	table.getAccessible().addAccessibleListener(
+				new AccessibleAdapter() {                       
+                    public void getName(AccessibleEvent e) {
+                            e.result = UIMessages.getString("SymbolTab.0"); //$NON-NLS-1$
+                    }
+                }
+		  );
     }
 
 	public ICLanguageSettingEntry doAdd() {

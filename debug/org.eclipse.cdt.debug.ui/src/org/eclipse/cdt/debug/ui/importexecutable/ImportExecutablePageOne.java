@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Nokia - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.importexecutable;
 
@@ -38,6 +39,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -261,6 +264,13 @@ public class ImportExecutablePageOne extends WizardPage {
 		});
 
 		executablesViewer.setInput(this);
+		executablesViewer.getTree().getAccessible().addAccessibleListener(
+	            new AccessibleAdapter() {                       
+	                public void getName(AccessibleEvent e) {
+	                        e.result = wizard.getExecutableListLabel();
+	                }
+	            }
+	        );
 		createSelectionButtons(listComposite);
 
 	}
@@ -287,7 +297,13 @@ public class ImportExecutablePageOne extends WizardPage {
 
 		// project location entry field
 		this.multipleExecutablePathField = new Text(workArea, SWT.BORDER);
-
+		multipleExecutablePathField.getAccessible().addAccessibleListener(
+            new AccessibleAdapter() {                       
+                public void getName(AccessibleEvent e) {
+                        e.result = Messages.ImportExecutablePageOne_SearchDirectory;
+                }
+            }
+        );
 		this.multipleExecutablePathField.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		selectMultipleBrowseButton = new Button(workArea, SWT.PUSH);
@@ -401,6 +417,13 @@ public class ImportExecutablePageOne extends WizardPage {
 
 		// project location entry field
 		this.singleExecutablePathField = new Text(workArea, SWT.BORDER);
+		singleExecutablePathField.getAccessible().addAccessibleListener(
+            new AccessibleAdapter() {                       
+                public void getName(AccessibleEvent e) {
+                        e.result = Messages.ImportExecutablePageOne_SelectExecutable;
+                }
+            }
+        );
 		// Set the data name field so Abbot based tests can find it.
 		singleExecutablePathField.setData("name", "singleExecutablePathField");
 		singleExecutablePathField.addModifyListener(new ModifyListener() {

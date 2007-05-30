@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Kevin Doyle (IBM) - [187553] - Removed code and related methods for toolbar/button bar.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -130,24 +130,12 @@ public class SystemViewForm extends Composite implements  ISystemTree
 		callerInstanceOfWizardPage = (caller instanceof WizardPage);
 		callerInstanceOfSystemPromptDialog = (caller instanceof SystemPromptDialog);				
 		prepareComposite(1, horizontalSpan, verticalSpan);
-		if (inputProvider.showActionBar())
-	      createToolBar(shell);
-	    if (inputProvider.showButtonBar())
-	    {
-	      createButtonBar(this, 2);
-          enableButtonBarButtons(false);
-          deferLoading = true;
-	    }
-	    
+    
 	    // set viewer filters
 	    this.initViewerFilters = initViewerFilters;
 	    
 	    createSystemView(shell, inputProvider, singleSelectionMode);
 	    
-	    if (inputProvider.showActionBar())
-	      populateToolBar(shell);
-	    
-        addOurSelectionListener();
 	}
 	
 	/**
@@ -198,7 +186,6 @@ public class SystemViewForm extends Composite implements  ISystemTree
     	{
     	  tree.setSelection(null);
     	  tree.setInputProvider(emptyProvider);
-          enableButtonBarButtons(false);
     	}
     	else
     	{
@@ -449,53 +436,6 @@ public class SystemViewForm extends Composite implements  ISystemTree
 	    tree.setShowActions(showActions);
 	}
 	
-	protected void createToolBar(Shell shell)
-	{
-	    toolbar = new ToolBar(this, SWT.FLAT | SWT.WRAP);		
-	    toolbarMgr = new ToolBarManager(toolbar);
-	}
-	
-	protected void populateToolBar(Shell shell)
-	{
-		SystemNewConnectionAction newConnAction = new SystemNewConnectionAction(shell, false, tree); // false implies not from popup menu
-		toolbarMgr.add(newConnAction);		
-		SystemCascadingPulldownMenuAction submenuAction = new SystemCascadingPulldownMenuAction(shell, tree);
-		toolbarMgr.add(submenuAction);		
-		toolbarMgr.update(false);		
-	}
-	
-	protected void createButtonBar(Composite parentComposite, int nbrButtons)
-	{
-		// Button composite
-		Composite composite_buttons = SystemWidgetHelpers.createTightComposite(parentComposite, nbrButtons);	
-        getListButton = SystemWidgetHelpers.createPushButton(composite_buttons, null, SystemResources.ACTION_VIEWFORM_GETLIST_LABEL, SystemResources.ACTION_VIEWFORM_GETLIST_TOOLTIP);		
-        refreshButton = SystemWidgetHelpers.createPushButton(composite_buttons, null, SystemResources.ACTION_VIEWFORM_REFRESH_LABEL, SystemResources.ACTION_VIEWFORM_REFRESH_TOOLTIP);		
-	}
-	
-	
-	protected void addOurSelectionListener()
-	{
-	   // Add the button listener
-	   SelectionListener selectionListener = new SelectionListener() 
-	   {
-		  public void widgetDefaultSelected(SelectionEvent event) 
-		  {
-		  }
-		  public void widgetSelected(SelectionEvent event) 
-		  {
-		  	  Object src = event.getSource();
-		  	  if (src==getListButton)
-		  	    processGetListButton();
-		  	  else if (src==refreshButton)
-		  	    processRefreshButton();
-		  }
-	   };
-	   if (getListButton != null)
-	     getListButton.addSelectionListener(selectionListener);
-	   if (refreshButton != null)
-	     refreshButton.addSelectionListener(selectionListener);
-
-	}
 	protected void addOurMouseListener()
 	{
 	   MouseListener mouseListener = new MouseAdapter() 
@@ -508,52 +448,6 @@ public class SystemViewForm extends Composite implements  ISystemTree
 	   toolbar.addMouseListener(mouseListener);
 	}
 
-    /**
-     * Process the refresh button.
-     */
-    protected void processRefreshButton()
-    {
-    	refreshButton.setEnabled(false);
-    	getListButton.setEnabled(false);
-    	requestInProgress = true;
-        fireRequestStartEvent();
-   
-    	refresh();
-
-        fireRequestStopEvent();
-    	requestInProgress = false;
-    	enableButtonBarButtons(true);    	
-    }
-
-    /**
-     * Process the getList button.
-     */
-    protected void processGetListButton()
-    {
-    	refreshButton.setEnabled(false);
-    	getListButton.setEnabled(false);
-    	requestInProgress = true;
-        fireRequestStartEvent();
-    	
-    	tree.setInputProvider(inputProvider);
-
-        fireRequestStopEvent();
-    	requestInProgress = false;
-    	enableButtonBarButtons(true);
-    }
-
-    /**
-     * Enable/Disable refresh and getList buttons.
-     * Note that these are mutually exclusive
-     */
-    protected void enableButtonBarButtons(boolean enableRefresh)
-    {
-    	if (refreshButton != null)
-    	  refreshButton.setEnabled(enableRefresh);
-    	if (getListButton != null)    	
-    	  getListButton.setEnabled(!enableRefresh);
-    }
-    
     /**
      * Fire long running request listener event
      */

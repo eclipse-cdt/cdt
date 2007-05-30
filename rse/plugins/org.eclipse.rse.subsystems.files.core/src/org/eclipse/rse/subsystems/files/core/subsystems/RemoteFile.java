@@ -909,13 +909,7 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 						}
 				    }
 				}
-			}
-			
-			IRemoteFile parent = getParentRemoteFile();
-			if (parent != null)
-			{
-				parent.markStale(isStale, false);
-			}
+			}			
 		}
 	}
 	

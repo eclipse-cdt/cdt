@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
@@ -22,6 +23,8 @@ import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
@@ -128,6 +131,13 @@ public class BaseClassesListDialogField extends ListDialogField {
     protected TableViewer createTableViewer(Composite parent) {
         TableViewer viewer = super.createTableViewer(parent);
         Table table = viewer.getTable();
+        table.getAccessible().addAccessibleListener(
+            new AccessibleAdapter() {                       
+                public void getName(AccessibleEvent e) {
+                        e.result = NewClassWizardMessages.getString("NewClassCreationWizardPage.baseClasses.label"); //$NON-NLS-1$
+                }
+            }
+        );
         
         CellEditor virtualCellEditor = new ComboBoxCellEditor(table,
         	new String[] {

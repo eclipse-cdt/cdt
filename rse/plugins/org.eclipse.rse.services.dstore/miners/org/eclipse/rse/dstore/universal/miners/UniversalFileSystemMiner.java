@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Xuan Chen (IBM) - Fix 160768 - [refresh][dstore] Refresh on renamed node within a zip does not work; 
+ * Xuan Chen (IBM) - Fix 189487 - copy and paste a folder did not work - workbench hang
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -327,7 +328,19 @@ public class UniversalFileSystemMiner extends Miner {
 				
 					// handle special characters in source and target strings 
 					src = enQuote(src);
-	
+					
+					// handle window case separately, since xcopy command could not handler
+					// multiple source names
+					if (_isWindows)
+					{
+						tgt = tgtFolder.getAbsolutePath() + File.separatorChar + srcFile.getName();
+						doCopyCommand(enQuote(src), enQuote(tgt), folderCopy, status);
+						if (status.getAttribute(DE.A_SOURCE) == IServiceConstants.FAILED)
+						{
+							break;
+						}
+						continue;
+					}
 					if (numOfNonVirtualSources == 0)
 					{
 						source += src;
@@ -356,7 +369,7 @@ public class UniversalFileSystemMiner extends Miner {
 			if (folderCopy) {
 				command = "xcopy " + source //$NON-NLS-1$
 					+ " " + tgt //$NON-NLS-1$
-					+ " /S /E /K /Q /H /I"; //$NON-NLS-1$
+					+ " /S /E /K /Q /H /I /Y"; //$NON-NLS-1$
 			}
 			else {
 				String unquotedTgt = tgt.substring(1, tgt.length() - 1);
@@ -3075,9 +3088,14 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			String tgt = tgtFolder.getAbsolutePath() + File.separatorChar + newName;
 			File tgtFile = new File(tgt);
 			
-			if (tgtFile.exists() && tgtFile.isDirectory() && newName.equals(srcFile.getName()))
+			if (tgtFile.exists() && tgtFile.isDirectory())
 			{
-			    tgt =  tgtFolder.getAbsolutePath();
+				//For Windows, we need to use xcopy command, which require the new directory
+				//name be part of the target.
+				if (newName.equals(srcFile.getName()) && !_isWindows)
+				{
+					tgt =  tgtFolder.getAbsolutePath();
+				}
 			}
 			
 			doCopyCommand(enQuote(src), enQuote(tgt), folderCopy, status);

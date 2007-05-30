@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fix 168586 - isCaseSensitive() on Windows
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Kevin Doyle (IBM) - [182221] Throwing Proper Exceptions on create file/folder
+ * Xuan Chen        (IBM)        - Fix 189487 - copy and paste a folder did not work - workbench hang
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1110,7 +1111,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			if (folderCopy)
 			{
-				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I /Y"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			else
 			{
@@ -1284,7 +1285,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			if (folderCopy)
 			{
-				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				command = "xcopy " + src + " " + target + " /S /E /K /Q /H /I /Y"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			else
 				command = _osCmdShell + "copy " + src + " " + target; //$NON-NLS-1$ //$NON-NLS-2$

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [187115] force SystemMessageDialog always into Display thread
+ * Martin Oberhuber (Wind River) - [189272] exception when canceling ssh connect
  ********************************************************************************/
 
 package org.eclipse.rse.ui.messages;
@@ -629,7 +630,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	/**
 	 * For ease of use for simple messages which are the result of an exception
 	 */
-	public static void displayErrorMessage(Shell shell, SystemMessage msg, Exception exc)
+	public static void displayErrorMessage(Shell shell, SystemMessage msg, Throwable exc)
 	{
 		SystemMessageDialog msgDlg = new SystemMessageDialog(shell, msg);
 		msgDlg.setException(exc);
@@ -723,7 +724,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	/**
 	 * For displaying a generic error message when an unexpected exception happens.
 	 */
-	public static void displayExceptionMessage(Shell shell, Exception exc)
+	public static void displayExceptionMessage(Shell shell, Throwable exc)
 	{
 		SystemMessage msg = getExceptionMessage(shell, exc);
 		if ((shell == null) && (Display.getCurrent()!=null))
@@ -738,7 +739,7 @@ public class SystemMessageDialog extends ErrorDialog implements Listener {
 	 * When an exception occurs and you want to turn it into a SystemMessage,
 	 *  call this...
 	 */
-	public static SystemMessage getExceptionMessage(Shell shell, Exception exc)
+	public static SystemMessage getExceptionMessage(Shell shell, Throwable exc)
 	{
 		SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_OCCURRED);
 		msg.makeSubstitution(exc);

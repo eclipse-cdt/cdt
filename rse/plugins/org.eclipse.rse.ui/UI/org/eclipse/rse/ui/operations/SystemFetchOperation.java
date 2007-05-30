@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [189272] exception when canceling ssh connect
  ********************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -21,6 +22,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -220,6 +222,12 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	
     protected void showOperationErrorMessage(Shell shell, Throwable exc, SubSystem ss)
     {
+    	if (exc instanceof InvocationTargetException) {
+    		exc = ((InvocationTargetException)exc).getTargetException();
+    	}
+    	if (exc instanceof OperationCanceledException) {
+    		return; //don't log or display user cancellation
+    	}
     	SystemMessage sysMsg = null;
     	if (exc instanceof SystemMessageException)
     	{
@@ -234,11 +242,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
           sysMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_OPERATION_FAILED);
           sysMsg.makeSubstitution(excMsg);
     	
-    	
-    	 SystemMessageDialog msgDlg = new SystemMessageDialog(shell, sysMsg);
-         msgDlg.setException(exc);
-    	 msgDlg.open();
-         //RSEUIPlugin.logError("Operation failed",exc); now done successfully in msgDlg.open()
+    	 SystemMessageDialog.displayErrorMessage(shell, sysMsg, exc);
     	}
  
     }

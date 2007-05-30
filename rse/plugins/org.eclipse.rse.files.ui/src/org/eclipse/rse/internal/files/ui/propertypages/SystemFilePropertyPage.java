@@ -26,6 +26,8 @@ import java.util.List;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -472,11 +474,31 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		{
    		  try
     	  {
-    	     getRemoteFile().getParentRemoteFileSubSystem().setReadOnly(getRemoteFile(), readOnlySelected, new NullProgressMonitor());
-		     RSECorePlugin.getTheSystemRegistry().fireEvent(
-                   new org.eclipse.rse.core.events.SystemResourceChangeEvent(
-                   getRemoteFile(),ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE,null)); 
-    	     
+   		   IRemoteFile remoteFile = getRemoteFile();
+
+           // get old can write attribute
+           boolean oldCanWrite = remoteFile.canWrite();
+
+           //set readonly                   
+           remoteFile.getParentRemoteFileSubSystem().setReadOnly(remoteFile,readOnlySelected, new NullProgressMonitor());
+
+           // get the new can write attribute
+           boolean updatedValue = remoteFile.canWrite();
+
+           // if the values haven't changed, then we need to     
+           // refresh  
+           ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
+           
+           // oldCanWrite and updatedValue may not be the same depending on the underlying file service
+           // If the file service updates the underlying object, then there is no need for a remote refresh
+           if (oldCanWrite == updatedValue)
+           {        	   
+        	   sr.fireEvent(new SystemResourceChangeEvent(remoteFile,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+           }
+           else
+           {	
+        	   sr.fireEvent(new SystemResourceChangeEvent(remoteFile,ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE,null));     	     
+           }
     	  }
    		  catch (RemoteFileIOException exc) {
              setMessage(RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_IO_ERROR));

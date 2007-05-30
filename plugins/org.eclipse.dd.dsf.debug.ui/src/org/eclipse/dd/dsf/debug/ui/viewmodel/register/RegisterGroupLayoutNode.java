@@ -124,10 +124,9 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
             StringBuffer exprBuf = new StringBuffer();
             IRegisterGroupDMContext groupDmc = 
                 DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterGroupDMContext.class);
-            IRegisterGroupDMData groupData = fSyncRegisterDataAccess.readRegisterGroup(groupDmc);
-            if (groupData != null) {
+            if (groupDmc != null) {
                 exprBuf.append("$$\""); //$NON-NLS-1$
-                exprBuf.append(groupData.getName());
+                exprBuf.append(groupDmc.getName());
                 exprBuf.append('"');
                 return exprBuf.toString();
             }

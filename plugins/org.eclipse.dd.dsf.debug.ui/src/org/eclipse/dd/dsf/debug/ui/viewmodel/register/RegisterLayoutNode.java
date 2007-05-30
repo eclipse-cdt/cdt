@@ -28,7 +28,6 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
-import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.AbstractExpressionLayoutNode;
@@ -134,20 +133,16 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             IRegisterGroupDMContext groupDmc = 
                 DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterGroupDMContext.class);
             if (groupDmc != null) {
-                IRegisterGroupDMData groupData = fSyncRegisterDataAccess.readRegisterGroup(groupDmc);
-                if (groupData != null) {
-                    exprBuf.append("$$\""); //$NON-NLS-1$
-                    exprBuf.append(groupData.getName());
-                    exprBuf.append('"');
-                }
+                exprBuf.append("$$\""); //$NON-NLS-1$
+                exprBuf.append(groupDmc.getName());
+                exprBuf.append('"');
             }
 
             IRegisterDMContext registerDmc = 
                 DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterDMContext.class);
-            IRegisterDMData regData = fSyncRegisterDataAccess.readRegister(registerDmc);
-            if (regData != null) {
+            if (registerDmc != null) {
                 exprBuf.append('$');
-                exprBuf.append(regData.getName());
+                exprBuf.append(registerDmc.getName());
                 return exprBuf.toString();
             }
 
@@ -178,8 +173,6 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     {
         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
         /*
-         *  PREFPAGE : We are using a default format until the preference page is created
-         *  
          *  First select the format to be used. This involves checking so see that the preference
          *  page format is supported by the register service. If the format is not supported then 
          *  we will pick the first available format.

@@ -29,9 +29,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IMnemonic;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
-import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
-import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
@@ -137,32 +135,23 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
             IRegisterGroupDMContext groupDmc = 
                 DMContexts.getAncestorOfType(bitFieldVmc.getDMC(), IRegisterGroupDMContext.class);
             if (groupDmc != null) {
-                IRegisterGroupDMData groupData = fDataAccess.readRegisterGroup(groupDmc);
-                if (groupData != null) {
-                    exprBuf.append("$$\""); //$NON-NLS-1$
-                    exprBuf.append(groupData.getName());
-                    exprBuf.append('"');
-                }
+                exprBuf.append("$$\""); //$NON-NLS-1$
+                exprBuf.append(groupDmc.getName());
+                exprBuf.append('"');
             }
             
             IRegisterDMContext registerDmc = 
                 DMContexts.getAncestorOfType(bitFieldVmc.getDMC(), IRegisterDMContext.class);
             if (registerDmc != null) {
-                IRegisterDMData regData = fDataAccess.readRegister(registerDmc);
-                if (regData != null) {
-                    exprBuf.append('$');
-                    exprBuf.append(regData.getName());
-                }
+                exprBuf.append('$');
+                exprBuf.append(registerDmc.getName());
             }
 
             IBitFieldDMContext bitFieldDmc = 
                 DMContexts.getAncestorOfType(bitFieldVmc.getDMC(), IBitFieldDMContext.class);
             if (bitFieldDmc != null) {
-                IBitFieldDMData bitFieldData = fDataAccess.readBitField(bitFieldDmc);
-                if (bitFieldData != null) {
-                    exprBuf.append('.');
-                    exprBuf.append(bitFieldData.getName());
-                }
+                exprBuf.append('.');
+                exprBuf.append(bitFieldDmc.getName());
             }
 
             return exprBuf.toString();

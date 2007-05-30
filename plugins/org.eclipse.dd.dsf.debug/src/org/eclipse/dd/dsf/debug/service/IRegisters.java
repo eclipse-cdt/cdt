@@ -25,7 +25,9 @@ public interface IRegisters extends IFormattedValues {
     public interface IGroupsChangedDMEvent extends IDMEvent<IRunControl.IExecutionDMContext> {}
 
     /** Register group context */
-    public interface IRegisterGroupDMContext extends IFormattedDataDMContext<IRegisterGroupDMData> {}
+    public interface IRegisterGroupDMContext extends IFormattedDataDMContext<IRegisterGroupDMData> {
+        public String getName();
+    }
     
     /** Event indicating registers in a group have changed. */
     public interface IRegistersChangedDMEvent extends IDMEvent<IRegisterGroupDMContext> {}
@@ -40,7 +42,9 @@ public interface IRegisters extends IFormattedValues {
     }
 
     /** Register context */
-    public interface IRegisterDMContext extends IFormattedDataDMContext<IRegisterDMData> {}
+    public interface IRegisterDMContext extends IFormattedDataDMContext<IRegisterDMData> {
+        public String getName();
+    }
     
     /** Event indicating register value changed. */
     public interface IRegisterChangedDMEvent extends IDMEvent<IRegisterDMContext> {}
@@ -59,7 +63,9 @@ public interface IRegisters extends IFormattedValues {
     }
 
     /** Bit field context */
-    public interface IBitFieldDMContext extends IFormattedDataDMContext<IBitFieldDMData> {}
+    public interface IBitFieldDMContext extends IFormattedDataDMContext<IBitFieldDMData> {
+        public String getName();
+    }
 
     /** Event indicating register value changed. */
     public interface IBitFieldChangedDMEvent extends IDMEvent<IBitFieldDMContext> {}

@@ -110,11 +110,12 @@ public class SystemDownloadConflictAction extends SystemBaseAction implements Ru
 			Label label = new Label(m, 0);
 			image.setBackground(label.getBackground());
 			label.setImage(image);
-			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_BEGINNING));
+			label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
 
 			Text text = new Text(m, SWT.WRAP | SWT.MULTI);
 			text.setEditable(false);
 			text.setText(_dialogText);
+            text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 			Composite options = new Composite(c, SWT.NONE);
 			GridLayout olayout = new GridLayout();

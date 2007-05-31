@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Xuan Chen (IBM) - Fix 160768 - [refresh][dstore] Refresh on renamed node within a zip does not work; 
  * Xuan Chen (IBM) - Fix 189487 - copy and paste a folder did not work - workbench hang
+ * Xuan Chen (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -1612,25 +1613,33 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				} else {
 					subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR);
 				}
-				String name = fullName
-						.substring(
-								fullName.lastIndexOf(File.separatorChar) + 1,
-								fullName.length());
-				String path = fullName.substring(0, fullName
-						.lastIndexOf(File.separatorChar));
-				subject.setAttribute(DE.A_NAME, name);
-				subject.setAttribute(DE.A_VALUE, path);
 			} 
 			else { // directory
 				subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
-				String name = fullName
-				.substring(
-						fullName.lastIndexOf(File.separatorChar) + 1,
-						fullName.length());
-				String path = fullName.substring(0, fullName.lastIndexOf(File.separatorChar));
-				subject.setAttribute(DE.A_NAME, name);
-				subject.setAttribute(DE.A_VALUE, path);
 			}
+			
+			String name = fullName
+			.substring(
+					fullName.lastIndexOf(File.separatorChar) + 1,
+					fullName.length());
+			int lastFileSeparatorIndex = fullName.lastIndexOf(File.separatorChar);
+			String path = "";  //$NON-NLS-1$
+			if (-1 != lastFileSeparatorIndex)
+			{
+				if (0 == lastFileSeparatorIndex)
+				{
+					//Need to handle the case like "/backup".  Its parent is "/", not ""
+					path = Character.toString(File.separatorChar);
+				}
+				else
+				{
+					path = fullName.substring(0, fullName.lastIndexOf(File.separatorChar));
+				}
+			}
+			subject.setAttribute(DE.A_NAME, name);
+			subject.setAttribute(DE.A_VALUE, path);
+			
+				
 
 			// DKM - do basic property stuff here
 			subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));

@@ -13,6 +13,7 @@
  * Contributors:
  * Kevin Doyle (IBM) - Fix 183870 - Display File Exists Error
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Xuan Chen        (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -725,8 +726,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		else
 		{
 			StringBuffer buf = new StringBuffer(remoteParent);
-			buf.append(getSeparator(remoteParent));
-			buf.append(name);
+			if (remoteParent.trim().equals("/")) //$NON-NLS-1$
+			{
+				buf.append(name);
+			}
+			else
+			{
+				buf.append(getSeparator(remoteParent));
+				buf.append(name);
+			}
 			de = getElementFor(buf.toString());
 		}
 		dsQueryCommand(de, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);

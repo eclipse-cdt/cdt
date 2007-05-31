@@ -69,13 +69,9 @@ import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.files.ui.FileResources;
-import org.eclipse.rse.internal.files.ui.actions.SystemAddToArchiveAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemCompareFilesAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemCompareWithEditionAction;
-import org.eclipse.rse.internal.files.ui.actions.SystemConvertAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemEditFilesAction;
-import org.eclipse.rse.internal.files.ui.actions.SystemExtractAction;
-import org.eclipse.rse.internal.files.ui.actions.SystemExtractToAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemMoveRemoteFileAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemNewFileAction;
 import org.eclipse.rse.internal.files.ui.actions.SystemNewFileFilterFromFolderAction;
@@ -178,10 +174,7 @@ public class SystemViewRemoteFileAdapter
 	//private SystemCommandAction commandAction, shellAction;
 	
 	private SystemSearchAction searchAction;
-	private SystemExtractAction extractAction;
-	private SystemExtractToAction extractToAction;
-	private SystemConvertAction convertAction;
-	private SystemAddToArchiveAction addToArchiveAction;
+
 	private IEditorRegistry registry;
 	private SystemRemoteFileOpenWithMenu openWithMenu;
 
@@ -371,31 +364,6 @@ public class SystemViewRemoteFileAdapter
 		    }
 		}
 
-		if (extractAction == null)
-		{
-			extractAction = new SystemExtractAction(shell);
-		}
-		if (extractToAction == null)
-		{
-			extractToAction = new SystemExtractToAction(shell);
-		}
-		if (convertAction == null)
-		{
-			convertAction = new SystemConvertAction(shell);
-		}
-		if (addToArchiveAction == null)
-		{
-			addToArchiveAction = new SystemAddToArchiveAction(shell);
-		}
-	
-		if (allHaveContents && canEdit && !isVirtual)
-		{
-		    /*
-			menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, extractAction);
-			menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, extractToAction);
-			menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, convertAction);
-			*/
-		}
 		
 		// add import and export actions for single selection of folder
 /*		if ((elementType == 1 && selection.size() == 1) && canEdit)

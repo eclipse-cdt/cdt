@@ -12,13 +12,11 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Replace SystemRegistry by ISystemRegistry
+ * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
  ********************************************************************************/
 
 package org.eclipse.rse.core.servicesubsystem;
 
-import java.util.Vector;
-
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
@@ -28,11 +26,6 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
-import org.eclipse.rse.ui.SystemMenuManager;
-import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
-import org.eclipse.swt.widgets.Shell;
-
-
 
 /**
  * This class is to be used by subsystem-providers that do not desire to use MOF/EMF. It is 
@@ -44,11 +37,10 @@ import org.eclipse.swt.widgets.Shell;
  *    <li>{@link #createSubSystemInternal(org.eclipse.rse.core.model.IHost)}, to instantiate your subsystem class.
  * </ul>
  * <p>
- * For additional customization of the subsystem, you may supply a {@link SubSystemConfigurationAdapter},
+ * For additional customization of the subsystem, you may supply a {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter},
  * which allows you to
- *    <li>supply your own subsystem popup menu actions via {@link SubSystemConfigurationAdapter#getSubSystemActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystemConfiguration, ISubSystem)} 
- *    <li>supply your own New->Filter popup menu action via {@link SubSystemConfigurationAdapter#getNewFilterPoolFilterAction(ISubSystemConfiguration, ISystemFilterPool, Shell)}, and 
- *    <li>supply your own Change Filter popup menu action via {@link SubSystemConfigurationAdapter#getChangeFilterAction(ISubSystemConfiguration, ISystemFilter,Shell)}.
+ *    <li>supply your own New->Filter popup menu action via {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewFilterPoolFilterAction(ISubSystemConfiguration, ISystemFilterPool, org.eclipse.swt.widgets.Shell)}, and 
+ *    <li>supply your own Change Filter popup menu action via {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getChangeFilterAction(ISubSystemConfiguration, ISystemFilter, org.eclipse.swt.widgets.Shell)}.
  * </ul>
  * <p>
  * This class is typically used together with:</p>
@@ -81,7 +73,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
 	// ------------------------------------------------------
 	/**
 	 * <i>Overridable configuration method. Default is <b>false</b></i><br>
-	 * Return true if instance of this factory's subsystems support connect and disconnect actions.
+	 * Return true if instance of this subsystem configuration's subsystems support connect and disconnect actions.
 	 */
 	public boolean supportsSubSystemConnect()
 	{
@@ -90,7 +82,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
 
     /**
 	 * <i>Overridable configuration method. Default is <b>true</b></i><br>
-     * Return true (default) or false to indicate if subsystems of this factory support user-editable
+     * Return true (default) or false to indicate if subsystems of this subsystem configuration support user-editable
      *  port numbers.
      */
     public boolean isPortEditable()
@@ -99,7 +91,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
     }
     /**
 	 * <i>Overridable configuration method. Default is <b>true</b></i><br>
-     * Required method for subsystem factory child classes. Return true if you support filters, false otherwise.
+     * Required method for subsystem configuration child classes. Return true if you support filters, false otherwise.
      * If you support filters, then some housekeeping will be done for you automatically. Specifically, they
      * will be saved and restored for you automatically.
      */
@@ -118,7 +110,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
 	/**
 	 * <i>COverridable configuration method. Default is <b>false</b></i><br>
 	 * Return true if you support user-defined actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem factory
+	 *  subsystems created by this subsystem configuration
 	 */
 	public boolean supportsUserDefinedActions()
 	{
@@ -159,10 +151,10 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
      * After a new subsystem instance is created, the framework calls this method
      * to initialize it. This is your opportunity to set default attribute values.
      * 
-     * <p>The reason for the connect wizard pages parm is in case your factory contributes a page to that wizard,
+     * <p>The reason for the connect wizard pages parameter is in case your subsystem configuration contributes a page to that wizard,
      * whose values are needed to set the subsystem's initial state. For example, you might decide to add a 
      * page to the connection wizard to prompt for a JDBC Driver name. If so, when this method is called at 
-     * the time a new connection is created apres the wizard, your page will have the user's value. You can
+     * the time a new connection is created after the wizard, your page will have the user's value. You can
      * thus use it here to initialize that subsystem property. Be use to use instanceof to find your particular
      * page. 
      * </p>
@@ -175,7 +167,7 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
      *            {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)} 
      *            method or null if you didn't override this method.
      *            Note there may be more pages than you originally supplied, as you are passed all pages contributed
-     *            by this factory object, including subclasses. Null on a clone operation.
+     *            by this subsystem configuration object, including subclasses. Null on a clone operation.
      * 
      * @see org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)
      */
@@ -189,9 +181,9 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
 	// --------------------------------
 
     /**
-     * <i>Optionally overridable method affecting the visual display of objects within subsystems created by this factory.</i><br>
+     * <i>Optionally overridable method affecting the visual display of objects within subsystems created by this subsystem configuration.</i><br>
      * Return the translated string to show in the property sheet for the "type" property, for the selected
-     *  filter. This method is only called for filters within subsystems created by this subsystem factory.
+     *  filter. This method is only called for filters within subsystems created by this subsystem configuration.
      * <p>
      * Returns a default string, override if appropriate.
      */
@@ -199,25 +191,5 @@ public abstract class ServiceSubSystemConfiguration extends SubSystemConfigurati
     {
     	return super.getTranslatedFilterTypeProperty(selectedFilter);
     }
-    /**
-	 * <i>Overridable method for getting Remote System view popup menu actions. Called by {@link org.eclipse.rse.internal.ui.view.SystemView SystemView}
-	 *  when constructing the popup menu for a selected filter.</i><br>
-     * This method is only called for filters within subsystems created by this subsystem factory.<br>
-     * By default, this returns null. Override if appropriate.
-     * 
-     * @see SubSystemConfigurationAdapter#getFilterActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystemConfiguration, ISystemFilter)
-     * 
-     * @return Vector of IAction objects, which usually are subclasses of {@link org.eclipse.rse.ui.actions.SystemBaseAction SystemBaseAction} or
-     * {@link org.eclipse.rse.ui.actions.SystemBaseDialogAction SystemBaseDialogAction} or
-     * {@link org.eclipse.rse.ui.actions.SystemBaseWizardAction SystemBaseWizardAction} or
-     * {@link org.eclipse.rse.ui.actions.SystemBaseSubMenuAction SystemBaseSubMenuAction}.
-     */
-    protected Vector getAdditionalFilterActions(ISystemFilter selectedFilter, Shell shell)
-    {
-    	return null;
-    }
-
-
-
 
 } 

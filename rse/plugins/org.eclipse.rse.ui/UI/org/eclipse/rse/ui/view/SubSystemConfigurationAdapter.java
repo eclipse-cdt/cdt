@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
+ * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -44,6 +45,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 import org.eclipse.rse.internal.core.filters.SystemFilterPoolWrapperInformation;
@@ -64,7 +66,9 @@ import org.eclipse.rse.internal.ui.actions.SystemFilterNewFilterPoolAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterRemoveFilterPoolReferenceAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterSelectFilterPoolsAction;
 import org.eclipse.rse.internal.ui.actions.SystemFilterWorkWithFilterPoolsAction;
+import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapter;
 import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemMenuManager;
@@ -83,6 +87,7 @@ import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCoreForm;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorPortInput;
+import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.wizards.SubSystemServiceWizardPage;
@@ -111,7 +116,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * Returns any framework-supplied actions remote objects that should be contributed to the popup menu
 		 * for the given selection list. This does nothing if this adapter does not implement ISystemRemoteElementAdapter,
 		 * else it potentially adds menu items for "User Actions" and Compile", for example. It queries the subsystem
-		 * factory of the selected objects to determine if these actions are appropriate to add.
+		 * configuration of the selected objects to determine if these actions are appropriate to add.
 		 * 
 		 * <p>
 		 * No need to override.
@@ -122,12 +127,12 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param menuGroup recommended menu group to add actions to. If added to another group, you must be sure to create that group first.
 		 * @param subsystem the subsystem of the selection
 		 */
-		public void addCommonRemoteActions(ISubSystemConfiguration factory, SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystem subsystem)
+		public void addCommonRemoteActions(ISubSystemConfiguration config, SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystem subsystem)
 		{
-			/** FIXME - UDAs should not be coupled to factory adapter
-			SystemCompileManager mgr = factory.getCompileManager();
+			/** FIXME - UDAs should not be coupled to subsystem configuration adapter
+			SystemCompileManager mgr = config.getCompileManager();
 
-			if (factory.supportsCompileActions() && (mgr != null))
+			if (config.supportsCompileActions() && (mgr != null))
 			{
 				int size = selection.size();
 
@@ -164,9 +169,9 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				}
 			}
 
-			if (factory.supportsUserDefinedActions() && factory.supportsUserDefinedActions(selection))
+			if (config.supportsUserDefinedActions() && config.supportsUserDefinedActions(selection))
 			{
-				addUserDefinedActions(factory, shell, selection, menu, menuGroup, getActionSubSystem(factory, subsystem));
+				addUserDefinedActions(config, shell, selection, menu, menuGroup, getActionSubSystem(config, subsystem));
 			}
 			**/
 		}
@@ -176,7 +181,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		// -----------------------------------
 		/**
 		 * Optionally return one or more wizard pages to append to the New Wizard connection if
-		 *  the user selects a system type that this subsystem factory supports.
+		 *  the user selects a system type that this subsystem configuration supports.
 		 * <p>
 		 * Some details:
 		 * <ul>
@@ -188,19 +193,19 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * </ul>
 		 * Tip: consider extending {@link org.eclipse.rse.ui.wizards.AbstractSystemNewConnectionWizardPage} for your wizard page class.
 		 */
-		public ISystemNewConnectionWizardPage[] getNewConnectionWizardPages(ISubSystemConfiguration factory, IWizard wizard)
+		public ISystemNewConnectionWizardPage[] getNewConnectionWizardPages(ISubSystemConfiguration config, IWizard wizard)
 		{
-			if (factory instanceof IServiceSubSystemConfiguration)
+			if (config instanceof IServiceSubSystemConfiguration)
 			{
-				SubSystemServiceWizardPage page = new SubSystemServiceWizardPage(wizard, factory);
+				SubSystemServiceWizardPage page = new SubSystemServiceWizardPage(wizard, config);
 				return new ISystemNewConnectionWizardPage[] {page};
 			}
 			else
 			{
-				List pages = getSubSystemPropertyPages(factory);
+				List pages = getSubSystemPropertyPages(config);
 				if (pages != null && pages.size() > 0)
 				{								
-					SystemSubSystemsPropertiesWizardPage page = new SystemSubSystemsPropertiesWizardPage(wizard, factory, pages);
+					SystemSubSystemsPropertiesWizardPage page = new SystemSubSystemsPropertiesWizardPage(wizard, config, pages);
 					return new ISystemNewConnectionWizardPage[] {page};				
 				}
 			}
@@ -213,16 +218,16 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		/*
 		 * Return the form used in the subsyste property page.  This default implementation returns Syste
 		 */
-		public ISystemSubSystemPropertyPageCoreForm getSubSystemPropertyPageCoreFrom(ISubSystemConfiguration factory, ISystemMessageLine msgLine, Object caller)
+		public ISystemSubSystemPropertyPageCoreForm getSubSystemPropertyPageCoreFrom(ISubSystemConfiguration config, ISystemMessageLine msgLine, Object caller)
 		{
 		    return new SystemSubSystemPropertyPageCoreForm(msgLine, caller);
 		}
 		
 		/**
-		 * Gets the list of property pages applicable for a subsystem associated with this factory
+		 * Gets the list of property pages applicable for a subsystem associated with this subsystem configuration
 		 * @return the list of subsystem property pages
 		 */
-		protected List getSubSystemPropertyPages(ISubSystemConfiguration factory)
+		protected List getSubSystemPropertyPages(ISubSystemConfiguration config)
 		{
 			List propertyPages= new ArrayList();
 			// Get reference to the plug-in registry
@@ -255,7 +260,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				}
 				
 				
-				if (objCls != null && ISubSystem.class.isAssignableFrom(objCls) && factory.isFactoryFor(objCls))			
+				if (objCls != null && ISubSystem.class.isAssignableFrom(objCls) && config.isFactoryFor(objCls))			
 				{
 					try
 					{
@@ -271,7 +276,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			return propertyPages;
 		}
 
-		// FIXME - UDAs no longer coupled with factory in core
+		// FIXME - UDAs no longer coupled with config in core
 //		// ---------------------------------
 //		// USER-DEFINED ACTIONS METHODS...
 //		// ---------------------------------
@@ -289,14 +294,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 //		 * @see #supportsUserDefinedActions()
 //		 * @see #createActionSubSystem()
 //		 */
-//		public SystemUDActionSubsystem getActionSubSystem(ISubSystemConfiguration factory, ISubSystem subsystem)
+//		public SystemUDActionSubsystem getActionSubSystem(ISubSystemConfiguration config, ISubSystem subsystem)
 //		{
 //			if (udas == null)
-//				udas = createActionSubSystem(factory);
+//				udas = createActionSubSystem(config);
 //			if (udas != null)
 //			{
 //				udas.setSubsystem(subsystem);
-//				udas.setSubSystemConfiguration(factory);
+//				udas.setSubSystemConfiguration(config);
 //			}
 //			return udas;
 //		}
@@ -308,7 +313,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 //		 * @see #supportsUserDefinedActions()
 //		 * @see #getActionSubSystem(ISubSystem)
 //		 */
-//		protected SystemUDActionSubsystem createActionSubSystem(ISubSystemConfiguration factory)
+//		protected SystemUDActionSubsystem createActionSubSystem(ISubSystemConfiguration config)
 //		{
 //			return null;
 //		}
@@ -320,7 +325,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 //		 * This is called by the addCommonRemoteObjectsActions method, if this subsystem
 //		 *  supports user defined actions.
 //		 */
-//		public static void addUserDefinedActions(ISubSystemConfiguration factory, Shell shell, IStructuredSelection selection, SystemMenuManager menu, String menuGroup, SystemUDActionSubsystem userActionSubSystem)
+//		public static void addUserDefinedActions(ISubSystemConfiguration config, Shell shell, IStructuredSelection selection, SystemMenuManager menu, String menuGroup, SystemUDActionSubsystem userActionSubSystem)
 //		{
 //			SystemUDACascadeAction act = new SystemUDACascadeAction(userActionSubSystem, selection);
 //			menu.add(menuGroup, act);
@@ -345,25 +350,26 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		// FACTORY ATTRIBUTE METHODS...
 		// ---------------------------------
 
-	
-		/**
-		 * Return image descriptor of this factory.
-		 * This comes from the xml "icon" attribute of the extension point.
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getImage(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 		 */
-		public ImageDescriptor getImage(ISubSystemConfiguration factory)
+		public ImageDescriptor getImage(ISubSystemConfiguration config)
 		{
-			// casting for now to allow for 2-phase refactoring - SubSystemConfiguration really shouldn't implement this
-			return ((SubSystemConfiguration)factory).getImage();
+			ISubSystemConfigurationProxy proxy = config.getSubSystemConfigurationProxy();
+			Object adapterCandidate = Platform.getAdapterManager().getAdapter(proxy, SubSystemConfigurationProxyAdapter.class);
+			SubSystemConfigurationProxyAdapter adapter = (SubSystemConfigurationProxyAdapter) adapterCandidate;
+			ImageDescriptor result = adapter.getImageDescriptor();
+			return result;
 		}
 		
-		/**
-		 * Return actual graphics Image of this factory.
-		 * This is the same as calling getImage().createImage() but the resulting
-		 *  image is cached.
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getGraphicsImage(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 		 */
-		public Image getGraphicsImage(ISubSystemConfiguration factory)
+		public Image getGraphicsImage(ISubSystemConfiguration config)
 		{
-			ImageDescriptor id = getImage(factory);
+			ImageDescriptor id = getImage(config);
 			if (id != null)
 			{
 				Image image = null;
@@ -381,26 +387,26 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			return null;
 		}
 
-
-
-		/**
-		 * Return image to use when this susystem is connection.
-		 * This comes from the xml "iconlive" attribute of the extension point.
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getLiveImage(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 		 */
-		public ImageDescriptor getLiveImage(ISubSystemConfiguration factory)
+		public ImageDescriptor getLiveImage(ISubSystemConfiguration config)
 		{
-			// casting for now to allow for 2-phase refactoring - SubSystemConfiguration really shouldn't implement this
-			return ((SubSystemConfiguration)factory).getLiveImage();
+			ISubSystemConfigurationProxy proxy = config.getSubSystemConfigurationProxy();
+			Object adapterCandidate = Platform.getAdapterManager().getAdapter(proxy, SubSystemConfigurationProxyAdapter.class);
+			SubSystemConfigurationProxyAdapter adapter = (SubSystemConfigurationProxyAdapter) adapterCandidate;
+			ImageDescriptor result = adapter.getLiveImageDescriptor();
+			return result;
 		}
 
-		/**
-		 * Return actual graphics LiveImage of this factory.
-		 * This is the same as calling getLiveImage().createImage() but the resulting
-		 *  image is cached.
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getGraphicsLiveImage(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 		 */
-		public Image getGraphicsLiveImage(ISubSystemConfiguration factory)
+		public Image getGraphicsLiveImage(ISubSystemConfiguration config)
 		{
-			ImageDescriptor id = getLiveImage(factory);
+			ImageDescriptor id = getLiveImage(config);
 			if (id != null)
 			{
 				Image image = null;
@@ -432,7 +438,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 
 		/**
-		 * Returns a list of actions for the popup menu when user right clicks on a subsystem object from this factory.
+		 * Returns a list of actions for the popup menu when user right clicks on a subsystem object from this subsystem configuration.
 		 * <p>
 		 * Override if additional actions needs to be contributed.
 		 * <p>
@@ -442,16 +448,16 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param shell The Shell of the view where this action was launched from
 		 * @return array of IAction objects to contribute to the popup menu
 		 */
-    public IAction[] getSubSystemActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISubSystem selectedSubSystem)
+    public IAction[] getSubSystemActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISubSystem selectedSubSystem)
 		{
 			Vector childActions = new Vector();
-			if (factory.supportsFilters())
+			if (config.supportsFilters())
 			{
-				boolean showFilterPools = factory.showFilterPools();
+				boolean showFilterPools = config.showFilterPools();
 				// if showing filter pools, we have to add a "new filter pool" action here...
 				if (showFilterPools)
 				{
-					IAction[] newFPActions = getSubSystemNewFilterPoolActions(menu, selection, shell, menuGroup, factory, selectedSubSystem);
+					IAction[] newFPActions = getSubSystemNewFilterPoolActions(menu, selection, shell, menuGroup, config, selectedSubSystem);
 					if (newFPActions != null)
 					{
 						for (int idx = 0; idx < newFPActions.length; idx++)
@@ -462,7 +468,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 							{
 								SystemFilterAbstractFilterPoolAction fpAction = (SystemFilterAbstractFilterPoolAction) newFPActions[idx];
 								fpAction.setFilterPoolManagerNamePreSelection(selectedSubSystem.getSystemProfile().getName());
-								fpAction.setFilterPoolManagerProvider(factory);
+								fpAction.setFilterPoolManagerProvider(config);
 							}
 							childActions.addElement(newFPActions[idx]);
 						} // end for loop
@@ -477,7 +483,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				// if not showing filter pools, we have to add a "new filter" action here...
 				if (!showFilterPools)
 				{
-					IAction[] newFilterActions = getNewFilterPoolFilterActions(menu, selection, shell, menuGroup, factory, null);
+					IAction[] newFilterActions = getNewFilterPoolFilterActions(menu, selection, shell, menuGroup, config, null);
 					if ((newFilterActions != null) && (newFilterActions.length > 0))
 					{
 						// pre-scan for legacy
@@ -498,18 +504,18 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			
 // FIXME - UDAs moved out of here
 //			// if user defined actions are supported, add an action to work with them...
-//			if (factory.supportsUserDefinedActions())
+//			if (config.supportsUserDefinedActions())
 //				childActions.addElement(new SystemWorkWithUDAsAction(shell, (ISubSystem)null));
 //			// if named file types are supported, add an action to work with them...
-//			if (factory.supportsFileTypes())
+//			if (config.supportsFileTypes())
 //				childActions.addElement(new SystemWorkWithFileTypesAction(shell, null));
 //			// if compile actions are supported, add an action to work with them...
-//			if (factory.supportsCompileActions())
+//			if (config.supportsCompileActions())
 //				childActions.addElement(new SystemWorkWithCompileCommandsAction(shell, false));
 
 	
 			
-			if (factory.supportsSubSystemConnect())
+			if (config.supportsSubSystemConnect())
 			{
 			    // MJB: RE defect 40854 
 				addConnectOrDisconnectAction(childActions, shell, selectedSubSystem);
@@ -519,7 +525,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 			{
 				// premise: none of these actions' constructor need the current selection as input
 				int nbrBaseActions = 0;
-				if (factory.supportsSubSystemConnect())
+				if (config.supportsSubSystemConnect())
 				{
 					//nbrBaseActions += 2; // 4; MJB: RE defect 50854    	
 					if (selectedSubSystem.getConnectorService().supportsUserId())
@@ -529,7 +535,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				//  nbrBaseActions += 2;
 				subSystemActions = new IAction[nbrBaseActions];
 				int ssIdx = 0;
-				if (factory.supportsSubSystemConnect())
+				if (config.supportsSubSystemConnect())
 				{
 				    // MJB: RE defect 40854 
 					//subSystemActions[ssIdx++] = new SystemConnectAction(shell);
@@ -581,11 +587,11 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * <p>
 		 * This method is from the ISystemNewFilterActionConfigurator interface
 		 */
-		public void configureNewFilterAction(ISubSystemConfiguration factory, SystemNewFilterAction newFilterAction, Object callerData)
+		public void configureNewFilterAction(ISubSystemConfiguration config, SystemNewFilterAction newFilterAction, Object callerData)
 		{
 			//System.out.println("Inside configureNewFilterAction! It worked!");
 			newFilterAction.setFromRSE(true);
-			boolean showFilterPools = factory.showFilterPools();
+			boolean showFilterPools = config.showFilterPools();
 			
 			// It does not make sense, when invoked from a filterPool, to ask the user
 			//  for the parent filter pool, or to ask the user whether the filter is connection
@@ -629,7 +635,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 					ISystemProfile activeProfile = selectedSubSystem.getHost().getSystemProfile();
 					for (int idx = 0; idx < activeProfiles.length; idx++)
 					{
-						ISystemFilterPool defaultPool = getDefaultSystemFilterPool(factory, activeProfiles[idx]);
+						ISystemFilterPool defaultPool = getDefaultSystemFilterPool(config, activeProfiles[idx]);
 						
 						if (defaultPool != null)
 						{
@@ -647,10 +653,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * Given a profile, return the first (hopefully only) default pool for this
 		 * profile.
 		 */
-		public ISystemFilterPool getDefaultSystemFilterPool(ISubSystemConfiguration factory, ISystemProfile profile)
+		public ISystemFilterPool getDefaultSystemFilterPool(ISubSystemConfiguration config, ISystemProfile profile)
 		{
 			ISystemFilterPool pool = null;
-			ISystemFilterPoolManager mgr = factory.getFilterPoolManager(profile);
+			ISystemFilterPoolManager mgr = config.getFilterPoolManager(profile);
 			pool = mgr.getFirstDefaultSystemFilterPool(); // RETURN FIRST
 			return pool;
 		}
@@ -672,7 +678,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param shell The Shell of the view where this action was launched from
 		 * @return array of IAction objects to contribute to the popup menu
 		 */
-		protected IAction[] getSubSystemNewFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISubSystem selectedSubSystem)
+		protected IAction[] getSubSystemNewFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISubSystem selectedSubSystem)
 		{
 			IAction[] actions = new IAction[2];
 			actions[0] = new SystemFilterNewFilterPoolAction(shell);
@@ -766,7 +772,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 		/**
 		 * Returns a list of actions for the popup menu when user right clicks on a
-		 *  filter pool object within a subsystem of this factory.
+		 *  filter pool object within a subsystem of this subsystem configuration.
 		 * Only supported and used by subsystems that support filters.
 		 * <p>
 		 * YOU DO NOT NEED TO OVERRIDE THIS METHOD.
@@ -777,10 +783,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-    public IAction[] getFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPool selectedPool)
+    public IAction[] getFilterPoolActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilterPool selectedPool)
 		{
 			Vector childActions = new Vector();
-			IAction[] newActions = getNewFilterPoolFilterActions(menu, selection, shell, menuGroup, factory, selectedPool);
+			IAction[] newActions = getNewFilterPoolFilterActions(menu, selection, shell, menuGroup, config, selectedPool);
 			if (newActions != null)
 			{
 				for (int idx = 0; idx < newActions.length; idx++)
@@ -828,10 +834,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		protected IAction[] getNewFilterPoolFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPool selectedPool)
+		protected IAction[] getNewFilterPoolFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilterPool selectedPool)
 		{
 			IAction[] actions = new IAction[1];
-			actions[0] = getNewFilterPoolFilterAction(factory, selectedPool, shell);
+			actions[0] = getNewFilterPoolFilterAction(config, selectedPool, shell);
 			return actions;
 		}
 		/**
@@ -845,7 +851,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		protected IAction getNewFilterPoolFilterAction(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
+		protected IAction getNewFilterPoolFilterAction(ISubSystemConfiguration config, ISystemFilterPool selectedPool, Shell shell)
 		{
 			SystemNewFilterAction action = new SystemNewFilterAction(shell, selectedPool);
 			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0042"); //$NON-NLS-1$
@@ -858,9 +864,9 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param selectedFilter the currently selected filter
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		protected IAction getNewNestedFilterAction(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell)
+		protected IAction getNewNestedFilterAction(ISubSystemConfiguration config, ISystemFilter selectedFilter, Shell shell)
 		{
-			return getNewFilterPoolFilterAction(factory, selectedFilter.getParentFilterPool(), shell);
+			return getNewFilterPoolFilterAction(config, selectedFilter.getParentFilterPool(), shell);
 		}
 		/**
 		 * Overridable method to return the action for changing an existing filter.
@@ -870,7 +876,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param selectedFilter the currently selected filter
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		protected IAction getChangeFilterAction(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell)
+		protected IAction getChangeFilterAction(ISubSystemConfiguration config, ISystemFilter selectedFilter, Shell shell)
 		{
 			/* We don't do this here now as this is overridable. Now done in SystemChangeFilterAction.
 			 * Also, single filter string doesn't mean non-editable.
@@ -911,11 +917,11 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemChangeFilterPropertyPage#setDescription(String)}
 		 * 	</ul>
 		 */
-		public void customizeChangeFilterPropertyPage(ISubSystemConfiguration factory, SystemChangeFilterPropertyPage page, ISystemFilter selectedFilter, Shell shell)
+		public void customizeChangeFilterPropertyPage(ISubSystemConfiguration config, SystemChangeFilterPropertyPage page, ISystemFilter selectedFilter, Shell shell)
 		{
 			// default behaviour is a total hack! We want to preserve all the configuration done on the
 			// Change dialog, so we instantiate it merely so that we can copy the configuration information...
-			IAction changeAction = getChangeFilterAction(factory, selectedFilter, shell);
+			IAction changeAction = getChangeFilterAction(config, selectedFilter, shell);
 		  	if (changeAction instanceof SystemChangeFilterAction)
 		  	{
 				SystemChangeFilterAction changeFilterAction = (SystemChangeFilterAction)changeAction;
@@ -966,12 +972,12 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 *   <li>{@link org.eclipse.rse.ui.propertypages.SystemFilterStringPropertyPage#setDescription(String)}
 		 * </ul>
 		 */
-		public void customizeFilterStringPropertyPage(ISubSystemConfiguration factory, SystemFilterStringPropertyPage page, ISystemFilterString selectedFilterString, Shell shell)
+		public void customizeFilterStringPropertyPage(ISubSystemConfiguration config, SystemFilterStringPropertyPage page, ISystemFilterString selectedFilterString, Shell shell)
 		{
 			// default behaviour is a total hack! We want to preserve all the configuration done on the
 			// Change dialog, so we instantiate it merely so that we can copy the configuration information...
 			ISystemFilter selectedFilter = selectedFilterString.getParentSystemFilter();
-			IAction changeAction = getChangeFilterAction(factory, selectedFilter, shell);
+			IAction changeAction = getChangeFilterAction(config, selectedFilter, shell);
 			if (changeAction instanceof SystemChangeFilterAction)
 			{
 				SystemChangeFilterAction changeFilterAction = (SystemChangeFilterAction)changeAction;
@@ -998,19 +1004,19 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 		/**
 		 * Returns a list of actions for the popup menu when user right clicks on a
-		 *  filter pool reference object within a subsystem of this factory. Note,
+		 *  filter pool reference object within a subsystem of this subsystem configuration. Note,
 		 *  these are added to the list returned by getFilterPoolActions().
 		 * Only supported by subsystems that support filters.
 		 * @param selectedPoolReference the currently selected pool reference
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-    public IAction[] getFilterPoolReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterPoolReference selectedPoolReference)
+    public IAction[] getFilterPoolReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilterPoolReference selectedPoolReference)
 		{
 			ISystemFilterPool selectedPool = selectedPoolReference.getReferencedFilterPool();
 			if (filterPoolReferenceActions == null)
 			{
 				filterPoolReferenceActions = new IAction[3];
-				filterPoolReferenceActions[0] = getRemoveFilterPoolReferenceAction(factory, selectedPool, shell);
+				filterPoolReferenceActions[0] = getRemoveFilterPoolReferenceAction(config, selectedPool, shell);
 				filterPoolReferenceActions[1] = new SystemFilterMoveUpFilterPoolReferenceAction(shell);
 				((ISystemAction) filterPoolReferenceActions[1]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0063"); //$NON-NLS-1$
 				filterPoolReferenceActions[2] = new SystemFilterMoveDownFilterPoolReferenceAction(shell);
@@ -1026,7 +1032,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param selectedPool the currently selected pool
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-		protected IAction getRemoveFilterPoolReferenceAction(ISubSystemConfiguration factory, ISystemFilterPool selectedPool, Shell shell)
+		protected IAction getRemoveFilterPoolReferenceAction(ISubSystemConfiguration config, ISystemFilterPool selectedPool, Shell shell)
 		{
 			ISystemAction action = new SystemFilterRemoveFilterPoolReferenceAction(shell);
 			action.setHelp(RSEUIPlugin.HELPPREFIX + "actn0062"); //$NON-NLS-1$
@@ -1048,14 +1054,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 *
 		 * @return the filter created by the user or null if they cancelled the prompting
 		 */
-		public ISystemFilter createFilterByPrompting(ISubSystemConfiguration factory, ISystemFilterReference referenceToPromptableFilter, Shell shell) throws Exception
+		public ISystemFilter createFilterByPrompting(ISubSystemConfiguration config, ISystemFilterReference referenceToPromptableFilter, Shell shell) throws Exception
 		{
 			ISystemFilter filterPrompt = referenceToPromptableFilter.getReferencedFilter();
 			ISystemFilterPool selectedPool = filterPrompt.getParentFilterPool();
 
 			SystemNewFilterAction action = new SystemNewFilterAction(shell, selectedPool);
 			Object simulatedSelectedParent = null;
-			if (!factory.showFilterPools()) // if we are not showing filter pools, the parent will be the subsystem itself
+			if (!config.showFilterPools()) // if we are not showing filter pools, the parent will be the subsystem itself
 			{
 				simulatedSelectedParent = referenceToPromptableFilter.getProvider(); // this is the subsystem
 				action.setCallBackConfigurator(this, simulatedSelectedParent);
@@ -1083,10 +1089,10 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * Most actions are handled in this base, except if you have your own action for
 		 * creating a new nested filter. In this case, <b>override getNewFilterAction()</b>
 		 */
-    public IAction[] getFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilter selectedFilter)
+    public IAction[] getFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilter selectedFilter)
 		{
 			Vector childActions = new Vector();
-			Vector ourChildActions = getAdditionalFilterActions(factory, selectedFilter, shell);
+			Vector ourChildActions = getAdditionalFilterActions(config, selectedFilter, shell);
 			int pasteIndex = -1;
 			if (ourChildActions != null)
 				for (int idx = 0; idx < ourChildActions.size(); idx++)
@@ -1129,14 +1135,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				((SystemFilterMoveDownFilterAction) filterActions[fsIdx++]).setHelp(RSEUIPlugin.HELPPREFIX + "actn0085"); //$NON-NLS-1$
 			}
 			// add overridable dynamic actions
-			if (factory.supportsNestedFilters())
+			if (config.supportsNestedFilters())
 			{
-				IAction newNestedFilterAction = getNewNestedFilterAction(factory, selectedFilter, shell);
+				IAction newNestedFilterAction = getNewNestedFilterAction(config, selectedFilter, shell);
 				if (newNestedFilterAction != null)
 					childActions.addElement(newNestedFilterAction);
 			}
 			
-			// IAction chgFilterAction = getChangeFilterAction(factory, selectedFilter, shell);
+			// IAction chgFilterAction = getChangeFilterAction(config, selectedFilter, shell);
 			// if (chgFilterAction != null)
 			//	childActions.addElement(chgFilterAction);
 			/*
@@ -1168,7 +1174,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @return Vector of IAction objects.
 		 * @see #getFilterActions(SystemMenuManager, IStructuredSelection, Shell, String, ISubSystemConfiguration, ISystemFilter)
 		 */
-		protected Vector getAdditionalFilterActions(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell)
+		protected Vector getAdditionalFilterActions(ISubSystemConfiguration config, ISystemFilter selectedFilter, Shell shell)
 		{
 			return null;
 		}
@@ -1179,7 +1185,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 		/**
 		 * Returns a list of actions for the popup menu when user right clicks on a
-		 *  filter reference object within a subsystem of this factory.
+		 *  filter reference object within a subsystem of this subsystem configuration.
 		 * Only supported and used by subsystems that support filters.
 		 * <p>
 		 * YOU DO NOT NEED TO OVERRIDE THIS METHOD.
@@ -1190,7 +1196,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * @param selectedFilterRef the currently selected filter reference
 		 * @param shell parent shell of viewer where the popup menu is being constructed
 		 */
-    public IAction[] getFilterReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration factory, ISystemFilterReference selectedFilterRef)
+    public IAction[] getFilterReferenceActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup, ISubSystemConfiguration config, ISystemFilterReference selectedFilterRef)
 		{
 			return null;
 		}
@@ -1206,7 +1212,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		 * Override if appropriate.
 		 * @return the UI form for the server launcher.
 		 */
-		public IServerLauncherForm getServerLauncherForm(ISubSystemConfiguration factory, Shell shell, ISystemMessageLine msgLine)
+		public IServerLauncherForm getServerLauncherForm(ISubSystemConfiguration config, Shell shell, ISystemMessageLine msgLine)
 		{
 			return new RemoteServerLauncherForm(shell, msgLine);
 		}
@@ -1238,7 +1244,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 
 
 		public ISystemValidator getUserIdValidator(ISubSystemConfiguration config) {
-			return ((SubSystemConfiguration)config).getUserIdValidator();
+			ISystemValidator userIdValidator =
+				new ValidatorSpecialChar(
+					"=;", //$NON-NLS-1$
+					false,
+					RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID),
+					RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY));
+			// false => allow empty? No.		
+			return userIdValidator;
 		}
 
 		/**

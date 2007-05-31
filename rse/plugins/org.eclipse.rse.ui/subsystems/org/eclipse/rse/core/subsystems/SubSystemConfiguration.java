@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
+ * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -31,13 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
@@ -68,37 +64,25 @@ import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.subsystems.SubSystemConfigurationProxyAdapter;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
-import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.propertypages.ISystemSubSystemPropertyPageCoreForm;
-import org.eclipse.rse.ui.propertypages.SystemSubSystemPropertyPageCoreForm;
-import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
-import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
-import org.eclipse.rse.ui.widgets.IServerLauncherForm;
-import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.wizards.ISubSystemPropertiesWizardPage;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.dialogs.PropertyPage;
 
 
 /**
- * Abstract base class for subsystem factory extension points.
+ * Abstract base class for subsystem configuration extension points.
  * Child classes must implement the methods:
  * <ul>
  *  <li>#createSubSystemInternal(SystemConnection conn)
  * </ul>
  * Child classes can optionally override:
  * <ul>
- *  <li>SubSystemConfiguration#supportsFilters() to indicate if filters are to be enabled for this factory
+ *  <li>SubSystemConfiguration#supportsFilters() to indicate if filters are to be enabled for this subsystem configuration
  *  <li>SubSystemConfiguration#supportsNestedFilters() to indicate if filters can exist inside filters.
  *  <li>SubSystemConfiguration#supportsDuplicateFilterStrings() to indicate if filter strings can be duplicated within a filter
  *  <li>SubSystemConfiguration#isCaseSensitive() to indicate if filter strings are case sensitive or not
@@ -108,14 +92,14 @@ import org.eclipse.ui.dialogs.PropertyPage;
  *  <li>SubSystemConfiguration#supportsFileTypes() to indicate if users can define their own named file types.
  *  <li>SubSystemConfiguration#isSubSystemsDeletable() if they support user-deleting of subsystems. Default is false.
  *  <li>SubSystemConfiguration#supportsSubSystemConnect() to return false if the connect() action is not supported
- *  <li>SubSystemConfiguration#supportsTargets() to return true if this factory supports the notions of targets. Normally, this is only for file system factories.
+ *  <li>SubSystemConfiguration#supportsTargets() to return true if this subsystem configuration supports the notions of targets. Normally, this is only for file system factories.
  *  <li>SubSystemConfiguration#getSubSystemActions() if they wish to supply actions for the right-click menu when
- *       the user right clicks on a subsystem object created by this factory.
+ *       the user right clicks on a subsystem object created by this subsystem configuration.
  *  <li>CreateDefaultFilterPool() to create any default filter pool when a new profile is created.
  *  <li>#initializeSubSystem(SubSystem ss, ISystemNewConnectionWizardPage[])
  * </ul>
  * <p>
- * A factory will maintain in memory a list of all subsystem objects it has. This
+ * A subsystem configuration will maintain in memory a list of all subsystem objects it has. This
  *  list should be initialize from disk at restore time, and maintained as the subsystems are
  *  created and deleted throughout the session. At save time, each subsystem in the list
  *  is asked to save itself. The getSubSystems method should return this list.
@@ -133,8 +117,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 {
-
-
 	// subsystem stuff...
 	private Hashtable subSystemsRestoredFlags = new Hashtable();
 	private ISubSystemConfigurationProxy proxy = null;
@@ -149,18 +131,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	protected ISystemFilterPoolManager[] filterPoolManagers = null;
 	protected Hashtable filterPoolManagersPerProfile = new Hashtable();
 
-
 	// other stuff...
 	private String translatedFilterType = null;
 	private static Hashtable brokenReferenceWarningsIssued = new Hashtable();
-	protected Hashtable imageTable = null;
 	protected IHost currentlySelectedConnection;
 	protected Object[] currentlySelected;
 
 	// support for default subclasses for non-mof users
 	protected static IHost currentlyProcessingConnection;
 	protected static SubSystemConfiguration currentlyProcessingSubSystemConfiguration;
-
 
 	protected java.util.List subSystemList = null;
 	protected java.util.List filterPoolManagerList = null;
@@ -177,8 +156,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		//initSubSystems();
 		SystemBasePlugin.logDebugMessage(this.getClass().getName(), "STARTED SSFACTORY"); //$NON-NLS-1$
 	}
-	
-
 	
 	/**
 	 * Reset for a full refresh from disk, such as after a team synch.
@@ -200,7 +177,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// ---------------------------------
 	
 	/**
-	 * Return true if instance of this factory's subsystems support connect and disconnect actions.
+	 * Return true if instance of this subsystem configuration's subsystems support connect and disconnect actions.
 	 * <b>By default, returns true</b>.
 	 * Override if this is not the case.
 	 */
@@ -209,7 +186,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return true;
 	}
 	/**
-	 * Return true (default) or false to indicate if subsystems of this factory support user-editable
+	 * Return true (default) or false to indicate if subsystems of this subsystem configuration support user-editable
 	 *  port numbers.
 	 */
 	public boolean isPortEditable()
@@ -217,7 +194,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return true;
 	}
 	/**
-	 * Return true if subsystem instances from this factory support remote command execution
+	 * Return true if subsystem instances from this subsystem configuration support remote command execution
 	 * <p>RETURNS FALSE BY DEFAULT.
 	 */
 	public boolean supportsCommands()
@@ -225,7 +202,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return false;
 	}
 	/**
-	 * Return true if subsystem instances from this factory support getting and setting properties
+	 * Return true if subsystem instances from this subsystem configuration support getting and setting properties
 	 * <p>RETURNS FALSE BY DEFAULT.
 	 * 
 	 * @return <code>false</code> to indicate that Properties are not supported by default.
@@ -258,7 +235,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
     }
     
     /**
-     * Required method for subsystem factory child classes. Return true if you filter caching.
+     * Required method for subsystem configuration child classes. Return true if you filter caching.
      * If you support filter caching, then the views will always check the in-memory cache for
      * filter results before attempting a query.
 	 * <p>Returns true in default implementation.
@@ -269,7 +246,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Required method for subsystem factory child classes. Return true if you support filters, and you support
+	 * Required method for subsystem configuration child classes. Return true if you support filters, and you support
 	 *  multiple filter strings per filter. Return false to restrict the user to one string per filter.
 	 * <p>Returns TRUE by default.
 	 */
@@ -279,7 +256,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Required method for subsystem factory child classes if returning true from supportsFilters.
+	 * Required method for subsystem configuration child classes if returning true from supportsFilters.
 	 * Return true if you support filters within filters, false otherwise.
 	 * <p>RETURNS supportsFilters() BY DEFAULT.
 	 */
@@ -299,7 +276,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	
 	/** 
-	 * Return true if filters of this subsystem factory support dropping into.
+	 * Return true if filters of this subsystem configuration support dropping into.
 	 * Override this method to provide drop support for filters.
 	 */
 	public boolean supportsDropInFilters()
@@ -308,7 +285,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	
 	/** 
-	 * Return true if filters of this subsystem factory provide a custom implementation of drop support.  
+	 * Return true if filters of this subsystem configuration provide a custom implementation of drop support.  
 	 * By default, the filter reference adapter treats a drop on a filter as an update to the list of filter
 	 * strings for a filter.  For things like files, it is more desirable to treat the drop as a physical 
 	 * resource copy, so in that case, custom drop makes sense.
@@ -322,74 +299,17 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	
 	/**
 	 * Return true if you support user-defined actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem factory
+	 *  subsystems created by this subsystem configuration
 	 * <p>RETURNS false BY DEFAULT
-	 * 
-	 * @see #supportsUserDefinedActions(ISelection)
 	 */
 	public boolean supportsUserDefinedActions()
 	{
 		return false;
 	}
 	
-	
-	/**
-	 * Return true if you support user-defined actions for the remote system objects explicitly given. This
-	 *  calls supportsUserDefinedActions() by default. It is called when decided whether or not to show
-	 *  the User Actions menu for the current selection, if supportsUserDefinedActions() returns true.
-	 * 
-	 */
-	public boolean supportsUserDefinedActions(ISelection selection)
-	{
-		// no selection or empty selection, so default to subsystem factory
-		if (selection == null || selection.isEmpty()) {
-			return supportsUserDefinedActions();
-		}
-		else {
-			
-			// selection is a structured selection
-			if (selection instanceof IStructuredSelection) {
-				
-				IStructuredSelection sel = (IStructuredSelection)selection;
-				
-				Iterator iter = sel.iterator();
-				
-				boolean supportsUserDefinedActions = true;
-				
-				// check if adapter of each object supports user defined actions
-				while (iter.hasNext()) {
-					Object obj = iter.next();
-					
-					// we query adapter as to whether it supports user defined actions only
-					// if the adapter is a remote element adapter
-					ISystemRemoteElementAdapter adapter = (ISystemRemoteElementAdapter)(Platform.getAdapterManager().getAdapter(obj, ISystemRemoteElementAdapter.class));
-					
-					if (adapter != null) {
-						supportsUserDefinedActions = adapter.supportsUserDefinedActions(obj);
-					}
-					else {
-						supportsUserDefinedActions = supportsUserDefinedActions();
-					}
-					
-					// if one of the selections doesn't support user defined actions, we return false
-					if (!supportsUserDefinedActions) {
-						return false;
-					}
-				}
-				
-				// all adapters support user defined actions, so return whether the subsystem factory
-				// supports user defined actions
-				return supportsUserDefinedActions();
-			}
-			// not a structured selection, so default to asking subsystem factory 
-			else {
-				return supportsUserDefinedActions();
-			}
-		}
-	}
 	/**
 	 * Return true if you support compile actions for the remote system objects returned from expansion of
-	 *  subsystems created by this subsystem factory.
+	 *  subsystems created by this subsystem configuration.
 	 * <p>
 	 * By returning true, user sees a "Work with->Compile Commands..." action item in the popup menu for this
 	 *  subsystem. The action is supplied by the framework, but is populated using overridable methods in this subsystem.
@@ -442,7 +362,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return false;
 	}
 	/**
-	 * Tell us if this subsystem factory supports targets, which are destinations for 
+	 * Tell us if this subsystem configuration supports targets, which are destinations for 
 	 *   pushes and builds. Normally only true for file system factories.
 	 */
 	public boolean supportsTargets()
@@ -450,7 +370,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return false;
 	}
 	/**
-	 * Tell us if this subsystem factory supports server launch properties, which allow the user
+	 * Tell us if this subsystem configuration supports server launch properties, which allow the user
 	 * to configure how the server-side code for these subsystems are started. There is a Server
 	 * Launch Setting property page, with a pluggable composite, where users can configure these 
 	 * properties. 
@@ -467,7 +387,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * the server launcher to decide if a given remote server launch type is supported or not.
 	 * <br> We return true by default.
 	 * @see org.eclipse.rse.core.subsystems.ServerLaunchType
-	 * @see #getServerLauncherForm(Shell, ISystemMessageLine)
 	 */
 	public boolean supportsServerLaunchType(ServerLaunchType serverLaunchType)
 	{
@@ -475,113 +394,17 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}	
 			
 	/**
-	 * Determines whether this factory is responsible for the creation of subsytems of the specified type
+	 * Determines whether this subsystem configuration is responsible for the creation of subsytems of the specified type
 	 * Subsystem factories should override this to indicate which subsystems they support.
 	 * 
 	 * @param subSystemType type of subsystem
-	 * @return whether this factory is for the specified subsystemtype
+	 * @return whether this subsystem configuration is for the specified subsystemtype
 	 */
 	public boolean isFactoryFor(Class subSystemType)
 	{
 		//return SubSystem.class.isAssignableFrom(subSystemType);
 		return false;
 	}
-
-	/*
-	 * Return the form used in the subsyste property page.  This default implementation returns Syste
-	 */
-	public ISystemSubSystemPropertyPageCoreForm getSubSystemPropertyPageCoreFrom(ISystemMessageLine msgLine, Object caller)
-	{
-	    return new SystemSubSystemPropertyPageCoreForm(msgLine, caller);
-	}
-	
-	/**
-	 * Gets the list of property pages applicable for a subsystem associated with this factory
-	 * @return the list of subsystem property pages
-	 */
-	protected List getSubSystemPropertyPages()
-	{
-		List propertyPages= new ArrayList();
-		// Get reference to the plug-in registry
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-
-		// Get configured property page extenders
-		IConfigurationElement[] propertyPageExtensions =
-			registry.getConfigurationElementsFor("org.eclipse.ui", "propertyPages"); //$NON-NLS-1$ //$NON-NLS-2$
-			
-		for (int i = 0; i < propertyPageExtensions.length; i++)
-		{
-			IConfigurationElement configurationElement = propertyPageExtensions[i];
-			String objectClass = configurationElement.getAttribute("objectClass"); //$NON-NLS-1$
-			String name = configurationElement.getAttribute("name"); //$NON-NLS-1$
-			Class objCls = null;
-			try
-			{
-			    ClassLoader loader = getClass().getClassLoader();
-				objCls = Class.forName(objectClass, false, loader);
-			}
-			catch (Exception e)
-			{
-			}
-			
-			
-			if (objCls != null && ISubSystem.class.isAssignableFrom(objCls) && isFactoryFor(objCls))			
-			{
-				try
-				{
-					PropertyPage page = (PropertyPage) configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
-					page.setTitle(name);
-					propertyPages.add(page);
-				}
-				catch (Exception e)
-				{
-				}
-			}
-		}
-		return propertyPages;
-	}
-
-
-
-	
-
-// FIXME - compile actions no longer part of core	
-//	// ---------------------------------
-//	// COMPILE ACTIONS METHODS...
-//	// ---------------------------------
-//	/**
-//	 * Get the singleton compile manager responsible for enabling the compile support
-//	 *   for remote source objects.
-//	 * <p>
-//	 * Do not override this, as the implementation is complete. However,
-//	 *  you must override createCompileManager()
-//	 * 
-//	 * @see #supportsCompileActions()
-//	 * @see #createCompileManager()
-//	 */
-//	public SystemCompileManager getCompileManager()
-//	{
-//		if (compileManager == null)
-//		{
-//			compileManager = createCompileManager();
-//			if (compileManager != null)
-//				compileManager.setSubSystemConfiguration(this);
-//		}
-//		return compileManager;
-//	}
-//
-//	/**
-//	 * Overridable method to instantiate the SystemCompileManager for this factory.
-//	 * This is typically your unique subclass of SystemCompileManager.
-//	 * Called once only by getCompileManager (it is only instantiated once).
-//	 * 
-//	 * @see #supportsCompileActions()
-//	 * @see #getCompileManager()
-//	 */
-//	protected SystemCompileManager createCompileManager()
-//	{
-//		return null;
-//	}
 
 	// ---------------------------------
 	// USER-PREFERENCE METHODS...
@@ -644,7 +467,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// ---------------------------------
 
 	/**
-	 * Return vendor of this factory.
+	 * Return vendor of this subsystem configuration.
 	 * This comes from the xml "vendor" attribute of the extension point.
 	 */
 	public String getVendor()
@@ -653,7 +476,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Return name of this factory.
+	 * Return name of this subsystem configuration.
 	 * This comes from the xml "name" attribute of the extension point.
 	 */
 	public String getName()
@@ -662,7 +485,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	
 	/**
-	 * Return name of this factory.
+	 * Return name of this subsystem configuration.
 	 * This comes from the xml "description" attribute of the extension point.
 	 */
 	public String getDescription()
@@ -671,91 +494,16 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 	
 	/**
-	 * Return unique id of this factory.
+	 * Return unique id of this subsystem configuration.
 	 * This comes from the xml "id" attribute of the extension point.
 	 */
 	public String getId()
 	{
 		return proxy.getId();
 	}
-	/**
-	 * Return image descriptor of this factory.
-	 * This comes from the xml "icon" attribute of the extension point.
-	 */
-	public ImageDescriptor getImage()
-	{
-		Object adapterCandidate = Platform.getAdapterManager().getAdapter(proxy, SubSystemConfigurationProxyAdapter.class);
-		SubSystemConfigurationProxyAdapter adapter = (SubSystemConfigurationProxyAdapter) adapterCandidate;
-		ImageDescriptor result = adapter.getImageDescriptor();
-		return result;
-	}
 	
 	/**
-	 * Return image to use when this susystem is connection.
-	 * This comes from the xml "iconlive" attribute of the extension point.
-	 */
-	public ImageDescriptor getLiveImage()
-	{
-		Object adapterCandidate = Platform.getAdapterManager().getAdapter(proxy, SubSystemConfigurationProxyAdapter.class);
-		SubSystemConfigurationProxyAdapter adapter = (SubSystemConfigurationProxyAdapter) adapterCandidate;
-		ImageDescriptor result = adapter.getLiveImageDescriptor();
-		return result;
-	}
-
-
-
-	/**
-	 * Return actual graphics Image of this factory.
-	 * This is the same as calling getImage().createImage() but the resulting
-	 *  image is cached.
-	 */
-	public Image getGraphicsImage()
-	{
-		ImageDescriptor id = getImage();
-		if (id != null)
-		{
-			Image image = null;
-			if (imageTable == null)
-				imageTable = new Hashtable();
-			else
-				image = (Image) imageTable.get(id);
-			if (image == null)
-			{
-				image = id.createImage();
-				imageTable.put(id, image);
-			}
-			return image;
-		}
-		return null;
-	}
-
-	/**
-	 * Return actual graphics LiveImage of this factory.
-	 * This is the same as calling getLiveImage().createImage() but the resulting
-	 *  image is cached.
-	 */
-	public Image getGraphicsLiveImage()
-	{
-		ImageDescriptor id = getLiveImage();
-		if (id != null)
-		{
-			Image image = null;
-			if (imageTable == null)
-				imageTable = new Hashtable();
-			else
-				image = (Image) imageTable.get(id);
-			if (image == null)
-			{
-				image = id.createImage();
-				imageTable.put(id, image);
-			}
-			return image;
-		}
-		return null;
-	}
-
-	/**
-	 * Return the category this subsystem factory subscribes to.
+	 * Return the category this subsystem configuration subscribes to.
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
 	 */
 	public String getCategory()
@@ -763,7 +511,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		return proxy.getCategory();
 	}
 	/**
-	 * Return the system types this subsystem factory supports.
+	 * Return the system types this subsystem configuration supports.
 	 */
 	public IRSESystemType[] getSystemTypes()
 	{
@@ -859,26 +607,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	// ---------------------------------
 	// SUBSYSTEM METHODS...
 	// ---------------------------------    	
-	/**
-	 * Return the validator for the userId.
-	 * A default is supplied.
-	 * Note this is only used for the subsystem's properties, so will not
-	 * be used by the connection's default. Thus, is only of limited value.
-	 * <p>
-	 * This must be castable to ICellEditorValidator for the property sheet support.
-	 */
-	public ISystemValidator getUserIdValidator()
-	{
-		ISystemValidator userIdValidator =
-			new ValidatorSpecialChar(
-				"=;", //$NON-NLS-1$
-				false,
-				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_NOTVALID),
-				RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_USERID_EMPTY));
-		// false => allow empty? No.		
-		return userIdValidator;
-	}
-	
 
 	/**
 	 * Called by SystemRegistry's renameSystemProfile method to ensure we update our
@@ -1219,7 +947,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *            {@link org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
 	 *             method or null if you didn't override this method.
 	 *            Note there may be more pages than you originally supplied as it is all pages contributed by 
-	 *            this factory object, including subclasses.
+	 *            this subsystem configuration object, including subclasses.
 	 */
 	public ISubSystem createSubSystem(IHost conn, boolean creatingConnection, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
 	{
@@ -1419,7 +1147,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 * Overridable.
 	 * <p>
 	 * Return the name to give a new subsystem. By default, it is given the name of this 
-	 *  factory object. This is fine, unless you support multiple subsystem instances per
+	 *  subsystem configuration object. This is fine, unless you support multiple subsystem instances per
 	 *  connection, in which case it is your responsibility to supply a unique name for 
 	 *  each.
 	 * <p>
@@ -1438,10 +1166,10 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * <i>Overridable</i> method to initialize subsystems after creation. The default behaviour here is to
 	 *  set the subsystem's port property to 0, and to add to it a reference to the default filter pool for this
-	 *  factory, if there is one. Typically subclasses call <samp>super().initializeSubSystem(...)</samp>
+	 *  subsystem configuration, if there is one. Typically subclasses call <samp>super().initializeSubSystem(...)</samp>
 	 *  to get this default behaviour, then extend it.
 	 * 
-	 * <p>The reason for the connect wizard pages parm is in case your factory contributes a page to that wizard,
+	 * <p>The reason for the connect wizard pages parm is in case your subsystem configuration contributes a page to that wizard,
 	 * whose values are needed to set the subsystem's initial state. For example, you might decide to add a 
 	 * page to the connection wizard to prompt for a JDBC Driver name. If so, when this method is called at 
 	 * the time a new connection is created apres the wizard, your page will have the user's value. You can
@@ -1454,7 +1182,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 *            {@link org.eclipse.rse.ui.view.SubSystemConfigurationAdapter#getNewConnectionWizardPages(org.eclipse.rse.core.subsystems.ISubSystemConfiguration, org.eclipse.jface.wizard.IWizard)}
 	 *             method or null if you didn't override this method.
 	 *            Note there may be more pages than you originally supplied, as you are passed all pages contributed
-	 *            by this factory object, including subclasses. This is null when this method is called other than
+	 *            by this subsystem configuration object, including subclasses. This is null when this method is called other than
 	 *            for a New Connection operation.
 	 */
 	protected void initializeSubSystem(ISubSystem ss, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
@@ -1627,7 +1355,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Returns true if this factory allows users to delete instances of subsystem objects.
+	 * Returns true if this subsystem configuration allows users to delete instances of subsystem objects.
 	 * Would only be true if users are allowed to create multiple instances of subsystem objects
 	 *  per connection.
 	 * Returns false by default. Override this and deleteSubSystem(SubSystem subsystem) to
@@ -1639,11 +1367,11 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	}
 
 	/**
-	 * Deletes a given subsystem instance from the list maintained by this factory.
+	 * Deletes a given subsystem instance from the list maintained by this subsystem configuration.
 	 * SystemRegistryImpl calls this when the user selects to delete a subsystem object,
 	 *  or deletes the parent connection this subsystem is associated with.
 	 * <p>
-	 * In former case, this is only called if the factory supports user-deletable subsystems.
+	 * In former case, this is only called if the subsystem configuration supports user-deletable subsystems.
 	 * <p>
 	 * Handled for you!
 	 */
@@ -1812,14 +1540,14 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * <i>Overridable lifecycle method. Typically overridden to supply a default filter.</i><br>
 	 * When the user creates a new profile in the RSE (which is mapped to a SystemFilterPoolManager
-	 * by our parent class), each subsystem factory that supports filters is asked if it wants to 
+	 * by our parent class), each subsystem configuration that supports filters is asked if it wants to 
 	 * create a default system filter pool in that profile. <br>
 	 * This is the method that is called to do that default filter pool creation in the new profile.
 	 * <p>
 	 * By default we create an <i>empty</i> filter pool with a generated name, and no pre-defined filters.
 	 * If you don't want that behaviour, override this method and do one of the following:</p>
 	 * <ul>
-	 * <li>nothing if you don't want your subsystem factory to have a default filter pool in the new profile</li>. 
+	 * <li>nothing if you don't want your subsystem configuration to have a default filter pool in the new profile</li>. 
 	 * <li>call super.createDefaultFilterPool(mgr) to get the default pool, and then than call <samp>mgr.createSystemFilter(pool,...)</samp> to create 
 	 * each filter and add it to the filter pool, if you want to pre-populate the default pool with
 	 * default filters.
@@ -1835,7 +1563,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		  pool = mgr.createSystemFilterPool(getDefaultFilterPoolName(mgr.getName(), getId()), true); // true=>is deletable by user
 		} catch (Exception exc)
 		{
-			SystemBasePlugin.logError("Error creating default filter pool in default subsystem factory",exc); //$NON-NLS-1$
+			SystemBasePlugin.logError("Error creating default filter pool in default subsystem configuration",exc); //$NON-NLS-1$
 		}
 		return pool;
 	}
@@ -1891,7 +1619,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		filterPoolManagers = null;
 	}
 	/**
-	 * Return an array of all filter pool managers owned by this subsystem factory.
+	 * Return an array of all filter pool managers owned by this subsystem configuration.
 	 * This is a runtime array that only captures those filter pools that have been restored
 	 *  as a result of someone calling getFilterPoolManager(SystemProfile).
 	 */
@@ -1935,7 +1663,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		{
 			try
 			{
-				mgr = SystemFilterPoolManager.createSystemFilterPoolManager(profile, RSEUIPlugin.getDefault().getLogger(), this, // the caller
+				mgr = SystemFilterPoolManager.createSystemFilterPoolManager(profile, RSECorePlugin.getDefault().getLogger(), this, // the caller
 							getFilterPoolManagerName(profile), // the filter pool manager name
 							supportsNestedFilters(), // whether or not nested filters are allowed
 							ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_FILTER, filterNamingPolicy);
@@ -2017,7 +1745,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	
 		ISystemFilterPoolManager oldMgr = getFilterPoolManager(oldProfile); // will restore it if necessary
 
-			ISystemFilterPoolManager mgr = SystemFilterPoolManager.createSystemFilterPoolManager(newProfile, RSEUIPlugin.getDefault().getLogger(), this, // the caller
+			ISystemFilterPoolManager mgr = SystemFilterPoolManager.createSystemFilterPoolManager(newProfile, RSECorePlugin.getDefault().getLogger(), this, // the caller
 		getFilterPoolManagerName(newProfile), // the filter pool manager name
 		supportsNestedFilters(), // whether or not nested filters are allowed
 	ISystemFilterSavePolicies.SAVE_POLICY_ONE_FILE_PER_FILTER, filterNamingPolicy);
@@ -2742,17 +2470,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		
 		sl.saveToProperties();
 		return sl;
-	}
-	/**
-	 * Return the form used in the property page, etc for this server launcher.
-	 * Only called if {@link #supportsServerLaunchProperties(IHost)} returns true. 
-	 * <p>
-	 * We return {@link RemoteServerLauncherForm}.
-	 * Override if appropriate.
-	 */
-	public IServerLauncherForm getServerLauncherForm(Shell shell, ISystemMessageLine msgLine)
-	{
-		return new RemoteServerLauncherForm(shell, msgLine);
 	}
 
 	// ------------------------------------------

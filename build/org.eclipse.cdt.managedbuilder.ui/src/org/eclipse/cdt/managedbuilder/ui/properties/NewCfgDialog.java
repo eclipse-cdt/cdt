@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
@@ -24,6 +25,8 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.ui.newui.INewCfgDialog;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -437,15 +440,30 @@ public class NewCfgDialog implements INewCfgDialog {
 		if (imp == null || !(imp instanceof ManagedProject)) return;
 		ManagedProject mp = (ManagedProject) imp;
 		try {
-			ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
+			ICConfigurationDescription cfgDes = null;
 			Configuration config = new Configuration(mp, (Configuration)parentConfig, id, false, true);
-			ICConfigurationDescription cfgDes = des.createConfiguration(id, newName, base);
-			config.setConfigurationDescription(cfgDes);
-			config.exportArtifactInfo();
-			config.setName(newName);
-			config.setDescription(newDescription);
+			if (config != null) {
+				if (b_clone.getSelection()) {
+					ICConfigurationDescription base = ManagedBuildManager.getDescriptionForConfiguration(parentConfig);
+					cfgDes = des.createConfiguration(id, newName, base);
+				} else {
+					CConfigurationData data = config.getConfigurationData();
+					cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
+				}
+				if (cfgDes != null) {
+					config.setConfigurationDescription(cfgDes);
+					config.exportArtifactInfo();
+					config.setName(newName);
+					config.setDescription(newDescription);
+				}
+			}
+			if (config == null || cfgDes == null) {
+				throw new CoreException(new Status(IStatus.ERROR, 
+					"org.eclipse.cdt.managedbuilder.ui", -1, //$NON-NLS-1$
+					UIMessages.getString("NewCfgDialog.2"), null));  //$NON-NLS-1$
+			}
 		} catch (CoreException e) {
-			System.out.println("Cannot create config\n"+ e.getLocalizedMessage()); //$NON-NLS-1$
+			ManagedBuilderUIPlugin.log(e);
 		}
 	}
 }

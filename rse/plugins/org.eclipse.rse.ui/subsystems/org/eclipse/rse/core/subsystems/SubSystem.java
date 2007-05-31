@@ -97,7 +97,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * instance of its subsystem. If desired, your GUI may also allow users to create additional
  * instances.
  * <p>
- * There are only a handleful of methods to implement in child classes (and indeed most of these
+ * There are only a handful of methods to implement in child classes (and indeed most of these
  *  are supplied as empty, so you only override those you want to support).
  * These are required:
  * <ul>

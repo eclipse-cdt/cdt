@@ -811,25 +811,7 @@ The list on the left shows the existing compile commands:
 <description>Opens Remote Search dialog page for text and file searching on remote systems.</description>
 </context>
 
-<!-- Extract To Dialog -->
-<context id="exdi0000">
-<description>Specify the name and location of a new folder which will be created to hold the extracted contents of the archive.</description>
-</context>
 
-<!-- Combine Dialog -->
-<context id="cmbd0000">
-<description>Specify the name, type and location of a new file which will be created to hold the combined archives.</description>
-</context>
-
-<!-- Convert Dialog -->
-<context id="cnvd0000">
-<description>Specify the name, type and location of the file to which the archive will be converted.</description>
-</context>
-
-<!-- Add to Archive Dialog -->
-<context id="atad0000">
-<description>Specify the name, type and location of the archive file to which the selected files will be added.</description>
-</context>
 
 <!-- Generic Position To Dialog -->
 <context id="gnpt0000">

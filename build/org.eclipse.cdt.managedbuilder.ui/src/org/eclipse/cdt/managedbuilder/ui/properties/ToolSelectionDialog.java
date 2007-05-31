@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
@@ -106,7 +107,7 @@ public class ToolSelectionDialog extends Dialog {
 		
 		c2.setLayout(new GridLayout(1, false));
 		Button b1 = new Button(c2, SWT.PUSH);
-		b1.setText(" > ");  //$NON-NLS-1$
+		b1.setText(Messages.getString("ToolSelectionDialog.12"));  //$NON-NLS-1$
 		b1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int x = t1.getSelectionIndex();
@@ -115,8 +116,9 @@ public class ToolSelectionDialog extends Dialog {
 				right.add(tool);
 				updateData(true);
 			}});
+		b1.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		Button b2 = new Button(c2, SWT.PUSH);
-		b2.setText(" < ");  //$NON-NLS-1$
+		b2.setText(Messages.getString("ToolSelectionDialog.13"));  //$NON-NLS-1$
 		b2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		b2.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -126,6 +128,7 @@ public class ToolSelectionDialog extends Dialog {
 				left.add(ManagedBuildManager.getRealTool(tool));
 				updateData(true);
 			}});
+		b2.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 		
 		errorLabel = new CLabel(composite, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);

@@ -1986,12 +1986,22 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 				}
 			}
 		}
+
 	
 	protected SystemResourceChangeEvent cloneEvent(SystemResourceChangeEvent event, Object parent)
 	{
-		SystemResourceChangeEvent result = new SystemResourceChangeEvent(event.getSource(), event.getType(), parent);
+		SystemResourceChangeEvent result;
+		if(event.getMultiSource()!=null)
+		{
+			result = new SystemResourceChangeEvent(event.getMultiSource(), event.getType(), parent);
+		}
+		else
+		{
+			result = new SystemResourceChangeEvent(event.getSource(), event.getType(), parent);
+		}
 		return result;
 	}
+	
 
 	/*
 	 * Fire an event of a given id to subsystems that hold a reference to the given filter string

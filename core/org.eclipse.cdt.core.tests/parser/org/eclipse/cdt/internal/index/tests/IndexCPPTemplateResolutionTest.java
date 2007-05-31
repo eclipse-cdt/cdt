@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -256,6 +257,53 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
  		assertInstance(b3, ICPPClassTemplate.class);
  		ICPPClassTemplate ct= (ICPPClassTemplate) b3;
  		assertEquals(3, ct.getPartialSpecializations().length);
+	}
+	
+	// template<typename T1>
+	// class A {};
+	// 
+	// template<typename T2>
+	// class B : public A<T2> {
+	//    public:
+	//       static void foo() {}
+	// };
+	//
+	// B<int> bb; // make sure the instance is in the pdom
+	
+	// template<typename T3>
+	// class X : public B<T3> {};
+	//
+	// void qux() {
+	//    B<int>::foo();
+	//    B<long>::foo(); // instance not in the referenced pdom
+	//    X<int> x;
+	// }
+	public void _testClassImplicitInstantiations_188274() throws Exception {
+		IBinding b2= getBindingFromASTName("X<int>", 6, true);
+		assertInstance(b2, ICPPClassType.class);
+		assertInstance(b2, ICPPTemplateInstance.class);
+		ICPPClassType ct2= (ICPPClassType) b2;
+		ICPPBase[] bss2= ct2.getBases();
+		assertEquals(1, bss2.length);
+		assertInstance(bss2[0].getBaseClass(), ICPPClassType.class);
+		ICPPClassType ct2b= (ICPPClassType) bss2[0].getBaseClass();
+		assertInstance(ct2b, ICPPTemplateInstance.class);
+		
+		IBinding b0= getBindingFromASTName("B<int>", 6, true);
+		assertInstance(b0, ICPPClassType.class);
+		ICPPClassType ct= (ICPPClassType) b0;
+		ICPPBase[] bss= ct.getBases();
+		assertEquals(1, bss.length);
+		assertInstance(bss[0].getBaseClass(), ICPPClassType.class);	
+		
+		IBinding b1= getBindingFromASTName("B<long>", 7, true);
+		assertInstance(b1, ICPPClassType.class);
+		ICPPClassType ct1= (ICPPClassType) b1;
+		ICPPBase[] bss1= ct1.getBases();
+		assertEquals(1, bss1.length);
+		assertInstance(bss1[0].getBaseClass(), ICPPClassType.class);
+		
+        fakeFailForSingle();
 	}
 	
 	//	class B {};

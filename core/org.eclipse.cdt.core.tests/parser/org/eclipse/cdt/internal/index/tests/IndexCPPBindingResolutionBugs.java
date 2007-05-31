@@ -18,6 +18,8 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -28,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 
 /**
  * For testing PDOM binding resolution
@@ -37,6 +40,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	public static class SingleProject extends IndexCPPBindingResolutionBugs {
 		public SingleProject() {setStrategy(new SinglePDOMTestStrategy(true));}
 	}
+	
 	public static class ProjectWithDepProj extends IndexCPPBindingResolutionBugs {
 		public ProjectWithDepProj() {setStrategy(new ReferencedProject(true));}
 	}
@@ -54,11 +58,41 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		setStrategy(new SinglePDOMTestStrategy(true));
 	}
 	
+	// template<typename T1>
+    // class A {};
+    // 
+    // template<typename T2>
+    // class B : public A<T2> {};
+    // 
+    // class C {};
+    //
+    // B<C> b;
+    
+    // void foo() {C c; B<int> b;}
+    public void _testBug188274() throws Exception {
+        IBinding b0= getBindingFromASTName("C", 1);
+        IBinding b1= getBindingFromASTName("B", 1);
+        assertInstance(b0, ICPPClassType.class);
+        assertInstance(b1, ICPPClassType.class);
+        assertInstance(b1, ICPPClassTemplate.class);
+        assertInstance(b1, ICPPInternalTemplateInstantiator.class);
+        
+        ICPPInternalTemplateInstantiator ct= (ICPPInternalTemplateInstantiator) b1;
+        ICPPSpecialization inst= ct.getInstance(new IType[]{(IType)b0});
+        assertInstance(inst, ICPPClassType.class);
+        ICPPClassType c2t= (ICPPClassType) inst;
+        ICPPBase[] bases= c2t.getBases();
+        assertEquals(1, bases.length);
+        assertInstance(bases[0].getBaseClass(), ICPPClassType.class);
+        
+        fakeFailForSingle();
+    }
+	
 	// namespace ns {class A{};}
 	
 	// ns::A a;
 	// class B {};
-	public void test188324() throws Exception {
+	public void testBug188324() throws Exception {
 		IASTName name= findNames("B", 1)[0];
 		IBinding b0= getBindingFromASTName("ns::A", 2);
 		assertInstance(b0, ICPPNamespace.class);
@@ -72,7 +106,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// 	 void foo() {
 	//      C<int>::unresolvable();
 	//   };
-	public void test185828() throws Exception {
+	public void testBug185828() throws Exception {
 		// Bug 185828 reports a StackOverflowException is thrown before we get here.
 		// That the SOE is thrown is detected in BaseTestCase via an Error IStatus
 		
@@ -101,10 +135,10 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//	};
 	
 	//	int main() {
-	//		MyClass* cls;
+	//		MyClass* cls= new MyClass();
 	//	}
-	public void test184216() throws Exception {
-		IBinding b0= getBindingFromASTName("MyClass", 7);
+	public void testBug184216() throws Exception {
+		IBinding b0= getBindingFromASTName("MyClass*", 7);
 		assertInstance(b0, ICPPClassType.class);
 		ICPPClassType ct= (ICPPClassType) b0;
 		ICPPMethod[] ms= ct.getDeclaredMethods(); // 184216 reports CCE thrown
@@ -155,7 +189,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	//   b.fooovr(1);
 	//   b.fooovr('a');
 	// }
-	public void test168020() {
+	public void testBug168020() {
 		getBindingFromASTName("foo(int i)", 3);
 		getBindingFromASTName("fooint()", 6);
 		getBindingFromASTName("fooovr()", 6);
@@ -185,7 +219,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// void Base::foo(int i) {
 	//   i=2;
 	// }
-	// void Base::foo2(int j) {
+	// int Base::foo2(int j) {
 	//   j=2;
 	// }
 	// void func(int k) {
@@ -194,7 +228,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	// void func2(int l) {
 	//  l=2;
 	// }
-	public void test168054() {
+	public void testBug168054() {
 		getBindingFromASTName("i=2", 1);
 		getBindingFromASTName("j=2", 1);
 		getBindingFromASTName("k=2", 1);

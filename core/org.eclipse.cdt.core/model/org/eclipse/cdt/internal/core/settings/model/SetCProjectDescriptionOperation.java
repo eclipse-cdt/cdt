@@ -18,12 +18,10 @@ import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.model.CModelOperation;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.CompositeWorkspaceRunnable;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class SetCProjectDescriptionOperation extends CModelOperation {
@@ -60,9 +58,10 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 			throw new CModelException(ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
 
 		CProjectDescription fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
+		SettingsContext context = new SettingsContext(project);
 		try {
 			mngr.setDescriptionApplying(project, fNewDescriptionCache);
-			fNewDescriptionCache.applyDatas();
+			fNewDescriptionCache.applyDatas(context);
 		} finally {
 			mngr.clearDescriptionApplying(project);
 		}
@@ -84,19 +83,10 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		
 		fSetDescription.switchToCachedAppliedData(fNewDescriptionCache);
 		
-		CompositeWorkspaceRunnable runnable = new CompositeWorkspaceRunnable(SettingsModelMessages.getString("SetCProjectDescriptionOperation.0")); //$NON-NLS-1$
-		
 		try {
-			final IProjectDescription eDes = project.getDescription();
+			final IProjectDescription eDes = context.getEclipseProjectDescription();
 			if(mngr.checkHandleActiveCfgChange(fNewDescriptionCache, fOldDescriptionCache, eDes, new NullProgressMonitor())){
-				runnable.add(new IWorkspaceRunnable(){
-
-					public void run(IProgressMonitor monitor)
-							throws CoreException {
-						project.setDescription(eDes, monitor);
-					}
-					
-				});
+				context.setEclipseProjectDescription(eDes);
 			}
 		} catch (CoreException e2) {
 			CCorePlugin.log(e2);
@@ -121,9 +111,11 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 
 		try {
 			if(!CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE))
-				runnable.add(mngr.createDesSerializationRunnable(fNewDescriptionCache));
-			if(!runnable.isEmpty())
-				mngr.runWspModification(runnable, new NullProgressMonitor());
+				context.addWorkspaceRunnable(mngr.createDesSerializationRunnable(fNewDescriptionCache));
+			IWorkspaceRunnable toRun = context.createOperationRunnable();
+			
+			if(toRun != null)
+				mngr.runWspModification(toRun, new NullProgressMonitor());
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}

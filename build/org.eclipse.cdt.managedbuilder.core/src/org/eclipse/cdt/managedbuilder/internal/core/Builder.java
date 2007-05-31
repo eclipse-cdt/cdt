@@ -835,6 +835,87 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			isDirty = false;
 		}
 	}
+	
+	public void serializeRawData(ICStorageElement element) {
+		if (superClass != null)
+			element.setAttribute(IProjectType.SUPERCLASS, superClass.getId());
+		
+		element.setAttribute(IBuildObject.ID, id);
+		
+		if (getName() != null) {
+			element.setAttribute(IBuildObject.NAME, getName());
+		}
+
+		if (unusedChildren != null) {
+			element.setAttribute(IProjectType.UNUSED_CHILDREN, unusedChildren);
+		}
+		
+		if (isAbstract != null) {
+			element.setAttribute(IProjectType.IS_ABSTRACT, isAbstract.toString());
+		}
+
+		// versionsSupported
+		if (versionsSupported != null) {
+			element.setAttribute(VERSIONS_SUPPORTED, versionsSupported);
+		}
+		
+		// convertToId
+		if (convertToId != null) {
+			element.setAttribute(CONVERT_TO_ID, convertToId);
+		}
+
+		if (getErrorParserIds() != null) {
+			element.setAttribute(IToolChain.ERROR_PARSERS, getErrorParserIds());
+		}
+		
+		if (getCommand() != null) {
+			element.setAttribute(IBuilder.COMMAND, getCommand());
+		}
+		
+		if (getArgumentsAttribute() != null) {
+			element.setAttribute(IBuilder.ARGUMENTS, getArgumentsAttribute());
+		}
+		
+		if(getAutoBuildTargetAttribute() != null)
+			element.setAttribute(ATTRIBUTE_TARGET_AUTO, getAutoBuildTargetAttribute());
+		element.setAttribute(ATTRIBUTE_AUTO_ENABLED, Boolean.valueOf(isAutoBuildEnable()).toString());
+		if(getIncrementalBuildTargetAttribute() != null)
+			element.setAttribute(ATTRIBUTE_TARGET_INCREMENTAL, getIncrementalBuildTargetAttribute());
+		element.setAttribute(ATTRIBUTE_INCREMENTAL_ENABLED, Boolean.valueOf(isIncrementalBuildEnabled()).toString());
+		if(getCleanBuildTargetAttribute() != null)
+			element.setAttribute(ATTRIBUTE_TARGET_CLEAN, getCleanBuildTargetAttribute());
+		element.setAttribute(ATTRIBUTE_CLEAN_ENABLED, Boolean.valueOf(isCleanBuildEnabled()).toString());
+		element.setAttribute(ATTRIBUTE_MANAGED_BUILD_ON, Boolean.valueOf(isManagedBuildOn()).toString());
+		element.setAttribute(ATTRIBUTE_KEEP_ENV, Boolean.valueOf(keepEnvironmentVariablesInBuildfile()).toString());
+		element.setAttribute(ATTRIBUTE_SUPORTS_MANAGED_BUILD, Boolean.valueOf(supportsBuild(true)).toString());
+		if(customizedErrorParserIds != null)
+			element.setAttribute(ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS, CDataUtil.arrayToString(customizedErrorParserIds, ";")); //$NON-NLS-1$
+		if(customizedEnvironment != null)
+			element.setAttribute(ATTRIBUTE_ENVIRONMENT, MapStorageElement.encodeMap(customizedEnvironment));
+		element.setAttribute(ATTRIBUTE_APPEND_ENVIRONMENT, Boolean.valueOf(appendEnvironment()).toString());
+		if(getBuildPathAttribute() != null)	
+			element.setAttribute(ATTRIBUTE_BUILD_PATH, getBuildPathAttribute());
+		if(customBuildProperties != null)
+			element.setAttribute(ATTRIBUTE_CUSTOM_PROPS, MapStorageElement.encodeMap(customBuildProperties));
+
+        if(getIgnoreErrCmdAttribute() != null)
+        	element.setAttribute(ATTRIBUTE_IGNORE_ERR_CMD, getIgnoreErrCmdAttribute());
+       	element.setAttribute(ATTRIBUTE_STOP_ON_ERR, Boolean.valueOf(isStopOnError()).toString());
+        if(getParrallelBuildCmd() != null)
+        	element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_CMD, getParrallelBuildCmd());
+       	element.setAttribute(ATTRIBUTE_PARALLELIZATION_NUMBER, new Integer(getParallelizationNumAttribute()).toString());
+       	element.setAttribute(ATTRIBUTE_PARALLEL_BUILD_ON, Boolean.valueOf(isParallelBuildOn()).toString());
+		// Note: build file generator cannot be specified in a project file because
+		//       an IConfigurationElement is needed to load it!
+		if (buildFileGeneratorElement != null) {
+			//  TODO:  issue warning?
+		}
+		
+		if(outputEntries != null){
+			ICStorageElement outEl = element.createChild(OUTPUT_ENTRIES);
+			LanguageSettingEntriesSerializer.serializeEntries(outputEntries, outEl);
+		}
+	}
 
 	/*
 	 *  P A R E N T   A N D   C H I L D   H A N D L I N G
@@ -1101,6 +1182,14 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	public void setArguments(String newArgs) {
 		if(getArguments().equals(newArgs))
 			return;
+		
+		if(newArgs != null){
+			String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
+			String parallelBuildCmd = isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+
+			newArgs = removeCmd(newArgs, stopOnErrCmd);
+			newArgs = removeCmd(newArgs, parallelBuildCmd);
+		}
 		setArgumentsAttribute(newArgs);
 	}
 
@@ -1810,7 +1899,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		if(autoBuildEnabled == null){
 			if(superClass != null)
 				return superClass.isAutoBuildEnable();
-			return true;
+			return false;
 		}
 		return autoBuildEnabled.booleanValue();
 	}
@@ -1969,6 +2058,49 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		return new String[0];
 	}
 	
+	public static String toBuilderAttribute(String name) {
+
+		if(BUILD_TARGET_INCREMENTAL.equals(name)
+				|| BuilderFactory.BUILD_TARGET_INCREMENTAL.equals(name)
+				|| BUILD_TARGET_FULL.equals(name)
+				|| BuilderFactory.BUILD_TARGET_FULL.equals(name)){
+			return ATTRIBUTE_TARGET_INCREMENTAL;
+		} else if (BUILD_TARGET_AUTO.equals(name)
+				|| BuilderFactory.BUILD_TARGET_AUTO.equals(name)) {
+			return ATTRIBUTE_TARGET_AUTO;
+		} else if (BUILD_TARGET_CLEAN.equals(name)
+				|| BuilderFactory.BUILD_TARGET_CLEAN.equals(name)) {
+			return ATTRIBUTE_TARGET_CLEAN;
+		} else if (BUILD_LOCATION.equals(name)
+				|| BuilderFactory.BUILD_LOCATION.equals(name)) {
+			return ATTRIBUTE_BUILD_PATH;
+		} else if (BUILD_COMMAND.equals(name)
+				|| BuilderFactory.BUILD_COMMAND.equals(name)) {
+			return COMMAND;
+		} else if (BUILD_ARGUMENTS.equals(name)
+				|| BuilderFactory.BUILD_ARGUMENTS.equals(name)) {
+			return ARGUMENTS;
+		} else if (BuilderFactory.STOP_ON_ERROR.equals(name)) {
+			return ATTRIBUTE_STOP_ON_ERR;
+		} //TODO else if(BuilderFactory.USE_DEFAULT_BUILD_CMD.equals(name)){
+		//	return getCommand();
+		//}
+		else if (BuilderFactory.BUILD_INCREMENTAL_ENABLED.equals(name)
+				||  BuilderFactory.BUILD_FULL_ENABLED.equals(name)) {
+			return ATTRIBUTE_INCREMENTAL_ENABLED;
+		} else if (BuilderFactory.BUILD_CLEAN_ENABLED.equals(name)){
+			return ATTRIBUTE_CLEAN_ENABLED;
+		} else if (BuilderFactory.BUILD_AUTO_ENABLED.equals(name)) {
+			return ATTRIBUTE_AUTO_ENABLED;
+		} else if (BuilderFactory.ENVIRONMENT.equals(name)) {
+			return ATTRIBUTE_ENVIRONMENT;
+		} else if (BuilderFactory.BUILD_APPEND_ENVIRONMENT.equals(name)){
+			return ATTRIBUTE_APPEND_ENVIRONMENT;
+		} else if (ErrorParserManager.PREF_ERROR_PARSER.equals(name)) {
+			return ATTRIBUTE_CUSTOMIZED_ERROR_PARSERS;
+		}
+		return null;
+	}
 	
 
 	public Map getEnvironment() {

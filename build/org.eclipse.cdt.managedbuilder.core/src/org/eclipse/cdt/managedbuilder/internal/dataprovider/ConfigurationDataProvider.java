@@ -24,9 +24,11 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
@@ -39,6 +41,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ISettingsChangeListener;
 import org.eclipse.cdt.managedbuilder.internal.core.InputType;
@@ -49,6 +52,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.SettingsChangeEvent;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
@@ -73,6 +77,27 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		}
 	}
 
+	private static class DesApplyRunnable implements IWorkspaceRunnable {
+		IBuilder fBuilder;
+		IProject fProject;
+		
+		DesApplyRunnable(IProject project, IBuilder builder){
+			fProject = project;
+			fBuilder = builder;
+		}
+		
+		public void run(IProgressMonitor monitor) throws CoreException {
+			try {
+				IProjectDescription eDes = fProject.getDescription();
+				if(BuilderFactory.applyBuilder(eDes, fBuilder) == BuilderFactory.CMD_CHANGED) {
+						fProject.setDescription(eDes, monitor);
+				}
+			} catch (Exception e){
+				ManagedBuilderCorePlugin.log(e);
+			}
+		}
+		
+	}
 	static BuildConfigurationData writeConfiguration(ICConfigurationDescription des,
 			CConfigurationData base) throws CoreException {
 		BuildConfigurationData appliedCfg = (BuildConfigurationData)base;
@@ -107,6 +132,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 			ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
 			CConfigurationData base,
+			IModificationContext context,
 			IProgressMonitor monitor)
 			throws CoreException {
 		if(des.isPreferenceConfiguration())
@@ -127,6 +153,22 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		
 		setPersistedFlag(des);
 		cacheNaturesIdsUsedOnCache(des);
+		
+		if(des.isActive()){
+			IConfiguration cfg = appliedCfg.getConfiguration();
+			IBuilder builder = cfg.getEditableBuilder();
+			IProject project = context.getProject();
+			IProjectDescription eDes = context.getEclipseProjectDescription();
+			switch(BuilderFactory.applyBuilder(eDes, builder)){
+			case BuilderFactory.CMD_UNDEFINED:
+				IWorkspaceRunnable applyR = new DesApplyRunnable(project, builder);
+				context.addWorkspaceRunnable(applyR);
+				break;
+			case BuilderFactory.CMD_CHANGED:
+				context.setEclipseProjectDescription(eDes);
+				break;
+			}
+		}
 		
 		return appliedCfg;
 	}

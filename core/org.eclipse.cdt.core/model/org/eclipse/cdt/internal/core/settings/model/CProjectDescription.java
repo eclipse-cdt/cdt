@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
@@ -205,7 +206,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 //		fIsLoadding = false;
 	}
 
-	void applyDatas(){
+	void applyDatas(IModificationContext context){
 		if(!fIsReadOnly || !fIsApplying)
 			return;
 		
@@ -213,7 +214,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		for(Iterator iter = fCfgMap.values().iterator(); iter.hasNext();){
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
 			try {
-				cache.applyData(factory);
+				cache.applyData(factory, context);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				e.printStackTrace();

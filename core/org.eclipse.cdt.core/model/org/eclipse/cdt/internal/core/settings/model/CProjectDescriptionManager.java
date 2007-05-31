@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
+import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
@@ -435,10 +436,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	public ICProjectDescription getProjectDescription(IProject project, int flags){
 
 		ICProjectDescription des = null;
-		IProjectDescription eDes = null; 
 		boolean write = checkFlags(flags, GET_WRITABLE);
 		boolean load = !checkFlags(flags, GET_IF_LOADDED);
 		boolean ignoreClose = checkFlags(flags, INTERNAL_GET_IGNORE_CLOSE);
+		SettingsContext context = null;
 		
 		des = getDescriptionApplying(project);
 		
@@ -457,8 +458,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			if(des == null){
 				//TODO: check if conversion needed
 				try {
-					eDes = project.getDescription();
-					des = getConvertedDescription(project, eDes);
+					context = new SettingsContext(project);
+					des = getConvertedDescription(project, context);
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
 				}
@@ -467,8 +468,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			if(des != null){
 				if(setLoaddedDescriptionOnLoad(project, des)){
 
-					if(eDes != null)
-						saveConversion(project, eDes, (CProjectDescription)des, new NullProgressMonitor());
+					if(context != null)
+						saveConversion(project, context, (CProjectDescription)des, new NullProgressMonitor());
 	
 					CProjectDescriptionEvent event = createLoaddedEvent(des);
 					notifyListeners(event);
@@ -567,7 +568,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return null;
 	}
 
-	private ICProjectDescription getConvertedDescription(IProject project, IProjectDescription eDes) throws CoreException{
+	private ICProjectDescription getConvertedDescription(IProject project, SettingsContext context) throws CoreException{
 		Object info[] = loadProjectDescriptionFromOldstyleStorage(project);
 		CProjectDescription des = null;
 		String ownerId;
@@ -582,8 +583,11 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				des = null;
 			}
 			
+			IProjectDescription eDes = context.getEclipseProjectDescription();
+			
 			ICProjectConverter converter = getConverter(project, ownerId, des);
 			if(converter != null){
+
 				CProjectDescription convertedDes = (CProjectDescription)converter.convertProject(project, eDes, ownerId, des);
 				if(convertedDes != null){
 ///					ICConfigurationDescription activeCfg = convertedDes.getActiveConfiguration();
@@ -602,6 +606,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			if(des != null && des.isValid()){
 				//TODO: should be set via the CModel operation?
 				InternalXmlStorageElement el = null;
+				context.setEclipseProjectDescription(eDes);
+				
 				try {
 					el = copyElement((InternalXmlStorageElement)des.getRootStorageElement(), false);
 				} catch (CoreException e2) {
@@ -610,7 +616,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				des = new CProjectDescription(des, true, el, des.isCdtProjectCreating());
 				try {
 					setDescriptionApplying(project, des);
-					des.applyDatas();
+					des.applyDatas(context);
 					des.doneApplying();
 				} finally {
 					clearDescriptionApplying(project);
@@ -632,30 +638,20 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 	
 	private void saveConversion(final IProject proj, 
-			final IProjectDescription eDes,
+			final SettingsContext context,
 			CProjectDescription des,
 			IProgressMonitor monitor) {
 		
-		CompositeWorkspaceRunnable r = new CompositeWorkspaceRunnable(null);
-		r.add(new IWorkspaceRunnable(){
-
-			public void run(IProgressMonitor monitor) throws CoreException {
-				try {
-					proj.setDescription(eDes, monitor);					
-				} catch (CoreException e){
-					CCorePlugin.log(e);
-				}
-				
-			}
-		});
 		
 		try {
-			r.add(createDesSerializationRunnable(des));
+			context.addWorkspaceRunnable(createDesSerializationRunnable(des));
 		} catch (CoreException e1) {
 			CCorePlugin.log(e1);
 		}
-		
-		runWspModification(r, monitor);
+
+		IWorkspaceRunnable toRun = context.createOperationRunnable();
+		if(toRun != null)
+			runWspModification(toRun, monitor);
 	}
 	
 	public Job runWspModification(final IWorkspaceRunnable runnable, IProgressMonitor monitor){
@@ -1565,12 +1561,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return provider.loadConfiguration(des, monitor);
 	}
 	
-	CConfigurationData applyData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base, IProgressMonitor monitor) throws CoreException {
+	CConfigurationData applyData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base, IModificationContext context, IProgressMonitor monitor) throws CoreException {
 		if(monitor == null)
 			monitor = new NullProgressMonitor();
 		
 		CConfigurationDataProvider provider = getProvider(des);
-		return provider.applyConfiguration(des, baseDescription, base, monitor);
+		return provider.applyConfiguration(des, baseDescription, base, context, monitor);
 	}
 
 	void notifyCached(ICConfigurationDescription des, CConfigurationData data, IProgressMonitor monitor) {
@@ -2904,6 +2900,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return getPreferenceConfiguration(buildSystemId, true);
 	}
 
+	private void runContextOperations(SettingsContext context, IProgressMonitor monitor){
+		IWorkspaceRunnable toRun = context.createOperationRunnable();
+		if(toRun != null){
+			runWspModification(toRun, monitor);
+		} else if (monitor != null){
+			monitor.done();
+		}
+	}
+	
 	public ICConfigurationDescription getPreferenceConfiguration(String buildSystemId, boolean write) throws CoreException {
 		ICConfigurationDescription des = getLoaddedPreference(buildSystemId);
 		if(des == null){
@@ -2984,9 +2989,11 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		rootEl = rootParent.importChild(baseRootEl);
 		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(des, baseData, cfgDes.getSpecSettings(), null, rootEl);
 		CSettingEntryFactory factory = new CSettingEntryFactory();
-		cache.applyData(factory);
+		SettingsContext context = new SettingsContext(null);
+		cache.applyData(factory, context);
 		cache.doneInitialization();
 		factory.clear();
+		runContextOperations(context, null);
 		return cache;
 	}
 	

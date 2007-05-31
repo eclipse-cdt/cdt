@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
-import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -26,9 +25,11 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,7 +37,7 @@ import org.eclipse.core.runtime.Status;
 public class BuilderFactory {
 
 	private static final String PREFIX = "org.eclipse.cdt.make.core"; //$NON-NLS-1$
-	private static final String PREFIX_WITH_DOT = PREFIX + '.'; //$NON-NLS-1$
+//	private static final String PREFIX_WITH_DOT = PREFIX + '.'; //$NON-NLS-1$
 
 	static final String BUILD_COMMAND = PREFIX + ".buildCommand"; //$NON-NLS-1$
 	static final String BUILD_LOCATION = PREFIX + ".buildLocation"; //$NON-NLS-1$
@@ -94,6 +95,17 @@ public class BuilderFactory {
 //				return PREFIX_WITH_DOT + name;
 //			return super.getMapKey(name);
 //		}
+
+		public void setAttribute(String name, String value) {
+			String[] names = Builder.toBuildAttributes(name);
+			String attrName = names.length != 0 ? names[names.length - 1] : null; 
+
+			if(attrName == null && BuilderFactory.USE_DEFAULT_BUILD_CMD.equals(name))
+				attrName = BuilderFactory.USE_DEFAULT_BUILD_CMD;
+			
+			if(attrName != null)
+				super.setAttribute(attrName, value);
+		}
 
 		protected MapStorageElement createChildElement(Map childMap) {
 			return new BuildArgsStorageElement(childMap, this);
@@ -204,6 +216,16 @@ public class BuilderFactory {
 	private static Map builderToMap(IBuilder builder){
 		MapStorageElement el = new MapStorageElement("", null); //$NON-NLS-1$
 		((Builder)builder).serialize(el, false);
+		
+		return el.toStringMap();
+	}
+
+	private static Map builderBuildArgsMap(IBuilder builder){
+		MapStorageElement el = new BuildArgsStorageElement("", null);  //$NON-NLS-1$
+		((Builder)builder).serializeRawData(el);
+		
+		Boolean d = Boolean.valueOf(builder.isDefaultBuildCmd());
+		el.setAttribute(BuilderFactory.USE_DEFAULT_BUILD_CMD, d.toString());
 		
 		return el.toStringMap();
 	}
@@ -373,5 +395,40 @@ public class BuilderFactory {
 		if(builders != null)
 			return builders;
 		return EMPTY_BUILDERS_ARRAY;
+	}
+
+	public static int applyBuilder(IProjectDescription eDes, IBuilder builder){
+		return applyBuilder(eDes, CommonBuilder.BUILDER_ID, builder);
+	}
+
+	public static final int CMD_UNDEFINED = -1;
+	public static final int NO_CHANGES = 0;
+	public static final int CMD_CHANGED = 1;
+	
+	public static int applyBuilder(IProjectDescription eDes, String eBuilderId, IBuilder builder){
+		ICommand cmd = ManagedCProjectNature.getBuildSpec(eDes, eBuilderId);
+		if(cmd == null)
+			return CMD_UNDEFINED;
+		
+		if(applyBuilder(cmd, builder)){
+			ManagedCProjectNature.setBuildSpec(eDes, cmd);
+			return CMD_CHANGED; 
+		}
+		return NO_CHANGES;
+	}
+	public static boolean applyBuilder(ICommand cmd, IBuilder builder) {
+		Map oldMap = cmd.getArguments();
+		Map map = builderBuildArgsMap(builder);
+		
+		if(oldMap.equals(map))
+			return false;
+		
+		cmd.setArguments(map);
+		
+		cmd.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, builder.isAutoBuildEnable());
+		cmd.setBuilding(IncrementalProjectBuilder.FULL_BUILD, builder.isFullBuildEnabled());
+		cmd.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, builder.isIncrementalBuildEnabled());
+		cmd.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, builder.isCleanBuildEnabled());
+		return true;
 	}
 }

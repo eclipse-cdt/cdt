@@ -3882,6 +3882,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 
 	private static ICConfigurationDescription getDescriptionForConfiguration(IConfiguration cfg, boolean checkConsistance){
+		if(cfg.isExtensionElement())
+			return null;
 		ICConfigurationDescription des = ((Configuration)cfg).getConfigurationDescription();
 		if(des == null){
 			if(checkConsistance)

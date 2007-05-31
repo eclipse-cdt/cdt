@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.settings.model.extension;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -55,20 +56,53 @@ public abstract class CConfigurationDataProvider {
 	public abstract void removeConfiguration(ICConfigurationDescription des, CConfigurationData data, IProgressMonitor monitor);
 
 	/**
-	 * called during the setProjectDescription operation to notify the provider that the configuration data
-	 * is being applied.
-	 * Provider would typically store all the necessary data configuration during this call.
+	 * the method is called in case the implementer does NOT override 
+	 * the {@link #applyConfiguration(ICConfigurationDescription, ICConfigurationDescription, CConfigurationData, IModificationContext, IProgressMonitor)}
+	 * method. See {@link #applyConfiguration(ICConfigurationDescription, ICConfigurationDescription, CConfigurationData, IModificationContext, IProgressMonitor)}
+	 * for detail
 	 * 
 	 * @param des
 	 * @param base
 	 * @return
 	 * @throws CoreException
+	 * 
+	 * @see {@link #applyConfiguration(ICConfigurationDescription, ICConfigurationDescription, CConfigurationData, IModificationContext, IProgressMonitor)}
 	 */
-	public abstract CConfigurationData applyConfiguration(ICConfigurationDescription des, 
+	public CConfigurationData applyConfiguration(ICConfigurationDescription des, 
 			ICConfigurationDescription baseDescription,
 			CConfigurationData baseData,
-			IProgressMonitor monitor) throws CoreException;
-	
+			IProgressMonitor monitor) throws CoreException{
+		return baseData;
+	}
+
+	/**
+	 * called during the setProjectDescription operation to notify the provider that the configuration data
+	 * is being applied.
+	 * Provider would typically store all the necessary data configuration during this call.
+	 * 
+	 * @param des
+	 * @param baseDescription
+	 * @param baseData
+	 * @param context the {@link IModificationContext} allows registering workspace runnables to be run
+	 * as a single batch workspace operation.
+	 * If possible the runnables will be run directly in the apply context(thread) after all
+	 * configuration datas get applied. Otherwise runnables will be run as a separate job.  
+	 * This allows to perform all workspace modifications registered by different configurations 
+	 * to be run as a single batch peration together with the workspace modifications performed by the 
+	 * ICProjectDesacription framework
+	 * @param monitor
+	 * 
+	 * @return
+	 * @throws CoreException
+	 */
+	public CConfigurationData applyConfiguration(ICConfigurationDescription des, 
+			ICConfigurationDescription baseDescription,
+			CConfigurationData baseData,
+			IModificationContext context,
+			IProgressMonitor monitor) throws CoreException{
+		return applyConfiguration(des, baseDescription, baseData, monitor);
+	}
+
 	/**
 	 * called to notify that the configuration data was cached
 	 * implementors can do any necessary cleaning, etc.

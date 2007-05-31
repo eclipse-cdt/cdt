@@ -50,6 +50,10 @@ public class IBMessages extends NLS {
 	public static String IBViewPart_waitingOnIndexerMessage;
 	public static String IBViewPart_workspaceScope;
 
+	public static String OpenIncludeBrowserAction_label;
+
+	public static String OpenIncludeBrowserAction_tooltip;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, IBMessages.class);

@@ -153,6 +153,12 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String OPEN_CALL_HIERARCHY= "org.eclipse.cdt.ui.edit.open.call.hierarchy"; //$NON-NLS-1$
 
 	/**
+	 * Action definition ID for opening the include browser.
+	 * (value <code>"org.eclipse.cdt.ui.edit.open.include.browser"</code>).
+	 */
+	public static final String OPEN_INCLUDE_BROWSER= "org.eclipse.cdt.ui.edit.open.include.browser"; //$NON-NLS-1$
+
+	/**
 	 * Action definition ID for go to next c member.
 	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.next.memeber"</code>)
 	 */

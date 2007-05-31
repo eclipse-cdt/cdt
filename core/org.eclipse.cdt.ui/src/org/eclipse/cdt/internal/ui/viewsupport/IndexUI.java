@@ -51,6 +51,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -58,6 +59,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -167,11 +169,7 @@ public class IndexUI {
 						String elementName= element.getElementName();
 						int idx= elementName.lastIndexOf(":")+1; //$NON-NLS-1$
 						ISourceRange pos= sf.getSourceRange();
-						IRegion region= new Region(pos.getIdStartPos()+idx, pos.getIdLength()-idx);
-						IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, file.getTimestamp());
-						if (converter != null) {
-							region= converter.actualToHistoric(region);
-						}
+						IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos()+idx, pos.getIdLength()-idx);
 						IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
 						for (int i = 0; i < names.length; i++) {
 							IIndexName name = names[i];
@@ -185,6 +183,51 @@ public class IndexUI {
 		}
 		return null;
 	}
+
+	private static IRegion getConvertedRegion(ITranslationUnit tu, IIndexFile file, int pos, int length) throws CoreException {
+		IRegion region= new Region(pos, length);
+		IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, file.getTimestamp());
+		if (converter != null) {
+			region= converter.actualToHistoric(region);
+		}
+		return region;
+	}
+	
+	public static IIndexInclude elementToInclude(IIndex index, IInclude include) throws CoreException {
+		if (include != null) {
+			ITranslationUnit tu= include.getTranslationUnit();
+			if (tu != null) {
+				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
+				if (location != null) {
+					IIndexFile file= index.getFile(location);
+					if (file != null) {
+						String elementName= include.getElementName();
+						elementName= elementName.substring(elementName.lastIndexOf('/')+1);
+						ISourceRange pos= include.getSourceRange();
+						IRegion region= getConvertedRegion(tu, file, pos.getIdStartPos(), pos.getIdLength());
+
+						IIndexInclude[] includes= index.findIncludes(file);
+						int bestDiff= Integer.MAX_VALUE;
+						IIndexInclude best= null;
+						for (int i = 0; i < includes.length; i++) {
+							IIndexInclude candidate = includes[i];
+							int diff= Math.abs(candidate.getNameOffset()- region.getOffset());
+							if (diff > bestDiff) {
+								break;
+							}
+							if (candidate.getName().endsWith(elementName)) {
+								bestDiff= diff;
+								best= candidate;
+							}
+						}
+						return best;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
 
 	public static ICElementHandle[] findRepresentative(IIndex index, IBinding binding) throws CoreException {
 		ICElementHandle[] defs = IndexUI.findAllDefinitions(index, binding);

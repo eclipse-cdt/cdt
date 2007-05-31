@@ -1028,6 +1028,14 @@
             visible="false"
             id="org.eclipse.cdt.ui.OpenActionSet">
          <action
+               definitionId="org.eclipse.cdt.ui.edit.open.include.browser"
+               id="org.eclipse.cdt.ui.actions.OpenIncludeBrowser"
+               label="%OpenIncludeBrowser.label"
+               menubarPath="navigate/open.ext"
+               retarget="true"
+               tooltip="%OpenIncludeBrowser.tooltip">
+         </action>
+         <action
                definitionId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
                id="org.eclipse.cdt.ui.actions.OpenCallHierarchy"
                label="%OpenCallHierarchy.label"
@@ -1219,6 +1227,16 @@
             contextId="org.eclipse.cdt.ui.cViewScope"
             commandId="org.eclipse.cdt.ui.edit.open.call.hierarchy"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="M1+M3+I"
+            contextId="org.eclipse.cdt.ui.cEditorScope"
+            commandId="org.eclipse.cdt.ui.edit.open.include.browser"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="M1+M3+I"
+            contextId="org.eclipse.cdt.ui.cViewScope"
+            commandId="org.eclipse.cdt.ui.edit.open.include.browser"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
      <!--removed, see bug 167162
      <key
             sequence="M1+F3"
@@ -1402,6 +1420,12 @@
             description="%ActionDefinition.openTypeHierarchy.description"
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.cdt.ui.edit.open.type.hierarchy">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%ActionDefinition.openIncludeBrowser.description"
+            name="%ActionDefinition.openIncludeBrowser.name"
+            id="org.eclipse.cdt.ui.edit.open.include.browser">
       </command>
       <command
             name="%ActionDefinition.openTypeInHierarchy.name"

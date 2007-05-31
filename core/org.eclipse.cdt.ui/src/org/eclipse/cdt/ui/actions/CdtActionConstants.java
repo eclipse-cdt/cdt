@@ -49,6 +49,13 @@ public class CdtActionConstants {
      */
     public static final String OPEN_CALL_HIERARCHY= "org.eclipse.cdt.ui.actions.OpenCallHierarchy"; //$NON-NLS-1$
 
+    /**
+     * Navigate menu: name of standard Open Include Browser global action
+     * (value <code>"org.eclipse.cdt.ui.actions.OpenIncludeBrowser"</code>).
+     * @since 4.0
+     */
+    public static final String OPEN_INCLUDE_BROWSER= "org.eclipse.cdt.ui.actions.OpenIncludeBrowser"; //$NON-NLS-1$
+
 	// Edit menu
 
 	/**

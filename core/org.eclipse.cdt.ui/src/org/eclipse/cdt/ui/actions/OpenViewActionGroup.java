@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.callhierarchy.OpenCallHierarchyAction;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.includebrowser.OpenIncludeBrowserAction;
 import org.eclipse.cdt.internal.ui.typehierarchy.OpenTypeHierarchyAction;
 
 /**
@@ -50,6 +51,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	private boolean fSuppressTypeHierarchy;
 	private boolean fSuppressCallHierarchy;
 	private boolean fSuppressProperties;
+	private boolean fEnableIncludeBrowser;
 	private IWorkbenchSite fSite;
 	private String fGroupName= IContextMenuConstants.GROUP_OPEN;
 	
@@ -58,6 +60,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	private OpenTypeHierarchyAction fOpenTypeHierarchy;
 	private PropertyDialogAction fOpenPropertiesDialog;
 	private OpenCallHierarchyAction fOpenCallHierarchy;
+	private OpenIncludeBrowserAction fOpenIncludeBrowser;
 
 	/**
 	 * Creates a new <code>OpenActionGroup</code>. The group requires
@@ -103,6 +106,10 @@ public class OpenViewActionGroup extends ActionGroup {
         fOpenCallHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
         part.setAction("OpenCallHierarchy", fOpenCallHierarchy); //$NON-NLS-1$
 
+        fOpenIncludeBrowser= new OpenIncludeBrowserAction(part);
+        fOpenIncludeBrowser.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_INCLUDE_BROWSER);
+        part.setAction("OpenIncludeBrowser", fOpenIncludeBrowser); //$NON-NLS-1$
+
 		initialize(part.getEditorSite());
 	}
 
@@ -119,6 +126,9 @@ public class OpenViewActionGroup extends ActionGroup {
 		fOpenCallHierarchy= new OpenCallHierarchyAction(site);
         fOpenCallHierarchy.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 
+		fOpenIncludeBrowser= new OpenIncludeBrowserAction(site);
+		fOpenIncludeBrowser.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_INCLUDE_BROWSER);
+
         fOpenPropertiesDialog= new PropertyDialogAction(site, site.getSelectionProvider());
         fOpenPropertiesDialog.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
 		
@@ -133,6 +143,7 @@ public class OpenViewActionGroup extends ActionGroup {
 //		fOpenExternalJavadoc.update(selection);
 		fOpenTypeHierarchy.update(selection);
 		fOpenCallHierarchy.update(selection);
+		fOpenIncludeBrowser.update(selection);
 		if (!fEditorIsOwner) {
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss= (IStructuredSelection)selection;
@@ -144,6 +155,7 @@ public class OpenViewActionGroup extends ActionGroup {
 //			provider.addSelectionChangedListener(fOpenExternalJavadoc);
 			provider.addSelectionChangedListener(fOpenTypeHierarchy);
 			provider.addSelectionChangedListener(fOpenCallHierarchy);
+			provider.addSelectionChangedListener(fOpenIncludeBrowser);
 			// no need to register the open properties dialog action since it registers itself
 		}
 	}
@@ -168,6 +180,9 @@ public class OpenViewActionGroup extends ActionGroup {
 			if (!fSuppressCallHierarchy && fOpenCallHierarchy.isEnabled()) {
 				menu.appendToGroup(fGroupName, fOpenCallHierarchy);
 			}
+			if (fEnableIncludeBrowser && fOpenIncludeBrowser.isEnabled()) {
+				menu.appendToGroup(fGroupName, fOpenIncludeBrowser);
+			}
 		}
 //		appendToGroup(menu, fOpenSuperImplementation);
 		IStructuredSelection selection= getStructuredSelection();
@@ -187,6 +202,7 @@ public class OpenViewActionGroup extends ActionGroup {
 //		provider.removeSelectionChangedListener(fOpenExternalJavadoc);
 		provider.removeSelectionChangedListener(fOpenTypeHierarchy);
 		provider.removeSelectionChangedListener(fOpenCallHierarchy);
+		provider.removeSelectionChangedListener(fOpenIncludeBrowser);
 		if (fOpenPropertiesDialog != null) {
 			fOpenPropertiesDialog.dispose();
 		}
@@ -198,6 +214,7 @@ public class OpenViewActionGroup extends ActionGroup {
 //		actionBars.setGlobalActionHandler(JdtActionConstants.OPEN_EXTERNAL_JAVA_DOC, fOpenExternalJavadoc);
 		actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_TYPE_HIERARCHY, fOpenTypeHierarchy);
         actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_CALL_HIERARCHY, fOpenCallHierarchy);
+        actionBars.setGlobalActionHandler(CdtActionConstants.OPEN_INCLUDE_BROWSER, fOpenIncludeBrowser);
         if (fOpenPropertiesDialog != null) {
         	actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), fOpenPropertiesDialog);
         }
@@ -248,5 +265,9 @@ public class OpenViewActionGroup extends ActionGroup {
 
 	public void setSuppressProperties(boolean suppressProperties) {
 		fSuppressProperties = suppressProperties;
+	}
+	
+	public void setEnableIncludeBrowser(boolean enableIncludeBrowser) {
+		fEnableIncludeBrowser= enableIncludeBrowser;
 	}
 }

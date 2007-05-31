@@ -97,7 +97,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	private MemberFilterActionGroup fMemberFilterActionGroup;
 
 	private ActionGroup fSelectionSearchGroup;
-	private ActionGroup fOpenViewActionGroup;
+	private OpenViewActionGroup fOpenViewActionGroup;
 	private ActionGroup fRefactoringActionGroup;
 	
 	/**
@@ -343,6 +343,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fOpenViewActionGroup = new OpenViewActionGroup(this);
+		fOpenViewActionGroup.setEnableIncludeBrowser(true);
 		fRefactoringActionGroup= new CRefactoringActionGroup(this);
 		// Custom filter group
 		fCustomFiltersActionGroup= new CustomFiltersActionGroup("org.eclipse.cdt.ui.COutlinePage", getTreeViewer()); //$NON-NLS-1$

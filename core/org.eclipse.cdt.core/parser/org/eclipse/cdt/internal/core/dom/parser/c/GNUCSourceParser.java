@@ -2349,6 +2349,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             declSpec = fd.declSpec;
         }
 
+        // bug 167833, no declspec no parameter.
+        if (current == LA(1))
+            throwBacktrack(current.getOffset(), current.getLength());
+
         IASTDeclarator declarator = null;
         if (LT(1) != IToken.tSEMI)
             declarator = initDeclarator();

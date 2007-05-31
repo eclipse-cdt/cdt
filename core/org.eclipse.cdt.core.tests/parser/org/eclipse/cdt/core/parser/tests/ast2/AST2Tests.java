@@ -3795,17 +3795,9 @@ public class AST2Tests extends AST2BaseTest {
 	// int32 f(int32 (*p)) {
 	//   return *p;
 	// }
-	public void test167833_cpp() throws Exception {
+	public void test167833() throws Exception {
 		StringBuffer buffer = getContents(1)[0];
 		parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
-	}		
-
-	// typedef int int32;
-	// int32 f(int32 (*p)) {
-	//   return *p;
-	// }
-	public void _test167833_c() throws Exception {
-		StringBuffer buffer = getContents(1)[0];
 		parseAndCheckBindings(buffer.toString(), ParserLanguage.C);
 	}		
 }

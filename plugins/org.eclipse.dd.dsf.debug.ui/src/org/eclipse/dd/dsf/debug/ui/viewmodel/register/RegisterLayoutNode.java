@@ -379,7 +379,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             parent.addFlags(IModelDelta.CONTENT);
         } 
         if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-            parent.addNode( new DMVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
+            parent.addNode( createVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
         
         super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);

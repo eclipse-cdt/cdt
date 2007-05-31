@@ -6,10 +6,13 @@
  * 
  * Contributors:
  * Kushal Munir (IBM) - initial API and implementation.
+ * Kevin Doyle (IBM) [189433] - Added Viewer Filter to display directories & archives
  ********************************************************************************/
 package org.eclipse.rse.internal.files.ui.search;
 
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
+import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -17,6 +20,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemSearchRemoteFolderDialog extends SystemRemoteFolderDialog {
 
+	private SystemActionViewerFilter _filter;
+	
 	/**
 	 * Constructor.
 	 * @param shell the parent shell.
@@ -34,6 +39,17 @@ public class SystemSearchRemoteFolderDialog extends SystemRemoteFolderDialog {
 		super(shell, title);
 	}
 
+	public SystemActionViewerFilter getViewerFilter()
+	{
+		if (_filter == null)
+		{
+			_filter = new SystemActionViewerFilter();
+			Class[] types = {IRemoteFile.class};
+			_filter.addFilterCriterion(types, "isDirectory", "true"); //$NON-NLS-1$  //$NON-NLS-2$
+			_filter.addFilterCriterion(types, "isArchive", "true");   //$NON-NLS-1$  //$NON-NLS-2$
+		}
+		return _filter;
+	}
 	
 	/**
 	 * Creates an instance of the select form for search {@link SystemSearchRemoteFolderForm}

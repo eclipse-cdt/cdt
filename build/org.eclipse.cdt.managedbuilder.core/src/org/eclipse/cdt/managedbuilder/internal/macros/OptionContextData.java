@@ -12,9 +12,11 @@ package org.eclipse.cdt.managedbuilder.internal.macros;
 
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IOption;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.macros.IOptionContextData;
@@ -50,15 +52,23 @@ public class OptionContextData implements IOptionContextData {
 		IBuildObject buildObj = data.getParent();
 		IToolChain tCh = null;
 		IHoldsOptions ho = null;
-		IResourceConfiguration rcCfg = null;
+		IResourceInfo rcInfo = null;
+		IFileInfo fileInfo = null;
+		IFolderInfo folderInfo = null;
 		if(buildObj instanceof ITool)
 			ho = (ITool)buildObj;
 		else if(buildObj instanceof IToolChain)
 			tCh = (IToolChain)buildObj;
-		else if(buildObj instanceof IResourceConfiguration)
-			rcCfg = (IResourceConfiguration)buildObj;
-		else if(buildObj instanceof IConfiguration)
+		else if(buildObj instanceof IFileInfo){
+			fileInfo = (IFileInfo)buildObj;
+			rcInfo = fileInfo;
+		}else if(buildObj instanceof IConfiguration)
 			tCh = ((IConfiguration)buildObj).getToolChain();
+		else if(buildObj instanceof IFolderInfo){
+			folderInfo = (IFolderInfo)buildObj;
+			rcInfo = folderInfo;
+			tCh = folderInfo.getToolChain();
+		}
 
 		if(ho == null){
 			IOption option = data.getOption();
@@ -74,8 +84,8 @@ public class OptionContextData implements IOptionContextData {
 						return tCh;
 				}
 				tools = tCh.getTools();
-			} else if(rcCfg != null){
-				tools = rcCfg.getTools();
+			} else if(rcInfo != null){
+				tools = rcInfo.getTools();
 			}
 			
 			if(tools != null){

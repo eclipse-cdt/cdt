@@ -509,7 +509,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return path.makeRelative();
 	}
 
-	protected ResourceInfo getParentResourceInfo(){
+	public ResourceInfo getParentResourceInfo(){
 		if(isRoot())
 			return null;
 		

@@ -16,6 +16,8 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -26,7 +28,9 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.BuildSettingsUtil;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.cdt.managedbuilder.internal.core.ResourceInfo;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -984,39 +988,126 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		IOption option = optionContext.getOption();
 		if(option == null)
 			return null;
-		IOption parentOption = null;
 			
 		IBuildObject parent = option.getParent();
 		ITool tool = null;
+		IToolChain tCh = null;
+		IResourceInfo optionRcInfo = null;
 		if (parent instanceof ITool) {
 			tool = (ITool)parent;
-		}
-		IBuildObject bObj = (optionContext instanceof OptionData) ?
-				((OptionData)optionContext).getOptionContainer() : optionContext.getParent();
-
-		IResourceConfiguration rcCfg = null;
-		ITool holderTool = null;
-		if(bObj instanceof ITool){
-			holderTool = (ITool)bObj;
-			IBuildObject p = holderTool.getParent();
-			if(p instanceof IResourceConfiguration)
-				rcCfg = (IResourceConfiguration)p;
-		} else if(bObj instanceof IResourceConfiguration)
-			rcCfg = (IResourceConfiguration)bObj;
-
-		IBuildObject parentObject = rcCfg == null ? bObj : rcCfg.getParent();
-
-		if(rcCfg != null && rcCfg.getTool(tool.getId()) != null){
-			tool = tool.getSuperClass();
-			parentOption = tool.getOptionBySuperClassId(option.getSuperClass().getId());
-		} else {
-			parentOption = option.getSuperClass();
+			optionRcInfo = tool.getParentResourceInfo();
+		} else if (parent instanceof IToolChain) {
+			tCh = (IToolChain)tCh;
+			optionRcInfo = tCh.getParentFolderInfo();
 		}
 		
+		if(optionRcInfo != null && optionRcInfo.isExtensionElement())
+			optionRcInfo = null;
+		
+		IBuildObject parentObj = null;
+		IOption parentOption = null;
+		
+		if(optionRcInfo != null){
+			//only if optionRcInfo is not null
+			IBuildObject bObj = (optionContext instanceof OptionData) ?
+					((OptionData)optionContext).getOptionContainer() : optionContext.getParent();
+					
+			
+			IResourceInfo rcInfo = null;
+			IFileInfo fileInfo = null;
+			IFolderInfo folderInfo = null;
+			ITool holderTool = null;
+			IToolChain holderTc = null;
+			if(bObj instanceof ITool){
+				holderTool = (ITool)bObj;
+				rcInfo = holderTool.getParentResourceInfo();
+			} else if(bObj instanceof IFileInfo) {
+				fileInfo = (IFileInfo)bObj;
+				rcInfo = fileInfo;
+			} else if (bObj instanceof IFolderInfo) {
+				folderInfo = (IFolderInfo)bObj;
+				rcInfo = folderInfo;
+				holderTc = folderInfo.getToolChain();
+			} else if (bObj instanceof IToolChain) {
+				holderTc = (IToolChain)bObj;
+				folderInfo = holderTc.getParentFolderInfo();
+			}
+			
+			if(rcInfo != null && rcInfo.isExtensionElement())
+				rcInfo = null;
+			
+			IResourceInfo parentRcInfo = null;
+			
+			if(rcInfo != null){
+				IPath optionRcPath = optionRcInfo.getPath();
+				IPath rcPath = rcInfo.getPath();
+				if(optionRcPath.isPrefixOf(rcPath)){
+					parentRcInfo = ((ResourceInfo)optionRcInfo).getParentResourceInfo();
+				} else {
+					parentRcInfo = ((ResourceInfo)rcInfo).getParentResourceInfo();
+				}
+			}
+			
+			if(parentRcInfo != null){
+				if(tool != null){
+					ITool tools[] = parentRcInfo.getTools();
+					ITool cur = tool;
+					ITool found = null;
+					do{
+						String id = cur.getId();
+						ITool []tmp = BuildSettingsUtil.getToolsBySuperClassId(tools, id);
+						if(tmp.length != 0){
+							found = tmp[0];
+							break;
+						}
+						if(cur.isExtensionElement())
+							break;
+						cur = cur.getSuperClass();
+					} while(cur != null);
+					
+					if(found != null){
+						parentOption = getParentOption(found, option);
+						if(parentOption != null){
+							parentObj = found;
+						}
+					}
+				} else if (tCh != null) {
+					if(parentRcInfo instanceof IFolderInfo){
+						IToolChain parentTc = ((IFolderInfo)parentRcInfo).getToolChain();
+						parentOption = getParentOption(parentTc, option);
+						if(parentOption != null){
+							parentObj = parentTc;
+						}
+					}
+				}
+			}
+		}
+		
+		if(parentObj == null)
+			parentOption = null;
+		if(parentOption == null)
+			parentOption = option.getSuperClass();
+		
 		if(parentOption != null)
-			return new OptionData(parentOption,bObj,parentObject);
+			return new OptionData(parentOption,optionContext.getParent(),parentObj);
 
 		return null;
+	}
+	
+	private IOption getParentOption(IHoldsOptions holder, IOption option){
+		IOption cur = option;
+		IOption found = null;
+		do {
+			String id = cur.getId();
+			found = holder.getOptionBySuperClassId(id);
+			if(found != null)
+				break;
+			
+			if(cur.isExtensionElement())
+				break;
+			cur = cur.getSuperClass(); 
+		} while (cur != null);
+		return found;
 	}
 
 	private boolean canHandle(IOptionContextData optionData){

@@ -209,4 +209,22 @@ public class BuildSettingsUtil {
 			flags |= ICProjectDescriptionManager.SET_NO_SERIALIZE; 
 		CoreModel.getDefault().getProjectDescriptionManager().setProjectDescription(project, des, flags, null);
 	}
+	
+	public static ITool[] getToolsBySuperClassId(ITool[] tools, String id) {
+		List retTools = new ArrayList();
+		if (id != null) {
+			for (int i = 0; i < tools.length; i++) {
+				ITool targetTool = tools[i];
+				ITool tool = targetTool;
+				do {
+					if (id.equals(tool.getId())) {
+						retTools.add(targetTool);
+						break;
+					}		
+					tool = tool.getSuperClass();
+				} while (tool != null);
+			}
+		}
+		return (ITool[])retTools.toArray( new ITool[retTools.size()]);
+	}
 }

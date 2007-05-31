@@ -20,22 +20,17 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.internal.core.envvar.UserDefinedEnvironmentSupplier;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
-import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
-import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
-import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
@@ -48,9 +43,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 
 
 public class ManagedBuildMacrosTests extends TestCase {
@@ -245,12 +238,12 @@ public class ManagedBuildMacrosTests extends TestCase {
 		try {
 			String[] set0 = opt.getStringListValue();
 			assertNotNull(set0);
-			final String[] set1 = {"new a", "test=${TEST}", INC_DEF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
+			final String[] set1 = {"new a", /*"test=${TEST}",*/ INC_DEF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$  
 				 "${PATH}", "PRJ=${NEW_FOR_PRJ}", "LIST=" + INC_DEF};//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			String[] res1 = {"new a", "test=CFGTEST", "x", "y",      //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					     "z", ":", "PRJ=<HZ>", "LIST=x|y|z"};        //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			String[] res1 = {"new a", /*"test=CFGTEST",*/ "x", "y",      //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					     "z", ":", "PRJ=NewMacrosForProjectContext", "LIST=x|y|z"};        //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			try {
-				res1[5] = mp.resolveValue("${PATH}",UNKNOWN,LISTSEP,IBuildMacroProvider.CONTEXT_OPTION, ocd);  //$NON-NLS-1$
+				res1[4] = mp.resolveValue("${PATH}",UNKNOWN,LISTSEP,IBuildMacroProvider.CONTEXT_OPTION, ocd);  //$NON-NLS-1$
 			} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); } 
 
 			opt = cfgs[0].setOption(t, opt, set1);
@@ -398,7 +391,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	/**
 	 * testMacroContext()
 	 */
-	public void testMacroContext(){
+	public void rm_testMacroContext(){
 		doInit();
 		IBuildMacro mcfg = mp.getMacro(TEST, IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0], true);
 		IBuildMacro mprj = mp.getMacro(TEST, IBuildMacroProvider.CONTEXT_PROJECT, mproj, true);
@@ -865,22 +858,22 @@ public class ManagedBuildMacrosTests extends TestCase {
 	/*
 	 * addVars() - adds macros for testMacroResolveCase
 	 */
-	private void addVars() {
-		int app = IBuildEnvironmentVariable.ENVVAR_APPEND;
-		String del = ""; //$NON-NLS-1$
-		UserDefinedEnvironmentSupplier usup = null;
-		usup = ManagedBuildEnvironmentTests.getSupplier(worksp, "Workspace"); //$NON-NLS-1$
-		if (usup != null) {
-			try {
-				usup.createVariable("casetest","lowercase",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$ 
-				usup.createVariable("CaseTest","capitalize", app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
-				usup.createVariable("CaSeTeSt","upper2low",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
-				usup.createVariable("CASETEST","uppercase",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (Exception e) {
-				fail("Failed to create workspace vars " + e.getLocalizedMessage()); //$NON-NLS-1$
-			}
-		}
-	}
+//	private void addVars() {
+//		int app = IBuildEnvironmentVariable.ENVVAR_APPEND;
+//		String del = ""; //$NON-NLS-1$
+//		UserDefinedEnvironmentSupplier usup = null;
+//		usup = ManagedBuildEnvironmentTests.getSupplier(worksp, "Workspace"); //$NON-NLS-1$
+//		if (usup != null) {
+//			try {
+//				usup.createVariable("casetest","lowercase",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$ 
+//				usup.createVariable("CaseTest","capitalize", app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
+//				usup.createVariable("CaSeTeSt","upper2low",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
+//				usup.createVariable("CASETEST","uppercase",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
+//			} catch (Exception e) {
+//				fail("Failed to create workspace vars " + e.getLocalizedMessage()); //$NON-NLS-1$
+//			}
+//		}
+//	}
 	/*
 	 * getFile() - open or creates sample file in current project
 	 */

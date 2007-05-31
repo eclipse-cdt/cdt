@@ -25,7 +25,7 @@ public class CompositeCPPFunctionInstance extends CompositeCPPFunction implement
 		super(cf, rbinding);
 	}
 
-	public IType[] getArguments() {	return TemplateInstanceUtil.getArguments(cf, rbinding); }
+	public IType[] getArguments() {	return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding); }
 	public ICPPTemplateDefinition getTemplateDefinition() { return TemplateInstanceUtil.getTemplateDefinition(cf, rbinding); }
 	public ObjectMap getArgumentMap() { return TemplateInstanceUtil.getArgumentMap(cf, rbinding); }
 	public IBinding getSpecializedBinding() { return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }

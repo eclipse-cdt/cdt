@@ -149,6 +149,14 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 			namespaces[i] = (ICPPNamespace) ibs[i];
 		return namespaces;
 	}
+	
+	IIndex getContext() {
+		return index;
+	}
+	
+	protected IIndexFragmentBinding findOneDefinition(IBinding binding) {
+		return super.findOneDefinition(binding);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeBinding(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IBinding)
@@ -159,18 +167,6 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 		try {
 			if(binding==null) {
 				result = null;
-			} else if (binding instanceof ICPPTemplateDefinition) {
-				if(binding instanceof ICPPClassTemplate) {
-					return new CompositeCPPClassTemplate(this, (ICPPClassType) findOneDefinition(binding));
-				} else if (binding instanceof ICPPConstructor) {
-					return new CompositeCPPConstructorTemplate(this, (ICPPConstructor) binding);
-				} else if (binding instanceof ICPPMethod) {
-						return new CompositeCPPMethodTemplate(this, (ICPPMethod) binding);
-				} else if (binding instanceof ICPPFunctionTemplate) {
-					return new CompositeCPPFunctionTemplate(this, (ICPPFunction) binding);
-				} else {
-					throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
-				}
 			} else if(binding instanceof ICPPSpecialization) {
 				if(binding instanceof ICPPTemplateInstance) {
 					if(binding instanceof ICPPDeferredTemplateInstance) {
@@ -184,19 +180,33 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 					} else {
 						if(binding instanceof ICPPClassType) {
 							return new CompositeCPPClassInstance(this, (ICPPClassType) findOneDefinition(binding));
-						} if(binding instanceof ICPPFunction) {
+						} else if(binding instanceof ICPPConstructor) {
+							return new CompositeCPPConstructorInstance(this, (ICPPConstructor) binding);
+						} else if(binding instanceof ICPPMethod) {
+							return new CompositeCPPMethodInstance(this, (ICPPMethod) binding);
+						} else if(binding instanceof ICPPFunction) {
 							return new CompositeCPPFunctionInstance(this, (ICPPFunction) binding);
 						} else {
 							throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
+				} else if (binding instanceof ICPPTemplateDefinition) {
+					if(binding instanceof ICPPClassTemplatePartialSpecialization) {
+						return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) binding);
+					} else if(binding instanceof ICPPClassType) {
+						return new CompositeCPPClassTemplateSpecialization(this, (ICPPClassType) binding);
+					} else if(binding instanceof ICPPConstructor) {
+						return new CompositeCPPConstructorTemplateSpecialization(this, (ICPPConstructor) binding);
+					} else if(binding instanceof ICPPMethod) {
+						return new CompositeCPPMethodTemplateSpecialization(this, (ICPPMethod) binding);
+					} else if(binding instanceof ICPPFunctionType) {
+						return new CompositeCPPFunctionTemplateSpecialization(this, (ICPPFunction) binding);
+					} else {
+						throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				} else {
 					if(binding instanceof ICPPClassType) {
-						if(binding instanceof ICPPClassTemplatePartialSpecialization) {
-							return new CompositeCPPClassTemplatePartialSpecialization(this, (ICPPClassTemplatePartialSpecialization) binding);
-						} else {
-							return new CompositeCPPClassSpecialization(this, (ICPPClassType) findOneDefinition(binding));
-						}
+						return new CompositeCPPClassSpecialization(this, (ICPPClassType) findOneDefinition(binding));
 					} if(binding instanceof ICPPConstructor) {
 						return new CompositeCPPConstructorSpecialization(this, (ICPPConstructor) binding);						
 					} if(binding instanceof ICPPMethod) {
@@ -212,6 +222,18 @@ public class CPPCompositesFactory extends AbstractCompositeFactory implements IC
 					} else {
 						throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
+				}
+			} else if (binding instanceof ICPPTemplateDefinition) {
+				if(binding instanceof ICPPClassTemplate) {
+					return new CompositeCPPClassTemplate(this, (ICPPClassType) findOneDefinition(binding));
+				} else if (binding instanceof ICPPConstructor) {
+					return new CompositeCPPConstructorTemplate(this, (ICPPConstructor) binding);
+				} else if (binding instanceof ICPPMethod) {
+						return new CompositeCPPMethodTemplate(this, (ICPPMethod) binding);
+				} else if (binding instanceof ICPPFunctionTemplate) {
+					return new CompositeCPPFunctionTemplate(this, (ICPPFunction) binding);
+				} else {
+					throw new CompositingNotImplementedError("composite binding unavailable for "+binding+" "+binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			} else if(binding instanceof ICPPParameter) {
 				result = new CompositeCPPParameter(this, (ICPPParameter) binding);

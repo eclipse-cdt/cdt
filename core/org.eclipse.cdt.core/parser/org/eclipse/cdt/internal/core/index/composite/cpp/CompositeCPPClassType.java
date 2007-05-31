@@ -50,13 +50,24 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 
 	private class CPPBaseDelegate implements ICPPBase, ICPPInternalBase {
 		private ICPPBase base;
+		private IBinding baseClass;
+		private boolean writable;
 		
 		CPPBaseDelegate(ICPPBase b) {
-			this.base = b;
+			this(b, false); 
+		}
+		
+		CPPBaseDelegate(ICPPBase b, boolean writable) {
+			this.base= b;
+			this.writable= writable; 
 		}
 		
 		public IBinding getBaseClass() throws DOMException {
-			return cf.getCompositeBinding((IIndexFragmentBinding)base.getBaseClass());
+			if(baseClass!=null) {
+				return baseClass;
+			} else {
+				return cf.getCompositeBinding((IIndexFragmentBinding)base.getBaseClass());
+			}
 		}
 
 		public IName getBaseClassSpecifierName() {
@@ -72,11 +83,15 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 		}
 
 		public void setBaseClass(IBinding binding) throws DOMException {
-			((ICPPInternalBase)base).setBaseClass(binding);
+			if(writable) {
+				baseClass= binding;
+			} else {
+				((ICPPInternalBase)base).setBaseClass(binding);
+			}
 		}
 		
 	    public Object clone(){
-	    	return ((ICPPInternalBase)base).clone();
+	    	return new CPPBaseDelegate(base, true);
 	    }
 	}
 	

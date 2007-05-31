@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -29,20 +30,30 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
  */
 public class TemplateInstanceUtil {
 	public static ObjectMap getArgumentMap(ICompositesFactory cf, IIndexBinding rbinding) {
-		ObjectMap preresult= ((ICPPSpecialization)rbinding).getArgumentMap();
+		ICPPSpecialization specn= (ICPPSpecialization) rbinding; 
+		IBinding specd= ((CPPCompositesFactory)cf).findOneDefinition(specn.getSpecializedBinding());
+		if(specd == null)
+			specd= specn.getSpecializedBinding();
+		
+		ObjectMap preresult= specn.getArgumentMap();
 		ObjectMap result= new ObjectMap(preresult.size());
 		Object[] keys= preresult.keyArray();
-		for(int i=0; i<keys.length; i++) {
-			IType type= (IType) preresult.get(keys[i]);
-			try {
-				result.put(
-					cf.getCompositeBinding((IIndexFragmentBinding)keys[i]),
-					cf.getCompositeType((IIndexType)type));
-			} catch(DOMException de) {
-				result.put(keys[i], type);
-				CCorePlugin.log(de);
+		Object[] keysToAdapt= keys;
+		
+		try {
+			if(specd instanceof ICPPTemplateDefinition) {
+				keysToAdapt= ((ICPPTemplateDefinition)specd).getTemplateParameters();
 			}
+			for(int i=0; i<keys.length; i++) {
+				IType type= (IType) preresult.get(keys[i]);
+				result.put(
+						cf.getCompositeBinding((IIndexFragmentBinding)keysToAdapt[i]),
+						cf.getCompositeType((IIndexType)type));
+			}
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
 		}
+		
 		return result;
 	}
 
@@ -52,8 +63,20 @@ public class TemplateInstanceUtil {
 	}
 	
 
-	public static  IType[] getArguments(ICompositesFactory cf, IIndexBinding rbinding) {
-		IType[] result = ((ICPPTemplateInstance)rbinding).getArguments();
+	public static  IType[] getArguments(ICompositesFactory cf, ICPPTemplateInstance rbinding) {
+		return getArguments(cf, rbinding.getArguments());
+	}
+	
+	public static  IType[] getArguments(ICompositesFactory cf, ICPPClassTemplatePartialSpecialization rbinding) {
+		try {
+			return getArguments(cf, rbinding.getArguments());
+		} catch(DOMException de) {
+			CCorePlugin.log(de);
+			return IType.EMPTY_TYPE_ARRAY;
+		}
+	}
+	
+	private static  IType[] getArguments(ICompositesFactory cf, IType[] result) {
 		try {
 			for(int i=0; i<result.length; i++) {
 				result[i] = cf.getCompositeType((IIndexType)result[i]);

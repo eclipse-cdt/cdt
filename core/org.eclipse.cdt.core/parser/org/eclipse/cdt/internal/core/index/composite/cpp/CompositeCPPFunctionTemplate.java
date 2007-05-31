@@ -40,7 +40,7 @@ public class CompositeCPPFunctionTemplate extends CompositeCPPFunction implement
 	}
 
 	public ICPPSpecialization getInstance(IType[] arguments) {
-		return InternalTemplateInstantiatorUtil.getInstance(arguments, cf, rbinding);
+		return InternalTemplateInstantiatorUtil.getInstance(arguments, cf, this);
 	}
 
 	public IBinding instantiate(IType[] arguments) {

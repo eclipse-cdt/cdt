@@ -278,7 +278,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//    B<long>::foo(); // instance not in the referenced pdom
 	//    X<int> x;
 	// }
-	public void _testClassImplicitInstantiations_188274() throws Exception {
+	public void testClassImplicitInstantiations_188274() throws Exception {
 		IBinding b2= getBindingFromASTName("X<int>", 6, true);
 		assertInstance(b2, ICPPClassType.class);
 		assertInstance(b2, ICPPTemplateInstance.class);
@@ -302,8 +302,6 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		ICPPBase[] bss1= ct1.getBases();
 		assertEquals(1, bss1.length);
 		assertInstance(bss1[0].getBaseClass(), ICPPClassType.class);
-		
-        fakeFailForSingle();
 	}
 	
 	//	class B {};

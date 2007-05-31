@@ -51,7 +51,7 @@ public class CompositeCPPDeferredClassInstance extends CompositeCPPClassType imp
 		return (IBinding) cf.getCompositeBinding((IIndexFragmentBinding)ins);
 	}
 	
-	public IType[] getArguments() { return TemplateInstanceUtil.getArguments(cf, rbinding);	}
+	public IType[] getArguments() { return TemplateInstanceUtil.getArguments(cf, (ICPPTemplateInstance) rbinding);	}
 	public ObjectMap getArgumentMap() {	return TemplateInstanceUtil.getArgumentMap(cf, rbinding); }
 	public IBinding getSpecializedBinding() { return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }
 }

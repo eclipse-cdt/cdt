@@ -69,7 +69,7 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
     // B<C> b;
     
     // void foo() {C c; B<int> b;}
-    public void _testBug188274() throws Exception {
+    public void testBug188274() throws Exception {
         IBinding b0= getBindingFromASTName("C", 1);
         IBinding b1= getBindingFromASTName("B", 1);
         assertInstance(b0, ICPPClassType.class);
@@ -84,8 +84,6 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
         ICPPBase[] bases= c2t.getBases();
         assertEquals(1, bases.length);
         assertInstance(bases[0].getBaseClass(), ICPPClassType.class);
-        
-        fakeFailForSingle();
     }
 	
 	// namespace ns {class A{};}

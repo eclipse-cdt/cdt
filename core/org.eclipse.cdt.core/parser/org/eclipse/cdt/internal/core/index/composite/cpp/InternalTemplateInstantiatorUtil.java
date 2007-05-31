@@ -11,13 +11,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
+import org.eclipse.core.runtime.CoreException;
 
 public class InternalTemplateInstantiatorUtil {
 	public static ICPPSpecialization deferredInstance(IType[] arguments, ICompositesFactory cf, IIndexBinding rbinding) {
@@ -30,9 +33,25 @@ public class InternalTemplateInstantiatorUtil {
 		}
 	}
 
-	public static ICPPSpecialization getInstance(IType[] arguments, ICompositesFactory cf, IIndexBinding rbinding) {
-		ICPPSpecialization ins= ((ICPPInternalTemplateInstantiator)rbinding).getInstance(arguments);
-		return (ICPPSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)ins);
+	public static ICPPSpecialization getInstance(IType[] arguments, ICompositesFactory cf, CompositeCPPBinding cbinding) {		
+		ICPPSpecialization preferredInstance= null;
+		try {
+			IIndexFragmentBinding[] bindings= ((CIndex)((CPPCompositesFactory)cf).getContext()).findEquivalentBindings(cbinding);
+			
+			for(int i=0; i<bindings.length && !(preferredInstance instanceof IIndexFragmentBinding); i++) {
+				ICPPInternalTemplateInstantiator instantiator= (ICPPInternalTemplateInstantiator) bindings[i];
+				preferredInstance= instantiator.getInstance(arguments);
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);
+		}
+		
+		if(preferredInstance instanceof IIndexFragmentBinding) {
+			return (ICPPSpecialization) cf.getCompositeBinding((IIndexFragmentBinding)preferredInstance);
+		} else {
+			// can result in a non-index binding
+			return preferredInstance;
+		}
 	}
 
 	public static IBinding instantiate(IType[] arguments, ICompositesFactory cf, IIndexBinding rbinding) {
@@ -40,7 +59,7 @@ public class InternalTemplateInstantiatorUtil {
 		if (ins instanceof IIndexFragmentBinding) {
 			return (IBinding) cf.getCompositeBinding((IIndexFragmentBinding)ins);
 		} else {
-			//can result in a non-index binding
+			// can result in a non-index binding
 			return ins;
 		}
 	}

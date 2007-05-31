@@ -860,6 +860,7 @@ public class SystemView extends SafeTreeViewer
 				
 				Object selectedObject = selection.getFirstElement();
 				ISystemViewElementAdapter adapter = getViewAdapter(selectedObject);
+				boolean hasChildren = adapter.hasChildren((IAdaptable)selectedObject);
 				if (!selectionIsRemoteObject)
 				{
 					GoIntoAction goIntoAction = getGoIntoAction();
@@ -868,7 +869,7 @@ public class SystemView extends SafeTreeViewer
 					if (singleSelection) {
 						// dkm - first find out if the selection will have children
 						//      only add this action if there are children
-						if (adapter.hasChildren((IAdaptable)selectedObject))
+						if (hasChildren)
 						{
 							menu.appendToGroup(ISystemContextMenuConstants.GROUP_GOTO, goIntoAction);
 						}
@@ -882,7 +883,7 @@ public class SystemView extends SafeTreeViewer
 					}
 				}
 				
-				if (showGenericShowInTableAction()) {
+				if (showGenericShowInTableAction() && hasChildren) {
 					SystemShowInTableAction showInTableAction = getShowInTableAction();
 					showInTableAction.setSelection(selection);
 					menu.appendToGroup(getOpenToPerspectiveAction().getContextMenuGroup(), showInTableAction);

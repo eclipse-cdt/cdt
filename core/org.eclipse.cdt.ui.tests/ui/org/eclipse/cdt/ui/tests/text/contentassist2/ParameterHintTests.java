@@ -158,4 +158,18 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 				"pi(aClass a) int"
 		});
 	}
+	
+	// class OtherClass {
+	// public:
+	// char getChar(int a, int b);
+	// };
+	//
+	// void foo() {
+	//    OtherClass* oc;
+	//    int i= (int) oc->getChar(
+	public void testMethodWithCast() throws Exception {
+		assertParameterHints(new String[] {
+				"getChar(int a,int b) char"
+		});
+	}
 }

@@ -11,7 +11,9 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - generalized Vector argumnents to Collections
+ * Kevin Doyle (IBM) - 174776: perform required sorting of Collection arguments
+ * David Dykstal (IBM) - 174776: disallowed sorting of input arguments, used copies
  ********************************************************************************/
 
 package org.eclipse.rse.ui.validators;
@@ -40,6 +42,8 @@ public class ValidatorUniqueString
 	public static final boolean CASE_SENSITIVE = true;
 	public static final boolean CASE_INSENSITIVE = false;
 	public static final char QUOTE = '\"';
+	private static final String[] EMPTY_LIST = new String[0];
+	
 	protected ISystemValidator syntaxValidator;
 	protected boolean          caseSensitive;
 	protected boolean          useUpperCase;
@@ -132,6 +136,7 @@ public class ValidatorUniqueString
 		{
 		  existingList = new String[newList.size()];
 		  newList.toArray(existingList);
+		  init(existingList, caseSensitive);
 		}
 	}
 	/**
@@ -156,27 +161,26 @@ public class ValidatorUniqueString
 	/**
 	 * Initialize sorted array.
 	 */
-	private void init(String existingList[], boolean caseSensitive)
-	{
-		this.existingList = existingList;
-		if (existingList == null)
-		  return;
-		if (!caseSensitive) // speed up comparison by converting to all lowercase
-		{
-		   String newList[] = new String[existingList.length];
-		   for (int idx=0; idx<existingList.length; idx++)
-		   {
-		   	  String string = existingList[idx];
-		   	  boolean quoted = (string.indexOf(QUOTE) != -1);
-		   	  if (!quoted)
-		        newList[idx] = string.toLowerCase();
-		      else
-		        newList[idx] = quotedToLowerCase(string);
-		   }
-		   existingList = newList;
+	private void init(String names[], boolean caseSensitive) {
+		if (names == null) {
+			existingList = EMPTY_LIST;
+		} else {
+			existingList = new String[names.length];
+			System.arraycopy(names, 0, existingList, 0, names.length);
+			// TODO (dwd 20070530) this should be using ICU4J to fold case.
+			if (!caseSensitive) { // speed up comparison by converting to all lowercase
+				for (int idx = 0; idx < existingList.length; idx++) {
+					String string = existingList[idx];
+					boolean quoted = (string.indexOf(QUOTE) != -1);
+					if (!quoted) {
+						existingList[idx] = string.toLowerCase();
+					} else {
+						existingList[idx] = quotedToLowerCase(string);
+					}
+				}
+			}
+			Arrays.sort(existingList); // Arrays is a utility class in java.util. New in JDK 1.2
 		}
-		Arrays.sort(existingList); // Arrays is a utility class in java.util. New in JDK 1.2
-		this.existingList = existingList;
 	}
 	 
 	/**

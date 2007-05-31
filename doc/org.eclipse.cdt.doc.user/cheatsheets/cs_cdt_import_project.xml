@@ -40,8 +40,10 @@
          For a project to work it needs files. In this step you import your old project files into your new C/C++ project.
       </description>
       <subitem label="Click File &gt; Import and then use one of the following import methods." skip="true">
+		<!--
          <command serialization="org.eclipse.ui.file.import" confirm="false">
          </command>
+		-->
       </subitem>
       <subitem label="To import files from another project, click General &gt; Existing Projects into Workspace." skip="true">
       </subitem>
@@ -53,14 +55,18 @@
          Build the program to create a binary and examine it in Outline and C/C++ Project views.
       </description>
       <subitem label="Click Project &gt; Build All to create a binary of your source file." skip="true">
+		<!--
          <command serialization="org.eclipse.ui.project.buildAll" confirm="false">
          </command>
+		-->
       </subitem>
       <subitem label="In the Project Explorer view, open the Binaries element and examine the program&apos;s binary." skip="true">
       </subitem>
       <subitem label="Open the .cpp file in the project and examine the Outline view." skip="true">
+		<!--
          <command serialization="org.eclipse.cdt.ui.edit.open.outline" confirm="false">
          </command>
+		-->
       </subitem>
    </item>
    <item title="Setup project properties" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/reference/cdt_u_sprop_indexer.htm">
@@ -76,9 +82,11 @@
       <description>
          Create a run configuration that defines how the program is launched. Note you can define multiple run configurations if desired, each with its own settings.
       </description>
-      <subitem label="Select the project and click Run &gt; Run.. to launch the program." skip="false">
-         <command serialization="org.eclipse.debug.ui.commands.OpenRunConfigurations" confirm="false">
+      <subitem label="Select the project and click Run As &gt; Open Run Dialog... to launch the program." skip="false">
+		<!--
+		  <command serialization="org.eclipse.debug.ui.commands.OpenRunConfigurations" confirm="false">
          </command>
+		-->
       </subitem>
       <subitem label="Create a run configuration by double-clicking the C/C++ Local Application item." skip="false">
       </subitem>

@@ -819,6 +819,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(IASTStandardFunctionDeclarator node) {
 		final List parameters = Arrays.asList(node.getParameters());
 		final ListAlignment align= new ListAlignment(preferences.alignment_for_parameters_in_method_declaration);
+		align.fSpaceBeforeOpeningParen= preferences.insert_space_before_opening_paren_in_method_declaration;
 		align.fSpaceAfterOpeningParen= preferences.insert_space_after_opening_paren_in_method_declaration;
 		align.fSpaceBeforeClosingParen= preferences.insert_space_before_closing_paren_in_method_declaration;
 		align.fSpaceBeforeComma= preferences.insert_space_before_comma_in_method_declaration_parameters;
@@ -1903,7 +1904,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 		scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_while);
 
-		formatAction(line, node.getBody(), preferences.brace_position_for_method_declaration, preferences.insert_space_before_opening_brace_in_method_declaration);
+		formatAction(line, node.getBody(), preferences.brace_position_for_block, preferences.insert_space_before_opening_brace_in_block);
 		return PROCESS_SKIP;
 	}
 

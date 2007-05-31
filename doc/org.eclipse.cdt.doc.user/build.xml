@@ -25,7 +25,7 @@
 		<mkdir dir="${destination.temp.folder}/${full.name}"/>
 		<zip zipfile="${destination.temp.folder}/${full.name}/doc.zip"
 			basedir="${basedir}"
-			includes="*.css, hglegal.htm, ngibmcpy.gif, concepts/**, getting_started/**, images/**, reference/**, tasks/**, tips/**, whatsNew/** "
+			includes="*.css, hglegal.htm, ngibmcpy.gif, concepts/**, getting_started/**, images/**, reference/**, tasks/**, tips/**, whatsNew/**, cheatsheets/**"
 		/>
 		<copy todir="${destination.temp.folder}/${full.name}">
 			<fileset dir="${basedir}" includes="*.properties,*.xml,*.zip,*.html,*.htm,*.gif,*.css" excludes="build.properties,build.xml"/>

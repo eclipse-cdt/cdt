@@ -40,9 +40,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 @SuppressWarnings("restriction")
 public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IExpressionDMData> {
+    
+    private SyncVariableDataAccess fSyncVariableDataAccess;
 
-    public VariableSubExpressionsLayoutNode(AbstractVMProvider provider, DsfSession session) {
+    public VariableSubExpressionsLayoutNode(AbstractVMProvider provider, DsfSession session, SyncVariableDataAccess syncVariableDataAccess) {
         super(provider, session, IExpressions.IExpressionDMContext.class);
+        fSyncVariableDataAccess = syncVariableDataAccess;
     }
     
     /** 

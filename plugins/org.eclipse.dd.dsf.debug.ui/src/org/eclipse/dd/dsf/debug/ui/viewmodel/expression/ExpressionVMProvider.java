@@ -16,6 +16,9 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePrefer
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterGroupLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.SyncRegisterDataAccess;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableLocalsLayoutNode;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableSubExpressionsLayoutNode;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
@@ -58,16 +61,54 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
     }
     
     protected void configureLayout() {
-        SyncRegisterDataAccess syncDataAccess = new SyncRegisterDataAccess();
         
-        // Configure the layout nodes
+        /*
+         *  Allocate the synchronous data providers.
+         */
+        SyncRegisterDataAccess syncRegDataAccess = new SyncRegisterDataAccess();
+        SyncVariableDataAccess syncvarDataAccess = new SyncVariableDataAccess() ;
+        
+        /*
+         *  Create the top level node which provides the anchor starting point.
+         */
         IVMRootLayoutNode debugViewSelectionNode = new DebugViewSelectionRootLayoutNode(this); 
+        
+        /*
+         * Now the Overarching management node.
+         */
         ExpressionManagerLayoutNode expressionManagerNode = new ExpressionManagerLayoutNode(this);
         debugViewSelectionNode.setChildNodes(new IVMLayoutNode[] {expressionManagerNode});
-        IExpressionLayoutNode registerGroupNode = new RegisterGroupLayoutNode(this, getSession(), syncDataAccess);
-        expressionManagerNode.setExpressionLayoutNodes(new IExpressionLayoutNode[] { registerGroupNode });
-        IVMLayoutNode registerNode = new RegisterLayoutNode(this, this, getSession(), syncDataAccess);
+        
+        /*
+         *  The expression view wants to support fully all of the components of the register view.
+         */
+        IExpressionLayoutNode registerGroupNode = new RegisterGroupLayoutNode(this, getSession(), syncRegDataAccess);
+        IVMLayoutNode registerNode = new RegisterLayoutNode(this, this, getSession(), syncRegDataAccess);
         registerGroupNode.setChildNodes(new IVMLayoutNode[] { registerNode });
+        
+        /*
+         *  Create the local variables nodes next. They represent the first level shown in the view.
+         */
+        IExpressionLayoutNode localsNode = new VariableLocalsLayoutNode(this, this, getSession(), syncvarDataAccess);
+        IVMLayoutNode subExpressioNode = new VariableSubExpressionsLayoutNode(this, getSession(), syncvarDataAccess);
+        localsNode.setChildNodes(new IVMLayoutNode[] { subExpressioNode });
+        
+        /*
+         *  Tell the expression node which subnodes  it will directly support.  It is very important
+         *  that the variables node be the last in this chain.  The model assumes that there is some
+         *  form of metalanguage expression syntax which each  of the nodes evaluates and decides if
+         *  they are dealing with it or not. The variables node assumes that the expression is fully
+         *  qualified and there is no analysis or subdivision of the expression it will parse. So it
+         *  it currently the case that the location of the nodes within the array being passed in is
+         *  the order of search/evaluation. Thus variables wants to be last. Otherwise it would just
+         *  assume what it was passed was for it and the real node which wants to handle it would be
+         *  left out in the cold.
+         */
+        expressionManagerNode.setExpressionLayoutNodes(new IExpressionLayoutNode[] { registerGroupNode, localsNode });
+        
+        /*
+         *  Let the work know which is the top level node.
+         */
         setRootLayoutNode(debugViewSelectionNode);
     }
 

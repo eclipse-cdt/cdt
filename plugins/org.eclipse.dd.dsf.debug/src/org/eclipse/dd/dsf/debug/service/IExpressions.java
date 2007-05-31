@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
@@ -167,4 +168,17 @@ public interface IExpressions extends IDMService, IFormattedValues {
      * @param rm: Request completion monitor.
      */
     void getBaseExpressions(IExpressionDMContext exprContext, DataRequestMonitor<IExpressionDMContext[]> rm);
+    
+    /**
+     * This method supports the writing/modifying the value of the expression.
+     * 
+     * @param expressionContext: The data model context representing an expression.
+     * 
+     * @param expressionValue: The new value of the expression as a String.
+     * 
+     * @param formatId: The format ID specifying the format of parameter <b>expressionValue</b>.
+     * 
+     * @param rm: Request completion monitor.
+     */
+    void writeExpression(IDMContext<?> expressionContext, String exressionValue, String formatId, RequestMonitor rm);
 }

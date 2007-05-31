@@ -19,8 +19,7 @@ Import-Package: com.ibm.icu.lang,
  com.ibm.icu.text,
  com.ibm.icu.util
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.rse.core.internal.subsystems;x-internal:=true,
- org.eclipse.rse.core.servicesubsystem,
+Export-Package: org.eclipse.rse.core.servicesubsystem,
  org.eclipse.rse.core.subsystems,
  org.eclipse.rse.internal.ui;x-internal:=true,
  org.eclipse.rse.internal.ui.actions;x-internal:=true,

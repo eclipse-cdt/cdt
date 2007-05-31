@@ -23,6 +23,10 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+
+import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
+import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
 
 /**
  * This class provides static methods to work with multiple
@@ -79,7 +83,19 @@ public class ManageConfigSelector {
 					prj = ((ICElement)obs[i]).getCProject().getProject();
 				} else if (obs[i] instanceof IResource) { // for other views
 					prj = ((IResource)obs[i]).getProject();
-				}
+				/* get project from Include folder elements */
+				} else if (obs[i] instanceof IncludeRefContainer) {
+					ICProject fCProject = ((IncludeRefContainer)obs[i]).getCProject();
+					if (fCProject != null)
+						prj = fCProject.getProject();
+				} else if (obs[i] instanceof IncludeReferenceProxy) {
+					IncludeRefContainer irc = ((IncludeReferenceProxy)obs[i]).getIncludeRefContainer();
+					if (irc != null) {
+						ICProject fCProject = irc.getCProject();
+						if (fCProject != null)
+							prj = fCProject.getProject();
+					}
+				} 
 
 				if (prj == null || lst.contains(prj) ||
 					!CoreModel.getDefault().isNewStyleProject(prj))

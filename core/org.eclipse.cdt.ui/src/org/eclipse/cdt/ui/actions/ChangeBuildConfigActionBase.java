@@ -29,6 +29,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 
+import org.eclipse.cdt.internal.ui.cview.IncludeRefContainer;
+import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
+
 /**
  * Base class for build configuration actions. 
  */
@@ -161,6 +164,17 @@ public class ChangeBuildConfigActionBase {
 				}
 				else if (selItem instanceof IResource) {
 					project = ((IResource)selItem).getProject();
+				} else if (selItem instanceof IncludeRefContainer) {
+					ICProject fCProject = ((IncludeRefContainer)selItem).getCProject();
+					if (fCProject != null)
+						project = fCProject.getProject();
+				} else if (selItem instanceof IncludeReferenceProxy) {
+					IncludeRefContainer irc = ((IncludeReferenceProxy)selItem).getIncludeRefContainer();
+					if (irc != null) {
+						ICProject fCProject = irc.getCProject();
+						if (fCProject != null)
+							project = fCProject.getProject();
+					}
 				}
 				// Check whether the project is CDT project
 				if (project != null) {

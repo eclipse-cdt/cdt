@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Kevin Doyle (IBM) - [189828] renameTo() now passes proper name to _child.renameTo()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -92,6 +92,11 @@ public class LocalVirtualHostFile extends LocalHostFile
 	 * @see org.eclipse.rse.internal.services.local.files.LocalHostFile#renameTo(java.lang.String)
 	 */
 	public void renameTo(String newAbsolutePath) {
-		_child.renameTo(newAbsolutePath);
+		newAbsolutePath = ArchiveHandlerManager.cleanUpVirtualPath(newAbsolutePath);
+		String newName = newAbsolutePath;
+		int i = newAbsolutePath.indexOf(ArchiveHandlerManager.VIRTUAL_SEPARATOR);
+		if (i != -1)
+			newName = newAbsolutePath.substring(i + ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
+		_child.renameTo(newName);
 	}
 }

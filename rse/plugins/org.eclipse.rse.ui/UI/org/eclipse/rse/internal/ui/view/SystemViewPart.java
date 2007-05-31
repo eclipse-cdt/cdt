@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * Martin Oberhuber (Wind River) - [190195] Cannot enable new connection prompt in system view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -90,6 +91,7 @@ import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -452,7 +454,7 @@ public class SystemViewPart
 		// ----------------------
 		// Restore previous state
 		// ----------------------		
-		if ((fMemento != null) && (input instanceof ISystemRegistry))
+		if ((fMemento != null) && (input instanceof ISystemRegistryUI))
 			restoreState(fMemento);
 		//fMemento = null;
 

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [182024] Folder field only initialized if selection supports search
+ * Kevin Doyle (IBM) - [189430] Limited System Types displayed in Folder Dialog
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -21,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -30,6 +32,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -48,6 +51,7 @@ import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -405,6 +409,24 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 					}
 				}
 			}
+			
+			// limit the system types displayed to those that can support search
+			List types = new LinkedList();
+			IRSESystemType[] allSystemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
+			for (int i = 0; i < allSystemTypes.length; i++)
+			{
+				IRemoteFileSubSystemConfiguration rfssc = RemoteFileUtility.getFileSubSystemConfiguration(allSystemTypes[i]);
+				if (rfssc != null && rfssc.supportsSearch())
+				{
+					types.add(allSystemTypes[i]);
+				}
+			}
+			
+			IRSESystemType[] allowedTypes = new IRSESystemType[types.size()];
+			types.toArray(allowedTypes);
+			
+			selectFolderAction.setSystemTypes(allowedTypes);
+			
 			// run the action
 			selectFolderAction.run();
 			

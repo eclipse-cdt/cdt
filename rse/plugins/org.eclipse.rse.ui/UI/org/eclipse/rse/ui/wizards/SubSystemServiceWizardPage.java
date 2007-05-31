@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Javier Montalvo Orus (Symbian) - [188146] Incorrect "FTP Settings" node in Property Sheet for Linux connection
+ * Martin Oberhuber (Wind River) - [190231] Move ISubSystemPropertiesWizardPage from UI to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -37,6 +38,7 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystem;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemPropertiesWizardPage;
 import org.eclipse.rse.ui.widgets.services.ConnectorServiceElement;
 import org.eclipse.rse.ui.widgets.services.FactoryServiceElement;
 import org.eclipse.rse.ui.widgets.services.PropertySetServiceElement;

@@ -69,9 +69,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
-import org.eclipse.rse.ui.filters.actions.SystemNewFilterAction;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
-import org.eclipse.rse.ui.wizards.ISubSystemPropertiesWizardPage;
 
 
 /**
@@ -1419,77 +1417,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		}
 	}
 
-	/**
-	 * There is a reasonable amount of processing needed to configure filter wizards. To aid
-	 *  in performance and memory usage, we extract that processing into this method, and then
-	 *  use a callback contract with the filter wizard to call us back to do this processing 
-	 *  only at the time the action is actually selected to be run.
-	 * <p>
-	 * The processing we do here is to specify the filter pools to prompt the user for, in the
-	 *  second page of the New Filter wizards.
-	 * <p>
-	 * This method is from the ISystemNewFilterActionConfigurator interface
-	 */
-	public void configureNewFilterAction(SystemNewFilterAction newFilterAction, Object callerData)
-	{
-		//System.out.println("Inside configureNewFilterAction! It worked!");
-		newFilterAction.setFromRSE(true);
-		boolean showFilterPools = showFilterPools();
-		
-		// It does not make sense, when invoked from a filterPool, to ask the user
-		//  for the parent filter pool, or to ask the user whether the filter is connection
-		//  specific, as they user has explicitly chosen their pool...
-		//if (!showFilterPools || (callerData instanceof SubSystem))
-		if (!showFilterPools)
-		{
-			ISubSystem selectedSubSystem = (ISubSystem) callerData;
-			// When not showing filter pools, we need to distinquish between an advanced user and a new user.
-			// For a new user we simply want to ask them whether this filter is to be team sharable or private,
-			//  and based on that, we will place the filter in the default filter pool for the appropriate profile.
-			// For an advanced user who has simply turned show filter pools back off, we want to let them choose
-			//  explicitly which filter pool they want to place the filter in. 
-			// To approximate the decision, we will define an advanced user as someone who already has a reference
-			//  to a filter pool other than the default pools in the active profiles.
-			boolean advancedUser = false;
-			ISystemFilterPoolReferenceManager refMgr = selectedSubSystem.getSystemFilterPoolReferenceManager();
-			ISystemFilterPool[] refdPools = refMgr.getReferencedSystemFilterPools();
-			if (refdPools.length == 0)
-				SystemBasePlugin.logInfo("SubSystemConfigurationImpl::getSubSystemActions - getReferencedSystemFilterPools returned array of length zero."); //$NON-NLS-1$
-			// so there already exists references to more than one filter pool, but it might simply be a reference
-			//  to the default filter pool in the user's profile and another to reference to the default filter pool in
-			//  the team profile... let's see...
-			else if (refdPools.length > 1)
-			{
-				for (int idx = 0; !advancedUser && (idx < refdPools.length); idx++)
-				{
-					if (!refdPools[idx].isDefault() && (refdPools[idx].getOwningParentName()==null))
-						advancedUser = true;
-				}
-			}
-			if (advancedUser)
-			{
-				newFilterAction.setAllowFilterPoolSelection(refdPools); // show all pools referenced in this subsystem, and let them choose one
-			}
-			else
-			{
-				boolean anyAdded = false;
-				SystemFilterPoolWrapperInformation poolWrapperInfo = getNewFilterWizardPoolWrapperInformation();
-				ISystemProfile[] activeProfiles = RSECorePlugin.getTheSystemRegistry().getActiveSystemProfiles();
-				ISystemProfile activeProfile = selectedSubSystem.getHost().getSystemProfile();
-				for (int idx = 0; idx < activeProfiles.length; idx++)
-				{
-					ISystemFilterPool defaultPool = getDefaultSystemFilterPool(activeProfiles[idx]);
-					if (defaultPool != null)
-					{
-						poolWrapperInfo.addWrapper(activeProfiles[idx].getName(), defaultPool, (activeProfiles[idx] == activeProfile)); // display name, pool to wrap, whether to preselect
-						anyAdded = true;
-					}
-				}
-				if (anyAdded)
-					newFilterAction.setAllowFilterPoolSelection(poolWrapperInfo);
-			}
-		}
-	}
 	/**
 	 * Overridable entry for child classes to supply their own flavour of ISystemFilterPoolWrapperInformation for
 	 *  the new filter wizards.

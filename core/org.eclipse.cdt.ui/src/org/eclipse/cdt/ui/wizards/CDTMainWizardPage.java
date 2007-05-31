@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -336,9 +337,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        		if (w.getLastProjectName() != null && w.getLastProjectName().equals(getProjectName()))
 	        			bad = false;
 	        	}
-	        	if (bad) { // Sic !! Show message but allow creation.
+	        	if (bad) { 
 	        		setErrorMessage(UIMessages.getString("CMainWizardPage.10")); //$NON-NLS-1$
-	        	    return true;
+	        	    return false;
 	        	}
 	        }
 
@@ -351,8 +352,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        	File f = p.toFile();
 	        	if (f.exists()) {
 	        		if (f.isDirectory()) {
-	        			setErrorMessage(UIMessages.getString("CMainWizardPage.7")); //$NON-NLS-1$
-		        		return true; // Sic !! Show message but allow creation.
+	        			setMessage(UIMessages.getString("CMainWizardPage.7"), DialogPage.WARNING); //$NON-NLS-1$
+		        		return true;
 	        		} else {
 	        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
 		        		return false;

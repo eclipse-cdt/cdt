@@ -508,6 +508,9 @@ implements
 			cfgDescs = CDTPropertyManager.getProjectDescription(this, getProject()).getConfigurations();
 			if (cfgDescs == null || cfgDescs.length == 0) return;
 			Arrays.sort(cfgDescs, CDTListComparator.getInstance());
+		} else {
+			// just register in CDTPropertyManager;
+			CDTPropertyManager.getProjectDescription(this, getProject());
 		}
 		
 		// Clear and replace the contents of the selector widget
@@ -685,8 +688,8 @@ implements
 			excludeFromBuildCheck.setEnabled(resd.canExclude(!resd.isExcluded()));
 			excludeFromBuildCheck.setSelection(resd.isExcluded());
 		}
-
-		for (int i=0; i<CDTPropertyManager.getPagesCount(); i++) {
+		int x = CDTPropertyManager.getPagesCount();
+		for (int i=0; i<x; i++) {
 			Object p = CDTPropertyManager.getPage(i);
 			if (p == null || !(p instanceof AbstractPage))
 				continue;

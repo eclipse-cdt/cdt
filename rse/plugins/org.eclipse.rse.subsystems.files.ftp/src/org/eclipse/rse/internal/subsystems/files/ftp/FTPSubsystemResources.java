@@ -7,6 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation 
+ * David Dykstal (IBM) - added RESID_FTP_SETTINGS_LABEL
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp;
@@ -23,5 +24,6 @@ public class FTPSubsystemResources extends NLS {
 
 	public static String	RESID_FTP_CONNECTORSERVICE_NAME;
 	public static String	RESID_FTP_CONNECTORSERVICE_DESCRIPTION;
+	public static String RESID_FTP_SETTINGS_LABEL;
 	
 }

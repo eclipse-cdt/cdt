@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [cleanup] move FTPSubsystemResources out of core
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  * Javier Montalvo Orus (Symbian) - [187531] Improve exception thrown when Login Failed on FTP
+ * David Dykstal (IBM) - added RESID_FTP_SETTINGS_LABEL
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ILabeledObject;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.PropertyType;
 import org.eclipse.rse.core.model.SystemSignonInformation;
@@ -73,7 +75,11 @@ public class FTPConnectorService extends StandardConnectorService
 			Arrays.sort(keysArray);
 			
 			_propertySet.addProperty("parser","AUTO",PropertyType.getEnumPropertyType(keysArray)); //$NON-NLS-1$ //$NON-NLS-2$
-		}	
+		}
+		if (_propertySet instanceof ILabeledObject) {
+			String label = FTPSubsystemResources.RESID_FTP_SETTINGS_LABEL;
+			((ILabeledObject)_propertySet).setLabel(label);
+		}
 	} 
 	
 	protected void internalConnect(IProgressMonitor monitor)  throws RemoteFileException, IOException

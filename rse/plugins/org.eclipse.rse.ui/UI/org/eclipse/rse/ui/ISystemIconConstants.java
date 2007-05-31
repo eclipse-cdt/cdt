@@ -236,22 +236,6 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_WORKWITHCOMPILECMDS_ROOT = "workwithcompilecmds";	 //$NON-NLS-1$
 	public static final String ICON_SYSTEM_WORKWITHCOMPILECMDS      = ICON_ACTIONS_DIR + ICON_SYSTEM_WORKWITHCOMPILECMDS_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_WORKWITHCOMPILECMDS_ID   = PREFIX+ICON_SYSTEM_WORKWITHCOMPILECMDS_ROOT+ICON_SUFFIX;
-	
-	public static final String ICON_SYSTEM_EXTRACT_ROOT = "xtrctarchv_tsk";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_EXTRACT      = ICON_ACTIONS_DIR + ICON_SYSTEM_EXTRACT_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_EXTRACT_ID   = PREFIX+ICON_SYSTEM_EXTRACT_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_EXTRACTTO_ROOT = "xtrctarchvto_tsk";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_EXTRACTTO      = ICON_ACTIONS_DIR + ICON_SYSTEM_EXTRACTTO_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_EXTRACTTO_ID   = PREFIX+ICON_SYSTEM_EXTRACTTO_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_CONVERT_ROOT = "convertarchive_tsk";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_CONVERT      = ICON_ACTIONS_DIR + ICON_SYSTEM_CONVERT_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_CONVERT_ID   = PREFIX+ICON_SYSTEM_CONVERT_ROOT+ICON_SUFFIX;
-	
-	public static final String ICON_SYSTEM_COMBINE_ROOT = "combine_tsk";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_COMBINE      = ICON_ACTIONS_DIR + ICON_SYSTEM_COMBINE_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_COMBINE_ID   = PREFIX+ICON_SYSTEM_COMBINE_ROOT+ICON_SUFFIX;
 
 	public static final String ICON_SYSTEM_SHOW_TABLE_ROOT 	= "systemshowintable"; //$NON-NLS-1$
 	public static final String ICON_SYSTEM_SHOW_TABLE      	= ICON_ACTIONS_DIR + ICON_SYSTEM_SHOW_TABLE_ROOT + ICON_EXT;

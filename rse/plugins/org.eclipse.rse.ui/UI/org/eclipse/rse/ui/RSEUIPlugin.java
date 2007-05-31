@@ -344,15 +344,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 						   path+ISystemIconConstants.ICON_SYSTEM_NEWFOLDER);
 	    //putImageInRegistry(ISystemConstants.ICON_SYSTEM_COLLAPSEALL_ID,
 		//				   path+ISystemConstants.ICON_SYSTEM_COLLAPSEALL); // defect 41203 D54577
-		
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_EXTRACT_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_EXTRACT); 
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_EXTRACTTO_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_EXTRACTTO);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_COMBINE_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_COMBINE);
-		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_CONVERT_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_CONVERT); 
+
  
  
 

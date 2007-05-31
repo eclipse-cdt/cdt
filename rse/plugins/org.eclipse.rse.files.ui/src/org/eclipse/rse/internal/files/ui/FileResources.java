@@ -54,33 +54,7 @@ public class FileResources extends NLS
 	
 	public static String DefaultEditorDescription_name;
 
-	// EXTRACT ARCHIVE TO DIALOG...
-	public static String RESID_EXTRACTTO_TITLE;
-	public static String RESID_EXTRACTTO_PROMPT;	
-	
-	// COMBINE ARCHIVES DIALOG...
-	public static String RESID_COMBINE_TITLE;
-	public static String RESID_COMBINE_PROMPT;
-	public static String RESID_COMBINE_NAME_LABEL; 
-	public static String RESID_COMBINE_NAME_TOOLTIP; 
-	public static String RESID_COMBINE_TYPE_LABEL;
-	public static String RESID_COMBINE_TYPE_TOOLTIP;
 
-	// CONVERT ARCHIVE DIALOG...
-	public static String RESID_CONVERT_TITLE;
-	public static String RESID_CONVERT_PROMPT;
-	public static String RESID_CONVERT_LOCATION;
-	public static String RESID_CONVERT_NAMEANDTYPE;
-
-	// ADD TO ARCHIVE DIALOG...
-	public static String RESID_ADDTOARCHIVE_TITLE;
-	public static String RESID_ADDTOARCHIVE_PROMPT;
-	public static String RESID_ADDTOARCHIVE_LOCATION;
-	public static String RESID_ADDTOARCHIVE_NAMEANDTYPE;
-	public static String RESID_ADDTOARCHIVE_SAVEPATH_LABEL; 
-	public static String RESID_ADDTOARCHIVE_SAVEPATH_TOOLTIP; 
-	public static String RESID_ADDTOARCHIVE_RELATIVETO_LABEL; 
-	public static String RESID_ADDTOARCHIVE_RELATIVETO_TOOLTIP; 
 	
 	// NEW FILE WIZARD...
 	public static String RESID_NEWFILE_TITLE;
@@ -260,21 +234,6 @@ public class FileResources extends NLS
 	public static String ACTION_REPLACEWITH_HISTORY_LABEL;
 	public static String ACTION_REPLACEWITH_HISTORY_TOOLTIP;
 
-	// Archive Menu Items
-	public static String ACTION_EXTRACT_LABEL;
-	public static String ACTION_EXTRACT_SUB_LABEL;
-	public static String ACTION_EXTRACT_TOOLTIP;
-	public static String ACTION_EXTRACT_TO_LABEL;
-	public static String ACTION_EXTRACT_TO_TOOLTIP;
-
-	public static String ACTION_COMBINE_LABEL;
-	public static String ACTION_COMBINE_TOOLTIP;
-
-	public static String ACTION_CONVERT_LABEL;
-	public static String ACTION_CONVERT_TOOLTIP;
-
-	public static String ACTION_ADDTOARCHIVE_LABEL;
-	public static String ACTION_ADDTOARCHIVE_TOOLTIP;
 
 	// Project menu item 
 	public static String RESID_OPEN_FROM_ASSOCIATED_PROJECT;

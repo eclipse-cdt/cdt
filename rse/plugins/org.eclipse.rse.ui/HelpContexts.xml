@@ -318,26 +318,6 @@ Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
 <context id="actn0117"><description>Paste the contents of the system clipboard into the selected resource.
 </description>
 </context>
-<!-- REMOTE RESOURCE ACTION:  Extract Archive action...   -->
-<context id="actn0118"><description>Extract the selected archive's contents to the same folder in which the archive is located. A new folder will be created with the same name as the archive for the archive's contents.
-</description>
-</context>
-<!-- REMOTE RESOURCE ACTION:  Extract Archive To action...   -->
-<context id="actn0119"><description>Extract the selected archive's contents to another folder. You will be prompted to select the destination folder.
-</description>
-</context>
-<!-- REMOTE RESOURCE ACTION:  Combine action...   -->
-<context id="actn0120"><description>Combine the selected archives into a single archive. You will be prompted to create the destination archive.
-</description>
-</context>
-<!-- REMOTE RESOURCE ACTION:  Convert action...   -->
-<context id="actn0121"><description>Convert the selected archives into another type of archive. You will be prompted to create the destination archive.
-</description>
-</context>
-<!-- REMOTE RESOURCE ACTION:  Add to archive action...   -->
-<context id="actn0122"><description>Add the selected files to a new or existing archive. You will be prompted to select or create the destination archive.
-</description>
-</context>
 <!-- CASCADING COMPILE PROMPT ACTION: Compile -->
 <context id="ccpa0000"><description>Select a command to compile this resource with. The command will first be prompted, then run.
 </description></context>

@@ -223,11 +223,7 @@ public interface ISystemMessages
 	public static final String MSG_VALIDATE_COMPILESTRING_NOTVALID = "RSEG1199"; //$NON-NLS-1$
 
 	public static final String MSG_VALIDATE_ARCHIVE_NAME = "RSEG1120"; //$NON-NLS-1$
-	public static final String MSG_COMBINETO_VIRTUAL_DEST = "RSEG1121"; //$NON-NLS-1$
-	public static final String MSG_CONVERTTO_VIRTUAL_DEST = "RSEG1127"; //$NON-NLS-1$
-	public static final String MSG_ADDTO_VIRTUAL_DEST = "RSEG1128"; //$NON-NLS-1$
-	public static final String MSG_DEST_NOT_IN_SOURCE = "RSEG1129"; //$NON-NLS-1$
-	public static final String MSG_DEST_TARGET_READONLY = "RSEF1313"; //$NON-NLS-1$
+
 
 	public static final String FILEMSG_ARCHIVE_CORRUPTED = "RSEG1122"; //$NON-NLS-1$
 	public static final String MSG_FOLDER_INUSE = "RSEG1150"; // defect 42138	 //$NON-NLS-1$

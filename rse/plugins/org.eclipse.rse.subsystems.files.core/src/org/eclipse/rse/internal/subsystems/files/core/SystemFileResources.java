@@ -169,16 +169,8 @@ public class SystemFileResources extends NLS
 	public static String	RESID_PP_FILE_ENCODING_OTHER_TOOLTIP;
 	public static String	RESID_PP_FILE_ENCODING_ENTER_TOOLTIP;
 	
-	// -------------------------------
-	// Enter or select file form
-	// -------------------------------
+
 	public static String	RESID_ENTER_OR_SELECT_FILE_TITLE;
-	public static String	RESID_ENTER_OR_SELECT_FILE_VERBIAGE_LABEL;
-	public static String	RESID_ENTER_OR_SELECT_FILE_ENTER_LABEL;
-	public static String	RESID_ENTER_OR_SELECT_FILE_ENTER_TOOLTIP;
-	public static String	RESID_ENTER_OR_SELECT_FILE_SELECT_TOOLTIP;
-	public static String	RESID_ENTER_OR_SELECT_FILE_FILE_LABEL;
-	public static String	RESID_ENTER_OR_SELECT_FILE_FILE_TOOLTIP;
 
 	public static String	RESID_JOB_SEARCH_NAME;
 	public static String	RESID_JOB_DECORATEFILES_NAME;

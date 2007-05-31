@@ -59,6 +59,7 @@ public class BuilderFactory {
 	static final String CONTENTS_BUILDER = PREFIX + ".builder"; //$NON-NLS-1$ 
 	static final String CONTENTS_BUILDER_CUSTOMIZATION = PREFIX + ".builderCustomization"; //$NON-NLS-1$ 
 	static final String CONTENTS_CONFIGURATION_IDS = PREFIX + ".configurationIds"; //$NON-NLS-1$ 
+	static final String CONTENTS_ACTIVE_CFG_SETTINGS = PREFIX + ".activeConfigSettings"; //$NON-NLS-1$ 
 
 //	static final String IDS = PREFIX + ".ids"; //$NON-NLS-1$ 
 	static final String CONFIGURATION_IDS = PREFIX + ".configurationIds"; //$NON-NLS-1$
@@ -227,7 +228,10 @@ public class BuilderFactory {
 		Boolean d = Boolean.valueOf(builder.isDefaultBuildCmd());
 		el.setAttribute(BuilderFactory.USE_DEFAULT_BUILD_CMD, d.toString());
 		
-		return el.toStringMap();
+		Map map = el.toStringMap();
+		map.put(CONTENTS, CONTENTS_ACTIVE_CFG_SETTINGS);
+		
+		return map;
 	}
 
 	public static IBuilder createCustomBuilder(IConfiguration cfg, String builderId) throws CoreException{
@@ -311,9 +315,14 @@ public class BuilderFactory {
 				args.remove(ErrorParserManager.PREF_ERROR_PARSER);
 			
 			tmp = (String)args.get(USE_DEFAULT_BUILD_CMD);
-			if(tmp != null && Boolean.valueOf(tmp).equals(Boolean.TRUE)){
-				args.remove(IMakeCommonBuildInfo.BUILD_COMMAND);
-				args.remove(IMakeCommonBuildInfo.BUILD_ARGUMENTS);
+			if(tmp != null){
+				if(Boolean.valueOf(tmp).equals(Boolean.TRUE)){
+					args.remove(IMakeCommonBuildInfo.BUILD_COMMAND);
+					args.remove(IMakeCommonBuildInfo.BUILD_ARGUMENTS);
+				} else {
+					args.put(IBuilder.ATTRIBUTE_IGNORE_ERR_CMD, "");
+					args.put(IBuilder.ATTRIBUTE_PARALLEL_BUILD_CMD, "");
+				}
 			}
 			//end adjusting settings
 			
@@ -349,7 +358,13 @@ public class BuilderFactory {
 						builder = createBuilder(cfg, args, true);
 					}
 					builders = new IBuilder[]{builder};
-					//TODO:
+				} else if (CONTENTS_ACTIVE_CFG_SETTINGS.equals(type)) {
+					IConfiguration cfg = info.getDefaultConfiguration();
+					
+					IBuilder builder = cfg.getEditableBuilder();
+					
+					builders = new IBuilder[]{builder};
+					
 				} else if (CONTENTS_BUILDER.equals(type)){
 					IConfiguration cfgs[] = configsFromMap(args, info);
 					if(cfgs.length != 0){
@@ -416,6 +431,7 @@ public class BuilderFactory {
 		}
 		return NO_CHANGES;
 	}
+	
 	public static boolean applyBuilder(ICommand cmd, IBuilder builder) {
 		Map oldMap = cmd.getArguments();
 		Map map = builderBuildArgsMap(builder);

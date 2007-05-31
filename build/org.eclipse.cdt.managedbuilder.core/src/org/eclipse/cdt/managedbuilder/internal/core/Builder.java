@@ -873,7 +873,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		}
 		
 		if (getArgumentsAttribute() != null) {
-			element.setAttribute(IBuilder.ARGUMENTS, getArgumentsAttribute());
+			element.setAttribute(IBuilder.ARGUMENTS, getArguments/*Attribute*/());
 		}
 		
 		if(getAutoBuildTargetAttribute() != null)
@@ -989,6 +989,12 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		String args = getArgumentsAttribute(); 
 		String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
 		String parallelBuildCmd = isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+		
+		String reversedStopOnErrCmd = getStopOnErrCmd(!isStopOnError());
+		String reversedParallelBuildCmd = !isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
+		
+		args = removeCmd(args, reversedStopOnErrCmd);
+		args = removeCmd(args, reversedParallelBuildCmd);
 		
 		args = addCmd(args, stopOnErrCmd);
 		args = addCmd(args, parallelBuildCmd);

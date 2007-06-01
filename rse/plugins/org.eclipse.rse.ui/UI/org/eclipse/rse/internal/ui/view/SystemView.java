@@ -2917,7 +2917,7 @@ public class SystemView extends SafeTreeViewer
 		// STEP 3: process all references to the object
 		boolean firstSelection = true;
 		for (int idx = 0; idx < matches.size(); idx++) {
-			Item match = (Item) matches.elementAt(idx);
+			Widget match = (Widget) matches.elementAt(idx);
 			// a reference to this remote object
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				Object data = match.getData();
@@ -2934,10 +2934,13 @@ public class SystemView extends SafeTreeViewer
 						{
 							allowExpand = rmtAdapter.hasChildren((IAdaptable)data);
 						}
-						if (allowExpand && wasExpanded && !getExpanded(match)) // assume if callers wants to select kids that they want to expand parent
+						if (match instanceof Item)
 						{
-							createChildren(match);
-							setExpanded(match, true);
+							if (allowExpand && wasExpanded && !getExpanded((Item)match)) // assume if callers wants to select kids that they want to expand parent
+							{
+								createChildren(match);
+								setExpanded((Item)match, true);
+							}
 						}
 						// todo: handle cumulative selections. 
 						// STEP 4: If requested, select the kids in the newly refreshed object. 

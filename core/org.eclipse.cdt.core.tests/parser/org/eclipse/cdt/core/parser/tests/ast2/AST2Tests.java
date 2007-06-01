@@ -3799,5 +3799,16 @@ public class AST2Tests extends AST2BaseTest {
 		StringBuffer buffer = getContents(1)[0];
 		parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
 		parseAndCheckBindings(buffer.toString(), ParserLanguage.C);
-	}		
+	}	
+	
+	
+	public void testBug188707_backslashNewline() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+	    buffer.append("// this is a \\\n" ); //$NON-NLS-1$
+	    buffer.append("single line comment \n" ); //$NON-NLS-1$
+	    buffer.append("char str[] = \" multi \\\n" ); //$NON-NLS-1$
+	    buffer.append("line \\\n" ); //$NON-NLS-1$
+	    buffer.append("string\";\n" ); //$NON-NLS-1$
+	    parseAndCheckBindings( buffer.toString() );
+	}
 }

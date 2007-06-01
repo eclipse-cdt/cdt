@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * Xuan Chen        (IBM)        - [180671] [refresh] It is not possible to refresh editor with double clicking on it
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2827,23 +2828,22 @@ public class SystemViewRemoteFileAdapter
 			{
 				try
 				{
-					if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.OPEN_IN_SAME_PERSPECTIVE)
-					{						
-						if (isFileCached(editable, remoteFile))
-						{
-							editable.openEditor();
-						}
-						else
-						{
-							DownloadJob oJob = new DownloadJob(editable, false);
-							oJob.schedule();
-						}
+					boolean openedInSamePerspective = (editable.checkOpenInEditor() == ISystemEditableRemoteObject.OPEN_IN_SAME_PERSPECTIVE);
+					boolean isFileCached = isFileCached(editable, remoteFile);
+					if (isFileCached)
+					{
+						editable.openEditor();
 					}
 					else
 					{
-						editable.setLocalResourceProperties();
-						editable.openEditor();
+						DownloadJob oJob = new DownloadJob(editable, false);
+						oJob.schedule();
 					}
+					if (openedInSamePerspective && isFileCached)
+					{
+						editable.setLocalResourceProperties();
+					}
+					
 				}
 				catch (Exception e)
 				{

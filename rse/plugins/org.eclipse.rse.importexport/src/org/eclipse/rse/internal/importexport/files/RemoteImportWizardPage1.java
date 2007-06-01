@@ -663,7 +663,8 @@ class RemoteImportWizardPage1 extends WizardResourceImportPage implements Listen
 		SystemSelectRemoteFolderAction action = new SystemSelectRemoteFolderAction(this.getShell());
 		action.setShowNewConnectionPrompt(true);
 		action.setShowPropertySheet(true, false);
-		action.run();
+		action.setFoldersOnly(true);
+		action.run(); 
 		IRemoteFile folder = action.getSelectedFolder();
 		if (folder != null) {
 			clearErrorMessage();

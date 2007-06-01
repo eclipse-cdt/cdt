@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David Dykstal (IBM) - [188718] fix error messages showing up as info messages on wizard page
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
@@ -169,18 +170,18 @@ public class SystemNewFolderWizard
                {
                	msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FOLDER_FAILED_EXIST)).makeSubstitution(absName);
                }
-	           mainPage.setMessage(msg);
+	           mainPage.setErrorMessage(msg);
 	           ok = false;
 // DY       } catch (Exception RemoteFileSecurityException)  {
             } catch (RemoteFileSecurityException e)  {
 	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote folder "+ absName + " failed with RemoteFileSecurityException ");  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FOLDER_FAILED)).makeSubstitution(absName);
                //SystemMessage.displayErrorMessage(SystemMessage.getDefaultShell(), msg); 
-	           mainPage.setMessage(msg);	                                                
+	           mainPage.setErrorMessage(msg);	                                                
 	           ok = false;
             } catch (SystemMessageException e) {
             	SystemBasePlugin.logError(CLASSNAME+ ":", e); //$NON-NLS-1$
-            	mainPage.setMessage(e.getSystemMessage());
+            	mainPage.setErrorMessage(e.getSystemMessage());
             	ok = false;
             }
 		          

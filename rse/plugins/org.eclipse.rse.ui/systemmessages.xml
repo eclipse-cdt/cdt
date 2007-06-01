@@ -488,10 +488,6 @@ Contributors:
                           <LevelOne>%1 is not a valid archive name.</LevelOne>		
                           <LevelTwo>You must give a filename with an extension that is recognized as a valid archive type extension.</LevelTwo>
                     </Message>
-                    <Message ID="1121" Indicator="E">
-                          <LevelOne>Combining to a virtual destination is not supported at this time. Please choose a non-virtual destination.</LevelOne>		
-                          <LevelTwo></LevelTwo>
-                    </Message>
                     <Message ID="1122" Indicator="E">
                           <LevelOne>The archive is corrupted or unreadable.</LevelOne>		
                           <LevelTwo>The archive cannot be opened because its format is unrecognized, or its contents are damaged in some way.</LevelTwo>
@@ -511,18 +507,6 @@ Contributors:
                     <Message ID="1126" Indicator="E">
                           <LevelOne>Could not move the virtual file or folder %1.</LevelOne>		
                           <LevelTwo>There was an error moving the virtual file or folder. The virtual file or folder was not moved.</LevelTwo>
-                    </Message>
-                    <Message ID="1127" Indicator="E">
-                          <LevelOne>Converting to a virtual destination is not supported at this time. Please choose a non-virtual destination.</LevelOne>		
-                          <LevelTwo></LevelTwo>
-                    </Message>
-                    <Message ID="1128" Indicator="E">
-                          <LevelOne>Adding to a virtual destination is not supported. Please choose a non-virtual destination.</LevelOne>		
-                          <LevelTwo></LevelTwo>
-                    </Message>
-                    <Message ID="1129" Indicator="E">
-                          <LevelOne>Destination archive cannot be the same as, or contained in, any of the source files or folders.</LevelOne>		
-                          <LevelTwo>You have selected a destination for the archive that is either one of the sources, or contained in one of the sources. This is not permitted.</LevelTwo>
                     </Message>
                     <Message ID="1130" Indicator="Q">
                           <LevelOne>Permanently delete selected remote resource(s)?</LevelOne>		
@@ -1005,10 +989,6 @@ Contributors:
 					<Message ID="1312" Indicator="E">
                         <LevelOne>Target folder cannot descend from source folder</LevelOne>
                         <LevelTwo>It is impossible to move a folder to one of its subfolders.</LevelTwo>
-                    </Message>
-					<Message ID="1313" Indicator="E">
-                        <LevelOne>Target folder cannot be written to. Please select another destination folder.</LevelOne>
-                        <LevelTwo>The target folder is an unsuitable destination because it is read-only or you do not have write permission on it.</LevelTwo>
                     </Message>
 		            <Message ID="1315" Indicator="I">
                         <LevelOne>Deleting %1...</LevelOne>

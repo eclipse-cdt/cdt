@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * Xuan Chen        (IBM)        - [187548] Editor shows incorrect file name after renaming file on Linux dstore
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -58,6 +59,7 @@ import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.resources.SystemFileNameHelper;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
@@ -1781,10 +1783,14 @@ public class UniversalFileTransferUtility
 		path = path.append(separator + actualHost + separator);
 
 		String absolutePath = srcFileOrFolder.getAbsolutePath();
+		
 		if (srcFileOrFolder.getSystemConnection().getSystemType().isLocal())
 		{
 			absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath());
 		}
+		
+		IPath remote = new Path(absolutePath);
+		absolutePath = SystemFileNameHelper.getEscapedPath(remote.toOSString());
 
 		int colonIndex = absolutePath.indexOf(IPath.DEVICE_SEPARATOR);
 

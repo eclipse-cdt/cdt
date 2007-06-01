@@ -172,7 +172,7 @@ public class SystemStartHere
    }
     
    /**
-	* Miscallenous Helper. Return singleton profile manager
+	* Miscellaneous Helper. Return singleton profile manager
     * SAME AS: <code>getSystemRegistry().getSystemProfileManager()</code>
 	*/
    public static ISystemProfileManager getSystemProfileManager()

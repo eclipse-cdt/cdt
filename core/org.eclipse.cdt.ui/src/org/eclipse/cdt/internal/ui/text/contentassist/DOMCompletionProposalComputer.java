@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -215,7 +217,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		
 		if (!isAnonymousBinding(binding)) {
 			if (binding instanceof ICPPClassType) {
-				handleClass((ICPPClassType) binding, cContext, proposals);
+				handleClass((ICPPClassType) binding, astContext, cContext, proposals);
 			} else if (binding instanceof IFunction) {
 				handleFunction((IFunction)binding, cContext, proposals);
 			} else if (!cContext.isContextInformationStyle()) {
@@ -235,7 +237,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		return name.length == 0 || name[0] == '{';
 	}
 
-	private void handleClass(ICPPClassType classType, CContentAssistInvocationContext context, List proposals) {
+	private void handleClass(ICPPClassType classType, IASTCompletionContext astContext, CContentAssistInvocationContext context, List proposals) {
 		if (context.isContextInformationStyle()) {
 			try {
 				ICPPConstructor[] constructors = classType.getConstructors();
@@ -245,6 +247,12 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			} catch (DOMException e) {
 			}
 		} else {
+			if (astContext instanceof IASTName && !(astContext instanceof ICPPASTQualifiedName)) {
+				IASTName name= (IASTName)astContext;
+				if (name.getParent() instanceof IASTDeclarator) {
+					proposals.add(createProposal(classType.getName()+"::", classType.getName(), getImage(classType), context)); //$NON-NLS-1$
+				}
+			}
 			proposals.add(createProposal(classType.getName(), classType.getName(), getImage(classType), context));
 		}
 	}

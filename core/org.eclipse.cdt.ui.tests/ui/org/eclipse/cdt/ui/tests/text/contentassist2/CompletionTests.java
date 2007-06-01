@@ -759,4 +759,12 @@ public class CompletionTests extends AbstractContentAssistTest {
 		assertMinimumCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 
+	// void Pri/*cursor*/
+	public void testMethodDefinitionClassName_Bug190296() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=190296
+		final String[] expected= {
+				"Printer::"
+		};
+		assertMinimumCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
 }

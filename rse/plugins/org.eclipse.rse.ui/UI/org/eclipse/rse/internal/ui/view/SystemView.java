@@ -5959,7 +5959,8 @@ public class SystemView extends SafeTreeViewer
 		findAllRemoteItemReferences(element, element, matches);
 
 		for (int i = 0; i < matches.size(); i++) {
-			internalUpdate((Item)matches.get(i), element, properties);
+		 
+			internalUpdate((Widget)matches.get(i), element, properties);
 		}		
 	}
 }

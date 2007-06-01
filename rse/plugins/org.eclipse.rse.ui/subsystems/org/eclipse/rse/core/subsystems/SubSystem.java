@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
+ * Xuan Chen        (IBM)        - [187342] Open in New Window expand failed error when not connected
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -2023,11 +2024,21 @@ public abstract class SubSystem extends RSEModelObject
      */
     public Object[] resolveFilterString(String filterString, IProgressMonitor monitor) throws Exception
     {
+    	boolean connnectedBefore = isConnected();
         boolean ok = true;
-    	if (!isConnected())
-    	  ok = promptForPassword();
+        
+        if (!connnectedBefore)
+      	  ok = promptForPassword();
+        
         if (ok)
-        {
+        {	
+          	if (!connnectedBefore)
+          	{
+          		getConnectorService().connect(monitor);
+          		// disconnected but may not have notified viewers (i.e. network problem)
+          	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
+                sr.connectedStatusChange(this, true, false, false);
+          	}
             Object[] results = internalResolveFilterString(filterString, monitor);
             if (sortResults && (results!=null))
                 results = sortResolvedFilterStringObjects(results);
@@ -2059,15 +2070,25 @@ public abstract class SubSystem extends RSEModelObject
     public Object[] resolveFilterStrings(String[] filterStrings, IProgressMonitor monitor)
     throws Exception
     {
+    	boolean connnectedBefore = isConnected();
         boolean ok = true;
+        
         if ((filterStrings == null) || (filterStrings.length == 0)) {
         	SystemBasePlugin.logInfo("Filter strings are null"); //$NON-NLS-1$
         	return null;
         }
-    	if (!isConnected())
+        
+        if (!connnectedBefore)
     	  ok = promptForPassword();
         if (ok)
-        {
+        {	
+        	if (!connnectedBefore)
+        	{
+        		getConnectorService().connect(monitor);
+        		// disconnected but may not have notified viewers (i.e. network problem)
+        	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
+                sr.connectedStatusChange(this, true, false, false);
+        	}
             Object[] results = internalResolveFilterStrings(filterStrings, monitor);
             if (sortResults && (results!=null))
                 results = sortResolvedFilterStringObjects(results);
@@ -2114,12 +2135,21 @@ public abstract class SubSystem extends RSEModelObject
 	public Object[] resolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
     throws Exception
     {
+		boolean connnectedBefore = isConnected();
 	    boolean ok = true;
-	    if (!isConnected())
-	        ok = promptForPassword();
  
-	    if (ok)
-	    {
+        if (!connnectedBefore)
+      	  ok = promptForPassword();
+        
+        if (ok)
+        {	
+          	if (!connnectedBefore)
+          	{
+          		getConnectorService().connect(monitor);
+          		// disconnected but may not have notified viewers (i.e. network problem)
+          	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
+                sr.connectedStatusChange(this, true, false, false);
+          	}
 	        Object[] results= internalResolveFilterString(parent, filterString, monitor);
 	        if (sortResults && (results!=null))
                 results =  sortResolvedFilterStringObjects(results);

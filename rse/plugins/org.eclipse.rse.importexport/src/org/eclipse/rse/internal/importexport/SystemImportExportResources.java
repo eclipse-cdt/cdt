@@ -70,18 +70,7 @@ public class SystemImportExportResources extends NLS {
 	public static String RESID_FILEIMPEXP_BUTTON_DESELECTALL_TOOLTIP;
 	public static String RESID_FILEIMPEXP_BUTTON_SELECTTYPES_LABEL;
 	public static String RESID_FILEIMPEXP_BUTTON_SELECTTYPES_TOOLTIP;
-	// REMOTE JAR EXPORT WIZARD
-	public static String RESID_RMTJAREXP_PREFIX;
-	public static String RESID_RMTJAREXP_FILEDIALOG_PREFIX;
-	public static String RESID_RMTJAREXP_FILEDIALOG_TITLE;
-	public static String RESID_RMTJAREXP_FILEDIALOG_PROMPT_LABEL;
-	public static String RESID_RMTJAREXP_FILEDIALOG_FILENAME_LABEL;
-	public static String RESID_RMTJAREXP_FILEDIALOG_FILENAME_TOOLTIP;
-	public static String RESID_RMTJAREXP_FILEDIALOG_FILETYPE_LABEL;
-	public static String RESID_RMTJAREXP_FILEDIALOG_FILETYPE_TOOLTIP;
-	public static String RESID_RMTJAREXP_SETTINGS_PREFIX;
-	public static String RESID_RMTJAREXP_SETTINGS_LABEL;
-	public static String RESID_RMTJAREXP_SETTINGS_TOOLTIP;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SystemImportExportResources.class);

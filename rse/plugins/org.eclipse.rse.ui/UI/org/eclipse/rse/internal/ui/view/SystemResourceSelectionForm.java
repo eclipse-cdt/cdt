@@ -14,6 +14,7 @@
  * Kevin Doyle (IBM) - Added getSystemViewForm()
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -35,6 +36,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;

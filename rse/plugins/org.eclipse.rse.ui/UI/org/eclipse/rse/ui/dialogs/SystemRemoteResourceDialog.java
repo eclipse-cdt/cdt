@@ -12,15 +12,16 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
 
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
 import org.eclipse.rse.internal.ui.view.SystemResourceSelectionForm;
 import org.eclipse.rse.internal.ui.view.SystemResourceSelectionInputProvider;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.swt.widgets.Composite;

@@ -236,11 +236,7 @@ public class PathEntryConfigurationDataProvider extends
 			throws CoreException {
 		//TODO: check external/reference info here as well.
 		if(!fFactory.isModified(base)){
-			try {
-				return createData(des);
-			} catch (Exception e){
-			}
-			return base;
+			return createData(des, base, false);
 		}
 		
 		
@@ -254,14 +250,31 @@ public class PathEntryConfigurationDataProvider extends
 		List list = new ArrayList();
 		list.addAll(Arrays.asList(entries));
 		for(int i = 0; i < curRawEntries.length; i++){
-			if(curRawEntries[i].getEntryKind() != IPathEntry.CDT_CONTAINER){
+			if(curRawEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER){
 				list.add(curRawEntries[i]);
 			}
 		}
 		
 		IPathEntry[] newEntries = (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
 		PathEntryManager.getDefault().setRawPathEntries(cproject, newEntries, new NullProgressMonitor());
-		return createData(des);
+		return createData(des, base, false);
+	}
+	
+	private CConfigurationData createData(ICConfigurationDescription des, CConfigurationData fallbackData, boolean modifiedFlag) throws CoreException {
+		CConfigurationData dataToReturn;
+		try {
+			dataToReturn = createData(des);
+		} catch (Exception e){
+			if(fallbackData != null)
+				dataToReturn = fallbackData;
+			else if (e instanceof CoreException)
+				throw (CoreException)e;
+			else
+				throw ExceptionFactory.createCoreException(e);
+		}
+		fFactory.setModified(dataToReturn, modifiedFlag);
+		return dataToReturn;
+		
 	}
 
 	public CConfigurationData createConfiguration(
@@ -337,13 +350,18 @@ public class PathEntryConfigurationDataProvider extends
 	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
 			IProgressMonitor monitor)
 			throws CoreException {
-		return createData(des);
+		return createData(des, null, false);
 	}
 
 	public void removeConfiguration(ICConfigurationDescription des,
 			CConfigurationData data,
 			IProgressMonitor monitor) {
 		//do nothing for now
+	}
+
+	public void dataCached(ICConfigurationDescription cfgDes,
+			CConfigurationData data, IProgressMonitor monitor) {
+		fFactory.setModified(data, false);
 	}
 
 }

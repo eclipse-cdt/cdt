@@ -18,9 +18,13 @@ package org.eclipse.rse.internal.files.ui;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
+import org.eclipse.rse.internal.files.ui.propertypages.SystemCachePreferencePage;
+import org.eclipse.rse.internal.files.ui.propertypages.UniversalPreferencePage;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -59,9 +63,26 @@ public class Activator extends AbstractUIPlugin
 	  	// add listener for temp files
     	int eventMask = IResourceChangeEvent.POST_CHANGE;	
     	IWorkspace ws = SystemBasePlugin.getWorkspace();
-    	ws.addResourceChangeListener(_tempFileListener, eventMask);
+    	ws.addResourceChangeListener(_tempFileListener, eventMask);   
+    	
+    	// DKM - workaround for issue in  175295
+    	// I had tried SystemFilePreferenceInitializer but it was not being started by the platform because
+    	// the preference store is rse.ui. In order to fix that, we'd have to migrate the
+    	// preferences for files to the files.ui preference store. 
+    	// Instead calling this directly at startup.
+    	initializeDefaultRSEPreferences();
 	}
 
+	/**
+	 * Initializes preferences.
+	 */
+	public void initializeDefaultRSEPreferences()
+	{
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		SystemCachePreferencePage.initDefaults(store);
+		UniversalPreferencePage.initDefaults(store);	
+	}
+	
 	/**
 	 * This method is called when the plug-in is stopped
 	 */

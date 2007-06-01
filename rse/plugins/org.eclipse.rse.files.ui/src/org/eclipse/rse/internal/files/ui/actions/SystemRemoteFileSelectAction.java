@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -22,10 +23,10 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.internal.files.ui.FileResources;
-import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
@@ -34,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * The action for allowing the user to select a remote folder.
+ * The action for allowing the user to select a remote file.
  * <p>
  * To configure the functionality, call these methods:
  * <ul>
@@ -42,7 +43,7 @@ import org.eclipse.swt.widgets.Shell;
  *   <li>{@link #setHost(IHost) or #setDefaultConnection(SystemConnection)}
  *   <li>{@link #setSystemType(IRSESystemType)} or {@link #setSystemTypes(IRSESystemType[])}
  *   <li>{@link #setRootFolder(IHost, String)} or {@link #setRootFolder(IRemoteFile)} or {@link #setPreSelection(IRemoteFile)}
- *   <li>{@link #setAutoExpandDepth(int)}
+ *   <li>{@link #setPreSelection(IRemoteFile)}
  *   <li>{@link #setShowPropertySheet(boolean)}
  *   <li>{@link #enableAddMode(ISystemAddFileListener)}
  *   <li>{@link #setMultipleSelectionMode(boolean)}
@@ -58,7 +59,7 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * After running, call these methods to get the output:
  * <ul>
- *   <li>{@link #getSelectedFolder()} or {@link #getSelectedFolders()}
+ *   <li>{@link #getSelectedFile()} or {@link #getSelectedFiles()}
  *   <li>{@link #getSelectedConnection()}
  * </ul>
  */

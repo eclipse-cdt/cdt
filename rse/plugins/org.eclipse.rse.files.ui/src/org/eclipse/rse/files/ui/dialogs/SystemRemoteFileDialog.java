@@ -13,6 +13,7 @@
  * Contributors:
  * Kevin Doyle (IBM) - Added Double Click Listener that closes dialog on file double click
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.dialogs;
@@ -22,8 +23,8 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
-import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
 import org.eclipse.rse.internal.ui.view.SystemView;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;

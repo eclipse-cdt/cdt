@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,17 +11,50 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - Add Javadoc
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
 
+import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.files.ui.ISystemAddFileListener;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.dialogs.SystemRemoteResourceDialog;
+import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.swt.widgets.Shell;
 
 
+/**
+ * The action for allowing the user to select a remote folder.
+ * <p>
+ * To configure the functionality, call these methods:
+ * <ul>
+ *   <li>{@link #setShowNewConnectionPrompt(boolean)}
+ *   <li>{@link #setHost(IHost) or #setDefaultConnection(SystemConnection)}
+ *   <li>{@link #setSystemType(IRSESystemType)} or {@link #setSystemTypes(IRSESystemType[])}
+ *   <li>{@link #setRootFolder(IHost, String)} or {@link #setRootFolder(IRemoteFile)} or {@link #setPreSelection(IRemoteFile)}
+ *   <li>{@link #setPreSelection(IRemoteFile)}
+ *   <li>{@link #setShowPropertySheet(boolean)}
+ *   <li>{@link #enableAddMode(ISystemAddFileListener)}
+ *   <li>{@link #setMultipleSelectionMode(boolean)}
+ *   <li>{@link #setSelectionValidator(IValidatorRemoteSelection)}
+ * </ul>
+ * <p>
+ * To configure the text on the dialog, call these methods:
+ * <ul>
+ *   <li>{@link #setDialogTitle(String)}
+ *   <li>{@link #setMessage(String)}
+ *   <li>{@link #setSelectionTreeToolTipText(String)}
+ * </ul>
+ * <p>
+ * After running, call these methods to get the output:
+ * <ul>
+ *   <li>{@link #getSelectedFolder()} or {@link #getSelectedFolders()}
+ *   <li>{@link #getSelectedConnection()}
+ * </ul>
+ */
 public class SystemRemoteFolderSelectAction extends
 		SystemRemoteFileSelectAction
 {

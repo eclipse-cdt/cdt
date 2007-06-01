@@ -7,12 +7,13 @@
  * Contributors:
  * Kushal Munir (IBM) - initial API and implementation.
  * Kevin Doyle (IBM) [189433] - Added Viewer Filter to display directories & archives
+ * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
  ********************************************************************************/
 package org.eclipse.rse.internal.files.ui.search;
 
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
-import org.eclipse.rse.internal.ui.view.SystemActionViewerFilter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.swt.widgets.Shell;
 
 /**

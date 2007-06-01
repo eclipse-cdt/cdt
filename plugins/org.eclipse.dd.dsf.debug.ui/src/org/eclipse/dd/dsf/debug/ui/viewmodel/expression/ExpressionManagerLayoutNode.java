@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
@@ -42,11 +40,31 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * This is the top-level layout node in the expressions view.  Its job is to:
+ * <li>
+ *   <ol> retrieve the {@link IExpression} objects from the global {@link IExpressionManager},</ol>
+ *   <ol> retrieve the expression string from the <code>IExpression</code> object,</ol>
+ *   <ol> then to call the configured expression nodes to parse the expression string.</ol>
+ * </li>
+ * <p>
+ * This node is not intended to have any standard child layout nodes, therefore 
+ * the implementation of {@link #setChildNodes(IVMLayoutNode[])} throws an exception.  
+ * Instead users should call {@link #setExpressionLayoutNodes(IExpressionLayoutNode[])}
+ * to configure layout nodes that this node will delegate to when processing expressions.
+ * </p> 
+ */
 @SuppressWarnings("restriction")
 public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
     implements IElementLabelProvider, IElementEditor
 {
 
+    /**
+     * VMC of an expression object that failed to get parsed by any of the 
+     * configured expression layout nodes.  It is only used to display an
+     * error message in the view, and to allow the user to edit the 
+     * expression.
+     */
     private class InvalidExpressionVMC extends AbstractVMContext {
         final IExpression fExpression;
         
@@ -76,8 +94,13 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
         }
     }
     
+    /** Array of expression nodes which parse the user expressions and handle model events */ 
     private IExpressionLayoutNode[] fExpressionNodes = new IExpressionLayoutNode[0];
+    
+    /** Local reference to the global expression manager */ 
     private IExpressionManager fManager = DebugPlugin.getDefault().getExpressionManager();
+    
+    /** Cached reference to a cell modifier for editing expression strings of invalid expressions */
     private WatchExpressionCellModifier fWatchExpressionCellModifier = new WatchExpressionCellModifier();
     
     public ExpressionManagerLayoutNode(AbstractVMProvider provider) {
@@ -85,6 +108,10 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
     }
 
     public void updateHasElements(IHasChildrenUpdate[] updates) {
+        // Test availability of children based on whether there are any expressions 
+        // in the manager.  We assume that the getExpressions() will just read 
+        // local state data, so we don't bother using a job to perform this 
+        // operation.
         for (int i = 0; i < updates.length; i++) {
             updates[i].setHasChilren(fManager.getExpressions().length != 0);
             updates[i].done();
@@ -99,6 +126,11 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
     public void updateElements(final IChildrenUpdate update) {
         final IExpression[] expressions = fManager.getExpressions();
 
+        // For each (expression) element in update, find the layout node that can 
+        // parse it.  And for each expression that has a corresponding layout node, 
+        // call IExpressionLayoutNode#getElementForExpression to generate a VMC.
+        // Since the last is an async call, we need to create a multi-RM to wait
+        // for all the calls to complete.
         final CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), null) {
             @Override
             protected void handleCompleted() {
@@ -107,10 +139,9 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
         };
         
         int expressionRmCount = 0;
-        
         for (int i = update.getOffset(); i < update.getOffset() + update.getLength() && i < expressions.length; i++) {
             
-            // Check the array boundries as the expression manager could change asynchronously.  
+            // Check the array boundaries as the expression manager could change asynchronously.  
             // The expression manager change should lead to a refresh in the view. 
             if (i > expressions.length) {
                 continue;
@@ -124,6 +155,10 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
                 update.setChild(new InvalidExpressionVMC(expression), i);
             } else {
                 expressionRmCount++;
+                // getElementForExpression() accepts a IElementsUpdate as an argument.
+                // Construct an instance of VMElementsUpdate which will call a 
+                // the request monitor when it is finished.  The request monitor
+                // will in turn set the element in the update argument in this method. 
                 VMElementsUpdate expressionElementUpdate = new VMElementsUpdate(
                     update, 0, 1,
                     new DataRequestMonitor<List<Object>>(getExecutor(), multiRm) {
@@ -143,6 +178,7 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
             }
         }
         
+        // If no expressions were parsed, we're finished.
         if (expressionRmCount > 0) {
             multiRm.setCount(expressionRmCount);
         } else {            
@@ -151,6 +187,9 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
     }
 
     public void update(ILabelUpdate[] updates) {
+        // The label update handler only handles labels for the invalid expression VMCs.
+        // The expression layout nodes are responsible for supplying label providers 
+        // for their VMCs.
         for (ILabelUpdate update : updates) {
             if (update.getElement() instanceof InvalidExpressionVMC) {
                 updateInvalidExpressionVMCLabel(update, (InvalidExpressionVMC) update.getElement());
@@ -159,7 +198,10 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
             }
         }
     }
-    
+
+    /**
+     * Updates the label for the InvalidExpressionVMC.
+     */
     private void updateInvalidExpressionVMCLabel(ILabelUpdate update, InvalidExpressionVMC vmc) {
         String[] columnIds = update.getColumnIds() != null ? 
             update.getColumnIds() : new String[] { IDebugVMConstants.COLUMN_ID__NAME };
@@ -182,6 +224,10 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
         update.done();
     }
     
+    /**
+     * Convenience call that iterates through all the configured expression
+     * layout nodes and finds the first one that can parse the given expression.
+     */
     private IExpressionLayoutNode findNodeForExpression(String expressionText) {
         for (IExpressionLayoutNode node : fExpressionNodes) {
             if (node.getExpressionLength(expressionText) > 0) {
@@ -191,11 +237,26 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
         return null;
     }
     
+    /**
+     * ExpressionManagerLayoutNode does not support child layout nodes.
+     * @see #setExpressionLayoutNodes(IExpressionLayoutNode[])
+     */
     @Override
     public void setChildNodes(IVMLayoutNode[] childNodes) {
         throw new UnsupportedOperationException("This node does not support children."); //$NON-NLS-1$
     }
     
+    /**
+     * Configures the set of expression layout nodes that the expression manager layout
+     * node will use to parse the expressions.  
+     * <p>
+     * <i>Note: The nodes specified in the array will be called to parse expressions, 
+     * in the order as they are in the array</i>.  Therefore if one node is a "greedy" 
+     * parser, and will accept any expression string, it should appear last in the list
+     * of the nodes. 
+     * </p>
+     * @param nodes Array of expression layout nodes to configure with the manager.
+     */
     public void setExpressionLayoutNodes(IExpressionLayoutNode[] nodes) {
         fExpressionNodes = nodes;
     }
@@ -209,19 +270,20 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
         super.dispose();
     }
     
-    /** 
-     * If any of the children nodes have delta flags, that means that this 
-     * node has to generate a delta as well. 
-     */
     @Override
     public int getDeltaFlags(Object event) {
         int retVal = 0;
         
-        // Add a flag if the list of expressions has changed.
+        // Add a flag if the list of expressions in the global expression manager has changed.
         if (event instanceof ExpressionsChangedEvent) {
             retVal |= IModelDelta.CONTENT;
         }
 
+        // If any of the expressions nodes have delta flags, that means that this 
+        // node probably needs to generate a delta as well.  Ideally, we would call 
+        // IExpressionLayoutNode.getDeltaFlagsForExpression() here, but getDeltaFlags()
+        // is an optimization call anyway, and it's OK if it generates some false 
+        // positives.  We will call getDeltaFlagsForExpression in buildDelta() instead..
         for (IExpressionLayoutNode node : fExpressionNodes) {
             retVal |= node.getDeltaFlags(event);
         }
@@ -236,6 +298,9 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
             parentDelta.addFlags(IModelDelta.CONTENT);
         }
         
+        // Once again, for each expression, find its corresponding layout node and ask that
+        // layout node for its delta flags for given event.  If there are delta flags to be 
+        // generated, call the asynchronous method to do so.
         CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), requestMonitor); 
         int buildDeltaForExpressionCallCount = 0;
         
@@ -263,22 +328,6 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
         }
     }
         
-    /**
-     * Convenience method that returns the child layout nodes which return
-     * <code>true</code> to the <code>hasDeltaFlags()</code> test for the given
-     * event.   
-     */
-    protected Map<IExpressionLayoutNode, Integer> getExpressionsWithDeltaFlags(String expressionText, Object e) {
-        Map<IExpressionLayoutNode, Integer> nodes = new HashMap<IExpressionLayoutNode, Integer>(); 
-        for (final IExpressionLayoutNode node : fExpressionNodes) {
-            int delta = node.getDeltaFlagsForExpression(expressionText, e);
-            if (delta != IModelDelta.NO_CHANGE) {
-                nodes.put(node, delta);
-            }
-        }
-        return nodes;
-    }
-
     
     public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
         if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {

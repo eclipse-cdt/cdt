@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [142065] fix drag and drop on Mac OS X
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -61,6 +62,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 
 
 	ISelectionProvider _selectionProvider;
+	private ISelection _selection = null; // set this on dragStart, set to null on dragFinished
 	public static final char CONNECTION_DELIMITER = ':';
 	public static final char RESOURCE_SEPARATOR = '|';
 
@@ -75,6 +77,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 
 	public void dragFinished(DragSourceEvent event)
 	{
+		_selection = null; // drag has finished, forget the selection
 		if (event.doit == false)
 		{
 			return;
@@ -117,10 +120,14 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 
 	public void dragStart(DragSourceEvent event)
 	{
-		ISelection selection = _selectionProvider.getSelection();
-		if (selection instanceof IStructuredSelection)
+		/*
+		 * Remember the selection at drag start. This is the only point at which the selection is valid
+		 * during the drag operations on all platforms.
+		 */
+		_selection = _selectionProvider.getSelection();
+		if (_selection instanceof IStructuredSelection)
 		{
-			IStructuredSelection ss = (IStructuredSelection) selection;
+			IStructuredSelection ss = (IStructuredSelection) _selection;
 			Iterator iterator = ss.iterator();
 			while (iterator.hasNext())
 			{
@@ -182,10 +189,17 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 	 */
 	public void dragSetData(DragSourceEvent event)
 	{
-		ISelection selection = _selectionProvider.getSelection();
-		if (selection instanceof IStructuredSelection)
+	
+		/*
+		 * We cannot request the selection from the selection provider at this point since
+		 * on some platforms (particularly Mac OS X) the selection is forgotten by the underlying
+		 * OS control immediately after the drag is started. This call is invoked at the end
+		 * of the drag operation but just before the corresponding drop call in the drop adapter.
+		 * Thus, we must remember the selection at drag start.
+		 */
+		if (_selection instanceof IStructuredSelection)
 		{
-			IStructuredSelection ss = (IStructuredSelection) selection;
+			IStructuredSelection ss = (IStructuredSelection) _selection;
 
 			if (PluginTransfer.getInstance().isSupportedType(event.dataType))
 			{
@@ -309,7 +323,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 										editable.addAsListener();
 										editable.setLocalResourceProperties();
 									
-										IFile theFile = (IFile)editable.getLocalResource();	
+										IFile theFile = editable.getLocalResource();	
 									
 										IEditorDescriptor preferredEditor = editRegistry.getDefaultEditor(theFile.getName()); // may be null
 										if (preferredEditor == null)

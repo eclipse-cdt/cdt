@@ -137,7 +137,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
         else if (selectedFolder.isDescendantOf(firstSelection))
         {
         	if (targetDescendsFromSrcMsg == null)
-        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE);
+        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE);
         	return targetDescendsFromSrcMsg;
         }
         else

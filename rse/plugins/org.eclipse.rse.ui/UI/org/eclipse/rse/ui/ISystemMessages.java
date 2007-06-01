@@ -288,7 +288,7 @@ public interface ISystemMessages
     public static final String FILEMSG_COPY_FILE_FAILED  = "RSEF1306"; //$NON-NLS-1$
     public static final String FILEMSG_MOVE_FILE_FAILED  = "RSEF1307"; //$NON-NLS-1$
     public static final String FILEMSG_MOVE_TARGET_EQUALS_SOURCE  = "RSEF1308"; //$NON-NLS-1$
-	public static final String FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOUCE = "RSEF1312"; //$NON-NLS-1$
+	public static final String FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE = "RSEF1312"; //$NON-NLS-1$
 	public static final String FILEMSG_DELETING = "RSEF1315"; //$NON-NLS-1$
 	
 	// -------------------------	

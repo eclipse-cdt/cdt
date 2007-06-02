@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189272] exception when canceling ssh connect
+ * David Dykstal (IBM) - [189483] add notification when canceling password prompting
  ********************************************************************************/
 
 package org.eclipse.rse.ui.operations;
@@ -30,7 +31,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.core.subsystems.SubSystem.DisplayErrorMessageJob;
 import org.eclipse.rse.internal.ui.GenericMessages;
@@ -105,6 +108,10 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 			monitor.setTaskName(getTaskName());
 			execute(Policy.subMonitorFor(monitor, 100));
 			endOperation();
+		} catch (InterruptedException e) { // operation was canceled
+			endOperation();
+			monitor.setCanceled(true);
+			throw e;
 		} catch (Exception e) {
 			// TODO: errors may not be empty (i.e. endOperation has not been executed)
 			throw new InvocationTargetException(e);
@@ -127,6 +134,7 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	public class PromptForPassword implements Runnable
 	{
 		public SubSystem _ss;
+		private boolean isCanceled = false; 
 		public PromptForPassword(SubSystem ss)
 		{
 			_ss = ss;
@@ -136,12 +144,20 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		{
 			try
 			{
+				isCanceled = false;
 				_ss.promptForPassword();
+			}
+			catch (InterruptedException e) {
+				isCanceled = true;
 			}
 			catch (Exception e)
 			{
 				
 			}
+		}
+		
+		public boolean isCanceled() {
+			return isCanceled;
 		}
 	}
 	
@@ -185,7 +201,14 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		{
 			
 			Display dis = Display.getDefault();
-			dis.syncExec(new PromptForPassword(ss));
+			PromptForPassword prompter = new PromptForPassword(ss);
+			dis.syncExec(prompter);
+			if (prompter.isCanceled()) {
+				SystemMessage canceledMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED);
+				SystemMessageObject canceledMessageObject = new SystemMessageObject(canceledMessage, ISystemMessageObject.MSGTYPE_CANCEL, _remoteObject);
+				_collector.add(canceledMessageObject, monitor);
+				throw new InterruptedException();
+			}
 			try
 			{
 				ss.getConnectorService().connect(monitor);

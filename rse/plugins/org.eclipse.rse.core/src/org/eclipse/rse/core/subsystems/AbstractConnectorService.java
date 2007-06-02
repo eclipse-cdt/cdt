@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [185750] Remove IConnectorService.getHostType() 
+ * David Dykstal (IBM) - [189483] fix spelling in initialize/uninitialize method signatures
  ********************************************************************************/
 package org.eclipse.rse.core.subsystems;
 
@@ -290,7 +291,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * Initialize any subsystems just after connecting to the host.
 	 * @param monitor a progress monitor to report progress of initialization.
 	 */
-	protected final void intializeSubSystems(IProgressMonitor monitor) {
+	protected final void initializeSubSystems(IProgressMonitor monitor) {
 		for (int i = 0; i < _registeredSubSystems.size(); i++)
 		{
 			ISubSystem ss = (ISubSystem)_registeredSubSystems.get(i);
@@ -302,7 +303,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	 * Uninitialize any subsystem just after disconnecting from the host.
 	 * @param monitor a progress monitor used to track uninitialization progress.
 	 */
-	protected final void unintializeSubSystems(IProgressMonitor monitor) {
+	protected final void uninitializeSubSystems(IProgressMonitor monitor) {
 		for (int i = 0; i < _registeredSubSystems.size(); i++)
 		{
 			ISubSystem ss = (ISubSystem)_registeredSubSystems.get(i);
@@ -409,7 +410,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	public final void connect(IProgressMonitor monitor) throws Exception {
 		preConnect();
 		internalConnect(monitor);
-		intializeSubSystems(monitor);
+		initializeSubSystems(monitor);
 		postConnect();
 	}
 
@@ -422,7 +423,7 @@ public abstract class AbstractConnectorService extends RSEModelObject implements
 	public final void disconnect(IProgressMonitor monitor) throws Exception {
 		preDisconnect();
 		internalDisconnect(monitor);
-		unintializeSubSystems(monitor);
+		uninitializeSubSystems(monitor);
 		postDisconnect();
 	}
 

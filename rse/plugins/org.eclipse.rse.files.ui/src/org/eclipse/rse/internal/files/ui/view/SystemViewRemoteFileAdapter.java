@@ -23,11 +23,11 @@
  * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Xuan Chen        (IBM)        - [180671] [refresh] It is not possible to refresh editor with double clicking on it
+ * David Dykstal (IBM) - [160776] format file size according to client system conventions and locale
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -143,6 +143,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.NumberFormat;
 
 /**
  * Adapter for displaying remote file system objects in tree views.
@@ -1185,7 +1186,9 @@ public class SystemViewRemoteFileAdapter
 		{
 			if (formatted)
 			{
-				return sub(xlatedSize, MSG_SUB1, Long.toString(file.getLength()));
+		    	NumberFormat fmt = NumberFormat.getIntegerInstance();
+		    	String formattedNumber = fmt.format(file.getLength());
+				return sub(xlatedSize, MSG_SUB1, formattedNumber);
 			}
 			else
 			{

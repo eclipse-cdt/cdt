@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [160776] format file size according to client system conventions and locale
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -57,6 +58,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.ide.IDEEncoding;
 
 import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.NumberFormat;
 
 
 /**
@@ -396,8 +398,11 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	        labelPath.setText(file.getParentPath());
 	    }
 	    // size
-	    if (labelSize != null)
-	      labelSize.setText(Long.toString(file.getLength()));
+	    if (labelSize != null) {
+	    	NumberFormat fmt = NumberFormat.getIntegerInstance();
+	    	String formattedNumber = fmt.format(file.getLength());
+	    	labelSize.setText(formattedNumber);
+	    }
 	    // modified
 	    if (labelModified != null)
 	    {

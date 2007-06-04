@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 	import java.io.File;
@@ -30,6 +31,8 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -147,7 +150,13 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 					switchTo((CWizardHandler)tis[0].getData(), (EntryDescriptor)tis[0].getData(DESC));
 					setPageComplete(validatePage());
 				}});
-	        
+	        tree.getAccessible().addAccessibleListener(
+					 new AccessibleAdapter() {                       
+		                 public void getName(AccessibleEvent e) {
+		                         e.result = UIMessages.getString("CMainWizardPage.0");
+		                 }
+		             }
+				 );
 	        right = new Composite(c, SWT.NONE);
 	        right.setLayoutData(new GridData(GridData.FILL_BOTH));
 	        right.setLayout(new PageLayout());

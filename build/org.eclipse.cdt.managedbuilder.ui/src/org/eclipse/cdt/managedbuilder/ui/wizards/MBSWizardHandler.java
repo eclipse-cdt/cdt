@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
@@ -55,6 +56,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -326,6 +329,13 @@ public class MBSWizardHandler extends CWizardHandler {
 		
 		if (table == null) {
 			table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
+			table.getAccessible().addAccessibleListener(
+					 new AccessibleAdapter() {                       
+		                 public void getName(AccessibleEvent e) {
+		                         e.result = head;
+		                 }
+		             }
+				 );
 			table.setToolTipText(tooltip);
 			if (entryInfo != null) {
 				Iterator it = entryInfo.tc_filter().iterator();

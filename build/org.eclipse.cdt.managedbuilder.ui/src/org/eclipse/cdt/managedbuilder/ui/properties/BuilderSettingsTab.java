@@ -187,7 +187,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		// Workbench behaviour group
 		AccessibleListener makeTargetLabelAccessibleListener = new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
-				e.result = Messages.getString("BuilderSettingsTab.16");
+				e.result = Messages.getString("BuilderSettingsTab.16"); //$NON-NLS-1$
 			}
 		};
 		Group g4 = setupGroup(comp, Messages.getString("BuilderSettingsTab.14"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$

@@ -332,7 +332,13 @@ public class NewCfgDialog implements INewCfgDialog {
 			cfgds[i] = ManagedBuildManager.getConfigurationForDescription(descs[i]);
 			IConfiguration cfg = cfgds[i];
 			for(; cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent());
-			if (cfg != null && !lst.contains(cfg)) lst.add(cfg);
+			if (cfg != null) {
+				IConfiguration[] cfs = cfg.getProjectType().getConfigurations(); 
+				for (int j=0; j<cfs.length; j++) {
+					if (cfs[j] != null && !lst.contains(cfs[j]))
+						lst.add(cfs[j]);
+				}
+			}
 		}
 		rcfgs = (IConfiguration[])lst.toArray(new IConfiguration[lst.size()]);
 	}

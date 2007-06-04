@@ -91,7 +91,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);    //$NON-NLS-1$           
+                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);//$NON-NLS-1$               
             }
             System.out.println();                        
         }
@@ -115,7 +115,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
     {
         int firsttok = super.getFirstErrorToken(error_token),
             lasttok = super.getLastErrorToken(error_token);
-        String location = super.getFileName() + ':' +//$NON-NLS-1$
+        String location = super.getFileName() + ':' +
                           (firsttok > lasttok
                                     ? (super.getEndLine(lasttok) + ":" + super.getEndColumn(lasttok))//$NON-NLS-1$
                                     : (super.getLine(error_token) + ":" +//$NON-NLS-1$
@@ -633,13 +633,13 @@ public List getRuleTokens() {
             }
  
             //
-            // Rule 99:  labeled_statement ::= case constant_expression : statement
+            // Rule 99:  labeled_statement ::= case constant_expression :
             //
             case 99: { action.beforeConsume(); action.   consumeStatementCase();            break;
             }
  
             //
-            // Rule 100:  labeled_statement ::= default : statement
+            // Rule 100:  labeled_statement ::= default :
             //
             case 100: { action.beforeConsume(); action.   consumeStatementDefault();            break;
             }

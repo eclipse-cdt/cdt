@@ -15,9 +15,10 @@
 %options import_terminals=D:\workspaces\cdt-head2\org.eclipse.cdt.core.parser.c99\src\org\eclipse\cdt\internal\core\dom\parser\c99\C99Lexer.g
 
 
--- Unified Parallel C (UPC) is an extension of C99
+-- Unified Parallel C (UPC) is an extension of C99.
+-- Must set LPG_INCLUDE environment variable to the location of C99Parser.g 
 $Import
-D:\workspaces\cdt-head2\org.eclipse.cdt.core.parser.c99\src\org\eclipse\cdt\internal\core\dom\parser\c99\C99Parser.g
+C99Parser.g
 $End
 
 $Globals

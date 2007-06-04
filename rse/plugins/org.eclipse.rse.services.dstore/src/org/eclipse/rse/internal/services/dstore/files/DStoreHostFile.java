@@ -170,11 +170,7 @@ public class DStoreHostFile implements IHostFile
 			else
 			{
 				String str = getAttribute(_element.getSource(), ATTRIBUTE_IS_HIDDEN);
-				if (str != null && str.length() > 0)
-				{
-					return(str.equals("true")); //$NON-NLS-1$
-				}
-				return false;
+				return "true".equals(str); //$NON-NLS-1$
 			}
 		}			
 	}
@@ -398,18 +394,12 @@ public class DStoreHostFile implements IHostFile
 
 	public boolean canRead() {
 		String str = getAttribute(_element.getSource(), ATTRIBUTE_CAN_READ);
-		if (str != null)
-		{
-			return(str.equals("true")); //$NON-NLS-1$
-		}
-		return false;
+		return "true".equals(str); //$NON-NLS-1$
 	}
 
 	public boolean canWrite() {
 		String str = getAttribute(_element.getSource(), ATTRIBUTE_CAN_WRITE);
-		if (str != null)
-			return(str.equals("true")); //$NON-NLS-1$
-		return false;
+		return "true".equals(str); //$NON-NLS-1$
 	}
 	
 }

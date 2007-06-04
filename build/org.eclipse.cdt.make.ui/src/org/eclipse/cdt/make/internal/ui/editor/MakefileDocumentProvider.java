@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Anton Leherbauer (Wind River Systems) - Fixed bug 141295
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.editor;
 
@@ -18,6 +18,7 @@ import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
@@ -144,4 +145,14 @@ public class MakefileDocumentProvider extends TextFileDocumentProvider implement
 			disconnect(e.next());
 	}
 	
+	/*
+	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createSaveOperation(java.lang.Object, org.eclipse.jface.text.IDocument, boolean)
+	 */
+	protected DocumentProviderOperation createSaveOperation(Object element, IDocument document, boolean overwrite)
+			throws CoreException {
+		if (!(element instanceof IFileEditorInput)) {
+			return null;
+		}
+		return super.createSaveOperation(element, document, overwrite);
+	}
 }

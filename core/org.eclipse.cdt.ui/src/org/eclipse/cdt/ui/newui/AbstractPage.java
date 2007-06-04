@@ -105,7 +105,7 @@ implements
 	private static ICResourceDescription resd = null;
 	private static ICConfigurationDescription[] cfgDescs = null;
 	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
-	private static int cfgIndex = 0;
+	private static int cfgIndex = -1;
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
@@ -182,7 +182,7 @@ implements
 	public AbstractPage() {
 		if (CDTPropertyManager.getPagesCount() == 0) {
 			cfgDescs = null;
-			cfgIndex = 0;
+			cfgIndex = -1;
 		}
 	}
 	
@@ -517,7 +517,8 @@ implements
 		configSelector.removeAll();
 		for (int i = 0; i < cfgDescs.length; ++i) {
 			configSelector.add(cfgDescs[i].getName());
-			if (cfgDescs[i].isActive()) cfgIndex = i;
+			if (cfgIndex == -1 && cfgDescs[i].isActive()) 
+				cfgIndex = i;
 		}
 		// Handling of All/Multiple configurations can be disabled
 		if (CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI)) {
@@ -547,6 +548,8 @@ implements
 			displayedConfig = true;
 			if (excludeFromBuildCheck != null && resd != null)
 				excludeFromBuildCheck.setSelection(resd.isExcluded());
+			configSelector.select(cfgIndex);
+			handleConfigSelection();
 		}
 
 		if (itabs.size() < 1) return;

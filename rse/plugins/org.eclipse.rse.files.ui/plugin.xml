@@ -249,7 +249,7 @@ Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter fro
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            label="%Remote.Search"
+            label="%Remote.ActionSet"
             visible="true"
             id="org.eclipse.rse.core.search.searchActionSet">
          <menu

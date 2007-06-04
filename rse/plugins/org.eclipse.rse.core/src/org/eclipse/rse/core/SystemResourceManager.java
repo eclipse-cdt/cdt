@@ -13,6 +13,10 @@
  * Contributors:
  * Dave McKnight (IBM) - [177155] Move from rse.ui/systems/org.eclipse.rse.core
  * Martin Oberhuber (Wind River) - Re-add missing methods for user actions
+ * David Dykstal (IBM) - [189858] delayed the creation of the remote systems project
+ *                                removed unneeded first time logic and flags
+ *                                renamed createRemoteSystemsProjectInternal to ensureRemoteSystemsProject
+ *                                made ensureRemoteSystemsProject private instead of protected 
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -59,8 +63,6 @@ public class SystemResourceManager implements SystemResourceConstants
 
 	private static IProject remoteSystemsProject = null;
 	private static IProject remoteSystemsTempFilesProject = null;
-	private static boolean initDone = false;
-	private static boolean firstTime = false;
 	private static SystemResourceHelpers helpers = null;
 
 	private static ISystemResourceListener _listener = null;
@@ -146,21 +148,33 @@ public class SystemResourceManager implements SystemResourceConstants
 	}
 	
     /**
-     * Get the default remote systems project.
-     * @return IProject handle of the project. Use exists() to test existence.
-     */
-    public static IProject getRemoteSystemsProject()
-    {
-    	if (remoteSystemsProject == null)
-    	{
-	      remoteSystemsProject = ResourcesPlugin.getWorkspace().getRoot().getProject(RESOURCE_PROJECT_NAME);
-	      if (!initDone || !remoteSystemsProject.isAccessible())
-	        remoteSystemsProject = createRemoteSystemsProjectInternal(remoteSystemsProject);
-    	}
-	    return remoteSystemsProject;
-    }
+	 * Get the default remote systems project.
+	 * If found but closed, this will open the project.
+	 * @return IProject handle of the project. Use exists() to test existence.
+	 */
+	public static IProject getRemoteSystemsProject() 
+	{
+		return getRemoteSystemsProject(true);
+	}
 
 	/**
+	 * Get the default remote systems project.
+	 * If found but closed, this will open the project.
+	 * @param force if true force the creation of the project if not found.
+	 * In any case, returns handle to the project.
+	 * @return IProject handle of the project. Use exists() to test existence.
+	 */
+	public static IProject getRemoteSystemsProject(boolean force) {
+		if (remoteSystemsProject == null) {
+			remoteSystemsProject = ResourcesPlugin.getWorkspace().getRoot().getProject(RESOURCE_PROJECT_NAME);
+		}
+		if ((!remoteSystemsProject.exists() && force) || (remoteSystemsProject.exists() && !remoteSystemsProject.isOpen())) {
+			ensureRemoteSystemsProject(remoteSystemsProject);
+		}
+		return remoteSystemsProject;
+	}
+
+    /**
 	 * Get the default remote systems temp files project.
 	 * @return IProject handle of the project. Use exists() to test existence.
 	 */
@@ -177,7 +191,7 @@ public class SystemResourceManager implements SystemResourceConstants
      * @param proj the handle for the remote systems project
      * @return the IProject handle of the project (the argument)
      */
-    protected static IProject createRemoteSystemsProjectInternal(IProject proj) 
+    private static IProject ensureRemoteSystemsProject(IProject proj) 
     {
 		// Check first for the project to be closed. If yes, try to open it and if this fails,
 		// try to delete if first before failing here. The case is that the user removed the
@@ -189,7 +203,6 @@ public class SystemResourceManager implements SystemResourceConstants
 			} catch (Exception e) {
 				try {
 					proj.delete(false, true, null);
-					
 					RSECorePlugin.getDefault().getLogger().logWarning("Removed stale remote systems project reference. Re-creating remote system project to recover."); //$NON-NLS-1$
 				} catch (CoreException exc) {
 					// If the delete fails, the original opening error will be passed to the error log.
@@ -205,31 +218,13 @@ public class SystemResourceManager implements SystemResourceConstants
 				String newNatures[] = { RemoteSystemsProject.ID };
 				description.setNatureIds(newNatures);
 				proj.setDescription(description, null);
-				firstTime = true;
 			} catch (Exception e) {
 				RSECorePlugin.getDefault().getLogger().logError("error creating remote systems project", e); //$NON-NLS-1$
 			}
 		}
-		try {
-			// create types folder...
-			// getResourceHelpers().getOrCreateFolder(proj, RESOURCE_TYPE_FILTERS_FOLDER_NAME);
-		} catch (Exception e) {
-			RSECorePlugin.getDefault().getLogger().logError("error opening/creating types folder", e); //$NON-NLS-1$
-		}
-		initDone = true;
 		return proj;
 	}
-    /**
-     * Return true if we just created the remote systems project for the first time.
-     * This call has the side effect of resetting the flag to false so it doesn't return
-     * true more than once, ever.
-     */
-    public static boolean isFirstTime()
-    {
-    	boolean firsttime = firstTime;
-    	firstTime = false;
-    	return firsttime;
-    }
+
     // --------------------------------------------
     // GET ALL EXISTING PROFILE NAMES OR FOLDERS...
     // --------------------------------------------
@@ -385,7 +380,7 @@ public class SystemResourceManager implements SystemResourceConstants
         String folderName = getFolderName(ssFactory);
         return getResourceHelpers().getOrCreateFolder(parentFolder, folderName); // Do create it.
     }
-
+   
     /**
      * Get compile commands root folder given a system profile name and subsystem factory Id.
      * This is a special-needs method provided for the Import action processing,
@@ -396,7 +391,6 @@ public class SystemResourceManager implements SystemResourceConstants
         IFolder parentFolder = getCompileCommandsFolder(profileName);
         return getResourceHelpers().getOrCreateFolder(parentFolder, factoryId); // Do create it.
     }
-   
 
     // -------------------
     // FOLDER ACTIONS...

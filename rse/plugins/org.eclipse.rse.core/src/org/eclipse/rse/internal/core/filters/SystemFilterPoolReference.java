@@ -13,6 +13,8 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * David Dykstal (IBM) - [189858] made sure that a reference remains broken if the profile
+ *                                contained in the reference was not found.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -169,10 +171,12 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 			String profileName = getReferencedFilterPoolManagerName();
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			ISystemProfile profile = registry.getSystemProfile(profileName);
-			ISubSystem subsystem = (ISubSystem) getProvider();
-			ISubSystemConfiguration config = subsystem.getSubSystemConfiguration();
-			filterPoolManager = config.getFilterPoolManager(profile);
-			filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
+			if (profile != null) {
+				ISubSystem subsystem = (ISubSystem) getProvider();
+				ISubSystemConfiguration config = subsystem.getSubSystemConfiguration();
+				filterPoolManager = config.getFilterPoolManager(profile);
+				filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
+			}
 		}
 		if (filterPool != null) {
 			setReferenceToFilterPool(filterPool);

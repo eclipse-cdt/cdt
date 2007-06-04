@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * David Dykstal (IBM) - [189858] Removed the remote systems project in the team view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -97,7 +98,8 @@ public class SystemTeamViewContentProvider extends WorkbenchContentProvider
 	public Object getParent(Object element) 
 	{
 		if (element instanceof ISystemProfile) 
-			return SystemResourceManager.getRemoteSystemsProject();
+//			return SystemResourceManager.getRemoteSystemsProject();
+			return null;
 		ISystemViewElementAdapter adapter = getSystemViewAdapter(element);
 		if (adapter != null)
 			return adapter.getParent(element);

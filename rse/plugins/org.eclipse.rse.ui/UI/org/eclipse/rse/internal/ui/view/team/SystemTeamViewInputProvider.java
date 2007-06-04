@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David Dykstal (IBM) - [189858] Removed the remote systems project in the team view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -19,8 +20,9 @@ package org.eclipse.rse.internal.ui.view.team;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
 
@@ -31,7 +33,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInputProvider
 {
-	private Object[] roots = new Object[1]; 
 	private Shell shell;
 	private Viewer viewer;
 			
@@ -49,9 +50,8 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	 */
 	public Object[] getRoots()
 	{
-		if (roots[0] == null)
-          roots[0] = SystemResourceManager.getRemoteSystemsProject();
-        return roots;
+		ISystemProfile[] roots = SystemProfileManager.getDefault().getSystemProfiles();
+		return roots;
 	}
 	
     /**

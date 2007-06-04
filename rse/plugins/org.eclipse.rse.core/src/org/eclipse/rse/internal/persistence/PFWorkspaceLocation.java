@@ -7,6 +7,9 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [189858] delayed the creation of the remote systems project by
+ *                                using handle-only operations. The project is created only
+ *                                if required to exist for writing.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -24,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.SystemResourceManager;
 
 class PFWorkspaceLocation implements PFPersistenceLocation {
 	IFolder baseFolder = null;
@@ -37,13 +42,7 @@ class PFWorkspaceLocation implements PFPersistenceLocation {
 	}
 	
 	public void ensure() {
-		if (!baseFolder.exists()) {
-			try {
-				baseFolder.create(true, true, null);
-			} catch (CoreException e) {
-				logException(e);
-			}
-		}
+		ensure(baseFolder);
 	}
 	
 	public PFPersistenceLocation getChild(String childName) {
@@ -132,6 +131,22 @@ class PFWorkspaceLocation implements PFPersistenceLocation {
 			}
 		}
 		return result;
+	}
+	
+	private void ensure(IContainer resource) {
+		if (!resource.isAccessible()) {
+			if (resource.getType() == IResource.PROJECT) {
+				SystemResourceManager.getRemoteSystemsProject();
+			} else {
+				IFolder folder = (IFolder) resource;
+				ensure(folder.getParent());
+				try {
+					folder.create(true, true, null);
+				} catch (CoreException e) {
+					logException(e);
+				}
+			}
+		}
 	}
 	
 	private void logException(Exception e) {

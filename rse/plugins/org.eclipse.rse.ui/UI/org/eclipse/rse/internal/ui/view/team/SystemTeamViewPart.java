@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [189858] Removed the remote systems project in the team view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -1395,7 +1396,7 @@ public class SystemTeamViewPart
 				case 0: elementType = token; break;
 				// profile
 				case 1: 
-					project = SystemResourceManager.getRemoteSystemsProject();
+					project = SystemResourceManager.getRemoteSystemsProject(false);
 					break;
 				case 2: 					
 					profile = sr.getSystemProfile(token);

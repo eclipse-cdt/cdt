@@ -7,6 +7,8 @@
  * 
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [189858] delayed the creation of the remote systems project by
+ *                                using handle-only operations.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -36,19 +38,21 @@ class PFWorkspaceAnchor implements PFPersistenceAnchor {
 	public String[] getProfileLocationNames() {
 		List names = new Vector(10);
 		IFolder providerFolder = getProviderFolder();
-		try {
-			IResource[] profileCandidates = providerFolder.members();
-			for (int i = 0; i < profileCandidates.length; i++) {
-				IResource profileCandidate = profileCandidates[i];
-				if (profileCandidate.getType() == IResource.FOLDER) {
-					String candidateName = profileCandidate.getName();
-					if (candidateName.startsWith(PFConstants.AB_PROFILE)) {
-						names.add(candidateName);
+		if (providerFolder.isAccessible()) {
+			try {
+				IResource[] profileCandidates = providerFolder.members();
+				for (int i = 0; i < profileCandidates.length; i++) {
+					IResource profileCandidate = profileCandidates[i];
+					if (profileCandidate.getType() == IResource.FOLDER) {
+						String candidateName = profileCandidate.getName();
+						if (candidateName.startsWith(PFConstants.AB_PROFILE)) {
+							names.add(candidateName);
+						}
 					}
 				}
+			} catch (CoreException e) {
+				logException(e);
 			}
-		} catch (CoreException e) {
-			logException(e);
 		}
 		String[] result = new String[names.size()];
 		names.toArray(result);
@@ -80,7 +84,8 @@ class PFWorkspaceAnchor implements PFPersistenceAnchor {
 
 	/**
 	 * Returns the IFolder in which a profile is stored. 
-	 * @return The folder that was created or found.
+	 * This is a handle operation, the resulting folder may not exist.
+	 * @return The folder that was found.
 	 */
 	private IFolder getProfileFolder(String profileLocationName) {
 		IFolder providerFolder = getProviderFolder();
@@ -90,36 +95,32 @@ class PFWorkspaceAnchor implements PFPersistenceAnchor {
 
 	/**
 	 * Returns the IFolder in which this persistence provider stores its profiles.
-	 * This will create the folder if the folder was not found.
-	 * @return The folder that was created or found.
+	 * This is a handle operation. It will not create the folder if it is not 
+	 * found.
+	 * @return The folder that contains the profiles for this provider.
 	 */
 	private IFolder getProviderFolder() {
-		IProject project = SystemResourceManager.getRemoteSystemsProject();
-		try {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		} catch (Exception e) {
+		IProject project = SystemResourceManager.getRemoteSystemsProject(false);
+		if (project.isAccessible()) {
+			try {
+				project.refreshLocal(IResource.DEPTH_INFINITE, null);
+			} catch (Exception e) {
+			}
 		}
 		IFolder providerFolder = getFolder(project, "dom.properties"); //$NON-NLS-1$
 		return providerFolder;
 	}
 	
 	/**
-	 * Returns the specified folder of the parent container. If the folder does
-	 * not exist it creates it.
+	 * Returns the specified folder of the parent container.
+	 * This is a handle operation. The folder may not exist.
 	 * @param parent the parent container - typically a project or folder
-	 * @param name the name of the folder to find or create
+	 * @param name the name of the folder to find
 	 * @return the found or created folder
 	 */
 	private IFolder getFolder(IContainer parent, String name) {
 		IPath path = new Path(name);
 		IFolder folder = parent.getFolder(path);
-		if (!folder.exists()) {
-			try {
-				folder.create(IResource.NONE, true, null);
-			} catch (CoreException e) {
-				logException(e);
-			}
-		}
 		return folder;
 	}
 

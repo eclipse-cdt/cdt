@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * David Dykstal (IBM) - [189858] Delay the creation of the remote systems project
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -85,7 +86,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    		ISystemRegistry registry = getSystemRegistryInternal();
 
 	    		
-	        	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree  
+//	        	SystemResourceManager.getRemoteSystemsProject(); // create core folder tree  
 	        	try
 	        	{
 	        		SystemStartHere.getSystemProfileManager(); // create folders per profile
@@ -99,13 +100,14 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			   
 		
 			    // add workspace listener for our project
-	        	IProject remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject();
+	        	IProject remoteSystemsProject = SystemResourceManager.getRemoteSystemsProject(false);
 	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
 			    SystemResourceManager.startResourceEventListening(listener);
 				
 				// new support to allow products to not pre-create a local connection
-				if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
-					// create the connection only if the local system type is enabled!
+//				if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
+				if (SystemPreferencesManager.getShowLocalConnection()) {
+					// create the connection only if the local system type is enabled
 					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 					if (systemType != null) {
 						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
@@ -547,14 +549,6 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     	}
     }
 
-    /**
-     * Return the project used to hold all the Remote System Framework files
-     */
-    public IProject getRemoteSystemsProject()
-    {
-    	return SystemResourceManager.getRemoteSystemsProject();
-    }
-    
     /**
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */

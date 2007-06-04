@@ -12,6 +12,7 @@
  * David Dykstal (IBM) - removed printlns, printStackTrace and added logging.
  * David Dykstal (IBM) - [177882] fixed escapeValue for garbling of CJK characters
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David Dykstal (IBM) - [188863] fix job conflict problems for save jobs, ignore bad profiles on restore
  ********************************************************************************/
 package org.eclipse.rse.internal.persistence;
 
@@ -20,10 +21,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -76,12 +79,16 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	 */
 	public String[] getSavedProfileNames() {
 		String[] locationNames = getAnchor().getProfileLocationNames();
-		String[] result = new String[locationNames.length];
+		List names = new ArrayList(locationNames.length);
 		for (int i = 0; i < locationNames.length; i++) {
 			String locationName = locationNames[i];
 			String profileName = getNodeName(locationName);
-			result[i] = profileName;
+			if (isValidName(profileName)) {
+				names.add(profileName);
+			}
 		}
+		String[] result = new String[names.size()];
+		names.toArray(result);
 		return result;
 	}
 	
@@ -141,7 +148,7 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 	public Job getSaveJob(RSEDOM dom) {
 		Job saveJob = (Job) saveJobs.get(dom);
 		if (saveJob == null) {
-			saveJob = new SaveRSEDOMJob(dom, this);
+			saveJob = anchor.makeSaveJob(dom, this);
 			saveJobs.put(dom, saveJob);
 		}
 		return saveJob;
@@ -162,6 +169,15 @@ public class PropertyFileProvider implements IRSEPersistenceProvider {
 				this.properties.put(key, value);
 			}
 		}
+	}
+	
+	/**
+	 * Checks a profile name for validity. Currently all names are valid except for completely blank names.
+	 * @param profileName the name to check
+	 * @return true if the name is valid.
+	 */
+	private boolean isValidName(String profileName) {
+		return (profileName.trim().length() > 0);
 	}
 	
 	private PFPersistenceAnchor getAnchor() {

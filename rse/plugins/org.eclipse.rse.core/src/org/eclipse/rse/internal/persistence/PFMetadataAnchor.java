@@ -19,7 +19,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.persistence.IRSEPersistenceProvider;
+import org.eclipse.rse.persistence.dom.RSEDOM;
 
 class PFMetadataAnchor implements PFPersistenceAnchor {
 	
@@ -55,7 +58,15 @@ class PFMetadataAnchor implements PFPersistenceAnchor {
 		names.toArray(result);
 		return result;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.internal.persistence.PFPersistenceAnchor#makeSaveJob(org.eclipse.rse.persistence.dom.RSEDOM, org.eclipse.rse.persistence.IRSEPersistenceProvider)
+	 */
+	public Job makeSaveJob(RSEDOM dom, IRSEPersistenceProvider provider) {
+		return new PFMetatdataJob(dom, provider);
+	}
+
 	/**
 	 * @return the folder that acts as the parent for profile folders.
 	 */
@@ -106,4 +117,5 @@ class PFMetadataAnchor implements PFPersistenceAnchor {
 		}
 		resource.delete();
 	}
+
 }

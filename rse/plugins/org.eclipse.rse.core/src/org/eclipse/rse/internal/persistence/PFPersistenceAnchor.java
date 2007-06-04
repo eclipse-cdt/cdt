@@ -13,6 +13,9 @@ package org.eclipse.rse.internal.persistence;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.persistence.IRSEPersistenceProvider;
+import org.eclipse.rse.persistence.dom.RSEDOM;
 
 interface PFPersistenceAnchor {
 
@@ -34,5 +37,15 @@ interface PFPersistenceAnchor {
 	 * @return the location of the profile
 	 */
 	PFPersistenceLocation getProfileLocation(String profileName);
+	
+	/**
+	 * Factory method to return a new Job instance to save an RSE DOM
+	 * to the persistence location managed by this anchor.
+	 * @param dom the RSEDOM (Profile) to save.
+	 * @param provider the Persistence Provider asking for save.
+	 * @return a Job to perform the save operation with proper
+	 *    scheduling rules.
+	 */
+	Job makeSaveJob(RSEDOM dom, IRSEPersistenceProvider provider);
 
 }

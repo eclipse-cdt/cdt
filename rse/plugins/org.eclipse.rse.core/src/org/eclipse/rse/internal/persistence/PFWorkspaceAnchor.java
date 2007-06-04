@@ -24,9 +24,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.internal.core.RSECoreMessages;
+import org.eclipse.rse.persistence.IRSEPersistenceProvider;
+import org.eclipse.rse.persistence.dom.RSEDOM;
 
 class PFWorkspaceAnchor implements PFPersistenceAnchor {
 
@@ -70,7 +73,11 @@ class PFWorkspaceAnchor implements PFPersistenceAnchor {
 		PFPersistenceLocation result = new PFWorkspaceLocation(profileFolder);
 		return result;
 	}
-	
+
+	public Job makeSaveJob(RSEDOM dom, IRSEPersistenceProvider provider) {
+		return new PFWorkspaceJob(dom, provider);
+	}
+
 	/**
 	 * Returns the IFolder in which a profile is stored. 
 	 * @return The folder that was created or found.
@@ -119,4 +126,5 @@ class PFWorkspaceAnchor implements PFPersistenceAnchor {
 	private void logException(Exception e) {
 		RSECorePlugin.getDefault().getLogger().logError("unexpected exception", e); //$NON-NLS-1$
 	}
+
 }

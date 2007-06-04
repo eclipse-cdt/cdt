@@ -12,12 +12,14 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David Dykstal (IBM) - [188863] created out of SaveRSEDOMJob
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,19 +30,20 @@ import org.eclipse.rse.persistence.IRSEPersistenceProvider;
 import org.eclipse.rse.persistence.dom.RSEDOM;
 
 /**
- * The SaveRSEDOMJob is a workspace job that belongs to the family 
+ * The PFWorkspaceJob is a workspace job that belongs to the family 
  * {@link RSECorePlugin#getThePersistenceManager()}. It is used to 
  * save a DOM to the workspace. A DOM corresponds to a profile.
  */
-public class SaveRSEDOMJob extends WorkspaceJob {
+public class PFWorkspaceJob extends WorkspaceJob {
 
 	private RSEDOM _dom;
 	private IRSEPersistenceProvider _provider;
-
-	public SaveRSEDOMJob(RSEDOM dom, IRSEPersistenceProvider provider) {
+	
+	public PFWorkspaceJob(RSEDOM dom, IRSEPersistenceProvider provider) {
 		super("Saving Profile"); //$NON-NLS-1$
 		String title = MessageFormat.format(RSECoreMessages.SaveRSEDOMJob_SavingProfileJobName, new Object[] { dom.getName() });
 		setName(title);
+		setRule(ResourcesPlugin.getWorkspace().getRoot());
 		_dom = dom;
 		_provider = provider;
 	}

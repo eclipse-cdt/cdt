@@ -60,6 +60,53 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		suite.addTest(suite(ProjectWithDepProj.class));
 	}
 	
+	// namespace n { class A{}; }
+	// namespace m {
+	// using namespace n;
+	//     class B {};
+	// }
+
+	// namespace n { class C{}; }
+	// m::C c;
+	public void _testUsingNamingDirective_177917_1() {
+		IBinding b0= getBindingFromASTName("C c", 1);
+	}
+
+	// int ff(int x) { return x; }
+	// namespace n { class A {}; }
+	// namespace m { class B {}; enum C{CE1,CE2}; }
+	// namespace o { int (*f)(int)= ff; }
+
+	// using n::A;
+	// A a;
+	// using namespace m;
+	// B b;
+	// C c= CE1;
+	// using o::f;
+	// int g(int x) {return 4;}
+	// int g(char x) {return 2;}
+	// int nn= g(f(2));
+	public void _testUsingTypeDirective_177917_1() {
+		IBinding b1= getBindingFromASTName("A a", 1);
+		IBinding b2= getBindingFromASTName("B b", 1);
+		IBinding b3= getBindingFromASTName("C c", 1);
+		IBinding b4= getBindingFromASTName("CE1", 3);
+		IBinding b5= getBindingFromASTName("f(2", 1);
+	}
+	
+	// namespace a { class A {}; }
+	// namespace b {
+	//     using a::A;
+	//     class B {};
+	// }
+
+	// b::A aa;
+	// b::B bb;
+	public void _testUsingTypeDirective_177917_2() {
+		IBinding b0= getBindingFromASTName("A aa", 1);
+		IBinding b1= getBindingFromASTName("B bb", 1);
+	}
+	
 	// int (*f)(int);
 	// int g(int n){return n;}
 	// int g(int n, int m){ return n+m; }

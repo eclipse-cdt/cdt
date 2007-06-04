@@ -726,15 +726,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		else
 		{
 			StringBuffer buf = new StringBuffer(remoteParent);
-			if (remoteParent.trim().equals("/")) //$NON-NLS-1$
-			{
-				buf.append(name);
+			String sep = getSeparator(remoteParent);
+			if (sep.length()>0 && !remoteParent.endsWith(sep)) {
+			    buf.append(sep);
 			}
-			else
-			{
-				buf.append(getSeparator(remoteParent));
-				buf.append(name);
-			}
+			buf.append(name);
 			de = getElementFor(buf.toString());
 		}
 		dsQueryCommand(de, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);

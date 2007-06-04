@@ -332,6 +332,10 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		    //return true; 
 		}
 		
+		// DKM - if the filter and the remote object are the same
+		if (container.equals(remoteObjectAbsoluteName))
+			return true;
+		
 		// trick: use filter string code to parse remote absolute name
 		RemoteFileFilterString rmtName = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), remoteObjectAbsoluteName);
 		boolean pathMatch = false;

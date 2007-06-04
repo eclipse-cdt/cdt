@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
  * Rupen Mardirossian (IBM) - [189434] Move Up/Down on Filters Error
+ * Kevin Doyle (IBM) - [190445] Set Position of cloned event in cloneEvent()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -2000,6 +2001,7 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 		{
 			result = new SystemResourceChangeEvent(event.getSource(), event.getType(), parent);
 		}
+		result.setPosition(event.getPosition());
 		return result;
 	}
 	

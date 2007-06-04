@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Kevin Doyle (IBM) - [190445] moveSystemFilter now reorganizes the list of filters
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -552,7 +552,8 @@ public class SystemFilterContainerCommonMethods
      */
     public void moveSystemFilter(java.util.List filters, int pos, ISystemFilter filter)
     {
-    	//FIXME filters.move(pos,filter);
+    	filters.remove(filter);
+    	filters.add(pos, filter);
     	invalidateCache();
     }
     /**

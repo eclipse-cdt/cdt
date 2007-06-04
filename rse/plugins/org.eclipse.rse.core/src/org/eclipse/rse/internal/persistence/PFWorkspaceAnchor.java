@@ -116,7 +116,7 @@ class PFWorkspaceAnchor implements PFPersistenceAnchor {
 	 * This is a handle operation. The folder may not exist.
 	 * @param parent the parent container - typically a project or folder
 	 * @param name the name of the folder to find
-	 * @return the found or created folder
+	 * @return the found folder (may not exist)
 	 */
 	private IFolder getFolder(IContainer parent, String name) {
 		IPath path = new Path(name);

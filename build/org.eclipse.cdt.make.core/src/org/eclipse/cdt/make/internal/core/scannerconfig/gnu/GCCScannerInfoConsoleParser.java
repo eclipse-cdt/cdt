@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Martin Oberhuber (Wind River Systems) - bug 155096
+ * Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -124,7 +125,8 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 				}
 				else if (fileName == null) {
 					String possibleFileName = token.toLowerCase();
-					if ((possibleFileName.startsWith(DOUBLE_QUOTE_STRING) && 
+					if (possibleFileName.length() >= 5 &&  // Two quotes plus 3 characters for file name.
+						(possibleFileName.startsWith(DOUBLE_QUOTE_STRING) && 
 						 possibleFileName.endsWith(DOUBLE_QUOTE_STRING)) ||
 						(possibleFileName.startsWith(SINGLE_QUOTE_STRING) && 
 						 possibleFileName.endsWith(SINGLE_QUOTE_STRING))) {

@@ -15,6 +15,8 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.util.Iterator;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -2055,5 +2057,21 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertInstance(tidSpc, ICPPConstructor.class);
     	assertInstance(tidSpc, ICPPSpecialization.class);
     	assertInstance(tidSpc, ICPPFunctionTemplate.class);
+    }
+    
+   	// template<class T> const T& (max)(const T& lhs, const T& rhs) {
+    //    return (lhs < rhs ? rhs : lhs);
+    // }
+    public void testNestedFuncTemplatedDeclarator_bug190241() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, true, true );
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	for (Iterator i = col.nameList.iterator(); i.hasNext();) {
+			IASTName name = (IASTName) i.next();
+			assertFalse(name.resolveBinding() instanceof IProblemBinding);
+		}
     }
 }

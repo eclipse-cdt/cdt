@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -83,7 +84,12 @@ abstract public class IndexerASTVisitor extends ASTVisitor {
 	public int visit(IASTDeclaration decl) {
 		if (decl instanceof IASTFunctionDefinition) {
 			IASTFunctionDefinition fdef= (IASTFunctionDefinition) decl;
-			IASTName name = getLastInQualified(fdef.getDeclarator().getName());
+			final IASTFunctionDeclarator declarator= fdef.getDeclarator();
+			IASTDeclarator nestedDeclarator= declarator;
+			while (nestedDeclarator.getNestedDeclarator() != null) {
+				nestedDeclarator= nestedDeclarator.getNestedDeclarator();
+			}
+			IASTName name= getLastInQualified(nestedDeclarator.getName());
 			visit(name, fDefinitionName);
 			push(name, decl);
 		}

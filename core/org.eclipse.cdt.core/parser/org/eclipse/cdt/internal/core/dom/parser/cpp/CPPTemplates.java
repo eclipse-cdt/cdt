@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Bryan Wilkinson (QNX)
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Mar 11, 2005
@@ -798,7 +799,11 @@ public class CPPTemplates {
 		            name = ((ICPPASTElaboratedTypeSpecifier)spec).getName();
 		    }
 		} else if( nestedDecl instanceof IASTFunctionDefinition ){
-		    name = ((IASTFunctionDefinition)nestedDecl).getDeclarator().getName();
+		    IASTDeclarator declarator = ((IASTFunctionDefinition)nestedDecl).getDeclarator();
+		    while (declarator.getNestedDeclarator() != null) {
+		    	declarator= declarator.getNestedDeclarator();
+		    }
+			name = declarator.getName();
 		}
 		if( name != null ){
 		    if( name instanceof ICPPASTQualifiedName ){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Mar 31, 2005
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -169,12 +169,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	 */
 	public IParameter[] getParameters() {
 		IASTName name = getTemplateName();
-		IASTNode parent = name.getParent();
-		if( parent instanceof ICPPASTQualifiedName )
-			parent = parent.getParent();
-		if( parent instanceof ICPPASTFunctionDeclarator ){
-			ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parent;
-			IASTParameterDeclaration[] params = dtor.getParameters();
+		ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(name);
+		if (fdecl != null) {
+			IASTParameterDeclaration[] params = fdecl.getParameters();
 			int size = params.length;
 			IParameter [] result = new IParameter[ size ];
 			if( size > 0 ){
@@ -261,25 +258,27 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     	binding = new CPPParameter( name );
     	IASTParameterDeclaration temp = null;
     	if( definition != null ){
-    		IASTNode node = definition.getParent();
-    		if( node instanceof ICPPASTQualifiedName )
-    			node = node.getParent();
-    		temp = ((ICPPASTFunctionDeclarator)node).getParameters()[i];
-    		IASTName n = temp.getDeclarator().getName();
-    		if( n != name ) {
-    		    n.setBinding( binding );
-    		    ((CPPParameter)binding).addDeclaration( n );
+    		ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(definition);
+    		if (fdecl != null) {
+    			temp = fdecl.getParameters()[i];
+    			IASTName n = temp.getDeclarator().getName();
+    			if( n != name ) {
+    				n.setBinding( binding );
+    				((CPPParameter)binding).addDeclaration( n );
+    			}
     		}
     	}
     	if( declarations != null ){
     		for( int j = 0; j < declarations.length && declarations[j] != null; j++ ){
-    			temp = ((ICPPASTFunctionDeclarator)declarations[j].getParent()).getParameters()[i];
-        		IASTName n = temp.getDeclarator().getName();
-        		if( n != name ) {
-        		    n.setBinding( binding );
-        		    ((CPPParameter)binding).addDeclaration( n );
+        		ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(declarations[j]);
+        		if (fdecl != null) {
+        			temp = fdecl.getParameters()[i];
+        			IASTName n = temp.getDeclarator().getName();
+        			if( n != name ) {
+        				n.setBinding( binding );
+        				((CPPParameter)binding).addDeclaration( n );
+        			}
         		}
-
     		}
     	}
     	return binding;	
@@ -364,18 +363,32 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
      * @see org.eclipse.cdt.core.dom.ast.IFunction#takesVarArgs()
      */
     public boolean takesVarArgs() {
-        IASTName name = (IASTName) getDefinition();
-        if( name != null ){
-            ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) name.getParent();
-            return dtor.takesVarArgs();
-        }
-        IASTName [] ns = (IASTName[]) getDeclarations();
-        if( ns != null && ns.length > 0 ){
-            ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) ns[0].getParent();
-            return dtor.takesVarArgs();
-        }
+    	ICPPASTFunctionDeclarator fdecl= getDeclaratorByName(getDefinition());
+    	if (fdecl == null) {
+    		IASTName [] ns = (IASTName[]) getDeclarations();
+    		if( ns != null && ns.length > 0 ){
+    			for (int i = 0; i < ns.length && fdecl==null; i++) {
+					IASTName name = ns[i];
+					fdecl= getDeclaratorByName(name);
+				}
+    		}
+    	}
+    	if (fdecl != null) {
+    		return fdecl.takesVarArgs();
+    	}
         return false;
     }
+
+	private ICPPASTFunctionDeclarator getDeclaratorByName(IASTNode node) {
+		// skip qualified names and nested declarators.
+    	while (node != null) {
+    		node= node.getParent();	
+    		if (node instanceof ICPPASTFunctionDeclarator) {
+    			return ((ICPPASTFunctionDeclarator) node);
+    		}
+        }
+    	return null;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)

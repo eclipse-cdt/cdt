@@ -2002,7 +2002,7 @@ public class SystemView extends SafeTreeViewer
 				// We also want to re-select any remote objects currently selected. They lose their selection as their
 				//  memory address changes.
 				Item parentElementItem = null;
-				Vector selectedRemoteObjects = new Vector();
+				List selectedRemoteObjects = new Vector();
 				items = getTree().getSelection();
 				int itemIdx = 0;
 				//System.out.println("Inside EVENT_REFRESH_SELECTED. FIRST SELECTED OBJECT = " + items[0].handle);
@@ -2016,7 +2016,7 @@ public class SystemView extends SafeTreeViewer
 						if ((parentItem != null) && (parentItem instanceof Item)) parentElementItem = (Item) parentItem; //.getData();
 					}
 					if (getViewAdapter(element) != null) {
-						selectedRemoteObjects.addElement(element);
+						selectedRemoteObjects.add(element);
 						if (ss == null) ss = getViewAdapter(element).getSubSystem(element);
 					}
 					itemIdx++;
@@ -2060,7 +2060,7 @@ public class SystemView extends SafeTreeViewer
 				// We also want to re-select any remote objects currently selected. They lose their selection as their
 				//  memory address changes.
 				Item parentElemItem = null;
-				Vector selRemoteObjects = new Vector();
+				List selRemoteObjects = new Vector();
 				if (j.hasNext()) {
 					Object element = j.next();
 					ISystemViewElementAdapter adapter = _originatingViewer.getViewAdapter(element);
@@ -2076,7 +2076,7 @@ public class SystemView extends SafeTreeViewer
 						}
 					}
 					if (getViewAdapter(element) != null) {
-						selRemoteObjects.addElement(element);
+						selRemoteObjects.add(element);
 						ss = getViewAdapter(element).getSubSystem(element);
 					}
 				}
@@ -2289,7 +2289,7 @@ public class SystemView extends SafeTreeViewer
 
 		ISubSystem ss = getSubSystem(event, remoteResource, remoteResourceParent);
 
-		Vector filterMatches = null;
+		List filterMatches = null;
 
 		switch (eventType) {
 		// --------------------------
@@ -2303,7 +2303,7 @@ public class SystemView extends SafeTreeViewer
 		// --------------------------
 		case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_CREATED:
 			// we can easily lose our original selection so we need save and restore it if needed
-			Vector prevSelection = null;
+			List prevSelection = null;
 			TreeItem parentSelectionItem = null;
 			if (originatedHere) {
 				prevSelection = getRemoteSelection();
@@ -2317,7 +2317,7 @@ public class SystemView extends SafeTreeViewer
 			ArrayList selectedFilters = null;
 			if (filterMatches != null) {
 				for (int idx = 0; idx < filterMatches.size(); idx++) {
-					FilterMatch match = (FilterMatch) filterMatches.elementAt(idx);
+					FilterMatch match = (FilterMatch) filterMatches.get(idx);
 					TreeItem filterItem = match.getTreeItem();
 					if (isTreeItemSelected(filterItem)) // if this filter is currently selected, we will lose that selection!
 					{
@@ -2378,7 +2378,7 @@ public class SystemView extends SafeTreeViewer
 			filterMatches = findAllRemoteItemFilterReferences(remoteResourceName, ss, null);
 			if (filterMatches != null) {
 				for (int idx = 0; idx < filterMatches.size(); idx++) {
-					FilterMatch match = (FilterMatch) filterMatches.elementAt(idx);
+					FilterMatch match = (FilterMatch) filterMatches.get(idx);
 					TreeItem filterItem = match.getTreeItem();
 					if (match.listsElement()) {
 						// if the filter is expanded, we are ok. If not, we need to flush its memory...
@@ -2416,7 +2416,7 @@ public class SystemView extends SafeTreeViewer
 			filterMatches = findAllRemoteItemFilterReferences(event.getOldName(), ss, null);
 			if (filterMatches != null) {
 				for (int idx = 0; idx < filterMatches.size(); idx++) {
-					FilterMatch match = (FilterMatch) filterMatches.elementAt(idx);
+					FilterMatch match = (FilterMatch) filterMatches.get(idx);
 					TreeItem filterItem = match.getTreeItem();
 					if (match.listsElementContents()) // this filter lists the contents of the renamed container element, so refresh it:
 					{
@@ -2433,7 +2433,7 @@ public class SystemView extends SafeTreeViewer
 			filterMatches = findAllRemoteItemFilterReferences(remoteResourceName, ss, null);
 			if (filterMatches != null) {
 				for (int idx = 0; idx < filterMatches.size(); idx++) {
-					FilterMatch match = (FilterMatch) filterMatches.elementAt(idx);
+					FilterMatch match = (FilterMatch) filterMatches.get(idx);
 					TreeItem filterItem = match.getTreeItem();
 					if (match.listsElementContents()) // this filter lists the contents of the renamed container element, so refresh it:
 					{
@@ -2459,8 +2459,8 @@ public class SystemView extends SafeTreeViewer
 	/**
 	 * Turn selection into an array of remote object names
 	 */
-	protected Vector getRemoteSelection() {
-		Vector prevSelection = null;
+	protected List getRemoteSelection() {
+		List prevSelection = null;
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator i = selection.iterator();
 		while (i.hasNext()) {
@@ -2468,7 +2468,7 @@ public class SystemView extends SafeTreeViewer
 			ISystemViewElementAdapter ra = getViewAdapter(element);
 			if (ra != null) {
 				if (prevSelection == null) prevSelection = new Vector();
-				prevSelection.addElement(ra.getAbsoluteName(element));
+				prevSelection.add(ra.getAbsoluteName(element));
 			}
 		}
 		return prevSelection;
@@ -2497,18 +2497,18 @@ public class SystemView extends SafeTreeViewer
 		if (event.getSubSystem() != null) return event.getSubSystem();
 		ISubSystem ss = null;
 		if ((remoteResource != null) && !(remoteResource instanceof String)) {
-			if (remoteResource instanceof Vector) {
-				Vector v = (Vector) remoteResource;
-				if (v.size() > 0) ss = getSubSystem(event, v.elementAt(0), null);
+			if (remoteResource instanceof List) {
+				List v = (List) remoteResource;
+				if (v.size() > 0) ss = getSubSystem(event, v.get(0), null);
 			} else {
 				ISystemViewElementAdapter ra = getViewAdapter(remoteResource);
 				if (ra != null) ss = ra.getSubSystem(remoteResource);
 			}
 		}
 		if ((ss == null) && (remoteParent != null) && !(remoteParent instanceof String)) {
-			if (remoteParent instanceof Vector) {
-				Vector v = (Vector) remoteParent;
-				if (v.size() > 0) ss = getSubSystem(event, null, v.elementAt(0));
+			if (remoteParent instanceof List) {
+				List v = (List) remoteParent;
+				if (v.size() > 0) ss = getSubSystem(event, null, v.get(0));
 			} else {
 				ISystemViewElementAdapter ra = getViewAdapter(remoteParent);
 				if (ra != null) ss = ra.getSubSystem(remoteParent);
@@ -2652,7 +2652,7 @@ public class SystemView extends SafeTreeViewer
 	 * Delete all occurrences of a given remote object
 	 */
 	protected void deleteRemoteObject(Object deleteObject, ISubSystem subsystem) {
-		Vector matches = null;
+		List matches = null;
 		String oldElementName = null;
 
 		// STEP 1: get the object's remote adapter and subsystem
@@ -2677,7 +2677,7 @@ public class SystemView extends SafeTreeViewer
 		boolean dupes = false;
 		Object prevData = null;
 		for (int idx = 0; !dupes && (idx < matches.size()); idx++) {
-			Item match = (Item) matches.elementAt(idx);
+			Item match = (Item) matches.get(idx);
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				if (match.getData() == prevData)
 					dupes = true;
@@ -2690,12 +2690,12 @@ public class SystemView extends SafeTreeViewer
 		List toRemove = new ArrayList();
 		// STEP 3: process all references to the object
 		for (int idx = 0; idx < matches.size(); idx++) {
-			Item match = (Item) matches.elementAt(idx);
+			Item match = (Item) matches.get(idx);
 			//System.out.println("...match " + idx + ": TreeItem? " + (match instanceof TreeItem) + ", disposed? " + ((TreeItem)match).isDisposed());
 			// a reference to this remote object
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				((TreeItem) match).getParentItem(); // DWD may not be necessary
-				Object data = match.getData();
+				//Object data = match.getData();
 				if (!wasSelected) {
 					//wasSelected = isSelectedOrChildSelected(data);
 					wasSelected = isTreeItemSelectedOrChildSelected(match);
@@ -2758,7 +2758,7 @@ public class SystemView extends SafeTreeViewer
 		 }
 		 */
 
-		Vector matches = null;
+		List matches = null;
 
 		// STEP 1: get the object's remote adapter and subsystem
 		String newElementName = null;
@@ -2782,7 +2782,7 @@ public class SystemView extends SafeTreeViewer
 		boolean refresh = false;
 		// STEP 3: process all references to the old name object
 		for (int idx = 0; idx < matches.size(); idx++) {
-			Item match = (Item) matches.elementAt(idx);
+			Item match = (Item) matches.get(idx);
 			// a reference to this remote object
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) 
 			{
@@ -2831,7 +2831,7 @@ public class SystemView extends SafeTreeViewer
 	 * Update properties of remote object. Update all references to this object
 	 */
 	protected void updateRemoteObjectProperties(Object remoteObject) {
-		Vector matches = new Vector();
+		List matches = new Vector();
 
 		// STEP 1: get the object's remote adapter and subsystem
 		ISystemRemoteElementAdapter	rmtAdapter = (ISystemRemoteElementAdapter)((IAdaptable)remoteObject).getAdapter(ISystemRemoteElementAdapter.class);
@@ -2845,7 +2845,7 @@ public class SystemView extends SafeTreeViewer
 		// STEP 3: process all references to the object
 		String[] allProps = { IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE };
 		for (int idx = 0; idx < matches.size(); idx++) {
-			Item match = (Item) matches.elementAt(idx);
+			Item match = (Item) matches.get(idx);
 			// a reference to this remote object
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				Object data = match.getData();
@@ -2894,7 +2894,7 @@ public class SystemView extends SafeTreeViewer
 		} else
 			oldElementName = (String) remoteObject;
 
-		Vector matches = new Vector();
+		List matches = new Vector();
 		// STEP 2: find all references to the object
 		findAllRemoteItemReferences(oldElementName, remoteObject, subsystem, matches);
 		if (remoteObject instanceof String) {
@@ -2917,7 +2917,7 @@ public class SystemView extends SafeTreeViewer
 		// STEP 3: process all references to the object
 		boolean firstSelection = true;
 		for (int idx = 0; idx < matches.size(); idx++) {
-			Widget match = (Widget) matches.elementAt(idx);
+			Widget match = (Widget) matches.get(idx);
 			// a reference to this remote object
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				Object data = match.getData();
@@ -2979,9 +2979,9 @@ public class SystemView extends SafeTreeViewer
 	 * Given the result TreeItems of findAllRemoteItemReferences,
 	 * return the Data of the first Item.
 	 */
-	protected Object getFirstRemoteObject(Vector matches) {
+	protected Object getFirstRemoteObject(List matches) {
 		if ((matches == null) || (matches.size() == 0)) return null;
-		Object firstRemote = matches.elementAt(0);
+		Object firstRemote = matches.get(0);
 		if (firstRemote != null) firstRemote = ((Item) firstRemote).getData();
 		return firstRemote;
 	}
@@ -3189,7 +3189,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Select a remote object or objects given the parent remote object (can be null) and subsystem (can be null)
-	 * @param src - either a remote object, a remote object absolute name, or a vector of remote objects or remote object absolute names
+	 * @param src - either a remote object, a remote object absolute name, or a List of remote objects or remote object absolute names
 	 * @param subsystem - the subsystem that owns the remote objects, to optimize searches.
 	 * @param parentObject - the parent that owns the remote objects, to optimize searches.
 	 * @return true if found and selected
@@ -3226,7 +3226,7 @@ public class SystemView extends SafeTreeViewer
 	/**
 	 * Select a remote object or objects given the parent remote object (can be null) and subsystem (can be null) and parent TreeItem to 
 	 *  start the search at (can be null)
-	 * @param src - either a remote object, a remote object absolute name, or a vector of remote objects or remote object absolute names
+	 * @param src - either a remote object, a remote object absolute name, or a List of remote objects or remote object absolute names
 	 * @param subsystem - the subsystem that owns the remote objects, to optimize searches.
 	 * @param parentItem - the parent at which to start the search to find the remote objects. Else, starts at the roots.
 	 * @return true if found and selected
@@ -3244,14 +3244,14 @@ public class SystemView extends SafeTreeViewer
 			setExpandedState(parentItem.getData(), true);
 
 		//System.out.println("SELECT_REMOTE: PARENT = " + parent + ", PARENTITEM = " + parentItem);
-		if (src instanceof Vector) {
+		if (src instanceof List) {
 			//String elementName = null;
-			Vector selVector = (Vector) src;
+			List setList = (List)src;
 			ArrayList selItems = new ArrayList();
-			// our goal here is to turn the vector of names or remote objects into a collection of
+			// our goal here is to turn the List of names or remote objects into a collection of
 			// actual TreeItems we matched them on...
-			for (int idx = 0; idx < selVector.size(); idx++) {
-				Object o = selVector.elementAt(idx);
+			for (int idx = 0; idx < setList.size(); idx++) {
+				Object o = setList.get(idx);
 				//elementName = null;
 				if (o instanceof String)
 					selItem = findFirstRemoteItemReference((String) o, subsystem, parentItem);
@@ -3294,7 +3294,7 @@ public class SystemView extends SafeTreeViewer
 		IStructuredSelection selected = (IStructuredSelection) getSelection();
 		Iterator i = selected.iterator();
 		Object parentElement = null;
-		Vector selectedRemoteObjects = new Vector();
+		List selectedRemoteObjects = new Vector();
 		Widget parentItem = null;
 		ISubSystem ss = null;
 		while (i.hasNext()) {
@@ -3304,7 +3304,7 @@ public class SystemView extends SafeTreeViewer
 				if ((parentItem != null) && (parentItem instanceof Item)) parentElement = ((Item) parentItem).getData();
 			}
 			if (getViewAdapter(element) != null) {
-				selectedRemoteObjects.addElement(element);
+				selectedRemoteObjects.add(element);
 				if (ss == null) ss = getViewAdapter(element).getSubSystem(element);
 			}
 		}
@@ -3464,7 +3464,7 @@ public class SystemView extends SafeTreeViewer
 				String searchString = adapter.getAbsoluteName(element);
 				ISubSystem subSystem = adapter.getSubSystem(element);
 
-				Vector matches = new Vector();
+				List matches = new Vector();
 				findAllRemoteItemReferences(searchString, element, subSystem, matches);
 				
 				// DKM - taken out as per defect 174295
@@ -4069,7 +4069,7 @@ public class SystemView extends SafeTreeViewer
 	 * @return TreeItem hit if found
 	 */
 	public Item findFirstRemoteItemReference(String remoteObjectName, ISubSystem subsystem, Item parentItem) {
-		//Vector matches = new Vector();
+		//List matches = new Vector();
 		Item match = null;
 		if (parentItem == null)
 			//findAllRemoteItemReferences(remoteObjectName, null, subsystem, matches);
@@ -4098,7 +4098,7 @@ public class SystemView extends SafeTreeViewer
 		if (match != null)
 			return match;
 		
-		//Vector matches = new Vector();
+		//List matches = new Vector();
 		ISystemViewElementAdapter adapter = getViewAdapter(remoteObject);
 		if (adapter == null) return null;
 		
@@ -4129,9 +4129,12 @@ public class SystemView extends SafeTreeViewer
 	 *
 	 * @param element the remote object to which we want to find a tree item which references it. Can be a string or an object
 	 * @param elementObject the actual remote element to find, for binary matching, optionally for cases when element is a string
-	 * @param matches the vector to populate with hits
+	 * @param matches the List to populate with hits, or <code>null</code> to
+	 *    get a new List created and returned with the hits.
+	 * @return the List populated with hits, or <code>null</code> if <code>null</code>
+	 *    was passed in as the List to populate and no hits were found.
 	 */
-	protected Vector findAllRemoteItemReferences(Object element, Object elementObject, Vector matches) {
+	protected List findAllRemoteItemReferences(Object element, Object elementObject, List matches) {
 		String searchString = null;
 		ISubSystem subsystem = null;
 		if (element instanceof String)
@@ -4182,9 +4185,13 @@ public class SystemView extends SafeTreeViewer
 	 *    we want to find a tree item which references it.
 	 * @param elementObject the actual remote element to find, for binary matching
 	 * @param subsystem optional subsystem to search within
-	 * @param matches the vector to populate with hits (TreeItem objects)
+	 * @param matches the List to populate with hits (TreeItem objects), 
+	 *     or <code>null</code> to get a new List created and returned
+	 * @return the List populated with hits, or <code>null</code> if 
+	 *     <code>null</code> was passed as matches to populate and no matches
+	 *     were found.
 	 */
-	protected Vector findAllRemoteItemReferences(String searchString, Object elementObject, ISubSystem subsystem, Vector matches) {
+	protected List findAllRemoteItemReferences(String searchString, Object elementObject, ISubSystem subsystem, List matches) {
 		Tree tree = getTree();
 		Item[] roots = tree.getItems();
 		if (roots == null) return matches;
@@ -4212,7 +4219,7 @@ public class SystemView extends SafeTreeViewer
 	}
 	
 	
-	private boolean recursiveFindExactMatches(TreeItem root, Object elementObject, ISubSystem subsystem, Vector matches)
+	private boolean recursiveFindExactMatches(TreeItem root, Object elementObject, ISubSystem subsystem, List matches)
 	{
 		boolean foundSomething = false;
 		Object data = root.getData();
@@ -4276,7 +4283,7 @@ public class SystemView extends SafeTreeViewer
 		return (Item)findItem(elementObject);
 	}
 	
-	protected boolean mappedFindAllRemoteItemReferences(Object elementObject, Vector occurrences)
+	protected boolean mappedFindAllRemoteItemReferences(Object elementObject, List occurrences)
 	{				
 		Widget[] items = findItems(elementObject);
 		if (items.length > 0)
@@ -4297,9 +4304,10 @@ public class SystemView extends SafeTreeViewer
 	 * @param elementName the absolute name of the remote element to find
 	 * @param elementObject the actual remote element to find, for binary matching
 	 * @param subsystem optional subsystem to search within
-	 * @param occurrences the vector to populate with hits
+	 * @param occurrences the List to populate with hits. Must not be <code>null</code>
+	 * @return the given List populated with hits
 	 */
-	protected Vector recursiveFindAllRemoteItemReferences(Item parent, String elementName, Object elementObject, ISubSystem subsystem, Vector occurrences) {
+	protected List recursiveFindAllRemoteItemReferences(Item parent, String elementName, Object elementObject, ISubSystem subsystem, List occurrences) {
 		Object rawData = parent.getData();
 		ISystemViewElementAdapter remoteAdapter = null;
 		// ----------------------------
@@ -4312,7 +4320,7 @@ public class SystemView extends SafeTreeViewer
 		if (remoteAdapter != null) {
 			// first test for binary match
 			if (elementObject == rawData) {
-				occurrences.addElement(parent); // found a match!
+				occurrences.add(parent); // found a match!
 				if (debugRemote) System.out.println("Find All: Remote item binary match found"); //$NON-NLS-1$
 				return occurrences; // no point in checking the kids
 			}
@@ -4320,7 +4328,7 @@ public class SystemView extends SafeTreeViewer
 			String fqn = remoteAdapter.getAbsoluteName(rawData);
 			if (debugRemote) System.out.println("TESTING FINDALL: '" + fqn + "' vs '" + elementName + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if ((fqn != null) && fqn.equals(elementName)) {
-				occurrences.addElement(parent); // found a match!
+				occurrences.add(parent); // found a match!
 				if (debugRemote) System.out.println("...and remote item name match found"); //$NON-NLS-1$
 				return occurrences; // no point in checking the kids
 			}
@@ -4425,11 +4433,13 @@ public class SystemView extends SafeTreeViewer
 	 * 
 	 * @param elementName the absolute name of the remote object to which we want to find a filters which result in it.
 	 * @param subsystem The subsystem which owns the remote resource. Necessary to scope the search for impacted filters.
-	 * @param matches the vector to populate with hits. Can be null, in which case a new vector is created.
-	 * 
-	 * @return Vector of FilterMatch objects for each affected filter
+	 * @param matches the List to populate with hits. Can be <code>null</code>,
+	 *     in which case a new List is created and returned.
+	 * @return List of FilterMatch objects for each affected filter, or
+	 *     <code>null</code> if <code>null</code> was passed in as the List
+	 *     to populate and no matches were found.
 	 */
-	protected Vector findAllRemoteItemFilterReferences(String elementName, ISubSystem subsystem, Vector matches) {
+	protected List findAllRemoteItemFilterReferences(String elementName, ISubSystem subsystem, List matches) {
 		Tree tree = getTree();
 		Item[] roots = tree.getItems();
 		if (roots == null) return matches;
@@ -4449,11 +4459,12 @@ public class SystemView extends SafeTreeViewer
 	 * @param parent the parent item at which to start the search.
 	 * @param elementName the absolute name of the remote element that has been created, changed, deleted or renamed.
 	 * @param subsystem The subsystem which owns the remote resource. Necessary to scope the search for impacted filters.
-	 * @param occurrences the vector to populate with hits
+	 * @param occurrences the List to populate with hits. Must not be <code>null</code>.
 	 * 
-	 * @return Vector of FilterMatch objects for each affected filter
+	 * @return The given List of occurrences, populated with FilterMatch objects
+	 *     for each affected filter.
 	 */
-	protected Vector recursiveFindAllRemoteItemFilterReferences(Item parent, String elementName, ISubSystem subsystem, Vector occurrences) {
+	protected List recursiveFindAllRemoteItemFilterReferences(Item parent, String elementName, ISubSystem subsystem, List occurrences) {
 		Object rawData = parent.getData();
 
 		// ----------------------------
@@ -4473,13 +4484,13 @@ public class SystemView extends SafeTreeViewer
 			{
 				// #1
 				if (fss.doesFilterMatch(filterRef.getReferencedFilter(), elementName)) {
-					occurrences.addElement(new FilterMatch((TreeItem) parent, true)); // found a match!
+					occurrences.add(new FilterMatch((TreeItem) parent, true)); // found a match!
 					if (debugRemote) System.out.println("...Filter match found for " + elementName + ": " + filterRef.getReferencedFilter().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 					return occurrences; // no point in checking the kids
 				}
 				// #2
 				else if (fss.doesFilterListContentsOf(filterRef.getReferencedFilter(), elementName)) {
-					occurrences.addElement(new FilterMatch((TreeItem) parent, false)); // found a match!
+					occurrences.add(new FilterMatch((TreeItem) parent, false)); // found a match!
 					if (debugRemote) System.out.println("...Filter content match found for " + elementName + ": " + filterRef.getReferencedFilter().getName()); //$NON-NLS-1$ //$NON-NLS-2$
 					return occurrences; // no point in checking the kids
 				} else if (debugRemote) System.out.println("... no match on the filter for element name " + elementName); //$NON-NLS-1$
@@ -4530,7 +4541,7 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Inner class to ensapsulate what is put in the vector for the recursiveFindAllRemoteItemFilterReferences() method.
+	 * Inner class to encapsulate what is put in the List for the recursiveFindAllRemoteItemFilterReferences() method.
 	 */
 	protected class FilterMatch {
 		protected boolean filterListsElement;
@@ -4817,7 +4828,7 @@ public class SystemView extends SafeTreeViewer
 		ISystemViewElementAdapter adapter = null;
 		boolean ok = true;
 		boolean anyOk = false;
-		Vector deletedVector = new Vector();
+		List deletedVector = new Vector();
 		
 		// keep track of the current set
 		SystemRemoteElementResourceSet set = null;
@@ -4831,7 +4842,7 @@ public class SystemView extends SafeTreeViewer
 				ok = adapter.doDelete(getShell(), element, monitor);
 				if (ok) {
 					anyOk = true;
-					deletedVector.addElement(element);
+					deletedVector.add(element);
 				}
 			}
 			// now we have things divided into sets
@@ -4874,7 +4885,7 @@ public class SystemView extends SafeTreeViewer
 						
 						Iterator iter = list.iterator();
 						
-						Vector refreshedList = new Vector();
+						List refreshedList = new Vector();
 						
 						while (iter.hasNext()) {
 							Object obj = iter.next();
@@ -4900,7 +4911,7 @@ public class SystemView extends SafeTreeViewer
 			else {
 				Object[] deleted = new Object[deletedVector.size()];
 				for (int idx = 0; idx < deleted.length; idx++)
-					deleted[idx] = deletedVector.elementAt(idx);
+					deleted[idx] = deletedVector.get(idx);
 				sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(deleted, ISystemResourceChangeEvents.EVENT_DELETE_MANY, getSelectedParent()));
 			}
 		}
@@ -5270,36 +5281,40 @@ public class SystemView extends SafeTreeViewer
 	/**
 	 * This returns an array containing each element in the tree, up to but not including the root.
 	 * The array is in reverse order, starting at the leaf and going up.
-	 * This flavour is optimized for the case when you have the tree item directly.
+	 * This flavor is optimized for the case when you have the tree item directly.
+	 * @return Array of Objects leading to the given TreeItem,
+	 *    sorted from the leaf item up. 
 	 */
 	public Object[] getElementNodes(TreeItem item) {
-		Vector v = new Vector();
-		v.addElement(item.getData());
+		List v = new Vector();
+		v.add(item.getData());
 		while (item != null) {
 			item = item.getParentItem();
-			if (item != null) v.addElement(item.getData());
+			if (item != null) v.add(item.getData());
 		}
 		Object[] nodes = new Object[v.size()];
 		for (int idx = 0; idx < nodes.length; idx++)
-			nodes[idx] = v.elementAt(idx);
+			nodes[idx] = v.get(idx);
 		return nodes;
 	}
 
 	/**
 	 * This returns an array containing each element in the tree, up to but not including the root.
 	 * The array is in reverse order, starting at the leaf and going up.
-	 * This flavour returns a vector of TreeItem objects versus element objects.
+	 * This flavor returns an array of TreeItem objects versus element objects.
+	 * @return Array of TreeItem objects leading to the given TreeItem,
+	 *    sorted from the leaf item up. 
 	 */
 	public TreeItem[] getItemNodes(TreeItem item) {
-		Vector v = new Vector();
-		v.addElement(item);
+		List v = new Vector();
+		v.add(item);
 		while (item != null) {
 			item = item.getParentItem();
-			if (item != null) v.addElement(item);
+			if (item != null) v.add(item);
 		}
 		TreeItem[] nodes = new TreeItem[v.size()];
 		for (int idx = 0; idx < nodes.length; idx++)
-			nodes[idx] = (TreeItem) v.elementAt(idx);
+			nodes[idx] = (TreeItem) v.get(idx);
 		return nodes;
 	}
 
@@ -5671,8 +5686,8 @@ public class SystemView extends SafeTreeViewer
 			parentElementOrTreePath = context.getModelObject();
 		}
 
-		Vector matches = new Vector();
-		matches = findAllRemoteItemReferences(parentElementOrTreePath, parentElementOrTreePath, matches);
+		List matches = new Vector();
+		findAllRemoteItemReferences(parentElementOrTreePath, parentElementOrTreePath, matches);
 
 		// get rid of references to items for different connection
 		if (parentElementOrTreePath instanceof IAdaptable)
@@ -5958,7 +5973,7 @@ public class SystemView extends SafeTreeViewer
 	
 	public void update(Object element, String[] properties) {
 		Assert.isNotNull(element);
-		Vector matches = new Vector();
+		List matches = new Vector();
 		findAllRemoteItemReferences(element, element, matches);
 
 		for (int i = 0; i < matches.size(); i++) {

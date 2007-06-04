@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Rupen Mardirossian	(IBM) - [187530] Commented out line 192, in order to stop logging of SystemMessageException
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
@@ -188,7 +189,7 @@ public class SystemNewFileWizard
 	           mainPage.setMessage(msg);	                                                
 	           ok = false;
             } catch (SystemMessageException e) {
-            	SystemBasePlugin.logError(CLASSNAME+ ":", e); //$NON-NLS-1$
+            	//SystemBasePlugin.logError(CLASSNAME+ ":", e); //$NON-NLS-1$
             	mainPage.setMessage(e.getSystemMessage());
             	ok = false;
             }

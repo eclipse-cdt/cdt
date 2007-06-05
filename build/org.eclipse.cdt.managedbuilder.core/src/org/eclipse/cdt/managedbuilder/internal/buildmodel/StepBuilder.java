@@ -14,9 +14,12 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -188,6 +191,14 @@ public class StepBuilder implements IBuildModelBuilder {
 	}
 	
 	protected void createOutDirs(IProgressMonitor monitor){
+		IBuildDescription des = fStep.getBuildDescription();
+		if(des != null && des.getInputStep() == fStep){
+			IPath path = des.getDefaultBuildDirFullPath();
+			if(path != null){
+				fDirs.createIfProjectDir(path, monitor);
+			}
+		}
+
 		IBuildResource rcs[] = fStep.getOutputResources();
 		
 		for(int i = 0; i < rcs.length; i++){

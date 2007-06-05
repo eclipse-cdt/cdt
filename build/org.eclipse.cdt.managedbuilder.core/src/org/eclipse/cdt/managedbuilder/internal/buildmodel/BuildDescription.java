@@ -2106,7 +2106,11 @@ public class BuildDescription implements IBuildDescription {
 	public IPath getDefaultBuildDirLocation() {
 		return getTopBuildDirLocation();
 	}
-	
+
+	public IPath getDefaultBuildDirFullPath() {
+		return getTopBuildDirFullPath();
+	}
+
 	protected void resourceAddedToType(BuildIOType type, BuildResource rc){
 		if(!type.isInput()){
 			String var = type.getLinkId();

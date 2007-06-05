@@ -367,13 +367,16 @@
 			<param name="tagmodule" value="org.eclipse.cdt/upc/org.eclipse.cdt.core.parser.upc.feature"/>
 		</antcall>
 		<antcall target="tagone">
-		<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.ui"/>
+			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.ui"/>
 		</antcall>
 		<antcall target="tagone">
-		<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.errorparsers.xlc"/>
+			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.errorparsers.xlc"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/releng/org.eclipse.cdt.master"/>
 		</antcall>
 	</target>
 </project>

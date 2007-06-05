@@ -91,30 +91,9 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	public ISubSystemConfiguration[] getSubSystemConfigurations();
 
 	/**
-	 * Return the parent subsystem configuration given a subsystem object.
-	 * @deprecated use subsystem.getSubSystemConfiguration()
-	 */
-	public ISubSystemConfiguration getSubSystemConfiguration(ISubSystem subsystem);
-
-	/**
 	 * Return the subsystem configuration, given its plugin.xml-declared id.
 	 */
 	public ISubSystemConfiguration getSubSystemConfiguration(String id);
-
-	/**
-	 * Return all subsystem factories which have declared themselves part of the given category.
-	 * <p>
-	 * This looks for a match on the "category" of the subsystem factory's xml declaration
-	 * in its plugin.xml file. Thus, it is efficient as it need not bring to life a 
-	 * subsystem factory just to test its parent class type.
-	 * 
-	 * @deprecated use {@link #getSubSystemConfigurationProxiesByCategory(String)}
-	 *    and instantiate only those subsystem configurations from the proxy
-	 *    that are really needed.
-	 * 
-	 * @see ISubSystemConfigurationCategories
-	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsByCategory(String factoryCategory);
 
 	/**
 	 * Return all subsystem factories which support the given system type.
@@ -186,26 +165,6 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 * @see ISystemProfileManager#getActiveSystemProfiles()
 	 */
 	public ISystemProfile[] getActiveSystemProfiles();
-
-	/**
-	 * Return the profile names currently selected by the user as his "active" profiles
-	 * @deprecated use getSystemProfileManager().getActiveSystemProfiles() 
-	 *     and get the names out of the returned array 
-	 */
-	public String[] getActiveSystemProfileNames();
-
-	/**
-	 * Return all defined profiles
-	 * @deprecated use getSystemProfileManager().getSystemProfiles()
-	 */
-	public ISystemProfile[] getAllSystemProfiles();
-
-	/**
-	 * Return all defined profile names
-	 * @deprecated use getSystemProfileManager().getSystemProfiles()
-	 *     and get the names out of the returned array 
-	 */
-	public String[] getAllSystemProfileNames();
 
 	/**
 	 * Get a SystemProfile given its name
@@ -305,19 +264,6 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	public ISubSystem[] getServiceSubSystems(IHost connection, Class serviceType);
 
 	/**
-	 * Resolve a subsystem from it's profile, connection and subsystem name.
-	 * 
-	 * @deprecated use other search methods in ISystemRegistry
-	 * 
-	 * @param srcProfileName the name of the profile
-	 * @param srcConnectionName the name of the connection
-	 * @param subsystemConfigurationId the id of the subsystem
-	 * 
-	 * @return the subsystem
-	 */
-	public ISubSystem getSubSystem(String srcProfileName, String srcConnectionName, String subsystemConfigurationId);
-
-	/**
 	 * Resolve a subsystem from it's absolute name
 	 * 
 	 * @param absoluteSubSystemName the name of the subsystem
@@ -339,25 +285,6 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 * @return the absolute name of the host
 	 */
 	public String getAbsoluteNameForConnection(IHost connection);
-
-	/**
-	 * Get a list of subsystem objects owned by the subsystem configuration
-	 * identified by its given plugin.xml-described id.
-	 * <p>
-	 * This is a list that of all subsystems for all connections owned by the factory.
-	 * Array is never null, but may be of length 0.
-	 * </p>
-	 * @deprecated use {@link #getSubSystemConfiguration(String).getSubSystems(true)
-	 */
-	public ISubSystem[] getSubSystems(String factoryId);
-
-	/**
-	 * Get a list of subsystem objects for given connection, owned by the subsystem 
-	 * configuration identified by its given plugin.xml-described id.
-	 * Array will never be null but may be length zero.
-	 * @deprecated use {@link #getSubSystemConfiguration(String).getSubSystems(connection, true)
-	 */
-	public ISubSystem[] getSubSystems(String factoryId, IHost connection);
 
 	/**
 	 * Get a list of subsystem objects for given connection, owned by a subsystem factory 
@@ -404,27 +331,11 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	public IHost[] getHostsByProfile(ISystemProfile profile);
 
 	/**
-	 * Return all connections in a given profile name.
-	 * @deprecated use {@link #getSystemProfile(String)} and
-	 *     {@link #getHostsByProfile(ISystemProfile)}
-	 */
-	public IHost[] getHostsByProfile(String profileName);
-
-	/**
 	 * Return all connections for which there exists one or more
 	 * subsystems owned by a given subsystem configuration.
 	 * @see #getSubSystemConfiguration(String)
 	 */
 	public IHost[] getHostsBySubSystemConfiguration(ISubSystemConfiguration config);
-
-	/**
-	 * Return all connections for which there exists one or more
-	 * subsystems owned  by a given subsystem configuration,
-	 * identified by configuration Id.
-	 * @deprecated use {@link #getSubSystemConfiguration(String)} and
-	 *     {@link #getHostsBySubSystemConfiguration(ISubSystemConfiguration)}
-	 */
-	public IHost[] getHostsBySubSystemConfigurationId(String configId);
 
 	/**
 	 * Return all connections for which there exists one or more
@@ -477,13 +388,6 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	public int getHostCount(ISystemProfile profile);
 
 	/**
-	 * Return the number of SystemConnection objects within the given profile.
-	 * @deprecated use {@link #getSystemProfile(String)} with
-	 *     {@link #getHostCount(ISystemProfile)}
-	 */
-	public int getHostCount(String profileName);
-
-	/**
 	 * Return the number of SystemConnection objects within the given 
 	 * connection's owning profile.
 	 */
@@ -494,13 +398,6 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
 	 * profiles.
 	 */
 	public int getHostCount();
-
-	/**
-	 * Return a vector of previously-used connection names in the given named profile.
-	 * @return Vector of String objects.
-	 * @deprecated use {@link #getHostAliasNames(ISystemProfile)}
-	 */
-	public Vector getHostAliasNames(String profileName);
 
 	/**
 	 * Return a vector of previously-used connection names in the given profile.

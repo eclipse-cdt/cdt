@@ -282,14 +282,6 @@ public class SystemRegistry implements ISystemRegistry
 	}
 
 	/**
-	 * Return the parent subsystem configuration given a subsystem object.
-	 */
-	public ISubSystemConfiguration getSubSystemConfiguration(ISubSystem subsystem)
-	{
-		return subsystem.getSubSystemConfiguration();
-	}
-
-	/**
 	 * Return the subsystem configuration, given its plugin.xml-declared id.
 	 */
 	public ISubSystemConfiguration getSubSystemConfiguration(String id)
@@ -305,38 +297,6 @@ public class SystemRegistry implements ISystemRegistry
 	}
 
 
-
-	/**
-	 * Return all subsystem factories which have declared themselves part of the given category.
-	 * <p>
-	 * This looks for a match on the "category" of the subsystem factory's xml declaration
-	 *  in its plugin.xml file. Thus, it is effecient as it need not bring to life a 
-	 *  subsystem factory just to test its parent class type.
-	 * 
-	 * @see ISubSystemConfigurationCategories
-	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsByCategory(String factoryCategory)
-	{
-		Vector v = new Vector();
-		if (subsystemConfigurationProxies != null)
-		{
-			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
-			{
-				if (subsystemConfigurationProxies[idx].getCategory().equals(factoryCategory))
-				{
-					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
-					if (factory != null)
-						v.addElement(factory);
-				}
-			}
-		}
-		ISubSystemConfiguration[] factories = new ISubSystemConfiguration[v.size()];
-		for (int idx = 0; idx < v.size(); idx++)
-		{
-			factories[idx] = (ISubSystemConfiguration) v.elementAt(idx);
-		}
-		return factories;
-	}
 
 	/**
 	 * Return all subsystem factories which support the given system type.
@@ -497,27 +457,6 @@ public class SystemRegistry implements ISystemRegistry
 	public ISystemProfile[] getActiveSystemProfiles()
 	{
 		return getSystemProfileManager().getActiveSystemProfiles();
-	}
-	/**
-	 * Return the profile names currently selected by the user as his "active" profiles
-	 */
-	public String[] getActiveSystemProfileNames()
-	{
-		return getSystemProfileManager().getActiveSystemProfileNames();
-	}
-	/**
-	 * Return all defined profiles
-	 */
-	public ISystemProfile[] getAllSystemProfiles()
-	{
-		return getSystemProfileManager().getSystemProfiles();
-	}
-	/**
-	 * Return all defined profile names
-	 */
-	public String[] getAllSystemProfileNames()
-	{
-		return getSystemProfileManager().getSystemProfileNames();
 	}
 
 	/**
@@ -918,15 +857,7 @@ public class SystemRegistry implements ISystemRegistry
 	{
 		return pool.getSystemProfile();
 	}
-	/**
-	 * Get a SystemProfile name given a connection pool
-	 */
-	private String getSystemProfileName(ISystemHostPool pool)
-	{
-		ISystemProfile profile = getSystemProfile(pool);
-		if (profile == null) return null; // MJB: Defect 45678
-		else return profile.getName();
-	}
+
 	public IConnectorService[] getConnectorServices(IHost conn)
 	{
 		List csList = new ArrayList();
@@ -1020,16 +951,6 @@ public class SystemRegistry implements ISystemRegistry
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystem(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public ISubSystem getSubSystem(String srcProfileName, String srcConnectionName, String subsystemConfigurationId)
-	{
-		ISystemProfile profile = getSystemProfile(srcProfileName);
-		return getSubSystem(profile, srcConnectionName, subsystemConfigurationId);
-	}
-
 	/**
 	 * Resolve a subsystem from it's profile, connection and subsystem name.
 	 * 
@@ -1081,11 +1002,9 @@ public class SystemRegistry implements ISystemRegistry
 		return null;
 	}
 
-	/**
-	 * Return the absolute name for the specified subsystem
-	 * 
-	 * @param subSystem The subsystem. Must be not <code>null</code>
-	 * @return the absolute name of the subsystem
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getAbsoluteNameForSubSystem(org.eclipse.rse.core.subsystems.ISubSystem)
 	 */
 	public String getAbsoluteNameForSubSystem(ISubSystem subSystem)
 	{
@@ -1103,11 +1022,9 @@ public class SystemRegistry implements ISystemRegistry
 		return dataStream.toString();
 	}
 
-	 /**
-	  * Return the absolute name for the specified connection
-	  * 
-	  * @param connection The connection. Must be not <code>null</code>.
-	  * @return the absolute name of the connection
+	 /*
+	  * (non-Javadoc)
+	  * @see org.eclipse.rse.core.model.ISystemRegistry#getAbsoluteNameForConnection(org.eclipse.rse.core.model.IHost)
 	  */
 	 public String getAbsoluteNameForConnection(IHost connection)
 	 {
@@ -1160,21 +1077,6 @@ public class SystemRegistry implements ISystemRegistry
 		return subsystems;
 	}
 
-	/**
-	 * Get a list of subsystem objects owned by the subsystem factory identified by 
-	 *  its given plugin.xml-described id. Array is never null, but may be of length 0.
-	 * <p>
-	 * This is a list that of all subsystems for all connections owned by the factory.
-	 */
-	public ISubSystem[] getSubSystems(String factoryId)
-	{
-		ISubSystemConfiguration factory = getSubSystemConfiguration(factoryId);
-		if (factory == null)
-			return (new ISubSystem[0]);
-		//return factory.getSubSystems();
-		return factory.getSubSystems(true); // true ==> force full restore from disk
-	}
-
 	public ISubSystem[] getSubsystems(IHost connection, Class subsystemInterface)
 	{
 		List matches = new ArrayList();
@@ -1208,26 +1110,10 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		return (ISubSystem[])matches.toArray(new ISubSystem[matches.size()]);
 	}
-	
-	/**
-	 * Get a list of subsystem objects for given connection, owned by the subsystem factory 
-	 * identified by its given plugin.xml-described id. Array will never be null but may be length zero.
-	 */
-	public ISubSystem[] getSubSystems(String configId, IHost connection)
-	{
-		ISubSystemConfiguration config = getSubSystemConfiguration(configId);
-		if (config == null)
-			return (new ISubSystem[0]);
-		return config.getSubSystems(connection, ISubSystemConfiguration.FORCE_INTO_MEMORY);
-	}
-	/**
-	 * Get a list of subsystem objects for given connection, owned by a subsystem factory 
-	 * that is of the given category. Array will never be null but may be length zero.
-	 * <p>
-	 * This looks for a match on the "category" of the subsystem factory's xml declaration
-	 *  in its plugin.xml file. 
-	 * 
-	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemsBySubSystemConfigurationCategory(java.lang.String, org.eclipse.rse.core.model.IHost)
 	 */
 	public ISubSystem[] getSubSystemsBySubSystemConfigurationCategory(String factoryCategory, IHost connection)
 	{
@@ -1246,14 +1132,9 @@ public class SystemRegistry implements ISystemRegistry
 		else
 			return (new ISubSystem[0]);
 	}
-
-
-	/**
-	 * @return all subsystem configurations. Be careful when you call this, as it activates all 
-	 * subsystem factories.
-	 */
-	// fixed Bugzilla Bug 160115 - added non-null guard for config
+	
 	public ISubSystemConfiguration[] getSubSystemConfigurations() {
+		// fixed Bugzilla Bug 160115 - added non-null guard for config
 		Vector v = new Vector();
 		ISubSystemConfigurationProxy[] proxies = getSubSystemConfigurationProxies();
 		if (proxies != null) {
@@ -1435,23 +1316,6 @@ public class SystemRegistry implements ISystemRegistry
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsByProfile(java.lang.String)
-	 */
-	public IHost[] getHostsByProfile(String profileName)
-	{
-		ISystemHostPool pool = getHostPool(profileName);
-		if (pool != null)
-		{
-			return pool.getHosts();
-		}
-		else
-		{
-			return null;
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfiguration(org.eclipse.rse.core.subsystems.ISubSystemConfiguration)
 	 */
 	public IHost[] getHostsBySubSystemConfiguration(ISubSystemConfiguration factory)
@@ -1474,15 +1338,6 @@ public class SystemRegistry implements ISystemRegistry
 			conns[idx] = (IHost) v.elementAt(idx);
 		}
 		return conns;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostsBySubSystemConfigurationId(java.lang.String)
-	 */
-	public IHost[] getHostsBySubSystemConfigurationId(String factoryId)
-	{
-		return getHostsBySubSystemConfiguration(getSubSystemConfiguration(factoryId));
 	}
 	
 	/*
@@ -1605,15 +1460,6 @@ public class SystemRegistry implements ISystemRegistry
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostCount(java.lang.String)
-	 */
-	public int getHostCount(String profileName)
-	{
-		return getHostPool(profileName).getHostCount();
-	}
-	
-	/*
-	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostCountWithinProfile(org.eclipse.rse.core.model.IHost)
 	 */
 	public int getHostCountWithinProfile(IHost conn)
@@ -1636,22 +1482,6 @@ public class SystemRegistry implements ISystemRegistry
 		return total;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostAliasNames(java.lang.String)
-	 */
-	public Vector getHostAliasNames(String profileName)
-	{
-		ISystemHostPool pool = getHostPool(profileName);
-		Vector names = new Vector();
-		IHost[] conns = pool.getHosts();
-		for (int idx = 0; idx < conns.length; idx++)
-		{
-			names.addElement(conns[idx].getAliasName());
-		}
-		return names;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.core.model.ISystemRegistry#getHostAliasNames(org.eclipse.rse.core.model.ISystemProfile)

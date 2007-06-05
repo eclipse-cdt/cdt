@@ -157,7 +157,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	//property for holding the resource change state
 	private static final String RC_CHANGE_STATE = "rcState";  //$NON-NLS-1$
 	//resource change state
-	private int resourceChangeState;
+	private int resourceChangeState = -1;
 
 	//Internal Builder state
 	//NOTE: these are temporary properties

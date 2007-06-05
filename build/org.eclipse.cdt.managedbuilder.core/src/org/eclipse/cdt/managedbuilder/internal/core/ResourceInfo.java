@@ -11,7 +11,6 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 
 public class EnvVarBuildPath implements
 		IEnvVarBuildPath {
-	private ITool tool;
 	
 	private int type;
 	private String variableNames[];
@@ -36,7 +35,6 @@ public class EnvVarBuildPath implements
 	 * @param element The element containing the information about the tool.
 	 */
 	public EnvVarBuildPath(ITool tool, IManagedConfigElement element) {
-		this.tool = tool;
 		loadFromManifest(element);
 	}
 	

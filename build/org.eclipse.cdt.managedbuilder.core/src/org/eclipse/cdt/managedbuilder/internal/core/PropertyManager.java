@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -316,8 +317,8 @@ public class PropertyManager {
 		setProperty(cfg, cfg, key, value);
 	}
 
-	public void setProperty(IResourceConfiguration rcCfg, String key, String value){
-		setProperty(rcCfg.getParent(), rcCfg, key, value);
+	public void setProperty(IResourceInfo rcInfo, String key, String value){
+		setProperty(rcInfo.getParent(), rcInfo, key, value);
 	}
 
 	public void setProperty(IToolChain tc, String key, String value){
@@ -339,8 +340,8 @@ public class PropertyManager {
 		return getProperty(cfg, cfg, key);
 	}
 
-	public String getProperty(IResourceConfiguration rcCfg, String key){
-		return getProperty(rcCfg.getParent(), rcCfg, key);
+	public String getProperty(IResourceInfo rcInfo, String key){
+		return getProperty(rcInfo.getParent(), rcInfo, key);
 	}
 
 	public String getProperty(IToolChain tc, String key){

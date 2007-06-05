@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -238,9 +237,9 @@ implements IExecutableExtension, IWizardWithMemory
 		final IProject newProjectHandle = root.getProject(name);
 		
 		if (!newProjectHandle.exists()) {
-			IWorkspaceDescription workspaceDesc = workspace.getDescription();
-			workspaceDesc.setAutoBuilding(false);
-			workspace.setDescription(workspaceDesc);
+//			IWorkspaceDescription workspaceDesc = workspace.getDescription();
+//			workspaceDesc.setAutoBuilding(false);
+//			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			if(location != null)
 				description.setLocation(location);

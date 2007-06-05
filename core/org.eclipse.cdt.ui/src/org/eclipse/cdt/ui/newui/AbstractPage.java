@@ -548,8 +548,10 @@ implements
 			displayedConfig = true;
 			if (excludeFromBuildCheck != null && resd != null)
 				excludeFromBuildCheck.setSelection(resd.isExcluded());
-			configSelector.select(cfgIndex);
-			handleConfigSelection();
+			if (configSelector != null) {
+				configSelector.select(cfgIndex == -1 ? 0 : cfgIndex);
+				handleConfigSelection();
+			}
 		}
 
 		if (itabs.size() < 1) return;

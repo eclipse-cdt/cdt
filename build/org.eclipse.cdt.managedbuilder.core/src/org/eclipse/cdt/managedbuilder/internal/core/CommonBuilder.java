@@ -999,6 +999,7 @@ public class CommonBuilder extends ACBuilder {
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			if(consoleOutStream != null){
 				StringBuffer buf = new StringBuffer();
 				String errorDesc = ManagedMakeMessages

@@ -240,6 +240,10 @@ public class DescriptionScannerInfoProvider implements IScannerInfoProvider, ICP
 				if(rc != null){
 					path = rc.getLocation(); 
 				}
+			} else if (!path.isAbsolute()) {
+				IPath projLocation = fProject != null ? fProject.getLocation() : null;
+				if(projLocation != null)
+					path = projLocation.append(path);
 			}
 			if(path != null)
 				values[num++] = path.toOSString();

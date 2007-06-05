@@ -33,6 +33,7 @@ public class SettingsSet {
 		private boolean fIsOverrideSupported;
 		private LinkedHashMap fEntries;
 		HashSet fOverrideSet;
+		private Object fContext;
 		
 		private SettingLevel(){
 			fEntries = new LinkedHashMap();
@@ -171,6 +172,14 @@ public class SettingsSet {
 			}
 			
 			return list;
+		}
+		
+		public Object getContext(){
+			return fContext;
+		}
+		
+		public void setContext(Object context){
+			fContext = context;
 		}
 	}
 	

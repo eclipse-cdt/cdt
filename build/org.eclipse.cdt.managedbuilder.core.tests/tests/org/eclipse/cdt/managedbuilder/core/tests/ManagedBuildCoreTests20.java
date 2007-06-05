@@ -45,7 +45,6 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
-import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
@@ -235,15 +234,15 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		 final String[] expectedPaths = new String[5];
 
 		 // This first path is a built-in, so it will not be manipulated by build manager
-		 expectedPaths[0] = (new Path("/usr/include")).toString();
-		 expectedPaths[1] = (new Path("/opt/gnome/include")).toString();
-		 IPath path = new Path("C:\\home\\tester/include");
+		 expectedPaths[0] = (new Path("\\usr\\include")).toOSString();
+		 expectedPaths[1] = (new Path("\\opt\\gnome\\include")).toOSString();
+		 IPath path = new Path("C:\\home\\tester\\include");
 		 if(path.isAbsolute()) // for win32 path is treated as absolute
-			 expectedPaths[2] = path.toString();
+			 expectedPaths[2] = path.toOSString();
 		 else // for Linux path is relative
-			 expectedPaths[2] = project.getLocation().append("Sub Config").append(path).toString();
-		 expectedPaths[3] = project.getLocation().append( "includes" ).toString();
-		 expectedPaths[4] = (new Path("/usr/gnu/include")).toString();
+			 expectedPaths[2] = project.getLocation().append("Sub Config").append(path).toOSString();
+		 expectedPaths[3] = project.getLocation().append( "includes" ).toOSString();
+		 expectedPaths[4] = (new Path("\\usr\\gnu\\include")).toOSString();
 		 
 		// Create a new managed project based on the sub project type
 		IProjectType projType = ManagedBuildManager.getExtensionProjectType("test.sub");
@@ -323,9 +322,6 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		assertTrue(currentSymbols.containsKey("BUILTIN"));
 		assertEquals((String)currentSymbols.get("BUILTIN"), "");
 		
-		//FIXME:
-		if(true)
-			return;
 		String[] currentPaths = currentSettings.getIncludePaths();
 		assertTrue(Arrays.equals(expectedPaths, currentPaths));
 

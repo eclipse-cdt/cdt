@@ -144,6 +144,13 @@ public class BuildStep implements IBuildStep {
 		
 		return rcs;
 	}
+	
+	public void removeResource(BuildIOType type, BuildResource rc, boolean rmTypeIfEmpty){
+		type.removeResource(rc);
+		if(rmTypeIfEmpty && type.getResources().length == 0){
+			removeIOType(type);
+		}
+	}
 
 	public BuildIOType createIOType(boolean input, boolean primary, /*String ext,*/ IBuildObject ioType) {
 		if(input){

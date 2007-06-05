@@ -76,8 +76,12 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		public String[] getStringListValue() throws CdtVariableException {
 //			if(!fIsDefined)
 //				throw new BuildMacroException(BuildMacroException.TYPE_MACROS_UNDEFINED,fName);
-			if(!fIsList && fStringListValue == null)
-				fStringListValue = new String[]{fStringValue};
+			if(!fIsList && fStringListValue == null){
+				if(fStringValue != null && fStringValue.length() != 0)
+					fStringListValue = new String[]{fStringValue};
+				else
+					fStringListValue = new String[0];
+			}
 			return fStringListValue;
 		}
 		

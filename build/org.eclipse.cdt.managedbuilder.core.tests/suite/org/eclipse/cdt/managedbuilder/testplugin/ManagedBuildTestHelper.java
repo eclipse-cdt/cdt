@@ -412,6 +412,74 @@ public class ManagedBuildTestHelper {
 		return true;
 	}
 
+	static public boolean compareBenchmarks(final IProject project, IPath testDir, String[] fileNames) {
+		return compareBenchmarks(project, testDir, new Path("benchmarks").append(testDir), fileNames);
+	}
+
+	static public boolean compareBenchmarks(final IProject project, IPath testDir, IPath benchmarkDir, String[] fileNames) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			}
+		};
+		try {
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			workspace.run(runnable, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
+		} catch (Exception e) {
+			Assert.fail("File " + fileNames[0] + " - project refresh failed.");
+		}
+		
+		IFolder testFolder = (IFolder)project.findMember(testDir);
+		IFolder bmFolder = (IFolder)project.findMember(benchmarkDir);
+		
+		return compareBenchmarks(testFolder, bmFolder, fileNames);
+	}
+	
+	static public boolean compareBenchmarks(IFolder testFolder, IFolder bmFolder, String[] fileNames) {
+		Assert.assertNotNull(testFolder);
+		Assert.assertNotNull(bmFolder);
+		
+		for (int i=0; i<fileNames.length; i++) {
+			IFile tFile = testFolder.getFile(fileNames[i]);
+			IFile bmFile = bmFolder.getFile(fileNames[i]);
+			if(!tFile.exists() && !bmFile.exists())
+				continue;
+			
+			compareBenchmarks(tFile, bmFile);
+		}
+		
+		return true;
+	}
+	
+	static public boolean compareBenchmarks(IFile tFile, IFile bmFile) {
+		StringBuffer testBuffer = readContentsStripLineEnds(tFile);
+		StringBuffer benchmarkBuffer = readContentsStripLineEnds(bmFile);
+		if (!testBuffer.toString().equals(benchmarkBuffer.toString())) {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("File ").append(tFile.getName()).append(" does not match its benchmark.\n ");
+			buffer.append("expected:\n ");
+			buffer.append("\"").append(benchmarkBuffer).append("\"");
+			buffer.append("\n\n ");
+			buffer.append("but was:\n ");
+			buffer.append("\"").append(testBuffer).append("\"");
+			buffer.append("\n\n ");
+				
+			buffer.append(">>>>>>>>>>>>>>>start diff: \n");
+			String location1 = getFileLocation(bmFile.getProject(), bmFile.getProjectRelativePath());
+			String location2 = getFileLocation(tFile.getProject(), tFile.getProjectRelativePath());
+			String diff = DiffUtil.getInstance().diff(location1, location2);
+			if(diff == null)
+				diff = "!diff failed!";
+			buffer.append(diff);
+			buffer.append("\n<<<<<<<<<<<end diff");
+			buffer.append("\n\n ");
+				
+			Assert.fail(buffer.toString());
+		} 
+		return true;
+	}
+
 	static public boolean verifyFilesDoNotExist(final IProject project, IPath testDir, IPath[] files) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
@@ -442,6 +510,9 @@ public class ManagedBuildTestHelper {
 
 	static public String getFileLocation(IProject project, IPath path){
 		return project.getLocation().append(path).toString();
+	}
+	static public StringBuffer readContentsStripLineEnds(IFile file) {
+		return readContentsStripLineEnds(file.getProject(), file.getProjectRelativePath());
 	}
 	static public StringBuffer readContentsStripLineEnds(IProject project, IPath path) {
 		StringBuffer buff = new StringBuffer();

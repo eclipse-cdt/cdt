@@ -759,7 +759,7 @@ public class BuildDescription implements IBuildDescription {
 		synchRebuildState();
 		//TODO: trim();
 	}
-
+	
 	protected void processBuildState(){
 		IPath paths[] = fBuildState.getFullPathsForState(IRebuildState.NEED_REBUILD);
 		processBuildState(IRebuildState.NEED_REBUILD, paths);

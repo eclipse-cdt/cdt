@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,6 +110,10 @@ public class BuildResource implements IBuildResource {
 			fDepArgs.add(arg);
 		} else {
 			if(fProducerArg == null){
+				fProducerArg = arg;
+			} else if(fProducerArg.getStep() == fInfo.getInputStep()) {
+				BuildStep inStep = (BuildStep)fInfo.getInputStep();
+				inStep.removeResource(fProducerArg, this, true);
 				fProducerArg = arg;
 			} else {
 				String err = "ProducerArgument not null!!!\n";	//$NON-NLS-1$

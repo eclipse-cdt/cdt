@@ -190,4 +190,8 @@ public final class OptionStringValue {
 	private static int code(String str){
 		return str != null ? str.hashCode() : 0;
 	}
+
+	public String toString() {
+		return new StringBuffer().append("ov:").append(value.toString()).toString();
+	}
 }

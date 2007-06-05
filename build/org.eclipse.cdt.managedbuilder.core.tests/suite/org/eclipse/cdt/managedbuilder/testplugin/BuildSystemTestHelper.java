@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.testplugin;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -116,5 +120,41 @@ public class BuildSystemTestHelper {
 		}
 				
 		return project;	
+	}
+	
+	static public void checkDiff(Object[] arr1, Object[] arr2){
+		LinkedHashSet set1 = new LinkedHashSet(Arrays.asList(arr1));
+		LinkedHashSet set2 = new LinkedHashSet(Arrays.asList(arr2));
+		LinkedHashSet set1Copy = new LinkedHashSet(set1);
+		set1.removeAll(set2);
+		set2.removeAll(set1Copy);
+
+		String set1String = collectionToString(set1);
+		String set2String = collectionToString(set2);
+		String diffMsg = "array1 entries: " + set1String + ",\n array2 entries: " + set2String + "\n"; 
+		Assert.assertEquals("arrays have different size\n" + diffMsg, arr1.length, arr2.length);
+		Assert.assertEquals("arrays have different contents\n" + diffMsg, 0, set1.size());
+		Assert.assertEquals("arrays have different contents\n" + diffMsg, 0, set2.size());
+		
+		if(!Arrays.equals(arr1, arr2)){
+			Assert.fail("different element order, dumping..\n array1 entries: " + arrayToString(arr1) + "\n array2 entries: " + arrayToString(arr2) + "\n"); 
+		}
+	}
+
+	static public String collectionToString(Collection c){
+		return arrayToString(c.toArray());
+	}
+
+	static public String arrayToString(Object[] arr){
+		StringBuffer buf = new StringBuffer();
+		buf.append('[');
+		for(int i = 0; i < arr.length; i++)	{
+			if(i != 0)
+				buf.append(", ");
+			
+			buf.append(arr[i].toString());
+		}
+		buf.append(']');
+		return buf.toString();
 	}
 }

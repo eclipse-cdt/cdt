@@ -11,10 +11,13 @@
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingPathEntry;
@@ -25,31 +28,59 @@ import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.SettingsSet;
 import org.eclipse.cdt.core.settings.model.util.SettingsSet.EntryInfo;
 import org.eclipse.cdt.core.settings.model.util.SettingsSet.SettingLevel;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.IReverseOptionPathConverter;
 import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
+import org.eclipse.cdt.managedbuilder.internal.macros.DefaultMacroContextInfo;
+import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
+import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
+import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class BuildEntryStorage extends AbstractEntryStorage {
 	private BuildLanguageData fLangData;
+	private String fBuildDirName;
 
 	private static class UserEntryInfo {
 		private ICLanguageSettingEntry fEntry;
-		private OptionStringValue fOptionValue;
+		private OptionStringValue fOriginalValue;
+		private OptionStringValue fBsResolvedValue;
+		private List fSequense;
 		
-		UserEntryInfo(ICLanguageSettingEntry entry, OptionStringValue optionValue){
+		UserEntryInfo(ICLanguageSettingEntry entry, OptionStringValue originalValue, OptionStringValue bsResolvedValue, List sequense){
 			fEntry = entry;
-			fOptionValue = optionValue;
+			fOriginalValue = originalValue;
+			fBsResolvedValue = bsResolvedValue;
+			fSequense = sequense;
+			if(sequense != null)
+				sequense.add(this);
 		}
 	}
+	
+	private static class EmptyEntryInfo {
+		private OptionStringValue fOriginalValue;
+		private int fPosition;
+		
+		EmptyEntryInfo(OptionStringValue value, int position){
+			fOriginalValue = value;
+			fPosition = position;
+		}
+	}
+
+
 	public BuildEntryStorage(int kind, BuildLanguageData lData) {
 		super(kind);
 		fLangData = lData;
@@ -83,6 +114,13 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return fLangData.getUndefOptionsForKind(getKind()).length != 0;
 	}
 
+	private String getBuildDitName(){
+		if(fBuildDirName == null){
+			fBuildDirName = fLangData.getConfiguration().getName();
+		}
+		return fBuildDirName;
+	}
+	
 	protected void obtainEntriesFromLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
 		case 0:
@@ -92,9 +130,12 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 				EntryInfo infos[] = level.getInfos();
 				UserEntryInfo[] userInfos = new UserEntryInfo[infos.length];
 				for(int i = 0; i < infos.length; i++){
-					userInfos[i] = new UserEntryInfo(infos[i].getEntry(), (OptionStringValue)infos[i].getCustomInfo());
+					UserEntryInfo uei = (UserEntryInfo)infos[i].getCustomInfo();
+					if(uei == null)
+						uei = new UserEntryInfo(infos[i].getEntry(), null, null, null);
+					userInfos[i] = uei;
 				}
-				setUserEntries(userInfos);
+				setUserEntries(userInfos, (List)level.getContext());
 				setUserUndefinedStringSet(level.containsOverrideInfo() ? level.getOverrideSet() : null);
 			}
 			break;
@@ -123,11 +164,14 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	protected void putEntriesToLevel(int levelNum, SettingLevel level) {
 		switch(levelNum){
 		case 0:
-			UserEntryInfo[] userEntries = getUserEntries(level.getFlags(0), true);
+			List emptyEntryInfos = new ArrayList();
+			UserEntryInfo[] userEntries = getUserEntries(level.getFlags(0), true, emptyEntryInfos);
 			for(int i = 0; i < userEntries.length; i++){
-				level.addEntry(userEntries[i].fEntry, userEntries[i].fOptionValue);
+				level.addEntry(userEntries[i].fEntry, userEntries[i]);
 			}
 			level.addOverrideNameSet(getUserUndefinedStringSet());
+			if(emptyEntryInfos.size() != 0)
+				level.setContext(emptyEntryInfos);
 			break;
 		case 1:
 			ICLanguageSettingEntry[] envEntries = getEnvEntries(level.getFlags(0));
@@ -143,7 +187,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	private ICLanguageSettingEntry[] getDiscoveredEntries(int flags){
 		ICLanguageSettingEntry[] entries = ProfileInfoProvider.getInstance().getEntryValues(fLangData, getKind(), flags);
 		if(entries == null || entries.length == 0){
-			UserEntryInfo[] infos = getUserEntries(flags, false);
+			UserEntryInfo[] infos = getUserEntries(flags, false, null);
 			if(infos.length != 0){
 				entries = new ICLanguageSettingEntry[infos.length];
 				for(int i = 0; i < entries.length; i++){
@@ -154,7 +198,16 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return entries;
 	}
 	
-	private UserEntryInfo[] getUserEntries(int flags, boolean usr){
+	private SupplierBasedCdtVariableSubstitutor createSubstitutor(IOption option, boolean bsVarsOnly){
+		OptionContextData ocd = new OptionContextData(option, fLangData.getTool());
+		DefaultMacroContextInfo ci = new DefaultMacroContextInfo(IBuildMacroProvider.CONTEXT_OPTION, ocd);
+		
+		return bsVarsOnly ? 
+				new BuildSystemSpecificVariableSubstitutor(ci)
+				: new SupplierBasedCdtVariableSubstitutor(ci, "", " ");
+	}
+	
+	private UserEntryInfo[] getUserEntries(int flags, boolean usr, List emptyValuesInfos){
 		IOption options[] = fLangData.getOptionsForKind(getKind());
 		if(options.length > 0){
 			List entryList = new ArrayList();
@@ -163,13 +216,24 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 				List list = usr ? (List)option.getExactValue() : option.getExactBuiltinsList();
 				int size = list != null ? list.size() : 0;
 				if(size > 0){
+					SupplierBasedCdtVariableSubstitutor subst = createSubstitutor(option, false);
+					SupplierBasedCdtVariableSubstitutor bSVarsSubst = createSubstitutor(option, true);
 					for(int j = 0; j < size; j++){
 						OptionStringValue ve = (OptionStringValue)list.get(j);
-//						if(value.indexOf('"') == 0 && value.lastIndexOf('"') == value.length() - 1 && value.length() != 1){
-//							value = value.substring(1, value.length() - 1);
-//						}
-						ICLanguageSettingEntry entry = createUserEntry(option, ve, flags);  
-						entryList.add(new UserEntryInfo(entry, ve));
+						OptionStringValue[] rVes = resolve(ve, option, bSVarsSubst);
+						if(rVes.length == 0){
+							if(emptyValuesInfos != null){
+								emptyValuesInfos.add(new EmptyEntryInfo(ve, j));
+							}
+						} else {
+							boolean isMultiple = rVes.length > 1;
+							List sequense = isMultiple ? new ArrayList(rVes.length) : null;
+							for(int k = 0; k < rVes.length; k++){
+								OptionStringValue rVe = rVes[k];
+								ICLanguageSettingEntry entry = createUserEntry(option, rVe, flags, subst);  
+								entryList.add(new UserEntryInfo(entry, ve, rVe, sequense));
+							}
+						}
 					}
 				}
 			}
@@ -179,13 +243,27 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return new UserEntryInfo[0];
 	}
 	
-	private static String stripQuotes(String value){
+//	private static OptionStringValue stripQuotes(OptionStringValue ov){
+//		String value = ov.getValue();
+//		value = stripQuotes(value, true);
+//		if(value != null){
+//			value = value.substring(1, value.length() - 1);
+//			ov = substituteValue(ov, value);
+//		}
+//		return ov;
+//	}
+	
+	private static String stripQuotes(String value, boolean nullIfNone){
 		if(value.indexOf('"') == 0 && value.lastIndexOf('"') == value.length() - 1 && value.length() != 1){
-			value = value.substring(1, value.length() - 1);
+			return value.substring(1, value.length() - 1);
 		}
-		return value;
+		return nullIfNone ? null : value;
+		
 	}
-
+	
+	private static OptionStringValue substituteValue(OptionStringValue ov, String value){
+		return new OptionStringValue(value, ov.isBuiltIn(), ov.getSourceAttachmentPath(), ov.getSourceAttachmentRootPath(), ov.getSourceAttachmentPrefixMapping());
+	}
 	
 	private HashSet getUserUndefinedStringSet(){
 		HashSet set = null;
@@ -202,6 +280,62 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			}
 		}
 		return set;
+	}
+	
+	private PathInfo fromBuildToProj(PathInfo info){
+		if(info.isAbsolute())
+			return info;
+		
+		Path path = new Path(info.getUnresolvedPath());
+		String projPath;
+		if(path.segmentCount() != 0 && "..".equals(path.segment(0))){
+			projPath = path.removeFirstSegments(1).toString();
+		} else {
+			StringBuffer buf = new StringBuffer();
+			buf.append(getBuildDitName()).append('/').append(info.getUnresolvedPath());
+			projPath = buf.toString();
+		}
+		return new PathInfo(projPath, info.isWorkspacePath(), info.getSubstitutor());
+	}
+
+	private PathInfo fromProjToBuild(PathInfo info){
+		if(info.isAbsolute())
+			return info;
+		
+		Path path = new Path(info.getUnresolvedPath());
+		String projPath;
+		if(path.segmentCount() != 0 && getBuildDitName().equals(path.segment(0))){
+			projPath = path.removeFirstSegments(1).toString();
+		} else {
+			StringBuffer buf = new StringBuffer();
+			buf.append("../").append(info.getUnresolvedPath());
+			projPath = buf.toString();
+		}
+		return new PathInfo(projPath, info.isWorkspacePath(), info.getSubstitutor());
+	}
+
+//	private String[] resolve(String v, IOption option, IPath[] buildLocation){
+//		
+//	}
+
+	private String[] resolve(String v, IOption option, SupplierBasedCdtVariableSubstitutor sub){
+		try {
+			return CdtVariableResolver.resolveToStringList(v, sub);
+		} catch (CdtVariableException e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return new String[0];
+	}
+	
+	private OptionStringValue[] resolve(OptionStringValue ov, IOption option, SupplierBasedCdtVariableSubstitutor sub){
+		String value = ov.getValue();
+		value = stripQuotes(value, false);
+		String[] rValues = resolve(value, option, sub);
+		OptionStringValue[] result = new OptionStringValue[rValues.length];
+		for(int i = 0; i < result.length; i++){
+			result[i] = substituteValue(ov, stripQuotes(rValues[i], false));
+		}
+		return result;
 	}
 
 	private ICLanguageSettingEntry[] getEnvEntries(int flags){
@@ -231,7 +365,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return new ICLanguageSettingEntry[0];
 	}
 	
-	private ICLanguageSettingEntry createUserEntry(Option option, OptionStringValue optionValue, int flags){
+	private ICLanguageSettingEntry createUserEntry(Option option, OptionStringValue optionValue, int flags, SupplierBasedCdtVariableSubstitutor subst){
 //	private ICLanguageSettingEntry createUserEntry(Option option, String optionValue, int flags){
 		int kind = getKind();
 		
@@ -264,32 +398,36 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			//do not break
 		default:
 			IOptionPathConverter optionPathConverter = fLangData.getTool().getOptionPathConverter();
-			Object[] v = optionPathValueToEntry(stripQuotes(optionValue.getValue()));
+			PathInfo pInfo = optionPathValueToEntry(optionValue.getValue(), subst);
+//			Object[] v = optionPathValueToEntry(stripQuotes(optionValue.getValue()));
 //			Object[] v = optionPathValueToEntry(optionValue);
-			String name = (String)v[0];
-			if(((Boolean)v[1]).booleanValue()){
+			
+			if(pInfo.isWorkspacePath()){
 				flags |= ICLanguageSettingEntry.VALUE_WORKSPACE_PATH;
 			} else if (optionPathConverter != null){
-				IPath path = optionPathConverter.convertToPlatformLocation(name, option, fLangData.getTool());
-				if(path != null)
-					name = path.toString();
+				IPath path = optionPathConverter.convertToPlatformLocation(pInfo.getUnresolvedPath(), option, fLangData.getTool());
+				if(path != null){
+					pInfo = new PathInfo(path.toString(), false, subst);
+				}
 			}
-			entry = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, name, null, null, flags, srcPath, srcRootPath, srcPrefixMapping);
+			
+			pInfo = fromBuildToProj(pInfo);
+			
+			entry = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, pInfo.getUnresolvedPath(), null, null, flags, srcPath, srcRootPath, srcPrefixMapping);
 			break;
-
 		}
 		return entry;
 	}
 	
-	private OptionStringValue createOptionValue(IOption option, UserEntryInfo info){
-		if(info.fOptionValue != null)
-			return info.fOptionValue;
+	private OptionStringValue createOptionValue(IOption option, UserEntryInfo info, SupplierBasedCdtVariableSubstitutor subst){
+		if(info.fOriginalValue != null)
+			return info.fOriginalValue;
 		
-		return entryValueToOption(option, info.fEntry);
+		return entryValueToOption(option, info.fEntry, subst);
 	}
 
-	private OptionStringValue entryValueToOption(IOption option, ICLanguageSettingEntry entry){
-		String optionValue = entryValueToOptionStringValue(option, entry);
+	private OptionStringValue entryValueToOption(IOption option, ICLanguageSettingEntry entry, SupplierBasedCdtVariableSubstitutor subst){
+		String optionValue = entryValueToOptionStringValue(option, entry, subst);
 		if(entry.getKind() == ICSettingEntry.LIBRARY_FILE){
 			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
 			return new OptionStringValue(optionValue, 
@@ -305,7 +443,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return path != null ? path.toString() : null;
 	}
 
-	private String entryValueToOptionStringValue(IOption option, ICLanguageSettingEntry entry){
+	private String entryValueToOptionStringValue(IOption option, ICLanguageSettingEntry entry, SupplierBasedCdtVariableSubstitutor subst){
 		String result;
 		boolean checkQuote = true;
 		if(entry.getKind() == ICLanguageSettingEntry.MACRO && entry.getValue().length() > 0){
@@ -317,23 +455,48 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 				checkQuote = false;
 			} else {
 				ICLanguageSettingPathEntry pathEntry = (ICLanguageSettingPathEntry)entry;
-				if(pathEntry.isValueWorkspacePath()){
-					result = ManagedBuildManager.fullPathToLocation(pathEntry.getValue());
-				} else {
-					result = entry.getName();
-				}
+				result = doConvertToOptionValue(option, pathEntry, subst);
 			}
 		} else {
 			result = entry.getName();
 		}
 		
 		if(checkQuote){
-			result = doubleQuotePath(result);
+			result = doubleQuotePath(result, false);
 		}
 		return result;
 	}
 	
-	private String doubleQuotePath(String pathName)	{
+	private String doConvertToOptionValue(IOption option, ICLanguageSettingPathEntry pathEntry, SupplierBasedCdtVariableSubstitutor subst){
+		boolean isWsp = pathEntry.isValueWorkspacePath();
+		PathInfo pInfo = new PathInfo(pathEntry.getName(), isWsp, subst);
+		String result;
+		if(isWsp){
+			if(!pInfo.isAbsolute()){
+				IConfiguration cfg = fLangData.getConfiguration();
+				IResource rc = cfg.getOwner();
+				if(rc != null){
+					IProject proj = rc.getProject();
+					String path = pInfo.getUnresolvedPath();
+					IPath p = proj.getFullPath().append(path);
+					result = p.toString();
+				} else {
+					result = pathEntry.getName();
+				}
+			} else {
+				result = pathEntry.getName();
+			}
+			
+			result = ManagedBuildManager.fullPathToLocation(result);
+		} else {
+			pInfo = fromProjToBuild(pInfo);
+			result = pInfo.getUnresolvedPath();
+		}
+		
+		return result;
+	}
+	
+	private static String doubleQuotePath(String pathName, boolean nullIfNone)	{
 		/* Trim */
 		pathName = pathName.trim();
 		
@@ -341,19 +504,27 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		boolean bStartsWithQuote = pathName.indexOf('"') == 0;
 		boolean bEndsWithQuote = pathName.lastIndexOf('"') == pathName.length() - 1;
 		
+		boolean quoted = false;
+		
 		/* Check for spaces, backslashes or macros */ 
 		int i = pathName.indexOf(' ') + pathName.indexOf('\\') //$NON-NLS-1$ //$NON-NLS-2$
 			+ pathName.indexOf("${"); //$NON-NLS-1$
 		
 		/* If indexof didn't fail all three times, double-quote path */
 		if (i != -3) {
-			if (!bStartsWithQuote)
+			if (!bStartsWithQuote){
 				pathName = "\"" + pathName; //$NON-NLS-1$
-			if (!bEndsWithQuote)
+				quoted = true;
+			}
+			if (!bEndsWithQuote){
 				pathName = pathName + "\""; //$NON-NLS-1$
+				quoted = true;
+			}
 		}
 		
-		return pathName;
+		if(quoted)
+			return pathName;
+		return nullIfNone ? null : pathName;
 	}
 	
 	public static String[] macroNameValueFromValue(String value){
@@ -369,23 +540,44 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return nv;
 	}
 	
-	private static Object[] optionPathValueToEntry(String value){
-		String wspPath = ManagedBuildManager.locationToFullPath(value);
-		if(wspPath != null)
-			return new Object[]{wspPath, Boolean.valueOf(true)};
-		return new Object[]{value, Boolean.valueOf(false)};
+//	private static Object[] optionPathValueToEntry(String value){
+//		String wspPath = ManagedBuildManager.locationToFullPath(value);
+//		if(wspPath != null)
+//			return new Object[]{wspPath, Boolean.valueOf(true)};
+//		return new Object[]{value, Boolean.valueOf(false)};
+//	}
+	
+	private static PathInfo optionPathValueToEntry(String str, SupplierBasedCdtVariableSubstitutor subst){
+		String unresolvedStr = ManagedBuildManager.locationToFullPath(str);
+		boolean isWorkspacePath;
+		if(unresolvedStr != null){
+			isWorkspacePath = true;
+		} else {
+			unresolvedStr = str;
+			isWorkspacePath = false;
+		}
+		return new PathInfo(unresolvedStr, isWorkspacePath, subst);
 	}
 	
-	private void setUserEntries(UserEntryInfo[] entries){
+	private void setUserEntries(UserEntryInfo[] entries, List emptyEntryInfos){
 		int kind = getKind();
 		IOption options[] = fLangData.getOptionsForKind(kind);
 		if(options.length != 0){
 			IOption option = options[0];
-			OptionStringValue optValue[] = new OptionStringValue[entries.length]; 
+			OptionStringValue[]  optValue;
 			if(entries.length != 0){
+				entries = combineSequenses(entries);
+				
+				entries = addEmptyEntries(entries, emptyEntryInfos);
+				
+				optValue = new OptionStringValue[entries.length];
+				SupplierBasedCdtVariableSubstitutor subst = createSubstitutor(option, false);
+
 				for(int i = 0; i < entries.length; i++){
-					optValue[i] = createOptionValue(option, entries[i]);
+					optValue[i] = createOptionValue(option, entries[i], subst);
 				}
+			} else {
+				optValue = Option.EMPTY_LV_ARRAY;
 			}
 
 			ITool tool = fLangData.getTool();
@@ -397,6 +589,73 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 					ManagedBuildManager.setOption(rcInfo, tool, option, new String[0]);
 			}
 		}
+	}
+
+	private UserEntryInfo[] addEmptyEntries(UserEntryInfo infos[], List emptyEntryInfos){
+		if(emptyEntryInfos == null || emptyEntryInfos.size() == 0)
+			return infos;
+
+		LinkedList list = new LinkedList();
+		list.addAll(Arrays.asList(infos));
+		for(int i = 0; i < emptyEntryInfos.size(); i++){
+			EmptyEntryInfo ei = (EmptyEntryInfo)emptyEntryInfos.get(i);
+			int index = ei.fPosition;
+			if(index > list.size())
+				index = list.size();
+			
+			list.add(index, new UserEntryInfo(null, ei.fOriginalValue, ei.fOriginalValue, null));
+		}
+		
+		return (UserEntryInfo[])list.toArray(new UserEntryInfo[list.size()]);
+	}
+
+	private UserEntryInfo[] combineSequenses(UserEntryInfo infos[]){
+		if(infos.length == 0)
+			return infos;
+
+		List list = new ArrayList(infos.length);
+		
+		for(int i = 0; i < infos.length; i++){
+			UserEntryInfo info = infos[i];
+			if(info.fSequense != null) {
+				boolean match = true;
+				int seqSize = info.fSequense.size();
+				if(seqSize > infos.length - i)
+					match = false;
+				else {
+					for(int k = 0; k < seqSize; k++){
+						if(info.fSequense.get(k) != infos[i + k]){
+							match = false;
+							break;
+						}
+					}
+				}
+				
+				if(match){
+					i = i + seqSize - 1; 
+				} else {
+					infos[i] = createDesecuencedEntry(info);
+					for(int k = i + 1; k < infos.length; k++){
+						if(infos[k].fSequense == info.fSequense)
+							infos[k] = createDesecuencedEntry(infos[k]);
+					}
+					info = infos[i];
+				}
+			}
+			list.add(info);
+		}
+		
+		return (UserEntryInfo[])list.toArray(new UserEntryInfo[list.size()]);
+	}
+	
+	private static UserEntryInfo createDesecuencedEntry(UserEntryInfo info){
+		OptionStringValue resolvedValue = info.fBsResolvedValue;
+		if(resolvedValue != null){
+			String v = doubleQuotePath(resolvedValue.getValue(), true);
+			if(v != null)
+				resolvedValue = substituteValue(resolvedValue, v); 
+		}
+		return new UserEntryInfo(info.fEntry, resolvedValue, resolvedValue, null);
 	}
 	
 	private void setUserUndefinedStringSet(Set set){

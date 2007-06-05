@@ -2835,16 +2835,16 @@ public class SystemViewRemoteFileAdapter
 					boolean isFileCached = isFileCached(editable, remoteFile);
 					if (isFileCached)
 					{
+						if (openedInSamePerspective)
+						{
+							editable.setLocalResourceProperties();
+						}
 						editable.openEditor();
 					}
 					else
 					{
 						DownloadJob oJob = new DownloadJob(editable, false);
 						oJob.schedule();
-					}
-					if (openedInSamePerspective && isFileCached)
-					{
-						editable.setLocalResourceProperties();
 					}
 					
 				}

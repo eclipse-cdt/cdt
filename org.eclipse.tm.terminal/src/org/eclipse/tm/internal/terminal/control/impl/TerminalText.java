@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
-import org.eclipse.tm.internal.terminal.telnet.TelnetConnection;
 
 /**
  * This class processes character data received from the remote host and
@@ -374,7 +373,7 @@ public class TerminalText implements ControlListener {
 	}
 	/**
 	 * This method executes in the Display thread to process data received from
-	 * the remote host by class {@link TelnetConnection} and 
+	 * the remote host by class {@link org.eclipse.tm.internal.terminal.telnet.TelnetConnection} and 
 	 * other implementors of {@link ITerminalConnector}, like the 
 	 * SerialPortHandler.
 	 * <p>

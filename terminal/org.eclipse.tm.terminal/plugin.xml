@@ -13,11 +13,6 @@
 -->
 <plugin>
    <extension-point id="terminalConnector" name="Terminal Connector" schema="schema/terminalConnector.exsd"/>
-   <extension
-         point="org.eclipse.tm.terminal.terminalConnector">
-      <connector name="%telnetConnection" class="org.eclipse.tm.internal.terminal.telnet.TelnetConnector"/>
-   </extension>
-
    <extension point="org.eclipse.ui.contexts">           
       <context
             name="%terminal.context.name"

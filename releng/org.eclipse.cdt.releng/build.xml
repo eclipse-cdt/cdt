@@ -104,8 +104,8 @@
 		</replace>
 		<move file="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip" todir="${buildDirectory}"/>
 		<unzip src="${buildDirectory}/cdt-master-${branchVersion}-${buildId}.zip" dest="${buildDirectory}/site"/>
-		<move file="${buildDirectory}/site/linux.gtk.x86/epl-v10.html" todir="${buildDirectory}/site/eclipse"/>
-		<move file="${buildDirectory}/site/linux.gtk.x86/notice.html" todir="${buildDirectory}/site/eclipse"/>
+		<move file="${buildDirectory}/site/linux.gtk.x86/eclipse/epl-v10.html" todir="${buildDirectory}/site/eclipse"/>
+		<move file="${buildDirectory}/site/linux.gtk.x86/eclipse/notice.html" todir="${buildDirectory}/site/eclipse"/>
 		<copy file="buildsite.xml" tofile="${buildDirectory}/site/eclipse/site.xml"/>
 		<replace file="${buildDirectory}/site/eclipse/site.xml">
 			<replacefilter token="@branchVersion@" value="${branchVersion}"/>

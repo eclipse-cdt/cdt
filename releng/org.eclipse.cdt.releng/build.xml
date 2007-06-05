@@ -14,6 +14,7 @@
 		<property name="branchVersion" value="4.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
+		<property name="buildingOSGi" value="true"/>
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
 		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build/scripts"/>
@@ -24,7 +25,7 @@
 		<property name="buildId" value="${buildType}${timestamp}"/>
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
 		<property name="milestonedir" value="${buildDirectory}/${milestone}"/>
-		<property name="buildingOSGi" value="true"/>
+		<property name="eclipseTest" value="org.eclipse.test_3.2.0"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
 		<property name="remotedir" value="dschaefer@dev.eclipse.org:cdt/builds/${branchVersion}"/>
@@ -132,14 +133,15 @@
 	</target>
 	
 	<target name="test" depends="init" unless="hasErrors">
-		<antcall target="unpack">
-			<param name="srcPrefix" value="${zipsdir}/cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}"/>
-			<param name="dest" value="${buildDirectory}"/>
-		</antcall>
-		<unzip src="${zipsdir}/cdt-testing-${branchVersion}-${buildId}.zip" dest="${buildDirectory}"/>
+		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
+			dest="${buildDirectory}/eclipse"/>
+		<unjar src="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
+			dest="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}"/>
+		<unjar src="${buildDirectory}/eclipse/plugins/${eclipseTest}.jar"
+			dest="${buildDirectory}/eclipse/plugins/${eclipseTest}"/>
 		<ant antfile="test.xml" dir="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${forceContextQualifier}">
 			<property name="eclipse-home" value="${buildDirectory}/eclipse"/>
-			<property name="library-file" value="${buildDirectory}/eclipse/plugins/org.eclipse.test_3.2.0/library.xml"/>
+			<property name="library-file" value="${buildDirectory}/eclipse/plugins/${eclipseTest}/library.xml"/>
 			<property name="os" value="${baseos}"/>
 			<property name="ws" value="${basews}"/>
 			<property name="arch" value="${basearch}"/>

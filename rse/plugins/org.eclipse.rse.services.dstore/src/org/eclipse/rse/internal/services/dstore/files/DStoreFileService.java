@@ -14,6 +14,7 @@
  * Kevin Doyle (IBM) - Fix 183870 - Display File Exists Error
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Xuan Chen        (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
+ * Kushal Munir (IBM) - [189352] Replace with appropriate line end character on upload
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -70,6 +71,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
 	private String remoteEncoding;
+	
+	protected boolean unixStyle = false;
 	
 	private static String _percentMsg = SystemMessage.sub(SystemMessage.sub(SystemMessage.sub(ServiceResources.DStore_Service_Percent_Complete_Message, "&0", "{0}"), "&1", "{1}"), "&2", "{2}");	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
@@ -391,6 +394,18 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			int available = bufInputStream.available();
 
 			long totalSent = 0;
+			
+			// line separator of local machine
+			String localLineSep = System.getProperty("line.separator"); //$NON-NLS-1$
+			
+			// line separator of remote machine
+			String targetLineSep = "\n"; //$NON-NLS-1$
+			
+			if (!unixStyle) {
+				targetLineSep = "\r\n"; //$NON-NLS-1$
+			}
+			
+			int localLineSepLength = localLineSep.length();
 
 			// upload bytes while available
 			while (available > 0 && !isCancelled)
@@ -411,12 +426,35 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				if (!isBinary && srcEncoding != null && hostEncoding != null) 
 				{
 					String tempStr = new String(buffer, 0, bytesRead, srcEncoding);
+					
+					// if the line end characters of the local and remote machines are different, we need to replace them 
+					if (!localLineSep.equals(targetLineSep)) {
 
-					// hack for zOS - \r causes problems for compilers
-//					if (osName != null && (osName.startsWith("z") || osName.equalsIgnoreCase("aix")))
-//					{
-//						tempStr = tempStr.replace('\r', ' ');
-//					}
+						int index = tempStr.indexOf(localLineSep);
+					
+						StringBuffer buf = new StringBuffer();
+					
+						boolean lineEndFound = false;
+						int lastIndex = 0;
+					
+						while (index != -1) {
+							buf = buf.append(tempStr.substring(lastIndex, index));
+							buf = buf.append(targetLineSep);
+						
+							if (!lineEndFound) {
+								lineEndFound = true;
+							}
+						
+							lastIndex = index+localLineSepLength;
+						
+							index = tempStr.indexOf(localLineSep, lastIndex);
+						}
+					
+						if (lineEndFound) {
+							buf = buf.append(tempStr.substring(lastIndex));
+							tempStr = buf.toString();
+						}
+					}
 
 					convBytes = tempStr.getBytes(hostEncoding);
 				
@@ -465,9 +503,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 					
 					String str = MessageFormat.format(_percentMsg, new Object[] {totalSentBuf, totalBuf, percentBuf});
 					monitor.subTask(str);					
-	
-
-
 
 					isCancelled = monitor.isCanceled();
 				}
@@ -1346,5 +1381,14 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode);
 		return outputStream;
+	}
+	
+	/**
+	 * Sets whether this is a Unix-style file system or a Windows-style file system. The
+	 * default is Windows if this is not called. The creator of this class should call this to set the type of the file system.
+	 * @param isUnixStyle <code>true<code> if this is a Unix-style file system, <code>false</code> otherwise.
+	 */
+	public void setIsUnixStyle(boolean isUnixStyle) {
+		this.unixStyle = isUnixStyle;
 	}
 }

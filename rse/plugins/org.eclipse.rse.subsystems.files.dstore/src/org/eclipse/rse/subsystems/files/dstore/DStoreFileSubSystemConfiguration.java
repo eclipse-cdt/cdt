@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Kushal Munir (IBM) - [189352] Set whether file service is Unix-style system or not
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.dstore;
@@ -134,6 +135,7 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 	{
 		DStoreConnectorService connectorService = (DStoreConnectorService)getConnectorService(host);
 		DStoreFileService service = new DStoreFileService(connectorService, SystemFileTransferModeRegistry.getInstance(), RSEUIPlugin.getDefault());
+		service.setIsUnixStyle(isUnixStyle());
 
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		int downloadBufferSize = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE);

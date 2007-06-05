@@ -153,7 +153,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        tree.getAccessible().addAccessibleListener(
 					 new AccessibleAdapter() {                       
 		                 public void getName(AccessibleEvent e) {
-		                         e.result = UIMessages.getString("CMainWizardPage.0");
+		                         e.result = UIMessages.getString("CMainWizardPage.0"); //$NON-NLS-1$
 		                 }
 		             }
 				 );

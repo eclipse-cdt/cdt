@@ -9,7 +9,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.tm.internal.discovery.model.provider;x-friends:="org.eclipse.tm.discovery.view,org.eclipse.tm.discovery.wizard"
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.edit;visibility:=reexport,
- org.eclipse.tm.discovery.model
+ org.eclipse.emf.edit;bundle-version="[2.2.0,3.0.0)";visibility:=reexport,
+ org.eclipse.tm.discovery.model;bundle-version="[2.0.0,3.0.0)"
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

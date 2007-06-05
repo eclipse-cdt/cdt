@@ -7,7 +7,7 @@ Bundle-Localization: plugin
 Import-Package: gnu.io;resolution:=optional
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.tm.terminal
+ org.eclipse.tm.terminal;bundle-version="[1.0.0,2.0.0)"
 Eclipse-LazyStart: true
 Eclipse-BuddyPolicy: ext
 Bundle-Vendor: %providerName

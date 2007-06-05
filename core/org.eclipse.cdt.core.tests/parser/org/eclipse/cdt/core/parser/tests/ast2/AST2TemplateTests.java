@@ -2069,9 +2069,33 @@ public class AST2TemplateTests extends AST2BaseTest {
     	CPPNameCollector col = new CPPNameCollector();
     	tu.accept( col );
     	
+    	IASTName name;
     	for (Iterator i = col.nameList.iterator(); i.hasNext();) {
-			IASTName name = (IASTName) i.next();
+			name = (IASTName) i.next();
 			assertFalse(name.resolveBinding() instanceof IProblemBinding);
 		}
+
+    	name= (IASTName) col.nameList.get(0);
+    	assertTrue(name.resolveBinding() instanceof ICPPTemplateParameter);
+    	name= (IASTName) col.nameList.get(1);
+    	assertTrue(name.resolveBinding() instanceof ICPPTemplateParameter);
+    	name= (IASTName) col.nameList.get(2);
+    	assertTrue(name.resolveBinding() instanceof ICPPFunction);
+    	name= (IASTName) col.nameList.get(3);
+    	assertTrue(name.resolveBinding() instanceof ICPPTemplateParameter);
+    	name= (IASTName) col.nameList.get(4);
+    	assertTrue(name.resolveBinding() instanceof IParameter);
+    	name= (IASTName) col.nameList.get(5);
+    	assertTrue(name.resolveBinding() instanceof ICPPTemplateParameter);
+    	name= (IASTName) col.nameList.get(6);
+    	assertTrue(name.resolveBinding() instanceof IParameter);
+    	name= (IASTName) col.nameList.get(7);
+    	assertTrue(name.resolveBinding() instanceof IParameter);
+    	name= (IASTName) col.nameList.get(8);
+    	assertTrue(name.resolveBinding() instanceof IParameter);
+    	name= (IASTName) col.nameList.get(9);
+    	assertTrue(name.resolveBinding() instanceof IParameter);
+    	name= (IASTName) col.nameList.get(10);
+    	assertTrue(name.resolveBinding() instanceof IParameter);
     }
 }

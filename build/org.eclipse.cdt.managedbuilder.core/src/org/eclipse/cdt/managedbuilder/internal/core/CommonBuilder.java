@@ -1320,6 +1320,18 @@ public class CommonBuilder extends ACBuilder {
 				//TODO:		messages.add(status);
 					}				
 				}
+			} else if (result.getCode() == IStatus.ERROR){
+				StringBuffer buf = new StringBuffer();
+				buf.append("Buildfile generation error occured..").append(NEWLINE);
+				String message = result.getMessage();
+				if(message != null || message.length() != 0){
+					buf.append(message).append(NEWLINE);
+				}
+				
+				buf.append("Build stopped..").append(NEWLINE);
+				message = buf.toString();
+				buildStatus.getConsoleMessagesList().add(message);
+				buildStatus.cancelBuild();
 			}
 
 			checkCancel(monitor);

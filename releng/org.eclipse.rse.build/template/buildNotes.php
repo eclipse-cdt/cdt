@@ -26,39 +26,33 @@
 <li>TM @buildId@ <b>requires Eclipse 3.3M6 or later</b>. Platform Runtime is the minimum
   requirement for core RSE and Terminal. Discovery needs EMF, and the Remotecdt
   integration needs CDT.</li>
-<li><b>Added a Telnet Subsystem</b>. It can be activated by selecting the new
-  system type "Telnet Only (Experimental)". The telnet subsystem is currently 
-  still experimental because of problems when passing invalid credentials, or
-  opening multiple telnet shells simultaneously.
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178201">178201</a>].</li>
-<li><b>Added ability to show translatable property set names</b>
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188284">188284</a>].</li>
-<li><b>Fixed automatic creation of Mnemonics</b>, added a Policy API to
-  allow products configure the policy for mnemonic generation</b>
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178768">178768</a>]
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187860">187860</a>].</li>
-<li><b>Persistence of RSE objects is now done in .metadata by default</b>.
-  This fixes problems with workspace locking. Existing connection definitions
-  in the old format are still read and understood. The old default behavior
-  can be restored by a Preference setting. For details, see bug
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187647">187647</a>].</li>
-<li>Fixed many problems with externalized Strings relevant for translated
-  versions of RSE with NL packs.</li>
-<!--
-<li><b>Copy&Paste, Drag&Drop to Project Explorer</b> are finally fixed
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153652">153652</a>].
-  Same support for Windows Explorer is still on the list
+<li><b>Split the Terminal Telnet connector from the core Terminal widget</b>.
+  This allows embedding a terminal widget in RCPs without having the unnecessary
+  code for the Telnet connector
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174162">174162</a>].</li>
+<li><b>Copy&Paste, Drag&Drop</b> had to be restored to avoid download-on-copy.
+  This means that drag&drop to Windows Explorer or Package Explorer do not 
+  work any more. As a workaround, you can drag&drop to the Local subsystem instead
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189268">189268</a>]
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181458">181458</a>].</li>
+<li><b>Automatic Mnemonic Generation</b> can now be switched off through a 
+  hidden Preference by setting a Policy
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178768">178768</a>].</li>
+<li><b>Dbl clicking a remote file now always refreshes</b> the editor, so 
+  the latest file is always edited and the threat of getting save conflicts
+  is smaller
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180671">180671</a>].</li>
+<!--
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least 8 API changes and 32 bugs were fixed: use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-05-19&chfieldto=2007-05-27&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+<li>At least 13 API changes and 66 bugs were fixed: use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-05-26&chfieldto=2007-06-05&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC2&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M7-200705182100/index.php">
-  TM 2.0M7</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0M7-200705182100/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC1-200705252030/index.php">
+  TM 2.0RC1</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC1-200705252030/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -110,7 +104,7 @@ API changes is found below with migration info. But although we had planned for
 API freeze with M6, there are still few more cleanup changes that we would like
 to take the opportunity and bring into TM 2.0. Most of these will be made shortly
 after M6, or they will be introduced in a backward compatible manner.
-At any rate, we will avoid breaking API changes after M7, or the earlierst 
+At any rate, we will avoid breaking API changes after M7, or the earliest 
 possible integration build up to M7. But please be prepared for future changes,
 and especially take care of API marked as <b>@deprecated</b> in the Javadoc.
 Such API is prime candidate to be removed for TM 2.0.</p>
@@ -137,9 +131,33 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ Breaking API Changes
 <ul>
-<!--
-<li><b>Cleaned up ISystemRegistry</b> - removed or changed signature of several methods [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>].</li>
--->
+<li><b>Cleaned up ISystemRegistry and ISystemProfileManager</b> - removed several convenience methods 
+  that are easily accessible through more common methods. If your code does
+  not compile any more because it is missing methods in ISystemRegistry,
+  browse RSE looking for alternative methods to do what you need
+  [<a href="https://bugs.eclipse.org/bugs/showdependencytree.cgi?id=175680">175680</a>]
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189749">189749</a>].</li>
+<li><b>Removed FileSelectionDialog, SystemFilterTableDialog</b> and related obsolete code.
+  For migration, use SystemRemoteFileDialog instead
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189973">189973</a>]
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189508">189508</a>].</li>
+<li><b>Removed icons, messages, constants and methods referring to User Actions</b>.
+  Since user actions are not shipped with TM 2.0, these items would not have been
+  functional and have thus been removed. For migration, just remove corresponding
+  usage of API in your code 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186589">186589</a>].</li>
+<li><b>Removed showActionBar() and showButtonBar() in ISystemViewInputProvider</b>,
+  and <b>moved ISystemViewInputProvider to non-UI</b>. Showing of action and button
+  bars is now governed by the dialogs or views using a SystemView component.
+  For migration, just "organize imports" and get rid of the deprecated methods in
+  ISystemViewInputProvider 
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189506">189506</a>]
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=190271">190271</a>].</li>
+<li><b>Moved the Terminal Telnet connector into a separate plugin</b>.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174162">174162</a>].</li>
+</ul></li>
+<li>TM 2.0RC1 Breaking API Changes
+<ul>
 <li><b>Created API for default encoding of a connection on the IHost level</b>.
   Existing <code>IRemoteCmdSubSystem.getEncoding()</code> is to be replaced by
   <code>IRemoteCmdSubSystem.getHost().getDefaultEncoding(true)</code>.
@@ -305,11 +323,9 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188939">bug 188939</a> - cri - [terminal] All terminal connections fail if RXTX is not available</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189043">bug 189043</a> - cri - TVT33:TCT335: ru: encoding not remembered or file content corruption</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189543">bug 189543</a> - blo - License and about file errors</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=190803">bug 190803</a> - cri - [dstore] Canceling a long-running dstore job makes all Eclipse freeze UI</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187301">bug 187301</a> - maj - [telnet] Telnet does not allow multiple shells</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188637">bug 188637</a> - maj - deleting a file to which you are not authorized gives no error message</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188863">bug 188863</a> - maj - [persistence] Eclipse hangs after choosing "Refresh" button in Team view</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

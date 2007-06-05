@@ -38,7 +38,7 @@
 <!-- Add one target for each root element and each configuration -->
 <!-- ===================================================================== -->
 
-<target name="assemble.org.eclipse.cdt">
+<target name="assemble.org.eclipse.cdt.group.group.group">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="cdt-master-${branchVersion}-${buildId}.zip"/>
 	</ant>

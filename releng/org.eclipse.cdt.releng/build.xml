@@ -86,7 +86,7 @@
 		</antcall>
 	</target>
 	
-	<target name="zips" depends="init,unzip">
+	<target name="zips" depends="init">
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/platform" />
 		</ant>

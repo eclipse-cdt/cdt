@@ -2,8 +2,8 @@
 <feature
       id="org.eclipse.tm.terminal.view"
       label="%featureName"
-      provider-name="%providerName"
-      version="1.0.0.qualifier">
+      version="1.0.0.qualifier"
+      provider-name="%providerName">
 
    <description>
       %description
@@ -25,7 +25,7 @@
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.tm.terminal"/>
+      <import plugin="org.eclipse.tm.terminal" version="1.0.0" match="compatible"/>
    </requires>
 
    <plugin

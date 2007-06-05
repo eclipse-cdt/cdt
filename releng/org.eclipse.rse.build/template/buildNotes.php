@@ -153,7 +153,7 @@ More information can be found in the associated bugzilla items.
   ISystemViewInputProvider 
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189506">189506</a>]
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=190271">190271</a>].</li>
-<li><b>Moved the Terminal Telnet connector into a separate plugin</b>.
+<li><b>Moved the Terminal Telnet connector into a separate plugin</b>
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174162">174162</a>].</li>
 </ul></li>
 <li>TM 2.0RC1 Breaking API Changes

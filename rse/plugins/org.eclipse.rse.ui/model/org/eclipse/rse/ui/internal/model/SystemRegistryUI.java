@@ -13,6 +13,8 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
+ * David Dykstal (IBM) - [191038] remove getInstance(logFilePath) log file was not used
+ *                                initialize correctly in getInstance()
  ********************************************************************************/
 package org.eclipse.rse.ui.internal.model;
 
@@ -80,9 +82,8 @@ public class SystemRegistryUI implements ISystemRegistryUI, ISystemViewInputProv
 	 * Constructor.
 	 * This is protected as the singleton instance should be retrieved by
 	 * calling @link{#getInstance()}.
-	 * @param logfilePath Root folder. Where to place the log file. 
 	 */
-	protected SystemRegistryUI(String logfilePath)
+	protected SystemRegistryUI()
 	{
 		super();
 		registry = SystemRegistry.getInstance();
@@ -93,23 +94,13 @@ public class SystemRegistryUI implements ISystemRegistryUI, ISystemViewInputProv
 	// ----------------------------
 
 	/**
-	 * Return singleton instance. Must be used on first instantiate.
-	 * @param logfilePath Root folder. Where to place the log file.
-	 * @return the singleton SystemRegistryUI instance.
-	 */
-	public static SystemRegistryUI getInstance(String logfilePath)
-	{
-		if (_instance == null)
-			_instance = new SystemRegistryUI(logfilePath);
-		return _instance;
-	}
-	
-	/**
-	 * Return singleton instance assuming it already exists.
 	 * @return the singleton SystemRegistryUI instance.
 	 */
 	public static SystemRegistryUI getInstance()
 	{
+		if (_instance == null) {
+			_instance = new SystemRegistryUI();
+		}
 		return _instance;
 	}
 

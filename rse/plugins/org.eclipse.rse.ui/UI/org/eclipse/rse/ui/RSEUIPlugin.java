@@ -26,6 +26,7 @@
  * David Dykstal (IBM) - [189858] Delay the creation of the remote systems project
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * David Dykstal (IBM) - [191038] initialize SystemRegistryUI without a log file, it was not used                               
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -657,8 +658,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
     {
     	if (_systemRegistryUI == null)
         {
-    	  String logfilePath = getStateLocation().toOSString();    	
-    	  _systemRegistryUI = SystemRegistryUI.getInstance(logfilePath);
+    	  _systemRegistryUI = SystemRegistryUI.getInstance();
         }
     	return _systemRegistryUI;
     }

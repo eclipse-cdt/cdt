@@ -8349,6 +8349,7 @@
                      osList="win32"
                      name="Test 4.0 ToolChainName.Cygwin"
                      targetTool="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;cdt.managedbuild.tool.gnu.c.linker.cygwin.base;cdt.managedbuild.tool.gnu.archiver"
+                     isSystem="true"
                      id="test.four.dot.zero.cdt.managedbuild.toolchain.gnu.cygwin.base">
                   <targetPlatform
 					  id="test.four.dot.zero.cdt.managedbuild.target.gnu.platform.cygwin.base"

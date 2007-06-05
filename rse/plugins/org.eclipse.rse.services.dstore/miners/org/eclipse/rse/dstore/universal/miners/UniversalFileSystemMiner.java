@@ -1,9 +1,10 @@
-/********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
- * This program and the accompanying materials are made available under the terms
- * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
- * available at http://www.eclipse.org/legal/epl-v10.html
- * 
+/*******************************************************************************
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
  * Initial Contributors:
  * The following IBM employees contributed to the Remote System Explorer
  * component that contains this file: David McKnight, Kushal Munir, 
@@ -15,7 +16,7 @@
  * Xuan Chen (IBM) - Fix 160768 - [refresh][dstore] Refresh on renamed node within a zip does not work; 
  * Xuan Chen (IBM) - Fix 189487 - copy and paste a folder did not work - workbench hang
  * Xuan Chen (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
- ********************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
 import java.io.File;

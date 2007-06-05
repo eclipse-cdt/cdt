@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -30,6 +31,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
@@ -38,7 +40,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
+import org.eclipse.swt.widgets.Shell;
 
 
 
@@ -140,7 +142,7 @@ public class SystemViewAPIProviderForFilters
 		   children = new SystemMessageObject[1];
     	   try {
     		   ISubSystemConfigurationAdapter adapter = (ISubSystemConfigurationAdapter)ssf.getAdapter(ISubSystemConfigurationAdapter.class);
-             ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, getShell());
+             ISystemFilter newFilter = adapter.createFilterByPrompting(ssf, fRef, (Shell)getShell());
              if (newFilter == null)
              {
 		        children[0] = new SystemMessageObject(RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXPAND_CANCELLED),
@@ -158,7 +160,7 @@ public class SystemViewAPIProviderForFilters
 		        if ((sfr != null)  && (inputProvider.getViewer()!=null))
 		        {
 		          SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
-                  Viewer v = inputProvider.getViewer();
+                  Viewer v = (Viewer)inputProvider.getViewer();
                   if (v instanceof ISystemResourceChangeListener)
                   {
                     //sr.fireEvent((ISystemResourceChangeListener)v, event); // only expand in the current viewer, not all viewers!

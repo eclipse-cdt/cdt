@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -37,6 +38,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.SystemFilterSimple;
 import org.eclipse.rse.core.model.ISystemMessageObject;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
@@ -53,7 +55,6 @@ import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ValidatorFilterName;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionFilter;
@@ -326,8 +327,8 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 		                                              ISystemMessageObject.MSGTYPE_OBJECTCREATED,filter);
 		                                              
 		        // select the new filter and expand it
-                Viewer v = inputProvider.getViewer();
-		        if ((v!=null) && (v instanceof ISystemResourceChangeListener))
+                Viewer v = (Viewer)inputProvider.getViewer();
+		        if (v instanceof ISystemResourceChangeListener)
 		        {
 		          SystemResourceChangeEvent event = new SystemResourceChangeEvent(newFilter, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
 		          RSEUIPlugin.getTheSystemRegistryUI().postEvent((ISystemResourceChangeListener)v, event); // only expand in the current viewer, not all viewers!

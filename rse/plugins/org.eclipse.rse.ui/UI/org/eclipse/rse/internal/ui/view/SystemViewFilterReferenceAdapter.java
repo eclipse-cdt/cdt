@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -47,6 +48,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemChildrenContentsType;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
@@ -67,7 +69,6 @@ import org.eclipse.rse.ui.view.IContextObject;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -305,7 +306,7 @@ public class SystemViewFilterReferenceAdapter
 					if ((sfr != null) && (inputProvider != null) && (inputProvider.getViewer() != null))
 					{
 						SystemResourceChangeEvent event = new SystemResourceChangeEvent(sfr, ISystemResourceChangeEvents.EVENT_SELECT_EXPAND, null);
-						Viewer v = inputProvider.getViewer();
+						Viewer v = (Viewer)inputProvider.getViewer();
 						if (v instanceof ISystemResourceChangeListener)
 						{
 							//sr.fireEvent((ISystemResourceChangeListener)v, event); // only expand in the current viewer, not all viewers!

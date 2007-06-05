@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 package org.eclipse.rse.ui.model;
 
@@ -24,7 +25,6 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Shell;
 
@@ -34,8 +34,7 @@ import org.eclipse.swt.widgets.Shell;
  * This interface is not intended to be implemented by clients.
  * </p>
  */
-public interface ISystemRegistryUI 
-	extends ISystemShellProvider, ISystemViewInputProvider {
+public interface ISystemRegistryUI extends ISystemShellProvider {
 
 	// ----------------------------------
 	// UI METHODS...

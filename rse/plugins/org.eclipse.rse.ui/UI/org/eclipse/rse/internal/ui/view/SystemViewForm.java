@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Kevin Doyle (IBM) - [187553] - Removed code and related methods for toolbar/button bar.
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -23,22 +24,16 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.rse.internal.ui.SystemResources;
-import org.eclipse.rse.internal.ui.actions.SystemCascadingPulldownMenuAction;
-import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.ISystemLongRunningRequestListener;
 import org.eclipse.rse.ui.view.ISystemTree;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemLongRunningRequestEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;

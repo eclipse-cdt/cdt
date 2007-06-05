@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -22,13 +23,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.widgets.Shell;
 
@@ -77,36 +78,38 @@ public abstract class SystemAbstractAPIProvider
    	    return Platform.getAdapterManager().getAdapter(this, adapterType);	
     }           
 
-    /**
-     * Set the shell in case it is needed for anything.
-     * The label and content provider will call this.
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setShell(java.lang.Object)
      */
-    public void setShell(Shell shell)
+    public void setShell(Object shell)
     {
-    	this.shell = shell;
+    	this.shell = (Shell)shell;
     }
     
-    /**
-     * Return the shell of the current viewer
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getShell()
      */
-    public Shell getShell()
+    public Object getShell()
     {
     	return shell;
     }
 
-    /**
-     * Set the viewer in case it is needed for anything.
-     * The label and content provider will call this.
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setViewer(java.lang.Object)
      */
-    public void setViewer(Viewer viewer)
+    public void setViewer(Object viewer)
     {
-    	this.viewer = viewer;
+    	this.viewer = (Viewer)viewer;
     }
     
-    /**
-     * Return the viewer we are currently associated with
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getViewer()
      */
-    public Viewer getViewer()
+    public Object getViewer()
     {
     	return viewer;
     }

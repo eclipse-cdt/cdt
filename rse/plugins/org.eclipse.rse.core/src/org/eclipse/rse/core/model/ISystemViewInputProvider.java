@@ -12,14 +12,12 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split SystemRegistryUI from SystemRegistry implementation
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core from org.eclipse.rse.ui.view
  ********************************************************************************/
 
-package org.eclipse.rse.ui.view;
+package org.eclipse.rse.core.model;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.model.IHost;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * Abstraction for any object that wishes to be a roots-provider for the SystemView tree viewer.
@@ -67,29 +65,32 @@ public interface ISystemViewInputProvider extends IAdaptable {
 	/**
 	 * Set the shell in case it is needed for anything.
 	 * The label and content provider will call this.
-	 * @param shell the shell being used by the viewer using this provider
+	 * @param shell an {@link org.eclipse.swt.widgets.Shell shell} object,
+	 *    being used by the viewer using this provider
 	 */
-	// TODO should possibly be deprecated or removed
-	public void setShell(Shell shell);
+	public void setShell(Object shell);
 
 	/**
-	 * @return the shell of the viewer we are currently associated with
+	 * @return the {@link org.eclipse.swt.widgets.Shell shell} of the viewer 
+	 *     we are currently associated with.
+	 * @deprecated use other methods for getting the active workbench shell,
+	 *     e.g. {@link org.eclipse.rse.ui.RSEUIPlugin#getActiveWorkbenchShell()}
 	 */
-	// TODO should possibly be deprecated or removed
-	public Shell getShell();
+	public Object getShell();
 
 	/**
 	 * Set the viewer in case it is needed for anything.
 	 * The label and content provider will call this.
-	 * @param viewer the viewer that uses this provider
+	 * @param viewer the {@link org.eclipse.jface.viewers.Viewer viewer}
+	 *     that uses this provider
 	 */
-	// TODO should possibly be deprecated or removed
-	public void setViewer(Viewer viewer);
+	public void setViewer(Object viewer);
 
 	/**
 	 * Return the viewer we are currently associated with
-	 * @return the viewer we are currently associated with
+	 * @return the {@link org.eclipse.jface.viewers.Viewer viewer}
+	 *     we are currently associated with
+	 * @deprecated use other methods for getting the active viewer.
 	 */
-	// TODO should possibly be deprecated or removed
-	public Viewer getViewer();
+	public Object getViewer();
 }

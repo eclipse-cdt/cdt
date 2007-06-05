@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -57,7 +58,7 @@ import org.eclipse.rse.internal.core.RSECoreRegistry;
  * This interface is not intended to be implemented by clients.
  * </p>
  */
-public interface ISystemRegistry extends ISchedulingRule, IAdaptable {
+public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemViewInputProvider {
 
 	/**
 	 * Get the SystemFilterStartHere singleton instance. 

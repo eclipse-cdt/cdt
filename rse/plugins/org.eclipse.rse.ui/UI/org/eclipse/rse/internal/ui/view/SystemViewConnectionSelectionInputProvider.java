@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -78,7 +79,7 @@ public class SystemViewConnectionSelectionInputProvider extends SystemAbstractAP
 	// REQUIRED METHODS...
 	
 	/**
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getSystemViewRoots()
+	 * @see org.eclipse.rse.core.model.ISystemViewInputProvider#getSystemViewRoots()
 	 */
 	public Object[] getSystemViewRoots()
 	{
@@ -124,28 +125,28 @@ public class SystemViewConnectionSelectionInputProvider extends SystemAbstractAP
 	}
 
 	/**
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#hasSystemViewRoots()
+	 * @see org.eclipse.rse.core.model.ISystemViewInputProvider#hasSystemViewRoots()
 	 */
 	public boolean hasSystemViewRoots()
 	{
 		return true;
 	}
 	/**
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#showingConnections()
+	 * @see org.eclipse.rse.core.model.ISystemViewInputProvider#showingConnections()
 	 */
 	public boolean showingConnections()
 	{
 		return true;
 	}
 	/**
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getConnectionChildren(org.eclipse.rse.core.model.IHost)
+	 * @see org.eclipse.rse.core.model.ISystemViewInputProvider#getConnectionChildren(org.eclipse.rse.core.model.IHost)
 	 */
 	public Object[] getConnectionChildren(IHost selectedConnection)
 	{
 		return null;
 	}
 	/**
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#hasConnectionChildren(org.eclipse.rse.core.model.IHost)
+	 * @see org.eclipse.rse.core.model.ISystemViewInputProvider#hasConnectionChildren(org.eclipse.rse.core.model.IHost)
 	 */
 	public boolean hasConnectionChildren(IHost selectedConnection)
 	{

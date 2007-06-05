@@ -12,12 +12,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 
 
 /**

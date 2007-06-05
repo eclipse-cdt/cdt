@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -19,9 +20,9 @@ package org.eclipse.rse.ui.dialogs;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.internal.ui.view.SystemViewForm;
-import org.eclipse.rse.ui.RSEUIPlugin;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -62,7 +63,7 @@ public class SystemSelectAnythingDialog extends SystemPromptDialog
 	 */
 	protected ISystemViewInputProvider getInputProvider() 
 	{
-		ISystemViewInputProvider inputProvider = RSEUIPlugin.getTheSystemRegistryUI();
+		ISystemViewInputProvider inputProvider = RSECorePlugin.getTheSystemRegistry();
 		
 		return inputProvider;
 	}

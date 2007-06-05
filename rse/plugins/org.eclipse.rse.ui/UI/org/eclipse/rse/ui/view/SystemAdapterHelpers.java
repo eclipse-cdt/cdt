@@ -13,6 +13,7 @@
  * Contributors:
  * Uwe Stieber (Wind River) - [174418] SystemAdapterHelpers.getViewAdapter(Object) try to find adapter twice
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -20,6 +21,7 @@ package org.eclipse.rse.ui.view;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.internal.ui.view.SystemViewAdapterFactory;
 import org.eclipse.rse.ui.RSEUIPlugin;
 

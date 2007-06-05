@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [190195] Cannot enable new connection prompt in system view
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -24,14 +25,14 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.internal.model.SystemNewConnectionPromptObject;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.view.AbstractSystemViewAdapter;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -115,7 +116,7 @@ public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter
 	{
 		ISystemViewInputProvider provider = (ISystemViewInputProvider)element;
 
-        if ((provider instanceof ISystemRegistryUI) && showNewConnectionPrompt())
+        if ((provider instanceof ISystemRegistry) && showNewConnectionPrompt())
         {
           Object[] children = provider.getSystemViewRoots();
           if ((children == null) || (children.length == 0))
@@ -140,7 +141,7 @@ public class SystemViewRootInputAdapter extends AbstractSystemViewAdapter
 	public boolean hasChildren(IAdaptable element)
 	{
 		ISystemViewInputProvider provider = (ISystemViewInputProvider)element;
-        if ((provider instanceof ISystemRegistryUI) && showNewConnectionPrompt())
+        if ((provider instanceof ISystemRegistry) && showNewConnectionPrompt())
         {
           return true;
         }

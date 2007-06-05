@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [190195] Cannot enable new connection prompt in system view
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -68,6 +69,7 @@ import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.actions.SystemCascadingPreferencesAction;
@@ -91,11 +93,9 @@ import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ScrollBar;
@@ -454,7 +454,7 @@ public class SystemViewPart
 		// ----------------------
 		// Restore previous state
 		// ----------------------		
-		if ((fMemento != null) && (input instanceof ISystemRegistryUI))
+		if ((fMemento != null) && (input instanceof ISystemRegistry))
 			restoreState(fMemento);
 		//fMemento = null;
 
@@ -763,7 +763,7 @@ public class SystemViewPart
 	{
 		IAdaptable inputObj = getSite().getPage().getInput();
 		inputIsRoot = false;
-		ISystemViewInputProvider inputProvider = RSEUIPlugin.getTheSystemRegistryUI();
+		ISystemViewInputProvider inputProvider = RSECorePlugin.getTheSystemRegistry();
 		if (inputObj != null)
 		{
 			platformManager = Platform.getAdapterManager();

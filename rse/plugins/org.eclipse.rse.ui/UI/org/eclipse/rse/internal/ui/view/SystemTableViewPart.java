@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [189005] Changed setFocus() to setInput to SystemRegistryUI
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1148,7 +1149,7 @@ public class SystemTableViewPart extends ViewPart
 	        }
 	        else
 	        {
-	            setInput(RSEUIPlugin.getTheSystemRegistryUI());
+	            setInput(RSECorePlugin.getTheSystemRegistry());
 	        }
 	    }
 

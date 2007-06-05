@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * David Dykstal (IBM) - [189858] Removed the remote systems project in the team view
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -22,8 +23,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -113,15 +114,15 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setShell(org.eclipse.swt.widgets.Shell)
 	 */
-	public void setShell(Shell shell)
+	public void setShell(Object shell)
 	{
-		this.shell = shell;		
+		this.shell = (Shell)shell;		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getShell()
 	 */
-	public Shell getShell()
+	public Object getShell()
 	{
 		return shell;
 	}
@@ -129,15 +130,15 @@ public class SystemTeamViewInputProvider implements IAdaptable, ISystemViewInput
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setViewer(org.eclipse.jface.viewers.Viewer)
 	 */
-	public void setViewer(Viewer viewer)
+	public void setViewer(Object viewer)
 	{
-		this.viewer = viewer;		
+		this.viewer = (Viewer)viewer;		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getViewer()
 	 */
-	public Viewer getViewer()
+	public Object getViewer()
 	{
 		return viewer;
 	}

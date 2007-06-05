@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  * David Dykstal (IBM) - [191038] remove getInstance(logFilePath) log file was not used
  *                                initialize correctly in getInstance()
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 package org.eclipse.rse.ui.internal.model;
 
@@ -23,11 +24,8 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
 import org.eclipse.rse.core.events.ISystemResourceChangeListener;
@@ -42,10 +40,8 @@ import org.eclipse.rse.internal.ui.view.SystemViewDataDropAdapter;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
-import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.model.ISystemRegistryUI;
-import org.eclipse.rse.ui.view.ISystemViewInputProvider;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -62,13 +58,11 @@ import org.eclipse.ui.part.ResourceTransfer;
  * 
  * This class is not intended to be subclassed by clients.
  */
-public class SystemRegistryUI implements ISystemRegistryUI, ISystemViewInputProvider {
+public class SystemRegistryUI implements ISystemRegistryUI {
 
 	private static SystemRegistryUI _instance = null;
 	private SystemRegistry registry = null;
 
-	private Viewer viewer = null;
-	
 	// progress monitor support
 	private IRunnableContext currentRunnableContext;
 	private Shell currentRunnableContextShell;
@@ -156,76 +150,6 @@ public class SystemRegistryUI implements ISystemRegistryUI, ISystemViewInputProv
 		}
 	}
 
-	// ----------------------------------
-	// SYSTEMVIEWINPUTPROVIDER METHODS...
-	// ----------------------------------
-	
-	/**
-	 * Return the children objects to constitute the root elements in the system view tree.
-	 * We return all connections for all active profiles.
-	 */
-	public Object[] getSystemViewRoots()
-	{
-		//DKM - only return enabled connections now
-		IHost[] connections = registry.getHosts();
-		List result = new ArrayList(); 
-		for (int i = 0; i < connections.length; i++) {
-			IHost con = connections[i];
-			IRSESystemType sysType = con.getSystemType();
-			if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
-				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(RSESystemTypeAdapter.class));
-				// Note: System types without registered subsystems get disabled by the adapter itself!
-				//       There is no need to re-check this here again.
-				if (adapter.isEnabled(sysType)) result.add(con);
-			}
-		}
-		return result.toArray();
-	}
-	
-	/**
-	 * Return true if {@link #getSystemViewRoots()} will return a non-empty list
-	 * We return true if there are any connections for any active profile.
-	 */
-	public boolean hasSystemViewRoots()
-	{
-		return (registry.getHostCount() > 0);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getConnectionChildren(org.eclipse.rse.core.model.IHost)
-	 */
-	public Object[] getConnectionChildren(IHost selectedConnection)
-	{
-		return registry.getConnectionChildren(selectedConnection);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#hasConnectionChildren(org.eclipse.rse.core.model.IHost)
-	 */
-	public boolean hasConnectionChildren(IHost selectedConnection)
-	{
-		return registry.hasConnectionChildren(selectedConnection);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapterType)
-	{
-		return Platform.getAdapterManager().getAdapter(this, adapterType);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setShell(org.eclipse.swt.widgets.Shell)
-	 */
-	public void setShell(Shell shell)
-	{
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.ui.model.ISystemShellProvider#getShell()
@@ -250,33 +174,6 @@ public class SystemRegistryUI implements ISystemRegistryUI, ISystemViewInputProv
 			}
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setViewer(org.eclipse.jface.viewers.Viewer)
-	 */
-	public void setViewer(Viewer viewer)
-	{
-		this.viewer = viewer;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getViewer()
-	 */
-	public Viewer getViewer()
-	{
-		return viewer;
-	}
-
-	/**
-	 * Return true if we are listing connections or not, so we know whether
-	 * we are interested in connection-add events
-	 */
-	public boolean showingConnections()
-	{
-		return true;
 	}
 
 	// ----------------------------------

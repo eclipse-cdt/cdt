@@ -30,6 +30,7 @@
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -88,6 +89,7 @@ import org.eclipse.rse.internal.core.model.SystemRemoteChangeEventManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemMessages;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.SystemPreferencesManager;
@@ -116,6 +118,10 @@ public class SystemRegistry implements ISystemRegistry
 
 	private ISubSystemConfigurationProxy[] subsystemConfigurationProxies = null;
 	private boolean errorLoadingFactory = false;
+	
+	//For ISystemViewInputProvider
+	private Object shell = null;
+	private Object viewer = null;
 
 	/**
 	 * Constructor.
@@ -2964,5 +2970,104 @@ public class SystemRegistry implements ISystemRegistry
 	public ISystemFilterStartHere getSystemFilterStartHere() {
 		return SystemFilterStartHere.getInstance();
 	}
+
+	// ----------------------------------
+	// SYSTEMVIEWINPUTPROVIDER METHODS...
+	// ----------------------------------
 	
+	/**
+	 * Return the children objects to constitute the root elements in the system view tree.
+	 * We return all connections for all active profiles.
+	 */
+	public Object[] getSystemViewRoots()
+	{
+		//DKM - only return enabled connections now
+		IHost[] connections = getHosts();
+		List result = new ArrayList(); 
+		for (int i = 0; i < connections.length; i++) {
+			IHost con = connections[i];
+			IRSESystemType sysType = con.getSystemType();
+			if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
+				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(RSESystemTypeAdapter.class));
+				// Note: System types without registered subsystems get disabled by the adapter itself!
+				//       There is no need to re-check this here again.
+				if (adapter.isEnabled(sysType)) result.add(con);
+			}
+		}
+		return result.toArray();
+	}
+	
+	/**
+	 * Return true if {@link #getSystemViewRoots()} will return a non-empty list
+	 * We return true if there are any connections for any active profile.
+	 */
+	public boolean hasSystemViewRoots()
+	{
+		return (getHostCount() > 0);
+	}
+
+	/**
+	 * Return true if we are listing connections or not, so we know whether
+	 * we are interested in connection-add events
+	 */
+	public boolean showingConnections()
+	{
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setShell(java.lang.Object)
+	 */
+	public void setShell(Object shell)
+	{
+		this.shell = shell;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.model.ISystemShellProvider#getShell()
+	 */
+	public Object getShell()
+	{
+//		// thread safe shell
+//		IWorkbench workbench = RSEUIPlugin.getDefault().getWorkbench();
+//		if (workbench != null)
+//		{
+//			// first try to get the active workbench window
+//			IWorkbenchWindow ww = workbench.getActiveWorkbenchWindow();
+//			if (ww == null) // no active window so just get the first one
+//				ww = workbench.getWorkbenchWindows()[0];
+//			if (ww != null)
+//			{
+//				Shell shell = ww.getShell();
+//				if (!shell.isDisposed())
+//				{
+//					return shell;
+//				}
+//			}
+//		}
+//		return null;
+		return this.shell;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#setViewer(java.lang.Object)
+	 */
+	public void setViewer(Object viewer)
+	{
+		this.viewer = viewer;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.ui.view.ISystemViewInputProvider#getViewer()
+	 */
+	public Object getViewer()
+	{
+		return viewer;
+	}
+
+
 }//SystemRegistryImpl

@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [189163] Update IActionFilter constants from subsystemFactory to subsystemConfiguration
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
+ * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -48,6 +49,7 @@ import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemResourceSet;
+import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
@@ -271,7 +273,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	      ISystemViewInputProvider ip = getInput();
 	      if (ip != null)
 	      {
-	        return ip.getViewer();
+	        return (Viewer)ip.getViewer();
 	      }
 	      else
 	      {

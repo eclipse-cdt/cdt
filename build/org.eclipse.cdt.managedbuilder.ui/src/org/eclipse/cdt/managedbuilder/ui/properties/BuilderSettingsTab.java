@@ -14,17 +14,11 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
-import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.TriButton;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.accessibility.AccessibleListener;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -37,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
@@ -45,52 +38,27 @@ import org.eclipse.swt.widgets.Widget;
 public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	// Widgets
 	//1
-	TriButton b_useDefault;
-	Combo  c_builderType;
-	Text   t_buildCmd; 
+	private TriButton b_useDefault;
+	private Combo  c_builderType;
+	private Text   t_buildCmd; 
 	//2
-	TriButton b_genMakefileAuto;
-	TriButton b_expandVars;
-	//3
-	TriButton b_stopOnError;
-	TriButton b_parallel;
-
-	Button b_parallelOpt;
-	Button b_parallelNum;
-	Spinner parallelProcesses;
-	//4 
-	Label  title2;
-	Button b_autoBuild;
-	Text   t_autoBuild;
-	Button b_cmdBuild;
-	Text   t_cmdBuild;
-	Button b_cmdClean;
-	Text   t_cmdClean;	
+	private TriButton b_genMakefileAuto;
+	private TriButton b_expandVars;
 	//5
-	Text   t_dir;
-	Button b_dirWsp;
-	Button b_dirFile;
-	Button b_dirVars;
+	private Text   t_dir;
+	private Button b_dirWsp;
+	private Button b_dirFile;
+	private Button b_dirVars;
 
-	protected final int cpuNumber = BuildProcessManager.checkCPUNumber(); 
 	IBuilder bld;
 	Configuration cfg;
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
 		usercomp.setLayout(new GridLayout(1, false));
-		
-		ScrolledComposite sc = new ScrolledComposite(usercomp, SWT.V_SCROLL | SWT.H_SCROLL);
-		sc.setLayoutData(new GridData(GridData.FILL_BOTH));
-	    sc.setExpandHorizontal(true);
-	    sc.setExpandVertical(true);
-
-	    Composite comp = new Composite(sc, SWT.NONE);
-		sc.setContent(comp);
-		comp.setLayout(new GridLayout(1, false));
 
 		// Builder group
-		Group g1 = setupGroup(comp, Messages.getString("BuilderSettingsTab.0"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g1 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.0"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g1, Messages.getString("BuilderSettingsTab.1"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		c_builderType = new Combo(g1, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		setupControl(c_builderType, 2, GridData.FILL_HORIZONTAL);
@@ -118,112 +86,14 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		        }
 			}});
 				
-		Group g2 = setupGroup(comp, Messages.getString("BuilderSettingsTab.6"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g2 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.6"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		((GridLayout)(g2.getLayout())).makeColumnsEqualWidth = true;
 		
 		b_genMakefileAuto = setupTri(g2, Messages.getString("BuilderSettingsTab.7"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		b_expandVars  = setupTri(g2, Messages.getString("BuilderSettingsTab.8"), 1, GridData.BEGINNING); //$NON-NLS-1$
 
-		// Build setting group
-		Group g3 = setupGroup(comp, Messages.getString("BuilderSettingsTab.9"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
-		((GridLayout)(g3.getLayout())).makeColumnsEqualWidth = true;
-		((GridLayout)(g3.getLayout())).verticalSpacing = 0;
-		
-		Composite c1 = new Composite(g3, SWT.NONE);
-		setupControl(c1, 1, GridData.FILL_BOTH);
-		GridData gd = (GridData)c1.getLayoutData();
-		gd.verticalSpan = 2;
-		c1.setLayoutData(gd);
-		GridLayout gl = new GridLayout(1, false);
-		gl.marginWidth = 0;
-		c1.setLayout(gl);
-		
-		b_stopOnError = setupTri(c1, Messages.getString("BuilderSettingsTab.10"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		
-		Composite c2 = new Composite(g3, SWT.NONE);
-		setupControl(c2, 1, GridData.FILL_BOTH);
-		gl = new GridLayout(1, false);
-		gl.marginWidth = 0;
-		c2.setLayout(gl);
-		
-		b_parallel = setupTri(c2, Messages.getString("BuilderSettingsTab.11"), 1, GridData.BEGINNING); //$NON-NLS-1$
-
-		Composite c3 = new Composite(g3, SWT.NONE);
-		setupControl(c3, 1, GridData.FILL_BOTH);
-		gl = new GridLayout(2, false);
-		gl.marginWidth = 0;
-		c3.setLayout(gl);
-		
-		b_parallelOpt= new Button(c3, SWT.RADIO);
-		b_parallelOpt.setText(Messages.getString("BuilderSettingsTab.12")); //$NON-NLS-1$
-		setupControl(b_parallelOpt, 2, GridData.BEGINNING);
-		((GridData)(b_parallelOpt.getLayoutData())).horizontalIndent = 15;
-		b_parallelOpt.addSelectionListener(new SelectionAdapter() {
-		    public void widgetSelected(SelectionEvent event) {
-				cfg.setParallelDef(b_parallelOpt.getSelection());
-				updateButtons();
-		 }});
-		
-		b_parallelNum= new Button(c3, SWT.RADIO);
-		b_parallelNum.setText(Messages.getString("BuilderSettingsTab.13")); //$NON-NLS-1$
-		setupControl(b_parallelNum, 1, GridData.BEGINNING);
-		((GridData)(b_parallelNum.getLayoutData())).horizontalIndent = 15;
-		b_parallelNum.addSelectionListener(new SelectionAdapter() {
-		    public void widgetSelected(SelectionEvent event) {
-				cfg.setParallelDef(!b_parallelNum.getSelection());
-				updateButtons();
-		 }});
-
-		parallelProcesses = new Spinner(c3, SWT.BORDER);
-		setupControl(parallelProcesses, 1, GridData.BEGINNING);
-		parallelProcesses.setValues(cpuNumber, 1, 10000, 0, 1, 10);
-		parallelProcesses.addSelectionListener(new SelectionAdapter () {
-			public void widgetSelected(SelectionEvent e) {
-				cfg.setParallelNumber(parallelProcesses.getSelection());
-				updateButtons();
-			}
-		});
-
-		// Workbench behaviour group
-		AccessibleListener makeTargetLabelAccessibleListener = new AccessibleAdapter() {
-			public void getName(AccessibleEvent e) {
-				e.result = Messages.getString("BuilderSettingsTab.16"); //$NON-NLS-1$
-			}
-		};
-		Group g4 = setupGroup(comp, Messages.getString("BuilderSettingsTab.14"), 3, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
-		setupLabel(g4, Messages.getString("BuilderSettingsTab.15"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		title2 = setupLabel(g4, Messages.getString("BuilderSettingsTab.16"), 2, GridData.BEGINNING); //$NON-NLS-1$
-		b_autoBuild = setupCheck(g4, Messages.getString("BuilderSettingsTab.17"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		t_autoBuild = setupBlock(g4, b_autoBuild);
-		t_autoBuild.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				try {
-					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, t_autoBuild.getText());
-				} catch (CoreException ex) {}
-			}} );
-		t_autoBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
-		setupLabel(g4, Messages.getString("BuilderSettingsTab.18"), 3, GridData.BEGINNING); //$NON-NLS-1$
-		b_cmdBuild = setupCheck(g4, Messages.getString("BuilderSettingsTab.19"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		t_cmdBuild = setupBlock(g4, b_cmdBuild);
-		t_cmdBuild.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				try { 
-					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, t_cmdBuild.getText());
-				} catch (CoreException ex) {}
-			}} );
-		t_cmdBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
-		b_cmdClean = setupCheck(g4, Messages.getString("BuilderSettingsTab.20"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		t_cmdClean = setupBlock(g4, b_cmdClean);
-		t_cmdClean.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				try { 
-					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, t_cmdClean.getText());
-				} catch (CoreException ex) {}
-			}} );
-		t_cmdClean.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
-
 		// Build location group
-		Group g5 = setupGroup(comp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		Group g5 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
 		setupLabel(g5, Messages.getString("BuilderSettingsTab.22"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_dir = setupText(g5, 1, GridData.FILL_HORIZONTAL);
 		t_dir.addModifyListener(new ModifyListener() {
@@ -239,8 +109,6 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_dirWsp = setupBottomButton(c, WORKSPACEBUTTON_NAME);
 		b_dirFile = setupBottomButton(c, FILESYSTEMBUTTON_NAME);
 		b_dirVars = setupBottomButton(c, VARIABLESBUTTON_NAME);
-
-		sc.setMinSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	void setManagedBuild(boolean enable) {
@@ -267,24 +135,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				cfg.canEnableInternalBuilder(false));
 		
 		t_buildCmd.setText(getMC());
-		
-		b_stopOnError.setSelection(bld.isStopOnError());
-		b_stopOnError.setEnabled(
-				bld.supportsStopOnError(true) &&
-				bld.supportsStopOnError(false));
-		// parallel
-		b_parallel.setSelection(cfg.getInternalBuilderParallel());
-		b_parallelOpt.setSelection(cfg.getParallelDef());
-		b_parallelNum.setSelection(!cfg.getParallelDef());
-		int n = cfg.getParallelNumber();
-		if (n < 0) n = -n;
-		parallelProcesses.setSelection(n);
-
-		b_parallel.setVisible(bld.supportsParallelBuild());
-		b_parallelOpt.setVisible(bld.supportsParallelBuild());
-		b_parallelNum.setVisible(bld.supportsParallelBuild());
-		parallelProcesses.setVisible(bld.supportsParallelBuild());
-		
+				
 		if(!bld.canKeepEnvironmentVariablesInBuildfile())
 			b_expandVars.setEnabled(false);
 		else {
@@ -300,15 +151,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_dirWsp.setEnabled(!mbOn);
 		b_dirFile.setEnabled(!mbOn);
 		
-		b_autoBuild.setSelection(bld.isAutoBuildEnable());
-		t_autoBuild.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
-		b_cmdBuild.setSelection(bld.isIncrementalBuildEnabled());
-		t_cmdBuild.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
-		b_cmdClean.setSelection(bld.isCleanBuildEnabled());
-		t_cmdClean.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
-		
 		boolean external = (c_builderType.getSelectionIndex() == 0);
-		boolean parallel = b_parallel.getSelection();
 		
 		b_useDefault.setEnabled(external);
 		t_buildCmd.setEnabled(external);
@@ -316,23 +159,9 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		
 		b_genMakefileAuto.setEnabled(external && cfg.supportsBuild(true));
 		b_expandVars.setEnabled(external && b_genMakefileAuto.getSelection());
-		b_parallelNum.setEnabled(parallel);
-		b_parallelOpt.setEnabled(parallel);
-		parallelProcesses.setEnabled(parallel & b_parallelNum.getSelection());
-		
-		title2.setVisible(external);
-		t_autoBuild.setVisible(external);
-		((Control)t_autoBuild.getData()).setVisible(external);
-		t_cmdBuild.setVisible(external);
-		((Control)t_cmdBuild.getData()).setVisible(external);
-		t_cmdClean.setVisible(external);
-		((Control)t_cmdClean.getData()).setVisible(external);
 		
 		if (external) {
 			checkPressed(b_useDefault);
-			checkPressed(b_autoBuild);
-			checkPressed(b_cmdBuild);
-			checkPressed(b_cmdClean);
 		}
 	}
 	
@@ -354,7 +183,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	 * Sets up text + corresponding button
 	 * Checkbox can be implemented either by Button or by TriButton
 	 */
-	Text setupBlock(Composite c, Control check) {
+	private Text setupBlock(Composite c, Control check) {
 		Text t = setupText(c, 1, GridData.FILL_HORIZONTAL);
 		Button b = setupButton(c, VARIABLESBUTTON_NAME, 1, GridData.END);
 		b.setData(t); // to get know which text is affected
@@ -370,7 +199,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	/*
 	 * Unified handler for "Variables" buttons
 	 */
-	void buttonVarPressed(SelectionEvent e) {
+	private void buttonVarPressed(SelectionEvent e) {
 		Widget b = e.widget;
 		if (b == null || b.getData() == null) return; 
 		if (b.getData() instanceof Text) {
@@ -393,7 +222,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
     	updateButtons();
     }
 	
-	void checkPressed(Control b) {	
+	private void checkPressed(Control b) {	
 		if (b == null) return;
 		
 		boolean val = false;
@@ -410,23 +239,13 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			}
 		}
 		try {
-			if (b == b_autoBuild) {
-				bld.setAutoBuildEnable(val);				
-			} else if (b == b_cmdBuild) {
-				bld.setIncrementalBuildEnable(val);				
-			} else if (b == b_cmdClean) {
-				bld.setCleanBuildEnable(val);
-			} else if (b == b_useDefault) {
+			if (b == b_useDefault) {
 				bld.setUseDefaultBuildCmd(!val);
 			} else if (b == b_genMakefileAuto) {
 				setManagedBuild(val);
 			} else if (b == b_expandVars) {
 				if(bld.canKeepEnvironmentVariablesInBuildfile()) 
 					bld.setKeepEnvironmentVariablesInBuildfile(!val);
-			} else if (b == b_stopOnError) {
-				bld.setStopOnError(val);
-			} else if (b == b_parallel) {
-				bld.setParallelBuildOn(val);
 			}
 		} catch (CoreException e) {}
 	}
@@ -462,7 +281,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		copyBuilders(cfg01.getBuilder(), cfg02.getEditableBuilder());
 	}
 	
-	private void copyBuilders(IBuilder b1, IBuilder b2) {  	
+	static void copyBuilders(IBuilder b1, IBuilder b2) {  	
 		try {
 			b2.setUseDefaultBuildCmd(b1.isDefaultBuildCmd());
 			if (!b1.isDefaultBuildCmd()) {

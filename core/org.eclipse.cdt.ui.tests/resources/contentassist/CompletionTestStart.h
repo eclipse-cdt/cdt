@@ -68,3 +68,5 @@ namespace xNamespace {
     void xNamespaceFunction(){
     }
 };
+
+

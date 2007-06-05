@@ -863,7 +863,7 @@ public class CPPVisitor {
 				IASTExpression owner = ((ICPPASTFieldReference)parent).getFieldOwner();
 				IType type = getExpressionType( owner );
 				if( ((ICPPASTFieldReference)parent).isPointerDereference() ){
-					type= CPPSemantics.getUltimateType(type, true);
+					type= CPPSemantics.getUltimateTypeUptoPointers(type);
 					if( type instanceof ICPPClassType ){
 						ICPPFunction op = CPPSemantics.findOperator( (IASTFieldReference)parent, (ICPPClassType) type );
 						if( op != null ){

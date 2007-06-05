@@ -42,6 +42,8 @@ public class ContentAssist2TestSuite extends TestSuite {
 		addTest(CompletionTest_MacroRef_NoPrefix.suite());
 		addTest(CompletionTest_MacroRef_Prefix.suite());
 		addTest(CompletionTest_MemberReference_Arrow_NoPrefix.suite());
+		addTest(CompletionTest_MemberReference_Arrow_NoPrefix2.suite());
+		addTest(CompletionTest_MemberReference_Arrow_NoPrefix3.suite());
 		addTest(CompletionTest_MemberReference_Arrow_Prefix.suite());
 		addTest(CompletionTest_MemberReference_Arrow_Prefix2.suite());
 		addTest(CompletionTest_MemberReference_Dot_NoPrefix.suite());

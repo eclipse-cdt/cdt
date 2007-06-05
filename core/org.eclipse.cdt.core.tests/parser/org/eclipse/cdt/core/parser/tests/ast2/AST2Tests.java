@@ -3791,6 +3791,30 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals("AA", ((ICPPMethod)methodAA).getClassOwner().getName());
 	}
 	
+	//	class B {
+	//		public:
+	//			void bar() {}
+	//	};
+	//	class A {
+	//		public:
+	//			B* operator->() { return new B(); }
+	//			void foo() {}
+	//	};
+	//
+	//	void main() {
+	//		A a, &aa=a, *ap= new A();
+	//		a.foo();
+	//		ap->foo();
+	//		aa.foo();
+	//		(*ap)->bar();
+	//		(&aa)->foo();
+	//		(&a)->foo();
+	//	}
+	public void test186736_variant2() throws Exception {
+		StringBuffer buffer = getContents(1)[0];
+		IASTTranslationUnit tu= parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
+	}
+	
 	// typedef int int32;
 	// int32 f(int32 (*p)) {
 	//   return *p;

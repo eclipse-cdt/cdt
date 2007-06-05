@@ -369,7 +369,7 @@ public class CPPSemantics {
                 {
                     ICPPASTFieldReference fieldRef = (ICPPASTFieldReference) tempName.getParent();
                     implied = CPPVisitor.getExpressionType( fieldRef.getFieldOwner() );
-                    IType ultimateImplied= getUltimateType(implied, true);
+                    IType ultimateImplied= getUltimateTypeUptoPointers(implied);
                     if( prop != STRING_LOOKUP_PROPERTY && fieldRef.isPointerDereference() && ultimateImplied instanceof ICPPClassType) {
                     	ICPPFunction operator= findOperator(fieldRef, (ICPPClassType) ultimateImplied);
                     	try {
@@ -2881,6 +2881,29 @@ public class CPPSemantics {
 	                return type;
 				else if( type instanceof IPointerType )
 					type = ((IPointerType) type).getType();
+				else if( type instanceof ICPPReferenceType )
+					type = ((ICPPReferenceType)type).getType();
+				else 
+					return type;
+			}
+        } catch ( DOMException e ) {
+            return e.getProblem();
+        }
+	}
+	
+	/**
+	 * Descends into type containers, stopping at pointer or
+	 * pointer-to-member types.
+	 * @param type
+	 * @return the ultimate type contained inside the specified type
+	 */
+	public static IType getUltimateTypeUptoPointers(IType type){
+	    try {
+	        while( true ){
+				if( type instanceof ITypedef )
+				    type = ((ITypedef)type).getType();
+	            else if( type instanceof IQualifierType )
+					type = ((IQualifierType)type).getType();
 				else if( type instanceof ICPPReferenceType )
 					type = ((ICPPReferenceType)type).getType();
 				else 

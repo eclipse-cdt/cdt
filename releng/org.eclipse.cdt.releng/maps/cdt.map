@@ -1,3 +1,6 @@
+! The master
+feature@org.eclipse.cdt.master=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/releng/org.eclipse.cdt.master
+
 ! Cross platform
 plugin@org.eclipse.cdt.core=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.core
 plugin@org.eclipse.cdt.ui=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/all/org.eclipse.cdt.ui

@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
-import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.core.templateengine.process.ProcessArgument;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.ProcessRunner;
@@ -66,7 +65,10 @@ public class NewManagedProject extends ProcessRunner {
 					locationPath = Path.fromPortableString(location);
 				}
 				
-				List configs = (List) template.getValueStore().get(TemplateEngineHelper.CONFIGURATIONS);
+				List configs = template.getTemplateInfo().getConfigurations();
+				if (configs == null || configs.size() == 0) {
+					throw new ProcessFailureException(Messages.getString("NewManagedProject.4") + projectName); //$NON-NLS-1$
+				}
 				
 				pca.setProject(project);
 				pca.setProjectLocation(locationPath);
@@ -82,7 +84,7 @@ public class NewManagedProject extends ProcessRunner {
 			} catch (CoreException e) {
 				throw new ProcessFailureException(Messages.getString("NewManagedProject.3") + e.getMessage(), e); //$NON-NLS-1$
 			} catch (BuildException e) {
-				throw new ProcessFailureException(Messages.getString("NewManagedProject.4") + e.getMessage(), e); //$NON-NLS-1$
+				throw new ProcessFailureException(Messages.getString("NewManagedProject.3") + e.getMessage(), e); //$NON-NLS-1$
 			}
 		} else {
 //			throw new ProcessFailureException(Messages.getString("NewManagedProject.5") + projectName); //$NON-NLS-1$

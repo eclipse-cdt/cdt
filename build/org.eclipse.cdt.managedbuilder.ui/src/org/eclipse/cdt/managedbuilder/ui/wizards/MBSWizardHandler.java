@@ -12,6 +12,7 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -93,7 +94,8 @@ public class MBSWizardHandler extends CWizardHandler {
 	private IWizard wizard;
 	private IWizardPage startingPage;
 //	private EntryDescriptor entryDescriptor = null;
-	private EntryInfo entryInfo; 
+	private EntryInfo entryInfo;
+	private CfgHolder[] cfgs = null;
 	
 	protected static final class EntryInfo {
 		private SortedMap tcs;
@@ -398,7 +400,6 @@ public class MBSWizardHandler extends CWizardHandler {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-		CfgHolder[] cfgs = null;
 		if (defaults) {
 			cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
 		} else {
@@ -463,6 +464,12 @@ public class MBSWizardHandler extends CWizardHandler {
 		Template template = entryInfo.getInitializedTemplate(getStartingPage(), getConfigPage(), getMainPageData());
 		if(template == null)
 			return;
+
+		List configs = new ArrayList();
+		for(int i = 0; i < cfgs.length; i++){
+			configs.add(cfgs[i].getConfiguration());
+		}
+		template.getTemplateInfo().setConfigurations(configs);
 
 		IStatus[] statuses = template.executeTemplateProcesses(null, false);
 	    if (statuses.length == 1 && statuses[0].getException() instanceof ProcessFailureException) {

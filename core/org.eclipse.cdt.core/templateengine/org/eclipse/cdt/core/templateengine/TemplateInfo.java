@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -28,6 +29,7 @@ public class TemplateInfo {
 	private boolean isCategory;
 	private String icon;
 	private String templateId;
+	private List configs;
 	
 	public TemplateInfo(String templateId, String projectTypeId, String filterPattern, String templatePath, 
 			String pluginId, Set toolChainIdSet, String usageDescription, 
@@ -41,6 +43,7 @@ public class TemplateInfo {
 		this.usageDescription = usageDescription != null ? usageDescription : ""; //$NON-NLS-1$
 		this.pagesProvider = pagesProvider;
 		this.isCategory = isCategory;
+		this.configs = null;
 	}
 
 	/**
@@ -102,6 +105,14 @@ public class TemplateInfo {
 
 	public void setToolChainSet(Set toolChainIdSet) {
 		this.toolChainIdSet = toolChainIdSet;
+	}
+	
+	public List getConfigurations() {
+		return configs;
+	}
+	
+	public void setConfigurations(List configs) {
+		this.configs = configs;
 	}
 	
 	/**

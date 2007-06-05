@@ -6710,7 +6710,7 @@
             natureFilter="cnature"
             name="%ToolName.linker.gnu.c"
             outputFlag="-o"
-		  isSystem="false"
+		  isSystem="true"
             command="gcc"
             id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker"
             errorParsers="org.eclipse.cdt.core.GLDErrorParser">
@@ -6904,7 +6904,7 @@
       <tool
             natureFilter="ccnature"
             name="Test 4.0 ToolName.linker.gnu.cpp"
-		  isSystem="false"
+		  isSystem="true"
             outputFlag="-o"
             command="g++"
             id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker"
@@ -7090,7 +7090,7 @@
       <tool
             natureFilter="both"
             isAbstract="true"
-            isSystem="false"
+            isSystem="true"
             name="Test 4.0 ToolName.archiver.gnu"
             command="ar"
             id="test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver">
@@ -7138,7 +7138,7 @@
 
       <tool
             command="as"
-		  isSystem="false"
+		  isSystem="true"
             name="Test 4.0 ToolName.assembler.gnu"
             outputFlag="-o"
             id="test.four.dot.zero.cdt.managedbuild.tool.gnu.assembler"
@@ -7191,7 +7191,7 @@
       <tool
 		  name="Test 4.0 ToolName.compiler.gnu.c"
 		  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler"
-		  isSystem="false"
+		  isSystem="true"
 		  isAbstract="true"
 		  command="gcc"
 		  natureFilter="both"
@@ -7492,7 +7492,7 @@
 		  name="Test 4.0 ToolName.compiler.gnu.cpp"
 		  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler"
 		  isAbstract="true"
-		  isSystem="false"
+		  isSystem="true"
 		  command="g++"
 		  natureFilter="ccnature"
 		  outputFlag="-o"
@@ -7777,7 +7777,7 @@
       <tool
           id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.cygwin"
           name="Test 4.0 ToolName.linker.cygwin.gnu.c"
-           isSystem="false"
+           isSystem="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker">
           <envVarBuildPath 
               pathType="buildpathLibrary"
@@ -7800,7 +7800,7 @@
       <tool
           id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin"
           name="Test 4.0 ToolName.linker.cygwin.gnu.cpp"
-          isSystem="false"
+          isSystem="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker">
           <envVarBuildPath 
               pathType="buildpathLibrary"
@@ -7824,7 +7824,7 @@
       <tool
           id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin"
           name="Test 4.0 ToolName.compiler.cygwin.gnu.c"
-          isTest="false"
+          isTest="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler"
           optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.OneDirectionalPathConverter">
           <envVarBuildPath 
@@ -7839,7 +7839,7 @@
       <tool
           id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.cygwin"
           name="Test 4.0 ToolName.compiler.cygwin.gnu.cpp"
-          isSystem="false"
+          isSystem="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler"
           optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.BidirectionalPathConverter">
           <envVarBuildPath 
@@ -7856,7 +7856,7 @@
 	  	  isAbstract="true"
 	      id="test.four.dot.zero.cdt.managedbuild.target.gnu.builder"
           command="make"
-          isSystem="false"
+          isSystem="true"
           arguments=""
           variableFormat="${=}"
           isVariableCaseSensitive="true"
@@ -7883,7 +7883,7 @@
    	  
       <toolChain
           archList="all"
-          isSystem="false"
+          isSystem="true"
           osList="linux,hpux,aix,qnx"
           name="Test 4.0 ToolChainName.Linux"
           targetTool="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker;test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker;test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver"
@@ -7971,7 +7971,7 @@
       
       <projectType      
             isAbstract="false"     
-            isTest="false"
+            isTest="true"
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.exe">
          <configuration
@@ -8088,7 +8088,7 @@
       
       <projectType      
             isAbstract="false"     
-            isTest="false"
+            isTest="true"
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.so">
          <configuration
@@ -8236,7 +8236,7 @@
       </projectType>
           
       <projectType 
-            isTest="false"
+            isTest="true"
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             isAbstract="false"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.lib">                        
@@ -8437,7 +8437,7 @@
       <projectType 
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.cygwin.exe"
-            isTest="false"
+            isTest="true"
             isAbstract="false">                                  
          <configuration
                name="Test 4.0 ConfigName.Dbg"
@@ -8555,7 +8555,7 @@
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.cygwin.so"
             isAbstract="false"
-            isTest="false">            
+            isTest="true">            
          <configuration
                name="Test 4.0 ConfigName.Dbg"
                cleanCommand="rm -rf"
@@ -8703,7 +8703,7 @@
       <projectType 
             buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
             id="test.four.dot.zero.cdt.managedbuild.target.gnu.cygwin.lib"
-            isTest="false"
+            isTest="true"
             isAbstract="false">            
          <configuration
                name="Test 4.0 ConfigName.Dbg"

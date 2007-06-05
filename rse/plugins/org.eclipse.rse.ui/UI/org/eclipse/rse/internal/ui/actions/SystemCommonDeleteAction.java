@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [188637] Handle the caught exception in DeleteJob.run when file fails to be deleted
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -34,12 +35,14 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.dialogs.SystemDeleteDialog;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.SystemRemoteElementResourceSet;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -146,8 +149,13 @@ public class SystemCommonDeleteAction
 						}
 					}
 				}
+				catch (SystemMessageException e)
+				{
+					SystemMessageDialog.displayMessage(e);
+				}
 				catch (Exception e)
-				{					
+				{
+					SystemMessageDialog.displayExceptionMessage(getShell(), e);
 				}
 			}
 			

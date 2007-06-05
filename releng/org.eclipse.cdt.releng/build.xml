@@ -14,7 +14,6 @@
 		<property name="branchVersion" value="4.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
-		<property name="outputUpdateJars" value="true"/>
 		<property name="buildDirectory" value="${basedir}/results" />
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
 		<property name="pde.build.scripts" value="${eclipse.home}/plugins/org.eclipse.pde.build/scripts"/>
@@ -88,7 +87,7 @@
 	</target>
 	
 	<target name="zips" depends="init,unzip">
-		<ant antfile="build.xml" dir="${pde.build.scripts}">
+		<!--ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/platform" />
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
@@ -105,6 +104,9 @@
 		</ant>
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/xlc" />
+		</ant-->
+		<ant antfile="build.xml" dir="${pde.build.scripts}">
+			<property name="builder" value="${basedir}/master" />
 		</ant>
 		<concat destfile="${zipsdir}/compilelog.txt">
 			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>

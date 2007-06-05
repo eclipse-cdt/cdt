@@ -87,24 +87,6 @@
 	</target>
 	
 	<target name="zips" depends="init,unzip">
-		<!--ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/platform" />
-		</ant>
-		<ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/sdk" />
-		</ant>
-		<ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/gdbjtag" />
-		</ant>
-		<ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/c99" />
-		</ant>
-		<ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/upc" />
-		</ant>
-		<ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/xlc" />
-		</ant-->
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/master" />
 		</ant>
@@ -120,6 +102,20 @@
 			<replacefilter token="@branchVersion@" value="${branchVersion}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
+		<rename dest="${buildDirectory}/cdt-master-${branchVersion}-${buildId}.zip"
+			src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"/>
+		<unzip src="${buildDirectory}/cdt-master-${branchVersion}-${buildId}.zip" dest="${buildDirectory}/site"/>
+		<rename dest="${buildDirectory}/site/eclipse/epl-v10.html"
+			src="${buildDirectory}/site/linux.x86.gtk/epl-v10.html"/>
+		<rename dest="${buildDirectory}/site/eclipse/notice.html"
+			src="${buildDirectory}/site/linux.x86.gtk/notice.html"/>
+		<copy file="buildsite.xml" tofile="${buildDirectory}/site/eclipse/site.xml"/>
+		<replace file="${buildDirectory}/site/eclipse/site.xml">
+			<replacefilter token="@branchVersion@" value="${branchVersion}"/>
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
+		<zip destfile="${zipsdir}/${branchVersion}-${buildId}.zip" 
+			basedir="${buildDirectory}/site/eclipse"/>
 	</target>
 
 	<target name="unpackzip" if="onWindows">

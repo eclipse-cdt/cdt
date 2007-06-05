@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<category-def name="CDT @branchVersion@.@buildId@" label="CDT @branchVersion@.@buildId@"/>
+	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_@branchVersion@.@buildId@.jar" version="@branchVersion@.@buildId@">
+		<category name="CDT @branchVersion@.@buildId@"/>
+	</feature>
+	<feature id="org.eclipse.cdt.sdk" url="features/org.eclipse.cdt.sdk_@branchVersion@.@buildId@.jar" version="@branchVersion@.@buildId@">
+		<category name="CDT @branchVersion@.@buildId@"/>
+	</feature>
+	<feature id="org.eclipse.cdt.debug.gdbjtag" url="features/org.eclipse.cdt.debug.gdbjtag_@branchVersion@.@buildId@.jar" version="@branchVersion@.@buildId@">
+		<category name="CDT @branchVersion@.@buildId@"/>
+	</feature>
+	<feature id="org.eclipse.cdt.core.parser.c99.feature" url="features/org.eclipse.cdt.core.parser.c99.feature_@branchVersion@.@buildId@.jar" version="@branchVersion@.@buildId@">
+		<category name="CDT @branchVersion@.@buildId@"/>
+	</feature>
+	<feature id="org.eclipse.cdt.core.parser.upc.feature" url="features/org.eclipse.cdt.core.parser.upc.feature_@branchVersion@.@buildId@.jar" version="@branchVersion@.@buildId@">
+		<category name="CDT @branchVersion@.@buildId@"/>
+	</feature>
+	<feature id="org.eclipse.cdt.xlc.feature" url="features/org.eclipse.cdt.xlc.feature_@branchVersion@.@buildId@.jar" version="@branchVersion@.@buildId@">
+		<category name="CDT @branchVersion@.@buildId@"/>
+	</feature>
+	<feature id="org.eclipse.cdt.testing" url="features/org.eclipse.cdt.testing_@branchVersion@.@buildId@.jar" version="@branchVersion@.@buildId@">
+		<category name="CDT @branchVersion@.@buildId@"/>
+	</feature>
+</site>

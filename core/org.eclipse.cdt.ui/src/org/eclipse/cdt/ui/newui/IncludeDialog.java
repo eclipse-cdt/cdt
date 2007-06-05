@@ -71,14 +71,14 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			l1.setText(UIMessages.getString("IncludeDialog.0")); //$NON-NLS-1$
 		else
 			l1.setText(UIMessages.getString("IncludeDialog.1")); //$NON-NLS-1$
-		gd = new GridData(GridData.BEGINNING);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		l1.setLayoutData(gd);
 		
 		text = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 3;
-		gd.widthHint = 450;
+		gd.widthHint = 300;
 		text.setLayoutData(gd);
 		if ((mode & OLD_MASK) == OLD_MASK) { text.setText(sdata); }
 		text.addModifyListener(new ModifyListener() {
@@ -131,6 +131,15 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		
 		c.getShell().setDefaultButton(b_ok);
 		c.pack();
+		
+		// resize (bug #189333)
+		int x = b_ko.getBounds().width * 3 + 10;
+		int y = c.getBounds().width - 10; 
+		if (x > y) {
+			((GridData)(text.getLayoutData())).widthHint = x;
+			c.pack();
+		}
+		
 		setButtons();
 		return c;
 	}	

@@ -16,9 +16,12 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -338,4 +341,48 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		IBinding b0 = getBindingFromASTName("field;//", 5);
 		assertTrue(b0 instanceof ICPPField);
 	}
+	
+    // typedef struct {
+    //    int utm;
+    // } usertype;
+    // void func(usertype t);
+
+	// #include "header.h"
+    // void test() {
+	//    usertype ut;
+	//    func(ut);
+    // }
+    public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
+		IBinding b0 = getBindingFromASTName("func(", 4);
+		assertTrue(b0 instanceof IFunction);
+		IFunction f= (IFunction) b0;
+		IParameter[] pars= f.getParameters();
+		assertEquals(1, pars.length);
+		IType type= pars[0].getType();
+		assertTrue(type instanceof ITypedef);
+		type= ((ITypedef) type).getType();
+		assertTrue(type instanceof ICPPClassType);
+    }
+
+    // typedef enum {
+    //    eItem
+    // } userEnum;
+    // void func(userEnum t);
+
+	// #include "header.h"
+    // void test() {
+	//    userEnum ut;
+	//    func(ut);
+    // }
+    public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
+		IBinding b0 = getBindingFromASTName("func(", 4);
+		assertTrue(b0 instanceof IFunction);
+		IFunction f= (IFunction) b0;
+		IParameter[] pars= f.getParameters();
+		assertEquals(1, pars.length);
+		IType type= pars[0].getType();
+		assertTrue(type instanceof ITypedef);
+		type= ((ITypedef) type).getType();
+		assertTrue(type instanceof IEnumeration);
+    }
 }

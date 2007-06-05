@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
@@ -33,8 +34,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
-import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.core.runtime.CoreException;
 
 public class PDOMASTAdapter {
@@ -357,19 +356,19 @@ public class PDOMASTAdapter {
 			char[] name= binding.getNameCharArray();
 			if (name.length == 0) {
 				if (binding instanceof IEnumeration) {
-					name= createNameForAnonymous(binding);
+					name= ASTTypeUtil.createNameForAnonymous(binding);
 					if (name != null) {
 						return new AnonymousEnumeration(name, (IEnumeration) binding);
 					}
 				}
 				else if (binding instanceof ICPPClassType) {
-					name= createNameForAnonymous(binding);
+					name= ASTTypeUtil.createNameForAnonymous(binding);
 					if (name != null) {
 						return new AnonymousClassType(name, (ICPPClassType) binding);
 					}
 				}
 				else if (binding instanceof ICompositeType) {
-					name= createNameForAnonymous(binding);
+					name= ASTTypeUtil.createNameForAnonymous(binding);
 					if (name != null) {
 						return new AnonymousCompositeType(name, (ICompositeType) binding);
 					}
@@ -378,48 +377,6 @@ public class PDOMASTAdapter {
 			}
 		}
 		return binding;
-	}
-
-	private static char[] createNameForAnonymous(IBinding binding) {
-		IASTNode node= null;
-		if (binding instanceof ICInternalBinding) {
-			node= ((ICInternalBinding) binding).getPhysicalNode();
-		}
-		else if (binding instanceof ICPPInternalBinding) {
-			node= ((ICPPInternalBinding) binding).getDefinition();
-		}
-		if (node != null) {
-			IASTFileLocation loc= node.getFileLocation();
-			if (loc == null) {
-				node= node.getParent();
-				if (node != null) {
-					loc= node.getFileLocation();
-				}
-			}
-			if (loc != null) {
-				char[] fname= loc.getFileName().toCharArray();
-				int fnamestart= findFileNameStart(fname);
-				StringBuffer buf= new StringBuffer();
-				buf.append('{');
-				buf.append(fname, fnamestart, fname.length-fnamestart);
-				buf.append(':');
-				buf.append(loc.getNodeOffset());
-				buf.append('}');
-				return buf.toString().toCharArray();
-			}
-		}
-		return null;
-	}
-
-	private static int findFileNameStart(char[] fname) {
-		for (int i= fname.length-2; i>=0; i--) {
-			switch (fname[i]) {
-			case '/':
-			case '\\':
-				return i+1;
-			}
-		}
-		return 0;
 	}
 
 	/**

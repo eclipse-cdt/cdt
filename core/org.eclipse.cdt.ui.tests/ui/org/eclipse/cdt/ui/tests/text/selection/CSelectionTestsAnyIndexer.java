@@ -15,7 +15,6 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -33,13 +32,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexer {
 
 	private static final int MAX_WAIT_TIME = 8000;
-	private IFile 					file;
-	private IFile					hfile;
-	private NullProgressMonitor		monitor;
 
 	private String sourceIndexerID;
 	private IIndex index;
-	
+
 	public CSelectionTestsAnyIndexer(String name, String indexerID) {
 		super(name);
 		sourceIndexerID= indexerID;
@@ -96,8 +92,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
-        hfile = importFile("basicDefinition.h", hcode); 
-        file = importFile("testBasicDefinition.c", scode); 
+        IFile hfile = importFile("basicDefinition.h", hcode); 
+        IFile file = importFile("testBasicDefinition.c", scode); 
         TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         
         int hoffset= hcode.indexOf("MyInt"); 
@@ -178,8 +174,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
-        hfile = importFile("testCPPSpecDeclsDefs.h", hcode); 
-        file = importFile("testCPPSpecDeclsDefs.c", scode); 
+        IFile hfile = importFile("testCPPSpecDeclsDefs.h", hcode); 
+        IFile file = importFile("testCPPSpecDeclsDefs.c", scode); 
         TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
 		        
         int offset0= hcode.indexOf("a;");
@@ -290,8 +286,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
-        hfile = importFile("testBug101287.h", hcode); 
-        file = importFile("testBug101287.c", scode); 
+        IFile hfile = importFile("testBug101287.h", hcode); 
+        IFile file = importFile("testBug101287.c", scode); 
         TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         IASTNode decl;
         int offset0, offset1;
@@ -314,8 +310,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
-        hfile = importFileWithLink("testBug103697.h", hcode); 
-        file = importFileWithLink("testBug103697.c", scode); 
+        IFile hfile = importFileWithLink("testBug103697.h", hcode); 
+        IFile file = importFileWithLink("testBug103697.c", scode); 
         TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         IASTNode decl;
         int offset0, offset1;
@@ -342,8 +338,8 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
-        hfile = importFile("testBug78354.h", hcode); 
-        file = importFile("testBug78354.c", scode); 
+        IFile hfile = importFile("testBug78354.h", hcode); 
+        IFile file = importFile("testBug78354.c", scode); 
         TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
         IASTNode decl;
         int offset0, offset1;
@@ -361,5 +357,57 @@ public abstract class CSelectionTestsAnyIndexer extends BaseSelectionTestsIndexe
         assertNode("TestTypeTwo", offset0, decl);
         decl = testF3(file, offset1);
         assertNode("TestTypeTwo", offset0, decl);        
+    }
+
+    // typedef struct {
+    //    int a;
+    // } usertype;
+    // void func(usertype t);
+
+	// #include "testBug190730.h"
+    // void func(usertype t) {
+    // }
+    public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("testBug190730.h", hcode); 
+        IFile file = importFile("testBug190730.c", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset0, offset1;
+        
+        offset0 = hcode.indexOf("func");
+        offset1 = scode.indexOf("func");
+        decl = testF3(hfile, offset0);
+        assertNode("func", offset1, decl);
+        decl = testF3(file, offset1);
+        assertNode("func", offset0, decl);        
+    }
+    
+    // typedef enum {
+    //    int eitem
+    // } userEnum;
+    // void func(userEnum t);
+
+	// #include "testBug190730_2.h"
+    // void func(userEnum t) {
+    // }
+    public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("testBug190730_2.h", hcode); 
+        IFile file = importFile("testBug190730_2.c", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset0, offset1;
+        
+        offset0 = hcode.indexOf("func");
+        offset1 = scode.indexOf("func");
+        decl = testF3(hfile, offset0);
+        assertNode("func", offset1, decl);
+        decl = testF3(file, offset1);
+        assertNode("func", offset0, decl);        
     }
 }

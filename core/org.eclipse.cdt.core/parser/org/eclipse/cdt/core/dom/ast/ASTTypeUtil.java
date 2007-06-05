@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,28 @@
  *
  * Contributors:
  *     Rational Software - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom.ast;
 
+import java.util.LinkedList;
+
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.c.ICPointerType;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
@@ -29,8 +40,10 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to the
@@ -199,13 +212,13 @@ public class ASTTypeUtil {
 //			result.append(SPACE);
 			if(type instanceof ICPPClassType) {
 				try {
-					String qn = CPPVisitor.renderQualifiedName(((ICPPClassType)type).getQualifiedName());
+					String qn = CPPVisitor.renderQualifiedName(getQualifiedNameForAnonymous((ICPPClassType)type));
 					result.append(qn);
 				} catch(DOMException de) {
-					result.append(((ICompositeType)type).getName());
+					result.append(getNameForAnonymous((ICompositeType)type));
 				}
 			} else {
-				result.append(((ICompositeType)type).getName());
+				result.append(getNameForAnonymous((ICompositeType)type));
 			}
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);
@@ -216,7 +229,7 @@ public class ASTTypeUtil {
 		} else if (type instanceof IEnumeration) {
 			result.append(Keywords.ENUM);
 			result.append(SPACE);
-			result.append(((IEnumeration)type).getName());
+			result.append(getNameForAnonymous((IEnumeration)type));
 		} else if (type instanceof IFunctionType) {
 			try {
 				String temp = getType(((IFunctionType)type).getReturnType());
@@ -256,7 +269,7 @@ public class ASTTypeUtil {
 		
 		return result.toString();
 	}
-	
+
 	/**
 	 * Returns the type represntation of the IType as a String.  This function uses the IType interfaces to build the 
 	 * String representation of the IType.
@@ -448,4 +461,97 @@ public class ASTTypeUtil {
 		}
 	}
 	
+	
+	private static String[] getQualifiedNameForAnonymous(ICPPBinding binding) throws DOMException {
+		LinkedList result= new LinkedList();
+		result.addFirst(getNameForAnonymous(binding));
+		ICPPScope scope = (ICPPScope) binding.getScope();
+		while( scope != null ){
+			if (scope instanceof ICPPBlockScope || scope instanceof ICPPFunctionScope) { 
+				break;
+			}
+			if (!(scope instanceof ICPPTemplateScope)) {
+				IName n = scope.getScopeName();
+				if (n == null) {
+					break;
+				}
+				char[] name= n.toCharArray();
+				if (name.length == 0){
+					if (!(scope instanceof ICPPNamespaceScope)) {
+						name= createNameForAnonymous(scope);
+						if (name == null) {
+							break;
+						}
+						result.addFirst(new String(name));
+					}
+				}
+				else {
+					result.addFirst(new String(name));
+				}
+			}
+			scope = (ICPPScope) scope.getParent();
+		}
+	    return (String[]) result.toArray(new String[result.size()]);
+	}
+	
+	private static String getNameForAnonymous(IBinding binding) {
+		char[] name= binding.getNameCharArray();
+		if (name == null || name.length == 0) {
+			char[] altname= createNameForAnonymous(binding);
+			if (altname != null) {
+				return new String(altname);
+			}
+		}
+		return new String(name);
+	}
+
+	private static char[] createNameForAnonymous(ICPPScope scope) {
+		if (scope instanceof ICPPClassScope) {
+			return createNameForAnonymous(((ICPPClassScope) scope).getClassType());
+		}
+		return null;
+	}
+
+	public static char[] createNameForAnonymous(IBinding binding) {
+		IASTNode node= null;
+		if (binding instanceof ICInternalBinding) {
+			node= ((ICInternalBinding) binding).getPhysicalNode();
+		}
+		else if (binding instanceof ICPPInternalBinding) {
+			node= ((ICPPInternalBinding) binding).getDefinition();
+		}
+		if (node != null) {
+			IASTFileLocation loc= node.getFileLocation();
+			if (loc == null) {
+				node= node.getParent();
+				if (node != null) {
+					loc= node.getFileLocation();
+				}
+			}
+			if (loc != null) {
+				char[] fname= loc.getFileName().toCharArray();
+				int fnamestart= findFileNameStart(fname);
+				StringBuffer buf= new StringBuffer();
+				buf.append('{');
+				buf.append(fname, fnamestart, fname.length-fnamestart);
+				buf.append(':');
+				buf.append(loc.getNodeOffset());
+				buf.append('}');
+				return buf.toString().toCharArray();
+			}
+		}
+		return null;
+	}
+
+	
+	private static int findFileNameStart(char[] fname) {
+		for (int i= fname.length-2; i>=0; i--) {
+			switch (fname[i]) {
+			case '/':
+			case '\\':
+				return i+1;
+			}
+		}
+		return 0;
+	}
 }

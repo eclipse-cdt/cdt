@@ -791,4 +791,56 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         decl = testF3(cfile, offset1);
         assertNode("c", offset0, decl);        
     }
+    
+    // typedef struct {
+    //    int a;
+    // } usertype;
+    // void func(usertype t);
+
+	// #include "testBug190730.h"
+    // void func(usertype t) {
+    // }
+    public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("testBug190730.h", hcode); 
+        IFile file = importFile("testBug190730.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset0, offset1;
+        
+        offset0 = hcode.indexOf("func");
+        offset1 = scode.indexOf("func");
+        decl = testF3(hfile, offset0);
+        assertNode("func", offset1, decl);
+        decl = testF3(file, offset1);
+        assertNode("func", offset0, decl);        
+    }
+    
+    // typedef enum {
+    //    int eitem
+    // } userEnum;
+    // void func(userEnum t);
+
+	// #include "testBug190730_2.h"
+    // void func(userEnum t) {
+    // }
+    public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("testBug190730_2.h", hcode); 
+        IFile file = importFile("testBug190730_2.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset0, offset1;
+        
+        offset0 = hcode.indexOf("func");
+        offset1 = scode.indexOf("func");
+        decl = testF3(hfile, offset0);
+        assertNode("func", offset1, decl);
+        decl = testF3(file, offset1);
+        assertNode("func", offset0, decl);        
+    }
 }

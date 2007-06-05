@@ -6,11 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions;
 
+import java.net.URL;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -42,22 +46,41 @@ public class Activator extends AbstractUIPlugin {
 		super.stop(context);
 		plugin = null;
 	}
-
+	
 	/**
 	 * Returns the shared instance.
 	 */
 	public static Activator getDefault() {
 		return plugin;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#initializeImageRegistry(org.eclipse.jface.resource.ImageRegistry)
+	 */
+	protected void initializeImageRegistry(ImageRegistry registry) {
+		super.initializeImageRegistry(registry);
+		registry.put(IUserActionsImageIds.COMPILE_0, getImageDescriptor("icons/full/dlcl16/compile.gif")); //$NON-NLS-1$
+		registry.put(IUserActionsImageIds.COMPILE_1, getImageDescriptor("icons/full/elcl16/compile.gif")); //$NON-NLS-1$
+		registry.put(IUserActionsImageIds.WORK_WITH_COMPILE_COMMANDS_0, getImageDescriptor("icons/full/dlcl16/workwithcompilecmds.gif")); //$NON-NLS-1$
+		registry.put(IUserActionsImageIds.WORK_WITH_COMPILE_COMMANDS_1, getImageDescriptor("icons/full/elcl16/workwithcompilecmds.gif")); //$NON-NLS-1$
+		registry.put(IUserActionsImageIds.WORK_WITH_NAMED_TYPES_0, getImageDescriptor("icons/full/dlcl16/workwithnamedtypes.gif")); //$NON-NLS-1$
+		registry.put(IUserActionsImageIds.WORK_WITH_NAMED_TYPES_1, getImageDescriptor("icons/full/elcl16/workwithnamedtypes.gif")); //$NON-NLS-1$
+		registry.put(IUserActionsImageIds.WORK_WITH_USER_ACTIONS_0, getImageDescriptor("icons/full/dlcl16/workwithuseractions.gif")); //$NON-NLS-1$
+		registry.put(IUserActionsImageIds.WORK_WITH_USER_ACTIONS_1, getImageDescriptor("icons/full/elcl16/workwithuseractions.gif")); //$NON-NLS-1$
+	}
+	
 	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path.
-	 *
-	 * @param path the path
+	 * Gets the image descriptor for images in the plugin bundle.
+	 * @param path the plugin relative path of the image
 	 * @return the image descriptor
 	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.rse.useractions", path); //$NON-NLS-1$
+	public ImageDescriptor getImageDescriptor(String path) {
+		ImageDescriptor descriptor = null;
+		URL url = getBundle().getResource(path);
+		if (url != null) {
+			descriptor = ImageDescriptor.createFromURL(url);
+		}
+		return descriptor;
 	}
+
 }

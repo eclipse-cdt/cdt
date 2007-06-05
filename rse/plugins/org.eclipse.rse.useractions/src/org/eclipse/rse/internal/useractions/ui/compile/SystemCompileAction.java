@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.compile;
 
@@ -19,7 +20,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.internal.ui.GenericMessages;
 import org.eclipse.rse.internal.ui.view.SystemTableViewProvider;
-import org.eclipse.rse.ui.ISystemIconConstants;
+import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -43,7 +45,7 @@ public class SystemCompileAction extends SystemBaseAction {
 	 */
 	public SystemCompileAction(Shell shell, SystemCompileCommand compileCommand, boolean isPrompt) {
 		super(
-				isPrompt ? compileCommand.getLabel() + "..." : compileCommand.getLabel(), compileCommand.getLabel(), RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_COMPILE_ID), shell); // null == image //$NON-NLS-1$
+				isPrompt ? compileCommand.getLabel() + "..." : compileCommand.getLabel(), compileCommand.getLabel(), Activator.getDefault().getImageDescriptor(IUserActionsImageIds.COMPILE_1), shell); // null == image //$NON-NLS-1$
 		this.compileCmd = compileCommand;
 		this.isPrompt = isPrompt;
 		SystemCompileManager mgr = compileCommand.getParentType().getParentProfile().getParentManager();

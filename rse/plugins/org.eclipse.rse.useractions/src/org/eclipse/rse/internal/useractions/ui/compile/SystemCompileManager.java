@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.compile;
@@ -18,11 +19,11 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.UserActionsPersistenceUtil;
 import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -210,7 +211,7 @@ public abstract class SystemCompileManager {
 		}
 		//System.out.println("systemProfile = "    + systemProfile);
 		//System.out.println("subsystemFactory = " + subsystemFactory);
-		IFolder folder = SystemResourceManager.getCompileCommandsFolder(systemProfile, subsystemFactory);
+		IFolder folder = UserActionsPersistenceUtil.getCompileCommandsFolder(systemProfile, subsystemFactory);
 		return folder;
 	}
 

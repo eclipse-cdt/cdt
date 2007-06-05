@@ -24,6 +24,8 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * David Dykstal (IBM) - [189858] Delay the creation of the remote systems project
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -313,8 +315,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 						   path+ISystemIconConstants.ICON_SYSTEM_RUN);	
 	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_STOP_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_STOP);						   					
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_COMPILE_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_COMPILE);
+//	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_COMPILE_ID,
+//						   path+ISystemIconConstants.ICON_SYSTEM_COMPILE);
 		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEACTIVE_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEACTIVE);
 		putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_MAKEPROFILEINACTIVE_ID,
@@ -330,12 +332,12 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 						   path+ISystemIconConstants.ICON_SYSTEM_SELECTFILTERPOOLS);
 	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WORKWITHFILTERPOOLS_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_WORKWITHFILTERPOOLS);
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WORKWITHUSERACTIONS_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_WORKWITHUSERACTIONS);
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WORKWITHNAMEDTYPES_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_WORKWITHNAMEDTYPES);
-	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WORKWITHCOMPILECMDS_ID,
-						   path+ISystemIconConstants.ICON_SYSTEM_WORKWITHCOMPILECMDS);
+//	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WORKWITHUSERACTIONS_ID,
+//						   path+ISystemIconConstants.ICON_SYSTEM_WORKWITHUSERACTIONS);
+//	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WORKWITHNAMEDTYPES_ID,
+//						   path+ISystemIconConstants.ICON_SYSTEM_WORKWITHNAMEDTYPES);
+//	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_WORKWITHCOMPILECMDS_ID,
+//						   path+ISystemIconConstants.ICON_SYSTEM_WORKWITHCOMPILECMDS);
 
 	    putImageInRegistry(ISystemIconConstants.ICON_SYSTEM_REFRESH_ID,
 						   path+ISystemIconConstants.ICON_SYSTEM_REFRESH);

@@ -6,7 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.compile.teamview;
 
@@ -14,8 +16,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.rse.core.model.ISystemProfile;
+import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
@@ -49,7 +51,7 @@ public class SystemTeamViewCompileCommandNode implements IAdaptable {
 	 * @return the image to show in the tree, for this node
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		return RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_COMPILE_ID);
+		return RSEUIPlugin.getDefault().getImageDescriptor(IUserActionsImageIds.COMPILE_1);
 	}
 
 	/**

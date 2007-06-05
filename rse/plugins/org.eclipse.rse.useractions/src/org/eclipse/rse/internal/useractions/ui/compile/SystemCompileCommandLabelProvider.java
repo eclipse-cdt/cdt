@@ -8,11 +8,14 @@ package org.eclipse.rse.internal.useractions.ui.compile;
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.rse.ui.ISystemIconConstants;
-import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.internal.useractions.Activator;
+import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -20,6 +23,9 @@ import org.eclipse.swt.graphics.Image;
  *  dialog.
  */
 public class SystemCompileCommandLabelProvider extends LabelProvider {
+	
+	Image _compileCommandImage = null;
+	
 	/**
 	 * Constructor
 	 */
@@ -27,8 +33,8 @@ public class SystemCompileCommandLabelProvider extends LabelProvider {
 		super();
 	}
 
-	/**
-	 * Override of parent to return the visual label for the given compile command
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
 		if (element instanceof SystemCompileCommand)
@@ -39,11 +45,19 @@ public class SystemCompileCommandLabelProvider extends LabelProvider {
 			return null;
 	}
 
-	/**
-	 * Override of parent so we can supply an image, if we desire.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		if (element instanceof SystemCompileCommand) return RSEUIPlugin.getDefault().getImage(ISystemIconConstants.ICON_SYSTEM_COMPILE_ID);
-		return null;
+		Image result = null;
+		if (element instanceof SystemCompileCommand) {
+			if (_compileCommandImage == null || _compileCommandImage.isDisposed()) {
+				ImageDescriptor id = Activator.getDefault().getImageDescriptor(IUserActionsImageIds.COMPILE_1);
+				_compileCommandImage = id.createImage();
+			}
+			result = _compileCommandImage;
+		}
+		return result;
 	}
+	
 }

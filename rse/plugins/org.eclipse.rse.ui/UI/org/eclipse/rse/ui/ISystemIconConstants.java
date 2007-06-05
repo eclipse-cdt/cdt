@@ -14,6 +14,8 @@
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -148,10 +150,6 @@ public interface ISystemIconConstants
     // OTHER ACTION ICONS...    			
     public static final String ICON_ACTIONS_DIR = "full/elcl16/";	 //$NON-NLS-1$
 
-	public static final String ICON_SYSTEM_COMPILE_ROOT = "compile";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_COMPILE      = ICON_ACTIONS_DIR + ICON_SYSTEM_COMPILE_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_COMPILE_ID   = PREFIX+ICON_SYSTEM_COMPILE_ROOT+ICON_SUFFIX;
-
 	public static final String ICON_SYSTEM_LOCK_ROOT = "lock";	 //$NON-NLS-1$
 	public static final String ICON_SYSTEM_LOCK      = ICON_ACTIONS_DIR + ICON_SYSTEM_LOCK_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_LOCK_ID   = PREFIX+ICON_SYSTEM_LOCK_ROOT+ICON_SUFFIX;
@@ -224,18 +222,6 @@ public interface ISystemIconConstants
 	public static final String ICON_SYSTEM_WORKWITHFILTERPOOLS_ROOT = "workwithfilterpools";	 //$NON-NLS-1$
 	public static final String ICON_SYSTEM_WORKWITHFILTERPOOLS      = ICON_ACTIONS_DIR + ICON_SYSTEM_WORKWITHFILTERPOOLS_ROOT+ICON_EXT;
 	public static final String ICON_SYSTEM_WORKWITHFILTERPOOLS_ID   = PREFIX+ICON_SYSTEM_WORKWITHFILTERPOOLS_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_WORKWITHUSERACTIONS_ROOT = "workwithuseractions";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_WORKWITHUSERACTIONS      = ICON_ACTIONS_DIR + ICON_SYSTEM_WORKWITHUSERACTIONS_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_WORKWITHUSERACTIONS_ID   = PREFIX+ICON_SYSTEM_WORKWITHUSERACTIONS_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_WORKWITHNAMEDTYPES_ROOT = "workwithnamedtypes";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_WORKWITHNAMEDTYPES      = ICON_ACTIONS_DIR + ICON_SYSTEM_WORKWITHNAMEDTYPES_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_WORKWITHNAMEDTYPES_ID   = PREFIX+ICON_SYSTEM_WORKWITHNAMEDTYPES_ROOT+ICON_SUFFIX;
-
-	public static final String ICON_SYSTEM_WORKWITHCOMPILECMDS_ROOT = "workwithcompilecmds";	 //$NON-NLS-1$
-	public static final String ICON_SYSTEM_WORKWITHCOMPILECMDS      = ICON_ACTIONS_DIR + ICON_SYSTEM_WORKWITHCOMPILECMDS_ROOT+ICON_EXT;
-	public static final String ICON_SYSTEM_WORKWITHCOMPILECMDS_ID   = PREFIX+ICON_SYSTEM_WORKWITHCOMPILECMDS_ROOT+ICON_SUFFIX;
 
 	public static final String ICON_SYSTEM_SHOW_TABLE_ROOT 	= "systemshowintable"; //$NON-NLS-1$
 	public static final String ICON_SYSTEM_SHOW_TABLE      	= ICON_ACTIONS_DIR + ICON_SYSTEM_SHOW_TABLE_ROOT + ICON_EXT;

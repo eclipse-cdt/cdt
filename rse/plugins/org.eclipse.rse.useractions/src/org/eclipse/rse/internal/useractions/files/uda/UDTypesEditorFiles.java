@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.files.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -8,8 +6,12 @@ package org.eclipse.rse.internal.useractions.files.uda;
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
+package org.eclipse.rse.internal.useractions.files.uda;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,11 +21,11 @@ import java.util.Vector;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.ISystemUDTypeEditPaneTypesSelector;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
@@ -244,7 +246,7 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 	 */
 	public SystemMessage validate() {
 		if (typesSelectionList == null) return null;
-		if (!areTypesSelected()) return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTTYPES_EMPTY);
+		if (!areTypesSelected()) return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_EMPTY);
 		// validate that user-defined entry field!
 		return validateUserDefinedTypes();
 	}
@@ -262,7 +264,7 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 		if (index == filename.length() - 1) {
 			if (index == 0 || (index == 1 && filename.charAt(0) == '*')) {
 				//setErrorMessage(GenericMessages.getString("FileExtension.extensionEmptyMessage")); //$NON-NLS-1$
-				return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTTYPES_NOTVALID);
+				return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID);
 			}
 		}
 		int startScan = 0;
@@ -275,11 +277,11 @@ public class UDTypesEditorFiles implements ISystemUDTypeEditPaneTypesSelector, I
 		if (index > -1) {
 			if (filename.length() == 1) {
 				//setErrorMessage(GenericMessages.getString("FileExtension.extensionEmptyMessage")); //$NON-NLS-1$
-				return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTTYPES_NOTVALID);
+				return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID);
 			}
 			if (index != 0 || filename.charAt(1) != '.') {
 				//setErrorMessage(GenericMessages.getString("FileExtension.fileNameInvalidMessage")); //$NON-NLS-1$
-				return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_UDTTYPES_NOTVALID);
+				return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_VALIDATE_UDTTYPES_NOTVALID);
 			}
 		}
 		return null;

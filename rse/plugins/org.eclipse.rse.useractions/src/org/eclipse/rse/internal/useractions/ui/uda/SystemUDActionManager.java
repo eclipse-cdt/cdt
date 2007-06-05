@@ -1,5 +1,3 @@
-package org.eclipse.rse.internal.useractions.ui.uda;
-
 /*******************************************************************************
  * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -8,17 +6,20 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
  *******************************************************************************/
+package org.eclipse.rse.internal.useractions.ui.uda;
+
 import java.io.File;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
+import org.eclipse.rse.internal.useractions.UserActionsPersistenceUtil;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Element;
 
@@ -130,14 +131,14 @@ public class SystemUDActionManager extends SystemUDBaseManager
 	 *  for the given profile
 	 */
 	protected IFolder getDocumentFolder(ISubSystemConfiguration subsystemFactory, ISystemProfile profile) {
-		return SystemResourceManager.getUserActionsFolder(profile.getName(), subsystemFactory);
+		return UserActionsPersistenceUtil.getUserActionsFolder(profile.getName(), subsystemFactory);
 	}
 
 	/**
 	 * Intended for IMPORT actions only, where no Subsystem instance available:
 	 */
 	public void setFolder(String profileName, String factoryId) {
-		importCaseFolder = SystemResourceManager.getUserActionsFolder(profileName, factoryId);
+		importCaseFolder = UserActionsPersistenceUtil.getUserActionsFolder(profileName, factoryId);
 	}
 
 	/**
@@ -152,7 +153,7 @@ public class SystemUDActionManager extends SystemUDBaseManager
 	 */
 	public boolean hasActions(ISystemProfile profile, ISubSystemConfiguration ssFactory) {
 		boolean hasActions = false;
-		boolean folderExists = SystemResourceManager.testUserActionsFolder(profile.getName(), ssFactory);
+		boolean folderExists = UserActionsPersistenceUtil.testUserActionsFolder(profile.getName(), ssFactory);
 		if (folderExists) {
 			String fileName = getFilePath(profile);
 			if (fileName != null) {

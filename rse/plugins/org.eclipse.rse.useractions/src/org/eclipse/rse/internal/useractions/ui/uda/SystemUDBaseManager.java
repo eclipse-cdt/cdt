@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [180562][api] dont implement ISystemUDAConstants
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -50,6 +52,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -422,7 +425,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			// Phil. 08/2002
 			if ((null == docroot) || !docroot.getTagName().equals(getDocumentRootTagName())) {
 				Shell activeShell = getActiveShell();
-				SystemMessage docRootMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_UDA_ROOTTAG_ERROR);
+				SystemMessage docRootMsg = RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_UDA_ROOTTAG_ERROR);
 				String oldFileName = getFilePath(profile);
 				String newFileName = getFileName() + ".bad"; //$NON-NLS-1$
 				IFile file = getFolder(profile).getFile(getFileName());
@@ -444,7 +447,7 @@ public abstract class SystemUDBaseManager implements ErrorHandler, IResourceChan
 			Document doc = initializeDocument();
 			SystemMessageDialog msgdlg = new SystemMessageDialog(SystemBasePlugin.getActiveWorkbenchShell(), RSEUIPlugin.getPluginMessage(
 			//                         ISystemMessages.MSG_RESTORE_FAILED).makeSubstitution(exc));
-					ISystemMessages.MSG_UDA_LOAD_ERROR).makeSubstitution(fileName, exc));
+					IUserActionsMessageIds.MSG_UDA_LOAD_ERROR).makeSubstitution(fileName, exc));
 			msgdlg.open();
 			return doc;
 		}

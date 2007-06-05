@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.propertypages;
@@ -17,6 +19,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.internal.useractions.IUserActionsModelChangeEvents;
 import org.eclipse.rse.internal.useractions.UserActionsResources;
 import org.eclipse.rse.internal.useractions.ui.compile.ISystemCompileCommandEditPaneHoster;
 import org.eclipse.rse.internal.useractions.ui.compile.ISystemCompileCommandEditPaneListener;
@@ -166,7 +169,7 @@ public class SystemTeamViewCompileCommandPropertyPage extends SystemBaseProperty
 		ok = (editedCompileCmd != null);
 		if (!ok) return false;
 		getCompileCommand().getCompileCommand().getParentType().getParentProfile().writeToDisk();
-		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, editedCompileCmd, null);
+		RSECorePlugin.getTheSystemRegistry().fireModelChangeEvent(ISystemModelChangeEvents.SYSTEM_RESOURCE_CHANGED, IUserActionsModelChangeEvents.SYSTEM_RESOURCETYPE_COMPILECMD, editedCompileCmd, null);
 		return ok;
 	}
 

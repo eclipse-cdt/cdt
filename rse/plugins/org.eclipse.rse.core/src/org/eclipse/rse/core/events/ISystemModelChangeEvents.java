@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David Dykstal (IBM) - [186589] Move User Actions events to the user actions plugin 
  ********************************************************************************/
 
 package org.eclipse.rse.core.events;
@@ -84,18 +85,18 @@ public interface ISystemModelChangeEvents {
 	 * Resource Type: filter 
 	 */
 	public static final int SYSTEM_RESOURCETYPE_FILTER = 32;
-	/**
-	 * Resource Type: user action
-	 */
-	public static final int SYSTEM_RESOURCETYPE_USERACTION = 128;
-	/**
-	 * Resource Type: named type, which are used in user actions
-	 */
-	public static final int SYSTEM_RESOURCETYPE_NAMEDTYPE = 256;
-	/**
-	 * Resource Type: compile command
-	 */
-	public static final int SYSTEM_RESOURCETYPE_COMPILECMD = 512;
+//	/**
+//	 * Resource Type: user action
+//	 */
+//	public static final int SYSTEM_RESOURCETYPE_USERACTION = 128;
+//	/**
+//	 * Resource Type: named type, which are used in user actions
+//	 */
+//	public static final int SYSTEM_RESOURCETYPE_NAMEDTYPE = 256;
+//	/**
+//	 * Resource Type: compile command
+//	 */
+//	public static final int SYSTEM_RESOURCETYPE_COMPILECMD = 512;
 	/**
 	 * Resource Type: ALL. Used with SYSTEM_RESOURCE_ALL_RELOADED
 	 */

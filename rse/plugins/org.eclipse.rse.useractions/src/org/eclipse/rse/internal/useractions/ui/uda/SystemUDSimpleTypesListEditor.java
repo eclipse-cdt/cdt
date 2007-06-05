@@ -8,13 +8,14 @@ package org.eclipse.rse.internal.useractions.ui.uda;
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
  *******************************************************************************/
+import org.eclipse.rse.internal.useractions.ui.validators.ValidatorUserTypeTypes;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.rse.ui.validators.ValidatorUserTypeTypes;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -171,7 +172,7 @@ public class SystemUDSimpleTypesListEditor implements ISystemUDTypeEditPaneTypes
 			nonEditableVerbage.setVisible(false);
 		else {
 			nonEditableVerbage.setVisible(true);
-			if (vendor.equals("IBM"))
+			if (vendor.equals("IBM")) //$NON-NLS-1$
 				nonEditableVerbage.setText(SystemUDAResources.RESID_UDT_IBM_VERBAGE);
 			else {
 				String verbage = SystemUDAResources.RESID_UDT_VENDOR_VERBAGE;

@@ -9,16 +9,18 @@ package org.eclipse.rse.internal.useractions.ui.uda.actions;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
+import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemWorkWithUDTypeDialog;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.swt.widgets.Shell;
@@ -70,7 +72,7 @@ public class SystemWorkWithFileTypesAction extends SystemBaseDialogAction {
 	 */
 	public SystemWorkWithFileTypesAction(Shell parent) {
 		super(SystemUDAResources.ACTION_WORKWITH_NAMEDTYPES_LABEL, SystemUDAResources.ACTION_WORKWITH_NAMEDTYPES_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(
-				ISystemIconConstants.ICON_SYSTEM_WORKWITHNAMEDTYPES_ID), parent);
+				IUserActionsImageIds.WORK_WITH_NAMED_TYPES_1), parent);
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_WORKWITH);
 		setHelp(RSEUIPlugin.HELPPREFIX + "actn0046"); //$NON-NLS-1$

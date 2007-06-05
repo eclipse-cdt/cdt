@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation. All rights reserved.
+ * Copyright (c) 2000, 2007 IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -195,33 +196,10 @@ public interface ISystemMessages
 
 	public static final String MSG_SAVING_PROGRESS = "RSEG1119"; //$NON-NLS-1$
 	
-	public static final String MSG_VALIDATE_UDANAME_EMPTY    = "RSEG1180"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_UDANAME_NOTUNIQUE= "RSEG1181"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_UDANAME_NOTVALID = "RSEG1182"; //$NON-NLS-1$
-
-	public static final String MSG_VALIDATE_UDACMT_EMPTY    = "RSEG1183"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_UDACMT_NOTVALID = "RSEG1184"; //$NON-NLS-1$
-	
-	public static final String MSG_VALIDATE_UDACMD_EMPTY    = "RSEG1185"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_UDACMD_NOTVALID = "RSEG1186"; //$NON-NLS-1$
-
-	public static final String MSG_VALIDATE_UDTNAME_EMPTY    = "RSEG1187"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_UDTNAME_NOTUNIQUE= "RSEG1188"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_UDTNAME_NOTVALID = "RSEG1189"; //$NON-NLS-1$
-
-	public static final String MSG_VALIDATE_UDTTYPES_EMPTY    = "RSEG1190"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_UDTTYPES_NOTVALID = "RSEG1191"; //$NON-NLS-1$
-
 	public static final String MSG_VALIDATE_SRCTYPE_EMPTY    = "RSEG1192"; //$NON-NLS-1$
 	public static final String MSG_VALIDATE_SRCTYPE_NOTVALID = "RSEG1193"; //$NON-NLS-1$
 	public static final String MSG_VALIDATE_SRCTYPE_NOTUNIQUE= "RSEG1194"; //$NON-NLS-1$
 		
-	public static final String MSG_VALIDATE_COMPILELABEL_EMPTY    = "RSEG1195"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_COMPILELABEL_NOTUNIQUE= "RSEG1196"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_COMPILELABEL_NOTVALID = "RSEG1197"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_COMPILESTRING_EMPTY    = "RSEG1198"; //$NON-NLS-1$
-	public static final String MSG_VALIDATE_COMPILESTRING_NOTVALID = "RSEG1199"; //$NON-NLS-1$
-
 	public static final String MSG_VALIDATE_ARCHIVE_NAME = "RSEG1120"; //$NON-NLS-1$
 
 
@@ -242,14 +220,8 @@ public interface ISystemMessages
 	public static final String MSG_LOADING_PROFILE_SHOULDBE_ACTIVATED = "RSEG1068"; //$NON-NLS-1$
 	public static final String MSG_LOADING_PROFILE_SHOULDNOTBE_DEACTIVATED = "RSEG1069";	 //$NON-NLS-1$
 
-	public static final String MSG_UDA_LOAD_ERROR = "RSEG1140";	 //$NON-NLS-1$
-	public static final String MSG_UDA_ROOTTAG_ERROR = "RSEG1141";	 //$NON-NLS-1$
-
 	public static final String MSG_HOSTNAME_NOTFOUND = "RSEG1220";	 //$NON-NLS-1$
 	public static final String MSG_HOSTNAME_VERIFYING = "RSEG1221";	 //$NON-NLS-1$
-
-	public static final String MSG_CONFIRM_DELETE_USERACTION = "RSEG1230";	 //$NON-NLS-1$
-	public static final String MSG_CONFIRM_DELETE_USERTYPE   = "RSEG1231";	 //$NON-NLS-1$
 
 	public static final String MSG_WIZARD_PAGE_ERROR   = "RSEG1240";	 //$NON-NLS-1$
 	

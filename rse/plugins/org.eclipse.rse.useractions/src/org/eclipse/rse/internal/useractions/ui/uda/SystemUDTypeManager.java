@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David Dykstal (IBM) - [186589] move user actions API out of org.eclipse.rse.ui   
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
@@ -19,10 +20,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.rse.core.SystemResourceHelpers;
-import org.eclipse.rse.core.SystemResourceManager;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.UserActionsIcon;
+import org.eclipse.rse.internal.useractions.UserActionsPersistenceUtil;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.swt.graphics.Image;
 import org.w3c.dom.Element;
@@ -159,7 +160,7 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 	 */
 	protected IFolder getDocumentFolder(ISubSystemConfiguration subsystemFactory, ISystemProfile profile) {
 		// return new location, as of R2
-		IFolder typesFolder = SystemResourceManager.getTypeFiltersFolder(subsystemFactory);
+		IFolder typesFolder = UserActionsPersistenceUtil.getTypeFiltersFolder(subsystemFactory);
 		// we check here for any residual old types files from R1. If found, we move it
 		// to the new location right away!
 		// TODO: DELETE THIS EXPENSIVE LOGIC AFTER A FEW RELEASES.
@@ -167,7 +168,7 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 			//if (profile == null)
 			//  profile = subsystem.getSystemProfile();
 			//System.out.println("Is profile null? " + (profile==null));
-			IFolder oldFolder = SystemResourceManager.getUserActionsFolder(profile.getName(), subsystemFactory);
+			IFolder oldFolder = UserActionsPersistenceUtil.getUserActionsFolder(profile.getName(), subsystemFactory);
 			IFile oldFile = oldFolder.getFile(getFileName());
 			if (exists(oldFile)) {
 				//System.out.println("Attempt to move old types folder...");
@@ -209,7 +210,7 @@ public class SystemUDTypeManager extends SystemUDBaseManager {
 	 */
 	public void setFolder(String profileName, String factoryId) {
 		//importCaseFolder = SystemResourceManager.getUserActionsFolder(profileName, factoryId);
-		importCaseFolder = SystemResourceManager.getTypeFiltersFolder(factoryId);
+		importCaseFolder = UserActionsPersistenceUtil.getTypeFiltersFolder(factoryId);
 	}
 
 	/**

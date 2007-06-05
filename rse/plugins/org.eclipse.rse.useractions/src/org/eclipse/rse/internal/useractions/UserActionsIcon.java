@@ -6,7 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions;
 
@@ -103,7 +105,7 @@ public class UserActionsIcon {
 	 * @return the image descriptor
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		ImageDescriptor descriptor = Activator.getImageDescriptor(location);
+		ImageDescriptor descriptor = Activator.getDefault().getImageDescriptor(location);
 		return descriptor;
 	}
 

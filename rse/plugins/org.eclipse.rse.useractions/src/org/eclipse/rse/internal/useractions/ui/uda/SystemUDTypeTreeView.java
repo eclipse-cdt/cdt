@@ -8,16 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
+import org.eclipse.rse.internal.useractions.IUserActionsModelChangeEvents;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Composite;
 
@@ -72,7 +74,7 @@ public class SystemUDTypeTreeView extends SystemUDBaseTreeView {
 	 * Return message for delete confirmation
 	 */
 	protected SystemMessage getDeleteConfirmationMessage() {
-		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONFIRM_DELETE_USERTYPE);
+		return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_CONFIRM_DELETE_USERTYPE);
 	}
 
 	/**
@@ -80,7 +82,7 @@ public class SystemUDTypeTreeView extends SystemUDBaseTreeView {
 	 * This is a parent class override.
 	 */
 	protected int getResourceType() {
-		return ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_NAMEDTYPE;
+		return IUserActionsModelChangeEvents.SYSTEM_RESOURCETYPE_NAMEDTYPE;
 	}
 
 	/**

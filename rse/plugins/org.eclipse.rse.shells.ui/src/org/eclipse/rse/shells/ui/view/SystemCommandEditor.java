@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -12,6 +12,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - fix 158765: content assist miss disables enter
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -44,7 +46,6 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.validators.ISystemValidator;
-import org.eclipse.rse.ui.validators.ValidatorUserActionCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -105,10 +106,11 @@ public class SystemCommandEditor extends SourceViewer
 	}
 	private void init(int columnSpan, SourceViewerConfiguration sourceViewerConfiguration, String cmd)
 	{
-		if (cmdValidator == null)
-		{
-			setCommandValidator(new ValidatorUserActionCommand());
-		}
+		// TODO (dwd) will need to have an editor callback on instantiation to add validators instead of assuming one
+//		if (cmdValidator == null)
+//		{
+//			setCommandValidator(new ValidatorUserActionCommand());
+//		}
 		IDocument document = new Document();
 		configure(sourceViewerConfiguration);
 		setEditable(true);

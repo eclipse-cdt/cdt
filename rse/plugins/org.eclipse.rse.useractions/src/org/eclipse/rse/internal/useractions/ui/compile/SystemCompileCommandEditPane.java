@@ -8,7 +8,9 @@ package org.eclipse.rse.internal.useractions.ui.compile;
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ * IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 import java.util.Vector;
 
@@ -18,13 +20,13 @@ import org.eclipse.rse.internal.useractions.ui.SystemCmdSubstVarList;
 import org.eclipse.rse.internal.useractions.ui.SystemCommandTextField;
 import org.eclipse.rse.internal.useractions.ui.SystemCommandViewerConfiguration;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
+import org.eclipse.rse.internal.useractions.ui.validators.ValidatorCompileCommandLabel;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.shells.ui.view.ISystemCommandTextModifyListener;
 import org.eclipse.rse.ui.ISystemMassager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.validators.ISystemValidator;
 import org.eclipse.rse.ui.validators.ISystemValidatorUniqueString;
-import org.eclipse.rse.ui.validators.ValidatorCompileCommandLabel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;

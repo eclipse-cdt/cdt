@@ -8,6 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.compile;
 
@@ -17,10 +19,10 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
+import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.compile.teamview.SystemTeamViewCompileTypeNode;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -39,7 +41,7 @@ public class SystemWorkWithCompileCommandsAction extends SystemBaseDialogAction 
 	public SystemWorkWithCompileCommandsAction(Shell shell, boolean fromCascadingCompileAction) {
 		super(fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWCOMPILE_CMDS_LABEL : SystemUDAResources.ACTION_WORKWITH_COMPILE_CMDS_LABEL,
 				fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWCOMPILE_CMDS_TOOLTIP : SystemUDAResources.ACTION_WORKWITH_COMPILE_CMDS_TOOLTIP, RSEUIPlugin.getDefault()
-						.getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_WORKWITHCOMPILECMDS_ID), shell);
+						.getImageDescriptor(IUserActionsImageIds.WORK_WITH_COMPILE_COMMANDS_1), shell);
 		allowOnMultipleSelection(false);
 		if (!fromCascadingCompileAction)
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_WORKWITH);

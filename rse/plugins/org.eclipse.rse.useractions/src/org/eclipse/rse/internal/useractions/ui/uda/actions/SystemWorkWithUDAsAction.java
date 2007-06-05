@@ -9,6 +9,8 @@ package org.eclipse.rse.internal.useractions.ui.uda.actions;
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 //import java.util.Iterator;
 import org.eclipse.jface.dialogs.Dialog;
@@ -17,10 +19,10 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.team.SystemTeamViewSubSystemConfigurationNode;
+import org.eclipse.rse.internal.useractions.IUserActionsImageIds;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDAResources;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemWorkWithUDAsDialog;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
 import org.eclipse.swt.widgets.Shell;
@@ -61,7 +63,7 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 	 */
 	public SystemWorkWithUDAsAction(Shell parent) {
 		super(SystemUDAResources.ACTION_WORKWITH_UDAS_LABEL, SystemUDAResources.ACTION_WORKWITH_UDAS_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(
-				ISystemIconConstants.ICON_SYSTEM_WORKWITHUSERACTIONS_ID), parent);
+				IUserActionsImageIds.WORK_WITH_USER_ACTIONS_1), parent);
 		allowOnMultipleSelection(false);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_WORKWITH);
 		setHelp(RSEUIPlugin.HELPPREFIX + "actn0045"); //$NON-NLS-1$
@@ -76,7 +78,7 @@ public class SystemWorkWithUDAsAction extends SystemBaseDialogAction {
 	public SystemWorkWithUDAsAction(Shell parent, boolean fromCascadingCompileAction) {
 		super(fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWUDAS_LABEL : SystemUDAResources.ACTION_WORKWITH_UDAS_LABEL,
 				fromCascadingCompileAction ? SystemUDAResources.ACTION_WORKWITH_WWUDAS_TOOLTIP : SystemUDAResources.ACTION_WORKWITH_UDAS_TOOLTIP, RSEUIPlugin.getDefault().getImageDescriptor(
-						ISystemIconConstants.ICON_SYSTEM_WORKWITHUSERACTIONS_ID), parent);
+						IUserActionsImageIds.WORK_WITH_USER_ACTIONS_1), parent);
 		allowOnMultipleSelection(false);
 		if (!fromCascadingCompileAction)
 			setContextMenuGroup(ISystemContextMenuConstants.GROUP_WORKWITH);

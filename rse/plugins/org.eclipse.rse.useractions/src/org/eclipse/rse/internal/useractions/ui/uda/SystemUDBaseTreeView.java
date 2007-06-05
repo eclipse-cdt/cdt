@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 
 package org.eclipse.rse.internal.useractions.ui.uda;
@@ -29,9 +31,9 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
+import org.eclipse.rse.internal.useractions.IUserActionsMessageIds;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.ISystemAction;
@@ -398,7 +400,7 @@ public class SystemUDBaseTreeView extends TreeViewer implements IMenuListener, I
 	 * Return message for delete confirmation
 	 */
 	protected SystemMessage getDeleteConfirmationMessage() {
-		return RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONFIRM_DELETE_USERACTION);
+		return RSEUIPlugin.getPluginMessage(IUserActionsMessageIds.MSG_CONFIRM_DELETE_USERACTION);
 	}
 
 	/**

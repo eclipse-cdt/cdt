@@ -8,14 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
+ *                                API to the user actions plugin
  *******************************************************************************/
 package org.eclipse.rse.internal.useractions.ui.uda;
 
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.rse.core.events.ISystemModelChangeEvents;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.IUserActionsModelChangeEvents;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -46,7 +48,7 @@ public class SystemUDActionTreeView extends SystemUDBaseTreeView {
 	 * This is a parent class override.
 	 */
 	protected int getResourceType() {
-		return ISystemModelChangeEvents.SYSTEM_RESOURCETYPE_USERACTION;
+		return IUserActionsModelChangeEvents.SYSTEM_RESOURCETYPE_USERACTION;
 	}
 
 	/**

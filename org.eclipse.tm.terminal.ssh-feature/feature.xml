@@ -2,8 +2,8 @@
 <feature
       id="org.eclipse.tm.terminal.ssh"
       label="%featureName"
-      version="1.0.0.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      version="1.0.0.qualifier">
 
    <description>
       %description

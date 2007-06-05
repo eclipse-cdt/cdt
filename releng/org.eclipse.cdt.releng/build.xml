@@ -108,10 +108,12 @@
 		<move file="${buildDirectory}/site/linux.gtk.x86/eclipse/notice.html" todir="${buildDirectory}/site/eclipse"/>
 		<copy file="buildsite.xml" tofile="${buildDirectory}/site/eclipse/site.xml"/>
 		<replace file="${buildDirectory}/site/eclipse/site.xml">
-			<replacefilter token="@branchVersion@" value="${branchVersion}"/>
-			<replacefilter token="@buildId@" value="${buildId}"/>
+			<replacefilter token="@buildVersion@" value="${branchVersion}.${timestamp}"/>
 		</replace>
-		<zip destfile="${zipsdir}/${branchVersion}-${buildId}.zip" 
+		<!-- for some reason LPG isn't getting picked up-->
+		<copy file="${buildDirectory}/plugins/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200702061926.jar"
+			todir="${buildDirectory}/site/eclipse/plugins"/>
+		<zip destfile="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip" 
 			basedir="${buildDirectory}/site/eclipse"/>
 	</target>
 
@@ -130,9 +132,6 @@
 	</target>
 	
 	<target name="test" depends="init" unless="hasErrors">
-		<ant antfile="build.xml" dir="${pde.build.scripts}">
-			<property name="builder" value="${basedir}/testing" />
-		</ant>
 		<antcall target="unpack">
 			<param name="srcPrefix" value="${zipsdir}/cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}"/>
 			<param name="dest" value="${buildDirectory}"/>

@@ -1372,7 +1372,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			}
 		}
 		// otherwise ask the binary
-		if (globals.length == 0)
+		if (list.size() == 0)
 		{
 			IBinaryObject file = getBinaryFile();
 			if (file != null) {

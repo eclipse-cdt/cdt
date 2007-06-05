@@ -146,6 +146,13 @@ abstract class BaseScanner implements IScanner {
 
     final static protected int BRANCH_END = 4;
 
+	// Bug 191091:
+    // Conditional circular inclusions appear on the stack no more than
+	// two times.  The second time it's included, if there is an include guard
+    // present, it won't be included a third time.  Otherwise, we can assume
+    // it is genuinely circularly included.
+	private static final int MAX_INCLUDE_OCCURRENCES = 2;
+
     // Utility
     protected static String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -1379,18 +1386,31 @@ abstract class BaseScanner implements IScanner {
     }
 
     protected boolean isCircularInclusion(InclusionData data) {
+    	// Bug 191091:
+    	// We need to check for inclusions that can put the scanner into
+    	// an infinite loop.  So we'll need to ensure we don't count
+    	// conditional circular inclusions since they're not
+    	// genuinely circular.
+    	
+    	int occurrences = 0;
         for (int i = 0; i < bufferStackPos; ++i) {
-            if (bufferData[i] instanceof CodeReader
+			if (bufferData[i] instanceof CodeReader
                     && CharArrayUtils.equals(
                             ((CodeReader) bufferData[i]).filename,
                             data.reader.filename)) {
-                return true;
+            	occurrences++;
+                if (occurrences > MAX_INCLUDE_OCCURRENCES) {
+                	return true;
+                }
             } else if (bufferData[i] instanceof InclusionData
                     && CharArrayUtils
                             .equals(
                                     ((InclusionData) bufferData[i]).reader.filename,
                                     data.reader.filename)) {
-                return true;
+            	occurrences++;
+                if (occurrences > MAX_INCLUDE_OCCURRENCES) {
+                	return true;
+                }
             }
         }
         return false;

@@ -90,7 +90,11 @@ public class CPPTemplateScope extends CPPScope implements ICPPTemplateScope {
 						return new CPPScope.CPPScopeProblem( names[i-1], IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray() );
 					}
 			    } catch( DOMException e ){
-			        return e.getProblem(); 
+			    	IScope result= e.getProblem();
+			    	if (result instanceof ICPPScope) {
+			    		return result;
+			    	}
+			        return new CPPScope.CPPScopeProblem( names[i-1], IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray() );
 			    }
 			} else if( qual.isFullyQualified() ){
 			    return qual.getTranslationUnit().getScope();

@@ -869,7 +869,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 					Activator.trace("SftpFileService.setReadOnly nothing-to-do"); //$NON-NLS-1$
 				}
 			} catch (Exception e) {
-				Activator.trace("SftpFileService.rename failed: "+e.toString()); //$NON-NLS-1$
+				Activator.trace("SftpFileService.setReadOnly failed: "+e.toString()); //$NON-NLS-1$
 				throw makeSystemMessageException(e);
 			} finally {
 				fDirChannelMutex.release();

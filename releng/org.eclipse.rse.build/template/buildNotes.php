@@ -23,36 +23,25 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>TM @buildId@ <b>requires Eclipse 3.3M6 or later</b>. Platform Runtime is the minimum
-  requirement for core RSE and Terminal. Discovery needs EMF, and the Remotecdt
-  integration needs CDT.</li>
+<li>TM @buildId@ <b>requires Eclipse 3.3RC3 or later for the SSH component</b>.
+  Other components should work with Eclipse 3.3M6 or later.
+  Platform Runtime is the minimum requirement for core RSE and Terminal.
+  Discovery needs EMF, and the Remotecdt integration needs CDT.</li>
+<!--
 <li><b>Split the Terminal Telnet connector from the core Terminal widget</b>.
   This allows embedding a terminal widget in RCPs without having the unnecessary
   code for the Telnet connector
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174162">174162</a>].</li>
-<li><b>Copy&Paste, Drag&Drop</b> had to be restored to avoid download-on-copy.
-  This means that drag&drop to Windows Explorer or Package Explorer do not 
-  work any more. As a workaround, you can drag&drop to the Local subsystem instead
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189268">189268</a>]
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181458">181458</a>].</li>
-<li><b>Automatic Mnemonic Generation</b> can now be switched off through a 
-  hidden Preference by setting a Policy
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178768">178768</a>].</li>
-<li><b>Dbl clicking a remote file now always refreshes</b> the editor, so 
-  the latest file is always edited and the threat of getting save conflicts
-  is smaller
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180671">180671</a>].</li>
-<!--
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least 13 API changes and 66 bugs were fixed: use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-05-26&chfieldto=2007-06-05&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC2&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+<li>At least ? API changes and ? bugs were fixed: use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-06-06&chfieldto=2007-06-14&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC3&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC1-200705252030/index.php">
-  TM 2.0RC1</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC1-200705252030/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC2-200706051715/index.php">
+  TM 2.0RC2</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC2-200706051715/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -130,6 +119,9 @@ More information can be found in the associated bugzilla items.
 
 <ul>
 <li>TM @buildId@ Breaking API Changes
+<ul>
+</ul></li>
+<li>TM 2.0RC2 Breaking API Changes
 <ul>
 <li><b>Cleaned up ISystemRegistry and ISystemProfileManager</b> - removed several convenience methods 
   that are easily accessible through more common methods. If your code does

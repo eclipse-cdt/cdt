@@ -31,10 +31,8 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -44,12 +42,55 @@ import org.osgi.service.prefs.Preferences;
  *
  */
 public class PropertyManager {
-	private static final String PROPS_PROPERTY = "properties";	//$NON-NLS-1$
-	private static final QualifiedName propsSessionProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), PROPS_PROPERTY);
+//	private static final String PROPS_PROPERTY = "properties";	//$NON-NLS-1$
+//	private static final QualifiedName propsSessionProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), PROPS_PROPERTY);
 
 	private static final String NODE_NAME = "properties";	//$NON-NLS-1$
 	
 	private static PropertyManager fInstance;
+	
+	private LoaddedInfo fLoaddedInfo;
+	
+	private static class LoaddedInfo {
+		private final IProject fProject;
+		private final String fCfgId;
+		private final Map fCfgPropertyMap;
+		
+		LoaddedInfo(IProject project, String cfgId, Map cfgPropertyMap){
+			fProject = project;
+			fCfgId = cfgId;
+			fCfgPropertyMap = cfgPropertyMap;
+		}
+		
+		public IConfiguration getConfiguration(){
+			return PropertyManager.getConfigurationFromId(fProject, fCfgId);
+		}
+
+		public IProject getProject(){
+			return fProject;
+		}
+
+		public String getConfigurationId(){
+			return fCfgId;
+		}
+
+		public Map getProperties(){
+			return fCfgPropertyMap;
+		}
+		
+		public boolean cfgMatch(IConfiguration cfg){
+			if(fCfgId == null || fProject == null)
+				return false;
+			
+			if(!fCfgId.equals(cfg.getId()))
+				return false;
+			
+			if(!fProject.equals(PropertyManager.getProject(cfg)))
+				return false;
+			
+			return true;
+		}
+	}
 
 	private PropertyManager(){
 	}
@@ -81,36 +122,62 @@ public class PropertyManager {
 	protected Properties getProperties(IConfiguration cfg, IBuildObject bo){
 		return loadProperties(cfg, bo);
 	}
-
-	protected Map getLoaddedData(IConfiguration cfg){
-		Map map = null;
-		IProject proj = null;
-		try {
-			if(!((Configuration)cfg).isPreference()){
-				proj = cfg.getOwner().getProject();
-				map = (Map)proj.getSessionProperty(propsSessionProperty);
-			}
-			if(map == null){
-				map = new HashMap();
-				if(proj != null){
-					proj.setSessionProperty(propsSessionProperty, map);
-				}
-			}
-			map = (Map)map.get(cfg.getId());
-		} catch (CoreException e) {
-		}
-		return map;
+	
+	private LoaddedInfo getLoaddedInfo(){
+		return fLoaddedInfo;
 	}
 
-	protected void clearLoaddedData(IConfiguration cfg){
+	private synchronized void setLoaddedInfo(LoaddedInfo info){
+		fLoaddedInfo = info;
+	}
+	protected Map getLoaddedData(IConfiguration cfg){
+		LoaddedInfo info = getLoaddedInfo();
+		if(info == null)
+			return null;
+		
+		if(!info.cfgMatch(cfg))
+			return null;
+		
+		return info.getProperties(); 
+//		Map map = null;
+//		IProject proj = null;
+//		try {
+//			if(!((Configuration)cfg).isPreference()){
+//				proj = cfg.getOwner().getProject();
+//				map = (Map)proj.getSessionProperty(propsSessionProperty);
+//			}
+//			if(map == null){
+//				map = new HashMap();
+//				if(proj != null){
+//					proj.setSessionProperty(propsSessionProperty, map);
+//				}
+//			}
+//			map = (Map)map.get(cfg.getId());
+//		} catch (CoreException e) {
+//		}
+//		return map;
+	}
+
+	protected synchronized void clearLoaddedData(IConfiguration cfg){
 		if(((Configuration)cfg).isPreference())
 			return;
+
+		LoaddedInfo info = getLoaddedInfo();
+		if(info == null)
+			return;
 		
-		IProject proj = cfg.getOwner().getProject();
-		try {
-			proj.setSessionProperty(propsSessionProperty, null);
-		} catch (CoreException e) {
-		}
+		if(info.cfgMatch(cfg))
+			setLoaddedInfo(null);
+//		IProject proj = cfg.getOwner().getProject();
+//		try {
+//			proj.setSessionProperty(propsSessionProperty, null);
+//		} catch (CoreException e) {
+//		}
+	}
+	
+	private static IProject getProject(IConfiguration cfg){
+		IResource rc = cfg.getOwner();
+		return rc != null ? rc.getProject() : null;
 	}
 
 	protected Properties loadProperties(IConfiguration cfg, IBuildObject bo){
@@ -300,17 +367,43 @@ public class PropertyManager {
 		return null;
 	}
 
-	protected void setLoaddedData(IConfiguration cfg, Map data){
-		try {
-			IProject proj = cfg.getOwner().getProject();
-			Map map = (Map)proj.getSessionProperty(propsSessionProperty);
-			if(map == null){
-				map = new HashMap();
-				proj.setSessionProperty(propsSessionProperty, map);
+	private static IConfiguration getConfigurationFromId(IProject project, String id){
+		if(project == null || id == null)
+			return null;
+		IManagedBuildInfo bInfo = ManagedBuildManager.getBuildInfo(project, false);
+		IConfiguration cfg = null;
+		if(bInfo != null){
+			IManagedProject mProj = bInfo.getManagedProject();
+			if(mProj != null){
+				cfg = mProj.getConfiguration(id);
 			}
-			map.put(cfg.getId(), data);
-		} catch (CoreException e) {
 		}
+
+		return cfg;
+	}
+	
+	protected void setLoaddedData(IConfiguration cfg, Map data){
+		if(cfg.getOwner() == null)
+			return;
+
+		LoaddedInfo info = getLoaddedInfo();
+		
+		if(info != null){
+			if(info.cfgMatch(cfg)){
+				info = new LoaddedInfo(info.getProject(), info.getConfigurationId(), data);
+				setLoaddedInfo(info);
+				return;
+			}
+	
+			IConfiguration oldCfg = info.getConfiguration();
+			if(oldCfg != null){
+				storeData(oldCfg, info.getProperties());
+			}
+		}
+
+		IProject proj = cfg.getOwner().getProject();
+		info = new LoaddedInfo(proj, cfg.getId(), data);
+		setLoaddedInfo(info);
 	}
 
 	public void setProperty(IConfiguration cfg, String key, String value){
@@ -408,18 +501,25 @@ public class PropertyManager {
 		
 		storeData(cfg);
 	}
-
+	
 	public void serialize(){
-		IProject projects[] = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for(int i = 0; i < projects.length; i++){
-			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projects[i], false);
-			if(info != null && info.isValid() && info.getManagedProject() != null){
-				IConfiguration cfgs[] = info.getManagedProject().getConfigurations();
-				for(int j = 0; j < cfgs.length; j++){
-					serialize(cfgs[j]);
-				}
-			}
+		LoaddedInfo info = getLoaddedInfo();
+		IConfiguration cfg = info.getConfiguration();
+		if(cfg != null){
+			serialize(cfg);
+			
+			clearLoaddedData(cfg);
 		}
+//		IProject projects[] = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+//		for(int i = 0; i < projects.length; i++){
+//			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(projects[i], false);
+//			if(info != null && info.isValid() && info.getManagedProject() != null){
+//				IConfiguration cfgs[] = info.getManagedProject().getConfigurations();
+//				for(int j = 0; j < cfgs.length; j++){
+//					serialize(cfgs[j]);
+//				}
+//			}
+//		}
 	}
 
 }

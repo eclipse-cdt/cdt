@@ -775,6 +775,8 @@ public class CommonBuilder extends ACBuilder {
 					cfg.setRebuildState(true);
 					throw e;
 				}
+				
+				PropertyManager.getInstance().serialize(cfg);
 			} else if(status.getConsoleMessagesList().size() != 0) {
 				emitMessage(bInfo, concatMessages(status.getConsoleMessagesList()));
 			}

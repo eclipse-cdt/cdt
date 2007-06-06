@@ -14,33 +14,88 @@
 
 <h1>Signals view</h1>
 
-<p>The Signals view of the Debug perspective lets you view the signals defined on the selected debug target and how the 
+<p>The <b>Signals</b> view of the Debug perspective lets you view the signals defined on the selected debug target and how the 
 debugger handles each one.</p>
-<dl>
-  <dt>Name</dt>
-  <dd>Displays the name of the signal.</dd>
-  <dt>Pass</dt>
-  <dd>Where &quot;yes&quot; is displayed, the debugger  lets your program see the 
+  <p><img src="../images/view_signals.png" width="440" height="251"></p>
+  <table width="600px" cellpadding="5" cellspacing="0" border="1" >
+    <caption>
+      <b>Signals Columns</b>
+    </caption>
+    <colgroup>
+    <col width="30%" valign="top" >
+    <col width="70%" valign="top" >
+    </colgroup>
+    <tbody>
+      <tr>
+        <td width="99"><dt>Name</dt></td>
+        <td width="475">Displays the name of the signal.</td>
+      </tr>
+      <tr>
+        <td><dt>Pass</dt></td>
+        <td>Where &quot;yes&quot; is displayed, the debugger  lets your program see the 
   signal. Your program can handle the signal, or else it may terminate if the 
-  signal is fatal and not handled.</dd>
-  <dt>Suspend</dt>
-  <dd>Where &quot;yes&quot; is displayed, the debugger  suspends your program when this 
-  signal is handled.</dd>
-  <dt>Description</dt>
-  <dd>Displays a description of the signal.</dd>
-</dl>
-
-<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
-<br>
-<a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
-<p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+  signal is fatal and not handled.</td>
+      </tr>
+      <tr>
+        <td><dt>Suspend</dt></td>
+        <td>Where &quot;yes&quot; is displayed, the debugger  suspends your program when this 
+  signal is handled.</td>
+      </tr>
+      <tr>
+        <td><dt>Description</dt></td>
+        <td>Displays a description of the signal.</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Signals view context menu commands </h3>
+  <p>The Signals view context menu commands   include:</p>
+  <table width="600" cellpadding="5" cellspacing="0" border="1" >
+    <colgroup>
+    <col width="30%" valign="top" >
+    <col width="70%" valign="top" >
+    </colgroup>
+    <tbody>
+      <tr>
+        <td valign="top"><center>
+          <b>Command</b>
+        </center>        </td>
+        <td valign="top"><center>
+          <b>Name</b>
+        </center>        </td>
+        <td valign="top"><center>
+          <b>Description</b>
+        </center>        </td>
+      </tr>
+      <tr>
+        <td width="74" valign="top">&nbsp;</td>
+        <td width="143" valign="top"><b>Signal Properties... </b></td>
+        <td width="345" valign="top"><p>Opens the properties window for the selected signal enabling you to:
+          <ul>
+              <li>pass or not pass the signal to the program</li>
+              <li>suspend the program when the signal occurs</li>
+          </ul></p></td>
+      </tr>
+      <tr>
+        <td valign="top"><center>
+          <img src="../images/icon_resume_signal.png" width="17" height="15">
+        </center>
+        </td>
+        <td valign="top"><b>Resume With Signal</b></td>
+        <td valign="top">Resume program execution after receiving the signal. </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+    <br>
+    <a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
+  <p><img border="0" src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
 <br>
 <a href="../tasks/cdt_o_debug.htm">Debugging</a></p>
 <p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
 <br>
 <a href="cdt_o_views.htm">Views</a></p>
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" > 
-
+<p><img src="../images/nokia2007Copyright.png" alt="Nokia Copyright Statement" ><br>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" ></p>
 </body>
 
 </html>

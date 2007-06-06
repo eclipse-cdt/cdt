@@ -13,15 +13,19 @@
 
 package org.eclipse.cdt.internal.corext.template.c;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IFunctionDeclaration;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.templates.GlobalTemplateVariables;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
+
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+
+import org.eclipse.cdt.internal.ui.codemanipulation.StubUtility;
 
 /**
  * A context type for translation units.
@@ -144,6 +148,26 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		}
 	}
 
+	protected static class Todo extends TemplateVariableResolver {
+
+		public Todo() {
+			super("todo", TemplateMessages.getString("CContextType.variable.description.todo")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		protected String resolve(TemplateContext context) {
+			TranslationUnitContext cContext= (TranslationUnitContext) context;
+			ITranslationUnit tUnit= cContext.getTranslationUnit();
+			if (tUnit == null)
+				return "XXX"; //$NON-NLS-1$
+			
+			ICProject cProject= tUnit.getCProject();
+			String todoTaskTag= StubUtility.getTodoTaskTag(cProject);
+			if (todoTaskTag == null)
+				return "XXX"; //$NON-NLS-1$
+
+			return todoTaskTag;
+		}
+	}	
+
 	/*
 	 * @see TemplateContextType#TemplateContextType()
 	 */
@@ -165,6 +189,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 		addResolver(new Method());
 		addResolver(new Project());
 		addResolver(new Arguments());
+		addResolver(new Todo());
 	}
 
 	public abstract TranslationUnitContext createContext(IDocument document, int offset, int length, ITranslationUnit translationUnit);

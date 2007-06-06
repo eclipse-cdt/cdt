@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2005 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,20 @@
  *
  * Contributors:
  *     Rational Software - initial implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.codemanipulation;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.SWT;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.SWT;
 
 public class StubUtility {
 	
@@ -65,5 +70,29 @@ public class StubUtility {
 		return System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-
+	/**
+	 * Get the default task tag for the given project.
+	 * 
+	 * @param project
+	 * @return the default task tag
+	 */
+	public static String getTodoTaskTag(ICProject project) {
+		String markers= null;
+		if (project == null) {
+			markers= CCorePlugin.getOption(CCorePreferenceConstants.TODO_TASK_TAGS);
+		} else {
+			markers= project.getOption(CCorePreferenceConstants.TODO_TASK_TAGS, true);
+		}
+		
+		if (markers != null && markers.length() > 0) {
+			int idx= markers.indexOf(',');
+			if (idx == -1) {
+				return markers;
+			} else {
+				return markers.substring(0, idx);
+			}
+		}
+		return CCorePreferenceConstants.DEFAULT_TASK_TAG;
+	}
+	
 }

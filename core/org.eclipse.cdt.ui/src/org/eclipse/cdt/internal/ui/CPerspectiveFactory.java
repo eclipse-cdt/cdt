@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -21,6 +22,8 @@ import org.eclipse.ui.console.IConsoleConstants;
 
 public class CPerspectiveFactory implements IPerspectiveFactory {
 		
+	private static final String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
+
 	/**
 	 * Constructs a new Default layout engine.
 	 */
@@ -35,13 +38,14 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
  		String editorArea = layout.getEditorArea();
 		
 		IFolderLayout folder1= layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.25, editorArea); //$NON-NLS-1$
-//		folder1.addView(CUIPlugin.CVIEW_ID);
-//		folder1.addView(IPageLayout.ID_RES_NAV);
-		folder1.addView("org.eclipse.ui.navigator.ProjectExplorer"); //$NON-NLS-1$
+		folder1.addView(ID_PROJECT_EXPLORER);
+		folder1.addPlaceholder(CUIPlugin.CVIEW_ID);
+		folder1.addPlaceholder(IPageLayout.ID_RES_NAV);
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 		
 		IFolderLayout folder2= layout.createFolder("bottom", IPageLayout.BOTTOM, (float)0.75, editorArea); //$NON-NLS-1$
 		folder2.addView(IPageLayout.ID_PROBLEM_VIEW);
+		folder2.addView(IPageLayout.ID_TASK_LIST);
 		folder2.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		folder2.addView(IPageLayout.ID_PROP_SHEET);
 		
@@ -64,11 +68,8 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(CUIPlugin.CVIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
+		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
 
-		// link - things we should do
-		layout.addShowInPart(CUIPlugin.CVIEW_ID);
-		layout.addShowInPart(IPageLayout.ID_RES_NAV);
-		
 		addCWizardShortcuts(layout);
 	}
 	

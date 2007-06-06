@@ -23,11 +23,20 @@
    </url>
 
    <requires>
-      <!-- Feature dependency due to bug 175004 (UM doesnt use plugins for "Select Required" -->
-      <!-- But take care of bug 154505 (UM "Select Required" selects container features) -->
-      <import feature="org.eclipse.rse.core" version="2.0.0" match="equivalent"/>
-      <import feature="org.eclipse.rse.local" version="2.0.0" match="equivalent"/>
-      <import feature="org.eclipse.rse.ftp" version="2.0.0" match="equivalent"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.rse.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.ui" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.tests.framework" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.rse.services" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services.files.ftp" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.files.ftp" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.help"/>
       <!-- org.junit either comes with the JDT feature (org.eclipse.jdt),  -->
       <!-- or with the eclipse-test-framework download. So, don't put a    -->
       <!-- feature dependency here since it is no hard dependency          -->

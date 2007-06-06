@@ -6,9 +6,9 @@ Bundle-Version: 2.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.examples.daytime.Activator
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.rse.ui,
- org.eclipse.rse.services,
- org.eclipse.rse.core,
+Require-Bundle: org.eclipse.rse.ui;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.rse.core;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.ui,
  org.eclipse.ui.views,
  org.eclipse.core.runtime

@@ -24,12 +24,22 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.views"/>
-      <!-- Feature dependency due to bug 175004 (UM doesnt use plugins for "Select Required" -->
-      <!-- But take care of bug 154505 (UM "Select Required" selects container features) -->
-      <import feature="org.eclipse.rse.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.connectorservice.dstore" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.services.dstore" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.dstore.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.dstore.extra" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.processes.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.ui" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.files.dstore" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.processes.dstore" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.dstore" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin

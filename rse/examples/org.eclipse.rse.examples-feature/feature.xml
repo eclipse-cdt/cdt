@@ -4,8 +4,8 @@
       label="%featureName"
       version="2.0.0.qualifier"
       provider-name="%providerName"
-      image="eclipse_update_120.jpg"
-      plugin="org.eclipse.rse.examples.tutorial">
+      plugin="org.eclipse.rse.examples.tutorial"
+      image="eclipse_update_120.jpg">
 
    <description>
       %description
@@ -25,11 +25,16 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <!-- Feature dependency due to bug 175004 (UM doesnt use plugins for "Select Required" -->
-      <!-- But take care of bug 154505 (UM "Select Required" selects container features) -->
-      <import feature="org.eclipse.rse.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.rse.services" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.ui" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.files.ui" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.shells.ui" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin

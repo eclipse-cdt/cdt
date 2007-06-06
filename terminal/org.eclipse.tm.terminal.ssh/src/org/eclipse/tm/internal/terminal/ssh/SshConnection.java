@@ -98,6 +98,7 @@ class SshConnection extends Thread {
 			session.connect(nTimeout);   // making connection with timeout.
 
 			ChannelShell channel=(ChannelShell) session.openChannel("shell"); //$NON-NLS-1$
+			channel.setPtyType("ansi"); //$NON-NLS-1$
 			channel.connect();
 			fConn.setInputStream(channel.getInputStream());
 			fConn.setOutputStream(channel.getOutputStream());

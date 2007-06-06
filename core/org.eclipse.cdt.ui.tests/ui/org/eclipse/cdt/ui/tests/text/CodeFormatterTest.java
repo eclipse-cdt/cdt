@@ -73,4 +73,53 @@ public class CodeFormatterTest extends BaseUITestCase {
 		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_OPENING_PAREN_IN_METHOD_DECLARATION, CCorePlugin.INSERT);
 		assertFormatterResult();
 	}
+
+	//void FailSwitchFormatting(void)
+	//{
+	//        switch (confusefomatter)
+	//        {
+	//
+	//        case START_CONFUSION:
+	//                SomeFunctionCallWithTypecast(( castConfusion_t)myvar1,
+	//                (castNoAdditionalConfusion_t) myvar2);
+	//                break;
+	//
+	//                case REVEAL_CONFUSION:
+	//                if (myBlockIndentIsOk)
+	//                {
+	//                        myBlockstuff();
+	//                }
+	//                break;
+	//
+	//                case CONTINUE_CONFUSION:
+	//                {
+	//                        //the indentation problem continues...
+	//                }
+	//                default://....still not right
+	//        }
+	//}
+
+	//void FailSwitchFormatting(void) {
+	//	switch (confusefomatter) {
+	//
+	//	case START_CONFUSION:
+	//		SomeFunctionCallWithTypecast(( castConfusion_t)myvar1,
+	//				(castNoAdditionalConfusion_t) myvar2);
+	//		break;
+	//
+	//	case REVEAL_CONFUSION:
+	//		if (myBlockIndentIsOk) {
+	//			myBlockstuff();
+	//		}
+	//		break;
+	//
+	//	case CONTINUE_CONFUSION: {
+	//		//the indentation problem continues...
+	//	}
+	//	default://....still not right
+	//	}
+	//}
+	public void testIndentConfusionByCastExpression_Bug191021() throws Exception {
+		assertFormatterResult();
+	}
 }

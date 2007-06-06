@@ -199,6 +199,7 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 			throws CoreException {
 		IndexFileInfo info= fCodeReaderFactory.createFileInfo(path);
 		info.fFile= file;
+		assert !info.hasCachedMacros();
 		if (info.fRequested != IndexFileInfo.NOT_REQUESTED) {
 			info.fRequested= IndexFileInfo.NOT_REQUESTED;
 			return true;

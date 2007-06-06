@@ -61,6 +61,10 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 
 		public IIndexFile fFile= null;
 		public int fRequested= 0;
+		
+		public boolean hasCachedMacros() {
+			return fMacros != null;
+		}
 	}
 	private static class NeedToParseException extends Exception {
 		private static final long serialVersionUID = 1L;
@@ -208,10 +212,11 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	}
 	
 	private void getInfosForMacroDictionary(IndexFileInfo fileInfo, LinkedHashSet/*<FileInfo>*/ target) throws CoreException, NeedToParseException {
-		if (!target.add(fileInfo)) {
+		// in case the file is already included, don't load the macros again.
+		if (isIncluded(fileInfo)) {
 			return;
 		}
-		if (isIncluded(fileInfo)) {
+		if (!target.add(fileInfo)) {
 			return;
 		}
 		final IIndexFile file= fileInfo.fFile;

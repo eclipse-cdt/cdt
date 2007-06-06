@@ -41,32 +41,32 @@ case ${uname_s}${uname_m} in
 esac
 
 # prepare the base Eclipse installation in folder "eclipse"
-if [ ! -f eclipse/plugins/org.eclipse.equinox.registry_3.3.0.v20070522.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.core.resources_3.3.0.v20070530.jar ]; then
   curdir2=`pwd`
   if [ ! -d eclipse -o -h eclipse ]; then
-    if [ -d eclipse-3.3RC2-${ep_arch} ]; then
-      rm -rf eclipse-3.3RC2-${ep_arch}
+    if [ -d eclipse-3.3RC3-${ep_arch} ]; then
+      rm -rf eclipse-3.3RC3-${ep_arch}
     fi
-    mkdir eclipse-3.3RC2-${ep_arch}
-    cd eclipse-3.3RC2-${ep_arch}
+    mkdir eclipse-3.3RC3-${ep_arch}
+    cd eclipse-3.3RC3-${ep_arch}
   else
     rm -rf eclipse
   fi
   ## Eclipse Platform 3.3RC2
-  #wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC2-200705251350/eclipse-platform-3.3RC2-${ep_arch}.tar.gz"
-  #tar xfvz eclipse-platform-3.3RC2-${ep_arch}.tar.gz
-  #rm eclipse-platform-3.3RC2-${ep_arch}.tar.gz
+  #wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC3-200706011539/eclipse-platform-3.3RC3-${ep_arch}.tar.gz"
+  #tar xfvz eclipse-platform-3.3RC3-${ep_arch}.tar.gz
+  #rm eclipse-platform-3.3RC3-${ep_arch}.tar.gz
   # Eclipse SDK 3.3: Need the SDK because EMF needs JDT (somehow)
   echo "Getting Eclipse SDK..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC2-200705251350/eclipse-SDK-3.3RC2-${ep_arch}.tar.gz"
-  tar xfvz eclipse-SDK-3.3RC2-${ep_arch}.tar.gz
-  rm eclipse-SDK-3.3RC2-${ep_arch}.tar.gz
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC3-200706011539/eclipse-SDK-3.3RC3-${ep_arch}.tar.gz"
+  tar xfvz eclipse-SDK-3.3RC3-${ep_arch}.tar.gz
+  rm eclipse-SDK-3.3RC3-${ep_arch}.tar.gz
   cd "${curdir2}"
   if [ ! -d eclipse -o -h eclipse ]; then
     if [ -e eclipse ]; then 
       rm eclipse
     fi
-    ln -s eclipse-3.3RC2-${ep_arch}/eclipse eclipse
+    ln -s eclipse-3.3RC3-${ep_arch}/eclipse eclipse
   fi
 fi
 if [ ! -f eclipse/startup.jar ]; then
@@ -91,24 +91,24 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200705251830.jar ]; then
   tar xfvz cdt-4.0.0-RC2-${cdt_arch}.tar.gz
   rm cdt-4.0.0-RC2-${cdt_arch}.tar.gz
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf_2.3.0.v200705230200.jar ]; then
+if [ ! -f eclipse/plugins/org.eclipse.emf_2.3.0.v200705300200.jar ]; then
   # EMF 2.3.0 Runtime
   echo "Getting EMF Runtime..."
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200705230200/emf-sdo-runtime-2.3.0RC1.zip"
-  unzip -o emf-sdo-runtime-2.3.0RC1.zip
-  rm emf-sdo-runtime-2.3.0RC1.zip 
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200705300200/emf-sdo-runtime-2.3.0RC2.zip
+  unzip -o emf-sdo-runtime-2.3.0RC2.zip
+  rm emf-sdo-runtime-2.3.0RC2.zip 
 fi
-if [ ! -f eclipse/plugins/org.junit_3.8.2.v200705231735/junit.jar ]; then
+if [ ! -f eclipse/plugins/org.junit_3.8.2.v200705250844/junit.jar ]; then
   # Eclipse Test Framework
   echo "Getting Eclipse Test Framework..."
-  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC2-200705251350/eclipse-test-framework-3.3RC2.zip"
-  unzip -o eclipse-test-framework-3.3RC2.zip
-  rm eclipse-test-framework-3.3RC2.zip
+  wget "http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC3-200706011539/eclipse-test-framework-3.3RC3.zip"
+  unzip -o eclipse-test-framework-3.3RC3.zip
+  rm eclipse-test-framework-3.3RC3.zip
 fi
 
 # checkout the basebuilder
-baseBuilderTag=RC1_33
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.3.0.v20070517-0010.jar \
+baseBuilderTag=RC2_33
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.3.0.v20070525-0010.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build/pdebuild.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."

@@ -3501,13 +3501,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
             case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
             	if (supportAttributeSpecifiers)
-            		__attribute__();
+            		__attribute_decl_seq(true, false);
             	else
             		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
             	break;
             case IGCCToken.t__declspec: // if __declspec appears before identifier
             	if (duple == null && supportDeclspecSpecifiers)
-                	__declspec();
+            		__attribute_decl_seq(false, true);
             	else
             		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
             	break;
@@ -3895,10 +3895,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consumePointerOperators(pointerOps);
             
             // if __attribute__ is after the pointer ops and before the declarator ex: void * __attribute__((__cdecl__)) foo();
-            if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
-            	__attribute__();
-            if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
-            	__declspec();
+            __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
             
             if (!pointerOps.isEmpty())
                 finalOffset = calculateEndOffset((IASTNode) pointerOps
@@ -4012,9 +4009,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         tryEncountered = true;
                         break overallLoop;
                     }
-                    
-                    if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
-                    	__attribute__();
+
+                    // Consume any number of __attribute__ tokens after the parameters
+                    __attribute_decl_seq(supportAttributeSpecifiers, false);
+                    	
 
                     IToken beforeCVModifier = mark();
                     IToken[] cvModifiers = new IToken[2];
@@ -4116,7 +4114,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     break;
                 case IGCCToken.t__attribute__:  // if __attribute__ is after the declarator
                 	if(supportAttributeSpecifiers)
-                		__attribute__();
+                		__attribute_decl_seq(supportAttributeSpecifiers, false);
                 	else
                 		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
                 	break;
@@ -4324,22 +4322,18 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
         IASTName name = null;
 
-        if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class and before the identifier
-        	__attribute__();
-        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
-        	__declspec();
-
+        // if __attribute__ or __declspec occurs after struct/union/class and before the identifier        
+        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        
         // class name
         if (LT(1) == IToken.tIDENTIFIER)
             name = createName(name());
         else
             name = createName();
         
-        if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class identifier and before the { or ;
-        	__attribute__();
-        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
-        	__declspec();
-
+        // if __attribute__ or __declspec occurs after struct/union/class identifier and before the { or ;
+        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+        
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);
             backup(mark);

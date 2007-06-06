@@ -2230,6 +2230,27 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return parseDeclarationOrExpressionStatement();
     }
 
+    /**
+     * Accept a sequence of __attribute__ or __declspec
+     * 
+     * @param allowAttrib if true accept any number of __attribute__ 
+     * @param allowDeclspec if true accept any number of __declspec
+     * @throws BacktrackException
+     * @throws EndOfFileException
+     */
+    protected void __attribute_decl_seq(boolean allowAttrib, boolean allowDeclspec) throws BacktrackException, EndOfFileException {
+        while (true) {
+        	IToken token = LA(1);
+        	if ( allowAttrib && (token.getType() == IGCCToken.t__attribute__)) {
+        		__attribute__();
+        	} else if (allowDeclspec && (token.getType() == IGCCToken.t__declspec)) {
+        		__declspec();
+        	} else {
+        		break;
+        	}
+        }
+    }
+
     protected void __attribute__() throws BacktrackException, EndOfFileException {
     	IToken token = LA(1);
     	

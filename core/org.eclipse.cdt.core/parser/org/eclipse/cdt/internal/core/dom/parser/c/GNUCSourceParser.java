@@ -1591,13 +1591,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 }
             case IGCCToken.t__attribute__: // if __attribute__ is after the declSpec
 	            	if (supportAttributeSpecifiers)
-	            		__attribute__();
+	            		__attribute_decl_seq(true, false);
 	            	else
 	            		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
             	break;
             case IGCCToken.t__declspec: // __declspec precedes the identifier
             	if (identifier == null && supportDeclspecSpecifiers)
-            		__declspec();
+            		__attribute_decl_seq(false, true);
             	else
             		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
             	break;
@@ -1755,10 +1755,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(mark.getOffset(), mark.getLength());
         }
 
-        if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class and before the identifier
-        	__attribute__();
-        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
-        	__declspec();
+        // if __attribute__ or __declspec occurs after struct/union/class and before the identifier
+        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
         
         IToken nameToken = null;
         // class name
@@ -1766,10 +1764,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             nameToken = identifier();
         }
 
-        if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ occurs after struct/union/class identifier and before the { or ;
-        	__attribute__();
-        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec occurs after struct/union/class and before the identifier
-        	__declspec();
+        // if __attribute__ or __declspec occurs after struct/union/class identifier and before the { or ;        
+        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
         
         if (LT(1) != IToken.tLBRACE) {
             IToken errorPoint = LA(1);
@@ -1914,11 +1910,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
             consumePointerOperators(pointerOps);
             
-            // if __attribute__ is after the pointer ops and before the declarator ex: void * __attribute__((__cdecl__)) foo();
-            if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
-            	__attribute__();
-            if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __declspec is after the parameters
-            	__declspec();
+            // Accept __attribute__ or __declspec after the pointer ops and before the declarator ex: void * __attribute__((__cdecl__)) foo();
+            __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
             
             if (!pointerOps.isEmpty()) {
                 finalOffset = calculateEndOffset((IASTPointerOperator) pointerOps
@@ -2083,13 +2076,13 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     break;
                 case IGCCToken.t__attribute__: // if __attribute__ is after the declarator
                 	if(supportAttributeSpecifiers)
-                		__attribute__();
+                		__attribute_decl_seq(true, false);
                 	else
                 		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
                 	break;
                 case IGCCToken.t__declspec:
                 	if(supportDeclspecSpecifiers)
-                		__declspec();
+                		__attribute_decl_seq(false, true);
                 	else
                 		throwBacktrack(LA(1).getOffset(), LA(1).getLength());
                 	break;
@@ -2101,11 +2094,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         } while (false);
 
-        if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after the parameters
-        	__attribute__();
-
-        if (LT(1) == IGCCToken.t__declspec && supportDeclspecSpecifiers) // if __attribute__ is after the parameters
-        	__declspec();
+        // Consume any number of __attribute__ and __declspec tokens after the parameters
+        __attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
         IASTDeclarator d = null;
         if (numKnRCParms > 0) {

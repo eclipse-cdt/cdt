@@ -92,7 +92,10 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput, IPersis
 	* @see IEditorInput#getPersistable()
 	*/
 	public IPersistableElement getPersistable() {
-		return this;
+		if (location != null) {
+			return this;
+		}
+		return null;
 	}
 
 	/*

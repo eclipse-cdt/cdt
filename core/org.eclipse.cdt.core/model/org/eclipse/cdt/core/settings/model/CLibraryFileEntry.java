@@ -127,9 +127,9 @@ public final class CLibraryFileEntry extends ACPathEntry implements
 		if(fSourceAttachmentPath != null){
 			StringBuffer buf = new StringBuffer();
 			buf.append(result);
-			buf.append(" ; srcPath=").append(fSourceAttachmentPath);
-			buf.append("; srcRoot=").append(fSourceAttachmentRootPath);
-			buf.append("; srcMapping=").append(fSourceAttachmentPrefixMapping);
+			buf.append(" ; srcPath=").append(fSourceAttachmentPath); //$NON-NLS-1$
+			buf.append("; srcRoot=").append(fSourceAttachmentRootPath); //$NON-NLS-1$
+			buf.append("; srcMapping=").append(fSourceAttachmentPrefixMapping); //$NON-NLS-1$
 
 			result = buf.toString();
 		}

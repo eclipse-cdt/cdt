@@ -35,7 +35,7 @@ public final class SettingsContext implements IModificationContext{
 		IProjectDescription eDes = fEDes;
 		if(eDes == null && create){
 			if(fProject == null)
-				throw ExceptionFactory.createCoreException("no project associated with the context");
+				throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("SettingsContext.0")); //$NON-NLS-1$
 			
 			eDes = fProject.getDescription();
 		}
@@ -51,7 +51,7 @@ public final class SettingsContext implements IModificationContext{
 		if(fEDes == null)
 			fEDes = des;
 		else if(fEDes != des)
-			throw ExceptionFactory.createCoreException("can not accept the not-context project description");
+			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("SettingsContext.1")); //$NON-NLS-1$
 	}
 
 	CompositeWorkspaceRunnable getCompositeWorkspaceRunnable(boolean create){

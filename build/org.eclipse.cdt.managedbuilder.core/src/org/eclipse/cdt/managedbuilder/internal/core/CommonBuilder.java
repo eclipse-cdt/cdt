@@ -1322,13 +1322,13 @@ public class CommonBuilder extends ACBuilder {
 				}
 			} else if (result.getCode() == IStatus.ERROR){
 				StringBuffer buf = new StringBuffer();
-				buf.append("Buildfile generation error occured..").append(NEWLINE);
+				buf.append(ManagedMakeMessages.getString("CommonBuilder.23")).append(NEWLINE); //$NON-NLS-1$
 				String message = result.getMessage();
 				if(message != null || message.length() != 0){
 					buf.append(message).append(NEWLINE);
 				}
 				
-				buf.append("Build stopped..").append(NEWLINE);
+				buf.append(ManagedMakeMessages.getString("CommonBuilder.24")).append(NEWLINE); //$NON-NLS-1$
 				message = buf.toString();
 				buildStatus.getConsoleMessagesList().add(message);
 				buildStatus.cancelBuild();

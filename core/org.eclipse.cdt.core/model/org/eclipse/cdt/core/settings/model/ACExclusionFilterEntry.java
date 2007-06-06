@@ -92,10 +92,10 @@ public abstract class ACExclusionFilterEntry extends ACPathEntry implements ICEx
 		if(exclusionPatterns.length != 0){
 			StringBuffer buf = new StringBuffer();
 			buf.append(result);
-			buf.append(" ; exclude: ");
+			buf.append(" ; exclude: "); //$NON-NLS-1$
 			for(int i = 0; i < exclusionPatterns.length; i++){
 				if(i != 0)
-					buf.append(", ");
+					buf.append(", "); //$NON-NLS-1$
 				buf.append(exclusionPatterns[i].toString());
 			}
 			result = buf.toString();

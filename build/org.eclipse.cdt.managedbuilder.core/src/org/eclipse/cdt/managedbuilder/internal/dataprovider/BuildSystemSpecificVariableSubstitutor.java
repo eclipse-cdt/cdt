@@ -36,7 +36,7 @@ public class BuildSystemSpecificVariableSubstitutor extends SupplierBasedCdtVari
 	}
 
 	public BuildSystemSpecificVariableSubstitutor(IVariableContextInfo contextInfo){
-		this(contextInfo, "", " ");
+		this(contextInfo, "", " "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public BuildSystemSpecificVariableSubstitutor(

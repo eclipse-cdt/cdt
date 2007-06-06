@@ -120,7 +120,7 @@ public abstract class ACSettingEntry implements ICSettingEntry {
 		StringBuffer buf = new StringBuffer();
 		buf.append('[').append(LanguageSettingEntriesSerializer.kindToString(getKind())).append(']').append(' ');
 		buf.append(contentsToString());
-		buf.append(" ; flags: ").append(LanguageSettingEntriesSerializer.composeFlagsString(getFlags()));
+		buf.append(" ; flags: ").append(LanguageSettingEntriesSerializer.composeFlagsString(getFlags())); //$NON-NLS-1$
 		return buf.toString();
 	}
 	

@@ -320,8 +320,8 @@ public class BuilderFactory {
 					args.remove(IMakeCommonBuildInfo.BUILD_COMMAND);
 					args.remove(IMakeCommonBuildInfo.BUILD_ARGUMENTS);
 				} else {
-					args.put(IBuilder.ATTRIBUTE_IGNORE_ERR_CMD, "");
-					args.put(IBuilder.ATTRIBUTE_PARALLEL_BUILD_CMD, "");
+					args.put(IBuilder.ATTRIBUTE_IGNORE_ERR_CMD, ""); //$NON-NLS-1$
+					args.put(IBuilder.ATTRIBUTE_PARALLEL_BUILD_CMD, ""); //$NON-NLS-1$
 				}
 			}
 			//end adjusting settings

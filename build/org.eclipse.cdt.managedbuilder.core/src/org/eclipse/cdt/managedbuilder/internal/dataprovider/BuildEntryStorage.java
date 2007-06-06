@@ -204,7 +204,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		
 		return bsVarsOnly ? 
 				new BuildSystemSpecificVariableSubstitutor(ci)
-				: new SupplierBasedCdtVariableSubstitutor(ci, "", " ");
+				: new SupplierBasedCdtVariableSubstitutor(ci, "", " "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private UserEntryInfo[] getUserEntries(int flags, boolean usr, List emptyValuesInfos){
@@ -288,7 +288,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		
 		Path path = new Path(info.getUnresolvedPath());
 		String projPath;
-		if(path.segmentCount() != 0 && "..".equals(path.segment(0))){
+		if(path.segmentCount() != 0 && "..".equals(path.segment(0))){ //$NON-NLS-1$
 			projPath = path.removeFirstSegments(1).toString();
 		} else {
 			StringBuffer buf = new StringBuffer();
@@ -308,7 +308,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			projPath = path.removeFirstSegments(1).toString();
 		} else {
 			StringBuffer buf = new StringBuffer();
-			buf.append("../").append(info.getUnresolvedPath());
+			buf.append("../").append(info.getUnresolvedPath()); //$NON-NLS-1$
 			projPath = buf.toString();
 		}
 		return new PathInfo(projPath, info.isWorkspacePath(), info.getSubstitutor());

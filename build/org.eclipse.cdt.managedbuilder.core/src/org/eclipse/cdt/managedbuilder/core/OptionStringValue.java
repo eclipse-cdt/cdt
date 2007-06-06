@@ -192,6 +192,6 @@ public final class OptionStringValue {
 	}
 
 	public String toString() {
-		return new StringBuffer().append("ov:").append(value.toString()).toString();
+		return new StringBuffer().append("ov:").append(value.toString()).toString(); //$NON-NLS-1$
 	}
 }

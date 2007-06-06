@@ -225,7 +225,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	pCurProcInfo -> eventTerminate = CreateEventW(NULL, TRUE, FALSE, eventTerminateName);
 	ResetEvent(pCurProcInfo -> eventTerminate);   
 
-	swprintf(szCmdLine, L"%sstarter.exe %i %i %s %s %s ", path, pid, nLocalCounter, eventBreakName, eventWaitName, eventTerminateName);
+	swprintf(szCmdLine, L"\"%sstarter.exe\" %i %i %s %s %s ", path, pid, nLocalCounter, eventBreakName, eventWaitName, eventTerminateName);
 	nPos = wcslen(szCmdLine);
 
 	// Prepare command line

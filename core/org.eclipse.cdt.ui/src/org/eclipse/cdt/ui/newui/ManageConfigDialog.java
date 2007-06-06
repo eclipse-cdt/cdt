@@ -273,4 +273,8 @@ public class ManageConfigDialog extends Dialog {
 		table.setFocus();
 		updateButtons();
 	}
+	
+	ICProjectDescription getProjectDescription(){
+		return des;
+	}
 }

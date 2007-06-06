@@ -98,8 +98,25 @@ public class CDTPropertyManager {
 	 */
 	public static void performOk(Object p) {
 		if (saveDone) return;
+
 		performOkForced(p);
-	}		
+		
+		if (pages.size() == 0) {
+			project = null;
+			prjd = null;
+			saveDone = false;
+		}
+	}
+	
+	public static void performCancel(Object p) {
+		saveDone = true;
+		
+		if (pages.size() == 0) {
+			project = null;
+			prjd = null;
+			saveDone = false;
+		}
+	}	
 	
 	/**
 	 * Performs mandatory saving 
@@ -111,6 +128,12 @@ public class CDTPropertyManager {
 			CoreModel.getDefault().setProjectDescription(project, prjd);
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().logErrorMessage(UIMessages.getString("AbstractPage.11") + e.getLocalizedMessage()); //$NON-NLS-1$
+		}
+		
+		if (pages.size() == 0) {
+			project = null;
+			prjd = null;
+			saveDone = false;
 		}
 	}
 	
@@ -136,6 +159,23 @@ public class CDTPropertyManager {
 						}
 					}
 				}
+			}
+			
+			
+			if (pages.size() == 0) {
+//				if(!saveDone){
+//					if(prjd != null){
+//						saveDone = !prjd.isModified();
+//					}
+//				}
+				
+				saveDone = true;
+				
+//				if(saveDone){
+					project = null;
+					prjd = null;
+					saveDone = false;
+//				}
 			}
 		}
 	}

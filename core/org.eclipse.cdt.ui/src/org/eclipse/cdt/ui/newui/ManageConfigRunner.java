@@ -12,8 +12,11 @@
 package org.eclipse.cdt.ui.newui;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 public class ManageConfigRunner implements IConfigManager {
@@ -41,10 +44,21 @@ public class ManageConfigRunner implements IConfigManager {
 		boolean result = false;
 		if (d.open() == Window.OK) {
 			if (doOk) {
-				CDTPropertyManager.performOk(d.getShell());
+//				CDTPropertyManager.performOk(d.getShell());
+				ICProjectDescription des = d.getProjectDescription();
+				if(des != null){
+					try {
+						CoreModel.getDefault().setProjectDescription(obs[0], des);
+					} catch (CoreException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 			AbstractPage.updateViews(obs[0]);
 			result = true;
+		} else if (doOk) {
+			CDTPropertyManager.performCancel(d.getShell());
 		}
 		return result;
 	}

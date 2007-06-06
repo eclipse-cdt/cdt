@@ -389,6 +389,9 @@ implements
 	
     public boolean performCancel() {
 		if (! noContentOnPage && displayedConfig) forEach(ICPropertyTab.CANCEL);
+		
+		CDTPropertyManager.performCancel(this);
+		
         return true;
     }
 	public void performDefaults() {

@@ -30,10 +30,12 @@ import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.ACBuilder;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
@@ -466,6 +468,11 @@ public class CommonBuilder extends ACBuilder {
 			return true;
 		}
 	}
+	
+	protected boolean isCdtProjectCreated(IProject project){
+		ICProjectDescription des = CoreModel.getDefault().getProjectDescription(project, false);
+		return des != null && !des.isCdtProjectCreating();
+	}
 
 	/**
 	 * @see IncrementalProjectBuilder#build
@@ -474,6 +481,9 @@ public class CommonBuilder extends ACBuilder {
 		fBuildSet.start(this);
 
 		IProject project = getProject();
+		
+		if(!isCdtProjectCreated(project))
+			return project.getReferencedProjects();
 
 		if(VERBOSE)
 			outputTrace(project.getName(), ">>build requested, type = " + kind); //$NON-NLS-1$
@@ -488,6 +498,9 @@ public class CommonBuilder extends ACBuilder {
 	}
 	
 	protected IProject[] build(int kind, IProject project, IBuilder[] builders, boolean isForeground, IProgressMonitor monitor) throws CoreException{
+		if(!isCdtProjectCreated(project))
+			return project.getReferencedProjects();
+
 		int num = builders.length;
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		IConfiguration activeCfg = info.getDefaultConfiguration();
@@ -1456,6 +1469,10 @@ public class CommonBuilder extends ACBuilder {
 	
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		IProject curProject = getProject();
+		
+		if(!isCdtProjectCreated(curProject))
+			return;
+		
 		IBuilder[] builders = ManagedBuilderCorePlugin.createBuilders(curProject, null);
 		for(int i = 0; i < builders.length; i++){
 			IBuilder builder = builders[i];

@@ -50,6 +50,7 @@ public class ChangeConfigAction extends Action {
 		while (iter.hasNext()) {
 			IProject prj = (IProject)iter.next();
 			ICProjectDescription prjd = CDTPropertyManager.getProjectDescription(prj);
+			boolean changed = false;
 			ICConfigurationDescription[] configs = prjd.getConfigurations(); 
 			if (configs != null && configs.length > 0) {
 				for (int i = 0; i < configs.length; i++) {
@@ -57,10 +58,14 @@ public class ChangeConfigAction extends Action {
 						configs[i].setActive();
 						CDTPropertyManager.performOk(null);
 						AbstractPage.updateViews(prj);
+						changed = true;
 						break;
 					}
 				}
 			}
+			
+			if(!changed)
+				CDTPropertyManager.performCancel(null);
 		}
 	}
 }

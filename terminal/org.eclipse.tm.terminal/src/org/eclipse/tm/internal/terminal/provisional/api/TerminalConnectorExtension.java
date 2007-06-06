@@ -111,6 +111,7 @@ public class TerminalConnectorExtension {
 					fConnector=createConnector(fConfig);
 					fConnector.initialize();
 				} catch (Exception e) {
+					fConnector=null;
 					fException=e;
 					// that's the place where we log the exception
 					Logger.logException(e);

@@ -1750,13 +1750,18 @@ public class CPPVisitor {
 	    } else if( expression instanceof IASTFunctionCallExpression ){
 	        IBinding binding = resolveBinding( expression );
 	        if( binding instanceof ICPPConstructor ){
-	        	ICPPClassScope scope;
 				try {
-					scope = (ICPPClassScope) ((ICPPConstructor)binding).getScope();
+					IScope scope= binding.getScope();
+					if (scope instanceof ICPPTemplateScope && ! (scope instanceof ICPPClassScope)) {
+						scope= scope.getParent();
+					}
+					if (scope instanceof ICPPClassScope) {
+						return ((ICPPClassScope) scope).getClassType();
+					}
 				} catch (DOMException e) {
 					return e.getProblem();
 				}
-	        	return scope.getClassType();
+				return new ProblemBinding(expression, IProblemBinding.SEMANTIC_BAD_SCOPE, binding.getName().toCharArray());
 	        } else if( binding instanceof IFunction ){
 	            IFunctionType fType;
                 try {

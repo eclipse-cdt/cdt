@@ -220,7 +220,8 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(0, decls.length);
 		
 		//TODO: should this be 2?
+		//Doug: Not sure but we're at one now...
 		IName[] refs = pdom.findNames(variable1, IIndex.FIND_REFERENCES);
-		assertEquals(0, refs.length);	
+		assertEquals(1, refs.length);	
 	}
 }

@@ -15,11 +15,15 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -34,7 +38,8 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @author Doug Schaefer
  */
-class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IIndexFragmentBinding {
+class PDOMCPPParameter extends PDOMNamedNode
+		implements ICPPParameter, IIndexFragmentBinding, ICPPDelegateCreator {
 
 	/**
 	 * Offset of pointer to the next parameter (relative to the
@@ -233,4 +238,9 @@ class PDOMCPPParameter extends PDOMNamedNode implements ICPPParameter, IIndexFra
 	public int getBindingConstant() {
 		return getNodeType();
 	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPParameter.CPPParameterDelegate(name, this);
+	}
+	
 }

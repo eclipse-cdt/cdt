@@ -15,11 +15,15 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration.CPPEnumerationDelegate;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -30,7 +34,8 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Doug Schaefer
  */
-class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexType, ICPPBinding {
+class PDOMCPPEnumeration extends PDOMCPPBinding
+		implements IEnumeration, IIndexType, ICPPBinding, ICPPDelegateCreator {
 
 	private static final int FIRST_ENUMERATOR = PDOMBinding.RECORD_SIZE + 0;
 	
@@ -123,6 +128,10 @@ class PDOMCPPEnumeration extends PDOMCPPBinding implements IEnumeration, IIndexT
 
 	public Object clone() {
 		throw new PDOMNotImplementedError();
+	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPEnumerationDelegate(name, this);
 	}
 
 }

@@ -23,11 +23,14 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -42,7 +45,8 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPNamespaceScope, IIndexScope {
+class PDOMCPPNamespace extends PDOMCPPBinding
+		implements ICPPNamespace, ICPPNamespaceScope, IIndexScope, ICPPDelegateCreator {
 
 	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
 
@@ -185,4 +189,9 @@ class PDOMCPPNamespace extends PDOMCPPBinding implements ICPPNamespace, ICPPName
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPNamespace.CPPNamespaceDelegate(name, this);
+	}
+	
 }

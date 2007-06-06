@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -30,8 +31,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunctionInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -47,7 +50,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		ICPPFunctionTemplate, ICPPInternalTemplateInstantiator,
-		IPDOMMemberOwner, ICPPTemplateScope, IIndexScope {
+		IPDOMMemberOwner, ICPPTemplateScope, IIndexScope, ICPPDelegateCreator {
 
 	private static final int TEMPLATE_PARAMS = PDOMCPPFunction.RECORD_SIZE + 0;
 	private static final int INSTANCES = PDOMCPPFunction.RECORD_SIZE + 4;
@@ -221,4 +224,9 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPFunctionTemplate.CPPFunctionTemplateDelegate(name, this);
+	}
+	
 }

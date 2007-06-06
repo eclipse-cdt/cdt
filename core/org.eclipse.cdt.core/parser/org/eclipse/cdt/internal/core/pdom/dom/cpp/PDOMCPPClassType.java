@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -41,6 +42,8 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType.CPPClassTypeDelegate;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -58,7 +61,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  */
 class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
-ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
+		ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope, ICPPDelegateCreator {
 
 	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 4; // byte
@@ -407,4 +410,9 @@ ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	public IIndexBinding getScopeBinding() {
 		return this;
 	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPClassTypeDelegate(name, this);
+	}
+	
 }

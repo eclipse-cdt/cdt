@@ -49,8 +49,8 @@ public class CPPUsingDeclaration extends PlatformObject implements ICPPUsingDecl
     private ICPPDelegate [] createDelegates( IBinding [] bindings ){
         ICPPDelegate [] result = null;
         for( int i = 0; i < bindings.length; i++ ){
-            if( bindings[i] instanceof ICPPInternalBinding ){
-                ICPPDelegate delegate = ((ICPPInternalBinding)bindings[i]).createDelegate( name );
+            if( bindings[i] instanceof ICPPDelegateCreator){
+                ICPPDelegate delegate = ((ICPPDelegateCreator)bindings[i]).createDelegate( name );
                 result = (ICPPDelegate[]) ArrayUtil.append( ICPPDelegate.class, result, delegate );
             } 
         }

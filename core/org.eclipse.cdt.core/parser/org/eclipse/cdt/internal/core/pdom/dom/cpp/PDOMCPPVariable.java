@@ -15,9 +15,13 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -29,7 +33,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
+class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelegateCreator {
 
 	/**
 	 * Offset of pointer to type information for this parameter
@@ -110,4 +114,9 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable {
 	public boolean isStatic() throws DOMException {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.STATIC_OFFSET);
 	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPVariable.CPPVariableDelegate(name, this);
+	}
+	
 }	

@@ -13,9 +13,13 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -25,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBinding {
+class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBinding, ICPPDelegateCreator {
 
 	private static final int ENUMERATION = PDOMBinding.RECORD_SIZE + 0;
 	private static final int NEXT_ENUMERATOR = PDOMBinding.RECORD_SIZE + 4;
@@ -70,4 +74,8 @@ class PDOMCPPEnumerator extends PDOMCPPBinding implements IEnumerator, ICPPBindi
 		}
 	}
 
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPEnumerator.CPPEnumeratorDelegate(name, this);
+	}
+	
 }

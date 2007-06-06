@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -54,8 +55,9 @@ import org.eclipse.core.runtime.CoreException;
  * @author Bryan Wilkinson
  * 
  */
-class PDOMCPPClassTemplate extends PDOMCPPClassType implements
-		ICPPClassTemplate, ICPPInternalTemplateInstantiator, ICPPTemplateScope {
+class PDOMCPPClassTemplate extends PDOMCPPClassType
+		implements ICPPClassTemplate, ICPPInternalTemplateInstantiator,
+		ICPPTemplateScope, ICPPDelegateCreator {
 	
 	private static final int PARAMETERS = PDOMCPPClassType.RECORD_SIZE + 0;
 	private static final int INSTANCES = PDOMCPPClassType.RECORD_SIZE + 4;

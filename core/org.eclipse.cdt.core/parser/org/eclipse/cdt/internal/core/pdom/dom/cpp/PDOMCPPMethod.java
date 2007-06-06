@@ -16,10 +16,14 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -31,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  * 
  */
-class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
+class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateCreator {
 
 	/**
 	 * Offset of remaining annotation information (relative to the beginning of
@@ -134,4 +138,9 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod {
 	public boolean isVolatile() {
 		return getBit(getByte(record + ANNOTATION1), PDOMCAnnotation.VOLATILE_OFFSET + CV_OFFSET);
 	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPMethod.CPPMethodDelegate(name, this);
+	}
+	
 }

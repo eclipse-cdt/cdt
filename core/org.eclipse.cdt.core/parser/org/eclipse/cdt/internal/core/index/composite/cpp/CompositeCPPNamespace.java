@@ -11,13 +11,17 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace {
+class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace, ICPPDelegateCreator {
 	ICPPNamespace[] namespaces;
 	public CompositeCPPNamespace(ICompositesFactory cf, ICPPNamespace[] namespaces) {
 		super(cf, namespaces[0]);
@@ -36,5 +40,9 @@ class CompositeCPPNamespace extends CompositeCPPBinding implements ICPPNamespace
 
 	public ICPPNamespaceScope getNamespaceScope() throws DOMException {
 		return new CompositeCPPNamespaceScope(cf, namespaces);
+	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPNamespace.CPPNamespaceDelegate(name, this);
 	}
 }

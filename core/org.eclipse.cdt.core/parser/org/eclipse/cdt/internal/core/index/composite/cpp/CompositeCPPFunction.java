@@ -12,16 +12,20 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
+class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, ICPPDelegateCreator {
 
 	public CompositeCPPFunction(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
@@ -84,5 +88,9 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction {
 			result.append(de);
 		}
 		return result.toString();
+	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPFunction.CPPFunctionDelegate(name, this);
 	}
 }

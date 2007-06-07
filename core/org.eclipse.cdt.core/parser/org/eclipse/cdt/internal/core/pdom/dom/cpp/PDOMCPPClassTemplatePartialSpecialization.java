@@ -240,6 +240,13 @@ class PDOMCPPClassTemplatePartialSpecialization extends
 			return type.isSameType(this);
 		}
 		
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			if (node.getPDOM() == getPDOM()) {
+				return node.getRecord() == getRecord();
+			}
+		}
+		
 		if( type instanceof ICPPSpecialization ) {
 	        	ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();
 	        	ICPPClassType ct2= (ICPPClassType) ((ICPPSpecialization)type).getSpecializedBinding();

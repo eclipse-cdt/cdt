@@ -12,17 +12,21 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -30,7 +34,7 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.core.runtime.CoreException;
 
 public class CompositeCPPClassTemplate extends CompositeCPPClassType implements
-ICPPClassTemplate, ICPPInternalTemplateInstantiator{
+ICPPClassTemplate, ICPPDelegateCreator, ICPPInternalTemplateInstantiator {
 
 	public CompositeCPPClassTemplate(ICompositesFactory cf, ICPPClassType ct) {
 		super(cf, ct);
@@ -87,5 +91,8 @@ ICPPClassTemplate, ICPPInternalTemplateInstantiator{
 		
 		return CPPTemplates.instantiateTemplate(this, arguments, null);
 	}
-
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPClassTemplate.CPPClassTemplateDelegate(name, this);
+	}
 }

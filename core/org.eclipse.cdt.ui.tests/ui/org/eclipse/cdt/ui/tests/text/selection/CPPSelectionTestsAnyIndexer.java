@@ -489,7 +489,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	// #include "testBug168533.h"
 	// using N::d; 					// declares 
 	// int a= d;
-	public void _testBug168533() throws Exception {
+	public void testBug168533() throws Exception {
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();

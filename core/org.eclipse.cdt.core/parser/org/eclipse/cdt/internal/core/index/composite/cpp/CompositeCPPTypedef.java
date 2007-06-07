@@ -11,10 +11,13 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
@@ -39,5 +42,9 @@ class CompositeCPPTypedef extends CompositeCPPBinding implements ITypedef, IInde
 	
 	public Object clone() {
 		return new CPPTypedefClone(this);
+	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPTypedef.CPPTypedefDelegate(name, this);
 	}
 }

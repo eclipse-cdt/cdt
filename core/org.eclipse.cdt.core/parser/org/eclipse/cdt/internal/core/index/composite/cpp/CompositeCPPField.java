@@ -11,15 +11,19 @@
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
-class CompositeCPPField extends CompositeCPPVariable implements ICPPField {
+class CompositeCPPField extends CompositeCPPVariable implements ICPPField, ICPPDelegateCreator {
 	public CompositeCPPField(ICompositesFactory cf, ICPPField rbinding) {
 		super(cf, rbinding);
 	}
@@ -36,5 +40,9 @@ class CompositeCPPField extends CompositeCPPVariable implements ICPPField {
 	public ICompositeType getCompositeTypeOwner() throws DOMException {
 		IBinding preresult = ((IField)rbinding).getCompositeTypeOwner();
 		return (ICompositeType) cf.getCompositeBinding((IIndexFragmentBinding) preresult);
+	}
+	
+	public ICPPDelegate createDelegate(IASTName name) {
+		return new CPPField.CPPFieldDelegate(name, this);
 	}
 }

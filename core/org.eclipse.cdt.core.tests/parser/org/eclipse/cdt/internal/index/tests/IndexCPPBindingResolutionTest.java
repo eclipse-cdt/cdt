@@ -86,7 +86,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// int g(int x) {return 4;}
 	// int g(char x) {return 2;}
 	// int nn= g(f(2));
-	public void _testUsingTypeDirective_177917_1() {
+	public void testUsingTypeDirective_177917_1() {
 		IBinding b1= getBindingFromASTName("A a", 1);
 		IBinding b2= getBindingFromASTName("B b", 1);
 		IBinding b3= getBindingFromASTName("C c", 1);

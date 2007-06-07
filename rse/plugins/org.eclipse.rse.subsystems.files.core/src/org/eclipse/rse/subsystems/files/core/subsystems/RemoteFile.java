@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * David McKnight (IBM)          - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -909,7 +910,14 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 						}
 				    }
 				}
-			}			
+			}
+			
+			if (_parentFile != null)
+			{
+				_parentFile.markStale(true, false);
+			}
+			
+			
 		}
 	}
 	

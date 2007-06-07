@@ -76,9 +76,9 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         saveGrp.setLayout(fl);
         
         s_0 = new Button(saveGrp, SWT.RADIO);
-        s_0.setText(UIMessages.getString("PropertyPageDefsTab.12")); //$NON-NLS-1$
+        s_0.setText(UIMessages.getString("PropertyPageDefsTab.13")); //$NON-NLS-1$
         s_1 = new Button(saveGrp, SWT.RADIO);
-        s_1.setText(UIMessages.getString("PropertyPageDefsTab.13")); //$NON-NLS-1$
+        s_1.setText(UIMessages.getString("PropertyPageDefsTab.12")); //$NON-NLS-1$
         s_2 = new Button(saveGrp, SWT.RADIO);
         s_2.setText(UIMessages.getString("PropertyPageDefsTab.14")); //$NON-NLS-1$
         
@@ -114,9 +114,9 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		}
 
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_POSSAVE)) {
-			case CDTPrefUtil.POSITION_SAVE_BOTH: s_0.setSelection(true); break;
-			case CDTPrefUtil.POSITION_SAVE_SIZE: s_1.setSelection(true); break;
+			case CDTPrefUtil.POSITION_SAVE_BOTH: s_1.setSelection(true); break;
 			case CDTPrefUtil.POSITION_SAVE_NONE: s_2.setSelection(true); break;
+			default: s_0.setSelection(true); break;
 		}
 	}
 
@@ -132,9 +132,9 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		else if (b_3.getSelection()) x = 3;
 		CDTPrefUtil.setInt(CDTPrefUtil.KEY_DISC_NAMES, x);
 
-		if (s_0.getSelection()) x = 0;
-		else if (s_1.getSelection()) x = 1;
-		else if (s_2.getSelection()) x = 2;
+		if (s_0.getSelection()) x = CDTPrefUtil.POSITION_SAVE_SIZE;
+		else if (s_1.getSelection()) x = CDTPrefUtil.POSITION_SAVE_BOTH;
+		else if (s_2.getSelection()) x = CDTPrefUtil.POSITION_SAVE_NONE;
 		CDTPrefUtil.setInt(CDTPrefUtil.KEY_POSSAVE, x);
 	}
 	

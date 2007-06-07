@@ -31,9 +31,9 @@ public class CDTPrefUtil {
 	public static final String KEY_PREFTC  = "wizard.preferred.toolchains";  //$NON-NLS-1$
 	// integer keys
 	public static final String KEY_POSSAVE  = "properties.save.position"; //$NON-NLS-1$
-	    public static final int POSITION_SAVE_BOTH = 0;
-	    public static final int POSITION_SAVE_SIZE = 1;
+		public static final int POSITION_SAVE_SIZE = 0;
 	    public static final int POSITION_SAVE_NONE = 2;
+	    public static final int POSITION_SAVE_BOTH = 3;
 	
 	public static final String KEY_DISC_NAMES  = "properties.discovery.naming"; //$NON-NLS-1$
 		public static final int DISC_NAMING_UNIQUE_OR_BOTH = 0;

@@ -32,7 +32,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 public class ErrorParserManager extends OutputStream {
 
@@ -60,10 +59,6 @@ public class ErrorParserManager extends OutputStream {
 	
 	private boolean hasErrors = false;
 
-	// Cygpath helpers
-	private CygPath cygpath;
-	private boolean cygpathInstalled = Platform.getOS().equals(Platform.OS_WIN32);
-	
 	public ErrorParserManager(ACBuilder builder) {
 		this(builder.getProject(), builder);
 	}
@@ -301,10 +296,10 @@ public class ErrorParserManager extends OutputStream {
 		}
 
 		// That didn't work, see if it is a cygpath
-		if (file == null && cygpathInstalled) {
+		if (file == null) {
+			CygPath cygpath = null;
 			try {
-				if (cygpath == null)
-					cygpath = new CygPath();
+				cygpath = new CygPath();
 				fp = new Path(cygpath.getFileName(filePath));
 				if (fBaseDirectory.isPrefixOf(fp)) {
 					int segments = fBaseDirectory.matchingFirstSegments(fp);
@@ -313,10 +308,11 @@ public class ErrorParserManager extends OutputStream {
 					path = fp;
 				}
 				file = findFileInWorkspace(path);
-			} catch (IOException e) {
-				// cygpath must not be installed, don't try this again
-				cygpathInstalled = false;
 			} catch (Exception e) {
+			}
+			finally {
+				if (cygpath != null)
+					cygpath.dispose();
 			}
 		}
 		

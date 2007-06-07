@@ -1363,16 +1363,21 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		ICDITarget cdiTarget = getCDITarget();
 		IGlobalVariableDescriptor[] globals = new IGlobalVariableDescriptor[0];
 		// If the backend can give us the globals...
+		boolean hasCDIGlobals = false;
 		ArrayList list = new ArrayList();
 		if (cdiTarget instanceof ICDITarget2)
 		{
 			ICDIGlobalVariableDescriptor[] cdiGlobals = ((ICDITarget2) cdiTarget).getGlobalVariables();
-			for (int i = 0; i < cdiGlobals.length; i++) {
-				list.add(CVariableFactory.createGlobalVariableDescriptor(cdiGlobals[i].getName(), null));
+			hasCDIGlobals = cdiGlobals != null;
+			if (hasCDIGlobals)
+			{
+				for (int i = 0; i < cdiGlobals.length; i++) {
+					list.add(CVariableFactory.createGlobalVariableDescriptor(cdiGlobals[i].getName(), null));
+				}				
 			}
 		}
 		// otherwise ask the binary
-		if (list.size() == 0)
+		if (!hasCDIGlobals)
 		{
 			IBinaryObject file = getBinaryFile();
 			if (file != null) {

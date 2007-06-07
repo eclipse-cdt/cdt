@@ -2024,21 +2024,9 @@ public abstract class SubSystem extends RSEModelObject
      */
     public Object[] resolveFilterString(String filterString, IProgressMonitor monitor) throws Exception
     {
-    	boolean connnectedBefore = isConnected();
-        boolean ok = true;
         
-        if (!connnectedBefore)
-      	  ok = promptForPassword();
-        
-        if (ok)
-        {	
-          	if (!connnectedBefore)
-          	{
-          		getConnectorService().connect(monitor);
-          		// disconnected but may not have notified viewers (i.e. network problem)
-          	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
-                sr.connectedStatusChange(this, true, false, false);
-          	}
+    	if (isConnected())
+        {
             Object[] results = internalResolveFilterString(filterString, monitor);
             if (sortResults && (results!=null))
                 results = sortResolvedFilterStringObjects(results);
@@ -2070,25 +2058,12 @@ public abstract class SubSystem extends RSEModelObject
     public Object[] resolveFilterStrings(String[] filterStrings, IProgressMonitor monitor)
     throws Exception
     {
-    	boolean connnectedBefore = isConnected();
-        boolean ok = true;
-        
         if ((filterStrings == null) || (filterStrings.length == 0)) {
         	SystemBasePlugin.logInfo("Filter strings are null"); //$NON-NLS-1$
         	return null;
         }
-        
-        if (!connnectedBefore)
-    	  ok = promptForPassword();
-        if (ok)
-        {	
-        	if (!connnectedBefore)
-        	{
-        		getConnectorService().connect(monitor);
-        		// disconnected but may not have notified viewers (i.e. network problem)
-        	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
-                sr.connectedStatusChange(this, true, false, false);
-        	}
+    	if (isConnected())
+        {
             Object[] results = internalResolveFilterStrings(filterStrings, monitor);
             if (sortResults && (results!=null))
                 results = sortResolvedFilterStringObjects(results);
@@ -2135,21 +2110,8 @@ public abstract class SubSystem extends RSEModelObject
 	public Object[] resolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
     throws Exception
     {
-		boolean connnectedBefore = isConnected();
-	    boolean ok = true;
- 
-        if (!connnectedBefore)
-      	  ok = promptForPassword();
-        
-        if (ok)
-        {	
-          	if (!connnectedBefore)
-          	{
-          		getConnectorService().connect(monitor);
-          		// disconnected but may not have notified viewers (i.e. network problem)
-          	    ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();	
-                sr.connectedStatusChange(this, true, false, false);
-          	}
+	    if (isConnected())
+	    {
 	        Object[] results= internalResolveFilterString(parent, filterString, monitor);
 	        if (sortResults && (results!=null))
                 results =  sortResolvedFilterStringObjects(results);

@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight  (IBM) - [191367] seeting supertransfer to be disabled by default
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -45,7 +46,7 @@ public interface ISystemFilePreferencesConstants
 	public static final int FILETRANSFERMODE_TEXT 				= 1;
 	
 	public static final String DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE 	= "zip"; //$NON-NLS-1$
-	public static final boolean DEFAULT_DOSUPERTRANSFER 			= true;
+	public static final boolean DEFAULT_DOSUPERTRANSFER 			= false;
 	
 	public static final int DEFAULT_DOWNLOAD_BUFFER_SIZE        = 40;
 	

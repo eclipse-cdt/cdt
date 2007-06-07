@@ -60,6 +60,19 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		suite.addTest(suite(ProjectWithDepProj.class));
 	}
 	
+	// namespace n { class A{}; class B{}; class C{}; }
+
+	// namespace m {
+	//    using namespace n;
+	//    class D{};
+	// }
+	// m::C c;
+	// m::D d;
+	public void testUsingNamingDirective_177917_1a() {
+		IBinding b0= getBindingFromASTName("C c", 1);
+		IBinding b1= getBindingFromASTName("D d", 1);
+	}
+	
 	// namespace n { class A{}; }
 	// namespace m {
 	// using namespace n;
@@ -68,7 +81,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	// namespace n { class C{}; }
 	// m::C c;
-	public void _testUsingNamingDirective_177917_1() {
+	public void _testUsingNamingDirective_177917_1b() {
 		IBinding b0= getBindingFromASTName("C c", 1);
 	}
 

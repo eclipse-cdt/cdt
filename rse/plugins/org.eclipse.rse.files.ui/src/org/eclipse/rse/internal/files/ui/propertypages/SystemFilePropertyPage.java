@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [160776] format file size according to client system conventions and locale
+ * David McKnight (IBM) - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -498,7 +499,14 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
            // If the file service updates the underlying object, then there is no need for a remote refresh
            if (oldCanWrite == updatedValue)
            {        	   
-        	   sr.fireEvent(new SystemResourceChangeEvent(remoteFile,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+        	   if (remoteFile.isDirectory())
+        	   {
+        		   sr.fireEvent(new SystemResourceChangeEvent(remoteFile.getParentRemoteFile(),ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+        	   }
+        	   else
+        	   {
+        		   sr.fireEvent(new SystemResourceChangeEvent(remoteFile,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+        	   }
            }
            else
            {	

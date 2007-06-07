@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Bala Torati (Symbian) - Initial API and implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine;
 
@@ -14,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Locale;
 import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -198,7 +198,7 @@ public class TemplateEngineHelper {
 	 */
 
 	public static URL getTemplateResourceURL(String pluginId, String resourcePath) throws IOException {
-		return FileLocator.toFileURL(Platform.getBundle(pluginId).getEntry(resourcePath));
+		return FileLocator.find(Platform.getBundle(pluginId), new Path(resourcePath), null);
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class TemplateEngineHelper {
 		} else {
 			path = path.substring(0, slash + 1) + resourcePath;
 		}
-		URL entry = Platform.getBundle(templateInfo.getPluginId()).getEntry(path);
+		URL entry = FileLocator.find(Platform.getBundle(templateInfo.getPluginId()), new Path(path), null);;
 		if (entry == null) {
 			return null;
 		}
@@ -278,30 +278,6 @@ public class TemplateEngineHelper {
 	}
 	
 	private static URL getResourceURL(Bundle bundle, String propertiesFile) {
-		// Get the properties in the following order
-		// propertiesFile_lang_country_variant
-		// propertiesFile_lang_country
-		// propertiesFile_lang
-		// propertiesFile
-	
-		URL url = null;
-		Locale locale = Locale.getDefault();
-		String lang = locale.getLanguage();
-		String country = locale.getCountry();
-		String variant = locale.getVariant();
-		
-		url = bundle.getResource(propertiesFile + US + lang + US + country + US + variant);
-		
-		if (url == null) {
-			url = bundle.getResource(propertiesFile + US + lang + US + country);
-		}
-		if (url == null) {
-			url = bundle.getResource(propertiesFile + US + lang);
-		}
-		if (url == null) {
-			url = bundle.getResource(propertiesFile);
-		}
-		
-		return url;
+		return FileLocator.find(bundle, new Path(propertiesFile), null);
 	}
 }

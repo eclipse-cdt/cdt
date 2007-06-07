@@ -3737,25 +3737,25 @@
       <template
             id="org.eclipse.cdt.build.core.templates.HelloWorldCCProject"
             filterPattern=".*"
-            location="templates/projecttemplates/HelloWorldCCProject/template.xml"
+            location="$nl$/templates/projecttemplates/HelloWorldCCProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
       </template>
       <template
             id="org.eclipse.cdt.build.templates.HelloWorldCAnsiProject"
             filterPattern=".*"
-            location="templates/projecttemplates/HelloWorldCAnsiProject/template.xml"
+            location="$nl$/templates/projecttemplates/HelloWorldCAnsiProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
       </template>
       <template
             id="org.eclipse.cdt.build.core.templates.EmptyProject"
             filterPattern=".*"
-            location="templates/projecttemplates/EmptyProject/template.xml"
+            location="$nl$/templates/projecttemplates/EmptyProject/template.xml"
             projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
       </template>
       <template
             id="org.eclipse.cdt.build.core.templates.MakefileHelloWorldCCProject"
             filterPattern=".*"
-            location="templates/projecttemplates/MakefileHelloWorldCCProject/template.xml"
+            location="$nl$/templates/projecttemplates/MakefileHelloWorldCCProject/template.xml"
             projectType="org.eclipse.cdt.build.makefile.projectType">
       </template>
       </extension>

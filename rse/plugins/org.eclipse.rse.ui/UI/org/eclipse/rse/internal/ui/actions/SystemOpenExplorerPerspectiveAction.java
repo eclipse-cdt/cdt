@@ -27,6 +27,7 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.model.ISystemPromptableObject;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -117,6 +118,7 @@ public class SystemOpenExplorerPerspectiveAction
 			}
 			catch (Exception e) {
 				// ignore since connect failed (and don't show in the window)
+				SystemBasePlugin.logError(e.getMessage(), e);
 			}
 		}
 		else {

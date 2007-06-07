@@ -91,7 +91,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);//$NON-NLS-1$               
+                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);//$NON-NLS-1$    
             }
             System.out.println();                        
         }
@@ -172,9 +172,9 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
     }
 
 
-private  UPCParserAction  action = new  UPCParserAction (this, UPCParserprs.orderedTerminalSymbols);
+private  UPCParserAction  action = null;
+private List commentTokens = null;
 private IKeywordMap keywordMap = new  UPCKeywordMap ();
-private List commentTokens = new ArrayList();
 
 public UPCParser() {  // constructor
 	this(new C99Lexer() {
@@ -205,11 +205,36 @@ public List getCommentTokens() {
 	return commentTokens;
 }
 
+public void resetTokenStream() {
+	super.resetTokenStream();
+	action = new  UPCParserAction (this, UPCParserprs.orderedTerminalSymbols);
+	commentTokens = new ArrayList();
+}
+
+
 public IParseResult parse() {
 	// this has to be done, or... kaboom!
 	setStreamLength(getSize());
-	// do the actual parsing, -1 means full error handling
-	parser(null, -1); 
+	
+	final int errorRepairCount = -1;  // -1 means full error handling
+	
+	if(btParser == null) {
+		parser(null, errorRepairCount);
+	}
+	else {
+		try
+        {
+        	// reuse the same btParser object for speed 
+        	// (creating an new instance for every translation unit is dirt slow)
+            btParser.parse(errorRepairCount);
+        }
+        catch (BadParseException e)
+        {
+            reset(e.error_token); // point to error token
+            DiagnoseParser diagnoseParser = new DiagnoseParser(this, prs);
+            diagnoseParser.diagnose(e.error_token);
+        }
+	}
 
 	IASTTranslationUnit tu      = action.getAST();
 	boolean encounteredError    = action.encounteredError();

@@ -7,9 +7,12 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson 		  - Modified for additional features in DSF Reference implementation	
  *******************************************************************************/
  
 package org.eclipse.dd.dsf.debug.service.command;
+
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 
 
 /**
@@ -31,6 +34,12 @@ public interface ICommand<V extends ICommandResult> {
      * @return newly created command, or null if command cannot be coalesced
      */
     public ICommand<? extends ICommandResult> coalesceWith( ICommand<? extends ICommandResult> command );
+    
+    /**
+     * Returns the context that this command is to be evaluated in.  May be null
+     * if the command does not need to be evaluated in a specific context.
+     */
+    public IDMContext<?> getContext();
 }
 
     

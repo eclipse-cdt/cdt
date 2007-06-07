@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson 		  - Modified for additional features in DSF Reference implementation
  *******************************************************************************/
 package org.eclipse.dd.dsf.datamodel;
 
@@ -31,6 +32,8 @@ public class DMContexts {
     @ThreadSafe
     @SuppressWarnings("unchecked")
     public static <V extends IDMContext> V getAncestorOfType(IDMContext ctx, Class<V> ancestorType) {
+    	if(ctx == null)
+    		return null;
         if (ancestorType.isAssignableFrom(ctx.getClass())) {
             return (V)ctx;
         }

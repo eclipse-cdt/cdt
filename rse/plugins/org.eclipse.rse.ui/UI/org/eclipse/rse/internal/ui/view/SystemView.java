@@ -670,7 +670,6 @@ public class SystemView extends SafeTreeViewer
 			_propertyDialogAction = new PropertyDialogAction(new SameShellProvider(getShell()), this);
 			_propertyDialogAction.setId(ActionFactory.PROPERTIES.getId());
 			_propertyDialogAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PROPERTIES);
-			//_propertyDialogAction.setToolTipText(" "); 
 		}
 
 

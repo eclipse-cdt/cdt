@@ -12,19 +12,25 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David McKnight   (IBM)        - [187342] Open in New Window expand failed error when not connected
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.model.IRSECallback;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.model.ISystemPromptableObject;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
@@ -83,16 +89,72 @@ public class SystemOpenExplorerPerspectiveAction
 	 */
 	public void run() 
 	{
-		/* OLD RELEASE 1 CODE
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		String perspectiveSetting =
-			store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-		runWithPerspectiveValue(desc, perspectiveSetting);		
-		*/
-		OpenInNewWindowAction workbenchOpenAction = // NEW FOR RELEASE 2
-		   new OpenInNewWindowAction(window,getPageInput());		
-		workbenchOpenAction.run();
+		final IAdaptable input = getPageInput();
+		final ISubSystem ss = getSubSystem(input);
+		if (ss!=null && !ss.isConnected()) {			
+			// Connect if the object's children will require a live connection.  If the connect is made, then
+			// the open window occurs as a result of the callback to connect.
+			try
+			{
+				ss.connect(false, 
+					new IRSECallback() // call back for opening the window after the connect
+					{
+						public void done(IStatus status, Object object)
+						{
+							if (ss.isConnected()) // only open the window if we're connected
+							{
+								Display.getDefault().asyncExec(new Runnable()
+								{
+									public void run()
+									{
+										openWindow(input);
+									}
+								});
+							}
+							
+						}
+					});		
+			}
+			catch (Exception e) {
+				// ignore since connect failed (and don't show in the window)
+			}
+		}
+		else {
+			openWindow(input);
+		}
 	}		
+		
+	/**
+	 * Returns the associated subsystem if the object is remote, a filter or a subsystem
+	 * @param input the input object
+	 * @return
+	 */	
+	private ISubSystem getSubSystem(IAdaptable input)
+	{
+		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)input.getAdapter(ISystemViewElementAdapter.class);
+		if (adapter != null) {
+			if ((input instanceof ISystemFilterReference)
+				|| input instanceof ISubSystem	
+				|| adapter.isRemote(input)) // not sure if we'd ever have 
+										// a remote object when not connected
+			{
+				return adapter.getSubSystem(input);
+			}
+		}
+		return null;
+	}
+
+	
+	/**
+	 * Open the input object in a new window
+	 * @param input the input to the new window
+	 */
+	protected void openWindow(IAdaptable input)
+	{
+		OpenInNewWindowAction workbenchOpenAction = // NEW FOR RELEASE 2
+			   new OpenInNewWindowAction(window,input);
+		workbenchOpenAction.run();
+	}
 	
 	/**
 	 * Sets the page input.  

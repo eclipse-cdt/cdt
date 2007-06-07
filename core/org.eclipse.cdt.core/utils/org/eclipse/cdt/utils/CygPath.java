@@ -19,6 +19,7 @@ import java.io.OutputStreamWriter;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 public class CygPath {
 
@@ -28,6 +29,9 @@ public class CygPath {
 	private final BufferedWriter stdin;
 
 	public CygPath(String command) throws IOException {
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
+			// Don't run this on non-windows platforms
+			throw new IOException("Not Windows"); //$NON-NLS-1$
 		String[] args = {command, "--windows", "--file", "-"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cygpath = ProcessFactory.getFactory().exec(args);
 		stdin = new BufferedWriter(new OutputStreamWriter(cygpath.getOutputStream()));

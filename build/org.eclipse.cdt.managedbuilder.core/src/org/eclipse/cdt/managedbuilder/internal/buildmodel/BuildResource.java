@@ -117,11 +117,20 @@ public class BuildResource implements IBuildResource {
 				fProducerArg = arg;
 			} else {
 				String err = "ProducerArgument not null!!!\n";	//$NON-NLS-1$
+
+				String rcName = DbgUtil.resourceName(this);
+				String step1Name = DbgUtil.stepName(fProducerArg.getStep());
+				String step2Name = DbgUtil.stepName(arg.getStep());
+				String rcs[] = new String[]{rcName, step1Name, step2Name};
+				
+				String externalizedErr = BuildModelMessages.getFormattedString("BuildResource.0", rcs); //$NON-NLS-1$
+
 				if(DbgUtil.DEBUG){
-					err = err + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) + "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep());	//$NON-NLS-1$	//$NON-NLS-2$
+					err = err + externalizedErr + "curent producer: " + DbgUtil.dumpStep(fProducerArg.getStep()) + "\n producer attempt: " + DbgUtil.dumpStep(arg.getStep());	//$NON-NLS-1$	//$NON-NLS-2$
 				}
+				
 					
-				throw new IllegalArgumentException(err);
+				throw new IllegalArgumentException(externalizedErr);
 			}
 		}
 	}

@@ -900,12 +900,6 @@ public class CommonBuilder extends ACBuilder {
 			
 			boolean buildIncrementaly = delta != null;
 			
-			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, cBS, delta, flags);
-	
-			DescriptionBuilder dBuilder = null;
-			if (!isParallel)
-				dBuilder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr, cBS);
-
 			// Get a build console for the project
 			StringBuffer buf = new StringBuffer();
 //			console = CCorePlugin.getDefault().getConsole();
@@ -935,7 +929,13 @@ public class CommonBuilder extends ACBuilder {
 			}
 			consoleOutStream.write(buf.toString().getBytes());
 			consoleOutStream.flush();
+
+			IBuildDescription des = BuildDescriptionManager.createBuildDescription(cfg, cBS, delta, flags);
 			
+			DescriptionBuilder dBuilder = null;
+			if (!isParallel)
+				dBuilder = new DescriptionBuilder(des, buildIncrementaly, resumeOnErr, cBS);
+
 			if(isParallel || dBuilder.getNumCommands() > 0) {
 				// Remove all markers for this project
 				removeAllMarkers(currentProject);
@@ -1014,14 +1014,13 @@ public class CommonBuilder extends ACBuilder {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			if(consoleOutStream != null){
 				StringBuffer buf = new StringBuffer();
 				String errorDesc = ManagedMakeMessages
 							.getResourceString(BUILD_ERROR);
 				buf.append(errorDesc);
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
-				buf.append("(").append(e.getLocalizedMessage()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append(e.getLocalizedMessage());
 				buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-1$//$NON-NLS-2$
 
 				try {

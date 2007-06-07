@@ -51,6 +51,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
@@ -76,7 +77,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 public class BuildDescription implements IBuildDescription {
 	private final static String DOT = ".";	//$NON-NLS-1$
@@ -154,13 +157,22 @@ public class BuildDescription implements IBuildDescription {
 		}
 
 		public boolean visit(IResourceProxy proxy) throws CoreException {
-
-			if(proxy.getType() == IResource.FILE){
-				doVisitFile(proxy.requestResource());
-				return false;
-			} 
-			
-			return !isGenerated(proxy.requestFullPath());
+			try {
+				if(proxy.getType() == IResource.FILE){
+					doVisitFile(proxy.requestResource());
+					return false;
+				} 
+				
+				return !isGenerated(proxy.requestFullPath());
+			} catch (CoreException e) {
+				throw e;
+			} catch (Exception e) {
+				String msg = e.getLocalizedMessage();
+				if(msg == null)
+					msg = ""; //$NON-NLS-1$
+				
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), msg, e));
+			}
 		}
 		
 		protected boolean postProcessVisit(IResourceDelta delta){

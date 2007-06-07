@@ -2104,6 +2104,18 @@ public class SystemView extends SafeTreeViewer
 				ISystemViewElementAdapter adapter = getViewAdapter(src);
 				if (adapter != null)
 				{
+					// we need to refresh filters
+					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		        	List filterReferences = sr.findFilterReferencesFor(src, adapter.getSubSystem(src), false);
+		        	// if filters reference this resource we need them refreshed
+		        	for (int f = 0; f < filterReferences.size(); f++)
+		        	{
+		        		ISystemFilterReference ref = (ISystemFilterReference)filterReferences.get(f);
+		        		ref.markStale(true);
+		        		smartRefresh(ref, true);
+		        	}	
+		        	
+
 					boolean hasChildren = adapter.hasChildren((IAdaptable)src);
 					if (!hasChildren)
 					{

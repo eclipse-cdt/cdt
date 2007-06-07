@@ -30,9 +30,22 @@ public interface IExpressions extends IDMService, IFormattedValues {
     
     /**
      * Expression context. Since some expressions have children, expression contexts can be have an
-     * arbitrary number of parents of type ExpressionContext.
+     * arbitrary number of parents of type IExpressionDMContext.
      */
     public interface IExpressionDMContext extends IFormattedDataDMContext<IExpressionDMData> {
+        /**
+         * Returns a fully qualified expression string represented by this context.  This 
+         * expression string is the same as the string that is sent to the debug engine to be
+         * evaluated in context of a stack frame, thread, or a symbol context.   
+         * @return
+         */
+        String getQualifiedExpression();
+
+        /**
+         * If this expression is a sub-expression of another expression, this method returns 
+         * the expression relative to the parent of this expression.  Otherwise this method 
+         * will return the same string as {@link #getQualifiedExpression()}. 
+         */
         String getExpression();
     }
     

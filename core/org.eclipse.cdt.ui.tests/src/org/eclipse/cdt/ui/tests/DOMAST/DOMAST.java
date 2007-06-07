@@ -997,10 +997,8 @@ public class DOMAST extends ViewPart {
 
                 if (tu != null) {
                     try {
-                    	aPart = EditorUtility.openInEditor(tu);
+                    	aPart = EditorUtility.openInEditor(path, tu);
 	                } catch (PartInitException e) {
-	                	return;
-	                } catch (CModelException e) {
 	                	return;
 	                }
                 }

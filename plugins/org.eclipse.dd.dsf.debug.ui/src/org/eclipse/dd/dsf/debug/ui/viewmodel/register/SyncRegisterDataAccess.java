@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
@@ -85,8 +84,8 @@ public class SyncRegisterDataAccess {
 
         private IBitFieldDMContext fDmc;
 
-        public GetBitFieldValueQuery(DsfExecutor executor, IBitFieldDMContext dmc) {
-            super(executor);
+        public GetBitFieldValueQuery(IBitFieldDMContext dmc) {
+            super();
             fDmc = dmc;
         }
 
@@ -159,7 +158,7 @@ public class SyncRegisterDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetBitFieldValueQuery query = new GetBitFieldValueQuery(session.getExecutor(), dmc);
+        GetBitFieldValueQuery query = new GetBitFieldValueQuery(dmc);
         session.getExecutor().execute(query);
 
         /*
@@ -183,8 +182,8 @@ public class SyncRegisterDataAccess {
         private String fValue;
         private String fFormatId;
 
-        public SetBitFieldValueQuery(DsfExecutor executor, IBitFieldDMContext dmc, String value, String formatId) {
-            super(executor);
+        public SetBitFieldValueQuery(IBitFieldDMContext dmc, String value, String formatId) {
+            super();
             fDmc = dmc;
             fValue = value;
             fFormatId = formatId;
@@ -262,7 +261,7 @@ public class SyncRegisterDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        SetBitFieldValueQuery query = new SetBitFieldValueQuery(session.getExecutor(), dmc, value, formatId);
+        SetBitFieldValueQuery query = new SetBitFieldValueQuery(dmc, value, formatId);
         session.getExecutor().execute(query);
 
         /*
@@ -292,8 +291,8 @@ public class SyncRegisterDataAccess {
 
         IMnemonic fMnemonic;
 
-        public SetBitFieldValueMnemonicQuery(DsfExecutor executor, IBitFieldDMContext dmc, IMnemonic mnemonic) {
-            super(executor);
+        public SetBitFieldValueMnemonicQuery(IBitFieldDMContext dmc, IMnemonic mnemonic) {
+            super();
             fDmc = dmc;
             fMnemonic = mnemonic;
         }
@@ -369,7 +368,7 @@ public class SyncRegisterDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        SetBitFieldValueMnemonicQuery query = new SetBitFieldValueMnemonicQuery( session.getExecutor(), dmc, mnemonic);
+        SetBitFieldValueMnemonicQuery query = new SetBitFieldValueMnemonicQuery(dmc, mnemonic);
         session.getExecutor().execute(query);
 
         /*
@@ -417,8 +416,8 @@ public class SyncRegisterDataAccess {
 
         IRegisterGroupDMContext fDmc;
 
-        public GetRegisterGroupValueQuery(DsfExecutor executor, IRegisterGroupDMContext dmc) {
-            super(executor);
+        public GetRegisterGroupValueQuery(IRegisterGroupDMContext dmc) {
+            super();
             fDmc = dmc;
         }
 
@@ -484,7 +483,7 @@ public class SyncRegisterDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetRegisterGroupValueQuery query = new GetRegisterGroupValueQuery(session.getExecutor(), dmc);
+        GetRegisterGroupValueQuery query = new GetRegisterGroupValueQuery(dmc);
         session.getExecutor().execute(query);
 
         /*
@@ -506,8 +505,8 @@ public class SyncRegisterDataAccess {
 
         IRegisterDMContext fDmc;
 
-        public GetRegisterValueQuery(DsfExecutor executor, IRegisterDMContext dmc) {
-            super(executor);
+        public GetRegisterValueQuery(IRegisterDMContext dmc) {
+            super();
             fDmc = dmc;
         }
 
@@ -573,7 +572,7 @@ public class SyncRegisterDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetRegisterValueQuery query = new GetRegisterValueQuery(session.getExecutor(), dmc);
+        GetRegisterValueQuery query = new GetRegisterValueQuery(dmc);
         session.getExecutor().execute(query);
 
         /*
@@ -597,8 +596,8 @@ public class SyncRegisterDataAccess {
         private String fValue;
         private String fFormatId;
 
-        public SetRegisterValueQuery(DsfExecutor executor, IRegisterDMContext dmc, String value, String formatId) {
-            super(executor);
+        public SetRegisterValueQuery(IRegisterDMContext dmc, String value, String formatId) {
+            super();
             fDmc = dmc;
             fValue = value;
             fFormatId = formatId;
@@ -681,7 +680,7 @@ public class SyncRegisterDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        SetRegisterValueQuery query = new SetRegisterValueQuery(session.getExecutor(), dmc, value, formatId);
+        SetRegisterValueQuery query = new SetRegisterValueQuery(dmc, value, formatId);
         session.getExecutor().execute(query);
 
         /*
@@ -708,8 +707,8 @@ public class SyncRegisterDataAccess {
 
         IFormattedDataDMContext<?> fDmc;
 
-        public GetSupportFormatsValueQuery(DsfExecutor executor, IFormattedDataDMContext<?> dmc) {
-            super(executor);
+        public GetSupportFormatsValueQuery(IFormattedDataDMContext<?> dmc) {
+            super();
             fDmc = dmc;
         }
 
@@ -783,7 +782,7 @@ public class SyncRegisterDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetSupportFormatsValueQuery query = new GetSupportFormatsValueQuery( session.getExecutor(), dmc);
+        GetSupportFormatsValueQuery query = new GetSupportFormatsValueQuery(dmc);
         session.getExecutor().execute(query);
 
         /*
@@ -806,8 +805,8 @@ public class SyncRegisterDataAccess {
         private IFormattedDataDMContext<?> fDmc;
         private String fFormatId;
 
-        public GetFormattedValueValueQuery(DsfExecutor executor, IFormattedDataDMContext<?> dmc, String formatId) {
-            super(executor);
+        public GetFormattedValueValueQuery(IFormattedDataDMContext<?> dmc, String formatId) {
+            super();
             fDmc = dmc;
             fFormatId = formatId;
         }
@@ -881,7 +880,7 @@ public class SyncRegisterDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetFormattedValueValueQuery query = new GetFormattedValueValueQuery(session.getExecutor(), dmc, formatId);
+        GetFormattedValueValueQuery query = new GetFormattedValueValueQuery(dmc, formatId);
         session.getExecutor().execute(query);
 
         /*

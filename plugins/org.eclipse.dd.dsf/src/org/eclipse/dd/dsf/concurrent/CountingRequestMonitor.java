@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.concurrent;
 
+import java.util.concurrent.Executor;
+
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.dd.dsf.DsfPlugin;
 
@@ -37,7 +39,7 @@ import org.eclipse.dd.dsf.DsfPlugin;
 public class CountingRequestMonitor extends RequestMonitor {
     private int fDoneCounter;
 
-    public CountingRequestMonitor(DsfExecutor executor, RequestMonitor parentRequestMonitor) {
+    public CountingRequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
         super(executor, parentRequestMonitor);
         setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
     }

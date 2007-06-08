@@ -274,7 +274,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
             // Query the service for frame data.  We are calling from a job thread, 
             // so we use the Query.get() method, which will block until the 
             // query is completed.
-            Query<FramePositioningData> query = new Query<FramePositioningData>(fExecutor) {
+            Query<FramePositioningData> query = new Query<FramePositioningData>() {
                 @Override
                 protected void execute(final DataRequestMonitor<FramePositioningData> rm) {
                     IStack stackService = fServicesTracker.getService(IStack.class); 

@@ -183,7 +183,7 @@ public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
         }
         
         final IDMContext<?> dmc = (IDMContext<?>)object;
-        Query<String> query = new Query<String>(fExecutor) { 
+        Query<String> query = new Query<String>() { 
             @Override
             protected void execute(final DataRequestMonitor<String> rm) {
                 getSourceNameOnDispatchThread(dmc, rm);

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.concurrent;
 
+import java.util.concurrent.Executor;
+
 
 /**
  * Request monitor that allows data to be returned to the request initiator.
@@ -21,7 +23,7 @@ public class DataRequestMonitor<V> extends RequestMonitor {
     /** Data object reference */
     private V fData; 
     
-    public DataRequestMonitor(DsfExecutor executor, RequestMonitor parentRequestMonitor) {
+    public DataRequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
         super(executor, parentRequestMonitor);
     }
 

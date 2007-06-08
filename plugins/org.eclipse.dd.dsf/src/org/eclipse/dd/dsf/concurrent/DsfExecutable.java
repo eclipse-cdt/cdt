@@ -40,7 +40,7 @@ public class DsfExecutable {
     static boolean ASSERTIONS_ENABLED = false;
 
     static {
-        assert ASSERTIONS_ENABLED = true;
+        assert (ASSERTIONS_ENABLED = true) == true;
         DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
                 Platform.getDebugOption("org.eclipse.dd.dsf/debug/executor")); //$NON-NLS-1$
     }  

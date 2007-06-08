@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.concurrent;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -59,7 +62,7 @@ public class RequestMonitor {
      * The executor that will be used in order to invoke the handler of the results
      * of the request.
      */
-    private final DsfExecutor fExecutor;
+    private final Executor fExecutor;
     
     /**
      * The request monitor which was used to call into the method that created this 
@@ -81,7 +84,7 @@ public class RequestMonitor {
      * @param parentRequestMonitor The optional parent request monitor to be invoked by
      * default when this request completes.  Parameter may be null.
      */
-    public RequestMonitor(DsfExecutor executor, RequestMonitor parentRequestMonitor) {
+    public RequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
         fExecutor = executor;
         fParentRequestMonitor = parentRequestMonitor;
     }
@@ -139,15 +142,19 @@ public class RequestMonitor {
             throw new IllegalStateException("RequestMonitor: " + this + ", done() method called more than once");  //$NON-NLS-1$//$NON-NLS-2$
         }
         fDone = true;
-        fExecutor.execute(new DsfRunnable() {
-            public void run() {
-                RequestMonitor.this.handleCompleted();
-            }
-            @Override
-            public String toString() {
-                return "Completed: " + RequestMonitor.this.toString(); //$NON-NLS-1$
-            }
-        });
+        try {
+            fExecutor.execute(new DsfRunnable() {
+                public void run() {
+                    RequestMonitor.this.handleCompleted();
+                }
+                @Override
+                public String toString() {
+                    return "Completed: " + RequestMonitor.this.toString(); //$NON-NLS-1$
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            handleRejectedExecutionException();
+        }
     }
     
     /**
@@ -231,7 +238,7 @@ public class RequestMonitor {
             fParentRequestMonitor.setMultiStatus(DsfPlugin.PLUGIN_ID, getStatus().getCode(), "Failed: " + toString(), getStatus()); //$NON-NLS-1$
             fParentRequestMonitor.done();
         } else {
-            MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Request for monitor: '" + this + "' resulted in an error.", null); //$NON-NLS-1$ //$NON-NLS-2$
+            MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in an error.", null); //$NON-NLS-1$ //$NON-NLS-2$
             logStatus.merge(getStatus());
             DsfPlugin.getDefault().getLog().log(logStatus);
         }
@@ -248,6 +255,22 @@ public class RequestMonitor {
         if (fParentRequestMonitor != null) {
             fParentRequestMonitor.setMultiStatus(DsfPlugin.PLUGIN_ID, getStatus().getCode(), "Canceled: " + toString(), getStatus()); //$NON-NLS-1$
             fParentRequestMonitor.done();
+        }
+    }
+    
+    /**
+     * Default handler for when the executor supplied in the constructor 
+     * rejects the runnable that is submitted invoke this requrest monitor.
+     * This usually happens only when the executor is shutting down.
+     */
+    protected void handleRejectedExecutionException() {
+        if (fParentRequestMonitor != null) {
+            fParentRequestMonitor.setMultiStatus(DsfPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Rejected execution exception when trying to complete the request monitor: " + toString(), getStatus()); //$NON-NLS-1$
+            fParentRequestMonitor.done();
+        } else {
+            MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in a rejected execution exception.", null); //$NON-NLS-1$ //$NON-NLS-2$
+            logStatus.merge(getStatus());
+            DsfPlugin.getDefault().getLog().log(logStatus);
         }
     }
 }

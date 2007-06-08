@@ -88,7 +88,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     static {
         DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
             Platform.getDebugOption("org.eclipse.dd.dsf/debug/executor")); //$NON-NLS-1$
-        assert ASSERTIONS_ENABLED = true;
+        assert (ASSERTIONS_ENABLED = true) == true;
     }  
 
     /** 

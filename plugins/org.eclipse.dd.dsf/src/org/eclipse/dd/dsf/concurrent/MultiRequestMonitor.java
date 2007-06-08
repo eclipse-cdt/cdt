@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.dd.dsf.DsfPlugin;
@@ -44,7 +45,7 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
     private Map<V,Boolean> fStatusMap = new HashMap<V,Boolean>();
     private int fDoneCounter;
 
-    public MultiRequestMonitor(DsfExecutor executor, RequestMonitor parentRequestMonitor) {
+    public MultiRequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
         super(executor, parentRequestMonitor);
         setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
     }

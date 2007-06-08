@@ -12,6 +12,7 @@ package org.eclipse.dd.dsf.concurrent;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -26,7 +27,26 @@ import org.eclipse.core.runtime.CoreException;
  * a Callable<V> in that it allows the implementation code to calculate
  * the result in several dispatches, rather than requiring it to return the 
  * data at end of Callable#call method.
- * 
+ * <p>
+ * Usage:<br/>
+ * <pre>
+ *     class DataQuery extends Query<Data> {
+ *         protected void execute(DataRequestMonitor<Data> rm) {
+ *             rm.setData(fSlowService.getData());
+ *             rm.done();
+ *         }
+ *     }
+ *     
+ *     DsfExecutor executor = getExecutor();
+ *     DataQuery query = new DataQuery();
+ *     executor.submit(query);
+ *     
+ *     try {
+ *         Data data = query.get();
+ *     }
+ *     
+ * </pre>
+ * <p> 
  * @see java.util.concurrent.Callable
  */
 @ThreadSafe
@@ -36,12 +56,21 @@ abstract public class Query<V> extends DsfRunnable
     /** The synchronization object for this query */
     private final Sync fSync = new Sync();
 
-    /** The executor that is used to complete the asynchronous operation of this query */ 
-    private final DsfExecutor fExecutor;
-    
+    /**
+     * The Query constructor no longer requires an executor to be specified.
+     * This executor was used to contruct the DataRequestMonitor argument to the
+     * {@link #execute(DataRequestMonitor)} method.  But a simplification in the 
+     * RequestMonitor object, made this unnecessary.
+     * @param executor
+     */
+    @Deprecated
     public Query(DsfExecutor executor) {
-        fExecutor = executor;
     }
+    
+    /** 
+     * The no-argument constructor 
+     */
+    public Query() {}
     
     public V get() throws InterruptedException, ExecutionException { return fSync.doGet(); }
 
@@ -71,7 +100,25 @@ abstract public class Query<V> extends DsfRunnable
     public void run() {
         if (fSync.doRun()) {
             try {
-                execute(new DataRequestMonitor<V>(fExecutor, null) {
+                /*
+                 * Create the executor which is going to handle the completion of the
+                 * request monitor.  Normally a DSF executor is supplied here which
+                 * causes the request monitor to be invoked in a new dispatch loop.
+                 * But since the query is a synchronization object, it can handle
+                 * the completion of the request in any thread.  
+                 * Avoiding the use of a DSF executor is very useful because queries are
+                 * meant to be used by clients calling from non-dispatch thread, and there
+                 * is a chance that a client may execute a query just as a session is being
+                 * shut down.  In that case, the DSF executor may throw a 
+                 * RejectedExecutionException which would have to be handled by the query.
+                 */
+                Executor rmExecutor = new Executor() {
+                    public void execute(Runnable command) {
+                        command.run();
+                    }
+                };
+                
+                execute(new DataRequestMonitor<V>(rmExecutor, null) {
                     @Override
                     public void handleCompleted() {
                         if (getStatus().isOK()) fSync.doSet(getData());

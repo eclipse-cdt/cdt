@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
@@ -83,8 +82,8 @@ public class SyncVariableDataAccess {
 
         private IExpressionDMContext fDmc;
 
-        public GetVariableValueQuery(DsfExecutor executor, IExpressionDMContext dmc) {
-            super(executor);
+        public GetVariableValueQuery(IExpressionDMContext dmc) {
+            super();
             fDmc = dmc;
         }
 
@@ -157,7 +156,7 @@ public class SyncVariableDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetVariableValueQuery query = new GetVariableValueQuery(session.getExecutor(), dmc);
+        GetVariableValueQuery query = new GetVariableValueQuery(dmc);
         session.getExecutor().execute(query);
 
         /*
@@ -181,8 +180,8 @@ public class SyncVariableDataAccess {
         private String fValue;
         private String fFormatId;
 
-        public SetVariableValueQuery(DsfExecutor executor, IExpressionDMContext dmc, String value, String formatId) {
-            super(executor);
+        public SetVariableValueQuery(IExpressionDMContext dmc, String value, String formatId) {
+            super();
             fDmc = dmc;
             fValue = value;
             fFormatId = formatId;
@@ -260,7 +259,7 @@ public class SyncVariableDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        SetVariableValueQuery query = new SetVariableValueQuery(session.getExecutor(), dmc, value, formatId);
+        SetVariableValueQuery query = new SetVariableValueQuery(dmc, value, formatId);
         session.getExecutor().execute(query);
 
         /*
@@ -294,8 +293,8 @@ public class SyncVariableDataAccess {
 
         IFormattedDataDMContext<?> fDmc;
 
-        public GetSupportFormatsValueQuery(DsfExecutor executor, IFormattedDataDMContext<?> dmc) {
-            super(executor);
+        public GetSupportFormatsValueQuery(IFormattedDataDMContext<?> dmc) {
+            super();
             fDmc = dmc;
         }
 
@@ -369,7 +368,7 @@ public class SyncVariableDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetSupportFormatsValueQuery query = new GetSupportFormatsValueQuery(session.getExecutor(), dmc);
+        GetSupportFormatsValueQuery query = new GetSupportFormatsValueQuery(dmc);
         session.getExecutor().execute(query);
 
         /*
@@ -392,8 +391,8 @@ public class SyncVariableDataAccess {
         private IFormattedDataDMContext<?> fDmc;
         private String fFormatId;
 
-        public GetFormattedValueValueQuery(DsfExecutor executor, IFormattedDataDMContext<?> dmc, String formatId) {
-            super(executor);
+        public GetFormattedValueValueQuery(IFormattedDataDMContext<?> dmc, String formatId) {
+            super();
             fDmc = dmc;
             fFormatId = formatId;
         }
@@ -467,7 +466,7 @@ public class SyncVariableDataAccess {
          * guard agains RejectedExecutionException, because
          * DsfSession.getSession() above would only return an active session.
          */
-        GetFormattedValueValueQuery query = new GetFormattedValueValueQuery(session.getExecutor(), dmc, formatId);
+        GetFormattedValueValueQuery query = new GetFormattedValueValueQuery(dmc, formatId);
         session.getExecutor().execute(query);
 
         /*

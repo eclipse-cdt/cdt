@@ -12,6 +12,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.core,
  org.eclipse.debug.ui,
  org.eclipse.ui.ide,
+ org.eclipse.jface.text,
+ org.eclipse.ui.workbench.texteditor,
  org.eclipse.dd.dsf,
  org.eclipse.dd.dsf.ui,
  org.eclipse.dd.dsf.debug,
@@ -24,5 +26,7 @@ Export-Package:
  org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport,
  org.eclipse.dd.dsf.debug.ui.viewmodel.launch,
  org.eclipse.dd.dsf.debug.ui.viewmodel.register,
- org.eclipse.dd.dsf.debug.ui.viewmodel.variable
+ org.eclipse.dd.dsf.debug.ui.viewmodel.variable,
+ org.eclipse.dd.dsf.debug.ui.sourcelookup, 
+ org.eclipse.dd.dsf.debug.ui.actions
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

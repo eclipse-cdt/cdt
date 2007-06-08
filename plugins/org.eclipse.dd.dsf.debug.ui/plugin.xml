@@ -7,4 +7,50 @@
      		delegateClass="org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionDelegate"/>
   </extension>
 
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+      <type
+         name="org.eclipse.dd.debug.currentIP">
+      </type>
+      <type
+         name="org.eclipse.dd.debug.secondaryIP">
+      </type>
+   </extension>   
+   
+   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationImageProvider="org.eclipse.dd.dsf.debug.ui.sourcelookup.InstructionPointerImageProvider"
+            annotationType="org.eclipse.dd.debug.currentIP"
+            colorPreferenceKey="currentIPColor"
+            colorPreferenceValue="198,219,174"
+            highlightPreferenceKey="currentIPHighlight"
+            highlightPreferenceValue="true"
+            label="%debugCurrentInstructionPointer"
+            overviewRulerPreferenceKey="currentIPOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="6"
+            textPreferenceKey="currentIPIndication"
+            textPreferenceValue="false"
+            verticalRulerPreferenceKey="currentIPVerticalRuler"
+            verticalRulerPreferenceValue="true">
+      </specification>
+      <specification
+            annotationImageProvider="org.eclipse.dd.dsf.debug.ui.sourcelookup.InstructionPointerImageProvider"
+            annotationType="org.eclipse.dd.debug.secondaryIP"
+            colorPreferenceKey="secondaryIPColor"
+            colorPreferenceValue="219,235,204"
+            highlightPreferenceKey="secondaryIPHighlight"
+            highlightPreferenceValue="true"
+            label="%debugCallStack"
+            overviewRulerPreferenceKey="secondaryIPOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="6"
+            textPreferenceKey="secondaryIPIndication"
+            textPreferenceValue="false"
+            verticalRulerPreferenceKey="secondaryIPVerticalRuler"
+            verticalRulerPreferenceValue="true">
+      </specification>
+   </extension>
+   
+
+
 </plugin>

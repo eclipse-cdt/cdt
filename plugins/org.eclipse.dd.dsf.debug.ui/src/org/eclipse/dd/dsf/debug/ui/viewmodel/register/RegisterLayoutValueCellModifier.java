@@ -28,6 +28,9 @@ public class RegisterLayoutValueCellModifier extends WatchExpressionCellModifier
         fFormattedValuePreferenceStore = formattedValuePreferenceStore;
     }
     
+    public SyncRegisterDataAccess getRegisterDataAccess() {
+        return fDataAccess;
+    }
     /*
      *  Used to make sure we are dealing with a valid register.
      */

@@ -18,7 +18,6 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
@@ -144,10 +143,9 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
         fSyncRegisterDataAccess = syncDataAccess;
     }
     
-    protected SyncRegisterDataAccess getSyncRegisterDataAccess() {
+    public SyncRegisterDataAccess getSyncRegisterDataAccess() {
         return fSyncRegisterDataAccess;
     }
-    
 
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
@@ -279,22 +277,15 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
             return;
         }
         
-        ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
-            dmc, 
-            new DataRequestMonitor<IRegisterGroupDMData>(getSession().getExecutor(), rm) { 
-                @Override
-                protected void handleOK() {
-                    int startIdx = "$$\"".length(); //$NON-NLS-1$
-                    int endIdx = expression.indexOf('"', startIdx);
-                    String groupName = expression.substring(startIdx, endIdx);
-                    if (groupName.equals(getData().getName())) {
-                        rm.setData(Boolean.TRUE);
-                    } else {
-                        rm.setData(Boolean.FALSE);
-                    }
-                    rm.done();
-                }
-            });
+        int startIdx = "$$\"".length(); //$NON-NLS-1$
+        int endIdx = expression.indexOf('"', startIdx);
+        String groupName = expression.substring(startIdx, endIdx);
+        if (groupName.equals(dmc.getName())) {
+            rm.setData(Boolean.TRUE);
+        } else {
+            rm.setData(Boolean.FALSE);
+        }
+        rm.done();
     }
     
     @Override

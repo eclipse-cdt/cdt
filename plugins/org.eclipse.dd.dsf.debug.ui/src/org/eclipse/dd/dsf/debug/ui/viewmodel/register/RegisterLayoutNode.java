@@ -165,6 +165,10 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
         return fSyncRegisterDataAccess;
     }
 
+    public IFormattedValuePreferenceStore getPreferenceStore() {
+        return fFormattedPrefStore;
+    }
+    
     /**
      *  Private data access routine which performs the extra level of data access needed to
      *  get the formatted data value for a specific register.
@@ -411,20 +415,13 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             return;
         }
         
-        ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
-            dmc, 
-            new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), rm) { 
-                @Override
-                protected void handleOK() {
-                    String regName = expression.substring(1);
-                    if (regName.equals(getData().getName())) {
-                        rm.setData(Boolean.TRUE);
-                    } else {
-                        rm.setData(Boolean.FALSE);
-                    }
-                    rm.done();
-                }
-            });
+        String regName = expression.substring(1);
+        if (regName.equals(dmc.getName())) {
+            rm.setData(Boolean.TRUE);
+        } else {
+            rm.setData(Boolean.FALSE);
+        }
+        rm.done();
     }
 
     @Override
@@ -447,7 +444,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final String expressionText, final Object event, final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) 
     {
         if (event instanceof IRunControl.ISuspendedDMEvent) {
-            // Mark the partent delta indicating that elements were added and/or removed.
+            // Mark the parent delta indicating that elements were added and/or removed.
             parentDelta.addFlags(IModelDelta.CONTENT);
         } 
         

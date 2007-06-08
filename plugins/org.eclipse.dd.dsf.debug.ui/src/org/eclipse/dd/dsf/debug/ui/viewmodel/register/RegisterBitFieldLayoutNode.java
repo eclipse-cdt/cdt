@@ -168,6 +168,9 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
         fFormattedPrefStore = prefStore;
     }
     
+    public IFormattedValuePreferenceStore getPreferenceStore() {
+        return fFormattedPrefStore;
+    }
     /**
      *  Private data access routine which performs the extra level of data access needed to
      *  get the formatted data value for a specific register.
@@ -480,20 +483,13 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
             return;
         }
         
-        ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
-            dmc, 
-            new DataRequestMonitor<IBitFieldDMData>(getSession().getExecutor(), rm) { 
-                @Override
-                protected void handleOK() {
-                    String bitFieldName = expression.substring(1);
-                    if (bitFieldName.equals(getData().getName())) {
-                        rm.setData(Boolean.TRUE);
-                    } else {
-                        rm.setData(Boolean.FALSE);
-                    }
-                    rm.done();
-                }
-            });
+        String bitFieldName = expression.substring(1);
+        if (bitFieldName.equals(dmc.getName())) {
+            rm.setData(Boolean.TRUE);
+        } else {
+            rm.setData(Boolean.FALSE);
+        }
+        rm.done();
     }
 
     public int getExpressionLength(String expression) {

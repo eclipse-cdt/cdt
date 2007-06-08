@@ -485,6 +485,13 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="isSystem" type="boolean">
+            <annotation>
+               <documentation>
+                  the system elements are used by the system for specific needs and are not displayed in UI
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -769,6 +776,13 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
             <annotation>
                <documentation>
                   Specifies whether or not the tool supports managed build. Default value is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isSystem" type="boolean">
+            <annotation>
+               <documentation>
+                  the system elements are used by the system for specific needs and are not displayed in UI
                </documentation>
             </annotation>
          </attribute>
@@ -1672,6 +1686,13 @@ If this attribute is not specified, MBS will assume that there are no reserved m
                <documentation>
                   specifies the &quot;parallel build&quot; builder option. 
 If the builder supports specifying custom number of parallel jobs, the option definition may contain &quot;*&quot; the Build System sill substitute the &quot;*&quot; with the number of parallel threads to be used.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isSystem" type="boolean">
+            <annotation>
+               <documentation>
+                  the system elements are used by the system for specific needs and are not displayed in UI
                </documentation>
             </annotation>
          </attribute>

@@ -7781,8 +7781,7 @@
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker">
           <envVarBuildPath 
               pathType="buildpathLibrary"
-              variableList="LIBRARY_PATH"
-              buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver">
+              variableList="LIBRARY_PATH">
           </envVarBuildPath>
           <outputType
 			  outputs="exe"
@@ -7804,8 +7803,7 @@
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker">
           <envVarBuildPath 
               pathType="buildpathLibrary"
-              variableList="LIBRARY_PATH"
-              buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver">
+              variableList="LIBRARY_PATH">
           </envVarBuildPath>
 		  <outputType
 			  outputs="exe"
@@ -7824,13 +7822,12 @@
       <tool
           id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.cygwin"
           name="Test 4.0 ToolName.compiler.cygwin.gnu.c"
-          isTest="true"
+          isSystem="true"
           superClass="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler"
           optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.OneDirectionalPathConverter">
           <envVarBuildPath 
               pathType="buildpathInclude"
-              variableList="CPATH,C_INCLUDE_PATH"
-              buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver">
+              variableList="CPATH,C_INCLUDE_PATH">
           </envVarBuildPath>
           <inputType
           	  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler.input.cygwin"
@@ -7844,8 +7841,7 @@
           optionPathConverter="org.eclipse.cdt.managedbuilder.core.tests.BidirectionalPathConverter">
           <envVarBuildPath 
               pathType="buildpathInclude"
-              variableList="CPATH,CPLUS_INCLUDE_PATH"
-              buildPathResolver="org.eclipse.cdt.managedbuilder.gnu.cygwin.CygwinPathResolver">
+              variableList="CPATH,CPLUS_INCLUDE_PATH">
           </envVarBuildPath>
           <inputType
           	  id="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"

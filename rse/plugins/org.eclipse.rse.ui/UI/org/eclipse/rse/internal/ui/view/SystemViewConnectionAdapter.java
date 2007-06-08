@@ -26,6 +26,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Kevin Doyle (IBM) - [189005] Fixed getParent() to return SystemRegistryUI instead of SystemRegistry
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David McKnight    (IBM)       - [191288] Up To Action doesn't go all the way back to the connections
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -420,7 +421,7 @@ public class SystemViewConnectionAdapter
 	 */
 	public Object getParent(Object element)
 	{
-		return RSEUIPlugin.getTheSystemRegistryUI();
+		return RSECorePlugin.getTheSystemRegistry();
 	}
 	
 	/**

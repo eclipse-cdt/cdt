@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [189005] Changed setFocus() to setInput to SystemRegistryUI
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David McKnight (IBM) - [191288] Up To Action doesn't go all the way back to the connections
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -79,7 +80,6 @@ import org.eclipse.rse.ui.actions.SystemTablePrintAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemSelectAnythingDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.model.ISystemRegistryUI;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -650,7 +650,6 @@ public class SystemTableViewPart extends ViewPart
 			final String filterID = memento.getString(TAG_TABLE_VIEW_FILTER_ID);
 			final String objectID = memento.getString(TAG_TABLE_VIEW_OBJECT_ID);
 
-			ISystemRegistryUI registryUI = RSEUIPlugin.getTheSystemRegistryUI();
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			
 			Object input = null;
@@ -664,9 +663,8 @@ public class SystemTableViewPart extends ViewPart
 				}
 				else
 				{
-				    // TODO why did we use null for a while?
-					//input = null;
-					input = registryUI;
+				    // 191288 we now use registry instead of registry ui as input 
+					input = registry;
 				}
 			}
 			else

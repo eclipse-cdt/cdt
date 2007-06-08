@@ -263,7 +263,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private Map fDescriptionMap = new HashMap(); //calls to this map are "manually" synchronized with the CProjectDescriptionManager object lock;
 	private ResourceChangeHandler fRcChangeHandler;
 	private CProjectDescriptionWorkspacePreferences fPreferences;
-	private boolean fAllowEmptyCreatingDescription = false; // not allowed by default
+	private boolean fAllowEmptyCreatingDescription = true; // allowed by default
 
 //	private CStorage fPrefCfgStorage;
 	private ICDataProxyContainer fPrefUpdater = new ICDataProxyContainer(){

@@ -96,8 +96,10 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 			treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					if (!treeViewer.getControl().isDisposed()) {
-						final ISelection sel = treeViewer.getSelection();
-						treeViewer.setSelection(updateSelection(sel));
+						// setting the selection here causes a secondary editor to scroll
+						// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=191358
+//						final ISelection sel = treeViewer.getSelection();
+//						treeViewer.setSelection(updateSelection(sel));
 						treeViewer.refresh();
 					}
 				}

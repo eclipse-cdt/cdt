@@ -53,7 +53,7 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 
 		Text pageText = new Text(composite, SWT.CENTER);
 		pageText.setBounds(composite.getBounds());
-		pageText.setText("always present");
+		pageText.setText("This page is a test page provided by the org.eclipse.cdt.managedbuilder.ui.tests plugin.");
 		pageText.setVisible(true);
 
 	}
@@ -71,12 +71,12 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 
 	public String getDescription()
 	{
-		return new String("My description");
+		return new String("This page is for testing, please ignore it.");
 	}
 
 	public String getErrorMessage()
 	{
-		return new String("My error msg");
+		return null;
 	}
 
 	public Image getImage()
@@ -92,7 +92,7 @@ public class AlwaysPresentWizardPage extends MBSCustomPage
 
 	public String getTitle()
 	{
-		return new String("My Title");
+		return new String("Test Page");
 	}
 
 	public void performHelp()

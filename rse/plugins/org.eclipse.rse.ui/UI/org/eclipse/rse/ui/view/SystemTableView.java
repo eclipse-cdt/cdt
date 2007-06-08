@@ -14,6 +14,7 @@
  * Kevin Doyle (IBM) - [187736] Marked _objectInput stale when new resource created
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Xuan Chen        (IBM)        - [187016] [menus] Remote Systems Details View should have Refresh on context menu
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -941,12 +942,33 @@ public class SystemTableView
 				break;
 				
 			case ISystemResourceChangeEvents.EVENT_REFRESH:
+			case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
 				{
 					if (child == RSECorePlugin.getTheSystemRegistry())
 					{
 						// treat this as refresh all
 						child = _objectInput;
 					}
+					if (child == _objectInput)
+					{
+						//the whole table need to be refreshed, will be handled by code below
+						break;
+					}
+					try
+					{
+						Widget w = findItem(child);
+						if (w != null && w.getData() != _objectInput)
+						{		
+							child = _objectInput; // refresh the parent
+							//Only one item of table need to be updated.
+							//updateItem(w, child);
+						}
+					}
+					catch (Exception e)
+					{
+						SystemBasePlugin.logError(e.getMessage());
+					}
+						
 				}
 				break;
 			default :
@@ -1684,7 +1706,7 @@ public class SystemTableView
 
 			// ADD COMMON ACTIONS...
 			// no need for refresh of object in table
-			//menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getRefreshAction());
+			menu.appendToGroup(ISystemContextMenuConstants.GROUP_BUILD, getRefreshAction());
 
 			// COMMON RENAME ACTION...
 			if (canRename())
@@ -1920,5 +1942,6 @@ public class SystemTableView
 		if (_messageLine != null)
 		  _messageLine.clearMessage();
 	}
+
 	
 }

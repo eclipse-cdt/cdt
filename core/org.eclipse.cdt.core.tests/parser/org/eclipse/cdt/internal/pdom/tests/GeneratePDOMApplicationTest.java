@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -57,6 +58,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	private static List toDeleteOnTearDown= new ArrayList();
 	private final static String locProject1= "resources/pdomtests/generatePDOMTests/project1";
 	private final static String locProject2= "resources/pdomtests/generatePDOMTests/project2";
+	private final static String locProject3= "resources/pdomtests/generatePDOMTests/project3";
 	private URI baseURI;
 
 	public static Test suite() {
@@ -224,6 +226,37 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject2Content(wpdom);
 	}
+	
+	public void testExternalExportProjectProvider_CLinkage() throws Exception {
+		File target= File.createTempFile("test", "pdom");
+
+		URL url= FileLocator.find(CTestPlugin.getDefault().getBundle(), new Path(locProject3), null);
+		String baseDir= FileLocator.toFileURL(url).getFile();
+
+		doGenerate(new String[] {
+				GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(), 
+				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider5.class.getName(),
+				ExternalExportProjectProvider.OPT_SOURCE, baseDir,
+				ExternalExportProjectProvider.OPT_FRAGMENT_ID, "hello.world"
+		});
+		assertTrue(target.exists());
+
+		IndexFilter CLinkage= new IndexFilter() {
+			public boolean acceptLinkage(ILinkage linkage) {
+				return linkage.getID().equals(ILinkage.C_LINKAGE_ID);
+			}
+		};
+
+		IndexFilter CPPLinkage= new IndexFilter() {
+			public boolean acceptLinkage(ILinkage linkage) {
+				return linkage.getID().equals(ILinkage.CPP_LINKAGE_ID);
+			}
+		};
+		
+		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		assertEquals(1, wpdom.findBindings(new char[][] {"foo".toCharArray()}, CLinkage, NPM).length);
+		assertEquals(0, wpdom.findBindings(new char[][] {"foo".toCharArray()}, CPPLinkage, NPM).length);
+	}
 
 	public void verifyProject1Content(WritablePDOM wpdom) throws Exception {
 		wpdom.acquireReadLock();
@@ -301,6 +334,25 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			ICProject cproject= CProjectHelper.createCCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
 			toDeleteOnTearDown.add(cproject);
 			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), locProject1);
+			return cproject;
+		}
+		public Map getExportProperties() {
+			Map map= new HashMap();
+			map.put(SDK_VERSION, "4.0.1");
+			map.put(IIndexFragment.PROPERTY_FRAGMENT_ID, ACME_SDK_ID);
+			return map;
+		}
+		public IIndexLocationConverter getLocationConverter(ICProject cproject) {
+			return new ResourceContainerRelativeLocationConverter(cproject.getProject());
+		}
+		public void setApplicationArguments(String[] arguments) {}
+	}
+	
+	public static class TestProjectProvider5 implements IExportProjectProvider {		
+		public ICProject createProject() throws CoreException {
+			ICProject cproject= CProjectHelper.createCProject("test"+System.currentTimeMillis(), null, IPDOMManager.ID_NO_INDEXER);
+			toDeleteOnTearDown.add(cproject);
+			CProjectHelper.importSourcesFromPlugin(cproject, CTestPlugin.getDefault().getBundle(), locProject3);
 			return cproject;
 		}
 		public Map getExportProperties() {

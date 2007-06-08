@@ -44,6 +44,9 @@
       <ExportProjectProvider
             class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider4">
       </ExportProjectProvider>
+      <ExportProjectProvider
+            class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider5">
+      </ExportProjectProvider>
    </extension>
    
    <extension

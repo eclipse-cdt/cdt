@@ -15,13 +15,28 @@ import java.io.File;
 
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
+import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
@@ -29,8 +44,14 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * Tests bugs found in the PDOM
@@ -174,4 +195,57 @@ public class PDOMBugsTest extends BaseTestCase {
 		pdom.acquireWriteLock();
 		pdom.releaseWriteLock();
 	}
+	
+	public void _test191679() throws Exception {
+		IProject project= cproject.getProject();
+		IFolder cHeaders= cproject.getProject().getFolder("cHeaders");
+		cHeaders.create(true, true, NPM);
+		LanguageManager lm= LanguageManager.getInstance();
+		
+		IFile cHeader= TestSourceReader.createFile(cHeaders, "cHeader.h", "struct S {int a; int b};\nvoid foo(struct S) {}\n");
+		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project);
+		ICConfigurationDescription cfgd= pd.getDefaultSettingConfiguration();
+		ProjectLanguageConfiguration plc= LanguageManager.getInstance().getLanguageConfiguration(project);
+		plc.addFileMapping(cfgd, cHeader, GCCLanguage.ID);
+		IContentType ct= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CHEADER);
+		lm.storeLanguageMappingConfiguration(project, new IContentType[] {ct});
+		
+		IFile cppSource= TestSourceReader.createFile(cHeaders, "cppSource.cpp", "struct S s; void ref() {foo(s);}");
+		
+		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
+		CCorePlugin.getIndexManager().reindex(cproject);
+		CCorePlugin.getIndexManager().joinIndexer(10000, NPM);
+		
+		final PDOM pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		pdom.acquireReadLock();
+		try {
+			{ // test reference to 'foo' was resolved correctly
+				IIndexBinding[] ib= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL, NPM);
+				assertEquals(1, ib.length);
+				
+				assertTrue(ib[0] instanceof IFunction);
+				assertTrue(!(ib[0] instanceof ICPPBinding));
+				
+				IName[] nms= pdom.findNames(ib[0], IIndexFragment.FIND_REFERENCES);
+				assertEquals(1, nms.length);
+				assertTrue(nms[0].getFileLocation().getFileName().endsWith(".cpp"));
+			}
+			
+			{ // test struct S has resolved to the C linkage 
+				IIndexBinding[] ib= pdom.findBindings(new char[][]{{'s'}}, IndexFilter.ALL, NPM);
+				assertEquals(1, ib.length);
+
+				assertTrue(ib[0] instanceof ICPPVariable);
+				ICPPVariable cppv= (ICPPVariable) ib[0];
+
+				IType type= cppv.getType();
+				assertTrue(type instanceof ICompositeType);
+				assertTrue(((ICompositeType) type).getKey() == ICompositeType.k_struct);
+				assertTrue(((ICompositeType) type).getLinkage().getID().equals(ILinkage.C_LINKAGE_ID));			
+			}
+		} finally {
+			pdom.releaseReadLock();
+		}
+	}
 }
+

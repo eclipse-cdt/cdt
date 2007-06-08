@@ -52,6 +52,7 @@
 		<topic label="Build Console preferences" href="reference/cdt_u_build_pref.htm"/>
 		
 		<topic label="Debug preferences" href="reference/cdt_u_debug.htm">
+			<topic label="Breakpoint Actions preferences" href="reference/cdt_u_dbg_brkpt_actions.htm"/>
 			<topic label="GDB MI preferences" href="reference/cdt_u_gdb_mi.htm"/>
 			<topic label="Source Code Locations preferences" href="reference/cdt_u_dbg_src.htm"/>
 		</topic>
@@ -69,7 +70,10 @@
 		</topic>
 		
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
-		<topic label="Make" href="reference/cdt_u_make_pref.htm"/>
+		<topic label="Make" href="reference/cdt_u_make_pref.htm" >
+			<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm"/>
+			<topic label="Settings" href="reference/cdt_u_make_settings_pref.htm"/>			
+		</topic>
 		
 		<topic label="New Make Projects properties" href="reference/cdt_o_proj_prop_pages.htm">
 			<topic label="Make Builder" href="reference/cdt_u_newproj_buildset.htm"/>

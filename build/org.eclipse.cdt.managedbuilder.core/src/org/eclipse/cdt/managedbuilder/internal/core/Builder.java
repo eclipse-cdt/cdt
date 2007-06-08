@@ -1693,41 +1693,65 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	}
 	
 	public String getBuildPathAttribute(){
+		return getBuildPathAttribute(true);
+	}
+	
+	public String getBuildPathAttribute(boolean querySuperClass){
 		if(buildPath == null){
-			if(superClass != null){
-				return ((Builder)superClass).getBuildPathAttribute();
+			if(querySuperClass && superClass != null){
+				return ((Builder)superClass).getBuildPathAttribute(true);
 			}
 		}
 		return buildPath;
 	}
 	
 	public void setBuildPath(String path){
+		setBuildPathAttribute(path);
+	}
+	
+	public void setBuildPathAttribute(String path){
 		buildPath = path;
 		setDirty(true);
 	}
 	
 	public String getBuildPath(){
+		if(isManagedBuildOn())
+			return getDefaultBuildPath();
+		
 		String path = getBuildPathAttribute();
 		if(path == null){
-			boolean initBuildPathVar = false;
-			Configuration cfg = (Configuration)getConfguration();
-			if(cfg != null && !cfg.isPreference()){
+			path = getDefaultBuildPath();
+//			if(isManagedBuildOn() && !isExtensionElement()) {
+//				buildPath = path;
+//			}
+		}
+		return path;
+	}
+	
+	public String getDefaultBuildPath(){
+		Configuration cfg = (Configuration)getConfguration();
+		String path = null;
+		if(cfg != null){
+			if(isManagedBuildOn()){
+				path = cfg.getName();
+			}
+			
+			if(!isExtensionElement() && !cfg.isPreference()){
 				IProject project = cfg.getOwner().getProject();
-				IPath projPath = project.getFullPath();
-				if(isManagedBuildOn()){
-					path = projPath.append(cfg.getName()).toString();
-					initBuildPathVar = !isExtensionBuilder;
-				} else {
-					path = projPath.toString();
-				}
+				IPath buildPath = project.getFullPath();
 				IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+				if(path != null)
+					buildPath = buildPath.append(path);
+
+				path = buildPath.toString();
 				path = mngr.generateVariableExpression("workspace_loc", path); //$NON-NLS-1$
-				if(initBuildPathVar)
-					buildPath = path;
-			} else {
-				path = "";  //$NON-NLS-1$
 			}
 		}
+		
+		if(path == null){
+			path = "";  //$NON-NLS-1$
+		}
+		
 		return path;
 	}
 	

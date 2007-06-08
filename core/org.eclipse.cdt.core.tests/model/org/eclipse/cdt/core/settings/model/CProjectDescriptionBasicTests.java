@@ -87,8 +87,8 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		ICStorageElement child = el.createChild(EL_NAME);
 		child.setAttribute(ATTR2, ATTR2_VALUE);
 		
-		final String newCfgId1 = CDataUtil.genId(null);
-		final String newCfgId2 = CDataUtil.genId(null);
+		final String newCfgId1 = "cfg1.id";//CDataUtil.genId(null);
+//		final String newCfgId2 = CDataUtil.genId(null);
 		
 		ICConfigurationDescription cfg1 = des.createConfiguration(newCfgId1, newCfgId1 + ".name", baseCfg);
 		assertEquals(newCfgId1, cfg1.getId());
@@ -102,6 +102,26 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 
 		mngr.setProjectDescription(p3, des);
 		
+		des = mngr.getProjectDescription(p3, false);
+		cfg1 = des.getConfigurationById(newCfgId1);
+		el = cfg1.getStorage(STORAGE_ID, false);
+		assertNotNull(el);
+		assertEquals(ATTR_VALUE, el.getAttribute(ATTR));
+		assertEquals(1, el.getChildren().length);
+		child = el.getChildren()[0];
+		assertEquals(EL_NAME, child.getName());
+		assertEquals(ATTR2_VALUE, child.getAttribute(ATTR2));
+
+		des = mngr.getProjectDescription(p3, true);
+		cfg1 = des.getConfigurationById(newCfgId1);
+		el = cfg1.getStorage(STORAGE_ID, false);
+		assertNotNull(el);
+		assertEquals(ATTR_VALUE, el.getAttribute(ATTR));
+		assertEquals(1, el.getChildren().length);
+		child = el.getChildren()[0];
+		assertEquals(EL_NAME, child.getName());
+		assertEquals(ATTR2_VALUE, child.getAttribute(ATTR2));
+
 	}
 
 	public void remove_prefix_testSetInvalidCreatingDescription() throws Exception {

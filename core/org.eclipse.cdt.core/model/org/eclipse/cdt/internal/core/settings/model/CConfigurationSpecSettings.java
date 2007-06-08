@@ -329,6 +329,12 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			fIsModified = true;
 		}
 	}
+	
+	void serializeId() throws CoreException {
+		fId = fCfg.getId();
+		ICStorageElement settings = getSettingsStorageElement();
+		settings.setAttribute(ID, fId);
+	}
 
 	void serialize() throws CoreException {
 		fId = fCfg.getId();

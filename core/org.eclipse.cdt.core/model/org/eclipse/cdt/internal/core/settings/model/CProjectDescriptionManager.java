@@ -2807,6 +2807,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		
 	}
 
+	InternalXmlStorageElement copyConfigurationElement(InternalXmlStorageElement el, String newId, boolean readOnly) throws CoreException {
+		el = copyElement(el, readOnly);
+		el.setAttribute(CConfigurationSpecSettings.ID, newId);
+		return el;
+	}
+
 	InternalXmlStorageElement copyElement(InternalXmlStorageElement el, boolean readOnly) throws CoreException {
 //		try {
 //			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

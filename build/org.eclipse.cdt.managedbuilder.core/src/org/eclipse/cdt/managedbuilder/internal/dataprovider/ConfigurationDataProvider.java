@@ -41,6 +41,7 @@ import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ISettingsChangeListener;
@@ -106,6 +107,11 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		rootElement.setAttribute(VERSION_ATTRIBUTE, ManagedBuildManager.getVersion().toString());
 		ICStorageElement cfgElemen = rootElement.createChild(IConfiguration.CONFIGURATION_ELEMENT_NAME);
 		Configuration cfg = (Configuration)appliedCfg.getConfiguration();
+		Builder b = (Builder)cfg.getEditableBuilder();
+		if(b != null && b.isManagedBuildOn() && b.getBuildPathAttribute(false) == null){
+			String bPath = b.getDefaultBuildPath();
+			b.setBuildPathAttribute(bPath);
+		}
 //		cfg.setConfigurationDescription(des);
 //		ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_APPLY);
 		cfg.serialize(cfgElemen);

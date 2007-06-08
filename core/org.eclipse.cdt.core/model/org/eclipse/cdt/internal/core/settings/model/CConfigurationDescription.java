@@ -93,13 +93,14 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		
 		CConfigurationSpecSettings baseSettings = ((CConfigurationDescription)base).getSpecSettings();
 		InternalXmlStorageElement baseRootEl = (InternalXmlStorageElement)baseSettings.getRootStorageElement();
-		InternalXmlStorageElement newRootEl = CProjectDescriptionManager.getInstance().copyElement(baseRootEl, false);
+		InternalXmlStorageElement newRootEl = CProjectDescriptionManager.getInstance().copyConfigurationElement(baseRootEl, id, false);
 		ICStorageElement parentEl = baseRootEl.getParent();
-		parentEl.importChild(newRootEl);
+		newRootEl = (InternalXmlStorageElement)parentEl.importChild(newRootEl);
 		
 		fCfgSpecSettings = new CConfigurationSpecSettings(this, baseSettings, newRootEl);
 		fCfgSpecSettings.setId(id);
 		fCfgSpecSettings.setName(name);
+		fCfgSpecSettings.serializeId();
 		CConfigurationData baseData = ((IInternalCCfgInfo)base).getConfigurationData(false);
 		if(baseData instanceof CConfigurationDescriptionCache){
 			baseData = ((CConfigurationDescriptionCache)baseData).getConfigurationData();

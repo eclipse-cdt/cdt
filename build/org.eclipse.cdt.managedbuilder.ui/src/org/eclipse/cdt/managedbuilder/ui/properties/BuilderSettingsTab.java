@@ -14,6 +14,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.TriButton;
@@ -296,7 +297,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			b2.setParallelizationNum(b1.getParallelizationNum());
 			if (b2.canKeepEnvironmentVariablesInBuildfile())
 				b2.setKeepEnvironmentVariablesInBuildfile(b1.keepEnvironmentVariablesInBuildfile());
-			b2.setBuildPath(null);
+			((Builder)b2).setBuildPath(((Builder)b1).getBuildPathAttribute());
 		
 			b2.setAutoBuildEnable((b1.isAutoBuildEnable()));
 			b2.setBuildAttribute(IBuilder.BUILD_TARGET_AUTO, (b1.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR)));

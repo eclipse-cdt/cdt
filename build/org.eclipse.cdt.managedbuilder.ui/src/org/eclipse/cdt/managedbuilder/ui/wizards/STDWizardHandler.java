@@ -55,7 +55,7 @@ public class STDWizardHandler extends MBSWizardHandler {
 		ManagedProject mProj = new ManagedProject(des);
 		info.setManagedProject(mProj);
 
-		CfgHolder[] cfgs = fConfigPage.getCfgItems(defaults);
+		cfgs = fConfigPage.getCfgItems(defaults);
 
 		for (int i=0; i<cfgs.length; i++) {
 			String s = (cfgs[i].getToolChain() == null) ? "0" : ((ToolChain)(cfgs[i].getToolChain())).getId();  //$NON-NLS-1$

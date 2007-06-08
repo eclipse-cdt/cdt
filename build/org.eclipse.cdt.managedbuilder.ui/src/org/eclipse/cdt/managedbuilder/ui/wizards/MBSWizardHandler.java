@@ -95,7 +95,7 @@ public class MBSWizardHandler extends CWizardHandler {
 	private IWizardPage startingPage;
 //	private EntryDescriptor entryDescriptor = null;
 	private EntryInfo entryInfo;
-	private CfgHolder[] cfgs = null;
+	protected CfgHolder[] cfgs = null;
 	
 	protected static final class EntryInfo {
 		private SortedMap tcs;

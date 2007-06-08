@@ -510,7 +510,7 @@
                       superClass="cdt.managedbuild.tool.xlc.cpp.compiler">                     
 					  <option
 						  id="xlc.cpp.compiler.exe.release.option.optimization.level"
-						  defaultValue="xlc.c.compiler.optimization.level.most"
+						  defaultValue="xlc.c.optimization.level.Level5"
 						  superClass="xlc.c.compiler.option.optimization.level">
 					  </option>
 					  <option
@@ -524,7 +524,7 @@
                       superClass="cdt.managedbuild.tool.xlc.c.compiler">                          
 					  <option
 						  id="xlc.c.compiler.exe.release.option.optimization.level"
-						  defaultValue="xlc.c.optimization.level.most"
+						  defaultValue="xlc.c.optimization.level.Level5"
 						  superClass="xlc.c.compiler.option.optimization.level">
 					  </option>
 					  <option
@@ -644,7 +644,7 @@
 					  superClass="cdt.managedbuild.tool.xlc.cpp.compiler">
 				      <option
 				          id="xlc.cpp.compiler.so.release.option.optimization.level"
-						  defaultValue="xlc.cpp.compiler.optimization.level.most"
+						  defaultValue="xlc.c.optimization.level.Level5"
 						  superClass="xlc.c.compiler.option.optimization.level">
 				      </option>
 				      <option
@@ -658,7 +658,7 @@
 					  superClass="cdt.managedbuild.tool.xlc.c.compiler">
 				      <option
 				          id="xlc.c.compiler.so.release.option.optimization.level"
-						  defaultValue="xlc.c.optimization.level.most"
+						  defaultValue="xlc.c.optimization.level.Level5"
 						  superClass="xlc.c.compiler.option.optimization.level">
 				      </option>
 				      <option
@@ -774,7 +774,7 @@
 					  superClass="cdt.managedbuild.tool.xlc.cpp.compiler">
 					  <option
 						  id="xlc.cpp.compiler.lib.release.option.optimization.level"
-						  defaultValue="xlc.c.compiler.optimization.level.most"
+						  defaultValue="xlc.c.optimization.level.Level5"
 						  superClass="xlc.c.compiler.option.optimization.level">
 					  </option>
 					  <option
@@ -788,7 +788,7 @@
 					  superClass="cdt.managedbuild.tool.xlc.c.compiler">
 					  <option
 						  id="xlc.c.compiler.lib.release.option.optimization.level"
-						  defaultValue="xlc.c.optimization.level.most"
+						  defaultValue="xlc.c.optimization.level.Level5"
 						  superClass="xlc.c.compiler.option.optimization.level">
 					  </option>
 					  <option
@@ -1504,7 +1504,7 @@
 			  valueType="enumerated">
 			<enumeratedOptionValue
 				  name="%Option.none"
-				  isDefault="false"
+				  isDefault="true"
 				  command="-O0"
 				  id="xlc.c.optimization.level.none">
 			</enumeratedOptionValue>
@@ -1515,7 +1515,6 @@
 			</enumeratedOptionValue>
 			<enumeratedOptionValue
 				  name="%Option.Optimize.Level2"
-				  isDefault="true"
 				  command="-O2"
 				  id="xlc.c.optimization.level.Level2">
 			</enumeratedOptionValue>
@@ -1634,37 +1633,37 @@
      <enumeratedOptionValue
            command="-qarch=pwr"
            id="xlc.c.compiler.option.optimization.arch.pwr"
-           name="POWER™">
+           name="POWER(TM)">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qarch=pwr2"
            id="xlc.c.compiler.option.optimization.arch.pwr2"
-           name="POWER2™">
+           name="POWER2(TM)">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qarch=pwr2s"
            id="xlc.c.compiler.option.optimization.arch.pwr2s"
-           name="POWER2™ s">
+           name="POWER2(TM) s">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qarch=pwr2sc"
            id="xlc.c.compiler.option.optimization.arch.pwr2sc"
-           name="POWER2™ Super Chip">
+           name="POWER2(TM) Super Chip">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qarch=pwr3"
            id="xlc.c.compiler.option.optimization.arch.pwr3"
-           name="POWER3™">
+           name="POWER3(TM)">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qarch=pwr4"
            id="xlc.c.compiler.option.optimization.arch.pwr4"
-           name="POWER4™">
+           name="POWER4(TM)">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qarch=pwr5"
            id="xlc.c.compiler.option.optimization.arch.pwr5"
-           name="POWER5™">
+           name="POWER5(TM)">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qarch=ppc"

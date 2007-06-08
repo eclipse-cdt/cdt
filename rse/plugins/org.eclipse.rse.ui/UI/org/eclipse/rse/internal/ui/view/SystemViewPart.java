@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * Martin Oberhuber (Wind River) - [190195] Cannot enable new connection prompt in system view
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David Dykstal (IBM) - [191311] enable global properties action
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -393,10 +394,8 @@ public class SystemViewPart
 		if (actionBars != null)
 		{
 			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), systemView.getDeleteAction());
-			//SystemCommonSelectAllAction selAllAction = new SystemCommonSelectAllAction(getShell(), systemView, systemView);
 			actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), systemView.getSelectAllAction());
-			// added by Phil in 3.0 ...
-			//actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES, systemView.getPropertyDialogAction(); hmm, different one for local vs remote objects
+			actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(), systemView.getPropertyDialogAction());
 			actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), systemView.getRefreshAction());
 			actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), systemView.getRenameAction());
 

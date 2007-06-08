@@ -2046,9 +2046,23 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					addToBuildVar(buildVarToRuleStringMap, ext, varName, relativePath, sourceLocation, generatedSource);
 			}
 		}
+
 		ToolInfoHolder h = getToolInfo(rcInfo.getPath());
 		ITool buildTools[] = h.buildTools;
 		
+//		if(tool == null){
+//			for (int j=0; j<buildTools.length; j++) {
+//				if (buildTools[j].buildsFileType(ext)) {
+//					if (tool == null) {
+//						tool = buildTools[j];
+//					}
+//					addToBuildVar(buildVarToRuleStringMap, ext, varName, relativePath, sourceLocation, generatedSource);
+//					break;
+//				}
+//			}
+//		}
+//		
+//		if(tool == null && rcInfo.getPath().segmentCount() != 0){
 		if(tool == null){
 			h = getToolInfo(Path.EMPTY);
 			buildTools = h.buildTools;

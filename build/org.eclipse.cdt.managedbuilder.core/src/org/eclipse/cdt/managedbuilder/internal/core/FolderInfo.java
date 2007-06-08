@@ -41,6 +41,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOutputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -1095,12 +1096,12 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			toolChain.addTool((Tool)added[i]);
 		}
 		
-		adjustTargetTools(removed, getTools());
+		adjustTargetTools(removed, added);
 		
 		toolChain.propertiesChanged();
 	}
 	
-	private void adjustTargetTools(ITool removed[], ITool allTools[]){
+	private void adjustTargetTools(ITool removed[], ITool added[]){
 		if(!isRoot())
 			return;
 		
@@ -1110,21 +1111,29 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		set.addAll(Arrays.asList(ids));
 		
 		for(int i = 0; i < removed.length; i++){
-			ITool target = getTargetTool(removed[i]);
+			Object[] tInfo = getTargetTool(removed[i]);
 			
-			if(target == null)
+			if(tInfo == null)
 				continue;
-			
-			List list = BuildSettingsUtil.calcDependentTools(allTools, target, null);
+
+			ITool target = (ITool)tInfo[0];
+			String tId = (String)tInfo[1];
+
+			List list = BuildSettingsUtil.calcDependentTools(added, target, null);
 			if(list.size() != 0)
 				continue;
 			
-			ITool newTargetTool = findCompatibleTargetTool(target, allTools);
-			if(newTargetTool != null){
-				set.remove(target.getId());
-				set.add(newTargetTool.getId());
-				targetToolsModified = true;
-			}
+			ITool newTargetTool = findCompatibleTargetTool(target, added);
+			if(newTargetTool == null)
+				continue;
+			
+			newTargetTool = ManagedBuildManager.getExtensionTool(newTargetTool);
+			if(newTargetTool == null)
+				continue;
+
+			set.remove(tId);
+			set.add(newTargetTool.getId());
+			targetToolsModified = true;
 		}
 		
 		if(targetToolsModified){
@@ -1149,10 +1158,43 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				break;
 		}
 		
+		if(compatibleTool == null){
+			//try to match build output variable
+			Set set = getToolOutputVars(tool);
+			for(int i = 0; i < allTools.length; i++){
+				IOutputType types[] = allTools[i].getOutputTypes();
+				for(int k = 0; k < types.length; k++){
+					String var = types[k].getBuildVariable();
+					if(var != null && set.contains(var)){
+						compatibleTool = allTools[i];
+						break;
+					}
+					
+				}
+
+				if(compatibleTool != null)
+					break;
+			}
+		}
+		
 		return compatibleTool;
 	}
 	
-	private ITool getTargetTool(ITool tool){
+	private Set getToolOutputVars(ITool tool){
+		Set set = new HashSet();
+		
+		IOutputType types[] = tool.getOutputTypes();
+		for(int k = 0; k < types.length; k++){
+			String var = types[k].getBuildVariable();
+			if(var != null)
+				set.add(var);
+			
+		}
+		
+		return set;
+	}
+	
+	private Object[] getTargetTool(ITool tool){
 		String [] ids = toolChain.getTargetToolList();
 		
 		for(int i = 0; i < ids.length; i++){
@@ -1163,7 +1205,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 					break;
 			}
 			if(target != null)
-				return target;
+				return new Object[]{target, id};
 				
 		}
 		return null;

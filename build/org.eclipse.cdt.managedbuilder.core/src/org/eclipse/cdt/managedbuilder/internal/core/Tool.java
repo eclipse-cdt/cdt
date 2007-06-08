@@ -2119,15 +2119,20 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getAnnouncement()
 	 */
 	public String getAnnouncement() {
+		String an = getAnnouncementAttribute();
+		if(an == null){
+			an = ManagedMakeMessages.getResourceString(DEFAULT_ANNOUNCEMENT_PREFIX) +
+						WHITESPACE + getName();  // + "(" + getId() + ")";  
+		}
+		return an;
+	}
+	
+	public String getAnnouncementAttribute() {
 		if (announcement == null) {
 			if (getSuperClass() != null) {
-				return getSuperClass().getAnnouncement();
-			} else {
-				//  Generate the default announcement string for the Tool
-				String defaultAnnouncement = ManagedMakeMessages.getResourceString(DEFAULT_ANNOUNCEMENT_PREFIX) +
-					WHITESPACE + getName();  // + "(" + getId() + ")";  
-				return defaultAnnouncement;
-			}
+				return ((Tool)getSuperClass()).getAnnouncementAttribute();
+			} 
+			return null;
 		}
 		return announcement;
 	}

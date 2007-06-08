@@ -6708,7 +6708,7 @@
       </managedBuildRevision>
       <tool
             natureFilter="cnature"
-            name="%ToolName.linker.gnu.c"
+            name="Test 4.0 ToolName.linker.gnu.c"
             outputFlag="-o"
 		  isSystem="true"
             command="gcc"
@@ -6727,12 +6727,12 @@
          
          <optionCategory
                owner="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker"
-               name="%OptionCategory.General"
+               name="Test 4.0 OptionCategory.General"
                id="test.gnu.c.link.category.general">
          </optionCategory>
          <option
                defaultValue="false"
-               name="%Option.Posix.Linker.NoStartFiles"
+               name="Test 4.0 Option.Posix.Linker.NoStartFiles"
                category="test.gnu.c.link.category.general"
                command="-nostartfiles"
                id="test.gnu.c.link.option.nostart"
@@ -6740,7 +6740,7 @@
          </option>
          <option
                defaultValue="false"
-               name="%Option.Posix.Linker.NoDefLibs"
+               name="Test 4.0 Option.Posix.Linker.NoDefLibs"
                category="test.gnu.c.link.category.general"
                command="-nodefaultlibs"
                id="test.gnu.c.link.option.nodeflibs"
@@ -6748,7 +6748,7 @@
          </option>
          <option
                defaultValue="false"
-               name="%Option.Posix.Linker.NoStdLibs"
+               name="Test 4.0 Option.Posix.Linker.NoStdLibs"
                category="test.gnu.c.link.category.general"
                command="-nostdlib"
                id="test.gnu.c.link.option.nostdlibs"
@@ -6756,7 +6756,7 @@
          </option>
          <option
                defaultValue="false"
-               name="%Option.Posix.Linker.Strip"
+               name="Test 4.0 Option.Posix.Linker.Strip"
                category="test.gnu.c.link.category.general"
                command="-s"
                id="test.gnu.c.link.option.strip"
@@ -6764,7 +6764,7 @@
          </option>
          <option
                defaultValue="false"
-               name="%Option.Posix.Linker.Static"
+               name="Test 4.0 Option.Posix.Linker.Static"
                category="test.gnu.c.link.category.general"
                command="-static"
                id="test.gnu.c.link.option.noshared"
@@ -6772,11 +6772,11 @@
          </option>
          <optionCategory
                owner="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker"
-               name="%OptionCategory.Libs"
+               name="Test 4.0 OptionCategory.Libs"
                id="test.gnu.c.link.category.libs">
          </optionCategory>
          <option
-               name="%Option.Posix.Libs"
+               name="Test 4.0 Option.Posix.Libs"
                category="test.gnu.c.link.category.libs"
                command="-l"
                id="test.gnu.c.link.option.libs"
@@ -6784,7 +6784,7 @@
                valueType="libs">
          </option>
          <option
-               name="%Option.Posix.Libsearch"
+               name="Test 4.0 Option.Posix.Libsearch"
                category="test.gnu.c.link.category.libs"
                command="-L"
                id="test.gnu.c.link.option.paths"
@@ -6793,17 +6793,17 @@
          </option>
          <optionCategory
                owner="test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker"
-               name="%OptionCategory.Misc"
+               name="Test 4.0 OptionCategory.Misc"
                id="test.gnu.c.link.category.other">
          </optionCategory>
          <option
-               name="%Option.Posix.Linker.Flags"
+               name="Test 4.0 Option.Posix.Linker.Flags"
                category="test.gnu.c.link.category.other"
                valueType="string"
                id="test.gnu.c.link.option.ldflags">
          </option>
          <option
-               name="%Option.Posix.Linker.XLinker"
+               name="Test 4.0 Option.Posix.Linker.XLinker"
                category="test.gnu.c.link.category.other"
                command="-Xlinker ${VALUE}"
                valueType="stringList"
@@ -8348,7 +8348,7 @@
                      archList="all"
                      osList="win32"
                      name="Test 4.0 ToolChainName.Cygwin"
-                     targetTool="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;cdt.managedbuild.tool.gnu.c.linker.cygwin.base;cdt.managedbuild.tool.gnu.archiver"
+                     targetTool="test.four.dot.zero.cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker.cygwin.base;test.four.dot.zero.cdt.managedbuild.tool.gnu.archiver"
                      isSystem="true"
                      id="test.four.dot.zero.cdt.managedbuild.toolchain.gnu.cygwin.base">
                   <targetPlatform
@@ -8809,7 +8809,7 @@
               </toolChain>                                                                                				                    
          </configuration>         
       </projectType>                              
-   	              
+     
    </extension>
    
    

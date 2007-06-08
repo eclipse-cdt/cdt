@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Xuan Chen        (IBM)        - [187548] Editor shows incorrect file name after renaming file on Linux dstore
+ * David McKnight   (IBM)        - [191472] should not use super transfer with SSH/FTP Folder Copy and Paste
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -111,6 +112,19 @@ public class UniversalFileTransferUtility
 		public RenameStatus(int severity, String pluginId, int code, String message, Throwable exception) {
 			super(severity, pluginId, code, message, exception);
 		}
+	}
+	
+	/**
+	 * Indicates whether super transfer should be used for a particular file transfer.  This will return true if both
+	 * the preference for super transfer is turned on and the subsystem configuration supports archives
+	 * @param subsystem the subsystem used to transfer files and folders
+	 * @return true if super transfer should be used
+	 */
+	private static boolean doSuperTransfer(IRemoteFileSubSystem subsystem)
+	{
+		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER) &&
+					subsystem.getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
+		return doSuperTransferProperty;
 	}
 	
 	/**
@@ -326,10 +340,9 @@ public class UniversalFileTransferUtility
 		{
 			return null;
 		}
-	
-		boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
 
-
+		boolean doSuperTransferProperty = doSuperTransfer(srcFS);
+		
 		List set = remoteSet.getResourceSet();
 		for (int i = 0; i < set.size() && !resultSet.hasMessage(); i++)
 		{
@@ -408,7 +421,8 @@ public class UniversalFileTransferUtility
 			IResource tempResource = (IResource)resultSet.get(r);
 			IRemoteFile rmtFile = (IRemoteFile)remoteSet.get(r);
 			
-			if (!tempResource.exists())
+			if (tempResource != null && !tempResource.exists()) // need to check for null resource
+				                                                // because it's possible to be null when the download fails
 			{
 				// refresh temp file in project
 				try
@@ -823,7 +837,7 @@ public class UniversalFileTransferUtility
 		{
 			IResource tempFolder = null;
 			
-			boolean doSuperTransferProperty = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+			boolean doSuperTransferProperty = doSuperTransfer(srcFileOrFolder.getParentRemoteFileSubSystem());
 			
 			if (doCompressedTransfer && doSuperTransferProperty && !srcFileOrFolder.isRoot() 
 					&& !(srcFileOrFolder.getParentRemoteFileSubSystem().getHost().getSystemType().isLocal()))
@@ -963,10 +977,11 @@ public class UniversalFileTransferUtility
 	 */
 	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
 	{	
-		boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER)
-											&& targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
- 
+		
+	 
 		IRemoteFileSubSystem targetFS = targetFolder.getParentRemoteFileSubSystem();
+		
+		boolean doSuperTransferPreference = doSuperTransfer(targetFS);
 		SystemRemoteResourceSet resultSet = new SystemRemoteResourceSet(targetFS);
 		
 		if (targetFolder.isStale())
@@ -1361,8 +1376,7 @@ public class UniversalFileTransferUtility
 				
 				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().isLocal();
 				boolean destInArchive = (newTargetFolder  instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
-				boolean doSuperTransferPreference = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
-				
+				boolean doSuperTransferPreference = doSuperTransfer(targetFS);
 				if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
 				{
 					compressedCopyWorkspaceResourceToRemote(directory, newTargetFolder, monitor);					

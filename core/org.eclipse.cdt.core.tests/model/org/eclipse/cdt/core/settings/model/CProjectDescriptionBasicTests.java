@@ -124,7 +124,7 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 
 	}
 
-	public void remove_prefix_testSetInvalidCreatingDescription() throws Exception {
+	public void testSetInvalidCreatingDescription() throws Exception {
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = wsp.getRoot();
 		

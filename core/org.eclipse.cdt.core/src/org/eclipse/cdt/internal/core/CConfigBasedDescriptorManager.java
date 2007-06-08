@@ -326,7 +326,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 					throw ExceptionFactory.createCoreException(CCorePlugin.getResourceString("CConfigBasedDescriptorManager.4")); //$NON-NLS-1$
 					
 				dr = new CConfigBasedDescriptor(cfgDes);
-			} else {
+			} else if (!des.isCdtProjectCreating()){
 				throw ExceptionFactory.createCoreException(CCorePlugin.getResourceString("CConfigBasedDescriptorManager.5")); //$NON-NLS-1$
 			}
 		}

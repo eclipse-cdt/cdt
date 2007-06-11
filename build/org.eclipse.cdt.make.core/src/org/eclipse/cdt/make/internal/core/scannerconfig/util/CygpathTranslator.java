@@ -18,9 +18,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.core.IMarkerGenerator;
-import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.scannerconfig2.SCMarkerGenerator;
 import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.ICygwinToolsFactroy;
 import org.eclipse.core.resources.IProject;
@@ -35,7 +32,7 @@ import org.eclipse.core.runtime.Platform;
  * @author vhirsl
  */
 public class CygpathTranslator {
-    private static final String CYGPATH_ERROR_MESSAGE = "CygpathTranslator.NotAvailableErrorMessage"; //$NON-NLS-1$
+//    private static final String CYGPATH_ERROR_MESSAGE = "CygpathTranslator.NotAvailableErrorMessage"; //$NON-NLS-1$
     private CygPath cygPath = null;
     private boolean isAvailable = false;
     
@@ -73,12 +70,6 @@ public class CygpathTranslator {
 //                    MakeMessages.getString(CYGPATH_ERROR_MESSAGE),
 //                    IMarkerGenerator.SEVERITY_WARNING, null);
         }
-        
-        // remove problem markers
-        SCMarkerGenerator scMarkerGenerator = new SCMarkerGenerator();
-        scMarkerGenerator.removeMarker(project, -1, 
-        		MakeMessages.getString(CYGPATH_ERROR_MESSAGE),
-        		IMarkerGenerator.SEVERITY_WARNING, null);
     }
     
     /**

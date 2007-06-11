@@ -5,8 +5,7 @@
 	</target>
 	
 	<target name="build" depends="zips,test"/>
-	<target name="nightly" depends="tag,zips,test,copy"/>
-	<target name="cdtbuild" depends="tag,zips,test,upload"/>
+	<target name="nightly" depends="tag,zips,test,copy,mail"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -24,11 +23,9 @@
 		<property name="buildType" value="I" />
 		<property name="buildId" value="${buildType}${timestamp}"/>
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
-		<property name="milestonedir" value="${buildDirectory}/${milestone}"/>
 		<property name="eclipseTest" value="org.eclipse.test_3.2.0"/>
 		<property name="messagefile" value="message.in"/>
-		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
-		<property name="remotedir" value="dschaefer@dev.eclipse.org:cdt/builds/${branchVersion}"/>
+		<property name="mailto" value="dschaefer@qnx.com"/>
 		<property name="eclipseRoot" value="/cvsroot/eclipse"/>
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
@@ -132,27 +129,6 @@
 		<xslt style="${basedir}/JUNIT.XSL"
 			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
 			out="${zipsdir}/junits.html"/>
-	</target>
-	
-	<target name="upload" depends="init" unless="hasErrors">
-		<exec dir="${buildDirectory}" executable="scp">
-			<arg line="${remotedir}/index.html index.html"/>
-		</exec>
-		<replace file="${buildDirectory}/index.html">
-			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
-			<replacevalue><![CDATA[  <li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>
-  <!-- add here -->]]></replacevalue>
-		</replace>
-		<replace file="${buildDirectory}/index.html">
-			<replacefilter token="@buildType@" value="${buildType}"/>
-			<replacefilter token="@buildId@" value="${buildId}"/>
-		</replace>
-		<exec dir="${buildDirectory}" executable="scp">
-			<arg line="index.html ${remotedir}/index.html"/>
-		</exec>
-		<exec dir="${buildDirectory}" executable="scp">
-			<arg line="-r ${buildType}.${buildId} ${remotedir}"/>
-		</exec>
 	</target>
 	
 	<target name="copy" depends="init" unless="hasErrors">

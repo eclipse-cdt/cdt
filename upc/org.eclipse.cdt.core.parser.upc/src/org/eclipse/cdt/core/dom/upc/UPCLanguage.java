@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom.upc;
 
 import org.eclipse.cdt.core.dom.c99.C99Language;
+import org.eclipse.cdt.core.dom.c99.IKeywordMap;
 import org.eclipse.cdt.core.dom.c99.IParser;
 import org.eclipse.cdt.core.dom.parser.c99.C99KeywordMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
@@ -31,8 +32,12 @@ public class UPCLanguage extends C99Language {
 	public static final String ID = PLUGIN_ID + ".upc"; //$NON-NLS-1$ 
 	
 	private static UPCKeywordMap keywordMap = new UPCKeywordMap();
+	private static final UPCLanguage myDefault = new UPCLanguage();
 	
 	
+	public static C99Language getDefault() {
+		return myDefault;
+	}
 	
 	public String getId() {
 		return ID;
@@ -44,11 +49,11 @@ public class UPCLanguage extends C99Language {
 	}
 	
 	
-	protected IParser getParser() {
+	public IParser getParser() {
 		return new UPCParser();
 	}
 
-	public C99KeywordMap getKeywordMap() {
+	public IKeywordMap getKeywordMap() {
 		return keywordMap;
 	}
 

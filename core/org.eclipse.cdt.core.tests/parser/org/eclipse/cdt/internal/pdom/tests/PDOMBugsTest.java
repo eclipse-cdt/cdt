@@ -202,7 +202,7 @@ public class PDOMBugsTest extends BaseTestCase {
 		cHeaders.create(true, true, NPM);
 		LanguageManager lm= LanguageManager.getInstance();
 		
-		IFile cHeader= TestSourceReader.createFile(cHeaders, "cHeader.h", "struct S {int a; int b};\nvoid foo(struct S) {}\n");
+		IFile cHeader= TestSourceReader.createFile(cHeaders, "cHeader.h", "struct S {int a; int b; };\nvoid foo(struct S s) {}\n");
 		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project);
 		ICConfigurationDescription cfgd= pd.getDefaultSettingConfiguration();
 		ProjectLanguageConfiguration plc= LanguageManager.getInstance().getLanguageConfiguration(project);

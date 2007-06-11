@@ -267,8 +267,8 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     @Override
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
-            
             final IRegisterDMContext dmc = findDmcInPath(update.getElementPath(), IRegisters.IRegisterDMContext.class);
+            if (!checkDmc(dmc, update) || !checkService(null, dmc.getServiceFilter(), update)) return;
             
             ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
                 dmc, 

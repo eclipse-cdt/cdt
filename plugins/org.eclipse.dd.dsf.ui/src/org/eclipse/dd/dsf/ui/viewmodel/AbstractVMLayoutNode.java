@@ -338,6 +338,12 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         return true;
     }
     
+    /**
+     * A convenience method that completes update object in case of an error.
+     * Different types of update need to have some data configured to exhibit
+     * desired behavior in the viewer.
+     * @param update Update to handle.
+     */
     protected void handleFailedUpdate(IViewerUpdate update) {
         if (update instanceof IHasChildrenUpdate) {
             ((IHasChildrenUpdate)update).setHasChilren(false);

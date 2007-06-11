@@ -169,6 +169,31 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         return true;
     }
 
+    /** 
+     * Convenience method that checks whether the given dmc context is null.  If it is null, an 
+     * appropriate error message is set in the update.
+     * @param dmc Data Model Context (DMC) to check.
+     * @param update Update to handle in case the DMC is null.
+     * @return true if the DMC is NOT null, indicating that it's OK to proceed.  
+     */
+    protected boolean checkDmc(IDMContext<?> dmc, IViewerUpdate update) {
+        if (dmc == null) {
+            update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
+                                        "No valid context found.", null)); //$NON-NLS-1$
+            handleFailedUpdate(update);
+            return false;
+        }
+        return true;
+    }    
+
+    /**
+     * A convenience method that checks whether a given service exists.  If the service does not
+     * exist, the update is filled in with the appropriate error message. 
+     * @param serviceClass Service class to find.
+     * @param filter Service filter to use in addition to the service class name.
+     * @param update Update object to fill in.
+     * @return true if service IS found, indicating that it's OK to proceed.  
+     */
     protected boolean checkService(Class<? extends IDsfService> serviceClass, String filter, IViewerUpdate update) {
         if (getServicesTracker().getService(serviceClass, filter) == null) {
             update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
@@ -291,12 +316,10 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      */
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
-            final DMVMContext vmc = (DMVMContext)update.getElement();
-            if (!checkService(null, vmc.getDMC().getServiceFilter(), update)) return;
-            
             final IDMContext<V> dmc = findDmcInPath(update.getElementPath(), fDMCClassType);
+            if (!checkDmc(dmc, update) || !checkService(null, dmc.getServiceFilter(), update)) return;
             
-            ((IDMService)getServicesTracker().getService(null, vmc.getDMC().getServiceFilter())).getModelData(
+            ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
                 dmc, 
                 new DataRequestMonitor<V>(getSession().getExecutor(), null) { 
                     @Override
@@ -395,7 +418,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         
         if (dmc != null) {
             // Create the VM context based on the DM context from the DM event.
-            final IVMContext vmc = new DMVMContext(DMContexts.getAncestorOfType(event.getDMContext(), fDMCClassType));
+            final IVMContext vmc = createVMContext(DMContexts.getAncestorOfType(event.getDMContext(), fDMCClassType));
     
             final Map<IVMLayoutNode,Integer> childNodeDeltas = getChildNodesWithDeltaFlags(event);
             if (childNodeDeltas.size() == 0) {

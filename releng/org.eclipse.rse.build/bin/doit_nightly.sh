@@ -63,15 +63,17 @@ fi
 #Copy latest SDK in order to give access to DOC server
 cd $HOME/ws2/publish
 if [ -d N.latest ]; then
-  FILES=`ls N${daystamp}*/RSE-SDK-N${daystamp}*.zip 2>/dev/null`
+  FILES=`ls -t N${daystamp}*/RSE-SDK-N${daystamp}*.zip | head -1 2>/dev/null`
   echo "FILES=$FILES"
   if [ "$FILES" != "" ]; then
-    rm N.latest/RSE-SDK-N*.zip
-    cp N${daystamp}*/RSE-SDK-N${daystamp}*.zip N.latest
-    cd N.latest
-    mv -f RSE-SDK-N${daystamp}*.zip RSE-SDK-latest.zip
-    chgrp dsdp-tmadmin RSE-SDK-latest.zip
-    chmod g+w RSE-SDK-latest.zip
+    rm N.latest/RSE-SDK-N*.zip 2>/dev/null
+    cd `dirname ${FILES}`
+    cp -f RSE-SDK-N*.zip ../N.latest/RSE-SDK-latest.zip
+    cp -f TM-discovery-*.zip ../N.latest/TM-discovery-latest.zip
+    cp -f RSE-remotecdt-*.zip ../N.latest/RSE-remotecdt-latest.zip
+    cd ../N.latest
+    chgrp dsdp-tmadmin *.zip
+    chmod g+w *.zip
   fi
 fi
 

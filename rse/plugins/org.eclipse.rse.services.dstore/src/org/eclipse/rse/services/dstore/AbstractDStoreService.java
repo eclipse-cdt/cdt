@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
+ * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout  
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore;
@@ -87,11 +88,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
 				smon.waitForUpdate(status, monitor);
 				int resultSize = subject.getNestedSize();
-				if (resultSize == 0)
-				{
-					//System.out.println("status="+status);
-					//System.out.println("subject="+subject);
-				}
+
 				checkHostJVM();
 				// get results
 				List nested = subject.getNestedData();
@@ -100,15 +97,19 @@ public abstract class AbstractDStoreService implements IDStoreService
 					return (DataElement[])nested.toArray(new DataElement[resultSize]);
 				}
 			}
-			catch (Exception e)
-			{			
-				e.printStackTrace();
+			catch (InterruptedException e)
+			{	
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
+				
+				//InterruptedException is used to report user cancellation, so no need to log
+				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}			
 		}
-		else
-		{
-			System.out.println("no query command for "+ subject); //$NON-NLS-1$
-		}
+
 		return new DataElement[0];
 	}
 	
@@ -125,8 +126,16 @@ public abstract class AbstractDStoreService implements IDStoreService
 				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
 				smon.waitForUpdate(status, monitor);
 			}
-			catch (Exception e)
+			catch (InterruptedException e)
 			{				
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
+				
+				//InterruptedException is used to report user cancellation, so no need to log
+				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}	
 			return status;
 		}
@@ -153,9 +162,16 @@ public abstract class AbstractDStoreService implements IDStoreService
 					return (DataElement[])nested.toArray(new DataElement[subject.getNestedSize()]);
 				}
 			}
-			catch (Exception e)
+			catch (InterruptedException e)
 			{				
-				e.printStackTrace();
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
+				
+				//InterruptedException is used to report user cancellation, so no need to log
+				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}			
 		}
 		return new DataElement[0];
@@ -174,8 +190,17 @@ public abstract class AbstractDStoreService implements IDStoreService
 			{
 				getStatusMonitor(ds).waitForUpdate(status, monitor);
 			}
-			catch (Exception e)
+			catch (InterruptedException e)
 			{				
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
+				
+				//InterruptedException is used to report user cancellation, so no need to log
+				//This should be reviewed (use OperationCanceledException) with bug #190750
+
 			}
 			return status;
 		}
@@ -252,7 +277,14 @@ public abstract class AbstractDStoreService implements IDStoreService
 			}
 			catch (InterruptedException e)
 			{
-				e.printStackTrace();
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
+				
+				//InterruptedException is used to report user cancellation, so no need to log
+				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}
 			
 			getMinerElement();

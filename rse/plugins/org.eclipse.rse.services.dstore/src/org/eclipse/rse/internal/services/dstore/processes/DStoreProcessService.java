@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.processes;
@@ -304,7 +305,14 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 			}
 			catch (InterruptedException e)
 			{
-				e.printStackTrace();
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
+				
+				//InterruptedException is used to report user cancellation, so no need to log
+				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}
 			getMinerElement();
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -382,7 +382,9 @@ public class DStoreStatusMonitor implements IDomainListener
 		}
 		catch (InterruptedException e)
 		{
-			e.printStackTrace();
+			//InterruptedException is used to report user cancellation, so no need to log
+			//This should be reviewed (use OperationCanceledException) with bug #190750
+
 			return;
 		}
 	}

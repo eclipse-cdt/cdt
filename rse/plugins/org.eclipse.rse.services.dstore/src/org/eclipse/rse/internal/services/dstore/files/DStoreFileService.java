@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Xuan Chen        (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
  * Kushal Munir (IBM) - [189352] Replace with appropriate line end character on upload
+ * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -679,10 +680,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			catch (InterruptedException e)
 			{
-				e.printStackTrace();
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
+				
+				//InterruptedException is used to report user cancellation, so no need to log
+				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}
-
-			//getStatusMonitor(ds).waitForUpdate(status, monitor);
 		}
 		catch (Exception e)
 		{

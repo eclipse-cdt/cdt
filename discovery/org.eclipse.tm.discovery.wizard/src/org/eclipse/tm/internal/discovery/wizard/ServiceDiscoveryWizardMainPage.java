@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.tm.discovery.protocol.ProtocolFactory;
 import org.eclipse.tm.discovery.transport.TransportFactory;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Main wizard page for the service discovery process.</br>
@@ -104,7 +105,7 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 		});
 		
 		addressText.setLayoutData(data);
-		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(addressText,"org.eclipse.tm.discovery.wizard.address"); //$NON-NLS-1$
 		
 		Composite comp2 = new Composite(comp,SWT.NULL);
 		GridLayout layout2 = new GridLayout();
@@ -180,6 +181,7 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 		});
 		
 		transportCombo.setLayoutData(data);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(transportCombo,"org.eclipse.tm.discovery.wizard.transport"); //$NON-NLS-1$
 		
 		new Label(comp,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.ProtocolLabel")); //$NON-NLS-1$
 		
@@ -221,6 +223,7 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 		});
 		
 		protocolCombo.setLayoutData(data);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(protocolCombo,"org.eclipse.tm.discovery.wizard.protocol"); //$NON-NLS-1$
 		
 		new Label(comp,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.DiscoveryQueryLabel")); //$NON-NLS-1$
 		
@@ -235,6 +238,7 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 		queryCombo.select(0);
 		
 		queryCombo.setLayoutData(data);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(queryCombo,"org.eclipse.tm.discovery.wizard.query"); //$NON-NLS-1$
 		
 		new Label(comp,SWT.NULL).setText(Messages.getString("ServiceDiscoveryWizardMainPage.TimeOutLabel")); //$NON-NLS-1$
 		
@@ -243,10 +247,14 @@ public class ServiceDiscoveryWizardMainPage extends WizardPage {
 		timeOutText.redraw();
 		
 		timeOutText.setLayoutData(data);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(timeOutText,"org.eclipse.tm.discovery.wizard.timeout"); //$NON-NLS-1$
 		
 		setPageComplete(false);
 		
 		setControl(comp);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),	"org.eclipse.tm.discovery.wizard.general"); //$NON-NLS-1$
+		
 		
 	}
 	

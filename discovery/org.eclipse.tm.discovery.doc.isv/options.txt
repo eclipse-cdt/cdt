@@ -1,0 +1,41 @@
+-quiet
+-encoding "iso-8859-1"
+-charset "iso-8859-1"
+-source 1.4
+-sourcepath "../org.eclipse.tm.discovery.engine/src
+;../org.eclipse.tm.discovery.model/src
+;../org.eclipse.tm.discovery.model.edit/src
+;../org.eclipse.tm.discovery.protocol.dnssd/src
+;../org.eclipse.tm.discovery.transport.udp/src
+;../org.eclipse.tm.discovery.view/src
+;../org.eclipse.tm.discovery.wizard/src
+;../org.eclipse.rse.discovery/src"
+-d reference/api
+-bootclasspath @rt@
+-classpath @cp@
+;../org.eclipse.rse.core/@dot
+;../org.eclipse.rse.core/bin
+;../org.eclipse.rse.ui/@dot
+;../org.eclipse.rse.ui/bin
+-breakiterator
+-tag generated:X
+-tag lastgen:X
+-tag model:X
+-tag ordered:X
+-use
+-splitIndex
+-windowtitle "TM Service Discovery API Specification"
+-doctitle "TM Service Discovery API Specification"
+-header "<b>TM Service Discovery</b><br>Release 2.0"
+-bottom "Copyright (c) 2007 Symbian Software Ltd. and others. All Rights Reserved."
+-group "TM Service Discovery Core Plug-in Packages" "org.eclipse.tm.discovery.*"
+-group "TM Service Discovery RSE Integration Plug-in Packages" "org.eclipse.rse.discovery"
+-link http://java.sun.com/j2se/1.4.2/docs/api
+-linkoffline ./../../../org.eclipse.platform.doc.isv/reference/api @javadoc.link.location@/platform/reference/api/
+-linkoffline ./../../../org.eclipse.emf.doc/references/javadoc @javadoc.link.location@/emf/references/javadoc/
+-linkoffline ./../../../org.eclipse.rse.doc.isv/reference/api ../org.eclipse.rse.doc.isv/reference/api
+-link http://bundles.osgi.org/javadoc/r4
+
+org.eclipse.tm.discovery.protocol
+org.eclipse.tm.discovery.transport
+org.eclipse.tm.discovery.model

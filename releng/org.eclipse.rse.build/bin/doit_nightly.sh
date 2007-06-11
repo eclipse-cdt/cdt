@@ -50,14 +50,14 @@ tail -50 $log
 if [ -d /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads ]; then
   cd /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads
   cvs -q update -RPd >> $log 2>&1
-  chgrp dsdp-tmadmin * CVS/*
+  chgrp dsdp-tmadmin * CVS/* 2>/dev/null
   cd /home/data/httpd/download.eclipse.org/dsdp/tm/downloads
   cvs -q update -RPd >> $log 2>&1
-  chgrp dsdp-tmadmin * CVS/*
+  chgrp dsdp-tmadmin * CVS/* 2>/dev/null
 
   #Fixup permissions and group id on download.eclpse.org (just to be safe)
-  chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*
-  chmod -R g+w drops/${buildType}*${daystamp}*
+  chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}* 2>/dev/null
+  chmod -R g+w drops/${buildType}*${daystamp}* 2>/dev/null
 fi
 
 #Copy latest SDK in order to give access to DOC server

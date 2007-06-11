@@ -81,10 +81,7 @@
 	</target>
 	
 	<target name="unzip" depends="init" unless="dontUnzip">
-		<antcall target="unpack">
-			<param name="srcPrefix" value="${eclipseDist}"/>
-			<param name="dest" value="${buildDirectory}"/>
-		</antcall>
+		<untar src="${eclipseDist}" dest="${dest}" compression="gzip"/>
 	</target>
 	
 	<target name="zips" depends="init,unzip">
@@ -118,20 +115,6 @@
 			basedir="${buildDirectory}/site/eclipse"/>
 	</target>
 
-	<target name="unpackzip" if="onWindows">
-		<unzip src="${srcPrefix}.zip" dest="${dest}"/>
-	</target>
-
-	<target name="unpacktar" unless="onWindows">
-		<untar src="${srcPrefix}.tar.gz" dest="${dest}"
-			compression="gzip"/>
-	</target>
-
-	<target name="unpack">
-		<antcall target="unpackzip"/>
-		<antcall target="unpacktar"/>
-	</target>
-	
 	<target name="test" depends="init" unless="hasErrors">
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
 			dest="${buildDirectory}/eclipse"/>
@@ -173,7 +156,7 @@
 	</target>
 	
 	<target name="copy" depends="init" unless="hasErrors">
-		<property name="copyToDir" value="/var/www/html/builds/${branchVersion}"/>
+		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
 		<replace file="${copyToDir}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
 			<replacevalue><![CDATA[  <li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>

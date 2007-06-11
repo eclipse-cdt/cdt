@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David Dykstal (IBM) - [191130] use explicit getRemoteSystemsProject(boolean) method
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -57,21 +58,23 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 		 */
 		List names = new Vector(10);
 		try {
-			IProject project = SystemResourceManager.getRemoteSystemsProject();
-			IResource[] candidates = project.members();
-			for (int i = 0; i < candidates.length; i++) {
-				IResource candidate = candidates[i];
-				if (candidate.getType() == IResource.FOLDER) {
-					IFolder candidateFolder = (IFolder) candidate;
-					IResource[] children = candidateFolder.members();
-					if (children.length == 1) {
-						IResource child = children[0];
-						if (child.getType() == IResource.FILE) {
-							String profileName = candidateFolder.getName();
-							String domFileName = profileName + ".rsedom"; //$NON-NLS-1$
-							String childName = child.getName();
-							if (childName.equals(domFileName)) {
-								names.add(profileName);
+			IProject project = SystemResourceManager.getRemoteSystemsProject(false);
+			if (project.isAccessible()) {
+				IResource[] candidates = project.members();
+				for (int i = 0; i < candidates.length; i++) {
+					IResource candidate = candidates[i];
+					if (candidate.getType() == IResource.FOLDER) {
+						IFolder candidateFolder = (IFolder) candidate;
+						IResource[] children = candidateFolder.members();
+						if (children.length == 1) {
+							IResource child = children[0];
+							if (child.getType() == IResource.FILE) {
+								String profileName = candidateFolder.getName();
+								String domFileName = profileName + ".rsedom"; //$NON-NLS-1$
+								String childName = child.getName();
+								if (childName.equals(domFileName)) {
+									names.add(profileName);
+								}
 							}
 						}
 					}
@@ -114,7 +117,7 @@ public class SerializingProvider implements IRSEPersistenceProvider {
 	}
 
 	private IFile getProfileFile(String domName, IProgressMonitor monitor) {
-		IProject project = SystemResourceManager.getRemoteSystemsProject();
+		IProject project = SystemResourceManager.getRemoteSystemsProject(true);
 
 		// before loading, make sure the project is in synch
 		try {

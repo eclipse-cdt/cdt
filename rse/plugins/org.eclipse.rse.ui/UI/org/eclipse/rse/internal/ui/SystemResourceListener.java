@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David Dykstal (IBM) - [191130] log exception instead of printing, do not log if project is not available
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -25,6 +26,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.rse.core.ISystemResourceListener;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -361,16 +363,18 @@ public class SystemResourceListener implements ISystemResourceListener, Runnable
             {
             	if (!resource.getName().equals(remoteSystemsProject.getName()))
             	  return true;
+                // [191130] the event can be ignored if the project cannot be accessed
+            	if (!resource.isAccessible()) return true;
                 try
                 {
                     if (!(((IProject) resource).hasNature(RemoteSystemsProject.ID)))
                         return true;
-                }
-                catch (Exception exc)
+					}
+                catch (CoreException exc)
                 {
-                	System.out.println("Exception trying to test the natures of the project that fired a resource change event"); //$NON-NLS-1$
-                }
-            }
+                	RSECorePlugin.getDefault().getLogger().logError("Exception trying to test the natures of the project that fired a resource change event", exc); //$NON-NLS-1$
+				}
+			}
         }
         return false;
     }
@@ -733,7 +737,7 @@ public class SystemResourceListener implements ISystemResourceListener, Runnable
     {
     	 SystemResourceListener us = null;
     	 if (inst == null)
-    	    us = getListener(SystemResourceManager.getRemoteSystemsProject());
+    	    us = getListener(SystemResourceManager.getRemoteSystemsProject(false));
     	 else
     	    us = inst;
 
@@ -747,7 +751,7 @@ public class SystemResourceListener implements ISystemResourceListener, Runnable
     {
     	 SystemResourceListener us = null;
     	 if (inst == null)
-    	    us = getListener(SystemResourceManager.getRemoteSystemsProject());
+    	    us = getListener(SystemResourceManager.getRemoteSystemsProject(false));
     	 else
     	    us = inst;
     	    

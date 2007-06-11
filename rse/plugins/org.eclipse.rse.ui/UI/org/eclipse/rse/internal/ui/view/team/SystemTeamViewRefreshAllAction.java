@@ -13,9 +13,11 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
+ * David Dykstal (IBM) - [191130] use new getRemoteSystemsProject(boolean) method
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.SystemResourceManager;
@@ -67,11 +69,12 @@ public class SystemTeamViewRefreshAllAction extends SystemBaseAction
 	public void run() 
 	{
 		try {
-		SystemResourceManager.getRemoteSystemsProject().refreshLocal(IResource.DEPTH_INFINITE, null);		
+			IProject connectionsProject = SystemResourceManager.getRemoteSystemsProject(false);
+			if (connectionsProject.isAccessible()) {
+				connectionsProject.refreshLocal(IResource.DEPTH_INFINITE, null);		
+			}
 		} catch (Exception exc) {}
-		
 		SystemTeamView teamViewer = (SystemTeamView)teamView.getTreeViewer();
 		teamViewer.refresh();
-		//System.out.println("Running refresh all");
 	}		
 }

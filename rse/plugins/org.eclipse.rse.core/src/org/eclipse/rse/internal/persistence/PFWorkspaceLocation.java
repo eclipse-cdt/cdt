@@ -10,6 +10,7 @@
  * David Dykstal (IBM) - [189858] delayed the creation of the remote systems project by
  *                                using handle-only operations. The project is created only
  *                                if required to exist for writing.
+ * David Dykstal (IBM) - [191130] use explicit getRemoteSystemsProject(boolean) method
  *******************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -136,7 +137,7 @@ class PFWorkspaceLocation implements PFPersistenceLocation {
 	private void ensure(IContainer resource) {
 		if (!resource.isAccessible()) {
 			if (resource.getType() == IResource.PROJECT) {
-				SystemResourceManager.getRemoteSystemsProject();
+				SystemResourceManager.getRemoteSystemsProject(true);
 			} else {
 				IFolder folder = (IFolder) resource;
 				ensure(folder.getParent());

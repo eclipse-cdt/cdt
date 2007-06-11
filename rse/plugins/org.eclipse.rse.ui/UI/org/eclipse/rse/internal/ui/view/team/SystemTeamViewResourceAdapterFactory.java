@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [191130] fix unnecessary creation of the remote systems project
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -54,7 +54,8 @@ public class SystemTeamViewResourceAdapterFactory implements IAdapterFactory
 	      if (adaptableObject instanceof ISystemRegistry)
 	      {
 	        //SystemRegistry sr = (SystemRegistry)adaptableObject; 
-	        adapter = SystemResourceManager.getRemoteSystemsProject();
+	        // [191130] do not force the creation of the project, just return its handle
+	        adapter = SystemResourceManager.getRemoteSystemsProject(false);
 	      }
 	      /* deferred
 	      else if (adaptableObject instanceof SystemProfile)

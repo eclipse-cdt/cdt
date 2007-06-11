@@ -19,6 +19,8 @@
  *                                made ensureRemoteSystemsProject private instead of protected 
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * David Dykstal (IBM) - [191130] remove getRemoteSystemsProject() and getProfileFolder()
+ *    as part of the work to removed the exception printed at startup.
  ********************************************************************************/
 
 package org.eclipse.rse.core;
@@ -148,22 +150,24 @@ public class SystemResourceManager implements SystemResourceConstants
 		  _listener.removeResourceChangeListener(l);
 	}
 	
-    /**
-	 * Get the default remote systems project.
-	 * If found but closed, this will open the project.
-	 * @return IProject handle of the project. Use exists() to test existence.
-	 */
-	public static IProject getRemoteSystemsProject() 
-	{
-		return getRemoteSystemsProject(true);
-	}
+//    /**
+//	 * Get the default remote systems project.
+//	 * If found but closed, this will open the project.
+//	 * @return IProject handle of the project. Use exists() to test existence.
+//	 * @deprecated use {@link #getRemoteSystemsProject(boolean)} instead.
+//	 */
+//	public static IProject getRemoteSystemsProject() 
+//	{
+//		return getRemoteSystemsProject(true);
+//	}
 
 	/**
 	 * Get the default remote systems project.
 	 * If found but closed, this will open the project.
 	 * @param force if true force the creation of the project if not found.
 	 * In any case, returns handle to the project.
-	 * @return IProject handle of the project. Use exists() to test existence.
+	 * @return IProject handle of the project. Clients should use 
+	 * exists() or isAccessible() to test existence.
 	 */
 	public static IProject getRemoteSystemsProject(boolean force) {
 		if (remoteSystemsProject == null) {
@@ -273,10 +277,10 @@ public class SystemResourceManager implements SystemResourceConstants
     /**
      * Get profiles folder for a given profile name
      */
-    public static IFolder getProfileFolder(String profileName)
-    {
-        return getResourceHelpers().getOrCreateFolder(getRemoteSystemsProject(),profileName);      	
-    }
+//    public static IFolder getProfileFolder(String profileName)
+//    {
+//        return getResourceHelpers().getOrCreateFolder(getRemoteSystemsProject(),profileName);      	
+//    }
 
 
     // -------------------

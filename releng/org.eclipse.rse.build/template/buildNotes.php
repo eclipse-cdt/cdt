@@ -120,6 +120,12 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ Breaking API Changes
 <ul>
+<li><b>SystemResourceManager</b> - removed two methods getRemoteSystemsProject() and getProfileFolder(String).
+getRemoteSystemsProject() was a convenience method that was equivalent to getRemoteSystemsProject(true) and it forced the
+creation of RemoteSystemConnections project in the workspace. This was undesirable given the current persistence provider
+defaults.
+getProfileFolder(String) returned a IFolder for a profile under the old persistence provider scheme. The method was obsolete and
+should not be being used at all.</li> 
 </ul></li>
 <li>TM 2.0RC2 Breaking API Changes
 <ul>

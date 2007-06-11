@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David Dykstal (IBM) - [191130] use new getRemoteSystemsProject(boolean) call
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -210,7 +211,7 @@ public class SystemTeamViewProfileAdapter
 	 */
 	public Object getParent(Object element)
 	{
-		return SystemResourceManager.getRemoteSystemsProject();
+		return SystemResourceManager.getRemoteSystemsProject(false);
 	}
 	
 	/**

@@ -40,7 +40,6 @@ public class CygpathTranslator {
     private boolean isAvailable = false;
     
     public CygpathTranslator(IProject project) {
-        SCMarkerGenerator scMarkerGenerator = new SCMarkerGenerator();
         try {
             ICExtensionReference[] parserRef = CCorePlugin.getDefault().getBinaryParserExtensions(project);
             for (int i = 0; i < parserRef.length; i++) {
@@ -68,17 +67,18 @@ public class CygpathTranslator {
         }
         catch (IOException e) {
             isAvailable = false;
-            scMarkerGenerator = new SCMarkerGenerator();
-            scMarkerGenerator.addMarker(project, -1, 
-                    MakeMessages.getString(CYGPATH_ERROR_MESSAGE),
-                    IMarkerGenerator.SEVERITY_WARNING, null);
+            // Removing markers. if cygpath isn't in your path then you aren't using cygwin.
+            // Then why are we calling this....
+//            scMarkerGenerator.addMarker(project, -1, 
+//                    MakeMessages.getString(CYGPATH_ERROR_MESSAGE),
+//                    IMarkerGenerator.SEVERITY_WARNING, null);
         }
-        if (isAvailable) {
-            // remove problem markers
-            scMarkerGenerator.removeMarker(project, -1, 
-                    MakeMessages.getString(CYGPATH_ERROR_MESSAGE),
-                    IMarkerGenerator.SEVERITY_WARNING, null);
-        }
+        
+        // remove problem markers
+        SCMarkerGenerator scMarkerGenerator = new SCMarkerGenerator();
+        scMarkerGenerator.removeMarker(project, -1, 
+        		MakeMessages.getString(CYGPATH_ERROR_MESSAGE),
+        		IMarkerGenerator.SEVERITY_WARNING, null);
     }
     
     /**

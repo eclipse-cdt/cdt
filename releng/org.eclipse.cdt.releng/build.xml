@@ -29,7 +29,7 @@
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="cdt-test-dev@eclipse.org"/>
 		<property name="remotedir" value="dschaefer@dev.eclipse.org:cdt/builds/${branchVersion}"/>
-		<property name="eclipseRoot" value=":pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse"/>
+		<property name="eclipseRoot" value="/cvsroot/eclipse"/>
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>
 		<property name="basearch" value="${osgi.arch}"/>

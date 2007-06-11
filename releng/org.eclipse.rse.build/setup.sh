@@ -91,12 +91,12 @@ if [ ! -f eclipse/plugins/org.eclipse.cdt.core_4.0.0.200705251830.jar ]; then
   tar xfvz cdt-4.0.0-RC2-${cdt_arch}.tar.gz
   rm cdt-4.0.0-RC2-${cdt_arch}.tar.gz
 fi
-if [ ! -f eclipse/plugins/org.eclipse.emf_2.3.0.v200705300200.jar ]; then
-  # EMF 2.3.0 Runtime
-  echo "Getting EMF Runtime..."
-  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200705300200/emf-sdo-runtime-2.3.0RC2.zip"
-  unzip -o emf-sdo-runtime-2.3.0RC2.zip
-  rm emf-sdo-runtime-2.3.0RC2.zip 
+if [ ! -f eclipse/plugins/org.eclipse.emf.doc_2.3.0.v200705300200/doc.zip ]; then
+  # Need EMF 2.3.0 SDK for Service Discovery ISV Docs Backlinks
+  echo "Getting EMF SDK..."
+  wget "http://download.eclipse.org/modeling/emf/emf/downloads/drops/2.3.0/S200705300200/emf-sdo-xsd-SDK-2.3.0RC2.zip"
+  unzip -o emf-sdo-xsd-SDK-2.3.0RC2.zip
+  rm emf-sdo-xsd-SDK-2.3.0RC2.zip 
 fi
 if [ ! -f eclipse/plugins/org.junit_3.8.2.v200705250844/junit.jar ]; then
   # Eclipse Test Framework

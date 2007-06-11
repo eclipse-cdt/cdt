@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,12 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -190,41 +194,75 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		//Don't presume what has been done to the string, rather use as is
 		String s= fInformation.getInformationDisplayString();
 		
-		//@@@ This is obviously going to have problems with functions such
-		//int myfunction(int (*function_argument)(void * extra, int param), void * extra)
-		//int myfunction(/*A comment, indeed */int a);
-		int start= 0;
-		int occurrences= 0;
-		while (occurrences < fCurrentParameter) {
-			int found= s.indexOf(',', start);
-			if (found == -1)
-				break;
-			start= found + 1;
-			++ occurrences;
-		}
-		
-		if (occurrences < fCurrentParameter) {
+		int[] commas= computeCommaPositions(s);
+		if (commas.length - 2 < fCurrentParameter) {
 			presentation.addStyleRange(new StyleRange(0, s.length(), null, null, SWT.NORMAL));
 			return true;
 		}
 		
-		if (start == -1)
-			start= 0;
-		
-		int end= s.indexOf(',', start);
-		if (end == -1)
-			end= s.length();
-			
-		if (start > 0)	
+		int start= commas[fCurrentParameter] + 1;
+		int end= commas[fCurrentParameter + 1];
+		if (start > 0)
 			presentation.addStyleRange(new StyleRange(0, start, null, null, SWT.NORMAL));
-		
+
 		if (end > start)
 			presentation.addStyleRange(new StyleRange(start, end - start, null, null, SWT.BOLD));
-		
+
 		if (end < s.length())
 			presentation.addStyleRange(new StyleRange(end, s.length() - end, null, null, SWT.NORMAL));
-			
+
 		return true;
+	}
+
+	private int[] computeCommaPositions(String code) {
+		final int length= code.length();
+	    int pos= 0;
+		List positions= new ArrayList();
+		positions.add(new Integer(-1));
+		while (pos < length && pos != -1) {
+			char ch= code.charAt(pos);
+			switch (ch) {
+	            case ',':
+		            positions.add(new Integer(pos));
+		            break;
+	            case '(':
+	            	pos= indexOfClosingPeer(code, '(', ')', pos);
+	            	break;
+	            case '<':
+	            	pos= indexOfClosingPeer(code, '<', '>', pos);
+	            	break;
+	            case '[':
+	            	pos= indexOfClosingPeer(code, '[', ']', pos);
+	            	break;
+	            default:
+	            	break;
+            }
+			if (pos != -1)
+				pos++;
+		}
+		positions.add(new Integer(length));
+		
+		int[] fields= new int[positions.size()];
+		for (int i= 0; i < fields.length; i++)
+	        fields[i]= ((Integer) positions.get(i)).intValue();
+	    return fields;
+    }
+
+	private int indexOfClosingPeer(String code, char left, char right, int pos) {
+		int level= 0;
+		final int length= code.length();
+		while (pos < length) {
+			char ch= code.charAt(pos);
+			if (ch == left) {
+				++level;
+			} else if (ch == right) {
+				if (--level == 0) {
+					return pos;
+				}
+			}
+			++pos;
+		}
+		return -1;
 	}
 }
 

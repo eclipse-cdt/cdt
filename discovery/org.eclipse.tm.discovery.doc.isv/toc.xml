@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Service Discovery Developer Guide">
+	
+	<topic label="Guide">
+	 	<topic label="Model"  href="guide/model.html">
+	 		<topic label="Network"  href="guide/network.html"/>
+	 		<topic label="Device"  href="guide/device.html"/>
+	 		<topic label="Service Type"  href="guide/servicetype.html"/>
+	 		<topic label="Service"  href="guide/service.html"/>
+	 		<topic label="Pair"  href="guide/pair.html"/>
+	 	</topic>
+		<topic label="Transport" href="guide/transport.html" />
+		<topic label="Protocol" href="guide/protocol.html" />
+		<topic label="Usage">
+			<topic label="Programmatically" href="guide/usage.html" />
+			<topic label="Service Discovery View" href="guide/view.html" />
+		</topic>
+	</topic>
+	<topic label="Reference">
+		<topic label="Extension Points Reference">
+			<topic label="org.eclipse.tm.discovery.engine.discoveryProtocol" href="reference/extension-points/org_eclipse_tm_discovery_engine_discoveryProtocol.html" />
+			<topic label="org.eclipse.tm.discovery.engine.discoveryTranport" href="reference/extension-points/org_eclipse_tm_discovery_engine_discoveryTransport.html" />
+		</topic>
+	</topic>
+</toc>

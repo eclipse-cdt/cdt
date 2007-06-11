@@ -89,7 +89,7 @@ fi
 
 #Check the publishing
 cd $HOME/ws2/publish
-DIRS=`ls -t ${buildType}*${daystamp}* | head -1 2>/dev/null`
+DIRS=`ls -dt ${buildType}*${daystamp}* | head -1 2>/dev/null`
 cd ${DIRS}
 FILES=`ls RSE-SDK-*.zip 2>/dev/null`
 echo "FILES=$FILES"

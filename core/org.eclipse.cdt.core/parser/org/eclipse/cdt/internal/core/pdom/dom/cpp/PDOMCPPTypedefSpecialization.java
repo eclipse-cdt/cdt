@@ -72,7 +72,7 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
 	}
 
 	public boolean isSameType(IType o) {
-        if( o.equals(this) )
+        if( this.equals(o) )
             return true;
 	    if( o instanceof ITypedef )
             try {

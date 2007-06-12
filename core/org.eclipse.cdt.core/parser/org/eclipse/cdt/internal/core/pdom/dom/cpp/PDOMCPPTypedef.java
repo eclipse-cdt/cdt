@@ -81,6 +81,9 @@ class PDOMCPPTypedef extends PDOMCPPBinding
 			
 			if (type instanceof ITypedef) {
 				type= ((ITypedef)type).getType();
+				if (type == null) {
+					return false;
+				}
 			}
 			return myrtype.isSameType(type);
 		} catch (DOMException e) {

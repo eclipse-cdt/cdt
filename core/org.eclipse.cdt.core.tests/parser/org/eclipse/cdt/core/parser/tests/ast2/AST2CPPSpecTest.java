@@ -205,7 +205,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	};
 	X::X(int = 0, int = 0) { }
 	class D: public X { }; // X(int, int) called by D();
-	// D()’s implicit definition
+	// D()'s implicit definition
 	// violates the ODR
 	 --End Example]
 	 */
@@ -230,7 +230,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("X::X(int = 0, int = 0) { }\n"); //$NON-NLS-1$
 		buffer.append("class D: public X { }; // X(int, int) called by D();\n"); //$NON-NLS-1$
-		buffer.append("// D()’s implicit definition\n"); //$NON-NLS-1$
+		buffer.append("// D()'s implicit definition\n"); //$NON-NLS-1$
 		buffer.append("// violates the ODR\n"); //$NON-NLS-1$
 		
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
@@ -427,7 +427,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// The following scopes are searched for a declaration of i:
 	// 1) outermost block scope of M::N::X::f, before the use of i
 	// 2) scope of class M::N::X
-	// 3) scope of M::N::X’s base class B
+	// 3) scope of M::N::X's base class B
 	// 4) scope of namespace M::N
 	// 5) scope of namespace M
 	// 6) global scope, before the definition of M::N::X::f
@@ -449,7 +449,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("// The following scopes are searched for a declaration of i:\n"); //$NON-NLS-1$
 		buffer.append("// 1) outermost block scope of M::N::X::f, before the use of i\n"); //$NON-NLS-1$
 		buffer.append("// 2) scope of class M::N::X\n"); //$NON-NLS-1$
-		buffer.append("// 3) scope of M::N::X’s base class B\n"); //$NON-NLS-1$
+		buffer.append("// 3) scope of M::N::X's base class B\n"); //$NON-NLS-1$
 		buffer.append("// 4) scope of namespace M::N\n"); //$NON-NLS-1$
 		buffer.append("// 5) scope of namespace M\n"); //$NON-NLS-1$
 		buffer.append("// 6) global scope, before the definition of M::N::X::f\n"); //$NON-NLS-1$
@@ -1301,10 +1301,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	X x;
 	void bar()
 	{
-	xp = &x; // OK; type is ‘‘pointer to X’’
+	xp = &x; // OK; type is ‘‘pointer to X''
 	arrp = &arr; // illformed: different types
 	xp++; //OK: X is complete
-	arrp++; //illformed: UNKA can’t be completed
+	arrp++; //illformed: UNKA can't be completed
 	}
 	 --End Example]
 	 */
@@ -1327,10 +1327,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("X x;\n"); //$NON-NLS-1$
 		buffer.append("void bar()\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
-		buffer.append("xp = &x; // OK; type is ‘‘pointer to X’’\n"); //$NON-NLS-1$
+		buffer.append("xp = &x; // OK; type is ‘‘pointer to X''\n"); //$NON-NLS-1$
 		buffer.append("arrp = &arr; // illformed: different types\n"); //$NON-NLS-1$
 		buffer.append("xp++; //OK: X is complete\n"); //$NON-NLS-1$
-		buffer.append("arrp++; //illformed: UNKA can’t be completed\n"); //$NON-NLS-1$
+		buffer.append("arrp++; //illformed: UNKA can't be completed\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
@@ -2403,7 +2403,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	}
 	namespace R {
-	void Q::V::g() {  } // error: R doesn’t enclose Q
+	void Q::V::g() {  } // error: R doesn't enclose Q
 	}
 	 --End Example]
 	 */
@@ -2420,7 +2420,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("namespace R {\n"); //$NON-NLS-1$
-		buffer.append("void Q::V::g() {  } // error: R doesn’t enclose Q\n"); //$NON-NLS-1$
+		buffer.append("void Q::V::g() {  } // error: R doesn't enclose Q\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 2);
 	}
@@ -2541,7 +2541,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	using B::f; // OK: B is a base of D2
 	using B::e; // OK: e is an enumerator of base B
 	using B::x; // OK: x is a union member of base B
-	using C::g; // error: C isn’t a base of D2
+	using C::g; // error: C isn't a base of D2
 	};
 	 --End Example]
 	 */
@@ -2554,7 +2554,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("using B::f; // OK: B is a base of D2\n"); //$NON-NLS-1$
 		buffer.append("using B::e; // OK: e is an enumerator of base B\n"); //$NON-NLS-1$
 		buffer.append("using B::x; // OK: x is a union member of base B\n"); //$NON-NLS-1$
-		buffer.append("using C::g; // error: C isn’t a base of D2\n"); //$NON-NLS-1$
+		buffer.append("using C::g; // error: C isn't a base of D2\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
 	}
@@ -2627,7 +2627,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	namespace X {
 	using ::f; // global f
-	using A::g; // A’s g
+	using A::g; // A's g
 	}
 	void h()
 	{
@@ -2644,7 +2644,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("namespace X {\n"); //$NON-NLS-1$
 		buffer.append("using ::f; // global f\n"); //$NON-NLS-1$
-		buffer.append("using A::g; // A’s g\n"); //$NON-NLS-1$
+		buffer.append("using A::g; // A's g\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("void h()\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
@@ -3151,8 +3151,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	// linkage; pf is a pointer to a C function
 	extern "C" typedef void FUNC();
 	FUNC f2; // the name f2 has C++ language linkage and the
-	// function’s type has C language linkage
-	extern "C" FUNC f3; // the name of function f3 and the function’s type
+	// function's type has C language linkage
+	extern "C" FUNC f3; // the name of function f3 and the function's type
 	// have C language linkage
 	void (*pf2)(FUNC*); // the name of the variable pf2 has C++ linkage and
 	// the type of pf2 is pointer to C++ function that
@@ -3166,8 +3166,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("// linkage; pf is a pointer to a C function\n"); //$NON-NLS-1$
 		buffer.append("extern \"C\" typedef void FUNC();\n"); //$NON-NLS-1$
 		buffer.append("FUNC f2; // the name f2 has C++ language linkage and the\n"); //$NON-NLS-1$
-		buffer.append("// function’s type has C language linkage\n"); //$NON-NLS-1$
-		buffer.append("extern \"C\" FUNC f3; // the name of function f3 and the function’s type\n"); //$NON-NLS-1$
+		buffer.append("// function's type has C language linkage\n"); //$NON-NLS-1$
+		buffer.append("extern \"C\" FUNC f3; // the name of function f3 and the function's type\n"); //$NON-NLS-1$
 		buffer.append("// have C language linkage\n"); //$NON-NLS-1$
 		buffer.append("void (*pf2)(FUNC*); // the name of the variable pf2 has C++ linkage and\n"); //$NON-NLS-1$
 		buffer.append("// the type of pf2 is pointer to C++ function that\n"); //$NON-NLS-1$
@@ -3180,18 +3180,18 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	extern "C" typedef void FUNC_c();
 	class C {
 	void mf1(FUNC_c*); // the name of the function mf1 and the member
-	// function’s type have C++ language linkage; the
+	// function's type have C++ language linkage; the
 	// parameter has type pointer to C function
 	FUNC_c mf2; // the name of the function mf2 and the member
-	// function’s type have C++ language linkage
+	// function's type have C++ language linkage
 	static FUNC_c* q; // the name of the data member q has C++ language
-	// linkage and the data member’s type is pointer to
+	// linkage and the data member's type is pointer to
 	// C function
 	};
 	extern "C" {
 	class X {
 	void mf(); // the name of the function mf and the member
-	// function’s type have C++ language linkage
+	// function's type have C++ language linkage
 	void mf2(void(*)()); // the name of the function mf2 has C++ language
 	// linkage; the parameter has type pointer to
 	// C function
@@ -3204,18 +3204,18 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("extern \"C\" typedef void FUNC_c();\n"); //$NON-NLS-1$
 		buffer.append("class C {\n"); //$NON-NLS-1$
 		buffer.append("void mf1(FUNC_c*); // the name of the function mf1 and the member\n"); //$NON-NLS-1$
-		buffer.append("// function’s type have C++ language linkage; the\n"); //$NON-NLS-1$
+		buffer.append("// function's type have C++ language linkage; the\n"); //$NON-NLS-1$
 		buffer.append("// parameter has type pointer to C function\n"); //$NON-NLS-1$
 		buffer.append("FUNC_c mf2; // the name of the function mf2 and the member\n"); //$NON-NLS-1$
-		buffer.append("// function’s type have C++ language linkage\n"); //$NON-NLS-1$
+		buffer.append("// function's type have C++ language linkage\n"); //$NON-NLS-1$
 		buffer.append("static FUNC_c* q; // the name of the data member q has C++ language\n"); //$NON-NLS-1$
-		buffer.append("// linkage and the data member’s type is pointer to\n"); //$NON-NLS-1$
+		buffer.append("// linkage and the data member's type is pointer to\n"); //$NON-NLS-1$
 		buffer.append("// C function\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("extern \"C\" {\n"); //$NON-NLS-1$
 		buffer.append("class X {\n"); //$NON-NLS-1$
 		buffer.append("void mf(); // the name of the function mf and the member\n"); //$NON-NLS-1$
-		buffer.append("// function’s type have C++ language linkage\n"); //$NON-NLS-1$
+		buffer.append("// function's type have C++ language linkage\n"); //$NON-NLS-1$
 		buffer.append("void mf2(void(*)()); // the name of the function mf2 has C++ language\n"); //$NON-NLS-1$
 		buffer.append("// linkage; the parameter has type pointer to\n"); //$NON-NLS-1$
 		buffer.append("// C function\n"); //$NON-NLS-1$
@@ -3658,15 +3658,15 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	/**
 	 [--Start Example(CPP 8.3.4-1):
 	typedef int A[5], AA[2][3];
-	typedef const A CA; // type is ‘‘array of 5 const int’’
-	typedef const AA CAA; // type is ‘‘array of 2 array of 3 const int’’
+	typedef const A CA; // type is ‘‘array of 5 const int''
+	typedef const AA CAA; // type is ‘‘array of 2 array of 3 const int''
 	 --End Example]
 	 */
 	public void test8_3_4s1() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("typedef int A[5], AA[2][3];\n"); //$NON-NLS-1$
-		buffer.append("typedef const A CA; // type is ‘‘array of 5 const int’’\n"); //$NON-NLS-1$
-		buffer.append("typedef const AA CAA; // type is ‘‘array of 2 array of 3 const int’’\n"); //$NON-NLS-1$
+		buffer.append("typedef const A CA; // type is ‘‘array of 5 const int''\n"); //$NON-NLS-1$
+		buffer.append("typedef const AA CAA; // type is ‘‘array of 2 array of 3 const int''\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
@@ -5389,7 +5389,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	{
 	D d;
 	B* pb = &d;
-	A* pa = &d; // error, ambiguous: C’s A or B’s A?
+	A* pa = &d; // error, ambiguous: C's A or B's A?
 	V* pv = &d; // OK: only one V subobject
 	}
 	 --End Example]
@@ -5405,7 +5405,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("D d;\n"); //$NON-NLS-1$
 		buffer.append("B* pb = &d;\n"); //$NON-NLS-1$
-		buffer.append("A* pa = &d; // error, ambiguous: C’s A or B’s A?\n"); //$NON-NLS-1$
+		buffer.append("A* pa = &d; // error, ambiguous: C's A or B's A?\n"); //$NON-NLS-1$
 		buffer.append("V* pv = &d; // OK: only one V subobject\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
@@ -6841,10 +6841,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	typedef B B_alias;
 	B* B_ptr = &D_object;
 	void f() {
-	D_object.B::~B(); // calls B’s destructor
-	B_ptr->~B(); //calls D’s destructor
-	B_ptr->~B_alias(); // calls D’s destructor
-	B_ptr->B_alias::~B(); // calls B’s destructor
+	D_object.B::~B(); // calls B's destructor
+	B_ptr->~B(); //calls D's destructor
+	B_ptr->~B_alias(); // calls D's destructor
+	B_ptr->B_alias::~B(); // calls B's destructor
 	B_ptr->B_alias::~B_alias(); // error, no B_alias in class B
 	}
 	 --End Example]
@@ -6861,10 +6861,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("typedef B B_alias;\n"); //$NON-NLS-1$
 		buffer.append("B* B_ptr = &D_object;\n"); //$NON-NLS-1$
 		buffer.append("void f() {\n"); //$NON-NLS-1$
-		buffer.append("D_object.B::~B(); // calls B’s destructor\n"); //$NON-NLS-1$
-		buffer.append("B_ptr->~B(); //calls D’s destructor\n"); //$NON-NLS-1$
-		buffer.append("B_ptr->~B_alias(); // calls D’s destructor\n"); //$NON-NLS-1$
-		buffer.append("B_ptr->B_alias::~B(); // calls B’s destructor\n"); //$NON-NLS-1$
+		buffer.append("D_object.B::~B(); // calls B's destructor\n"); //$NON-NLS-1$
+		buffer.append("B_ptr->~B(); //calls D's destructor\n"); //$NON-NLS-1$
+		buffer.append("B_ptr->~B_alias(); // calls D's destructor\n"); //$NON-NLS-1$
+		buffer.append("B_ptr->B_alias::~B(); // calls B's destructor\n"); //$NON-NLS-1$
 		buffer.append("B_ptr->B_alias::~B_alias(); // error, no B_alias in class B\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
@@ -7296,7 +7296,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	extern B bobj;
 	B* pb = &bobj; // OK
 	int* p1 = &bobj.a; // undefined, refers to base class member
-	int* p2 = &bobj.y.i; // undefined, refers to member’s member
+	int* p2 = &bobj.y.i; // undefined, refers to member's member
 	A* pa = &bobj; // undefined, upcast to a base class type
 	B bobj; // definition of bobj
 	extern X xobj;
@@ -7313,7 +7313,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("extern B bobj;\n"); //$NON-NLS-1$
 		buffer.append("B* pb = &bobj; // OK\n"); //$NON-NLS-1$
 		buffer.append("int* p1 = &bobj.a; // undefined, refers to base class member\n"); //$NON-NLS-1$
-		buffer.append("int* p2 = &bobj.y.i; // undefined, refers to member’s member\n"); //$NON-NLS-1$
+		buffer.append("int* p2 = &bobj.y.i; // undefined, refers to member's member\n"); //$NON-NLS-1$
 		buffer.append("A* pa = &bobj; // undefined, upcast to a base class type\n"); //$NON-NLS-1$
 		buffer.append("B bobj; // definition of bobj\n"); //$NON-NLS-1$
 		buffer.append("extern X xobj;\n"); //$NON-NLS-1$
@@ -7374,7 +7374,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	f(); //calls V::f, not A::f
 	g(); //calls B::g, not D::g
 	v->g(); // v is base of B, the call is welldefined,	calls B::g
-	a->f(); //undefined behavior, a’s type not a base of B
+	a->f(); //undefined behavior, a's type not a base of B
 	}
 	 --End Example]
 	 */
@@ -7404,7 +7404,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("f(); //calls V::f, not A::f\n"); //$NON-NLS-1$
 		buffer.append("g(); //calls B::g, not D::g\n"); //$NON-NLS-1$
 		buffer.append("v->g(); // v is base of B, the call is welldefined, calls B::g\n"); //$NON-NLS-1$
-		buffer.append("a->f(); //undefined behavior, a’s type not a base of B\n"); //$NON-NLS-1$
+		buffer.append("a->f(); //undefined behavior, a's type not a base of B\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
@@ -8143,7 +8143,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	Fcn(&i, 1L); // calls Fcn(int*, int), because
 	// &i ® int* is better than &i ® const int*
 	// and 1L ® short and 1L ® int are indistinguishable
-	Fcn(&i,’c’); //callsFcn(int*, int), because
+	Fcn(&i,'c'); //callsFcn(int*, int), because
 	// &i ® int* is better than &i ® const int*
 	// and c ® int is better than c ® short
 	}
@@ -9348,11 +9348,11 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	{
 	A<char,0> a0;
 	A<char,2> a2;
-	a0.f(); //OK, uses definition of primary template’s member
+	a0.f(); //OK, uses definition of primary template's member
 	a2.g(); //OK, uses definition of
-	// partial specialization’s member
+	// partial specialization's member
 	a2.h(); //OK, uses definition of
-	// explicit specialization’s member
+	// explicit specialization's member
 	a2.f(); //illformed, no definition of f for A<T,2>
 	// the primary template is not used here
 	}
@@ -9379,11 +9379,11 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("A<char,0> a0;\n"); //$NON-NLS-1$
 		buffer.append("A<char,2> a2;\n"); //$NON-NLS-1$
-		buffer.append("a0.f(); //OK, uses definition of primary template’s member\n"); //$NON-NLS-1$
+		buffer.append("a0.f(); //OK, uses definition of primary template's member\n"); //$NON-NLS-1$
 		buffer.append("a2.g(); //OK, uses definition of\n"); //$NON-NLS-1$
-		buffer.append("// partial specialization’s member\n"); //$NON-NLS-1$
+		buffer.append("// partial specialization's member\n"); //$NON-NLS-1$
 		buffer.append("a2.h(); //OK, uses definition of\n"); //$NON-NLS-1$
-		buffer.append("// explicit specialization’s member\n"); //$NON-NLS-1$
+		buffer.append("// explicit specialization's member\n"); //$NON-NLS-1$
 		buffer.append("a2.f(); //illformed, no definition of f for A<T,2>\n"); //$NON-NLS-1$
 		buffer.append("// the primary template is not used here\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
@@ -9535,8 +9535,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	Y* a3; // declare pointer to Y<T>
 	Z* a4; // declare pointer to Z
 	typedef typename T::A TA;
-	TA* a5; // declare pointer to T’s A
-	typename T::A* a6; // declare pointer to T’s A
+	TA* a5; // declare pointer to T's A
+	typename T::A* a6; // declare pointer to T's A
 	T::A* a7; // T::A is not a type name:
 	// multiply T::A by a7; illformed,
 	// no visible declaration of a7
@@ -9559,8 +9559,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("Y* a3; // declare pointer to Y<T>\n"); //$NON-NLS-1$
 		buffer.append("Z* a4; // declare pointer to Z\n"); //$NON-NLS-1$
 		buffer.append("typedef typename T::A TA;\n"); //$NON-NLS-1$
-		buffer.append("TA* a5; // declare pointer to T’s A\n"); //$NON-NLS-1$
-		buffer.append("typename T::A* a6; // declare pointer to T’s A\n"); //$NON-NLS-1$
+		buffer.append("TA* a5; // declare pointer to T's A\n"); //$NON-NLS-1$
+		buffer.append("typename T::A* a6; // declare pointer to T's A\n"); //$NON-NLS-1$
 		buffer.append("T::A* a7; // T::A is not a type name:\n"); //$NON-NLS-1$
 		buffer.append("// multiply T::A by a7; illformed,\n"); //$NON-NLS-1$
 		buffer.append("// no visible declaration of a7\n"); //$NON-NLS-1$
@@ -9839,7 +9839,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	void f();
 	};
 	template<class B> void A<B>::f() {
-	B b; // A’s B, not the template parameter
+	B b; // A's B, not the template parameter
 	}
 	 --End Example]
 	 */
@@ -9850,7 +9850,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("void f();\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("template<class B> void A<B>::f() {\n"); //$NON-NLS-1$
-		buffer.append("B b; // A’s B, not the template parameter\n"); //$NON-NLS-1$
+		buffer.append("B b; // A's B, not the template parameter\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
@@ -9891,8 +9891,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	int Y;
 	};
 	template<class B, class a> struct X : A {
-	B b; // A’s B
-	a b; // error: A’s a isn’t a type name
+	B b; // A's B
+	a b; // error: A's a isn't a type name
 	};
 	 --End Example]
 	 */
@@ -9904,8 +9904,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("int Y;\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		buffer.append("template<class B, class a> struct X : A {\n"); //$NON-NLS-1$
-		buffer.append("B b; // A’s B\n"); //$NON-NLS-1$
-		buffer.append("a b; // error: A’s a isn’t a type name\n"); //$NON-NLS-1$
+		buffer.append("B b; // A's B\n"); //$NON-NLS-1$
+		buffer.append("a b; // error: A's a isn't a type name\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
 	}
@@ -10390,14 +10390,14 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	 [--Start Example(CPP 14.7.2-9):
 	char* p = 0;
 	template<class T> T g(T = &p);
-	template int g<int>(int); // OK even though &p isn’t an int.
+	template int g<int>(int); // OK even though &p isn't an int.
 	 --End Example]
 	 */
 	public void test14_7_2s9() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("char* p = 0;\n"); //$NON-NLS-1$
 		buffer.append("template<class T> T g(T = &p);\n"); //$NON-NLS-1$
-		buffer.append("template int g<int>(int); // OK even though &p isn’t an int.\n"); //$NON-NLS-1$
+		buffer.append("template int g<int>(int); // OK even though &p isn't an int.\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	
@@ -10919,13 +10919,13 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	/**
 	 [--Start Example(CPP 14.8.2-2e):
 	template <class T, T*> int f(int);
-	int i2 = f<int,1>(0); // can’t conv 1 to int*
+	int i2 = f<int,1>(0); // can't conv 1 to int*
 	 --End Example]
 	 */
 	public void test14_8_2s2e() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template <class T, T*> int f(int);\n"); //$NON-NLS-1$
-		buffer.append("int i2 = f<int,1>(0); // can’t conv 1 to int*\n"); //$NON-NLS-1$
+		buffer.append("int i2 = f<int,1>(0); // can't conv 1 to int*\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 1);
 	}
 	

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
+import org.eclipse.cdt.debug.core.cdi.ICDIFileLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -577,20 +579,24 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	public void stepUntil(ICDILocation location) throws CDIException {
 		CommandFactory factory = miSession.getCommandFactory();
 		String loc = null;
+		File file = null;
+		if (location instanceof ICDIFileLocation) {
+			String filePath = ((ICDIFileLocation)location).getFile();
+			if (filePath != null && filePath.length() > 0)
+				file = new File(filePath);
+		}
 		if (location instanceof ICDILineLocation) {
 			ICDILineLocation lineLocation = (ICDILineLocation)location;
-			if (lineLocation.getFile() != null && lineLocation.getFile().length() > 0) {
-				loc = lineLocation.getFile() + ":" + lineLocation.getLineNumber(); //$NON-NLS-1$
+			if (file != null) {
+				loc = file.getName() + ":" + lineLocation.getLineNumber(); //$NON-NLS-1$
 			}
 		} else if (location instanceof ICDIFunctionLocation) {
 			ICDIFunctionLocation funcLocation = (ICDIFunctionLocation)location;
 			if (funcLocation.getFunction() != null && funcLocation.getFunction().length() > 0) {
 				loc = funcLocation.getFunction();
 			}
-			if (funcLocation.getFile() != null && funcLocation.getFile().length() > 0) {
-				if (loc != null) {
-					loc = funcLocation.getFile() + ":" + loc; //$NON-NLS-1$
-				}
+			if (file != null && loc != null) {
+				loc = funcLocation.getFile() + ":" + loc; //$NON-NLS-1$
 			}
 		} else if (location instanceof ICDIAddressLocation) {
 			ICDIAddressLocation addrLocation = (ICDIAddressLocation)location;
@@ -675,14 +681,65 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(org.eclipse.cdt.debug.core.cdi.ICDILocation)
 	 */
 	public void resume(ICDILocation location) throws CDIException {
-		jump(location);
+		CommandFactory factory = miSession.getCommandFactory();
+		String loc = null;
+		File file = null;
+		if (location instanceof ICDIFileLocation) {
+			String filePath = ((ICDIFileLocation)location).getFile();
+			if (filePath != null && filePath.length() > 0)
+				file = new File(filePath);
+		}
+		if (location instanceof ICDILineLocation) {
+			ICDILineLocation lineLocation = (ICDILineLocation)location;
+			if (file != null) {
+				loc = file.getName() + ":" + lineLocation.getLineNumber(); //$NON-NLS-1$
+			}
+		} else if (location instanceof ICDIFunctionLocation) {
+			ICDIFunctionLocation funcLocation = (ICDIFunctionLocation)location;
+			if (funcLocation.getFunction() != null && funcLocation.getFunction().length() > 0) {
+				loc = funcLocation.getFunction();
+			}
+			if (file != null && loc != null) {
+				loc = funcLocation.getFile() + ":" + loc; //$NON-NLS-1$
+			}
+		} else if (location instanceof ICDIAddressLocation) {
+			ICDIAddressLocation addrLocation = (ICDIAddressLocation)location;
+			if (!addrLocation.getAddress().equals(BigInteger.ZERO)) {
+				loc = "*0x" + addrLocation.getAddress().toString(16); //$NON-NLS-1$
+			}
+		}
+		// Throw an exception we do know where to go
+		if (loc == null) {
+			throw new CDIException(CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
+		}
+
+		CLIJump jump = factory.createCLIJump(loc);
+		try {
+			miSession.postCommand(jump);
+			MIInfo info = jump.getMIInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIExecuteResume#resume(org.eclipse.cdt.debug.core.cdi.model.ICDISignal)
 	 */
 	public void resume(ICDISignal signal) throws CDIException {
-		signal(signal);
+		CommandFactory factory = miSession.getCommandFactory();
+		CLISignal sig = factory.createCLISignal(signal.getName());
+		try {
+			miSession.postCommand(sig);
+			MIInfo info = sig.getMIInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -693,7 +750,17 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 			throw new CDIException(CdiResources.getString("cdi.model.Target.Inferior_already_running")); //$NON-NLS-1$
 		} else if (miSession.getMIInferior().isSuspended()) {
 			if (passSignal) {
-				signal();
+				CommandFactory factory = miSession.getCommandFactory();
+				CLISignal signal = factory.createCLISignal("0"); //$NON-NLS-1$
+				try {
+					miSession.postCommand(signal);
+					MIInfo info = signal.getMIInfo();
+					if (info == null) {
+						throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
+					}
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
+				}
 			} else {
 				continuation();
 			}
@@ -722,78 +789,21 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#jump(ICDILocation)
 	 */
 	public void jump(ICDILocation location) throws CDIException {
-		CommandFactory factory = miSession.getCommandFactory();
-		String loc = null;
-		if (location instanceof ICDILineLocation) {
-			ICDILineLocation lineLocation = (ICDILineLocation)location;
-			if (lineLocation.getFile() != null && lineLocation.getFile().length() > 0) {
-				loc = lineLocation.getFile() + ":" + lineLocation.getLineNumber(); //$NON-NLS-1$
-			}
-		} else if (location instanceof ICDIFunctionLocation) {
-			ICDIFunctionLocation funcLocation = (ICDIFunctionLocation)location;
-			if (funcLocation.getFunction() != null && funcLocation.getFunction().length() > 0) {
-				loc = funcLocation.getFunction();
-			}
-			if (funcLocation.getFile() != null && funcLocation.getFile().length() > 0) {
-				if (loc != null) {
-					loc = funcLocation.getFile() + ":" + loc; //$NON-NLS-1$
-				}
-			}
-		} else if (location instanceof ICDIAddressLocation) {
-			ICDIAddressLocation addrLocation = (ICDIAddressLocation)location;
-			if (!addrLocation.getAddress().equals(BigInteger.ZERO)) {
-				loc = "*0x" + addrLocation.getAddress().toString(16); //$NON-NLS-1$
-			}
-		}
-		// Throw an exception we do know where to go
-		if (loc == null) {
-			throw new CDIException(CdiResources.getString("cdi.mode.Target.Bad_location")); //$NON-NLS-1$
-		}
-
-		CLIJump jump = factory.createCLIJump(loc);
-		try {
-			miSession.postCommand(jump);
-			MIInfo info = jump.getMIInfo();
-			if (info == null) {
-				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
-			}
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
+		resume(location);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#signal()
 	 */
 	public void signal() throws CDIException {
-		CommandFactory factory = miSession.getCommandFactory();
-		CLISignal signal = factory.createCLISignal("0"); //$NON-NLS-1$
-		try {
-			miSession.postCommand(signal);
-			MIInfo info = signal.getMIInfo();
-			if (info == null) {
-				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
-			}
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
+		resume(true);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#signal(ICDISignal)
 	 */
 	public void signal(ICDISignal signal) throws CDIException {
-		CommandFactory factory = miSession.getCommandFactory();
-		CLISignal sig = factory.createCLISignal(signal.getName());
-		try {
-			miSession.postCommand(sig);
-			MIInfo info = sig.getMIInfo();
-			if (info == null) {
-				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
-			}
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
+		resume(signal);
 	}
 
 	public String evaluateExpressionToString(ICDIStackFrame frame, String expressionText) throws CDIException {

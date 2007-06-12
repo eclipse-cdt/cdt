@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Freescale - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186929
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
@@ -16,17 +17,23 @@ import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
+import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -60,17 +67,22 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 					errorMessage = ActionMessages.getString( "ResumeAtLineAdapter.1" ); //$NON-NLS-1$
 				}
 				else {
-					final String fileName = getFileName( input );
+					final String fileName = getFileName( input ); // actually, absolute path, not just file name
+					IDebugTarget debugTarget = null;
+					if ( target instanceof CDebugElement ) { // should always be, but just in case
+						debugTarget = ((CDebugElement)target).getDebugTarget();
+					}
+					final IPath path = convertPath( fileName, debugTarget );					
 					ITextSelection textSelection = (ITextSelection)selection;
 					final int lineNumber = textSelection.getStartLine() + 1;
 					if ( target instanceof IAdaptable ) {
 						final IJumpToLine jumpToLine = (IJumpToLine)((IAdaptable)target).getAdapter( IJumpToLine.class );
-						if ( jumpToLine != null && jumpToLine.canJumpToLine( fileName, lineNumber ) ) {
+						if ( jumpToLine != null && jumpToLine.canJumpToLine( path.toPortableString(), lineNumber ) ) {
 							Runnable r = new Runnable() {
 								
 								public void run() {
 									try {
-										jumpToLine.jumpToLine( fileName, lineNumber );
+										jumpToLine.jumpToLine( path.toPortableString(), lineNumber );
 									}
 									catch( DebugException e ) {
 										failed( e );
@@ -141,16 +153,21 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 				if ( document == null ) {
 					return false;
 				}
-				String fileName;
+				String fileName; // actually, absolute path, not just file name
 				try {
 					fileName = getFileName( input );
 				}
 				catch( CoreException e ) {
 					return false;
 				}
+				IDebugTarget debugTarget = null;
+				if ( target instanceof CDebugElement ) { // should always be, but just in case
+					debugTarget = ((CDebugElement)target).getDebugTarget();
+				}
+				final IPath path = convertPath( fileName, debugTarget );					
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				return jumpToLine.canJumpToLine( fileName, lineNumber );
+				return jumpToLine.canJumpToLine( path.toPortableString(), lineNumber );
 			}
 			if ( part instanceof DisassemblyView ) {
 				IJumpToAddress jumpToAddress = (IJumpToAddress)((IAdaptable)target).getAdapter( IJumpToAddress.class );
@@ -171,10 +188,10 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 
 	private String getFileName( IEditorInput input ) throws CoreException {
 		if ( input instanceof IFileEditorInput ) {
-			return ((IFileEditorInput)input).getFile().getName();
+			return ((IFileEditorInput)input).getFile().getLocation().toOSString();
 		}
 		if ( input instanceof IStorageEditorInput ) {
-			return ((IStorageEditorInput)input).getStorage().getName();
+			return ((IStorageEditorInput)input).getStorage().getFullPath().toOSString();
 		}
 		return null;
 	}
@@ -187,5 +204,21 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "ResumeAtLineAdapter.4" ), null ); //$NON-NLS-1$
 		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
 		CDebugUtils.error( ms, this );
+	}
+	
+	private IPath convertPath( String sourceHandle, IDebugTarget debugTarget ) {
+		IPath path = null;
+		if ( Path.EMPTY.isValidPath( sourceHandle ) ) {
+			if ( debugTarget != null ) {
+				ISourceLocator sl = debugTarget.getLaunch().getSourceLocator();
+				if ( sl instanceof CSourceLookupDirector ) {
+					path = ((CSourceLookupDirector)sl).getCompilationPath( sourceHandle );
+				}
+			}
+			if ( path == null ) {
+				path = new Path( sourceHandle );
+			}
+		}
+		return path;
 	}
 }

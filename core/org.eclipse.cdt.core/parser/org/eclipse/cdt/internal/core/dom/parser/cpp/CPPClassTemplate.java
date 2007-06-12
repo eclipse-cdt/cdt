@@ -437,8 +437,16 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() {
-	    if( definition != null )
-	        return getCompositeTypeSpecifier().getKey();
+	    if( definition != null ) {
+	    	ICPPASTCompositeTypeSpecifier cts= getCompositeTypeSpecifier();
+	    	if (cts != null) {
+	    		return cts.getKey();
+	    	}
+	    	IASTNode n= definition.getParent();
+	    	if (n instanceof ICPPASTElaboratedTypeSpecifier) {
+	    		return ((ICPPASTElaboratedTypeSpecifier)n).getKind();
+	    	}
+	    }
 	    
 	    if( declarations != null && declarations.length > 0 ){
 	        IASTNode n = declarations[0].getParent();

@@ -9,7 +9,7 @@
 	<property name="cdt-mbs-ui-loc" value="${eclipse-home}/cdt_mbs_ui_folder"/>
 
 	<target name="init">
-		<tstamp/>
+		<echo message="library file: ${library-file}"/>
 	</target>
 
 	<target name="cleanup">

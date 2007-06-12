@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -53,7 +54,22 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements
 	}
 	
 	public ICPPNamespaceScope getNamespaceScope() throws DOMException {
-		return (ICPPNamespaceScope) getBinding();
+		return getNamespaceScope(this, 20);	// avoid an infinite loop.
+	}
+	
+	private ICPPNamespaceScope getNamespaceScope(PDOMCPPNamespaceAlias alias, final int maxDepth) {
+		IBinding binding= alias.getBinding();
+		if (binding instanceof ICPPNamespaceScope) {
+			return (ICPPNamespaceScope) binding;
+		}
+
+		if (maxDepth <= 0) {
+			return null;
+		}
+		if (binding instanceof PDOMCPPNamespaceAlias) {
+			return getNamespaceScope((PDOMCPPNamespaceAlias) binding, maxDepth-1);
+		}
+		return null;
 	}
 
 	public IBinding[] getMemberBindings() throws DOMException {

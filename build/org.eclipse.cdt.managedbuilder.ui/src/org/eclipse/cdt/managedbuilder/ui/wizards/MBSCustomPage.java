@@ -19,7 +19,7 @@ import org.eclipse.jface.wizard.IWizardPage;
  * This abstract class provides a convenient, partial implementation of the IWizardPage interface.
  * This class consults with the MBSCustomPageManager to determine its actions.
  
- * If an ISV’s custom pages do not subclass MBSCustomPage then their page implementation must be
+ * If an ISV's custom pages do not subclass MBSCustomPage then their page implementation must be
  * carefully coded to function properly while still respecting the rules laid out by the page manager.
  */
 public abstract class MBSCustomPage implements IWizardPage

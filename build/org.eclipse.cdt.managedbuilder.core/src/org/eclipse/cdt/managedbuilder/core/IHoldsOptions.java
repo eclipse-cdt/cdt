@@ -145,8 +145,8 @@ public interface IHoldsOptions extends IBuildObject {
 
 	* This method should be called in order to obtain the option whose value and attributes could be directly changed/adjusted
 	* 
-	* @param id –the option to be modified
-	* @param adjustExtension – if false, modifications are to be made for the non-extension element 
+	* @param id -the option to be modified
+	* @param adjustExtension - if false, modifications are to be made for the non-extension element 
 	* (only for some particular configuration associated with some eclipse project)
 	* This is the most common use of this method.
 	* 

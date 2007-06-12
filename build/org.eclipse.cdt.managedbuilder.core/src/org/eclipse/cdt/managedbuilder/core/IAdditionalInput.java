@@ -59,9 +59,9 @@ public interface IAdditionalInput {
 
 	/**
 	 * Returns the kind of additional input.  The valid values are: 
-	 *   •	KIND_ADDITIONAL_DEPENDENCY – added as a tool dependency, but not to the command line.
-	 *   •	KIND_ADDITIONAL_INPUT – added as an additional input to the command line, but not as a dependency.
-	 *   •	KIND_ADDITIONAL_INPUT_DEPENDENCY – added as both.
+	 *   KIND_ADDITIONAL_DEPENDENCY - added as a tool dependency, but not to the command line.
+	 *   KIND_ADDITIONAL_INPUT - added as an additional input to the command line, but not as a dependency.
+	 *   KIND_ADDITIONAL_INPUT_DEPENDENCY - added as both.
 	 * The default is KIND_ADDITIONAL_INPUT_DEPENDENCY
      */
 	public int getKind();

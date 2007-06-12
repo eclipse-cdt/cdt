@@ -1685,10 +1685,10 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	 [--Start Example(CPP 6.5-3):
 	int foo() {
 	int x=5;
-	while (-­x >= 0)
+	while (--x >= 0)
 	int i;
 	//can be equivalently rewritten as
-	while (-­x >= 0) {
+	while (--x >= 0) {
 	int i;
 	}
 	}
@@ -1812,7 +1812,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	/**
 	 [--Start Example(CPP 6.8-1):
 	int foo() {
-	T(a)­>m = 7; // expressionstatement
+	T(a)->m = 7; // expressionstatement
 	T(a)++; //expressionstatement
 	T(a,5)<<c; //expressionstatement
 	T(*d)(int); //declaration
@@ -8178,7 +8178,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	void f(A) { }
 	void f(C) { }
 	B b;
-	f(b); //ambiguous because b ­> C via constructor and
+	f(b); //ambiguous because b -> C via constructor and
 	// b -> A via constructor or conversion function.
 	 --End Example]
 	 */
@@ -8191,7 +8191,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("void f(A) { }\n"); //$NON-NLS-1$
 		buffer.append("void f(C) { }\n"); //$NON-NLS-1$
 		buffer.append("B b;\n"); //$NON-NLS-1$
-		buffer.append("f(b); //ambiguous because b ­> C via constructor and\n"); //$NON-NLS-1$
+		buffer.append("f(b); //ambiguous because b -> C via constructor and\n"); //$NON-NLS-1$
 		buffer.append("// b -> A via constructor or conversion function.\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
 	}

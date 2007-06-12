@@ -8,6 +8,7 @@
  *   Javier Montalvo Orus (Symbian) - initial API and implementation
  *   Javier Montalvo Orus (Symbian) - added transport key
  *   Javier Montalvo Orus (Symbian) - [plan] Improve Discovery and Autodetect in RSE
+ *   Javier Montalvo Orus (Symbian) - [191207] DNS-SD adds duplicated transport attribute when discovery is refreshed
  ********************************************************************************/
 
 package org.eclipse.tm.internal.discovery.protocol.dnssd;
@@ -121,6 +122,8 @@ public class DNSSDProtocol implements IProtocol {
 	
 	private final Pattern srvPattern = Pattern.compile("^(.+)\\._(.+)._(.+)\\.local."); //$NON-NLS-1$
 	private final Pattern ptrPattern = Pattern.compile("^_(.+)._.+\\.local."); //$NON-NLS-1$
+	
+	private final String TRANSPORT_KEY = "transport"; //$NON-NLS-1$
 	
 	private Resource resource = null;
 	private ITransport transport = null;
@@ -609,13 +612,33 @@ public class DNSSDProtocol implements IProtocol {
 			serviceType.getService().add(service);
 		}
 		
-		//add discovered transport
+		//add or update discovered transport if available in response
 		if(serviceTransport != null)
 		{
-			Pair transportPair = ModelFactory.eINSTANCE.createPair();
-			transportPair.setKey("transport"); //$NON-NLS-1$
-			transportPair.setValue(serviceTransport);
-			service.getPair().add(transportPair);
+			
+			Iterator pairIterator = service.getPair().iterator();
+			found = false;
+			while (pairIterator.hasNext()) {
+				Pair aPair = (Pair) pairIterator.next();
+				if (aPair != null) {
+					if (TRANSPORT_KEY.equals(aPair.getKey())) {
+
+						//update transport value
+						aPair.setValue(serviceTransport);
+						found = true;
+						break;
+					}
+				}
+			}
+
+			if (!found) {
+				Pair transportPair = ModelFactory.eINSTANCE.createPair();
+				transportPair.setKey(TRANSPORT_KEY);
+				transportPair.setValue(serviceTransport);
+				service.getPair().add(transportPair);
+			}
+			
+			
 		}
 		
 		//process "key=value" pairs

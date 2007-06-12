@@ -214,11 +214,14 @@ public class ChangeBuildConfigActionBase {
 							if (part instanceof IEditorPart) {
 								IEditorPart epart = (IEditorPart) part;
 								IResource resource = (IResource) epart.getEditorInput().getAdapter(IResource.class);
-								IProject project = resource.getProject();
-								badObject = !(project != null && CoreModel.getDefault().isNewStyleProject(project));
+								if (resource != null)
+								{
+									IProject project = resource.getProject();
+									badObject = !(project != null && CoreModel.getDefault().isNewStyleProject(project));
 
-								if (!badObject) {
-									fProjects.add(project);
+									if (!badObject) {
+										fProjects.add(project);
+									}									
 								}
 							}
 						}

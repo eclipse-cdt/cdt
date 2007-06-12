@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Bryan Wilkinson (QNX)
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Mar 31, 2005
@@ -72,19 +73,25 @@ public class CPPClassTemplate extends CPPTemplateDefinition implements
             return ((ICPPClassTemplate)getBinding()).getTemplateParameters();
         }
         public void addSpecialization( IType[] arguments, ICPPSpecialization specialization ) {
-            ((ICPPInternalTemplate)getBinding()).addSpecialization( arguments, specialization );
+            final IBinding binding = getBinding();
+            if (binding instanceof ICPPInternalBinding) {
+            	((ICPPInternalTemplate)binding).addSpecialization( arguments, specialization );
+            }
         }
         public IBinding instantiate( IType[] arguments ) {
-            return ((ICPPInternalTemplate)getBinding()).instantiate( arguments );
+            return ((ICPPInternalTemplateInstantiator)getBinding()).instantiate( arguments );
         }
         public ICPPSpecialization deferredInstance( IType[] arguments ) {
-            return ((ICPPInternalTemplate)getBinding()).deferredInstance( arguments );
+            return ((ICPPInternalTemplateInstantiator)getBinding()).deferredInstance( arguments );
         }
         public ICPPSpecialization getInstance( IType[] arguments ) {
-            return ((ICPPInternalTemplate)getBinding()).getInstance( arguments );
+            return ((ICPPInternalTemplateInstantiator)getBinding()).getInstance( arguments );
         }
 		public void addPartialSpecialization( ICPPClassTemplatePartialSpecialization spec ) {
-			((ICPPInternalClassTemplate)getBinding()).addPartialSpecialization( spec );
+            final IBinding binding = getBinding();
+            if (binding instanceof ICPPInternalClassTemplate) {
+            	((ICPPInternalClassTemplate)getBinding()).addPartialSpecialization( spec );
+            }
 		}
     }
 	private ICPPClassTemplatePartialSpecialization [] partialSpecializations = null;

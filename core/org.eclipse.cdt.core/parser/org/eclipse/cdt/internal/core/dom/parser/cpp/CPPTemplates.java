@@ -1542,8 +1542,8 @@ public class CPPTemplates {
 			}
 		}
 		
-		if( template instanceof ICPPInternalTemplate ){
-			return ((ICPPInternalTemplate)template).instantiate( args );
+		if( template instanceof ICPPInternalTemplateInstantiator ){
+			return ((ICPPInternalTemplateInstantiator)template).instantiate( args );
 		}
 		return template;
 	}

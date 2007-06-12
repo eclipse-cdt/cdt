@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2006. This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2007. This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
 
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -19,8 +19,8 @@ tr {vertical-align: top;}
 
 <h2>CDT 4.0 - New and Noteworthy</h2>
 
-<p>CDT 4.0 includes new features in the Editor, 
-  <!-- ****************** START OF N&N TABLE ****************** -->new Code Navigation tools, debugger enhancements, and other improvements. 
+<p>CDT 4.0 includes new features in the editor, 
+  <!-- ****************** START OF N&N TABLE ****************** -->new code navigation tools, debugger enhancements, and other improvements. 
 <table cellpadding="10" cellspacing="0" width="600">
   <colgroup>
   <col width="20%">
@@ -28,6 +28,27 @@ tr {vertical-align: top;}
   </colgroup>
   <tbody>
 <!-- ******************** Editor ********************** -->
+<tr>
+
+<td colspan="2"><a name="Projects"></a>
+<div style="font-size: 20px; font-weight: bold;">Projects</div></td>
+</tr>
+
+<tr>
+    <td>
+      <p align="right"><b>New Project Creation</b></p>    </td>
+    <td><p>Now it's easier to create and configure a new CDT project:  </p>
+	<p><img src="../images/nn_new_project.png">    
+ 	  </td>
+  </tr>
+<tr>
+    <td>
+      <p align="right"><b>Project Templates</b></p>    </td>
+    <td><p>Projects can be created from one of the available templates. Project templates include wizard pages that let you configure basic settings for new project code. </p>
+	  <p><img src="../images/nn_basic_settings.png">    
+	  </td>
+  </tr>
+<!-- ******************** Views ********************** -->
 <tr>
 
 <td colspan="2"><a name="Editor"></a>
@@ -54,24 +75,29 @@ tr {vertical-align: top;}
 <tr>
     <td>
       <p align="right"><b>Include Browser</b></p>    </td>
-    <td>insert info and screenshot	  </td>
+    <td>The Include Browser now lets you see the hierarchy of included headers in a source file.
+      <p><img src="../images/nn_include_browser.png">    </p>
+	 </td>
+	
   </tr>
 
   <tr>
     <td> <p align="right"><b>Call Hierarchy</b></p></td>
     <td>
-     blah blah	</td>
+     The	Call Heirarchy view shows you who calls a function.
+	   <p><img src="../images/nn_call_hierarchy.png">    </p></td>
   </tr>
 
   <tr> 
     <td> <p align="right"><b>Type Hierarchy</b></p></td>
-    <td>blah blah	</td>
+    <td>The Type Hierarchy view shows you how	C/C++ types are related.
+	  <p><img src="../images/nn_type_hierarchy.png">    </p></td>
   </tr>
   
   <tr> 
-    <td> <p align="right"><b>Parser Improvements</b></p></td>
-    <td><p>blah blah 
-    </p>    </td>
+    <td> <p align="right"><b>Indexer Improvements</b></p></td>
+    <td><p>The indexer is greatly improved with more features and accuracy:</p>   
+	  <p><img src="../images/nn_indexer_prefs.png">    </p> </td>
   </tr>
 
 
@@ -98,7 +124,18 @@ tr {vertical-align: top;}
     <td>
       <p align="right"><b>Contextual Launch Support</b></p>    </td>
     <td>
-    <p>blech blech</p>    </td>
+    <p>CDT 4.0 now takes advantage of the contextual launch support in Eclipse 3.3 to make the run and debug commands just &quot;do the right thing&quot; for C/C++ projects.</p>
+    <p><img src="../images/nn_contextlaunch.png">
+	<p>Just click the Debug button to start a debug session instead of manually creating a launch configuration. </td>
+  </tr>
+  <tr>
+    <td>
+      <p align="right"><b>Locating Source Files</b></p>    </td>
+    <td>
+    <p>When the debugger can't find a source file using the path in the symbol table it now lets you locate it directly instead of having to configure a source lookup path. </p>
+    <p><img src="../images/nn_missing_file.png">
+    
+    <p>&nbsp; </p></td>
   </tr>
 <!-- *********************** Debugger *********************** -->
 <tr>
@@ -106,10 +143,14 @@ tr {vertical-align: top;}
 <div style="font-size: 20px; font-weight: bold;">Other Improvements</div></td>
 </tr>
 <tr>
-    <td>
-      <p align="right"><b>MinGW Toolchain Integration</b></p>    </td>
-    <td><p>blah blah</p>      </td>
-  </tr>
+  <td><p align="right"><b>Project Build Button </b></p></td>
+  <td><p>The toolbar now includes a button that builds the active configuration of the selected project. It's menu lets you quickly build another configuration.</p>
+  <p><img src="../images/nn_buildbtn.png"></td>
+</tr>
+<tr>
+  <td><p align="right"><b>MinGW Toolchain Integration</b></p></td>
+  <td><p>blah blah</p></td>
+</tr>
   <tr>
     <td>
       <p align="right"><b>IBM xlC Toolchain Integration</b></p>    </td>

@@ -29,11 +29,13 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -44,6 +46,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public class BaseUITestCase extends BaseTestCase {
@@ -185,6 +188,12 @@ public class BaseUITestCase extends BaseTestCase {
 				page.closeAllEditors(false);
 			}
 		}
+	}
+	
+	protected void showCDTPerspective() throws WorkbenchException {
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		workbench.showPerspective(CUIPlugin.ID_CPERSPECTIVE, workbench.getActiveWorkbenchWindow());
+		runEventQueue(0);
 	}
 	
 	protected IViewPart activateView(String id) throws PartInitException {

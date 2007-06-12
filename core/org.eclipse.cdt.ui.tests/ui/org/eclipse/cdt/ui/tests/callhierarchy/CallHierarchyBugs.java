@@ -20,8 +20,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -40,6 +40,10 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		return suite(CallHierarchyBugs.class);
 	}
 
+	protected void setUp() throws Exception {
+		super.setUp();
+		showCDTPerspective();
+	}
 	
 	// class SomeClass {
 	// public:
@@ -136,7 +140,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(chTree, 0, 0, "SomeClass::ref2");
 	}
 
-	private void openEditor(IFile file) throws PartInitException {
+	private void openEditor(IFile file) throws WorkbenchException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IDE.openEditor(page, file, true);
 		getFocusControl(StyledText.class, 8000);

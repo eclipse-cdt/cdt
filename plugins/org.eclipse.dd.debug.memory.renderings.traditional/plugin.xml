@@ -27,4 +27,31 @@
    <initializer class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferenceInitializer"/>
 </extension>
 
+<extension point="org.eclipse.ui.viewActions">
+	<viewContribution
+    	targetID="org.eclipse.debug.ui.MemoryView"
+        id="org.eclipse.debug.ui.memoryView.toolbar">
+        	<action
+               	class="org.eclipse.dd.debug.memory.renderings.actions.ExportMemoryAction"
+               	helpContextId="ExportMemoryAction_context"
+               	icon="$nl$/icons/full/elcl16/pin.gif"
+               	id="org.eclipse.dd.debug.memory.renderings.actions.ExportMemoryAction"
+               	label="%ExportMemoryAction.label"
+               	state="false"
+               	style="push"
+               	toolbarPath="additions"
+               	tooltip="%ExportMemoryAction.label"/>
+            <action
+               	class="org.eclipse.dd.debug.memory.renderings.actions.ImportMemoryAction"
+               	helpContextId="ExportMemoryAction_context"
+               	icon="$nl$/icons/full/elcl16/pin.gif"
+               	id="org.eclipse.dd.debug.memory.renderings.actions.ImportMemoryAction"
+               	label="%ImportMemoryAction.label"
+               	state="false"
+               	style="push"
+               	toolbarPath="additions"
+               	tooltip="%ImportMemoryAction.label"/>
+    </viewContribution>
+</extension>
+
 </plugin>

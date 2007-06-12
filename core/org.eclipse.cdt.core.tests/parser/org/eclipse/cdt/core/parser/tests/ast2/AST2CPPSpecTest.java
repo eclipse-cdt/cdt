@@ -8138,14 +8138,14 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	short s = 0;
 	void f() {
 	Fcn(&i, s); // is ambiguous because
-	// &i ® int* is better than &i ® const int*
-	// but s ® short is also better than s ® int
+	// &i -> int* is better than &i -> const int*
+	// but s -> short is also better than s -> int
 	Fcn(&i, 1L); // calls Fcn(int*, int), because
-	// &i ® int* is better than &i ® const int*
-	// and 1L ® short and 1L ® int are indistinguishable
+	// &i -> int* is better than &i -> const int*
+	// and 1L -> short and 1L -> int are indistinguishable
 	Fcn(&i,'c'); //callsFcn(int*, int), because
-	// &i ® int* is better than &i ® const int*
-	// and c ® int is better than c ® short
+	// &i -> int* is better than &i -> const int*
+	// and c -> int is better than c -> short
 	}
 	 --End Example]
 	 */
@@ -8157,14 +8157,14 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("short s = 0;\n"); //$NON-NLS-1$
 		buffer.append("void f() {\n"); //$NON-NLS-1$
 		buffer.append("Fcn(&i, s); // is ambiguous because\n"); //$NON-NLS-1$
-		buffer.append("// &i ® int* is better than &i ® const int*\n"); //$NON-NLS-1$
-		buffer.append("// but s ® short is also better than s ® int\n"); //$NON-NLS-1$
+		buffer.append("// &i -> int* is better than &i -> const int*\n"); //$NON-NLS-1$
+		buffer.append("// but s -> short is also better than s -> int\n"); //$NON-NLS-1$
 		buffer.append("Fcn(&i, 1L); // calls Fcn(int*, int), because\n"); //$NON-NLS-1$
-		buffer.append("// &i ® int* is better than &i ® const int*\n"); //$NON-NLS-1$
-		buffer.append("// and 1L ® short and 1L ® int are indistinguishable\n"); //$NON-NLS-1$
+		buffer.append("// &i -> int* is better than &i -> const int*\n"); //$NON-NLS-1$
+		buffer.append("// and 1L -> short and 1L -> int are indistinguishable\n"); //$NON-NLS-1$
 		buffer.append("Fcn(&i,'c'); //callsFcn(int*, int), because\n"); //$NON-NLS-1$
-		buffer.append("// &i ® int* is better than &i ® const int*\n"); //$NON-NLS-1$
-		buffer.append("// and c ® int is better than c ® short\n"); //$NON-NLS-1$
+		buffer.append("// &i -> int* is better than &i -> const int*\n"); //$NON-NLS-1$
+		buffer.append("// and c -> int is better than c -> short\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
 	}
@@ -8284,8 +8284,8 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	} a;
 	int f(int);
 	int f(float);
-	int i = f(a); // Calls f(int), because short ® int is
-	// better than short ® float.
+	int i = f(a); // Calls f(int), because short -> int is
+	// better than short -> float.
 	 --End Example]
 	 */
 	public void test13_3_3_2s3c() throws Exception {
@@ -12371,7 +12371,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
     struct X { X(A*); };
     struct E : C, D, X {
     E() : D(this), // undefined: upcast from E* to A*
-    // might use path E* ® D* ® A*
+    // might use path E* -> D* -> A*
     // but D is not constructed
     // D((C*)this), // defined:
     // E* -> C* defined because E() has started
@@ -12393,11 +12393,11 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
         buffer.append("struct X { X(A*); };\n"); //$NON-NLS-1$
         buffer.append("struct E : C, D, X {\n"); //$NON-NLS-1$
         buffer.append("E() : D(this), // undefined: upcast from E* to A*\n"); //$NON-NLS-1$
-        buffer.append("// might use path E* ® D* ® A*\n"); //$NON-NLS-1$
+        buffer.append("// might use path E* -> D* -> A*\n"); //$NON-NLS-1$
         buffer.append("// but D is not constructed\n"); //$NON-NLS-1$
         buffer.append("// D((C*)this), // defined:\n"); //$NON-NLS-1$
-        buffer.append("// E* ® C* defined because E() has started\n"); //$NON-NLS-1$
-        buffer.append("// and C* ® A* defined because\n"); //$NON-NLS-1$
+        buffer.append("// E* -> C* defined because E() has started\n"); //$NON-NLS-1$
+        buffer.append("// and C* -> A* defined because\n"); //$NON-NLS-1$
         buffer.append("// C fully constructed\n"); //$NON-NLS-1$
         buffer.append("X(this) //defined: upon construction of X,\n"); //$NON-NLS-1$
         buffer.append("// C/B/D/A sublattice is fully constructed\n"); //$NON-NLS-1$

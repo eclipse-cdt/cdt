@@ -11,8 +11,6 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 import org.eclipse.core.resources.IResource;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * This class represents a project instance in the managed build system.

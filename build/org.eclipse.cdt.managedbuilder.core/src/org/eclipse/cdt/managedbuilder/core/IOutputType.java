@@ -231,7 +231,7 @@ public interface IOutputType extends IBuildObject {
 	 * Returns the name of the build variable associated this this output type's resources
 	 * The variable is used in the build file to represent the list of output files.  
 	 * The same variable name can be used by an inputType to identify a set of output 
-	 * files that contribute to the tool’s input (i.e., those using the same buildVariable 
+	 * files that contribute to the tool's input (i.e., those using the same buildVariable 
 	 * name).  The default name is chosen by MBS.
 	 * 
 	 * @return String

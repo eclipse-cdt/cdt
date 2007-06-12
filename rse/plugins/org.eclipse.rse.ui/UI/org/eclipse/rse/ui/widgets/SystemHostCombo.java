@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Rupen Mardirossian (IBM) - [189426] modify addOurButtonSelectionListener to return proper IHost added to populate ComboBox
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
@@ -983,9 +984,15 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 		  public void widgetSelected(SelectionEvent event) 
 		  {
 		  	  setBusyCursor(true);
-		  	  newConnectionAction.run();
+		  	  IHost[] hostlist = RSECorePlugin.getTheSystemRegistry().getHosts();
+		  	  newConnectionAction.run(); 
 			  setBusyCursor(false);
-		  	  IHost newConnection = (IHost)newConnectionAction.getValue();
+			  IHost[] hostlist2 = RSECorePlugin.getTheSystemRegistry().getHosts();
+			  IHost newConnection=null;
+			  if(hostlist2.length>hostlist.length)
+		  	  {
+		  		  newConnection = hostlist2[hostlist2.length-1];
+		  	  }
 		  	  //System.out.println("newConnection == " + newConnection);
 		  	  if (newConnection != null )
 		  	  {

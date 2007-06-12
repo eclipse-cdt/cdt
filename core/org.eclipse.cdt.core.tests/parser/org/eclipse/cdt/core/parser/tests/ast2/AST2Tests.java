@@ -2134,9 +2134,9 @@ public class AST2Tests extends AST2BaseTest {
                 .getName());
     }
 
-    // test C99: 6.7.5.3-7 A declaration of a parameter as ‘‘array of type’’
-    // shall be adjusted to ‘‘qualified pointer to
-    // type’’, where the type qualifiers (if any) are those specified within the
+    // test C99: 6.7.5.3-7 A declaration of a parameter as ''array of type''
+    // shall be adjusted to ''qualified pointer to
+    // type'', where the type qualifiers (if any) are those specified within the
     // [ and ] of the
     // array type derivation.
     public void testArrayTypeToQualifiedPointerTypeParm() throws Exception {

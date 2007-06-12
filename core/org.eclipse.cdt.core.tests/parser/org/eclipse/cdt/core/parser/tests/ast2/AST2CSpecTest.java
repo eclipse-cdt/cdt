@@ -805,7 +805,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	pi = &ncs.mem; // valid
 	pi = &cs.mem; // violates type constraints for =
 	pci = &cs.mem; // valid
-	pi = a[0]; // invalid: a[0] has type ‘‘const int *’’
+	pi = a[0]; // invalid: a[0] has type ''const int *''
 	}
 	 --End Example]
 	 */
@@ -823,7 +823,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 		buffer.append("pi = &ncs.mem; // valid\n"); //$NON-NLS-1$
 		buffer.append("pi = &cs.mem; // violates type constraints for =\n"); //$NON-NLS-1$
 		buffer.append("pci = &cs.mem; // valid\n"); //$NON-NLS-1$
-		buffer.append("pi = a[0]; // invalid: a[0] has type ‘‘const int *’’\n"); //$NON-NLS-1$
+		buffer.append("pi = a[0]; // invalid: a[0] has type ''const int *''\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parseCandCPP(buffer.toString(), true, 0);
 	}

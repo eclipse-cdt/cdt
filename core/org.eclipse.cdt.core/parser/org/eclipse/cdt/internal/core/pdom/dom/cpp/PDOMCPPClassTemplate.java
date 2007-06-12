@@ -401,7 +401,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 				if(p instanceof IType && op instanceof IType) {
 					same &= (((IType)p).isSameType((IType)op));
 				} else {
-					fail();
+					return false;
 				}
 			}
 			

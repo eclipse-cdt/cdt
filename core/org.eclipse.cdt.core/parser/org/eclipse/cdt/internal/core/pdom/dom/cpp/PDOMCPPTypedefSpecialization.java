@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX - Initial API and implementation
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -100,12 +102,6 @@ class PDOMCPPTypedefSpecialization extends PDOMCPPSpecialization
      * @see java.lang.Object#clone()
      */
     public Object clone() {
-    	IType t = null;
-   		try {
-            t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
-            //not going to happen
-        }
-        return t;
+		return new CPPTypedefClone(this);
     }
 }

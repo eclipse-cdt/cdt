@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,11 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 		if (!selection.isEmpty() && isProjectSelection && hasBuilder) {
 			fCleanAction.selectionChanged(selection);
 			if (fCleanAction.isEnabled()) {
-				menu.insertAfter(BuildAction.ID_BUILD, fCleanAction);
+				if (menu.find(BuildAction.ID_BUILD) != null) {
+					menu.insertAfter(BuildAction.ID_BUILD, fCleanAction);
+				} else {
+					menu.insertAfter(ICommonMenuConstants.GROUP_BUILD, fCleanAction);
+				}
 			}
 		}
 		menu.appendToGroup(ICommonMenuConstants.GROUP_BUILD, new Separator(BUILD_GROUP_MARKER));
@@ -140,7 +144,6 @@ public class CNavigatorBuildActionGroup extends AbstractCNavigatorActionGroup {
 
 		fCleanAction= new BuildAction(shell, IncrementalProjectBuilder.CLEAN_BUILD);
 		fCleanAction.setText(CViewMessages.getString("CleanAction.label")); //$NON-NLS-1$
-		
 	}
 
 	public void updateActionBars() {

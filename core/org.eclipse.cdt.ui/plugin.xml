@@ -1898,33 +1898,16 @@
                       property="org.eclipse.core.resources.projectNature"
                       value="org.eclipse.cdt.core.cnature"/>
              </adapt>
-             <instanceof value="org.eclipse.core.resources.IWorkspaceRoot"/>
-             <instanceof value="org.eclipse.core.resources.IFolder" />
-             <instanceof value="org.eclipse.core.resources.IFile" />
-             <instanceof value="org.eclipse.core.resources.IStorage" />
-             <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
-             <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
+             <instanceof value="org.eclipse.core.resources.IResource"/>
              <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
              <instanceof value="org.eclipse.cdt.ui.CElementGrouping"/>
           </or>
        </triggerPoints>
        <possibleChildren>
           <or>
-             <instanceof value="org.eclipse.core.resources.IWorkspaceRoot"/>
-	         <instanceof value="org.eclipse.core.resources.IFolder" />
-	         <instanceof value="org.eclipse.core.resources.IFile" />
-	         <instanceof value="org.eclipse.core.resources.IStorage" />
-             <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
-             <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
+             <instanceof value="org.eclipse.core.resources.IResource"/>
              <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
              <instanceof value="org.eclipse.cdt.ui.CElementGrouping"/>
-             <adapt
-                   type="org.eclipse.core.resources.IProject">
-                <test
-                      property="org.eclipse.core.resources.projectNature"
-                      value="org.eclipse.cdt.core.cnature">
-                </test>
-             </adapt>
           </or>
        </possibleChildren>
        <override

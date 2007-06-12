@@ -259,6 +259,9 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptAdd(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
 	public PipelinedShapeModification interceptAdd(PipelinedShapeModification addModification) {
+		if(addModification.getParent() instanceof ICProject && fRealInput instanceof IWorkspaceRoot) {
+			addModification.setParent(((ICProject)addModification.getParent()).getProject());
+		}
 		convertToCElements(addModification);
 		return addModification;
 	}
@@ -307,7 +310,6 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 						modification.setParent(element);
 					}
 					return convertToCElements(modification.getChildren());
-					
 				}
 			}
 		}
@@ -336,6 +338,9 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 						convertedChildren.add(newChild);
 					}
 				}
+//			} else if (child instanceof ICProject) {
+//				iter.remove();
+//				convertedChildren.add(((ICProject)child).getProject());
 			}
 		}
 		if (!convertedChildren.isEmpty()) {
@@ -351,7 +356,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	protected void postRefresh(final Object element) {
 		if (element instanceof ICModel) {
 			super.postRefresh(fRealInput);
-		} else if (element instanceof ICProject) {
+		} else if (element instanceof ICProject  && fRealInput instanceof IWorkspaceRoot) {
 			super.postRefresh(((ICProject)element).getProject());
 		} else {
 			super.postRefresh(element);
@@ -361,7 +366,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	protected void postAdd(final Object parent, final Object element) {
 		if (parent instanceof ICModel) {
 			super.postAdd(fRealInput, element);
-		} else if (parent instanceof ICProject) {
+		} else if (parent instanceof ICProject && fRealInput instanceof IWorkspaceRoot) {
 			super.postAdd(((ICProject)parent).getProject(), element);
 		} else {
 			super.postAdd(parent, element);

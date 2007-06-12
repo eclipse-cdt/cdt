@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.upc;
 
+import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.c99.C99Language;
 import org.eclipse.cdt.core.dom.c99.IKeywordMap;
 import org.eclipse.cdt.core.dom.c99.IParser;
+import org.eclipse.cdt.core.dom.c99.IPreprocessorExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c99.C99KeywordMap;
+import org.eclipse.cdt.core.dom.parser.c99.GCCPreprocessorExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
 
@@ -25,7 +28,10 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
  *
  * @author Mike Kucera
  */
-public class UPCLanguage extends C99Language {
+public class UPCLanguage extends BaseExtensibleLanguage {
+	
+	protected static final IPreprocessorExtensionConfiguration 
+		GCC_PREPROCESSOR_EXTENSION = new GCCPreprocessorExtensionConfiguration();
 	
 	// TODO: this should probably go somewhere else
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.parser.upc"; //$NON-NLS-1$ 
@@ -35,7 +41,7 @@ public class UPCLanguage extends C99Language {
 	private static final UPCLanguage myDefault = new UPCLanguage();
 	
 	
-	public static C99Language getDefault() {
+	public static UPCLanguage getDefault() {
 		return myDefault;
 	}
 	
@@ -55,6 +61,10 @@ public class UPCLanguage extends C99Language {
 
 	public IKeywordMap getKeywordMap() {
 		return keywordMap;
+	}
+
+	protected IPreprocessorExtensionConfiguration getPreprocessorExtensionConfiguration() {
+		return GCC_PREPROCESSOR_EXTENSION;
 	}
 
 }

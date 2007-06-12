@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
 
-import org.eclipse.cdt.core.dom.c99.C99Language;
+import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.parser.c99.tests.C99DOMLocationMacroTests;
 
@@ -19,7 +19,7 @@ public class UPCC99DOMLocationMacroTests extends C99DOMLocationMacroTests {
 	public UPCC99DOMLocationMacroTests() {
 	}
 
-	protected C99Language getLanguage() {
-    	return new UPCLanguage();
+	protected BaseExtensibleLanguage getLanguage() {
+    	return UPCLanguage.getDefault();
     }
 }

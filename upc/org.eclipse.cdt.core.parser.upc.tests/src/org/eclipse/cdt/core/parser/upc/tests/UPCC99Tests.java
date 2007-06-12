@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
 
-import org.eclipse.cdt.core.parser.c99.tests.C99Tests;
-import org.eclipse.cdt.core.dom.c99.C99Language;
+import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
+import org.eclipse.cdt.core.parser.c99.tests.C99Tests;
 /**
  * Run the C99 tests against the UPC parser
  *
@@ -23,8 +23,8 @@ public class UPCC99Tests extends C99Tests {
 		super(name);
 	}
 
-	protected C99Language getC99Language() {
-		return new UPCLanguage();
+	protected BaseExtensibleLanguage getC99Language() {
+		return UPCLanguage.getDefault();
 	}
 	
 }

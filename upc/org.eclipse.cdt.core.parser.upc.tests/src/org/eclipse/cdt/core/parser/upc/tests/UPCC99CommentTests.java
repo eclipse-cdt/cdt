@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
 
-import org.eclipse.cdt.core.dom.c99.C99Language;
+import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.parser.c99.tests.C99CommentTests;
 
 public class UPCC99CommentTests extends C99CommentTests {
-
-	protected C99Language getC99Language() {
-		return new UPCLanguage();
-	}
-
 	
+	protected BaseExtensibleLanguage getLanguage() {
+		return UPCLanguage.getDefault();
+	}
 }

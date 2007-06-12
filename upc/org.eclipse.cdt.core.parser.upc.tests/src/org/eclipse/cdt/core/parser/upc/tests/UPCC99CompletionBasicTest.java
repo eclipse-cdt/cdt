@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
 
+import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.c99.C99Language;
-import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.parser.c99.tests.C99CompletionBasicTest;
 
 public class UPCC99CompletionBasicTest extends C99CompletionBasicTest {
 
-	public UPCC99CompletionBasicTest() {
+	public UPCC99CompletionBasicTest() { }
+
+	protected BaseExtensibleLanguage getLanguage() {
+		return C99Language.getDefault();
 	}
 
-	protected C99Language getC99Language() {
-		return new UPCLanguage();
-	}
-
-	
 }

@@ -12,15 +12,15 @@ package org.eclipse.cdt.core.parser.upc.tests;
 
 import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
-import org.eclipse.cdt.core.parser.c99.tests.C99SpecTests;
+import org.eclipse.cdt.core.parser.c99.tests.C99GCCTests;
 
-public class UPCC99SpecTests extends C99SpecTests {
-
-	public UPCC99SpecTests() {
+public class UPCC99GCCTests extends C99GCCTests {
+	
+	public UPCC99GCCTests() {
 	}
-
-	public UPCC99SpecTests(String name) {
-		super(name);
+	
+	public UPCC99GCCTests(String message) {
+		super(message);
 	}
 
 	protected BaseExtensibleLanguage getLanguage() {

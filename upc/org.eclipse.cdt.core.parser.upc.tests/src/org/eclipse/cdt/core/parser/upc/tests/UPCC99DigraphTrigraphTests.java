@@ -10,22 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
 
-import org.eclipse.cdt.core.dom.c99.C99Language;
+import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.parser.c99.tests.C99DigraphTrigraphTests;
 
 
 public class UPCC99DigraphTrigraphTests extends C99DigraphTrigraphTests {
 
-	public UPCC99DigraphTrigraphTests() {
-		super();
-	}
+	public UPCC99DigraphTrigraphTests() { }
+	public UPCC99DigraphTrigraphTests(String name) { super(name); }
 
-	public UPCC99DigraphTrigraphTests(String name) {
-		super(name);
-	}
-
-	protected C99Language getC99Language() {
-		return new UPCLanguage();
+	protected BaseExtensibleLanguage getLanguage() {
+		return UPCLanguage.getDefault();
 	}
 }

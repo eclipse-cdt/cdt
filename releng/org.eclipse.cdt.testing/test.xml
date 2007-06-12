@@ -1,7 +1,5 @@
 <project name="CDT Automated Tests" default="run" basedir=".">
 
-	<property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
-
 	<property name="cdt-core-loc" value="${eclipse-home}/cdt_core_folder"/>
 	<property name="cdt-ui-loc" value="${eclipse-home}/cdt_ui_folder"/>
 	<property name="cdt-debug-ui-loc" value="${eclipse-home}/cdt_debug_ui_folder"/>

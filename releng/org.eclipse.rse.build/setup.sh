@@ -107,8 +107,8 @@ if [ ! -f eclipse/plugins/org.junit_3.8.2.v200705250844/junit.jar ]; then
 fi
 
 # checkout the basebuilder
-baseBuilderTag=RC2_33
-if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.3.0.v20070525-0010.jar \
+baseBuilderTag=RC3_33
+if [ ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.core_3.3.0.v20070531-0010.jar \
   -o ! -f org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build/pdebuild.jar ]; then
   if [ -d org.eclipse.releng.basebuilder ]; then
     echo "Re-getting basebuilder from CVS..."

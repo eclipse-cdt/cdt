@@ -16,14 +16,10 @@ import java.io.File;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
@@ -56,11 +52,11 @@ import org.eclipse.core.runtime.content.IContentType;
 /**
  * Tests bugs found in the PDOM
  */
-public class PDOMBugsTest extends BaseTestCase {
+public class PDOMCPPBugsTest extends BaseTestCase {
 	ICProject cproject;
 	
 	public static Test suite() {
-		return suite(PDOMBugsTest.class);
+		return suite(PDOMCPPBugsTest.class);
 	}
 	
 	protected void setUp() throws Exception {
@@ -202,7 +198,7 @@ public class PDOMBugsTest extends BaseTestCase {
 		cHeaders.create(true, true, NPM);
 		LanguageManager lm= LanguageManager.getInstance();
 		
-		IFile cHeader= TestSourceReader.createFile(cHeaders, "cHeader.h", "struct S {int a; int b; };\nvoid foo(struct S s) {}\n");
+		IFile cHeader= TestSourceReader.createFile(cHeaders, "cHeader.h", "extern \"C\" void foo(int i) {}\n");
 		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project);
 		ICConfigurationDescription cfgd= pd.getDefaultSettingConfiguration();
 		ProjectLanguageConfiguration plc= LanguageManager.getInstance().getLanguageConfiguration(project);
@@ -210,7 +206,7 @@ public class PDOMBugsTest extends BaseTestCase {
 		IContentType ct= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CHEADER);
 		lm.storeLanguageMappingConfiguration(project, new IContentType[] {ct});
 		
-		IFile cppSource= TestSourceReader.createFile(cHeaders, "cppSource.cpp", "struct S s; void ref() {foo(s);}");
+		IFile cppSource= TestSourceReader.createFile(cHeaders, "cppSource.cpp", "void ref() {foo(1);}");
 		
 		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
@@ -229,19 +225,6 @@ public class PDOMBugsTest extends BaseTestCase {
 				IName[] nms= pdom.findNames(ib[0], IIndexFragment.FIND_REFERENCES);
 				assertEquals(1, nms.length);
 				assertTrue(nms[0].getFileLocation().getFileName().endsWith(".cpp"));
-			}
-			
-			{ // test struct S has resolved to the C linkage 
-				IIndexBinding[] ib= pdom.findBindings(new char[][]{{'s'}}, IndexFilter.ALL, NPM);
-				assertEquals(1, ib.length);
-
-				assertTrue(ib[0] instanceof ICPPVariable);
-				ICPPVariable cppv= (ICPPVariable) ib[0];
-
-				IType type= cppv.getType();
-				assertTrue(type instanceof ICompositeType);
-				assertTrue(((ICompositeType) type).getKey() == ICompositeType.k_struct);
-				assertTrue(((ICompositeType) type).getLinkage().getID().equals(ILinkage.C_LINKAGE_ID));			
 			}
 		} finally {
 			pdom.releaseReadLock();

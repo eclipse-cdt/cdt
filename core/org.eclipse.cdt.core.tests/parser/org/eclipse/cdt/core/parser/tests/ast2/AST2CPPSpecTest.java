@@ -1100,7 +1100,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	struct D1 : B { void f(); };
 	struct D2 : B { void f(); };
 	void B::mutate() {
-	new (this) D2; // reuses storage – ends the lifetime of *this
+	new (this) D2; // reuses storage - ends the lifetime of *this
 	f(); //undefined behavior
 	this; // OK, this points to valid memory
 	}
@@ -1124,7 +1124,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("struct D1 : B { void f(); };\n"); //$NON-NLS-1$
 		buffer.append("struct D2 : B { void f(); };\n"); //$NON-NLS-1$
 		buffer.append("void B::mutate() {\n"); //$NON-NLS-1$
-		buffer.append("new (this) D2; // reuses storage – ends the lifetime of *this\n"); //$NON-NLS-1$
+		buffer.append("new (this) D2; // reuses storage - ends the lifetime of *this\n"); //$NON-NLS-1$
 		buffer.append("f(); //undefined behavior\n"); //$NON-NLS-1$
 		buffer.append("this; // OK, this points to valid memory\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
@@ -1301,7 +1301,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	X x;
 	void bar()
 	{
-	xp = &x; // OK; type is ‘‘pointer to X''
+	xp = &x; // OK; type is ''pointer to X''
 	arrp = &arr; // illformed: different types
 	xp++; //OK: X is complete
 	arrp++; //illformed: UNKA can't be completed
@@ -1327,7 +1327,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("X x;\n"); //$NON-NLS-1$
 		buffer.append("void bar()\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
-		buffer.append("xp = &x; // OK; type is ‘‘pointer to X''\n"); //$NON-NLS-1$
+		buffer.append("xp = &x; // OK; type is ''pointer to X''\n"); //$NON-NLS-1$
 		buffer.append("arrp = &arr; // illformed: different types\n"); //$NON-NLS-1$
 		buffer.append("xp++; //OK: X is complete\n"); //$NON-NLS-1$
 		buffer.append("arrp++; //illformed: UNKA can't be completed\n"); //$NON-NLS-1$
@@ -1794,7 +1794,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	 [--Start Example(CPP 6.7-4):
 	int foo(int i)
 	{
-	static int s = foo(2*i); // recursive call – undefined
+	static int s = foo(2*i); // recursive call - undefined
 	return i+1;
 	}
 	 --End Example]
@@ -1803,7 +1803,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("int foo(int i)\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
-		buffer.append("static int s = foo(2*i); // recursive call – undefined\n"); //$NON-NLS-1$
+		buffer.append("static int s = foo(2*i); // recursive call - undefined\n"); //$NON-NLS-1$
 		buffer.append("return i+1;\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
@@ -3658,15 +3658,15 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	/**
 	 [--Start Example(CPP 8.3.4-1):
 	typedef int A[5], AA[2][3];
-	typedef const A CA; // type is ‘‘array of 5 const int''
-	typedef const AA CAA; // type is ‘‘array of 2 array of 3 const int''
+	typedef const A CA; // type is ''array of 5 const int''
+	typedef const AA CAA; // type is ''array of 2 array of 3 const int''
 	 --End Example]
 	 */
 	public void test8_3_4s1() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("typedef int A[5], AA[2][3];\n"); //$NON-NLS-1$
-		buffer.append("typedef const A CA; // type is ‘‘array of 5 const int''\n"); //$NON-NLS-1$
-		buffer.append("typedef const AA CAA; // type is ‘‘array of 2 array of 3 const int''\n"); //$NON-NLS-1$
+		buffer.append("typedef const A CA; // type is ''array of 5 const int''\n"); //$NON-NLS-1$
+		buffer.append("typedef const AA CAA; // type is ''array of 2 array of 3 const int''\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
 	}
 	

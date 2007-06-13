@@ -48,8 +48,7 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 		}
 	
 		WorkingCopy workingCopy = getWorkingCopy();
-		boolean wasOpen= workingCopy.isOpen();
-		boolean wasConsistent = wasOpen && workingCopy.isConsistent();
+		boolean wasConsistent = workingCopy.isConsistent();
 		CElementDeltaBuilder deltaBuilder = null;
 	
 		try {
@@ -64,7 +63,7 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 
 				// register the deltas
 				if (deltaBuilder.delta != null) {
-					if (!wasOpen || deltaBuilder.delta.getAffectedChildren().length > 0) {
+					if (!wasConsistent || forceProblemDetection || deltaBuilder.delta.getAffectedChildren().length > 0) {
 						addReconcileDelta(workingCopy, deltaBuilder.delta);
 					}
 				}

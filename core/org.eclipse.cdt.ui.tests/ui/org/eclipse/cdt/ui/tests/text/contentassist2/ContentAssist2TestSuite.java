@@ -25,7 +25,7 @@ public class ContentAssist2TestSuite extends TestSuite {
 	}
 	
 	public ContentAssist2TestSuite()  {
-		super("Tests in package org.eclipse.cdt.ui.tests.text.contentassist2");
+		super(ContentAssist2TestSuite.class.getName());
 		
 		addTest(CompletionTest_AnonymousTypes.suite());
 		addTest(CompletionTest_ArgumentType_Prefix.suite());

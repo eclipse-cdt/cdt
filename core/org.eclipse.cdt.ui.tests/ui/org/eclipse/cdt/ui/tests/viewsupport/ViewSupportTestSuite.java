@@ -20,7 +20,7 @@ public class ViewSupportTestSuite extends TestSuite {
     }
     
     public ViewSupportTestSuite() {
-        super("Tests in package org.eclipse.cdt.ui.tests.viewsupport");
+        super(ViewSupportTestSuite.class.getName());
         addTestSuite(AsyncViewerTest.class);
     }
 }

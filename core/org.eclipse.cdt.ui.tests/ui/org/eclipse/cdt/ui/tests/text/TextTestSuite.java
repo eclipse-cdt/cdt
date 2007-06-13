@@ -20,7 +20,7 @@ public class TextTestSuite extends TestSuite {
     }
     
     public TextTestSuite() {
-        super("Tests in package org.eclipse.cdt.ui.tests.text");
+        super(TextTestSuite.class.getName());
 
         // partitioning tests
 		addTest(PartitionTokenScannerTest.suite());

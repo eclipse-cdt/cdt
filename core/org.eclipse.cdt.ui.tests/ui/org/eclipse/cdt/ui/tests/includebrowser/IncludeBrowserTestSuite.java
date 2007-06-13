@@ -20,7 +20,7 @@ public class IncludeBrowserTestSuite extends TestSuite {
     }
     
     public IncludeBrowserTestSuite() {
-        super("Tests in package org.eclipse.cdt.ui.tests.inlucdebrowser");
+        super(IncludeBrowserTestSuite.class.getName());
         addTest(BasicIncludeBrowserTest.suite());
     }
 }

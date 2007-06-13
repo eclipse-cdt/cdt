@@ -20,7 +20,7 @@ public class ContentAssistTestSuite extends TestSuite {
     }
     
     public ContentAssistTestSuite() {
-        super("Tests in package org.eclipse.cdt.ui.tests.text.contentassist");
+        super(ContentAssistTestSuite.class.getName());
         
 		addTest( ContentAssistTests.suite() );
         

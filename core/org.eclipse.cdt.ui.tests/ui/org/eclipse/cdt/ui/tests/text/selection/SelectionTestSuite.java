@@ -20,7 +20,7 @@ public class SelectionTestSuite extends TestSuite {
     }
     
     public SelectionTestSuite() {
-        super("Tests in package org.eclipse.cdt.ui.tests.text.selection");
+        super(SelectionTestSuite.class.getName());
         
         // selection tests
         addTest( ResolveBindingTests.suite() );

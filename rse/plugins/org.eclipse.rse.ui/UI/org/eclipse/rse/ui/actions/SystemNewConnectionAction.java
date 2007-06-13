@@ -13,9 +13,11 @@
  * Contributors:
  * Uwe Stieber (Wind River) - Set action id for identification from plugin.xml menu extensions.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Uwe Stieber (Wind River) - [192202] Default RSE new connection wizard does not allow to query created host instance anymore
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -33,6 +35,7 @@ import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.wizards.newconnection.RSEDefaultNewConnectionWizard;
 import org.eclipse.rse.ui.wizards.newconnection.RSEMainNewConnectionWizard;
 import org.eclipse.swt.widgets.Shell;
 
@@ -107,6 +110,9 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 	 * Our default implementation is to return <code>RSEMainNewConnectionWizard</code>.
 	 */
 	protected IWizard createWizard() {
+		// reset the output value
+		setValue(null);
+		
 		// create the new connection wizard instance.
 		RSEMainNewConnectionWizard newConnWizard = new RSEMainNewConnectionWizard();
 		
@@ -159,6 +165,30 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 		this.restrictSystemTypesTo = systemTypes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.actions.SystemBaseWizardAction#postProcessWizard(org.eclipse.jface.wizard.IWizard)
+	 */
+	protected void postProcessWizard(IWizard wizard) {
+		if (wizard instanceof RSEDefaultNewConnectionWizard) {
+			setValue(((RSEDefaultNewConnectionWizard)wizard).getCreatedHost());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.actions.SystemBaseWizardAction#getDialogValue(org.eclipse.jface.dialogs.Dialog)
+	 */
+	protected Object getDialogValue(Dialog dlg) {
+		// We have to trick the super implementation a little bit because otherwise
+		// we do not get access to the current wizard instance. The postProcessWizard
+		// implementation will use setValue() for pushing the created host instance,
+		// which in turn we query here again in case the super implementation does
+		// return null to us (which is the case if the wizard does not implement ISystemWizard,
+		// what is what we do not want to do in case of RSEDefaultNewConnectionWizard anymore).
+		Object value = super.getDialogValue(dlg);
+		if (value == null && getValue() != null) value = getValue();
+		return value;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.actions.SystemBaseAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */

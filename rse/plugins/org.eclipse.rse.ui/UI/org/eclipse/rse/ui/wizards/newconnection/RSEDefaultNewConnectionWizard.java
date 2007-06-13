@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Uwe Stieber (Wind River) - [192202] Default RSE new connection wizard does not allow to query created host instance anymore
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -69,6 +70,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	private ISystemProfile privateProfile = null;
 	private IHost selectedContext = null;
 	private static String lastProfile = null;
+	private IHost createdHost = null; 
 
 	/**
 	 * Constructor.
@@ -119,6 +121,9 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 	 */
 	public void addPages() {
 		try {
+			// reset the remembered created host instance
+			createdHost = null;
+			
 			mainPage = createMainPage(getSystemType());
 		
 			SystemConnectionForm form = mainPage.getSystemConnectionForm();
@@ -329,7 +334,7 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 				try {
 					IRSESystemType systemType = getSystemType();
 					SystemConnectionForm form = mainPage.getSystemConnectionForm();
-					IHost conn = sr.createHost(form.getProfileName(), systemType, form.getConnectionName(), form.getHostName(),
+					createdHost = sr.createHost(form.getProfileName(), systemType, form.getConnectionName(), form.getHostName(),
 																			form.getConnectionDescription(), form.getDefaultUserId(), form.getUserIdLocation(),
 																			subsystemConfigurationSuppliedWizardPages);
 
@@ -337,15 +342,15 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 					cursorSet = false;
 
 					// a tweak that is the result of UCD feedback. Phil
-					if ((conn != null) && SystemPerspectiveHelpers.isRSEPerspectiveActive()) {
+					if ((createdHost != null) && SystemPerspectiveHelpers.isRSEPerspectiveActive()) {
 						if (systemType.getId().equals(IRSESystemType.SYSTEMTYPE_ISERIES_ID)) {
-							ISubSystem[] objSubSystems = sr.getSubSystemsBySubSystemConfigurationCategory("nativefiles", conn); //$NON-NLS-1$
+							ISubSystem[] objSubSystems = sr.getSubSystemsBySubSystemConfigurationCategory("nativefiles", createdHost); //$NON-NLS-1$
 							if ((objSubSystems != null) && (objSubSystems.length > 0))// might be in product that doesn't have iSeries plugins
 								RSEUIPlugin.getTheSystemRegistryUI().expandSubSystem(objSubSystems[0]);
 							else
-								RSEUIPlugin.getTheSystemRegistryUI().expandHost(conn);
+								RSEUIPlugin.getTheSystemRegistryUI().expandHost(createdHost);
 						} else
-							RSEUIPlugin.getTheSystemRegistryUI().expandHost(conn);
+							RSEUIPlugin.getTheSystemRegistryUI().expandHost(createdHost);
 					}
 
 					lastProfile = form.getProfileName();
@@ -368,6 +373,16 @@ public class RSEDefaultNewConnectionWizard extends RSEAbstractNewConnectionWizar
 		return ok;
 	}
 
+	/**
+	 * Returns the create host instance once the user pressed finished. The created
+	 * host instance will be reset to <code>null</code> once the wizard got disposed.
+	 * 
+	 * @return The created host instance or <code>null</code>.
+	 */
+	public IHost getCreatedHost() {
+		return createdHost;
+	}
+		
 	/**
 	 * Private method to get all the wizard pages from all the subsystem factories, given a
 	 * system type.

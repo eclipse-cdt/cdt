@@ -117,7 +117,7 @@
 
 	<target name="test" depends="init" unless="hasErrors">
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
-			dest="${buildDirectory}/eclipse"/>
+			dest="${buildDirectory}"/>
 		<unjar src="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
 			dest="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}"/>
 		<unjar src="${buildDirectory}/eclipse/plugins/${eclipseTest}.jar"
@@ -136,9 +136,9 @@
 	
 	<target name="sign" depends="init" unless="hasErrors">
 		<exec executable="sign">
-			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/${masterFile}"/>
+			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/${buildType}.${buildId}/${masterFile}"/>
 			<arg value="nomail"/>
-			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/${buildId}"/>
+			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results"/>
 		</exec>
 		<waitfor maxwait="30" maxwaitunit="minute">
 			<available file="${buildDirectory}/${masterFile}"/>

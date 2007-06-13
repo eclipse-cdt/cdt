@@ -4,7 +4,7 @@
 		<echo message="${eclipse.home}"/>
 	</target>
 	
-	<target name="build" depends="zips,test"/>
+	<target name="build" depends="zips,sign,test"/>
 	<target name="nightly" depends="tag,zips,sign,test,copy"/>
 	
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
@@ -135,7 +135,7 @@
 	</target>
 	
 	<target name="sign" depends="init" unless="hasErrors">
-		<exec command="sign">
+		<exec executable="sign">
 			<arg value="${zipsdir}/${masterFile}"/>
 			<arg value="nomail"/>
 			<arg value="${buildDirectory}"/>

@@ -14,6 +14,7 @@
  * Uwe Stieber (Wind River) - Set action id for identification from plugin.xml menu extensions.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Uwe Stieber (Wind River) - [192202] Default RSE new connection wizard does not allow to query created host instance anymore
+ * Uwe Stieber (Wind River) - [189426] System File/Folder Dialogs - New Connection Not Added to Drop Down
  ********************************************************************************/
 
 package org.eclipse.rse.ui.actions;
@@ -169,6 +170,7 @@ public class SystemNewConnectionAction extends SystemBaseWizardAction {
 	 * @see org.eclipse.rse.ui.actions.SystemBaseWizardAction#postProcessWizard(org.eclipse.jface.wizard.IWizard)
 	 */
 	protected void postProcessWizard(IWizard wizard) {
+		if (wizard instanceof RSEMainNewConnectionWizard) wizard = ((RSEMainNewConnectionWizard)wizard).getSelectedWizard();
 		if (wizard instanceof RSEDefaultNewConnectionWizard) {
 			setValue(((RSEDefaultNewConnectionWizard)wizard).getCreatedHost());
 		}

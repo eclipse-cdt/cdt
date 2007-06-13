@@ -15,6 +15,7 @@
  * Uwe Stieber (Wind River) - Reworked new connection wizard extension point.
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * Uwe Stieber (Wind River) - [189426] System File/Folder Dialogs - New Connection Not Added to Drop Down
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -86,6 +87,7 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		setDialogSettings(settings.getSection(sectionName));
 		
 		selectedContext = null;
+		selectedWizard = null;
 		mainPage = new RSENewConnectionWizardSelectionPage();
 		initializedWizards.clear();
 		selectionChangedListener.clear();
@@ -98,7 +100,6 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 		super.dispose();
 		
 		selectedContext = null;
-		selectedWizard = null;
 		selectedSystemType = null;
 		selectedWizardCanFinishEarly = false;
 		mainPage = null;

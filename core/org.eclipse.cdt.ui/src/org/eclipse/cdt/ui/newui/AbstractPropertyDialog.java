@@ -67,11 +67,13 @@ public abstract class AbstractPropertyDialog extends Dialog {
 	 		createDialogArea(shell);
 	 		
 	 		// center window
-	 		Rectangle r1 = shell.getDisplay().getBounds();
-	 		Rectangle r2 = shell.getBounds();
-	 		int x = r1.width / 2 - r2.width / 2;
-	 		int y = r1.height / 2 - r2.height / 2;
-	 		shell.setBounds(x, y, r2.width, r2.height);
+	 		if (!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOCENTER)) {
+	 			Rectangle r1 = shell.getDisplay().getBounds();
+	 			Rectangle r2 = shell.getBounds();
+	 			int x = r1.width / 2 - r2.width / 2;
+	 			int y = r1.height / 2 - r2.height / 2;
+	 			shell.setBounds(x, y, r2.width, r2.height);
+	 		}
 	 		
 		 	shell.open();
 		 	Display display = parent.getDisplay();

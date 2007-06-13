@@ -30,14 +30,14 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 	public void handleEvent(CProjectDescriptionEvent event) {
 		ICProjectDescription old= event.getOldCProjectDescription();
 		ICProjectDescription act= event.getNewCProjectDescription();
-		if (old != null && act != null) {
+		if (act != null) {
 			if (completedProjectCreation(old, act)) {
 				ICProject project= getProject(event);
 				if (project != null) {
 					fIndexManager.addProject(project);
 				}
 			}
-			else if (changedDefaultSettingConfiguration(old, act)) {
+			else if (old != null && changedDefaultSettingConfiguration(old, act)) {
 				ICProject project= getProject(event);
 				if (project != null) {
 					fIndexManager.reindex(project);
@@ -70,6 +70,6 @@ public class CProjectDescriptionListener implements	ICProjectDescriptionListener
 	}
 
 	private boolean completedProjectCreation(ICProjectDescription old, ICProjectDescription act) {
-		return old.isCdtProjectCreating() && !act.isCdtProjectCreating();
+		return (old == null || old.isCdtProjectCreating()) && !act.isCdtProjectCreating();
 	}
 }

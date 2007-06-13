@@ -42,7 +42,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		showCDTPerspective();
+		restoreAllParts();
 	}
 	
 	// class SomeClass {

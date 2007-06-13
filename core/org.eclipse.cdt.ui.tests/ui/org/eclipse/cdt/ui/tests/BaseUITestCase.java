@@ -28,8 +28,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -46,7 +47,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public class BaseUITestCase extends BaseTestCase {
@@ -142,10 +142,10 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 	
 	protected void expandTreeItem(TreeItem item) {
-		item.setExpanded(true);
 		Event event = new Event();
 		event.item = item;
 		item.getParent().notifyListeners(SWT.Expand, event);	
+		item.setExpanded(true);
 		runEventQueue(0);
 	}
 
@@ -190,9 +190,21 @@ public class BaseUITestCase extends BaseTestCase {
 		}
 	}
 	
-	protected void showCDTPerspective() throws WorkbenchException {
-		final IWorkbench workbench = PlatformUI.getWorkbench();
-		workbench.showPerspective(CUIPlugin.ID_CPERSPECTIVE, workbench.getActiveWorkbenchWindow());
+	protected void restoreAllParts() throws WorkbenchException {
+		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		page.zoomOut();
+		runEventQueue(0);
+
+		IViewReference[] viewRefs= page.getViewReferences();
+		for (int i = 0; i < viewRefs.length; i++) {
+			IViewReference ref = viewRefs[i];
+			page.setPartState(ref, IWorkbenchPage.STATE_RESTORED);
+		}
+		IEditorReference[] editorRefs= page.getEditorReferences();
+		for (int i = 0; i < editorRefs.length; i++) {
+			IEditorReference ref = editorRefs[i];
+			page.setPartState(ref, IWorkbenchPage.STATE_RESTORED);
+		}
 		runEventQueue(0);
 	}
 	
@@ -214,15 +226,18 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 	
 	protected Control getFocusControl(Class clazz, Control differentTo, int wait) {
+		Control fc= null;
 		for (int i = 0; i <= wait/10; i++) {
-			Control fc= Display.getCurrent().getFocusControl();
+			fc= Display.getCurrent().getFocusControl();
 			if (clazz.isInstance(fc) && fc != differentTo) {
 				return fc;
 			}
 			runEventQueue(10);
 		}
-		fail();
-		return null;
+		assertNotNull(fc);
+		assertTrue(fc != differentTo);
+		assertTrue("Unexpected class " + fc.getClass().getName(), clazz.isInstance(fc));
+		return fc;
 	}
 
 	final protected TreeItem checkTreeNode(Tree tree, int i0, String label) {
@@ -272,5 +287,4 @@ public class BaseUITestCase extends BaseTestCase {
 		assertEquals(label, item.getText());
 		return item;
 	}
-
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,13 +96,18 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	private void insertSearchElement(PDOMSearchElement element) {
 		IPath path = new Path(element.getFileName());
 		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+		boolean handled= false;
 		if (files.length > 0) {
 			for (int j = 0; j < files.length; ++j) {
 				ICElement celement = CoreModel.getDefault().create(files[j]);
-				insertChild(celement, element);
-				insertCElement(celement);
+				if (celement != null) {
+					insertChild(celement, element);
+					insertCElement(celement);
+					handled= true;
+				}
 			}
-		} else {
+		} 
+		if (!handled) {
 			String pathName = path.toOSString(); 
 			insertChild(pathName, element);
 			insertChild(result, pathName);

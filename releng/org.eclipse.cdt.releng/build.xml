@@ -100,8 +100,8 @@
 			<replacefilter token="@branchVersion@" value="${branchVersion}"/>
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
-		<move file="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip" todir="${buildDirectory}"/>
-		<unzip src="${buildDirectory}/cdt-master-${branchVersion}-${buildId}.zip" dest="${buildDirectory}/site"/>
+		<move file="${zipsdir}/${masterFile}" todir="${buildDirectory}"/>
+		<unzip src="${buildDirectory}/${masterFile}" dest="${buildDirectory}/site"/>
 		<move file="${buildDirectory}/site/linux.gtk.x86/eclipse/epl-v10.html" todir="${buildDirectory}/site/eclipse"/>
 		<move file="${buildDirectory}/site/linux.gtk.x86/eclipse/notice.html" todir="${buildDirectory}/site/eclipse"/>
 		<copy file="buildsite.xml" tofile="${buildDirectory}/site/eclipse/site.xml"/>
@@ -111,7 +111,7 @@
 		<!-- for some reason LPG isn't getting picked up-->
 		<copy file="${buildDirectory}/plugins/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200702061926.jar"
 			todir="${buildDirectory}/site/eclipse/plugins"/>
-		<zip destfile="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip" 
+		<zip destfile="${zipsdir}/${masterFile}"
 			basedir="${buildDirectory}/site/eclipse"/>
 	</target>
 
@@ -141,9 +141,9 @@
 			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results"/>
 		</exec>
 		<waitfor maxwait="30" maxwaitunit="minute">
-			<available file="${buildDirectory}/${masterFile}"/>
+			<available file="${buildDirectory}/signed/${masterFile}"/>
 		</waitfor>
-		<move file="${buildDirectory}/${masterFile}" todir="${zipsdir}"/>
+		<move file="${buildDirectory}/signed/${masterFile}" todir="${zipsdir}"/>
 	</target>
 
 	<target name="upload" depends="init" unless="hasErrors">

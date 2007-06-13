@@ -117,7 +117,7 @@
 
 	<target name="test" depends="init" unless="hasErrors">
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
-			dest="${buildDirectory}"/>
+			dest="${buildDirectory}/eclipse"/>
 		<unjar src="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
 			dest="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}"/>
 		<unjar src="${buildDirectory}/eclipse/plugins/${eclipseTest}.jar"

@@ -136,9 +136,9 @@
 	
 	<target name="sign" depends="init" unless="hasErrors">
 		<exec executable="sign">
-			<arg value="${zipsdir}/${masterFile}"/>
+			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/${masterFile}"/>
 			<arg value="nomail"/>
-			<arg value="${buildDirectory}"/>
+			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/${buildId}"/>
 		</exec>
 		<waitfor maxwait="30" maxwaitunit="minute">
 			<available file="${buildDirectory}/${masterFile}"/>

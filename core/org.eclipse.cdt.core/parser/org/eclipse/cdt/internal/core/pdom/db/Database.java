@@ -62,6 +62,7 @@ public class Database {
 	private final File location;
 	private final RandomAccessFile file;
 	private boolean fWritable= false;
+	private boolean fPermanentlyReadOnly;
 	private Chunk[] chunks;
 	
 	private long malloced;
@@ -81,18 +82,29 @@ public class Database {
 	public static final int DATA_AREA = CHUNK_SIZE / MIN_SIZE * INT_SIZE + INT_SIZE;
 	
 	public static final int MAX_SIZE = CHUNK_SIZE - 4; // Room for overhead
-		
-	public Database(File location, ChunkCache cache, int version) throws CoreException {
+	
+	/**
+	 * Construct a new Database object, creating a backing file if necessary.
+	 * @param location the local file path for the database 
+	 * @param cache the cache to be used optimisation
+	 * @param version the version number to store in the database (only applicable for new databases)
+	 * @param permanentReadOnly whether this Database object will ever need writing to
+	 * @throws CoreException
+	 */
+	public Database(File location, ChunkCache cache, int version, boolean permanentlyReadOnly) throws CoreException {
 		try {
 			this.location = location;
-			this.file = new RandomAccessFile(location, "rw"); //$NON-NLS-1$
-			fCache= cache;
+			this.fPermanentlyReadOnly= permanentlyReadOnly;
+			this.file = new RandomAccessFile(location, permanentlyReadOnly ? "r" : "rw"); //$NON-NLS-1$ //$NON-NLS-2$
+			this.fCache= cache;
 			
 			// Allocate chunk table, make sure we have at least one
 			long nChunks = file.length() / CHUNK_SIZE;
 			chunks = new Chunk[(int)nChunks];
 			if (nChunks == 0) {
-				setWritable();
+				if(!permanentlyReadOnly) {
+					setWritable();
+				}
 				createNewChunk();
 				setVersion(version);
 				setReadOnly(true);
@@ -428,7 +440,15 @@ public class Database {
 		return fCache;
 	}
 
+	/**
+	 * Marks this Database as writable. This is used for avoiding some synchronization on chunk fetching. An
+	 * exception is thrown if this Database was constructed as a permanently read only Database.
+	 * @see Database#Database(File, ChunkCache, int, boolean)
+	 * @throw IllegalStateException if called on a permanently read-only database  
+	 */
 	public void setWritable() {
+		if(fPermanentlyReadOnly)
+			throw new IllegalStateException("A Database created as permanent-read-only may not be changed to writable state"); //$NON-NLS-1$
 		fWritable= true;
 	}
 

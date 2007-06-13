@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 import junit.framework.Test;
@@ -35,7 +36,7 @@ public class DBTest extends BaseTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		db = new Database(getTestDir().append(getName()+System.currentTimeMillis()+".dat").toFile(),
-				new ChunkCache(), 0);
+				new ChunkCache(), 0, false);
 	}
 		
 	public static Test suite() {
@@ -73,6 +74,30 @@ public class DBTest extends BaseTestCase {
 		assertEquals(mem - Database.INT_SIZE + blocksize, db.getInt(((Database.CHUNK_SIZE - blocksize) / Database.MIN_SIZE) * Database.INT_SIZE));
 	}
 
+	public void testBug192437() throws IOException {
+		File tmp= File.createTempFile("readOnlyEmpty", ".db");
+		try {
+			tmp.setReadOnly();
+			
+			/* check opening a readonly file for rw access fails */
+			try {
+				new Database(tmp, ChunkCache.getSharedInstance(), 0, false);
+				fail("A readonly file should not be openable with write-access");
+			} catch(CoreException ioe) {
+				// we expect to get a failure here
+			}
+			
+			/* check opening a readonly file for read access does not fail */
+			try {
+				new Database(tmp, ChunkCache.getSharedInstance(), 0, true);
+			} catch(CoreException ce) {
+				fail("A readonly file should be readable by a permanently readonly database "+ce);
+			}
+		} finally {
+			tmp.delete(); // this may be pointless on some platforms
+		}
+	}
+	
 	public void testFreeBlockLinking() throws Exception {
 		final int realsize = 42;
 		final int blocksize = (realsize / Database.MIN_SIZE + 1) * Database.MIN_SIZE;
@@ -126,7 +151,7 @@ public class DBTest extends BaseTestCase {
 		// Tests inserting and retrieving strings
 		File f = getTestDir().append("testStrings.dat").toFile();
 		f.delete();
-		final Database db = new Database(f, new ChunkCache(), 0);
+		final Database db = new Database(f, new ChunkCache(), 0, false);
 		db.setWritable();
 
 		String[] names = {

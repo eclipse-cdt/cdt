@@ -134,10 +134,17 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		loadDatabase(dbPath, cache);
 		this.locationConverter = locationConverter;
 	}
+	
+	/**
+	 * Returns whether this PDOM can never be written to. Writable subclasses should return false.
+	 */
+	protected boolean isPermanentlyReadOnly() {
+		return true;
+	}  
 
 	private void loadDatabase(File dbPath, ChunkCache cache) throws CoreException {
 		fPath= dbPath;
-		db = new Database(fPath, cache, VERSION);
+		db = new Database(fPath, cache, VERSION, isPermanentlyReadOnly());
 		fileIndex= null;	// holds on to the database, so clear it.
 
 		int version= db.getVersion();
@@ -258,7 +265,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			CCorePlugin.log(e);
 		}
 		loadDatabase(file, db.getChunkCache());
-		db.setWritable();
+		if(!isPermanentlyReadOnly()) {
+			db.setWritable();
+		}
 		oldFile.delete();
 	}		
 
@@ -549,10 +558,21 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		}
 	}
 
+	/**
+	 * Acquire a write lock on this PDOM. Blocks until any existing read/write locks are released.
+	 * @throws InterruptedException
+	 * @throws IllegalStateException if this PDOM is not writable
+	 */
 	public void acquireWriteLock() throws InterruptedException {
 		acquireWriteLock(0);
 	}
 
+	/**
+	 * Acquire a write lock on this PDOM, giving up the specified number of read locks first. Blocks
+	 * until any existing read/write locks are released.
+	 * @throws InterruptedException
+	 * @throws IllegalStateException if this PDOM is not writable
+	 */
 	public void acquireWriteLock(int giveupReadLocks) throws InterruptedException {
 		synchronized (mutex) {
 			if (giveupReadLocks > 0) {

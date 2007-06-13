@@ -52,7 +52,7 @@ public class BTreeTests extends BaseTestCase {
 	// and invoke it multiple times per Junit test
 	protected void init(int degree) throws Exception {
 		dbFile = File.createTempFile("pdomtest", "db");
-		db = new Database(dbFile, new ChunkCache(), 0);
+		db = new Database(dbFile, new ChunkCache(), 0, false);
 		db.setWritable();
 		rootRecord = Database.DATA_AREA;
 		comparator = new BTMockRecordComparator();

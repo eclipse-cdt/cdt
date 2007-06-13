@@ -154,4 +154,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	void setCreatedFromScratch(boolean createdFromScratch) {
 		fCreatedFromScratch = createdFromScratch;
 	}
+	
+	protected final boolean isPermanentlyReadOnly() {
+		return false;
+	}
 }

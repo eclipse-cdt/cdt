@@ -37,7 +37,7 @@ public class DBPropertiesTests extends BaseTestCase {
 	protected void setUp() throws Exception {
 		dbLoc = File.createTempFile("test", "db");
 		dbLoc.deleteOnExit();
-		db = new Database(dbLoc, new ChunkCache(), 0);
+		db = new Database(dbLoc, new ChunkCache(), 0, false);
 		db.setWritable();
 	}
 	

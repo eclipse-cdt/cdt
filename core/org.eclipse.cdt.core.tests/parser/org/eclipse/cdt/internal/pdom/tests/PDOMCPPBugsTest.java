@@ -165,7 +165,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 	}
 	
 	public void testInterruptingAcquireWriteLock() throws Exception {
-		final PDOM pdom= (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		final WritablePDOM pdom= (WritablePDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		final boolean[] ok= {false};
 		pdom.acquireReadLock();
 		try {

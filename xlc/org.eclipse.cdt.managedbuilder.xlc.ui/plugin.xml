@@ -198,14 +198,14 @@
 			category="xlc.c.compiler.category.optimization"
 			command="-Q+="
 			id="xlc.c.compiler.option.optimization.Qplus"
-			valueType="stringList"> 
+			valueType="string"> 
 		</option>
 		<option
 			name="%Option.Qminus"
 			category="xlc.c.compiler.category.optimization"
 			command="-Q-="
 			id="xlc.c.compiler.option.optimization.Qminus"
-			valueType="stringList"> 
+			valueType="string"> 
 		</option>
 	  </tool>
 	  <tool
@@ -970,11 +970,11 @@
 		</option>
 		
 		<option
-			name="%Option.Keyword"
-			category="xlc.c.compiler.category.Input"
-			command="-qkeyword="
-			id="xlc.c.compiler.option.misc.keyword"
-			valueType="boolean"> 
+        category="xlc.c.compiler.category.Input"
+        command="-qkeyword="
+        id="xlc.c.compiler.option.misc.keyword"
+        name="%Option.Keyword"
+        valueType="boolean"> 
 		</option>
 
 		<option
@@ -2066,13 +2066,6 @@
 			valueType="string"> 
 		</option>
 		<option
-			name="%Option.expfile"
-			category="xlc.c.compiler.category.cc"
-			command="-qexpfile="
-			id="xlc.c.compiler.option.cc.expfile"
-			valueType="string"> 
-		</option>
-		<option
 			name="%Option.maxmem"
 			category="xlc.c.compiler.category.cc"
 			command="-qmaxmem="
@@ -2080,11 +2073,12 @@
 			valueType="string"> 
 		</option>
 		<option
-			name="%Option.path"
-			category="xlc.c.compiler.category.cc"
-			command="-qpath="
-			id="xlc.c.compiler.option.cc.path"
-			valueType="string"> 
+        browseType="directory"
+        category="xlc.c.compiler.category.cc"
+        command="-qpath="
+        id="xlc.c.compiler.option.cc.path"
+        name="%Option.path"
+        valueType="string"> 
 		</option>
 		<option
 			name="%Option.tls"
@@ -2160,9 +2154,38 @@
 		<option
 			name="%Option.halt"
 			category="xlc.c.compiler.category.lm"
-			command="-qhalt="
 			id="xlc.c.compiler.option.lm.halt"
-			valueType="string"> 
+			valueType="enumerated">
+     <enumeratedOptionValue
+           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue1"
+           isDefault="true"
+           name="%Option.default">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qhalt=i"
+           id="xlc.c.compiler.option.lm.halt.information"
+           name="%Option.halt.information">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qhalt=w"
+           id="xlc.c.compiler.option.lm.halt.warning"
+           name="%Option.halt.warning">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qhalt=e"
+           id="xlc.c.compiler.option.lm.halt.error"
+           name="%Option.halt.error">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qhalt=s"
+           id="xlc.c.compiler.option.lm.halt.severeError"
+           name="%Option.halt.severeError">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qhalt=u"
+           id="xlc.c.compiler.option.lm.halt.unrecoverableError"
+           name="%Option.halt.unrecoverableError">
+     </enumeratedOptionValue> 
 		</option>
 			
 		<option
@@ -2171,53 +2194,6 @@
 			command="-qinfo="
 			id="xlc.c.compiler.option.lm.info"
 			valueType="string"> 
-		</option>
-		 <option
-			name="%Option.langlvl"
-			category="xlc.c.compiler.category.lm"
-			id="xlc.c.compiler.option.lm.langlvl"
-			valueType="enumerated">
-			  <enumeratedOptionValue
-				  name="%Option.none"
-				  isDefault="false"
-				  id="xlc.c.input.langlvl.none">
-			  </enumeratedOptionValue>
-			  <enumeratedOptionValue
-				  name="%Option.langlvl.77std"
-				  isDefault="false"
-				  command="-qlanglvl=77std"
-				  id="xlc.c.input.langlvl.77std">
-			  </enumeratedOptionValue>
-			  <enumeratedOptionValue
-				  name="%Option.langlvl.90std"
-				  isDefault="false"
-				  command="-qlanglvl=90std"
-				  id="xlc.c.input.langlvl.90std">
-			  </enumeratedOptionValue>
-			  <enumeratedOptionValue
-				  name="%Option.langlvl.90pure"
-				  isDefault="false"
-				  command="-qlanglvl=90pure"
-				  id="xlc.c.input.langlvl.90pure">
-			  </enumeratedOptionValue>
-			  <enumeratedOptionValue
-				  name="%Option.langlvl.95std"
-				  isDefault="false"
-				  command="-qlanglvl=95std"
-				  id="xlc.c.input.langlvl.95std">
-			  </enumeratedOptionValue>
-			  <enumeratedOptionValue
-				  name="%Option.langlvl.95pure"
-				  isDefault="false"
-				  command="-qlanglvl=95pure"
-				  id="xlc.c.input.langlvl.95pure">
-			  </enumeratedOptionValue>
-			  <enumeratedOptionValue
-				  name="%Option.langlvl.extended"
-				  isDefault="false"
-				  command="-qlanglvl=extended"
-				  id="xlc.c.input.langlvl.extended">
-			  </enumeratedOptionValue>
 		</option>
 		<option
 			
@@ -2704,6 +2680,14 @@
 				command="-G"
 				id="xlc.c.compiler.option.linking.G"
 				valueType="boolean">
+			</option>
+			<option
+         browseType="file"
+         category="xlc.c.compiler.category.linking"
+         command="-qexpfile="
+         id="xlc.c.compiler.option.linking.expfile"
+         name="%Option.linking.expfile"
+         valueType="string"> 
 			</option>
 			<outputType
 				outputs="so"

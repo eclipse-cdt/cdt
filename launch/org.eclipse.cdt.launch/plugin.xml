@@ -80,35 +80,33 @@
            <enablement>
              <with variable="selection">
                <count value="1"/>
-               <iterate
-                     ifEmpty="false">
-                  <adapt
-                        type="org.eclipse.cdt.core.model.ICElement">
-                     <or>
-                        <instanceof
-                              value="org.eclipse.cdt.core.model.IBinary">
-                        </instanceof>
-                        <instanceof
-                              value="org.eclipse.cdt.core.model.ICProject">
-                        </instanceof>
-                     </or>
-                  </adapt>
+               <iterate>
+                   <or>
+                     <instanceof value="org.eclipse.cdt.core.model.IBinary"/>
+                     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.cdt.launch.isExecutable"/>
+                     <test
+                           forcePluginActivation="true"
+                           property="org.eclipse.cdt.launch.isCProject"/>
+                     <and>
+                       <instanceof value="org.eclipse.ui.IFileEditorInput"/>
+                       <adapt type="org.eclipse.core.resources.IResource">
+                         <adapt type="org.eclipse.cdt.core.model.ICElement"/>
+                       </adapt>
+                     </and>
+                   </or>
                </iterate>
              </with>
            </enablement>
-           <contextLabel
-         	  mode="run"
-         	  label="%ContextualRunCApplication.label"/>
-  		   <contextLabel
-  		 	  mode="debug"
-  		 	  label="%ContextualDebugCApplication.label"/>
-  		 </contextualLaunch>
-         <perspective
-               id="org.eclipse.cdt.ui.CPerspective">
-         </perspective>
-         <perspective
-               id="org.eclipse.debug.ui.DebugPerspective">
-         </perspective>
+         </contextualLaunch>
+         <description
+             mode="run"
+             description="%ContextualRunCApplication.description"/>
+          <description
+             mode="debug"
+             description="%ContextualDebugCApplication.description"/>
          <configurationType
                id="org.eclipse.cdt.launch.localCLaunch">
          </configurationType>
@@ -141,9 +139,7 @@
 	</extension>
 	
 	<!-- Adapters for contextual launch -->
-	<!-- Doug: I'm not sure these are needed anymore.
-		 Contextual launch seems to use a different mechanism now -->
-	<!--extension point="org.eclipse.core.runtime.adapters">
+	<extension point="org.eclipse.core.runtime.adapters">
          <factory 
             class="" 
             adaptableType="org.eclipse.cdt.core.model.IBinary">
@@ -156,9 +152,9 @@
          </factory>         
          <factory 
             class="" 
-            adaptableType="org.eclipse.cdt.internal.core.model.CProject">
+            adaptableType="org.eclipse.cdt.core.model.ICProject">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
          </factory>         
-    </extension-->
+    </extension>
 	
 </plugin>

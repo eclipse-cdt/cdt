@@ -5,7 +5,8 @@
 	</target>
 	
 	<target name="build" depends="zips,test"/>
-	<target name="nightly" depends="tag,zips,test,copy"/>
+	<target name="nightly" depends="tag,zips,sign,test,copy"/>
+	
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>
 	
 	<target name="init">
@@ -24,6 +25,7 @@
 		<property name="buildType" value="I" />
 		<property name="buildId" value="${buildType}${timestamp}"/>
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
+		<property name="masterFile" value="cdt-master-${branchVersion}-${buildId}.zip"/>
 		<property name="eclipseTest" value="org.eclipse.test_3.2.0"/>
 		<property name="messagefile" value="message.in"/>
 		<property name="mailto" value="dschaefer@qnx.com"/>
@@ -132,6 +134,18 @@
 			out="${zipsdir}/junits.html"/>
 	</target>
 	
+	<target name="sign" depends="init" unless="hasErrors">
+		<exec command="sign">
+			<arg value="${zipsdir}/${masterFile}"/>
+			<arg value="nomail"/>
+			<arg value="${buildDirectory}"/>
+		</exec>
+		<waitfor maxwait="30" maxwaitunit="minute">
+			<available file="${buildDirectory}/${masterFile}"/>
+		</waitfor>
+		<move file="${buildDirectory}/${masterFile}" todir="${zipsdir}"/>
+	</target>
+
 	<target name="upload" depends="init" unless="hasErrors">
 		<property name="remotedir" value="dschaefer@dev.eclipse.org:cdt/builds/${branchVersion}"/>
 		<exec dir="${buildDirectory}" executable="scp">

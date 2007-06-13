@@ -32,6 +32,7 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		suite.addTestSuite(UPCLanguageExtensionTests.class);
 		suite.addTestSuite(UPCC99DigraphTrigraphTests.class);
 		suite.addTestSuite(UPCC99GCCTests.class);
+		suite.addTestSuite(UPCC99UtilOldTests.class);
 		
 		return suite;
 	}

@@ -15,6 +15,8 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David Dykstal (IBM) - [189858] made sure that a reference remains broken if the profile
  *                                contained in the reference was not found.
+ * David Dykstal (IBM) - [192122] extended search to look for filter pools in
+ *   profile during getReferencedFilterPool() rather than returning broken reference
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -176,6 +178,19 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 				ISubSystemConfiguration config = subsystem.getSubSystemConfiguration();
 				filterPoolManager = config.getFilterPoolManager(profile);
 				filterPool = filterPoolManager.getSystemFilterPool(filterPoolName);
+				// TODO (dwd) may not need filter pools managers on a per subsystem configuration basis, investigate
+				// added for 192122 - search all pools in the profile, these are unique anyway
+				if (filterPool == null) {
+					ISystemFilterPool[] candidatePools = profile.getFilterPools();
+					for (int i = 0; i < candidatePools.length; i++) {
+						ISystemFilterPool candidatePool = candidatePools[i];
+						String candidatePoolName = candidatePool.getName();
+						if (candidatePoolName.equals(filterPoolName)) {
+							filterPool = candidatePool;
+							break;
+						}
+					}
+				}
 			}
 		}
 		if (filterPool != null) {
@@ -186,7 +201,7 @@ public class SystemFilterPoolReference extends SystemPersistableReferencingObjec
 		}
 		return filterPool;
 	}
-
+	
 	// -------------------------------------------------------------
 	// Methods common with SystemFilterPoolReferenceImpl, and hence
 	//  abstracted out into SystemFilterContainerReference...

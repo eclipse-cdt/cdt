@@ -360,7 +360,9 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		                }
 		                else {
 		                    Set oldFileSet = (Set) sid.commandIdToFilesMap.get(oldCommandId);
-		                    oldFileSet.remove(file);
+		                    if (oldFileSet != null) {
+		                    	oldFileSet.remove(file);
+		                    }
 		                }
 		            }
 		            if (change) {
@@ -498,7 +500,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
                 for (Iterator i = sid.commandIdCommandMap.keySet().iterator(); i.hasNext(); ) {
                     Integer cmdId = (Integer) i.next();
                     Set fileSet = (Set) sid.commandIdToFilesMap.get(cmdId);
-                    if (!fileSet.isEmpty()) {
+                    if (fileSet != null && !fileSet.isEmpty()) {
                         rv.add(sid.commandIdCommandMap.get(cmdId));
                     }
                 }

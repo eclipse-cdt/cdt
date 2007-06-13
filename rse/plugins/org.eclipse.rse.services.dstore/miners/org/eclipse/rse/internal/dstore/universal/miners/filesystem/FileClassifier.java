@@ -12,7 +12,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
- * Martin Oberhuber (Wind River) - [186640] Fix case sensitive issue comparing z/OS 
+ * Martin Oberhuber (Wind River) - [186640] Fix case sensitive issue comparing z/OS
+ * Xuan Chen        (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -145,7 +146,6 @@ public class FileClassifier extends Thread
         _systemShell = "sh"; //$NON-NLS-1$
         _canResolveLinks = osName.startsWith("linux"); //$NON-NLS-1$
 
-        init();
     }
 
     private void init()
@@ -257,6 +257,7 @@ public class FileClassifier extends Thread
     {
         if (!_systemSupportsClassify)
             return;
+        init();
 
         // get full path
         String filePath = null;

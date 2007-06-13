@@ -16,6 +16,7 @@
  * Xuan Chen (IBM) - Fix 160768 - [refresh][dstore] Refresh on renamed node within a zip does not work; 
  * Xuan Chen (IBM) - Fix 189487 - copy and paste a folder did not work - workbench hang
  * Xuan Chen (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
+ * Xuan Chen (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -26,7 +27,7 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.dstore.core.miners.Miner;
@@ -1752,11 +1753,12 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			File[] list, String queryType, String filter, int include, String types[]) 
 	{
 
-		IdentityHashMap foundMap = new IdentityHashMap(list.length);
+		HashMap filteredChildren = new HashMap();
 		List children = subject.getNestedData();
 		if (children != null)
 		{
-			ArrayList filteredChildren = new ArrayList();
+			long enterForTime = System.currentTimeMillis();
+			//Use a HashMap instead of array list to improve performance
 			for (int f = 0; f < children.size(); f++)
 			{
 				DataElement child = (DataElement)children.get(f);
@@ -1767,36 +1769,40 @@ private DataElement createDataElementFromLSString(DataElement subject,
 					{
 						if (StringCompare.compare(filter, child.getName(), false))
 						{
-							filteredChildren.add(child);
+							//filteredChildren.add(child);
+							filteredChildren.put(child.getName(), child);
 						}
 					}
 					else
 					{
-						filteredChildren.add(child);
+						//filteredChildren.add(child);
+						filteredChildren.put(child.getName(), child);
 					}
 				}
 			}
+		}
 			
 		
-			if (filteredChildren.size() != 0) 
-			{
-				boolean found;
-				Object[] currentObjList = filteredChildren.toArray();
+			
+				boolean found = false;
 						
 				// Check if the current Objects in the DataStore are valid... exist
 				// on the remote host
 				try {
-					for (int i = 0; i < currentObjList.length; ++i) 
-					{
-						found = false;
-						DataElement previousElement = (DataElement) currentObjList[i];
-						for (int j = 0; j < list.length && !found; ++j) 
+						for (int j = 0; j < list.length; ++j) 
 						{
 							
-							if (previousElement.getName().equals(list[j].getName()) && !previousElement.isDeleted()) 
+							found = false;
+							File file = list[j];
+							String fileName = file.getName();
+							boolean isHidden = file.isHidden() || fileName.charAt(0) == '.';
+
+							DataElement previousElement = (DataElement)filteredChildren.get(fileName);
+							if (previousElement != null && !previousElement.isDeleted()) 
 							{
 								// Type have to be equal as well
-								String type = ((DataElement) currentObjList[i]).getType();
+								//String type = ((DataElement) currentObjList[i]).getType();
+								String type = previousElement.getType();
 								boolean isfile = list[j].isFile();
 								if (((type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || type.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) && isfile)
 										|| 
@@ -1808,191 +1814,156 @@ private DataElement createDataElementFromLSString(DataElement subject,
 										String thisType = types[j];
 										if (attributes.indexOf(thisType) != -1)
 										{
-											foundMap.put(list[j], currentObjList[i]); // already exists so don't recreate the element
+										    filteredChildren.remove(list[j].getName()); //remove it from the filterChildren list
 											found = true;
 										}
 									}
 									else
 									{
-										foundMap.put(list[j], currentObjList[i]); // already exists so don't recreate the element
+									    filteredChildren.remove(list[j].getName());
 										found = true;
 									}
 								}
 							}
+							
+							DataElement deObj = null;
+							if (!isHidden || showHidden)
+							{
+								if (found)
+								{
+									//this object already exists in the DStore
+									deObj = previousElement;
+								}
+								else
+								{
+									//We need to create a new data element for this object.
+									if (include == IClientServerConstants.INCLUDE_ALL) 
+									{
+										if (file.isDirectory())
+										{
+											deObj = ds.createObject(subject,deUniversalFolderObject,fileName);
+										}
+										else
+										// file
+										{
+											if (ArchiveHandlerManager.getInstance().isArchive(file)) 
+											{
+												deObj = ds
+														.createObject(
+																subject,
+																deUniversalArchiveFileObject,
+																fileName);
+											} 
+											else 
+											{
+												deObj = ds.createObject(subject,
+														deUniversalFileObject,
+														fileName);
+											}
+										}
+									} 
+									else if (include == IClientServerConstants.INCLUDE_FOLDERS_ONLY) 
+									{
+										if (ArchiveHandlerManager.getInstance().isArchive(file)) 
+										{
+											deObj = ds.createObject(subject,
+													deUniversalArchiveFileObject,
+													fileName);
+										} 
+										else 
+										{
+											deObj = ds.createObject(subject,
+													deUniversalFolderObject,
+													fileName);
+										}
+									} 
+									else if (include == IClientServerConstants.INCLUDE_FILES_ONLY) 
+									{
+										if (ArchiveHandlerManager.getInstance().isArchive(file)) 
+										{
+											deObj = ds.createObject(subject,
+													deUniversalArchiveFileObject,
+													fileName);
+										} 
+										else 
+										{
+											deObj = ds
+													.createObject(subject,
+															deUniversalFileObject,
+															fileName);
+										}
+									}
+									if (deObj != null)
+									{
+										if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
+										{
+											deObj.setAttribute(DE.A_VALUE, subject.getAttribute(DE.A_VALUE));
+										}
+										else 
+										{
+										
+											if (subject.getName().length() > 0) 
+											{
+												String valueStr = subject.getAttribute(DE.A_VALUE);
+												//String valueStr = list[i].getParentFile().getAbsolutePath();
+												StringBuffer valueBuffer = new StringBuffer(valueStr);
+												if ((_isWindows && valueStr.endsWith("\\"))|| valueStr.endsWith("/") || subject.getName().startsWith("/"))  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+												{
+													valueBuffer.append(subject.getName());
+													deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
+												} 
+												else 
+												{
+													valueBuffer.append(File.separatorChar);
+													valueBuffer.append(subject.getName());
+													deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
+												}
+											} 
+											else 
+											{
+												String valueStr = list[j].getParentFile().getAbsolutePath();
+												deObj.setAttribute(DE.A_VALUE, valueStr);
+											}
+										}
+									}
+								}
+								
+								String properties = setProperties(file);
+								if (deObj != null)
+								{
+									if (types != null)
+									{
+										String oldSource = deObj.getAttribute(DE.A_SOURCE);
+										String newSource = properties + "|" + types[j];
+										if (!oldSource.startsWith(newSource))
+										                                            
+									    {
+									        deObj.setAttribute(DE.A_SOURCE, newSource); //$NON-NLS-1$
+									    }
+									}
+									else
+									{
+										String oldSource = deObj.getAttribute(DE.A_SOURCE);
+										String newSource = properties;
+										if (!oldSource.startsWith(newSource))
+											deObj.setAttribute(DE.A_SOURCE, properties);
+									}
+								}
+							}
 						} // end for j
-	
-						// Object in DataStore no longer exists in the host. Remove
-						// it from DataStore.
-						if (found == false) 
+						
+						//Object left over in the filteredChildren is no longer in the system any more.  Need to remove.
+						Iterator myIterator = filteredChildren.keySet().iterator();
+						while(myIterator.hasNext()) 
 						{
-							//DataElement deObj = ds.find(subject, DE.A_NAME,((DataElement) currentObjList[i]).getName(), 1);
-							ds.deleteObject(subject, previousElement);
+							ds.deleteObject(subject, (DataElement)(filteredChildren.get(myIterator.next())));
 						}
-					} // end for i
+	
 				} catch (Exception e) {
 					e.printStackTrace();
 					UniversalServerUtilities.logError(CLASSNAME,
 							"createDataElement failed with exception - isFile ", e); //$NON-NLS-1$
 				}
-			} // end currentObj not 0
-		}
-
-		// Now query the other way. If the object queried, exists on the host,
-		// then check if
-		// it is already in datastore. If so do not recreate it.
-
-
-			 
-			// DKM - test - dummy object
-			//ds.createObject(subject,IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR,"I'm not really here!");
-
-			for (int i = 0; i < list.length; i++) 
-			{
-				DataElement deObj = null;
-				File file = list[i];
-			
-				try 
-				{
-					String fileName = file.getName();
-					boolean isHidden = file.isHidden() || fileName.charAt(0) == '.';
-
-					if (!isHidden || showHidden)
-					{
-						// check for duplicates
-						Object obj = foundMap.get(file);
-						if (obj != null && obj instanceof DataElement)
-						{
-							deObj = (DataElement)obj;
-						}
-						//deObj = getFileElement(subject, list[i]);
-						
-						if (deObj == null) 
-						{
-							if (include == IClientServerConstants.INCLUDE_ALL) 
-							{
-								if (file.isDirectory())
-								{
-									deObj = ds.createObject(subject,deUniversalFolderObject,fileName);
-								}
-								else
-								// file
-								{
-									if (ArchiveHandlerManager.getInstance().isArchive(file)) 
-									{
-										deObj = ds
-												.createObject(
-														subject,
-														deUniversalArchiveFileObject,
-														fileName);
-									} 
-									else 
-									{
-										deObj = ds.createObject(subject,
-												deUniversalFileObject,
-												fileName);
-									}
-								}
-							} 
-							else if (include == IClientServerConstants.INCLUDE_FOLDERS_ONLY) 
-							{
-								if (ArchiveHandlerManager.getInstance().isArchive(file)) 
-								{
-									deObj = ds.createObject(subject,
-											deUniversalArchiveFileObject,
-											fileName);
-								} 
-								else 
-								{
-									deObj = ds.createObject(subject,
-											deUniversalFolderObject,
-											fileName);
-								}
-							} 
-							else if (include == IClientServerConstants.INCLUDE_FILES_ONLY) 
-							{
-								if (ArchiveHandlerManager.getInstance().isArchive(file)) 
-								{
-									deObj = ds.createObject(subject,
-											deUniversalArchiveFileObject,
-											fileName);
-								} 
-								else 
-								{
-									deObj = ds
-											.createObject(subject,
-													deUniversalFileObject,
-													fileName);
-								}
-							}
-
-							if (deObj != null)
-							{
-								if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
-								{
-									deObj.setAttribute(DE.A_VALUE, subject.getAttribute(DE.A_VALUE));
-								}
-								else 
-								{
-								
-									if (subject.getName().length() > 0) 
-									{
-										String valueStr = subject.getAttribute(DE.A_VALUE);
-										//String valueStr = list[i].getParentFile().getAbsolutePath();
-										StringBuffer valueBuffer = new StringBuffer(valueStr);
-										if ((_isWindows && valueStr.endsWith("\\"))|| valueStr.endsWith("/") || subject.getName().startsWith("/"))  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-										{
-											valueBuffer.append(subject.getName());
-											deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
-										} 
-										else 
-										{
-											valueBuffer.append(File.separatorChar);
-											valueBuffer.append(subject.getName());
-											deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
-										}
-									} 
-									else 
-									{
-										String valueStr = list[i].getParentFile().getAbsolutePath();
-										deObj.setAttribute(DE.A_VALUE, valueStr);
-									}
-								}
-							}
-						}
-						// DKM - do basic property stuff here
-						String properties = setProperties(file);
-						if (deObj != null)
-						{
-							if (types != null)
-							{
-							    /*
-							    String oldClassification = getClassificationString(deObj.getAttribute(DE.A_SOURCE));
-							    if (oldClassification != null && !oldClassification.equals(types[i]))
-							    {
-							        deObj.setAttribute(DE.A_SOURCE, properties + "|" + oldClassification + " " + types[i]);
-							    }
-							    else
-							    */
-							    {
-							        deObj.setAttribute(DE.A_SOURCE, properties + "|" + types[i]); //$NON-NLS-1$
-							    }
-							}
-							else
-							{
-								deObj.setAttribute(DE.A_SOURCE, properties);
-							}
-						}
-					}
-				} catch (Exception e) 
-				{
-					UniversalServerUtilities
-							.logError(
-									CLASSNAME,
-									"createDataElement failed with exception - isHidden ", //$NON-NLS-1$
-									e);
-				}
-			} // end for
-		//*/
 
 	}
 
@@ -2006,12 +1977,10 @@ private DataElement createDataElementFromLSString(DataElement subject,
 			String virtualPath) 
 	{
 
-		IdentityHashMap foundMap = null;
+		HashMap filteredChildren = new HashMap();
 		List children = subject.getNestedData();
 		if (children != null)
 		{
-			ArrayList filteredChildren = new ArrayList();
-			
 			for (int f = 0; f < children.size(); f++)
 			{
 				DataElement child = (DataElement)children.get(f);
@@ -2021,33 +1990,27 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				{
 					if (StringCompare.compare(filter, child.getName(), false))
 					{
-						filteredChildren.add(child);
+						filteredChildren.put(child.getName(), child);
 					}
 				}
 				else
 				{
-					filteredChildren.add(child);
+					filteredChildren.put(child.getName(), child);
 				}				
 			}
+		}
 			
-			foundMap = new IdentityHashMap(list.length);
-			
-			if (filteredChildren.size() != 0) 
-			{
-				boolean found;
-				Object[] currentObjList = filteredChildren.toArray();
+
 	
 				// Check if the current Objects in the DataStore are valid... exist
 				// on the remote host
 				try {
-					for (int i = 0; i < currentObjList.length; ++i) {
-						found = false;
-						DataElement previousElement = (DataElement) currentObjList[i];
-						for (int j = 0; j < list.length && !found; ++j) 
+					    boolean found = false;
+						for (int j = 0; j < list.length; ++j) 
 						{
-							
-							if (!previousElement.isDeleted()
-									&& previousElement.getName().equals(list[j].name)) 
+							found = false;
+							DataElement previousElement = (DataElement)filteredChildren.get(list[j].name);
+							if (previousElement != null &&!previousElement.isDeleted())
 							{
 								// Type have to be equal as well
 								String type = previousElement.getType();
@@ -2056,67 +2019,57 @@ private DataElement createDataElementFromLSString(DataElement subject,
 										|| (type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR) && !isfile)
 										)
 								{
-								    foundMap.put(list[j], previousElement);
+								    filteredChildren.remove(list[j].name);
 									found = true;
 								}
 							}
+							DataElement deObj = null;
+							VirtualChild child = list[j];
+							
+							if (found)
+							{
+								deObj = previousElement;
+							}
+							if (deObj == null) 
+							{
+								if (child.isDirectory) 
+								{
+									deObj = _dataStore.createObject(subject, IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR,child.name);
+								} 
+								else // file
+								{
+									deObj = _dataStore.createObject(subject,IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR, child.name);
+								}
+							
+							}
+							String oldValue = deObj.getAttribute(DE.A_VALUE);
+							String newValue = rootPath + ArchiveHandlerManager.VIRTUAL_SEPARATOR + virtualPath;
+							if (!oldValue.startsWith(newValue))  
+						    {
+						        deObj.setAttribute(DE.A_VALUE, newValue); //$NON-NLS-1$
+						    }
+							String oldSource = deObj.getAttribute(DE.A_SOURCE);
+							String newSource = setProperties(child);
+							if (!oldSource.startsWith(newSource))  
+						    {
+						        deObj.setAttribute(DE.A_SOURCE, newSource); //$NON-NLS-1$
+						    }
+
 						} // end for j
-	
-						// Object in DataStore no longer exists in the host. Remove
-						// it from DataStore.
-						if (found == false) 
+						
+						//Object left over in the filteredChildren is no longer in the system any more.  Need to remove.
+						Iterator myIterator = filteredChildren.keySet().iterator();
+						while(myIterator.hasNext()) 
 						{
-							ds.deleteObject(subject, previousElement);
+							ds.deleteObject(subject, (DataElement)(filteredChildren.get(myIterator.next())));
 						}
-					} // end for i
 				} catch (Exception e) {
 					e.printStackTrace();
 					UniversalServerUtilities.logError(CLASSNAME,
 							"createDataElement failed with exception - isFile ", e); //$NON-NLS-1$
 				}
-			} // end currentObj not 0
-		}
-
+	} // end currentObj not 0
 		
-		// Now query the other way. If the object queried, exists on the host,
-		// then check if
-		// it is already in datastore. If so do not recreate it.
-
-		if (list != null) 
-		{
-			for (int i = 0; i < list.length; i++) 
-			{
-			    DataElement deObj = null;
-				VirtualChild child = list[i];
-				Object obj = null;
-				if (foundMap != null)
-				{
-					obj = foundMap.get(child);
-				}
-				if (obj != null && obj instanceof DataElement)
-				{
-					deObj = (DataElement)obj;
-				}
-
-				if (deObj == null) 
-				{
-					if (child.isDirectory) 
-					{
-						deObj = _dataStore.createObject(subject, IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR,child.name);
-					} 
-					else // file
-					{
-						deObj = _dataStore.createObject(subject,IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR, child.name);
-					}
-				
-				}
-				deObj.setAttribute(DE.A_VALUE, rootPath + ArchiveHandlerManager.VIRTUAL_SEPARATOR + virtualPath);
-				deObj.setAttribute(DE.A_SOURCE, setProperties(child));
-			}
-		}
-
-		//*/
-	}
 
 	public String setProperties(File fileObj) {
 		return setProperties(fileObj, false);

@@ -331,6 +331,10 @@ public final class CHeuristicScanner implements Symbols {
 			case LANGLE:
 				return TokenLESSTHAN;
 			case RANGLE:
+				if (peekNextChar() == RANGLE) {
+					++fPos;
+					return TokenSHIFTRIGHT;
+				}
 				return TokenGREATERTHAN;
 		}
 
@@ -403,6 +407,10 @@ public final class CHeuristicScanner implements Symbols {
 			case LANGLE:
 				return TokenLESSTHAN;
 			case RANGLE:
+				if (peekPreviousChar() == RANGLE) {
+					--fPos;
+					return TokenSHIFTRIGHT;
+				}
 				return TokenGREATERTHAN;
 			case DOT:
 				return TokenDOT;
@@ -437,6 +445,32 @@ public final class CHeuristicScanner implements Symbols {
 			return TokenOTHER;
 		}
 
+	}
+
+	/**
+	 * @return the next char without shifting the position
+	 */
+	private char peekNextChar() {
+		if (fPos + 1 < fDocument.getLength()) {
+			try {
+				return fDocument.getChar(fPos + 1);
+			} catch (BadLocationException exc) {
+			}
+		}
+		return (char)-1;
+	}
+
+	/**
+	 * @return the previous char without shifting the position
+	 */
+	private char peekPreviousChar() {
+		if (fPos >= 0) {
+			try {
+				return fDocument.getChar(fPos);
+			} catch (BadLocationException exc) {
+			}
+		}
+		return (char)-1;
 	}
 
 	/**

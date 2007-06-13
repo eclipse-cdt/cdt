@@ -210,8 +210,7 @@
 	</target>
 
 	<target name="tagone">
-		<cvs cvsroot=":ext:dschaefer@dev.eclipse.org:/cvsroot/tools" cvsrsh="ssh"
-			command="rtag ${tagbranch} ${tagname} ${tagmodule}"/>
+		<cvs cvsroot="/cvsroot/tools" command="rtag ${tagbranch} ${tagname} ${tagmodule}"/>
 	</target>
 	
 	<target name="tag" depends="init">

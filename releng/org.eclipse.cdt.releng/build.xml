@@ -138,7 +138,7 @@
 		<exec executable="sign">
 			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/${buildType}.${buildId}/${masterFile}"/>
 			<arg value="nomail"/>
-			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results"/>
+			<arg value="/home/data/httpd/download-staging.priv/tools/cdt/releng/results/signed"/>
 		</exec>
 		<waitfor maxwait="30" maxwaitunit="minute">
 			<available file="${buildDirectory}/signed/${masterFile}"/>

@@ -73,36 +73,32 @@ public class IncludeFileEntry extends APathEntry implements IIncludeFileEntry {
 	 * @see org.eclipse.cdt.core.model.IIncludeEntry#getFullIncludePath()
 	 */
 	public IPath getFullIncludeFilePath() {
-		IPath p;
-		IPath inc = getIncludeFilePath();
+		final IPath inc = getIncludeFilePath();
 		if (!basePath.isEmpty()) {
 			IPath loc = basePath;
 			if (!loc.isAbsolute()) {
-				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(loc);
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(loc.append(inc));
 				if (res != null) {
-					loc = res.getLocation();
+					IPath location = res.getLocation();
+					if (location != null) {
+						return location;
+					}
 				}
 			}
-			p = loc.append(inc);
-			return p;
+			return loc.append(inc);
 		}
 		
-		p = inc;
-
-		if (!p.isAbsolute()) {
+		if (!inc.isAbsolute()) {
 			IPath resPath = getPath();
-			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath);
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(resPath.append(inc));
 			if (res != null) {
-				if (res.getType() == IResource.FILE) {
-					res = res.getParent();
-				}
 				IPath location = res.getLocation();
 				if (location != null) {
-					p = location.append(p);
+					return location;
 				}
 			}
 		}
-		return p;
+		return inc;
 	}
 
 	/* (non-Javadoc)

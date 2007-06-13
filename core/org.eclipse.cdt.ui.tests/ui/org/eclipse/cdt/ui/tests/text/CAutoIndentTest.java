@@ -438,8 +438,8 @@ public class CAutoIndentTest extends TestCase {
 		for(int i=0; i<kw.length; i++) {
 			tester.reset();
 
-			tester.type(kw[i]+" A {\n"); //$NON-NLS-1$
-			assertEquals(kw[i]+" A {\n\t\r\n};", tester.fDoc.get()); //$NON-NLS-1$
+			tester.type("\n\n\n"+kw[i]+" A {\n"); //$NON-NLS-1$
+			assertEquals("\n\n\n"+kw[i]+" A {\n\t\n};", tester.fDoc.get()); //$NON-NLS-1$
 		}
 		
 		for(int i=0; i<kw.length; i++) {		
@@ -493,20 +493,20 @@ public class CAutoIndentTest extends TestCase {
 	public void testBracketInsertion() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester();
 		
-		tester.type("for (;;) {\n");
-		assertEquals("for (;;) {\n\t\r\n}", tester.fDoc.get()); //$NON-NLS-1$
+		tester.type("\nfor (;;) {\n");
+		assertEquals("\nfor (;;) {\n\t\n}", tester.fDoc.get()); //$NON-NLS-1$
 		
 		tester.reset();
-		tester.type("for /*class*/ (;;) {\n"); //$NON-NLS-1$
-		assertEquals("for /*class*/ (;;) {\n\t\r\n}", tester.fDoc.get()); //$NON-NLS-1$	
+		tester.type("\nfor /*class*/ (;;) {\n"); //$NON-NLS-1$
+		assertEquals("\nfor /*class*/ (;;) {\n\t\n}", tester.fDoc.get()); //$NON-NLS-1$	
 		
 		tester.reset();
-		tester.type("for (;;) /*class*/ {\n"); //$NON-NLS-1$
-		assertEquals("for (;;) /*class*/ {\n\t\r\n}", tester.fDoc.get()); //$NON-NLS-1$
+		tester.type("\nfor (;;) /*class*/ {\n"); //$NON-NLS-1$
+		assertEquals("\nfor (;;) /*class*/ {\n\t\n}", tester.fDoc.get()); //$NON-NLS-1$
 
 		tester.reset();
-		tester.type("int i[5]={\n"); //$NON-NLS-1$
-		assertEquals("int i[5]={\n\t\t\r\n};", tester.fDoc.get()); //$NON-NLS-1$
+		tester.type("\nint i[5]={\n"); //$NON-NLS-1$
+		assertEquals("\nint i[5]={\n\t\t\n};", tester.fDoc.get()); //$NON-NLS-1$
 	}
 
 	public void testBracketIndentForConstructorDefinition_Bug183814() throws BadLocationException {

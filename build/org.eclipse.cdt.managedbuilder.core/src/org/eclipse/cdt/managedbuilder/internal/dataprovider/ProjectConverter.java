@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.util.PathEntryTranslator;
@@ -502,7 +501,7 @@ public class ProjectConverter implements ICProjectConverter {
 		convertOldStdMakeToNewStyle(project, false, monitor, true);
 	}
 
-	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes){
+	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes) throws CoreException {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfoLegacy(project);
 		
 		synchronized(LOCK){
@@ -516,21 +515,23 @@ public class ProjectConverter implements ICProjectConverter {
 					for(int i = 0; i < cfgs.length; i++){
 						cfg = (Configuration)cfgs[i];
 						data = cfg.getConfigurationData();
-						try {
+//						try {
 							ICConfigurationDescription cfgDes = newDes.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 							if(cfg.getConfigurationDescription() != null) {
 								//copy cfg to avoid raise conditions
 								cfg = ConfigurationDataProvider.copyCfg(cfg, cfgDes);
 							}
 							cfg.setConfigurationDescription(cfgDes);
-						} catch (WriteAccessException e) {
-							ManagedBuilderCorePlugin.log(e);
-						} catch (CoreException e) {
-							ManagedBuilderCorePlugin.log(e);
-						}
+//						} catch (WriteAccessException e) {
+//							ManagedBuilderCorePlugin.log(e);
+//						} catch (CoreException e) {
+//							ManagedBuilderCorePlugin.log(e);
+//						}
 						cfg.exportArtifactInfo();
 					}
 				}
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), "failed to load the build info for the old-style project"));
 			}
 		}
 		return info;

@@ -288,7 +288,11 @@ implements IExecutableExtension, IWizardWithMemory
 	public IPath getLastProjectLocation() {
 		return lastProjectLocation;
 	}
-	
+
+	public IProject getLastProject() {
+		return newProject;
+	}
+
 	// Methods below should provide data for language check
 	public String[] getLanguageIDs (){
 		return EMPTY_ARR;

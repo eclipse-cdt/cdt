@@ -27,9 +27,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -92,48 +90,6 @@ public class TeamSharedIndexTest extends IndexTestBase {
 			return project;
 		} finally {
 			mj.dispose();
-		}
-	}
-
-	static class ModelJoiner implements IElementChangedListener {
-		private boolean[] changed= new boolean[1];
-		
-		public ModelJoiner() {
-			CoreModel.getDefault().addElementChangedListener(this);
-		}
-		
-		public void clear() {
-			synchronized (changed) {
-				changed[0]= false;
-				changed.notifyAll();
-			}
-		}
-		
-		public void join() throws CoreException {
-			try {
-				synchronized(changed) {
-					while(!changed[0]) {
-						changed.wait();
-					}
-				}
-			} catch(InterruptedException ie) {
-				throw new CoreException(CCorePlugin.createStatus("Interrupted", ie));
-			}
-		}
-		
-		public void dispose() {
-			CoreModel.getDefault().removeElementChangedListener(this);
-		}
-		
-		public void elementChanged(ElementChangedEvent event) {
-			// Only respond to post change events
-			if (event.getType() != ElementChangedEvent.POST_CHANGE)
-				return;
-			
-			synchronized (changed) {
-				changed[0]= true;
-				changed.notifyAll();
-			}
 		}
 	}
 	

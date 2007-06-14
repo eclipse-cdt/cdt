@@ -28,6 +28,10 @@ import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -187,4 +191,50 @@ public class BaseTestCase extends TestCase {
     public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
     	fExpectedLoggedNonOK= count;
     }
+    
+    /**
+     * Some test steps need synchronizing against a CModel event. This class
+     * is a very basic means of doing that.
+     */
+    static protected class ModelJoiner implements IElementChangedListener {
+		private boolean[] changed= new boolean[1];
+		
+		public ModelJoiner() {
+			CoreModel.getDefault().addElementChangedListener(this);
+		}
+		
+		public void clear() {
+			synchronized (changed) {
+				changed[0]= false;
+				changed.notifyAll();
+			}
+		}
+		
+		public void join() throws CoreException {
+			try {
+				synchronized(changed) {
+					while(!changed[0]) {
+						changed.wait();
+					}
+				}
+			} catch(InterruptedException ie) {
+				throw new CoreException(CCorePlugin.createStatus("Interrupted", ie));
+			}
+		}
+		
+		public void dispose() {
+			CoreModel.getDefault().removeElementChangedListener(this);
+		}
+		
+		public void elementChanged(ElementChangedEvent event) {
+			// Only respond to post change events
+			if (event.getType() != ElementChangedEvent.POST_CHANGE)
+				return;
+			
+			synchronized (changed) {
+				changed[0]= true;
+				changed.notifyAll();
+			}
+		}
+	}
 }

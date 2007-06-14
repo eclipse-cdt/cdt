@@ -66,41 +66,44 @@ public class PDOMTestBase extends BaseTestCase {
 	}
 	
 	protected ICProject createProject(String folderName, final boolean cpp) throws CoreException {
-
-		// Create the project
-		projectName = "ProjTest_" + System.currentTimeMillis();
-		final File rootDir = CTestPlugin.getDefault().getFileInPlugin(rootPath.append(folderName));
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final ICProject cprojects[] = new ICProject[1];
-		workspace.run(new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// Create the project
-				ICProject cproject= cpp ? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
-						: CProjectHelper.createCProject(projectName, null, IPDOMManager.ID_NO_INDEXER);
+		ModelJoiner mj= new ModelJoiner();
+		try {
+			// Create the project
+			projectName = "ProjTest_" + System.currentTimeMillis();
+			final File rootDir = CTestPlugin.getDefault().getFileInPlugin(rootPath.append(folderName));
+			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			workspace.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					// Create the project
+					ICProject cproject= cpp ? CProjectHelper.createCCProject(projectName, null, IPDOMManager.ID_NO_INDEXER)
+							: CProjectHelper.createCProject(projectName, null, IPDOMManager.ID_NO_INDEXER);
 
-				// Import the files at the root
-				ImportOperation importOp = new ImportOperation(cproject.getProject().getFullPath(),
-						rootDir, FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
-					public String queryOverwrite(String pathString) {
-						return IOverwriteQuery.ALL;
+					// Import the files at the root
+					ImportOperation importOp = new ImportOperation(cproject.getProject().getFullPath(),
+							rootDir, FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
+						public String queryOverwrite(String pathString) {
+							return IOverwriteQuery.ALL;
+						}
+					});
+					importOp.setCreateContainerStructure(false);
+					try {
+						importOp.run(monitor);
+					} catch (Exception e) {
+						throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
 					}
-				});
-				importOp.setCreateContainerStructure(false);
-				try {
-					importOp.run(monitor);
-				} catch (Exception e) {
-					throw new CoreException(new Status(IStatus.ERROR, CTestPlugin.PLUGIN_ID, 0, "Import Interrupted", e));
+
+					cprojects[0] = cproject;
 				}
-
-				cprojects[0] = cproject;
-			}
-		}, null);
-
-		// Index the project
-		CCorePlugin.getIndexManager().setIndexerId(cprojects[0], IPDOMManager.ID_FAST_INDEXER);
-		// wait until the indexer is done
-		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
-
+			}, null);
+			mj.join();
+			// Index the project
+			CCorePlugin.getIndexManager().setIndexerId(cprojects[0], IPDOMManager.ID_FAST_INDEXER);
+			// wait until the indexer is done
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		} finally {
+			mj.dispose();
+		}
 		return cprojects[0];
 	}
 

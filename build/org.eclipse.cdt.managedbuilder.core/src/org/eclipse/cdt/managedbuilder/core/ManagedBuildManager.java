@@ -1392,12 +1392,30 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return true;
 	}
 
-	public static boolean saveBuildInfo(IProject project, boolean force) {
+	public static boolean saveBuildInfo(final IProject project, final boolean force) {
 		try {
 			return updateBuildInfo(project, force);
 		} catch (CoreException e) {
 			ManagedBuilderCorePlugin.log(e);
 			return false;
+		} catch (IllegalArgumentException e){
+			//can not acquire the root rule
+			Job j = new Job("save build info job"){
+
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						updateBuildInfo(project, force);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+				
+			};
+			j.setRule(ResourcesPlugin.getWorkspace().getRoot());
+			j.setSystem(true);
+			j.schedule();
+			return true;
 		}
 	}
 

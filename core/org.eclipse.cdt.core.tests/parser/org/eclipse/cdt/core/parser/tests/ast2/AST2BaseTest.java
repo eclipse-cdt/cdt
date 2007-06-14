@@ -394,7 +394,7 @@ public class AST2BaseTest extends BaseTestCase {
 	}
 	
 	protected static void assertInstance(Object o, Class c) {
-		assertNotNull(o);
+		assertNotNull("Expected object of "+c.getName()+" but got a null value", o);
 		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
 	}
 }

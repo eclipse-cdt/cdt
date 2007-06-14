@@ -113,9 +113,9 @@ public class AST2Tests extends AST2BaseTest {
     	super(name);
     }
     
-    
     public void testBug75189() throws Exception {
-        parseAndCheckBindings( "struct A{};typedef int (*F) (A*);" ); //$NON-NLS-1$
+        parseAndCheckBindings( "struct A{};\n typedef int (*F) (struct A*);" ); //$NON-NLS-1$
+        parseAndCheckBindings( "struct A{};\n typedef int (*F) (A*);", ParserLanguage.CPP ); //$NON-NLS-1$
     }
     
     public void testBug75340() throws Exception {
@@ -1873,7 +1873,7 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(decls.length, 1);
         assertEquals(decls[0], name_A1);
 
-        assertNull(name_d.resolveBinding());
+        assertNull("Expected null, got "+name_d.resolveBinding(), name_d.resolveBinding());
     }
 
     public void testDesignatedInitializers() throws ParserException {
@@ -3834,5 +3834,37 @@ public class AST2Tests extends AST2BaseTest {
 	    buffer.append("line \\\n" ); //$NON-NLS-1$
 	    buffer.append("string\";\n" ); //$NON-NLS-1$
 	    parseAndCheckBindings( buffer.toString() );
+	}
+	
+	// typedef A B;
+	// typedef C D;
+	// typedef E E;
+	// typedef typeof(G) G;
+	// typedef H *H;
+	// typedef I *************I;
+	// typedef int (*J)(J);
+	public void testBug192165() throws Exception {
+		String content= getContents(1)[0].toString();
+		for (int i = 0; i < LANGUAGES.length; i++) {
+			IASTTranslationUnit tu = parse( content, LANGUAGES[i], true, false );
+			CNameCollector col = new CNameCollector();
+	        tu.accept(col);
+	        assertInstance(col.getName(0).resolveBinding(), IProblemBinding.class);
+	        assertInstance(col.getName(1).resolveBinding(), ITypedef.class);
+	        assertInstance(col.getName(2).resolveBinding(), IProblemBinding.class);
+	        assertInstance(col.getName(3).resolveBinding(), ITypedef.class);
+	        assertInstance(col.getName(4).resolveBinding(), IProblemBinding.class);
+	        assertInstance(col.getName(5).resolveBinding(), ITypedef.class);
+	        assertInstance(col.getName(6).resolveBinding(), IProblemBinding.class);
+	        assertInstance(col.getName(7).resolveBinding(), ITypedef.class);
+	        assertInstance(col.getName(8).resolveBinding(), IProblemBinding.class);
+	        assertInstance(col.getName(9).resolveBinding(), ITypedef.class);
+	        assertInstance(col.getName(10).resolveBinding(), IProblemBinding.class);
+	        assertInstance(col.getName(11).resolveBinding(), ITypedef.class);
+	        
+	        // function ptr
+	        assertInstance(col.getName(12).resolveBinding(), ITypedef.class);
+	        assertInstance(col.getName(13).resolveBinding(), IProblemBinding.class);
+		}
 	}
 }

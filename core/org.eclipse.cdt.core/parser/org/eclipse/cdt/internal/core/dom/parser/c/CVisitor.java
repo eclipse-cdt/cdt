@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -103,6 +104,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.CoreException;
@@ -993,8 +995,11 @@ public class CVisitor {
 		} else if( node instanceof ICASTTypedefNameSpecifier ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			try {
-				IBinding binding = (IBinding) findBinding( blockItem, ((ICASTTypedefNameSpecifier)node).getName(), bits );
-                if( binding instanceof IType )
+				IASTName name= ((ICASTTypedefNameSpecifier)node).getName();
+				IBinding binding = (IBinding) findBinding( blockItem, name, bits );
+                if( binding == null )
+                	return new ProblemBinding( node, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, name.toCharArray());
+				if( binding instanceof IType )
 					return binding;
                 else if( binding != null )
 					return new ProblemBinding( node, IProblemBinding.SEMANTIC_INVALID_TYPE, binding.getNameCharArray() );
@@ -1318,7 +1323,9 @@ public class CVisitor {
 	                }
 				}
 				if( result != null ){
-			        return ((IASTName)result).resolveBinding();
+					if(CVisitor.declaredBefore((IASTName)result, name)) {
+						return ((IASTName)result).resolveBinding();
+					}
 				}
 			}
 			if( (bits & CURRENT_SCOPE) == 0 )
@@ -2031,4 +2038,42 @@ public class CVisitor {
         
         return result;
     }
+    
+	static public boolean declaredBefore(IASTNode nodeA, IASTNode nodeB){
+	    if( nodeB == null ) return true;
+	    if( nodeB.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
+	    
+	    if(nodeA instanceof ASTNode) {
+	    	ASTNode nd= (ASTNode) nodeA;
+	        int pointOfDecl = 0;
+	        
+            ASTNodeProperty prop = nd.getPropertyInParent();
+            //point of declaration for a name is immediately after its complete declarator and before its initializer
+            if( prop == IASTDeclarator.DECLARATOR_NAME || nd instanceof IASTDeclarator ){
+                IASTDeclarator dtor = (IASTDeclarator)((nd instanceof IASTDeclarator) ? nd : nd.getParent());
+                while( dtor.getParent() instanceof IASTDeclarator )
+                    dtor = (IASTDeclarator) dtor.getParent();
+                IASTInitializer init = dtor.getInitializer();
+                if( init != null )
+                    pointOfDecl = ((ASTNode)init).getOffset() - 1;
+                else
+                    pointOfDecl = ((ASTNode)dtor).getOffset() + ((ASTNode)dtor).getLength();
+            } 
+            //point of declaration for an enumerator is immediately after it enumerator-definition
+            else if( prop == IASTEnumerator.ENUMERATOR_NAME) {
+                IASTEnumerator enumtor = (IASTEnumerator) nd.getParent();
+                if( enumtor.getValue() != null ){
+                    ASTNode exp = (ASTNode) enumtor.getValue();
+                    pointOfDecl = exp.getOffset() + exp.getLength();
+                } else {
+                    pointOfDecl = nd.getOffset() + nd.getLength();
+                }
+            } else 
+                pointOfDecl = nd.getOffset() + nd.getLength();
+            
+            return ( pointOfDecl < ((ASTNode)nodeB).getOffset() );
+	    }
+	    
+	    return true; 
+	}
 }

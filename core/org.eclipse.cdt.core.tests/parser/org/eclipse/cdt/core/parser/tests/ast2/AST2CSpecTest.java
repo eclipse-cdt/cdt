@@ -1505,7 +1505,7 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	public void test6_7_8s34() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("div_t answer = { .quot = 2, .rem = -1 };\n"); //$NON-NLS-1$
-		parse(buffer.toString(), ParserLanguage.C, true, 0);
+		parse(buffer.toString(), ParserLanguage.C, true, 1); // div_t (correctly) cannot be resolved
 	}
 	
 	/**

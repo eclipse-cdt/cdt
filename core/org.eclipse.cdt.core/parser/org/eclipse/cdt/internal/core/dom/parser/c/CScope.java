@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -201,12 +202,20 @@ public class CScope implements ICScope, IASTInternalScope {
         if( o instanceof IBinding )
             return (IBinding) o;
 
-        if( (resolve || ((IASTName)o).getBinding() != null) && ( o != name ) )
-            return ((IASTName)o).resolveBinding();
+        IASTName foundName= (IASTName) o;
+        if( (resolve || foundName.getBinding() != null) && ( foundName != name ) ) {
+        	if(!isTypeDefinition(name) || CVisitor.declaredBefore(foundName, name)) {
+        		return foundName.resolveBinding();
+        	}
+        }
 
         return null;
     }
 
+    private boolean isTypeDefinition(IASTName name) {
+    	return name.getPropertyInParent()==ICASTTypedefNameSpecifier.NAME;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */

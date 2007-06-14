@@ -134,7 +134,6 @@ public class TypeHierarchyBaseTest extends BaseUITestCase {
 			}
 			runEventQueue(10);
 		}
-		fail();
 		return null;
 	}
 

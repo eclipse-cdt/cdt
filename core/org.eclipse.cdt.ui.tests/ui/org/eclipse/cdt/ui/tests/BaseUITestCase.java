@@ -11,6 +11,8 @@
 package org.eclipse.cdt.ui.tests;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
@@ -22,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -220,24 +223,52 @@ public class BaseUITestCase extends BaseTestCase {
 		assertNotNull(hs);
 		hs.executeCommand(commandID, null);
 	}
-	
-	protected Control getFocusControl(Class clazz, int wait) {
-		return getFocusControl(clazz, null, wait);
+
+	private Control[] findControls(Control w, Class clazz) {
+		ArrayList result= new ArrayList();
+		findControls(w, clazz, result);
+		return (Control[]) result.toArray(new Control[result.size()]);
 	}
 	
-	protected Control getFocusControl(Class clazz, Control differentTo, int wait) {
-		Control fc= null;
-		for (int i = 0; i <= wait/10; i++) {
-			fc= Display.getCurrent().getFocusControl();
-			if (clazz.isInstance(fc) && fc != differentTo) {
-				return fc;
+	private void findControls(Control w, Class clazz, List result) {	
+		if (clazz.isInstance(w)) {
+			result.add(w);
+		}
+		if (w instanceof Composite) {
+			Composite comp= (Composite) w;
+			Control[] children= comp.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				findControls(children[i], clazz, result);
+			}
+		}
+	}
+
+	final protected TreeItem checkTreeNode(IViewPart part, int i0, String label) {
+		Tree tree= null;
+		TreeItem root= null;
+		for (int i=0; i<400; i++) {
+			Control[] trees= findControls(part.getSite().getShell(), Tree.class);
+			for (int j = 0; j < trees.length; j++) {
+				try {
+					tree= (Tree) trees[j];
+					root= tree.getItem(i0);
+					if (label.equals(root.getText())) {
+						return root;
+					}
+				} 
+				catch (SWTException e) {
+					// in case widget was disposed, item may be replaced
+				}
+				catch (IllegalArgumentException e) {
+					// item does not yet exist.
+				}
 			}
 			runEventQueue(10);
 		}
-		assertNotNull(fc);
-		assertTrue(fc != differentTo);
-		assertTrue("Unexpected class " + fc.getClass().getName(), clazz.isInstance(fc));
-		return fc;
+		assertNotNull("No tree in viewpart", tree);
+		assertNotNull("Tree node " + label + "{" + i0 + "} does not exist!", root);
+		assertEquals(label, root.getText());
+		return root;
 	}
 
 	final protected TreeItem checkTreeNode(Tree tree, int i0, String label) {

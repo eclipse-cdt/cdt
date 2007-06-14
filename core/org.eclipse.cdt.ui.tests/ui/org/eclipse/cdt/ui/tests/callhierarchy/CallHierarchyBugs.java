@@ -14,8 +14,6 @@ package org.eclipse.cdt.ui.tests.callhierarchy;
 import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
@@ -60,19 +58,22 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		IFile file1= createFile(getProject(), "SomeClass.h", contents[0].toString());
 		IFile file2= createFile(getProject(), "SomeClass.cpp", contents[1].toString());
 		waitForIndexer(fIndex, file2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
-		
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+
+		// open editor, check outline
 		openEditor(file1);
-		IViewPart outline = activateView(IPageLayout.ID_OUTLINE);
-		Tree outlineTree= (Tree) getFocusControl(Tree.class, 8000);
-		checkTreeNode(outlineTree, 0, "SomeClass");
+		Tree outlineTree= checkTreeNode(outline, 0, "SomeClass").getParent();
 		expandTreeItem(outlineTree, 0);
 		checkTreeNode(outlineTree, 0, 0, "method() : void");
+		
+		// open and check call hierarchy
+		activateView(IPageLayout.ID_OUTLINE);
 		selectTreeItem(outlineTree, 0, 0);
 		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 
-		CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
-		Tree chTree= (Tree) getFocusControl(Tree.class, 8000);
-		checkTreeNode(chTree, 0, "SomeClass::method()");
+		Tree chTree= checkTreeNode(ch, 0, "SomeClass::method()").getParent();
 		checkTreeNode(chTree, 0, 1, null);
 		
 		ch.onSetShowReferencedBy(false);
@@ -102,47 +103,48 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		IFile file2= createFile(getProject(), "SomeClass.cpp", contents[1].toString());
 		waitForIndexer(fIndex, file2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 
-		IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
-		Control avoid= getFocusControl(Control.class, 8000);
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IViewPart outline= activateView(IPageLayout.ID_OUTLINE);
+
+		// open editor, check outline
 		openEditor(file1);
-		outline= activateView(IPageLayout.ID_OUTLINE);
-		Tree outlineTree= (Tree) getFocusControl(Tree.class, avoid, 8000);
-		checkTreeNode(outlineTree, 1, "SomeClass::ambiguous_impl() : void");
+		Tree outlineTree= checkTreeNode(outline, 1, "SomeClass::ambiguous_impl() : void").getParent();
+		checkTreeNode(outlineTree, 2, "other() : void");
+
+		// open and check call hierarchy
+		activateView(IPageLayout.ID_OUTLINE);
 		selectTreeItem(outlineTree, 1);	// select the definition
 		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
-
-		CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		
 		ch.onSetShowReferencedBy(false);
-		Tree chTree= (Tree) getFocusControl(Tree.class, 8000);
-		checkTreeNode(chTree, 0, "SomeClass::ambiguous_impl()");
+		Tree chTree= checkTreeNode(ch, 0, "SomeClass::ambiguous_impl()").getParent();
 		checkTreeNode(chTree, 0, 0, "SomeClass::ref1");
 
-		// just change the call hierarchy
-		outline= activateView(IPageLayout.ID_OUTLINE);
-		outlineTree= (Tree) getFocusControl(Tree.class, avoid, 8000);
-		checkTreeNode(outlineTree, 2, "other() : void");
+		// open and check call hierarchy
+		activateView(IPageLayout.ID_OUTLINE);
 		selectTreeItem(outlineTree, 2);	
 		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 		checkTreeNode(chTree, 0, "other()");
 
-		openEditor(file2);
-		outline= activateView(IPageLayout.ID_OUTLINE);
-		outlineTree= (Tree) getFocusControl(Tree.class, outlineTree, 8000);
 		
+		// open editor, check outline
+		openEditor(file2);
+		outlineTree= checkTreeNode(outline, 0, "SomeClass.h").getParent();
 		checkTreeNode(outlineTree, 1, "SomeClass::ambiguous_impl() : void");
+		
+		// open and check call hierarchy
+		activateView(IPageLayout.ID_OUTLINE);
 		selectTreeItem(outlineTree, 1);	// select the definition
 		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 
-		ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
 		ch.onSetShowReferencedBy(false);
-		chTree= (Tree) getFocusControl(Tree.class, 8000);
-		checkTreeNode(chTree, 0, "SomeClass::ambiguous_impl()");
+		chTree= checkTreeNode(ch, 0, "SomeClass::ambiguous_impl()").getParent();
 		checkTreeNode(chTree, 0, 0, "SomeClass::ref2");
 	}
 
 	private void openEditor(IFile file) throws WorkbenchException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IDE.openEditor(page, file, true);
-		getFocusControl(StyledText.class, 8000);
+		runEventQueue(0);
 	}
 }

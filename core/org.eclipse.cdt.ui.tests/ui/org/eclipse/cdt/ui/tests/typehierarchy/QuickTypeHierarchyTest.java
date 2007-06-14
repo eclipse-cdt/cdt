@@ -14,6 +14,7 @@ package org.eclipse.cdt.ui.tests.typehierarchy;
 import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
@@ -65,6 +66,10 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("Simple1"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
+		if (tree == null) {
+			checkPlatform();
+			return;	
+		}
 		
 		item1= checkTreeNode(tree, 0, "Simple1");
 		assertEquals(1, tree.getItemCount());
@@ -157,6 +162,10 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("field1"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
+		if (tree == null) {
+			checkPlatform();
+			return;	
+		}
 		
 		item1= checkTreeNode(tree, 0, "Simple1");
 		assertEquals(1, tree.getItemCount());
@@ -250,6 +259,10 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("Multi1"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
+		if (tree == null) {
+			checkPlatform();
+			return;	
+		}
 
 		item1= checkTreeNode(tree, 0, "Multi1");
 		assertEquals(1, tree.getItemCount());
@@ -357,6 +370,10 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("field1"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
+		if (tree == null) {
+			checkPlatform();
+			return;	
+		}
 
 		item1= checkTreeNode(tree, 0, "Multi1");
 		assertEquals(1, tree.getItemCount());
@@ -464,6 +481,10 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("Diamond1"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
+		if (tree == null) {
+			checkPlatform();
+			return;	
+		}
 
 		item1= checkTreeNode(tree, 0, "Diamond1");
 		assertEquals(1, tree.getItemCount());
@@ -571,6 +592,10 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("field1"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
+		if (tree == null) {
+			checkPlatform();
+			return;	
+		}
 
 		item1= checkTreeNode(tree, 0, "Diamond1");
 		assertEquals(1, tree.getItemCount());
@@ -672,6 +697,10 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("ViaTypedef1"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
+		if (tree == null) {
+			checkPlatform();
+			return;	
+		}
 		
 		item1= checkTreeNode(tree, 0, "ViaTypedef1");
 		assertEquals(1, tree.getItemCount());
@@ -762,6 +791,10 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		editor.selectAndReveal(content.indexOf("field1"), 1);
 		openQuickTypeHierarchy(editor);
 		tree= getQuickTypeHierarchyViewer(editor);
+		if (tree == null) {
+			checkPlatform();
+			return;	
+		}
 		
 		item1= checkTreeNode(tree, 0, "ViaTypedef1");
 		assertEquals(1, tree.getItemCount());
@@ -821,5 +854,9 @@ public class QuickTypeHierarchyTest extends TypeHierarchyBaseTest {
 		
 		assertEquals(0, item4.getItemCount());
 
+	}
+
+	private void checkPlatform() {
+		assertFalse(Platform.getOS().equals(Platform.OS_WIN32));
 	}
 }

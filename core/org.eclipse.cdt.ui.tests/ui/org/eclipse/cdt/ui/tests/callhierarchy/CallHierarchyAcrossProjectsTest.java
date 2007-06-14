@@ -87,10 +87,12 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		String header= content[0].toString();
 		String source = content[1].toString();
 		IFile headerFile= createFile(fCProject.getProject(), "testMethods.h", header);
+		waitForIndexer(fIndex, headerFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IFile sourceFile= createFile(fCProject2.getProject(), "testMethods.cpp", source);
+		waitForIndexer(fIndex, sourceFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor= (CEditor) IDE.openEditor(page, sourceFile);
-		waitForIndexer(fIndex, sourceFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		
 		
 		editor.selectAndReveal(source.indexOf("method"), 2);
 		openCallHierarchy(editor, true);

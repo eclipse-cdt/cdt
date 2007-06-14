@@ -142,6 +142,22 @@
      <actionSet
            id="org.eclipse.cdt.managedbuilder.ui.BuildAllActionSet"
            label="%BuildCfgMenu.label">
+<!-- Note: The menu (re-) definition has to be here due to bug: -->
+<!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=15670  -->
+        <menu
+              id="org.eclipse.cdt.ui.prjmenu"
+              label="%Configurations.menu"
+              path="project/build">
+           <groupMarker
+                 name="gm1">
+           </groupMarker>
+           <separator
+                 name="s2">
+           </separator>
+           <groupMarker
+                 name="gm2">
+           </groupMarker>
+        </menu>
         <action
               class="org.eclipse.cdt.managedbuilder.ui.actions.BuildAllAction"
               enablesFor="+"

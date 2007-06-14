@@ -1056,6 +1056,20 @@
            id="org.eclipse.cdt.ui.buildConfigActionSet"
            label="%BuildConfigActionSet.label"
            visible="false">
+        <menu
+              id="org.eclipse.cdt.ui.prjmenu"
+              label="%Configurations.menu"
+              path="project/build">
+           <groupMarker
+                 name="gm1">
+           </groupMarker>
+           <separator
+                 name="s2">
+           </separator>
+           <groupMarker
+                 name="gm2">
+           </groupMarker>
+        </menu>
         <action
               class="org.eclipse.cdt.ui.actions.ChangeBuildConfigMenuAction"
               disabledIcon="icons/dlcl16/config-tool.gif"
@@ -1098,20 +1112,6 @@
               label="%DeleteRcConfigAction.label"
               menubarPath="project/org.eclipse.cdt.ui.prjmenu/gm1"
               />
-        <menu
-              id="org.eclipse.cdt.ui.prjmenu"
-              label="%Configurations.menu"
-              path="project/build">
-           <groupMarker
-                 name="gm1">
-           </groupMarker>
-           <separator
-                 name="s2">
-           </separator>
-           <groupMarker
-                 name="gm2">
-           </groupMarker>
-        </menu>
      </actionSet>
      <actionSet
             label="%CElementCreationActionSet.label"

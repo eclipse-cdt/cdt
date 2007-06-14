@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1343,7 +1344,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				file.createNewFile();
 			}
 			fileStream = new FileOutputStream(file);
-			fileStream.write(utfString.getBytes());
+			byte[] bytes;
+			try {
+				bytes = utfString.getBytes("UTF-8"); //$NON-NLS-1$
+			} catch (UnsupportedEncodingException e){
+				bytes = utfString.getBytes();
+			}
+			fileStream.write(bytes);
 			fileStream.close();
 			// Close the streams
 			stream.close();

@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.cdt.internal.core.CDTLogWriter;
@@ -1125,14 +1126,16 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * returns the project description associated with this project
+	 * returns the project description associated with this project or null if the project does not contain the
+	 * CDT data associated with it. 
+	 * 
 	 * this is a convenience method fully equivalent to getProjectDescription(project, true)
 	 * see {@link #getProjectDescription(IProject, boolean)} for more detail
 	 * @param project
 	 * @return a writable copy of the ICProjectDescription or null if the project does not contain the
 	 * CDT data associated with it. 
 	 * Note: changes to the project description will not be reflected/used by the core
-	 * untill the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 * until the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
 	 * 
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
@@ -1161,7 +1164,8 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * returns the project description associated with this project
+	 * returns the project description associated with this project or null if the project does not contain the
+	 * CDT data associated with it. 
 	 * 
 	 * @param project project for which the description is requested
 	 * @param write if true, the writable description copy is returned. 
@@ -1183,7 +1187,8 @@ public class CCorePlugin extends Plugin {
 	 * i.e. the implementer of the org.eclipse.cdt.core.CConfigurationDataProvider extension
 	 * This ensures the Core<->Build System settings integrity
 	 * 
-	 * @return {@link ICProjectDescription}
+	 * @return {@link ICProjectDescription} or null if the project does not contain the
+	 * CDT data associated with it. 
 	 */
 	public ICProjectDescription getProjectDescription(IProject project, boolean write){
 		return fNewCProjectDescriptionManager.getProjectDescription(project, write);

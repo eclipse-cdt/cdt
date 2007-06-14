@@ -26,10 +26,12 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class CProjectDescriptionBasicTests  extends BaseTestCase{
 	private static final String PROJ_NAME_PREFIX = "CProjectDescriptionBasicTests_";
-	IProject p1, p2, p3;
+	IProject p1, p2, p3, p4;
 	
 	public static TestSuite suite() {
 		return suite(CProjectDescriptionBasicTests.class, "_");
@@ -159,6 +161,33 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		mngr.setProjectDescription(p2, des);
 		
 	}
+	
+	public void testSetDescriptionWithRootIncompatibleRuleAquired() throws Exception {
+		ICProject p = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "4", IPDOMManager.ID_NO_INDEXER);
+		p4 = p.getProject();
+		
+		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
+		
+		ICProjectDescription des = mngr.getProjectDescription(p4);
+		ICConfigurationDescription baseCfg = des.getConfigurations()[0];
+		
+		baseCfg.setName("qwertyuiop");
+		
+		IJobManager jm = Job.getJobManager();
+		boolean failed = false;
+		try {
+			jm.beginRule(p4, null);
+			
+			mngr.setProjectDescription(p4, des);
+		} catch (CoreException e) {
+			failed = true;
+			assertTrue(e.getStatus().getException() instanceof IllegalArgumentException);
+		} finally {
+			jm.endRule(p4);
+		}
+		
+		assertTrue(failed);
+	}
 
 	protected void tearDown() throws Exception {
 		try {
@@ -174,6 +203,11 @@ public class CProjectDescriptionBasicTests  extends BaseTestCase{
 		try {
 			if(p3 != null)
 				p3.getProject().delete(true, null);
+		} catch (CoreException e){
+		}
+		try {
+			if(p4 != null)
+				p4.getProject().delete(true, null);
 		} catch (CoreException e){
 		}
 		super.tearDown();

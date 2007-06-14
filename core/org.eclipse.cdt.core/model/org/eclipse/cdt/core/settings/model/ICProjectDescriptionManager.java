@@ -47,14 +47,16 @@ public interface ICProjectDescriptionManager {
 
 	
 	/**
-	 * returns the project description associated with this project
+	 * returns the project description associated with this project or null if the project does not contain the
+	 * CDT data associated with it. 
+	 * 
 	 * this is a convenience method fully equivalent to getProjectDescription(project, true)
 	 * see {@link #getProjectDescription(IProject, boolean)} for more detail
 	 * @param project
 	 * @return a writable copy of the ICProjectDescription or null if the project does not contain the
 	 * CDT data associated with it. 
 	 * Note: changes to the project description will not be reflected/used by the core
-	 * untill the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 * until the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
 	 * 
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
@@ -79,7 +81,8 @@ public interface ICProjectDescriptionManager {
 	void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * returns the project description associated with this project
+	 * returns the project description associated with this project or null if the project does not contain the
+	 * CDT data associated with it. 
 	 * 
 	 * @param project project for which the description is requested
 	 * @param write if true, the writable description copy is returned. 
@@ -101,7 +104,8 @@ public interface ICProjectDescriptionManager {
 	 * i.e. the implementer of the org.eclipse.cdt.core.CConfigurationDataProvider extension
 	 * This ensures the Core<->Build System settings integrity
 	 * 
-	 * @return {@link ICProjectDescription}
+	 * @return {@link ICProjectDescription} or null if the project does not contain the
+	 * CDT data associated with it. 
 	 */
 	ICProjectDescription getProjectDescription(IProject project, boolean write);
 

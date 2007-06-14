@@ -102,7 +102,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -121,8 +120,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -1396,26 +1393,28 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		try {
 			return updateBuildInfo(project, force);
 		} catch (CoreException e) {
+			Throwable cause = e.getStatus().getException();
+			if(cause instanceof IllegalArgumentException){
+				//can not acquire the root rule
+				Job j = new Job("save build info job"){
+	
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							updateBuildInfo(project, force);
+						} catch (CoreException e) {
+							return e.getStatus();
+						}
+						return Status.OK_STATUS;
+					}
+					
+				};
+				j.setRule(ResourcesPlugin.getWorkspace().getRoot());
+				j.setSystem(true);
+				j.schedule();
+				return true;
+			}
 			ManagedBuilderCorePlugin.log(e);
 			return false;
-		} catch (IllegalArgumentException e){
-			//can not acquire the root rule
-			Job j = new Job("save build info job"){
-
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						updateBuildInfo(project, force);
-					} catch (CoreException e) {
-						return e.getStatus();
-					}
-					return Status.OK_STATUS;
-				}
-				
-			};
-			j.setRule(ResourcesPlugin.getWorkspace().getRoot());
-			j.setSystem(true);
-			j.schedule();
-			return true;
 		}
 	}
 

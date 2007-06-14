@@ -1198,7 +1198,11 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		ICProject cproject = manager.create(project);
 
 		SetCProjectDescriptionOperation op = new SetCProjectDescriptionOperation(cproject, (CProjectDescription)des, flags);
-		op.runOperation(monitor);
+		try {
+			op.runOperation(monitor);
+		} catch (IllegalArgumentException e){
+			throw ExceptionFactory.createCoreException(e);
+		}
 	}
 	
 	IWorkspaceRunnable createDesSerializationRunnable(CProjectDescription des) throws CoreException{

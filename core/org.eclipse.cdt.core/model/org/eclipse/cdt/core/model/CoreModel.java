@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.internal.core.model.APathEntry;
 import org.eclipse.cdt.internal.core.model.BatchOperation;
 import org.eclipse.cdt.internal.core.model.CModel;
@@ -1340,14 +1341,16 @@ public class CoreModel {
 	}
 	
 	/**
-	 * returns the project description associated with this project
+	 * returns the project description associated with this project or null if the project does not contain the
+	 * CDT data associated with it. 
+	 * 
 	 * this is a convenience method fully equivalent to getProjectDescription(project, true)
 	 * see {@link #getProjectDescription(IProject, boolean)} for more detail
 	 * @param project
 	 * @return a writable copy of the ICProjectDescription or null if the project does not contain the
 	 * CDT data associated with it. 
 	 * Note: changes to the project description will not be reflected/used by the core
-	 * untill the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
+	 * until the {@link #setProjectDescription(IProject, ICProjectDescription)} is called
 	 * 
 	 * @see #getProjectDescription(IProject, boolean)
 	 */
@@ -1376,7 +1379,8 @@ public class CoreModel {
 	}
 
 	/**
-	 * returns the project description associated with this project
+	 * returns the project description associated with this project or null if the project does not contain the
+	 * CDT data associated with it. 
 	 * 
 	 * @param project project for which the description is requested
 	 * @param write if true, the writable description copy is returned. 
@@ -1398,7 +1402,8 @@ public class CoreModel {
 	 * i.e. the implementer of the org.eclipse.cdt.core.CConfigurationDataProvider extension
 	 * This ensures the Core<->Build System settings integrity
 	 * 
-	 * @return {@link ICProjectDescription}
+	 * @return {@link ICProjectDescription} or null if the project does not contain the
+	 * CDT data associated with it. 
 	 */
 	public ICProjectDescription getProjectDescription(IProject project, boolean write){
 		return descriptionManager.getProjectDescription(project, write);

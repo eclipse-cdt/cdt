@@ -24,6 +24,8 @@ public class Messages extends NLS {
 	public static String PDOMManager_notifyJob_label;
 	public static String PDOMManager_notifyTask_message;
 	public static String PDOMManager_StartJob_name;
+	public static String PDOMWriter_errorResolvingName;
+	public static String PDOMWriter_errorWhileParsing;
 	public static String TeamPDOMExportOperation_errorCreateArchive;
 	public static String TeamPDOMExportOperation_errorCreatingTempFile;
 	public static String TeamPDOMExportOperation_errorWriteTempFile;

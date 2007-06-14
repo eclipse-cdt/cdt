@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -45,11 +46,15 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerASTVisitor;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerStatistics;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Abstract class to write information from AST 
@@ -135,9 +140,11 @@ abstract public class PDOMWriter {
 			IWritableIndex index, int readlockCount, boolean flushIndex,
 			int configHash, ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
+		ArrayList stati= new ArrayList();
+		IIndexFileLocation[] orderedPaths= null;
 		try {
 			HashSet contextIncludes= new HashSet();
-			IIndexFileLocation[] orderedPaths= extractSymbols(ast, symbolMap, configHash, contextIncludes);
+			orderedPaths= extractSymbols(ast, symbolMap, configHash, contextIncludes);
 			for (int i=0; i<orderedPaths.length; i++) {
 				if (pm.isCanceled()) {
 					return;
@@ -148,23 +155,40 @@ abstract public class PDOMWriter {
 				// resolve the names
 				long start= System.currentTimeMillis();
 				ArrayList names= arrayLists[2];
-				for (int j=0; j<names.size(); j++) {
-					final IASTName[] na= (IASTName[]) names.get(j);
+				boolean reported= false;
+				for (Iterator j = names.iterator(); j.hasNext();) {
+					final IASTName[] na= (IASTName[]) j.next();
 					final IASTName name = na[0];
-					final IBinding binding= name.resolveBinding();
-					if (binding instanceof IProblemBinding)
-						reportProblem((IProblemBinding) binding);
-					else if (name.isReference()) {
-						if (fSkipReferences == SKIP_TYPE_REFERENCES) {
-							if (isTypeReferenceBinding(binding) && !isInheritanceSpec(name)) {
-								na[0]= null;
-								fStatistics.fReferenceCount--;
+					try {
+						final IBinding binding = name.resolveBinding();
+						if (binding instanceof IProblemBinding)
+							reportProblem((IProblemBinding) binding);
+						else if (name.isReference()) {
+							if (fSkipReferences == SKIP_TYPE_REFERENCES) {
+								if (isTypeReferenceBinding(binding) && !isInheritanceSpec(name)) {
+									na[0]= null;
+									fStatistics.fReferenceCount--;
+								}
 							}
+							fStatistics.fReferenceCount++;
 						}
-						fStatistics.fReferenceCount++;
-					}
-					else {
-						fStatistics.fDeclarationCount++;
+						else {
+							fStatistics.fDeclarationCount++;
+						}
+					} catch (RuntimeException e) {
+						if (!reported) {
+							stati.add(CCorePlugin.createStatus(
+								NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
+						}
+						reported= true;
+						j.remove();
+					} catch (PDOMNotImplementedError e) {
+						if (!reported) {
+							stati.add(CCorePlugin.createStatus(
+									NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
+						}
+						reported= true;
+						j.remove();
 					}
 				}
 				fStatistics.fResolutionTime += System.currentTimeMillis()-start;
@@ -184,7 +208,18 @@ abstract public class PDOMWriter {
 						if (fShowActivity) {
 							System.out.println("Indexer: adding " + path.getURI());  //$NON-NLS-1$
 						}
-						IIndexFile file= addToIndex(index, path, symbolMap, configHash, contextIncludes);
+						IIndexFile file;
+						try {
+							file = addToIndex(index, path, symbolMap, configHash, contextIncludes);
+						} catch (RuntimeException e) {
+							stati.add(CCorePlugin.createStatus(
+									NLS.bind(Messages.PDOMWriter_errorWhileParsing, path.getURI().getPath()), e));
+							break;
+						} catch (PDOMNotImplementedError e) {
+							stati.add(CCorePlugin.createStatus(
+									NLS.bind(Messages.PDOMWriter_errorWhileParsing, path.getURI().getPath()), e));
+							break;
+						}
 						boolean wasRequested= postAddToIndex(path, file);
 
 						synchronized(fInfo) {
@@ -214,6 +249,24 @@ abstract public class PDOMWriter {
 			synchronized(fInfo) {
 				fInfo.fCompletedSources++;
 			}
+		}
+		if (!stati.isEmpty()) {
+			String path= null;
+			if (orderedPaths != null && orderedPaths.length > 0) {
+				path= orderedPaths[orderedPaths.length-1].getURI().getPath();
+			}
+			else {
+				path= ast.getFilePath().toString();
+			}
+			String msg= NLS.bind(Messages.PDOMWriter_errorWhileParsing, path);
+			if (stati.size() == 1) {
+				IStatus status= (IStatus) stati.get(0);
+				if (msg.equals(status.getMessage())) {
+					throw new CoreException(status);
+				}
+			}
+			throw new CoreException(new MultiStatus(CCorePlugin.PLUGIN_ID, 0, 
+					(IStatus[]) stati.toArray(new IStatus[stati.size()]), msg, null));
 		}
 	}
 

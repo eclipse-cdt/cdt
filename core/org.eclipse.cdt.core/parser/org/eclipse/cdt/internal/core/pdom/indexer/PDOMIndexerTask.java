@@ -384,9 +384,14 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	}
 	
 	private void swallowError(IPath file, Throwable e) throws CoreException {
-		IStatus status= CCorePlugin.createStatus(
-				MessageFormat.format(Messages.PDOMIndexerTask_errorWhileParsing, new Object[]{file}), e);
-		CCorePlugin.log(status);
+		if (e instanceof CoreException) {
+			CCorePlugin.log(((CoreException) e).getStatus());
+		}
+		else {
+			IStatus status= CCorePlugin.createStatus(
+					MessageFormat.format(Messages.PDOMIndexerTask_errorWhileParsing, new Object[]{file}), e);
+			CCorePlugin.log(status);
+		}
 		if (++fStatistics.fErrorCount > MAX_ERRORS) {
 			throw new CoreException(CCorePlugin.createStatus(
 					MessageFormat.format(Messages.PDOMIndexerTask_tooManyIndexProblems, new Object[]{getIndexer().getProject().getElementName()})));

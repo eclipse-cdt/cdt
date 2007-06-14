@@ -843,16 +843,26 @@ public class CPPVisitor {
 							binding = (IBinding) t;
 						else break;
 					}
+					boolean done= true;
+					IScope scope= null;
 					if( binding instanceof ICPPClassType ){
-						return ((ICPPClassType)binding).getCompositeScope();
+						scope= ((ICPPClassType)binding).getCompositeScope();
 					} else if( binding instanceof ICPPNamespace ){
-						return ((ICPPNamespace)binding).getNamespaceScope();
+						scope= ((ICPPNamespace)binding).getNamespaceScope();
 					} else if( binding instanceof ICPPInternalUnknown ){
-					    return ((ICPPInternalUnknown)binding).getUnknownScope();
+					    scope= ((ICPPInternalUnknown)binding).getUnknownScope();
 					} else if( binding instanceof IProblemBinding ){
 						if( binding instanceof ICPPScope )
-							return (IScope) binding;
-						return new CPPScope.CPPScopeProblem( names[i-1], IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray() );
+							scope= (IScope) binding;
+					}
+					else {
+						done= false;
+					}
+					if (done) {
+						if (scope == null) {
+							return new CPPScope.CPPScopeProblem( names[i-1], IProblemBinding.SEMANTIC_BAD_SCOPE, names[i-1].toCharArray() );
+						}
+						return scope;
 					}
 				}
 				else if( ((ICPPASTQualifiedName)parent).isFullyQualified() )
@@ -860,12 +870,13 @@ public class CPPVisitor {
 				   return parent.getTranslationUnit().getScope();
 				}
 			} else if( parent instanceof ICPPASTFieldReference ){
-				IASTExpression owner = ((ICPPASTFieldReference)parent).getFieldOwner();
+				final ICPPASTFieldReference fieldReference = (ICPPASTFieldReference)parent;
+				IASTExpression owner = fieldReference.getFieldOwner();
 				IType type = getExpressionType( owner );
-				if( ((ICPPASTFieldReference)parent).isPointerDereference() ){
+				if( fieldReference.isPointerDereference() ){
 					type= CPPSemantics.getUltimateTypeUptoPointers(type);
 					if( type instanceof ICPPClassType ){
-						ICPPFunction op = CPPSemantics.findOperator( (IASTFieldReference)parent, (ICPPClassType) type );
+						ICPPFunction op = CPPSemantics.findOperator( fieldReference, (ICPPClassType) type );
 						if( op != null ){
 							type = op.getType().getReturnType();
 						}
@@ -873,7 +884,11 @@ public class CPPVisitor {
 				} 
 				type =  CPPSemantics.getUltimateType( type, false );
 				if( type instanceof ICPPClassType ){
-					return ((ICPPClassType) type).getCompositeScope();
+					IScope scope= ((ICPPClassType) type).getCompositeScope();
+					if (scope == null) {
+						scope= new CPPScope.CPPScopeProblem(fieldReference, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray() );
+					}
+					return scope;
 				}
 			} else if( parent instanceof IASTGotoStatement || parent instanceof IASTLabelStatement ){
 			    while( !(parent instanceof IASTFunctionDefinition) ){

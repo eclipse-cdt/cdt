@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [181939] Deferred class loading for keystoreProviders
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Martin Oberhuber (Wind River) - [160293] NPE on startup when only Core feature is installed
+ * Uwe Stieber (Wind River) - [192611] RSE Core plugin may fail to initialize because of cyclic code invocation
  ********************************************************************************/
 package org.eclipse.rse.core;
 
@@ -151,7 +152,6 @@ public class RSECorePlugin extends Plugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		logger = LoggerFactory.getLogger(this);
 		registerKeystoreProviders();
 	}
 
@@ -218,6 +218,7 @@ public class RSECorePlugin extends Plugin {
 	 * @return the instance of System#Logger used by the core RSE
 	 */
 	public Logger getLogger() {
+		if (logger == null) logger = LoggerFactory.getLogger(this);
 		return logger;
 	}
 	

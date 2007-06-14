@@ -113,6 +113,7 @@ public class AST2Tests extends AST2BaseTest {
     	super(name);
     }
     
+    
     public void testBug75189() throws Exception {
         parseAndCheckBindings( "struct A{};\n typedef int (*F) (struct A*);" ); //$NON-NLS-1$
         parseAndCheckBindings( "struct A{};\n typedef int (*F) (A*);", ParserLanguage.CPP ); //$NON-NLS-1$
@@ -3867,4 +3868,14 @@ public class AST2Tests extends AST2BaseTest {
 	        assertInstance(col.getName(13).resolveBinding(), IProblemBinding.class);
 		}
 	}
+	
+	// /* a comment */
+	// #define INVALID(a, b)  ## a ## b
+	// INVALID(1, 2)
+	//
+	public void test192639() throws Exception {
+		StringBuffer buffer = getContents(1)[0];
+		parse( buffer.toString(), ParserLanguage.CPP, false, false, true ); 
+		parse( buffer.toString(), ParserLanguage.C, false, false, true ); 
+	}	
 }

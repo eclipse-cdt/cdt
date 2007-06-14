@@ -3575,7 +3575,7 @@ abstract class BaseScanner implements IScanner {
         char[] prevArg = null;
         int prevArgStart = -1;
         int prevArgLength = -1;
-        int prevArgTarget = -1;
+        int prevArgTarget = 0;
 
         int limit = expansion.length;
 
@@ -3628,9 +3628,15 @@ abstract class BaseScanner implements IScanner {
                     // copy what we haven't so far
                     if (++lastcopy < idstart) {
                         int n = idstart - lastcopy;
-                        if (result != null)
+                        if (result != null) {
+                        	// the outpos may be set back when prevConcat is true, so make sure we
+                        	// stay in bounds.
+                            if (prevConcat && outpos+n > result.length) {
+                            	n= result.length- outpos;
+                            }
                             System.arraycopy(expansion, lastcopy, result,
                                     outpos, n);
+                        }
                         outpos += n;
                     }
 
@@ -4257,14 +4263,14 @@ abstract class BaseScanner implements IScanner {
     }
     protected IToken scanComment() {
     		char[] buffer = bufferStack[bufferStackPos];
-    		int limit = bufferLimit[bufferStackPos];
+    		final int limit = bufferLimit[bufferStackPos];
     
     		int pos = bufferPos[bufferStackPos];
     		if (pos + 1 < limit) {
     			if (buffer[pos + 1] == '/') {
     				// C++ comment
     				int commentLength = 0;
-    				while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
+    				while (++bufferPos[bufferStackPos] < limit) {
     					if (buffer[bufferPos[bufferStackPos]] == '\n'||buffer[bufferPos[bufferStackPos]] == '\r') {
     						break;
     					}
@@ -4277,10 +4283,9 @@ abstract class BaseScanner implements IScanner {
     		} else if (buffer[pos + 1] == '*') {
     			// C comment, find closing */
     			int start = pos;
-    			for (bufferPos[bufferStackPos] += 2; bufferPos[bufferStackPos] < limit; ++bufferPos[bufferStackPos]) {
+    			for (bufferPos[bufferStackPos] += 2; bufferPos[bufferStackPos]+1 < limit; ++bufferPos[bufferStackPos]) {
     				pos = bufferPos[bufferStackPos];
-    				if (buffer[pos] == '*' && pos + 1 < limit
-    						&& buffer[pos + 1] == '/') {
+    				if (buffer[pos] == '*' && buffer[pos + 1] == '/') {
     					++bufferPos[bufferStackPos];
     					break;
     				}

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -262,7 +263,14 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 		if( size > 0 ){
 			for( int i = 0; i < size; i++ ){
 				IASTParameterDeclaration p = params[i];
-				result[i] = (IParameter) p.getDeclarator().getName().resolveBinding();
+				final IASTName name = p.getDeclarator().getName();
+				final IBinding binding= name.resolveBinding();
+				if (binding instanceof IParameter) {
+					result[i]= (IParameter) binding;
+				}
+				else {
+					result[i] = new CPPParameter.CPPParameterProblem(p, IProblemBinding.SEMANTIC_INVALID_TYPE, name.toCharArray());
+				}
 			}
 		}
 		return result;

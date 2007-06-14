@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -65,6 +66,42 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		}
     }
     
+    public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
+        public CPPParameterProblem( IASTNode node, int id, char[] arg ) {
+            super( node, id, arg );
+        }
+        public IType getType() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isStatic() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isExtern() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isAuto() throws DOMException {
+            throw new DOMException( this );        
+        }
+        public boolean isRegister() throws DOMException {
+            throw new DOMException( this );
+        }
+		public boolean hasDefaultValue() {
+            return false;
+		}
+		public boolean isMutable() throws DOMException {
+            throw new DOMException( this );
+		}
+		public String[] getQualifiedName() throws DOMException {
+            throw new DOMException( this );
+		}
+		public char[][] getQualifiedNameCharArray() throws DOMException {
+            throw new DOMException( this );
+		}
+		public boolean isGloballyQualified() throws DOMException {
+            throw new DOMException( this );
+		}
+    }
+
 	private IType type = null;
 	private IASTName [] declarations = null;
 	

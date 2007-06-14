@@ -31,7 +31,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
     private Button show_mng;
     private Button show_tool;
     private Button show_exp;
-    private Button center_dlg;
 
     private Button b_0;
     private Button b_1;
@@ -67,10 +66,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
         show_exp.setText(UIMessages.getString("PropertyPageDefsTab.10")); //$NON-NLS-1$
         show_exp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		center_dlg = new Button(usercomp, SWT.CHECK);
-		center_dlg.setText(UIMessages.getString("PropertyPageDefsTab.15")); //$NON-NLS-1$
-		center_dlg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
- 
         Group saveGrp = new Group(usercomp, SWT.NONE);
         saveGrp.setText(UIMessages.getString("PropertyPageDefsTab.11")); //$NON-NLS-1$
         saveGrp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -110,7 +105,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		show_mng.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOMNG));
 		show_tool.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOTOOLM));
 		show_exp.setSelection(CDTPrefUtil.getBool(CDTPrefUtil.KEY_EXPORT));
-		center_dlg.setSelection(!CDTPrefUtil.getBool(CDTPrefUtil.KEY_NOCENTER));
 		
 		switch (CDTPrefUtil.getInt(CDTPrefUtil.KEY_DISC_NAMES)) {
 			case CDTPrefUtil.DISC_NAMING_UNIQUE_OR_BOTH: b_0.setSelection(true); break;
@@ -132,7 +126,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOMNG, !show_mng.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOTOOLM, !show_tool.getSelection());
 		CDTPrefUtil.setBool(CDTPrefUtil.KEY_EXPORT, show_exp.getSelection());
-		CDTPrefUtil.setBool(CDTPrefUtil.KEY_NOCENTER, !center_dlg.getSelection());
 		int x = 0;
 		if (b_1.getSelection()) x = 1;
 		else if (b_2.getSelection()) x = 2;
@@ -151,7 +144,6 @@ public class PropertyPageDefsTab extends AbstractCPropertyTab {
 		show_mng.setSelection(true);
 		show_tool.setSelection(true);
 		show_exp.setSelection(false);
-		center_dlg.setSelection(true);
 		b_0.setSelection(true);
 		b_1.setSelection(false);
 		b_2.setSelection(false);

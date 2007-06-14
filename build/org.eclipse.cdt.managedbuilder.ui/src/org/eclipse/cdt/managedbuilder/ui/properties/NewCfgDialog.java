@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
@@ -238,9 +239,10 @@ public class NewCfgDialog implements INewCfgDialog {
 				}
 			});	
 
+			String[] extCfgs = getConfigNamesAndDescriptions(rcfgs, true);
 			realConfigSelector = new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 			realConfigSelector.setFont(group.getFont());
-			realConfigSelector.setItems(getConfigNamesAndDescriptions(rcfgs, true));
+			realConfigSelector.setItems(extCfgs);
 			index = realConfigSelector.indexOf(newName);
 			realConfigSelector.select(index < 0 ? 0 : index);
 			gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
@@ -251,6 +253,9 @@ public class NewCfgDialog implements INewCfgDialog {
 					setButtons();		
 				}
 			});	
+			
+			if(extCfgs.length == 0)
+				b_real.setEnabled(false);
 
 			statusLabel = new Label(composite, SWT.CENTER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -333,10 +338,13 @@ public class NewCfgDialog implements INewCfgDialog {
 			IConfiguration cfg = cfgds[i];
 			for(; cfg != null && !cfg.isExtensionElement(); cfg = cfg.getParent());
 			if (cfg != null) {
-				IConfiguration[] cfs = cfg.getProjectType().getConfigurations(); 
-				for (int j=0; j<cfs.length; j++) {
-					if (cfs[j] != null && !lst.contains(cfs[j]))
-						lst.add(cfs[j]);
+				IProjectType pType = cfg.getProjectType();
+				if(pType != null){
+					IConfiguration[] cfs = pType.getConfigurations(); 
+					for (int j=0; j<cfs.length; j++) {
+						if (cfs[j] != null && !lst.contains(cfs[j]))
+							lst.add(cfs[j]);
+					}
 				}
 			}
 		}

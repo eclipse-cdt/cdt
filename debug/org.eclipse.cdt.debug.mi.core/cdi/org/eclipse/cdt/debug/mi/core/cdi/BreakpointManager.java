@@ -722,7 +722,7 @@ public class BreakpointManager extends Manager {
 					throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Parsing_Error")); //$NON-NLS-1$
 				}
 				// Set
-				if (bkpt.getFile().length() > 0)
+				if (bkpt.getFile() != null && bkpt.getFile().length() > 0)
 				{
 					for (int j = 0; j < points.length; j++) {
 						points[j].setFile(bkpt.getFile());

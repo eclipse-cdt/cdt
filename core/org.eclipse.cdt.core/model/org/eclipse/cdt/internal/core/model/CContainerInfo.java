@@ -68,7 +68,6 @@ public class CContainerInfo extends OpenableInfo {
 				resources = container.members(false);
 			}
 
-//			IPathEntry[] entries = cproject.getResolvedPathEntries();
 			ICSourceEntry[] entries = null;
 			ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(cproject.getProject(), false);
 			if(des != null){
@@ -85,21 +84,21 @@ public class CContainerInfo extends OpenableInfo {
 						case IResource.FOLDER: {
 							// Check if the folder is not itself a sourceEntry.
 							IPath resourcePath = member.getFullPath();
-							if (cproject.isOnSourceRoot(member) || isSourceEntry(resourcePath, entries)) {
+							if (cproject.isOnSourceRoot(member) || isSourceEntry(resourcePath, entries)
+							        || cproject.isOnOutputEntry(member)) {
 								continue;
 							}
 							break;
 						}
 						case IResource.FILE: {
 							String filename = member.getName();
-							if (CoreModel.isValidTranslationUnitName(cproject.getProject(), filename) &&
-									root.isOnSourceEntry(member)) {
+							if (CoreModel.isValidTranslationUnitName(cproject.getProject(), filename)
+							        && root.isOnSourceEntry(member)) {
 								continue;
 							}
-							if (root.isOnSourceEntry(member)) {
-								if (cproject.isOnOutputEntry(member) && CModelManager.getDefault().createBinaryFile((IFile)member) != null) {
-									continue;
-								}
+							if (cproject.isOnOutputEntry(member)
+							        && CModelManager.getDefault().createBinaryFile((IFile) member) != null) {
+								continue;
 							}
 							break;
 						}

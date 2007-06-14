@@ -156,10 +156,7 @@ public class CProject extends Openable implements ICProject {
 			for (int i = 0; i < entries.length; i++) {
 				if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
 					IIncludeEntry entry = (IIncludeEntry) entries[i];
-					IIncludeReference inc = new IncludeReference(this, entry);
-					if (inc != null) {
-						list.add(inc);
-					}
+					list.add(new IncludeReference(this, entry));
 				}
 			}
 			incRefs = (IIncludeReference[]) list.toArray(new IIncludeReference[0]);
@@ -481,15 +478,14 @@ public class CProject extends Openable implements ICProject {
 	 * @see org.eclipse.cdt.core.model.ICProject#getSourceRoots()
 	 */
 	public ISourceRoot[] getSourceRoots() throws CModelException {
-		Object[] children;
-		int length;
-
-		children = getChildren();
-		length = children.length; 
-		ISourceRoot[] roots = new ISourceRoot[length]; 
-		System.arraycopy(children, 0, roots, 0, length);
-			
-		return roots;
+		Object[] children = getChildren();
+		ArrayList result = new ArrayList(children.length);
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] instanceof ISourceRoot) {
+				result.add(children[i]);
+			}
+        }
+		return (ISourceRoot[]) result.toArray(new ISourceRoot[result.size()]);
 	}
 
 	/**
@@ -588,7 +584,7 @@ public class CProject extends Openable implements ICProject {
 		try {
 			IResource res = getResource();
 			if (res != null && res.isAccessible()) {
-				validInfo = computeSourceRoots(info, res);
+				validInfo = computeChildren(info, res);
 			} else {
 				throw newNotPresentException();
 			}
@@ -613,29 +609,57 @@ public class CProject extends Openable implements ICProject {
 		if(entries != null){
 			ArrayList list = new ArrayList(entries.length);
 			for (int i = 0; i < entries.length; i++) {
-//				if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
-				ICSourceEntry sourceEntry = (ICSourceEntry)entries[i];
+				ICSourceEntry sourceEntry = entries[i];
 					ISourceRoot root = getSourceRoot(sourceEntry);
 					if (root != null) {
 						list.add(root);
 					}
-//				}
 			}
 			return list;
 		}
 		return new ArrayList(0);
 	}
 
-	protected boolean computeSourceRoots(OpenableInfo info, IResource res) throws CModelException {
-		info.setChildren(computeSourceRoots());
+	/**
+	 * Add any output paths which don't overlay paths already in the list.
+	 */
+	private List addOutputOnlyRoots(List sourceRoots) {
+		IResource[] resources;
+		ArrayList result = new ArrayList(sourceRoots.size());
+		try {
+			resources = getProject().members();
+			for (int i = 0; i < resources.length; i++) {
+				if (resources[i].getType() == IResource.FOLDER) {
+					boolean found = false;
+					for (int j = 0; j < sourceRoots.size(); j++) {
+						if (((ICElement) sourceRoots.get(j)).getResource().getProjectRelativePath().isPrefixOf(resources[i].getProjectRelativePath())) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						result.add(new CContainer(this, resources[i]));
+					}
+				}
+			}
+		} catch (CoreException e) {
+			// ignore
+		}
+		result.addAll(sourceRoots);
+		return result;
+    }
+
+	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
+		List list = computeSourceRoots();
+		list = addOutputOnlyRoots(list);
+		info.setChildren(list);
 		if (info instanceof CProjectInfo) {
 			CProjectInfo pinfo = (CProjectInfo)info;
 			pinfo.setNonCResources(null);
 		}
-
 		return true;
 	}
-
+	
 	/*
 	 * @see ICProject
 	 */

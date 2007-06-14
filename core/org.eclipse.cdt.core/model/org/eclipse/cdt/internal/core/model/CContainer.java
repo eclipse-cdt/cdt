@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -202,28 +202,19 @@ public class CContainer extends Openable implements ICContainer {
 		try {
 			IResource[] resources = null;
 			if (res instanceof IContainer) {
-				//System.out.println (" Resource: " +
-				// res.getFullPath().toOSString());
 				IContainer container = (IContainer) res;
 				resources = container.members(false);
 			}
 			if (resources != null) {
 				ICProject cproject = getCProject();
-				ISourceRoot sroot = getSourceRoot();
 				for (int i = 0; i < resources.length; i++) {
-					if (sroot.isOnSourceEntry(resources[i])) {
-						// Check for Valid C Element only.
-						ICElement celement = computeChild(resources[i], cproject);
-						if (celement != null) {
-							vChildren.add(celement);
-						}
+					ICElement celement = computeChild(resources[i], cproject);
+					if (celement != null) {
+						vChildren.add(celement);
 					}
 				}
 			}
 		} catch (CoreException e) {
-			//System.out.println (e);
-			//CPlugin.log (e);
-			//e.printStackTrace();
 			throw new CModelException(e);
 		}
 		info.setChildren(vChildren);
@@ -235,23 +226,35 @@ public class CContainer extends Openable implements ICContainer {
 
 	protected ICElement computeChild(IResource res, ICProject cproject) throws CModelException {
 		ICElement celement = null;
+		ISourceRoot sroot = getSourceRoot();
+		if (sroot == null) {
+			return null;
+		}
 		switch (res.getType()) {
-			case IResource.FILE : {
+			case IResource.FILE: {
 				IFile file = (IFile) res;
-				String id = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
-				if (id != null) {
-					celement = new TranslationUnit(this, file, id);
-				} else if (cproject.isOnOutputEntry(file)) {
+				boolean checkBinary = true;
+				if (sroot.isOnSourceEntry(res)) {
+					// Check for Valid C Element only.
+					String id = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
+					if (id != null) {
+						celement = new TranslationUnit(this, file, id);
+						checkBinary = false;
+					} else {
+						checkBinary = true;
+					}
+				}
+				if (checkBinary && cproject.isOnOutputEntry(file)) {
 					IBinaryParser.IBinaryFile bin = factory.createBinaryFile(file);
 					if (bin != null) {
 						if (bin.getType() == IBinaryFile.ARCHIVE) {
-							celement = new Archive(this, file, (IBinaryArchive)bin);
-							ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
+							celement = new Archive(this, file, (IBinaryArchive) bin);
+							ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
 							vlib.addChild(celement);
 						} else {
-							celement = new Binary(this, file, (IBinaryObject)bin);
+							celement = new Binary(this, file, (IBinaryObject) bin);
 							if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
-								BinaryContainer vbin = (BinaryContainer)cproject.getBinaryContainer();
+								BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
 								vbin.addChild(celement);
 							}
 						}
@@ -259,8 +262,10 @@ public class CContainer extends Openable implements ICContainer {
 				}
 				break;
 			}
-			case IResource.FOLDER :
-				celement = new CContainer(this, res);
+			case IResource.FOLDER:
+				if (sroot.isOnSourceEntry(res) || cproject.isOnOutputEntry(res)) {
+					celement = new CContainer(this, res);
+				}
 				break;
 		}
 		return celement;

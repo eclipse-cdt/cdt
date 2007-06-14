@@ -85,31 +85,24 @@ class CProjectInfo extends OpenableInfo {
 		IProject project = cproject.getProject();
 		IPath projectPath = project.getFullPath();
 		char[][] exclusionPatterns = null;
-//		try {
-//			entries = cproject.getResolvedPathEntries();
-			ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-			if(des != null){
-				ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
-				if(cfg != null){
-					entries = cfg.getResolvedSourceEntries();
+		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
+		if (des != null) {
+			ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
+			if (cfg != null) {
+				entries = cfg.getResolvedSourceEntries();
+			}
+		}
+
+		if (entries != null) {
+			for (int i = 0; i < entries.length; i++) {
+				ICSourceEntry entry = entries[i];
+				if (projectPath.equals(entry.getFullPath())) {
+					srcIsProject = true;
+					exclusionPatterns = entry.fullExclusionPatternChars();
+					break;
 				}
 			}
-			
-			if(entries != null){
-				for (int i = 0; i < entries.length; i++) {
-//					if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
-						ICSourceEntry entry = /*(ISourceEntry)*/entries[i];
-						if (projectPath.equals(entry.getFullPath())) {
-							srcIsProject = true;
-							exclusionPatterns = entry.fullExclusionPatternChars();
-							break;
-						}
-//					}
-				}
-			}
-//		} catch (CModelException e) {
-			// ignore
-//		}
+		}
 
 		ArrayList notChildren = new ArrayList();
 		try {

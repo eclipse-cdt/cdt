@@ -13,7 +13,6 @@
 			<topic label="Converting CDT 1.x Projects" href="tasks/cdt_t_convert_cdt_proj.htm"/>
 			<topic label="Converting CDT 2.x Managed Make Projects" href="tasks/cdt_t_convert_mbs20_proj.htm"/>
 			<topic label="Adding Convert to a C/C++ Make Project to the New menu" href="tasks/cdt_t_add_custom_persp.htm"/>
-			<topic label="Set Discovery Options" href="tasks/cdt_t_discovery.htm"/>
 		</topic>
 		<topic label="Write code" href="tasks/cdt_o_write_code.htm">
 			<topic label="Customize the C/C++ editor" href="tasks/cdt_t_cust_cpp_editor.htm"/>
@@ -25,7 +24,6 @@
 			</topic>
 			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
 			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>
-			<topic label="Navigate to C/C++ definitions by name" href="tasks/cdt_t_open_definitions.htm"/>
 			<topic label="Refactoring" href="tasks/cdt_t_refactoring.htm"/>
 		</topic>
 		<topic label="Building projects" href="tasks/cdt_o_build_task.htm">

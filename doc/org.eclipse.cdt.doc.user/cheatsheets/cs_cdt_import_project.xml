@@ -69,7 +69,7 @@
 		-->
       </subitem>
    </item>
-   <item title="Setup project properties" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/reference/cdt_u_sprop_indexer.htm">
+   <item title="Setup project properties" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/reference/cdt_u_prop_general_idx.htm">
       <description>
          With the project imported and able to build, its time now to reset some project properties for easier development.
       </description>

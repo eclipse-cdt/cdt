@@ -9,7 +9,7 @@
 	<topic label="C/C++ Views and Editors" href="reference/cdt_o_views.htm">
 		<topic label="Selecting Views and Editors" href="reference/cdt_u_views.htm"/>
 		<topic label="C/C++ Projects view" href="reference/cdt_u_cproj_view.htm"/>	
-		<topic label="Navigator view" href="reference/cdt_u_navigator_view.htm"/>
+		<topic label="Project Explorer view" href="reference/cdt_u_project_explorer_view.htm"/>
 		<topic label="Outline view" href="reference/cdt_u_outline_view.htm"/>	
 		<topic label="Make Targets view" href="reference/cdt_u_make_targets_view.htm"/>
 		<topic label="Editor view" href="reference/cdt_u_editor_view.htm"/>
@@ -81,11 +81,7 @@
 			<topic label="Binary Parser" href="reference/cdt_u_newproj_parser_binary.htm"/>
 			<topic label="Discovery Options" href="reference/cdt_u_discovery_preferences.htm"/>
 		</topic>
-		
-		<topic label="Managed Make Project preferences" href="reference/cdt_o_mproj_pref.htm">
-			<topic label="Environment" href="reference/cdt_o_mproj_pref_env.htm"/>
-			<topic label="Build Macros" href="reference/cdt_o_mproj_pref_macro.htm"/>
-		</topic>
+
 	</topic>
 	
 	<!-- PROJECT PROPERTIES TOPICS -->

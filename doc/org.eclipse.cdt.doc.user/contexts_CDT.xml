@@ -195,7 +195,7 @@
 </context>
 <context id ="man_prop_indexer">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_mprop_indexer.htm"
+   <topic href="reference/cdt_u_prop_general_idx.htm"
    	label="Indexer"/>
 </context>
 <context id ="man_prop_error">
@@ -230,7 +230,7 @@
 </context>
 <context id ="std_prop_indexer">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_sprop_indexer.htm"
+   <topic href="reference/cdt_u_prop_general_idx.htm"
    	label="Indexer"/>
 </context>
 <context id ="std_prop_build">

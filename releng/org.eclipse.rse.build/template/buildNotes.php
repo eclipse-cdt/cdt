@@ -27,6 +27,8 @@
   Other components should work with Eclipse 3.3M6 or later.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the Remotecdt integration needs CDT.</li>
+<li>If you use the dstore server, the version number has been updated. You should use 
+  the new server with this build.</li>
 <!--
 <li><b>Split the Terminal Telnet connector from the core Terminal widget</b>.
   This allows embedding a terminal widget in RCPs without having the unnecessary
@@ -35,7 +37,7 @@
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least ? API changes and ? bugs were fixed: use 
+<li>At least 2 API changes were made and 25 bugs were resolved: use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-06-06&chfieldto=2007-06-14&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC3&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
@@ -120,12 +122,20 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ Breaking API Changes
 <ul>
-<li><b>SystemResourceManager</b> - removed two methods getRemoteSystemsProject() and getProfileFolder(String).
-getRemoteSystemsProject() was a convenience method that was equivalent to getRemoteSystemsProject(true) and it forced the
-creation of RemoteSystemConnections project in the workspace. This was undesirable given the current persistence provider
-defaults.
-getProfileFolder(String) returned a IFolder for a profile under the old persistence provider scheme. The method was obsolete and
-should not be being used at all.</li> 
+<li><b>ISystemResourceManager</b> - removed two methods getRemoteSystemsProject() 
+  and getProfileFolder(String).
+  The method getRemoteSystemsProject() was a convenience method that was 
+  equivalent to getRemoteSystemsProject(true) and it forced the
+  creation of RemoteSystemConnections project in the workspace.
+  This was undesirable given the current persistence provider defaults.
+  The method getProfileFolder(String) returned a IFolder for a profile under the 
+  old persistence provider scheme. The method was obsolete and
+  should not be being used at all.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=191130">191130</a>]
+<li><b>The version number of the dstore server was updated from 8.0.0 to 9.0.0</b> - running this build against an
+  older dstore server will likely work, but will receive an incompatibility message on connection.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188365">188365</a>]
+</li> 
 </ul></li>
 <li>TM 2.0RC2 Breaking API Changes
 <ul>
@@ -321,8 +331,6 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189543">bug 189543</a> - blo - License and about file errors</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=190803">bug 190803</a> - cri - [dstore] Canceling a long-running dstore job makes all Eclipse freeze UI</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187301">bug 187301</a> - maj - [telnet] Telnet does not allow multiple shells</li>
 </ul>
 <!--

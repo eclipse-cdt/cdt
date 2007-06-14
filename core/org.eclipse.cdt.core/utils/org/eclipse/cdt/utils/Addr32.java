@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 Intel Corporation and others.
+ * Copyright (c) 2004, 2006 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Intel Corporation - Initial API and implementation
  *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
-******************************************************************************/
+ *******************************************************************************/
 package org.eclipse.cdt.utils;
 
 import java.math.BigInteger;

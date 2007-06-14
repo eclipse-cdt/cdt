@@ -73,7 +73,7 @@ feature@org.eclipse.cdt.xlc.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:
 
 ! C99 parser
 plugin@org.eclipse.cdt.core.parser.c99=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/c99/org.eclipse.cdt.core.parser.c99
-plugin@net.sourceforge.lpg.lpgjavaruntime,1.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/S200704252129/bundles/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200702061926.jar
+plugin@net.sourceforge.lpg.lpgjavaruntime,1.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R200706131308/bundles/net.sourceforge.lpg.lpgjavaruntime_1.1.0.v200706111738.jar
 feature@org.eclipse.cdt.core.parser.c99.feature=@cdtTag@,:pserver:anonymous@dev.eclipse.org:/cvsroot/tools,,org.eclipse.cdt/c99/org.eclipse.cdt.core.parser.c99.feature
 
 ! UPC parser - also uses LPG but since we already download it above no need to download again

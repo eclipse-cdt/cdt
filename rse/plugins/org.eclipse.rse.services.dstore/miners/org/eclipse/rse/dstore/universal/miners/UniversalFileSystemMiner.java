@@ -2044,7 +2044,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 							}
 							String oldValue = deObj.getAttribute(DE.A_VALUE);
 							String newValue = rootPath + ArchiveHandlerManager.VIRTUAL_SEPARATOR + virtualPath;
-							if (!oldValue.startsWith(newValue))  
+							if (!oldValue.equals(newValue))  
 						    {
 						        deObj.setAttribute(DE.A_VALUE, newValue); //$NON-NLS-1$
 						    }

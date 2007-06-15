@@ -21,5 +21,9 @@
 	<topic label="Reference"  href="reference/cdt_o_ref.htm">
 		<link toc="topics_Reference.xml" />
 	</topic>
-<topic label="What's new"  href="concepts/cdt_c_whatsnew.htm"/>
+	
+	<topic label="What's new"  href="concepts/cdt_c_whatsnew.htm"/>
+	
+	<topic label="Legal" href="notices.html"/>
+	
 </toc>

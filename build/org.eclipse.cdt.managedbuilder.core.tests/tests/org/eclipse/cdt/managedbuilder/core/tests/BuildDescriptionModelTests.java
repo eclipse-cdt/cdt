@@ -1105,10 +1105,12 @@ public class BuildDescriptionModelTests extends TestCase {
 		//the refresh is scheduled as a job, so in case we do not wait here the job may not be completed by the time
 		//the test is run
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 		}
 		
+		CCorePlugin.getIndexManager().joinIndexer(-1, new NullProgressMonitor());
+		CCorePlugin.getIndexManager().reindex(cProject);
 		CCorePlugin.getIndexManager().joinIndexer(-1, new NullProgressMonitor());
 
 		IBuildDescription des = null;

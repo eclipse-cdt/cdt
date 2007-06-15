@@ -261,6 +261,24 @@ public class UpdateManagedProjectManager {
 		return answer[0];
 	}
 	
+	static public void openInformation(final String title, final String message){
+		if(fOpenQuestionQuery != null)
+			return;// getBooleanFromQueryAnswer(fOpenQuestionQuery.queryOverwrite(message));
+
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window == null){
+			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+			window = windows[0];
+		}
+
+		final Shell shell = window.getShell();
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(shell,title,message); 
+			}
+		});	
+	}
+	
 	/**
 	 * returns ManagedBuildInfo for the current project
 	 * if converter is currently running 
@@ -310,9 +328,15 @@ public class UpdateManagedProjectManager {
 					ConverterMessages.getFormattedString("UpdateManagedProjectManager.4", new String[]{fProject.getName(),version.toString(),ManagedBuildManager.getBuildInfoVersion().toString()}) //$NON-NLS-1$
 					);
 			
-			if (!shouldUpdate) 
+			if (!shouldUpdate){ 
 				fIsInfoReadOnly = true;
-									
+				throw new CoreException(new Status(IStatus.CANCEL, ManagedBuilderCorePlugin.getUniqueIdentifier(), "project conversion was cancelled"));
+			}
+			
+			IFile projectFile = fProject.getFile(".project"); //$NON-NLS-1$
+			if(projectFile.exists())
+				backupFile(projectFile, "_initial", monitor, fProject); //$NON-NLS-1$
+
 			if(version.isEquivalentTo(new PluginVersionIdentifier(1,2,0))){
 				UpdateManagedProject12.doProjectUpdate(monitor, fProject);
 				version = getManagedBuildInfoVersion(info.getVersion());

@@ -46,6 +46,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -78,6 +79,9 @@ public class ProjectConverter implements ICProjectConverter {
 	private final static String NEW_MAKE_TARGET_BUIDER_ID = "org.eclipse.cdt.build.MakeTargetBuilder"; //$NON-NLS-1$
 
 	private static final Object LOCK = new Object();
+	private static ResourcePropertyHolder PROPS = new ResourcePropertyHolder(true);
+	
+	private static String CONVERSION_FAILED_MSG_ID = "conversionFailed";
 	
 	public boolean canConvertProject(IProject project, String oldOwnerId, ICProjectDescription oldDes) {
 		try {
@@ -128,8 +132,20 @@ public class ProjectConverter implements ICProjectConverter {
 
 			des.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
 		} else if(natureSet.contains(OLD_MNG_NATURE_ID)){
-			newDes = model.createProjectDescription(project, false);
-			info = convertManagedBuildInfo(project, newDes);
+			try {
+				synchronized (LOCK) {
+					if(PROPS.getProperty(project, CONVERSION_FAILED_MSG_ID) != null)
+						throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), "failed to load the build info for the old-style project"));
+				}
+
+				newDes = model.createProjectDescription(project, false);
+				info = convertManagedBuildInfo(project, newDes);
+			} catch (CoreException e) {
+				synchronized (LOCK) {
+					displayInfo(project, CONVERSION_FAILED_MSG_ID, "project conversion failed", "project conversion failed for project " + project.getName() + " with the following error:\n" + e.getLocalizedMessage());
+				}
+				throw e;
+			}
 		} 
 
 		if(newDes == null || !newDes.isValid() || newDes.getConfigurations().length == 0){
@@ -215,6 +231,13 @@ public class ProjectConverter implements ICProjectConverter {
 		}
 
 		return newDes;
+	}
+	
+	static void displayInfo(IProject proj, String id, String title, String message){
+		if(PROPS.getProperty(proj, id) == null){
+			UpdateManagedProjectManager.openInformation(title, message);
+			PROPS.setProperty(proj, id, Boolean.TRUE);
+		}
 	}
 	
 	private static void convertMakeTargetInfo(final IProject project, ICProjectDescription des, IProgressMonitor monitor) throws CoreException{
@@ -502,7 +525,7 @@ public class ProjectConverter implements ICProjectConverter {
 	}
 
 	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes) throws CoreException {
-		IManagedBuildInfo info = ManagedBuildManager.getBuildInfoLegacy(project);
+		IManagedBuildInfo info = ManagedBuildManager.getOldStyleBuildInfo(project);
 		
 		synchronized(LOCK){
 			if(info != null && info.isValid()){

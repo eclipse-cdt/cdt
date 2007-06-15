@@ -2982,7 +2982,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return getBuildInfo(resource, true);
 	}
 
-	public static synchronized IManagedBuildInfo getBuildInfoLegacy(IProject project){
+	public static synchronized IManagedBuildInfo getOldStyleBuildInfo(IProject project) throws CoreException {
 		IManagedBuildInfo info = null;
 		try {
 			info = getLoaddedBuildInfo(project);
@@ -2996,10 +2996,21 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				if(info != null)
 					setLoaddedBuildInfo(project, info);
 			} catch (Exception e) {
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), e.getLocalizedMessage(), e));
 			}
 		}
 		
 		return info;
+		
+	}
+
+	public static synchronized IManagedBuildInfo getBuildInfoLegacy(IProject project){
+		try {
+			return getOldStyleBuildInfo(project);
+		} catch (CoreException e) {
+			ManagedBuilderCorePlugin.log(e);
+			return null;
+		}
 	}
 	/**
 	 * Finds, but does not create, the managed build information for the 

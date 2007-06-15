@@ -51,9 +51,9 @@ public class ManagedProjectUpdateTests extends TestCase {
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_Update"));
 //		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_Update"));
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_Update"));
-		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_NoUpdate"));
-		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_NoUpdate"));
-		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_NoUpdate"));
+//		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate12_NoUpdate"));
+//		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate20_NoUpdate"));
+//		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21_NoUpdate"));
 		// TODO:  This is affected by the TODO in UpdateManagedProjectManager
 		suite.addTest(new ManagedProjectUpdateTests("testProjectUpdate21CPP_Update"));
 		

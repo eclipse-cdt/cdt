@@ -678,4 +678,46 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}		
 	}
+	
+    // typedef struct {
+    //    float   fNumber;
+    //    int     iIdx;
+    // } StructA_T;
+	
+	// #include "../__bugsTest__/common.h"
+	// StructA_T gvar1;
+	
+	// #include "../__bugsTest__/common.h"
+	// StructA_T gvar2;
+	public void testFileInMultipleFragments_bug192352() throws Exception {
+		StringBuffer[] contents= getContentsForTest(3);
+
+		
+		ICProject p2 = CProjectHelper.createCCProject("__bugsTest_2_", "bin", IPDOMManager.ID_FAST_INDEXER);
+		try {
+			IFile f3= TestSourceReader.createFile(p2.getProject(), "src.cpp", contents[2].toString());
+			IFile f1= TestSourceReader.createFile(fCProject.getProject(), "common.h", contents[0].toString());
+			IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
+			waitForIndexer();
+
+			IIndex index= CCorePlugin.getIndexManager().getIndex(new ICProject[]{fCProject, p2});
+			index.acquireReadLock();
+			try {
+				IIndexBinding[] bindings= index.findBindings("StructA_T".toCharArray(), IndexFilter.ALL, NPM);
+				assertEquals(1, bindings.length);
+				IIndexBinding binding= bindings[0];
+				IIndexName[] names= index.findReferences(binding);
+				assertEquals(2, names.length);
+				names= index.findDeclarations(binding);
+				assertEquals(1, names.length);
+			}
+			finally {
+				index.releaseReadLock();
+			}
+		}
+		finally {
+			CProjectHelper.delete(p2);
+		}
+	}
+
 }

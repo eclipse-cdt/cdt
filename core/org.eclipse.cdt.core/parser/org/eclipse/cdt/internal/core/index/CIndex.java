@@ -116,11 +116,27 @@ public class CIndex implements IIndex {
 	}
 
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
-		ArrayList result= new ArrayList();
+		LinkedList result= new LinkedList();
+		int fragCount= 0;
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
 			IIndexFragmentBinding adaptedBinding= fFragments[i].adaptBinding(binding);
 			if (adaptedBinding != null) {
-				result.addAll(Arrays.asList(fFragments[i].findNames(adaptedBinding, flags)));
+				final IIndexFragmentName[] names = fFragments[i].findNames(adaptedBinding, flags);
+				if (names.length > 0) {
+					result.addAll(Arrays.asList(names));
+					fragCount++;
+				}
+			}
+		}
+		// bug 192352, files can reside in multipe fragments, remove duplicates
+		if (fragCount > 1) {
+			HashSet keys= new HashSet();
+			for (Iterator iterator = result.iterator(); iterator.hasNext();) {
+				final IIndexFragmentName name = (IIndexFragmentName) iterator.next();
+				final String key= name.getFile().getLocation().getURI().toString() + name.getNodeOffset();
+				if (!keys.add(key)) {
+					iterator.remove();
+				}
 			}
 		}
 		return (IIndexName[]) result.toArray(new IIndexName[result.size()]);

@@ -27,6 +27,7 @@ import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IOutputType;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
@@ -179,6 +180,15 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 				} else if (contextData instanceof IBuilder){
 					builder = (IBuilder)contextData;
 					cfg = builder.getParent().getParent();
+				} else if (contextData instanceof ITool) {
+					ITool tool = (ITool)contextData;
+					IResourceInfo rcInfo = tool.getParentResourceInfo();
+					if(rcInfo != null){
+						cfg = rcInfo.getParent();
+						if(cfg != null){
+							builder = cfg.getBuilder();
+						}
+					}
 				}
 			}
 			break;
@@ -210,7 +220,8 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		if(fConfiguration != null && fBuilder != null && 
 				fBuilder.keepEnvironmentVariablesInBuildfile() && 
 				fVarMngr.isEnvironmentVariable(macro, fCfgDes) &&
-				!CdtVariableResolver.isStringListVariable(macro.getValueType())){
+				(!CdtVariableResolver.isStringListVariable(macro.getValueType())
+						|| size(macro.getStringListValue()) < 2)){
 			String ref = getMacroReference(macro);
 			if(ref != null)
 				resolved = new ResolvedMacro(macro.getName(),ref);
@@ -219,6 +230,10 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		if(resolved != null)
 			return resolved;
 		return super.resolveMacro(macro);
+	}
+	
+	private static int size(String[] value){
+		return value != null ? value.length : 0;
 	}
 	
 	public IConfiguration getConfiguration(){
@@ -264,7 +279,8 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 	public void setMacroContextInfo(IVariableContextInfo info)
 				throws CdtVariableException{
 		super.setMacroContextInfo(info);
-//		init();
+		if(info instanceof IMacroContextInfo)
+			init(null, (IMacroContextInfo)info);
 	}
 
 	/* (non-Javadoc)

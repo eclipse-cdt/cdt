@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.cdtvariables;
 
+import java.util.Arrays;
+
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.cdtvariables.EclipseVariablesVariableSupplier.EclipseVarMacro;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
@@ -21,6 +24,8 @@ import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
 import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableManager;
+import org.eclipse.core.internal.events.BuildManager;
+import org.eclipse.core.internal.localstore.IsSynchronizedVisitor;
 import org.eclipse.core.variables.IStringVariable;
 
 /**
@@ -30,12 +35,12 @@ import org.eclipse.core.variables.IStringVariable;
 public class CdtVariableManager implements ICdtVariableManager {
 	static private CdtVariableManager fDefault;
 	
-	public static UserDefinedVariableSupplier fUserDefinedMacroSupplier = UserDefinedVariableSupplier.getInstance();
-	public static BuildSystemVariableSupplier fBuildSystemVariableSupplier = BuildSystemVariableSupplier.getInstance();
-	public static EnvironmentVariableSupplier fEnvironmentMacroSupplier = EnvironmentVariableSupplier.getInstance();
-	public static CdtMacroSupplier fCdtMacroSupplier = CdtMacroSupplier.getInstance();
-	public static EclipseVariablesVariableSupplier fEclipseVariablesMacroSupplier = EclipseVariablesVariableSupplier.getInstance();
-
+	public static final UserDefinedVariableSupplier fUserDefinedMacroSupplier = UserDefinedVariableSupplier.getInstance();
+	public static final BuildSystemVariableSupplier fBuildSystemVariableSupplier = BuildSystemVariableSupplier.getInstance();
+	public static final EnvironmentVariableSupplier fEnvironmentMacroSupplier = EnvironmentVariableSupplier.getInstance();
+	public static final CdtMacroSupplier fCdtMacroSupplier = CdtMacroSupplier.getInstance();
+	public static final EclipseVariablesVariableSupplier fEclipseVariablesMacroSupplier = EclipseVariablesVariableSupplier.getInstance();
+	
 	protected CdtVariableManager(){
 		
 	}
@@ -57,6 +62,11 @@ public class CdtVariableManager implements ICdtVariableManager {
 		int type = getContextType(cfg);
 		return SupplierBasedCdtVariableManager.getVariable(macroName,
 				getMacroContextInfo(type,cfg),true);
+	}
+	
+	private IVariableContextInfo getVariableContextInfo(ICConfigurationDescription cfg){
+		int type = getContextType(cfg);
+		return getMacroContextInfo(type,cfg);
 	}
 
 	/* (non-Javadoc)
@@ -187,7 +197,45 @@ public class CdtVariableManager implements ICdtVariableManager {
 
 	public boolean isEnvironmentVariable(ICdtVariable variable,
 			ICConfigurationDescription cfg) {
-		return variable instanceof EnvironmentVariableSupplier.EnvVarMacro;
+		if(variable instanceof EnvironmentVariableSupplier.EnvVarMacro)
+			return true;
+		
+		IVariableContextInfo info = getVariableContextInfo(cfg);
+		ICdtVariable var = fEnvironmentMacroSupplier.getVariable(variable.getName(), info);
+		if(var != null && variablesEqual(var, variable))
+			return true;
+		
+		return false;
+	}
+	
+	private static boolean variablesEqual(ICdtVariable var1, ICdtVariable var2){
+		if(CDataUtil.objectsEqual(var1, var2))
+			return true;
+		
+		if(var1 == null || var2 == null)
+			return false;
+		
+		if(var1.getValueType() != var2.getValueType())
+			return false;
+		
+		if(!var1.getName().equals(var2.getName()))
+			return false;
+		
+		try {
+			if(CdtVariableResolver.isStringListVariable(var1.getValueType())){
+				String[] v1 = var1.getStringListValue();
+				String[] v2 = var2.getStringListValue();
+				if(!Arrays.equals(v1, v2))
+					return false;
+			} else {
+				if(!CDataUtil.objectsEqual(var1.getStringValue(), var2.getStringValue()))
+					return false;
+			}
+		} catch (CdtVariableException e){
+			return false;
+		}
+		
+		return true;
 	}
 
 	public IStringVariable toEclipseVariable(ICdtVariable variable,

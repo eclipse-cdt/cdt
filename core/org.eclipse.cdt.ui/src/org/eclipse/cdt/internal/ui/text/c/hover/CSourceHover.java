@@ -47,8 +47,10 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -65,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
@@ -263,7 +266,6 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			mgr.connect(location, locationKind, fMonitor);
 			ITextFileBuffer buffer= mgr.getTextFileBuffer(location, locationKind);
 			try {
-				
 				IRegion nameRegion= new Region(fileLocation.getNodeOffset(), fileLocation.getNodeLength());
 				final int nameOffset= nameRegion.getOffset();
 				final int sourceStart;
@@ -279,17 +281,18 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 						} else {
 							sourceStart= directiveStart;
 						}
-							sourceEnd= directiveStart + partition.getLength();
+						sourceEnd= directiveStart + partition.getLength();
 					} else {
 						return null;
 					}
 				} else {
 					// expand source range to include preceding comment, if any
-					sourceStart= computeSourceStart(doc, nameOffset, binding);
+					boolean isKnR= isKnRSource(name);
+					sourceStart= computeSourceStart(doc, nameOffset, binding, isKnR);
 					if (sourceStart == CHeuristicScanner.NOT_FOUND) {
 						return null;
 					}
-					sourceEnd= computeSourceEnd(doc, nameOffset + nameRegion.getLength(), binding, name.isDefinition());
+					sourceEnd= computeSourceEnd(doc, nameOffset + nameRegion.getLength(), binding, name.isDefinition(), isKnR);
 				}
 				String source= buffer.getDocument().get(sourceStart, sourceEnd - sourceStart);
 				return source;
@@ -303,15 +306,37 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			return null;
 		}
 
-		private int computeSourceStart(IDocument doc, int nameOffset, IBinding binding) throws BadLocationException {
+		/**
+		 * Determine if the name is part of a KnR function definition.
+		 * @param name
+		 * @return <code>true</code> if the name is part of a KnR function
+		 */
+		private boolean isKnRSource(IName name) {
+			if (name instanceof IASTName) {
+				IASTNode node= (IASTNode)name;
+				while (node.getParent() != null) {
+					if (node instanceof ICASTKnRFunctionDeclarator) {
+						return node.getParent() instanceof IASTFunctionDefinition;
+					}
+					node= node.getParent();
+				}
+			}
+			return false;
+		}
+
+		private int computeSourceStart(IDocument doc, int nameOffset, IBinding binding, boolean isKnR) throws BadLocationException {
 			int sourceStart= nameOffset;
 			CHeuristicScanner scanner= new CHeuristicScanner(doc);
 			if (binding instanceof IParameter) {
-				sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '>', '(', ',' });
-				if (sourceStart > 0 && doc.getChar(sourceStart) == '>') {
-					sourceStart= scanner.findOpeningPeer(sourceStart - 1, '<', '>');
-					if (sourceStart > 0) {
-						sourceStart= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '(', ',' });
+				if (isKnR) {
+					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { ')', ';' });
+				} else {
+					sourceStart= scanner.scanBackward(nameOffset, CHeuristicScanner.UNBOUND, new char[] { '>', '(', ',' });
+					if (sourceStart > 0 && doc.getChar(sourceStart) == '>') {
+						sourceStart= scanner.findOpeningPeer(sourceStart - 1, '<', '>');
+						if (sourceStart > 0) {
+							sourceStart= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '(', ',' });
+						}
 					}
 				}
 				if (sourceStart == CHeuristicScanner.NOT_FOUND) {
@@ -361,13 +386,22 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				expectClosingBrace= type instanceof ICompositeType || type instanceof IEnumeration;
 				final int nameLine= doc.getLineOfOffset(nameOffset);
 				sourceStart= nameOffset;
-				int commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+				int commentBound;
+				if (isKnR) {
+					commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { ')', ';' });
+				} else {
+					commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+				}
 				while (expectClosingBrace && commentBound > 0 && doc.getChar(commentBound) == '}') {
 					int openingBrace= scanner.findOpeningPeer(commentBound - 1, '{', '}');
 					if (openingBrace != CHeuristicScanner.NOT_FOUND) {
 						sourceStart= openingBrace - 1;
 					}
-					commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+					if (isKnR) {
+						commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { ')', ';' });
+					} else {
+						commentBound= scanner.scanBackward(sourceStart, CHeuristicScanner.UNBOUND, new char[] { '{', '}', ';' });
+					}
 				}
 				if (commentBound == CHeuristicScanner.NOT_FOUND) {
 					commentBound= -1; // unbound
@@ -390,7 +424,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 			return sourceStart;
 		}
 
-		private int computeSourceEnd(IDocument doc, int start, IBinding binding, boolean isDefinition) throws BadLocationException {
+		private int computeSourceEnd(IDocument doc, int start, IBinding binding, boolean isDefinition, boolean isKnR) throws BadLocationException {
 			int sourceEnd= start;
 			CHeuristicScanner scanner= new CHeuristicScanner(doc);
 			// expand forward to the end of the definition/declaration
@@ -403,7 +437,13 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				searchBrace= true;
 			} else if (binding instanceof IFunction && isDefinition) {
 				searchBrace= true;
-			} else if (binding instanceof IParameter || binding instanceof IEnumerator || binding instanceof ICPPTemplateParameter) {
+			} else if (binding instanceof IParameter) {
+				if (isKnR) {
+					searchSemi= true;
+				} else {
+					searchComma= true;
+				}
+			} else if (binding instanceof IEnumerator || binding instanceof ICPPTemplateParameter) {
 				searchComma= true;
 			} else if (binding instanceof IVariable || binding instanceof ITypedef) {
 				searchSemi= true;

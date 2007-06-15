@@ -81,7 +81,7 @@ public class ProjectConverter implements ICProjectConverter {
 	private static final Object LOCK = new Object();
 	private static ResourcePropertyHolder PROPS = new ResourcePropertyHolder(true);
 	
-	private static String CONVERSION_FAILED_MSG_ID = "conversionFailed";
+	private static String CONVERSION_FAILED_MSG_ID = "conversionFailed"; //$NON-NLS-1$
 	
 	public boolean canConvertProject(IProject project, String oldOwnerId, ICProjectDescription oldDes) {
 		try {
@@ -135,14 +135,14 @@ public class ProjectConverter implements ICProjectConverter {
 			try {
 				synchronized (LOCK) {
 					if(PROPS.getProperty(project, CONVERSION_FAILED_MSG_ID) != null)
-						throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), "failed to load the build info for the old-style project"));
+						throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
 				}
 
 				newDes = model.createProjectDescription(project, false);
 				info = convertManagedBuildInfo(project, newDes);
 			} catch (CoreException e) {
 				synchronized (LOCK) {
-					displayInfo(project, CONVERSION_FAILED_MSG_ID, "project conversion failed", "project conversion failed for project " + project.getName() + " with the following error:\n" + e.getLocalizedMessage());
+					displayInfo(project, CONVERSION_FAILED_MSG_ID, DataProviderMessages.getString("ProjectConverter.10"), DataProviderMessages.getFormattedString("ProjectConverter.11", new String[]{project.getName(), e.getLocalizedMessage()})); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				throw e;
 			}
@@ -554,7 +554,7 @@ public class ProjectConverter implements ICProjectConverter {
 					}
 				}
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), "failed to load the build info for the old-style project"));
+				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), DataProviderMessages.getString("ProjectConverter.13"))); //$NON-NLS-1$
 			}
 		}
 		return info;

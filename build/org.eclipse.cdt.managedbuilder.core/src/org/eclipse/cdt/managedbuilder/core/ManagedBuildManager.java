@@ -1396,7 +1396,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			Throwable cause = e.getStatus().getException();
 			if(cause instanceof IllegalArgumentException){
 				//can not acquire the root rule
-				Job j = new Job("save build info job"){
+				Job j = new Job("save build info job"){ //$NON-NLS-1$
 	
 					protected IStatus run(IProgressMonitor monitor) {
 						try {

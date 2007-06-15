@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -27,6 +28,20 @@ public class DataProviderMessages {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
+		} catch (NullPointerException e) {
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
+	}
+	
+	public static String getResourceString(String key) {
+		return getString(key);
+	}
+
+	public static String getFormattedString(String key, String arg) {
+		return MessageFormat.format(getResourceString(key), new String[] { arg });
+	}
+
+	public static String getFormattedString(String key, String[] args) {
+		return MessageFormat.format(getResourceString(key), args);
 	}
 }

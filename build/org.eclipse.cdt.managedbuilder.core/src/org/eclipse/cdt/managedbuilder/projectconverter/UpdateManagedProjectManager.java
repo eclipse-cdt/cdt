@@ -330,7 +330,7 @@ public class UpdateManagedProjectManager {
 			
 			if (!shouldUpdate){ 
 				fIsInfoReadOnly = true;
-				throw new CoreException(new Status(IStatus.CANCEL, ManagedBuilderCorePlugin.getUniqueIdentifier(), "project conversion was cancelled"));
+				throw new CoreException(new Status(IStatus.CANCEL, ManagedBuilderCorePlugin.getUniqueIdentifier(), ConverterMessages.getResourceString("UpdateManagedProjectManager.7"))); //$NON-NLS-1$
 			}
 			
 			IFile projectFile = fProject.getFile(".project"); //$NON-NLS-1$

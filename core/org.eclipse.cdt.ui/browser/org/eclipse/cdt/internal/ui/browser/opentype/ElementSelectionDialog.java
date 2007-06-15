@@ -41,6 +41,8 @@ import org.eclipse.cdt.core.browser.IndexTypeInfo;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndex;
@@ -253,7 +255,12 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 
 								if(binding instanceof ICPPBinding) {
 									fqn= ((ICPPBinding)binding).getQualifiedName();
-								} else {
+								} else if (binding instanceof IField) {
+									IField field= (IField) binding;
+									ICompositeType owner= field.getCompositeTypeOwner();
+									fqn= new String[] {owner.getName(), field.getName()};
+								}
+								else {
 									fqn= new String[] {binding.getName()};
 								}
 								if (binding instanceof IFunction) {

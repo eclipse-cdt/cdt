@@ -126,9 +126,9 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 				forced= workingCopy.isConsistent();
 				ast= workingCopy.reconcile(computeAST, true, fProgressMonitor);
 			}
-		} catch(OperationCanceledException oce) {
+		} catch (OperationCanceledException oce) {
 			// document was modified while parsing
-		} catch(CModelException e) {
+		} catch (CModelException e) {
 			IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
 			CUIPlugin.getDefault().log(status);
 		} finally {
@@ -138,7 +138,16 @@ public class CReconcilingStrategy implements IReconcilingStrategy, IReconcilingS
 					index= ast.getIndex();
 				}
 				try {
-					((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
+					if (ast == null) {
+						((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
+					} else {
+						synchronized (ast) {
+							((ICReconcilingListener)fEditor).reconciled(ast, forced, fProgressMonitor);
+						}
+					}
+				} catch(Exception e) {
+					IStatus status= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, IStatus.OK, "Error in CDT UI during reconcile", e);  //$NON-NLS-1$
+					CUIPlugin.getDefault().log(status);
 				} finally {
 					if (index != null) {
 						index.releaseReadLock();

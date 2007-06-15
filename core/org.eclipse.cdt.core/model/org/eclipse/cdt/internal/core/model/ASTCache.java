@@ -208,7 +208,12 @@ public class ASTCache {
 		try {
 			IASTTranslationUnit ast= getAST(tUnit, index, wait, monitor);
 			ILanguage lang= (tUnit instanceof TranslationUnit) ? ((TranslationUnit) tUnit).getLanguageOfContext() : tUnit.getLanguage();
-			return astRunnable.runOnAST(lang, ast);
+			if (ast == null) {
+				return astRunnable.runOnAST(lang, ast);
+			}
+			synchronized (ast) {
+				return astRunnable.runOnAST(lang, ast);
+			}
 		}
 		catch (CoreException e) {
 			return e.getStatus();

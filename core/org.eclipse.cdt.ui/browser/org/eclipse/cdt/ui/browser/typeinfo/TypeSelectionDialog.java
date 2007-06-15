@@ -636,11 +636,13 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
     public Object[] getFoldedElements(int index) {
     	ArrayList result= new ArrayList();
     	Object[] typeInfos= super.getFoldedElements(index);
-    	for (int i = 0; i < typeInfos.length; i++) {
-			Object typeInfo = typeInfos[i];
-			if (typeInfo instanceof IndexTypeInfo) {
-				addFoldedElements((IndexTypeInfo) typeInfo, result);
-			}
+    	if (typeInfos != null) {
+    		for (int i = 0; i < typeInfos.length; i++) {
+    			Object typeInfo = typeInfos[i];
+    			if (typeInfo instanceof IndexTypeInfo) {
+    				addFoldedElements((IndexTypeInfo) typeInfo, result);
+    			}
+    		}
     	}
     	return result.toArray();
     }

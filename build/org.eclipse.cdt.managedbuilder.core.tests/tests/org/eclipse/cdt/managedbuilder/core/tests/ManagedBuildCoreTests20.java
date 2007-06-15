@@ -237,7 +237,7 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		 // This first path is a built-in, so it will not be manipulated by build manager
 		 expectedPaths[0] = (new Path("/usr/include")).toOSString();
 		 expectedPaths[1] = (new Path("/opt/gnome/include")).toOSString();
-		 IPath path = new Path("C:/home/tester/include");
+		 IPath path = new Path("C:\\home\\tester/include");
 		 if(path.isAbsolute()) // for win32 path is treated as absolute
 			 expectedPaths[2] = path.toOSString();
 		 else // for Linux path is relative

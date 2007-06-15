@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
+import java.io.File;
+
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
@@ -22,6 +24,9 @@ class PathInfo {
 	private String fAbsoluteInfoStr;
 	private Boolean fIsAbsolute;
 	private SupplierBasedCdtVariableSubstitutor fSubstitutor;
+	
+	private static final boolean IS_WINDOWS = File.separatorChar == '\\';
+
 
 	public PathInfo(String str, boolean isWspPath, SupplierBasedCdtVariableSubstitutor subst){
 		fUnresolvedStr = str;
@@ -74,7 +79,7 @@ class PathInfo {
 			return false;
 		
 		char c1 = str.charAt(1);
-		if(c1 == ':')
+		if(IS_WINDOWS && c1 == ':')
 			return true;
 		
 		if(length < 4)

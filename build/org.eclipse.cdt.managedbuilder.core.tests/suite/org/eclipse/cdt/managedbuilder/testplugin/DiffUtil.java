@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 public class DiffUtil {
-	private static final String DIFF_CMD = "diff -u";
+	private static final String DIFF_CMD = "diff -ub";
 	private static DiffUtil fInstance;
 	
 	private DiffUtil(){

@@ -8,15 +8,18 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
  * Anton Leherbauer (Wind River Systems)
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
@@ -40,10 +43,20 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	 */
 	public String getText(Object element) {
 		if (element instanceof IncludeReferenceProxy) {
-			IIncludeReference ref = ((IncludeReferenceProxy)element).getReference();
-			IPath location = ref.getPath();
-			IContainer[] containers = ref.getCModel().getWorkspace().getRoot().findContainersForLocation(location);
+			final IIncludeReference ref = ((IncludeReferenceProxy)element).getReference();
+			final IPath location = ref.getPath();
+			final IContainer[] containers= ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(location);
 			if (containers.length > 0) {
+				// bug 192707, prefer the project the reference belongs to.
+				final ICProject prj= ref.getCProject();
+				if (prj != null) {
+					for (int i = 0; i < containers.length; i++) {
+						final IContainer container = containers[i];
+						if (container.getProject().equals(prj.getProject())) {
+							return container.getFullPath().makeRelative().toString();
+						}
+					}
+				}
 				return containers[0].getFullPath().makeRelative().toString();
 			}
 		} else if (element instanceof IIncludeReference) {

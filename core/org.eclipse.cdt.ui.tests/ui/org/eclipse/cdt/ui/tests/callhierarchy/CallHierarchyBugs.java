@@ -69,8 +69,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(outlineTree, 0, 0, "method() : void");
 		
 		// open and check call hierarchy
-		activateView(IPageLayout.ID_OUTLINE);
 		selectTreeItem(outlineTree, 0, 0);
+		outline.setFocus();
 		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 
 		Tree chTree= checkTreeNode(ch, 0, "SomeClass::method()").getParent();
@@ -112,8 +112,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(outlineTree, 2, "other() : void");
 
 		// open and check call hierarchy
-		activateView(IPageLayout.ID_OUTLINE);
 		selectTreeItem(outlineTree, 1);	// select the definition
+		outline.setFocus();
 		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 		
 		ch.onSetShowReferencedBy(false);
@@ -121,8 +121,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(chTree, 0, 0, "SomeClass::ref1");
 
 		// open and check call hierarchy
-		activateView(IPageLayout.ID_OUTLINE);
 		selectTreeItem(outlineTree, 2);	
+		outline.setFocus();
 		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 		checkTreeNode(chTree, 0, "other()");
 
@@ -133,8 +133,8 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		checkTreeNode(outlineTree, 1, "SomeClass::ambiguous_impl() : void");
 		
 		// open and check call hierarchy
-		activateView(IPageLayout.ID_OUTLINE);
 		selectTreeItem(outlineTree, 1);	// select the definition
+		outline.setFocus();
 		executeCommand(outline, ICEditorActionDefinitionIds.OPEN_CALL_HIERARCHY);
 
 		ch.onSetShowReferencedBy(false);

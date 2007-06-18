@@ -150,17 +150,6 @@ public class SystemResourceManager implements SystemResourceConstants
 		  _listener.removeResourceChangeListener(l);
 	}
 	
-//    /**
-//	 * Get the default remote systems project.
-//	 * If found but closed, this will open the project.
-//	 * @return IProject handle of the project. Use exists() to test existence.
-//	 * @deprecated use {@link #getRemoteSystemsProject(boolean)} instead.
-//	 */
-//	public static IProject getRemoteSystemsProject() 
-//	{
-//		return getRemoteSystemsProject(true);
-//	}
-
 	/**
 	 * Get the default remote systems project.
 	 * If found but closed, this will open the project.
@@ -229,59 +218,6 @@ public class SystemResourceManager implements SystemResourceConstants
 		}
 		return proj;
 	}
-
-    // --------------------------------------------
-    // GET ALL EXISTING PROFILE NAMES OR FOLDERS...
-    // --------------------------------------------
-    /**
-     * Each root folder of the project is assumed to be a profile, if it has a file named profile.xmi
-     */
-    /*
-    public static IFolder[] getProfileFolders()
-    {
-    	IProject proj = getRemoteSystemsProject();
-    	IFolder[] allFolders = getResourceHelpers().listFolders(proj);
-    	//System.out.println("Inside getProfileFolders. allFolders.length = " + allFolders.length);
-    	Vector v = new Vector();
-    	for (int idx=0; idx<allFolders.length; idx++)
-    	{
-    		String saveFileName = SystemProfileManager.getSaveFileName(allFolders[idx].getName());
-    		IFile saveFile = getResourceHelpers().getFile(allFolders[idx], saveFileName);    		
-    		boolean saveFileExists = getResourceHelpers().fileExists(saveFile);
-    	    //System.out.println("...folderName = " + allFolders[idx].getName());
-    	    //System.out.println("...saveFileName = " + saveFileName);
-    	    //System.out.println("...saveFile.exists() = " + saveFileExists);
-    		if (saveFileExists)
-    		  v.addElement(allFolders[idx]);
-    	}
-    	return getResourceHelpers().convertToFolderArray(v);
-    }
-    */
-
-    /**
-     * Guess the profile names by itemizing all the root folders, and
-     *  assuming any such folder that has a file in it named "profile.xmi" is
-     *  indeed a profile whose name equals the folder name.
-     */
-    /*
-    public static String[] deduceProfileNames()
-    {
-    	IFolder[] folders = getProfileFolders();
-    	String[] names = new String[folders.length];
-    	for (int idx=0; idx<names.length; idx++)
-    	   names[idx] = folders[idx].getName();
-    	return names;
-    }
-    */
-
-    /**
-     * Get profiles folder for a given profile name
-     */
-//    public static IFolder getProfileFolder(String profileName)
-//    {
-//        return getResourceHelpers().getOrCreateFolder(getRemoteSystemsProject(),profileName);      	
-//    }
-
 
     // -------------------
     // FOLDER ACTIONS...

@@ -18,6 +18,12 @@ package org.eclipse.rse.persistence;
 
 import org.eclipse.rse.core.model.ISystemProfile;
 
+/**
+ * This interface defines the services provided by a persistence manager for RSE.
+ * There is typically only one persistence manager instance defined when RSE is running.
+ * The persistence manager controls the persistence of RSE profiles through the use 
+ * of registered persistence providers.
+ */
 public interface IRSEPersistenceManager {
 
 	/**

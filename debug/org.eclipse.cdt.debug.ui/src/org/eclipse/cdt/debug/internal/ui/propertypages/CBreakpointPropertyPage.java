@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Nokia - https://bugs.eclipse.org/bugs/show_bug.cgi?id=145606
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.propertypages;
 
@@ -18,6 +19,9 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -318,9 +322,16 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				CDebugUIPlugin.log( ce );
 			}
 			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), type ) ); //$NON-NLS-1$
-			String projectName = breakpoint.getMarker().getResource().getLocation().toOSString();
-			if ( projectName != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.10" ), projectName ) ); //$NON-NLS-1$
+			IProject project = breakpoint.getMarker().getResource().getProject();
+			if ( project != null ) {
+				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.10" ), project.getName() ) ); //$NON-NLS-1$
+			}
+			IResource resource = breakpoint.getMarker().getResource();
+			if ( resource instanceof IFile ) {
+				String filename = resource.getLocation().toOSString();
+				if ( filename != null ) {
+					addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.20" ), filename ) ); //$NON-NLS-1$
+				}
 			}
 			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.14" ), expression ) ); //$NON-NLS-1$
 		}

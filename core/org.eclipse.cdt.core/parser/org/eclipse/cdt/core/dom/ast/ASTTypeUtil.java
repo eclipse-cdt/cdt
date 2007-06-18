@@ -266,38 +266,57 @@ public class ASTTypeUtil {
 			} catch (DOMException e) {}
 			
 		}
+		else if (type instanceof ITypedef) {
+			result.append(((ITypedef)type).getNameCharArray());
+		}
 		
 		return result.toString();
 	}
 
 	/**
 	 * Returns the type represntation of the IType as a String.  This function uses the IType interfaces to build the 
-	 * String representation of the IType.
+	 * String representation of the IType. Resolves typedefs.
 	 * @param type
 	 * @return the type represntation of the IType
 	 */
 	public static String getType(IType type) {
+		return getType(type, true);
+	}
+		
+	/**
+	 * Returns the type represntation of the IType as a String.  This function uses the IType interfaces to build the 
+	 * String representation of the IType.
+	 * @param type
+	 * @param resolveTypedefs whether or not typedefs shall be resolved to their real types
+	 * @return the type represntation of the IType
+	 */
+	public static String getType(IType type, boolean resolveTypedefs) {
 		StringBuffer result = new StringBuffer();
 		IType[] types = new IType[DEAULT_ITYPE_SIZE];
 		
 		// push all of the types onto the stack
-		while(type != null && type instanceof ITypeContainer) {
-		    types = (IType[]) ArrayUtil.append( IType.class, types, type );
-			
-			try {
-				type = ((ITypeContainer)type).getType();
-			} catch (DOMException e) {}
-		}
-		
-		if (type != null && !(type instanceof ITypeContainer)) {
-		    types = (IType[]) ArrayUtil.append( IType.class, types, type );
+		while(type != null) {
+			final boolean isTypedef= type instanceof ITypedef;
+			if (!resolveTypedefs || !isTypedef) { 
+			    types = (IType[]) ArrayUtil.append( IType.class, types, type );
+			}
+			if (!resolveTypedefs && isTypedef) {
+				type= null;	// stop here
+			}
+			else if (type instanceof ITypeContainer) {
+				try {
+					type = ((ITypeContainer)type).getType();
+				} catch (DOMException e) {
+					type= null;
+				}
+			}
+			else {
+				type= null;
+			}
 		}
 		
 		// pop all of the types off of the stack, and build the string representation while doing so
 		for(int j=types.length-1; j>=0; j--) {
-			if (types[j] instanceof ITypedef)
-				continue;
-
 			if (types[j] != null && result.length() > 0) result.append(SPACE); // only add a space if this is not the first type being added
 			
 			if (types[j] != null) {

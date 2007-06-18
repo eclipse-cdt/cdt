@@ -8,6 +8,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -766,5 +767,21 @@ public class CompletionTests extends AbstractContentAssistTest {
 				"Printer::"
 		};
 		assertMinimumCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// typedef struct {
+    //    int sx;
+    // } my_struct;
+    //
+    // void func(my_struct s);
+    // 
+    // void test() {
+    //    fun/*cursor*/
+	public void testFunctionWithTypedefToAnonymousType_bug192787() throws Exception {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=192787
+		final String[] expected= {
+				"func(my_struct s) void"
+		};
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_DISP_STRINGS);
 	}
 }

@@ -695,9 +695,9 @@ public class IndexBugsTests extends BaseTestCase {
 		
 		ICProject p2 = CProjectHelper.createCCProject("__bugsTest_2_", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
-			IFile f3= TestSourceReader.createFile(p2.getProject(), "src.cpp", contents[2].toString());
 			IFile f1= TestSourceReader.createFile(fCProject.getProject(), "common.h", contents[0].toString());
 			IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
+			IFile f3= TestSourceReader.createFile(p2.getProject(), "src.cpp", contents[2].toString());
 			waitForIndexer();
 
 			IIndex index= CCorePlugin.getIndexManager().getIndex(new ICProject[]{fCProject, p2});

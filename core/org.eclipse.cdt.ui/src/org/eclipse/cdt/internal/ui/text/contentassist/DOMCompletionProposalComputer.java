@@ -277,8 +277,8 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
                         idargs.append(',');
                     }
 
-					dispargs.append(ASTTypeUtil.getType(paramType));
-                    idargs.append(ASTTypeUtil.getType(paramType));
+					dispargs.append(ASTTypeUtil.getType(paramType, false));
+                    idargs.append(ASTTypeUtil.getType(paramType, false));
 					String paramName = params[i].getName();
 					if (paramName != null && paramName.length() > 0) {
 						dispargs.append(' ');
@@ -302,7 +302,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 			if (functionType != null) {
 				IType returnType = functionType.getReturnType();
 				if (returnType != null)
-					returnTypeStr = ASTTypeUtil.getType(returnType);
+					returnTypeStr = ASTTypeUtil.getType(returnType, false);
 			}
 		} catch (DOMException e) {
 		}
@@ -349,7 +349,7 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 		try {
 			IType varType = variable.getType();
 			if (varType != null)
-				returnTypeStr = ASTTypeUtil.getType(varType);
+				returnTypeStr = ASTTypeUtil.getType(varType, false);
 		} catch (DOMException e) {
 		}
         

@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -286,10 +288,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 		// includes
 		final IASTPreprocessorIncludeStatement[] includeDirectives= ast.getIncludeDirectives();
+		Set allIncludes= new HashSet();
 		for (int i= 0; i < includeDirectives.length; i++) {
 			IASTPreprocessorIncludeStatement includeDirective= includeDirectives[i];
 			if (isLocalToFile(includeDirective)) {
-				createInclusion(fTranslationUnit, includeDirective);
+				createInclusion(fTranslationUnit, includeDirective, allIncludes);
 			}
 		}
 		// macros
@@ -357,13 +360,18 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		return fTranslationUnitFileName.equals(node.getContainingFilename());
 	}
 
-	private Include createInclusion(Parent parent, IASTPreprocessorIncludeStatement inclusion) throws CModelException{
+	private Include createInclusion(Parent parent, IASTPreprocessorIncludeStatement inclusion, Set allIncludes) throws CModelException{
 		// create element
 		final IASTName name= inclusion.getName();
 		Include element= new Include(parent, ASTStringUtil.getSimpleName(name), inclusion.isSystemInclude());
 		element.setFullPathName(inclusion.getPath());
 		element.setActive(inclusion.isActive());
 		element.setResolved(inclusion.isResolved());
+		// if there is a duplicate include, also set the index
+		if (!allIncludes.add(element)) {
+			element.setIndex(allIncludes.size());
+			allIncludes.add(element);
+		}
 		// add to parent
 		parent.addChild(element);
 		// set positions

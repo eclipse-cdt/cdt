@@ -21,6 +21,7 @@ public class Include extends SourceManipulation implements IInclude {
 	private String fullPath;
 	private boolean fIsActive= true;
 	private boolean fIsResolved= true;
+	private int fIndex= 0;
 
 	public Include(ICElement parent, String name, boolean isStandard) {
 		super(parent, name, ICElement.C_INCLUDE);
@@ -79,12 +80,25 @@ public class Include extends SourceManipulation implements IInclude {
 		return fIsResolved;
 	}
 
+	/**
+	 * Set the index of this include, in case the same include is referenced
+	 * multiple times.
+	 * 
+	 * @param index
+	 */
+	public void setIndex(int index) {
+		fIndex= index;
+	}
+
 	/*
 	 * @see org.eclipse.cdt.internal.core.model.CElement#equals(java.lang.Object)
 	 */
 	public boolean equals(Object other) {
-		if (other instanceof IInclude) {
-			return equals(this, (IInclude) other);
+		if (other instanceof IInclude && equals(this, (IInclude) other)) {
+			if (other instanceof Include) {
+				return fIndex == ((Include)other).fIndex;
+			}
+			return true;
 		}
 		return false;
 	}

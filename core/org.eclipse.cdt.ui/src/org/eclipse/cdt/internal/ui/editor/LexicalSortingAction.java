@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -15,10 +16,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
 
 
 public class LexicalSortingAction extends Action {
@@ -69,19 +71,56 @@ public class LexicalSortingAction extends Action {
 			if (obj instanceof ICElement) {
 				ICElement elem= (ICElement)obj;
 				switch (elem.getElementType()) {
-					case ICElement.C_MACRO: return 1;
-					case ICElement.C_INCLUDE: return 2;
+				case ICElement.C_MACRO:
+					return 2;
+				case ICElement.C_INCLUDE:
+					return 3;
+				case ICElement.C_USING:
+					return 4;
 					
-					case ICElement.C_CLASS: return 3;
-					case ICElement.C_STRUCT: return 4;
-					case ICElement.C_UNION: return 5;
+				case ICElement.C_TYPEDEF:
+					return 10;
+				case ICElement.C_CLASS: 
+				case ICElement.C_CLASS_DECLARATION:
+				case ICElement.C_TEMPLATE_CLASS:
+				case ICElement.C_TEMPLATE_CLASS_DECLARATION:
+					return 11;
+				case ICElement.C_STRUCT:
+				case ICElement.C_STRUCT_DECLARATION:
+				case ICElement.C_TEMPLATE_STRUCT:
+				case ICElement.C_TEMPLATE_STRUCT_DECLARATION:
+					return 12;
+				case ICElement.C_UNION:
+				case ICElement.C_UNION_DECLARATION:
+				case ICElement.C_TEMPLATE_UNION:
+				case ICElement.C_TEMPLATE_UNION_DECLARATION:
+					return 13;
+				case ICElement.C_ENUMERATION:
+					return 14;
 					
-					case ICElement.C_FIELD: return 6;
-					case ICElement.C_FUNCTION: return 7;		
+				case ICElement.C_VARIABLE:
+				case ICElement.C_VARIABLE_DECLARATION:
+					return 20;
+				case ICElement.C_FIELD:
+					return 21;
+				case ICElement.C_FUNCTION:
+				case ICElement.C_FUNCTION_DECLARATION:
+				case ICElement.C_TEMPLATE_FUNCTION:
+				case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+					return 22;
+				case ICElement.C_METHOD:
+				case ICElement.C_METHOD_DECLARATION:
+				case ICElement.C_TEMPLATE_METHOD:
+				case ICElement.C_TEMPLATE_METHOD_DECLARATION:
+					return 23;
+					
+				case ICElement.C_NAMESPACE:
+					return 30;
 				}
-				
+			} else if (obj instanceof CElementGrouping) {
+				return 0;
 			}
-			return 0;
+			return 100;
 		}
 	}
 	

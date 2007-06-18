@@ -85,53 +85,9 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 	protected IASTName[] findNames(String section, int len) {
 		// get the language from the language manager
 		ILanguage language = null;
-		ICProject cproject = strategy.getCProject();
 		IASTTranslationUnit ast = strategy.getAst();
 		try {
-			IProject project = cproject.getProject();
-			ICConfigurationDescription configuration = CoreModel.getDefault().getProjectDescription(project, false).getActiveConfiguration();
-			language = LanguageManager.getInstance().getLanguageForFile(strategy.getAst().getFilePath(), project, configuration);
-		} catch (CoreException e) {
-			fail("Unexpected exception while getting language for file.");
-		}
-		
-		
-		assertNotNull("No language for file " + ast.getFilePath().toString(), language);
-		
-		return language.getSelectedNames(ast, strategy.getTestData()[1].indexOf(section), len);
-	}
-
-	
-	protected IBinding getBindingFromASTName(String section, int len) {
-		return getBindingFromASTName(section, len, false);
-	}
-	
-	protected IBinding getBindingFromASTName(String section, int len, boolean matchLength) {
-		IASTName[] names= findNames(section, len);
-		if(matchLength) {
-			List lnames= new ArrayList(Arrays.asList(names));
-			for(ListIterator li= lnames.listIterator(); li.hasNext(); ) {
-				IASTName name= (IASTName) li.next();
-				if(name.getRawSignature().length()!=len) {
-					li.remove();
-				}
-			}
-			names= (IASTName[]) lnames.toArray(new IASTName[lnames.size()]);
-		}
-		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
-		IBinding binding = names[0].resolveBinding();
-		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
-		return names[0].resolveBinding();
-	}
-
-	protected IBinding getProblemFromASTName(String section, int len) {
-		// get the language from the language manager
-		ILanguage language = null;
-		ICProject cproject = strategy.getCProject();
-		IASTTranslationUnit ast = strategy.getAst();
-		try {
-			IProject project = cproject.getProject();
+			IProject project = strategy.getCProject().getProject();
 			ICConfigurationDescription configuration = CoreModel.getDefault().getProjectDescription(project, false).getActiveConfiguration();
 			language = LanguageManager.getInstance().getLanguageForFile(ast.getFilePath(), project, configuration);
 		} catch (CoreException e) {
@@ -139,9 +95,49 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 		}
 		
 		assertNotNull("No language for file " + ast.getFilePath().toString(), language);
-		
-		IASTName[] names= language.getSelectedNames(ast, strategy.getTestData()[1].indexOf(section), len);
+		return language.getSelectedNames(ast, strategy.getTestData()[1].indexOf(section), len);
+	}
+	
+	/**
+	 * Attempts to get an IBinding from the initial specified number of characters
+	 * from the specified code fragment. Fails the test if
+	 * <ul>
+	 *  <li> There is not a unique name with the specified criteria
+	 *  <li> The binding associated with the name is null or a problem binding
+	 * </ul>
+	 * @param section the code fragment to search for in the AST. The first occurrence of an identical section is used.
+	 * @param len the length of the specified section to use as a name. This can also be useful for distinguishing between
+	 * template names, and template ids.
+	 * @return the associated name's binding
+	 */
+	protected IBinding getBindingFromASTName(String section, int len) {
+		IASTName[] names= findNames(section, len);
+		List lnames= new ArrayList(Arrays.asList(names));
+		for(ListIterator li= lnames.listIterator(); li.hasNext(); ) {
+			IASTName name= (IASTName) li.next();
+			if(name.getRawSignature().length()!=len) {
+				li.remove();
+			}
+		}
+		names= (IASTName[]) lnames.toArray(new IASTName[lnames.size()]);
 		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
+		
+		IBinding binding = names[0].resolveBinding();
+		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
+		assertFalse("Binding is a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));
+		return names[0].resolveBinding();
+	}
+
+	/**
+	 * Attempts to verify that the resolved binding for a name is a problem binding.
+	 * @param section the code fragment to search for in the AST. The first occurrence of an identical section is used.
+	 * @param len the length of the specified section to use as a name
+	 * @return the associated name's binding
+	 */
+	protected IBinding getProblemFromASTName(String section, int len) {
+		IASTName[] names= findNames(section, len);
+		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
+		
 		IBinding binding = names[0].resolveBinding();
 		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
 		assertTrue("Binding is not a ProblemBinding for name "+names[0].getRawSignature(), IProblemBinding.class.isAssignableFrom(names[0].resolveBinding().getClass()));

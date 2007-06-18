@@ -111,8 +111,8 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		// Bug 185828 reports a StackOverflowException is thrown before we get here.
 		// That the SOE is thrown is detected in BaseTestCase via an Error IStatus
 		
-		IBinding b0= getBindingFromASTName("C", 1);
-		IBinding b1= getBindingFromASTName("C<int>", 6, true);
+		IBinding b0= getBindingFromASTName("C<int>", 1);
+		IBinding b1= getBindingFromASTName("C<int>", 6);
 		IBinding b2= getProblemFromASTName("unresolvable", 12);
 		
 		assertInstance(b0, ICPPClassType.class);

@@ -49,6 +49,7 @@
 	
 	<!-- PREFERENCE TOPICS -->
 	<topic label="C/C++ Preferences" href="reference/cdt_u_c_pref.htm">
+		<topic label="Appearance preferences" href="reference/cdt_u_appearance_pref.htm"/>
 		<topic label="Build Console preferences" href="reference/cdt_u_build_pref.htm"/>
 		
 		<topic label="Debug preferences" href="reference/cdt_u_debug.htm">
@@ -72,7 +73,9 @@
 		<topic label="Environment preferences" href="reference/cdt_u_environment_pref.htm"/>
 		
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
-		
+
+		<topic label="Language Mappings preferences" href="reference/cdt_u_appearance_pref.htm"/>
+
 		<topic label="Make" href="reference/cdt_u_make_pref.htm" >
 			<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm"/>
 			<topic label="Settings" href="reference/cdt_u_make_settings_pref.htm"/>			

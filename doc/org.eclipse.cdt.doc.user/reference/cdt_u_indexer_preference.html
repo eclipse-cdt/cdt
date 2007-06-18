@@ -3,16 +3,74 @@
 <head>
   <meta http-equiv="Content-Language" content="en-us">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Indexer Preference Page</title>
+  <title>Indexer Preference page</title>
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>Indexer Preference Page</h1>
+<h1>Indexer Preference page</h1>
+<p>Use the <b>Indexer</b> preference page to select the indexer used by default for new projects and configure its behavior.</p>
 <p> <img src="../images/indexer_preference_page.PNG"
- alt="Indexer Preferences Window" style="width: 580px; height: 532px;"><br>
+ alt="Indexer Preferences Window" ><br>
 </p>
-<p>The indexer preference page allows you to select which indexer is to
-be used as a default for new projects.</p>
+<table width="600" cellpadding="5" cellspacing="0" border="1" >
+  <caption>
+  <b>Indexer  Options</b>
+  </caption>
+  <colgroup>
+  <col width="30%" valign="top" >
+  <col width="70%" valign="top" >
+  </colgroup>
+  <tbody>
+    <tr>
+      <td width="241" valign="top"><b>Select Indexer </b></td>
+      <td width="333" valign="top">Select the indexer to use by default for all new projects. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Index all files (files neither built nor included, also) </b></td>
+      <td valign="top">Activate this checkbox to index all files </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Skip all references (Call Hierarchy and Search will not work) </b></td>
+      <td valign="top">Activate this checkbox to not index references in indexed files. This prevents some portions of CDT from working, like Call Hierarchy and Search. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Skip type references (Search fort type references will not work) </b></td>
+      <td valign="top">Activate this checkbox to not index type references in indexed files. This prevents some portions of CDT from working, Search. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Files to index up-front </b></td>
+      <td valign="top">Type a comma separated list of files that should always be indexed immediately. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Automatically update the index </b></td>
+      <td valign="top">Activate this checkbox to have the index automatically update as it requires. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Update index immediately after every file change </b></td>
+      <td valign="top">Activate this checkbox to force an index update whenever a file is saved. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Use active build configuration </b></td>
+      <td valign="top">Activate this checkbox to always use the active build configuration indexer settings to build the index. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Use the build configuration specified in the project's indexer settings </b></td>
+      <td valign="top">Activate this checkbox to always use the project's indexer settings to build the index. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Limit relative to the maximum heap size </b></td>
+      <td valign="top">Specify the relative size limit the index can reach based on the maximum heap size. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Index database cache: Absolute limit </b></td>
+      <td valign="top">Specify the  maximum size the index database cache is limited to. </td>
+    </tr>
+    <tr>
+      <td valign="top"><b>Header file cache: Absolute limit </b></td>
+      <td valign="top">Specify the  maximum size the header file cache is limited to. </td>
+    </tr>
+  </tbody>
+</table>
 <p><img style="border: 0px solid ; width: 143px; height: 21px;"
  src="../images/ngconcepts.gif" alt="Related concepts"> <br>
 <a href="../concepts/cdt_o_code_entry.htm">Coding aids</a><br>
@@ -29,7 +87,8 @@ editor</a></p>
 <a href="cdt_u_m_search.htm">Search action</a><br>
 <a href="cdt_u_search_view.htm">Search view</a><br>
 </p>
-<p><img src="../images/ng00_05a.gif" alt="Copyright"
+<p><img src="../images/nokia2007Copyright.png" width="255" height="14"><br>
+  <img src="../images/ng00_05a.gif" alt="Copyright"
  style="width: 324px; height: 14px;"><br>
 </p>
 <p>

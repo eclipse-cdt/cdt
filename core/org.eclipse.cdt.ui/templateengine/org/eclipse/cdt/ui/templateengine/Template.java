@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,12 +25,12 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateInfo;
+import org.eclipse.cdt.core.templateengine.TemplateInitializationException;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.templateengine.pages.UIPagesProvider;
@@ -56,7 +53,7 @@ public class Template extends TemplateCore {
 	private UIPagesProvider uiPagesProvider;
 	private Map/*<String, UIWizardPage>*/ pageMap;
 	
-	public Template(TemplateInfo templateInfo) throws IOException, ProcessFailureException, SAXException, ParserConfigurationException {
+	public Template(TemplateInfo templateInfo) throws TemplateInitializationException {
 		super(templateInfo);
 		templateDescriptor = getTemplateDescriptor();
 		uiElementTreeBuilderManager = new UIElementTreeBuilderManager(new UIElementTreeBuilderHelper(templateDescriptor, templateInfo));

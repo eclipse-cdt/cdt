@@ -66,44 +66,52 @@ public class TemplateEngine {
 	}
 
 	/**
-	 * get All the templates, no filtering is done.
-	 * 
-	 * @return
+	 * Returns all the TemplateCore objects, no filtering is done.
 	 */
 	public TemplateCore[] getTemplates() {
 		TemplateInfo[] templateInfoArray = getTemplateInfos();
-		List/*<Template>*/ templatesList = new ArrayList/*<Template>*/();
+		List/*<TemplateCore>*/ tcores = new ArrayList/*<TemplateCore>*/();
 		for (int i=0; i<templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
-				templatesList.add(TemplateCore.getTemplate(info));
-			} catch (Exception e) {
+				tcores.add(TemplateCore.getTemplate(info));
+			} catch (TemplateInitializationException e) {
+				CCorePlugin.log(e);
 			}
 		}
-		return (TemplateCore[]) templatesList.toArray(new TemplateCore[templatesList.size()]);
+		return (TemplateCore[]) tcores.toArray(new TemplateCore[tcores.size()]);
 	}
 
 	/**
-	 * This method will be called by Contianer UIs (Wizard, PropertyPage,
-	 * PreferencePage). Create a Template instance, update the ValueStore, with
-	 * SharedDefaults. This method calls the getTemplate(URL), after getting URL
-	 * for the given String TemplateDescriptor.
-	 * 
-	 * @param StringTemplateDescriptor,
-	 *            TemplateDescriptor name.
-	 * @throws IOException
+	 * Returns the TemplateCore for the first template defined for the specified parameters, or null
+	 * if no such definition exists, or if there is an error initializing the template (the error will
+	 * be logged). 
+	 * @param projectType may not be null
+	 * @param toolChain may be null to indicate no tool-chain filtering
+	 * @param usageFilter a regex in java.util.regex.Pattern format, may be null to indicate no filtering
+	 * @see java.util.regex.Pattern
+	 * @return
+	 */
+	public TemplateCore getFirstTemplate(String projectType, String toolChain, String usageFilter) {
+		TemplateInfo[] infos= getTemplateInfos(projectType, toolChain, usageFilter);
+		if(infos.length>0) {
+			try {
+				return TemplateCore.getTemplate(infos[0]);
+			} catch(TemplateInitializationException tie) {
+				CCorePlugin.log(tie);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Equivalent to calling the overloaded version of getFirstTemplate with null arguments for
+	 * toolChain and usageFilter.
+	 * @see TemplateEngine#getFirstTemplate(String, String, String)
+	 * @return the first TemplateCore object registered, or null if this does not exist
 	 */
 	public TemplateCore getFirstTemplate(String projectType) {
 		return getFirstTemplate(projectType, null, null);
-	}
-
-	public TemplateCore getFirstTemplate(String projectType, String toolChain, String usageFilter) {
-		try {
-			return TemplateCore.getTemplate(getTemplateInfos(projectType, toolChain, usageFilter)[0]);
-		} catch (Exception e) {
-			// ignore
-		}				
-		return null;
 	}
 
 	/**
@@ -119,7 +127,8 @@ public class TemplateEngine {
 			TemplateInfo info = templateInfoArray[i];
 			try {
 				templatesList.add(TemplateCore.getTemplate(info));
-			} catch (Exception e) {
+			} catch (TemplateInitializationException tie) {
+				CCorePlugin.log(tie);
 			}
 		}
 		return (TemplateCore[]) templatesList.toArray(new TemplateCore[templatesList.size()]);
@@ -273,6 +282,11 @@ public class TemplateEngine {
 	
 	/**
 	 * Gets an array of template info objects matching the criteria passed as params.
+	 * @param projectType may not be null
+	 * @param toolChain may be null to indicate no tool-chain
+	 * @param usageFilter a usage string which is matched against the filter from the template, may be null
+	 * to indicate no usage filtering
+	 * @return an array of template infos (never null)
 	 */
 	public TemplateInfo[] getTemplateInfos(String projectType, String toolChain, String usageFilter) {
 		List/*<TemplateInfo>*/ templateInfoList = (List/*<TemplateInfo*/) templateInfoMap.get(projectType.trim());
@@ -315,6 +329,10 @@ public class TemplateEngine {
 		return getTemplateInfos(projectType, null, null);
 	}
 
+	/**
+	 * Returns all TemplateInfo objects known to the TemplateEngine
+	 * @return
+	 */
 	public TemplateInfo[] getTemplateInfos() {
 		List/*<TemplateInfo>*/ infoList = new ArrayList/*<TemplateInfo>*/();
 		for (Iterator i = templateInfoMap.values().iterator(); i.hasNext();) {

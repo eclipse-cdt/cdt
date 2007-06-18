@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.tests.templateengine;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.templateengine.TemplateCore;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
 /**
  * Test the functionality of Tempalte Class.
  */
-public class TestTemplateCore extends TestCase {
+public class TestTemplateCore extends BaseTestCase {
 
     public TemplateCore[] templates = null;
     

@@ -15,16 +15,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.templateengine.SharedDefaults;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
 
 /**
 * Executes all the test cases of SharedDefaults backend functionality
 */
 
-public class TestSharedDefaults extends TestCase {
+public class TestSharedDefaults extends BaseTestCase {
 	private SharedDefaults sharedDefaults;
 	
 	/*

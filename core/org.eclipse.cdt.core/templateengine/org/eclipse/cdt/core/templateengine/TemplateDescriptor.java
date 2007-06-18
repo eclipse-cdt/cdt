@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.templateengine;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,15 +47,22 @@ public class TemplateDescriptor {
 	/**
 	 * Constructor  which construct the Document based the URL
 	 * @param descriptorURL
-	 * @throws SAXException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
+	 * @throws TemplateInitializationException
 	 */
-	public TemplateDescriptor(URL descriptorURL, String id) throws SAXException, IOException, ParserConfigurationException {
-		document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(descriptorURL.openStream());
-		rootElement = document.getDocumentElement();
-		persistVector = new ArrayList/*<String>*/();
-		pluginId = id;
+	public TemplateDescriptor(URL descriptorURL, String pluginId) throws TemplateInitializationException {
+		String msg= MessageFormat.format(TemplateEngineMessages.getString("TemplateCore.InitFailed"), new Object[]{descriptorURL}); //$NON-NLS-1$
+		try {
+			this.document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(descriptorURL.openStream());
+		} catch(ParserConfigurationException pce) {
+			throw new TemplateInitializationException(msg, pce);
+		} catch(IOException ioe) {
+			throw new TemplateInitializationException(msg, ioe);
+		} catch(SAXException se) {
+			throw new TemplateInitializationException(msg, se);
+		}
+		this.rootElement = document.getDocumentElement();
+		this.persistVector = new ArrayList/*<String>*/();
+		this.pluginId = pluginId;
 	}
 
 	/**

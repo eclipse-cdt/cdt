@@ -13,10 +13,10 @@ package org.eclipse.cdt.ui.templateengine;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.templateengine.TemplateCore;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateInfo;
-
+import org.eclipse.cdt.core.templateengine.TemplateInitializationException;
 
 /**
  * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for 
@@ -30,32 +30,13 @@ public class TemplateEngineUI {
 	/**
 	 * static reference to the Singleton TemplateEngine instance.
 	 */
-	private static TemplateEngineUI TEMPLATE_ENGINE_UI = new TemplateEngineUI();
+	private static final TemplateEngineUI TEMPLATE_ENGINE_UI = new TemplateEngineUI();
 
 	private TemplateEngineUI() {
 	}
 
 	public static TemplateEngineUI getDefault() {
 		return TEMPLATE_ENGINE_UI;
-	}
-
-	/**
-	 * This method will be called by Contianer UIs (Wizard, PropertyPage,
-	 * PreferencePage). Create a Template instance, update the ValueStore, with
-	 * SharedDefaults. This method calls the getTemplate(URL), after getting URL
-	 * for the given String TemplateDescriptor.
-	 */
-	public TemplateCore getFirstTemplate(String projectType) {
-		return getFirstTemplate(projectType, null, null);
-	}
-
-	public TemplateCore getFirstTemplate(String projectType, String toolChain, String usageFilter) {
-		try {
-			return new Template(TemplateEngine.getDefault().getTemplateInfos(projectType, toolChain, usageFilter)[0]);
-		} catch (Exception e) {
-			// ignore
-		}				
-		return null;
 	}
 
 	public Template[] getTemplates(String projectType, String toolChain, String usageFilter) {
@@ -65,7 +46,8 @@ public class TemplateEngineUI {
 			TemplateInfo info = templateInfoArray[i];
 			try {
 				templatesList.add(new Template(info));
-			} catch (Exception e) {
+			} catch (TemplateInitializationException tie) {
+				CCorePlugin.log(tie);
 			}
 		}
 		return (Template[]) templatesList.toArray(new Template[templatesList.size()]);
@@ -80,7 +62,7 @@ public class TemplateEngineUI {
 	}
 	
 	/**
-	 * get All the templates, no filtering is done.
+	 * Returns all the templates, no filtering is done.
 	 */
 	public Template[] getTemplates() {
 		TemplateInfo[] templateInfoArray = TemplateEngine.getDefault().getTemplateInfos();
@@ -88,7 +70,8 @@ public class TemplateEngineUI {
 		for (int i=0; i<templateInfoArray.length; i++) {
 			try {
 				templatesList.add(new Template(templateInfoArray[i]));
-			} catch (Exception e) {
+			} catch (TemplateInitializationException tie) {
+				CCorePlugin.log(tie);
 			}
 		}
 

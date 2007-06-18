@@ -13,11 +13,10 @@ package org.eclipse.cdt.core.tests.templateengine;
 import java.io.File;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -28,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
-public class TestProcesses extends TestCase {
+public class TestProcesses extends BaseTestCase {
 	
 	private static final String workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toOSString();
 	private static final String PROJECT_NAME = "TemplateEngineTestsProject"; //$NON-NLS-1$

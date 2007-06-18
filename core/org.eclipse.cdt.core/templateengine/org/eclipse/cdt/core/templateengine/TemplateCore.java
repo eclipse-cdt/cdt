@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.templateengine;
 
 import java.io.IOException;
+import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -20,15 +22,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.TemplateProcessHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -66,17 +65,19 @@ public class TemplateCore {
 	private boolean fireDirtyEvents;
 	
 	/**
-	 * Constructor
-	 * 
-	 * @param templateInfo
-	 * @throws IOException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
+	 * @param templateInfo may not be null
+	 * @throws TemplateInitializationException
 	 */
-
-	protected TemplateCore(TemplateInfo templateInfo) throws IOException, SAXException, ParserConfigurationException {
+	protected TemplateCore(TemplateInfo templateInfo) throws TemplateInitializationException {
 		this.templateInfo = templateInfo;
-		templateDescriptor = new TemplateDescriptor(TemplateEngineHelper.getTemplateResourceURL(templateInfo.getPluginId(), templateInfo.getTemplatePath()), templateInfo.getPluginId());
+		URL descriptorURL;
+		try {
+			descriptorURL= TemplateEngineHelper.getTemplateResourceURL(templateInfo.getPluginId(), templateInfo.getTemplatePath());
+		} catch(IOException ioe) {
+			String msg= MessageFormat.format(TemplateEngineMessages.getString("TemplateCore.InitFailed"), new Object[]{templateInfo.getTemplatePath()}); //$NON-NLS-1$
+			throw new TemplateInitializationException(msg);
+		}
+		templateDescriptor = new TemplateDescriptor(descriptorURL, templateInfo.getPluginId());
 		valueStore = new ValueStore/*<String, String>*/(this);
 		valueStore.putAll(templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement()));
 		valueStore.putAll(TemplateEngine.getDefault().getSharedDefaults());
@@ -221,14 +222,10 @@ public class TemplateCore {
 	 * Gets the Template
 	 * 
 	 * @param templateInfo
-	 * @throws IOException
-	 * @throws ProcessFailureException
-	 * @throws SAXException
-	 * @throws ParserConfigurationException
-     * 
+	 * @throws TemplateInitializationException
      * @since 4.0
 	 */
-	public static TemplateCore getTemplate(TemplateInfo templateInfo) throws IOException, ProcessFailureException, SAXException, ParserConfigurationException {
+	public static TemplateCore getTemplate(TemplateInfo templateInfo) throws TemplateInitializationException {
 		synchronized (templateCache) {
 			TemplateCore template = (TemplateCore) templateCache.get(templateInfo);
 			if (template == null) {

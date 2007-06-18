@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.tests.templateengine;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
 /**
  * Test the functionality of TemplateEngine.
  */
-public class TestTemplateEngine extends TestCase {
+public class TestTemplateEngine extends BaseTestCase {
 
     
     TemplateEngine templateEngine = null;

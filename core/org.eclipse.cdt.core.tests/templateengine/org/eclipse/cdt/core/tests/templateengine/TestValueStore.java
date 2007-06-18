@@ -13,16 +13,15 @@ package org.eclipse.cdt.core.tests.templateengine;
 import java.util.Iterator;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
 
 /**
  * Test the functionality of the ValueStore class.
  */
-public class TestValueStore extends TestCase {
+public class TestValueStore extends BaseTestCase {
 
 
 	/**

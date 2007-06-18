@@ -409,7 +409,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 					String langId = type.getLanguageId(tool);
 					if(langId != null){
 						ILanguageDescriptor des = (ILanguageDescriptor)langMap.remove(langId);
-						adjustInputType(tool, type, des);
+						if(des != null)
+							adjustInputType(tool, type, des);
 						continue;
 					} else {
 						IContentType[] cTypes = type.getSourceContentTypes();

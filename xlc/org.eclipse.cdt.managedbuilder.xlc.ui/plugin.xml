@@ -2488,7 +2488,7 @@
                command="-L"
                id="xlc.c.link.option.paths"
                browseType="directory"
-               valueType="stringList">
+               valueType="libPaths">
          </option>
          <option
                name="%Option.UserObjs"

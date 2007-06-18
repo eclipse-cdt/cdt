@@ -53,7 +53,11 @@ import org.eclipse.ui.progress.IElementCollector;
 
 
 /**
- * @author dmcknigh
+ * A SystemFetchOperation is used to perform a query of a remote system on behalf of a subsystem. The operation 
+ * has some knowledge of the containing user interface, e.g. the workbench part which is responsible for 
+ * issuing the query. It is created with a "collector" that will contain the results of the query.
+ * <p>
+ * This class may be subclassed but usually is used directly.
  */
 public class SystemFetchOperation extends JobChangeAdapter implements IRunnableWithProgress
 {
@@ -65,6 +69,13 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
     protected boolean _canRunAsJob;
     protected InvocationTargetException _exc;
  
+    /**
+     * Creates an instance of this fetch operation. This instance cannot be run in a job, but must be invoked directly.
+     * @param part the workbench part associated with this fetch.
+     * @param remoteObject the remote object that provides the context for this fetch
+     * @param adapter the adapter that can be used to extract information from the remote objects that will be retrieved by this fetch.
+     * @param collector the collector for the fetch results.
+     */
     public SystemFetchOperation(IWorkbenchPart part, Object remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector) 
     {
 		_part = part;
@@ -74,6 +85,14 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		_canRunAsJob = false;
 	}
     
+    /**
+     * Creates an instance of this fetch operation.
+     * @param part the workbench part associated with this fetch.
+     * @param remoteObject the remote object that provides the context for this fetch
+     * @param adapter the adapter that can be used to extract information from the remote objects that will be retrieved by this fetch.
+     * @param collector the collector for the fetch results.
+     * @param canRunAsJob true if this fetch operation can be run in a job of its own, false otherwise
+     */
     public SystemFetchOperation(IWorkbenchPart part, Object remoteObject, ISystemViewElementAdapter adapter, IElementCollector collector, boolean canRunAsJob) 
     {
 		_part = part;
@@ -131,6 +150,11 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	}
 	
 	
+	/**
+	 * An action that prompts the user for credentials to connect the subsystem that is issued the fetch.
+	 * <p>
+	 * This class is listed as public, but should not be used/referenced by others.
+	 */
 	public class PromptForPassword implements Runnable
 	{
 		public SubSystem _ss;
@@ -161,6 +185,11 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 		}
 	}
 	
+	/**
+	 * A sub-operation that broadcasts any connection status change.
+	 * <p>
+	 * Listed as public, but should not be used or referenced by others.
+	 */
 	public class UpdateRegistry implements Runnable
 	{
 		private SubSystem _ss;
@@ -243,6 +272,15 @@ public class SystemFetchOperation extends JobChangeAdapter implements IRunnableW
 	    monitor.done();
 	}
 	
+    /**
+     * Show an error message as a result of running this operation.
+     * Uses the user interface knowledge of this operation to show the message.
+     * <p>
+     * May be overridden by subclasses but it usually used directly.
+     * @param shell The parent shell for a message dialog box.
+     * @param exc the exception that was recieved and should be shown
+     * @param ss the subsystem that this operation is being issued for
+     */
     protected void showOperationErrorMessage(Shell shell, Throwable exc, SubSystem ss)
     {
     	if (exc instanceof InvocationTargetException) {

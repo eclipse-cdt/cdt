@@ -33,6 +33,7 @@ public class TextTestSuite extends TestSuite {
 		addTest(IndentActionTest.suite());
 		addTest(FormatActionTest.suite());
 		addTest(CodeFormatterTest.suite());
+		addTest(CIndenterTest.suite());
 		
 		// Break iterator tests.
 		addTest(CBreakIteratorTest.suite());

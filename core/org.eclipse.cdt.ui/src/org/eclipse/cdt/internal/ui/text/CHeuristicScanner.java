@@ -301,6 +301,16 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return a constant from {@link Symbols} describing the next token
 	 */
 	public int nextToken(int start, int bound) {
+		try {
+			// check for string or char literal
+			char ch = fDocument.getChar(start);
+			if (ch == '"' || ch == '\'') {
+				fChar= ch;
+				fPos= fNonWSDefaultPart.nextPosition(start, true);
+				return TokenOTHER;
+			}
+		} catch (BadLocationException exc) {
+		}
 		int pos= scanForward(start, bound, fNonWSDefaultPart);
 		if (pos == NOT_FOUND)
 			return TokenEOF;
@@ -331,11 +341,23 @@ public final class CHeuristicScanner implements Symbols {
 			case LANGLE:
 				return TokenLESSTHAN;
 			case RANGLE:
-				if (peekNextChar() == RANGLE) {
+				switch (peekNextChar()) {
+				case RANGLE:
 					++fPos;
 					return TokenSHIFTRIGHT;
 				}
 				return TokenGREATERTHAN;
+			case DOT:
+				return TokenDOT;
+			case MINUS:
+				switch (peekNextChar()) {
+				case RANGLE:
+					++fPos;
+					return TokenARROW;
+				}
+				return TokenMINUS;
+			case TILDE:
+				return TokenTILDE;
 		}
 
 		// else
@@ -407,9 +429,13 @@ public final class CHeuristicScanner implements Symbols {
 			case LANGLE:
 				return TokenLESSTHAN;
 			case RANGLE:
-				if (peekPreviousChar() == RANGLE) {
+				switch (peekPreviousChar()) {
+				case RANGLE:
 					--fPos;
 					return TokenSHIFTRIGHT;
+				case MINUS:
+					--fPos;
+					return TokenARROW;
 				}
 				return TokenGREATERTHAN;
 			case DOT:
@@ -966,11 +992,8 @@ public final class CHeuristicScanner implements Symbols {
 		if (token == Symbols.TokenDOT) {
 			return true;
 		}
-		if (token == Symbols.TokenGREATERTHAN) {
-			token= previousToken(getPosition(), bound);
-			if (token == Symbols.TokenMINUS) {
-				return true;
-			}
+		if (token == Symbols.TokenARROW) {
+			return true;
 		} else if (token == Symbols.TokenCOLON) {
 			token= previousToken(getPosition(), bound);
 			if (token == Symbols.TokenCOLON) {

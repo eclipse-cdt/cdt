@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.upc.UPCLanguage;
 import org.eclipse.cdt.core.parser.c99.tests.C99Tests;
@@ -19,11 +21,15 @@ import org.eclipse.cdt.core.parser.c99.tests.C99Tests;
  */
 public class UPCC99Tests extends C99Tests {
 
+	public static TestSuite suite() {
+    	return suite(UPCC99Tests.class);
+    }
+	
 	public UPCC99Tests(String name) {
 		super(name);
 	}
 
-	protected BaseExtensibleLanguage getC99Language() {
+	protected BaseExtensibleLanguage getLanguage() {
 		return UPCLanguage.getDefault();
 	}
 	

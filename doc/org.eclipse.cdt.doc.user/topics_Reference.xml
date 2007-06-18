@@ -70,16 +70,20 @@
 		</topic>
 		
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
+		
 		<topic label="Make" href="reference/cdt_u_make_pref.htm" >
 			<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm"/>
 			<topic label="Settings" href="reference/cdt_u_make_settings_pref.htm"/>			
 		</topic>
 		
-		<topic label="New Make Projects properties" href="reference/cdt_o_proj_prop_pages.htm">
-			<topic label="Make Builder" href="reference/cdt_u_newproj_buildset.htm"/>
-			<topic label="Error Parser" href="reference/cdt_u_newproj_parser_error.htm"/>
-			<topic label="Binary Parser" href="reference/cdt_u_newproj_parser_binary.htm"/>
-			<topic label="Discovery Options" href="reference/cdt_u_discovery_preferences.htm"/>
+		<topic label="New CDT project wizard" href="reference/cdt_o_proj_prop_pages.htm">
+			<topic label="Makefile Project pages" >
+				<topic label="Binary parsers" href="reference/cdt_u_newproj_parser_binary.htm"/>
+				<topic label="Error parsers" href="reference/cdt_u_newproj_parser_error.htm"/>
+				<topic label="Discovery options" href="reference/cdt_u_newproj_discovery_options.htm"/>
+				<topic label="Builder settings" href="reference/cdt_u_newproj_buildset.htm"/>
+				<topic label="Behaviour" href="reference/cdt_u_newproj_behavior.htm"/>
+			</topic>
 		</topic>
 
 	</topic>

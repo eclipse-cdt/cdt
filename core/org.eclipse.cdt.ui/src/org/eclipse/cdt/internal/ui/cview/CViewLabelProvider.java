@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.ui.cview;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -52,7 +53,9 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 				if (prj != null) {
 					for (int i = 0; i < containers.length; i++) {
 						final IContainer container = containers[i];
-						if (container.getProject().equals(prj.getProject())) {
+						final IProject project = container.getProject();
+						// in case the path is empty, the container is the workspace root and project is null.
+						if (project != null && project.equals(prj.getProject())) {
 							return container.getFullPath().makeRelative().toString();
 						}
 					}

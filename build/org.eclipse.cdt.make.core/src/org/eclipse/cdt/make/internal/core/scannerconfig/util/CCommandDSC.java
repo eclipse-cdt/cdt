@@ -402,23 +402,25 @@ public class CCommandDSC {
 	}
 
 	private static IResource findResource(IProject project, IPath path) {
-		IResource resource = project.findMember(path, true);
+		IResource resource = project.findMember(path, false);
 		if (resource == null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			resource = root.findMember(path, true);
+			resource = root.findMember(path, false);
 			if (resource == null) {
 				IResource[] resources = root.findFilesForLocation(path);
-				if (resources != null) {
+				if (project != null) {
 					for (int i = 0; i < resources.length; i++) {
-						if (resources[i].getProject() == project) {
+						final IProject myProject = resources[i].getProject();
+						// resource could be root, then myProject is null.
+						if (myProject != null && myProject.equals(project)) {
 							resource = resources[i];
 							break;
 						}
 					}
-					// make a relative path to another project (better than an absolute path)
-					if (resource == null && resources.length > 0) {
-						resource = resources[0];
-					}
+				}
+				// make a relative path to another project (better than an absolute path)
+				if (resource == null && resources.length > 0) {
+					resource = resources[0];
 				}
 			}
 		}

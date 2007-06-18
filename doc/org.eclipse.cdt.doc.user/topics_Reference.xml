@@ -69,6 +69,8 @@
 			<topic label="Typing preferences" href="reference/cdt_u_c_editor_typing.htm"/>
 		</topic>
 		
+		<topic label="Environment preferences" href="reference/cdt_u_environment_pref.htm"/>
+		
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
 		
 		<topic label="Make" href="reference/cdt_u_make_pref.htm" >

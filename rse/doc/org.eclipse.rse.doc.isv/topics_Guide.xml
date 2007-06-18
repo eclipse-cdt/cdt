@@ -12,7 +12,6 @@
 		<topic label="Subsystems" href="guide/rse_int_subsystems.html"/>
 		<topic label="Connector Services" href="guide/rse_int_connectorservices.html"/>
 		<topic label="Hosts" href="guide/rse_int_hosts.html"/>
-		<topic label="User Interface" href="guide/rse_int_ui.html"/>
 	</topic>
 	<topic label="Using the RSE API" href="guide/usingAPIs.html">
 		<topic label="RSE User Interface API" href="guide/api/uiAPI.html" />

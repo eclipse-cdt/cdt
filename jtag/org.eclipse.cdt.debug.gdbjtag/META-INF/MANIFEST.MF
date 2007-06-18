@@ -4,3 +4,4 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.gdbjtag
 Bundle-Version: 4.0.0.qualifier
 Bundle-Vendor: %providerName
+Bundle-Localization: plugin

@@ -10,6 +10,10 @@
       %description
    </description>
 
+   <copyright>
+      %copyright
+   </copyright>
+
    <license url="%licenseURL">
       %license
    </license>

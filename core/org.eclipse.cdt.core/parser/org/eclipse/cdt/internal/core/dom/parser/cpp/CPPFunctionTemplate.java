@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
@@ -180,7 +181,14 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 			if( size > 0 ){
 				for( int i = 0; i < size; i++ ){
 					IASTParameterDeclaration p = params[i];
-					result[i] = (IParameter) p.getDeclarator().getName().resolveBinding();
+					final IASTName pname = p.getDeclarator().getName();
+					final IBinding binding= pname.resolveBinding();
+					if (binding instanceof IParameter) {
+						result[i]= (IParameter) binding;
+					}
+					else {
+						result[i] = new CPPParameter.CPPParameterProblem(p, IProblemBinding.SEMANTIC_INVALID_TYPE, pname.toCharArray());
+					}
 				}
 			}
 			return result;

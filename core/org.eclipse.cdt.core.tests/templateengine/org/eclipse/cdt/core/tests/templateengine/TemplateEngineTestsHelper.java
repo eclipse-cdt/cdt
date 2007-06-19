@@ -51,7 +51,7 @@ public class TemplateEngineTestsHelper {
 	 */
 	public static URL getTemplateURL(String templateName){
 		Bundle bundle = Platform.getBundle(CTestPlugin.PLUGIN_ID);
-		URL url = FileLocator.find(bundle, new Path("testdata/"+templateName), null); //$NON-NLS-1$
+		URL url = FileLocator.find(bundle, new Path("resources/templateengine/"+templateName), null); //$NON-NLS-1$
 		if ( url != null )
 		{ 
 			try {

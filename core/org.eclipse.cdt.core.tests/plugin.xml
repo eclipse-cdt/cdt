@@ -80,13 +80,13 @@
             id="org.eclipse.cdt.core.tests.templates.AddFile"
             filterPattern=".*AddFile"
             isCategory="true"
-            location="testdata/AddFile.xml"
+            location="resources/templateengine/AddFile.xml"
             projectType="org.eclipse.cdt.core.tests.projectType">
       </template>
       <template
             id="org.eclipse.cdt.core.tests.templates.AddFiles"
             filterPattern=".*AddFiles"
-            location="testdata/AddFiles.xml"
+            location="resources/templateengine/AddFiles.xml"
             projectType="org.eclipse.cdt.core.tests.projectType">
          <toolChain id="org.eclipse.cdt.core.tests.toolChain1"/>
          <toolChain id="org.eclipse.cdt.core.tests.toolChain2"/>
@@ -94,33 +94,33 @@
       <template
             id="org.eclipse.cdt.core.tests.templates.AddLink"
             filterPattern=".*AddLink"
-            location="testdata/AddLink.xml"
+            location="resources/templateengine/AddLink.xml"
             projectType="org.eclipse.cdt.core.tests.projectType">
       </template>
       <template
             id="org.eclipse.cdt.core.tests.templates.Append"
             filterPattern=".*Append"
-            location="testdata/Append.xml"
+            location="resources/templateengine/Append.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
       <template
             id="org.eclipse.cdt.core.tests.templates.AppendCreate"
             filterPattern=".*AppendCreate"
-            location="testdata/AppendCreate.xml"
+            location="resources/templateengine/AppendCreate.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
       <template
             id="org.eclipse.cdt.core.tests.templates.Copy"
             filterPattern=".*Copy"
-            location="testdata/Copy.xml"
+            location="resources/templateengine/Copy.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
       <template
             id="org.eclipse.cdt.core.tests.templates.CreateResourceIdentifier"
             filterPattern=".*CreateResourceIdentifier"
-            location="testdata/CreateResourceIdentifier.xml"
+            location="resources/templateengine/CreateResourceIdentifier.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
       <template
             id="org.eclipse.cdt.core.tests.templates.CreateSourceFolder"
             filterPattern=".*CreateSourceFolder"
-            location="testdata/CreateSourceFolder.xml"
+            location="resources/templateengine/CreateSourceFolder.xml"
             projectType="org.eclipse.cdt.core.tests.projectType"/>
    </extension>
    <extension

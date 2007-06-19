@@ -2772,12 +2772,24 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         subName);
             }
 
-            subName.setParent(result);
-            subName.setPropertyInParent(ICPPASTQualifiedName.SEGMENT_NAME);
-            ((ASTNode) subName).setOffsetAndLength(
-                    segments[i].getStartOffset(), segments[i].getEndOffset()
-                            - segments[i].getStartOffset());
-            result.addName(subName);
+            // bug 189299, 193152 indicate that there have been nested qualified names
+            // as a work around just flatten them.
+            if (subName instanceof ICPPASTQualifiedName) {
+            	IASTName[] subNames= ((ICPPASTQualifiedName) subName).getNames();
+            	for (int j = 0; j < subNames.length; j++) {
+					subName = subNames[j];
+		            subName.setParent(result);
+		            subName.setPropertyInParent(ICPPASTQualifiedName.SEGMENT_NAME);
+	            	result.addName(subName);
+				}            
+            }
+            else {
+            	subName.setParent(result);
+            	subName.setPropertyInParent(ICPPASTQualifiedName.SEGMENT_NAME);
+            	((ASTNode) subName).setOffsetAndLength(segments[i].getStartOffset(), 
+            			segments[i].getEndOffset() - segments[i].getStartOffset());
+            	result.addName(subName);
+            }
         }
         return result;
     }

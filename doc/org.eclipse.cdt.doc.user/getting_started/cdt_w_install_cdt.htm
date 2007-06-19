@@ -14,55 +14,69 @@ function changeSize(theImage,wd,ht) {
 	theImage.style.width=wdth; theImage.style.height=hght;
 }
 </script>
+<script language="JavaScript">
+function newWin(url) {
+	window.open(url, 'install_cdt', 'width=900, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
+}
+</script>
 </head>
 
 <body>
 
-<h1>Updating the CDT</h1>
+<h1>Installing and updating the CDT</h1>
 
-<p>The CDT can be updated directly from the workbench using your internet connection.</p>
+<p>You can use the Software Updates manager to quickly install or update the CDT directly from the Eclipse workbench using your internet connection.</p>
 
+<p>To obtain the latest CDT features:</p>
 <ol>
-	<li>Click <b>Help > Software Updates > Find and Install</b>.<br>
-	<img src="../images/cdt_update_find-install.png" alt="Help, Software Updates,  Find and Install Menu selection"><br>&nbsp;</li>
+	<li>Select <b>Help &gt; Software Updates &gt; Find and Install</b>.<p><br></p>
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_find-install.png')">Click here to see an illustration (displayed in a separate window)</a>.</p>
+	<br></li>
 	
-	<li>In the <b>Feature Updates</b> window select <b>Search for new features to install</b> and click <b>Next</b>.<br>
-	<img src="../images/cdt_update_install_new.png" alt="Feature Updates dialog box"><br>&nbsp;</li>
+	<li>In the <b>Feature Updates</b> window, select <b>Search for new features to install</b> and click <b>Next</b>. <p><b>Note: If you want to search for updates on features that you currently have installed, you can select the option <b>Search for updates of the currently installed features</b>.</p><br><p><br></p><p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_install_new.png')">Click here to see an illustration</a>.</p>
+	<br></li>
 	
 	
-	<li>If you have not updated previously, you will have to enter the location of the CDT Install site. Click
-		the <b>Add Update Site...</b> button.<br>
-	<img src="../images/cdt_update_install_sites.png" alt="Add Update Sites dialog box"><br>&nbsp;</li>
+	<li>If you have not updated previously, you will have to enter the location of the Eclipse CDT Install site. Click <b>New Remote Site...</b>.<p><br></p>
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_install_sites.png')">Click here to see an illustration</a>.</p>
+	<br></li>
 	
-	<li>In the New Update Site dialog box, enter a name and the URL for the update site in the spaces provided.<br> 
-	<img src="../images/cdt_update_install_new_sites.png" alt="Install New Site dialog box"><br>&nbsp;</li>
+	<li>In the New Update Site dialog box, type the name and URL for the Eclipe update site in the spaces provided.<p><br></p> 
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_install_new_sites.png')">Click here to see an illustration</a>.</p><br></li>
 	
- 	<li>Select the update site you just created by clicking the appropriate checkbox and click <b>Next</b>.<br>
-	<img src="../images/cdt_update_install_cdt_site.png" alt="Install Sites dialog box with the CDT site selcted"><br>&nbsp;</li>
+ 	<li>Click <b>OK</b>.
+	<li>From the <b>Sites to include in search</b> list, select the update site you just created by clicking the appropriate check box, and click <b>Finish</b>.<p><br></p>
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_install_cdt_site.png')">Click here to see an illustration</a>.</p>
+	<br></li>
 	
-	<li>A dialog box will appear showing the updates available from the update site, select each of the following features, 
-		ensuring you have precisely the same version for each one:
+	<li>The Search Results dialog shows the features available to install from the update site. Select each of the following features, 
+		ensuring that you have precisely the same version for each one:
 		<ul>
 			<li>Eclipse C/C+ Development Tooling SDK</li>
 			<li>Eclipse C/C+ Development Tools</li>
 		</ul>
-		Then click <b>Next</b>.<br>
-	<img src="../images/cdt_update_search_results.png" alt="Search Results dialog box"><br>&nbsp;</li>
+<li>Expand and select any additional features that you require. De-select any options that do not apply to you.
+<li>Click <b>Next</b>.<p><br></p>
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_search_results.png')">Click here to see an illustration</a>.</p><br>
+	</li>
 	
-	<li>You should now see the Eclipse.org Software User Agreement, you must accept the agreement to install the CDT update.
-		Do so by selecting <b>I accept the terms in the license agreement</b> and then click <b>Next</b>.<br>
-	<img src="../images/cdt_update_license_agreement.png" alt="Feature License dialog box"><br>&nbsp;</li>
+	<li>You must accept the Eclipse.org Software User Agreement to continue installing the CDT update. If you accept the terms, select <b>I accept the terms in the license agreement</b> and then click <b>Next</b>.<p><br></p>
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_license_agreement.png')">Click here to see an illustration</a>.</p>
+	<br></li>
+	<p>You can review the summary list of the features you selected to install.<p>
+	<li>Optional: Click <b>Change Location</b> to select the location you would like the updates installed. Typically, this is the directory where you installed Eclipse.
+<li>Click <b>Finish</b>.<p><br></p><p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_location.png')">Click here to see an illustration</a>.</p>
+	<br></li>
 	
-	<li>Now select the location you would like the updates installed, usually this is the directory where you installed Eclipse,
-		and click <b>Finish</b>.<br>
-	<img src="../images/cdt_update_location.png" alt="Install Location dialog box"><br>&nbsp;</li>
+	<li>You will now start downloading the CDT components. You will have to verify that you want the features installed by clicking
+		<b>Install</b> for each feature you selected.<p><br></p>
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_update_jar_verification.png')">Click here to see an illustration</a>.</p>
+	<br></li>
 	
-	<li>You will now start downloading the CDT components.  You will have to verify that you want the features installed by clicking
-		<b>Install</b> for each feature you selected.<br>
-	<img src="../images/cdt_update_jar_verification.png" alt="Feature Verification dialog box"><br>&nbsp;</li>
-	
-	<li>You will now have to restart Eclipse, select <b>Yes</b> to complete the update.<br>
-	<img src="../images/cdt_restart.png" alt="Install/Update prompt to restart Eclipse">
+	<p>Now, you have to restart Eclipse. 
+	<li>Select <b>Yes</b> to complete the feature installation process.<p><br></p>
+
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_restart.png')">Click here to see an illustration</a>.</p>
 </ol>
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>
@@ -70,7 +84,7 @@ function changeSize(theImage,wd,ht) {
 <a href="../concepts/cdt_c_perspectives.htm">C/C++ Development perspective</a><br>
 &nbsp;</p>
 
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" > </p>
+<img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" > </p>
 
 </body>
 

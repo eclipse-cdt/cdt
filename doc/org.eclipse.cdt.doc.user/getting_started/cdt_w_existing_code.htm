@@ -9,26 +9,147 @@
 
 <body>
 
-<h1>How to bring C/C++ source files into Eclipse</h1>
+<h1>Importing your C/C++ source files into Eclipse</h1>
 
-<p>A common scenario that you may encounter when starting to use the CDT, is determining how 
+<p>Using the CVS Repository Exploring perspective, you can check
+out modules or directories into existing projects, or create new
+projects. A common scenario that you may encounter when starting to use the CDT, is determining how 
 to bring existing C/C++ source files into Eclipse. There are a number of ways to 
 do this. The scenarios described below are recommended approaches.</p>
 
-<h2>Create a project from CVS</h2>
+<h2>Creating a project from source files in CVS</h2>
 
 <p>If your existing source tree is managed in CVS, you can use the CVS 
 Repository perspective to &quot;Checkout As...&quot; any folder in the repository. 
-The first time you &quot;Checkout As...&quot;, the New Project wizard is launched and you need to 
+The first time you &quot;Checkout As...&quot;, the New Project wizard launches and you need to 
 create a C or C++ project for the folder. For more information, see
 <a href="../tasks/cdt_t_proj_new.htm">Creating a project</a> and
 <a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a>.</p>
 
-<p>A CVS checkout of the project into the project's location occurs.  It is recommended that you eventually add and commit the CDT project files back into CVS.  
-The CDT project files include .project, .cdtproject and .cdtbuild (for Managed Build projects) and are located at the root folder of each CDT project.</p>
+<p>After you perform a checkout operation, a CVS checkout of the project occurs into the project's location. It is recommended that you eventually add and commit the CDT project files back into CVS.  
+These files include .project, .cdtproject, and .cdtbuild (for Managed Build projects) and are located at the root folder of each CDT project.</p>
+
+<p>
+Bringing code into the IDE from CVS differs slightly, depending on what
+you're importing:
+</p>
+
+<ul>
+    <li>
+    <xref xid="#cvs_existing_project">an existing C/C++ project</xref>
+    </li>
+
+    <li>
+    <xref xid="#cvs_existing_code">existing C/C++ code that isn't part
+    of a project</xref>
+    </li>
+
+    <li>
+    <xref xid="#cvs_code_into_project">existing C/C++ code that needs
+    to be added to an existing project</xref>
+    </li>
+</ul>
+
+<h3 id="cvs_existing_project">Importing a C/C++ project from CVS</h3>
+
+<p>
+To check out an existing C/C++ project from the CVS repository into your workspace, right-click the project in the CVS Repositories view, and select <b>Check Out</b> from the menu. A project with the same name as the CVS module is checked out in to your workspace. 
+</p>
 
 
-<h2>Create new projects from existing source roots</h2>
+<h3 id="cvs_existing_code">Importing C/C++ code from CVS</h3>
+
+<p>
+To check out existing C/C++ code that is not part of a project:
+</p>
+
+<ol>
+    <li>
+    Right-click the module or directory in the CVS
+    Repositories view and choose <b>Check Out As&hellip;</b>
+    from the menu.
+    
+    <p>
+    The Check Out As wizard dispalys.
+    </p>
+
+    <figure>
+    <img src="images/cvs-checkout-as.gif" alt="Check Out As">
+    <caption>The Check Out As wizard.</caption>
+    </figure>
+    </li>
+
+    <li>
+    Choose how to check out this project:
+
+    <ul>
+        <li>
+        as a project configured using the New Project
+        wizard
+
+        <p>
+        or:
+        </p>
+        </li>
+
+        <li>
+        as a new project in the workspace
+
+        <p>
+        or:
+        </p>
+        </li>
+
+        <li>
+        as a Standard Make C/C++ Project &ndash; if you need to create your own
+        <fname>Makefile</fname> to integrate with an existing build
+        process
+        </li>
+    </ul>
+
+    <p>
+    Choose the workspace location for this project, then the CVS
+    tag to check out.  
+    <li>Click <ui>Finish</ui> to exit the <ui>Check Out As</ui> dialog.
+    </p>
+
+    <li>Click <ui>Next</ui> to continue.
+</ol>
+
+<h3 id="cvs_code_into_project">Importing C/C++ code into an existing project</h3>
+
+<p>
+To import a directory full of C/C++ code into an existing project:
+</p>
+
+<ol>
+    <li>
+    Right-click the module or directory in the CVS
+    Repositories view and choose <ui>Check Out As&hellip;</ui>
+    from the menu.
+
+    <p>
+    The IDE displays the Check Out As dialog.
+    </p>
+
+<li>Choose <ui>Check out into an existing project</ui>, and then click
+  <ui>Next</ui>.
+  The IDE displays the Check Out Into dialog:
+
+    <p>
+    <img src="images/cvs-checkout-into.gif" alt="Check Out Into">
+    </p>
+    </li>
+
+    <li>
+    Select an existing project from the list, and then
+    click <ui>Finish</ui> to add the code from CVS to the selected
+    project.
+    </li>
+</ol>
+
+
+<h2>Creating new projects from existing source roots</h2>
 
 If your resource code is not managed in CVS but is available from the file system, then you need to perform two steps:
 <ol>
@@ -54,7 +175,7 @@ index for the project and the link to the existing source, is stored in the meta
 directory in the workspace folder. For more information on the workspace folder, 
 see <b>Workbench User Guide &gt; Tasks &gt; Upgrading Eclipse</b>.</p>
 
-Once you create a CDT project, you cannot easily move it or redefine its root folders.  
+After you create a CDT project, you cannot easily move it or redefine its root folders.  
 If you need to, you can delete the CDT project (without deleting its contents) and then 
 recreate it specifying a different non-default location.
 
@@ -93,7 +214,7 @@ appropriate "root folder" to import from.</p>
 <br>
 <a href="../reference/cdt_o_proj_prop_pages.htm">Project properties</a></p><p>
 
-<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+<img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" >
 
 </body>
 

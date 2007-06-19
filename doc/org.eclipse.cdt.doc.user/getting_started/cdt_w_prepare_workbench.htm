@@ -6,6 +6,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Preparing the Workbench</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript">
+function newWin(url) {
+	window.open(url, 'install_cdt', 'width=750, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
+}
+</script>
 </head>
 
 <body>
@@ -13,34 +18,36 @@
 <h1>Preparing the Workbench</h1>
 
 <p>This tutorial will get you started using the C/C++ Development Toolkit (CDT) in the Workbench.</p>
-<p>In this section, you will verify that the workbench is properly set up for C/C++ development. It is assumed that:</p>
+<p>First, you will verify that the workbench is properly configured for C/C++ development. It is assumed that:</p>
 <ul>
 <li>Your Workbench has its default settings.
-To reset the current perspective to its original layout, from the menu bar choose 
-<b>Window > Reset Perspective</b>.</li>
-<li>You are familiar with the basic Workbench mechanisms, such as 
+To reset the current perspective to its original layout, from the menu bar select
+<b>Window &gt; Reset Perspective</b>.</li>
+<li>You are familiar with the basic Workbench features, such as 
 <a href="../concepts/cdt_o_views.htm">views</a> and 
 <a href="../concepts/cdt_o_perspectives.htm">perspectives</a>.
 </li>
 </ul>
 
-<h2>Setting the C/C++ Editor's operation and appearance</h2>
+<h2>Setting the operation and appearance of the C/C++ Editor</h2>
 
 <ol>
-<br><li>Open the Workbench preferences: from the menu bar, select <b>Window &gt; Preferences</b>.</li>
-<br><li>Expand the <b>C/C++</b> heading and click on <b>C/C++ Editor</b>. The <b>Preferences C/C++ Editor</b> dialog's <b>General</b> tab appears.
-<p><img src="../images/editor_general_preferences.png" alt="C/C++ Editor Preferences General page"></li>
-<br><li>Make any changes that you require to be comfortable editing files. 
-For example, you may want to enable <b>Show line numbers</b> or you may want to make the <b>Problem indicator color</b> a different shade of red. For more information see the <a href="../reference/cdt_u_c_editor_gen.htm">General page Preferences window</a> in the reference section.</li>
+<br><li>To open the Workbench preferences, from the menu bar, select <b>Window &gt; Preferences</b>.</li>
+<br><li>Expand <b>C/C++</b> and select <b>Editor</b>. 
 
-<br><li>On the <b>Preferences C/C++ Editor</b> dialog, click the <b>Colors</b> tab. The <b>Preferences C/C++ Editor</b> dialog's <b>Colors</b> tab appears.</p>
-<img src="../images/editor_color_preferences.png" alt="C/C++ Editor Preferences Color page">
+<p><br><a href="javascript:void(0)" onClick="newWin('../images/editor_general_preferences.png')">Click here to see an illustration (displayed in a separate window).</a></p></li>
+<br><li>Make any changes that you require to be comfortable editing files. 
+For example, you might want to enable <b>Show line numbers</b> or change the <b>Problem indicator color</b> to a different shade of red. For more information about setting preferences in the editor, see <a href="../reference/cdt_u_c_editor_gen.htm">General page Preferences window</a> in the reference section.</li>
+
+<br><li>On the Preferences C/C++ Editor dialog, click the <b>Colors</b> tab. The <b>Colors</b> tab for the C/C++ Editor preferences dialog displays.</p><p><br><a href="javascript:void(0)" onClick="newWin('../images/editor_color_preferences.png')">Click here to see an illustration.</a></p>
 
 <br>Again, make any changes that will be useful for your working habits and click <b>OK</b>. For more information see the <a href="../reference/cdt_u_c_editor_color.htm">Color page Preferences window</a> in the reference section.</li>
 
 <br><li>On the <b>Preferences C/C++ Editor</b> dialog, click the <b>Content Assist</b> tab. The <b>Preferences C/C++ Editor</b> dialog's <b>Content Assist</b> tab appears.<br>
-<img src="../images/contentAssist_preferences.png" alt="C/C++ Editor Preferences Content Assist page">
-<br>If you want to set an auto-activation delay or change the background for completion proposals, do so now. For more information see the <a href="../reference/cdt_u_c_editor_con_assist.htm">Content Assist page Preferences window</a> in the reference section.</li>
+<p><br><a href="javascript:void(0)" onClick="newWin('../images/contentAssist_preferences.png')">Click here to see an illustration.</a></p>
+
+
+<p><br>If you want to set an auto-activation delay or change the background for completion proposals, do so now. For more information see the <a href="../reference/cdt_u_c_editor_con_assist.htm">Content Assist page Preferences window</a> in the reference section.</p></li>
 <br><li>Leave the preferences by clicking <b>OK</b>.</li>
 </ol>
 

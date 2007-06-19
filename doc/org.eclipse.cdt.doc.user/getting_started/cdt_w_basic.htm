@@ -4,153 +4,119 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>New CDT Project with generated makefile - Tutorial</title>
 	<link rel="stylesheet" type="text/css" href="../help.css">
-
 <script language="JavaScript">
-var first = 0;
-var last = 19;
-var position = 0;
-
-var cdt_w_basicText= new Array(20) 
-cdt_w_basicText[0]='cdt_w_basic01.htm';
-cdt_w_basicText[1]='cdt_w_basic02.htm';
-cdt_w_basicText[2]='cdt_w_basic03.htm';
-cdt_w_basicText[3]='cdt_w_basic04.htm';
-cdt_w_basicText[4]='cdt_w_basic05.htm';
-cdt_w_basicText[5]='cdt_w_basic06.htm';
-cdt_w_basicText[6]='cdt_w_basic07.htm';
-cdt_w_basicText[7]='cdt_w_basic08.htm';
-cdt_w_basicText[8]='cdt_w_basic09.htm';
-cdt_w_basicText[9]='cdt_w_basic10.htm';
-cdt_w_basicText[10]='cdt_w_basic11.htm';
-cdt_w_basicText[11]='cdt_w_basic12.htm';
-cdt_w_basicText[12]='cdt_w_basic13.htm';
-cdt_w_basicText[13]='cdt_w_basic14.htm';
-cdt_w_basicText[14]='cdt_w_basic15.htm';
-cdt_w_basicText[15]='cdt_w_basic16.htm';
-cdt_w_basicText[16]='cdt_w_basic17.htm';
-cdt_w_basicText[17]='cdt_w_basic18.htm';
-cdt_w_basicText[18]='cdt_w_basic19.htm';
-cdt_w_basicText[19]='cdt_w_basic20.htm';
-                                          
-var cdt_w_basicPic= new Array(20) 
-cdt_w_basicPic[0]='../images/cdt_w_basic01.png';
-cdt_w_basicPic[1]='../images/cdt_w_basic02.png';
-cdt_w_basicPic[2]='../images/cdt_w_basic03.png';
-cdt_w_basicPic[3]='../images/cdt_w_basic04.png';
-cdt_w_basicPic[4]='../images/cdt_w_basic05.png';
-cdt_w_basicPic[5]='../images/cdt_w_basic06.png';
-cdt_w_basicPic[6]='../images/cdt_w_basic07.png';
-cdt_w_basicPic[7]='../images/cdt_w_basic08.png';
-cdt_w_basicPic[8]='../images/cdt_w_basic09.png';
-cdt_w_basicPic[9]='../images/cdt_w_basic10.png';
-cdt_w_basicPic[10]='../images/cdt_w_basic11.png';
-cdt_w_basicPic[11]='../images/cdt_w_basic12.png';
-cdt_w_basicPic[12]='../images/cdt_w_basic13.png';
-cdt_w_basicPic[13]='../images/cdt_w_basic14.png';
-cdt_w_basicPic[14]='../images/cdt_w_basic15.png';
-cdt_w_basicPic[15]='../images/cdt_w_basic16.png';
-cdt_w_basicPic[16]='../images/cdt_w_basic17.png';
-cdt_w_basicPic[17]='../images/cdt_w_basic18.png';
-cdt_w_basicPic[18]='../images/cdt_w_basic19.png';
-cdt_w_basicPic[19]='../images/cdt_w_basic20.png';
-
-var screenText= new Array(20) 
-screenText[0]='Eclipse Workbench';
-screenText[1]='Creating a New Project';
-screenText[2]='New Project Wizard';
-screenText[3]='Define project name';
-screenText[4]='Select project type';
-screenText[5]='Select toolchain';
-screenText[6]='Select configurations';
-screenText[7]='New Project created in Workspace';
-screenText[8]='New File creation menu';
-screenText[9]='New File creation dialog';
-screenText[10]='New File created in Workspace';
-screenText[11]='Entering Code in the New .cpp File';
-screenText[12]='Stepping Through the Code in Outline View';
-screenText[13]='Save the File, build the Project';
-screenText[14]='Displaying New Executables in the Projects View';
-screenText[15]='Selecting Run from the Menu';
-screenText[16]='Run Wizard';
-screenText[17]='New Run Configuration created';
-screenText[18]='Console View with Program Running';
-screenText[19]='Console View with Program Terminated';
-
-
-function nav_a() {	
-					document.home.src='../images/icon_home.png';  
-					document.home.title='Start Over'; 
-					
-					document.back.src='../images/icon_back.png';  
-					document.back.title='Back';
-					
-					document.next.src='../images/icon_forward.png';  
-					document.next.title='Next';  
-				 };
-				 
-function nav_b() {
-					document.home.src='../images/trans.gif'; 
-					document.home.title=''; 
-					
-					document.back.src='../images/trans.gif'; 
-					document.back.title='';
-					
-					document.next.src='../images/icon_forward.png';  
-					document.next.title='Next';  
-				 };
-				 
-function nav_e() {	
-					document.home.src='../images/icon_home.png';  
-					document.home.title='Start Over'; 
-					
-					document.back.src='../images/icon_back.png';  
-					document.back.title='Back';
-					
-					document.next.src='../images/trans.gif';
-					document.next.title='';  
-				 };
-
-function show() { 
-	textFrame.location.href = cdt_w_basicText[position]; 
-	document.screen.src  = cdt_w_basicPic[position];
-	document.screen.alt  = screenText[position];
-} 
-
-function reset() { 
-	position = first; 
-	show(); 
-	nav_b(); 
-} 
-
-function goNext() {
-	if ( position == first ) { nav_a(); };
-	if ( position  < last  ) { position++; show(); }
-	if ( position == last  ) { nav_e(); }
+function newWin(url) {
+	window.open(url, 'install_cdt', 'width=750, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
 }
-
-function goBack() {
-	if ( position == last  ) { nav_a(); };
-	if ( position  > first ) { position--; show()};
-	if ( position == first ) { nav_b(); };
-}
-
-</script> 
-
+</script>
 </head>
 <body>
-<h2>CDT New Project Tutorial</h2>
-<IFRAME name=textFrame SRC="cdt_w_basic01.htm" TITLE="cdt_w_basic Text" MARGINWIDTH=0 MARGINHEIGHT=0 width="90%" height="180" frameborder=0 SCROLLING=auto></IFRAME>
-<hr>
-<table width="120px" border="0" cellspacing="0" summary="" >
-	<tr>
-		<td align="center"><img src="../images/trans.gif" width="22" height="22" onClick="reset();" title="" name="home"></img></td>
-		<td align="right"><img src="../images/trans.gif" align="left" width="22" height="22" onClick="goBack();" title="" name="back"></td>
-		<td align="right"><img src="../images/icon_forward.png" width="22" height="22" onClick="goNext();" title="Next" name="next" ></td>
-	</tr>
-</table>
-<p><img src="../images/cdt_w_basic01.png" align="center" alt="Tutorial image" name="screen" ></p>
+<h2>Tutorial: Creating a simple application using the CDT</h2>
+
+<p>In this tutorial, you will use the CDT to create a simple 'Hello World' application. This tutorial describes the process of creating a new C++ project where the makefile is automatically created by the CDT.</p>
+
+<p>Note: In an earlier version of the CDT, there were two separate project types: Managed make (automatically generated a makefile) and Standard make (required the user's makefile to build). In CDT 4.0, both of these types are combined; basically, the only available project type can be changed to Managed make or Standard make mode at any given time. </p>
+
+<p>If you do not currently have the CDT installed, see the topic <a href="javascript:void(0)" onClick="newWin('cdt_w_install_cdt.htm')">Installing and updating the CDT</a>.
+</p>
+
+<p>To create a simple "Hello World" application using the CDT, you will perform the following steps:</p>
+
+<h3> Step 1: Creating a project</h3>
+<ol>
+	<li>Select <b>File &gt; New &gt; Project</b>.</p>
+	<p><br><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic20.png')">Click here to see an illustration (displayed in a separate window)</a>.</p><br></li>
+	<li>Select the type of project to create. For this tutorial, expand the <b>C++</b> folder and select <b>C++ Project</b>.
+	<p><br>The <b>C++ Project</b> wizard opens. <a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic19.png')">Click here to see an illustration.</a><br></p>
+<p><br>By default, the CDT filters the <b>Toolchain</b> and <b>Project types</b> that currently display in those lists are based on the language support for the C++ Project wizard you selected for this tutorial.
+<li>In the <b>Project name</b> field, type a name for the project.  
+<li>From the <b>Project types</b> list, expand <b>Executable</b> and select <b>Hello World C++ Example</b>. This project type provides a simple Hello World application in C++, and the makefile is automatically created by the CDT.
+
+<li>Select a required toolchain from the <b>Toolchain</b> list. 
+<p>A toolchain is a set of tools (such as a compiler, linker, and assembler) intended to build your project.
+Additional tools, such as a debugger, can be associated with a toolchain.<br>
+There can be several toolchains available, depending on the compilers installed on your system.
+</p>
+<li>Optional: If you want to change these default settings, click <b>Advanced Settings</b> at Step 10instead of clicking <b>Finish</b>. 
+
+<p>If the <b>C++ perspective</b> is not currectly set as the default, you are prompted to determined if you would like to this project to be associated with the C/C++ perspective. Click <b>Yes</b>. <br><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_cpp_perspectx.png')">Click here to see an illustration.</a></p><br>
+
+<p>A project is created with the default settings and a full set of configurations based on the project type and toolchain you selected.</p>
+
+<li>If you clicked <b>Next</b> at Step 7, you can specify the basic properties for the new project, such as your name, copyright, and source information.</p><br>
+
+	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic15.png')">Click here to see an illustration.</a></p><br>
+
+<li>Click <b>Next</b>.
+
+<p>The Select Configurations window displays a list of configurations based on the project type and toolchain(s) you selected earlier. <br><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic14.png')">Click here to see an illustration.</a></p><br>
+
+<li>Click <b>Finish</b>.
+
+<p>You should now see the new project in C/C++ Projects view.</p>
+<p>If C/C++ perspective was not set as current before, it will be selected now.</p>
+
+<h3>Step 2: Creating a new file for the project</h3>
+<p>Now, you will create a new .cpp file (such as main.cpp) that will contain some code that you will copy from another file into an editor. </p>
+
+<ol>
+	<li>Right-click on your project in the Navigator.
+	<li>Select <b>New &gt; Source File</b>.
+	<p>You should now see the new project in the C/C++ Projects view under the project, and the new file opens in the <b>Editor</b> view.</p>
+</ol>  
+
+<h3>Step 3: Enter and step through the code</h3>
+<ol>
+	<li>Copy the code from the file <a href="javascript:void(0)"
+ onclick="newWin('hw_example.htm')" title="here">main.cpp</a>
+file that was just created.
+<p>
+You can double click the <b>main.cpp</b> tab in the <b>Editor</b>
+view to expand the view. <br>
+<i>Note: Leave a blank line at the end of the code because it is required by some compilers.</i></p>
+<p>On the tab in the <b>Editor</b> view, an asterisk character ("*") prefixes the file name. The asterisk indicates that the file has changed but has not been saved.</p>
+	<li>Notice that the <b>Outline</b> view has also been populated
+with objects created from your code. </p>
+<p>If you select an item from the <b>Outline</b> view, the
+corresponding text in the editor is highlighted.
+<li>Save the main.cpp file by clicking <span
+ style="font-weight: bold;">File &gt; Save</span> or pressing <b>CTRL+S</b>.
+<li>Build your project by pressing <b>CTRL+B</b>.</p>
+<p>You can read through the build messages in the <b>Console</b> view.
+The project should build successfully, showing the following message:</p>
+<p><tt>Finished building target: HelloWorld.exe</tt></p>
+<br>
+<p>You will also see the <b>Outline</b> view has also been populated
+with objects created from your code. </p>
+<p>If you select an item from the <b>Outline</b> view, the
+corresponding text in the editor is highlighted.</p></li>
+</ol>  
+
+<h3>Step 4: Running the application</h3>
+<ol>
+	<li>To run your application within the C/C++ Perspective, click <b>Run &gt; Run...</b>
+	<li>Select <b>C/C++ Local Application</b>.
+	<li>Click <b>'New'</b>.
+<li>Click <b>'New'</b>.</p>
+
+<p>A new Run Configuration is created. Its name and path to executable are provided by the project ('HelloWorld' in our case). 
+
+<li>Click <b>'Run'</b>.
+</ol>  
+
+<h3>Step 5: Reviewing and interpreting the results in the Console view</h3>
+<p>Now, you should now see the Hello World application running in the <b>Console</b> view.  
+The <b>Console</b> also shows which application is running in a title bar.  
+You can configure this view to display different elements (such as user input elements) using different colors.</p>
+<ol>
+	<li>Type in your name and press Enter.
+	<p>The title bar in the <b>Console</b> view shows you when the program has terminated.</p>
+
+	<li>You can click the other views to see the information that they contain.
+</ol> 
+
 
 <hr>
-<img src="../images/ng00_07.gif" ALT="IBM Copyright Statement" >
+<img src="../images/ng00_07.gif" ALT="QNX Software Systems Copyright Statement" >
 </body>
 </html>

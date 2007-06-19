@@ -271,7 +271,6 @@ public class IndexUI {
 
 	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName) 
 			throws CoreException {
-		assert !declName.isReference();
 		IBinding binding= declName.resolveBinding();
 		if (binding != null) {
 			ITranslationUnit tu= getTranslationUnit(preferProject, declName);

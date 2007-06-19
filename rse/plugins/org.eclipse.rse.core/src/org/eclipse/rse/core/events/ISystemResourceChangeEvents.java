@@ -17,7 +17,7 @@
 package org.eclipse.rse.core.events;
 
 import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
-
+ 
 /**
  * Interface of event ID constants
  */

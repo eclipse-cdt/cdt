@@ -18,7 +18,7 @@ package org.eclipse.rse.core.events;
 
 /**
  * The event IDs sent when remote resources in the model change
- * These IDs are used when creating SystemRemoteChangeEvent objects.  
+ * These IDs are used when creating ISystemRemoteChangeEvent objects.  
  * 
  */
 public interface ISystemRemoteChangeEvents 
@@ -28,7 +28,8 @@ public interface ISystemRemoteChangeEvents
 	 * 
 	 * The event stores the following event parameters:
 	 * <ul> 
-	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter,
+	 *    or a List of absolute names each of which would be given by calling getAbsoluteName on it's remote adapter
 	 *  <li>resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurrences of that parent.
 	 *  <li>subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
@@ -44,7 +45,8 @@ public interface ISystemRemoteChangeEvents
 	 * 
 	 *  The event stores the following event parameters:
 	 * <ul> 
-	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter,
+	 *    or a List of absolute names each of which would be given by calling getAbsoluteName on it's remote adapter
 	 *  <li>resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurrences of that parent.
 	 *  <li>subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
@@ -60,7 +62,8 @@ public interface ISystemRemoteChangeEvents
 	 * 
 	 *  The event stores the following event parameters:
 	 * <ul> 
-	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter,
+	 *  or a List of absolute names each of which would be given by calling getAbsoluteName on it's remote adapter
 	 *  <li>resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurrences of that parent.
 	 *  <li>subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
@@ -76,7 +79,8 @@ public interface ISystemRemoteChangeEvents
 	 * 
 	 * The event stores the following event parameters:
 	 * <ul> 
-	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter,
+	 *  or a List of absolute names each of which would be given by calling getAbsoluteName on it's remote adapter
 	 *  <li>resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurrences of that parent.
 	 *  <li>subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.

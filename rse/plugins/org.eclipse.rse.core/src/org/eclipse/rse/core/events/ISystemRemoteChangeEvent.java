@@ -34,7 +34,8 @@ public interface ISystemRemoteChangeEvent
 
 	/**
 	 * Get the resource that this event applies to. 
-	 * It must either be the binary object of the resource, or the absolute name of the resource.
+	 * It must either be the binary object of the resource, or the absolute name of the resource,
+	 * or a List of absolute names of the resources
 	 * @return the resource that this event applies to.
 	 */
 	public Object getResource();

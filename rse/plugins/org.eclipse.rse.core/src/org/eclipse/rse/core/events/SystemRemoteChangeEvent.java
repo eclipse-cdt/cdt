@@ -34,7 +34,8 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	/**
 	 * Constructor for non-rename event
 	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
-	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter, 
+	 * or List of absoluteNames 
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
 	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
@@ -51,7 +52,8 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	/**
 	 * Constructor for a rename event.
 	 * @param eventType - one of the constants from {@link org.eclipse.rse.core.events.ISystemRemoteChangeEvents}
-	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 * @param resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter,
+	 * or List of absoluteNames 
 	 * @param resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurences of that parent.
 	 * @param subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
 	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
@@ -121,7 +123,8 @@ public class SystemRemoteChangeEvent implements ISystemRemoteChangeEvent
 	
 	/**
 	 * Get the resource that this event applies to
-	 * It must either be the binary object of the resource, or the absolute name of the resource.
+	 * It must either be the binary object of the resource, or the absolute name of the resource,
+	 * or List of absoluteNames.
 	 */
 	public Object getResource()
 	{

@@ -47,7 +47,7 @@ public class ManagedBuildWizard extends AbstractCWizard {
 		ArrayList items = new ArrayList();
 		// new style project types
 		for (int i=0; i<vs.length; i++) {
-			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(MBSWizardHandler.ARTIFACT, vs[i].getId());
+			IToolChain[] tcs = ManagedBuildManager.getExtensionsToolChains(MBSWizardHandler.ARTIFACT, vs[i].getId(), false);
 			if (tcs == null || tcs.length == 0) continue;
 			MBSWizardHandler h = new MBSWizardHandler(vs[i], parent, wizard);
 			for (int j=0; j<tcs.length; j++) {

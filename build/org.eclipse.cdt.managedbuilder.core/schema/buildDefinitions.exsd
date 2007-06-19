@@ -341,6 +341,7 @@ Specifying this attribute is fully equivalent to specifying the &quot;org.eclips
             <element ref="builder" minOccurs="0" maxOccurs="1"/>
             <element ref="optionCategory" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="option" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="supportedProperties" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>

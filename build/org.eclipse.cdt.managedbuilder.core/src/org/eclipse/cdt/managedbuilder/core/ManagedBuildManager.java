@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -4145,7 +4146,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, String propertyType, String propertyValue){
 //		List all = getSortedToolChains();
 		List list = findIdenticalElements((ToolChain)tChain, fToolChainSorter);
-		List result = new ArrayList();
+		LinkedHashSet result = new LinkedHashSet();
 		boolean tcFound = false;
 		if(list != null){
 			for(int i = 0; i < list.size(); i++){
@@ -4371,11 +4372,15 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 
 	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue){
+		return getExtensionsToolChains(propertyType, propertyValue, true);
+	}
+
+	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue, boolean supportedPropsOnly){
 		HashMap all = getSortedToolChains();
 		List result = new ArrayList();
 		for(Iterator iter = all.values().iterator(); iter.hasNext();){
 			List list = (List)iter.next();
-			IToolChain tc = findToolChain(list, propertyType, propertyValue);
+			IToolChain tc = findToolChain(list, propertyType, propertyValue, supportedPropsOnly);
 			if(tc != null)
 				result.add(tc);
 		}
@@ -4397,53 +4402,62 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		getSortedBuilders();
 	}
 	
-	private static IToolChain findToolChain(List list, String propertyType, String propertyValue){
+	private static IToolChain findToolChain(List list, String propertyType, String propertyValue, boolean supportedOnly){
 		ToolChain bestMatch = null;
 		IConfiguration cfg = null;
 		IProjectType type = null;
+		boolean valueSupported = false;
+
 		for(int i = 0; i < list.size(); i++){
 			ToolChain tc = (ToolChain)list.get(i);
-			if(!tc.supportsValue(propertyType, propertyValue))
-				return null;
+			if(tc.supportsValue(propertyType, propertyValue)){
+				valueSupported = true;
+			} else if (valueSupported){
+				continue;
+			}
 			
 			if(!tc.supportsBuild(true))
 				return null;
 			
-			if(bestMatch == null)
+			if(bestMatch == null && valueSupported)
 				bestMatch = tc;
 			
 			IConfiguration tcCfg = tc.getParent();
 			if(tcCfg != null){
-				if(cfg == null){
+				if(cfg == null && valueSupported){
 					bestMatch = tc;
 					cfg = tcCfg;
 				}
 				
 				IBuildObjectProperties props =tcCfg.getBuildProperties();
 				IBuildProperty prop = props.getProperty(propertyType);
-				if(prop != null && propertyValue.equals(prop.getValue().getId())){
+				if(valueSupported && prop != null && propertyValue.equals(prop.getValue().getId())){
 					bestMatch = tc;
 					cfg = tcCfg;
 				}
 
 				IProjectType tcType = tcCfg.getProjectType();
 				if(tcType != null){
-					if(type == null){
+					if(type == null && valueSupported){
 						type = tcType;
 						bestMatch = tc;
 					}
 					props = tcType.getBuildProperties();
 					prop = props.getProperty(propertyType); 
 					if(prop != null && propertyValue.equals(prop.getValue().getId())){
-						type = tcType;
 						bestMatch = tc;
-						break;
+						if(valueSupported){
+							type = tcType;
+							break;
+						}
 					}
 				}
 			}
 		}
 		
-		return bestMatch;
+		if(valueSupported || ! supportedOnly)
+			return bestMatch;
+		return null;
 	}
 
 	private static List findIdenticalElements(IMatchKeyProvider p, ISorter sorter){

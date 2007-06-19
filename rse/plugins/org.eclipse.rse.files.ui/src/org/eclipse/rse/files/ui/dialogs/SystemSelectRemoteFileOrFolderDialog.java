@@ -70,6 +70,11 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @see org.eclipse.rse.files.ui.actions.SystemSelectRemoteFileAction
  * @see org.eclipse.rse.files.ui.actions.SystemSelectRemoteFolderAction
+ * 
+ * @deprecated should be using SystemRemoteResourceDialog now
+ * @see org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog
+ * @see org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog
+ * 
  */
 public class SystemSelectRemoteFileOrFolderDialog 
        extends SystemPromptDialog 

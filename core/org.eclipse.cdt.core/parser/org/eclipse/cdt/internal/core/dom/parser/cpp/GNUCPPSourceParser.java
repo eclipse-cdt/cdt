@@ -2824,8 +2824,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     protected IASTName createName(ITokenDuple duple) {
         if (duple == null)
             return createName();
-        if (duple.getSegmentCount() != 1)
-            return createQualifiedName(duple);
+        if (duple.getSegmentCount() != 1) {
+        	// workaround for bug 193152, 
+        	// looks like duple.getSeqmentCount() and duple.getSegments().length can be different.
+        	ICPPASTQualifiedName qname= createQualifiedName(duple);
+        	if (qname.getNames().length > 0) {
+        		return qname;
+        	}
+        }
         if (duple.getTemplateIdArgLists() != null)
             return createTemplateID(duple);
 

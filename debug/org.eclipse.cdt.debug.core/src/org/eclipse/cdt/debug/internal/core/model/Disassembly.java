@@ -17,6 +17,9 @@ import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -30,7 +33,7 @@ import org.eclipse.debug.core.DebugException;
 /**
  * CDI implementation of IDisassembly 
  */
-public class Disassembly extends CDebugElement implements IDisassembly {
+public class Disassembly extends CDebugElement implements IDisassembly, ICDIEventListener {
 
 	final static private int DISASSEMBLY_BLOCK_SIZE = 100;
 
@@ -43,6 +46,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 	 */
 	public Disassembly( CDebugTarget target ) {
 		super( target );
+		getCDISession().getEventManager().addEventListener( this );
 	}
 
 	/* (non-Javadoc)
@@ -117,6 +121,7 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 	}
 
 	public void dispose() {
+		getCDISession().getEventManager().removeEventListener( this );
 		for ( int i = 0; i < fBlocks.length; ++i )
 			if ( fBlocks[i] != null ) {
 				fBlocks[i].dispose();
@@ -147,5 +152,28 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 	 */
 	public IAddressFactory getAddressFactory() {
 		return ((CDebugTarget)getDebugTarget()).getAddressFactory();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
+	 */
+	public void handleDebugEvents( ICDIEvent[] events ) {
+		boolean update = false;
+		for ( int i = 0; i < events.length; ++i ) {
+			if ( events[i] instanceof ICDIMemoryChangedEvent ) {
+				BigInteger[] addresses = ((ICDIMemoryChangedEvent)events[i]).getAddresses();
+				for ( int j = 0; j < addresses.length; ++j ) {
+					IAddress address = getAddressFactory().createAddress( addresses[i] );
+					for ( int k = 0; k < fBlocks.length; ++k ) {
+						if ( fBlocks[k] != null && fBlocks[k].contains( address ) ) {
+							update = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if ( update )
+			reset();
 	}
 }

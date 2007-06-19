@@ -225,4 +225,8 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 	private void setMixedMode( boolean mixedMode ) {
 		this.fMixedMode = mixedMode;
 	}
+
+	protected boolean contains( IAddress address ) {
+		return ( address.compareTo( fStartAddress ) >= 0 && address.compareTo( fEndAddress ) <= 0 );
+	}
 }

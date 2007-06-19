@@ -25,107 +25,114 @@ public interface ISystemResourceChangeEvents
 {
 	/**
 	 * The event is specifically a filter reference add (filter added)
+	 * An ISystemFilter is expected as a parameter of this event
 	 */
 	public static final int EVENT_ADD_FILTER_REFERENCE = 10;	
 	/**
 	 * The event is specifically a filter reference rename (filter renamed)
+	 * An ISystemFilter is expected as a parameter of this event
 	 */
 	public static final int EVENT_RENAME_FILTER_REFERENCE = 15;	
 	/**
 	 * The event is specifically a filter reference delete (filter deleted)
+	 * An ISystemFilter is expected as a parameter of this event
 	 */
 	public static final int EVENT_DELETE_FILTER_REFERENCE = 20;		
 	/**
 	 * The event is specifically a filter reference change (filter strings changes)
+	 * An ISystemFilter is expected as a parameter of this event
 	 */
 	public static final int EVENT_CHANGE_FILTER_REFERENCE = 25;
+	
 	/**
 	 * The event is specifically a filter reference move (filters reordered)
+	 * An array of ISystemFilter[] is the expected multi-source 
+	 * parameter.  The source is the first item in that array.
 	 */
 	public static final int EVENT_MOVE_FILTER_REFERENCES = 30;
 
 	/**
 	 * The event is specifically a filter string reference add (filterstring added)
+	 * An ISystemFilterString is expected as a parameter of this event
 	 */
 	public static final int EVENT_ADD_FILTERSTRING_REFERENCE = 41;	
+	
 	/**
 	 * The event is specifically a filter string reference delete (filterstring deleted)
+	 * An ISystemFilterString is expected as a parameter of this event
 	 */
 	public static final int EVENT_DELETE_FILTERSTRING_REFERENCE = 42;		
+	
 	/**
 	 * The event is specifically a filter string reference change (filterstring changed)
+	 * An ISystemFilterString is expected as a parameter of this event
 	 */
 	public static final int EVENT_CHANGE_FILTERSTRING_REFERENCE = 43;
+	
 	/**
 	 * The event is specifically a filter string reference move (filterstrings reordered)
+	 * An array of ISystemFilterString[] is the expected multi-source 
+	 * parameter.  The source is the first item in that array.
 	 */
 	public static final int EVENT_MOVE_FILTERSTRING_REFERENCES = 44;
 
 	/**
 	 * The event is a resource add.
+	 * Any RSE object is the expected parameter
 	 */
 	public static final int EVENT_ADD = 50;
+	
 	/**
 	 * The event is a multi-resource add.
+	 * An array of RSE objects (i.e. Object[]) is the multi-source 
+	 * parameter (the source is the first item in that array) and a parent 
+	 * RSE object is expected.  
 	 */
 	public static final int EVENT_ADD_MANY = 51;
 
 	/**
 	 * The event is a resource add. The resource is added relative to the "previous" attribute .
+	 * The expected parameters are an RSE object and it's parent RSE object
 	 */
 	public static final int EVENT_ADD_RELATIVE = 53;
-	/*
-	 * The event is a multi-resource add. The resources are added relative to the "previous" attribute
-	 *
-	public static final int EVENT_ADD_MANY_RELATIVE = 54;
-	*/
 
 	/**
 	 * After an add, you wish to expand the parent to reveal and select the new child.
 	 * This is a harmless operation if the parent was already expanded when EVENT_ADD was sent.
+	 * The expected parameters are an RSE object and the selected object
 	 */
 	public static final int EVENT_REVEAL_AND_SELECT = 52;
+	
 	/**
 	 * The event is a single resource deletion.
+	 * An RSE object is the expected parameter
 	 */
 	public static final int EVENT_DELETE = 55;	
-	/*
-	 * The event is a single remote resource deletion. You need only set the source, not the parent
-	 *
-	public static final int EVENT_DELETE_REMOTE = 56;	*/
 
 	/**
 	 * The event is a multiple resource deletion. 
+	 * An array of RSE objects (i.e. Object[]) is the expected multi-source 
+	 * parameter.  The source is the first item in that array.
 	 */
 	public static final int EVENT_DELETE_MANY = 60;		
-	/*
-	 * The event is a multiple resource deletion. You need only set the multisource, not the parent
-	 *
-	public static final int EVENT_DELETE_REMOTE_MANY = 61;		*/
 
 	/**
 	 * The event is a resource rename.
+	 * An RSE object is the expected parameter
 	 */
 	public static final int EVENT_RENAME = 65;	
-	/*
-	 * The event is a remote resource rename. You need only set the source, not the parent
-	 *
-	public static final int EVENT_RENAME_REMOTE = 66;	*/
 
 	/**
-	 * The event is a resource move within the same children set
-	 */
-	//public static final int EVENT_MOVE = 70;	
-	/**
 	 * The event is a multiple resource move within the same children set
+	 * An array of RSE objects (i.e. Object[]) is the multi-source 
+	 * parameter (the source is the first item in that array) and a parent 
+	 * RSE object is expected.  
 	 */
 	public static final int EVENT_MOVE_MANY = 75;
-	/**
-	 * The event is a resource change. This results in a shallow refresh: only direct children are refreshed.
-	 */
-	//public static final int EVENT_CHANGE = 80;
+
     /**
 	 * The event is an icon change event
+	 * A source RSE object and it's parent RSE object are the expected parameters
 	 */
 	public static final int EVENT_ICON_CHANGE = 81;
 
@@ -135,6 +142,8 @@ public interface ISystemResourceChangeEvents
 	 * All expanded sub-nodes are re-queried for their children, unexpanded
 	 * nodes lose their children cache. Selection is not maintained by this
 	 * event (use EVENT_REFRESH_REMOTE instead to maintain the selection).
+	 * 
+	 * A source RSE object to refresh is the expected parameter
 	 */
 	public static final int EVENT_REFRESH = 82;
 
@@ -188,27 +197,32 @@ public interface ISystemResourceChangeEvents
 	 * (re)select a list of objects after refreshing.
 	 * 
 	 * An object is considered remote if it has an adapter that implements
-	 * {@link ISystemViewElementAdapter}, so it is possible to get the 
-	 * associated subsystem and absolute name. This method refreshes all
-	 * occurrences of the remote object, even under multiple filters.
-	 * The tricky part about remote objects is their actual memory object changes
-	 * on each refresh, so to find one in the tree we must use something
-	 * more permanent: hence the use of getAbsoluteName to find it. 
+	 * {@link ISystemViewElementAdapter} where the adapter returns true for 
+	 * the isRemote(Object) call.  This method refreshes all occurrences of 
+	 * the remote object, even under multiple filters.  The tricky part about 
+	 * remote objects is their actual memory object changes on each refresh, 
+	 * so to find one in the tree we must use something more permanent: hence 
+	 * the use of getAbsoluteName to find it. 
 	 * <p>
 	 * You can optionally pass a child remote object, or string, or Vector of
 	 * objects or strings, in the "parent" parameter of the event, and it/they
 	 * will be selected after the refresh. When passing a string, it must be 
 	 * the result of {@link IRemoteObjectIdentifier#getAbsoluteName(Object)}
 	 * on the adapter.
+	 * 
+	 * A remote RSE object is the expected source parameter
 	 */
 	public static final int EVENT_REFRESH_REMOTE = 85;
 
 	/**
 	 * The event is a resource property change.
+	 * A source RSE object and it's parent RSE object are the expected parameters
 	 */
 	public static final int EVENT_PROPERTY_CHANGE = 86;
+	
 	/**
 	 * The event is a request to update the property sheet of whatever is currently selected.
+	 * A source RSE object and it's parent RSE object are the expected parameters
 	 */
 	public static final int EVENT_PROPERTYSHEET_UPDATE = 87;
 
@@ -216,31 +230,40 @@ public interface ISystemResourceChangeEvents
 	 * The event is a resource property change that invalidates child nodes
 	 *  in the GUI (eg, hostname change means the expanded information should
 	 *  be collapsed)
+	 *  A source RSE object is the expected parameter
 	 */
 	public static final int EVENT_MUST_COLLAPSE = 90;	
+	
 	/**
 	 * The event is a full collapse of the RSE tree
 	 * Pass "false" for the src value to prevent the memory flush, else
 	 *  pass any dummy value for the src to prevent crash, but it is ignored
 	 */
 	public static final int EVENT_COLLAPSE_ALL = 91;	
+	
 	/**
 	 * The event is a collapse of the selected elements in the tree
 	 * Pass any dummy value for the src to prevent crash, but it is ignored
 	 */
 	public static final int EVENT_COLLAPSE_SELECTED = 92;
+	
 	/**
 	 * The event is an expand of the selected elements in the tree
 	 * Pass any dummy value for the src to prevent crash, but it is ignored
 	 */
 	public static final int EVENT_EXPAND_SELECTED = 93;
+	
 	/**
 	 * The event is a generic notification that the children have changed
 	 *  and must be refreshed.
+	 *  A source RSE object and (optionally) it's parent RSE object are the 
+	 *  expected parameters
 	 */
 	public static final int EVENT_CHANGE_CHILDREN = 95;
+
 	/**
 	 * The event is simply to force selection of the given object.
+	 * A source RSE object is the expected parameter
 	 */
 	public static final int EVENT_SELECT = 100;
 
@@ -258,27 +281,42 @@ public interface ISystemResourceChangeEvents
 
 	/**
 	 * The event is to both select and expand the given object.
+	 * A source RSE object is the expected parameter
 	 */
 	public static final int EVENT_SELECT_EXPAND = 105;
+
 	/**
 	 * The event is to log a command that has been run
+	 * A source RSE object is the expected parameter
 	 */
 	public static final int EVENT_COMMAND_RUN = 110;
+	
 	/**
 	 * The event is to log a message from a command that has been run
+	 * A source RSE object and it's parent RSE object are the expected parameters
 	 */
 	public static final int EVENT_COMMAND_MESSAGE = 115;
+
 	/**
 	 * The event is to replace the children (similar to EVENT_ADD_MANY), it will 
 	 * expand also
+	 * An array of RSE objects (i.e. Object[]) is the multi-source 
+	 * parameter (the source is the first item in that array) and a parent 
+	 * RSE object is expected.  
 	 */
 	public static final int EVENT_REPLACE_CHILDREN = 120;
+	
 	/**
 	 * The event is to log a command that has been run
+	 * @deprecated
 	 */
 	public static final int EVENT_COMPILE_COMMAND_RUN = 125;
+
 	/**
 	 * The event is to update the command history drop-down in the remote shell view
+	 * A source RSE object is the expected parameter
+	 * 
+	 * TODO should be moved out of core since this is command-specific
 	 */
 	public static final int EVENT_COMMAND_HISTORY_UPDATE = 130;
 
@@ -290,12 +328,19 @@ public interface ISystemResourceChangeEvents
 	
 	/**
 	 * The event is to update the remote shell view when a command is finished
+	 * A source RSE object is the expected parameter
 	 */
 	public static final int EVENT_COMMAND_SHELL_FINISHED = 140;
+	
+	/**
+	 * The event is to indicate that a shell has been removed
+	 * A source RSE object is the expected parameter
+	 */
 	public static final int EVENT_COMMAND_SHELL_REMOVED = 141;
 	
 	/**
 	 * The event is to update the search view when a search is finished
+	 * A IHostSearchResultConfiguration is the expected parameter
 	 */
 	public static final int EVENT_SEARCH_FINISHED = 150;
 

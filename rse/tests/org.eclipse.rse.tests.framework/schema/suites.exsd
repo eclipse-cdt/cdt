@@ -13,7 +13,7 @@
    <element name="extension">
       <annotation>
          <documentation>
-            Use this element to register a list of test suites with the framework.  There are two ways to register, using extensions of &lt;code&gt;junit.framework.TestSuite&lt;/code&gt; or using an implementer of &lt;code&gt;org.eclipse.rse.tests.framework.ITestSuiteProvider&lt;/code&gt;.
+            Use this element to register a list of test suite types and test suites with the framework. Test suite types define holders for test suites that allow them to participate in the test suite view and perhaps interact with the user. Test suites are registered to a test suite type. See the &lt;code&gt;suite&lt;/code&gt; element for information on the pre-defined test suite types.
          </documentation>
       </annotation>
       <complexType>
@@ -60,7 +60,7 @@
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  The class of the test suite.  This must be an extension of &lt;code&gt;junit.framework.TestSuite&lt;/code&gt;.
+                  The type of the test suite.  Types are defined using the &lt;code&gt;type&lt;/code&gt; element of this extension point. The basic implementation defines two types: &lt;code&gt;standard&lt;/code&gt; and &lt;code&gt;generated&lt;/code&gt;. Standard suites typically just subclass org.junit.TestSuite. Generated suites will implement &lt;code&gt;org.eclipse.rse.tests.framework.ITestSuiteProvider&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -91,7 +91,7 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name of the argument given to a test suite provider.
                </documentation>
             </annotation>
          </attribute>
@@ -108,14 +108,14 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The name of the type of test suite.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The class that implements the holder for this test suite. A holder wraps the suite for the purposes of running within the RSE test framework. This class must extend &lt;code&gt;org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder&lt;/code&gt;. Once a type is defined, it can be referenced by a test suite defined in this extension.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.rse.tests.framework.DelegatingTestSuiteHolder"/>

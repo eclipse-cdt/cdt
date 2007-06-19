@@ -79,7 +79,7 @@ public class CDTConfigWizardPage extends WizardPage {
         setWizard(h.getWizard());
     }
 	
-	private void addCustomPages() {
+	void addCustomPages() {
 		if (pagesLoaded) return;
 		pagesLoaded = true;
 		

@@ -453,8 +453,9 @@ public class MBSWizardHandler extends CWizardHandler {
 		doPostProcess(project);
 		
 		// process custom pages
-		if (fConfigPage != null && fConfigPage.pagesLoaded)
-			doCustom();
+//		if (fConfigPage != null && fConfigPage.pagesLoaded)
+		getConfigPage().addCustomPages();
+		doCustom();
 	}
 	
 	protected void doPostProcess(IProject prj) {

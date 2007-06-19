@@ -105,14 +105,19 @@ public class CIndenterTest extends BaseUITestCase {
 		assertIndenterResult();
 	}
 
-	//int x;
-	//	   	
-	//int y;
+	//struct x {
+	// int f1 : 1;
+	// int f2 : 1;
+	// int f3 : 1;
+	//}
 	
-	//int x;
-	//
-	//int y;
-	public void testIndentationOfEmptyLine_Bug192412() throws Exception {
+	//struct x {
+	//	int f1 : 1;
+	//	int f2 : 1;
+	//	int f3 : 1;
+	//}
+	public void testIndentationOfBitFields_Bug193298() throws Exception {
 		assertIndenterResult();
 	}
+
 }

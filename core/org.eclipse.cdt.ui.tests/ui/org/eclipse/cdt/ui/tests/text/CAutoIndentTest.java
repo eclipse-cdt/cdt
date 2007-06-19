@@ -426,6 +426,7 @@ public class CAutoIndentTest extends TestCase {
 	public void testBracketWithSemiColonInsertion() throws BadLocationException {
 		AutoEditTester tester = createAutoEditTester(); 
 		String[] kw= new String[] {"class", "union", "struct", "enum"};
+		String[] kw_inh= new String[] {"class", "union", "struct"};
 		String[] kw_anon= new String[] {"union", "struct", "enum"};
 
 		for(int i=0; i<kw.length; i++) {
@@ -461,11 +462,11 @@ public class CAutoIndentTest extends TestCase {
 		// this tests for a sensible behaviour for enums, although the
 		// code generated is invalid, its the user entered part that is
 		// the problem
-		for(int i=0; i<kw.length; i++) {		
+		for(int i=0; i<kw_inh.length; i++) {		
 			tester.reset();
 
-			tester.type("\n\n\n"+kw[i]+" A\n:\npublic B\n,\npublic C\n{\n"); //$NON-NLS-1$
-			assertEquals("\n\n\n"+kw[i]+" A\n:\n\tpublic B\n\t,\n\tpublic C\n\t{\n\t\n\t};", tester.fDoc.get()); //$NON-NLS-1$
+			tester.type("\n\n\n"+kw_inh[i]+" A\n:\npublic B\n,\npublic C\n{\n"); //$NON-NLS-1$
+			assertEquals("\n\n\n"+kw_inh[i]+" A\n:\n\tpublic B\n\t,\n\tpublic C\n\t{\n\t\t\n\t};", tester.fDoc.get()); //$NON-NLS-1$
 		}
 		
 		for(int i=0; i<kw.length; i++) {		

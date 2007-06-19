@@ -929,10 +929,15 @@ public final class CIndenter {
 				return fPosition;
 
 			case Symbols.TokenCOLON:
-				// TODO handle ternary deep indentation
-				fIndent= fPrefs.prefCaseBlockIndent;
-				return fPosition;
-
+				pos= fPosition;
+				if (looksLikeCaseStatement()) {
+					fIndent= fPrefs.prefCaseBlockIndent;
+					return pos;
+				} else {
+					// TODO handle ternary deep indentation
+					fPosition= pos;
+					return skipToStatementStart(danglingElse, false);
+				}
 			case Symbols.TokenQUESTIONMARK:
 				if (fPrefs.prefTernaryDeepAlign) {
 					setFirstElementAlignment(fPosition, offset + 1);
@@ -991,6 +996,44 @@ public final class CIndenter {
 	}
 
 	/**
+	 * Test whether the colon at the current position marks a case statement 
+	 * (or a similar construct increasing the indent).
+	 * 
+	 * @return <code>true</code> if this looks like a case statement
+	 */
+	private boolean looksLikeCaseStatement() {
+		nextToken();
+		switch (fToken) {
+		case Symbols.TokenIDENT:
+			nextToken();
+			while (skipQualifiers()) {
+				nextToken();
+			}
+			switch (fToken) {
+			case Symbols.TokenCASE:
+			case Symbols.TokenCLASS:
+			case Symbols.TokenSTRUCT:
+			case Symbols.TokenUNION:
+				return true;
+			}
+			break;
+		case Symbols.TokenOTHER:
+			nextToken();
+			switch (fToken) {
+			case Symbols.TokenCASE:
+				return true;
+			}
+		case Symbols.TokenRPAREN: // constructor initializer
+		case Symbols.TokenDEFAULT:
+		case Symbols.TokenPUBLIC:
+		case Symbols.TokenPROTECTED:
+		case Symbols.TokenPRIVATE:
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Skips to the start of a statement that ends at the current position.
 	 *
 	 * @param danglingElse whether to indent aligned with the last <code>if</code>
@@ -1020,6 +1063,8 @@ public final class CIndenter {
 
 					case Symbols.TokenCLASS:
 					case Symbols.TokenENUM:
+					case Symbols.TokenSTRUCT:
+					case Symbols.TokenUNION:
 						isTypeBody= true;
 						break;
 
@@ -1133,18 +1178,32 @@ public final class CIndenter {
 	 */
 	private boolean isConditional() {
 		while (true) {
+			int previous= fToken;
 			nextToken();
 			switch (fToken) {
 				// search for case labels, which consist of (possibly qualified) identifiers or numbers
 				case Symbols.TokenIDENT:
-				case Symbols.TokenOTHER: // dots for qualified constants
+					if (previous == Symbols.TokenIDENT) {
+						return false;
+					}
+				case Symbols.TokenDOUBLECOLON:
+				case Symbols.TokenOTHER:
 					continue;
-
+					
+				case Symbols.TokenQUESTIONMARK:
+					return true;
+					
+				case Symbols.TokenSEMICOLON:
+				case Symbols.TokenLBRACE:
+				case Symbols.TokenRBRACE:
 				case Symbols.TokenCASE:
 				case Symbols.TokenDEFAULT:
 				case Symbols.TokenPUBLIC:
 				case Symbols.TokenPROTECTED:
 				case Symbols.TokenPRIVATE:
+				case Symbols.TokenCLASS:
+				case Symbols.TokenSTRUCT:
+				case Symbols.TokenUNION:
 					return false;
 
 				default:
@@ -1618,13 +1677,10 @@ public final class CIndenter {
 	 *         will be an IDENT.
 	 */
 	private boolean skipQualifiers() {
-		if (fToken == Symbols.TokenCOLON) {
+		if (fToken == Symbols.TokenDOUBLECOLON) {
 			nextToken();
-			if (fToken == Symbols.TokenCOLON) {
-				nextToken();
-				if (fToken == Symbols.TokenIDENT) {
-					return true;
-				}
+			if (fToken == Symbols.TokenIDENT) {
+				return true;
 			}
 		}
 		return false;

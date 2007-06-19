@@ -332,6 +332,13 @@ public final class CHeuristicScanner implements Symbols {
 				return TokenRPAREN;
 			case SEMICOLON:
 				return TokenSEMICOLON;
+			case COLON:
+				switch (peekNextChar()) {
+				case COLON:
+					++fPos;
+					return TokenDOUBLECOLON;
+				}
+				return TokenCOLON;
 			case COMMA:
 				return TokenCOMMA;
 			case QUESTIONMARK:
@@ -422,6 +429,11 @@ public final class CHeuristicScanner implements Symbols {
 			case SEMICOLON:
 				return TokenSEMICOLON;
 			case COLON:
+				switch (peekPreviousChar()) {
+				case COLON:
+					--fPos;
+					return TokenDOUBLECOLON;
+				}
 				return TokenCOLON;
 			case COMMA:
 				return TokenCOMMA;
@@ -970,10 +982,7 @@ public final class CHeuristicScanner implements Symbols {
 		int token= previousToken(start - 1, bound);
 		if (token == Symbols.TokenIDENT) { // type name
 			token= previousToken(getPosition(), bound);
-			while (token == Symbols.TokenCOLON) { // colon of qualification
-				token= previousToken(getPosition(), bound);
-				if (token != Symbols.TokenCOLON) // second colon of qualification
-					return false;
+			while (token == Symbols.TokenDOUBLECOLON) { // qualification
 				token= previousToken(getPosition(), bound);
 				if (token != Symbols.TokenIDENT) // qualification name
 					return false;
@@ -1004,11 +1013,8 @@ public final class CHeuristicScanner implements Symbols {
 		}
 		if (token == Symbols.TokenARROW) {
 			return true;
-		} else if (token == Symbols.TokenCOLON) {
-			token= previousToken(getPosition(), bound);
-			if (token == Symbols.TokenCOLON) {
-				return true;
-			}
+		} else if (token == Symbols.TokenDOUBLECOLON) {
+			return true;
 		}
 		return false;
 	}

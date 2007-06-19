@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -40,7 +41,6 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassSpecializationScope;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
@@ -193,96 +193,101 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * @throws CoreException
 	 */
 	protected PDOMNode getAdaptedParent(IBinding binding, boolean createFileLocalScope, boolean addParent) throws CoreException {
-		IBinding scopeBinding = null;
-		
-		if (binding instanceof ICPPTemplateInstance) {
-			scopeBinding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
-		} else {
 		try {
-		IScope scope = binding.getScope();
-		if (scope == null) {
-			if (binding instanceof ICPPDeferredTemplateInstance) {
-				ICPPDeferredTemplateInstance deferred = (ICPPDeferredTemplateInstance) binding;
-				ICPPTemplateDefinition template = deferred.getTemplateDefinition();
-				scope = template.getScope();
+			IBinding scopeBinding = null;
+			if (binding instanceof ICPPTemplateInstance) {
+				scopeBinding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
 			} 
-			
-			IIndexBinding ib = (binding instanceof IIndexBinding) ? (IIndexBinding) binding : null;
-			
-			if (ib == null && binding instanceof ICPPSpecialization) {
-				IBinding spec = ((ICPPSpecialization)binding).getSpecializedBinding();
-				if (spec instanceof IIndexBinding) {
-					ib = (IIndexBinding) spec;
-				}
-			}
-			
-			if (ib != null) {
-				// don't adapt file local bindings from other fragments to this one.
-				if (ib.isFileLocal()) {
+			else {
+				IScope scope = binding.getScope();
+				if (scope == null) {
+					if (binding instanceof ICPPDeferredTemplateInstance) {
+						ICPPDeferredTemplateInstance deferred = (ICPPDeferredTemplateInstance) binding;
+						ICPPTemplateDefinition template = deferred.getTemplateDefinition();
+						scope = template.getScope();
+					} 
+
+					IIndexBinding ib = (binding instanceof IIndexBinding) ? (IIndexBinding) binding : null;
+
+					if (ib == null && binding instanceof ICPPSpecialization) {
+						IBinding spec = ((ICPPSpecialization)binding).getSpecializedBinding();
+						if (spec instanceof IIndexBinding) {
+							ib = (IIndexBinding) spec;
+						}
+					}
+
+					if (ib != null) {
+						// don't adapt file local bindings from other fragments to this one.
+						if (ib.isFileLocal()) {
+							return null;
+						}
+						// in an index the null scope represents global scope.
+						return this;
+					}
+
 					return null;
 				}
-				// in an index the null scope represents global scope.
-				return this;
+
+				if(scope instanceof IIndexScope) {
+					if(scope instanceof CompositeScope) { // we special case for performance
+						return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
+					} else {
+						return adaptBinding(((IIndexScope) scope).getScopeBinding());
+					}
+				}
+
+				// the scope is from the ast
+				if (scope instanceof ICPPTemplateScope && !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
+					scope = scope.getParent();
+					if (scope == null) {
+						return null;
+					}
+				}
+
+				if (scope instanceof ICPPNamespaceScope) {
+					IName name= scope.getScopeName();
+					if (name != null && name.toCharArray().length == 0) {
+						// skip unnamed namespaces
+						return null;
+					}
+				}
+
+				IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
+				if (scopeNode instanceof IASTCompoundStatement) {
+					return null;
+				}
+				else if (scopeNode instanceof IASTTranslationUnit) {
+					if (isFileLocalBinding(binding)) {
+						IASTTranslationUnit tu= (IASTTranslationUnit) scopeNode;
+						return findFileLocalScope(tu.getFilePath(), createFileLocalScope);
+					}
+					return this;
+				}
+				else {
+					if (scope instanceof ICPPClassScope) {
+						scopeBinding = ((ICPPClassScope)scope).getClassType();
+					} 
+					else {
+						IName scopeName = scope.getScopeName();		
+						if (scopeName instanceof IASTName) {
+							scopeBinding = ((IASTName) scopeName).resolveBinding();
+						}	
+					}
+				}
+			} 		
+			if (scopeBinding != null && scopeBinding != binding) {
+				PDOMBinding scopePDOMBinding = null;
+				if (addParent) {
+					scopePDOMBinding = addBinding(scopeBinding);
+				} else {
+					scopePDOMBinding = adaptBinding(scopeBinding);
+				}
+				if (scopePDOMBinding != null)
+					return scopePDOMBinding;
 			}
-			
-			return null;
 		}
-		 		
-		if(scope instanceof IIndexScope) {
-			if(scope instanceof CompositeScope) { // we special case for performance
-				return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
-			} else {
-				return adaptBinding(((IIndexScope) scope).getScopeBinding());
-			}
-		}
-			
-		// the scope is from the ast
-		if (scope instanceof ICPPTemplateScope && !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPTemplateInstance)) {
-				scope = scope.getParent();
-		}
-		
-		if (scope instanceof ICPPNamespaceScope) {
-			IName name= scope.getScopeName();
-			if (name != null && name.toCharArray().length == 0) {
-				// skip unnamed namespaces
-				return null;
-			}
-		}
-		
-		IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
-		if (scopeNode instanceof IASTCompoundStatement)
-			return null;
-		else if (scopeNode instanceof IASTTranslationUnit) {
-			if (isFileLocalBinding(binding)) {
-				IASTTranslationUnit tu= (IASTTranslationUnit) scopeNode;
-				return findFileLocalScope(tu.getFilePath(), createFileLocalScope);
-			}
-			return this;
-		}
-		else {
-			if (scope instanceof CPPClassSpecializationScope) {
-				scopeBinding = ((CPPClassSpecializationScope)scope).getClassType();
-			} else {
-				IName scopeName = scope.getScopeName();		
-				if (scopeName instanceof IASTName) {
-					scopeBinding = ((IASTName) scopeName).resolveBinding();
-				}	
-			}
-		}
-		} catch (DOMException e) {
+		catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
-		}
-		}
-		
-		if (scopeBinding != null) {
-			PDOMBinding scopePDOMBinding = null;
-			if (addParent) {
-				scopePDOMBinding = addBinding(scopeBinding);
-			} else {
-				scopePDOMBinding = adaptBinding(scopeBinding);
-			}
-			if (scopePDOMBinding != null)
-				return scopePDOMBinding;
 		}
 		return null;
 	}

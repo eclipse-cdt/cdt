@@ -345,6 +345,9 @@ public final class CHeuristicScanner implements Symbols {
 				case RANGLE:
 					++fPos;
 					return TokenSHIFTRIGHT;
+				case EQUAL:
+					++fPos;
+					return TokenOTHER;
 				}
 				return TokenGREATERTHAN;
 			case DOT:
@@ -425,6 +428,13 @@ public final class CHeuristicScanner implements Symbols {
 			case QUESTIONMARK:
 				return TokenQUESTIONMARK;
 			case EQUAL:
+				switch (peekPreviousChar()) {
+				case RANGLE:
+					--fPos;
+				case LANGLE:
+					--fPos;
+					return TokenOTHER;
+				}
 				return TokenEQUAL;
 			case LANGLE:
 				return TokenLESSTHAN;

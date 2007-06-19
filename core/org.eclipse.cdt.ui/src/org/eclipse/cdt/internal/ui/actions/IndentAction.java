@@ -102,11 +102,11 @@ public class IndentAction extends TextEditorAction {
 			fCaretOffset= -1;
 			
 			try {
-				document.addPosition(end);
 				firstLine= document.getLineOfOffset(offset);
 				// check for marginal (zero-length) lines
 				int minusOne= length == 0 ? 0 : 1;
 				nLines= document.getLineOfOffset(offset + length - minusOne) - firstLine + 1;
+				document.addPosition(end);
 			} catch (BadLocationException e) {
 				// will only happen on concurrent modification
 				CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "", e)); //$NON-NLS-1$
@@ -144,11 +144,11 @@ public class IndentAction extends TextEditorAction {
 						if (newOffset != -1 && (hasChanged || newOffset != offset || newLength != length))
 							selectAndReveal(newOffset, newLength);
 						
-						document.removePosition(end);
 					} catch (BadLocationException e) {
 						// will only happen on concurrent modification
 						CUIPlugin.getDefault().log(new Status(IStatus.ERROR, CUIPlugin.getPluginId(), IStatus.OK, "ConcurrentModification in IndentAction", e)); //$NON-NLS-1$
 					} finally {
+						document.removePosition(end);
 						if (target != null)
 							target.endCompoundChange();
 					}

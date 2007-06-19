@@ -68,7 +68,7 @@ public class CIndenterTest extends BaseUITestCase {
 	
 	//foo(arg,
 	//		"string");
-	public void testIndentationOfStringAsLastArgument_Bug192412() throws Exception {
+	public void testIndentationOfStringLiteralAsLastArgument_Bug192412() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -80,6 +80,39 @@ public class CIndenterTest extends BaseUITestCase {
 	//	foo->bar();
 	//dontIndent();
 	public void testIndentationAfterArrowOperator_Bug192412() throws Exception {
+		assertIndenterResult();
+	}
+
+	//if (1)
+	//foo>>bar;
+	//  dontIndent();
+	
+	//if (1)
+	//	foo>>bar;
+	//dontIndent();
+	public void testIndentationAfterShiftRight_Bug192412() throws Exception {
+		assertIndenterResult();
+	}
+
+	//if (1)
+	//foo >= bar();
+	//  dontIndent();
+	
+	//if (1)
+	//	foo >= bar();
+	//dontIndent();
+	public void testIndentationAfterGreaterOrEquals_Bug192412() throws Exception {
+		assertIndenterResult();
+	}
+
+	//int x;
+	//	   	
+	//int y;
+	
+	//int x;
+	//
+	//int y;
+	public void testIndentationOfEmptyLine_Bug192412() throws Exception {
 		assertIndenterResult();
 	}
 }

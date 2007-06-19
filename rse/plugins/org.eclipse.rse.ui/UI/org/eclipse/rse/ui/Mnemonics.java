@@ -95,7 +95,8 @@ public class Mnemonics {
 	public static final int APPEND_MNEMONICS = 2;
 	
 	/**
-	 * The simple name of the preference that holds the pattern  to be used for matching against the locale to determine if APPEND_MNEMONICS option applies. 
+	 * The simple name of the preference that holds the pattern  to be used for matching 
+	 * against the locale to determine if APPEND_MNEMONICS option applies. 
 	 */
 	public static final String APPEND_MNEMONICS_PATTERN_PREFERENCE = "APPEND_MNEMONICS_PATTERN"; //$NON-NLS-1$
 

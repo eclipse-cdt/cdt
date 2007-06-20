@@ -60,4 +60,17 @@ public interface ITerminalViewControl {
      * @return null or the current input field
      */
     ICommandInputField getCommandInputField();
+    
+	/**
+	 * @return the maximum number of lines to display
+	 * in the terminal view. -1 means unlimited.
+	 */
+	public int getBufferLineLimit();
+
+	/**
+	 * @param bufferLineLimit the maximum number of lines to show
+	 * in the terminal view. -1 means unlimited. 
+	 */
+	public void setBufferLineLimit(int bufferLineLimit);
+    
 }

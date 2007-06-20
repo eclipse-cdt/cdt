@@ -9,28 +9,68 @@
 <body>
 <h2>Before you begin</h2>
 
-<p>Your CDT plugins are not complete until you've installed some additional C/C++ development tools.</p>
+<p>Depending on how you received the CDT you may or may not have also received
+a tool chain with a built-in CDT integration.
+If you simply downloaded the CDT from an update site, then one will be required before
+you can build and debug projects.</p>
 
-<h3>Utilities</h3>
-<p>You must install and configure the following utilities:</p>
-<ul>
-  <li>Build (such as <tt>make</tt>).</li>
-  <li>Compile (such as <tt>gcc</tt>). For more information, see <a href="http://gcc.gnu.org">http://gcc.gnu.org</a>.</li>
-  <li>Debug (such as <tt>gdb</tt>). For more information, see <a href="http://sources.redhat.com/gdb/">http://sources.redhat.com/gdb/</a>.</li>
-</ul>
+<p>The base CDT supports integration with the GNU tool chain.
+This includes GNU's make, gcc compiler, and gdb debugger utilities.
+If you require a tool chain to build software for your development host, this
+is the best choice to get started.
+Each platform that runs the CDT requires different steps to acquire this tool chain.</p>
 
-<h3>cygwin</h3>
-<p><tt>cygwin</tt> contains all of these utilities for the Windows environment. To download or more information, see <a href="http://www.cygwin.com">http://www.cygwin.com</a>.<p>
+<h3>Linux</h3>
+<p>All Linux distributions include the GNU tool chain. They may not, however, be installed by default.
+Please see the instructions for your particular distribution on how to install it</p>
 
-<p>Once you've installed <tt>cygwin</tt>, you should test to ensure it was installed correctly. To do this, open a command prompt and type <tt>g++</tt> or <tt>make</tt>. If the command complains of a missing file for input, everything has installed  fine.</p>
+<h3>Windows</h3>
+<p>There are two main choices for acquiring the GNU tool chain for Windows: MinGW, and Cygwin.</p>
 
-<p>If the following error message appears, it means that no <tt>make</tt> is installed, or your <tt>path</tt> is not configured correctly.</p>  
-<pre>'g++' (or 'make') is not recognized as an internal or external command, operable program or batch file</pre> 
-<p>To check the environment variable <tt>path</tt> for correctness, open a command prompt and type <tt>PATH</tt>. Make sure that the path to your build utility is defined (example <tt>PATH=c:\cygwin\bin</tt>).<p>
+<p><a href="http://www.cygwin.com">Cygwin</a> is a port of the Linux environment to Windows.
+It provides a compatibility layer in a set of DLLs. These DLLs are
+<a href="http://www.gnu.org/copyleft/gpl.html">GPL licensed</a>
+making any code that links to them also subject to the GPL.
+Cygwin, however, does provide the fullest implementation of the GNU tool chain
+by supporting the GNU libc C library.</p>
 
-<h3>Build Automatically</h3>
-<p>For C/C++ projects the <b>Build Automatically</b> feature should be turned off, otherwise builds will be performed whenever a file is saved, including makefiles and header files.</p>
-<p>Click <b>Projects</b> from the menubar and ensure there is no checkmark beside the <b>Build Automatically</b> menu item. If there is one, click <b>Build Automatically</b> to deselect it.</p>
+<p><a href="http://www.mingw.org">MinGW</a> is a port of the GNU tool chain to the Windows platform.
+The biggest difference over Cygwin is that MinGW uses the Windows C libraries (mscvrt) instead
+of GNU's libc. As a result a compatibility layer is not required, thus avoiding the GPL issues
+with Cygwin. However, there are differences between the Windows and GNU C libraries that will make
+writing portable applications more difficult.</p>
+
+<p>MinGW allows the best integration support with the CDT
+due to it's direct support for the Windows environment.
+The following are instructions and links on how to install the current version
+of MinGW. Note that these links may become stale over time as new versions of
+MinGW components are introduced. Please check the
+<a href="http://sourceforge.net/project/showfiles.php?group_id=2435">
+MinGW File Release</a> section for the latest versions.</p>
+
+<ol>
+  <li>Download and run the MinGW setup program,
+  <a href="http://downloads.sourceforge.net/mingw/MinGW-5.1.3.exe">MinGW-5.1.3.exe</a>.
+  Select download and install the MinGW base tools and the g++ compiler.
+  You may select the Current or Candidate version of these tools.
+  You may also install any of the other available compilers as well.
+  Do not install the MinGW Make feature as the MSYS version of make from step 3
+  is a more complete implementation of make.</li>
+  <li>The MinGW setup program currently does not install the gdb debugger.
+  To do so, download the
+  <a href="http://downloads.sourceforge.net/mingw/gdb-6.6.tar.bz2">gdb-6.6.tar.bz2</a>
+  file and extract it's contents to the same location where you installed MinGW.</li>
+  <li>If you plan on using Makefile projects, download and run the
+  <a href="http://downloads.sourceforge.net/mingw/MSYS-1.0.10.exe">MSYS-1.0.10.exe</a>
+  setup program. MSYS provides an implementation of make and related command line tools.
+  This is not required for other types of projects with the MinGW tool chain,
+  which use CDT's internal build tools to perform the build.</li>
+</ol>
+
+<h3>Other Platforms</h3>
+<p>The GNU tool chain is supported on all platforms that the CDT supports.
+Please see you're platform vendor for instructions on how to install the GNU tool chain
+on your platform.</p>
 
 <p align="left"> <img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">  <br>
   <a href="../concepts/cdt_o_home.htm">CDT Home</a><br>

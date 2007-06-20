@@ -36,6 +36,10 @@ h2 { background-color: #CCCCFF }
 <TD><b>Message prefix</b>=RSEC</TD></TR>
 </TABLE>
 <A NAME="General"><!-- --></A><H2>General Messages</H2>
+<H3>RSEG0402</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>%1 must be between %2 and %3.<br>
+<b>LevelTwo: </b><br>
 <H3>RSEG1001</H3>
 <b>Severity: </b>Unexpected<br>
 <b>LevelOne: </b>Under construction<br>
@@ -91,7 +95,7 @@ h2 { background-color: #CCCCFF }
 <H3>RSEG1016</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Not a valid profile name<br>
-<b>LevelTwo: </b>Profiles ultimate are folders in the file system, so profile names must be valid folder names for the workbench. Further, they must not contain pound signs (#) or exceed 100 characters in length. Profile names are not case sensitive, but are case tolerant.<br>
+<b>LevelTwo: </b>Profiles are stored as folders in the file system, so profile names must be valid folder names for the workbench. Furthermore, they must not contain pound signs (#) or exceed 100 characters in length. Profile names are not case sensitive, but are case tolerant.<br>
 <H3>RSEG1017</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Enter number<br>
@@ -106,23 +110,23 @@ h2 { background-color: #CCCCFF }
 <b>LevelTwo: </b>The name must be a valid file name within the workbench and the underlying file system.<br>
 <H3>RSEG1020</H3>
 <b>Severity: </b>Error<br>
-<b>LevelOne: </b>Enter system type<br>
+<b>LevelOne: </b>Please enter a valid system type.<br>
 <b>LevelTwo: </b>You must select a system type. The system type is the type of the operating system of the remote sytem.<br>
 <H3>RSEG1021</H3>
 <b>Severity: </b>Error<br>
-<b>LevelOne: </b>Enter connection name<br>
+<b>LevelOne: </b>Please enter a valid connection name.<br>
 <b>LevelTwo: </b>You must enter a connection name. This name is arbitrary, but must be unique to the selected profile.<br>
 <H3>RSEG1022</H3>
 <b>Severity: </b>Error<br>
-<b>LevelOne: </b>Connection name is not unique for its profile<br>
+<b>LevelOne: </b>Connection name is not unique for the selected profile.<br>
 <b>LevelTwo: </b>Connection names must be unique to the profile that contains the connection. Specify a name not already in use.<br>
 <H3>RSEG1023</H3>
 <b>Severity: </b>Error<br>
-<b>LevelOne: </b>Not a valid connection name<br>
+<b>LevelOne: </b>Invalid connection name. Must be a valid folder name in the underlying file system.<br>
 <b>LevelTwo: </b>The connection name is not syntactically valid. The name must be a valid folder name within the workbench and the underlying file system.<br>
 <H3>RSEG1024</H3>
 <b>Severity: </b>Error<br>
-<b>LevelOne: </b>Enter host name or ip address<br>
+<b>LevelOne: </b>Enter host name or IP address<br>
 <b>LevelTwo: </b>You must specify a host name or TCP/IP address for the remote system.<br>
 <H3>RSEG1025</H3>
 <b>Severity: </b>Error<br>
@@ -139,7 +143,7 @@ h2 { background-color: #CCCCFF }
 <H3>RSEG1028</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Not a valid port number<br>
-<b>LevelTwo: </b>The value you entered is not a valid port number. It must be a positive integer.<br>
+<b>LevelTwo: </b>The value you entered is not a valid port number. It must be a positive integer between 1 and 65536.<br>
 <H3>RSEG1029</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Enter value<br>
@@ -187,7 +191,11 @@ h2 { background-color: #CCCCFF }
 <H3>RSEG1040</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Profile name %1 is reserved<br>
-<b>LevelTwo: </b>The given profile name is reserved by IBM. Specify another name for the profile.<br>
+<b>LevelTwo: </b>The given profile name is reserved. Specify another name for the profile.<br>
+<H3>RSEG1041</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Connection of name %1 already exists in profile %2. Continue?<br>
+<b>LevelTwo: </b>A connection of this name exists in another profile. While this allowed, it is discouraged as it may lead to confusion. Press Yes to create the connection, or No to cancel the creation.<br>
 <H3>RSEG1042</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Enter filter name<br>
@@ -488,6 +496,34 @@ h2 { background-color: #CCCCFF }
 <b>Severity: </b>Information<br>
 <b>LevelOne: </b>Moving %1...<br>
 <b>LevelTwo: </b><br>
+<H3>RSEG1119</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Saving %1...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1120</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>%1 is not a valid archive name.<br>
+<b>LevelTwo: </b>You must give a filename with an extension that is recognized as a valid archive type extension.<br>
+<H3>RSEG1122</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The archive is corrupted or unreadable.<br>
+<b>LevelTwo: </b>The archive cannot be opened because its format is unrecognized, or its contents are damaged in some way.<br>
+<H3>RSEG1123</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Cannot create archive.<br>
+<b>LevelTwo: </b>There was an error creating the empty archive. The archive was not created.<br>
+<H3>RSEG1124</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Creation of the virtual file or folder %1 failed.<br>
+<b>LevelTwo: </b>There was an error creating the virtual file or folder. The virtual file or folder was not created.<br>
+<H3>RSEG1125</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Deletion of the virtual file or folder %1 failed.<br>
+<b>LevelTwo: </b>There was an error deleting the virtual file or folder. The virtual file or folder was not deleted.<br>
+<H3>RSEG1126</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Could not move the virtual file or folder %1.<br>
+<b>LevelTwo: </b>There was an error moving the virtual file or folder. The virtual file or folder was not moved.<br>
 <H3>RSEG1130</H3>
 <b>Severity: </b>Question<br>
 <b>LevelOne: </b>Permanently delete selected remote resource(s)?<br>
@@ -629,7 +665,7 @@ h2 { background-color: #CCCCFF }
 <H3>RSEG1220</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Host name '%1' not found or valid<br>
-<b>LevelTwo: </b>A remote system of host name '%1' was found. If you are working disconnected, de-select the checkbox to verify the host name<br>
+<b>LevelTwo: </b>A remote system of host name '%1' was not found. If you are working disconnected, de-select the checkbox to verify the host name<br>
 <H3>RSEG1221</H3>
 <b>Severity: </b>Information<br>
 <b>LevelOne: </b>Verifying host name...<br>
@@ -648,6 +684,18 @@ h2 { background-color: #CCCCFF }
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>There is an error on another page<br>
 <b>LevelTwo: </b>Another page of the wizard has an error that must be corrected before the wizard can be finished<br>
+<H3>RSEG1242</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Daemon failed to launch server on %1 using port %2<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEG1243</H3>
+<b>Severity: </b>Unexpected<br>
+<b>LevelOne: </b>Failed to connect to the daemon on %1 using port %2 with an unexpected exception<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEG1244</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The selected encoding is not supported.<br>
+<b>LevelTwo: </b><br>
 <H3>RSEG1250</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>The pattern may not be blank<br>
@@ -664,14 +712,54 @@ h2 { background-color: #CCCCFF }
 <b>Severity: </b>Information<br>
 <b>LevelOne: </b>%1 - Finished<br>
 <b>LevelTwo: </b><br>
+<H3>RSEG1257</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>%1 - Cancelled<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1258</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>%1 - Disconnected<br>
+<b>LevelTwo: </b><br>
 <H3>RSEG1260</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>The invocation may not be blank<br>
 <b>LevelTwo: </b><br>
 <H3>RSEG1270</H3>
 <b>Severity: </b>Error<br>
-<b>LevelOne: </b>Invalid drag and drop operation<br>
+<b>LevelOne: </b>Invalid transfer operation<br>
 <b>LevelTwo: </b>The source %1 cannot be transferred into the target %2<br>
+<H3>RSEG1280</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Downloading %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1281</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Uploading %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1282</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Synchronizing Resources...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1285</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Extracting %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1290</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>%1 of %2 complete (%3)<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1295</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Downloading resources...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1296</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Uploading resources...<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1297</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The new password is invalid.<br>
+<b>LevelTwo: </b>The remote system indicated that the new password is unacceptable. Please ensure the new password follows all password rules for the remote system.<br>
 <H3>RSEG1300</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>The FTP service is unavailable on the remote system.<br>
@@ -688,6 +776,10 @@ h2 { background-color: #CCCCFF }
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Unable to install the RSE server.<br>
 <b>LevelTwo: </b><br>
+<H3>RSEG1304</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Archive Management is not supported by the current File subsystem's configuration.<br>
+<b>LevelTwo: </b>In the properties for the File subsystem, choose a configuration that supports Archive Management.<br>
 <H3>RSEG1400</H3>
 <b>Severity: </b>Question<br>
 <b>LevelOne: </b>This action will take a few minutes. Proceed?<br>
@@ -696,6 +788,18 @@ h2 { background-color: #CCCCFF }
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Classic help already enabled.<br>
 <b>LevelTwo: </b>The HTML files for the CODE and VisualAge RPG help have already been uncompressed.<br>
+<H3>RSEG1500</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Remote Error List: %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEG1600</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Folder path must not be empty.<br>
+<b>LevelTwo: </b>Select a folder from the dropdown list or click the Browse... button and select a folder from the dialog.<br>
+<H3>RSEG1601</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Regular expression is not valid.<br>
+<b>LevelTwo: </b>The value %1 you entered is not a valid regular expression.<br>
 <br>
 <hr>
 <A NAME="Other"><!-- --></A><H2>Other Messages</H2>
@@ -784,7 +888,7 @@ h2 { background-color: #CCCCFF }
 <b>LevelTwo: </b>The folder you specified does not exist. Select Yes to create it, No to cancel the operation<br>
 <H3>RSEF1006</H3>
 <b>Severity: </b>Error<br>
-<b>LevelOne: </b>File '%' not found<br>
+<b>LevelOne: </b>File '%1' not found<br>
 <b>LevelTwo: </b><br>
 <H3>RSEF1011</H3>
 <b>Severity: </b>Error<br>
@@ -882,6 +986,14 @@ h2 { background-color: #CCCCFF }
 <b>Severity: </b>Question<br>
 <b>LevelOne: </b>Resource will not be visible due to subsetting. Rename it anyway?<br>
 <b>LevelTwo: </b>The new name of the resource does not match the current filter criteria. If you select Yes to rename the resource, it will not be visible within the current filter.<br>
+<H3>RSEF1312</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Target folder cannot descend from source folder<br>
+<b>LevelTwo: </b>It is impossible to move a folder to one of its subfolders.<br>
+<H3>RSEF1315</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Deleting %1...<br>
+<b>LevelTwo: </b><br>
 <H3>RSEF5001</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>File %1 on %2 can not be opened. You do not have read access to the file.<br>
@@ -892,8 +1004,8 @@ h2 { background-color: #CCCCFF }
 <b>LevelTwo: </b>You do not have write permission to the file %1 on %2. You can open the file in browse (read-only) mode. If you want to edit the file, change file permissions to allow write access to the file.<br>
 <H3>RSEF5003</H3>
 <b>Severity: </b>Error<br>
-<b>LevelOne: </b>File %1 can not be saved on %2. You do not have read access to the file.<br>
-<b>LevelTwo: </b>Change file permissions to ensure you have read access to the file.<br>
+<b>LevelOne: </b>File %1 can not be saved on %2. You do not have write access to the file.<br>
+<b>LevelTwo: </b>Change file permissions to ensure you have write access to the file.<br>
 <H3>RSEF5004</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>File %1 can not be saved on %2. You do not have write access to the file.<br>
@@ -928,8 +1040,32 @@ h2 { background-color: #CCCCFF }
 <b>LevelTwo: </b>Connection may have been renamed or deleted.<br>
 <H3>RSEF5012</H3>
 <b>Severity: </b>Question<br>
-<b>LevelOne: </b>File %1 already exists. Do you want to overwrite it?<br>
+<b>LevelOne: </b>File %1 already exists. Do you want to replace it?<br>
 <b>LevelTwo: </b><br>
+<H3>RSEF5013</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Parent folder %1 does not exist. Do you want to create it?<br>
+<b>LevelTwo: </b>The parent folder must be created for the file to be created.<br>
+<H3>RSEF5014</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Parent folder %1 does not exist. Verify that the correct path was entered.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF5020</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Folder %1 is not readable. Cannot expand<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF5101</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to use connection.<br>
+<b>LevelTwo: </b>Please correct, or select alternate connection.<br>
+<H3>RSEF5102</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unexpected exception received: %1.<br>
+<b>LevelTwo: </b>Please see error log for details.<br>
+<H3>RSEF5103</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>The file '%1' already exists on %2. Do you want to overwrite it?<br>
+<b>LevelTwo: </b>Click Yes to overwrite the existing file, or click No to cancel the export.<br>
 <H3>RSEF6001</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>File type extension can not be empty.<br>
@@ -937,6 +1073,30 @@ h2 { background-color: #CCCCFF }
 <H3>RSEF6002</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>File type extension must not contain '*' or '.'<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF6003</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The encoding is not supported.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF6101</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>One or more cached files have changes that have not been saved on the host.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF6102</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>Unable to synchronize cache changes to host. Operation cancelled.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF6201</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The IP address or host name can not be empty.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF6202</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The IP address is not valid.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF6203</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The host name is not valid.<br>
 <b>LevelTwo: </b><br>
 <H3>RSEF7001</H3>
 <b>Severity: </b>Error<br>
@@ -962,13 +1122,105 @@ h2 { background-color: #CCCCFF }
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Input %1 is not valid<br>
 <b>LevelTwo: </b>%1<br>
+<H3>RSEF8050</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Can not copy root file system<br>
+<b>LevelTwo: </b>The root is not something that can be copied<br>
+<H3>RSEF8051</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Could not close import stream for %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF8052</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to import %1: %2<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEF8053</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Creating folder %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF8054</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Problems were encountered during import<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEF8055</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Error opening input stream for %1<br>
+<b>LevelTwo: </b>%2<br>
+<H3>RSEF8056</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to import %1<br>
+<b>LevelTwo: </b>The file cannot be copied onto itself<br>
+<H3>RSEF8057</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Error occurred while exporting %1: %2<br>
+<b>LevelTwo: </b>%3<br>
+<H3>RSEF8058</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Problems were encountered during export<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEF8059</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Cannot overwrite file %1<br>
+<b>LevelTwo: </b>The file does not have its write attribute set, so it cannot be written to<br>
+<H3>RSEF8060</H3>
+<b>Severity: </b>Question<br>
+<b>LevelOne: </b>Target folder does not exist. Would you like to create it?<br>
+<b>LevelTwo: </b>Press Yes to create the folder %1, No to cancel<br>
+<H3>RSEF8061</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Target folder already exists, as a file<br>
+<b>LevelTwo: </b>The remote resource %1 already exists, but as a file, not a folder<br>
+<H3>RSEF8062</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Destination folder conflicts with location of %1<br>
+<b>LevelTwo: </b>You are attempting to export to the local file system, to a location that overlaps the resources being exported.<br>
+<H3>RSEF8063</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Source is a file, not a folder<br>
+<b>LevelTwo: </b>The remote resource %1 is a file, but a folder is required<br>
+<H3>RSEF8064</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>There are no resources currently selected for import<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF8065</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Select the source directory<br>
+<b>LevelTwo: </b><br>
+<H3>RSEF8066</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Enter or select a source folder<br>
+<b>LevelTwo: </b>You have left the source folder empty, but it must be set to continue.<br>
+<H3>RSEF8067</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Export problems<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEF8068</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>There are no resources currently selected for export<br>
+<b>LevelTwo: </b>Select resources to be exported and try again<br>
+<H3>RSEF8069</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Please enter a destination folder<br>
+<b>LevelTwo: </b>The destination folder is empty. You must select a destination folder.<br>
+<H3>RSEF8070</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Import problems<br>
+<b>LevelTwo: </b>%1<br>
+<H3>RSEF8071</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>There are no resources currently selected for import<br>
+<b>LevelTwo: </b>Select resources to be imported and try again<br>
+<H3>RSEF8072</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Filtering selection...<br>
+<b>LevelTwo: </b><br>
 <br>
 <hr>
 <A NAME="Communications"><!-- --></A><H2>Communications Messages</H2>
 <H3>RSEC1001</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Connection to %1 could not be established.<br>
-<b>LevelTwo: </b>A socket connection to %1 could not be established.  If you are connecting via the communications daemon make sure the daemon is running on the remote system.  If you are connecting directly to the communications server make sure the server is started on the remote system.<br>
+<b>LevelTwo: </b>A socket connection to %1 could not be established.  If you are connecting via the communications daemon make sure the daemon is running on the remote system.  If you are connecting directly to the communications server make sure the server is started on the remote system.  If you are connecting using REXEC, make sure that the server is installed on the remote system and that the REXEC service is running on that system.<br>
 <H3>RSEC1002</H3>
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>Invalid password or user ID<br>
@@ -1013,6 +1265,74 @@ h2 { background-color: #CCCCFF }
 <b>Severity: </b>Error<br>
 <b>LevelOne: </b>There are no tools installed which support saving password information.<br>
 <b>LevelTwo: </b>The password information preference page is a centralized place for Workbench tools to save password information.  Each tool registers and provides its own encryption algorithm.  There are no tools installed that have registered with the password information preference page.<br>
+<H3>RSEC2301</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to launch server on host %1.<br>
+<b>LevelTwo: </b>Message from host: %2<br>
+<H3>RSEC2302</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Invalid password or user ID for %1.<br>
+<b>LevelTwo: </b>Message from host: %2<br>
+<H3>RSEC2303</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Incompatible host server running on remote system %1.<br>
+<b>LevelTwo: </b>The host server is not a Remote System Explorer server.<br>
+<H3>RSEC2304</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Incompatible Remote System Explorer host server running on remote system %1.<br>
+<b>LevelTwo: </b>The host server needs to be updated to work with the current client.<br>
+<H3>RSEC2305</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to connect to REXEC host service on port %1 of host %2<br>
+<b>LevelTwo: </b>Message from host: %3<br>
+<H3>RSEC2306</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>Port %1 is normally used for the %2 service.<br>
+<b>LevelTwo: </b><br>
+<H3>RSEC2307</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>Unable to establish a secure connection with the Remote System Explorer host server.<br>
+<b>LevelTwo: </b>Make sure both the client and server are configured to use SSL.  The SSL handshake between client and server failed with the following exception: %1<br>
+<H3>RSEC2308</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>The host server running on remote system %1 is an older version than the RSE client.<br>
+<b>LevelTwo: </b>It is recommended that the client and server versions match.<br>
+<H3>RSEC2309</H3>
+<b>Severity: </b>Warning<br>
+<b>LevelOne: </b>The host server running on remote system %1 is a newer version than the RSE client.<br>
+<b>LevelTwo: </b>It is recommended that the client and server versions match.<br>
+<H3>RSEC2310</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Starting Remote System Explorer host server using REXEC<br>
+<b>LevelTwo: </b><br>
+<H3>RSEC2311</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Starting Remote System Explorer host server using daemon<br>
+<b>LevelTwo: </b><br>
+<H3>RSEC2312</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Connecting to Remote System Explorer host server on port %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEC2313</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Initializing Remote System Explorer host server<br>
+<b>LevelTwo: </b><br>
+<H3>RSEC2314</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Communication with the remote system %1 has been secured using SSL. Continue?<br>
+<b>LevelTwo: </b><br>
+<H3>RSEC2315</H3>
+<b>Severity: </b>Information<br>
+<b>LevelOne: </b>Connection %1 has not been secured using SSL. Proceed anyway?<br>
+<b>LevelTwo: </b><br>
+<H3>RSEC2316</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The specified server port is out of the allowed range: %1<br>
+<b>LevelTwo: </b><br>
+<H3>RSEC3001</H3>
+<b>Severity: </b>Error<br>
+<b>LevelOne: </b>The connection %1 is currently offline and cannot be connected.<br>
+<b>LevelTwo: </b>You have performed an action which requires a live connection to the remote system.  Switch the connection to online and perform the action again.  To switch the connection online, right click on the connection %1 and select the Work Offline action.<br>
 <br>
 </BODY>
 </HTML>

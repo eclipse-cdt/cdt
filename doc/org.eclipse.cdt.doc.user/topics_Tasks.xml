@@ -4,6 +4,7 @@
 
      <toc label="Tasks">
 		<topic label="Creating a project" href="tasks/cdt_t_proj_new.htm"/>
+		<topic label="Creating a project via a project template" href="tasks/cdt_t_proj_new_with_template.htm"/>
 		<topic label="Work with C or C++ project files" href="tasks/cdt_o_proj_files.htm">
 			<topic label="Display file members in the C/C++ Projects view" href="tasks/cdt_t_show_proj_files.htm"/>
 			<topic label="Converting a C or C++ nature for a project" href="tasks/cdt_t_conv_proj.htm"/>

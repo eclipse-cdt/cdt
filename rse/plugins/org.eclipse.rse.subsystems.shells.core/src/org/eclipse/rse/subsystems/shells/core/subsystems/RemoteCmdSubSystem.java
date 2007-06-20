@@ -1197,18 +1197,15 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	}
 
 	/**
-	 * Actually run a remote command. This is called by the run(IProgressMonitor
-	 * monitor) method, which in turn is called by runCommand(...).
-	 * <p>
-	 * As per IRunnableWithProgress rules:
-	 * <ul>
-	 * <li>if the user cancels (monitor.isCanceled()), throw new
-	 * InterruptedException()
-	 * <li>if something else bad happens, throw new
-	 * InvocationTargetException(exc);
-	 * <li>do not worry about calling monitor.done() ... caller will do that!
-	 * </ul>
-	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT COMMANDS!
+	 * Runs a remote command.
+	 * This method must be overridden by implementers of command subsystems.
+	 * @param cmd The command to execute.
+	 * @param context The IServiceCommandShell that provides the context in which to run this command.
+	 * @param monitor a monitor for progress and cancellation, the caller is expected to call monitor.done()
+	 * @return an array of 1 object, the IServiceCommandShell, which can be queried for output.
+	 * @throws InterruptedException if the user cancels the operation
+	 * @throws SystemMessageException if the command results in an error on the target system
+	 * @throws InvocationTargetException if something else bad happens
 	 */
 	protected Object[] internalRunCommand(String cmd, Object context, IProgressMonitor monitor)
 			throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException, SystemMessageException
@@ -1217,18 +1214,15 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 	}
 
 	/**
-	 * Actually run a remote command. This is called by the run(IProgressMonitor
-	 * monitor) method, which in turn is called by runCommand(...).
-	 * <p>
-	 * As per IRunnableWithProgress rules:
-	 * <ul>
-	 * <li>if the user cancels (monitor.isCanceled()), throw new
-	 * InterruptedException()
-	 * <li>if something else bad happens, throw new
-	 * InvocationTargetException(exc);
-	 * <li>do not worry about calling monitor.done() ... caller will do that!
-	 * </ul>
-	 * YOU MUST OVERRIDE THIS IF YOU SUPPORT COMMANDS!
+	 * Runs a remote command and interprets any resulting output.
+	 * This method must be overridden by implementers of command subsystems.
+	 * @param cmd The command to execute.
+	 * @param context The IServiceCommandShell that provides the context in which to run this command.
+	 * @param monitor a monitor for progress and cancellation, the caller is expected to call monitor.done()
+	 * @return an array of 1 object, the IServiceCommandShell, which can be queried for output.
+	 * @throws InterruptedException if the user cancels the operation
+	 * @throws SystemMessageException if the command results in an error on the target system
+	 * @throws InvocationTargetException if something else bad happens
 	 */
 	protected Object[] internalRunCommand(String cmd, Object context, boolean interpretOutput, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException, SystemMessageException
@@ -1236,17 +1230,46 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		return null;
 	}
 
+	/**
+	 * Establishes a new shell. This causes the shell to start and establish its initial environment.
+	 * This method must be overridden by implementers of command subsystems.
+	 * @param context the current directory for this shell. Can be a String containing a path
+	 * name to be used as the current directory or an IRemoteFile representing
+	 * a directory. If null or "null", the home directory is used.
+	 * @param monitor a monitor for progress and cancellation, the caller is expected to call monitor.done()
+	 * @return the newly established shell.
+	 * @throws InterruptedException if the user cancels the operation
+	 * @throws SystemMessageException if the command results in an error on the target system
+	 * @throws InvocationTargetException if something else bad happens
+	 */
 	protected IRemoteCommandShell internalRunShell(Object context, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException, SystemMessageException
 	{
 		return null;
 	}
 
+	/**
+	 * Cancels a running shell.
+	 * This method must be overridden by implementers of command subsystems.
+	 * @param command the IServiceCommandShell to cancel.
+	 * @param monitor a monitor for progress and cancellation, the caller is expected to call monitor.done()
+	 * @throws InterruptedException if the user cancels the operation
+	 * @throws InvocationTargetException if something else bad happens
+	 */
 	protected void internalCancelShell(Object command, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException
 	{
 	}
 
+	/**
+	 * Sends a command to a shell for execution.
+	 * This method must be overridden by implementers of command subsystems.
+	 * @param cmd the command to execute.
+	 * @param command the IServiceCommandShell that provides the context in which to execute the command.
+	 * @param monitor a monitor for progress and cancellation, the caller is expected to call monitor.done()
+	 * @throws InterruptedException if the user cancels the operation
+	 * @throws InvocationTargetException if something else bad happens
+	 */
 	protected void internalSendCommandToShell(String cmd, Object command, IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException
 	{

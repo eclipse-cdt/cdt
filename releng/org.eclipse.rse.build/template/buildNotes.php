@@ -26,9 +26,8 @@
 <li>TM @buildId@ <b>requires Eclipse 3.3RC3 or later for the SSH component</b>.
   Other components should work with Eclipse 3.3M6 or later.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
-  Discovery needs EMF, and the Remotecdt integration needs CDT.</li>
-<li>If you use the dstore server, the version number has been updated. You should use 
-  the new server with this build.</li>
+  Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
+<li>If you use the dstore server, the version number was updated in RC3. You should use an RC3 or later server with this build.</li>
 <!--
 <li><b>Split the Terminal Telnet connector from the core Terminal widget</b>.
   This allows embedding a terminal widget in RCPs without having the unnecessary
@@ -37,13 +36,13 @@
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>At least 2 API changes were made and 25 bugs were resolved: use 
+<li>No API changes were made. 17 bugs were resolved (1 was critical, the rest were documentation). Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-06-06&chfieldto=2007-06-14&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC3&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC2-200706051715/index.php">
-  TM 2.0RC2</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC2-200706051715/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC3-200706140914/index.php">
+  TM 2.0RC3</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC3-200706140914/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -121,6 +120,11 @@ More information can be found in the associated bugzilla items.
 
 <ul>
 <li>TM @buildId@ Breaking API Changes
+<ul>
+<li>None</li> 
+</ul>
+</li>
+<li>TM 2.0RC3 Breaking API Changes
 <ul>
 <li><b>ISystemResourceManager</b> - removed two methods getRemoteSystemsProject() 
   and getProfileFolder(String).

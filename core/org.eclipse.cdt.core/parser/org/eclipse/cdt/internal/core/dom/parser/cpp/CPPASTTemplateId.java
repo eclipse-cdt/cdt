@@ -66,17 +66,20 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
     
     private IASTNode [] templateArguments = null;
     private IBinding binding = null;
-    private boolean resolving = false;
+	private int fResolutionDepth= 0;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-    	if (binding == null && !resolving) {
+    	if (binding == null) {
     		// protect for infinite recursion
-   			resolving = true;
-       		binding = CPPTemplates.createBinding( this ); 
-   			resolving = false;
+        	if (++fResolutionDepth > CPPASTName.MAX_RESOLUTION_DEPTH) {
+        		binding= new CPPASTName.RecursionResolvingBinding(this);
+        	}
+        	else {
+        		binding = CPPTemplates.createBinding( this );
+        	}
     	}
     	
         return binding;    
@@ -155,6 +158,7 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
 	 */
 	public void setBinding(IBinding binding) {
 		this.binding = binding;
+		fResolutionDepth= 0;
 	}
 
     public void replace(IASTNode child, IASTNode other) {
@@ -178,4 +182,9 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
         return false;
     }
 
+	public void incResolutionDepth() {
+		if (binding == null && ++fResolutionDepth > CPPASTName.MAX_RESOLUTION_DEPTH) {
+			binding= new CPPASTName.RecursionResolvingBinding(this);
+		}
+	}
 }

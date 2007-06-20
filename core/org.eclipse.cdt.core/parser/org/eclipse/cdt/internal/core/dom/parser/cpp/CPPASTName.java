@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  * @author jcamelon
  */
 public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionContext {
-	private final static class RecursionResolvingBinding extends ProblemBinding {
+	final static class RecursionResolvingBinding extends ProblemBinding {
 		public RecursionResolvingBinding() {
 			super(null, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, CharArrayUtils.EMPTY);
 		}
@@ -45,7 +45,7 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
     private static final char[] EMPTY_CHAR_ARRAY = {};
 	private static final String EMPTY_STRING = "";  //$NON-NLS-1$
 
-	private static final int MAX_RESOLUTION_DEPTH = 5;
+	static final int MAX_RESOLUTION_DEPTH = 5;
 
     private IBinding binding = null;
     private int fResolutionDepth= 0;

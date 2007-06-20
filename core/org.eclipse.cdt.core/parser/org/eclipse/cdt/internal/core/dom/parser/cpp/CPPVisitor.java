@@ -996,6 +996,9 @@ public class CPPVisitor {
 			if (name instanceof CPPASTName) {
 				((CPPASTName) name).incResolutionDepth();
 			}
+			else if (name instanceof CPPASTTemplateId) {
+				((CPPASTTemplateId) name).incResolutionDepth();
+			}
 			IBinding binding = name.getBinding();
 			if( binding == null ){
 				binding = CPPSemantics.resolveBinding( name );

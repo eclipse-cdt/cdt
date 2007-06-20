@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -333,7 +334,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 *
 	 * @param activationSet the activation set
 	 */
-	public final void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
+	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
 		fCompletionAutoActivationCharacters= activationSet;
 	}
 
@@ -341,7 +342,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/*
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
-	public final char[] getCompletionProposalAutoActivationCharacters() {
+	public char[] getCompletionProposalAutoActivationCharacters() {
 		return fCompletionAutoActivationCharacters;
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -174,7 +175,7 @@ public class ContentAssistTests extends BaseUITestCase {
 
 		String contentType = editor.getViewer().getDocument().getContentType(offset);
 		ContentAssistant assistant = new ContentAssistant();
-		CContentAssistProcessor processor = new CContentAssistProcessor(editor, assistant, contentType);
+		CContentAssistProcessor processor = new CContentAssistProcessor(editor, editor.getViewer(), assistant, contentType);
 		return processor.computeCompletionProposals(editor.getViewer(), offset);
     }
     

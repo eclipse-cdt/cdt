@@ -9,6 +9,7 @@
  *     IBM Rational Software - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -102,7 +103,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		ISourceViewer sourceViewer= EditorTestHelper.getSourceViewer((AbstractTextEditor)fEditor);
 		String contentType = sourceViewer.getDocument().getContentType(offset);
 		ContentAssistant assistant = new ContentAssistant();
-		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, assistant, contentType);
+		CContentAssistProcessor processor = new CContentAssistProcessor(fEditor, sourceViewer, assistant, contentType);
 		long startTime= System.currentTimeMillis();
 		Object[] results = isCompletion
 			? (Object[]) processor.computeCompletionProposals(sourceViewer, offset)

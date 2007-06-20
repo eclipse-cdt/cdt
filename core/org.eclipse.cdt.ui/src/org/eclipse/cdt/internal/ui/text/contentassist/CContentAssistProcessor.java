@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
@@ -20,12 +21,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
@@ -120,12 +123,22 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	}
 
 
+	private static final int IDX_AFTERDASH = 0;
+	private static final int IDX_AFTERCOLON = 1;
+	private static final int IDX_AFTEROTHER = 2;
+	private static final int IDX_ALL = 3;
+	
+
+
 	private IContextInformationValidator fValidator;
 	private final IEditorPart fEditor;
+	private char[][] fCompletionAutoActivationCharacters;
+	private ISourceViewer fViewer;
 
-	public CContentAssistProcessor(IEditorPart editor, ContentAssistant assistant, String partition) {
+	public CContentAssistProcessor(IEditorPart editor, ISourceViewer viewer, ContentAssistant assistant, String partition) {
 		super(assistant, partition);
 		fEditor= editor;
+		fViewer= viewer;
 	}
 
 	/*
@@ -204,6 +217,68 @@ public class CContentAssistProcessor extends ContentAssistProcessor {
 	 */
 	protected ContentAssistInvocationContext createContext(ITextViewer viewer, int offset, boolean isCompletion) {
 		return new CContentAssistInvocationContext(viewer, offset, fEditor, isCompletion);
+	}
+	
+	public void setCompletionProposalAutoActivationCharacters(char[] activationSet) {
+		if (activationSet == null) {
+			fCompletionAutoActivationCharacters= null;
+		}
+		else {
+			final int len= activationSet.length;
+			StringBuffer afterDash= new StringBuffer(len);
+			StringBuffer afterColon= new StringBuffer(len);
+			StringBuffer afterOther= new StringBuffer(len);
+			for (int i = 0; i < activationSet.length; i++) {
+				final char c = activationSet[i];
+				switch(c) {
+				case ':':
+					afterColon.append(c);
+					break;
+				case '>':
+					afterDash.append(c);
+					break;
+				default:
+					afterDash.append(c);
+				afterColon.append(c);
+				afterOther.append(c);
+				break;
+				}
+			}
+			fCompletionAutoActivationCharacters= new char[4][];
+			fCompletionAutoActivationCharacters[IDX_AFTERDASH]= afterDash.toString().toCharArray();
+			fCompletionAutoActivationCharacters[IDX_AFTERCOLON]= afterColon.toString().toCharArray();
+			fCompletionAutoActivationCharacters[IDX_AFTEROTHER]= afterOther.toString().toCharArray();
+			fCompletionAutoActivationCharacters[IDX_ALL]= activationSet;
+		}
+	}
+
+
+	public char[] getCompletionProposalAutoActivationCharacters() {
+		if (fCompletionAutoActivationCharacters == null) {
+			return null;
+		}
+		
+		if (fViewer != null) {
+			char prevChar= 0;
+			try {
+				final IDocument doc= fViewer.getDocument();
+				if (doc != null) {
+					prevChar= doc.getChar(fViewer.getSelectedRange().x-1);
+				}
+			} 
+			catch (BadLocationException e) {
+				// beginning of document.
+			}
+			switch (prevChar) {
+				case ':':
+					return fCompletionAutoActivationCharacters[IDX_AFTERCOLON];
+				case '-':
+					return fCompletionAutoActivationCharacters[IDX_AFTERDASH];
+				default:
+					return fCompletionAutoActivationCharacters[IDX_AFTEROTHER];
+			}
+		}
+		return fCompletionAutoActivationCharacters[IDX_ALL];
 	}
 
 }

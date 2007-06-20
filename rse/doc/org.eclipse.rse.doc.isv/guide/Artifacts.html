@@ -4,7 +4,7 @@
 <head>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
 <META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2006. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2002, 2007. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
 <link rel="stylesheet" type="text/css" HREF="../book.css">
 <title>RSE Artifacts</title>
 </head>
@@ -30,18 +30,24 @@ The RSE's <A href="view_RS.gif">Remote Systems view</A> shows all existing <b>Ho
 Hosts are objects that are persisted, containing the information needed to access a particular remote host.
 The view contains a prompt to create new Hosts, and pop-up menu actions to rename, copy, delete, and reorder existing Hosts.
 </p>
-<p>Hosts contain attributes, or data, that is saved between sessions of the workbench. These attributes are
+<p>
+Hosts contain attributes, or data, that is saved between sessions of the workbench. These attributes are
 the host name, the remote system's host name and system type, an optional description, and a user Id that is
 used by default by each subordinate subsystem, at host time.
-Underneath, all Hosts are stored via RSE persistence in an Eclipse project named <CODE>RemoteSystemsConnections</CODE></A>, which
-the user can enable for team support, allowing Hosts to be shared by a team.
+Underneath, all Hosts are stored in profiles by an registered persistence provider.
 </p>
 
 <h2><A name="profiles">Profiles</A></h2>
 <p>
-To facilitate team-shared and user-unique Hosts,
-Hosts are owned by <b>profiles</b>. These are simply <A href="file_profiles.gif">folders in the RemoteSystemsConnections
-project</A>, as it turns out, within which all other data including Hosts are scoped. Internally profiles are realized as
+To facilitate sharing Hosts are owned by <b>Profiles</b>. 
+In 1.0 these were simply folders in the RemoteSystemsConnections
+project. With the introduction of persistence providers in 2.0, profiles 
+can now be persisted in multiple forms - including the 1.0 scheme.
+It is our intention to have RSE allow for the sharing of profiles by exporting to and importing from
+the file system or from projects in a future release.
+</p>
+<p> 
+Internally profiles are realized as
 SystemProfile objects, managed by the SystemProfileManager.
 For each profile there is also a SystemHostPool object
 created to manage the Hosts within that profile. There are menu actions for the
@@ -53,7 +59,11 @@ By default, there exists a profile named <code>Team</code>, and a profile with a
 host is created the user is asked to supply this unique name, which defaults to the hostname of their
 workstation. Whenever a new host is created, the user is prompted for an active profile to contain the new
 host. Both default profiles are active initially, so all Hosts from each are shown. There is a preferences
-setting to show the host names qualified by their profile name. After synchronizing the RemoteSystemsConnections
+setting to show the host names qualified by their profile name.
+</p>
+<!-- TODO
+<p>
+After synchronizing the RemoteSystemsConnections
 project with a team repository, using the RSE <A href="plugin/view_Team.gif">team view</A>, all profiles of all members of
 the team will exist in the user's workspace, and hence
 all the Hosts created by all the team members. However, only the two default profiles are active, so the Hosts
@@ -66,13 +76,11 @@ for:
 <li>User-roaming, whereby a user uses a different workstation than usual, 
 and then synchronizes with the team repository and sets their profile to be active.
 </ol>
-<p>
+-->
+<!-- TODO rework
 As an aside, user IDs and passwords are not shared with the team repository, but rather stored only locally per
 workstation.
-Each subsystem can have a unique user ID, which if not set is inherited from its host, 
-which in turn if not set is inherited from the
-user ID preferences setting for the appropriate system type.
-</p>
+-->
 
 <h2><A name="subsystems">Subsystems and subsystem configurations</A></h2>
 <p>
@@ -98,7 +106,12 @@ remote commands. There is also a Remote Shell view supplied that logs all comman
 enter a command to be run remotely. The commands all execute within the same shell, and users
 can launch additional shells for the same host.
 </ol>
-<h2><A name="systems">Systems and System Managers</A></h2>
+<p>
+Each subsystem can have a unique user ID, which if not set is inherited from its host, 
+which in turn if not set is inherited from the
+user ID preferences setting for the appropriate system type.
+</p>
+<h2><A name="systems">Connector services and their managers</A></h2>
 <p>While not seen by the user, subsystem objects are required to return a <b>connectorservice</b> object via the
 <A href="../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html#getConnectorService()">getConnectorService()</A> method.
 A connectorService object is an object implementing the <A href="../reference/api/org/eclipse/rse/core/subsystems/IConnectorService.html">IConnectorService</A> interface.

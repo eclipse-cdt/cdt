@@ -28,10 +28,12 @@
      <topic label="Creating a second profile" href="tasks/tbeginsecprofile.html"/>
      <topic label="Deleting a profile" href="tasks/tbegindeleteprofile.html"/>
    </topic>
+   <!-- TODO rework needed
    <topic label="Team support" href="concepts/cteam.html">
       <topic label="Using team support" href="tasks/tteamsup.html"/>
       <topic label="Working with profiles and team support" href="tasks/tteamsup1.html"/>
    </topic>
+   -->
    <topic label="Shells and commands in the Remote Systems view" href="concepts/crunremcmds.html">
       <topic label="Running and viewing commands using the Remote Shell view" href="tasks/truncmdsview.html"/>
       <topic label="Working with command shells" href="tasks/twrkcmdshl.html"/>

@@ -23,14 +23,20 @@ each created by a subsystem configuration registered with this extension point.
 as it has only one element, <b><samp>&lt;configuration&gt;</samp></b>, with only a few simple attributes to supply:
 </p>
 <ul>
-<li><b>id</b>. Unique id for the extension, as required for all extensions. However, in this case it is used to create
-folders within the <samp>RemoteSystemsConnections</samp> project, where all Remote System Explorer data is stored.
+<li><b>id</b>.
+Unique id for the extension, as required for all extensions.
 There is also a way to <A href="../../reference/api/org/eclipse/rse/core/model/ISystemRegistry.html#getSubSystemConfiguration(java.lang.String)">query</A> a subsystem configuration
-object via its ID.<li><b>vendor</b>. Your company name, shown in properties dialog for subsystems created by this subsystem configuration.
-<li><b>icon</b>. The icon displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
-<li><b>iconlive</b>. The icon used when the subsystem is physically connected to its remote system.
-<li><b>name</b>. The name displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
-<li><b>systemTypeIds</b>. A semi-colon separated list of system type IDs which this subsystem configuration supports. When a user creates a
+object via its ID.
+<li><b>vendor</b>.
+Your company name, shown in properties dialog for subsystems created by this subsystem configuration.
+<li><b>icon</b>.
+The icon displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
+<li><b>iconlive</b>.
+The icon used when the subsystem is physically connected to its remote system.
+<li><b>name</b>.
+The name displayed in the Remote Systems view for each subsystem created by this subsystem configuration.
+<li><b>systemTypeIds</b>.
+A semi-colon separated list of system type IDs which this subsystem configuration supports. When a user creates a
 connection, this configuration will only be asked to create a subsystem for connections to systems of these types. Wildcards are 
 supported; in order to register against all system types, specify a single "*".
 <li><b>serviceType</b>. An optional semi-colon separated list of names and transports that can be used to match this service with remotelly advertised services through DNS-SD or any other supported service discovery protocol.

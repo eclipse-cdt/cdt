@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -486,12 +487,11 @@ public class UPCLanguageExtensionTests extends TestCase {
 		IASTStatement[] body = ((IASTCompoundStatement)main.getBody()).getStatements();
 		assertEquals(8, body.length);
 		
-		IASTUnaryExpression cexpr;
 		
-		cexpr = (IASTUnaryExpression)((IASTExpressionStatement)body[0]).getExpression();
-		assertEquals(IASTUnaryExpression.op_sizeof, cexpr.getOperator());
 		
-		cexpr = (IASTUnaryExpression)((IASTExpressionStatement)body[1]).getExpression();
+		IASTTypeIdExpression idexpr = (IASTTypeIdExpression)((IASTExpressionStatement)body[0]).getExpression();
+		
+		IASTUnaryExpression cexpr = (IASTUnaryExpression)((IASTExpressionStatement)body[1]).getExpression();
 		assertEquals(IASTUnaryExpression.op_sizeof, cexpr.getOperator());
 		
 		IUPCASTSizeofExpression expr;

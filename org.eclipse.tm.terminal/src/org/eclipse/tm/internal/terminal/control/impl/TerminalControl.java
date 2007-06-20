@@ -844,4 +844,16 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 			fCommandInputField.createControl(fWndParent, this);
 		fWndParent.layout(true);
 	}
+
+	public int getBufferLineLimit() {
+		if(getTerminalText().isLimitOutput())
+			return getTerminalText().getBufferLineLimit();
+		return -1;
+	}
+
+	public void setBufferLineLimit(int bufferLineLimit) {
+		getTerminalText().setLimitOutput(bufferLineLimit!=-1);
+		getTerminalText().setBufferLineLimit(bufferLineLimit);
+		
+	}
 }

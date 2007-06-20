@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -106,18 +107,35 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	private SettingsStore fStore;
 
 	private CommandInputFieldWithHistory fCommandInputField;
+	
+	/**
+	 * Listens to changes in the preferences
+	 */
+	private final IPropertyChangeListener fPreferenceListener=new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if(event.getProperty().equals(TerminalPreferencePage.PREF_LIMITOUTPUT)
+					|| event.getProperty().equals(TerminalPreferencePage.PREF_BUFFERLINES)) {
+				updatePreferences();
+			}
+		}
+	};
 
 	public TerminalView() {
 		Logger
 				.log("==============================================================="); //$NON-NLS-1$
 	}
-// TODO MSA
-//	private void XXXXX() {
-//		Preferences preferences = TerminalViewPlugin.getDefault().getPluginPreferences();
-//		boolean bLimitOutput = preferences.getBoolean(TerminalPreferencePage.PREF_LIMITOUTPUT);
-//		int bufferLineLimit = preferences.getInt(TerminalPreferencePage.PREF_BUFFERLINES);
-//
-//	}
+	/**
+	 * Update the text limits from the preferences
+	 */
+	private void updatePreferences() {
+		Preferences preferences = TerminalViewPlugin.getDefault().getPluginPreferences();
+		boolean limitOutput = preferences.getBoolean(TerminalPreferencePage.PREF_LIMITOUTPUT);
+		int bufferLineLimit = preferences.getInt(TerminalPreferencePage.PREF_BUFFERLINES);
+		if(!limitOutput)
+			bufferLineLimit=-1;
+		fCtlTerminal.setBufferLineLimit(bufferLineLimit);
+		
+	}
 	// TerminalTarget interface
 	public void setState(final TerminalState state) {
 		Runnable runnable=new Runnable() {
@@ -382,12 +400,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		onTerminalStatus();
 		onTerminalFontChanged();
 	}
-
 	public void dispose() {
 		Logger.log("entered."); //$NON-NLS-1$
 
 		setPartName("Terminal"); //$NON-NLS-1$
-
+		TerminalViewPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
 
 		JFaceResources.getFontRegistry().removeListener(fPropertyChangeHandler);
 		MenuManager menuMgr = getEditMenuManager();
@@ -399,6 +416,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			menu.removeMenuListener(fMenuHandlerEdit);
 
 		fCtlTerminal.disposeTerminal();
+		super.dispose();
 	}
 	/**
 	 * Passing the focus request to the viewer's control.
@@ -420,6 +438,9 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 				fCtlTerminal.setConnector(connectors[i]);
 		}
 		setCommandInputField("true".equals(fStore.get(STORE_HAS_COMMAND_INPUT_FIELD))); //$NON-NLS-1$
+		updatePreferences();
+		TerminalViewPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
+
 	}
 	
 	private void saveSettings(ITerminalConnectorInfo connector) {

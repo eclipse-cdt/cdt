@@ -207,6 +207,18 @@
 			id="xlc.c.compiler.option.optimization.Qminus"
 			valueType="string"> 
 		</option>
+  <option
+        id="xlc.c.compiler.option.input.D.c"
+        superClass="xlc.c.compiler.option.input.D">
+     <listOptionValue
+           builtIn="true"
+           value="__xlc__">
+     </listOptionValue>
+     <listOptionValue
+           builtIn="true"
+           value="__IBMC__">
+     </listOptionValue>
+  </option>
 	  </tool>
 	  <tool
          command="xlC"
@@ -407,6 +419,18 @@
                     id="xlc.c.compiler.option.optimization.exceptionhandling.v6"
                     name="%Option.optimization.exceptionhandling.v6">
               </enumeratedOptionValue>
+           </option>
+           <option
+                 id="xlc.c.compiler.option.input.D.cpp"
+                 superClass="xlc.c.compiler.option.input.D">
+              <listOptionValue
+                    builtIn="true"
+                    value="__xlC__">
+              </listOptionValue>
+              <listOptionValue
+                    builtIn="true"
+                    value="__IBMCPP__">
+              </listOptionValue>
            </option>
  	 </tool>
 	
@@ -842,6 +866,10 @@
 			id="xlc.c.compiler.option.include.paths"
 			valueType="includePath"
 			browseType="directory">
+     <listOptionValue
+           builtIn="true"
+           value="/usr/include">
+     </listOptionValue>
 		</option>
 		<option
 			name="%Option.UndefSym"

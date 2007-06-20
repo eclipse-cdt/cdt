@@ -23,15 +23,14 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.cdt.ui"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.cdt.make.core"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.cdt.ui"/>
+      <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
@@ -41,12 +40,17 @@
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.cdt.make.core"/>
       <import plugin="com.ibm.icu"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.core.filebuffers"/>
       <import plugin="org.eclipse.cdt.refactoring"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
       <import plugin="org.eclipse.ltk.ui.refactoring"/>
+      <import plugin="org.eclipse.cdt.debug.core"/>
+      <import plugin="org.eclipse.cdt.debug.mi.core"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.filesystem"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.ui"/>
    </requires>
 
    <plugin

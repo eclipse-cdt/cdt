@@ -163,7 +163,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		
 		MISession mi = ((Target)getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		String name = "&(" + getName() + ")";
+		String name = "&(" + getQualifiedName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		MIVarCreate varCreateCmd = factory.createMIVarCreate(name);
 		try {
 			if (mi.getCommandTimeout() >= 0) {

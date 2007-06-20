@@ -50,7 +50,7 @@ public class TestTemplateEngine extends BaseTestCase {
 	 *
 	 */
 	public void testSharedDefaults(){
-	    assertNotNull(templateEngine.getSharedDefaults());
+	    assertNotNull(TemplateEngine.getSharedDefaults());
 	}
 	
 	/**

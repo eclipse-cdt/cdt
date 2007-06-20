@@ -80,7 +80,7 @@ public class TemplateCore {
 		templateDescriptor = new TemplateDescriptor(descriptorURL, templateInfo.getPluginId());
 		valueStore = new ValueStore/*<String, String>*/(this);
 		valueStore.putAll(templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement()));
-		valueStore.putAll(TemplateEngine.getDefault().getSharedDefaults());
+		valueStore.putAll(TemplateEngine.getSharedDefaults());
 		valueStore.put("projectType", templateInfo.getProjectType()); //$NON-NLS-1$
 
 		processHandler = new TemplateProcessHandler(this);

@@ -48,11 +48,6 @@ public class TemplateEngine {
 	 */
 	private static TemplateEngine TEMPLATE_ENGINE;
 	
-	static {
-		 TEMPLATE_ENGINE = new TemplateEngine();
-		 TEMPLATE_ENGINE.initializeTemplateInfoMap();
-	}
-	
 	/**
 	 * This is a Map <WizardID, TemplateInfo>.
 	 */
@@ -63,6 +58,7 @@ public class TemplateEngine {
 	 */
 	private TemplateEngine() {
 		templateInfoMap = new HashMap/*<String, List<TemplateInfo>>*/();
+		initializeTemplateInfoMap();
 	}
 
 	/**
@@ -159,7 +155,7 @@ public class TemplateEngine {
 	 * 
 	 * @return
 	 */
-	public Map/*<String, String>*/ getSharedDefaults() {
+	public static Map/*<String, String>*/ getSharedDefaults() {
 		return SharedDefaults.getInstance().getSharedDefaultsMap();
 	}
 
@@ -196,6 +192,9 @@ public class TemplateEngine {
      * @since 4.0
 	 */
 	public static TemplateEngine getDefault() {
+		if(TEMPLATE_ENGINE==null) {
+			TEMPLATE_ENGINE = new TemplateEngine();
+		}
 		return TEMPLATE_ENGINE;
 	}
 

@@ -220,7 +220,7 @@ public class TemplateEngineHelper {
 		} else {
 			path = path.substring(0, slash + 1) + resourcePath;
 		}
-		URL entry = FileLocator.find(Platform.getBundle(templateInfo.getPluginId()), new Path(path), null);;
+		URL entry = FileLocator.find(Platform.getBundle(templateInfo.getPluginId()), new Path(path), null);
 		if (entry == null) {
 			return null;
 		}

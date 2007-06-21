@@ -41,7 +41,6 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 	IASTTranslationUnit tu = null;
 	DOMASTNodeParent tuTreeParent = null;
 	TreeViewer viewer = null;
-	DOMASTNodeLeaf startingNode = null;
 	IASTName[] matchingNames = null;
 	boolean wasForward = true;
 	int index = 0;
@@ -352,13 +351,9 @@ public class FindIASTNameTarget implements IFindReplaceTarget, IFindReplaceTarge
 		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 		
 		if (selection.isEmpty()) {
-			if (viewer.getTree().getItems()[0].getData() instanceof DOMASTNodeLeaf);
-				startingNode = (DOMASTNodeLeaf)viewer.getTree().getItems()[0].getData();
-			
 			return new Point(0, 0);
 		}
 		
-		startingNode = (DOMASTNodeLeaf)selection.getFirstElement();
 		return new Point(((ASTNode)((DOMASTNodeLeaf)selection.getFirstElement()).getNode()).getOffset(), 0);
 	}
 

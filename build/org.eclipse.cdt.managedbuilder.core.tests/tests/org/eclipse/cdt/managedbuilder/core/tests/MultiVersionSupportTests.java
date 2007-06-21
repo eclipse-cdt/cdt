@@ -71,7 +71,8 @@ public class MultiVersionSupportTests extends TestCase {
 		suite.addTest(new MultiVersionSupportTests("testConfigurationDescription"));	//$NON-NLS-1$
 		suite.addTest(new MultiVersionSupportTests("testVersionInfo"));	//$NON-NLS-1$
 		suite.addTest(new MultiVersionSupportTests("testVersionsSupportedAttribute"));	//$NON-NLS-1$
-		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT20")); //$NON-NLS-1$
+		//the test is invalid, disabling for now (see bug# 193831)
+//		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT20")); //$NON-NLS-1$
 		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT21")); //$NON-NLS-1$
 		suite.addTest(new MultiVersionSupportTests("testProjectConversion")); //$NON-NLS-1$
 		//$JUnit-END$

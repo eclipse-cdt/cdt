@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.cdt.core" id="language" name="%language.name"/>
+         <meta.schema plugin="org.eclipse.cdt.core" id="language" name="CDT Language"/>
       </appInfo>
       <documentation>
          This extension point is used to declare a language or language variant. Languages define how the C model of a file is created (e.g. to populate the outline view). It also provides hooks to override the low level parsing of translation units into an abstract syntax tree. Practically this is limited to C/C++ language variants only. Completely different languages cannot be modelled reasonably using this extension point.

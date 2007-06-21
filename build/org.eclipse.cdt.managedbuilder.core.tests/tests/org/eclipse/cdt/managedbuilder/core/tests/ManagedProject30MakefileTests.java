@@ -81,7 +81,7 @@ public class ManagedProject30MakefileTests extends TestCase {
 		suite.addTest(new ManagedProject30MakefileTests("TestATO"));
 		suite.addTest(new ManagedProject30MakefileTests("testMacroSupportInBuildDefinitions"));
 		suite.addTest(new ManagedProject30MakefileTests("testSpaces"));
-		if(File.pathSeparatorChar == '\\'){
+		if(File.separatorChar == '\\'){
 			//the test is valid for windows because it is using windows-specific paths with devices and assumes they are absolute
 			//FIXME: make the test run on linux
 			suite.addTest(new ManagedProject30MakefileTests("testInputTypeOption"));

@@ -156,33 +156,15 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	}
 
 	private String getHexAddress() throws CDIException {
-
 		if (hexAddress != null) {
 			return hexAddress;
 		}
-		
-		MISession mi = ((Target)getTarget()).getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		String name = "&(" + getQualifiedName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		MIVarCreate varCreateCmd = factory.createMIVarCreate(name);
-		try {
-			if (mi.getCommandTimeout() >= 0) {
-				mi.postCommand(varCreateCmd, mi.getCommandTimeout());
-			} else {
-				mi.postCommand(varCreateCmd);
-			}
-			MIVarCreateInfo info = varCreateCmd.getMIVarCreateInfo();
-			if (info == null) {
-				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-			}
-			MIVar var = info.getMIVar();
-			Variable v = createVariable((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(),
-					name, name, getPosition(), getStackDepth(), var);
-			v.setFormat(ICDIFormat.HEXADECIMAL);
-			hexAddress = v.getValue().getValueString();
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
+		VariableManager vm = ((Session)((Target)getTarget()).getSession()).getVariableManager();
+		String qualName = "&(" + getQualifiedName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		LocalVariableDescriptor desc = new LocalVariableDescriptor((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(), getName(), qualName, getPosition(), getStackDepth());
+		Variable v = vm.createVariable( desc );
+		v.setFormat(ICDIFormat.HEXADECIMAL);
+		hexAddress = v.getValue().getValueString();		
 		return hexAddress;
 	}
 
@@ -283,9 +265,12 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			ICDIType t = getType();
 			boolean container = isStructureProvider(t);
 			for (int i = 0; i < vars.length; i++) {
-				String prefix = "(" + getFullName() + ")"; // parent qualified name
-				String childName = vars[i].getExp(); // child simple name
-				String childFullName = prefix + "." + childName; // fallback full name
+				// parent qualified name
+				String prefix = '(' + getFullName() + ')'; 
+				// child simple name
+				String childName = vars[i].getExp(); 
+				// fallback full name
+				String childFullName = prefix + '.' + childName; 
 				ICDIType childType = null;
 				boolean childFake = false;
 				if (cppFakeLayer && container) {
@@ -294,7 +279,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 					if (!isAccessQualifier(childName)) {
 						// if field is not access modifier and fake - it is a basetype
 						// cast to it to see reduced structure as value
-						childFullName = "(" + childName + ")" + prefix;
+						childFullName = '(' + childName + ')' + prefix;
 					} else {
 						childFullName = prefix;
 					}

@@ -63,6 +63,14 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 
 	}
 
+	/*
+	 * @see PreferencePage#createControl(Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -131,8 +139,6 @@ public class CodeAssistPreferencePage extends AbstractPreferencePage {
 		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 
 		initializeFields();
-
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(contentAssistComposite, ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);
 
 		return contentAssistComposite;
 	}

@@ -106,42 +106,42 @@
 <context id ="code_temp">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_code_temp.htm"
-   	label="Code Templates"/>
+   	label="C/C++ Editor Templates Preferences"/>
+</context>
+<context id ="codeformatter_preference_page_context">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_code_style_pref.htm"
+   	label="C/C++ Code Style Preferences"/>
 </context>
 <context id ="c_editor_gen">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_c_editor_gen.htm"
-   	label="Editor General Preferences"/>
+   	label="C/C++ Editor Preferences"/>
 </context>
 <context id ="c_editor_color">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_c_editor_color.htm"
-   	label="Editor Colors Preferences"/>
+   	label="C/C++ Editor Syntax Coloring Preferences"/>
 </context>
 <context id ="c_editor_con_assist">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_c_editor_con_assist.htm"
-   	label="Editor Content Assist Preferences"/>
+   	label="C/C++ Editor Content Assist Preferences"/>
 </context>
 <context id ="c_editor_hov">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_c_editor_hov.htm"
-   	label="Editor Hovers Preferences"/>
+   	label="C/C++ Editor Hovers Preferences"/>
 </context>
 <context id ="c_editor_typing">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_c_pref.htm"
-   	label="C/C++ Preferences"/>
+   <topic href="reference/cdt_u_c_editor_typing.htm"
+   	label="C/C++ Editor Typing Preferences"/>
 </context>
 <context id ="c_editor_folding">
    <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_c_pref.htm"
-   	label="C/C++ Preferences"/>
-</context>
-<context id ="c_editor_navigation">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_c_editor_navigation.htm"
-   	label="Editor Navigation Preferences"/>
+   <topic href="reference/cdt_u_c_editor_folding.htm"
+   	label="C/C++ Editor Folding Preferences"/>
 </context>
 <context id ="c_file_types">
    <description>Click below to see help.</description>

@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <!--
 ******************************************************************
-**  (C) COPYRIGHT International Business Machines Corp. 2001,2003
+**  (C) COPYRIGHT International Business Machines Corp. 2001,2007
 **  All Rights Reserved * Licensed Materials - Property of IBM
 ******************************************************************
 -->
@@ -12,7 +12,7 @@
 	<!ENTITY registersViewPrefs "Registers view preferences">
 	<!ENTITY memoryView "Memory view">
 	<!ENTITY memoryViewPrefs "Memory view preferences">
-	<!ENTITY ModulesView "Modules view">
+	<!ENTITY modulesView "Modules view">
 	<!ENTITY sharedLibsViewPrefs "Shared Libraries view preferences">
 	<!ENTITY signalsView "Signals view">
     <!ENTITY debugPrefs "Debug preferences">

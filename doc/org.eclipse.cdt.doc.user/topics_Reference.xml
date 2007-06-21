@@ -58,8 +58,11 @@
 			<topic label="Source Code Locations preferences" href="reference/cdt_u_dbg_src.htm"/>
 		</topic>
 		
+		<topic label="Code Style preferences" href="reference/cdt_u_c_code_style_pref.htm">
+		</topic>
+		
 		<topic label="C/C++ Editor preferences" href="reference/cdt_o_ceditor_pref.htm">
-			<topic label="Editor preferences" href="reference/cdt_u_c_editor_gen.htm"/>
+			<topic label="General preferences" href="reference/cdt_u_c_editor_gen.htm"/>
 			<topic label="Content Assist preferences" href="reference/cdt_u_c_editor_con_assist.htm" >
 				<topic label="Advanced preferences" href="reference/cdt_u_c_editor_con_assist_adv.htm"/>
 			</topic>

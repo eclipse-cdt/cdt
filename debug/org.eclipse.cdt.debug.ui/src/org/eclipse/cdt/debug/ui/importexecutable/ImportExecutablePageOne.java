@@ -181,7 +181,18 @@ public class ImportExecutablePageOne extends WizardPage {
 		workArea.setLayout(new GridLayout());
 		workArea.setLayoutData(new GridData(GridData.FILL_BOTH
 				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
-
+		
+		//bug 189003: to fix the tab order on the page
+		if (wizard.userSelectsBinaryParser()) {
+			Composite binaryParserGroup = new Composite(workArea, SWT.NONE);
+			GridLayout layout = new GridLayout(3, false);
+			layout.numColumns = 3;
+			layout.makeColumnsEqualWidth = false;
+			layout.marginWidth = 0;
+			binaryParserGroup.setLayout(layout);
+			createSelectBinaryParser(binaryParserGroup);
+		}
+		
 		Composite selectExecutableGroup = new Composite(workArea, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
@@ -191,8 +202,6 @@ public class ImportExecutablePageOne extends WizardPage {
 		selectExecutableGroup.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 
-		if (wizard.userSelectsBinaryParser())
-			createSelectBinaryParser(selectExecutableGroup);
 		createSelectExecutable(selectExecutableGroup);
 		createExecutablesRoot(selectExecutableGroup);
 		createExecutablesList(workArea);

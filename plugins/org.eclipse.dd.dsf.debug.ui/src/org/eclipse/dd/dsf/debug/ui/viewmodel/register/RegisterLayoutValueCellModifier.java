@@ -11,12 +11,14 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMData;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
 
 public class RegisterLayoutValueCellModifier extends WatchExpressionCellModifier {
     
@@ -31,12 +33,17 @@ public class RegisterLayoutValueCellModifier extends WatchExpressionCellModifier
     public SyncRegisterDataAccess getRegisterDataAccess() {
         return fDataAccess;
     }
+    
+    public IFormattedValuePreferenceStore getPreferenceStore() {
+        return fFormattedValuePreferenceStore;
+    }
     /*
      *  Used to make sure we are dealing with a valid register.
      */
-    private IRegisterDMContext getRegisterDMC(Object element) {
-        if (element instanceof IAdaptable) {
-            return (IRegisterDMContext)((IAdaptable)element).getAdapter(IRegisterDMContext.class);
+    protected IRegisterDMContext getRegisterDMC(Object element) {
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            return DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
         }
         return null;
     }
@@ -52,7 +59,6 @@ public class RegisterLayoutValueCellModifier extends WatchExpressionCellModifier
             /*
              *  Make sure we are are dealing with a valid set of information.
              */
-                
             if ( getRegisterDMC(element) == null ) return false;
             
             /*
@@ -79,13 +85,7 @@ public class RegisterLayoutValueCellModifier extends WatchExpressionCellModifier
             /*
              *  Make sure we are working on the editable areas.
              */
-            
-            /*
-             *  Write the value in the currently requested format. Since they could
-             *  have freeformed typed in any format this is just a guess and may not
-             *  really accomplish anything.
-             */
-            String value = fDataAccess.getFormattedValue(element, fFormattedValuePreferenceStore.getDefaultFormatId());
+            String value = fDataAccess.getFormattedRegisterValue(element, fFormattedValuePreferenceStore.getDefaultFormatId());
             
             if ( value == null ) { return "..."; } //$NON-NLS-1$
             else                 { return value; }

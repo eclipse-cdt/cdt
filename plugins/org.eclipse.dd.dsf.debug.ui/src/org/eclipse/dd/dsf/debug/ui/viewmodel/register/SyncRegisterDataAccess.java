@@ -13,12 +13,13 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
@@ -33,6 +34,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -137,8 +139,9 @@ public class SyncRegisterDataAccess {
     }
 
     public IBitFieldDMContext getBitFieldDMC(Object element) {
-        if (element instanceof IAdaptable) {
-            return (IBitFieldDMContext) ((IAdaptable) element).getAdapter(IBitFieldDMContext.class);
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            return DMContexts.getAncestorOfType(dmc, IBitFieldDMContext.class);
         }
         return null;
     }
@@ -392,22 +395,26 @@ public class SyncRegisterDataAccess {
     }
 
     public IRegisterGroupDMContext getRegisterGroupDMC(Object element) {
-        if (element instanceof IAdaptable) {
-            return (IRegisterGroupDMContext) ((IAdaptable) element).getAdapter(IRegisterGroupDMContext.class);
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            return DMContexts.getAncestorOfType(dmc, IRegisterGroupDMContext.class);
         }
         return null;
     }
 
     public IRegisterDMContext getRegisterDMC(Object element) {
-        if (element instanceof IAdaptable) {
-            return (IRegisterDMContext) ((IAdaptable) element).getAdapter(IRegisterDMContext.class);
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            return DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
         }
         return null;
     }
 
     public IFormattedDataDMContext<?> getFormattedDMC(Object element) {
-        if (element instanceof IAdaptable) {
-            return (IFormattedDataDMContext<?>) ((IAdaptable) element).getAdapter(IFormattedDataDMContext.class);
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
+            return DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
         return null;
     }
@@ -772,7 +779,13 @@ public class SyncRegisterDataAccess {
          * Get the DMC and the session. If element is not an register DMC, or
          * session is stale, then bail out.
          */
-        IFormattedDataDMContext<?> dmc = getFormattedDMC(element);
+        IFormattedDataDMContext<?> dmc = null;
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
+            dmc = DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
+        }
+        
         if (dmc == null) return null;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
         if (session == null) return null;
@@ -799,7 +812,7 @@ public class SyncRegisterDataAccess {
             return null;
         }
     }
-
+    
     public class GetFormattedValueValueQuery extends Query<Object> {
 
         private IFormattedDataDMContext<?> fDmc;
@@ -864,13 +877,59 @@ public class SyncRegisterDataAccess {
         }
     }
 
-    public String getFormattedValue(Object element, String formatId) {
+    public String getFormattedRegisterValue(Object element, String formatId) {
 
         /*
          * Get the DMC and the session. If element is not an register DMC, or
          * session is stale, then bail out.
          */
-        IFormattedDataDMContext<?> dmc = getFormattedDMC(element);
+        IFormattedDataDMContext<?> dmc = null;
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
+            dmc = DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
+        }
+        
+        if (dmc == null) return null;
+        DsfSession session = DsfSession.getSession(dmc.getSessionId());
+        if (session == null) return null;
+        
+        /*
+         * Create the query to write the value to the service. Note: no need to
+         * guard agains RejectedExecutionException, because
+         * DsfSession.getSession() above would only return an active session.
+         */
+        GetFormattedValueValueQuery query = new GetFormattedValueValueQuery(dmc, formatId);
+        session.getExecutor().execute(query);
+
+        /*
+         * Now we have the data, go and get it. Since the call is completed now
+         * the ".get()" will not suspend it will immediately return with the
+         * data.
+         */
+        try {
+            return (String) query.get();
+        } catch (InterruptedException e) {
+            assert false;
+            return null;
+        } catch (ExecutionException e) {
+            return null;
+        }
+    }
+    
+    public String getFormattedBitFieldValue(Object element, String formatId) {
+
+        /*
+         * Get the DMC and the session. If element is not an register DMC, or
+         * session is stale, then bail out.
+         */
+        IFormattedDataDMContext<?> dmc = null;
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IBitFieldDMContext  bitfielddmc = DMContexts.getAncestorOfType(vmcdmc, IBitFieldDMContext.class);
+            dmc = DMContexts.getAncestorOfType(bitfielddmc, IFormattedDataDMContext.class);
+        }
+        
         if (dmc == null) return null;
         DsfSession session = DsfSession.getSession(dmc.getSessionId());
         if (session == null) return null;

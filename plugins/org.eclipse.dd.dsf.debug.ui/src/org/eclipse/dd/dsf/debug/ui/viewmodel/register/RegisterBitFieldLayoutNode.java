@@ -175,7 +175,7 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
      *  Private data access routine which performs the extra level of data access needed to
      *  get the formatted data value for a specific register.
      */
-    private void updateFormattedRegisterValue(final ILabelUpdate update, final int labelIndex, final IBitFieldDMContext dmc)
+    private void updateFormattedRegisterValue(final ILabelUpdate update, final int labelIndex, final IBitFieldDMContext dmc, final IBitFieldDMData data)
     {
         final IRegisters regService = getServicesTracker().getService(IRegisters.class);
         
@@ -249,7 +249,14 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
                                 /*
                                  *  Fill the label/column with the properly formatted data value.
                                  */
-                                update.setLabel(getData().getFormattedValue() , labelIndex);
+                                IMnemonic mnemonic = data.getCurrentMnemonicValue();
+                                if ( mnemonic != null ) {
+                                    String mnemstr = mnemonic.getLongName() + " - " + getData().getFormattedValue(); //$NON-NLS-1$
+                                    update.setLabel(mnemstr , labelIndex);
+                                }
+                                else {
+                                    update.setLabel(getData().getFormattedValue() , labelIndex);
+                                }
                                 update.done();
                             }
                         }
@@ -329,7 +336,7 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
                         } else {
                             for (int idx = 0; idx < localColumns.length; idx++) {
                                 if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-                                    updateFormattedRegisterValue(update, idx, dmc);
+                                    updateFormattedRegisterValue(update, idx, dmc, getData() );
                                 }
                             }
                         }

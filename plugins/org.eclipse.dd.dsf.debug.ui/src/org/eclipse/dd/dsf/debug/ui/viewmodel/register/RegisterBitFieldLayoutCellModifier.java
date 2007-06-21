@@ -6,7 +6,8 @@
  */
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMData;
@@ -14,6 +15,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IMnemonic;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
 
 public class RegisterBitFieldLayoutCellModifier extends WatchExpressionCellModifier {
     
@@ -35,8 +37,9 @@ public class RegisterBitFieldLayoutCellModifier extends WatchExpressionCellModif
      *  Used to make sure we are dealing with a valid register.
      */
     private IBitFieldDMContext getBitFieldDMC(Object element) {
-        if (element instanceof IAdaptable) {
-            return (IBitFieldDMContext)((IAdaptable)element).getAdapter(IBitFieldDMContext.class);
+        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
+            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            return DMContexts.getAncestorOfType(dmc, IBitFieldDMContext.class);
         }
         return null;
     }
@@ -86,7 +89,7 @@ public class RegisterBitFieldLayoutCellModifier extends WatchExpressionCellModif
                 /*
                  *  We let the Model provider supply the current format.
                  */
-                String value = fDataAccess.getFormattedValue(fElement, fFormatPrefStore.getDefaultFormatId());
+                String value = fDataAccess.getFormattedBitFieldValue(fElement, fFormatPrefStore.getDefaultFormatId());
                 
                 if ( value == null ) { value = "..."; } //$NON-NLS-1$
                 

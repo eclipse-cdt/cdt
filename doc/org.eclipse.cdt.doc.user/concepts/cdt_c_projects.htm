@@ -46,13 +46,13 @@ at any time for existing project. Use <a href="../reference/cdt_o_proj_prop_page
 </ul>
 
 <p>After you select a template, the result is a project with only the meta-data files required for the project type. You are expected to modify these source files, as required, and provide source files for the project's target.</p><p>The makefile for the <b>Executable</b> project type is automatically created by the CDT.</p>
-		<li><b>Shared Library</b> - An executable module that is compiled and linked separately. When you create a project that uses a shared library (<fname>libxx.so</fname>), you define your shared library's project as a Project Reference for your application. For this project type, the CDT combines object files together and joins them so they're relocatable and can be shared by many processes. Shared libraries are named using the format
-<fname>libxx.so.</fname><var>version</var>, where
+		<li><b>Shared Library</b> - An executable module that is compiled and linked separately. When you create a project that uses a shared library (libxx.so), you define your shared library's project as a Project Reference for your application. For this project type, the CDT combines object files together and joins them so they're relocatable and can be shared by many processes. Shared libraries are named using the format
+libxx.so.<var>version</var>, where
 <var>version</var> is a number with a default of 1. The
-<fname>libxx.so</fname> file usually is a symbolic link to the
+libxx.so file usually is a symbolic link to the
 latest version.</p><p>The makefile for this project type is automatically created by the CDT.
-		<li><b>Static Library</b> - A collection of object files that you can link into another application (<fname>libxx.a</fname>). The CDT combines object files (i.e. <fname>*.o</fname>)
-into an archive (<fname>*.a</fname>) that is directly linked into an
+		<li><b>Static Library</b> - A collection of object files that you can link into another application (libxx.a). The CDT combines object files (i.e. *.o)
+into an archive (*.a) that is directly linked into an
 executable.</p><p>The makefile for this project type is automatically created by the CDT.
 		<li><b>Makefile Project</b> - Creates an empty project without the meta-data files. This selection is useful for importing and modifying existing makefile-based projects; a new makefile is not created for this project type. 
 	</ul> 

@@ -9,68 +9,71 @@
 <body>
 <h2>Before you begin</h2>
 
-<p>Depending on how you received the CDT you may or may not have also received
+<p>Depending on how you obtained the CDT, you might have also received
 a tool chain with a built-in CDT integration.
-If you simply downloaded the CDT from an update site, then one will be required before
-you can build and debug projects.</p>
+However, if you downloaded the CDT from an update site, then you will require a tool chain before
+you can build and debug any projects.</p>
 
 <p>The base CDT supports integration with the GNU tool chain.
 This includes GNU's make, gcc compiler, and gdb debugger utilities.
 If you require a tool chain to build software for your development host, this
 is the best choice to get started.
-Each platform that runs the CDT requires different steps to acquire this tool chain.</p>
+
+<p>Each platform that runs the CDT requires different steps to acquire this tool chain.</p>
 
 <h3>Linux</h3>
 <p>All Linux distributions include the GNU tool chain. They may not, however, be installed by default.
-Please see the instructions for your particular distribution on how to install it</p>
+For instructions about installing the GNU tool chain for Linux, see the instructions for your particular distribution.</p>
 
 <h3>Windows</h3>
-<p>There are two main choices for acquiring the GNU tool chain for Windows: MinGW, and Cygwin.</p>
-
-<p><a href="http://www.cygwin.com">Cygwin</a> is a port of the Linux environment to Windows.
+<p>For windows, MinGW, and Cygwin are the two main choices for acquiring the GNU tool chain:</p>
+<ul>
+<li><a href="http://www.cygwin.com"><b>Cygwin</b></a> is a port of the Linux environment to Windows.
 It provides a compatibility layer in a set of DLLs. These DLLs are
-<a href="http://www.gnu.org/copyleft/gpl.html">GPL licensed</a>
+<a href="http://www.gnu.org/copyleft/gpl.html">GPL licensed</a>,
 making any code that links to them also subject to the GPL.
 Cygwin, however, does provide the fullest implementation of the GNU tool chain
-by supporting the GNU libc C library.</p>
-
-<p><a href="http://www.mingw.org">MinGW</a> is a port of the GNU tool chain to the Windows platform.
+by supporting the GNU libc C library.
+<p> <br></p>
+</li>
+<li><a href="http://www.mingw.org"><b>MinGW</b></a> is a port of the GNU tool chain to the Windows platform.
 The biggest difference over Cygwin is that MinGW uses the Windows C libraries (mscvrt) instead
-of GNU's libc. As a result a compatibility layer is not required, thus avoiding the GPL issues
+of GNU's libc. As a result, a compatibility layer is not required, thus avoiding the GPL issues
 with Cygwin. However, there are differences between the Windows and GNU C libraries that will make
-writing portable applications more difficult.</p>
-
+writing portable applications more difficult.
+<br>
 <p>MinGW allows the best integration support with the CDT
-due to it's direct support for the Windows environment.
-The following are instructions and links on how to install the current version
-of MinGW. Note that these links may become stale over time as new versions of
+due to it's direct support for the Windows environment.</p>
+<br>
+<p>The following are instructions and links on how to install the current version
+of MinGW. Note that these links may become inaccurate over time as new versions of
 MinGW components are introduced. Please check the
 <a href="http://sourceforge.net/project/showfiles.php?group_id=2435">
 MinGW File Release</a> section for the latest versions.</p>
-
+<br>
 <ol>
   <li>Download and run the MinGW setup program,
   <a href="http://downloads.sourceforge.net/mingw/MinGW-5.1.3.exe">MinGW-5.1.3.exe</a>.
-  Select download and install the MinGW base tools and the g++ compiler.
+  <li>Select download and install the MinGW base tools and the g++ compiler.
   You may select the Current or Candidate version of these tools.
   You may also install any of the other available compilers as well.
-  Do not install the MinGW Make feature as the MSYS version of make from step 3
-  is a more complete implementation of make.</li>
+  <p><b>Do not install the MinGW Make feature</b> as the MSYS version of make from step 3
+  is a more complete implementation of make.</p></li>
   <li>The MinGW setup program currently does not install the gdb debugger.
-  To do so, download the
+  To install the debugger, download the file from the following location: 
   <a href="http://downloads.sourceforge.net/mingw/gdb-6.6.tar.bz2">gdb-6.6.tar.bz2</a>
-  file and extract it's contents to the same location where you installed MinGW.</li>
-  <li>If you plan on using Makefile projects, download and run the
+  <li>Extract the contents of the file gdb-6.6.tar.bz2 to the same location where you installed MinGW.</li>
+  <li>If you want to use Makefile projects, download and run the setup program from the following location: 
   <a href="http://downloads.sourceforge.net/mingw/MSYS-1.0.10.exe">MSYS-1.0.10.exe</a>
-  setup program. MSYS provides an implementation of make and related command line tools.
+  <p>MSYS provides an implementation of make and related command line tools.
   This is not required for other types of projects with the MinGW tool chain,
   which use CDT's internal build tools to perform the build.</li>
 </ol>
-
+</ul>
+<br>
 <h3>Other Platforms</h3>
-<p>The GNU tool chain is supported on all platforms that the CDT supports.
-Please see you're platform vendor for instructions on how to install the GNU tool chain
-on your platform.</p>
+<p>The GNU tool chain is supported on all platforms that the CDT supports. For instructions about installing the GNU tool chain
+on your platform, see your platform vendor.</p>
 
 <p align="left"> <img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">  <br>
   <a href="../concepts/cdt_o_home.htm">CDT Home</a><br>
@@ -78,7 +81,7 @@ on your platform.</p>
 <p align="left"> <img border="0" src="../images/ngtasks.gif" ALT="Related tasks"> <br>
   <a href="../tasks/cdt_t_manualbuild.htm">Building Manually</a>
 </p>
-<p><img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" > 
+<p><img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" > 
 </p>
 </body>
 

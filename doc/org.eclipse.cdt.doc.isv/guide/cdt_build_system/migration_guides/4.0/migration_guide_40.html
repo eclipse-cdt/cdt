@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <title>Managed Build System Extensibility Document</title>
+  <link rel="stylesheet"
+ href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/cdt-home/cdt.css?cvsroot=Tools_Project"
+ type="text/css">
+  <link rel="stylesheet" href="cdt.css" type="text/css">
+	<style>
+<!--
+h3
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:13.0pt;
+	font-family:Arial}
+-->
+  </style>
+	<!--[if !mso]>
+	<style>h2
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic}
+table.MsoTableGrid
+	{border:1.0pt solid windowtext;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	}
+ li.MsoNormal
+	{mso-style-parent:"";
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	margin-left:0in; margin-right:0in; margin-top:0in}
+  h4
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:.6in;
+	text-indent:-.6in;
+	page-break-after:avoid;
+	tab-stops:list .6in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	}
+ table.MsoNormalTable
+	{mso-style-parent:"";
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	}
+</style>
+	<![endif]-->
+</head>
+<body>
+<!-- Document Header -->
+<table border="0" cellpadding="2" width="100%">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"><font class="indextop">Migrating your 
+		tool-chain integration to CDT 4.0</font><br>
+      <font class="indexsub">This document describes </font>steps needed to be 
+		done to migrate the existing tool-chain integrations to the CDT 4.0</td>
+      <td width="28%"><img src="http://dev.eclipse.org/images/Idea.jpg"
+ alt="" height="86" width="120"></td>
+    </tr>
+  </tbody>
+</table>
+<table border="1">
+ <tr>
+    <td width="50%" rowspan="2">Authors</td>
+  </tr>
+  <tr>
+  <td width="50%"><a href="mailto:mikhail.sennikovsky@intel.com">Mikhail 
+	Sennikovsky</a></td>
+  </tr>
+  <tr>
+    <td width="50%" rowspan="2">Revision Date</td>
+  </tr>
+  <tr>
+    <td width="50%">06/21/07 - Version 4.0</td>
+  </tr>
+  <tr>
+    <td width="50%" rowspan="2">Change History</td>
+  </tr>
+  <tr>
+    <td width="50%">4.0 - Document Creation</td>
+  </tr>
+</table>
+<br>
+<!-- End of Document Header --><!-- Table of Contents -->
+<div class="section">Table of Contents</div>
+<br>
+<div class="indent"><a href="#_TocSectionIntro">1 </a>
+	<A href="#_TocSectionIntro">Scope of the document</A></div>
+<div class="indent"><a href="#_TocSectionUIModel">2 Migration Steps</a></div>
+<!-- End of Table of Contents --><br>
+<p class="section"><a name="_TocSectionIntro">1 Scope of the document</a></p>
+<p style="margin-top: 0; margin-bottom: 0">The document describes steps needed to be done to migrate the existing 
+tool-chain integrations to the CDT 4.0. </p>
+<p style="margin-top: 0; margin-bottom: 0">The documents outlines the main steps 
+needed for migration without focusing on details of the new Build System 
+functionality. For more detail on the new functionality presented in the CDT 4.0 
+please refer to the &quot;What's New in the CDT Build System&quot; document.</p>
+<p class="section"><a name="_TocSectionUIModel">2 Migration Steps</a></p>
+<ol>
+	<li>
+	<p class="MsoNormal" style="margin-top:6.0pt">The Build System now supports 
+	the per-folder settings. The new interface 
+	org.eclipse.cdt.managedbuilder.core.IFolderInfo is presented to represent 
+	the folder-specific settings. Thus the implementers of the following 
+	interfaces should now expect to receive the IFolderInfo in addition to the 
+	IFileInfo (IResourceConfiguration) and IConfiguration as the &quot;IBuildObject 
+	configuration&quot; argument:</p>
+	<ul>
+		<li>
+		<p class="MsoNormal" style="margin-top:6.0pt">
+		org.eclipse.cdt.managedbuilder.core.IOptionApplicability</p></li>
+		<li>
+		<p class="MsoNormal" style="margin-top:6.0pt">
+		org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler</p></li>
+		<li>
+		<p class="MsoNormal" style="margin-top:6.0pt">
+		org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2</p>
+		</li>
+	</ul>
+	</li>
+	<li>
+	<p class="MsoNormal" style="margin-top:6.0pt">The new New Project wizard now 
+	operates with tool-chains allowing to select the tool-chain(s) to be used on 
+	project creation. Also the &quot;Tool-chain editor&quot; functionality now allows to 
+	modify/change the tool-chain of the already created project. Thus it is 
+	required that all toolChain/tool/builder build definitions representing 
+	different tool-chain/tool/builder must have different names as well as 
+	toolChain/tool/builder build definitions representing one and the same 
+	tool-chain/tool/builder must have identical names.</p>
+	<p class="MsoNormal" style="margin-top:0; margin-bottom:0"><b>&nbsp;&nbsp;&nbsp; 
+	Example:</b> to illustrate the above requirement here is how this is handled 
+	in the gnu tool-chain definitions:</p>
+	<p class="MsoNormal" style="margin-top:0; margin-bottom:0">&nbsp;&nbsp;&nbsp; 
+	The gnu plug-in contains the gcc linker tool on Linux is defined as</p>
+	<p class="MsoNormal" style="margin-top:0; margin-bottom:0">&nbsp;&nbsp;&nbsp;&nbsp; 
+	&lt;tool<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; natureFilter=&quot;cnature&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name=&quot;%ToolName.linker.gnu.c&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; outputFlag=&quot;-o&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command=&quot;gcc&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;</p>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	...</p>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp;
+	</p>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp; 
+	At the same time the gnu tool-chain definitions refers to the gcc linker by 
+	defining a new tool as a super-class of the &quot;cdt.managedbuild.tool.gnu.c.linker&quot; 
+	tool</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">&nbsp;&nbsp;&nbsp;&nbsp; &lt;tool<br>
+&nbsp;&nbsp;&nbsp; id=&quot;cdt.managedbuild.tool.gnu.c.linker.base&quot;<br>
+&nbsp;&nbsp;&nbsp; superClass=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;&gt;</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">...</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">Both tool definitions listed 
+	above are actually treated as two different tools by the Build System, while 
+	both of them refer to one and&nbsp; the same &quot;gcc&quot; executable. To make the 
+	build system aware that both tool definitions refer to one and the same tool/executable 
+	it is required that both tool definitions specify one and the same name. In 
+	the above sample the tool of id=&quot;cdt.managedbuild.tool.gnu.c.linker.base&quot; 
+	does not specify any name thus making the name to be inherited from the 
+	super-class tool, so both tools have the same name.</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">On the other hand the cygwin 
+	gcc linker is defined as </p>
+	<p class="MsoNormal" style="margin-top:6.0pt">&nbsp;&lt;tool<br>
+	id=&quot;cdt.managedbuild.tool.gnu.c.linker.cygwin&quot;<br>
+	name=&quot;%ToolName.linker.cygwin.gnu.c&quot;<br>
+	superClass=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;&gt;<br>
+	...</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">although the tool definitions 
+	is defined as a super-class of the linux gcc linker, it refers to the 
+	different tool(executable) than the Linux linker definition. The cygwin 
+	linker definition specifies the name=&quot;%ToolName.linker.cygwin.gnu.c&quot; that 
+	differs from the one defined by the Linux gcc linker.</p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:6.0pt">The CDT Build System now 
+	support the <a href="../../whats_new/4.0/whats_new_CBS_40.html#_TocSectionUIModel_7">Custom 
+	Configuration Builds</a>. For Managed builds (makefiles 
+are generated automatically) this functionality works only in case the buildfile 
+generator implements the 
+org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2. This 
+interface extends the old IManagedBuilderMakefileGenerator by defining a new 
+initialize() method which accepts IConfiguration and IBuilder rather than 
+IManagedBuildInfo thus removing an assumption that only active configuration can 
+be used for building.</p>
+<p style="margin-top: 0; margin-bottom: 0">The default GnuMakefileGenerator 
+supplied with the CDT now implements this interface, so in case the builder is 
+using this default implementation, no changes are needed.</p>
+	</li>
+	<li>
+	<p class="MsoNormal" style="margin-top:6.0pt">There are some modifications 
+	in Eclipse Platform's org.eclipse.core.runtime.Path class behavior that 
+	might affect some of the current MBS integrations, namely </p>
+	<p class="MsoNormal" style="margin-top:6.0pt">The changes are related to the 
+	way the dot (&quot;./&quot;) prefix are treated by the path constructors, i.e. with 
+	Eclipse 3.2.x the Path(String) constructor and also Path.from*String() 
+	methods generate the &#8220;./some/path&#8221; path given a &#8220;./some/path&#8221; string<br>
+	<br>
+	With Eclipse 3.3 the above generate &#8220;some/path&#8221; for the same string (note 
+	the &#8220;./&#8221; stripped)<br>
+	<br>
+	Historically the Managed Build System contains some logic that behaves 
+	differently depending on whether the &#8220;./&#8221; is prefixed or not, e.g. 
+	org.eclipse.cdt.managedbuilder.core.IManagedOutputNameProvider is expected 
+	to return a one-segment path to force the path to be prepended by the build 
+	output [sub]directory path, so returning &#8220;./foo.o&#8221; and &#8220;foo.o&#8221; would have 
+	different meaning and behavior, i.e. the &#8220;./foo.o&#8221; would force the foo.o to 
+	be located in the root output directory, while &#8220;foo.o&#8221; would result in 
+	putting the foo.o in the output_dir/source/relative/directory/foo.o<br>
+	<br>
+	There was some code in MBS relying on the 3.2 Path behavior, e.g. something 
+	like path = Path.fromOSString(&#8220;./&#8221; + name + extension); Stripping the &#8220;./&#8221; 
+	in eclipse 3.3 resulted in incorrect output calculation for the case the 
+	tool wanted to force the output to be located in the build output root 
+	directory for.<br>
+	<br>
+	If your tool-chain needs to specify the &quot;./&quot; prefix to the paths, they could 
+	do it by using the following construction</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">path = new Path(&#8220;./&#8221;).append(fileName);</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">instead of </p>
+	<p class="MsoNormal" style="margin-top:6.0pt">path = new Path(&quot;./&quot; + 
+	fileName);</p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:6.0pt">Integrating with the new New 
+	Project Wizard</p>
+	<p class="MsoNormal" style="margin-top:6.0pt">If no modifications are made 
+	the old-style project types should be presented as separate entries in the 
+	&quot;Project Types&quot; list of the wizard. In case a tool-integrator is willing to 
+	use general project type entries, he/she should refer to the New Project 
+	Wizard description for detail.</p></li>
+</ol>
+</body>
+</html>

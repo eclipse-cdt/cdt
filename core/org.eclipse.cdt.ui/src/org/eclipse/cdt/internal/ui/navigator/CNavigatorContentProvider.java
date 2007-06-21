@@ -28,6 +28,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 import org.eclipse.ui.navigator.PipelinedShapeModification;
@@ -48,9 +51,24 @@ import org.eclipse.cdt.internal.ui.cview.CViewContentProvider;
  */
 public class CNavigatorContentProvider extends CViewContentProvider implements IPipelinedTreeContentProvider {
 
+	/** Project Explorer view id */
+	private static final String PROJECT_EXPLORER_ID = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
+
+	/** Cloned memento key from {@link CommonNavigator}. */
+	private static String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$
+	/** Memento key for delayed enablement of link-with-editor */
+	static String LINKING_ENABLED_DELAYED = LINKING_ENABLED + ".delayed"; //$NON-NLS-1$ 
+
 	/** The input object as supplied in the call to {@link #inputChanged()} */
 	private Object fRealInput;
 	private IPropertyChangeListener fPropertyChangeListener;
+	/** 
+	 * Flag set in {@link #restoreState(IMemento) restoreState},
+	 * indicating whether link-with-editor should be enabled delayed 
+	 * as a workaround for 
+	 * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344">bug 186344</a>
+	 */
+	private boolean fLinkingEnabledDelayed;
 
 	/*
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
@@ -111,6 +129,9 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			if (mementoValue != null) {
 				groupIncludes= Boolean.valueOf(mementoValue).booleanValue();
 			}
+			// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344
+			Integer value= memento.getInteger(LINKING_ENABLED_DELAYED);
+			fLinkingEnabledDelayed= value != null && value.intValue() != 0;
 		}
 		setProvideMembers(showCUChildren);
 		setIncludesGrouping(groupIncludes);
@@ -124,6 +145,15 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		if (memento != null) {
 			memento.putString(PreferenceConstants.PREF_SHOW_CU_CHILDREN, String.valueOf(getProvideMembers()));
 			memento.putString(PreferenceConstants.CVIEW_GROUP_INCLUDES, String.valueOf(areIncludesGroup()));
+			// disable linking enabled on next startup
+			// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344
+			Integer linkingEnabled= memento.getInteger(LINKING_ENABLED);
+			if (linkingEnabled != null && linkingEnabled.intValue() != 0) {
+				memento.putInteger(LINKING_ENABLED, 0);
+				memento.putInteger(LINKING_ENABLED_DELAYED, linkingEnabled.intValue());
+			} else {
+				memento.putInteger(LINKING_ENABLED_DELAYED, 0);
+			}
 		}
 	}
 
@@ -133,6 +163,29 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) { 
 		fRealInput= newInput;
 		super.inputChanged(viewer, oldInput, findInputElement(newInput));
+		
+		workaroundForBug186344();
+	}
+
+	/**
+	 * Workaround for
+	 * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344">bug 186344</a>
+	 */
+	private void workaroundForBug186344() {
+		if (fLinkingEnabledDelayed) {
+			// enable linking delayed
+			fLinkingEnabledDelayed= false;
+			IViewPart viewPart= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PROJECT_EXPLORER_ID);
+			if (viewPart instanceof CommonNavigator) {
+				final CommonNavigator cn= ((CommonNavigator)viewPart);
+				viewPart.getSite().getShell().getDisplay().asyncExec(
+						new Runnable() {
+							public void run() {
+								cn.setLinkingEnabled(true);
+							}
+						});
+			}
+		}
 	}
 	
 	private Object findInputElement(Object newInput) {

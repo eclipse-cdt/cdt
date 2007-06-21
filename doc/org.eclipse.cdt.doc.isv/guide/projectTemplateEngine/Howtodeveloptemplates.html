@@ -1,0 +1,830 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html><head>
+<title>How to develop templates in How to extend the user interface using templates</title>
+<link href="_stock/sysdoc.css" type="text/css" rel="stylesheet" media="screen">
+<link href="_stock/sysdoc.css" type="text/css" rel="stylesheet" media="print">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <style type="text/css" media="screen">
+	   .ButtonBox { background-image: url(_stock/gradient.jpg); }
+   </style>
+   </head>
+   <body>
+   <table width="100%" border="0" cellspacing="0"
+   cellpadding="0"><tbody><tr>
+   </tr><tr><td class="DocSetBox" width="25%">
+   <p>&nbsp;</p>
+   </td>
+   <td class="ButtonBox" align="right" width="40%">
+   <p> <A href="index.html"><IMG height=22
+	   alt=[Previous] src="_stock/btn_prev_wt.gif" width=85 border=0 ></a> <A href="Howtoregistertemplates.html"><IMG height=22 alt=[Next]
+	   src="_stock/btn_next_wt.gif" width=58 border=0 ></a></p>
+   </td>
+   </tr></tbody></table>
+   <hr noshade size="1">
+   <p class="breadcrumbNav"><span class="separator">&#187;</span>
+   <A href="index.html">How&nbsp;to&nbsp;extend&nbsp;the&nbsp;user&nbsp;interface&nbsp;using&nbsp;templates</a>&nbsp;<span class="separator">&#187;</span>
+How&nbsp;to&nbsp;develop&nbsp;templates</p>
+
+   <hr noshade size="1">
+   <div class="AuthoredContent">
+    
+
+</div><div class="Head1">
+
+<h1>How to develop templates</h1>
+</div><div class="Bodytext">
+<p>
+Templates form an important part of the drive to support automatic GUI generation
+ of various user interface types as supported in Eclipse frame work. 
+These templates are often referred as project
+templates, as they are used to support the creation of ready-made projects. For
+example, you can define a template to create a simple GUI based
+<code class="filename">EXE</code> application for a set of Build Configurations. 
+</p>
+<p>
+The project templates are simple XML files, which follow a structure or
+schema defined in the <code class="filename">TemplateDescriptorSchema.xsd</code> file. These
+templates define the inputs and processes required to create a project for a
+particular platform. Inputs define the type of inputs required such as, files,
+settings etc. The processes define what to do with those inputs to create a
+particular type of project. 
+</p>
+<p>
+The New Project wizard lists all the templates available based on the
+matching criteria defined by the templates. Once the user selects a template from the list, the
+Template Engine plug-in processes the selected template. The plug-in generates the subsequent wizard
+pages based on whether the template needs user input or not. 
+</p>
+<p>
+This document details the schema for writing project templates. The
+schema file <code class="filename">TemplateDescriptorSchema.xsd</code>, which defines the
+structure for the project templates, is part of
+<code class="filename">org.eclipse.cdt.templateengine</code> plug-in. 
+</p>
+<p>
+The structure or schema for a project template is as follows: 
+</p>
+<p class="CodeBlock"><code>&lt;template <br>type="TemplateType" <br>version="Version" <br>supplier="Supplier" <br>revision="Revision" <br>author="Author"&nbsp;&nbsp;&nbsp;<br>id="TemplateId" <br>label="Template label visible to the user" <br>description="A brief description of the template" <br>help="help.html" <br>preview-icon="icon.gif"&gt;<br><br>&lt;property-group <br>id="properyGroupId" <br>label="Property group label" <br>description="A simple description of the property group" <br>type=" Type of UIElement group" <br>help="help.html"<br>branding-icon="icon.gif"&gt;<br>...<br>&lt;/property-group&gt;<br><br>&lt;process&gt;<br>...<br>&lt;/process&gt;<br><br>&lt;/template&gt;</code></p>
+<p>
+The root element for a project template is <code>template</code>, which
+provides the following properties or attributes to describe the template: 
+</p>
+<ul>
+<li>
+<p>
+<code>type</code>: Use this attribute to specify the template type.
+For a project template the <code>type</code> should be <code>ProjTempl</code>. 
+</p>
+<li>
+<p>
+<code>version</code>: Use this attribute to specify the major version
+number of the template. 
+</p>
+<li>
+<p>
+<code>supplier</code>: Use this attribute to specify the name of the
+supplier who provided the template. 
+</p>
+<li>
+<p>
+<code>revision</code>: Use this attribute to specify the minor
+version number of the template. 
+</p>
+<li>
+<p>
+<code>author</code>: Use this attribute to specify the template
+author's name. 
+</p>
+<li>
+<p>
+<code>id</code>: Use this attribute to specify a unique name for the
+template. 
+</p>
+<li>
+<p>
+<code>label</code>: Use this attribute to specify a label for the
+template, which briefly describes the purpose of the template. For example, if
+you are defining a template for a Helloworld <code class="filename">EXE</code>
+application, the label can be "HelloWorld <code class="filename">EXE</code>
+Application". 
+</p>
+<li>
+<p>
+<code>description</code>: Use this attribute to provide a description
+for the template, which is displayed to users when they choose the template
+from the list of available templates. 
+</p>
+<li>
+<p>
+<code>help</code>: Use this attribute to specify the HTML help file
+name for the template. 
+</p>
+<li>
+<p>
+<code>preview-icon</code>: Use this attribute to specify a
+<code class="filename">GIF</code> or <code class="filename">JPG</code> file name to be used as a icon for the
+template. There are no constraints on the image, as this attribute is meant for
+future use. 
+</p>
+</li>
+</ul>
+<p>
+The <code>template</code> element includes the following child elements: 
+</p>
+<ul>
+<li>
+<p>
+<code>property-group</code>: A property-group element represents a
+wizard page in the New Project wizard. It lists all the fields to be displayed
+to the user for input using the <code>property</code> element. For example, you
+could use this element to define all the input fields to be displayed in the
+<em>Project Directories</em> page of the New Project wizard. 
+</p>
+<li>
+<p>
+<code>process</code>: A process element defines the process of
+creating the project in the Eclipse workspace, based on the user input values.
+For example, if the user specifies "include" as the folder name for all the
+header files, the process of creating a folder by that name and copying all the
+header files to it is defined here. 
+</p>
+</li>
+</ul>
+<h4 class="subheading">
+property-group 
+</h4>
+<p>
+As mentioned earlier, a <code>property-group</code> includes the
+<code>property</code> elements that specify all the input fields required for a
+wizard page. A <code>property-group</code> can include any number of
+<code>property</code> elements. The following attributes can be used to
+describe a property group: 
+</p>
+<ul>
+<li>
+<p>
+<code>id</code>: Use this attribute to specify a unique ID for the
+property group. 
+</p>
+<li>
+<p>
+<code>label</code>: Use this attribute to specify a name for the
+property group, which is displayed as a title of the wizard page generated by
+the Template Engine. 
+</p>
+<li>
+<p>
+<code>description</code>: Use this attribute to provide a short
+description of the property group, which is displayed below the wizard page
+title. 
+</p>
+<li>
+<p>
+<code>type</code>: Use this attribute to specify the wizard page
+type. The possible values for this attribute are: 
+</p>
+<ul>
+<li>
+<p>
+<code>PAGES_ONLY</code>: If you want all the properties to be
+listed in a simple page. 
+</p>
+<li>
+<p>
+<code>PAGES_TAB</code>: If you want all the properties to be
+displayed as tabs in a page. 
+</p>
+<li>
+<p>
+<code>PAGES_TREE</code>: If you want all the properties to be
+displayed in a simple tree structure. 
+</p>
+<li>
+<p>
+<code>PAGES_TREE_TREE</code>: If you want all the properties to
+be displayed in a multi-level tree structure. 
+</p>
+<li>
+<p>
+<code>PAGES_TAB_TREE</code>: If you want all the properties to be
+displayed as tabs or as a tree structure. 
+</p>
+</li>
+</ul>
+<li>
+<p>
+<code>help</code>: Use this attribute to specify the HTML help file
+name for the property group. 
+</p>
+<li>
+<p>
+<code>branding-icon</code>: Use this attribute to specify a
+<code class="filename">GIF</code> file name to be used as an icon for the property group. 
+</p>
+</li>
+</ul>
+<h4 class="subheading">
+property 
+</h4>
+<p>
+The syntax for the <code>property</code> elements included by the
+property-group element is as follows: 
+</p>
+<p class="CodeBlock"><code>&lt;property <br>id="propertyId"<br>label="User visible label of the property"<br>description="A brief description of the property"<br>type="type of the property"<br>pattern="Regular expression of the expected property"<br>default="Default value of the property"<br>size="size"<br>mandatory="true|false"<br>hidden="true|false"<br>persist="true|false"&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name="name of the item"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="User visible label of the item"<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;selected="true|false"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/item&gt;<br>&lt;/property&gt;</code></p>
+<p>
+Here is a list of attributes of the <code>property</code> element: 
+</p>
+<ul>
+<li>
+<p>
+<code>id</code>: Use this attribute to specify a unique ID for the
+property. 
+</p>
+<li>
+<p>
+<code>label</code>: Use this attribute to specify a name for the
+property, which is displayed as a label in the wizard page next to the input
+field. 
+</p>
+<li>
+<p>
+<code>description</code>: Use this attribute to provide a short
+description of the property, which is displayed whenever the mouse hovers over
+the label. 
+</p>
+<li>
+<p>
+<code>type</code>: Use this attribute to specify the property type.
+The possible values for this attribute are: 
+</p>
+<ul>
+<li>
+<p>
+<code>input</code>: If you want a text input box. 
+</p>
+<li>
+<p>
+<code>multiline</code>: If you want a multiline input box. 
+</p>
+<li>
+<p>
+<code>select</code>: If you want a drop-down combo box. 
+</p>
+<li>
+<p>
+<code>boolean</code>: If you want an option button. 
+</p>
+<li>
+<p>
+<code>stringlist</code>: If you want a list box. 
+</p>
+<li>
+<p>
+<code>speciallist</code>: If you want a list box with buttons to
+add and delete items to it. 
+</p>
+<li>
+<p>
+<code>browse</code>: If you want a browse field to choose a file
+or directory using the File Open dialog. 
+</p>
+</li>
+</ul>
+<li>
+<p>
+<code>pattern</code>: Use this attribute to specify the input
+character pattern for the property using regular expressions. For more
+information on regular expression patterns, refer to Java API document for
+<a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">java.util.regex.Pattern</a>.
+</p>
+<li>
+<p>
+<code>default</code>: Use this attribute to specify a default value
+for the property. 
+</p>
+<li>
+<p>
+<code>size</code>: Use this attribute to specify the size of the
+property. Note that this attribute is relevant only if the property type is
+<code>input</code> or <code>multiline</code>. 
+</p>
+<li>
+<p>
+<code>mandatory</code>: Use this attribute to specify whether the
+property is mandatory or not. The value for this attribute can either be
+<code>true</code> or <code>false</code>. 
+</p>
+<li>
+<p>
+<code>hidden</code>: Use this attribute to specify whether the
+property is visible to the user or not. The value for this attribute can either
+be <code>true</code> or <code>false</code>. 
+</p>
+<li>
+<p>
+<code>persist</code>: Use this attribute to specify whether the
+property should persist its value or not. The value for this attribute can
+either be <code>true</code> or <code>false</code>. 
+</p>
+</li>
+</ul>
+<p>
+If the property <code>type</code> is <code>select</code> or
+<code>stringlist</code>, you can include the <code>item</code> element to
+specify the items to be listed. There is no limitation on the number of items
+that can be listed. Here is the syntax for the <code>item</code> element: 
+</p>
+<p class="CodeBlock"><code>&lt;item <br>name="name of the item"<br>label="User visible label of the item"<br>selected="true|false"&gt;<br>&lt;/item&gt;</code></p>
+<p>
+Here is a list of attributes of the <code>item</code> element: 
+</p>
+<ul>
+<li>
+<p>
+<code>name</code>: Used to specify a unique name for the list item. 
+</p>
+<li>
+<p>
+<code>label</code>: Used to specify a label that is displayed to the
+user. 
+</p>
+<li>
+<p>
+<code>selected</code>: Used to specify whether the list item is
+selected by default. The value for this attribute can either be
+<code>true</code> or <code>false</code>. 
+</p>
+</li>
+</ul>
+<h4 class="subheading">
+process 
+</h4>
+<p>
+The <code>process</code> element within the root element of a project
+template defines the processes to be followed to create a project, based on the
+inputs taken. Here is the syntax for this element: 
+</p>
+<p class="CodeBlock"><code>&lt;process type="org.eclipse.cdt.templateengine.&lt;process type&gt;"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name" value=""/&gt; <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex name="name"&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex&gt; <br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex-array name="name"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex-array&gt; <br><br>&lt;/process&gt;</code></p>
+<p>
+A <code>process</code> element defines a single process. A process is
+like a procedure with a set of parameters. In similar terms, the
+<code>process</code> element defines the procedure. You need to specify all the
+parameters expected by a process. In the project template, you need to specify
+arguments for the process matching their types and in the order specified. 
+</p>
+<p>
+You can specify the process type using the <code>type</code> attribute.
+For example, to add files to a project you can use
+<code>org.eclipse.cdt.templateengine.AddFiles</code> as the process type.
+</p>
+<p>
+A <code>process</code> element may include the following child elements: 
+</p>
+<ul>
+<li>
+<p>
+<code>simple</code>: A simple string parameter. In a project
+template, you need to specify a name for the parameter using the
+<code>name</code> attribute along with the corresponding <code>value</code>
+attribute. 
+</p>
+<p>
+Here is an example showing the usage of this element: 
+</p>
+<p class="CodeBlock"><code>&lt;simple name="name" value="value" /&gt;</code></p>
+<li>
+<p>
+<code>simple-array</code>: A simple string array parameter. In the
+project template, you need to specify a name for the parameter using the
+<code>name</code> attribute along with the corresponding <code>element</code>
+children. You can have any number of <code>element</code> children per
+<code>simple-array</code> element with the corresponding <code>value</code>
+attribute. 
+</p>
+<p>
+Here is an example showing the usage of this element: 
+</p>
+<p class="CodeBlock"><code>&lt;simple-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element value="value1" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element value="value2" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;</code></p>
+<li>
+<p>
+<code>complex</code>: A <code>complex</code> parameter groups
+together any number of <code>simple</code>, <code>simple-array</code> and
+<code>complex</code> parameters. In the project template, you need to specify a
+name for the parameter using the <code>name</code> attribute along with the
+corresponding children elements. 
+</p>
+<p>
+Here is an example showing the usage of this element: 
+</p>
+<p class="CodeBlock"><code>&lt;complex name="name"&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name" value="value" /&gt;<br>&nbsp;&nbsp;&nbsp;&lt;simple-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element value="value1" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &lt;element value="value2" /&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex&gt;</code></p>
+<li>
+<p>
+<code>complex-array</code>: A complex-array parameter. Each element
+of this parameter is of the type <code>complex</code>. In the project template,
+you need to specify a name for the parameter using the <code>name</code>
+attribute along with the corresponding <code>element</code> children. You can
+have any number of element children per complex-array element with the
+corresponding complex type arguments. 
+</p>
+<p>
+Here is an example showing the usage of this element: 
+</p>
+<p class="CodeBlock"><code>&lt;complex-array name="values"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name1" value="value1" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name2" value="value2" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name3" value="value3" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name4" value="value4" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name5" value="value5" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name6" value="value6" /&gt; <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex-array&gt;</code></p>
+</li>
+</ul>
+<h4 class="subheading">
+Process types
+</h4>
+<p>
+A process type is a prototype of a process procedure. It defines the
+parameters required to complete a procedure. For example, to copy a file you
+need its source and destination information, which can be defined as parameters
+for the copy process.
+</p>
+<p>
+The Template Engine plug-in provides a set of process types using the
+extension-point <code class="filename">org.eclipse.cdt.templateengine.processType</code>. Using
+these process types you can describe a process in your template. For example,
+you can describe the copy process by providing the source and destination
+folder names.
+</p>
+<p>
+The following is a list of process types provided by the Template Engine:
+</p>
+<ul>
+<li>
+<p>
+<b>NewProject</b>: It defines all the parameters required for a
+new C/C++ project and provides the fully qualified name of the class, which
+processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>Name</em>: You use this parameter to specify the name of
+the project. It is of type <code>simple</code>.
+</p>
+<li>
+<p>
+<em>projectType</em>: You use this parameter to specify the
+type of the project. It is of type <code>simple</code>.
+</p>
+<li>
+<p>
+<em>location</em>: You use this parameter to specify the
+location of the project. It is of type <code>simple</code>.
+</p>
+<li>
+<p>
+<em>targetType</em>: You use this parameter to specify the
+type of the target binary. It is of type <code>simple</code>.
+</p>
+<li>
+<p>
+<em>configs</em>: You use this parameter to specify the build
+configurations for the project. It is of type <code>simple</code>.
+</p>
+</li>
+</ul>
+<li>
+<p>
+<b>NewManagedProject</b>: It defines all the parameters
+required for a new managed project and provides the fully qualified name of the
+class, which processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>Name</em>: You use this parameter to specify the name of
+the managed project. It is of type <code>simple</code>.
+</p>
+<li>
+<p>
+<em>projectType</em>: You use this parameter to specify the
+type of the managed project. It is of type <code>simple</code>.
+</p>
+<li>
+<p>
+<em>location</em>: You use this parameter to specify the
+location of the managed project. It is of type <code>simple</code>.
+</p>
+<li>
+<p>
+<em>targetType</em>: You use this parameter to specify the
+type of the target binary. It is of type <code>simple</code>.
+</p>
+<li>
+<p>
+<em>configs</em>: You use this parameter to specify the build
+configurations for the managed project. It is of type <code>simple</code>.
+</p>
+</li>
+</ul>
+<li>
+<p>
+<b>Copy</b>: It defines all the parameters required to copy
+files and provides the fully qualified name of the class, which processes these
+parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>files</em>: You can use this parameter to list the files
+to be copied. It is of type <code>complexArrary</code>. Each file to be copied
+is represented by a baseType <code>element</code>, which contains the following
+<code>simple</code> types:
+</p>
+<ul>
+<li>
+<p>
+<em>source</em>: Use this to specify the source file
+location in the file system.
+</p>
+<li>
+<p>
+<em>target</em>: Use this to specify the target location
+for the file.
+</p>
+<li>
+<p>
+<em>replaceable</em>: Use this flag to specify whether
+the file should be replaced or not, if it is found in the <code>target</code>
+location.
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<li>
+<p>
+<b>Append</b>: It defines all the parameters required to append
+files to a project and provides the fully qualified name of the class, which
+processes these parameters. For more information about the parameters, refer to
+the <code>Copy</code> process type described above.
+</p>
+<li>
+<p>
+<b>AddFile</b>: It defines all the parameters required to add a
+file to the project and provides the fully qualified name of the class, which
+processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>projectName</em>: Use this parameter to specify the name
+of the project to which the file should be copied. It is of <code>simple</code>
+type.
+</p>
+<li>
+<p>
+<em>file</em>: Use this parameter to include information
+related to source, target and replaceable. It is of <code>complex</code> type.
+For more information about the parameters, refer to the <code>Copy</code>
+process type described above.
+</p>
+</li>
+</ul>
+<li>
+<p>
+<b>AddFiles</b>: It defines all the parameters required to add
+files to a project and provides the fully qualified name of the class, which
+processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>projectName</em>: Use this parameter to specify the name
+of the project to which the file should be copied. It is of <code>simple</code>
+type.
+</p>
+<li>
+<p>
+<em>files</em>: Use this parameter to include information
+related to source, target and replaceable. It is of <code>complexArray</code>
+type. For more information about the parameters, refer to the <code>Copy</code>
+process type described above.
+</p>
+</li>
+</ul>
+<li>
+<p>
+<b>CreateSourceFolder</b>: It defines all the parameters
+required to create a folder for the source files in a project and provides the
+fully qualified name of the class, which processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>projectName</em>: Use this parameter to specify the name
+of the project to which the file should be copied. It is of <code>simple</code>
+type.
+</p>
+<li>
+<p>
+<em>path</em>: Use this parameter to specify the path
+relative to the project folder, where the folder for the source files should be
+created. It is of <code>simple</code> type.
+</p>
+</li>
+</ul>
+<li>
+<p>
+<b>AddLink</b>: It defines all the parameters required to
+create a linked file and provides the fully qualified name of the class, which
+processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>projectName</em>: Use this parameter to specify the name
+of the project in which the linked file should be created. It is of
+<code>simple</code> type.
+</p>
+<li>
+<p>
+<em>filePath</em>: Use this parameter to specify the path of
+the original file relative to the project folder. It is of <code>simple</code>
+type.
+</p>
+<li>
+<p>
+<em>targetPath</em>: Use this parameter to specify the target
+location relative to the project folder, where a linked file to the original
+file should be created. It is of <code>simple</code> type.
+</p>
+</li>
+</ul>
+<li>
+<p>
+<b>CreateIncludeFolder</b>: It defines all the parameters
+required to create a folder for the header files in a project and provides the
+fully qualified name of the class, which processes these parameters. For
+information about the parameters, refer to the <code>CreateSourceFolder</code>
+process type described above.
+</p>
+<li>
+<p>
+<b>SetMBSStringOptionValue</b>: It defines all the parameters
+required to create a string option value and provides the fully qualified name
+of the class, which processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>projectName</em>: Use this parameter to specify the name
+of the project for which the string option is created. It is of
+<code>simple</code> type.
+</p>
+<li>
+<p>
+<em>resourcePaths</em>: Use this parameter to specify the
+path of the resources. It is of <code>complexArray</code> type. Each resource
+patth to be created is represented by a baseType <code>element</code>, which
+contains the following <code>simple</code> types:
+</p>
+<ul>
+<li>
+<p>
+<em>id</em>: Use this parameter to specify a unique ID
+for the resource path. It is of <code>simple</code> type.
+</p>
+<li>
+<p>
+<em>value</em>: Use this parameter to specify a value for
+the resource path. It is of <code>simple</code> type.
+</p>
+<li>
+<p>
+<em>path</em>: Use this parameter to specify the path of
+the resource. It is of <code>simple</code> type.
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<li>
+<p>
+<b>SetMBSStringListOptionValues</b>: It defines all the
+parameters required to create a string list of option values and provides the
+fully qualified name of the class, which processes these parameters. The
+parameters required are similar to that of <code>SetMBSStringOptionValue</code>
+process type, only difference is that each resource path will have a list of
+option values. For information about the parameters, refer to the
+<code>SetMBSStringOptionValue</code> process type described above.
+</p>
+<li>
+<p>
+<b>SetMBSBooleanOptionValue</b>: It defines all the parameters
+required to create a boolean option value and provides the fully qualified name
+of the class, which processes these parameters. The parameters required are
+similar to that of <code>SetMBSStringOptionValue</code> process type, only
+difference is that this process type is used to create boolean option value.
+For information about the parameters, refer to the
+<code>SetMBSStringOptionValue</code> process type described above.
+</p>
+<li>
+<p>
+<b>AppendMBSStringOptionValue</b>: It defines all the
+parameters required to append a string option value to an existing string
+option. It also provides the fully qualified name of the class, which processes
+these parameters. For information about the parameters, refer to the
+<code>SetMBSStringOptionValue</code> process type described above.
+</p>
+<li>
+<p>
+<b>AppendCreate</b>: It defines all the parameters required to
+append or create a file in a project. It also provides the fully qualified name
+of the class, which processes these parameters. For information about the
+parameters, refer to the <code>AddFiles</code> process type described above.
+</p>
+<li>
+<p>
+<b>CreateResourceIdentifier</b>: It defines all the parameters
+required to append or create a resource identifier. It also provides the fully
+qualified name of the class, which processes these parameters.
+</p>
+<p>
+Here is a list of parameters defined by this process type:
+</p>
+<ul>
+<li>
+<p>
+<em>valueName</em>: Use this attribute to specify a name for
+the resource identifier. It is of <code>simple</code> type.
+</p>
+<li>
+<p>
+<em>appName</em>: Use this attribute to specify application,
+which will be using this resource identifier. It is of <code>simple</code>
+type.
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>
+Once the project template has been written, register it with Eclipse to
+make it available for use. For more information on this, refer to
+<A href="Howtoregistertemplates.html#Howto%2eregister%2etemplates">How to register a template with Eclipse</a>.
+</p>
+<a name="1.38"></a>
+</div><div class="Head2">
+<hr size="2" noshade>
+<h2>See also:</h2>
+</div><div class="Bodytext">
+<ul>
+<li>
+<p>
+<A href="Howtoregistertemplates.html#Howto%2eregister%2etemplates">How to register a template with Eclipse</a>
+</p>
+<li>
+<p>
+<A href="exampletemplate.html#Corona%2ecustomguide%2eexampletemplate">Example template</a>
+</p>
+</li>
+</ul>
+
+   </div><div class="Footer">
+   <hr noshade size="1">
+   <table cellpadding="0" cellspacing="0" border="0" width="100%">
+     <tr>
+       <td class="ButtonBottomBox" align="right" height="12" width="67%">
+         <p>
+           <A href="index.html"><IMG height=22
+		   alt=[Previous] src="_stock/btn_prev.gif" width=85 border=0 ></a>
+	   <A href="#_top"><IMG alt=[Top] src="_stock/btn_top.gif" align=bottom border=0></a>
+           <A href="Howtoregistertemplates.html"><IMG height=22 alt=[Next]
+		   src="_stock/btn_next.gif" width=58 border=0 ></a>
+         </p>
+       </td>
+     </tr>
+   </table>
+   </div>
+   </body>
+   </html>
+   

@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html><head>
+<title>How to register a template with Eclipse in How to extend the user interface using templates</title>
+<link href="_stock/sysdoc.css" type="text/css" rel="stylesheet" media="screen">
+<link href="_stock/sysdoc.css" type="text/css" rel="stylesheet" media="print">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <style type="text/css" media="screen">
+	   .ButtonBox { background-image: url(_stock/gradient.jpg); }
+   </style>
+   </head>
+   <body>
+   <table width="100%" border="0" cellspacing="0" cellpadding="0"><tbody><tr>
+   </tr><tr><td class="DocSetBox" width="25%">
+   <p>&nbsp;</p>
+   </td>
+   <td class="ButtonBox" align="right" width="40%">
+	   <p> <A href="Howtodeveloptemplates.html"><IMG height=22 alt=[Previous] src="_stock/btn_prev_wt.gif" width=85 border=0 ></A> <A href="exampletemplate.html"><IMG height=22 alt=[Next] src="_stock/btn_next_wt.gif" width=58 border=0 ></A></p>
+   </td>
+   </tr></tbody></table>
+   <hr noshade size="1">
+   <p class="breadcrumbNav"><span class="separator">&#187;</span>
+   <A href="index.html">How&nbsp;to&nbsp;extend&nbsp;the&nbsp;user&nbsp;interface&nbsp;using&nbsp;templates</A>&nbsp;<span class="separator">&#187;</span> 
+How&nbsp;to&nbsp;register&nbsp;a&nbsp;template&nbsp;with&nbsp;Eclipse</p>
+
+   <hr noshade size="1">
+   <div class="AuthoredContent">
+    
+
+</div><div class="Head1">
+
+<h1>How to register a template with Eclipse</h1>
+</div><div class="Bodytext">
+<p>
+Once the project template is ready, you need to register it with Eclipse
+to make the template available for use. It is a good practice to group all the
+files and resources related to the project template together in one folder. For
+example, if you are writing a project template for a Hello World Application,
+group all the resources required for this application in a folder
+"HelloWorld". 
+</p>
+<p>
+To register a project template with Eclipse follow the steps given below:
+</p>
+<ol>
+<li>
+<p>
+Create an empty plug-in project from the Eclipse workbench without
+the source folders. 
+</p>
+<li>
+<p>
+Create a folder and copy the project template along with all the
+resources required to create the project. For example, all the hearder files,
+source files, resource files etc. 
+</p>
+<li>
+<p>
+Open the plug-in manifest editor and select the
+<code class="ProgramOutput">Dependencies</code> page. For more information on plug-in manifest
+editor, refer to <i>PDE 
+  Guide &gt; Getting Started  &gt; Basic  Plug-in Tutorial
+&gt;  Plug-in manifest editor</i>. 
+</p>
+<li>
+<p>
+Click <code>Add</code> to select
+<code class="filename">org.eclipse.cdt.templateengine</code> plug-in from the list.
+</p>
+<li>
+<p>
+Select the <code>Extensions</code> page in the plug-in manifest
+editor. 
+</p>
+<li>
+<p>
+Click <code>Add</code> to create an extension to the extension-point.
+</p>
+<li>
+<p>
+Select the extension-point with ID
+<code class="filename">org.eclipse.cdt.templateengine.templates</code> from the list of
+extensions-points.
+</p>
+<li>
+<p>
+Right-click on the newly added extension, and select
+<code class="ProgramOutput">New</code> &gt;  
+<code class="ProgramOutput">template</code> from the context menu.
+</p>
+<li>
+<p>
+Choose the new template added in step 6 from the <code class="ProgramOutput">All
+Extensions</code> list.
+</p>
+<li>
+<p>
+Specify the <code class="ProgramOutput">wizardId</code> attribute of the template as
+"<em>org.eclipse.cdt.project.ui.NewProjectWizard</em>". This
+attribute is mandatory.
+</p>
+<li>
+<p>
+Specify the location of the template relative to the plug-in created
+in step 1. This attribute is mandatory.
+</p>
+<li>
+<p>
+Specify a <code class="ProgramOutput">filterPattern</code> to indicate the build 
+Configurations for which the template is created. It is a regular expression used 
+to filter the build Configurations. If the template is designed for a particular 
+Configuration, it is recommended to specify the filter pattern. For example, If 
+the template is designed for GCC Configurations, the filter pattern can be ".*gcc".
+ If the template is designed for multiple build Configurations, you can specify 
+ the filter patterns delimited by "|" .
+</p>
+<p>
+The New Project wizard filters the available build Configurations based on the filter
+pattern for the selected template. The filter patterns are matched against the
+available Configurations' ID to get a list of matching SDKs. This is an optional
+attribute. 
+</p>
+<p>
+For more information on regular expression patterns, refer to Java
+API document for
+<a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">java.util.regex.Pattern</a>.
+</p>
+<li>
+<p>
+Select an appropriate project type from the
+<code class="ProgramOutput">projectType</code> drop-down list. This is an optional attribute. 
+</p>
+<li>
+<p>
+Specify the <code class="ProgramOutput">usageDescription</code>, which is a notation
+describing how this template is used. Usually used to filter the list of
+templates on offer depending on other wizard attributes. This is an optional
+attribute. For more information, refer to Java API document for
+<a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">java.util.regex.Pattern</a>.
+</p>
+<p>
+The New Project wizard will list only those templates, which are
+relevant for the build Configurations choosen for the project. For a example, if the developer
+choose to create a <code class="ProgramOutput">C++ Application for Symbian OS</code>, the wizard
+will list all the templates with the relevant
+<code class="ProgramOutput">usageDescription</code>. Otherwise, for a standard <code class="ProgramOutput">CDT
+C++ Project</code> the wizard will list all the templates, irrespective of
+whether the <code class="ProgramOutput">usageDescription</code> is specified or not. 
+</p>
+<li>
+<p>
+Specify the <code class="ProgramOutput">pagesAfterTemplateSelectionProvider</code>,
+which is a fully qualified name of the class that implements
+<code class="filename">org.eclipse.cdt.templateengine.IPagesAfterTemplateSelectionProvider</code>
+interface. This is an optional attribute. 
+</p>
+</li>
+</ol>
+<p>
+After creating the plug-ins and registering the templates, launch a
+runtime workbench and invoke the New Project wizard to check that the template
+you added is listed.
+</p>
+<a name="1.7"></a>
+</div><div class="Head2">
+<hr size="2" noshade>
+<h2>See also:</h2>
+</div><div class="Bodytext">
+<ul>
+<li>
+<p>
+<A href="Howtodeveloptemplates.html#howto%2edevelop%2etemplates">How to develop templates</A>
+</p>
+<li>
+<p>
+<A href="exampletemplate.html#Corona%2ecustomguide%2eexampletemplate">Example template</A>
+</p>
+</li>
+</ul>
+
+   </div><div class="Footer">
+   <hr noshade size="1">
+   <table cellpadding="0" cellspacing="0" border="0" width="100%">
+     <tr>
+       <td class="ButtonBottomBox" align="right" height="12" width="67%">
+         <p>
+	 <A href="Howtodeveloptemplates.html"><IMG height=22 alt=[Previous] src="_stock/btn_prev.gif" width=85 border=0></A>
+	 <A href="#_top"><IMG alt=[Top] src="_stock/btn_top.gif" align=bottom border=0></A>
+	 <A href="exampletemplate.html"><IMG height=22 alt=[Next] src="_stock/btn_next.gif" width=58 border=0 ></A>
+         </p>
+       </td>
+     </tr>
+   </table>
+   </div>
+   </body>
+   </html>
+   

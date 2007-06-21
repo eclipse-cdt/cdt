@@ -115,4 +115,26 @@
     	</cheatsheet>
 	</extension>
 
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            content="intro/cdtIntro.xml"
+            configId="org.eclipse.ui.intro.universalConfig">
+      </configExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/cdtTutorial.xml">
+      </configExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="intro/cdtWhatsnew.xml">
+      </configExtension>
+   </extension>
+
 </plugin>

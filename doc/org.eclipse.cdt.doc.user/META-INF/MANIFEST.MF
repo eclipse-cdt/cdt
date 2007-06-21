@@ -6,3 +6,7 @@ Bundle-Version: 4.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
+Require-Bundle: org.eclipse.help,
+ org.eclipse.ui.cheatsheets,
+ org.eclipse.ui.intro,
+ org.eclipse.ui.intro.universal

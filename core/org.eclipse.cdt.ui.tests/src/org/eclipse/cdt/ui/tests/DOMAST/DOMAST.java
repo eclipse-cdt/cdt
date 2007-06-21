@@ -138,8 +138,6 @@ public class DOMAST extends ViewPart {
    private static final String DISPLAY_PROBLEMS   = "Display Problems";  //$NON-NLS-1$
    TreeViewer          viewer;
    private DrillDownAdapter    drillDownAdapter;
-   private Action              openDeclarationsAction;
-   private Action              openReferencesAction;
    private Action              displayProblemsAction;
    private Action			   displayNodeTypeAction;
    private Action			   displayNodeSignatureAction;
@@ -385,7 +383,7 @@ public class DOMAST extends ViewPart {
              System.out.println(DOM_AST_VIEW_DONE + GENERATING_INITIAL_TREE + COLON_SPACE + (System.currentTimeMillis()- start) );
 	         
 	         // display roots
-	         root = new DOMASTNodeParent(null); //$NON-NLS-1$
+	         root = new DOMASTNodeParent(null); 
 	         
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 	         monitor.subTask(RETRIEVING_PREPROCESSOR_STATEMENTS);
@@ -776,8 +774,6 @@ public class DOMAST extends ViewPart {
    }
 
    void fillContextMenu(IMenuManager manager) {
-      manager.add(openDeclarationsAction);
-      manager.add(openReferencesAction);
       manager.add(new Separator());
 	  // ASTUtil#... menu
 	  MenuManager astMenu = new MenuManager(ASTUTIL_MENU_LABEL);

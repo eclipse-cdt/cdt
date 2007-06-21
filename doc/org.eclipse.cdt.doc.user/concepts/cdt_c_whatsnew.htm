@@ -82,7 +82,7 @@ tr {vertical-align: top;}
   <tr>
     <td> <p align="right"><b>Call Hierarchy</b></p></td>
     <td>
-     The	Call Heirarchy view shows you who calls a function.
+     The	Call Hierarchy view shows you who calls a function.
 	   <p><img src="../images/nn_call_hierarchy.png">    </p></td>
   </tr>
 
@@ -106,8 +106,17 @@ tr {vertical-align: top;}
 </tr>
 <tr>
     <td>
-      <p align="right"><b>GDB Hardware Debugging</b></p>    </td>
-    <td><p>blah blah</p>      </td>
+      <p align="right"><b>GDB Hardware Debugging</b></p>
+    </td>
+    <td>
+      <p>The GDB Hardware Debugging feature provides a specialized debug launch configuration
+      that allows you to start up GDB using CDT's GDB integration in a specialized manner that
+      allows for sessions that connect to hardware debugging devices, such as JTAG and BDM,
+      that support an integration with GDB. In particular it allows you to specify commands that
+      are executed when GDB connects to the device, optionally specify an image to load onto the
+      target, and specify commands that set up the target for execution.</p>
+      <p><img src="../images/nn_gdb_hardware_debug.png"></p>
+    </td>
   </tr>
 
   <tr>
@@ -143,11 +152,21 @@ tr {vertical-align: top;}
 <tr>
   <td><p align="right"><b>Project Build Button </b></p></td>
   <td><p>The toolbar now includes a button that builds the active configuration of the selected project. It's menu lets you quickly build another configuration.</p>
-  <p><img src="../images/nn_buildbtn.png"></td>
+  <p><img src="../images/nn_buildbtn.png"/></p></td>
 </tr>
 <tr>
-  <td><p align="right"><b>MinGW Toolchain Integration</b></p></td>
-  <td><p>blah blah</p></td>
+  <td>
+    <p align="right"><b>MinGW Toolchain Integration</b></p>
+  </td>
+  <td>
+    <p>Support for the GNU toolchain on Windows now specifies two separate toolchains Cygwin and MinGW.
+    The MinGW toolchain integration automatically detects the location of your MinGW install and sets
+    the paths appropriately.</p>
+    <p>MinGW tool chain for new projects:</p>
+    <p><img src="../images/nn_mingw_project.png"/></p>
+    <p>MinGW debugger launch configuration:</p>
+    <p><img src="../images/nn_mingw_debug.png"/></p>
+  </td>
 </tr>
   <tr>
     <td>

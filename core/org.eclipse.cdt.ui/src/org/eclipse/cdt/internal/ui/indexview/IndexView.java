@@ -77,6 +77,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	private IndexAction findReferencesAction;
 	Filter filter = new Filter();
 	public boolean isLinking = false;
+	private volatile boolean fUpdateRequested= false;
 	
 	public void toggleExternalDefs() {
 		if (!filter.showExternalDefs) {
@@ -406,13 +407,23 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 	}
 
 	public void handleChange(PDOM pdom) {
-		viewer.getControl().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				viewer.refresh();
-			}
-		});
+		requestUpdate();
 	}
 
+	private void requestUpdate() {
+		if (!fUpdateRequested) {
+			fUpdateRequested= true;
+			viewer.getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					fUpdateRequested= false;
+					if (!viewer.getControl().isDisposed()) {
+						viewer.refresh();
+					}
+				}
+			});
+		}
+	}
+	
 	public void elementChanged(ElementChangedEvent event) {
 		// Only respond to post change events
 		if (event.getType() != ElementChangedEvent.POST_CHANGE)

@@ -138,6 +138,8 @@ public class Database {
 		Chunk header= getChunk(0);
 		header.clear(0, CHUNK_SIZE);
 		setVersion(version);
+		
+		// chunks have been removed from the cache, so we are fine here.
 		chunks = new Chunk[] {header};
 		try {
 			getChannel().truncate(CHUNK_SIZE);
@@ -252,16 +254,20 @@ public class Database {
 	}
 	
 	private int createNewChunk() throws CoreException {
-		Chunk[] oldtoc = chunks;
-		int n = oldtoc.length;
-		int offset = n * CHUNK_SIZE;
-		chunks = new Chunk[n + 1];
-		System.arraycopy(oldtoc, 0, chunks, 0, n);
-		final Chunk chunk= new Chunk(this, n);
+		// prepare new chunk array
+		final int oldLen= chunks.length;
+		final Chunk chunk= new Chunk(this, oldLen);
 		chunk.fDirty= true;
-		chunks[n]= chunk;
-		fCache.add(chunk, true);
-		return offset;
+
+		Chunk[] newchunks = new Chunk[oldLen+1];
+		// the content of the chunk array may be modified by the cache, so sync it.
+		synchronized (fCache) {
+			System.arraycopy(chunks, 0, newchunks, 0, oldLen);
+			newchunks[oldLen]= chunk;
+			chunks= newchunks;
+			fCache.add(chunk, true);
+		}
+		return oldLen * CHUNK_SIZE;
 	}
 	
 	private int getFirstBlock(int blocksize) throws CoreException {
@@ -408,6 +414,8 @@ public class Database {
 	public void close() throws CoreException {
 		setReadOnly(true);
 		removeChunksFromCache();
+		
+		// chunks have been removed from the cache, so we are fine
 		chunks= new Chunk[0];
 		try {
 			file.close();

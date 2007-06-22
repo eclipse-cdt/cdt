@@ -121,7 +121,8 @@ table.MsoTableGrid
 	<a href="#_TocSectionUIModel_7">2.7 Customized Configuration Builds</a><p style="margin-top: 0; margin-bottom: 0">
 	<a href="#_TocSectionUIModel_8">2.8 Make target build for Managed Build projects</a><p style="margin-top: 0; margin-bottom: 0">
 	<a href="#_TocSectionUIModel_9">2.9 Tool-chain modification</a><p style="margin-top: 0; margin-bottom: 0">
-	<a href="#_TocSectionUIModel_10">2.10 Build Properties</a></div>
+	<a href="#_TocSectionUIModel_10">2.10 Build Properties</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_11">2.11 Model schema changes</a></div>
 </div>
 <p>&nbsp;</p>
 <p class="section"><a name="_TocSectionIntro">1 Scope of the document</a></p>
@@ -180,6 +181,9 @@ Build System functionality updates. The list of the new features is given below:
 	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
 	<a href="#_TocSectionUIModel_10">Build 
 	Properties</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_11">Model schema changes</a></p></li>
 </ol>
 <p class="subsection"><a name="_TocSectionUIModel_1">2.1 Standard and Managed 
 Build System incorporation</a></p>
@@ -698,8 +702,7 @@ font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.cor
 font-family:&quot;Courier New&quot;;color:navy">name=</span><span style="font-size:10.0pt;
 font-family:&quot;Courier New&quot;;color:green">&quot;%BuildProperty.type.name.executable&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">/&gt;</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
-<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
 <span style="font-size:10.0pt;
 font-family:&quot;Courier New&quot;;color:navy">&lt;propertyValue</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
 </span></p>
@@ -1087,8 +1090,7 @@ assign the set of build properties and their values for project-types and
 configurations</p>
 <p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
-<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
 &lt;projectType</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></p>
@@ -1105,7 +1107,7 @@ the &quot;buildProperties&quot; attribute for the project type and define the se
 properties there in the same way as for configuration (see below)</span></font></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .....</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .......</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
@@ -1129,13 +1131,12 @@ cleanCommand=</span><span style="font-size:10.0pt;font-family:&quot;Courier New&
 -rf&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;
 color:navy">&gt;</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
-<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
 &lt;toolChain</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .....</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
 <font size="2" color="#000080"><span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
 ...</span></font></p>
@@ -1155,8 +1156,7 @@ configuration</span></p>
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
 id=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;cdt.managedbuild.tool.gnu.c.compiler.exe.debug&quot;</span></p>
 <p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
-<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
 <span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
 superClass=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;cdt.managedbuild.tool.gnu.c.compiler.base&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></p>
@@ -1167,8 +1167,8 @@ superClass=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Cour
 font-family:&quot;Courier New&quot;;color:navy">&nbsp;&lt;/toolChain&gt;</span></p>
 <p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
 <p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
-<p class="subsection"><a name="_TocSectionUIModel_11">2.11 Model changes</a></p>
-<p class="subsection"><a name="_TocSectionUIModel_11_4">2.11.1 folderInfo</a></p>
+<p class="subsection"><a name="_TocSectionUIModel_11">2.11 Model schema changes</a></p>
+<p class="subsection"><a name="_TocSectionUIModel_11_1">2.11.1 folderInfo</a></p>
 The folderInfo is a new element presented in 4.0. The element represents the 
 per-folder settings<table border="1" width="688" height="58" id="table21">
 	<tr>
@@ -1192,7 +1192,7 @@ per-folder settings<table border="1" width="688" height="58" id="table21">
 		<p align="center">false</td>
 	</tr>
 </table>
-<p class="subsection"><a name="_TocSectionUIModel_11_5">2.11.2 fileInfo</a></p>
+<p class="subsection"><a name="_TocSectionUIModel_11_2">2.11.2 fileInfo</a></p>
 The fildeInfo is a new element presented in 4.0. The element represents the 
 per-file settings.<p class="ConfigMarkup" id="elementDesc">This element has the 
 same meaning as the resourceConfiguration element. It is added for consistency 
@@ -1243,7 +1243,7 @@ way as the folderInfo does.</p>
 	</tr>
 </table>
 <p class="subsection">&nbsp;</p>
-<p class="subsection"><a name="_TocSectionUIModel_11_1">2.11.1 toolChain</a></p>
+<p class="subsection"><a name="_TocSectionUIModel_11_3">2.11.3 toolChain</a></p>
 	Note: 
 
 the default value is used ONLY in case the property is undefined for all 
@@ -1261,7 +1261,7 @@ tool-chain's super-classes<table border="1" width="688" height="58">
 		<p align="center">true</td>
 	</tr>
 </table>
-<p class="subsection"><a name="_TocSectionUIModel_11_2">2.11.2 tool</a></p>Note: 
+<p class="subsection"><a name="_TocSectionUIModel_11_4">2.11.4 tool</a></p>Note: 
 
 the default value is used ONLY in case the property is undefined for all tool's 
 super-classes<table border="1" width="688" height="58" id="table19">
@@ -1278,7 +1278,7 @@ super-classes<table border="1" width="688" height="58" id="table19">
 		<p align="center">true</td>
 	</tr>
 </table>
-<p class="subsection"><a name="_TocSectionUIModel_11_3">2.11.2 inputType</a></p>Note: 
+<p class="subsection"><a name="_TocSectionUIModel_11_5">2.11.5 inputType</a></p>Note: 
 
 the default value is used ONLY in case the property is undefined for all input 
 types's super-classes<table border="1" width="688" height="58" id="table20">
@@ -1315,6 +1315,61 @@ types's super-classes<table border="1" width="688" height="58" id="table20">
 		tool-chain</td>
 	</tr>
 </table>
+<p class="subsection"><a name="_TocSectionUIModel_11_6">2.11.6 builder</a></p>Note: 
+
+the default value is used ONLY in case the property is undefined for all input 
+types's super-classes<table border="1" width="688" height="58" id="table23">
+	<tr>
+		<td height="30" width="271" align="center"><b>Property</b></td>
+		<td height="30" width="235" align="center"><b>Description</b></td>
+		<td height="30" width="160" align="center"><b>Default Value</b></td>
+	</tr>
+	<tr>
+		<td height="20" width="271">parallelBuildCmd</td>
+		<td height="20" width="235">specifies the &quot;parallel build&quot; builder 
+		option. <br>
+		If the builder supports specifying custom number of parallel jobs, the 
+		option definition may contain &quot;*&quot; the Build System sill substitute the 
+		&quot;*&quot; with the number of parallel threads to be used.</td>
+		<td height="20" width="160">
+		<p align="center">none</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">ignoreErrCmd</td>
+		<td height="20" width="235">specifies the &quot;ignore error&quot; builder option.</td>
+		<td height="20" width="160" align="center">
+		none</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">cleanBuildTarget</td>
+		<td height="20" width="235">represents the build target to be used for 
+		clean build</td>
+		<td height="20" width="160" align="center">
+		clean</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">incrementalBuildTarget</td>
+		<td height="20" width="235">represents the build target to be used for 
+		incremental build</td>
+		<td height="20" width="160" align="center">
+		all</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">autoBuildTarget</td>
+		<td height="20" width="235">represents the build target to be used for 
+		auto build</td>
+		<td height="20" width="160" align="center">
+		all</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">supportsManagedBuild</td>
+		<td height="20" width="235">Specifies whether the duilder supports 
+		managed build. Default value is true.</td>
+		<td height="20" width="160" align="center">
+		true</td>
+	</tr>
+</table>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>

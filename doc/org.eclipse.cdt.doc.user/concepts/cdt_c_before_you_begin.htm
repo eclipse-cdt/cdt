@@ -10,39 +10,39 @@
 <h2>Before you begin</h2>
 
 <p>Depending on how you obtained the CDT, you might have also received
-a tool chain with a built-in CDT integration.
-However, if you downloaded the CDT from an update site, then you will require a tool chain before
+a toolchain with a built-in CDT integration.
+However, if you downloaded the CDT from an update site, then you will require a toolchain before
 you can build and debug any projects.</p>
 
-<p>The base CDT supports integration with the GNU tool chain.
+<p>The base CDT supports integration with the GNU toolchain.
 This includes GNU's make, gcc compiler, and gdb debugger utilities.
-If you require a tool chain to build software for your development host, this
+If you require a toolchain to build software for your development host, this
 is the best choice to get started.
 
-<p>Each platform that runs the CDT requires different steps to acquire this tool chain.</p>
+<p>Each platform that runs the CDT requires different steps to acquire this toolchain.</p>
 
 <h3>Linux</h3>
-<p>All Linux distributions include the GNU tool chain. They may not, however, be installed by default.
-For instructions about installing the GNU tool chain for Linux, see the instructions for your particular distribution.</p>
+<p>All Linux distributions include the GNU toolchain. They may not, however, be installed by default.
+For instructions about installing the GNU toolchain for Linux, see the instructions for your particular distribution.</p>
 
 <h3>Windows</h3>
-<p>For windows, MinGW, and Cygwin are the two main choices for acquiring the GNU tool chain:</p>
+<p>For windows, MinGW, and Cygwin are the two main choices for acquiring the GNU toolchain:</p>
 <ul>
 <li><a href="http://www.cygwin.com"><b>Cygwin</b></a> is a port of the Linux environment to Windows.
 It provides a compatibility layer in a set of DLLs. These DLLs are
 <a href="http://www.gnu.org/copyleft/gpl.html">GPL licensed</a>,
 making any code that links to them also subject to the GPL.
-Cygwin, however, does provide the fullest implementation of the GNU tool chain
-by supporting the GNU libc C library.
+Cygwin, however, does provide the fullest implementation of the GNU toolchain
+by supporting the GNU libc C runtime library.
 <p> <br></p>
 </li>
-<li><a href="http://www.mingw.org"><b>MinGW</b></a> is a port of the GNU tool chain to the Windows platform.
-The biggest difference over Cygwin is that MinGW uses the Windows C libraries (mscvrt) instead
+<li><p><a href="http://www.mingw.org"><b>MinGW</b></a> is a port of the GNU toolchain to the Windows platform.
+The biggest difference over Cygwin is that MinGW uses the Windows C runtime libraries (mscvrt) instead
 of GNU's libc. As a result, a compatibility layer is not required, thus avoiding the GPL issues
-with Cygwin. However, there are differences between the Windows and GNU C libraries that will make
-writing portable applications more difficult.
+with Cygwin. There are differences, though, between the Windows and GNU C runtime libraries that will make
+writing portable applications more difficult.</p>
 <br>
-<p>MinGW allows the best integration support with the CDT
+<p>However, MinGW provides the best integration support with the CDT
 due to it's direct support for the Windows environment.</p>
 <br>
 <p>The following are instructions and links on how to install the current version
@@ -64,15 +64,15 @@ MinGW File Release</a> section for the latest versions.</p>
   <a href="http://downloads.sourceforge.net/mingw/gdb-6.6.tar.bz2">gdb-6.6.tar.bz2</a>
   <li>Extract the contents of the file gdb-6.6.tar.bz2 to the same location where you installed MinGW.</li>
   <li>If you want to use Makefile projects, download and run the setup program from the following location: 
-  <a href="http://downloads.sourceforge.net/mingw/MSYS-1.0.10.exe">MSYS-1.0.10.exe</a>
-  <p>MSYS provides an implementation of make and related command line tools.
-  This is not required for other types of projects with the MinGW tool chain,
+  <a href="http://downloads.sourceforge.net/mingw/MSYS-1.0.10.exe">MSYS-1.0.10.exe</a>.
+  MSYS provides an implementation of make and related command line tools.
+  This is not required for other types of projects with the MinGW toolchain,
   which use CDT's internal build tools to perform the build.</li>
 </ol>
 </ul>
 <br>
 <h3>Other Platforms</h3>
-<p>The GNU tool chain is supported on all platforms that the CDT supports. For instructions about installing the GNU tool chain
+<p>The GNU toolchain is supported on all platforms that the CDT supports. For instructions about installing the GNU toolchain
 on your platform, see your platform vendor.</p>
 
 <p align="left"> <img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">  <br>

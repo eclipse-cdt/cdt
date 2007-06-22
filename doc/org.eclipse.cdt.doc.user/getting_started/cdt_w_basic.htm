@@ -6,7 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="../help.css">
 <script language="JavaScript">
 function newWin(url) {
-	window.open(url, 'install_cdt', 'width=750, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
+	window.open(url, 'install_cdt', 'width=900, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
 }
 </script>
 </head>
@@ -27,37 +27,48 @@ With CDT 4.0, you now select a project type, and that determines what build syst
 <h3> Step 1: Creating a project</h3>
 <ol>
 	<li>Select <b>File &gt; New &gt; Project</b>.</p>
-	<p><br><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic20.png')">Click here to see an illustration (displayed in a separate window)</a>.</p><br></li>
-	<li>Select the type of project to create. For this tutorial, expand the <b>C++</b> folder and select <b>C++ Project</b>.
-	<p><br>The <b>C++ Project</b> wizard opens. <a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic19.png')">Click here to see an illustration.</a><br></p>
-<p><br>By default, the CDT filters the <b>Toolchain</b> and <b>Project types</b> that currently display in those lists are based on the language support for the C++ Project wizard you selected for this tutorial.
-<li>In the <b>Project name</b> field, type a name for the project.  
-<li>From the <b>Project types</b> list, expand <b>Executable</b> and select <b>Hello World C++ Example</b>. This project type provides a simple Hello World application in C++, and the makefile is automatically created by the CDT.
+	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic02.png')">Click here to see an illustration (displayed in a separate window)</a>.</p><br></li>
 
-<li>Select a required toolchain from the <b>Toolchain</b> list. 
-<p>A toolchain is a set of tools (such as a compiler, linker, and assembler) intended to build your project.
-Additional tools, such as a debugger, can be associated with a toolchain.<br>
-There can be several toolchains available, depending on the compilers installed on your system.
-</p>
-<li>Optional: If you want to change these default settings, click <b>Advanced Settings</b> at Step 10instead of clicking <b>Finish</b>. 
-
-<p>If the <b>C++ perspective</b> is not currectly set as the default, you are prompted to determined if you would like to this project to be associated with the C/C++ perspective. Click <b>Yes</b>. <br><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_cpp_perspectx.png')">Click here to see an illustration.</a></p><br>
-
-<p>A project is created with the default settings and a full set of configurations based on the project type and toolchain you selected.</p>
-
-<li>If you clicked <b>Next</b> at Step 7, you can specify the basic properties for the new project, such as your name, copyright, and source information.</p><br>
-
-	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic15.png')">Click here to see an illustration.</a></p><br>
-
-<li>Click <b>Next</b>.
-
-<p>The Select Configurations window displays a list of configurations based on the project type and toolchain(s) you selected earlier. <br><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic14.png')">Click here to see an illustration.</a></p><br>
-
-<li>Click <b>Finish</b>.
-
-<p>You should now see the new project in C/C++ Projects view.</p>
-<p>If C/C++ perspective was not set as current before, it will be selected now.</p>
+	<li>Select the type of project to create. For this tutorial, expand the <b>C++</b> folder and select <b>C++ Project</b> and click <b>Next</b>.
+	<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic03a.png')">Click here to see an illustration.</a><br></p>
+	<p><br>The <b>C++ Project</b> wizard opens.</p>
+	<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic04.png')">Click here to see an illustration.</a><br></p>
+    <p><br>By default, the CDT filters the <b>Toolchain</b> and <b>Project types</b> that it displays in those lists based on the language support for the C++ Project wizard you selected for this tutorial.</p>
+    </li><br>
+    <li><p>In the <b>Project name</b> field, type a name for the project.</p>
+    <br>
+    <li><p>From the <b>Project types</b> list, expand <b>Executable</b> and select <b>Hello World C++ Project</b>. This project type provides a simple Hello World application in C++, and the makefile is automatically created by the CDT.</p>
+	<br>
+    <li><p>Select a required toolchain from the <b>Toolchain</b> list.</p>
+    <br>
+    <p>A toolchain is a set of tools (such as a compiler, linker, and assembler) intended to build your project.
+    Additional tools, such as a debugger, can be associated with a toolchain.
+    There can be several toolchains available, depending on the compilers installed on your system.</p>
+    <br>
+    <li><p>Click <b>Next</b>.</p>
+    <br>
+    <p>The Select Configurations window displays a list of configurations based on the project type and toolchain(s) you selected earlier.
+    <br>
+    <a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic07.png')">Click here to see an illustration.</a></p>
+    <br>
+    <li><p>Optional: If you want to change the default project settings, click <b>Advanced Settings</b>.</p>
+    <br>
+    <p>This opens the project properties dialog for your new project allowing you change any of the project specific settings,
+    such as includes paths, compiler options, and libraries.</p>
+    <p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic21.png')">Click here to see an illustration.</a></p>
+    <br>
+	<li>If you clicked <b>Next</b> at Step 6, you can specify the basic properties for the new project, such as your name, copyright, and source information.</p>
+	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_basic22.png')">Click here to see an illustration.</a></p>
+	<br>
+    <li><p>Click <b>Finish</b>.</p>
+    <br>
+	<li><p>If the <b>C++ perspective</b> is not currently set as the default, you are prompted to determined if you would like to this project to be associated with the C/C++ perspective. Click <b>Yes</b>.
+	<br><p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_cpp_perspectx.png')">Click here to see an illustration.</a></p>
+	<br>
+	<p>A project is created with the default settings and a full set of configurations based on the project type and toolchain you selected.
+	You should now see the new project in C/C++ Projects view.</p>
 </ol>
+
 <h3>Step 2: Creating a new file for the project</h3>
 <p>Now, you will create a new .cpp file (such as main.cpp) that will contain some code that you will copy from another file into an editor. </p>
 

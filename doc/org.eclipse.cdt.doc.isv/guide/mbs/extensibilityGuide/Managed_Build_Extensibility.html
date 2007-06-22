@@ -93,7 +93,7 @@ managed build system and how to extend it.</font></td>
   <td width="50%"><a href="mailto:recoskie@ca.ibm.com">Chris Recoskie</a></td>
   </tr>
   <tr>
-    <td width="50%" rowspan="6">Revision Date</td>
+    <td width="50%" rowspan="7">Revision Date</td>
     <td width="50%">10/21/2003 - Version: 0.1.0</td>
   </tr>
   <tr>
@@ -112,7 +112,10 @@ managed build system and how to extend it.</font></td>
     <td width="50%">05/09/06 - Version 3.1</td>
   </tr>
   <tr>
-    <td width="50%" rowspan="6">Change History</td>
+    <td width="50%">06/22/07 - Version 4.0</td>
+  </tr>
+  <tr>
+    <td width="50%" rowspan="7">Change History</td>
     <td width="50%" height="22">0.1.0 - Document Creation</td>
   </tr>
   <tr>
@@ -129,6 +132,11 @@ managed build system and how to extend it.</font></td>
   </tr>
   <tr>
     <td width="50%">3.1 - Updated for CDT 3.1</td>
+  </tr>
+	<tr>
+    <td width="50%">4.0 Added link to
+	<a href="../../cdt_build_system/whats_new/4.0/whats_new_CBS_40.html">&quot;what's 
+	new in 4.0&quot; document</a></td>
   </tr>
 </table>
 <br>
@@ -211,6 +219,15 @@ managed build system and how to extend it.</font></td>
 </div>
 <!-- End of Table of Contents --><br>
 <p class="section"><a name="_TocSectionIntro">1 Introduction</a></p>
+<p style="margin-top: 0; margin-bottom: 0"><b><font color="#FF0000">NOTE: </font>
+</b>the document describes the CDT Managed Build System (MBS) 3.x functionality. 
+Although there have been lots of significant changes made to the Build System in 
+the 4.0, the document still remains valid since all the 4.0 build system changes 
+were made by extending the MBS functionality described in this document.</p>
+<p style="margin-top: 0; margin-bottom: 0">Please refer to the
+<a href="../../cdt_build_system/whats_new/4.0/whats_new_CBS_40.html">&quot;What's new 
+in the CDT Build System 4.0&quot; document</a> for the list and description of 
+additional new functionality presented in CDT 4.0</p>
 <p>C and C++ developers are a diverse group. The tools they use, the
 processes they follow, and the level of support they expect from their
 development environments vary widely. The CDT provides a framework for
@@ -253,10 +270,11 @@ needs, then you do not need to modify anything. Please
 feel free to skip sections 3, 6, 7 and 8, as they are primarily concerned
 with adding new tool integrations to the build model.</p>
 <p>If you are working with tools other than GCC, or you wish to create 
-project-types that CDT does not support out of the box, then you have to
-decide whether you will provide your own makefile and use the standard builder, 
-or add a description of your project-type to the extension point and
-let the CDT generate the makefiles for your project.</p>
+project-types that CDT does not support out of the box, you can add a 
+description of your project-type/toolchain and make the CDT pick up the 
+information you provide with your definitions. With the CDT 4.0 you can do this 
+for both cases whether you are willing the CDT to automatically generate 
+makefiles for your project or not.</p>
 <p>If you choose to add your own tools to the managed build system, it
 is assumed that you are familiar with XML and the Eclipse extension
 point mechanism. Having made the standard disclaimer, it should be said

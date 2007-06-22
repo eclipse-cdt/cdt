@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
@@ -43,7 +44,7 @@ public class CMergeViewer extends TextMergeViewer {
 	private CSourceViewerConfiguration fSourceViewerConfiguration;
 		
 	public CMergeViewer(Composite parent, int styles, CompareConfiguration mp) {
-		super(parent, styles, mp);
+		super(parent, styles | SWT.LEFT_TO_RIGHT, mp);
 
 		IPreferenceStore store = getPreferenceStore();
 

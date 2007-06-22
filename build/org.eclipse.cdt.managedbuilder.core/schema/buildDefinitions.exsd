@@ -207,6 +207,8 @@ Specifying this attribute is fully equivalent to specifying the &quot;org.eclips
             <element ref="toolChain" minOccurs="0" maxOccurs="1"/>
             <element ref="resourceConfiguration" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="enablement" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="folderInfo" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="fileInfo" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -910,7 +912,21 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
             <annotation>
                <documentation>
                   Represents the language id, i.e. the id of language defined via the org.eclipse.cdt.core.language extension point
+
+The value of this attribute is used only in case languageInfoCalculator is not specified
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="languageInfoCalculator" type="string">
+            <annotation>
+               <documentation>
+                  Specifies the name of the class that implements org.eclipse.cdt.managedbuilder.core.ILanguageInfoCalculator for dinamic providing the language id info.
+Overrides language id specified with the languageId attribute.
+
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.ILanguageInfoCalculator"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -2216,6 +2232,93 @@ The way the value is specified and treated depends on the value of the isRegex a
             <annotation>
                <documentation>
                   represents the property value id
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="folderInfo">
+      <annotation>
+         <documentation>
+            Represents per-folder settings.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="toolChain"/>
+         </sequence>
+         <attribute name="resourcePath" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Project-relative resource path
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="exclude" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether the resource is excluded from building in the parent configuration.  The default is false.  The resourceConfiguration element retains its tool children, if any exist, even when excluded from the build.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="fileInfo">
+      <annotation>
+         <documentation>
+            Represents per-file settings.
+This element has the same meaning as resourceConfiguration.
+It is added for consistency with the folderInfo element.
+The only difference between this element and the resourceConfiguration is that resourceConfiguration specifies the resource full path, while the fileInfo specifies project-relative resource path in the same way as the folderInfo does.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="resourcePath" type="string">
+            <annotation>
+               <documentation>
+                  Project-relative resource path
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="exclude" type="boolean">
+            <annotation>
+               <documentation>
+                  Specifies whether the resource is excluded from building in the parent configuration.  The default is false.  The resourceConfiguration element retains its tool children, if any exist, even when excluded from the build.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="rcbsApplicability">
+            <annotation>
+               <documentation>
+                  Identifies how the user desires to apply a resource custom build step:
+     1.  Apply rcbs tool before any other tools defined for the resource.
+     2.  Apply rcbs tool after any other tools defined for the resource.
+     3.  Apply rcbs tool overriding any other tools defined for the resource.
+     4.  Disable (don&apos;t apply) the rcbs tool.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="before">
+                  </enumeration>
+                  <enumeration value="after">
+                  </enumeration>
+                  <enumeration value="override">
+                  </enumeration>
+                  <enumeration value="disable">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="toolsToInvoke" type="string">
+            <annotation>
+               <documentation>
+                  Identifies which tools to invoke by a semicolon separated list of child tool ids.  Applies as follows:
+     1.  Defaults to all tools in the order found
+     2.  Use specified ordered list of children to invoke
+     3.  If empty string, treat as if no resource configuration existed, i.e., use project level tool.
                </documentation>
             </annotation>
          </attribute>

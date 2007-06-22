@@ -91,7 +91,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);//$NON-NLS-1$        
+                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);//$NON-NLS-1$               
             }
             System.out.println();                        
         }
@@ -172,8 +172,8 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
     }
 
 
-private  UPCParserAction  action = null;
-private List commentTokens = null;
+private  UPCParserAction  action = new  UPCParserAction (this, UPCParserprs.orderedTerminalSymbols);
+private List commentTokens = new ArrayList();
 private IKeywordMap keywordMap = new  UPCKeywordMap ();
 
 public UPCParser() {  // constructor
@@ -240,6 +240,7 @@ public IParseResult parse() {
 	boolean encounteredError    = action.encounteredError();
 	IASTCompletionNode compNode = action.getASTCompletionNode();
 
+	resetTokenStream(); // important, allows memory to be reclaimed
 	return new C99ParseResult(tu, compNode, encounteredError);
 }
 

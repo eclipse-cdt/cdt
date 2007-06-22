@@ -59,6 +59,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCalculator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
@@ -74,10 +75,12 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 
@@ -979,7 +982,10 @@ public class BuildDescription implements IBuildDescription {
 	private IManagedBuilderMakefileGenerator getMakeGenInitialized(){
 		if(fMakeGen == null){
 			fMakeGen = ManagedBuildManager.getBuildfileGenerator(fCfg);
-			fMakeGen.initialize(fProject, fInfo, null);
+			if(fMakeGen instanceof IManagedBuilderMakefileGenerator2)
+				((IManagedBuilderMakefileGenerator2)fMakeGen).initialize(IncrementalProjectBuilder.FULL_BUILD, fCfg, fCfg.getEditableBuilder(), new NullProgressMonitor());
+			else
+				fMakeGen.initialize(fProject, fInfo, null);
 		}
 		return fMakeGen;
 	}

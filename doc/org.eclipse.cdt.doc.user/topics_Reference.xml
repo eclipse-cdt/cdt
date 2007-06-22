@@ -77,7 +77,7 @@
 		
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
 
-		<topic label="Language Mappings preferences" href="reference/cdt_u_appearance_pref.htm"/>
+		<topic label="Language Mappings preferences" href="reference/cdt_u_language_mapping_pref.htm"/>
 
 		<topic label="Make" href="reference/cdt_u_make_pref.htm" >
 			<topic label="Makefile Editor" href="reference/cdt_u_makefile_settings_pref.htm"/>

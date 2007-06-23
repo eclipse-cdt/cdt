@@ -620,39 +620,36 @@ public class CProject extends Openable implements ICProject {
 		return new ArrayList(0);
 	}
 
-	/**
-	 * Add any output paths which don't overlay paths already in the list.
-	 */
-	private List addOutputOnlyRoots(List sourceRoots) {
-		IResource[] resources;
-		ArrayList result = new ArrayList(sourceRoots.size());
+	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
+		List sourceRoots = computeSourceRoots();
+		List children = new ArrayList(sourceRoots.size());
+		children.addAll(sourceRoots);
+		
+		// Now look for output folders
 		try {
-			resources = getProject().members();
+			IResource[] resources = getProject().members();
 			for (int i = 0; i < resources.length; i++) {
-				if (resources[i].getType() == IResource.FOLDER) {
+				IResource child = resources[i];
+				if (child.getType() == IResource.FOLDER) {
 					boolean found = false;
-					for (int j = 0; j < sourceRoots.size(); j++) {
-						if (((ICElement) sourceRoots.get(j)).getResource().getProjectRelativePath().isPrefixOf(resources[i].getProjectRelativePath())) {
+					for (Iterator iter = sourceRoots.iterator(); iter.hasNext();) {
+						ISourceRoot sourceRoot = (ISourceRoot)iter.next();
+						if (sourceRoot.isOnSourceEntry(child)) {
 							found = true;
 							break;
 						}
 					}
-					if (!found) {
-						result.add(new CContainer(this, resources[i]));
-					}
+					
+					// Not in source folder, check if it's a container on output entry
+					if (!found && isOnOutputEntry(child))
+						children.add(new CContainer(this, child));
 				}
 			}
 		} catch (CoreException e) {
 			// ignore
 		}
-		result.addAll(sourceRoots);
-		return result;
-    }
-
-	protected boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
-		List list = computeSourceRoots();
-		list = addOutputOnlyRoots(list);
-		info.setChildren(list);
+		
+		info.setChildren(children);
 		if (info instanceof CProjectInfo) {
 			CProjectInfo pinfo = (CProjectInfo)info;
 			pinfo.setNonCResources(null);

@@ -249,10 +249,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		return cModel.getCProject(project);
 	}
 
-	private boolean isInContainerOnOutputPath(ICContainer root, IResource resource) {
-		return (root.getPath().isPrefixOf(resource.getFullPath()));
-    }
-
 	public ICContainer create(IFolder folder, ICProject cproject) {
 		if (folder == null) {
 			return null;
@@ -260,33 +256,41 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (cproject == null) {
 			cproject = create(folder.getProject());
 		}
-		ICContainer celement = null;
-		IPath resourcePath = folder.getFullPath();
 		try {
 			ICElement[] children = cproject.getChildren();
 			for (int i = 0; i < children.length; ++i) {
-				if (children[i] instanceof ICContainer) {
-					ICContainer root = (ICContainer) children[i];
-					IPath rootPath = root.getPath();
-					if (rootPath.equals(resourcePath)) {
-						celement = root;
-						break; // We are done.
-					} else if (root instanceof ISourceRoot && ((ISourceRoot)root).isOnSourceEntry(folder) || isInContainerOnOutputPath(root, folder)) {
-						IPath path = resourcePath.removeFirstSegments(rootPath.segmentCount());
+				if (children[i] instanceof ISourceRoot) {
+					ISourceRoot root = (ISourceRoot)children[i];
+					if (root.isOnSourceEntry(folder)) {
+						// Get the container
+						IPath path = folder.getFullPath();
+						path = path.removeFirstSegments(root.getPath().segmentCount());
 						String[] segments = path.segments();
 						ICContainer cfolder = root;
-						for (int j = 0; j < segments.length; j++) {
+						for (int j = 0; j < segments.length; ++j) {
 							cfolder = cfolder.getCContainer(segments[j]);
 						}
-						celement = cfolder;
-						break;
+						return cfolder;
+					}
+				} else if (children[i] instanceof ICContainer) {
+					ICContainer root = (ICContainer)children[i];
+					IPath rootPath = root.getPath();
+					IPath path = folder.getFullPath();
+					if (rootPath.isPrefixOf(path) && cproject.isOnOutputEntry(folder)) {
+						path = path.removeFirstSegments(root.getPath().segmentCount());
+						String[] segments = path.segments();
+						ICContainer cfolder = root;
+						for (int j = 0; j < segments.length; ++j) {
+							cfolder = cfolder.getCContainer(segments[j]);
+						}
+						return cfolder;
 					}
 				}
 			}
 		} catch (CModelException e) {
 			//
 		}
-		return celement;
+		return null;
 	}
 
 	public ICElement create(IFile file, ICProject cproject) {
@@ -298,40 +302,36 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 		ICElement celement = null;
 		try {
-			ICElement[] children = cproject.getChildren();
-			for (int i = 0; i < children.length; ++i) {
-				if (children[i] instanceof ICContainer) {
-					ICContainer root = (ICContainer) children[i];
-					if (root instanceof ISourceRoot && ((ISourceRoot)root).isOnSourceEntry(file) || isInContainerOnOutputPath(root, file)) {						
-						IPath rootPath = root.getPath();
-						IPath resourcePath = file.getFullPath();
-						IPath path = resourcePath.removeFirstSegments(rootPath.segmentCount());
-						String fileName = path.lastSegment();
-						path = path.removeLastSegments(1);
-						String[] segments = path.segments();
-						ICContainer cfolder = root;
-						for (int j = 0; j < segments.length; j++) {
-							cfolder = cfolder.getCContainer(segments[j]);
-						}
-						if (CoreModel.isValidTranslationUnitName(cproject.getProject(), fileName)) {
-							celement = cfolder.getTranslationUnit(fileName);
-						} else if (cproject.isOnOutputEntry(file)) {
-							IBinaryFile bin = createBinaryFile(file);
-							if (bin != null) {
-								if (bin.getType() == IBinaryFile.ARCHIVE) {
-									celement = new Archive(cfolder, file, (IBinaryArchive) bin);
-									ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
-									vlib.addChild(celement);
-								} else {
-									celement = new Binary(cfolder, file, (IBinaryObject) bin);
-									BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
-									vbin.addChild(celement);
-								}
-							}
-						}
-						break;
+			// First look for TU's
+			IPath resourcePath = file.getFullPath();
+			ISourceRoot[] roots = cproject.getSourceRoots();
+			for (int i = 0; i < roots.length; ++i) {
+				ISourceRoot root = roots[i];
+				if (root.isOnSourceEntry(file)) {
+					IPath rootPath = root.getPath();
+					IPath path = resourcePath.removeFirstSegments(rootPath.segmentCount());
+					String fileName = path.lastSegment();
+					path = path.removeLastSegments(1);
+					String[] segments = path.segments();
+					ICContainer cfolder = root;
+					for (int j = 0; j < segments.length; j++) {
+						cfolder = cfolder.getCContainer(segments[j]);
 					}
+					if (CoreModel.isValidTranslationUnitName(cproject.getProject(), fileName)) {
+						celement = cfolder.getTranslationUnit(fileName);
+					} else {
+						IBinaryFile bin = createBinaryFile(file);
+						if (bin != null)
+							celement = create(file, bin, cproject);
+					}
+					break;
 				}
+			}
+			
+			if (celement == null && cproject.isOnOutputEntry(file)) {
+				IBinaryFile bin = createBinaryFile(file);
+				if (bin != null)
+					celement = create(file, bin, cproject);
 			}
 		} catch (CModelException e) {
 			//
@@ -354,6 +354,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			if (cproject.isOnOutputEntry(file)) {
 				IPath resourcePath = file.getParent().getFullPath();
 				ICElement cfolder = cproject.findElement(resourcePath);
+				
+				// Check if folder is a source root and use that instead
+				ISourceRoot sourceRoot = cproject.findSourceRoot(resourcePath);
+				if (sourceRoot != null)
+					cfolder = sourceRoot;
+				
 				if (bin.getType() == IBinaryFile.ARCHIVE) {
 					ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
 					celement = new Archive(cfolder, file, (IBinaryArchive)bin);

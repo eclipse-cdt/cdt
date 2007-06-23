@@ -12,10 +12,10 @@
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICProject;
@@ -23,16 +23,10 @@ import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 /** 
  * Info for ICProject.
@@ -78,72 +72,58 @@ class CProjectInfo extends OpenableInfo {
 		if (nonCResources != null)
 			return nonCResources;
 
-		// determine if src == project
-		boolean srcIsProject = false;
-		ICSourceEntry[] entries = null;
-		ICProject cproject = getElement().getCProject();
-		IProject project = cproject.getProject();
-		IPath projectPath = project.getFullPath();
-		char[][] exclusionPatterns = null;
-		ICProjectDescription des = CProjectDescriptionManager.getInstance().getProjectDescription(project, false);
-		if (des != null) {
-			ICConfigurationDescription cfg = des.getDefaultSettingConfiguration();
-			if (cfg != null) {
-				entries = cfg.getResolvedSourceEntries();
-			}
-		}
-
-		if (entries != null) {
-			for (int i = 0; i < entries.length; i++) {
-				ICSourceEntry entry = entries[i];
-				if (projectPath.equals(entry.getFullPath())) {
-					srcIsProject = true;
-					exclusionPatterns = entry.fullExclusionPatternChars();
-					break;
-				}
-			}
-		}
-
-		ArrayList notChildren = new ArrayList();
+		List notChildren = new ArrayList();
 		try {
-			IResource[] resources = null;
 			if (res instanceof IContainer) {
-				IContainer container = (IContainer)res;
-				resources = container.members(false);
-			}
-
-			if (resources != null) {
-				for (int i = 0; i < resources.length; i++) {
-					IResource member = resources[i];
-					switch(member.getType()) {
-						case IResource.FILE: {
-							String filename = member.getName();
-							if (srcIsProject) {
-								if (CoreModel.isValidTranslationUnitName(cproject.getProject(), filename) 
-									&& !CoreModelUtil.isExcluded(member, exclusionPatterns)) {
-									continue;
-								} else if (!CoreModelUtil.isExcluded(member, exclusionPatterns)) {
-									if (cproject.isOnOutputEntry(member) && CModelManager.getDefault().createBinaryFile((IFile)member) != null) {
-										continue;
-									}
-								}
-							}
+				ICProject cproject = getElement().getCProject();
+				ISourceRoot[] sourceRoots = cproject.getSourceRoots();
+				IResource[] resources = ((IContainer)res).members();
+				
+				for (int i = 0; i < resources.length; ++i) {
+					IResource child = resources[i];
+					
+					// Check if under source root
+					boolean found = false;
+					for (int j = 0; j < sourceRoots.length; ++j)
+						if (sourceRoots[j].isOnSourceEntry(child)) {
+							found = true; 
 							break;
 						}
-						case IResource.FOLDER: {
-							if (srcIsProject && !CoreModelUtil.isExcluded(member, exclusionPatterns)) {
+					
+					if (found) {
+						switch (child.getType()) {
+						case IResource.FILE:
+							// Must be a translation unit or binary
+							if (CoreModel.isValidTranslationUnitName(cproject.getProject(), child.getName())
+									|| CModelManager.getDefault().createBinaryFile((IFile)child) != null)
 								continue;
-							}
+							break;
+						case IResource.FOLDER:
+							// All folders are good
+							continue;
+						}
+					} else if (cproject.isOnOutputEntry(child)) {
+						switch (child.getType()) {
+						case IResource.FILE:
+							if (CModelManager.getDefault().createBinaryFile((IFile)child) != null)
+								continue;
+							break;
+						case IResource.FOLDER:
+							// All folders are good here too
+							continue;
 						}
 					}
-					notChildren.add(member);
+
+					// It's a non C resource
+					notChildren.add(child);
 				}
-			}
+			}			
+		} catch (CModelException e) {
+			// this can't be good.
 		} catch (CoreException e) {
-			//System.out.println (e);
-			//CPlugin.log (e);
-			//e.printStackTrace();
+			// this neither
 		}
+	
 		setNonCResources(notChildren.toArray());	
 		return nonCResources;
 	}

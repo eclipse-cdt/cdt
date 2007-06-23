@@ -329,19 +329,16 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return NO_CHILDREN;
 			
 		List list= new ArrayList();
-		ISourceRoot[] roots = cproject.getSourceRoots();
-		// filter out source roots that correspond to projects and
-		// replace them with the package fragments directly
-		for (int i= 0; i < roots.length; i++) {
-			ISourceRoot root= roots[i];
-			if (isProjectSourceRoot(root)) {
-				Object[] children= root.getChildren();
-				for (int k= 0; k < children.length; k++) { 
-					list.add(children[k]);
-				}
-			} else {
-				list.add(root);
-			}
+		ICElement[] children = cproject.getChildren();
+		for (int i= 0; i < children.length; i++) {
+			ICElement child = children[i];
+			if (child instanceof ISourceRoot && child.getResource().getType() == IResource.PROJECT) {
+				// Was a source root at the project, get the children of this element
+				ICElement[] c2 = ((ISourceRoot)child).getChildren();
+				for (int k = 0; k < c2.length; ++k)
+					list.add(c2[k]);
+			} else
+				list.add(child);
 		}
 
 		Object[] objects = list.toArray();

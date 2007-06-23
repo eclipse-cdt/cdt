@@ -227,14 +227,11 @@ public class CContainer extends Openable implements ICContainer {
 	protected ICElement computeChild(IResource res, ICProject cproject) throws CModelException {
 		ICElement celement = null;
 		ISourceRoot sroot = getSourceRoot();
-		if (sroot == null) {
-			return null;
-		}
 		switch (res.getType()) {
 			case IResource.FILE: {
 				IFile file = (IFile) res;
 				boolean checkBinary = true;
-				if (sroot.isOnSourceEntry(res)) {
+				if (sroot != null && sroot.isOnSourceEntry(res)) {
 					// Check for Valid C Element only.
 					String id = CoreModel.getRegistedContentTypeId(file.getProject(), file.getName());
 					if (id != null) {
@@ -263,7 +260,7 @@ public class CContainer extends Openable implements ICContainer {
 				break;
 			}
 			case IResource.FOLDER:
-				if (sroot.isOnSourceEntry(res) || cproject.isOnOutputEntry(res)) {
+				if (sroot != null && sroot.isOnSourceEntry(res) || cproject.isOnOutputEntry(res)) {
 					celement = new CContainer(this, res);
 				}
 				break;

@@ -8,26 +8,26 @@
 
 <script language="JavaScript">
 function newWin(url) {
-	window.open(url, 'install_cdt', 'width=750, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
+	window.open(url, 'install_cdt', 'width=950, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
 }
 </script>
 </head>
 <body>
-<h2>Turorial: Importing an existing project</h2>
+<h2>Tutorial: Importing an existing project</h2>
 
-<p>The following tutorial will walk you though the process of importing a simple application using the CDT.</p>
+<p>The following tutorial takes you though the process of importing a simple application using the CDT.</p>
 
 
 <p>Step 1: You want to create a single project that will reflect all of the components for the existing source tree.<br></p> 
 <ol>
 	<li>Select <b>File &gt; New &gt; Project</b>.
 	<li>For this tutorial, expand <b>C++</b> and select <b>C++ project</b>.
-	<p><br>The <b>New Project</b> wizard dispalys. <a href="javascript:void(0)" onClick="newWin('../images/cdt_w_import02.png')">Click here to see an illustration (displayed in a separate window)</a>.</p> <br>
+	<p><br>The <b>New Project</b> wizard displays. <a href="javascript:void(0)" onClick="newWin('../images/cdt_w_import02.png')">Click here to see an illustration (displayed in a separate window)</a>.</p> <br>
 
 
 	<li>In the <b>Project name</b> field, type a name for the project.
 	<li>Ensure that the <b>Use default location</b> option is not selected because you will need to specify where the resources reside in the file system since they do not reside in your workspace.
-	<li>In the <b>Location</b> field, specify the path for your project. For this tutorial, the project to import is assumed to reside in the directory C:\MySrcDirectory.
+	<li>In the <b>Location</b> field, specify a path for your project.
 	<li>From the <b>Project types</b> list, expand <b>Makefile Project</b> and select <b>Hello World C++ Project</b>.
 	<li>Click <b>Next</b>.
 	<li>Select only the configurations you want created. Configurations display for each toolchain selected on the previous page of the wizard.

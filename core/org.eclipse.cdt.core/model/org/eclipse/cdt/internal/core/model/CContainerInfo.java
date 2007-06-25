@@ -57,8 +57,6 @@ public class CContainerInfo extends OpenableInfo {
 		ISourceRoot root = null;
 		if (celement instanceof ISourceRoot) {
 			root = (ISourceRoot)celement;
-		} else {
-			return new Object[0]; // should not be. assert
 		}
 
 		try {
@@ -92,7 +90,7 @@ public class CContainerInfo extends OpenableInfo {
 						}
 						case IResource.FILE: {
 							String filename = member.getName();
-							if (CoreModel.isValidTranslationUnitName(cproject.getProject(), filename)
+							if (root != null && CoreModel.isValidTranslationUnitName(cproject.getProject(), filename)
 							        && root.isOnSourceEntry(member)) {
 								continue;
 							}

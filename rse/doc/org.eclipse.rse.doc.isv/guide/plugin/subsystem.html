@@ -19,7 +19,7 @@ a connection when a connection is expanded in the Remote Systems view.
 For example, <A href="RSView_iSeries.gif">here is an iSeries connection</A> with four subsystems,
 each created by a subsystem configuration registered with this extension point.
 </p>
-<p>The <A href="../../reference/extension-points/org_eclipse_rse_ui_subsystemConfiguration.html">extension markup</A> is quite simple for this extension point,
+<p>The <A href="../../reference/extension-points/org_eclipse_rse_core_subsystemConfiguration.html">extension markup</A> is quite simple for this extension point,
 as it has only one element, <b><samp>&lt;configuration&gt;</samp></b>, with only a few simple attributes to supply:
 </p>
 <ul>
@@ -54,7 +54,7 @@ interface, as described in the following programming details section.
 <p>It is important to remember what the purpose of a subsystem is, and how it fits in the overall RSE <A
 	href="../Model.html">model</A>, so as to understand the programming details for supporting
 subsystems via this subsystem configuration extension point. Minimally speaking, this extension point requires a class that implements the interface
-<samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html"><B>ISubSystemFactory</B></A></samp>.
+<samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystemConfiguration.html"><B>ISubSystemConfiguration</B></A></samp>.
 Ultimately, the intent of a subsystem <I>configuration</I> is to provide individual
 subsystem <I>instances</I> to each connection, and the intent of a subsystem instance is to present remote resources for display or manipulation purposes. Thus, you must also create a class implementing the interface <samp><A href="../../reference/api/org/eclipse/rse/core/subsystems/ISubSystem.html"><B>ISubSystem</B></A></samp>.
 <BR>
@@ -194,7 +194,7 @@ following summarizes the minimum set of classes you will be creating in order to
        and has no eclipse-dependencies, so it can be used in your client subsystem code, or your server-side code.
       </ul>
    </li>
-  <li>Creating a subclass of <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">DefaultSubSystemFactoryImpl.</A></li>
+  <li>Creating a subclass of <A href="../../reference/api/org/eclipse/rse/core/subsystems/SubSystemConfiguration.html">SubSystemConfiguration.</A></li>
   <li>Defining your <A href="../../reference/extension-points/org_eclipse_rse_core_subsystemConfigurations.html">subsystemConfigurations extension</a> in your <samp>plugin.xml</samp> file.</li>
   <li>For each remote resource class you created in step 4, you need to create an adapter class, which extends
       <A href="../../reference/api/org/eclipse/rse/ui/view/AbstractSystemViewAdapter.html">AbstractSystemViewAdapter</A> and which
@@ -235,11 +235,11 @@ following summarizes the minimum set of classes you will be creating in order to
             and in it calling <samp><a href="../../reference/api/org/eclipse/rse/ui/filters/dialogs/SystemChangeFilterDialog.html#setFilterStringEditPane(org.eclipse.rse.ui.filters.SystemFilterStringEditPane)">setFilterStringEditPane</a></samp>
             on the given dialog.
       <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/ui/subsystems/ISubSystemConfigurationAdapter.html#getNewFilterPoolFilterAction(org.eclipse.rse.core.filters.ISystemFilterPool, org.eclipse.swt.widgets.Shell)">getNewFilterPoolFilterAction(SystemFilterPool, Shell)</a></samp>
-            method in your subsystem factory, to return an instance of your new-filter action.
+            method in your subsystem configuration, to return an instance of your new-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
             in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemNewFilterAction.html">new-filter action class</a>.
       <li type="i">Override the <samp><a href="../../reference/api/org/eclipse/rse/ui/subsystems/ISubSystemConfigurationAdapter.html#getChangeFilterAction(org.eclipse.rse.core.filters.ISystemFilter, org.eclipse.swt.widgets.Shell)">getChangeFilterAction(SystemFilter, Shell)</a></samp>
-            method in your subsystem factory, to return an instance of your change-filter action.
+            method in your subsystem configuration, to return an instance of your change-filter action.
             You can actually avoid creating an action subclass if you choose, by calling the configuration methods
             in the RSE-supplied <a href="../../reference/api/org/eclipse/rse/ui/filters/actions/SystemChangeFilterAction.html">change-filter action class</a>.
     </ol>

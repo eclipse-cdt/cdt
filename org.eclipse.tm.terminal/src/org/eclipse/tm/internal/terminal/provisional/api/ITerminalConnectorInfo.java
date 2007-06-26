@@ -15,6 +15,12 @@ package org.eclipse.tm.internal.terminal.provisional.api;
  * extension. It maintains a proxy to the connector to allow lazy initialization of the
  * real {@link ITerminalConnector connector} that comes from an extension.
  *
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * work or that it will remain the same. Please do not use this API without
+ * consulting with the <a href="http://www.eclipse.org/dsdp/tm/">Target Management</a> team.
+ * </p>
  */
 public interface ITerminalConnectorInfo {
 	/**

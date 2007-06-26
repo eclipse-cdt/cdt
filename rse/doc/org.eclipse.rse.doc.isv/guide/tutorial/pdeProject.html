@@ -30,7 +30,7 @@
 <li>In the third page of the wizard uncheck the "Create a plug-in using one of the templates" checkbox and click <b>Finish</b>.
 <br /><img src="pdeProj_wiz_page3.png">
 </li>
-<li>Your new plugin project is created and visible in the Package Explorer of the Plug-in Development perspective. Your new <samp>plugin.xml</samp> file is also open in the plug-in editor.</li>
+<li>Your new plugin project is created and visible in the Package Explorer of the Plug-in Development perspective. Your new plugin properties are also open in the plug-in editor.</li>
 <li>Go to the dependencies tab of the plug-in editor and add the following plugins to the list:
 <ul>
 <li>org.eclipse.core.resources</li>
@@ -41,7 +41,26 @@
 <li>org.eclipse.rse.subsystems.files.core</li>
 <li>org.eclipse.rse.subsystems.shells.core</li>
 </ul>
-Save the plugin.xml file.</li>
+</li>
+<li>Now go to the MANIFEST.MF tab of the plugin properties.
+This shows the source for the MANIFEST.MF file associated with this plugin.
+Change the Bundle-SymbolicName line adding a singleton:=true directive.
+<pre><code>
+Bundle-SymbolicName:RSESamples;singleton:=true
+</code></pre>
+This allows us to add extensions to the plugin at a later point.
+Save the plugin properties and close the editor.
+</li>
+<li>
+Right-click on the RSESamples project and create a plugin.xml file.
+Normally this would be created if you used a template to create your plugin.
+We will use this file to add extensions to RSE but for now it will just be a skeleton with the following contents:
+<pre><code>
+&lt;plugin&gt;
+&lt;/plugin&gt;
+</code></pre>
+Add the lines above to the empty plugin.xml file and save it.
+</li>
 <li>Expand the <b>src</b> folder, then the <b>rsesamples</b> package folder, and double-click on <samp><b>RSESamplesPlugin.java</b></samp> to edit this class.
 Change it as described below. Reference the source <a href="RSESamplesPlugin.html">here</a> for the details.
 <ul>

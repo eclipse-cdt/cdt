@@ -83,9 +83,9 @@ if [ -d /home/data/httpd/archive.eclipse.org/dsdp/tm/downloads ]; then
   chgrp dsdp-tmadmin * CVS/*
 
   #Fixup permissions and group id on download.eclpse.org (just to be safe)
-  echo "Fixup: chgrp -R dsdp-tmadmin drops/${buildType}*-${daystamp}*"
-  chgrp -R dsdp-tmadmin drops/${buildType}*-${daystamp}*
-  chmod -R g+w drops/${buildType}*-${daystamp}*
+  echo "Fixup: chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*"
+  chgrp -R dsdp-tmadmin drops/${buildType}*${daystamp}*
+  chmod -R g+w drops/${buildType}*${daystamp}*
 fi
 
 #Check the publishing

@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalHostShell.
  * Sheldon D'souza (Celunite) - Adapted from SshHostShell
+ * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet.shell;
 
@@ -25,6 +26,7 @@ import java.io.PrintWriter;
 import java.util.regex.Pattern;
 
 import org.apache.commons.net.telnet.TelnetClient;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.internal.services.telnet.ITelnetSessionProvider;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.shells.AbstractHostShell;
@@ -39,15 +41,17 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 	private TelnetShellOutputReader fStdoutHandler;
 	private TelnetShellOutputReader fStderrHandler;
 	private TelnetShellWriterThread fShellWriter;
+	private TelnetClient fTelnetClient;
 	
 	public TelnetHostShell(ITelnetSessionProvider sessionProvider, String initialWorkingDirectory, String commandToRun, String encoding, String[] environment) {
 		try {
 			fSessionProvider = sessionProvider;
 			
+			fTelnetClient = fSessionProvider.makeNewTelnetClient(new NullProgressMonitor());
 
-			fStdoutHandler = new TelnetShellOutputReader(this, new BufferedReader(new InputStreamReader(sessionProvider.getTelnetClient().getInputStream())), false);
+			fStdoutHandler = new TelnetShellOutputReader(this, new BufferedReader(new InputStreamReader(fTelnetClient.getInputStream())), false);
 			fStderrHandler = new TelnetShellOutputReader(this, null,true);
-			OutputStream outputStream = sessionProvider.getTelnetClient().getOutputStream();
+			OutputStream outputStream = fTelnetClient.getOutputStream();
 			//TODO check if encoding or command to execute needs to be considered
 			//If a command is given, it might be possible to do without a Thread
 			//Charset cs = Charset.forName(encoding);
@@ -85,11 +89,10 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 		try {
 			//TODO disconnect should better be done via the ConnectorService!!
 			//Because like we do it here, the connector service is not notified!
-			TelnetClient client = fSessionProvider.getTelnetClient();
-			if (client!=null) {
-				synchronized(client) {
-					if (client.isConnected())
-						client.disconnect();
+			if (fTelnetClient!=null) {
+				synchronized(fTelnetClient) {
+					if (fTelnetClient.isConnected())
+						fTelnetClient.disconnect();
 				}
 			}
 		} catch (IOException e) {
@@ -106,16 +109,18 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 	}
 
 	public boolean isActive() {
-		TelnetClient client = fSessionProvider.getTelnetClient();
-		if (client!=null ) {
+		if (fTelnetClient!=null && fTelnetClient.isConnected()) {
 			return true;
 		}
 		// shell is not active: check for session lost
 		exit();
 		
-		if (client!=null && !client.isConnected()) {
-			fSessionProvider.handleSessionLost();
-		}
+		////MOB: Telnet sessions are really independent of each other.
+		////So if one telnet session disconnects, it must not disconnect
+		////the other sessions.
+		//if (fTelnetClient!=null && !fTelnetClient.isConnected()) {
+		//	fSessionProvider.handleSessionLost();
+		//}
 		return false;
 	}
 

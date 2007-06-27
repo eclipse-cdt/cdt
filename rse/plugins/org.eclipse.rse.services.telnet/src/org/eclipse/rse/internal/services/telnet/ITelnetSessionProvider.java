@@ -13,15 +13,21 @@
  * 
  * Contributors:
  * Sheldon D'souza (Celunite) - adapted from ISshSessionProvider
+ * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet;
 
 import org.apache.commons.net.telnet.TelnetClient;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface ITelnetSessionProvider {
 	
-	public TelnetClient getTelnetClient();
+	/**
+	 * Create a new Commons.Net TelnetClient.
+	 * @param monitor progress monitor
+	 * @return a new Commons.Net TelnetClient for the given connection, already authenticated
+	 * @throws Exception in case of any error
+	 */
+	public TelnetClient makeNewTelnetClient(IProgressMonitor monitor) throws Exception ;
 	
-	/* Inform the connectorService that a session has been lost. */
-	public void handleSessionLost();
 }

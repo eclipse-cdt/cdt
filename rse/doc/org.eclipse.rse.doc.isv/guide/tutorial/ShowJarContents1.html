@@ -10,34 +10,36 @@
 
 <body bgcolor="#ffffff">
 <h1>ShowJarContents Class After Creation</h1>
-<p>
 <pre><samp>
 package samples.ui.actions;
 
-import org.eclipse.rse.files.ui.actions.SystemAbstractRemoteFilePopupMenuExtensionAction;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
 
-public class <b>ShowJarContents</b>
-	extends SystemAbstractRemoteFilePopupMenuExtensionAction
-{
+public class ShowJarContents implements IObjectActionDelegate {
 
-	/**
-	 * Constructor for ShowJarContents.
-	 */
-	public <b>ShowJarContents</b>()
-	{
-		super();
+	public ShowJarContents() {
+		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @see org.eclipse.rse.ui.actions.SystemAbstractPopupMenuExtensionAction#run()
-	 */
-	public void <b>run</b>()
-	{
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void run(IAction action) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void selectionChanged(IAction action, ISelection selection) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
-
 </samp></pre>
-</p>
 </body>
 </html>

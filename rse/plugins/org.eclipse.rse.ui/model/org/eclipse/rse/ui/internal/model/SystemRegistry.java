@@ -1673,7 +1673,7 @@ public class SystemRegistry implements ISystemRegistry
 				subSystems[idx] = factory.createSubSystem(conn, true, interestingPages); // give it the opportunity to create a subsystem
 			}
 			FireNewHostEvents fire = new FireNewHostEvents(conn, subSystems, this);
-			Display.getDefault().syncExec(fire);
+			Display.getDefault().asyncExec(fire);
 		}
 		conn.commit();
 		SystemPreferencesManager.setConnectionNamesOrder(); // update preferences order list                

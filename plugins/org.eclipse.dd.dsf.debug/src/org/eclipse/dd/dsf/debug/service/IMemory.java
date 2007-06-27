@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson Communication - extended the API for IMemoryBlockExtension
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
@@ -14,6 +15,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.debug.core.model.MemoryByte;
 
 /**
  * Service for accessing memory.  Memory contexts are not meant to be 
@@ -38,5 +40,23 @@ public interface IMemory extends IDsfService {
      */
     public void fillMemory(IDMContext<?> ctx, IAddress addr,
                            int word_size, byte[] value, int size, int mode, RequestMonitor requestMonitor);
+
+    // ////////////////////////////////////////////////////////////////////////
+    // Replicated the base functions to support IMemoryBlockExtension
+    // ////////////////////////////////////////////////////////////////////////
+
+    /**  Writes the given value to the given memory location. */
+    public void setMemory(IDMContext<?> ctx, IAddress addr, 
+                          int word_size, MemoryByte[] buf, int offs, int size, int mode, RequestMonitor requestMonitor);
+
+    /** Reads memory at the given location */
+    public void getMemory(IDMContext<?> ctx, IAddress addr, 
+                          int word_size, MemoryByte[] buf, int offs, int size, int mode, RequestMonitor requestMonitor);
+
+    public void fillMemory(IDMContext<?> ctx, IAddress addr,
+            int word_size, MemoryByte[] value, int size, int mode, RequestMonitor requestMonitor);
+
+//    /** Reads memory at the given location */
+//    public void resolveMemoryAddress(IDMContext<?> ctx, String expression, BigInteger[] address, RequestMonitor requestMonitor);
     
 }

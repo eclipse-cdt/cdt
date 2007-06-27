@@ -12,4 +12,4 @@ Eclipse-LazyStart: true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Export-Package: org.eclipse.dstore.extra,
- org.eclipse.dstore.internal.extra;x-internal:=true
+ org.eclipse.dstore.internal.extra;x-friends:="org.eclipse.rse.subsystems.files.dstore"

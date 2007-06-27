@@ -18,7 +18,12 @@
 		User Agreement</a>.</p>
 		
 		<p><font size="+1"><strong>
+<!--
 		  <a href="buildNotes.php">New and Noteworthy / Build Notes</a>
+-->
+		  <p><a href="http://www.eclipse.org/dsdp/tm/development/relnotes/2.0/tm-news-2.0.html">New and Noteworthy</a></p>
+		  <p><a href="http://www.eclipse.org/dsdp/tm/development/relnotes/2.0/readme_tm_2.0.html">TM 2.0 Readme / Release Notes</a></p>
+		  <p><a href="buildNotes.php">Build Notes</a></p>
 		</strong></font></p>
 		
 		<!-- <p>To get started, see the <a href="buildNotes.php">build notes</a>.<br>
@@ -49,10 +54,10 @@
   <tbody>
     <tr><td><b>TM @buildId@ requires 
     	<a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC3-200706011539/index.php">
-         Eclipse 3.3RC3</a> or later for the SSH component.
+         Eclipse 3.3</a> or later for the SSH component.
     </b></td></tr>
     <tr><td>
-      Other components should be able to do with Eclipse 3.3M6 or later.
+      Other components may work with earlier Eclipse versions, but these have not been tested.<br/>
       For core RSE and TM-Terminal, the
         <a href="http://download.eclipse.org/eclipse/downloads/drops/S-3.3RC3-200706011539/index.php#PlatformRuntime">
         Eclipse Platform Runtime Binary</a> is sufficient. Of course you can also use the popular
@@ -62,9 +67,11 @@
       Prerequisites for the remotecdt and discovery add-ons (CDT, EMF) can be retrieved from the
       <a href="http://download.eclipse.org/releases/europa/">Europa Discovery Site</a>.
     </td></tr> 
+<!--
     <tr><td>
       Earlier versions (e.g. Eclipse 3.2.x, Eclipse 3.3M5) will <b>not</b> work!
-    </td></tr> 
+    </td></tr>
+--> 
   </tbody>
 </table>
 </table>

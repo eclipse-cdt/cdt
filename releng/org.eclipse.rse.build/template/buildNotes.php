@@ -23,26 +23,28 @@
 </table>
 <table><tbody><tr><td>
 <ul>
-<li>TM @buildId@ <b>requires Eclipse 3.3RC3 or later for the SSH component</b>.
-  Other components should work with Eclipse 3.3M6 or later.
+<li>TM @buildId@ <b>requires Eclipse 3.3 later for the SSH component</b>.
+  Other components may work with earlier Eclipse versions, but these have not been tested.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
-<li>If you use the dstore server, the version number was updated in RC3. You should use an RC3 or later server with this build.</li>
+<li>If you use the dstore server, the protocol version number as well as the
+  default daemon port were updated. You should use an RSE 2.0 dstore server
+  with this build.</li>
+<li>See also the <a href="http://www.eclipse.org/dsdp/tm/development/relnotes/2.0/tm-news-2.0.html">Official TM 2.0 New and Noteworthy</a>
+  for a summary of interesting changes since RSE 1.0. 
 <!--
-<li><b>Split the Terminal Telnet connector from the core Terminal widget</b>.
-  This allows embedding a terminal widget in RCPs without having the unnecessary
-  code for the Telnet connector
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174162">174162</a>].</li>
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>No API changes were made. 17 bugs were resolved (1 was critical, the rest were documentation). Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-06-06&chfieldto=2007-06-14&chfield=resolution&cmdtype=doit"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0+RC4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+<li>No API changes were made in this build. 8 bugs were resolved (P1 bug <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=194442">194442</a> to 
+  improve migration of dstore daemons to the 2.0 version, and P1 bug <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187301">187301</a>
+  to support multiple RSE shells with Telnet; the rest were documentation). Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-06-21&chfieldto=2007-06-28&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC3-200706140914/index.php">
-  TM 2.0RC3</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC3-200706140914/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC4-200706201718/index.php">
+  TM 2.0RC4</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-2.0RC4-200706201718/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -89,18 +91,16 @@ are the best places for you to get started.
 is to harden the APIs which were provisional by RSE 1.0. Naturally, this requires
 API changes, and especially moving lots of classes which we cannot guarantee to 
 support in the future into internal packages.</p> 
-<p>As of TM 2.0 M6, most of this work has been completed, and the list of breaking
-API changes is found below with migration info. But although we had planned for
-API freeze with M6, there are still few more cleanup changes that we would like
-to take the opportunity and bring into TM 2.0. Most of these will be made shortly
-after M6, or they will be introduced in a backward compatible manner.
-At any rate, we will avoid breaking API changes after M7, or the earliest 
-possible integration build up to M7. But please be prepared for future changes,
-and especially take care of API marked as <b>@deprecated</b> in the Javadoc.
-Such API is prime candidate to be removed for TM 2.0.</p>
-<p><b>Use <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=%5Bapi%5D&classification=DSDP&product=Target+Management&target_milestone=2.0&target_milestone=2.0+M7&target_milestone=2.0+RC1&target_milestone=2.0+RC2&target_milestone=2.0+RC3&cmdtype=doit">
-this query</a> to show the list of API changes planned or done after M6</b>. All
-such API changes are voted by committers on the 
+<p>The list of breaking API changes is found below with migration info.
+See also the release notes as well as migration docs on the Wiki for
+more information.</p>
+<p>Although we completed a great deal of API cleanup for TM 2.0, we decided
+to still mark all API as <i>provisional</i> since we expect more work to do.
+If anyhow possible, we will avoid breaking API changes after TM 2.0, but please 
+be prepared for future changes, and especially take care of API marked as 
+<b>@deprecated</b> in the Javadoc.
+Such API is prime candidate to be removed in the future. All
+API changes will be voted by committers on the 
 <a href="https://dev.eclipse.org/mailman/listinfo/dsdp-tm-dev">
 dsdp-tm-dev</a> developer mailing list, and documented in a migration guide
 for future releases. Early migration information can also be found right
@@ -332,14 +332,14 @@ Use
 	</tr>
 </table>
 <table><tbody><tr><td>
+<!--
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187301">bug 187301</a> - maj - [telnet] Telnet does not allow multiple shells</li>
 </ul>
-<!--
-<p>No major or critical bugs are known at the time of release.
 -->
+<p>No major or critical bugs are known at the time of release.
 Use 
 <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&cmdtype=doit">this query</a>
 for an up-to-date list of major or critical bugs.</p>

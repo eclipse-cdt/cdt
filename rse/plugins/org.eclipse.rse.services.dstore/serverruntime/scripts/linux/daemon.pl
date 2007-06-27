@@ -10,7 +10,7 @@
 # IBM Corporation - initial API and implementation
 #*******************************************************************************
  
-$port = "4035";
+$port = "4075";
 $helpFlag = "-h"; 
 $dir = ".";
  

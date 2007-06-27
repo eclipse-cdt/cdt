@@ -619,7 +619,7 @@ public class ClientConnection
 	 */
 	public ConnectionStatus launchServer(String user, String password)
 	{
-		// default daemon port is 4035
+		// default daemon port is 4075
 		return launchServer(user, password, ServerLauncher.DEFAULT_DAEMON_PORT);
 	}
 

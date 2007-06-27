@@ -17,6 +17,7 @@
 
 package org.eclipse.rse.ui.validators;
 
+import org.eclipse.rse.core.subsystems.RemoteServerLauncherConstants;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
@@ -34,10 +35,10 @@ public class ValidatorServerPortInput extends ValidatorPortInput
 		if (msg == null)
 		{
 		  	// check that it's not a used port
-		  	if (number == 4035)
+		  	if (number == RemoteServerLauncherConstants.DEFAULT_DAEMON_PORT)
 		  	{
 		  		currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PORT_WARNING);
-		  		currentMessage.makeSubstitution("4035", "RSE daemon"); //$NON-NLS-1$ //$NON-NLS-2$
+		  		currentMessage.makeSubstitution("4075", "RSE daemon"); //$NON-NLS-1$ //$NON-NLS-2$
 		  		msg = currentMessage.getLevelOneText();
 		  	}
 		}
@@ -52,10 +53,10 @@ public class ValidatorServerPortInput extends ValidatorPortInput
 		if (msg == null)
 		{		 		  	
 		  	// check that it's not a used port
-		  	if (number == 4035)
+		  	if (number == RemoteServerLauncherConstants.DEFAULT_DAEMON_PORT)
 		  	{
 		  		currentMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COMM_PORT_WARNING);
-		  		currentMessage.makeSubstitution("4035", "RSE daemon"); //$NON-NLS-1$ //$NON-NLS-2$
+		  		currentMessage.makeSubstitution("4075", "RSE daemon"); //$NON-NLS-1$ //$NON-NLS-2$
 		  		msg = currentMessage.getLevelOneText();
 		  	}
 		}

@@ -17,7 +17,7 @@ REM Usage: daemon.bat [<port> | <low port>-<high port>] [ <low server port>-<hig
 REM
 setlocal
 
-SET DaemonPort=4035
+SET DaemonPort=4075
 SET ServerPortRange=
 IF NOT "%1"=="" SET DaemonPort=%1
 IF NOT "%2"=="" SET ServerPortRange=%2

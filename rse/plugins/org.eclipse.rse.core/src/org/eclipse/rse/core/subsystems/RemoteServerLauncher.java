@@ -78,7 +78,7 @@ public class RemoteServerLauncher extends ServerLauncher implements IRemoteServe
 
 	protected int _rexecPort = REXEC_PORT_EDEFAULT;
 
-	protected static final int DAEMON_PORT_EDEFAULT = 4035;
+	protected static final int DAEMON_PORT_EDEFAULT = 4075;
 
 	protected int _daemonPort = DAEMON_PORT_EDEFAULT;
 

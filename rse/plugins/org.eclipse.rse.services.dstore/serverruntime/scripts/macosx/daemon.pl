@@ -11,7 +11,7 @@
 #*******************************************************************************
 
 # Arguments:
-# ARGV[0] is the port number for the daemon to listen on. Default is 4035.
+# ARGV[0] is the port number for the daemon to listen on. Default is 4075.
 # ARGV[1] is the directory that contains RSE DStore server jar files and 
 # installation supplied miner class files. The default is the working 
 # directory.
@@ -26,7 +26,7 @@
 # Does not return if the daemon starts successfully. Terminate the
 # daemon with a signal such as TERM or INT.
 
-$port = $ARGV[0] || "4035";
+$port = $ARGV[0] || "4075";
 $plugin_dir = $ARGV[1] || $ENV{PWD};
 $trace = $ENV{DSTORE_TRACING_ON} || "0";
 $debug = $ENV{DSTORE_DEBUG_ON} || "0";

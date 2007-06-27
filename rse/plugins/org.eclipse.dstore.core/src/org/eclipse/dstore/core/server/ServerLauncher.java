@@ -408,7 +408,7 @@ public class ServerLauncher extends Thread {
 
 	private ISSLProperties _sslProperties;
 
-	public static int DEFAULT_DAEMON_PORT = 4035;
+	public static int DEFAULT_DAEMON_PORT = 4075;
 
 	/**
 	 * Constructor
@@ -645,7 +645,7 @@ public class ServerLauncher extends Thread {
 	 * Entry point into the DataStore daemon
 	 * 
 	 * @param args
-	 *            the port for the daemon to run on (default is 4035).
+	 *            the port for the daemon to run on (default is 4075).
 	 *            Optionally, the second arg specifies whether to use SSL or
 	 *            not. an optional second arg can be used to specify the port
 	 *            range of servers that get launched

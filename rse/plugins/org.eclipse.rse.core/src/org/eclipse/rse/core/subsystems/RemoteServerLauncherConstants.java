@@ -23,9 +23,9 @@ public interface RemoteServerLauncherConstants
 {
 	
 	/**
-	 * Default daemon port, 4035. 
+	 * Default daemon port, 4075. 
 	 */
-	public static final int DEFAULT_DAEMON_PORT = 4035;
+	public static final int DEFAULT_DAEMON_PORT = 4075;
 	
 	/** 
 	 * Default REXEC port, 512.

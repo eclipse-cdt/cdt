@@ -18,6 +18,7 @@
  * Kevin Doyle (IBM) - [189005] Changed setFocus() to setInput to SystemRegistryUI
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight (IBM) - [191288] Up To Action doesn't go all the way back to the connections
+ * Xuan Chen        (IBM)        - [192716] Refresh Error in Table View after Renaming folder shown in table
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1166,6 +1167,12 @@ public class SystemTableViewPart extends ViewPart
 
 	public void createPartControl(Composite parent)
 	{
+		//Want to register SystemTableViewPart as resouce change listener first, since it may update the _inputObject
+		//of the SystemTableView, which will affect the behaviour of the resource change event handling of SystemTableView.
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+		registry.addSystemResourceChangeListener(this);
+		registry.addSystemRemoteChangeListener(this);
+		
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
 		_viewer = new SystemTableView(table, this);
 
@@ -1191,7 +1198,6 @@ public class SystemTableViewPart extends ViewPart
 		_browsePosition = 0;
 
 		// register global edit actions 		
-		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -1208,9 +1214,7 @@ public class SystemTableViewPart extends ViewPart
 		
 		// register rename action as a global handler
 		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.RENAME.getId(), _renameAction);
-
-		registry.addSystemResourceChangeListener(this);
-		registry.addSystemRemoteChangeListener(this);
+		
 
 		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "sysd0000"); //$NON-NLS-1$
 		
@@ -1604,7 +1608,7 @@ public class SystemTableViewPart extends ViewPart
 	{
 		int eventType = event.getEventType();
 		Object remoteResource = event.getResource();
-	
+		String inputAbsoluteNameWithSubSystemId = null;
 		Vector remoteResourceNames = null;
 		if (remoteResource instanceof Vector)
 		{
@@ -1616,8 +1620,50 @@ public class SystemTableViewPart extends ViewPart
 		
 		
 		Object input = _viewer.getInput();
-		if (input == child || child instanceof Vector)
+		
+		//Simply doing comparason of if two object is equal is not enough
+		//If two different objects, but if their absoluate path (with subsystem id)
+		//are the same, they refer to the same remote object.
+		
+		if(input instanceof IAdaptable) 
 		{
+      	  	ISystemViewElementAdapter adapter =
+      		  (ISystemViewElementAdapter)
+      		  ((IAdaptable)input).getAdapter(ISystemViewElementAdapter.class);
+      	
+      	  	if (adapter != null ) {
+      		  // first need to check subsystems
+      		  ISubSystem subSystem = adapter.getSubSystem(input);
+      		  String subSystemId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
+      		  String absolutePath = adapter.getAbsoluteName(input);
+      		  inputAbsoluteNameWithSubSystemId = subSystemId + ":" + absolutePath;  //$NON-NLS-1$
+      			 
+	      }
+        }
+		
+		String remoteResourceAbsoluteNameWithSubSystemId = null;
+		if(child instanceof IAdaptable) 
+		{
+      	  	ISystemViewElementAdapter adapter =
+      		  (ISystemViewElementAdapter)
+      		  ((IAdaptable)child).getAdapter(ISystemViewElementAdapter.class);
+      	
+      	  	if (adapter != null ) {
+      		  // first need to check subsystems
+      		  ISubSystem subSystem = adapter.getSubSystem(child);
+      		  String subSystemId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
+      		remoteResourceAbsoluteNameWithSubSystemId = subSystemId + ":" + event.getOldName();  //$NON-NLS-1$
+      			 
+	      }
+        }
+		
+		boolean referToSameObject = false;
+		if (inputAbsoluteNameWithSubSystemId != null && inputAbsoluteNameWithSubSystemId.equals(remoteResourceAbsoluteNameWithSubSystemId))
+		{
+			referToSameObject = true;
+		}
+		if (input == child || child instanceof Vector || referToSameObject)
+		{ 
 			switch (eventType)
 			{
 				// --------------------------

@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTSimpleDeclaration extends IASTDeclaration, IASTNode {
+public interface IASTSimpleDeclaration extends IASTDeclaration {
 
 	/**
 	 * <code>DECL_SPECIFIER</code> represents the relationship between an

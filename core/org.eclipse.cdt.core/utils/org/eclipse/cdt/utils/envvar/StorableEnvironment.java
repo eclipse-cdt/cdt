@@ -31,6 +31,7 @@ import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 public class StorableEnvironment /*implements Cloneable*/{
 	public static final String ENVIRONMENT_ELEMENT_NAME = "environment"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_APPEND = "append";  //$NON-NLS-1$
+	private static final String ATTRIBUTE_APPEND_CONTRIBUTED = "appendContributed";  //$NON-NLS-1$
 	private static final boolean DEFAULT_APPEND = true;
 	private HashMap fVariables;
 	private boolean fIsDirty = false;
@@ -58,6 +59,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 		if(env.fVariables != null)
 			fVariables = (HashMap)env.fVariables.clone();
 		fAppend = env.fAppend;
+		fAppendContributedEnv = env.fAppendContributedEnv;
 		fIsReadOnly = isReadOnly;
 		fIsDirty = env.isDirty();
 	}
@@ -77,14 +79,20 @@ public class StorableEnvironment /*implements Cloneable*/{
 		}
 		
 		String append = element.getAttribute(ATTRIBUTE_APPEND);
-		fAppend = append != null ? Boolean.valueOf(element.getAttribute(ATTRIBUTE_APPEND)).booleanValue()
-				: true;
+		fAppend = append != null ? Boolean.valueOf(append).booleanValue()
+				: DEFAULT_APPEND;
+		
+		append = element.getAttribute(ATTRIBUTE_APPEND_CONTRIBUTED);
+		fAppendContributedEnv = append != null ? Boolean.valueOf(append).booleanValue()
+				: DEFAULT_APPEND;
+		
 		fIsDirty = false;
 		fIsChanged = false;
 	}
 	
 	public void serialize(ICStorageElement element){
 		element.setAttribute(ATTRIBUTE_APPEND, Boolean.valueOf(fAppend).toString());
+		element.setAttribute(ATTRIBUTE_APPEND_CONTRIBUTED, Boolean.valueOf(fAppendContributedEnv).toString());
 		if(fVariables != null){
 			Iterator iter = fVariables.values().iterator();
 			while(iter.hasNext()){
@@ -93,6 +101,7 @@ public class StorableEnvironment /*implements Cloneable*/{
 				var.serialize(varEl);
 			}
 		}
+		
 		fIsDirty = false;
 	}
 
@@ -288,7 +297,14 @@ public class StorableEnvironment /*implements Cloneable*/{
 	}
 
 	public void setAppendEnvironment(boolean append){
+		if(fAppend == append)
+			return;
+
+		if(fIsReadOnly)
+			throw ExceptionFactory.createIsReadOnlyException();
+
 		fAppend = append;
+		fIsDirty = true;
 	}
 
 	public boolean appendContributedEnvironment(){
@@ -296,7 +312,14 @@ public class StorableEnvironment /*implements Cloneable*/{
 	}
 
 	public void setAppendContributedEnvironment(boolean append){
+		if(fAppendContributedEnv == append)
+			return;
+
+		if(fIsReadOnly)
+			throw ExceptionFactory.createIsReadOnlyException();
+		
 		fAppendContributedEnv = append;
+		fIsDirty = true;
 	}
 	
 	public void restoreDefaults(){

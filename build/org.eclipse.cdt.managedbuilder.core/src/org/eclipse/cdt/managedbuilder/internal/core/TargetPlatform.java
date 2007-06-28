@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
@@ -224,7 +225,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 		String bpars = element.getAttribute(BINARY_PARSER); 
 		if (bpars != null) {
 			binaryParserList = new ArrayList();
-			String[] bparsTokens = bpars.split(";"); //$NON-NLS-1$
+			String[] bparsTokens = CDataUtil.stringToArray(bpars, ";"); //$NON-NLS-1$
 			for (int j = 0; j < bparsTokens.length; ++j) {
 				binaryParserList.add(bparsTokens[j].trim());
 			}
@@ -298,7 +299,7 @@ public class TargetPlatform extends BuildObject implements ITargetPlatform {
 			String bpars = element.getAttribute(BINARY_PARSER);
 			if (bpars != null) {
 				binaryParserList = new ArrayList();
-				String[] bparsTokens = bpars.split(";"); //$NON-NLS-1$
+				String[] bparsTokens = CDataUtil.stringToArray(bpars, ";"); //$NON-NLS-1$
 				for (int j = 0; j < bparsTokens.length; ++j) {
 					binaryParserList.add(bparsTokens[j].trim());
 				}

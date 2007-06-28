@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [182403] Double Click on an object that can be expanded
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -187,7 +188,14 @@ public class SystemScratchpadViewPart extends ViewPart
 		{
 			if (adapter.hasChildren((IAdaptable)element))
 			{
-				setInput((IAdaptable) element);
+				if (_viewer.getExpandedState(element))
+				{
+					_viewer.collapseToLevel(element, 1);
+				}
+				else
+				{
+					_viewer.expandToLevel(element, 1);
+				}
 			}
 			else
 			{

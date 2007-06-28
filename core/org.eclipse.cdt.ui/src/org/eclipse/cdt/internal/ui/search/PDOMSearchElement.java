@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.ui.search;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.IndexTypeInfo;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 
@@ -25,18 +27,16 @@ import org.eclipse.cdt.core.index.IIndexName;
  */
 public class PDOMSearchElement {
 
-	private final IIndexBinding binding;
-	private final String name;
+	private final ITypeInfo typeInfo;
 	private final String filename;
 	
 	public PDOMSearchElement(IIndexName name, IIndexBinding binding) throws CoreException {
-		this.binding= binding;
-		this.name = binding.getName();
+		this.typeInfo= IndexTypeInfo.create(null, binding);
 		filename = new Path(name.getFileLocation().getFileName()).toOSString();
 	}
 	
 	public int hashCode() {
-		return name.hashCode() + filename.hashCode();
+		return (typeInfo.getCElementType() *31 + typeInfo.getName().hashCode())*31 + filename.hashCode();
 	}
 	
 	public boolean equals(Object obj) {
@@ -45,16 +45,16 @@ public class PDOMSearchElement {
 		if (this == obj)
 			return true;
 		PDOMSearchElement other = (PDOMSearchElement)obj;
-		return name.equals(other.name)
+		return typeInfo.getCElementType() == other.typeInfo.getCElementType()
+			&& typeInfo.getName().equals(other.typeInfo.getName())
 			&& filename.equals(other.filename);
 	}
 
+	public ITypeInfo getTypeInfo() {
+		return typeInfo;
+	}
+	
 	public String getFileName() {
 		return filename;
 	}
-
-	public IIndexBinding getBinding() {
-		return binding;
-	}
-	
 }

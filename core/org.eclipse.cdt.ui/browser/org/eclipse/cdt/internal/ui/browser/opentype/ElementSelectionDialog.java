@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.browser.opentype;
@@ -39,13 +40,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.IndexTypeInfo;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IField;
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
@@ -242,38 +238,15 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 				IIndex index = CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects());
 				try {
 					index.acquireReadLock();
-					IBinding[] bindings= index.findBindingsForPrefix(prefix, false, IndexFilter.ALL_DECLARED, monitor);
+					IIndexBinding[] bindings= index.findBindingsForPrefix(prefix, false, IndexFilter.ALL_DECLARED, monitor);
 					for(int i=0; i<bindings.length; i++) {
 						if (i % 0x1000 == 0 && monitor.isCanceled()) {
 							return null;
 						}
-						IBinding binding = bindings[i];
-						try {
-							final int elementType = IndexModelUtil.getElementType(binding);
-							if (isVisibleType(elementType)) {
-								String[] fqn;
-
-								if(binding instanceof ICPPBinding) {
-									fqn= ((ICPPBinding)binding).getQualifiedName();
-								} else if (binding instanceof IField) {
-									IField field= (IField) binding;
-									ICompositeType owner= field.getCompositeTypeOwner();
-									fqn= new String[] {owner.getName(), field.getName()};
-								}
-								else {
-									fqn= new String[] {binding.getName()};
-								}
-								if (binding instanceof IFunction) {
-									final IFunction function= (IFunction)binding;
-									final String[] paramTypes= IndexModelUtil.extractParameterTypes(function);
-									final String returnType= IndexModelUtil.extractReturnType(function);
-									types.add(new IndexTypeInfo(fqn, elementType, paramTypes, returnType, index));
-								} else {
-									types.add(new IndexTypeInfo(fqn, elementType, index));
-								}
-							}
-						} catch(DOMException de) {
-							CCorePlugin.log(de);
+						IIndexBinding binding = bindings[i];
+						final int elementType = IndexModelUtil.getElementType(binding);
+						if (isVisibleType(elementType)) {
+							types.add(IndexTypeInfo.create(index, binding));
 						}
 					}
 				} finally {

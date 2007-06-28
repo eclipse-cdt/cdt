@@ -10,6 +10,7 @@
  * 		IBM Corporation
  *      Andrew Ferguson (Symbian)
  *      Anton Leherbauer (Wind River Systems)
+ *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
@@ -20,7 +21,10 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -52,6 +56,43 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	private final String returnType;
 	private ITypeReference reference; // lazily constructed
 	
+	/**
+	 * Creates a typeinfo suitable for the binding.
+	 * @since 4.0.1
+	 */
+	public static IndexTypeInfo create(IIndex index, IIndexBinding binding) {
+		String[] fqn;
+		int elementType;
+		try {
+			elementType = IndexModelUtil.getElementType(binding);
+			if (binding instanceof ICPPBinding) {
+				fqn= ((ICPPBinding)binding).getQualifiedName();
+			} 
+			else if (binding instanceof IField) {
+				IField field= (IField) binding;
+				ICompositeType owner= field.getCompositeTypeOwner();
+				fqn= new String[] {owner.getName(), field.getName()};	
+			}
+			else {
+				fqn= new String[] {binding.getName()};
+			}
+			if (binding instanceof IFunction) {
+				final IFunction function= (IFunction)binding;
+				final String[] paramTypes= IndexModelUtil.extractParameterTypes(function);
+				final String returnType= IndexModelUtil.extractReturnType(function);
+				return new IndexTypeInfo(fqn, elementType, paramTypes, returnType, null);
+			}
+		} catch (DOMException e) {
+			// index bindings don't throw DOMExceptions.
+			throw new AssertionError();
+		}
+
+		return new IndexTypeInfo(fqn, elementType, index);
+	}
+
+	/**
+	 * @deprecated, use {@link #create(IIndex, IBinding)}.
+	 */
 	public IndexTypeInfo(String[] fqn, int elementType, IIndex index) {
 		this.fqn = fqn;
 		this.elementType = elementType;
@@ -60,6 +101,9 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		this.returnType= null;
 	}
 
+	/**
+	 * @deprecated, use {@link #create(IIndex, IBinding)}.
+	 */
 	public IndexTypeInfo(String[] fqn, int elementType, String[] params, String returnType, IIndex index) {
 		this.fqn = fqn;
 		this.elementType = elementType;

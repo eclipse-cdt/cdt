@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
@@ -65,8 +66,7 @@ public class AllTypesCache {
 			
 			ITypeInfo[] result = new ITypeInfo[all.length];
 			for(int i=0; i<all.length; i++) {
-				IIndexBinding ib = (IIndexBinding) all[i];				
-				result[i] = new IndexTypeInfo(ib.getQualifiedName(), IndexModelUtil.getElementType(ib), index);
+				result[i] = IndexTypeInfo.create(index, all[i]);
 			}
 
 			if(DEBUG) {

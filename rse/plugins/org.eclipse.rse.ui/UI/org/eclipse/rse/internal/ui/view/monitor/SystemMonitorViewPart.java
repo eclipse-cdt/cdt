@@ -14,13 +14,14 @@
  * Michael Berger (IBM) - 146339 Added refresh action graphic.
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [177587] Made MonitorViewPart a SelectionProvider
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
 
 import java.util.ArrayList;
 import java.util.Vector;
-
+ 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -28,6 +29,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -90,7 +92,8 @@ public class SystemMonitorViewPart
 		ISystemShellProvider,
 		ISystemRemoteChangeListener,
 		ISystemMessageLine,
-		IRSEViewPart
+		IRSEViewPart,
+		ISelectionProvider
 {
 
 
@@ -621,6 +624,11 @@ class SubSetAction extends BrowseAction
 	private SubSetAction _subsetAction = null;
 	private PositionToAction _positionToAction = null;
 	
+	private ISelectionProvider viewerProvider = null;
+	private ArrayList selectionListeners = new ArrayList();
+	
+	private ISelectionChangedListener selectionListener = null;
+	
 	// constants			
 	public static final String ID = "org.eclipse.rse.ui.view.monitorView"; //$NON-NLS-1$
 	// matches id in plugin.xml, view tag	
@@ -672,6 +680,21 @@ class SubSetAction extends BrowseAction
 
 		RestoreStateRunnable restore = new RestoreStateRunnable();
 		Display.getCurrent().asyncExec(restore);
+
+		getSite().setSelectionProvider(this);
+		selectionListener = new ISelectionChangedListener() {
+			public void selectionChanged (SelectionChangedEvent event)
+			{
+				for (int i = 0; i < selectionListeners.size(); i++)
+				{
+					if (selectionListeners.get(i) instanceof ISelectionChangedListener)
+					{
+						((ISelectionChangedListener) selectionListeners.get(i)).selectionChanged(event);
+					}
+				}
+			}
+		};
+		
 		
 		fillLocalToolBar();
 		
@@ -760,7 +783,60 @@ class SubSetAction extends BrowseAction
 	{
 	}
 
-
+	public void addSelectionChangedListener(ISelectionChangedListener listener)
+	{
+		if (selectionListeners != null)
+			selectionListeners.add(listener);
+	}
+	
+	public void removeSelectionChangedListener(ISelectionChangedListener listener)
+	{
+		if (selectionListeners != null)
+			selectionListeners.remove(listener);
+	}
+	
+	public ISelection getSelection()
+	{
+		if (viewerProvider == null)
+			return null;
+		else
+			return viewerProvider.getSelection();
+	}
+	
+	/**
+	 * Sets the wrapped selection provider.
+	 * This method should only be called when the viewer changes.
+	 * @param newProvider The new wrapped selection provider.
+	 */
+	public void setActiveViewerSelectionProvider(ISelectionProvider newProvider)
+	{
+		if (viewerProvider != null)
+			viewerProvider.removeSelectionChangedListener(selectionListener);
+	
+		viewerProvider = newProvider;
+			
+		if (newProvider != null)
+		{
+			newProvider.addSelectionChangedListener(selectionListener);
+			
+			// Create a new event and tell all listeners about it, so that the properties
+			// view is updated to show the new viewers selected object
+			SelectionChangedEvent event = new SelectionChangedEvent(newProvider, newProvider.getSelection());
+			for (int i = 0; i < selectionListeners.size(); i++)
+			{
+				if (selectionListeners.get(i) instanceof ISelectionChangedListener)
+				{
+					((ISelectionChangedListener) selectionListeners.get(i)).selectionChanged(event);
+				}
+			}
+		}
+	}
+	
+	public void setSelection(ISelection selection)
+	{
+		if (viewerProvider != null)
+			viewerProvider.setSelection(selection);
+	}
 
 	public void addItemToMonitor(IAdaptable root)
 	{
@@ -921,7 +997,20 @@ class SubSetAction extends BrowseAction
 	public void widgetSelected(SelectionEvent e)
 	{
 		Widget source = e.widget;
-
+		Widget item = e.item;
+		Object data = item.getData();
+		MonitorViewPage page = null;	
+		
+		if (data instanceof MonitorViewPage)
+			page = (MonitorViewPage) data;
+		
+		// Set the wrapped viewer to be the viewer of the new selected tab
+		if (page != null)
+		{
+			SystemTableView viewer = page.getViewer();
+			setActiveViewerSelectionProvider(viewer);
+		}
+		
 		if (source == _folder.getFolder())
 		{
 			updateActionStates();

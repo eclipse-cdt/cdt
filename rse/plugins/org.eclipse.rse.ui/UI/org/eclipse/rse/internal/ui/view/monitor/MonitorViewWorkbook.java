@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Kevin Doyle (IBM) - [177587] createTabItem sets the wrapped selection provider
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -229,9 +230,11 @@ public class MonitorViewWorkbook extends Composite
 		monitorViewPage.setInput(root);
 
 		SystemTableView viewer = monitorViewPage.getViewer();
-		_viewPart.getSite().setSelectionProvider(viewer);
-		_viewPart.getSite().registerContextMenu(viewer.getContextMenuManager(), viewer);
-		
+		if (_viewPart != null)
+		{
+			_viewPart.setActiveViewerSelectionProvider(viewer);
+			_viewPart.getSite().registerContextMenu(viewer.getContextMenuManager(), viewer);
+		}
 		monitorViewPage.setFocus();
 	}
 

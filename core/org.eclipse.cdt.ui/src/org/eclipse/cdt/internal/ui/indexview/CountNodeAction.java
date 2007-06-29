@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems
+ * Copyright (c) 2005, 2007 QNX Software Systems
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.indexview;
 
@@ -35,8 +36,8 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
  */
 public class CountNodeAction extends IndexAction {
 
-	public CountNodeAction(TreeViewer viewer) {
-		super(viewer, CUIPlugin.getResourceString("IndexView.CountSymbols.name")); //$NON-NLS-1$
+	public CountNodeAction(IndexView view, TreeViewer viewer) {
+		super(view, viewer, CUIPlugin.getResourceString("IndexView.CountSymbols.name")); //$NON-NLS-1$
 	}
 
 	public boolean valid() {
@@ -74,43 +75,60 @@ public class CountNodeAction extends IndexAction {
 				final PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
 				//pdom.getDB().reportFreeBlocks();
 
-				pdom.getFileIndex().accept(new IBTreeVisitor() {
-					public int compare(int record) throws CoreException {
-						return 0;
-					}
-					public boolean visit(int record) throws CoreException {
-						if (record != 0) {
-							PDOMFile file = new PDOMFile(pdom, record);
-							++count[FILES];
-							PDOMMacro macro = file.getFirstMacro();
-							while (macro != null) {
-								++count[MACROS];
-								macro = macro.getNextMacro();
+				pdom.acquireReadLock();
+				try {
+					pdom.getFileIndex().accept(new IBTreeVisitor() {
+						public int compare(int record) throws CoreException {
+							return 0;
+						}
+
+						public boolean visit(int record) throws CoreException {
+							if (record != 0) {
+								PDOMFile file = new PDOMFile(pdom, record);
+								++count[FILES];
+								PDOMMacro macro = file.getFirstMacro();
+								while (macro != null) {
+									++count[MACROS];
+									macro = macro.getNextMacro();
+								}
 							}
+							return true;
 						}
-						return true;
-					}
-				});
-				pdom.accept(new IPDOMVisitor() {
-					public boolean visit(IPDOMNode node) throws CoreException {
-						++count[SYMBOLS];
-						if (node instanceof PDOMBinding) {
-							PDOMBinding binding = (PDOMBinding)node;
-							for (PDOMName name = binding.getFirstReference(); name != null; name = name.getNextInBinding())
-								++count[REFS];
-							for (PDOMName name = binding.getFirstDeclaration(); name != null; name = name.getNextInBinding())
-								++count[DECLS];
-							for (PDOMName name = binding.getFirstDefinition(); name != null; name = name.getNextInBinding())
-								++count[DEFS];
+					});
+					pdom.accept(new IPDOMVisitor() {
+						public boolean visit(IPDOMNode node)
+								throws CoreException {
+							++count[SYMBOLS];
+							if (node instanceof PDOMBinding) {
+								PDOMBinding binding = (PDOMBinding) node;
+								for (PDOMName name = binding
+										.getFirstReference(); name != null; name = name
+										.getNextInBinding())
+									++count[REFS];
+								for (PDOMName name = binding
+										.getFirstDeclaration(); name != null; name = name
+										.getNextInBinding())
+									++count[DECLS];
+								for (PDOMName name = binding
+										.getFirstDefinition(); name != null; name = name
+										.getNextInBinding())
+									++count[DEFS];
+							}
+							return true;
 						}
-						return true;
-					}
-					public void leave(IPDOMNode node) throws CoreException {
-					}
-				});
+
+						public void leave(IPDOMNode node) throws CoreException {
+						}
+					});
+				} finally {
+					pdom.releaseReadLock();
+				}
 			}
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return;
 		}
 		
 		MessageDialog.openInformation(null,

@@ -6,14 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
- * Andrew Ferguson (Symbian)
- * Bryan Wilkinson (QNX)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
+ *    Andrew Ferguson (Symbian)
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.ui;
+package org.eclipse.cdt.internal.ui.indexview;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -47,8 +48,8 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
@@ -58,9 +59,36 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
  */
 public class IndexLabelProvider extends LabelProvider {
 	public String getText(Object element) {
-		if (element == null) {
-			return "null :("; //$NON-NLS-1$
-		} else if (element instanceof PDOMNode) {
+		if (element instanceof IndexNode) {
+			return ((IndexNode) element).fText;
+		}
+		return super.getText(element);
+	}
+	
+	public Image getImage(Object element) {
+		if (element instanceof IndexNode) {
+			return ((IndexNode) element).fImage;
+		}
+		ImageDescriptor desc= null;
+		if (element instanceof ICProject)
+			desc = CPluginImages.DESC_OBJS_SEARCHHIERPROJECT;
+		else if (element instanceof ICContainer)
+			desc = CPluginImages.DESC_OBJS_SEARCHHIERFODLER;
+		else if (element instanceof ITranslationUnit) {
+			ITranslationUnit tu = (ITranslationUnit)element;
+			desc = tu.isHeaderUnit()
+				? CPluginImages.DESC_OBJS_TUNIT_HEADER
+				: CPluginImages.DESC_OBJS_TUNIT;
+		}
+		
+		if (desc != null)
+			return CUIPlugin.getImageDescriptorRegistry().get(desc);
+		
+		return super.getImage(element);
+	}
+
+	public static String getText(IPDOMNode element) {
+		if (element instanceof PDOMNamedNode) {
 			try {
 				String result = ((PDOMNamedNode)element).getDBName().getString();
 
@@ -139,11 +167,11 @@ public class IndexLabelProvider extends LabelProvider {
 			} catch (CoreException e) {
 				return e.getMessage();
 			}
-		} else
-			return super.getText(element);
+		} 
+		return ""; //$NON-NLS-1$
 	}
 	
-	public Image getImage(Object element) {
+	public static Image getImage(IPDOMNode element) {
 		ImageDescriptor desc = null;
 	
 		if (element instanceof IVariable)
@@ -177,23 +205,13 @@ public class IndexLabelProvider extends LabelProvider {
 			desc = CElementImageProvider.getEnumeratorImageDescriptor();
 		else if (element instanceof ITypedef)
 			desc = CElementImageProvider.getTypedefImageDescriptor();
-		else if (element instanceof ICProject)
-			desc = CPluginImages.DESC_OBJS_SEARCHHIERPROJECT;
-		else if (element instanceof ICContainer)
-			desc = CPluginImages.DESC_OBJS_SEARCHHIERFODLER;
-		else if (element instanceof ITranslationUnit) {
-			ITranslationUnit tu = (ITranslationUnit)element;
-			desc = tu.isHeaderUnit()
-				? CPluginImages.DESC_OBJS_TUNIT_HEADER
-				: CPluginImages.DESC_OBJS_TUNIT;
-		}
 		
 		if (desc != null)
 			return CUIPlugin.getImageDescriptorRegistry().get(desc);
 		else if (element instanceof PDOMLinkage)
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
-		else
-			return super.getImage(element);
+
+		return null;
 	}
 	
 }

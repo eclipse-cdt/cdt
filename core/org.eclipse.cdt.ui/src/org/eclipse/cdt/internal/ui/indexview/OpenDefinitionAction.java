@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.indexview;
@@ -29,7 +30,11 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
@@ -39,32 +44,36 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  */
 public class OpenDefinitionAction extends IndexAction {
 
-	public OpenDefinitionAction(TreeViewer viewer) {
-		super(viewer, CUIPlugin.getResourceString("IndexView.openDefinition.name"));//$NON-NLS-1$
+	public OpenDefinitionAction(IndexView view, TreeViewer viewer) {
+		super(view, viewer, CUIPlugin.getResourceString("IndexView.openDefinition.name"));//$NON-NLS-1$
 	}
 	
-	public void run() {
+	private IndexNode getBindingNode() {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
+			return null;
+		Object[] objs = ((IStructuredSelection)selection).toArray();
+		if (objs.length == 1 && objs[0] instanceof IndexNode) {
+			IndexNode node= (IndexNode) objs[0];
+			if (node.fObject instanceof IIndexBinding) {
+				return node;
+			}
+		}
+		return null;
+	}
+
+	public void run() {
+		IndexNode bindingNode= getBindingNode();
+		if (bindingNode == null) {
 			return;
-		
+		}
 		try {
-			IIndex index= CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects());
-			Object[] objs = ((IStructuredSelection)selection).toArray();
-			for (int i = 0; i < objs.length; ++i) {
-				if (!(objs[i] instanceof IIndexBinding))
-					continue;
-			
-				index.acquireReadLock();
-				try {
-					IIndexBinding binding = (IIndexBinding)objs[i];
-					IIndexName[] defs= index.findDefinitions(binding);
-					for (int j = 0; j < defs.length; j++) {
-						IIndexName name = defs[j];
-						showInEditor(name);
-					}
-				} finally {
-					index.releaseReadLock();
+			ICProject cproject= bindingNode.getProject();
+			if (cproject != null) {
+				IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);
+				if (!openDefinition(cproject, bindingNode, index)) {
+					index= CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects());
+					openDefinition(cproject, bindingNode, index);
 				}
 			}
 		}
@@ -73,6 +82,29 @@ public class OpenDefinitionAction extends IndexAction {
 		} 
 		catch (InterruptedException e) {
 		}
+	}
+
+	private boolean openDefinition(ICProject cproject, IndexNode bindingNode, IIndex index) 
+			throws InterruptedException, CoreException, CModelException, PartInitException {
+		index.acquireReadLock();
+		try {
+			if (indexView.getLastWriteAccess(cproject) != ((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).getLastWriteAccess()) {
+				return true;
+			}
+			IIndexName[] defs= index.findDefinitions((IIndexBinding) bindingNode.fObject);
+			if (defs.length > 0) {
+				showInEditor(defs[0]);
+				return true;
+			}
+			defs= index.findDeclarations((IIndexBinding) bindingNode.fObject);
+			if (defs.length > 0) {
+				showInEditor(defs[0]);
+				return true;
+			}
+		} finally {
+			index.releaseReadLock();
+		}
+		return false;
 	}
 
 	private void showInEditor(IIndexName name) throws CModelException, PartInitException, CoreException {
@@ -99,14 +131,6 @@ public class OpenDefinitionAction extends IndexAction {
 	}
 	
 	public boolean valid() {
-		ISelection selection = viewer.getSelection();
-		if (!(selection instanceof IStructuredSelection))
-			return false;
-		Object[] objs = ((IStructuredSelection)selection).toArray();
-		for (int i = 0; i < objs.length; ++i)
-			if (objs[i] instanceof IIndexBinding)
-				return true;
-		return false;
+		return getBindingNode() != null;
 	}
-
 }

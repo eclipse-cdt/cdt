@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM and others.
+ * Copyright (c) 2006, 2007 IBM and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.indexview;
@@ -24,19 +25,17 @@ import org.eclipse.jface.viewers.TreeViewer;
  *
  */
 public class DiscardExternalDefsAction extends IndexAction {
-	final IndexView view;
 	public DiscardExternalDefsAction(TreeViewer viewer, IndexView view) {
-		super(viewer, CUIPlugin.getResourceString("IndexView.ToggleExternals.name"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
+		super(view, viewer, CUIPlugin.getResourceString("IndexView.ToggleExternals.name"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
 		setToolTipText(CUIPlugin.getResourceString("IndexView.ToggleExternals.tooltip")); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$	
-		this.view = view;
 	}
 	
 	public void run() {
 		ISelection selection = viewer.getSelection();
 		if (!(selection instanceof IStructuredSelection))
 			return;
-		view.toggleExternalDefs();
+		indexView.toggleExternalDefs();
 	}
 	
 	public boolean valid() {

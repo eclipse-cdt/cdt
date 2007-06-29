@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.indexview;
@@ -23,25 +24,30 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 public abstract class IndexAction extends Action {
 
-	protected TreeViewer viewer;
+	final protected IndexView indexView;
+	final protected TreeViewer viewer;
 	
-	protected IndexAction(TreeViewer viewer) {
+	protected IndexAction(IndexView view, TreeViewer viewer) {
 		super();
+		this.indexView= view;
 		this.viewer = viewer;
 	}
 
-	protected IndexAction(TreeViewer viewer, String text) {
+	protected IndexAction(IndexView view, TreeViewer viewer, String text) {
 		super(text);
+		this.indexView= view;
 		this.viewer = viewer;
 	}
 
-	protected IndexAction(TreeViewer viewer, String text, ImageDescriptor image) {
+	protected IndexAction(IndexView view, TreeViewer viewer, String text, ImageDescriptor image) {
 		super(text, image);
+		this.indexView= view;
 		this.viewer = viewer;
 	}
 
-	protected IndexAction(TreeViewer viewer, String text, int style) {
+	protected IndexAction(IndexView view, TreeViewer viewer, String text, int style) {
 		super(text, style);
+		this.indexView= view;
 		this.viewer = viewer;
 	}
 

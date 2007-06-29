@@ -301,17 +301,20 @@ public final class CHeuristicScanner implements Symbols {
 	 * @return a constant from {@link Symbols} describing the next token
 	 */
 	public int nextToken(int start, int bound) {
+		int pos= scanForward(start, bound, fNonWS);
+		if (pos == NOT_FOUND)
+			return TokenEOF;
 		try {
 			// check for string or char literal
-			char ch = fDocument.getChar(start);
+			char ch = fDocument.getChar(pos);
 			if (ch == '"' || ch == '\'') {
 				fChar= ch;
-				fPos= fNonWSDefaultPart.nextPosition(start, true);
+				fPos= fNonWSDefaultPart.nextPosition(pos, true);
 				return TokenOTHER;
 			}
 		} catch (BadLocationException exc) {
 		}
-		int pos= scanForward(start, bound, fNonWSDefaultPart);
+		pos= scanForward(pos, bound, fNonWSDefaultPart);
 		if (pos == NOT_FOUND)
 			return TokenEOF;
 
@@ -346,6 +349,14 @@ public final class CHeuristicScanner implements Symbols {
 			case EQUAL:
 				return TokenEQUAL;
 			case LANGLE:
+				switch (peekNextChar()) {
+				case LANGLE:
+					++fPos;
+					return TokenSHIFTLEFT;
+				case EQUAL:
+					++fPos;
+					return TokenOTHER;
+				}
 				return TokenLESSTHAN;
 			case RANGLE:
 				switch (peekNextChar()) {
@@ -442,13 +453,17 @@ public final class CHeuristicScanner implements Symbols {
 			case EQUAL:
 				switch (peekPreviousChar()) {
 				case RANGLE:
-					--fPos;
 				case LANGLE:
 					--fPos;
 					return TokenOTHER;
 				}
 				return TokenEQUAL;
 			case LANGLE:
+				switch (peekPreviousChar()) {
+				case LANGLE:
+					--fPos;
+					return TokenSHIFTLEFT;
+				}
 				return TokenLESSTHAN;
 			case RANGLE:
 				switch (peekPreviousChar()) {
@@ -566,6 +581,10 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenWHILE;
 				if ("union".equals(s)) //$NON-NLS-1$
 					return TokenUNION;
+				if ("throw".equals(s)) //$NON-NLS-1$
+					return TokenTHROW;
+				if ("const".equals(s)) //$NON-NLS-1$
+					return TokenCONST;
 				break;
 			case 6:
 				if ("delete".equals(s)) //$NON-NLS-1$
@@ -588,6 +607,10 @@ public final class CHeuristicScanner implements Symbols {
 					return TokenPRIVATE;
 				if ("virtual".equals(s)) //$NON-NLS-1$
 					return TokenVIRTUAL;
+				break;
+			case 8:
+				if ("operator".equals(s)) //$NON-NLS-1$
+					return TokenOPERATOR;
 				break;
 			case 9:
 				if ("namespace".equals(s)) //$NON-NLS-1$

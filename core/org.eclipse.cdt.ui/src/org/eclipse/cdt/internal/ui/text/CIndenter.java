@@ -1653,6 +1653,25 @@ public final class CIndenter {
 		return false;
 	}
 
+
+	/**
+	 * Skips pointer operators if the current token is a pointer operator.
+	 *
+	 * @return <code>true</code> if a <code>*</code> or <code>&amp;</code> could be scanned, the
+	 *         current token is left at the operator.
+	 */
+	private boolean skipPointerOperators() {
+		if (fToken == Symbols.TokenOTHER) {
+			CharSequence token= getTokenContent();
+			if (token.length() == 1 && token.charAt(0) == '*' || token.charAt(0) == '&') {
+				return true;
+			}
+		} else if (fToken == Symbols.TokenCONST) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Skips brackets if the current token is a RBRACKET. There can be nothing
 	 * but whitespace in between, this is only to be used for <code>[]</code> elements.
@@ -1724,7 +1743,9 @@ public final class CIndenter {
 	 */
 	private boolean looksLikeMethodDecl() {
 		nextToken();
-		if (fToken == Symbols.TokenIDENT) { // method name
+		switch (fToken) {
+		case Symbols.TokenIDENT: // method name
+			int pos= fPosition;
 			nextToken();
 			// check destructor tilde
 			if (fToken == Symbols.TokenTILDE) {
@@ -1737,8 +1758,72 @@ public final class CIndenter {
 			while (skipBrackets()) {
 				nextToken();
 			}
-			return fToken == Symbols.TokenIDENT;
-
+			while (skipPointerOperators()) {
+				nextToken();
+			}
+			switch (fToken) {
+			case Symbols.TokenIDENT:
+				return true;
+			case Symbols.TokenSEMICOLON:
+			case Symbols.TokenRBRACE:
+				fPosition= pos;
+				return true;
+			case Symbols.TokenLBRACE:
+				if (fScanner.looksLikeCompositeTypeDefinitionBackward(fPosition, CHeuristicScanner.UNBOUND)) {
+					fPosition= pos;
+					return true;
+				}
+				break;
+			case Symbols.TokenGREATERTHAN:
+				return skipScope();
+			case Symbols.TokenCOLON:
+				nextToken();
+				switch (fToken) {
+				case Symbols.TokenPUBLIC:
+				case Symbols.TokenPROTECTED:
+				case Symbols.TokenPRIVATE:
+					fPosition= pos;
+					return true;
+				case Symbols.TokenRPAREN:
+					// constructor initializer
+					if (skipScope()) {
+						nextToken();
+						// optional throw
+						if (fToken == Symbols.TokenTHROW) {
+							nextToken();
+							if (fToken != Symbols.TokenRPAREN || !skipScope()) {
+								return false;
+							}
+						}
+						return looksLikeMethodDecl();
+					}
+					break;
+				}
+			}
+			break;
+		case Symbols.TokenARROW:
+		case Symbols.TokenCOMMA:
+		case Symbols.TokenEQUAL:
+		case Symbols.TokenGREATERTHAN:
+		case Symbols.TokenLESSTHAN:
+		case Symbols.TokenMINUS:
+		case Symbols.TokenSHIFTRIGHT:
+		case Symbols.TokenSHIFTLEFT:
+		case Symbols.TokenDELETE:
+		case Symbols.TokenNEW:
+			nextToken();
+			return fToken == Symbols.TokenOPERATOR;
+		case Symbols.TokenOTHER:
+			if (getTokenContent().length() == 1) {
+				nextToken();
+				if (fToken == Symbols.TokenOPERATOR)
+					return true;
+			}
+			if (getTokenContent().length() == 1) {
+				nextToken();
+				if (fToken == Symbols.TokenOPERATOR)
+					return true;
+			}
 		}
 		return false;
 	}

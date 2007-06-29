@@ -68,7 +68,25 @@ public class CIndenterTest extends BaseUITestCase {
 	
 	//foo(arg,
 	//		"string");
-	public void testIndentationOfStringLiteralAsLastArgument_Bug192412() throws Exception {
+	public void testIndentationOfStringLiteralAsLastArgument1_Bug192412() throws Exception {
+		assertIndenterResult();
+	}
+
+	//a::foo(arg,
+	//"string");
+	
+	//a::foo(arg,
+	//		"string");
+	public void testIndentationOfStringLiteralAsLastArgument2_Bug192412() throws Exception {
+		assertIndenterResult();
+	}
+
+	//a::foo(arg,
+	//		"string");
+	
+	//a::foo(arg,
+	//		"string");
+	public void testIndentationOfStringLiteralAsLastArgument3_Bug192412() throws Exception {
 		assertIndenterResult();
 	}
 
@@ -105,6 +123,19 @@ public class CIndenterTest extends BaseUITestCase {
 		assertIndenterResult();
 	}
 
+	//std::ostream& operator<<(std::ostream& stream,
+	//const BinFileParser::Exception& exp)
+	//{
+	//}
+	
+	//std::ostream& operator<<(std::ostream& stream,
+	//		const BinFileParser::Exception& exp)
+	//{
+	//}
+	public void testIndentationOfOperatorMethodBody_Bug192412() throws Exception {
+		assertIndenterResult();
+	}
+
 	//struct x {
 	// int f1 : 1;
 	// int f2 : 1;
@@ -120,4 +151,58 @@ public class CIndenterTest extends BaseUITestCase {
 		assertIndenterResult();
 	}
 
+	//class A {
+	//A(int a,
+	//int b)
+	//{
+	//}
+	//};
+
+	//class A {
+	//	A(int a,
+	//			int b)
+	//	{
+	//	}
+	//};
+	public void testIndentationOfConstructorBody_Bug194586() throws Exception {
+		assertIndenterResult();
+	}
+
+	//class A {
+	//A(int a,
+	//int b)
+	//throw()
+	//{
+	//}
+	//};
+	
+	//class A {
+	//	A(int a,
+	//			int b)
+	//	throw()
+	//	{
+	//	}
+	//};
+	public void testIndentationOfConstructorBodyWithThrow_Bug194586() throws Exception {
+		assertIndenterResult();
+	}
+
+	//class A {
+	//A(int a,
+	//int b)
+	//:f(0)
+	//{
+	//}
+	//};
+	
+	//class A {
+	//	A(int a,
+	//			int b)
+	//	:f(0)
+	//	{
+	//	}
+	//};
+	public void testIndentationOfConstructorBodyWithInitializer_Bug194586() throws Exception {
+		assertIndenterResult();
+	}
 }

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [192278] Removed handleKeyPressed
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -206,14 +207,6 @@ public class SystemScratchpadView
 			initDragAndDrop();
 
 			tableTree.setVisible(false);
-			// key listening for delete press
-			getControl().addKeyListener(new KeyAdapter()
-			{
-				public void keyPressed(KeyEvent e)
-				{
-					handleKeyPressed(e);
-				}
-			});
 			getControl().addMouseListener(new MouseAdapter() 
 					{
 					   public void mouseDown(MouseEvent e) 
@@ -1393,27 +1386,6 @@ public class SystemScratchpadView
 
 	}
 
-	
-	void handleKeyPressed(KeyEvent event)
-	{
-		//System.out.println("Key Pressed");
-		//System.out.println("...event character : " + event.character + ", "+(int)event.character);
-		//System.out.println("...event state mask: " + event.stateMask);
-		//System.out.println("...CTRL            : " + SWT.CTRL);
-		if ((event.character == SWT.DEL) && (event.stateMask == 0) && (((IStructuredSelection) getSelection()).size() > 0))
-		{
-			scanSelections();
-			if (showDelete() && canDelete())
-			{
-				SystemCommonDeleteAction dltAction = (SystemCommonDeleteAction) getDeleteAction();
-				dltAction.setShell(getShell());
-				dltAction.setSelection(getSelection());
-				dltAction.setViewer(this);
-				dltAction.run();
-			}
-		}
-	}
-	
 	/**
 	 * Overridden so that we can pass a wrapper IContextObject into the provider to get children instead 
 	 * of the model object, itself

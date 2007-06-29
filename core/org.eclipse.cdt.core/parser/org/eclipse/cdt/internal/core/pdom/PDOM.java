@@ -93,7 +93,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 14 - added timestamps for files (bug 149571)
 	// 15 - fixed offsets for pointer types and qualifier types and PDOMCPPVariable (bug 160540). 
 	// 16 - have PDOMCPPField store type information, and PDOMCPPNamespaceAlias store what it is aliasing
-	// 17 - use single linked list for names in file, adds a link to enclosing defintion name.
+	// 17 - use single linked list for names in file, adds a link to enclosing definition name.
 	// 18 - distinction between c-unions and c-structs.
     // 19 - alter representation of paths in the pdom (162172)
 	// 20 - add pointer to member types, array types, return types for functions
@@ -105,13 +105,13 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 26 - add properties storage
 	// 27 - templates: classes, functions, limited nesting support, only template type parameters
 	// 28 - templates: class instance/specialization base classes
-	// 29 - includes: fixed modelling of unresolved includes (180159)
+	// 29 - includes: fixed modeling of unresolved includes (180159)
 	// 30 - templates: method/constructor templates, typedef specializations
 	// 31 - macros: added file locations
-	// 32 - support standalone function types (181936)
+	// 32 - support stand-alone function types (181936)
 	// 33 - templates: constructor instances
 	// 34 - fix for base classes represented by qualified names (183843)
-	// 35 - add scanner configuration hashcode (62366)
+	// 35 - add scanner configuration hash-code (62366)
 	// 36 - changed chunk size back to 4K (184892)
 	
 	public static final int LINKAGES = Database.DATA_AREA;
@@ -144,13 +144,17 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private void loadDatabase(File dbPath, ChunkCache cache) throws CoreException {
 		fPath= dbPath;
+		final boolean lockDB= db == null || lockCount != 0;
+		
 		db = new Database(fPath, cache, VERSION, isPermanentlyReadOnly());
 		fileIndex= null;	// holds on to the database, so clear it.
 
+		db.setLocked(lockDB);
 		int version= db.getVersion();
 		if (version == VERSION) {
 			readLinkages();
 		}
+		db.setLocked(lockCount != 0);
 	}
 
 	public IIndexLocationConverter getLocationConverter() {
@@ -242,32 +246,24 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 	
 	protected void clear() throws CoreException {
-		Database db = getDB();
-		// Clear out the database
-		db.clear(1);
-
-		// Zero out the File Index and Linkages
-		clearFileIndex();
+		assert lockCount < 0; // needs write-lock.
 		
-		db.setVersion(VERSION);
-		db.putInt(PROPERTIES, 0);
-		db.putInt(LINKAGES, 0);
-		fLinkageIDCache.clear();
+		// Clear out the database, everything is set to zero.
+		getDB().clear(VERSION);
+		clearCaches();
 	}
 	
 	void reloadFromFile(File file) throws CoreException {
 		assert lockCount < 0;	// must have write lock.
 		File oldFile= fPath;
-		fLinkageIDCache.clear();
+		clearCaches();
 		try {
 			db.close();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
 		loadDatabase(file, db.getChunkCache());
-		if(!isPermanentlyReadOnly()) {
-			db.setWritable();
-		}
+		db.setExclusiveLock();
 		oldFile.delete();
 	}		
 
@@ -538,6 +534,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				--waitingReaders;
 			}
 			++lockCount;
+			db.setLocked(true);
 		}
 	}
 
@@ -550,11 +547,10 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				--lockCount;
 			mutex.notifyAll();
 			clearCache= lockCount == 0;
+			db.setLocked(lockCount != 0);
 		}
 		if (clearCache) {
-			synchronized (fResultCache) {
-				fResultCache.clear();
-			}
+			clearResultCache();
 		}
 	}
 
@@ -574,9 +570,10 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 * @throws IllegalStateException if this PDOM is not writable
 	 */
 	public void acquireWriteLock(int giveupReadLocks) throws InterruptedException {
+		assert !isPermanentlyReadOnly();
 		synchronized (mutex) {
 			if (giveupReadLocks > 0) {
-				// giveup on read locks
+				// give up on read locks
 				assert lockCount >= giveupReadLocks: "Not enough locks to release"; //$NON-NLS-1$
 				if (lockCount < giveupReadLocks) {
 					giveupReadLocks= lockCount;
@@ -590,7 +587,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			while (lockCount > giveupReadLocks || waitingReaders > 0)
 				mutex.wait();
 			lockCount= -1;
-			db.setWritable();
+			db.setExclusiveLock();
 		}
 	}
 
@@ -599,11 +596,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 	
 	public void releaseWriteLock(int establishReadLocks, boolean flush) {
-		synchronized(fResultCache) {
-			fResultCache.clear();
-		}
+		clearResultCache();
 		try {
-			db.setReadOnly(flush);
+			db.giveUpExclusiveLock(flush);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -613,6 +608,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			if (lockCount < 0)
 				lockCount= establishReadLocks;
 			mutex.notifyAll();
+			db.setLocked(lockCount != 0);
 		}
 		fireChange();
 	}
@@ -756,8 +752,20 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public void close() throws CoreException {
-		fLinkageIDCache.clear();
 		db.close();
+		clearCaches();
+	}
+
+	private void clearCaches() {
+		fileIndex= null;
+		fLinkageIDCache.clear();
+		clearResultCache();
+	}
+
+	private void clearResultCache() {
+		synchronized (fResultCache) {
+			fResultCache.clear();
+		}
 	}
 
 	public long getCacheHits() {

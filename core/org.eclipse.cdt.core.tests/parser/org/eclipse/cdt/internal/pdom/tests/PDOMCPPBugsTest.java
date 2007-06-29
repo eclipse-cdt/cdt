@@ -45,6 +45,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -119,7 +120,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 			String id= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 			assertNotNull("Exported pdom ID is null", id);
 			
-			String id2= ((PDOM)pdomManager.getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			String id2 = getFragmentID(cproject);
 			assertNotNull("Project pdom ID is null", id2);
 			assertFalse("Project pdom ID equals export PDOM id", id2.equals(id));
 			
@@ -130,12 +131,26 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 			assertNotNull("Exported pdom ID is null after project reindex", id3);
 			assertEquals("Exported pdom ID hasChanged during reindex", id, id3);
 			
-			String id4= ((PDOM)pdomManager.getPDOM(cproject)).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			String id4= getFragmentID(cproject);
 			assertNotNull("Reindexed project pdom ID is null", id4);
 			assertFalse("Reindexex project pdom ID equals exported pdom ID", id4.equals(id));
 		} finally {
 			pdom.releaseReadLock();
 		}
+	}
+
+	private String getFragmentID(final ICProject cproject) throws CoreException, InterruptedException {
+		PDOMManager pdomManager= CCoreInternals.getPDOMManager();
+		final PDOM projectPDOM = (PDOM)pdomManager.getPDOM(cproject);
+		String id2;
+		projectPDOM.acquireReadLock();
+		try {
+			id2= (projectPDOM).getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+		}
+		finally {
+			projectPDOM.releaseReadLock();
+		}
+		return id2;
 	}
 	
 	public void testInterruptingAcquireReadLock() throws Exception {

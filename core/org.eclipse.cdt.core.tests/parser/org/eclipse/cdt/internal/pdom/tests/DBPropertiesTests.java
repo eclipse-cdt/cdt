@@ -38,7 +38,7 @@ public class DBPropertiesTests extends BaseTestCase {
 		dbLoc = File.createTempFile("test", "db");
 		dbLoc.deleteOnExit();
 		db = new Database(dbLoc, new ChunkCache(), 0, false);
-		db.setWritable();
+		db.setExclusiveLock();
 	}
 	
 	protected void tearDown() throws Exception {
@@ -46,7 +46,6 @@ public class DBPropertiesTests extends BaseTestCase {
 	}
 	
 	public void testBasic() throws CoreException {
-		db.setWritable();
 		DBProperties properties = new DBProperties(db);
 		Properties expected = System.getProperties();
 		for(Iterator i = expected.keySet().iterator(); i.hasNext(); ) {

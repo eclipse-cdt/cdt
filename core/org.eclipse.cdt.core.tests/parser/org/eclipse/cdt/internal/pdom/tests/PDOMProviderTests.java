@@ -105,14 +105,20 @@ public class PDOMProviderTests extends PDOMTestBase {
 				}
 		));
 		IIndex index= CCorePlugin.getIndexManager().getIndex(cproject2);
-		IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
-		assertEquals(1, bindings.length);
-		bindings= index.findBindingsForPrefix("A".toCharArray(), false, new IndexFilter() {
-			public boolean acceptBinding(IBinding binding) {
-				return binding instanceof ICPPClassType;
-			}
-		}, null);
-		assertEquals(2, bindings.length);
+		index.acquireReadLock();
+		try {
+			IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			bindings= index.findBindingsForPrefix("A".toCharArray(), false, new IndexFilter() {
+				public boolean acceptBinding(IBinding binding) {
+					return binding instanceof ICPPClassType;
+				}
+			}, null);
+			assertEquals(2, bindings.length);
+		}
+		finally {
+			index.releaseReadLock();
+		}
 	}
 
 
@@ -178,41 +184,59 @@ public class PDOMProviderTests extends PDOMTestBase {
 
 		{
 			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject2);
-			IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
-			assertEquals(1, bindings.length);
-			assertEquals(1, index.findDefinitions(bindings[0]).length);
-			bindings= index.findBindingsForPrefix("A".toCharArray(), false, new IndexFilter() {
-				public boolean acceptBinding(IBinding binding) {
-					return binding instanceof ICPPClassType;
-				}
-			}, null);
-			assertEquals(2, bindings.length);
+			index.acquireReadLock();
+			try {
+				IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
+				assertEquals(1, bindings.length);
+				assertEquals(1, index.findDefinitions(bindings[0]).length);
+				bindings= index.findBindingsForPrefix("A".toCharArray(), false, new IndexFilter() {
+					public boolean acceptBinding(IBinding binding) {
+						return binding instanceof ICPPClassType;
+					}
+				}, null);
+				assertEquals(2, bindings.length);
+			}
+			finally {
+				index.releaseReadLock();
+			}
 		}
 
 		{
 			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject3);
-			IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
-			assertEquals(1, bindings.length);
-			assertEquals(1, index.findDefinitions(bindings[0]).length);
-			bindings= index.findBindingsForPrefix("A".toCharArray(), false, new IndexFilter() {
-				public boolean acceptBinding(IBinding binding) {
-					return binding instanceof ICPPClassType;
-				}
-			}, null);
-			assertEquals(2, bindings.length);
+			index.acquireReadLock();
+			try {
+				IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
+				assertEquals(1, bindings.length);
+				assertEquals(1, index.findDefinitions(bindings[0]).length);
+				bindings= index.findBindingsForPrefix("A".toCharArray(), false, new IndexFilter() {
+					public boolean acceptBinding(IBinding binding) {
+						return binding instanceof ICPPClassType;
+					}
+				}, null);
+				assertEquals(2, bindings.length);
+			}
+			finally {
+				index.releaseReadLock();
+			}
 		}
 		
 		{
 			IIndex index= CCorePlugin.getIndexManager().getIndex(new ICProject[]{cproject2, cproject3});
-			IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
-			assertEquals(1, bindings.length);
-			assertEquals(1, index.findDefinitions(bindings[0]).length);
-			bindings= index.findBindingsForPrefix("A".toCharArray(), false, new IndexFilter() {
-				public boolean acceptBinding(IBinding binding) {
-					return binding instanceof ICPPClassType;
-				}
-			}, null);
-			assertEquals(3, bindings.length);
+			index.acquireReadLock();
+			try {
+				IBinding[] bindings= index.findBindings("A".toCharArray(), IndexFilter.ALL, NPM);
+				assertEquals(1, bindings.length);
+				assertEquals(1, index.findDefinitions(bindings[0]).length);
+				bindings= index.findBindingsForPrefix("A".toCharArray(), false, new IndexFilter() {
+					public boolean acceptBinding(IBinding binding) {
+						return binding instanceof ICPPClassType;
+					}
+				}, null);
+				assertEquals(3, bindings.length);
+
+			} finally {
+				index.releaseReadLock();
+			}		
 		}
 	}
 	
@@ -236,9 +260,9 @@ public class PDOMProviderTests extends PDOMTestBase {
 			wpdom.acquireWriteLock();
 			try {
 				wpdom.getDB().setVersion(1);	
+				wpdom.close();
 			} finally {
 				wpdom.releaseWriteLock();
-				wpdom.close();
 			}
 		}
 

@@ -39,7 +39,7 @@ final class Chunk {
 	void read() throws CoreException {
 		try {
 			final ByteBuffer buf= ByteBuffer.wrap(fBuffer);
-			fDatabase.getChannel().read(buf, fSequenceNumber*Database.CHUNK_SIZE);
+			fDatabase.getFileChannel().read(buf, fSequenceNumber*Database.CHUNK_SIZE);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
@@ -48,7 +48,7 @@ final class Chunk {
 	void flush() throws CoreException {
 		try {
 			final ByteBuffer buf= ByteBuffer.wrap(fBuffer);
-			fDatabase.getChannel().write(buf, fSequenceNumber*Database.CHUNK_SIZE);
+			fDatabase.getFileChannel().write(buf, fSequenceNumber*Database.CHUNK_SIZE);
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}

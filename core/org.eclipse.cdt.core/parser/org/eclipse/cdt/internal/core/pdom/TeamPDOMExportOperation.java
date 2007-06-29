@@ -71,7 +71,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 	public void run(IProgressMonitor monitor) throws CoreException {
 		getMessageDigest();
 		getTargetLocation();
-
+	
 		File tmpPDOM= null;
 		File tmpChecksums= null;
 		try {
@@ -80,15 +80,15 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 		} catch (IOException e) {
 			throw new CoreException(CCorePlugin.createStatus(Messages.TeamPDOMExportOperation_errorCreatingTempFile, e));
 		}
-
+	
 		try {
 			PDOMManager pdomManager= CCoreInternals.getPDOMManager();
-
+	
 			// wait for indexer
 			monitor.beginTask("", 100); //$NON-NLS-1$
 			pdomManager.joinIndexer(Integer.MAX_VALUE, subMonitor(monitor, 1));
 			checkMonitor(monitor);
-
+	
 			// create index
 			IIndexLocationConverter converter= new ResourceContainerRelativeLocationConverter(ResourcesPlugin.getWorkspace().getRoot());
 			pdomManager.exportProjectPDOM(fProject, tmpPDOM, converter);
@@ -97,12 +97,15 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			
 			// create checksums
 			PDOM pdom= new PDOM(tmpPDOM, converter, LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+			pdom.acquireReadLock();
 			try {
 				monitor.setTaskName(Messages.Checksums_taskComputeChecksums);
 				createChecksums(fProject, pdom, tmpChecksums, subMonitor(monitor, 94));
+				pdom.db.setExclusiveLock();	// The tmpPDOM is all ours.
+				pdom.close();
 			}
 			finally {
-				pdom.close();
+				pdom.releaseReadLock();
 			}
 			
 			// create archive
@@ -111,6 +114,9 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 			// store preferences
 			monitor.setTaskName(Messages.TeamPDOMExportOperation_taskExportIndex);
 			IndexerPreferences.setIndexImportLocation(fProject.getProject(), fTargetLocation.toString());
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			return;
 		}
 		finally {
 			if (tmpPDOM != null) {

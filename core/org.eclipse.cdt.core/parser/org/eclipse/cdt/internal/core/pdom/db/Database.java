@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.pdom.db;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,15 +62,19 @@ public class Database {
 
 	private final File location;
 	private final RandomAccessFile file;
-	private boolean fWritable= false;
-	private boolean fPermanentlyReadOnly;
-	private Chunk[] chunks;
+	private boolean fExclusiveLock= false;	// necessary for any write operation
+	private boolean fLocked;				// necessary for any operation.
+	private boolean fIsMarkedIncomplete= false;
+
+	private int fVersion;
+	private final Chunk fHeaderChunk;
+	private Chunk[] fChunks;
+	private ChunkCache fCache;
 	
 	private long malloced;
 	private long freed;
 	private long cacheHits;
 	private long cacheMisses;
-	private ChunkCache fCache;
 	
 	// public for tests only, you shouldn't need these
 	public static final int VERSION_OFFSET = 0;
@@ -86,63 +91,69 @@ public class Database {
 	/**
 	 * Construct a new Database object, creating a backing file if necessary.
 	 * @param location the local file path for the database 
-	 * @param cache the cache to be used optimisation
+	 * @param cache the cache to be used optimization
 	 * @param version the version number to store in the database (only applicable for new databases)
 	 * @param permanentReadOnly whether this Database object will ever need writing to
 	 * @throws CoreException
 	 */
-	public Database(File location, ChunkCache cache, int version, boolean permanentlyReadOnly) throws CoreException {
+	public Database(File location, ChunkCache cache, int version, boolean openReadOnly) throws CoreException {
 		try {
 			this.location = location;
-			this.fPermanentlyReadOnly= permanentlyReadOnly;
-			this.file = new RandomAccessFile(location, permanentlyReadOnly ? "r" : "rw"); //$NON-NLS-1$ //$NON-NLS-2$
+			this.file = new RandomAccessFile(location, openReadOnly ? "r" : "rw"); //$NON-NLS-1$ //$NON-NLS-2$
 			this.fCache= cache;
 			
-			// Allocate chunk table, make sure we have at least one
-			long nChunks = file.length() / CHUNK_SIZE;
-			chunks = new Chunk[(int)nChunks];
+			int nChunks = Math.max(1, (int) (file.length() / CHUNK_SIZE));
+			fHeaderChunk= new Chunk(this, 0);
+			fHeaderChunk.fLocked= true;		// never makes it into the cache, needed to satisfy assertions
+			fChunks = new Chunk[nChunks];	// chunk[0] is unused.
 			if (nChunks == 0) {
-				if(!permanentlyReadOnly) {
-					setWritable();
-				}
-				createNewChunk();
-				setVersion(version);
-				setReadOnly(true);
+				fVersion= version;
+			}
+			else {
+				fHeaderChunk.read();
+				fVersion= fHeaderChunk.getInt(0);
 			}
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
 	
-	public FileChannel getChannel() {
+	FileChannel getFileChannel() {
 		return file.getChannel();
+	}
+
+	public void transferTo(FileChannel target) throws IOException {
+		assert fLocked;
+		final FileChannel from= file.getChannel();
+		from.transferTo(0, from.size(), target);
 	}
 	
 	public int getVersion() throws CoreException {
-		return getChunk(0).getInt(0);
+		return fVersion;
 	}
 	
 	public void setVersion(int version) throws CoreException {
-		getChunk(0).putInt(0, version);
+		assert fExclusiveLock;
+		fHeaderChunk.putInt(0, version);
+		fVersion= version;
 	}
 
 	/**
 	 * Empty the contents of the Database, make it ready to start again
 	 * @throws CoreException
 	 */
-	public void clear(long timeout) throws CoreException {
-		int version= getVersion();
+	public void clear(int version) throws CoreException {
+		assert fExclusiveLock;
 		removeChunksFromCache();
 		
+		fVersion= version;
 		// clear the first chunk.
-		Chunk header= getChunk(0);
-		header.clear(0, CHUNK_SIZE);
-		setVersion(version);
-		
-		// chunks have been removed from the cache, so we are fine here.
-		chunks = new Chunk[] {header};
+		fHeaderChunk.clear(0, CHUNK_SIZE);
+		// chunks have been removed from the cache, so we may just reset the array of chunks.
+		fChunks = new Chunk[] {null};
 		try {
-			getChannel().truncate(CHUNK_SIZE);
+			fHeaderChunk.flush();	// zero out header chunk
+			file.getChannel().truncate(CHUNK_SIZE);	// truncate database
 		}
 		catch (IOException e) {
 			CCorePlugin.log(e);
@@ -152,11 +163,11 @@ public class Database {
 
 	private void removeChunksFromCache() {
 		synchronized (fCache) {
-			for (int i = 0; i < chunks.length; i++) {
-				Chunk chunk= chunks[i];
+			for (int i=1; i < fChunks.length; i++) {
+				Chunk chunk= fChunks[i];
 				if (chunk != null) {
 					fCache.remove(chunk);
-					chunks[i]= null;
+					fChunks[i]= null;
 				}
 			}
 		}
@@ -168,34 +179,22 @@ public class Database {
 	 * @throws CoreException 
 	 */
 	public Chunk getChunk(int offset) throws CoreException {
-		int index = offset / CHUNK_SIZE;
-		
-		// for performance reasons try to find chunk and mark it without
-		// synchronizing. This means that we might pick up a chunk that
-		// has been paged out, which is fine.
-		// Furthermore the hit-flag may not be seen by the clock-algorithm,
-		// which might lead to the eviction of a chunk. With the next
-		// cache failure we are in sync again, though.
-		Chunk chunk = chunks[index];		
-		if (chunk != null && (chunk.fLocked || !fWritable)) {
-			chunk.fCacheHitFlag= true;
-			cacheHits++;
-			return chunk;
+		if (offset < CHUNK_SIZE) {
+			return fHeaderChunk;
 		}
-		
-		// here is the safe code that has to be performed if we cannot
-		// get hold of the chunk.
 		synchronized(fCache) {
-			chunk= chunks[index];
+			assert fLocked;
+			final int index = offset / CHUNK_SIZE;
+			Chunk chunk= fChunks[index];
 			if (chunk == null) {
 				cacheMisses++;
-				chunk = chunks[index] = new Chunk(this, index);
+				chunk = fChunks[index] = new Chunk(this, index);
 				chunk.read();
 			}
 			else {
 				cacheHits++;
 			}
-			fCache.add(chunk, fWritable);
+			fCache.add(chunk, fExclusiveLock);
 			return chunk;
 		}
 	}
@@ -207,6 +206,7 @@ public class Database {
 	 * @return
 	 */ 
 	public int malloc(int size) throws CoreException {
+		assert fExclusiveLock;
 		if (size > MAX_SIZE)
 			// Too Big
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0,
@@ -254,31 +254,33 @@ public class Database {
 	}
 	
 	private int createNewChunk() throws CoreException {
-		// prepare new chunk array
-		final int oldLen= chunks.length;
-		final Chunk chunk= new Chunk(this, oldLen);
-		chunk.fDirty= true;
-
-		Chunk[] newchunks = new Chunk[oldLen+1];
-		// the content of the chunk array may be modified by the cache, so sync it.
+		assert fExclusiveLock;
 		synchronized (fCache) {
-			System.arraycopy(chunks, 0, newchunks, 0, oldLen);
+			final int oldLen= fChunks.length;
+			final Chunk chunk= new Chunk(this, oldLen);
+			chunk.fDirty= true;
+
+			Chunk[] newchunks = new Chunk[oldLen+1];
+			System.arraycopy(fChunks, 0, newchunks, 0, oldLen);
 			newchunks[oldLen]= chunk;
-			chunks= newchunks;
+			fChunks= newchunks;
 			fCache.add(chunk, true);
+			return oldLen * CHUNK_SIZE;
 		}
-		return oldLen * CHUNK_SIZE;
 	}
 	
 	private int getFirstBlock(int blocksize) throws CoreException {
-		return getChunk(0).getInt((blocksize / MIN_SIZE) * INT_SIZE);
+		assert fLocked;
+		return fHeaderChunk.getInt((blocksize / MIN_SIZE) * INT_SIZE);
 	}
 	
 	private void setFirstBlock(int blocksize, int block) throws CoreException {
-		getChunk(0).putInt((blocksize / MIN_SIZE) * INT_SIZE, block);
+		assert fExclusiveLock;
+		fHeaderChunk.putInt((blocksize / MIN_SIZE) * INT_SIZE, block);
 	}
 	
 	private void removeBlock(Chunk chunk, int blocksize, int block) throws CoreException {
+		assert fExclusiveLock;
 		int prevblock = chunk.getInt(block + PREV_OFFSET);
 		int nextblock = chunk.getInt(block + NEXT_OFFSET);
 		if (prevblock != 0)
@@ -291,6 +293,7 @@ public class Database {
 	}
 	
 	private void addBlock(Chunk chunk, int blocksize, int block) throws CoreException {
+		assert fExclusiveLock;
 		// Mark our size
 		chunk.putInt(block, blocksize);
 
@@ -309,6 +312,7 @@ public class Database {
 	 * @param offset
 	 */
 	public void free(int offset) throws CoreException {
+		assert fExclusiveLock;
 		// TODO - look for opportunities to merge blocks
 		int block = offset - 4;
 		Chunk chunk = getChunk(block);
@@ -382,15 +386,14 @@ public class Database {
 			return new ShortString(this, offset);
 	}
 	
-	public int getChunkCount() {
-		return chunks.length;
-	}
-
+	/**
+	 * For debugging purposes, only.
+	 */
 	public void reportFreeBlocks() throws CoreException {
-		System.out.println("Allocated size: " + chunks.length * CHUNK_SIZE); //$NON-NLS-1$
+		System.out.println("Allocated size: " + fChunks.length * CHUNK_SIZE); //$NON-NLS-1$
 		System.out.println("malloc'ed: " + malloced); //$NON-NLS-1$
 		System.out.println("free'd: " + freed); //$NON-NLS-1$
-		System.out.println("wasted: " + (chunks.length * CHUNK_SIZE - (malloced - freed))); //$NON-NLS-1$
+		System.out.println("wasted: " + (fChunks.length * CHUNK_SIZE - (malloced - freed))); //$NON-NLS-1$
 		System.out.println("Free blocks"); //$NON-NLS-1$
 		for (int bs = MIN_SIZE; bs <= CHUNK_SIZE; bs += MIN_SIZE) {
 			int count = 0;
@@ -412,11 +415,14 @@ public class Database {
 	 * @throws CoreException 
 	 */
 	public void close() throws CoreException {
-		setReadOnly(true);
+		assert fExclusiveLock;
+		flush();
 		removeChunksFromCache();
 		
 		// chunks have been removed from the cache, so we are fine
-		chunks= new Chunk[0];
+		fHeaderChunk.clear(0, CHUNK_SIZE);
+		fHeaderChunk.fDirty= false;
+		fChunks= new Chunk[] {null};
 		try {
 			file.close();
 		} catch (IOException e) {
@@ -436,7 +442,7 @@ public class Database {
 	 */
 	void releaseChunk(final Chunk chunk) {
 		if (!chunk.fLocked) {
-			chunks[chunk.fSequenceNumber]= null;
+			fChunks[chunk.fSequenceNumber]= null;
 		}			
 	}
 
@@ -449,65 +455,70 @@ public class Database {
 	}
 
 	/**
-	 * Marks this Database as writable. This is used for avoiding some synchronization on chunk fetching. An
-	 * exception is thrown if this Database was constructed as a permanently read only Database.
-	 * @see Database#Database(File, ChunkCache, int, boolean)
-	 * @throw IllegalStateException if called on a permanently read-only database  
+	 * Asserts that database is used by one thread exclusively. This is necessary when doing
+	 * write operations.
 	 */
-	public void setWritable() {
-		if(fPermanentlyReadOnly)
-			throw new IllegalStateException("A Database created as permanent-read-only may not be changed to writable state"); //$NON-NLS-1$
-		fWritable= true;
+	public void setExclusiveLock() {
+		fExclusiveLock= true;
+		fLocked= true;
 	}
 
-	public void setReadOnly(final boolean flush) throws CoreException {
-		if (fWritable) {
-			fWritable= false;
-			
-			ArrayList dirtyChunks= new ArrayList();
-			synchronized (fCache) {
-				for (int i= chunks.length-1; i >= 0 ; i--) {
-					Chunk chunk= chunks[i];
-					if (chunk != null) {
-						if (chunk.fCacheIndex < 0) {
-							chunk.fLocked= false;
-							chunks[i]= null;
-							if (chunk.fDirty) {
-								dirtyChunks.add(chunk);
+	public void setLocked(boolean val) {
+		fLocked= val;
+	}
+	
+	public void giveUpExclusiveLock(final boolean flush) throws CoreException {
+		if (fExclusiveLock) {
+			try {
+				ArrayList dirtyChunks= new ArrayList();
+				synchronized (fCache) {
+					for (int i= 1; i < fChunks.length; i++) {
+						Chunk chunk= fChunks[i];
+						if (chunk != null) {
+							if (chunk.fCacheIndex < 0) { 	
+								// locked chunk that has been removed from cache.
+								if (chunk.fDirty) {
+									dirtyChunks.add(chunk); // keep in fChunks until it is flushed.
+								}
+								else {
+									chunk.fLocked= false;
+									fChunks[i]= null;
+								}
 							}
-						}
-						else if (chunk.fLocked) {
-							if (!chunk.fDirty) {
-								chunk.fLocked= false;
+							else if (chunk.fLocked) {
+								// locked chunk, still in cache.
+								if (chunk.fDirty) {
+									if (flush) {
+										dirtyChunks.add(chunk);
+									}
+								}
+								else {
+									chunk.fLocked= false;
+								}
 							}
-							else if (flush) {
-								chunk.fLocked= false;
-								dirtyChunks.add(chunk);
+							else {
+								assert !chunk.fDirty; // dirty chunks must be locked.
 							}
-						}
-						else if (flush && chunk.fDirty) {
-							dirtyChunks.add(chunk);
 						}
 					}
 				}
+				// also handles header chunk
+				flushAndUnlockChunks(dirtyChunks, flush);
 			}
-			
-			if (!dirtyChunks.isEmpty()) {
-				for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
-					Chunk chunk = (Chunk) it.next();
-					chunk.flush();
-				}
+			finally {
+				fExclusiveLock= false;
 			}
 		}
 	}
 	
 	public void flush() throws CoreException {
-		if (fWritable) {
+		assert fLocked;
+		if (fExclusiveLock) {
 			try {
-				setReadOnly(true);
+				giveUpExclusiveLock(true);
 			}
 			finally {
-				setWritable();
+				setExclusiveLock();
 			}
 			return;
 		}
@@ -515,33 +526,69 @@ public class Database {
 		// be careful as other readers may access chunks concurrently
 		ArrayList dirtyChunks= new ArrayList();
 		synchronized (fCache) {
-			for (int i= chunks.length-1; i >= 0 ; i--) {
-				Chunk chunk= chunks[i];
+			for (int i= 1; i < fChunks.length ; i++) {
+				Chunk chunk= fChunks[i];
 				if (chunk != null && chunk.fDirty) {
 					dirtyChunks.add(chunk);
 				}
 			}
 		}
 
-		if (!dirtyChunks.isEmpty()) {
-			for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
-				Chunk chunk = (Chunk) it.next();
-				chunk.flush();
+		// also handles header chunk
+		flushAndUnlockChunks(dirtyChunks, true);
+	}
+
+	private void flushAndUnlockChunks(final ArrayList dirtyChunks, boolean isComplete) throws CoreException {
+		assert !Thread.holdsLock(fCache);
+		synchronized(fHeaderChunk) {
+			if (!fHeaderChunk.fDirty) {
+				if (!(isComplete && fIsMarkedIncomplete)) {
+					return;
+				}
 			}
-		}
-		
-		// only after the chunks are flushed we may unlock and release them.
-		synchronized (fCache) {
-			for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
-				Chunk chunk = (Chunk) it.next();
-				chunk.fLocked= false;
-				if (chunk.fCacheIndex < 0) {
-					chunks[chunk.fSequenceNumber]= null;
+			if (!dirtyChunks.isEmpty()) {
+				markFileIncomplete();
+				for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
+					Chunk chunk = (Chunk) it.next();
+					if (chunk.fDirty) {
+						chunk.flush();
+					}
+				}
+
+				// only after the chunks are flushed we may unlock and release them.
+				synchronized (fCache) {
+					for (Iterator it = dirtyChunks.iterator(); it.hasNext();) {
+						Chunk chunk = (Chunk) it.next();
+						chunk.fLocked= false;
+						if (chunk.fCacheIndex < 0) {
+							fChunks[chunk.fSequenceNumber]= null;
+						}
+					}
+				}
+			}
+
+			if (isComplete) {
+				if (fHeaderChunk.fDirty || fIsMarkedIncomplete) {
+					fHeaderChunk.putInt(0, fVersion);
+					fHeaderChunk.flush();
+					fIsMarkedIncomplete= false;
 				}
 			}
 		}
 	}
 		
+	private void markFileIncomplete() throws CoreException {
+		if (!fIsMarkedIncomplete) {
+			fIsMarkedIncomplete= true;
+			try {
+				final ByteBuffer buf= ByteBuffer.wrap(new byte[4]);
+				file.getChannel().write(buf, 0);
+			} catch (IOException e) {
+				throw new CoreException(new DBStatus(e));
+			}
+		}
+	}
+
 	public void resetCacheCounters() {
 		cacheHits= cacheMisses= 0;
 	}

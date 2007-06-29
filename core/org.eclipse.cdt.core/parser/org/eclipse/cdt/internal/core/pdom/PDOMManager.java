@@ -61,7 +61,6 @@ import org.eclipse.cdt.internal.core.index.IndexerStateEvent;
 import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
-import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.cdt.internal.core.pdom.indexer.DeltaAnalyzer;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
@@ -1082,34 +1081,30 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		try {
 			// copy it
 			PDOM pdom= (PDOM) getPDOM(cproject);
-			pdom.acquireWriteLock();
+			pdom.acquireReadLock();
+			String oldID= null;
 			try {
+				oldID= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 				pdom.flush();
-				Database db= pdom.getDB();
-				FileChannel from= db.getChannel();
 				FileChannel to = new FileOutputStream(targetLocation).getChannel();
-				from.transferTo(0, from.size(), to);
+				pdom.getDB().transferTo(to);
 				to.close();
 			} finally {
-				pdom.releaseWriteLock();
+				pdom.releaseReadLock();
 			}
 
 			// overwrite internal location representations
 			final WritablePDOM newPDOM = new WritablePDOM(targetLocation, pdom.getLocationConverter(), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());			
+			newPDOM.acquireWriteLock();
 			try {
-				newPDOM.acquireWriteLock();
-				try {
-					newPDOM.rewriteLocations(newConverter);
+				newPDOM.rewriteLocations(newConverter);
 
-					// ensure fragment id has a sensible value, in case callee's do not
-					// overwrite their own values
-					String oldId= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-					newPDOM.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "exported."+oldId); //$NON-NLS-1$
-				} finally {
-					newPDOM.releaseWriteLock();
-				}
-			} finally {
+				// ensure fragment id has a sensible value, in case callee's do not
+				// overwrite their own values
+				newPDOM.setProperty(IIndexFragment.PROPERTY_FRAGMENT_ID, "exported."+oldID); //$NON-NLS-1$
 				newPDOM.close();
+			} finally {
+				newPDOM.releaseWriteLock();
 			}
 		} catch(IOException ioe) {
 			throw new CoreException(CCorePlugin.createStatus(ioe.getMessage()));

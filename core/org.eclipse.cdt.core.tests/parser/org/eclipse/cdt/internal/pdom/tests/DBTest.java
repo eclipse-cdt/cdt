@@ -37,6 +37,7 @@ public class DBTest extends BaseTestCase {
 		super.setUp();
 		db = new Database(getTestDir().append(getName()+System.currentTimeMillis()+".dat").toFile(),
 				new ChunkCache(), 0, false);
+		db.setExclusiveLock();
 	}
 		
 	public static Test suite() {
@@ -65,7 +66,6 @@ public class DBTest extends BaseTestCase {
 		final int realsize = 42;
 		final int blocksize = (realsize / Database.MIN_SIZE + 1) * Database.MIN_SIZE;
 		
-		db.setWritable();
 		int mem = db.malloc(realsize);
 		assertEquals(-blocksize, db.getInt(mem - Database.INT_SIZE));
 		db.free(mem);
@@ -102,7 +102,6 @@ public class DBTest extends BaseTestCase {
 		final int realsize = 42;
 		final int blocksize = (realsize / Database.MIN_SIZE + 1) * Database.MIN_SIZE;
 
-		db.setWritable();
 		int mem1 = db.malloc(realsize);
 		int mem2 = db.malloc(realsize);
 		db.free(mem1);
@@ -115,7 +114,6 @@ public class DBTest extends BaseTestCase {
 	}
 	
 	public void testSimpleAllocationLifecycle() throws Exception {	
-		db.setWritable();
 		int mem1 = db.malloc(42);
 		db.free(mem1);
 		int mem2 = db.malloc(42);
@@ -152,7 +150,7 @@ public class DBTest extends BaseTestCase {
 		File f = getTestDir().append("testStrings.dat").toFile();
 		f.delete();
 		final Database db = new Database(f, new ChunkCache(), 0, false);
-		db.setWritable();
+		db.setExclusiveLock();
 
 		String[] names = {
 				"ARLENE",
@@ -270,12 +268,10 @@ public class DBTest extends BaseTestCase {
 	{
 		char[] acs = a.toCharArray();
 		char[] bcs = b.toCharArray();
-		db.setWritable();
 		IString aiss = db.newString(a);
 		IString biss = db.newString(b);
 		IString aisc = db.newString(acs);
 		IString bisc = db.newString(bcs);
-		db.setReadOnly(true);
 		
 		assertSignEquals(expected, aiss.compare(bcs, caseSensitive));
 		assertSignEquals(expected, aiss.compare(biss, caseSensitive));

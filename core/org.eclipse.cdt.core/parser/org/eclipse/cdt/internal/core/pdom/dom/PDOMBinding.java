@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
@@ -289,11 +290,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	 * @return
 	 */
 	public int pdomCompareTo(PDOMBinding other) {
-		PDOMBinding otherBinding = (PDOMBinding) other;
-		int cmp = comparePDOMBindingQNs(this, otherBinding);
+		int cmp = comparePDOMBindingQNs(this, other);
 		if(cmp==0) {
 			int t1 = getNodeType();
-			int t2 = otherBinding.getNodeType();
+			int t2 = other.getNodeType();
 			return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
 		}
 		return cmp;

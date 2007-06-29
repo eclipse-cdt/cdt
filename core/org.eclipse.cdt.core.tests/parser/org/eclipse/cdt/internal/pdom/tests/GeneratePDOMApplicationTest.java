@@ -105,7 +105,13 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
-		String fid= wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+		String fid;
+		wpdom.acquireReadLock();
+		try {
+			fid = wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+		} finally {
+			wpdom.releaseReadLock();
+		}
 		assertNotNull(fid);
 		assertTrue(fid.startsWith("export")); // check for default export id
 	}
@@ -120,13 +126,17 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
-		String fid= wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-		assertNotNull(fid);
-		assertEquals(ACME_SDK_ID, fid); // check for custom export id
-
-		String sdkVer= wpdom.getProperty(SDK_VERSION);
-		assertNotNull(sdkVer);
-		assertEquals("4.0.1", sdkVer); // check for custom property value
+		wpdom.acquireReadLock();
+		try {
+			String fid = wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull(fid);
+			assertEquals(ACME_SDK_ID, fid); // check for custom export id
+			String sdkVer = wpdom.getProperty(SDK_VERSION);
+			assertNotNull(sdkVer);
+			assertEquals("4.0.1", sdkVer); // check for custom property value
+		} finally {
+			wpdom.releaseReadLock();
+		}
 	}
 
 	public void testExternalExportProjectProvider_BadCmdLine1() throws Exception {
@@ -194,10 +204,14 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
 		verifyProject1Content(wpdom);
 
-		String fid= wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
-		assertNotNull(fid);
-		assertEquals("hello.world", fid); // check for id passed on command-line
-
+		wpdom.acquireReadLock();
+		try {
+			String fid = wpdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
+			assertNotNull(fid);
+			assertEquals("hello.world", fid); // check for id passed on command-line
+		} finally {
+			wpdom.releaseReadLock();
+		}
 		assertTrue(stateCount[0] == 2);
 	}
 
@@ -254,8 +268,15 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		};
 		
 		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-		assertEquals(1, wpdom.findBindings(new char[][] {"foo".toCharArray()}, CLinkage, NPM).length);
-		assertEquals(0, wpdom.findBindings(new char[][] {"foo".toCharArray()}, CPPLinkage, NPM).length);
+		wpdom.acquireReadLock();
+		try {
+			assertEquals(1, wpdom.findBindings(new char[][] { "foo"
+					.toCharArray() }, CLinkage, NPM).length);
+			assertEquals(0, wpdom.findBindings(new char[][] { "foo"
+					.toCharArray() }, CPPLinkage, NPM).length);
+		} finally {
+			wpdom.releaseReadLock();
+		}
 	}
 
 	public void verifyProject1Content(WritablePDOM wpdom) throws Exception {

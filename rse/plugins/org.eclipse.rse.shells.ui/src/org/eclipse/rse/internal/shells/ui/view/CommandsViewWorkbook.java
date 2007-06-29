@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -127,6 +127,24 @@ public class CommandsViewWorkbook extends Composite
 	public void showCurrentPage()
 	{
 	    _folder.setFocus();
+	}
+	
+	/**
+	 * For defect 165680, needed to change the active tab
+	 * @param root the shell to show
+	 */
+	public void showPageFor(IRemoteCommandShell root)
+	{
+		for (int i = 0; i < _folder.getItemCount(); i++)
+		{
+			CTabItem item = _folder.getItem(i);
+			CommandsViewPage page = (CommandsViewPage) item.getData();
+			if (page != null && root == page.getInput())
+			{
+				_folder.setSelection(item);
+			}
+
+		}
 	}
 
 	public Object getInput()

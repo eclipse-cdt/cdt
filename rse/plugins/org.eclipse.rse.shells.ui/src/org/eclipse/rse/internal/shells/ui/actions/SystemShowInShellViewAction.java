@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
  *******************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.actions;
@@ -53,6 +53,7 @@ public class SystemShowInShellViewAction extends SystemBaseShellAction
 		{
 		    IRemoteCommandShell cmdShell = (IRemoteCommandShell)_selected.get(i);
 		    viewPart.updateOutput(cmdShell);
+		    viewPart.showPageFor(cmdShell); // for defect 165680		    
 		}
 	}
 }

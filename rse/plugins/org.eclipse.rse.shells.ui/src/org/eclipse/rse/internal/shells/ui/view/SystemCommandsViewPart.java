@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -625,6 +626,18 @@ public class SystemCommandsViewPart
 			_folder.updateOutput(root, createTab);
 			if (createTab)
 			    updateActionStates();
+		}
+	}
+	
+	/**
+	 * For defect 165680, needed to change the active tab
+	 * @param root the shell to show
+	 */
+	public void showPageFor(IRemoteCommandShell root)
+	{
+		if (root != null && _folder != null)
+		{
+			_folder.showPageFor(root);
 		}
 	}
 

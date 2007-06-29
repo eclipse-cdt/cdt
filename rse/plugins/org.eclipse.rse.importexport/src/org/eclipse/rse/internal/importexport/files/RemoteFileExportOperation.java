@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [191479] refreshing destination directory after export
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -32,13 +33,18 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.importexport.RemoteImportExportPlugin;
 import org.eclipse.rse.internal.importexport.RemoteImportExportUtil;
 import org.eclipse.rse.internal.importexport.SystemImportExportResources;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -397,6 +403,7 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 	 */
 	public void run(IProgressMonitor monitor) throws InterruptedException {
 		this.monitor = monitor;
+		IPath parentPath = (IPath)path.clone();
 		if (resource != null) {
 			if (createLeadupStructure) createLeadupDirectoriesFor(resource);
 			if (createContainerDirectories && resource.getType() != IResource.FILE) { // ensure it's a container
@@ -422,6 +429,13 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 			} else {
 				exportSpecifiedResources();
 			}
+			
+			// fire event to update RSE
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			IRemoteFile destination = getRemoteFile(conn, parentPath);
+			
+			sr.fireEvent(new SystemResourceChangeEvent(destination, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+			
 			if (saveSettings) {
 				try {
 					saveDescription();
@@ -438,6 +452,11 @@ class RemoteFileExportOperation implements IRunnableWithProgress {
 		}
 	}
 
+	private IRemoteFile getRemoteFile(IHost conn, IPath path)
+	{
+		return Utilities.getIRemoteFile(conn, path.toString());
+	}
+	
 	/**
 	 * Saves a description file for the export.
 	 * @throws CoreException if an unexpected exception occurs.

@@ -46,7 +46,7 @@ public class CWordFinder {
 	 *         error accessing the docment data.
 	 */
 	public static IRegion findWord(IDocument document, int offset) {
-		int start = -1;
+		int start = -2;
 		int end = -1;
 
 		try {
@@ -77,7 +77,7 @@ public class CWordFinder {
 		} catch (BadLocationException x) {
 		}
 
-		if (start > -1 && end > -1) {
+		if (start >= -1 && end > -1) {
 			if (start == offset && end == offset)
 				return new Region(offset, 0);
 			else if (start == offset)

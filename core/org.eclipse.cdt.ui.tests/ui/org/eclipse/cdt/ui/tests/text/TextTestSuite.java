@@ -54,5 +54,8 @@ public class TextTestSuite extends TestSuite {
 		
 		// editor hyperlink tests
 		addTest(HyperlinkTest.suite());
+
+		// word detection
+		addTest(CWordFinderTest.suite());
     }
 }

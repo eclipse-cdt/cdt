@@ -28,6 +28,7 @@
  * Martin Oberhuber (Wind River) - [186964] Fix adapter actions for multiselect, and and NPE
  * Martin Oberhuber (Wind River) - [186991] Avoid remote refresh if no element is remote 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Kevin Doyle (IBM) - [194602] handleDoubleClick does expand/collapse on treepath instead of element
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -66,6 +67,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -506,12 +508,17 @@ public class SystemView extends SafeTreeViewer
 			//event.doit = false;
 			return;
 		}
-		IStructuredSelection s = (IStructuredSelection) event.getSelection();
+		ITreeSelection s = (ITreeSelection) event.getSelection();
 		Object element = s.getFirstElement();
 		if (element == null) return;
-		if (isExpandable(element)) {
-			boolean expandedState = getExpandedState(element);
-			setExpandedState(element, !expandedState);
+		// Get the path for the element and use it for setting expanded state,
+		// so the proper TreeItem is expanded/collapsed
+		TreePath[] paths = s.getPathsFor(element);
+		if (paths == null || paths.length == 0 || paths[0] == null) return;
+		TreePath elementPath = paths[0];
+		if (isExpandable(elementPath)) {
+			boolean expandedState = getExpandedState(elementPath);
+			setExpandedState(elementPath, !expandedState);
 			// DY:  fire collapse / expand event
 			if (expandedState) {
 				fireTreeCollapsed(new TreeExpansionEvent(this, element));
@@ -2103,16 +2110,20 @@ public class SystemView extends SafeTreeViewer
 				// if it's NOT a container, pass in it's parent
 				ISystemViewElementAdapter adapter = getViewAdapter(src);
 				if (adapter != null)
-				{
+				{					
 					// we need to refresh filters
 					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+					
 		        	List filterReferences = sr.findFilterReferencesFor(src, adapter.getSubSystem(src), false);
 		        	// if filters reference this resource we need them refreshed
 		        	for (int f = 0; f < filterReferences.size(); f++)
 		        	{
 		        		ISystemFilterReference ref = (ISystemFilterReference)filterReferences.get(f);
-		        		ref.markStale(true);
-		        		smartRefresh(ref, true);
+		        		if (!ref.isStale())
+		        		{
+		        			ref.markStale(true);
+		        			smartRefresh(ref, true);
+		        		}
 		        	}	
 		        	
 
@@ -2168,6 +2179,9 @@ public class SystemView extends SafeTreeViewer
 				}
 				
 				refreshRemoteObject(src, parent, originatedHere);
+		
+	        		
+	        	
 				break;
 			case ISystemResourceChangeEvents.EVENT_SELECT_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_SELECT_REMOTE: src = " + src); //$NON-NLS-1$
@@ -3402,7 +3416,13 @@ public class SystemView extends SafeTreeViewer
 				//item = (Item)recursiveFindRemoteItem(itemToExpand.parentItem, itemToExpand.remoteName, itemToExpand.subsystem);
 				//else
 				//item = (Item)findRemoteItem(itemToExpand.remoteName, itemToExpand.subsystem);
+				
+				//************************************************************///
+				// FIXME!!
+				// TODO
+				// DKM - problem here is that if a query is in progress, then we won't find it untli the deferred query completes
 				item = findFirstRemoteItemReference(itemToExpand.remoteName, itemToExpand.subsystem, itemToExpand.parentItem);
+				//************************************************************///
 				// if found, re-expand it
 				if (item != null) {
 					//setExpanded(item, true);

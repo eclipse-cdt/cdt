@@ -150,6 +150,8 @@ public class SystemActionViewerFilter extends ViewerFilter {
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		
+	
+		
 		// check if the object is an instance of one of the object types we want to filter
 		Class objType = isInstance(element);
 		
@@ -165,6 +167,12 @@ public class SystemActionViewerFilter extends ViewerFilter {
 			IAdaptable adaptable = (IAdaptable)element;
 			
 			adapter = (ISystemViewElementAdapter)(adaptable.getAdapter(ISystemViewElementAdapter.class));
+			if (adapter == null)
+			{
+				// might be deferred stuff
+				return true;
+			}
+			
 			
 			// get list of criteria
 			List criteria = (List)(map.get(objType));

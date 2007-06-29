@@ -911,7 +911,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		declSpec.accept(this);
 		final List declarators= Arrays.asList(node.getDeclarators());
 		if (declarators.size() > 0) {
-			if (scribe.printComment() || isCompositeTypeDeclaration(declSpec)) {
+			if (scribe.printComment() || peekNextToken() == Token.tIDENTIFIER) {
 				scribe.space();
 			}
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
@@ -930,7 +930,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	 * @param declSpec
 	 * @return true if the decl specifier is one of 'class', 'struct', 'union' or 'enum'
 	 */
-	private boolean isCompositeTypeDeclaration(IASTDeclSpecifier declSpec) {
+	protected boolean isCompositeTypeDeclaration(IASTDeclSpecifier declSpec) {
 		return declSpec instanceof IASTCompositeTypeSpecifier || declSpec instanceof ICASTEnumerationSpecifier;
 	}
 
@@ -1399,6 +1399,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		case IASTUnaryExpression.op_bracketedPrimary:
 			scribe.printNextToken(Token.tLPAREN, scribe.printComment());
 			operand.accept(this);
+			if (peekNextToken() != Token.tRPAREN) {
+				scribe.skipToToken(Token.tRPAREN);
+			}
 			scribe.printNextToken(Token.tRPAREN, scribe.printComment());
 			break;
 		case IASTUnaryExpression.op_prefixIncr:
@@ -1443,12 +1446,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			break;
 		case IASTUnaryExpression.op_sizeof:
 			scribe.printNextToken(Token.t_sizeof, scribe.printComment());
-			scribe.printNextToken(Token.tLPAREN, scribe.printComment());
 			operand.accept(this);
-			if (peekNextToken() != Token.tRPAREN) {
-				scribe.skipToToken(Token.tRPAREN);
-			}
-			scribe.printNextToken(Token.tRPAREN, scribe.printComment());
 			break;
 		default:
 			formatNode(node);

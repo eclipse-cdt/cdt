@@ -122,4 +122,16 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testIndentConfusionByCastExpression_Bug191021() throws Exception {
 		assertFormatterResult();
 	}
+	
+	//int
+	//var;
+	//int*
+	//pvar;
+	
+	//int var;
+	//int* pvar;
+	public void testSpaceBetweenTypeAndIdentifier_Bug194603() throws Exception {
+		assertFormatterResult();
+	}
+	
 }

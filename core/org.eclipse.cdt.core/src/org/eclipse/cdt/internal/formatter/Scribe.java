@@ -951,10 +951,13 @@ public class Scribe {
 					preserveEmptyLines(count - 1, scanner.getCurrentTokenStartPosition());
 					addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
 				} else if (count != 0 && formatter.preferences.number_of_empty_lines_to_preserve != 0) {
+					String preservedEmptyLines= getPreserveEmptyLines(count - 1);
 					addReplaceEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition(),
-							getPreserveEmptyLines(count - 1));
+							preservedEmptyLines);
+					hasWhitespace= preservedEmptyLines.length() == 0;
 				} else {
 					addDeleteEdit(scanner.getCurrentTokenStartPosition(), scanner.getCurrentTokenEndPosition());
+					hasWhitespace= true;
 				}
 				currentTokenStartPosition= scanner.getCurrentPosition();
 				break;

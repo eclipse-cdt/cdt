@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Rupen Mardirossian (IBM) - [187713] Check to see if target is null before attempting to retrieve targetAdapter in tranferRSEResources method (line 248)
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -243,9 +244,15 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 			        ISubSystemConfiguration factory = targetSubSystem.getSubSystemConfiguration();
 			        if (factory.supportsDropInFilters())
 			        {											        
-			            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);										            
-			            targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
-				
+			            target = targetSubSystem.getTargetForFilter((ISystemFilterReference)target);
+			            if (target == null)
+			            {
+			            	return false;
+			            }
+			            else
+			            {
+			            	targetAdapter = (ISystemDragDropAdapter) ((IAdaptable) target).getAdapter(ISystemDragDropAdapter.class);
+			            }
 			        }
 			    }
 				if (targetAdapter.validateDrop(set, target, (targetSubSystem == srcSubSystem)))

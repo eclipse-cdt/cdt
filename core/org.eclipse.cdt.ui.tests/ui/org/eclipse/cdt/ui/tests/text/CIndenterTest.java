@@ -205,4 +205,29 @@ public class CIndenterTest extends BaseUITestCase {
 	public void testIndentationOfConstructorBodyWithInitializer_Bug194586() throws Exception {
 		assertIndenterResult();
 	}
+
+	//void f() {
+	//switch(c) {
+	//case 'a':
+	//{
+	//}
+	//case 1:
+	//{
+	//}
+	//}
+	//}
+
+	//void f() {
+	//	switch(c) {
+	//	case 'a':
+	//	{
+	//	}
+	//	case 1:
+	//	{
+	//	}
+	//	}
+	//}
+public void testIndentationOfCaseBlockAfterCharLiteral_Bug194710() throws Exception {
+		assertIndenterResult();
+	}
 }

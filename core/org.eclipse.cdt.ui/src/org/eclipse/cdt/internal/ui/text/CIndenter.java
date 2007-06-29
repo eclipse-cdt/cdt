@@ -785,7 +785,9 @@ public final class CIndenter {
 					case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
 						if (bracelessBlockStart && !fPrefs.prefIndentBracesForBlocks)
 							unindent= true;
-						else if ((prevToken == Symbols.TokenCOLON || prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !fPrefs.prefIndentBracesForArrays)
+						else if (prevToken == Symbols.TokenCOLON && !fPrefs.prefIndentBracesForBlocks)
+							unindent= true;
+						else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !fPrefs.prefIndentBracesForArrays)
 							unindent= true;
 						else if (!bracelessBlockStart && fPrefs.prefIndentBracesForMethods)
 							indent= true;
@@ -1004,6 +1006,9 @@ public final class CIndenter {
 	private boolean looksLikeCaseStatement() {
 		nextToken();
 		switch (fToken) {
+		case Symbols.TokenCASE:
+			// char literal got skipped
+			return true;
 		case Symbols.TokenIDENT:
 			nextToken();
 			while (skipQualifiers()) {

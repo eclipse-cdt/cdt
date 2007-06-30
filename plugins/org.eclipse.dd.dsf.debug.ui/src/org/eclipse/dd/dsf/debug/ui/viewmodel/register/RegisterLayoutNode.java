@@ -58,9 +58,8 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("restriction")
 public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDMData> 
@@ -257,9 +256,9 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
 	                                	.getCache(RegisterLayoutNode.this.getVMProvider().getPresentationContext())
 	                            		.getArchivedModelData(valueDmc);
 	                                if(oldData != null && oldData.getFormattedValue().equals(getData().getFormattedValue()))
-	                                	update.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK).getRGB(), labelIndex);
+	                                	update.setForeground(new RGB(0,0,0), labelIndex);
 	                                else
-	                                	update.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED).getRGB(), labelIndex);
+	                                	update.setForeground(new RGB(255,0,0), labelIndex);
 	                              
 	                                update.done();
 	                            }

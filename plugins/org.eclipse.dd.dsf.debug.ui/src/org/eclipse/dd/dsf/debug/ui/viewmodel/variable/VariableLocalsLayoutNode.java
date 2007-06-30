@@ -424,7 +424,8 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
                         
                         mrm.add(rm);
                         
-                        stackFrameService.getModelData(localDMC, rm);
+                        VMCacheManager.getVMCacheManager().getCache(VariableLocalsLayoutNode.this.getVMProvider().getPresentationContext())
+                    		.getModelData(stackFrameService, localDMC, rm, getExecutor());
                     }
                 }
         };

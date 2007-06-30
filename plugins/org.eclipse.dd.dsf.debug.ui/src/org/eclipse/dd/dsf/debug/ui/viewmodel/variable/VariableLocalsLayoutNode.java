@@ -42,6 +42,7 @@ import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -168,8 +169,9 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
             
             final IExpressionDMContext dmc = findDmcInPath(update.getElementPath(), IExpressions.IExpressionDMContext.class);
             
-            ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
-                dmc, 
+            VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+				.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
+				dmc, 
                 new DataRequestMonitor<IExpressionDMData>(getSession().getExecutor(), null) { 
                     @Override
                     protected void handleCompleted() {
@@ -221,7 +223,8 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
                             }
                         }
                     }
-                }
+                },
+                getExecutor()
             );
         }
     }
@@ -293,7 +296,8 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
                      */
                     FormattedValueDMContext valueDmc = expressionService.getFormattedValue(dmc, finalFormatId);
                     
-                    expressionService.getModelData(
+                    VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+        				.getModelData(expressionService,
                         valueDmc, 
                         new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
                             @Override
@@ -309,7 +313,8 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
                                 update.setLabel(getData().getFormattedValue(), labelIndex);
                                 update.done();
                             }
-                        }
+                        },
+                        getExecutor()
                     );
                 }
             }

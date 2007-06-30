@@ -34,6 +34,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -319,8 +320,9 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
             final IDMContext<V> dmc = findDmcInPath(update.getElementPath(), fDMCClassType);
             if (!checkDmc(dmc, update) || !checkService(null, dmc.getServiceFilter(), update)) return;
             
-            ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
-                dmc, 
+            VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+    			.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
+    			dmc, 
                 new DataRequestMonitor<V>(getSession().getExecutor(), null) { 
                     @Override
                     protected void handleCompleted() {
@@ -350,7 +352,8 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
                         }
                         update.done();
                     }
-                });
+                },
+                getExecutor());
         }
     }
 

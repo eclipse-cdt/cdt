@@ -34,6 +34,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -72,7 +73,8 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
             
             final IExpressionDMContext dmc = findDmcInPath(update.getElementPath(), IExpressions.IExpressionDMContext.class);
             
-            ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
+            VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+				.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
                 dmc, 
                 new DataRequestMonitor<IExpressionDMData>(getSession().getExecutor(), null) { 
                     @Override
@@ -123,7 +125,8 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
                             }
                         }
                     }
-                }
+                },
+                getExecutor()
             );
         }
     }
@@ -195,8 +198,9 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
                      */
                     FormattedValueDMContext valueDmc = expressionService.getFormattedValue(dmc, finalFormatId);
                     
-                    expressionService.getModelData(
-                        valueDmc, 
+                    VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+        				.getModelData(expressionService,
+        				valueDmc, 
                         new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
                             @Override
                             public void handleCompleted() {
@@ -211,7 +215,8 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
                                 update.setLabel(getData().getFormattedValue(), labelIndex);
                                 update.done();
                             }
-                        }
+                        },
+                        getExecutor()
                     );
                 }
             }

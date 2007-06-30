@@ -43,6 +43,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -236,8 +237,9 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
                      */
                     FormattedValueDMContext valueDmc = regService.getFormattedValue(dmc, finalFormatId);
                     
-                    regService.getModelData(
-                        valueDmc, 
+                    VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+        				.getModelData(regService,
+        				valueDmc, 
                         new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
                             @Override
                             public void handleCompleted() {
@@ -259,7 +261,8 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
                                 }
                                 update.done();
                             }
-                        }
+                        },
+                        getExecutor()
                     );
                 }
             }
@@ -280,7 +283,8 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
             
             final IBitFieldDMContext dmc = findDmcInPath(update.getElementPath(), IRegisters.IBitFieldDMContext.class);
             
-            ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
+            VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+				.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
                 dmc, 
                 new DataRequestMonitor<IBitFieldDMData>(getSession().getExecutor(), null) { 
                     @Override
@@ -341,7 +345,8 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
                             }
                         }
                     }
-                }
+                },
+                getExecutor()
             );
         }
     }

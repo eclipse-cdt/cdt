@@ -39,6 +39,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -57,7 +58,9 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("restriction")
 public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDMData> 
@@ -231,25 +234,37 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                     /*
                      *  Format has been validated. Get the formatted value.
                      */
-                    FormattedValueDMContext valueDmc = regService.getFormattedValue(dmc, finalFormatId);
+                    final FormattedValueDMContext valueDmc = regService.getFormattedValue(dmc, finalFormatId);
                     
-                    regService.getModelData(
-                        valueDmc, 
-                        new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
-                            @Override
-                            public void handleCompleted() {
-                                if (!getStatus().isOK()) {
-                                    handleFailedUpdate(update);
-                                    return;
-                                }
-
-                                /*
-                                 *  Fill the label/column with the properly formatted data value.
-                                 */
-                                update.setLabel(getData().getFormattedValue(), labelIndex);
-                                update.done();
-                            }
-                        }
+                    VMCacheManager.getVMCacheManager().getCache(RegisterLayoutNode.this.getVMProvider().getPresentationContext())
+                    	.getModelData(regService,
+	                    	valueDmc,
+	                        new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
+	                            @Override
+	                            public void handleCompleted() {
+	                                if (!getStatus().isOK()) {
+	                                    handleFailedUpdate(update);
+	                                    return;
+	                                }
+	
+	                                /*
+	                                 *  Fill the label/column with the properly formatted data value.
+	                                 */
+	                                update.setLabel(getData().getFormattedValue(), labelIndex);
+	                                
+	                                // color based on change history
+	                                FormattedValueDMData oldData = (FormattedValueDMData) VMCacheManager.getVMCacheManager()
+	                                	.getCache(RegisterLayoutNode.this.getVMProvider().getPresentationContext())
+	                            		.getArchivedModelData(valueDmc);
+	                                if(oldData != null && oldData.getFormattedValue().equals(getData().getFormattedValue()))
+	                                	update.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK).getRGB(), labelIndex);
+	                                else
+	                                	update.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED).getRGB(), labelIndex);
+	                              
+	                                update.done();
+	                            }
+	                        }, 
+	                        getSession().getExecutor()
                     );
                 }
             }
@@ -270,9 +285,10 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             final IRegisterDMContext dmc = findDmcInPath(update.getElementPath(), IRegisters.IRegisterDMContext.class);
             if (!checkDmc(dmc, update) || !checkService(null, dmc.getServiceFilter(), update)) return;
             
-            ((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter())).getModelData(
-                dmc, 
-                new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), null) { 
+            VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+	        		.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
+	        		dmc,             
+            		new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), null) { 
                     @Override
                     protected void handleCompleted() {
                         /*
@@ -332,7 +348,8 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                             }
                         }
                     }
-                }
+                },
+                getSession().getExecutor()
             );
         }
     }

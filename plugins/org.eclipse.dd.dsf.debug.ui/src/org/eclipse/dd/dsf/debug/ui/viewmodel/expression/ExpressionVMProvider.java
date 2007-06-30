@@ -24,7 +24,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProviderWithCache;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionsListener;
 import org.eclipse.debug.core.model.IExpression;
@@ -35,7 +35,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * 
  */
 @SuppressWarnings("restriction")
-public class ExpressionVMProvider extends AbstractDMVMProvider 
+public class ExpressionVMProvider extends AbstractDMVMProviderWithCache 
     implements IExpressionsListener, IFormattedValuePreferenceStore
 {
     private String fDefaultFormatId = IFormattedValues.HEX_FORMAT;

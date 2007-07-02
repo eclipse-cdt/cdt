@@ -43,6 +43,7 @@
  * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
  * Javier Montalvo Orus (Symbian) - [187531] Improve exception thrown when Login Failed on FTP
  * Javier Montalvo Orus (Symbian) - [187862] Incorrect Error Message when creating new file in read-only directory
+ * Javier Montalvo Orus (Symbian) - [194204] Renaming Files/Folders moves them sometimes
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -811,6 +812,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			try {
 				FTPClient ftpClient = getFTPClient(); 
+				
+				if(!ftpClient.changeWorkingDirectory(remoteParent))
+				{
+					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()));
+				}
+				
 				
 				String source = remoteParent.endsWith(String.valueOf(getSeparator())) ? remoteParent + oldName : remoteParent + getSeparator() + oldName;
 				

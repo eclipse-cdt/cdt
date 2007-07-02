@@ -34,7 +34,7 @@ public abstract class AbstractDMVMProviderWithCache extends AbstractDMVMProvider
 
 	public void cacheFlushed(Object context) {
 		if(getPresentationContext().equals(context))
-			getModelProxy().fireModelChanged(new ModelDelta(this.getRootLayoutNode().getRootObject(),IModelDelta.CONTENT));
+			getModelProxy().fireModelChanged(new ModelDelta(getRootElement(),IModelDelta.CONTENT));
 	}
 
 	public AbstractDMVMProviderWithCache(AbstractVMAdapter adapter,  IPresentationContext presentationContext, DsfSession session) {

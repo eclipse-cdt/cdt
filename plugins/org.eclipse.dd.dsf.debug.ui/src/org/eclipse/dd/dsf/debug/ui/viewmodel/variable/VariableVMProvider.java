@@ -9,13 +9,13 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.DebugViewSelectionRootLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProviderWithCache;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.DMVMRootLayoutNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -37,7 +37,7 @@ public class VariableVMProvider extends AbstractDMVMProviderWithCache implements
         /*
          *  Create the top level node to deal with the root selection.
          */
-        IVMRootLayoutNode debugViewSelection = new DebugViewSelectionRootLayoutNode(this);
+        IVMRootLayoutNode debugViewSelection = new DMVMRootLayoutNode(this);
         
         /*
          *  Create the local variables nodes next. They represent the first level shown in the view.

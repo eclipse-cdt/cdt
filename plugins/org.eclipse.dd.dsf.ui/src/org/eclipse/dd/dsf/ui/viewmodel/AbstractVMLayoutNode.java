@@ -447,7 +447,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
                 return path.getLastSegment();
             }
             // Calculate the root of the viewer.
-            return getVMProvider().getRootLayoutNode().getRootObject();
+            return getVMProvider().getRootElement();
         }
 
         public Object getElement() {

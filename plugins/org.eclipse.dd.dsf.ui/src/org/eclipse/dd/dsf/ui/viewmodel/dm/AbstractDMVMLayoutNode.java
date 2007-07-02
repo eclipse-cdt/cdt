@@ -534,7 +534,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         }
         // Search the root object of the layout hierarchy.
         if (retVal == null) {
-            Object inputObject = getVMProvider().getRootLayoutNode().getRootObject();
+            Object inputObject = getVMProvider().getRootElement();
             if (inputObject instanceof ITreeSelection) {
                 ITreeSelection inputSelection = (ITreeSelection)inputObject;
                 if (inputSelection.getPaths().length == 1) {

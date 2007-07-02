@@ -23,6 +23,15 @@ public interface IVMProvider
     public IVMRootLayoutNode getRootLayoutNode();
     
     /**
+     * Returns the root element of the view model.  If the given view model is 
+     * used to populate the entire contents of the view, then this is the input
+     * element for the viewer.  If the view model is used to populate only a 
+     * sub-tree section of the view, then this is the root element of that 
+     * sub-tree.
+     */
+    public Object getRootElement();
+    
+    /**
      * Returns the presentation context of the viewer that this provider
      * is configured for. 
      */
@@ -32,4 +41,5 @@ public interface IVMProvider
      * Cleans up the resources associated with this provider.
      */
     public void dispose();
+    
 }

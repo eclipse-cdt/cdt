@@ -22,14 +22,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 public interface IVMRootLayoutNode extends IVMLayoutNode{
     
     /**
-     * Returns the single element of this node.  Root layout node can only have
-     * one element, and this is a convenience method to access this element.
-     * Alternatively getElements() could be used.  
-     * @return
-     */
-    public Object getRootObject();
-    
-    /**
      * Version of the {@link IVMLayoutNode#buildDelta(Object, ViewModelDelta, org.eclipse.dd.dsf.concurrent.RequestMonitor)}
      * method, which creates and returns the root node of the delta.  It does 
      * not require a parent object for the delta, as this is the root node. 

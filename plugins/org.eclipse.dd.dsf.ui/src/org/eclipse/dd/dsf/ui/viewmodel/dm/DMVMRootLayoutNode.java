@@ -8,21 +8,16 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel;
+package org.eclipse.dd.dsf.ui.viewmodel.dm;
 
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMRootLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.VMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode.DMVMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * This is is a standard root node which listens to the selection in Debug View.
@@ -36,13 +31,11 @@ import org.eclipse.ui.IWorkbenchWindow;
  * whole selection. 
  */
 @SuppressWarnings("restriction")
-public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode 
+public class DMVMRootLayoutNode extends VMRootLayoutNode 
     implements IVMRootLayoutNode
 {
-    private final IWorkbenchWindow fWindow;
-    public DebugViewSelectionRootLayoutNode(AbstractVMProvider provider) {
+    public DMVMRootLayoutNode(AbstractVMProvider provider) {
         super(provider);
-        fWindow = DsfDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
     }
 
     /**
@@ -91,33 +84,14 @@ public class DebugViewSelectionRootLayoutNode extends AbstractVMRootLayoutNode
         return super.getDeltaFlags(event);
     }
 
-    /**
-     * Returns the full selection as it came from the DebugContextManager.  
-     * @return
-     */
-    public ISelection getSelection() {
-        return DebugUITools.getDebugContextManager().getContextService(fWindow).getActiveContext();
-    }
-    
-    public Object getRootObject() {
-        ISelection selection = getSelection();
-        if (selection instanceof IStructuredSelection) {
-            return ((IStructuredSelection)selection).getFirstElement();
-        }
-        return null;
-    }
-    
     private IDMContext<?> getSelectedDMC() {
-        Object selection = getSelection();
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection structSelection = (IStructuredSelection)selection; 
-            if (structSelection.getFirstElement() instanceof DMVMContext) 
-            {
-                // Correct cast: (AbstractDMVMLayoutNode<?>.DMVMContext) breaks the javac compiler
-                @SuppressWarnings("unchecked")
-                DMVMContext vmc = (DMVMContext)structSelection.getFirstElement();
-                return vmc.getDMC();
-            }
+        Object rootObject = getVMProvider().getRootElement();
+        if (rootObject instanceof DMVMContext) 
+        {
+            // Correct cast: (AbstractDMVMLayoutNode<?>.DMVMContext) breaks the javac compiler
+            @SuppressWarnings("unchecked")
+            DMVMContext vmc = (DMVMContext)rootObject;
+            return vmc.getDMC();
         }
         return null;
     }

@@ -11,7 +11,6 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.DebugViewSelectionRootLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterGroupLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterLayoutNode;
@@ -25,6 +24,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProviderWithCache;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.DMVMRootLayoutNode;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionsListener;
 import org.eclipse.debug.core.model.IExpression;
@@ -71,7 +71,7 @@ public class ExpressionVMProvider extends AbstractDMVMProviderWithCache
         /*
          *  Create the top level node which provides the anchor starting point.
          */
-        IVMRootLayoutNode debugViewSelectionNode = new DebugViewSelectionRootLayoutNode(this); 
+        IVMRootLayoutNode debugViewSelectionNode = new DMVMRootLayoutNode(this); 
         
         /*
          * Now the Overarching management node.
@@ -145,7 +145,7 @@ public class ExpressionVMProvider extends AbstractDMVMProviderWithCache
         if (rootLayoutNode == null) {
             return null;
         } 
-        else if (element.equals(rootLayoutNode.getRootObject())) {
+        else if (element.equals(getRootElement())) {
             return rootLayoutNode;
         } 
         else if (element instanceof IVMContext){

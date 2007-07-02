@@ -62,8 +62,21 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
 @SuppressWarnings("restriction")
 abstract public class AbstractVMProvider implements IVMProvider
 {
+    /** Reference to the VM adapter that owns this provider */
     private final AbstractVMAdapter fVMAdapter;
+    
+    /** The presentation context that this provider is associated with */
     private final IPresentationContext fPresentationContext;
+    
+    /** 
+     * The current root element of this view model.  This element is obtained
+     * from the argument to {@link #createModelProxy(Object, IPresentationContext)}.
+     */ 
+    private Object fRootElement;
+    
+    /**
+     * 
+     */
     private ModelProxy fModelProxy = new ModelProxy();
     private boolean fDisposed = false;
 
@@ -104,8 +117,14 @@ abstract public class AbstractVMProvider implements IVMProvider
         }
     }
     
+    @ThreadSafe
     protected synchronized ModelProxy getModelProxy() {
         return fModelProxy;
+    }
+    
+    @ThreadSafe
+    public synchronized Object getRootElement() {
+        return fRootElement;
     }
     
     @ThreadSafe
@@ -385,18 +404,16 @@ abstract public class AbstractVMProvider implements IVMProvider
     public ModelProxy createModelProxy(Object element, IPresentationContext context) {
         /*
          * Model proxy is the object that correlates events from the data model 
-         * into view model deltas that the view can process.  We only need to 
-         * create a proxy for the root element of the tree.
+         * into view model deltas that the view can process.  This method is called 
+         * by the viewer when a new input object is set to the view.  We need to create
+         * a new instance of the ModelProxy object with every call, because the viewer
+         * disposes the old proxy before calling this method.  
          */
-        if (getRootLayoutNode() != null && 
-            element.equals(getRootLayoutNode().getRootObject()))
-        {
-            synchronized(this) {
-                fModelProxy = new ModelProxy();
-            }
-            return fModelProxy;
-        } 
-        return null;
+        synchronized(this) {
+            fRootElement = element;
+            fModelProxy = new ModelProxy();
+        }
+        return fModelProxy;
     }
 
     /**
@@ -456,7 +473,7 @@ abstract public class AbstractVMProvider implements IVMProvider
         if (rootLayoutNode == null) {
             return null;
         } 
-        else if (element.equals(rootLayoutNode.getRootObject())) {
+        else if (element.equals(getRootElement())) {
             return rootLayoutNode;
         } 
         else if (element instanceof IVMContext){

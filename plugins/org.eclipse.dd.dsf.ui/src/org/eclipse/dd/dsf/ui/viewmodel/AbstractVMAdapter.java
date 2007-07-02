@@ -67,15 +67,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
         return fExecutor;
     }
     
-    /**
-     * Creates a new View Model Provider for given presentation context.  Returns null
-     * if the presentation context is not supported.
-     */
-    @ThreadSafe    
-    abstract protected IVMProvider createViewModelProvider(IPresentationContext context);
-
     @ThreadSafe
-    private IVMProvider getViewModelProvider(IPresentationContext context) {
+    public IVMProvider getVMProvider(IPresentationContext context) {
         synchronized(fViewModelProviders) {
             if (fDisposed) return null;
 
@@ -142,7 +135,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     }
     
     private void callProviderWithUpdate(IViewerUpdate[] updates, int startIdx, int endIdx) {
-        final IVMProvider provider = getViewModelProvider(updates[0].getPresentationContext());
+        final IVMProvider provider = getVMProvider(updates[0].getPresentationContext());
         if (provider == null) {
             for (IViewerUpdate update : updates) {
                 update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
@@ -175,7 +168,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     }
         
     public IModelProxy createModelProxy(Object element, IPresentationContext context) {
-        IVMProvider provider = getViewModelProvider(context);
+        IVMProvider provider = getVMProvider(context);
         if (provider != null) {
             return provider.createModelProxy(element, context);
         }
@@ -183,7 +176,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     }
     
     public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
-        final IVMProvider provider = getViewModelProvider(context);
+        final IVMProvider provider = getVMProvider(context);
         if (provider != null) {
             return provider.createColumnPresentation(context, element);
         }
@@ -191,12 +184,17 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     }
     
     public String getColumnPresentationId(IPresentationContext context, Object element) {
-        final IVMProvider provider = getViewModelProvider(context);
+        final IVMProvider provider = getVMProvider(context);
         if (provider != null) {
             return provider.getColumnPresentationId(context, element);
         }
         return null;
     }
     
-
+    /**
+     * Creates a new View Model Provider for given presentation context.  Returns null
+     * if the presentation context is not supported.
+     */
+    @ThreadSafe    
+    abstract protected IVMProvider createViewModelProvider(IPresentationContext context);
 }

@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMRootLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.VMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
@@ -35,7 +35,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
  * functionality, so the default adapters should be used to retrieve the label.  
  */
 @SuppressWarnings("restriction")
-public class StandardLaunchRootLayoutNode extends AbstractVMRootLayoutNode 
+public class StandardLaunchRootLayoutNode extends VMRootLayoutNode 
     implements IVMRootLayoutNode
 {
     public static class LaunchesEvent {

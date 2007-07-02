@@ -18,9 +18,13 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 
 /**
  * For testing PDOM binding resolution
@@ -127,4 +131,92 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 //		type= ((ITypedef) type).getType();
 //		assertTrue(type instanceof IEnumeration);
     }
+    
+    // int globalVar;
+
+	// // don't include header
+    // char globalVar;
+    public void _testAstIndexConflictVariable_Bug195127() throws Exception {
+    	fakeFailForMultiProject();
+		IBinding b0 = getBindingFromASTName("globalVar;", 9);
+		assertTrue(b0 instanceof IVariable);
+		IVariable v= (IVariable) b0;
+		IType type= v.getType();
+		assertTrue(type instanceof IBasicType);
+		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
+    }
+
+    // int globalFunc();
+
+	// // don't include header
+    // char globalFunc();
+    public void _testAstIndexConflictFunction_Bug195127() throws Exception {
+    	fakeFailForMultiProject();
+		IBinding b0 = getBindingFromASTName("globalFunc(", 10);
+		assertTrue(b0 instanceof IFunction);
+		IFunction f= (IFunction) b0;
+		IType type= f.getType().getReturnType();
+		assertTrue(type instanceof IBasicType);
+		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
+    }
+
+    // struct astruct {
+    //    int member;
+    // };
+
+	// // don't include header
+    // struct astruct {
+    //    char member;
+    //    int additionalMember;
+    // };
+    public void _testAstIndexConflictStruct_Bug195127() throws Exception {
+    	fakeFailForMultiProject();
+		IBinding b0 = getBindingFromASTName("astruct", 7);
+		assertTrue(b0 instanceof ICompositeType);
+		ICompositeType ct= (ICompositeType) b0;
+		IField[] fields= ct.getFields();
+		assertEquals(2, fields.length);
+		IField member= fields[0];
+		IField additionalMember= fields[1];
+		if (member.getName().equals("additionalMember")) {
+			IField h= member; member= additionalMember; additionalMember= h;
+		}
+		assertEquals("member", member.getName());
+		assertEquals("additionalMember", additionalMember.getName());
+		IType type= member.getType();
+		assertTrue(type instanceof IBasicType);
+		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
+    }
+
+    // enum anenum {
+    //    eItem0
+    // };
+
+	// // don't include header
+    // enum anenum {
+    //    eItem0, eItem1
+    // };
+    public void _testAstIndexConflictEnumerator_Bug195127() throws Exception {
+    	fakeFailForMultiProject();
+		IBinding b0 = getBindingFromASTName("anenum", 7);
+		assertTrue(b0 instanceof IEnumeration);
+		IEnumeration enumeration= (IEnumeration) b0;
+		IEnumerator[] enumerators= enumeration.getEnumerators();
+		assertEquals(2, enumerators.length);
+    }
+
+    // typedef int atypedef;
+
+	// // don't include header
+    // typedef char atypedef;
+    public void testAstIndexConflictTypedef_Bug195127() throws Exception {
+    	fakeFailForMultiProject();
+		IBinding b0 = getBindingFromASTName("atypedef;", 8);
+		assertTrue(b0 instanceof ITypedef);
+		ITypedef t= (ITypedef) b0;
+		IType type= t.getType();
+		assertTrue(type instanceof IBasicType);
+		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
+    }
+
 }

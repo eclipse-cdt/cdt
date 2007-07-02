@@ -396,13 +396,25 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 
 	/**
 	 * When a test is failing only for the strategy where the test data is split over
-	 * multiple index fragements, we artificially fail the single fragment strategy also.
-	 * This is not ideal, but as both strategies behaviour are typically the same, is 
+	 * multiple index fragments, we artificially fail the single fragment strategy also.
+	 * This is not ideal, but as both strategies behavior are typically the same, is 
 	 * quite rare.
 	 */
 	protected void fakeFailForSingle() {
 		if(getName().startsWith("_") && strategy instanceof SinglePDOMTestStrategy) {
 			fail("Artificially failing - see IndexBindingResolutionTestBase.fakeFailForSingle()");
+		}
+	}
+
+	/**
+	 * When a test is failing only for the strategy where the test data is not split over
+	 * multiple index fragments, we artificially fail the single fragment strategy also.
+	 * This is not ideal, but as both strategies behavior are typically the same, is 
+	 * quite rare.
+	 */
+	protected void fakeFailForMultiProject() {
+		if(getName().startsWith("_") && strategy instanceof ReferencedProject) {
+			fail("Artificially failing - see IndexBindingResolutionTestBase.fakeFailForReferenced()");
 		}
 	}
 }

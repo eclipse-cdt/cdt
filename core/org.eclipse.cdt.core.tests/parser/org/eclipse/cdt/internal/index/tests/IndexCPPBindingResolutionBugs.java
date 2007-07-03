@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
 
@@ -385,4 +387,159 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		type= ((ITypedef) type).getType();
 		assertTrue(type instanceof IEnumeration);
     }
+    
+    // // no header needed
+    
+    // typedef class {
+    //    int member;
+    // } t_class;
+    // typedef struct {
+    //    int member;
+    // } t_struct;
+    // typedef union {
+    //    int member;
+    // } t_union;
+    // typedef enum {
+    //    ei
+    // } t_enum;
+	public void testIsSameAnonymousType_Bug193962() throws DOMException {
+		// class
+		IBinding tdAST = getBindingFromASTName("t_class;", 7);
+		assertFalse(tdAST instanceof IIndexBinding);
+		IBinding tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		assertTrue(tdIndex instanceof IIndexBinding);
+		assertTrue(tdAST instanceof ITypedef);
+		assertTrue(tdIndex instanceof ITypedef);
+
+		IType tAST= ((ITypedef) tdAST).getType();
+		IType tIndex= ((ITypedef) tdIndex).getType();
+		assertTrue(tAST instanceof ICompositeType);
+		assertTrue(tIndex instanceof ICompositeType);
+		assertTrue(tAST.isSameType(tIndex));
+		assertTrue(tIndex.isSameType(tAST));
+
+		// struct
+		tdAST = getBindingFromASTName("t_struct;", 8);
+		assertFalse(tdAST instanceof IIndexBinding);
+		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		assertTrue(tdIndex instanceof IIndexBinding);
+		assertTrue(tdAST instanceof ITypedef);
+		assertTrue(tdIndex instanceof ITypedef);
+		
+		tAST= ((ITypedef) tdAST).getType();
+		tIndex= ((ITypedef) tdIndex).getType();
+		assertTrue(tAST instanceof ICompositeType);
+		assertTrue(tIndex instanceof ICompositeType);
+		assertTrue(tAST.isSameType(tIndex));
+		assertTrue(tIndex.isSameType(tAST));
+
+		// union
+		tdAST = getBindingFromASTName("t_union;", 7);
+		assertFalse(tdAST instanceof IIndexBinding);
+		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		assertTrue(tdIndex instanceof IIndexBinding);
+		assertTrue(tdAST instanceof ITypedef);
+		assertTrue(tdIndex instanceof ITypedef);
+		
+		tAST= ((ITypedef) tdAST).getType();
+		tIndex= ((ITypedef) tdIndex).getType();
+		assertTrue(tAST instanceof ICompositeType);
+		assertTrue(tIndex instanceof ICompositeType);
+		assertTrue(tAST.isSameType(tIndex));
+		assertTrue(tIndex.isSameType(tAST));
+
+		// enum
+		tdAST = getBindingFromASTName("t_enum;", 6);
+		assertFalse(tdAST instanceof IIndexBinding);
+		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		assertTrue(tdIndex instanceof IIndexBinding);
+		assertTrue(tdAST instanceof ITypedef);
+		assertTrue(tdIndex instanceof ITypedef);
+		
+		tAST= ((ITypedef) tdAST).getType();
+		tIndex= ((ITypedef) tdIndex).getType();
+		assertTrue(tAST instanceof IEnumeration);
+		assertTrue(tIndex instanceof IEnumeration);
+		assertTrue(tAST.isSameType(tIndex));
+		assertTrue(tIndex.isSameType(tAST));
+	}
+
+    // // no header needed
+    
+	// namespace ns {
+    // typedef class {
+    //    int member;
+    // } t_class;
+    // typedef struct {
+    //    int member;
+    // } t_struct;
+    // typedef union {
+    //    int member;
+    // } t_union;
+    // typedef enum {
+    //    ei
+    // } t_enum;
+	// };
+	public void testIsSameNestedAnonymousType_Bug193962() throws DOMException {
+		// class
+		IBinding tdAST = getBindingFromASTName("t_class;", 7);
+		assertFalse(tdAST instanceof IIndexBinding);
+		IBinding tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		assertTrue(tdIndex instanceof IIndexBinding);
+		assertTrue(tdAST instanceof ITypedef);
+		assertTrue(tdIndex instanceof ITypedef);
+
+		IType tAST= ((ITypedef) tdAST).getType();
+		IType tIndex= ((ITypedef) tdIndex).getType();
+		assertTrue(tAST instanceof ICompositeType);
+		assertTrue(tIndex instanceof ICompositeType);
+		assertTrue(tAST.isSameType(tIndex));
+		assertTrue(tIndex.isSameType(tAST));
+
+		// struct
+		tdAST = getBindingFromASTName("t_struct;", 8);
+		assertFalse(tdAST instanceof IIndexBinding);
+		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		assertTrue(tdIndex instanceof IIndexBinding);
+		assertTrue(tdAST instanceof ITypedef);
+		assertTrue(tdIndex instanceof ITypedef);
+		
+		tAST= ((ITypedef) tdAST).getType();
+		tIndex= ((ITypedef) tdIndex).getType();
+		assertTrue(tAST instanceof ICompositeType);
+		assertTrue(tIndex instanceof ICompositeType);
+		assertTrue(tAST.isSameType(tIndex));
+		assertTrue(tIndex.isSameType(tAST));
+
+		// union
+		tdAST = getBindingFromASTName("t_union;", 7);
+		assertFalse(tdAST instanceof IIndexBinding);
+		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		assertTrue(tdIndex instanceof IIndexBinding);
+		assertTrue(tdAST instanceof ITypedef);
+		assertTrue(tdIndex instanceof ITypedef);
+		
+		tAST= ((ITypedef) tdAST).getType();
+		tIndex= ((ITypedef) tdIndex).getType();
+		assertTrue(tAST instanceof ICompositeType);
+		assertTrue(tIndex instanceof ICompositeType);
+		assertTrue(tAST.isSameType(tIndex));
+		assertTrue(tIndex.isSameType(tAST));
+
+		// enum
+		tdAST = getBindingFromASTName("t_enum;", 6);
+		assertFalse(tdAST instanceof IIndexBinding);
+		tdIndex= strategy.getIndex().adaptBinding(tdAST);
+		assertTrue(tdIndex instanceof IIndexBinding);
+		assertTrue(tdAST instanceof ITypedef);
+		assertTrue(tdIndex instanceof ITypedef);
+		
+		tAST= ((ITypedef) tdAST).getType();
+		tIndex= ((ITypedef) tdIndex).getType();
+		assertTrue(tAST instanceof IEnumeration);
+		assertTrue(tIndex instanceof IEnumeration);
+		assertTrue(tAST.isSameType(tIndex));
+		assertTrue(tIndex.isSameType(tAST));
+	}
+
 }

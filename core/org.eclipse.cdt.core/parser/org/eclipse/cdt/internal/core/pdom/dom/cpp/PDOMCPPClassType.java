@@ -51,6 +51,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -128,6 +129,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		
 		if (type instanceof ICPPClassType && !(type instanceof ProblemBinding)) {
 			ICPPClassType ctype= (ICPPClassType) type;
+			ctype= (ICPPClassType) PDOMASTAdapter.getAdapterIfAnonymous(ctype);
 			try {
 				if (ctype.getKey() == getKey()) {
 					char[][] qname= ctype.getQualifiedNameCharArray();

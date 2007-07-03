@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -181,6 +182,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		
 		if (type instanceof ICompositeType) {
 			ICompositeType etype= (ICompositeType) type;
+			etype= (ICompositeType) PDOMASTAdapter.getAdapterIfAnonymous(etype);
 			try {
 				return getDBName().equals(etype.getNameCharArray());
 			} catch (CoreException e) {

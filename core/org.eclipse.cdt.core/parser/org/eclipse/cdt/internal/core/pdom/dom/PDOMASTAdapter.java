@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -246,11 +247,11 @@ public class PDOMASTAdapter {
 		}
 	}
 
-	private static class AnonymousClassType implements ICPPClassType {
-		private ICPPClassType fDelegate;
+	private static class AnonymousCPPBinding implements ICPPBinding {
+		protected ICPPBinding fDelegate;
 		private char[] fName;
 
-		public AnonymousClassType(char[] name, ICPPClassType delegate) {
+		public AnonymousCPPBinding(char[] name, ICPPBinding delegate) {
 			fName= name;
 			fDelegate= delegate;
 		}
@@ -267,68 +268,30 @@ public class PDOMASTAdapter {
 			return fName;
 		}
 
-		public IField findField(String name) throws DOMException {
-			return fDelegate.findField(name);
+		public String[] getQualifiedName() throws DOMException {
+			String[] qn= fDelegate.getQualifiedName();
+			if (qn.length < 1) {
+				qn= new String[]{null};
+			}
+			qn[qn.length-1]= new String(fName);
+			return qn;
+		}
+
+		public char[][] getQualifiedNameCharArray() throws DOMException {
+			char[][] qn= fDelegate.getQualifiedNameCharArray();
+			if (qn.length < 1) {
+				qn= new char[][]{null};
+			}
+			qn[qn.length-1]= fName;
+			return qn;
 		}
 
 		public Object getAdapter(Class adapter) {
 			return fDelegate.getAdapter(adapter);
 		}
 
-		public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
-			return fDelegate.getAllDeclaredMethods();
-		}
-
-		public ICPPBase[] getBases() throws DOMException {
-			return fDelegate.getBases();
-		}
-
-		public IScope getCompositeScope() throws DOMException {
-			return fDelegate.getCompositeScope();
-		}
-
-		public ICPPConstructor[] getConstructors() throws DOMException {
-			return fDelegate.getConstructors();
-		}
-
-		public ICPPField[] getDeclaredFields() throws DOMException {
-			return fDelegate.getDeclaredFields();
-		}
-
-		public ICPPMethod[] getDeclaredMethods() throws DOMException {
-			return fDelegate.getDeclaredMethods();
-		}
-
-		public IField[] getFields() throws DOMException {
-			return fDelegate.getFields();
-		}
-
-		public IBinding[] getFriends() throws DOMException {
-			return fDelegate.getFriends();
-		}
-
-		public int getKey() throws DOMException {
-			return fDelegate.getKey();
-		}
-
 		public ILinkage getLinkage() throws CoreException {
 			return fDelegate.getLinkage();
-		}
-
-		public ICPPMethod[] getMethods() throws DOMException {
-			return fDelegate.getMethods();
-		}
-
-		public ICPPClassType[] getNestedClasses() throws DOMException {
-			return fDelegate.getNestedClasses();
-		}
-
-		public String[] getQualifiedName() throws DOMException {
-			return fDelegate.getQualifiedName();
-		}
-
-		public char[][] getQualifiedNameCharArray() throws DOMException {
-			return fDelegate.getQualifiedNameCharArray();
 		}
 
 		public IScope getScope() throws DOMException {
@@ -338,9 +301,77 @@ public class PDOMASTAdapter {
 		public boolean isGloballyQualified() throws DOMException {
 			return fDelegate.isGloballyQualified();
 		}
+	}
+
+	private static class AnonymousCPPEnumeration extends AnonymousCPPBinding implements IEnumeration, ICPPBinding {
+		public AnonymousCPPEnumeration(char[] name, IEnumeration delegate) {
+			super(name, (ICPPBinding) delegate);
+		}
+
+		public IEnumerator[] getEnumerators() throws DOMException {
+			return ((IEnumeration) fDelegate).getEnumerators();
+		}
 
 		public boolean isSameType(IType type) {
-			return fDelegate.isSameType(type);
+			return ((IEnumeration) fDelegate).isSameType(type);
+		}
+	}
+
+	private static class AnonymousClassType extends AnonymousCPPBinding implements ICPPClassType {
+		public AnonymousClassType(char[] name, ICPPClassType delegate) {
+			super(name, delegate);
+		}
+		
+		public IField findField(String name) throws DOMException {
+			return ((ICPPClassType) fDelegate).findField(name);
+		}
+
+		public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
+			return ((ICPPClassType) fDelegate).getAllDeclaredMethods();
+		}
+
+		public ICPPBase[] getBases() throws DOMException {
+			return ((ICPPClassType) fDelegate).getBases();
+		}
+
+		public IScope getCompositeScope() throws DOMException {
+			return ((ICPPClassType) fDelegate).getCompositeScope();
+		}
+
+		public ICPPConstructor[] getConstructors() throws DOMException {
+			return ((ICPPClassType) fDelegate).getConstructors();
+		}
+
+		public ICPPField[] getDeclaredFields() throws DOMException {
+			return ((ICPPClassType) fDelegate).getDeclaredFields();
+		}
+
+		public ICPPMethod[] getDeclaredMethods() throws DOMException {
+			return ((ICPPClassType) fDelegate).getDeclaredMethods();
+		}
+
+		public IField[] getFields() throws DOMException {
+			return ((ICPPClassType) fDelegate).getFields();
+		}
+
+		public IBinding[] getFriends() throws DOMException {
+			return ((ICPPClassType) fDelegate).getFriends();
+		}
+
+		public int getKey() throws DOMException {
+			return ((ICPPClassType) fDelegate).getKey();
+		}
+
+		public ICPPMethod[] getMethods() throws DOMException {
+			return ((ICPPClassType) fDelegate).getMethods();
+		}
+
+		public ICPPClassType[] getNestedClasses() throws DOMException {
+			return ((ICPPClassType) fDelegate).getNestedClasses();
+		}
+
+		public boolean isSameType(IType type) {
+			return ((ICPPClassType) fDelegate).isSameType(type);
 		}
 	}
 
@@ -358,6 +389,9 @@ public class PDOMASTAdapter {
 				if (binding instanceof IEnumeration) {
 					name= ASTTypeUtil.createNameForAnonymous(binding);
 					if (name != null) {
+						if (binding instanceof ICPPBinding) {
+							return new AnonymousCPPEnumeration(name, (IEnumeration) binding);
+						}
 						return new AnonymousEnumeration(name, (IEnumeration) binding);
 					}
 				}

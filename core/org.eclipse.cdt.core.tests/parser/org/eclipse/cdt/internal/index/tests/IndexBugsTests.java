@@ -719,5 +719,4 @@ public class IndexBugsTests extends BaseTestCase {
 			CProjectHelper.delete(p2);
 		}
 	}
-
 }

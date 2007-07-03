@@ -24,8 +24,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration.CPPEnumerationDelegate;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -55,7 +57,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 	}
 	
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPENUMERATION;
+		return IIndexCPPBindingConstants.CPPENUMERATION;
 	}
 
 	public IEnumerator[] getEnumerators() throws DOMException {
@@ -111,6 +113,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 			if (type instanceof IEnumeration) {
 				if (type instanceof ICPPBinding) {
 					ICPPBinding etype= (ICPPBinding) type;
+					etype= (ICPPBinding) PDOMASTAdapter.getAdapterIfAnonymous(etype);
 					char[][] qname = etype.getQualifiedNameCharArray();
 					return hasQualifiedName(qname, qname.length-1);
 				}

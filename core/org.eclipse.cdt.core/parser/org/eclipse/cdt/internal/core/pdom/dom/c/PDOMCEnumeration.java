@@ -19,8 +19,10 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -49,7 +51,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 	}
 	
 	public int getNodeType() {
-		return PDOMCLinkage.CENUMERATION;
+		return IIndexCBindingConstants.CENUMERATION;
 	}
 
 	public IEnumerator[] getEnumerators() throws DOMException {
@@ -103,6 +105,7 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType {
 		
 		if (type instanceof IEnumeration) {
 			IEnumeration etype= (IEnumeration) type;
+			etype= (IEnumeration) PDOMASTAdapter.getAdapterIfAnonymous(etype);
 			try {
 				return getDBName().equals(etype.getNameCharArray());
 			} catch (CoreException e) {

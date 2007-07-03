@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Executor;
 
+import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
@@ -242,6 +243,7 @@ public abstract class VMCache
     }
     
     @SuppressWarnings("unchecked") 
+    @ConfinedToDsfExecutor("DsfSession.getSession(dmc.getSessionId()).getExecutor()")
     public void getModelData(IDMService service, final IDMContext dmc, final DataRequestMonitor rm, DsfExecutor executor)
     { 
     	if(fData.containsKey(dmc) && useCache())

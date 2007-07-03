@@ -20,6 +20,7 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
+import org.eclipse.dd.dsf.debug.service.IRegisters.IGroupChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -204,8 +205,12 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
     protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
-        }else if (e instanceof IRegisters.IRegistersChangedDMEvent) {
+        } 
+        else if (e instanceof IRegisters.IGroupsChangedDMEvent) {
             return IModelDelta.CONTENT;
+        }
+        else if (e instanceof IRegisters.IGroupChangedDMEvent) {
+            return IModelDelta.STATE;
         }
         return IModelDelta.NO_CHANGE;
     }
@@ -213,12 +218,17 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
     @Override
     protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
-            // Create a delta that the whole register group has changed.
+            // Create a delta that indicates all groups have changed
             parent.addFlags(IModelDelta.CONTENT);
         } 
-        if (e instanceof IRegisters.IRegistersChangedDMEvent) {
-            parent.addNode( createVMContext(((IRegisters.IRegistersChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
+        else if (e instanceof IRegisters.IGroupsChangedDMEvent) {
+            // Create a delta that indicates all groups have changed
+            parent.addFlags(IModelDelta.CONTENT);
         } 
+        else if (e instanceof IRegisters.IGroupChangedDMEvent) {
+            // Create a delta that indicates that specific group changed
+            parent.addNode( createVMContext(((IGroupChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
+        }
         
         super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
     }

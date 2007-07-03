@@ -386,20 +386,35 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
-        } else if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-            return IModelDelta.STATE;
+        }
+        else if (e instanceof IRegisters.IRegistersChangedDMEvent) {
+            return IModelDelta.CONTENT;
+        }
+        else if (e instanceof IRegisters.IRegisterChangedDMEvent) {
+            /*
+             *  Logically one would think that STATE should be specified here. But we specifiy CONTENT
+             *  as well so that if there are subregisters ( BIT FIELDS ) they will be forced to update
+             *  and show new values when the total register changes.
+             */
+            return IModelDelta.CONTENT | IModelDelta.STATE;
         }
         return IModelDelta.NO_CHANGE;
     }
 
     @Override
     protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent, int nodeOffset, RequestMonitor rm) {
+        
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that the whole register group has changed.
             parent.addFlags(IModelDelta.CONTENT);
         } 
+        
+        if (e instanceof IRegisters.IRegistersChangedDMEvent) {
+            parent.addFlags(IModelDelta.CONTENT);;
+        } 
+        
         if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-            parent.addNode( createVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
+            parent.addNode( createVMContext(((IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.CONTENT | IModelDelta.STATE );
         } 
         
         super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);

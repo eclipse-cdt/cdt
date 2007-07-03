@@ -29,6 +29,9 @@ public interface IRegisters extends IFormattedValues {
         public String getName();
     }
     
+    /** Event indicating values for the group have changed. */
+    public interface IGroupChangedDMEvent extends IDMEvent<IRegisterGroupDMContext> {}
+    
     /** Event indicating registers in a group have changed. */
     public interface IRegistersChangedDMEvent extends IDMEvent<IRegisterGroupDMContext> {}
     

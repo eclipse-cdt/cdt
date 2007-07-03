@@ -12,38 +12,32 @@
 package org.eclipse.dd.dsf.ui.viewmodel.update;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.Executor;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
+import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
+import org.eclipse.dd.dsf.ui.viewmodel.VMElementsCountUpdate;
+import org.eclipse.dd.dsf.ui.viewmodel.VMElementsUpdate;
+import org.eclipse.dd.dsf.ui.viewmodel.VMHasElementsUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.jface.viewers.TreePath;
 
 public abstract class VMCache  
 {
+	protected Executor fExecutor = new DefaultDsfExecutor();
+	
 	protected HashMap<Object, Integer> fChildrenCounts = new HashMap<Object, Integer>();
 	
-	class ChildData
-	{
-		Object child;
-		int offset;
-		
-		public ChildData(Object child, int offset)
-		{
-			this.child = child;
-			this.offset = offset;
-		}
-	}
-	
-	protected HashMap<Object, ChildData[]> fChildren = new HashMap<Object, ChildData[]>();
+	protected HashMap<Object, HashMap<Integer,Object>> fChildren = new HashMap<Object, HashMap<Integer,Object>>();
 	
 	protected HashMap<Object, Boolean> fHasChildren = new HashMap<Object, Boolean>();
 	
@@ -66,6 +60,7 @@ public abstract class VMCache
 		return true;
 	}
 	
+	@SuppressWarnings("restriction")
 	public IHasChildrenUpdate[] update(IHasChildrenUpdate[] updates) {
     	Vector<IHasChildrenUpdate> missVector = new Vector<IHasChildrenUpdate>();
     	for(IHasChildrenUpdate update : updates)
@@ -85,54 +80,22 @@ public abstract class VMCache
     	for(int i = 0; i < updates.length; i++)
     	{
     		final IHasChildrenUpdate update = missVector.elementAt(i);
-    		updates[i] = new IHasChildrenUpdate()
-    		{
-    			private boolean fIsHasChildren;
-    			
-    			public void setHasChilren(boolean hasChildren) {
-    				fIsHasChildren = hasChildren;
-					update.setHasChilren(hasChildren);
-				}
-    			
-				public void cancel() {
-					update.cancel();
-				}
-
-				public void done() {
-					fHasChildren.put(getElement(), Boolean.valueOf(fIsHasChildren));
-					update.done();
-				}
-
-				public IStatus getStatus() {
-					return update.getStatus();
-				}
-
-				public boolean isCanceled() {
-					return update.isCanceled();
-				}
-
-				public void setStatus(IStatus status) {
-					update.setStatus(status);
-				}
-
-				public Object getElement() {
-					return update.getElement();
-				}
-
-				public TreePath getElementPath() {
-					return update.getElementPath();
-				}
-
-				public IPresentationContext getPresentationContext() {
-					return update.getPresentationContext();
-				}
-    			
-    		};
+    		updates[i] = new VMHasElementsUpdate(update, new DataRequestMonitor<Boolean>(fExecutor, null)
+			{
+    			@Override
+    			protected void handleCompleted()
+    			{
+    				fHasChildren.put(update.getElement(), this.getData());
+    				update.setHasChilren(getData());
+    				update.done();
+    			}
+			});
     	}
     	
     	return updates;
     }
     
+	@SuppressWarnings("restriction")
     public IChildrenCountUpdate[] update(IChildrenCountUpdate[] updates) 
     {
     	Vector<IChildrenCountUpdate> missVector = new Vector<IChildrenCountUpdate>();
@@ -153,129 +116,128 @@ public abstract class VMCache
     	for(int i = 0; i < updates.length; i++)
     	{
     		final IChildrenCountUpdate update = missVector.elementAt(i);
-    		updates[i] = new IChildrenCountUpdate()
-    		{
-    			private int fChildCount;
-    			
-				public void cancel() {
-					update.cancel();
-				}
-
-				public void done() {
-					fChildrenCounts.put(getElement(), fChildCount);
-					update.done();
-				}
-
-				public IStatus getStatus() {
-					return update.getStatus();
-				}
-
-				public boolean isCanceled() {
-					return update.isCanceled();
-				}
-
-				public void setStatus(IStatus status) {
-					update.setStatus(status);
-				}
-
-				public void setChildCount(int numChildren) {
-					fChildCount = numChildren;
-					update.setChildCount(numChildren);
-				}
-
-				public Object getElement() {
-					return update.getElement();
-				}
-
-				public TreePath getElementPath() {
-					return update.getElementPath();
-				}
-
-				public IPresentationContext getPresentationContext() {
-					return update.getPresentationContext();
-				}
-    			
-    		};
+    		updates[i] = new VMElementsCountUpdate(update, new DataRequestMonitor<Integer>(fExecutor, null)
+			{
+    			@Override
+    			protected void handleCompleted()
+    			{
+    				fChildrenCounts.put(update.getElement(), this.getData());
+    				update.setChildCount(this.getData());
+    				update.done();
+    			}
+			});
     	}
     	
     	return updates;
     }
     
+	@SuppressWarnings("restriction")
     public IChildrenUpdate[] update(IChildrenUpdate[] updates) {
-    	Vector<IChildrenUpdate> missVector = new Vector<IChildrenUpdate>();
-    	for(IChildrenUpdate update : updates)
+    	Vector<IChildrenUpdate> updatesEntirelyMissingFromCache = new Vector<IChildrenUpdate>();
+    	for(final IChildrenUpdate update : updates)
     	{
     		if(fChildren.containsKey(update.getElement()) && useCache())
     		{
-    			ChildData childData[] = fChildren.get(update.getElement());
-    			for(ChildData data : childData)
-    				update.setChild(data.child, data.offset);
-    			update.done();
+    			Vector<Integer> childrenMissingFromCache = new Vector<Integer>();
+    			for(int i = update.getOffset(); i < update.getOffset() + update.getLength(); i++)
+    				childrenMissingFromCache.addElement(i);
+    			childrenMissingFromCache.removeAll(fChildren.get(update.getElement()).keySet());
+    			
+    			if(childrenMissingFromCache.size() > 0)
+    			{
+    				// perform a partial update; we only have some of the children of the update request
+    			
+    				final HashMap<DataRequestMonitor<List<Object>>,IChildrenUpdate> associationsRequestMonitorToChildUpdate
+    					= new HashMap<DataRequestMonitor<List<Object>>,IChildrenUpdate>();
+    				
+	    			final MultiRequestMonitor<DataRequestMonitor<List<Object>>> childrenMultiRequestMon = 
+	                    new MultiRequestMonitor<DataRequestMonitor<List<Object>>>(fExecutor, null) { 
+	                        @Override
+	                        protected void handleCompleted() {
+	                            // Status is OK, only if all request monitors are OK. 
+	                            if (getStatus().isOK()) 
+	                            { 
+	                                for (DataRequestMonitor<List<Object>> monitor : getRequestMonitors()) 
+	                                {
+                                		int offset = associationsRequestMonitorToChildUpdate.get(monitor).getOffset();
+                                		for(Object child : monitor.getData())
+                                			update.setChild(child, offset++);
+	                                }
+	                            } else {
+	                                update.setStatus(getStatus());
+	                            }
+	                            update.done();
+	                        }
+	                    };
+	                    
+	    			while(childrenMissingFromCache.size() > 0)
+	    			{
+	    				int offset = childrenMissingFromCache.elementAt(0);
+	    				childrenMissingFromCache.removeElementAt(0);
+	    				int length = 1;
+	    				while(childrenMissingFromCache.size() > 0 && childrenMissingFromCache.elementAt(0) == offset + length)
+	    				{
+	    					length++;
+	    					childrenMissingFromCache.removeElementAt(0);
+	    				}
+	    				
+	    				DataRequestMonitor<List<Object>> partialUpdateMonitor = new DataRequestMonitor<List<Object>>(fExecutor, null)
+						{
+			    			@Override
+			    			protected void handleCompleted()
+			    			{
+			    				
+			    				childrenMultiRequestMon.requestMonitorDone(this);
+			    			}
+						};
+						
+	    				final IChildrenUpdate partialUpdate = new VMElementsUpdate(update, update.getOffset(), update.getLength(),
+	    						childrenMultiRequestMon.add(partialUpdateMonitor));
+	    				
+	    				associationsRequestMonitorToChildUpdate.put(partialUpdateMonitor, partialUpdate);
+								
+	    				updatesEntirelyMissingFromCache.add(partialUpdate);
+	    				
+	    			}
+    			}
+    			else
+    			{
+    				// we have all of the children in cache; return from cache
+    				for(int position = update.getOffset(); position < update.getOffset() + update.getLength(); position++)
+    					update.setChild(fChildren.get(update.getElement()).get(position), position);
+    				update.done();
+    			}
     		}
     		else
     		{
-    			missVector.addElement(update);
+    			updatesEntirelyMissingFromCache.addElement(update);
     		}
     	}
     	
-    	updates = new IChildrenUpdate[missVector.size()];
+    	updates = new IChildrenUpdate[updatesEntirelyMissingFromCache.size()];
     	for(int i = 0; i < updates.length; i++)
     	{
-    		final IChildrenUpdate update = missVector.elementAt(i);
-    		updates[i] = new IChildrenUpdate()
-    		{
-    			Vector<ChildData> fChilds = new Vector<ChildData>();
-    			
-    			public int getLength() {
-					return update.getLength();
-				}
-
-				public int getOffset() {
-					return update.getOffset();
-				}
-
-				public void setChild(Object child, int offset) {
-					fChilds.addElement(new ChildData(child, offset));
-					update.setChild(child, offset);
-				}
-    			
-				public void cancel() {
-					update.cancel();
-				}
-
-				public void done() {
-					// FIXME synchronize with events?
-					fChildren.put(getElement(), fChilds.toArray(new ChildData[fChilds.size()]));
-					update.done();
-				}
-
-				public IStatus getStatus() {
-					return update.getStatus();
-				}
-
-				public boolean isCanceled() {
-					return update.isCanceled();
-				}
-
-				public void setStatus(IStatus status) {
-					update.setStatus(status);
-				}
-
-				public Object getElement() {
-					return update.getElement();
-				}
-
-				public TreePath getElementPath() {
-					return update.getElementPath();
-				}
-
-				public IPresentationContext getPresentationContext() {
-					return update.getPresentationContext();
-				}
-    			
-    		};
+    		final IChildrenUpdate update = updatesEntirelyMissingFromCache.elementAt(i);
+    		updates[i] = new VMElementsUpdate(update, update.getOffset(), update.getLength(),
+    			new DataRequestMonitor<List<Object>>(fExecutor, null)
+			{
+    			@Override
+    			protected void handleCompleted()
+    			{
+    				for(int j = 0; j < update.getLength(); j++)
+    				{
+    					if(!fChildren.containsKey(update.getElement()))
+    						fChildren.put(update.getElement(), new HashMap<Integer,Object>());
+    					
+    					fChildren.get(update.getElement()).put(update.getOffset() + j, getData().get(j));
+    					
+    					update.setChild(getData().get(j), update.getOffset() + j);
+    				}
+    				update.done();
+    			}
+			});
     	}
-    	
+
     	return updates;
     }
     

@@ -625,6 +625,13 @@ public class CProject extends Openable implements ICProject {
 		List children = new ArrayList(sourceRoots.size());
 		children.addAll(sourceRoots);
 		
+		boolean projectIsSourceRoot = false;
+		for (Iterator i = sourceRoots.iterator(); i.hasNext();)
+			if (((ISourceRoot)i.next()).getResource().equals(getProject())) {
+				projectIsSourceRoot = true;
+				break;
+			}
+		
 		// Now look for output folders
 		try {
 			IResource[] resources = getProject().members();
@@ -641,7 +648,9 @@ public class CProject extends Openable implements ICProject {
 					}
 					
 					// Not in source folder, check if it's a container on output entry
-					if (!found && isOnOutputEntry(child))
+					// Also make sure I'm not a source root since my SourceRoot object would
+					// have already added this.
+					if (!found && isOnOutputEntry(child) && !projectIsSourceRoot)
 						children.add(new CContainer(this, child));
 				}
 			}

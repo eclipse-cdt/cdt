@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -40,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
-import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IndexFilter;
@@ -56,7 +56,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class CScope implements ICScope, IASTInternalScope {
 	/**
-	 * ISO C:99 6.2.3 there are seperate namespaces for various categories of
+	 * ISO C:99 6.2.3 there are separate namespaces for various categories of
 	 * identifiers: - label names ( labels have ICFunctionScope ) - tags of
 	 * structures or unions : NAMESPACE_TYPE_TAG - members of structures or
 	 * unions ( members have ICCompositeTypeScope ) - all other identifiers :
@@ -170,50 +170,47 @@ public class CScope implements ICScope, IASTInternalScope {
         
         return NAMESPACE_TYPE_OTHER;
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
-     */
     public IBinding getBinding( IASTName name, boolean resolve ) {
-        char [] c = name.toCharArray();
-        if( c.length == 0  ){
-            return null;
-        }
-        
-        int type = getNamespaceType( name );
-        Object o = bindings[type].get( name.toCharArray() );
-        
-        if( o == null ) {
-        	IBinding result= null;
-        	if(physicalNode instanceof IASTTranslationUnit) {
-        		IIndex index= ((IASTTranslationUnit)physicalNode).getIndex();
-        		if(index!=null) {
-        			try {
-        				IBinding[] bindings= index.findBindings(name.toCharArray(), getIndexFilter(type), new NullProgressMonitor());
-        				result= processIndexResults(name, bindings);
-        			} catch(CoreException ce) {
-        				CCorePlugin.log(ce);
-        			}
-        		}
-        	}
-        	return result;
-        }
-            
-        
-        if( o instanceof IBinding )
-            return (IBinding) o;
-
-        IASTName foundName= (IASTName) o;
-        if( (resolve || foundName.getBinding() != null) && ( foundName != name ) ) {
-        	if(!isTypeDefinition(name) || CVisitor.declaredBefore(foundName, name)) {
-        		return foundName.resolveBinding();
-        	}
-        }
-
-        return null;
-    }
+	    char [] c = name.toCharArray();
+	    if( c.length == 0  ){
+	        return null;
+	    }
+	    
+	    int type = getNamespaceType( name );
+	    Object o = bindings[type].get( name.toCharArray() );
+	    
+	    if( o == null || name == o) {
+	    	IBinding result= null;
+	    	if(physicalNode instanceof IASTTranslationUnit) {
+	    		IIndex index= ((IASTTranslationUnit)physicalNode).getIndex();
+	    		if(index!=null) {
+	    			try {
+	    				IBinding[] bindings= index.findBindings(name.toCharArray(), getIndexFilter(type), new NullProgressMonitor());
+	    				result= processIndexResults(name, bindings);
+	    			} catch(CoreException ce) {
+	    				CCorePlugin.log(ce);
+	    			}
+	    		}
+	    	}
+	    	return result;
+	    }
+	        
+	    
+	    if( o instanceof IBinding )
+	        return (IBinding) o;
+	
+	    IASTName foundName= (IASTName) o;
+	    if( (resolve || foundName.getBinding() != null) && ( foundName != name ) ) {
+	    	if(!isTypeDefinition(name) || CVisitor.declaredBefore(foundName, name)) {
+	    		return foundName.resolveBinding();
+	    	}
+	    }
+	
+	    return null;
+	}
 
     private boolean isTypeDefinition(IASTName name) {
-    	return name.getPropertyInParent()==ICASTTypedefNameSpecifier.NAME;
+    	return name.getPropertyInParent()==IASTNamedTypeSpecifier.NAME;
     }
     
     /* (non-Javadoc)

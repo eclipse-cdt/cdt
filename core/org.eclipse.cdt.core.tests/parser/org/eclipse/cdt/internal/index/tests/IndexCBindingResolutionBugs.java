@@ -136,7 +136,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 
 	// // don't include header
     // char globalVar;
-    public void _testAstIndexConflictVariable_Bug195127() throws Exception {
+    public void testAstIndexConflictVariable_Bug195127() throws Exception {
     	fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("globalVar;", 9);
 		assertTrue(b0 instanceof IVariable);
@@ -150,7 +150,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 
 	// // don't include header
     // char globalFunc();
-    public void _testAstIndexConflictFunction_Bug195127() throws Exception {
+    public void testAstIndexConflictFunction_Bug195127() throws Exception {
     	fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("globalFunc(", 10);
 		assertTrue(b0 instanceof IFunction);
@@ -169,7 +169,7 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
     //    char member;
     //    int additionalMember;
     // };
-    public void _testAstIndexConflictStruct_Bug195127() throws Exception {
+    public void testAstIndexConflictStruct_Bug195127() throws Exception {
     	fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("astruct", 7);
 		assertTrue(b0 instanceof ICompositeType);
@@ -196,9 +196,9 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
     // enum anenum {
     //    eItem0, eItem1
     // };
-    public void _testAstIndexConflictEnumerator_Bug195127() throws Exception {
+    public void testAstIndexConflictEnumerator_Bug195127() throws Exception {
     	fakeFailForMultiProject();
-		IBinding b0 = getBindingFromASTName("anenum", 7);
+		IBinding b0 = getBindingFromASTName("anenum", 6);
 		assertTrue(b0 instanceof IEnumeration);
 		IEnumeration enumeration= (IEnumeration) b0;
 		IEnumerator[] enumerators= enumeration.getEnumerators();
@@ -228,10 +228,44 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
     // void func(struct st_20070703* x) {
     //    x->member= 0;
     // }
-    public void _testAstIndexConflictStruct_Bug195227() throws Exception {
-    	fakeFailForMultiProject();
+    public void testAstIndexStructFwdDecl_Bug195227() throws Exception {
 		IBinding b0 = getBindingFromASTName("member=", 6);
 		assertTrue(b0 instanceof IField);
     }
 
+    // struct astruct {
+    //    int member;
+    // };
+    // enum anenum {
+    //    eItem0
+    // };
+
+	// #include "header.h"
+    // struct astruct;
+    // enum anenum;
+    // void func(struct astruct a, enum anenum b) {
+    // }
+    public void testAstIndexFwdDecl_Bug195227() throws Exception {
+		IBinding b0 = getBindingFromASTName("astruct;", 7);
+		IBinding b1 = getBindingFromASTName("anenum;", 6);
+		assertTrue(b0 instanceof ICompositeType);
+		ICompositeType t= (ICompositeType) b0;
+		IField[] f= t.getFields();
+		assertEquals(1, f.length);
+		assertTrue(b1 instanceof IEnumeration);
+		IEnumeration e= (IEnumeration) b1;
+		IEnumerator[] ei= e.getEnumerators();
+		assertEquals(1, ei.length);
+
+		b0 = getBindingFromASTName("astruct a", 7);
+		b1 = getBindingFromASTName("anenum b", 6);
+		assertTrue(b0 instanceof ICompositeType);
+		t= (ICompositeType) b0;
+		f= t.getFields();
+		assertEquals(1, f.length);
+		assertTrue(b1 instanceof IEnumeration);
+		e= (IEnumeration) b1;
+		ei= e.getEnumerators();
+		assertEquals(1, ei.length);
+    } 
 }

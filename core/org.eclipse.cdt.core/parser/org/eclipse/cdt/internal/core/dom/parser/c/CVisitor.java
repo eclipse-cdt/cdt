@@ -500,9 +500,9 @@ public class CVisitor {
         } catch ( DOMException e ) {
             binding = null;
         }
-        if( binding != null ){
-        	if(binding instanceof IEnumeration && (binding instanceof IIndexBinding || binding instanceof CEnumeration) ) {
-            	if( binding instanceof CEnumeration ) {
+        if (binding != null && !(binding instanceof IIndexBinding)) {
+        	if (binding instanceof IEnumeration) {
+            	if (binding instanceof CEnumeration) {
             	    ((CEnumeration)binding).addDefinition( name );
             	}
         	} else {
@@ -887,7 +887,7 @@ public class CVisitor {
 			} catch (DOMException e) {
 			}
 		} else if( funcDeclarator != null ){
-			if( binding != null ) {
+			if( binding != null && !(binding instanceof IIndexBinding)) {
 			    if( binding instanceof IFunction ){
 			        IFunction function = (IFunction) binding;
 			        if( function instanceof CFunction )
@@ -905,7 +905,7 @@ public class CVisitor {
 				binding = new CTypedef( name );
 			} else {
 			    IType t1 = null, t2 = null;
-			    if( binding != null ) {
+			    if( binding != null && !(binding instanceof IIndexBinding)) {
 			        if( binding instanceof IParameter ){
 			            return new ProblemBinding( name, IProblemBinding.SEMANTIC_INVALID_REDECLARATION, name.toCharArray() );
 			        } else if( binding instanceof IVariable ){
@@ -948,7 +948,7 @@ public class CVisitor {
 				scope = (ICScope) scope.getParent();
 				
 			binding = scope.getBinding( name, false );
-			if( binding != null ){
+			if( binding != null && !(binding instanceof IIndexBinding)){
 				if (binding instanceof CStructure)
 					((CStructure)binding).addDefinition( compositeTypeSpec );
 				return binding;
@@ -1197,7 +1197,7 @@ public class CVisitor {
 	protected static Object findBinding( IASTNode blockItem, IASTName name, int bits ) throws DOMException{
 	    boolean prefix = ( bits & PREFIX_LOOKUP ) != 0;
 		Object binding =  prefix ? new ObjectSet( 2 ) : null;
-		
+		IIndexBinding foundIndexBinding= null;
 		CharArrayObjectMap prefixMap = prefix ? new CharArrayObjectMap(2) : null;
 
 		while( blockItem != null ){
@@ -1252,12 +1252,19 @@ public class CVisitor {
                 }
 			    if( binding != null )
 			        return binding;
-			} else if (!prefix && scope != null  && scope.getParent() == null
-					&& scope.getBinding( name, false ) != null) {
-				binding = scope.getBinding( name, false );
-				return binding;
 			} else {
-			
+				if (!prefix && scope != null  && scope.getParent() == null) {
+					binding= scope.getBinding(name, false);
+					if (binding != null) {
+						if (binding instanceof IIndexBinding) {
+							foundIndexBinding= (IIndexBinding) binding;
+						}
+						else {
+							return binding;
+						}
+					}
+				}
+					
 				Object result = null;
 				boolean reachedBlockItem = false;
 				if( nodes != null ){
@@ -1335,6 +1342,9 @@ public class CVisitor {
 			
 			if( blockItem instanceof IASTTranslationUnit )
 			    break;
+		}
+		if (foundIndexBinding != null) {
+			return foundIndexBinding;
 		}
 		if( prefixMap != null ){
 		    IBinding [] result = null;

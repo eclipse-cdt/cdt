@@ -219,4 +219,19 @@ public class IndexCBindingResolutionBugs extends IndexBindingResolutionTestBase 
 		assertTrue(((IBasicType) type).getType() == IBasicType.t_char);
     }
 
+    // struct st_20070703 {
+    //    int member;
+    // };
+
+	// #include "header.h"
+    // struct st_20070703;
+    // void func(struct st_20070703* x) {
+    //    x->member= 0;
+    // }
+    public void _testAstIndexConflictStruct_Bug195227() throws Exception {
+    	fakeFailForMultiProject();
+		IBinding b0 = getBindingFromASTName("member=", 6);
+		assertTrue(b0 instanceof IField);
+    }
+
 }

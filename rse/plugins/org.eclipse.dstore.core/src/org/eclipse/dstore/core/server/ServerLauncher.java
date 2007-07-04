@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight (IBM) - [193426] don't display exceptions
  *******************************************************************************/
 
 package org.eclipse.dstore.core.server;
@@ -213,7 +213,8 @@ public class ServerLauncher extends Thread {
 			}
 			catch (IOException e)
 			{
-				e.printStackTrace();
+				// don't display exceptions 193426
+				//e.printStackTrace();
 				_port = "0"; //$NON-NLS-1$
 			}
 
@@ -518,7 +519,8 @@ public class ServerLauncher extends Thread {
 							_serverSocket = sslContext.getServerSocketFactory()
 									.createServerSocket(i);
 						} catch (Exception e) {
-							e.printStackTrace();
+							// don't display exceptions 193426
+							//e.printStackTrace();
 						}
 					} else {
 						_serverSocket = new ServerSocket(i);
@@ -533,14 +535,16 @@ public class ServerLauncher extends Thread {
 				} catch (UnknownHostException e) {
 					System.err
 							.println("Networking problem, can't resolve local host"); //$NON-NLS-1$
-					e.printStackTrace();
+					// don't display exceptions 193426
+					//e.printStackTrace();
 					System.exit(-1);
 				} catch (BindException e) {
 					System.err.println("socket taken on " + i); //$NON-NLS-1$
 					// keep going
 				} catch (IOException e) {
 					System.err.println("Failure to create ServerSocket"); //$NON-NLS-1$
-					e.printStackTrace();
+					// don't display exceptions 193426
+					//e.printStackTrace();
 					System.exit(-1);
 				}
 
@@ -560,7 +564,8 @@ public class ServerLauncher extends Thread {
 						_serverSocket = sslContext.getServerSocketFactory()
 								.createServerSocket(port);
 					} catch (Exception e) {
-						e.printStackTrace();
+						// don't display exceptions 193426
+						//e.printStackTrace();
 					}
 				} else {
 					_serverSocket = new ServerSocket(port);
@@ -571,11 +576,13 @@ public class ServerLauncher extends Thread {
 			} catch (UnknownHostException e) {
 				System.err
 						.println("Networking problem, can't resolve local host"); //$NON-NLS-1$
-				e.printStackTrace();
+				// don't display exceptions 193426
+				//e.printStackTrace();
 				System.exit(-1);
 			} catch (IOException e) {
 				System.err.println("Failure to create ServerSocket"); //$NON-NLS-1$
-				e.printStackTrace();
+				// don't display exceptions 193426
+				//e.printStackTrace();
 				System.exit(-1);
 			}
 		}

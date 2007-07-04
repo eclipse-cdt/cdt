@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [189150] setSelection(null) added to clear()
  ********************************************************************************/
 
 
@@ -54,6 +55,7 @@ public class ClearAction extends BrowseAction
 	{
 	    _scratchPad.clearChildren();
 	    RSECorePlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_scratchPad, ISystemResourceChangeEvents.EVENT_REFRESH, _scratchPad));
+	    _view.setSelection(null);
 	    //_view.updateActionStates();
 	}
 }

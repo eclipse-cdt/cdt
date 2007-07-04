@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [192278] Removed handleKeyPressed
+ * Kevin Doyle (IBM) - [189150] _selectionFlagsUpdated reset after clear action performed
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -573,12 +574,17 @@ public class SystemScratchpadView
 	public void selectionChanged(SelectionChangedEvent event)
 	{
 
+			// Set _selectionFlagsUpdate to false, so the next time the context menu
+			// is requested we rescan the selections to determine which actions
+			// to show and enable/disable.
+			// Setting this to false will force a rescan because in fillContextMenu()
+			// if this is false it will call scanSelections();
+			_selectionFlagsUpdated = false;
 		    IStructuredSelection sel = (IStructuredSelection)event.getSelection();		
 			Object firstSelection = sel.getFirstElement();
 			if (firstSelection == null)
 			  return;
 			
-			_selectionFlagsUpdated = false;
 			ISystemViewElementAdapter adapter = getViewAdapter(firstSelection);
 			if (adapter != null)
 			{
@@ -1211,6 +1217,8 @@ public class SystemScratchpadView
      */
     protected boolean showRefresh()
     {
+    	if (!_selectionFlagsUpdated)
+    		scanSelections();
     	return _selectionShowRefreshAction;
     }
 	

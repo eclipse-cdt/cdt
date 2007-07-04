@@ -96,11 +96,20 @@ public class LocalProjectScope implements IScopeContext {
 				Preferences target= getPPP(movedTo.lastSegment());
 				copyPrefs(prefs, target);
 			}
-			Preferences parent= prefs.parent();
-			prefs.removeNode();
-			parent.flush();
+			deletePrefs(prefs);
 		} catch (BackingStoreException e) {
 		}
+	}
+
+	private static void deletePrefs(Preferences prefs) throws BackingStoreException {
+		prefs.clear();
+		String[] children= prefs.childrenNames();
+		for (int i = 0; i < children.length; i++) {
+			String child = children[i];
+			prefs.node(child).removeNode();
+		}
+		prefs.flush();
+		prefs.removeNode();
 	}
 
 	private static void copyPrefs(Preferences prefs, Preferences target) throws BackingStoreException {
@@ -117,5 +126,6 @@ public class LocalProjectScope implements IScopeContext {
 			String child = children[i];
 			copyPrefs(prefs.node(child), target.node(child));
 		}
+		target.flush();
 	}
 }

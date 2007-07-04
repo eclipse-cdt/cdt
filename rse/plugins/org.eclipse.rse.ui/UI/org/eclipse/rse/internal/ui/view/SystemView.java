@@ -29,6 +29,7 @@
  * Martin Oberhuber (Wind River) - [186991] Avoid remote refresh if no element is remote 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Kevin Doyle (IBM) - [194602] handleDoubleClick does expand/collapse on treepath instead of element
+ * David McKnight   (IBM)        - [194897] Should not remote refresh non-remote objects.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2105,11 +2106,9 @@ public class SystemView extends SafeTreeViewer
 			case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
 				if (debug) logDebugMsg("SV event: EVENT_REFRESH_REMOTE: src = " + src); //$NON-NLS-1$
 				
-				// first, find out if src is a container or not
-				// if it's a container, just pass into refreshRemoteObject
-				// if it's NOT a container, pass in it's parent
+				// only do this if the object is "remote"
 				ISystemViewElementAdapter adapter = getViewAdapter(src);
-				if (adapter != null)
+				if (adapter != null && adapter.isRemote(src))
 				{					
 					// we need to refresh filters
 					ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
@@ -2126,7 +2125,9 @@ public class SystemView extends SafeTreeViewer
 		        		}
 		        	}	
 		        	
-
+					// first, find out if src is a container or not
+					// if it's a container, just pass into refreshRemoteObject
+					// if it's NOT a container, pass in it's parent
 					boolean hasChildren = adapter.hasChildren((IAdaptable)src);
 					if (!hasChildren)
 					{
@@ -2139,8 +2140,8 @@ public class SystemView extends SafeTreeViewer
 					}
 					else
 					{
-						// only do this if the object is "remote"
-						if (adapter.isRemote(src))
+						
+						//if (adapter.isRemote(src))
 						{
 							// get up-to-date version of the container (need to make sure it still exists)
 							if (ss == null)

@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
  *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -61,11 +62,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
     private SessionLostHandler fSessionLostHandler;
 
 	public SshConnectorService(IHost host) {
-		//TODO the port parameter doesnt really make sense here since
-		//it will be overridden when the subsystem initializes (through
-		//setPort() on our base class -- I assume the port is meant to 
-		//be a local port.
-		super(SshConnectorResources.SshConnectorService_Name, SshConnectorResources.SshConnectorService_Description, host, 0);
+		super(SshConnectorResources.SshConnectorService_Name, SshConnectorResources.SshConnectorService_Description, host, SSH_DEFAULT_PORT);
 		fSessionLostHandler = null;
 	}
 
@@ -94,6 +91,14 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	// </copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)>
 	//----------------------------------------------------------------------
 
+	protected int getSshPort() {
+		int port = getPort();
+		if (port<=0) {
+			//Legacy "default port" setting
+			port = SSH_DEFAULT_PORT;
+		}
+		return port;
+	}
 
 	protected void internalConnect(IProgressMonitor monitor) throws Exception
     {
@@ -108,7 +113,7 @@ public class SshConnectorService extends StandardConnectorService implements ISs
         userInfo.aboutToConnect();
         
         try {
-            session = createSession(user, password, host, SSH_DEFAULT_PORT, 
+            session = createSession(user, password, host, getSshPort(), 
             		userInfo, monitor);
 
             //java.util.Hashtable config=new java.util.Hashtable();

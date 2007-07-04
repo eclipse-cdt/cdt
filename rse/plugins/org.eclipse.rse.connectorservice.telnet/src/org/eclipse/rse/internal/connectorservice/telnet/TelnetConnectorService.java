@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
  * Sheldon D'souza (Celunite) - [194464] fix create multiple telnet shells quickly
+ * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -77,7 +78,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	public TelnetConnectorService(IHost host) {
 		super(TelnetConnectorResources.TelnetConnectorService_Name,
 				TelnetConnectorResources.TelnetConnectorService_Description,
-				host, 0);
+				host, TELNET_DEFAULT_PORT);
 		fSessionLostHandler = null;
 		telnetPropertySet = getTelnetPropertySet();
 	}
@@ -132,6 +133,15 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		}
 	}
 
+	protected int getTelnetPort() {
+		int port = getPort();
+		if (port<=0) {
+			//Legacy "default port" setting
+			port = TELNET_DEFAULT_PORT;
+		}
+		return port;
+	}
+
 	public TelnetClient makeNewTelnetClient( IProgressMonitor monitor ) throws Exception {
 		TelnetClient client = new TelnetClient();
 		String host = getHostName();
@@ -141,7 +151,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		Exception nestedException = null;
 		try {
 			Activator.trace("Telnet Service: Connecting....."); //$NON-NLS-1$
-			client.connect(host, TELNET_DEFAULT_PORT);
+			client.connect(host, getTelnetPort());
 			SystemSignonInformation ssi = getSignonInformation();
 			if (ssi != null) {
 				password = ssi.getPassword();

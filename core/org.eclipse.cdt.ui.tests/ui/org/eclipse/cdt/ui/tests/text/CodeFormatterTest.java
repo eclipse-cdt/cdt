@@ -133,5 +133,12 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testSpaceBetweenTypeAndIdentifier_Bug194603() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int a = sizeof(     int)    ;
 	
+	//int a = sizeof(int);
+	public void testSizeofExpression_Bug195246() throws Exception {
+		assertFormatterResult();
+	}
+
 }

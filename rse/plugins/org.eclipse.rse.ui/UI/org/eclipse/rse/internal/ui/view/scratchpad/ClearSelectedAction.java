@@ -14,12 +14,15 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [189150] setSelection(null) added to clear()
+ * Kevin Doyle (IBM) - [193148] Clear Selected Action enabled when not on a root element
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
 import java.util.Iterator;
 
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -53,6 +56,20 @@ public class ClearSelectedAction extends BrowseAction
 		            {
 		                setEnabled(false);
 		                return;
+		            }
+		            else
+		            {
+		            	if (selection instanceof TreeSelection)
+		            	{
+		            		TreeSelection treeSelection = (TreeSelection) selection;
+		            		TreePath[] paths = treeSelection.getPathsFor(obj);
+		            		// if paths[0].getSegmentCount is not 1 then it's not a root
+		            		if (paths.length > 0 && paths[0].getSegmentCount() != 1)
+		            		{
+		            			setEnabled(false);
+		            			return;
+		            		}
+		            	}
 		            }
 		        }
 		        setEnabled(true);

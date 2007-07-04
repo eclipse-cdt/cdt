@@ -253,6 +253,17 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	}
 
 	/*
+	 * @see org.eclipse.cdt.internal.ui.cview.CViewContentProvider#hasChildren(java.lang.Object)
+	 */
+	public boolean hasChildren(Object element) {
+		if (element instanceof IProject) {
+			IProject project= (IProject) element;
+			return project.isAccessible();	
+		}
+		return super.hasChildren(element);
+	}
+	
+	/*
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#getPipelinedChildren(java.lang.Object, java.util.Set)
 	 */
 	public void getPipelinedChildren(Object parent, Set currentChildren) { 

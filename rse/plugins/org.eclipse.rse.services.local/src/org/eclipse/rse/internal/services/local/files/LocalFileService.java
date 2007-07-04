@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Kevin Doyle (IBM) - [182221] Throwing Proper Exceptions on create file/folder
  * Xuan Chen        (IBM)        - Fix 189487 - copy and paste a folder did not work - workbench hang
+ * David McKnight   (IBM)        - [192705] Exception needs to be thrown when rename fails
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -997,7 +998,13 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			return renameVirtualFile(fileToRename, newName);
 		}
 		File newFile = new File(remoteParent, newName);
-		return fileToRename.renameTo(newFile);
+		boolean result =  fileToRename.renameTo(newFile);
+		if (!result)
+		{
+			// for 192705, we need to throw an exception when rename fails
+			throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(newFile)); //$NON-NLS-1$
+		}
+		return result;
 	}
 	
 	public boolean rename(String remoteParent, String oldName, String newName, IHostFile oldFile, IProgressMonitor monitor) throws SystemMessageException

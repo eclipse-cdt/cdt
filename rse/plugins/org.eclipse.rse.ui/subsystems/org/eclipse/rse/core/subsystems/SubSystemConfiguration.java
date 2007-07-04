@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
  * Rupen Mardirossian (IBM) - [189434] Move Up/Down on Filters Error
  * Kevin Doyle (IBM) - [190445] Set Position of cloned event in cloneEvent()
+ * Martin Oberhuber (Wind River) - [195392] Avoid setting port 0 in initializeSubSystem()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -1164,15 +1165,15 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	public abstract ISubSystem createSubSystemInternal(IHost conn);
 
 	/**
-	 * <i>Overridable</i> method to initialize subsystems after creation. The default behaviour here is to
-	 *  set the subsystem's port property to 0, and to add to it a reference to the default filter pool for this
-	 *  subsystem configuration, if there is one. Typically subclasses call <samp>super().initializeSubSystem(...)</samp>
-	 *  to get this default behaviour, then extend it.
+	 * Initialize subsystems after creation (<i>Overridable</i>).
+	 * The default behavior is to add a reference to the default filter pool for this subsystem configuration,
+	 * if there is one. Typically subclasses call <samp>super().initializeSubSystem(...)</samp>
+	 * to get this default behavior, then extend it.
 	 * 
-	 * <p>The reason for the connect wizard pages parm is in case your subsystem configuration contributes a page to that wizard,
+	 * <p>The reason for the connect wizard pages parameter is in case your subsystem configuration contributes a page to that wizard,
 	 * whose values are needed to set the subsystem's initial state. For example, you might decide to add a 
 	 * page to the connection wizard to prompt for a JDBC Driver name. If so, when this method is called at 
-	 * the time a new connection is created apres the wizard, your page will have the user's value. You can
+	 * the time a new connection is created after the wizard, your page will have the user's value. You can
 	 * thus use it here to initialize that subsystem property. Be use to use instanceof to find your particular
 	 * page. 
 	 * </p>
@@ -1187,11 +1188,6 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	 */
 	protected void initializeSubSystem(ISubSystem ss, ISystemNewConnectionWizardPage[] yourNewConnectionWizardPages)
 	{
-		IConnectorService connectorService = ss.getConnectorService();
-		if (connectorService != null)
-		{
-			connectorService.setPort(0);
-		}
 		if (supportsFilters())
 		{
 			// --------------------------------------------

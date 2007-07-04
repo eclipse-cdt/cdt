@@ -2,9 +2,9 @@
 
 const SimpleStruct simpleStruct =
 {
-		1
-		, "mySimple"
-		, 0.1232
+		1,
+		"mySimple",
+		0.1232
 };
 
 #define SIZEOF( A, B ) sizeof( A.B )
@@ -20,19 +20,19 @@ const OtherStruct array[] =
 {
 		{
 #if FOO
-			"foo"
+				"foo"
 #  else
-			"bar"
+				"bar"
 #endif
-			,	SIZEOF( simpleStruct, num )
-			, &t_int
-			, 0
+				,	SIZEOF( simpleStruct, num )
+				, &t_int
+				, 0
 		}
 		, {
-			"name"
-			, SIZEOF( simpleStruct, floatnum )
-			, &t_float
-			, 1
+				"name"
+				, SIZEOF( simpleStruct, floatnum )
+				, &t_float
+				, 1
 		}
 };
 

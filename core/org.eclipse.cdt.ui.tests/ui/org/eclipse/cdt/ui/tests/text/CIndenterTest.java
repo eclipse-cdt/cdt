@@ -227,7 +227,53 @@ public class CIndenterTest extends BaseUITestCase {
 	//	}
 	//	}
 	//}
-public void testIndentationOfCaseBlockAfterCharLiteral_Bug194710() throws Exception {
+	public void testIndentationOfCaseBlockAfterCharLiteral_Bug194710() throws Exception {
+		assertIndenterResult();
+	}
+
+	//int a[]=
+	//{
+	//1,
+	//2
+	//};
+
+	//int a[]=
+	//{
+	//		1,
+	//		2
+	//};
+	public void testIndentationOfInitializerLists_Bug194585() throws Exception {
+		assertIndenterResult();
+	}
+
+	//struct_t a[]=
+	//{
+	//{
+	//1,
+	//2,
+	//{ 1,2,3 }
+	//},
+	//{
+	//1,
+	//2,
+	//{ 1,2,3 }
+	//}
+	//};
+	
+	//struct_t a[]=
+	//{
+	//		{
+	//				1,
+	//				2,
+	//				{ 1,2,3 }
+	//		},
+	//		{
+	//				1,
+	//				2,
+	//				{ 1,2,3 }
+	//		}
+	//};
+	public void testIndentationOfNestedInitializerLists_Bug194585() throws Exception {
 		assertIndenterResult();
 	}
 }

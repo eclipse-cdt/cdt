@@ -2,9 +2,9 @@
 
 const SimpleStruct simpleStruct =
 {
-	1
-  , "mySimple"
-  , 0.1232
+	1,
+"mySimple",
+0.1232
 };
 
 #define SIZEOF( A, B ) sizeof( A.B )

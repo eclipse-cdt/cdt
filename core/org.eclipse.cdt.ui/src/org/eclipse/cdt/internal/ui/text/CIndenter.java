@@ -1502,9 +1502,10 @@ public final class CIndenter {
 
 			case Symbols.TokenLBRACE:
 				pos= fPosition; // store
-
+				
+				final boolean looksLikeArrayInitializerIntro= looksLikeArrayInitializerIntro();
 				// special: array initializer
-				if (looksLikeArrayInitializerIntro()) {
+				if (looksLikeArrayInitializerIntro) {
 					if (fPrefs.prefArrayDeepIndent)
 						return setFirstElementAlignment(pos, bound);
 					else
@@ -1517,8 +1518,7 @@ public final class CIndenter {
 
 				// normal: skip to the statement start before the scope introducer
 				// opening braces are often on differently ending indents than e.g. a method definition
-				if (looksLikeArrayInitializerIntro() && !fPrefs.prefIndentBracesForArrays
-						|| !fPrefs.prefIndentBracesForBlocks) {
+				if (!looksLikeArrayInitializerIntro && !fPrefs.prefIndentBracesForBlocks) {
 					fPosition= pos; // restore
 					return skipToStatementStart(true, true); // set to true to match the first if
 				} else {
@@ -1564,13 +1564,27 @@ public final class CIndenter {
 
 	/**
 	 * Returns <code>true</code> if the next token received after calling
-	 * <code>nextToken</code> is either an equal sign or an array designator ('[]').
+	 * <code>nextToken</code> is either an equal sign, an opening brace, 
+	 * a comma or an array designator ('[]').
 	 *
 	 * @return <code>true</code> if the next elements look like the start of an array definition
 	 */
 	private boolean looksLikeArrayInitializerIntro() {
+		int pos= fPosition;
 		nextToken();
-		if (fToken == Symbols.TokenEQUAL || skipBrackets()) {
+		switch (fToken) {
+		case Symbols.TokenEQUAL:
+			return true;
+		case Symbols.TokenRBRACKET:
+			return skipBrackets();
+		case Symbols.TokenLBRACE:
+			if (looksLikeArrayInitializerIntro()) {
+				fPosition= pos;
+				return true;
+			}
+			return false;
+		case Symbols.TokenCOMMA:
+			fPosition= pos;
 			return true;
 		}
 		return false;

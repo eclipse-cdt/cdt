@@ -30,6 +30,7 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Kevin Doyle (IBM) - [194602] handleDoubleClick does expand/collapse on treepath instead of element
  * David McKnight   (IBM)        - [194897] Should not remote refresh objects above subsystem.
+ * Kevin Doyle - [193380] Deleting connection Refresh's Entire Remote Systems view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1898,7 +1899,7 @@ public class SystemView extends SafeTreeViewer
 				if ((parentItem instanceof Item) && !getExpanded((Item) parentItem))
 					refresh(parent); // flush memory
 				else if (parentItem instanceof Tree) {
-					refresh();
+					if (_originatingViewer != null) _originatingViewer.remove(multiSource);
 				} else {
 					wasSelected = isSelectedOrChildSelected(multiSource);
 					if (wasSelected) clearSelection();

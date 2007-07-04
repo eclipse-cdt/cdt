@@ -15,6 +15,7 @@
  * Sheldon D'souza (Celunite) - [186570] handle invalid user id and password more gracefully
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
+ * Sheldon D'souza (Celunite) - [194464] fix create multiple telnet shells quickly
  *******************************************************************************/
 package org.eclipse.rse.internal.connectorservice.telnet;
 
@@ -67,8 +68,6 @@ public class TelnetConnectorService extends StandardConnectorService implements
 	private static final int TELNET_CONNECT_TIMEOUT = 60; //seconds - TODO: Make configurable
 	private List fTelnetClients = new ArrayList();
 	private SessionLostHandler fSessionLostHandler;
-	private InputStream in;
-	private PrintStream out;
 	private IPropertySet telnetPropertySet = null;
 	private static final int ERROR_CODE = 100; // filed error code
 	private static final int SUCCESS_CODE = 150; // login pass code
@@ -148,11 +147,8 @@ public class TelnetConnectorService extends StandardConnectorService implements
 				password = ssi.getPassword();
 			}
 
-			in = client.getInputStream();
-			out = new PrintStream(client.getOutputStream());
-
 			long millisToEnd = System.currentTimeMillis() + TELNET_CONNECT_TIMEOUT*1000;
-			LoginThread checkLogin = new LoginThread(user, password);
+			LoginThread checkLogin = new LoginThread(user, password,client.getInputStream(),new PrintStream( client.getOutputStream() ));
 			checkLogin.start();
 			while (checkLogin.isAlive() && System.currentTimeMillis()<millisToEnd) {
 				if (monitor!=null) {
@@ -231,7 +227,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		}
 	}
 
-	public int readUntil(String pattern) {
+	public int readUntil(String pattern,InputStream in) {
 		try {
 			char lastChar = pattern.charAt(pattern.length() - 1);
 			StringBuffer sb = new StringBuffer();
@@ -260,7 +256,7 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		return CONNECT_CLOSED;
 	}
 
-	public void write(String value) {
+	public void write(String value,PrintStream out) {
 		try {
 			out.println(value);
 			out.flush();
@@ -498,10 +494,14 @@ public class TelnetConnectorService extends StandardConnectorService implements
 		private String username;
 		private String password;
 		private int status = SUCCESS_CODE;
+		private InputStream in;
+		private PrintStream out;
 
-		public LoginThread(String username, String password) {
+		public LoginThread(String username, String password,InputStream in,PrintStream out) {
 			this.username = username;
 			this.password = password;
+			this.in = in;
+			this.out = out;
 		}
 
 		public void run() {
@@ -519,19 +519,19 @@ public class TelnetConnectorService extends StandardConnectorService implements
 			if (Boolean.valueOf(login_required).booleanValue()) {
 				status = SUCCESS_CODE;
 				if (login_prompt != null && login_prompt.length() > 0) {
-					status = readUntil(login_prompt);
-					write(username);
+					status = readUntil(login_prompt,this.in);
+					write(username,this.out);
 				}
 				if (status == SUCCESS_CODE && password_prompt != null && password_prompt.length() > 0) {
-					status = readUntil(password_prompt);
-					write(password);
+					status = readUntil(password_prompt,this.in);
+					write(password,this.out);
 				}
 				if (status == SUCCESS_CODE && command_prompt != null && command_prompt.length() > 0) {
-					status = readUntil(command_prompt);
+					status = readUntil(command_prompt,this.in);
 				}
 			} else {
 				if (command_prompt != null && command_prompt.length() > 0) {
-					status = readUntil(command_prompt);
+					status = readUntil(command_prompt,this.in);
 				}
 			}
 		}

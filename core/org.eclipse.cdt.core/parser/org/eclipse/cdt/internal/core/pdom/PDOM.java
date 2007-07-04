@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
@@ -341,11 +340,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				// check if we have a complete match.
 				final int lastIdx = pattern.length-1;
 				if (matchesUpToLevel.get(lastIdx) && pattern[lastIdx].matcher(name).matches()) {
-					if (filter.acceptImplicitMethods() || !(binding instanceof ICPPMethod) ||
-							!((ICPPMethod)binding).isImplicit()) {
-						if (filter.acceptBinding(binding)) {
-							bindings.add(binding);
-						}
+					if (filter.acceptBinding(binding)) {
+						bindings.add(binding);
 					}
 				}
 

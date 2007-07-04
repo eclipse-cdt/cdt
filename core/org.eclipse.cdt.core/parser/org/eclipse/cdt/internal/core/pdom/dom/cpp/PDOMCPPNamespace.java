@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
@@ -109,7 +110,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	public IBinding[] find(String name) {
 		try {
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(),  name.toCharArray(), IndexFilter.ALL_DECLARED_OR_IMPLICIT,false, true);
 			getIndex().accept(visitor);
 			return visitor.getBindings();
 		} catch (CoreException e) {
@@ -134,7 +135,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			if (!prefixLookup) {
 				return getBindingsViaCache(name.toCharArray());
 			}
-			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(), null, prefixLookup, !prefixLookup);
+			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(), IndexFilter.ALL_DECLARED_OR_IMPLICIT, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
 			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
 		} catch (CoreException e) {

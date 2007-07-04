@@ -66,6 +66,29 @@ public class CScope implements ICScope, IASTInternalScope {
 	public static final int NAMESPACE_TYPE_OTHER = 1;
 	public static final int NAMESPACE_TYPE_BOTH = 2;
 	
+	private static final IndexFilter[] INDEX_FILTERS = {
+		new IndexFilter() {	// namespace type tag
+			public boolean acceptBinding(IBinding binding) throws CoreException {
+				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptBinding(binding) &&
+					(binding instanceof ICompositeType || binding instanceof IEnumeration);
+			}
+			public boolean acceptLinkage(ILinkage linkage) {
+				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptLinkage(linkage);
+			}
+		},
+		new IndexFilter() { // namespace type other
+			public boolean acceptBinding(IBinding binding) throws CoreException {
+				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptBinding(binding) &&
+					!(binding instanceof ICompositeType || binding instanceof IEnumeration);
+			}
+			public boolean acceptLinkage(ILinkage linkage) {
+				return IndexFilter.C_DECLARED_OR_IMPLICIT.acceptLinkage(linkage);
+			}
+		},
+		// namespace type both
+		IndexFilter.C_DECLARED_OR_IMPLICIT
+	};
+	
     private IASTNode physicalNode = null;
     private boolean isFullyCached = false;
     
@@ -185,7 +208,7 @@ public class CScope implements ICScope, IASTInternalScope {
 	    		IIndex index= ((IASTTranslationUnit)physicalNode).getIndex();
 	    		if(index!=null) {
 	    			try {
-	    				IBinding[] bindings= index.findBindings(name.toCharArray(), getIndexFilter(type), new NullProgressMonitor());
+	    				IBinding[] bindings= index.findBindings(name.toCharArray(), INDEX_FILTERS[type], new NullProgressMonitor());
 	    				result= processIndexResults(name, bindings);
 	    			} catch(CoreException ce) {
 	    				CCorePlugin.log(ce);
@@ -240,8 +263,8 @@ public class CScope implements ICScope, IASTInternalScope {
         	if(index!=null) {
         		try {
         			IBinding[] bindings = prefixLookup ?
-							index.findBindingsForPrefix(name.toCharArray(), true, getIndexFilter(NAMESPACE_TYPE_BOTH), null) :
-							index.findBindings(name.toCharArray(), getIndexFilter(NAMESPACE_TYPE_BOTH), null);
+							index.findBindingsForPrefix(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null) :
+							index.findBindings(name.toCharArray(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
 					obj = ArrayUtil.addAll(Object.class, obj, bindings);
         		} catch(CoreException ce) {
         			CCorePlugin.log(ce);
@@ -295,41 +318,7 @@ public class CScope implements ICScope, IASTInternalScope {
 
     	return candidate;
     }
-    
-
-    /**
-     * Returns a C-linkage filter suitable for searching the index for the types of bindings
-     * specified
-     * @param type the types of bindings to search for. One of {@link CScope#NAMESPACE_TYPE_TAG}
-     * or {@link CScope#NAMESPACE_TYPE_OTHER}, otherwise the C-linkage will not be filtered
-     * @return a C-linkage filter suitable for searching the index for the types of bindings
-     * specified
-     */
-    private IndexFilter getIndexFilter(final int type) {
-    	switch(type) {
-    		case NAMESPACE_TYPE_TAG:
-    		return new IndexFilter() {
-    			public boolean acceptBinding(IBinding binding) {
-    				return binding instanceof ICompositeType || binding instanceof IEnumeration;
-    			}
-    			public boolean acceptLinkage(ILinkage linkage) {
-    				return linkage.getID().equals(ILinkage.C_LINKAGE_ID);
-    			}
-    		};
-    		case NAMESPACE_TYPE_OTHER:
-    			return new IndexFilter() {
-        			public boolean acceptBinding(IBinding binding) {
-        				return !(binding instanceof ICompositeType || binding instanceof IEnumeration);
-        			}
-        			public boolean acceptLinkage(ILinkage linkage) {
-        				return linkage.getID().equals(ILinkage.C_LINKAGE_ID);
-        			}
-        		};
-        	default:
-        		return IndexFilter.getFilter(ILinkage.C_LINKAGE_ID);
-    	}
-    }
-    
+        
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#setFullyCached(boolean)
      */

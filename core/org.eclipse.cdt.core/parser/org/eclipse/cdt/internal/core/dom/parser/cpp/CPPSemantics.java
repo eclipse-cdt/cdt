@@ -1065,7 +1065,7 @@ public class CPPSemantics {
 						if (data.contentAssist) {
 							Object[] objs = ArrayUtil.addAll(Object.class, null, inScope);
 							for (int i = 0; i < b.length; i++) {
-								if (b[i] instanceof IIndexBinding)
+								if (isFromIndex(b[i]))
 									objs = ArrayUtil.append(Object.class, objs, b[i]);
 							}
 							mergeResults(data, objs, true);
@@ -1073,7 +1073,7 @@ public class CPPSemantics {
 							mergeResults(data, inScope, true);
 						}
 					} else if (!data.contentAssist) {
-						if (b != null && b[0] instanceof IIndexBinding) {
+						if (b != null && isFromIndex(b[0])) {
 							mergeResults(data, b, true);
 						}
 					} else if (b != null){
@@ -2025,7 +2025,7 @@ public class CPPSemantics {
 	        	} else { 
 	        		if( fns == ObjectSet.EMPTY_SET )
 	        			fns = new ObjectSet(2);
-	        		if (temp instanceof IIndexBinding) {
+	        		if (isFromIndex(temp)) {
 	        			// accept bindings from index only, in case we have none in the AST
 	        			if (!fnsFromAST) {
 	        				fns.put(temp);
@@ -2065,8 +2065,8 @@ public class CPPSemantics {
 	        	}
 	        	else {
 	        		// ignore index stuff in case we have bindings from the ast
-	        		boolean ibobj= obj instanceof IIndexBinding;
-	        		boolean ibtemp= temp instanceof IIndexBinding;
+	        		boolean ibobj= isFromIndex(obj);
+	        		boolean ibtemp= isFromIndex(temp);
 	        		// blame it on the index
 	        		if (ibobj != ibtemp) {
 	        			if (ibobj) 
@@ -2123,6 +2123,16 @@ public class CPPSemantics {
 	    }
 	    
 	    return obj;
+	}
+
+	private static boolean isFromIndex(IBinding binding) {
+		if (binding instanceof IIndexBinding) {
+			return true;
+		}
+		if (binding instanceof ICPPSpecialization) {
+			return ((ICPPSpecialization) binding).getSpecializedBinding() instanceof IIndexBinding;
+		}
+		return false;
 	}
 	
 	static private boolean functionHasParameters( IFunction function, IASTParameterDeclaration [] params ) throws DOMException{

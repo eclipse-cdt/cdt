@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -1357,7 +1356,7 @@ public class CVisitor {
 			IIndex index = tu.getIndex();
 			if (index != null) {
 				try {
-					IndexFilter filter = IndexFilter.getFilter(ILinkage.C_LINKAGE_ID);
+					IndexFilter filter = IndexFilter.C_DECLARED_OR_IMPLICIT;
 					IBinding[] bindings= prefix 
 						? index.findBindingsForPrefix(name.toCharArray(), true, filter, null) 
 						: index.findBindings(name.toCharArray(), filter, null);

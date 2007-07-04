@@ -73,7 +73,7 @@ public class TypesTests extends PDOMTestBase {
 
 	public void testCPP() throws Exception {
 		// Get the binding for A::f
-		IBinding [] As = pdom.findBindings(Pattern.compile("A"), false, IndexFilter.ALL, new NullProgressMonitor());
+		IBinding [] As = pdom.findBindings(Pattern.compile("A"), true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, As.length);
 		ICPPClassType A = (ICPPClassType)As[0];
 		ICPPMethod[] Amethods = A.getDeclaredMethods();

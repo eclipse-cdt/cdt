@@ -53,6 +53,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	private ICProject fCProject;
 	private IFile fCFile;
 	protected ITextEditor fEditor;
+	private boolean fIsCpp;
 
 	private final static Set fgAllKeywords= new HashSet();
 	
@@ -62,13 +63,19 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.KEYWORDS, ParserLanguage.CPP));
 		fgAllKeywords.addAll(ParserFactory.getKeywordSet(KeywordSetKey.TYPES, ParserLanguage.CPP));
 	}
-	public AbstractContentAssistTest(String name) {
+	public AbstractContentAssistTest(String name, boolean isCpp) {
 		super(name);
+		fIsCpp= isCpp;
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		fCProject= CProjectHelper.createCCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
+		if (fIsCpp) {
+			fCProject= CProjectHelper.createCCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
+		}
+		else {
+			fCProject= CProjectHelper.createCProject(getName(), "unused", IPDOMManager.ID_FAST_INDEXER);
+		}
 		fCFile= setUpProjectContent(fCProject.getProject());
 		assertNotNull(fCFile);
 		fEditor= (ITextEditor)EditorTestHelper.openInEditor(fCFile, true);

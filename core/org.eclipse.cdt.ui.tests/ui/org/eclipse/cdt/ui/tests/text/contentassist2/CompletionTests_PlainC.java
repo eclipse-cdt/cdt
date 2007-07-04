@@ -16,6 +16,7 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
 /**
@@ -28,11 +29,20 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "CompletionTest.h";
 	private static final String SOURCE_FILE_NAME = "CompletionTest.c";
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";
+	private static final String DISTURB_FILE_NAME= "DisturbWith.c";
 	
 	protected int fCursorOffset;
+	private IProject fProject;
 
 	//{CompletionTest.h}
 	//int gGlobalInt;
+
+	//{DisturbWith.c}
+	// int gTemp;
+	// void gFunc();
+	// typedef struct {
+	//    int mem;
+	// } gStruct;
 
 	public static Test suite() {
 		return BaseTestCase.suite(CompletionTests_PlainC.class, "_");
@@ -42,13 +52,14 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	 * @param name
 	 */
 	public CompletionTests_PlainC(String name) {
-		super(name);
+		super(name, false);
 	}
 
 	/*
 	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest#setUpProjectContent(org.eclipse.core.resources.IProject)
 	 */
 	protected IFile setUpProjectContent(IProject project) throws Exception {
+		fProject= project;
 		String headerContent= readTaggedComment(HEADER_FILE_NAME);
 		StringBuffer sourceContent= getContentsForTest(1)[0];
 		sourceContent.insert(0, "#include \""+HEADER_FILE_NAME+"\"\n");
@@ -93,4 +104,22 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
+	// void test() {
+	//    g/*cursor*/
+	public void testBindingsWithoutDeclaration() throws Exception {
+		final String[] expected= {
+			"gGlobalInt", "gTemp", "gFunc(void)", "gStruct"
+		};
+		final String[] expected2= {
+				"gGlobalInt"
+			};
+		String disturbContent= readTaggedComment(DISTURB_FILE_NAME);
+		IFile dfile= createFile(fProject, DISTURB_FILE_NAME, disturbContent);
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
+		assertCompletionResults(expected);
+		
+		dfile.delete(true, NPM);
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
+		assertCompletionResults(expected2);		
+	}
 }

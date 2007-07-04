@@ -55,7 +55,7 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 		IBinding[] barBs = pdom.findBindings(Pattern.compile("bar"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(8, barBs.length);
 
-		IBinding[] FooBs = pdom.findBindings(Pattern.compile("Foo"), false, IndexFilter.ALL, new NullProgressMonitor());
+		IBinding[] FooBs = pdom.findBindings(Pattern.compile("Foo"), false, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
 		assertEquals(4, FooBs.length);
 
 		Pattern[] XBarAbsPath = makePatternArray(new String[] {"X","bar"});

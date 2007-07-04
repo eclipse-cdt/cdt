@@ -129,7 +129,10 @@ public class IndexBugsTests extends BaseTestCase {
 	//   void four() {}
 	//   void five() {}
 	// };
-	public void _test154563() throws Exception {
+	public void test154563() throws Exception {
+		// because of fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=193779
+		// this test case passes. However https://bugs.eclipse.org/bugs/show_bug.cgi?id=154563
+		// remains to be fixed.
 		StringBuffer[] content= getContentsForTest(3);
 		
 		IFile file= createFile(getProject(), "header.h", content[0].toString());
@@ -415,7 +418,7 @@ public class IndexBugsTests extends BaseTestCase {
 		index = CCorePlugin.getIndexManager().getIndex(cproject);
 		index.acquireReadLock();
 		try {
-			IBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, new NullProgressMonitor());
+			IBinding[] bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
 			assertEquals(4, bindings.length);
 		}
 		finally {

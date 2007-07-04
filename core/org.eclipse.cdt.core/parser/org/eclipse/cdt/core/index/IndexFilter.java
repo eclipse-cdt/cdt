@@ -31,7 +31,10 @@ import org.eclipse.core.runtime.CoreException;
 
 abstract public class IndexFilter {
 	public static final IndexFilter ALL = new IndexFilter() {};
-	public static final IndexFilter ALL_DECLARED = new DeclaredBindingsFilter();
+	public static final IndexFilter ALL_DECLARED = getDeclaredBindingFilter(null, false);
+	public static final IndexFilter ALL_DECLARED_OR_IMPLICIT = getDeclaredBindingFilter(null, true);
+	public static final IndexFilter CPP_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.CPP_LINKAGE_ID, true);
+	public static final IndexFilter C_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.C_LINKAGE_ID, true);
 
 	/**
 	 * Get an IndexFilter that filters out bindings from linkages other than that
@@ -48,6 +51,16 @@ abstract public class IndexFilter {
 	}
 
 	/**
+	 * Get an IndexFilter that filters out bindings without declarations and those
+	 * from linkages other than that specified. 
+	 * @param linkageID the id of the linkage whose bindings should be retained
+	 * @return an IndexFilter instance
+	 */
+	public static IndexFilter getDeclaredBindingFilter(final String linkageID, boolean acceptImplicit) {
+		return new DeclaredBindingsFilter(linkageID, acceptImplicit);
+	}
+
+	/**
 	 * Returns whether or not to include objects of the given linkage in the query.
 	 * @see IIndex#findBindings(java.util.regex.Pattern, boolean, IndexFilter, org.eclipse.core.runtime.IProgressMonitor)
 	 * @param linkage a linkage to be tested
@@ -56,17 +69,7 @@ abstract public class IndexFilter {
 	public boolean acceptLinkage(ILinkage linkage) {
 		return true;
 	}
-	
-	/**
-	 * Returns whether or not to include implicit methods in the query.
-	 * @see IIndex#findBindings(java.util.regex.Pattern, boolean, IndexFilter, org.eclipse.core.runtime.IProgressMonitor)
-	 * @return whether or not to include implicit methods in the query.
-	 * @since 4.0
-	 */
-	public boolean acceptImplicitMethods() {
-		return false;
-	}
-	
+		
 	/**
 	 * Determines whether or not a binding is valid.
 	 * 

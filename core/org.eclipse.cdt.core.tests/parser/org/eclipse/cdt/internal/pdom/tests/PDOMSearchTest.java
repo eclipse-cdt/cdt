@@ -45,7 +45,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 	protected ICProject project;	
 	protected PDOM pdom;
 	protected IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
-	protected IndexFilter INDEX_FILTER = IndexFilter.ALL;
+	protected IndexFilter INDEX_FILTER = IndexFilter.ALL_DECLARED;
 
 	public static Test suite() {
 		return suite(PDOMSearchTest.class);

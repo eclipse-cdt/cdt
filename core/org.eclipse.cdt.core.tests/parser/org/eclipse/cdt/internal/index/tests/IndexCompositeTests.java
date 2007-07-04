@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
@@ -41,7 +42,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Tests the behaviour of the IIndex API when dealing with multiple projects
+ * Tests the behavior of the IIndex API when dealing with multiple projects
  */
 public class IndexCompositeTests  extends BaseTestCase {
 
@@ -51,6 +52,14 @@ public class IndexCompositeTests  extends BaseTestCase {
 
 	private static final int NONE = 0, REFS = IIndexManager.ADD_DEPENDENCIES;
 	private static final int REFD = IIndexManager.ADD_DEPENDENT, BOTH = REFS | REFD;
+	private static final IndexFilter FILTER= new IndexFilter() {
+		public boolean acceptBinding(IBinding binding) throws CoreException {
+			if (binding instanceof ICPPMethod) {
+				return !((ICPPMethod) binding).isImplicit();
+			}
+			return true;
+		}
+	};
 	
 	IIndex index;
 	
@@ -387,21 +396,21 @@ public class IndexCompositeTests  extends BaseTestCase {
 	 * @throws CoreException
 	 */
 	private IIndex assertBCount(int global, int all) throws CoreException {
-		IBinding[] bindings = index.findBindings(Pattern.compile(".*"), true, IndexFilter.ALL, new NullProgressMonitor());
+		IBinding[] bindings = index.findBindings(Pattern.compile(".*"), true, FILTER, new NullProgressMonitor());
 		assertEquals(global, bindings.length);
-		bindings = index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, new NullProgressMonitor());
+		bindings = index.findBindings(Pattern.compile(".*"), false, FILTER, new NullProgressMonitor());
 		assertEquals(all, bindings.length);
 		return index;
 	}
 	
 	private void assertNamespaceXMemberCount(int count) throws CoreException, DOMException {
-		IBinding[] bindings = index.findBindings(Pattern.compile("X"), true, IndexFilter.ALL, new NullProgressMonitor());
+		IBinding[] bindings = index.findBindings(Pattern.compile("X"), true, FILTER, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		assertEquals(count, ((ICPPNamespace)bindings[0]).getMemberBindings().length);
 	}
 	
 	private void assertFieldCount(String qnPattern, int count) throws CoreException, DOMException {
-		IBinding[] bindings = index.findBindings(Pattern.compile(qnPattern), true, IndexFilter.ALL, new NullProgressMonitor());
+		IBinding[] bindings = index.findBindings(Pattern.compile(qnPattern), true, FILTER, new NullProgressMonitor());
 		assertEquals(1, bindings.length);
 		assertEquals(count, ((ICompositeType)bindings[0]).getFields().length);
 	}

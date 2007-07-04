@@ -448,9 +448,6 @@ public class CIndex implements IIndex {
 			public boolean acceptBinding(IBinding binding) throws CoreException {
 				return filter.acceptBinding(binding);
 			}
-			public boolean acceptImplicitMethods() {
-				return filter.acceptImplicitMethods();
-			}
 			public boolean acceptLinkage(ILinkage other) {
 				return linkage.getID().equals(other.getID());
 			}

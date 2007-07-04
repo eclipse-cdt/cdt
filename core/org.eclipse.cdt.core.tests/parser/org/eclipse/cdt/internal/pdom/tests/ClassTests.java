@@ -86,7 +86,7 @@ public class ClassTests extends PDOMTestBase {
 	}
 
 	public void testNested() throws Exception {
-		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), false, IndexFilter.ALL, NPM);
+		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), false, IndexFilter.ALL_DECLARED, NPM);
 		assertEquals(1, bindings.length);
 		ICPPClassType NestedA = (ICPPClassType)bindings[0];
 		ICPPClassType[] nested = NestedA.getNestedClasses();
@@ -174,9 +174,6 @@ public class ClassTests extends PDOMTestBase {
 			public boolean acceptBinding(IBinding binding) {
 				return binding instanceof ICPPConstructor;
 			}
-			public boolean acceptImplicitMethods() {
-				return true;
-			}
 		};
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("C"), false, JUST_CONSTRUCTORS, NPM);
 		// expecting C(int) and C(const C &)
@@ -187,9 +184,6 @@ public class ClassTests extends PDOMTestBase {
 		IndexFilter JUST_CONSTRUCTORS= new IndexFilter() {
 			public boolean acceptBinding(IBinding binding) {
 				return binding instanceof ICPPConstructor;
-			}
-			public boolean acceptImplicitMethods() {
-				return true;
 			}
 		};
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("D"), false, JUST_CONSTRUCTORS, NPM);

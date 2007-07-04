@@ -43,7 +43,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 //template<class T>void tFunc(T x, T y);
 	
 	public ParameterHintTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	public static Test suite() {

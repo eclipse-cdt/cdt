@@ -17,7 +17,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -104,7 +103,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 				// Try looking this up in the PDOM
 				if (physicalNode instanceof IASTTranslationUnit) {
 					try {
-						IBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID), NPM);
+						IBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.CPP_DECLARED_OR_IMPLICIT, NPM);
 						binding= CPPSemantics.resolveAmbiguities(name, bindings);
 					} catch (CoreException e) {
 		        		CCorePlugin.log(e);
@@ -182,7 +181,7 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		if (index != null) {
 			if (physicalNode instanceof IASTTranslationUnit) {
 				try {
-					IndexFilter filter = IndexFilter.getFilter(ILinkage.CPP_LINKAGE_ID);
+					IndexFilter filter = IndexFilter.CPP_DECLARED_OR_IMPLICIT;
 					IBinding[] bindings = prefixLookup ?
 							index.findBindingsForPrefix(name.toCharArray(), true, filter, null) :
 							index.findBindings(name.toCharArray(), filter, null);

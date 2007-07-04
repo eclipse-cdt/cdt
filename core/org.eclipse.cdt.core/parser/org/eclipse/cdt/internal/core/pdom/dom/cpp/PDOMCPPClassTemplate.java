@@ -162,9 +162,6 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 				public boolean acceptBinding(IBinding binding) {
 					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
 				}
-				public boolean acceptImplicitMethods() {
-					return true;
-				}
 				public boolean acceptLinkage(ILinkage linkage) {
 					return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
 				}
@@ -191,9 +188,6 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 			IndexFilter filter = new IndexFilter() {
 				public boolean acceptBinding(IBinding binding) {
 					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
-				}
-				public boolean acceptImplicitMethods() {
-					return true;
 				}
 				public boolean acceptLinkage(ILinkage linkage) {
 					return linkage.getID() == ILinkage.CPP_LINKAGE_ID;

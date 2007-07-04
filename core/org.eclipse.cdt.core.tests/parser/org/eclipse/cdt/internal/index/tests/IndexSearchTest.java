@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 
 public class IndexSearchTest extends IndexTestBase {
 
-	private static final IndexFilter INDEX_FILTER = IndexFilter.ALL;
+	private static final IndexFilter INDEX_FILTER = IndexFilter.ALL_DECLARED;
 
 	public static TestSuite suite() {
 		TestSuite suite= suite(IndexSearchTest.class, "_");

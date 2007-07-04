@@ -35,7 +35,11 @@ public abstract class CompletionProposalsBaseTest extends AbstractContentAssistT
 	private boolean fFailingTest;
 
 	public CompletionProposalsBaseTest(String name) {
-		super(name);
+		super(name, true);
+	}
+
+	public CompletionProposalsBaseTest(String name, boolean isCpp) {
+		super(name, isCpp);
 	}
 	
 	/*

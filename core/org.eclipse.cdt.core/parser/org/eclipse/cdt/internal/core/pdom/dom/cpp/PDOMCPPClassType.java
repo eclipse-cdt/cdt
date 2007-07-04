@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
@@ -341,7 +342,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			if (!prefixLookup) {
 				return getBindingsViaCache(nameChars);
 			}
-			BindingCollector visitor = new BindingCollector(getLinkageImpl(), nameChars, null, prefixLookup, !prefixLookup);
+			BindingCollector visitor = new BindingCollector(getLinkageImpl(), nameChars, IndexFilter.ALL_DECLARED_OR_IMPLICIT, prefixLookup, !prefixLookup);
 			if (getDBName().comparePrefix(nameChars, false) == 0) {
 				// 9.2 ... The class-name is also inserted into the scope of
 				// the class itself
@@ -362,7 +363,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		if (result != null) {
 			return result;
 		}
-		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name, null, false, true);
+		BindingCollector visitor = new BindingCollector(getLinkageImpl(), name, IndexFilter.ALL_DECLARED_OR_IMPLICIT, false, true);
 		if (getDBName().compare(name, true) == 0) {
 			visitor.visit(this);
 		}

@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 
 /**
@@ -30,9 +31,31 @@ public class CompletionTests extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "CompletionTest.h";
 	private static final String SOURCE_FILE_NAME = "CompletionTest.cpp";
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";
+	private static final String DISTURB_FILE_NAME= "DisturbWith.cpp";
 	
 	protected int fCursorOffset;
 	private boolean fCheckExtraResults= true;
+	private IProject fProject;
+	
+	
+	//{DisturbWith.cpp}
+	// int gTemp;
+	// void gFunc();
+	// typedef struct {
+	//    int mem;
+	// } gStruct;
+	// class gClass {};
+	// namespace gns {
+	//    int gnsTemp;
+	//    void gnsFunc();
+	//    typedef struct {
+	//      int mem;
+	//    } gnsStruct;
+	//    class gnsClass {};
+	// };
+
+
+
 
 //{CompletionTest.h}
 //class C1;
@@ -120,7 +143,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 //};
 
 	public CompletionTests(String name) {
-		super(name);
+		super(name, true);
 	}
 
 	public static Test suite() {
@@ -131,6 +154,7 @@ public class CompletionTests extends AbstractContentAssistTest {
 	 * @see org.eclipse.cdt.ui.tests.text.contentassist2.AbstractCompletionTest#setUpProjectContent(org.eclipse.core.resources.IProject)
 	 */
 	protected IFile setUpProjectContent(IProject project) throws Exception {
+		fProject= project;
 		String headerContent= readTaggedComment(HEADER_FILE_NAME);
 		StringBuffer sourceContent= getContentsForTest(1)[0];
 		sourceContent.insert(0, "#include \""+HEADER_FILE_NAME+"\"\n");
@@ -783,5 +807,27 @@ public class CompletionTests extends AbstractContentAssistTest {
 				"func(my_struct s) void"
 		};
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_DISP_STRINGS);
+	}
+	
+	// namespace gns {
+	//   void test() {
+	//      g/*cursor*/
+	public void testBindingsWithoutDeclaration() throws Exception {
+		final String[] expected= {
+			"gC1", "gC2", "gfC1()", "gfC2()", 
+			"gns::", "gnsClass", "gnsFunc()", "gnsStruct", "gnsTemp",
+			"gClass", "gFunc()", "gStruct", "gTemp"
+		};
+		final String[] expected2= {
+				"gC1", "gC2", "gfC1()", "gfC2()", "gns::"
+		};
+		String disturbContent= readTaggedComment(DISTURB_FILE_NAME);
+		IFile dfile= createFile(fProject, DISTURB_FILE_NAME, disturbContent);
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+		
+		dfile.delete(true, NPM);
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
+		assertCompletionResults(fCursorOffset, expected2, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Andrew Ferguson (andrew.ferguson@arm.com) - bug 123997
+ *     Ken Ryall (Nokia) - bug 178731
  *******************************************************************************/
 package org.eclipse.cdt.launch;
 
@@ -33,12 +34,15 @@ import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.ui.newui.CDTPropertyManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -534,12 +538,36 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			}
 
 			monitor.subTask(LaunchMessages.getString("AbstractCLaunchDelegate.building") + project.getName()); //$NON-NLS-1$
+			setBuildConfiguration(configuration, project);
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(monitor, scale));
 		} finally {
 			monitor.done();
 		}
 
 		return false; 
+	}
+
+	/**
+	 * Sets up a project for building by making sure the active configuration is the one used
+	 * when the launch was created.
+	 * @param configuration
+	 * @param buildProject
+	 */
+	private void setBuildConfiguration(ILaunchConfiguration configuration, IProject buildProject) {
+		
+		try {
+			String buildConfigID = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, ""); //$NON-NLS-1$
+			ICProjectDescription projDes = CDTPropertyManager.getProjectDescription(buildProject);
+			
+			if (buildConfigID.length() > 0 && projDes != null)
+			{
+				ICConfigurationDescription buildConfiguration = projDes.getConfigurationById(buildConfigID);
+				buildConfiguration.setActive();
+				CDTPropertyManager.performOk(null);
+				//AbstractPage.updateViews(buildProject);
+			}
+			
+		} catch (CoreException e) {}
 	}
 
 	/**

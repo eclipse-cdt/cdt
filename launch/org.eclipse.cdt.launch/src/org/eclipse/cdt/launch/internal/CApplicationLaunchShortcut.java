@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Ken Ryall (Nokia) - bug 178731
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
@@ -189,7 +191,14 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 				ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, debugConfig.getID());
-			
+
+			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(bin.getCProject().getProject());
+			if (projDes != null)
+			{
+				String buildConfigID = projDes.getActiveConfiguration().getId();
+				wc.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);				
+			}
+
 			// Load up the debugger page to set the defaults. There should probably be a separate
 			// extension point for this.
 			ICDebuggerPage page = CDebugUIPlugin.getDefault().getDebuggerPage(debugConfig.getID());
@@ -419,7 +428,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 					return;
 				}
 				int count = results.size();
-				if (count == 0) {
+				if (count == 0) {					
 					MessageDialog.openError(getShell(), LaunchMessages.getString("CApplicationLaunchShortcut.Application_Launcher"), LaunchMessages.getString("CApplicationLaunchShortcut.Launch_failed_no_binaries")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (count > 1) {
 					bin = chooseBinary(results, mode);

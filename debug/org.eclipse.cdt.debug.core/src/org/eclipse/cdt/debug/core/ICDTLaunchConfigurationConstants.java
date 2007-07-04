@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
- *     Ken Ryall (Nokia) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=118894
+ *     Ken Ryall (Nokia) - bug 118894
+ *     Ken Ryall (Nokia) - bug 178731
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -33,6 +34,12 @@ public interface ICDTLaunchConfigurationConstants {
 	 * project associated with a C/C++ launch configuration.
 	 */
 	public static final String ATTR_PROJECT_NAME = CDT_LAUNCH_ID + ".PROJECT_ATTR"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is the ID of the project's
+	 * build configuration that should be used when a build is required before launch.
+	 */
+	public static final String ATTR_PROJECT_BUILD_CONFIG_ID = CDT_LAUNCH_ID + ".PROJECT_BUILD_CONFIG_ID_ATTR"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a string specifying

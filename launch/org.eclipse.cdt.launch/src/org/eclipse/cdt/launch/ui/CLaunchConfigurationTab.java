@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Ken Ryall (Nokia) - bug 178731
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -15,6 +16,7 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -124,6 +126,11 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		if (cProject != null && cProject.exists()) {
 			name = cProject.getElementName();
 			config.setMappedResources(new IResource[] {cProject.getProject()});
+			
+			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
+			String buildConfigID = projDes.getActiveConfiguration().getId();
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);
+			
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, name);
 

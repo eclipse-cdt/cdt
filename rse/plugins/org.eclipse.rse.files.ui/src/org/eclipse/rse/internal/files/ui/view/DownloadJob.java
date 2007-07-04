@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Kevin Doyle (IBM) - [194463] Use the result of _editable.download() to decide if file is to be opened
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -80,18 +80,19 @@ public class DownloadJob extends Job
 
 	public IStatus run(IProgressMonitor monitor) 
 	{
+		boolean downloadSuccessful = false;
 		try
 		{
 			IFile localFile = _editable.getLocalResource();
 			SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
 			listener.addIgnoreFile(localFile);
-			_editable.download(monitor);
+			downloadSuccessful = _editable.download(monitor);
 			listener.removeIgnoreFile(localFile);
 		}
 		catch (Exception e)
 		{				
 		}
-		if (!monitor.isCanceled())
+		if (downloadSuccessful)
 		{
 			OpenEditorRunnable oe = new OpenEditorRunnable(_editable, _systemEditor);
 			Display.getDefault().asyncExec(oe);

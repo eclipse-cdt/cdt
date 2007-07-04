@@ -192,7 +192,7 @@ public abstract class VMCache
 			    			}
 						};
 						
-	    				final IChildrenUpdate partialUpdate = new VMElementsUpdate(update, update.getOffset(), update.getLength(),
+	    				final IChildrenUpdate partialUpdate = new VMElementsUpdate(update, offset, length,
 	    						childrenMultiRequestMon.add(partialUpdateMonitor));
 	    				
 	    				associationsRequestMonitorToChildUpdate.put(partialUpdateMonitor, partialUpdate);

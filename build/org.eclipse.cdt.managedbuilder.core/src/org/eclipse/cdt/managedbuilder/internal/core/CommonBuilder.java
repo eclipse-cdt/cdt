@@ -1869,7 +1869,7 @@ public class CommonBuilder extends ACBuilder {
 
 	// Turn the string into an array.
 	String[] makeArray(String string) {
-		string.trim();
+		string = string.trim();
 		char[] array = string.toCharArray();
 		ArrayList aList = new ArrayList();
 		StringBuffer buffer = new StringBuffer();
@@ -1884,14 +1884,24 @@ public class CommonBuilder extends ACBuilder {
 				}
 			}
 			if (c == ' ' && !inComment) {
-				aList.add(buffer.toString());
+				if (buffer.length() > 0){
+					String str = buffer.toString().trim();
+					if(str.length() > 0){
+						aList.add(str);
+					}
+				}
+//				aList.add(buffer.toString());
 				buffer = new StringBuffer();
 			} else {
 				buffer.append(c);
 			}
 		}
-		if (buffer.length() > 0)
-			aList.add(buffer.toString());
+		if (buffer.length() > 0){
+			String str = buffer.toString().trim();
+			if(str.length() > 0){
+				aList.add(str);
+			}
+		}
 		return (String[]) aList.toArray(new String[aList.size()]);
 	}
 

@@ -120,7 +120,7 @@ public abstract class VMCache
     		updates[i] = new VMElementsCountUpdate(update, new DataRequestMonitor<Integer>(fExecutor, null)
 			{
     			@Override
-    			protected void handleCompleted()
+    			protected void handleOK()
     			{
     				fChildrenCounts.put(update.getElement(), this.getData());
     				update.setChildCount(this.getData());
@@ -223,7 +223,7 @@ public abstract class VMCache
     			new DataRequestMonitor<List<Object>>(fExecutor, null)
 			{
     			@Override
-    			protected void handleCompleted()
+    			protected void handleOK()
     			{
     				for(int j = 0; j < update.getLength(); j++)
     				{
@@ -256,7 +256,7 @@ public abstract class VMCache
 	    	service.getModelData(dmc, 
 	    		new DataRequestMonitor<IDMData>(executor, null) {
 		            @Override
-		            public void handleCompleted() {
+		            public void handleOK() {
 		            	fData.put(dmc, getData());
 		            	rm.setData(getData());
 		            	rm.done();

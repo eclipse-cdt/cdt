@@ -380,7 +380,7 @@
       </fileTypes>
       <fileTypes
             type="text"
-            extension="cdtproject">
+            extension="cproject">
       </fileTypes>
    </extension>
 <!-- =================================================================================== -->

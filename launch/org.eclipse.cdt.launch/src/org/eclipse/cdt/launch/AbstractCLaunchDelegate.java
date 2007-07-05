@@ -564,7 +564,6 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				ICConfigurationDescription buildConfiguration = projDes.getConfigurationById(buildConfigID);
 				buildConfiguration.setActive();
 				CDTPropertyManager.performOk(null);
-				//AbstractPage.updateViews(buildProject);
 			}
 			
 		} catch (CoreException e) {}

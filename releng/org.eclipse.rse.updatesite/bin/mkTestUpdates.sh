@@ -55,15 +55,16 @@ if [ `basename $SITE` = testUpdates ]; then
     fi
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/testUpdates,g' \
-    	-e 's,Project Update,Project Test Update,g' \
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/testUpdates,g' \
+    	-e 's,Project 2.0 Update,Project Test Update,g' \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/testUpdates,g' \
-        -e 's,Project Update,Project Test Update,g' \
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/testUpdates,g' \
+        -e 's,Project 2.0 Update,Project Test Update,g' \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_patches -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project Update,Project Test Update,g' \
+    sed -e 's,Project 2.0 Update,Project Test Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
     echo "Conditioning the site... $SITE"
@@ -174,15 +175,16 @@ elif [ `basename $SITE` = signedUpdates ]; then
     fi
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/signedUpdates,g' \
-    	-e 's,Project Update,Project Signed Test Update,g' \
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/signedUpdates,g' \
+    	-e 's,Project 2.0 Update,Project Signed Test Update,g' \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/signedUpdates,g' \
-        -e 's,Project Update,Project Signed Test Update,g' \
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/signedUpdates,g' \
+        -e 's,Project 2.0 Update,Project Signed Test Update,g' \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_patches -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project Update,Project Signed Test Update,g' \
+    sed -e 's,Project 2.0 Update,Project Signed Test Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ `basename $SITE` = milestones ]; then
@@ -191,18 +193,19 @@ elif [ `basename $SITE` = milestones ]; then
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/milestones,g' \
-    	-e 's,Project Update,Project Milestone Update,g' \
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/milestones,g' \
+    	-e 's,Project 2.0 Update,Project Milestone Update,g' \
     	-e '\,</h1>,a\
 This site contains Target Management Milestones (I-, S- and M- builds) which are \
 being contributed to the Europa coordinated release train (Eclipse 3.3).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/milestones,g' \
-        -e 's,Project Update,Project Milestone Update,g' \
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/milestones,g' \
+        -e 's,Project 2.0 Update,Project Milestone Update,g' \
+    	-e '<!-- BEGIN_2_0_1 -->,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project Update,Project Milestone Update,g' \
+    sed -e 's,Project 2.0 Update,Project Milestone Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 elif [ `basename $SITE` = interim ]; then
@@ -211,18 +214,19 @@ elif [ `basename $SITE` = interim ]; then
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/interim,g' \
-    	-e 's,Project Update,Project Interim Update,g' \
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/interim,g' \
+    	-e 's,Project 2.0 Update,Project Interim Update,g' \
     	-e '\,</h1>,a\
 This site contains Target Management Interim Maintenance builds (M-builds) in order \
 to test them before going live.' \
     	index.html > index.html.new
     mv -f index.html.new index.html
-    sed -e 's,/dsdp/tm/updates,/dsdp/tm/updates/interim,g' \
-        -e 's,Project Update,Project Interim Update,g' \
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/interim,g' \
+        -e 's,Project 2.0 Update,Project Interim Update,g' \
+    	-e '<!-- BEGIN_2_0_1 -->,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
-    sed -e 's,Project Update,Project Interim Update,g' \
+    sed -e 's,Project 2.0 Update,Project Interim Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
 else
@@ -231,6 +235,9 @@ else
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
+    sed -e '<!-- BEGIN_2_0_1 -->,/<!-- END_2_0_1 -->/d' \
+        site.xml > site.xml.new
+    mv -f site.xml.new site.xml
 fi
 FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^0-9]*[0-9][0-9.]*\).*$,\1,g'`
 for feature in $FEATURES ; do

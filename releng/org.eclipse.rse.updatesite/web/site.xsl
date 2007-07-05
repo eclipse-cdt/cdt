@@ -5,7 +5,7 @@
 <xsl:for-each select="site">
 	<html>
 	<head>
-	<title>Target Management Project Updates</title>
+	<title>Target Management Project 2.0 Updates</title>
 	<style>@import url("web/site.css");</style>
 	</head>
 	<body>

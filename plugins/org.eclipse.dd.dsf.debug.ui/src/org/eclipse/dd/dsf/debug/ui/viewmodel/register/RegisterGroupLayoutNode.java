@@ -34,6 +34,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -222,6 +223,8 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
             parent.addFlags(IModelDelta.CONTENT);
         } 
         else if (e instanceof IRegisters.IGroupsChangedDMEvent) {
+        	// flush the cache
+        	VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
             // Create a delta that indicates all groups have changed
             parent.addFlags(IModelDelta.CONTENT);
         } 

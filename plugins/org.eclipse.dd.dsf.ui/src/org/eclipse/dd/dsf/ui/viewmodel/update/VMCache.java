@@ -53,7 +53,7 @@ public abstract class VMCache
 		fData = new HashMap<IDMContext<?>, IDMData>();
 		fChildrenCounts.clear();
 		fChildren.clear();
-		fChildrenCounts.clear();
+		fHasChildren.clear();
 	}
 	
 	protected boolean useCache()

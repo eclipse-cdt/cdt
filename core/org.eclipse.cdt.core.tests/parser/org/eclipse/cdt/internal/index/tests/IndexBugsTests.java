@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndex;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -721,5 +723,41 @@ public class IndexBugsTests extends BaseTestCase {
 		finally {
 			CProjectHelper.delete(p2);
 		}
+	}
+	
+	// #ifndef _h1
+	// #define _h1
+	// #define M v
+	// #endif
+	
+	// #ifndef _h1
+	// #include "header1.h"
+	// #endif
+	
+	// #include "header1.h"
+	// #include "header2.h"
+	
+	// #include "header2.h"
+	// int M;
+	
+	public void _testIncludeGuardsOutsideOfHeader_Bug167100() throws Exception {
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		StringBuffer[] contents= getContentsForTest(4);
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header1.h", contents[0].toString());
+		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "header2.h", contents[1].toString());
+		IFile f3= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[2].toString());
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IFile f4= TestSourceReader.createFile(fCProject.getProject(), "src2.cpp", contents[2].toString());
+		waitForIndexer();
+		
+		IIndex index= indexManager.getIndex(fCProject);
+		IIndexBinding[] bindings= index.findBindings("v".toCharArray(), null, NPM);
+		assertEquals(1, bindings.length);
+		IIndexBinding binding= bindings[0];
+		assertTrue(binding instanceof IVariable);
+		IIndexName[] names= index.findNames(binding, IIndex.FIND_ALL_OCCURENCES);
+		assertEquals(1, names.length);
+		assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
 	}
 }

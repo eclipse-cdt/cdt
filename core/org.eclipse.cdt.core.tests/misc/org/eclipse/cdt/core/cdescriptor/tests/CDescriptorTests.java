@@ -12,6 +12,8 @@
 
 package org.eclipse.cdt.core.cdescriptor.tests;
 
+import java.util.Iterator;
+
 import junit.extensions.TestSetup;
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -23,9 +25,12 @@ import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorListener;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwnerInfo;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -70,6 +75,7 @@ public class CDescriptorTests extends TestCase {
 		suite.addTest(new CDescriptorTests("testProjectDataCreate"));
 		suite.addTest(new CDescriptorTests("testProjectDataDelete"));
 		suite.addTest(new CDescriptorTests("testConcurrentDescriptorCreation"));
+		suite.addTest(new CDescriptorTests("testConcurrentDescriptorCreation2"));
 
 		TestSetup wrapper = new TestSetup(suite) {
 
@@ -169,6 +175,63 @@ public class CDescriptorTests extends TestCase {
 		desc.saveProjectData();
 		fLastEvent = null;
  	}
+
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=185930
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=193503
+	public void testConcurrentDescriptorCreation2() throws Exception {
+		for (int i=0; i<100; ++i) {
+			PDOMManager pdomMgr= (PDOMManager)CCorePlugin.getIndexManager();
+			pdomMgr.shutdown();
+			fProject.close(null);
+			fProject.open(null);
+			pdomMgr.startup().schedule();
+			ICDescriptor desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+			NodeList childNodes= desc.getProjectData("testElement").getChildNodes();
+			int lengthBefore= childNodes.getLength();
+			final Throwable[] exception= new Throwable[10];
+			Thread[] threads= new Thread[10];
+			for (int j = 0; j < 10; j++) {
+				final int index= j;
+				Thread t= new Thread() {
+					public void run() {
+						try {
+							ICDescriptorOperation operation= new ICDescriptorOperation() {
+								public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
+									try {
+										Thread.sleep(10);
+									} catch (InterruptedException exc) {
+									}
+									Element data = descriptor.getProjectData("testElement");
+									data.appendChild(data.getOwnerDocument().createElement("test"));
+									assertFalse(descriptor.getConfigurationDescription().isReadOnly());
+									descriptor.saveProjectData();
+								}};
+								CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(fProject, operation, null);
+						} catch (Throwable exc) {
+							exception[index]= exc;
+							exc.printStackTrace();
+						}
+					}
+				};
+				t.start();
+				threads[j] = t;
+				Thread.sleep(10);
+			}
+			for (int j = 0; j < threads.length; j++) {
+				if (threads[j] != null) {
+					threads[j].join();
+				}
+				assertNull(exception[j]);
+			}
+			desc= CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+			childNodes= desc.getProjectData("testElement").getChildNodes();
+			int lengthAfter= childNodes.getLength();
+			assertEquals(threads.length, lengthAfter - lengthBefore);
+
+			fLastEvent = null;
+		}
+	}
 
 	public void testDescriptorOwner() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);

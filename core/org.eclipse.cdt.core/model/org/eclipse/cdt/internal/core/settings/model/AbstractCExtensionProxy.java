@@ -48,7 +48,7 @@ public abstract class AbstractCExtensionProxy implements ICProjectDescriptionLis
 	private ICExtensionReference getRef(ICConfigurationDescription cfg, boolean update){
 		if(fExtPointId != null){
 			try {
-				CConfigBasedDescriptor dr = new CConfigBasedDescriptor(cfg);
+				CConfigBasedDescriptor dr = new CConfigBasedDescriptor(cfg, false);
 				ICExtensionReference[] cextensions = dr.get(fExtPointId, update);
 				if (cextensions.length > 0) {
 					return cextensions[0];

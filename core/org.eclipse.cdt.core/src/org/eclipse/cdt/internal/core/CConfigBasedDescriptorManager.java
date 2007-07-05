@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -30,7 +31,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionListener;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
-import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescription;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
@@ -49,6 +50,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Element;
 
@@ -106,16 +108,16 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 
 	public void configure(IProject project, String id) throws CoreException {
 		CConfigBasedDescriptor dr;
-		if (id.equals(NULLCOwner.getOwnerID())) { //$NON-NLS-1$
+		if (id.equals(NULLCOwner.getOwnerID())) {
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
 					CCorePlugin.getResourceString("CDescriptorManager.exception.invalid_ownerID"), //$NON-NLS-1$
 					(Throwable)null);
 			throw new CoreException(status);
 		}
-		synchronized (this) {
+		synchronized (CProjectDescriptionManager.getInstance()) {
 			dr = findDescriptor(project, false);
 			if (dr != null) {
-				if (dr.getProjectOwner().getID().equals(NULLCOwner.getOwnerID())) { //$NON-NLS-1$
+				if (dr.getProjectOwner().getID().equals(NULLCOwner.getOwnerID())) {
 					// non owned descriptors are simply configure to the new owner no questions ask!
 					dr = updateDescriptor(project, dr, id);
 					dr.apply(true);
@@ -176,14 +178,14 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 //			throw ExceptionFactory.createCoreException("the projecty does not contain valid configurations");
 //		}
 
-		dr = updateDescriptor(project, dr, id);
-		dr.apply(true);
+		synchronized(CProjectDescriptionManager.getInstance()){
+			dr = updateDescriptor(project, dr, id);
+			dr.apply(true);
+		}
 	}
 
 	public ICDescriptor getDescriptor(IProject project) throws CoreException {
-		synchronized (CProjectDescriptionManager.getInstance()) {
-			return getDescriptor(project, true);
-		}
+		return getDescriptor(project, true);
 	}
 
 	public ICDescriptor getDescriptor(IProject project, boolean create)
@@ -209,7 +211,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Failed to create descriptor", null)); //$NON-NLS-1$
 		}
 
-		synchronized (dr) {
+		synchronized (CProjectDescriptionManager.getInstance()) {
 			boolean initialApplyOnChange = dr.isApplyOnChange();
 			dr.setApplyOnChange(false);
 			try {
@@ -217,9 +219,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			} finally {
 				dr.setApplyOnChange(initialApplyOnChange);
 			}
+
+			dr.apply(false);
 		}
-		
-		dr.apply(false);
 	}
 
 	public void runDescriptorOperation(IProject project,
@@ -236,6 +238,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CConfigBasedDescriptorManager.2"), null)); //$NON-NLS-1$
 		}
 		
+		//create a new descriptor
 		dr = loadDescriptor((CProjectDescription)des);
 		
 		if (dr == null) {
@@ -244,7 +247,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		
 		setOperatingDescriptor(project, dr);
 
-		synchronized (dr) {
+//		synchronized (CProjectDescriptionManager.getInstance()) {
 			dr.setApplyOnChange(false);
 			try {
 				op.execute(dr, monitor);
@@ -252,7 +255,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			} finally {
 				clearOperatingDescriptor(project);
 			}
-		}
+//		}
 	}
 
 	private CConfigBasedDescriptor getLoaddedDescriptor(ICProjectDescription des){
@@ -279,7 +282,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		} 
 		return dr;
 	}
-	
+
 	private CConfigBasedDescriptor findDescriptor(CProjectDescription des) throws CoreException{
 		CConfigBasedDescriptor dr = getApplyingDescriptor(des.getProject());
 		if(dr != null)
@@ -293,7 +296,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		
 		dr = getLoaddedDescriptor(des);
 		if(dr == null){
-			dr = loadDescriptor((CProjectDescription)des);
+			dr = loadDescriptor(des);
 			if(dr != null){
 				setLoaddedDescriptor(des, dr);
 			}
@@ -311,6 +314,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		return des;
 	}
 
+	/*
+	 * creates a new descriptor
+	 */
 	private CConfigBasedDescriptor loadDescriptor(CProjectDescription des) throws CoreException{
 		CConfigBasedDescriptor dr = null;
 
@@ -319,6 +325,10 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);
 			
 			ICConfigurationDescription cfgDes = des.getDefaultSettingConfiguration();
+			if(cfgDes instanceof CConfigurationDescriptionCache){
+				des = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(des.getProject(), true);
+				cfgDes = des.getDefaultSettingConfiguration();
+			}
 	
 			
 			if(cfgDes != null){
@@ -335,7 +345,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	}
 
 	public COwnerConfiguration getOwnerConfiguration(String id) {
-		if (id.equals(NULLCOwner.getOwnerID())) { //$NON-NLS-1$
+		if (id.equals(NULLCOwner.getOwnerID())) {
 			return NULLCOwner;
 		}
 		if (fOwnerConfigMap == null) {
@@ -395,7 +405,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 						if(des != null){
 							ICConfigurationDescription cfgDescription = des.getDefaultSettingConfiguration();
 							if(cfgDescription != null){
-								dr.updateConfiguration((CConfigurationDescription)cfgDescription);
+								dr.updateConfiguration(cfgDescription);
 								dr.setDirty(false);
 							} else {
 								setLoaddedDescriptor(des, null);
@@ -470,7 +480,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				if(updatedCfg != null && dr != null){
 					CProjectDescription writableDes = (CProjectDescription)CProjectDescriptionManager.getInstance().getProjectDescription(event.getProject(), true);
 					ICConfigurationDescription indexCfg = writableDes.getDefaultSettingConfiguration();
-					dr.updateConfiguration((CConfigurationDescription)indexCfg);
+					dr.updateConfiguration(indexCfg);
 					dr.setDirty(false);
 				}
 				if(desEvent != null){
@@ -511,7 +521,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		}
 		for (int i = 0; i < listeners.length; i++) {
 			final int index = i;
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 
 				public void handleException(Throwable exception) {
 					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.CExtensionUtil;
+import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
@@ -92,9 +93,13 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 			}
 		}
 	}
-	
+
 	public CConfigBasedDescriptor(ICConfigurationDescription des) throws CoreException{
-		updateConfiguration(des);
+		this(des, true);
+	}
+
+	public CConfigBasedDescriptor(ICConfigurationDescription des, boolean write) throws CoreException{
+		updateConfiguration(des, write);
 	}
 	
 	public void setApplyOnChange(boolean apply){
@@ -119,11 +124,13 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 	
 	private void checkApply() throws CoreException {
-		if(fApplyOnChange){
-			apply(false);
-			fIsDirty = false;
-		} else {
-			fIsDirty = true;
+		synchronized (CProjectDescriptionManager.getInstance()){
+			if(fApplyOnChange){
+				apply(false);
+				fIsDirty = false;
+			} else {
+				fIsDirty = true;
+			}
 		}
 	}
 	
@@ -153,8 +160,15 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	void setDirty(boolean dirty){
 		fIsDirty = dirty;
 	}
-
+	
 	public void updateConfiguration(ICConfigurationDescription des) throws CoreException{
+		updateConfiguration(des, true);
+	}
+
+	public void updateConfiguration(ICConfigurationDescription des, boolean write) throws CoreException{
+		if(write && des instanceof CConfigurationDescriptionCache)
+			throw new IllegalArgumentException();
+		
 		fCfgDes = des;
 		fProject = fCfgDes.getProjectDescription().getProject();
 		CConfigurationSpecSettings settings = ((IInternalCCfgInfo)fCfgDes).getSpecSettings(); 
@@ -248,13 +262,15 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 
 	public Element getProjectData(String id) throws CoreException {
-		Element el = (Element)fStorageDataElMap.get(id);
-		if(el == null){
-			InternalXmlStorageElement storageEl = (InternalXmlStorageElement)fCfgDes.getStorage(id, true);
-			el = CProjectDescriptionManager.getInstance().createXmlElementCopy(storageEl);
-			fStorageDataElMap.put(id, el);
+		synchronized(CProjectDescriptionManager.getInstance()){
+			Element el = (Element)fStorageDataElMap.get(id);
+			if(el == null){
+				InternalXmlStorageElement storageEl = (InternalXmlStorageElement)fCfgDes.getStorage(id, true);
+				el = CProjectDescriptionManager.getInstance().createXmlElementCopy(storageEl);
+				fStorageDataElMap.put(id, el);
+			}
+			return el;
 		}
-		return el;
 	}
 
 	public ICOwnerInfo getProjectOwner() {
@@ -307,10 +323,12 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 
 	public void saveProjectData() throws CoreException {
-		if(CProjectDescriptionManager.getInstance().getDescriptorManager().reconsile(this, fCfgDes.getProjectDescription()))
-			fIsDirty = true;
-		
-		checkApply();
+		synchronized (CProjectDescriptionManager.getInstance()) {
+			if(CProjectDescriptionManager.getInstance().getDescriptorManager().reconsile(this, fCfgDes.getProjectDescription()))
+				fIsDirty = true;
+			
+			checkApply();
+		}
 	}
 	
 	public Map getStorageDataElMap(){

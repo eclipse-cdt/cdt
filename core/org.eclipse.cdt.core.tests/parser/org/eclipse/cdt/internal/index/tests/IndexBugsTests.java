@@ -740,24 +740,43 @@ public class IndexBugsTests extends BaseTestCase {
 	// #include "header2.h"
 	// int M;
 	
-	public void _testIncludeGuardsOutsideOfHeader_Bug167100() throws Exception {
+	// #include "header2.h"
+	// #ifndef _h1
+	// #include "header1.h"
+	// #endif
+	public void testIncludeGuardsOutsideOfHeader_Bug167100() throws Exception {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
-		StringBuffer[] contents= getContentsForTest(4);
+		StringBuffer[] contents= getContentsForTest(5);
 		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header1.h", contents[0].toString());
 		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "header2.h", contents[1].toString());
 		IFile f3= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[2].toString());
 		indexManager.reindex(fCProject);
 		waitForIndexer();
-		IFile f4= TestSourceReader.createFile(fCProject.getProject(), "src2.cpp", contents[2].toString());
+		IFile f4= TestSourceReader.createFile(fCProject.getProject(), "src2.cpp", contents[3].toString());
+		IFile f5= TestSourceReader.createFile(fCProject.getProject(), "src3.cpp", contents[4].toString());
 		waitForIndexer();
 		
 		IIndex index= indexManager.getIndex(fCProject);
-		IIndexBinding[] bindings= index.findBindings("v".toCharArray(), null, NPM);
-		assertEquals(1, bindings.length);
-		IIndexBinding binding= bindings[0];
-		assertTrue(binding instanceof IVariable);
-		IIndexName[] names= index.findNames(binding, IIndex.FIND_ALL_OCCURENCES);
-		assertEquals(1, names.length);
-		assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
+		index.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = index.findBindings("v".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			IIndexBinding binding = bindings[0];
+			assertTrue(binding instanceof IVariable);
+			IIndexName[] names = index.findNames(binding,
+					IIndex.FIND_ALL_OCCURENCES);
+			assertEquals(1, names.length);
+			assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
+			
+			IIndexFile idxFile= index.getFile(IndexLocationFactory.getWorkspaceIFL(f5));
+			IIndexInclude[] includes= idxFile.getIncludes();
+			assertEquals(2, includes.length);
+			assertTrue(includes[0].isActive());
+			assertTrue(includes[0].isResolved());
+			assertFalse(includes[1].isActive());
+			assertTrue(includes[1].isResolved());
+		} finally {
+			index.releaseReadLock();
+		}
 	}
 }

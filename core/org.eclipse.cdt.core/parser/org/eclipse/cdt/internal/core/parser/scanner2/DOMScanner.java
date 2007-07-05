@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,6 +39,17 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  */
 public class DOMScanner extends BaseScanner {
     private static final Class CHAR_ARRAY_CLASS = new char[]{}.getClass();
+
+    private final IScannerPreprocessorLog locationMap = new LocationMap();
+    private final IIncludeFileTester createPathTester= new IIncludeFileTester() { 
+    	public Object checkFile(String path, String fileName) {
+    		path= ScannerUtility.createReconciledPath(path, fileName);
+    		if (new File(path).exists()) {
+    			return path;
+    		}
+    		return null;
+    	}
+    };
 
     protected final ICodeReaderFactory codeReaderFactory;
     protected int[] bufferDelta = new int[bufferInitialSize];
@@ -123,8 +135,6 @@ public class DOMScanner extends BaseScanner {
         return null;
     }
 
-    final IScannerPreprocessorLog locationMap = new LocationMap();
-
     /*
      * (non-Javadoc)
      * 
@@ -176,9 +186,30 @@ public class DOMScanner extends BaseScanner {
     /*
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#processInclude(char[], boolean, boolean, int, int, int, int, int, int, int)
      */
-    protected void processInclude(char[] filename, boolean local, boolean active, int startOffset, int nameOffset,
-    		int nameEndOffset, int endOffset, int startingLineNumber, int nameLine, int endLine) {
-    	locationMap.encounterPoundInclude(getGlobalOffset(startOffset), getGlobalOffset(nameOffset), getGlobalOffset(nameEndOffset), getGlobalOffset(endOffset), filename, !local, active);
+    protected void processInclude(char[] filename, boolean local, boolean include_next, boolean active, 
+    		int startOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLineNumber, 
+    		int nameLine, int endLine) {
+    	char[] pchars= null;
+    	String path= (String) findInclusion(new String(filename), local, include_next, createPathTester);
+    	if (path != null) {
+    		if (codeReaderFactory instanceof IIndexBasedCodeReaderFactory) {
+    			// fast indexer
+    			if (((IIndexBasedCodeReaderFactory) codeReaderFactory).hasFileBeenIncludedInCurrentTranslationUnit(path)) {
+    				pchars= path.toCharArray();
+    			}
+    		}
+    		else {
+    			// full indexer
+    			pchars= path.toCharArray();
+    			if (!includedFiles.containsKey(pchars)) {
+    				// not a hidden dependency, don't report it.
+    				pchars= null;
+    			}
+    		}
+    	}
+    	locationMap.encounterPoundInclude(getGlobalOffset(startOffset), getGlobalOffset(nameOffset), 
+    			getGlobalOffset(nameEndOffset), getGlobalOffset(endOffset), 
+    			filename, pchars, !local, active);
     }
 
     /*
@@ -221,6 +252,7 @@ public class DOMScanner extends BaseScanner {
                 locationMap.startInclusion(((InclusionData) data).reader, inc.o, getGlobalOffset(getCurrentOffset())+1,
                 		inc.nameOffset, inc.nameEndoffset, inc.name, inc.systemInclude);
                 bufferDelta[bufferStackPos + 1] = 0;
+    			includedFiles.put(inc.pt);	
             }
         }
 

@@ -39,15 +39,20 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.internal.core.parser.scanner2.IIndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * @author Doug Schaefer
- *
+ * Code reader factory, that fakes code readers for header files already stored in the 
+ * index.
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  */
-public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
+public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory {
 	public static interface CallbackHandler {
 		boolean needToUpdate(IndexFileInfo fileInfo) throws CoreException;		
 	}
@@ -78,7 +83,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 	private Map/*<String,IIndexFileLocation>*/ iflCache;
 	private List usedMacros = new ArrayList();
 	private Set/*<FileInfo>*/ fIncluded= new HashSet();
-	/** The fallback code reader factory used in case a header file is not indexed */
+	/** The fall-back code reader factory used in case a header file is not indexed */
 	private ICodeReaderFactory fFallBackFactory;
 	private CallbackHandler fCallbackHandler;
 	private final ICProject cproject;
@@ -166,6 +171,7 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 						}
 						// record the macros we used.
 						usedMacros.add(fi.fMacros);
+						setIncluded(fi);
 					}
 					return new CodeReader(canonicalPath, EMPTY_CHARS);
 				} catch (NeedToParseException e) {
@@ -182,6 +188,25 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 			return fFallBackFactory.createCodeReaderForInclusion(scanner, canonicalPath);
 		}
 		return ParserUtil.createReader(canonicalPath, null);
+	}
+
+	public boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
+		String canonicalPath= path;
+		if (!CASE_SENSITIVE_FILES) {
+			try {
+				File location= new File(path);
+				canonicalPath= location.getCanonicalPath();
+			}
+			catch (IOException e) {
+				// just use the original
+			}
+		}
+		IIndexFileLocation loc= findLocation(canonicalPath);
+		IndexFileInfo info= (IndexFileInfo) fileInfoCache.get(loc);
+		if (info != null && isIncluded(info)) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -234,7 +259,6 @@ public class IndexBasedCodeReaderFactory implements ICodeReaderFactory {
 				getInfosForMacroDictionary(nextInfo, target);
 			}
 		}
-		setIncluded(fileInfo);
 	}
 	
 	public void clearMacroAttachements() {

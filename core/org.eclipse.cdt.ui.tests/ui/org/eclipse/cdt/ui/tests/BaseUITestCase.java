@@ -42,6 +42,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -104,6 +105,10 @@ public class BaseUITestCase extends BaseTestCase {
 			}
 			finally {
 				index.releaseReadLock();
+				int time= (int) (endTime- System.currentTimeMillis());
+				if (time > 0) {
+					CCorePlugin.getIndexManager().joinIndexer(time, NPM);
+				}
 			}
 		}
 		throw new Exception("Indexer did not complete in time!");

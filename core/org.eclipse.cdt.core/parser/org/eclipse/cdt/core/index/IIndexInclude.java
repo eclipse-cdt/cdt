@@ -47,7 +47,7 @@ public interface IIndexInclude {
 	
 	/**
 	 * Returns the IIndexFileLocation of the file that is included by this
-	 * directive. In case of an unresolved or inactive include <code>null</code>
+	 * directive. In case of an unresolved include <code>null</code>
 	 * will be returned.
 	 * 
 	 * @return the IIndexFileLocation of the file that is included by this
@@ -59,7 +59,7 @@ public interface IIndexInclude {
 	
 	/**
 	 * Returns the simple name of the directive. This skips any leading
-	 * direcories. E.g.: for '<sys/types.h>' 'types.h' will be returned.
+	 * directories. E.g.: for '<sys/types.h>' 'types.h' will be returned.
 	 * @throws CoreException 
 	 */
 	String getName() throws CoreException;
@@ -87,7 +87,6 @@ public interface IIndexInclude {
 
 	/**
 	 * Test whether this include is in active code (not skipped by conditional preprocessing).
-	 * 
 	 * @return whether this include is in active code
 	 * @throws CoreException
 	 */
@@ -95,6 +94,13 @@ public interface IIndexInclude {
 
 	/**
 	 * Test whether this include has been resolved (found in the file system).
+	 * Inactive includes are not resolved, unless they constitute a hidden dependency.
+	 * This is the case when an include is inactive because it has been included before:
+	 * <code>
+	 *   #ifndef _header_h
+	 *   #include "header.h"
+	 *   #endif
+	 * <code>
 	 * 
 	 * @return whether this is a resolved include
 	 * @throws CoreException

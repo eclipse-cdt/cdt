@@ -581,16 +581,18 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public final int fNameOffset;
         public final int fNameEndOffset;
 		public final char[] fName;
+		public final char[] fPath;
 		public final boolean fSystemInclude;
     	public final boolean fIsActive;
     	public final boolean fIsResolved;
 
 		public _Include(_CompositeContext parent, int startOffset, int endOffset, int nameOffset, int nameEndoffset,
-				char[] name, boolean systemInclude, boolean active, boolean resolved) {
+				char[] name, char[] path, boolean systemInclude, boolean active, boolean resolved) {
             super(parent, startOffset, endOffset);
             fNameOffset= nameOffset;
             fNameEndOffset= nameEndoffset;
             fName= name;
+            fPath= path == null ? name : path;
             fSystemInclude= systemInclude;
             fIsActive= active;
             fIsResolved= resolved;
@@ -1754,7 +1756,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     private IASTPreprocessorIncludeStatement createASTInclusion(_Include inc) {
-    	ASTInclusionStatement result = new ASTInclusionStatement(inc.fName);
+    	ASTInclusionStatement result = new ASTInclusionStatement(inc.fPath);
         result.setOffsetAndLength(inc.context_directive_start, inc.getDirectiveLength());
         result.startOffset = inc.getContextStart();
         result.endOffset = inc.context_directive_end;
@@ -2413,9 +2415,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /*
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundInclude(int, int, int, int, char[], boolean, boolean)
      */
-    public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset, char[] name,
-    		boolean systemInclude, boolean active) {
-    	currentContext.addSubContext(new _Include(currentContext, startOffset, endOffset, nameOffset, nameEndOffset, name, systemInclude, active, false));
+    public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset, 
+    		char[] name, boolean systemInclude, boolean active) {
+    	encounterPoundInclude(startOffset, nameOffset, nameEndOffset, endOffset, name, null, systemInclude, active);
+    }
+    
+    public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset, 
+    		char[] name, char[] path, boolean systemInclude, boolean active) {
+    	currentContext.addSubContext(new _Include(currentContext, startOffset, endOffset, nameOffset, nameEndOffset, name, path, systemInclude, active, path != null));
     }
 
     /*

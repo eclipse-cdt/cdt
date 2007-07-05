@@ -78,7 +78,24 @@ public interface IScannerPreprocessorLog {
     public void encounterPoundUndef(int startOffset, int endOffset,
             char[] symbol, int nameOffset, IMacroDefinition macroDefinition);
 
+    /**
+     * @deprecated use {@link #encounterPoundInclude(int, int, int, int, char[], char[], boolean, boolean)}.
+     */
 	public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset, char[] name, boolean systemInclude, boolean active);
+
+	/**
+	 * Report an include that is not actually processed ({@link #startInclusion(CodeReader, int, int, int, int, char[], boolean)}
+	 * To report hidden dependencies (bug 167100) you can use the path parameter.
+	 * @param startOffset
+	 * @param nameOffset
+	 * @param nameEndOffset
+	 * @param endOffset
+	 * @param name the name of the include as found in the source
+	 * @param hiddenDependency a file-path in case the include is a hidden dependency, or <code>null</code>. 
+	 * @param systemInclude
+	 * @param active
+	 */
+	public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset, char[] name, char[] hiddenDependency, boolean systemInclude, boolean active);
 
 	public void encounterProblem(IASTProblem problem);
 

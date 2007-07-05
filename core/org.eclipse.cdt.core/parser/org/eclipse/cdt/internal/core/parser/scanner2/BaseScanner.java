@@ -129,6 +129,16 @@ abstract class BaseScanner implements IScanner {
     		 return arguments;
     	 }
     }
+    
+    protected interface IIncludeFileTester {
+    	Object checkFile(String path, String fileName);
+    }
+    
+    final private IIncludeFileTester createCodeReaderTester= new IIncludeFileTester() { 
+    	public Object checkFile(String path, String fileName) {
+    		return createReader(path, fileName);
+    	}
+    };
 
     protected ParserLanguage language;
 
@@ -1800,8 +1810,7 @@ abstract class BaseScanner implements IScanner {
      */
     protected abstract void processIf(int startPos, int endPos, boolean taken);
 
-    protected void handlePPInclude(int pos2, boolean include_next,
-            int startingLineNumber, boolean active) {
+    protected void handlePPInclude(int pos2, boolean include_next, int startingLineNumber, boolean active) {
         char[] buffer = bufferStack[bufferStackPos];
         int limit = bufferLimit[bufferStackPos];
 
@@ -1929,78 +1938,55 @@ abstract class BaseScanner implements IScanner {
         endLine = getLineNumber(bufferPos[bufferStackPos]);
         skipToNewLine();
 
-        if (active) {
-        	findAndPushInclusion(filename, fileNameArray, local, include_next, false, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
-        } else {
-        	processInclude(fileNameArray, local, active, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
+        if (parserMode == ParserMode.QUICK_PARSE && active) {
+        	final Object inc= createInclusionConstruct(
+        			fileNameArray, EMPTY_CHAR_ARRAY, local, startOffset, startingLineNumber, 
+        			nameOffset, nameEndOffset, nameLine, endOffset, endLine, false);
+        	quickParsePushPopInclusion(inc);
+        }
+        else {
+        	CodeReader reader= null;
+        	if (active) {
+        		reader= findInclusion(filename, local, include_next);
+        		if (reader != null) {
+        			final Object inc = createInclusionConstruct(
+        					fileNameArray, reader.filename, local, startOffset,	startingLineNumber, 
+        					nameOffset, nameEndOffset, nameLine, endOffset, endLine, false);
+        			pushContext(reader.buffer, new InclusionData(reader, inc, false));
+        		}
+        	}
+        	if (reader == null) {
+        		processInclude(fileNameArray, local, include_next, active, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
+        		if (active) {
+        			handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset, fileNameArray);
+        		}
+        	}
         }
     }
 
     /**
      * Process an include directive without following the inclusion.
-     * 
-	 * @param fileName
-	 * @param local
-	 * @param active
-	 * @param startOffset
-	 * @param nameOffset
-	 * @param nameEndOffset
-	 * @param endOffset
-	 * @param startingLineNumber
-	 * @param nameLine
-	 * @param endLine
 	 */
-	protected void processInclude(char[] fileName, boolean local, boolean active, int startOffset, int nameOffset,
+	protected void processInclude(char[] fileName, boolean local, boolean include_next, boolean active, int startOffset, int nameOffset,
 			int nameEndOffset, int endOffset, int startingLineNumber, int nameLine, int endLine) {
 		// default: do nothing
 	}
 
-	/**
-     * @param filename
-	 * @param fileNameArray
-	 * @param local
-	 * @param include_next
-	 * @param includeOnce
-	 * @param startOffset
-	 * @param nameOffset
-	 * @param nameEndOffset
-	 * @param endOffset
-	 * @param startingLine
-	 * @param nameLine
-	 * @param endLine
-     */
-    protected void findAndPushInclusion(String filename, char[] fileNameArray, boolean local, boolean include_next, boolean includeOnce, int startOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLine, int nameLine, int endLine) {
-        if (parserMode == ParserMode.QUICK_PARSE) {
-            Object inclusion = createInclusionConstruct(fileNameArray,
-                    EMPTY_CHAR_ARRAY, local, startOffset, startingLine,
-                    nameOffset, nameEndOffset, nameLine, endOffset, endLine,
-                    false);
-            quickParsePushPopInclusion(inclusion);
-            return;
-        }
-        
-        CodeReader reader = null;
+    private CodeReader findInclusion(final String filename, final boolean local, final boolean include_next) {
+    	return (CodeReader) findInclusion(filename, local, include_next, createCodeReaderTester);
+    }
+
+    protected Object findInclusion(final String filename, final boolean local, final boolean include_next,
+    		final IIncludeFileTester tester) {
+        Object reader = null;
 		// filename is an absolute path or it is a Linux absolute path on a windows machine
 		if (new File(filename).isAbsolute() || filename.startsWith("/")) { //$NON-NLS-1$
-		    reader = createReader( EMPTY_STRING, filename );
-		    if (reader != null) {
-		        pushContext(reader.buffer, new InclusionData(reader,
-		                createInclusionConstruct(fileNameArray,
-		                        reader.filename, local, startOffset,
-		                        startingLine, nameOffset,
-		                        nameEndOffset, nameLine, endOffset,
-		                        endLine, false), includeOnce));
-		        return;
-		    }
-		    processInclude(fileNameArray, local, true, startOffset, nameOffset, nameEndOffset, endOffset, startingLine, nameLine, endLine);
-		    handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
-		            fileNameArray);
-		    return;
+		    return tester.checkFile( EMPTY_STRING, filename );
 		}
         
         File currentDirectory = null;
         if (local || include_next) {
-            // if the include is eclosed in quotes OR we are in an include_next
+            // if the include is enclosed in quotes OR we are in an include_next
             // then we need to know what the current directory is!
             File file = new File(String.valueOf(getCurrentFilename()));
             currentDirectory = file.getParentFile();
@@ -2010,24 +1996,15 @@ abstract class BaseScanner implements IScanner {
             // Check to see if we find a match in the current directory
             if (currentDirectory != null) {
                 String absolutePath = currentDirectory.getAbsolutePath();
-                reader = createReader(absolutePath, filename);
+                reader = tester.checkFile(absolutePath, filename);
                 if (reader != null) {
-                    pushContext(reader.buffer, new InclusionData(reader,
-                            createInclusionConstruct(fileNameArray,
-                                    reader.filename, local, startOffset,
-                                    startingLine, nameOffset,
-                                    nameEndOffset, nameLine, endOffset,
-                                    endLine, false), includeOnce));
-                    return;
+                	return reader;
                 }
             }
         }
-        // if we're not include_next, then we are looking for the
-        // first occurance of the file, otherwise, we ignore all the paths
-        // before
-        // the
-        // current directory
         
+        // if we're not include_next, then we are looking for the first occurrence of 
+        // the file, otherwise, we ignore all the paths before the current directory
         String [] includePathsToUse = stdIncludePaths;
         if( local && locIncludePaths != null && locIncludePaths.length > 0 ) {
             includePathsToUse = new String[locIncludePaths.length + stdIncludePaths.length];
@@ -2040,21 +2017,13 @@ abstract class BaseScanner implements IScanner {
             if (include_next)
                 startpos = findIncludePos(includePathsToUse, currentDirectory) + 1;
             for (int i = startpos; i < includePathsToUse.length; ++i) {
-                reader = createReader(includePathsToUse[i], filename);
+                reader = tester.checkFile(includePathsToUse[i], filename);
                 if (reader != null) {
-                    pushContext(reader.buffer, new InclusionData(reader,
-                            createInclusionConstruct(fileNameArray,
-                                    reader.filename, local, startOffset,
-                                    startingLine, nameOffset,
-                                    nameEndOffset, nameLine, endOffset,
-                                    endLine, false), includeOnce));
-                    return;
+                	return reader;
                 }
             }
         }
-	    processInclude(fileNameArray, local, true, startOffset, nameOffset, nameEndOffset, endOffset, startingLine, nameLine, endLine);
-        handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
-                fileNameArray);
+        return null;
     }
 
 	protected abstract CodeReader createReader(String path, String fileName);

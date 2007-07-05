@@ -462,8 +462,9 @@ abstract public class PDOMWriter {
 				info.fStatement= include;
 				if (include.isResolved()) {
 					info.fLocation= findLocation(include.getPath());
-					info.fIsContext= contextIncludes.contains(include) ||
-						clearedContexts.contains(info.fLocation);
+					info.fIsContext= include.isActive() && 
+						(contextIncludes.contains(include) || 
+								clearedContexts.contains(info.fLocation));
 				}
 			}
 			index.setFileContent(file, includeInfos, macros, names);

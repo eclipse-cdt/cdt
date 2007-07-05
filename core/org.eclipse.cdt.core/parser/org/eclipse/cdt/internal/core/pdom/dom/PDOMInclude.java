@@ -31,23 +31,22 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMInclude implements IIndexFragmentInclude {
 
+	private static final int INCLUDES_FILE_OR_NAME 	= 0;
+	private static final int INCLUDED_BY 			= 4;
+	private static final int INCLUDES_NEXT 			= 8;
+	private static final int INCLUDED_BY_NEXT 		= 12;
+	private static final int INCLUDED_BY_PREV 		= 16;
+	private static final int NODE_OFFSET_OFFSET  	= 20;
+	private static final int NODE_LENGTH_OFFSET  	= 24;
+	private static final int FLAG_OFFSET 			= 26;
+	private static final int RECORD_SIZE 			= 27;
+
+	private static final int FLAG_SYSTEM_INCLUDE 		= 1;
+	private static final int FLAG_INACTIVE_INCLUDE 		= 2;
+	private static final int FLAG_UNRESOLVED_INCLUDE 	= 4;
+	
 	private final PDOM pdom;
 	private final int record;
-	
-	private final int INCLUDES_FILE_OR_NAME = 0;
-	private final int INCLUDED_BY = 4;
-	private final int INCLUDES_NEXT = 8;
-	private final int INCLUDED_BY_NEXT = 12;
-	private final int INCLUDED_BY_PREV = 16;
-	private static final int NODE_OFFSET_OFFSET  = 20;
-	private static final int NODE_LENGTH_OFFSET  = 24;
-	private static final int FLAG_OFFSET 				 = 26;
-
-	private static final int FLAG_SYSTEM_INCLUDE = 1;
-	private static final int FLAG_INACTIVE_INCLUDE = 2;
-	private static final int FLAG_UNRESOLVED_INCLUDE = 4;
-	
-	private final int RECORD_SIZE = 27;
 	
 	// cached fields
 	private String fName= null;

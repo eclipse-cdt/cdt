@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.dstore"
       label="%featureName"
-      version="2.0.0.qualifier"
+      version="2.0.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.dstore">
 
@@ -28,18 +28,11 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.rse.connectorservice.dstore" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.services" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.services.dstore" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.dstore.core" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.dstore.extra" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.subsystems.files.core" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.subsystems.processes.core" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.subsystems.shells.core" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.ui" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.dstore" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.processes.dstore" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.shells.dstore" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin

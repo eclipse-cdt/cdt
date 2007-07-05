@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.local"
       label="%featureName"
-      version="2.0.0.qualifier"
+      version="2.0.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.local">
 
@@ -27,8 +27,6 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.rse.services" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.services.local" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.connectorservice.local" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.subsystems.files.core" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.ui" version="2.0.0" match="compatible"/>
       <import plugin="org.eclipse.rse.subsystems.processes.core" version="2.0.0" match="compatible"/>

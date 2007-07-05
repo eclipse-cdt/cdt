@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen        (IBM)        - [192741] [Archives] Move a folder from within an Archive doesn't work if > 1 level deep
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -712,7 +713,17 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		File topFile = destination;
 		String topFilePath = topFile.getAbsolutePath().replace('\\', '/');				
 		//if (!dir.equals(topFile.getName()))
-		if (!topFilePath.endsWith(dir))    
+		String lastPortionOfDir = null;
+		int lastSlashIndex = dir.lastIndexOf('/');
+		if (-1 == lastSlashIndex)
+		{
+			lastPortionOfDir = dir;
+		}
+		else
+		{
+			lastPortionOfDir = dir.substring(lastSlashIndex + 1);
+		}
+		if (!topFilePath.endsWith(lastPortionOfDir))    
 		{
 		 rename(dir, topFile.getName());  
 		 dir = topFile.getName();

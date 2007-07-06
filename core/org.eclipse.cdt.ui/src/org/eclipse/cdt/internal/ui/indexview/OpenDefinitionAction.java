@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
@@ -88,7 +87,7 @@ public class OpenDefinitionAction extends IndexAction {
 			throws InterruptedException, CoreException, CModelException, PartInitException {
 		index.acquireReadLock();
 		try {
-			if (indexView.getLastWriteAccess(cproject) != ((PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject)).getLastWriteAccess()) {
+			if (indexView.getLastWriteAccess(cproject) != CCoreInternals.getPDOMManager().getPDOM(cproject).getLastWriteAccess()) {
 				return true;
 			}
 			IIndexName[] defs= index.findDefinitions((IIndexBinding) bindingNode.fObject);

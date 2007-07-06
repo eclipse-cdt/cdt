@@ -61,8 +61,9 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 	}
 	
 	protected void setUp() throws Exception {
-		cproject= CProjectHelper.createCCProject("PDOMBugsTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER);		
 		super.setUp();
+		cproject= CProjectHelper.createCCProject("PDOMBugsTest"+System.currentTimeMillis(), "bin", IPDOMManager.ID_FAST_INDEXER);
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
 	}
 
 	protected void tearDown() throws Exception {
@@ -73,7 +74,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 	}
 
 	public void testPDOMProperties() throws Exception {
-		IWritableIndexFragment pdom = (IWritableIndexFragment) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireWriteLock(0);
 		try {
 			WritablePDOM wpdom = (WritablePDOM) pdom;
@@ -89,7 +90,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 	}
 	
 	public void testProjectPDOMProperties() throws Exception {
-		IWritableIndexFragment pdom = (IWritableIndexFragment) CCoreInternals.getPDOMManager().getPDOM(cproject);
+		PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();
 		try {
 			String id= pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);

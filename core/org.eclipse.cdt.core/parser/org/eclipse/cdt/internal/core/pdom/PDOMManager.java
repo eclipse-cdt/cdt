@@ -30,7 +30,6 @@ import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.dom.IPDOM;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -266,18 +265,34 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	/**
+	 * Returns the pdom for the project. 
+	 * @throws CoreException
+	 */
+	public IPDOM getPDOM(ICProject project) throws CoreException {
+		synchronized (fProjectToPDOM) {
+			IProject rproject = project.getProject();
+			IPDOM pdom = (IPDOM) fProjectToPDOM.get(rproject);
+			if (pdom == null) {
+				pdom= new PDOMProxy();
+				fProjectToPDOM.put(rproject, pdom);
+			}
+			return pdom;
+		}
+	}
+	
+	/**
 	 * Returns the pdom for the project. The call to the method may cause 
 	 * opening the database. In case there is a version mismatch the data
 	 * base is cleared, in case it does not exist it is created. In any
 	 * case a pdom ready to use is returned.
 	 * @throws CoreException
 	 */
-	public IPDOM getPDOM(ICProject project) throws CoreException {
+	private WritablePDOM getOrCreatePDOM(ICProject project) throws CoreException {
 		synchronized (fProjectToPDOM) {
 			IProject rproject = project.getProject();
-			WritablePDOM pdom = (WritablePDOM) fProjectToPDOM.get(rproject);
-			if (pdom != null) {
-				return pdom;
+			IPDOM pdomProxy= (IPDOM) fProjectToPDOM.get(rproject);
+			if (pdomProxy instanceof WritablePDOM) {
+				return (WritablePDOM) pdomProxy;
 			}
 
 			String dbName= rproject.getPersistentProperty(dbNameProperty);
@@ -292,49 +307,48 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					ICProject currentCOwner= (ICProject) fFileToProject.get(dbFile);
 					if (currentCOwner != null) {
 						IProject currentOwner= currentCOwner.getProject();
-						if (currentOwner.exists()) {
-							dbName= null;
-							dbFile= null;
-						}
-						else {
-							pdom= (WritablePDOM) fProjectToPDOM.remove(currentOwner);
+						if (!currentOwner.exists()) {
 							fFileToProject.remove(dbFile);
+							dbFile.delete();
 						}
+						dbName= null;
+						dbFile= null;
 					}
 				}
 			}
 
-			if (pdom == null) {
-				boolean fromScratch= false;
-				if (dbName == null) {
-					dbName = createNewDatabaseName(project);
-					dbFile= fileFromDatabaseName(dbName);
-					storeDatabaseName(rproject, dbName);
-					fromScratch= true;
-				}
-			
-				pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-				if (pdom.versionMismatch() || fromScratch) {
-					try {
-						pdom.acquireWriteLock();
-					} catch (InterruptedException e) {
-						throw new CoreException(CCorePlugin.createStatus(Messages.PDOMManager_creationOfIndexInterrupted, e));
-					}
-					if (fromScratch) {
-						pdom.setCreatedFromScratch(true);
-					}
-					else {
-						pdom.clear();
-						pdom.setClearedBecauseOfVersionMismatch(true);
-					}
-					writeProjectPDOMProperties(pdom, rproject);
-					pdom.releaseWriteLock();
-				}
-				pdom.addListener(this);
+			boolean fromScratch= false;
+			if (dbName == null) {
+				dbName = createNewDatabaseName(project);
+				dbFile= fileFromDatabaseName(dbName);
+				storeDatabaseName(rproject, dbName);
+				fromScratch= true;
 			}
+
+			WritablePDOM pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+			if (pdom.versionMismatch() || fromScratch) {
+				try {
+					pdom.acquireWriteLock();
+				} catch (InterruptedException e) {
+					throw new CoreException(CCorePlugin.createStatus(Messages.PDOMManager_creationOfIndexInterrupted, e));
+				}
+				if (fromScratch) {
+					pdom.setCreatedFromScratch(true);
+				}
+				else {
+					pdom.clear();
+					pdom.setClearedBecauseOfVersionMismatch(true);
+				}
+				writeProjectPDOMProperties(pdom, rproject);
+				pdom.releaseWriteLock();
+			}
+			pdom.addListener(this);
 			
 			fFileToProject.put(dbFile, project);
 			fProjectToPDOM.put(rproject, pdom);
+			if (pdomProxy instanceof PDOMProxy) {
+				((PDOMProxy) pdomProxy).setDelegate(pdom);
+			}
 			return pdom;
 		}
 	}
@@ -470,7 +484,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		IProject prj= project.getProject();
 		try {
 			synchronized (fUpdatePolicies) {
-				WritablePDOM pdom= (WritablePDOM) getPDOM(project);
+				WritablePDOM pdom= getOrCreatePDOM(project);
 				Properties props= IndexerPreferences.getProperties(prj);
 				IPDOMIndexer indexer= createIndexer(project, getIndexerId(project), props);
 
@@ -721,32 +735,33 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-	public void deleteProject(ICProject cproject) {
-		removeProject(cproject, true); 
+	public void preDeleteProject(ICProject cproject) {
+		preRemoveProject(cproject, true); 
 	}
 
-	public void closeProject(ICProject cproject) {
-		removeProject(cproject, false);
+	public void preCloseProject(ICProject cproject) {
+		preRemoveProject(cproject, false);
 	}
 
-	private void removeProject(ICProject cproject, final boolean delete) {
+	private void preRemoveProject(ICProject cproject, final boolean delete) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		IPDOMIndexer indexer= getIndexer(cproject);
 		if (indexer != null) {
 			stopIndexer(indexer);
 		}
     	unregisterPreferenceListener(cproject);
-    	WritablePDOM pdom= null;
+    	Object pdom= null;
     	synchronized (fProjectToPDOM) {
 			IProject rproject= cproject.getProject();
-    		pdom = (WritablePDOM) fProjectToPDOM.remove(rproject);
-    		if (pdom != null) {
-    			fFileToProject.remove(pdom.getDB().getLocation());
+    		pdom = fProjectToPDOM.remove(rproject);
+    		// if the project is closed allow to reuse the pdom.
+    		if (pdom instanceof WritablePDOM && !delete) {
+    			fFileToProject.remove(((WritablePDOM) pdom).getDB().getLocation());
     		}
     	}
 
-    	if (pdom != null) {
-    		final WritablePDOM finalpdom= pdom;
+    	if (pdom instanceof WritablePDOM) {
+    		final WritablePDOM finalpdom= (WritablePDOM) pdom;
     		Job job= new Job(Messages.PDOMManager_ClosePDOMJob) {
     			protected IStatus run(IProgressMonitor monitor) {
         			try {
@@ -774,6 +789,14 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		synchronized (fUpdatePolicies) {
 			fUpdatePolicies.remove(cproject);
 		}
+	}
+	
+	void removeProject(ICProject cproject, ICElementDelta delta) {
+    	synchronized (fProjectToPDOM) {
+			IProject rproject= cproject.getProject();
+			fProjectToPDOM.remove(rproject);
+			// don't remove the location, because it may not be reused when the project was deleted.
+    	}
 	}
 
 	private void stopIndexer(IPDOMIndexer indexer) {
@@ -1080,7 +1103,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 		try {
 			// copy it
-			PDOM pdom= (PDOM) getPDOM(cproject);
+			PDOM pdom= getOrCreatePDOM(cproject);
 			pdom.acquireReadLock();
 			String oldID= null;
 			try {

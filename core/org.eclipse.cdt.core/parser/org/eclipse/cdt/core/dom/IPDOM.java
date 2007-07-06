@@ -14,9 +14,6 @@ package org.eclipse.cdt.core.dom;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * This is the reader interface to the PDOM. It is used by general
- * clients that need access to the information stored there.
- * 
- * @author Doug Schaefer
+ * @deprecated use IIndex instead.
  */
 public interface IPDOM extends IAdaptable {}

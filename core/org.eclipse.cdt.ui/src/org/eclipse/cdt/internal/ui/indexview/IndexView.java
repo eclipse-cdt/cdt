@@ -55,6 +55,7 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.IPDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -217,7 +218,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 					ICProject cproject= node.getProject();
 					if (cproject != null && cproject.getProject().isOpen()) {
 						Long ts= (Long) fTimestampPerProject.get(cproject.getElementName());
-						PDOM pdom= (PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject);
+						IPDOM pdom= CCoreInternals.getPDOMManager().getPDOM(cproject);
 						pdom.acquireReadLock();
 						try {
 							if (ts == null || ts.longValue() == pdom.getLastWriteAccess()) {
@@ -238,7 +239,7 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		}
 
 		private Object[] computeChildren(ICProject cproject) throws CoreException, InterruptedException {
-			PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject);
+			IPDOM pdom = CCoreInternals.getPDOMManager().getPDOM(cproject);
 			pdom.acquireReadLock();
 			try {
 				fTimestampPerProject.put(cproject.getElementName(), new Long(pdom.getLastWriteAccess()));
@@ -291,8 +292,8 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		try {
 			ICProject[] projects = model.getCProjects();
 			for (int i = 0; i < projects.length; ++i) {
-				PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(projects[i]); 
-					pdom.addListener(this);
+				IPDOM pdom = CCoreInternals.getPDOMManager().getPDOM(projects[i]); 
+				pdom.addListener(this);
 			}
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
@@ -334,8 +335,8 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 		try {
 			ICProject[] projects = model.getCProjects();
 			for (int i = 0; i < projects.length; ++i) {
-				PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(projects[i]); 
-					pdom.removeListener(this);
+				IPDOM pdom = CCoreInternals.getPDOMManager().getPDOM(projects[i]); 
+				pdom.removeListener(this);
 			}
 		} catch (CoreException e) {
 			CUIPlugin.getDefault().log(e);
@@ -443,9 +444,9 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 			switch (delta.getKind()) {
 			case ICElementDelta.ADDED:
 				try {
-					PDOM pdom = ((PDOM)CCoreInternals.getPDOMManager().getPDOM((ICProject)delta.getElement()));
+					IPDOM pdom = CCoreInternals.getPDOMManager().getPDOM((ICProject)delta.getElement());
 					pdom.addListener(this);
-					handleChange(pdom);
+					handleChange(null);
 				} catch (CoreException e) {
 				}
 				break;

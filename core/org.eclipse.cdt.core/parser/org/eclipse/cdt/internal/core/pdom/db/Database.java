@@ -60,8 +60,8 @@ import org.eclipse.core.runtime.Status;
  */
 public class Database {
 
-	private final File location;
-	private final RandomAccessFile file;
+	private final File fLocation;
+	private final RandomAccessFile fFile;
 	private boolean fExclusiveLock= false;	// necessary for any write operation
 	private boolean fLocked;				// necessary for any operation.
 	private boolean fIsMarkedIncomplete= false;
@@ -98,33 +98,38 @@ public class Database {
 	 */
 	public Database(File location, ChunkCache cache, int version, boolean openReadOnly) throws CoreException {
 		try {
-			this.location = location;
-			this.file = new RandomAccessFile(location, openReadOnly ? "r" : "rw"); //$NON-NLS-1$ //$NON-NLS-2$
-			this.fCache= cache;
+			fLocation = location;
+			fFile = new RandomAccessFile(location, openReadOnly ? "r" : "rw"); //$NON-NLS-1$ //$NON-NLS-2$
+			fCache= cache;
 			
-			int nChunks = Math.max(1, (int) (file.length() / CHUNK_SIZE));
+			int nChunksOnDisk = (int) (fFile.length() / CHUNK_SIZE);
 			fHeaderChunk= new Chunk(this, 0);
 			fHeaderChunk.fLocked= true;		// never makes it into the cache, needed to satisfy assertions
-			fChunks = new Chunk[nChunks];	// chunk[0] is unused.
-			if (nChunks == 0) {
+			if (nChunksOnDisk <= 0) {
 				fVersion= version;
+				fChunks= new Chunk[1];
 			}
 			else {
 				fHeaderChunk.read();
 				fVersion= fHeaderChunk.getInt(0);
+				fChunks = new Chunk[nChunksOnDisk];	// chunk[0] is unused.
 			}
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
 	}
-	
-	FileChannel getFileChannel() {
-		return file.getChannel();
+		
+	void read(ByteBuffer buf, int i) throws IOException {
+		fFile.getChannel().read(buf, i);
+	}
+
+	void write(ByteBuffer buf, int i) throws IOException {
+		fFile.getChannel().write(buf, i);
 	}
 
 	public void transferTo(FileChannel target) throws IOException {
 		assert fLocked;
-		final FileChannel from= file.getChannel();
+		final FileChannel from= fFile.getChannel();
 		from.transferTo(0, from.size(), target);
 	}
 	
@@ -153,7 +158,7 @@ public class Database {
 		fChunks = new Chunk[] {null};
 		try {
 			fHeaderChunk.flush();	// zero out header chunk
-			file.getChannel().truncate(CHUNK_SIZE);	// truncate database
+			fFile.getChannel().truncate(CHUNK_SIZE);	// truncate database
 		}
 		catch (IOException e) {
 			CCorePlugin.log(e);
@@ -424,7 +429,7 @@ public class Database {
 		fHeaderChunk.fDirty= false;
 		fChunks= new Chunk[] {null};
 		try {
-			file.close();
+			fFile.close();
 		} catch (IOException e) {
 			throw new CoreException(new DBStatus(e));
 		}
@@ -434,7 +439,7 @@ public class Database {
      * This method is public for testing purposes only.
      */
 	public File getLocation() {
-		return location;
+		return fLocation;
 	}
 
 	/**
@@ -582,7 +587,7 @@ public class Database {
 			fIsMarkedIncomplete= true;
 			try {
 				final ByteBuffer buf= ByteBuffer.wrap(new byte[4]);
-				file.getChannel().write(buf, 0);
+				fFile.getChannel().write(buf, 0);
 			} catch (IOException e) {
 				throw new CoreException(new DBStatus(e));
 			}

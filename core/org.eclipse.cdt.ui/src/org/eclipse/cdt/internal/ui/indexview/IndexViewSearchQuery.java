@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.pdom.PDOM;
 
 import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
 
@@ -51,7 +50,7 @@ public class IndexViewSearchQuery extends PDOMSearchQuery {
 	
 	public IStatus runWithIndex(IIndex index, IProgressMonitor monitor) throws OperationCanceledException {
 		try {
-			if (((PDOM) CCoreInternals.getPDOMManager().getPDOM(fProject)).getLastWriteAccess() == fLastWrite) {
+			if (CCoreInternals.getPDOMManager().getPDOM(fProject).getLastWriteAccess() == fLastWrite) {
 				createMatches(index, fBinding);
 			}
 			return Status.OK_STATUS;

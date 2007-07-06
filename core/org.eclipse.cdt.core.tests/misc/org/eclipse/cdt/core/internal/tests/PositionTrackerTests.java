@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,19 +60,19 @@ public class PositionTrackerTests extends TestCase {
     }
 
     public void testRandomDepth5() {
-        randomTest(20, 5, 5, 50000);
+        randomTest(20, 5, 5, 1000);
     }
 
     public void testRandomDepth10() {
-        randomTest(50, 10, 10, 50000);
+        randomTest(50, 10, 10, 1000);
     }
 
     public void testRandomDepth15() {
-        randomTest(100, 15, 15, 50000);
+        randomTest(100, 15, 15, 1000);
     }
 
     public void testRandomDepth20() {
-        randomTest(100, 15, 20, 50000);
+        randomTest(100, 15, 20, 1000);
     }
 
     public void testRetireDepth2() {

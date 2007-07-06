@@ -66,7 +66,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 				fManager.changeProject(project, delta);
 				break;
 			case ICElementDelta.REMOVED:
-				// handled on pre-close and pre-delete
+				fManager.removeProject(project, delta);
 				break;
 			}
 		}

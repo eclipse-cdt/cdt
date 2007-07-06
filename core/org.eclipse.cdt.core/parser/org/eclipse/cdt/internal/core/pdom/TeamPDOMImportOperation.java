@@ -194,8 +194,13 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 
 	private void checkIndex(Map checksums, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		List filesToCheck= new ArrayList();		
-
-		WritablePDOM pdom= (WritablePDOM) CCoreInternals.getPDOMManager().getPDOM(fProject);
+		
+		IPDOM obj= CCoreInternals.getPDOMManager().getPDOM(fProject);
+		if (!(obj instanceof WritablePDOM)) {
+			return;
+		}
+		
+		WritablePDOM pdom= (WritablePDOM) obj;
 		pdom.acquireReadLock();
 		try {
 			if (pdom.versionMismatch()) {

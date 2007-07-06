@@ -64,7 +64,7 @@ public class IndexFactory {
 		HashMap fragments= new LinkedHashMap();
 		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
 			ICProject cproject = (ICProject) iter.next();
-			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
+			IIndexFragment pdom= fPDOMManager.getPDOM(cproject);
 			if (pdom != null) {
 				safeAddFragment(fragments, pdom);
 				
@@ -86,7 +86,7 @@ public class IndexFactory {
 			selectedProjects= getProjects(projects, true, false, map, new Integer(2));
 			for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
 				ICProject cproject = (ICProject) iter.next();
-				IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
+				IIndexFragment pdom= fPDOMManager.getPDOM(cproject);
 				safeAddFragment(fragments, pdom);
 				
 				if(!skipProvided) {
@@ -117,7 +117,7 @@ public class IndexFactory {
 		
 		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
 			ICProject cproject = (ICProject) iter.next();
-			safeAddFragment(readOnlyFrag, (IIndexFragment) fPDOMManager.getPDOM(cproject));
+			safeAddFragment(readOnlyFrag, fPDOMManager.getPDOM(cproject));
 		}
 				
 		if (fragments.isEmpty()) {

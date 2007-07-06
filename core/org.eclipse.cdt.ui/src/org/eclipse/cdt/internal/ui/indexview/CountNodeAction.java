@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.IPDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -72,7 +73,11 @@ public class CountNodeAction extends IndexAction {
 					continue;
 
 				ICProject project = (ICProject)objs[i];
-				final PDOM pdom = (PDOM)CCoreInternals.getPDOMManager().getPDOM(project);
+				IPDOM ipdom= CCoreInternals.getPDOMManager().getPDOM(project);
+				if (!(ipdom instanceof PDOM)) {
+					continue;
+				}
+				final PDOM pdom = (PDOM) ipdom;
 				//pdom.getDB().reportFreeBlocks();
 
 				pdom.acquireReadLock();

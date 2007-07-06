@@ -93,7 +93,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	protected DeltaProcessor fDeltaProcessor = new DeltaProcessor();
 
 	/**
-	 * Queue of deltas created explicily by the C Model that
+	 * Queue of deltas created explicitly by the C Model that
 	 * have yet to be fired.
 	 */
 	List fCModelDeltas = Collections.synchronizedList(new ArrayList());
@@ -758,7 +758,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						if (resource.getType() == IResource.PROJECT && 	
 								( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
 										((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
-							this.deleting((IProject) resource, delta);}
+							this.preDeleteProject((IProject) resource);}
 					} catch (CoreException e) {
 					}
 					break;
@@ -768,7 +768,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						if (resource.getType() == IResource.PROJECT && 	
 						    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
 						      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
-							this.closing((IProject) resource, delta);}
+							this.preCloseProject((IProject) resource);}
 					} catch (CoreException e) {
 					}
 					break;
@@ -1182,18 +1182,18 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 	
-	private void deleting(IProject project, IResourceDelta delta) {
+	private void preDeleteProject(IProject project) {
 		// stop the binary runner for this project
 		removeBinaryRunner(project);
 		// stop indexing jobs for this project
-		CCoreInternals.getPDOMManager().deleteProject(create(project));
+		CCoreInternals.getPDOMManager().preDeleteProject(create(project));
 	}
 
-	private void closing(IProject project, IResourceDelta delta) {
+	private void preCloseProject(IProject project) {
 		// stop the binary runner for this project
 		removeBinaryRunner(project);
 		// stop indexing jobs for this project
-		CCoreInternals.getPDOMManager().closeProject(create(project));
+		CCoreInternals.getPDOMManager().preCloseProject(create(project));
 	}
 
 }

@@ -32,6 +32,7 @@ import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.ILineTracker;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.Annotation;
@@ -49,11 +50,13 @@ import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IMarkerUpdater;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -255,6 +258,46 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	}
 
 	/**
+	 * A marker updater which removes problems markers with length 0.
+	 */
+	public static class ProblemMarkerUpdater implements IMarkerUpdater {
+
+		/**
+		 * Default constructor (executable extension).
+		 */
+		public ProblemMarkerUpdater() {
+		}
+
+		/*
+		 * @see org.eclipse.ui.texteditor.IMarkerUpdater#getAttribute()
+		 */
+		public String[] getAttribute() {
+			return null;
+		}
+
+		/*
+		 * @see org.eclipse.ui.texteditor.IMarkerUpdater#getMarkerType()
+		 */
+		public String getMarkerType() {
+			return ICModelMarker.C_MODEL_PROBLEM_MARKER;
+		}
+
+		/*
+		 * @see org.eclipse.ui.texteditor.IMarkerUpdater#updateMarker(org.eclipse.core.resources.IMarker, org.eclipse.jface.text.IDocument, org.eclipse.jface.text.Position)
+		 */
+		public boolean updateMarker(IMarker marker, IDocument document, Position position) {
+			if (position == null) {
+				return true;
+			}
+			if (position.isDeleted() || position.getLength() == 0) {
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	/**
 	 * Annotation model dealing with c marker annotations and temporary problems.
 	 * Also acts as problem requestor for its translation unit. Initialiy inactive. Must explicitly be
 	 * activated.
@@ -314,11 +357,17 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 				int line= MarkerUtilities.getLineNumber(marker);
 				if (line > 0 && fDocument != null) {
 					try {
-						start= fDocument.getLineOffset(line - 1);
-						String ld = fDocument.getLineDelimiter(line - 1);
-						int lineDelimiterLegnth = ld != null ? ld.length(): 0;
-						end= fDocument.getLineLength(line - 1) + start - lineDelimiterLegnth;
+						IRegion lineRegion= fDocument.getLineInformation(line - 1);
+						start= lineRegion.getOffset();
+						end= start + lineRegion.getLength();
+						if (marker.isSubtypeOf(ICModelMarker.C_MODEL_PROBLEM_MARKER)) {
+							// strip leading whitespace
+							while (start < end && Character.isWhitespace(fDocument.getChar(start))) {
+								++start;
+							}
+						}
 					} catch (BadLocationException x) {
+					} catch (CoreException exc) {
 					}
 				}
 			}

@@ -39,8 +39,10 @@ if [ -f web/site.xsl.new ]; then
 fi
 
 # get newest plugins and features: to be done manually on real update site
+TYPE=none
 if [ `basename $SITE` = testUpdates ]; then
     echo "Working on test update site"
+    TYPE=test
     REL=`ls $HOME/ws2/working/package | sort | tail -1`
     if [ "$REL" != "" ]; then
       echo "Checking new Updates from $REL"
@@ -80,6 +82,7 @@ if [ `basename $SITE` = testUpdates ]; then
 	#	-outputDir $SITE -processAll -repack $SITE
 elif [ `basename $SITE` = signedUpdates ]; then
     echo "Working on signed update site"
+    TYPE=testSigned
     echo "Signing jars from test update site (expecting conditioned jars)..."
     STAGING=/home/data/httpd/download-staging.priv/dsdp/tm
     stamp=`date +'%Y%m%d-%H%M'`
@@ -189,6 +192,7 @@ elif [ `basename $SITE` = signedUpdates ]; then
     mv -f web/site.xsl.new web/site.xsl
 elif [ `basename $SITE` = milestones ]; then
     echo "Working on milestone update site"
+    TYPE=milestone
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -210,6 +214,7 @@ being contributed to the Europa coordinated release train (Eclipse 3.3).' \
     mv -f web/site.xsl.new web/site.xsl
 elif [ `basename $SITE` = interim ]; then
     echo "Working on interim update site"
+    TYPE=interim
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -231,6 +236,7 @@ to test them before going live.' \
     mv -f web/site.xsl.new web/site.xsl
 else
     echo "Working on official update site"
+    TYPE=official
     echo "Expect that you copied your features and plugins yourself"
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
@@ -269,15 +275,19 @@ mv -f site.xml.tmp site.xml
 # Workaround for downgrading effort of pack200 to avoid VM bug
 # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
 echo "Packing the site... $SITE"
-#java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-#java -jar $HOME/ws2/eclipse/startup.jar \
-java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
+case ${TYPE} in test*)
+  if [ "${TYPE}" = "test" -o "${TYPE}" = "test
+  #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+  #java -jar $HOME/ws2/eclipse/startup.jar \
+  java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \
     -application org.eclipse.update.core.siteOptimizer \
     -jarProcessor -outputDir $SITE \
     -processAll -pack $SITE
-#java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
-#    $HOME/ws2/jarprocessor/jarprocessor.jar \
-#    -outputDir $SITE -processAll -pack $SITE
+  #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
+  #    $HOME/ws2/jarprocessor/jarprocessor.jar \
+  #    -outputDir $SITE -processAll -pack $SITE
+  ;;
+esac
 
 #Create the digest
 echo "Creating digest..."

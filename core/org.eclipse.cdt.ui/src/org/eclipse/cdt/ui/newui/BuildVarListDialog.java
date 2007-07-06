@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
@@ -14,6 +15,8 @@ import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -35,7 +38,8 @@ public class BuildVarListDialog extends ElementListSelectionDialog {
 
 	private Text text;
 	private Label type;
-
+	private static final String LIST_DESCRIPTION = UIMessages.getString("BuildVarListDialog.1"); //$NON-NLS-1$
+	
 	public BuildVarListDialog(Shell parent, Object[] input) {
 		super(parent, new LabelProvider () {
 			public String getText(Object element) {
@@ -67,6 +71,18 @@ public class BuildVarListDialog extends ElementListSelectionDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 50;
 		text.setLayoutData(gd);
+		
+		//bug 189413 - adding label to build variable list for accessiblity
+		if (fFilteredList != null) {
+			fFilteredList.getAccessible().addAccessibleListener(
+	            new AccessibleAdapter() {                       
+	                public void getName(AccessibleEvent e) {
+	                        e.result = LIST_DESCRIPTION;
+	                }
+	            }
+	        );
+		}
+		
 		return c;
 	}
 	

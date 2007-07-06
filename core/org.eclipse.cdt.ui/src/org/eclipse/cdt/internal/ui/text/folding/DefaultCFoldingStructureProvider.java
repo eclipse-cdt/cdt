@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
@@ -43,6 +44,8 @@ import org.eclipse.jface.text.source.projection.IProjectionPosition;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -84,6 +87,16 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
  * </p>
  */
 public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvider {
+
+	/**
+	 * Listen to cursor position changes.
+	 */
+	private final class SelectionListener implements ISelectionChangedListener {
+		public void selectionChanged(SelectionChangedEvent event) {
+			ITextSelection selection= (ITextSelection)event.getSelection();
+			fCursorPosition= selection.getOffset();
+		}
+	}
 
 	/**
 	 * Reconcile annotation positions from preprocessor branches.
@@ -659,6 +672,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	private ICReconcilingListener fReconilingListener;
 	boolean fInitialReconcilePending= true;
 
+	private int fCursorPosition;
+
+	private SelectionListener fSelectionListener;
+
 
 	/**
 	 * Creates a new folding provider. It must be
@@ -725,7 +742,6 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	protected void handleProjectionEnabled() {
 		if (DEBUG) System.out.println("DefaultCFoldingStructureProvider.handleProjectionEnabled()"); //$NON-NLS-1$
-		// http://home.ott.oti.com/teams/wswb/anon/out/vms/index.html
 		// projectionEnabled messages are not always paired with projectionDisabled
 		// i.e. multiple enabled messages may be sent out.
 		// we have to make sure that we disable first when getting an enable
@@ -737,6 +753,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			initialize();
 			fReconilingListener= new PreprocessorBranchesReconciler();
 			((CEditor)fEditor).addReconcileListener(fReconilingListener);
+			fSelectionListener= new SelectionListener();
+			fEditor.getSelectionProvider().addSelectionChangedListener(fSelectionListener);
 		}
 	}
 
@@ -758,6 +776,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		if (fReconilingListener != null) {
 			((CEditor)fEditor).removeReconcileListener(fReconilingListener);
 			fReconilingListener= null;
+		}
+		if (fSelectionListener != null) {
+			fEditor.getSelectionProvider().removeSelectionChangedListener(fSelectionListener);
+			fSelectionListener= null;
 		}
 	}
 
@@ -814,6 +836,11 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	private void update(FoldingStructureComputationContext ctx) {
 	    if (ctx == null)
 			return;
+
+		if (!fInitialReconcilePending && fSelectionListener != null) {
+			fEditor.getSelectionProvider().removeSelectionChangedListener(fSelectionListener);
+			fSelectionListener= null;
+		}
 
 		Map additions= new HashMap();
 		List deletions= new ArrayList();
@@ -1328,8 +1355,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			IRegion normalized= alignRegion(regions[regions.length - 1], ctx, true);
 			if (normalized != null) {
 				Position position= element instanceof IMember ? createMemberPosition(normalized, (IMember) element) : createCommentPosition(normalized);
-				if (position != null)
+				if (position != null) {
+					collapse= collapse && !position.includes(fCursorPosition);
 					ctx.addProjectionRange(new CProjectionAnnotation(collapse, element, false), position);
+				}
 			}
 		}
 	}

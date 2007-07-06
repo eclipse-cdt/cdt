@@ -159,7 +159,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             if (layoutNode == null) {
                 // Stale update, most likely as a result of the layout nodes being
                 // changed.  Just ignore it.
-                if (!update.isCanceled()) update.done();
+                update.done();
                 continue;
             }        
             if (!nodeUpdatesMap.containsKey(layoutNode)) {
@@ -240,7 +240,10 @@ abstract public class AbstractVMProvider implements IVMProvider
 
     public void update(final IChildrenCountUpdate[] updates) {
         for (final IChildrenCountUpdate update : updates) {
-            if (update.isCanceled()) continue;
+            if (update.isCanceled()) {
+                update.done();
+                continue;
+            }
 
             getChildrenCountsForNode(
                 update, 
@@ -346,7 +349,7 @@ abstract public class AbstractVMProvider implements IVMProvider
         final IVMLayoutNode layoutNode = getLayoutNodeForElement(update.getElement());
         if (layoutNode == null) {
             // Stale update. Just ignore.
-            if (!update.isCanceled()) update.done();
+            update.done();
             return;
         }        
 
@@ -356,7 +359,7 @@ abstract public class AbstractVMProvider implements IVMProvider
             new MultiRequestMonitor<RequestMonitor>(getExecutor(), null) { 
                 @Override
                 protected void handleCompleted() {
-                    if (!update.isCanceled()) update.done();
+                    update.done();
                 }
             };
 

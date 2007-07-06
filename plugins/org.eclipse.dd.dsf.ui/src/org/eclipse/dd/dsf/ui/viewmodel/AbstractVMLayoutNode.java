@@ -330,7 +330,10 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
      * that the layout node depends on, are not available.
      */
     protected boolean checkUpdate(IViewerUpdate update) {
-        if (update.isCanceled()) return false;
+        if (update.isCanceled()) {
+            update.done();
+            return false;
+        }
         if (fDisposed) {
             handleFailedUpdate(update);
             return false;

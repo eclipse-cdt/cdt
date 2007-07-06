@@ -34,7 +34,7 @@ public class VMHasElementsUpdate extends VMViewerUpdate implements IHasChildrenU
 
     @Override
     public void done() {
-        assert fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.getStatus().isOK();
+        assert isCanceled() || fHasElemsRequestMonitor.getData() != null || !fHasElemsRequestMonitor.getStatus().isOK();
         super.done();            
     }
 }

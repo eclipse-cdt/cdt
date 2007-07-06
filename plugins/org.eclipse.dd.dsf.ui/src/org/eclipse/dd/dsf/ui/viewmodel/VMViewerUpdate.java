@@ -13,7 +13,9 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -46,6 +48,9 @@ public class VMViewerUpdate implements IViewerUpdate {
 
     public void done() { 
         try {
+            if ( isCanceled() ) {
+                fRequestMonitor.setStatus(new Status( IStatus.CANCEL, DsfUIPlugin.PLUGIN_ID," Update was cancelled") ); //$NON-NLS-1$
+            }
             fRequestMonitor.done();
         } catch (RejectedExecutionException e) { // Ignore
         }

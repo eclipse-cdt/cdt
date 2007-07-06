@@ -34,7 +34,7 @@ public class VMElementsCountUpdate extends VMViewerUpdate implements IChildrenCo
     
     @Override
     public void done() {
-        assert fCountRequestMonitor.getData() != null || !fCountRequestMonitor.getStatus().isOK();
+        assert isCanceled() || fCountRequestMonitor.getData() != null || !fCountRequestMonitor.getStatus().isOK();
         super.done();
     }
 

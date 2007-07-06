@@ -11,6 +11,7 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.dm.AbstractDebugDMVMProviderWithCache;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterGroupLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterLayoutNode;
@@ -23,7 +24,6 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProviderWithCache;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.DMVMRootLayoutNode;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionsListener;
@@ -35,7 +35,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * 
  */
 @SuppressWarnings("restriction")
-public class ExpressionVMProvider extends AbstractDMVMProviderWithCache 
+public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache 
     implements IExpressionsListener, IFormattedValuePreferenceStore
 {
     private String fDefaultFormatId = IFormattedValues.HEX_FORMAT;

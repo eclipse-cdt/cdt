@@ -21,12 +21,13 @@ Require-Bundle: org.eclipse.ui,
 Eclipse-LazyStart: true
 Export-Package: 
  org.eclipse.dd.dsf.debug.ui,
+ org.eclipse.dd.dsf.debug.ui.actions,
+ org.eclipse.dd.dsf.debug.ui.sourcelookup,
  org.eclipse.dd.dsf.debug.ui.viewmodel,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.dm,
  org.eclipse.dd.dsf.debug.ui.viewmodel.expression,
  org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport,
  org.eclipse.dd.dsf.debug.ui.viewmodel.launch,
  org.eclipse.dd.dsf.debug.ui.viewmodel.register,
- org.eclipse.dd.dsf.debug.ui.viewmodel.variable,
- org.eclipse.dd.dsf.debug.ui.sourcelookup, 
- org.eclipse.dd.dsf.debug.ui.actions
+ org.eclipse.dd.dsf.debug.ui.viewmodel.variable
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

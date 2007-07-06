@@ -49,10 +49,16 @@ public class VMCacheManager
 			{
 				@Override
 				public void handleEvent(IDMEvent event) {
-					flush(true);
 				}
 				
-				public boolean readFromCache()
+				@Override
+				public boolean isCacheReadEnabled()
+				{
+					return false;
+				}
+				
+				@Override
+				public boolean isCacheWriteEnabled()
 				{
 					return false;
 				}

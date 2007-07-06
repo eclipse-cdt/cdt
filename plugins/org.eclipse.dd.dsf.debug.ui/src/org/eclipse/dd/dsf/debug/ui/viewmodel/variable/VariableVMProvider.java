@@ -9,19 +9,19 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.dm.AbstractDebugDMVMProviderWithCache;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProviderWithCache;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.DMVMRootLayoutNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 @SuppressWarnings("restriction")
-public class VariableVMProvider extends AbstractDMVMProviderWithCache implements
+public class VariableVMProvider extends AbstractDebugDMVMProviderWithCache implements
 		IColumnPresentationFactory, IFormattedValuePreferenceStore {
     
     private String defaultFormatId = IFormattedValues.NATURAL_FORMAT;

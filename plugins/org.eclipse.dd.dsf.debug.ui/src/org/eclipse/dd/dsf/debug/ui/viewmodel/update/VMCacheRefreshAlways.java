@@ -25,12 +25,4 @@ public class VMCacheRefreshAlways extends VMCache
 			flush(true);
 	}
 
-	@Override
-	protected boolean useCache() {
-		return false;
-	}
-
-	
-	
-
 }

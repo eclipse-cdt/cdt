@@ -56,17 +56,25 @@ public abstract class VMCache
 		fHasChildren.clear();
 	}
 	
-	protected boolean useCache()
+	protected boolean isCacheReadEnabled()
+	{
+		return true;
+	}
+	
+	protected boolean isCacheWriteEnabled()
 	{
 		return true;
 	}
 	
 	@SuppressWarnings("restriction")
 	public IHasChildrenUpdate[] update(IHasChildrenUpdate[] updates) {
+		if(!isCacheReadEnabled())
+			return updates;
+		
     	Vector<IHasChildrenUpdate> missVector = new Vector<IHasChildrenUpdate>();
     	for(IHasChildrenUpdate update : updates)
     	{
-    		if(fHasChildren.containsKey(update.getElement()) && useCache())
+    		if(fHasChildren.containsKey(update.getElement()) && isCacheReadEnabled())
     		{
     			update.setHasChilren(fHasChildren.get(update.getElement()).booleanValue());
     			update.done();
@@ -86,7 +94,8 @@ public abstract class VMCache
     			@Override
     			protected void handleCompleted()
     			{
-    				fHasChildren.put(update.getElement(), this.getData());
+    				if(isCacheWriteEnabled())
+    					fHasChildren.put(update.getElement(), this.getData());
     				update.setHasChilren(getData());
     				update.done();
     			}
@@ -99,10 +108,13 @@ public abstract class VMCache
 	@SuppressWarnings("restriction")
     public IChildrenCountUpdate[] update(IChildrenCountUpdate[] updates) 
     {
+		if(!isCacheReadEnabled())
+			return updates;
+		
     	Vector<IChildrenCountUpdate> missVector = new Vector<IChildrenCountUpdate>();
     	for(IChildrenCountUpdate update : updates)
     	{
-    		if(fChildrenCounts.containsKey(update.getElement()) && useCache())
+    		if(fChildrenCounts.containsKey(update.getElement()) && isCacheReadEnabled())
     		{
     			update.setChildCount(fChildrenCounts.get(update.getElement()));
     			update.done();
@@ -122,7 +134,8 @@ public abstract class VMCache
     			@Override
     			protected void handleOK()
     			{
-    				fChildrenCounts.put(update.getElement(), this.getData());
+    				if(isCacheWriteEnabled())
+    					fChildrenCounts.put(update.getElement(), this.getData());
     				update.setChildCount(this.getData());
     				update.done();
     			}
@@ -134,10 +147,13 @@ public abstract class VMCache
     
 	@SuppressWarnings("restriction")
     public IChildrenUpdate[] update(IChildrenUpdate[] updates) {
+		if(!isCacheReadEnabled())
+			return updates;
+		
     	Vector<IChildrenUpdate> updatesEntirelyMissingFromCache = new Vector<IChildrenUpdate>();
     	for(final IChildrenUpdate update : updates)
     	{
-    		if(fChildren.containsKey(update.getElement()) && useCache())
+    		if(fChildren.containsKey(update.getElement()) && isCacheReadEnabled())
     		{
     			Vector<Integer> childrenMissingFromCache = new Vector<Integer>();
     			for(int i = update.getOffset(); i < update.getOffset() + update.getLength(); i++)
@@ -227,10 +243,13 @@ public abstract class VMCache
     			{
     				for(int j = 0; j < update.getLength(); j++)
     				{
-    					if(!fChildren.containsKey(update.getElement()))
-    						fChildren.put(update.getElement(), new HashMap<Integer,Object>());
-    					
-    					fChildren.get(update.getElement()).put(update.getOffset() + j, getData().get(j));
+    					if(isCacheWriteEnabled())
+    					{
+	    					if(!fChildren.containsKey(update.getElement()))
+	    						fChildren.put(update.getElement(), new HashMap<Integer,Object>());
+	    					
+	    					fChildren.get(update.getElement()).put(update.getOffset() + j, getData().get(j));
+    					}
     					
     					update.setChild(getData().get(j), update.getOffset() + j);
     				}
@@ -246,7 +265,7 @@ public abstract class VMCache
     @ConfinedToDsfExecutor("DsfSession.getSession(dmc.getSessionId()).getExecutor()")
     public void getModelData(IDMService service, final IDMContext dmc, final DataRequestMonitor rm, DsfExecutor executor)
     { 
-    	if(fData.containsKey(dmc) && useCache())
+    	if(fData.containsKey(dmc) && isCacheReadEnabled())
     	{ 
     		rm.setData(  fData.get(dmc));
     		rm.done();
@@ -257,7 +276,8 @@ public abstract class VMCache
 	    		new DataRequestMonitor<IDMData>(executor, null) {
 		            @Override
 		            public void handleOK() {
-		            	fData.put(dmc, getData());
+		            	if(isCacheWriteEnabled())
+		            		fData.put(dmc, getData());
 		            	rm.setData(getData());
 		            	rm.done();
 		            }

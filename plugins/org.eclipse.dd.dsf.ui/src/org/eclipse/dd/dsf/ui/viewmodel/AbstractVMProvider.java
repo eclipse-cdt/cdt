@@ -386,8 +386,10 @@ abstract public class AbstractVMProvider implements IVMProvider
                             elementsMultiRequestMon.add(new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
                                 @Override
                                 protected void handleCompleted() {
-                                    for (int i = 0; i < elementsLength; i++) {
-                                        update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
+                                    if (getStatus().isOK()) {
+                                        for (int i = 0; i < elementsLength; i++) {
+                                            update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
+                                        }
                                     }
                                     elementsMultiRequestMon.requestMonitorDone(this);
                                 }

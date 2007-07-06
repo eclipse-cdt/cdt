@@ -30,6 +30,8 @@ import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -307,6 +309,16 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
  		fNewFilteredList = super.createFilteredList(parent);
 		fNewFilteredList.setFilterMatcher(fFilterMatcher);
 		fNewFilteredList.setComparator(fStringComparator);
+		//bug 189330 - adding label to element list for accessiblity
+		if (fNewFilteredList != null) {
+			fNewFilteredList.getAccessible().addAccessibleListener(
+	            new AccessibleAdapter() {                       
+	                public void getName(AccessibleEvent e) {
+	                        e.result = TypeInfoMessages.TypeSelectionDialog_upperLabel;
+	                }
+	            }
+	        );
+		}
 		return fNewFilteredList;
 	}
 

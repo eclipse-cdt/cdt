@@ -398,6 +398,14 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
             parent.addFlags(IModelDelta.CONTENT);
         } 
         if (e instanceof IRegisters.IBitFieldChangedDMEvent) {
+            /*
+             * Flush the cache.
+             */
+            VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
+            
+            /*
+             *  Create a delta indicating the bit field has changed.
+             */
             parent.addNode( createVMContext(((IRegisters.IBitFieldChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         } 
         

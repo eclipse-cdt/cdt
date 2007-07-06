@@ -225,10 +225,14 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
         else if (e instanceof IRegisters.IGroupsChangedDMEvent) {
         	// flush the cache
         	VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
+            
             // Create a delta that indicates all groups have changed
             parent.addFlags(IModelDelta.CONTENT);
         } 
         else if (e instanceof IRegisters.IGroupChangedDMEvent) {
+            // flush the cache
+            VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
+            
             // Create a delta that indicates that specific group changed
             parent.addNode( createVMContext(((IGroupChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
         }

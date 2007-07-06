@@ -392,6 +392,11 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
         }
         else if (e instanceof IRegisters.IRegisterChangedDMEvent) {
             /*
+             * Flush the cache.
+             */
+            VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
+            
+            /*
              *  Logically one would think that STATE should be specified here. But we specifiy CONTENT
              *  as well so that if there are subregisters ( BIT FIELDS ) they will be forced to update
              *  and show new values when the total register changes.

@@ -276,7 +276,6 @@ mv -f site.xml.tmp site.xml
 # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
 echo "Packing the site... $SITE"
 case ${TYPE} in test*)
-  if [ "${TYPE}" = "test" -o "${TYPE}" = "test
   #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
   #java -jar $HOME/ws2/eclipse/startup.jar \
   java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \

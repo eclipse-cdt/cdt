@@ -271,11 +271,10 @@ mv -f site.xml.tmp site.xml
 
 # optimize the site
 # see http://wiki.eclipse.org/index.php/Platform-releng-faq
-#Pack the site
-# Workaround for downgrading effort of pack200 to avoid VM bug
-# See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
-echo "Packing the site... $SITE"
 case ${TYPE} in test*)
+  echo "Packing the site... $SITE"
+  # Workaround for downgrading effort of pack200 to avoid VM bug
+  # See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154069
   #java -Dorg.eclipse.update.jarprocessor.pack200=$mydir \
   #java -jar $HOME/ws2/eclipse/startup.jar \
   java -jar ${basebuilder}/plugins/org.eclipse.equinox.launcher.jar \

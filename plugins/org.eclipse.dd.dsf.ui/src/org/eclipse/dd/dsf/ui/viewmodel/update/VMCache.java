@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Executor;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
@@ -132,13 +133,15 @@ public abstract class VMCache
     		updates[i] = new VMElementsCountUpdate(update, new DataRequestMonitor<Integer>(fExecutor, null)
 			{
     			@Override
-    			protected void handleOK()
-    			{
-    				if(isCacheWriteEnabled())
-    					fChildrenCounts.put(update.getElement(), this.getData());
-    				update.setChildCount(this.getData());
+				protected void handleCompleted() {
+    				if(getStatus().isOK())
+    				{
+    					if(isCacheWriteEnabled())
+        					fChildrenCounts.put(update.getElement(), this.getData());
+        				update.setChildCount(this.getData());
+    				}
     				update.done();
-    			}
+				}
 			});
     	}
     	
@@ -239,22 +242,25 @@ public abstract class VMCache
     			new DataRequestMonitor<List<Object>>(fExecutor, null)
 			{
     			@Override
-    			protected void handleOK()
+    			protected void handleCompleted()
     			{
-    				for(int j = 0; j < update.getLength(); j++)
+    				if(getStatus().isOK())
     				{
-    					if(isCacheWriteEnabled())
-    					{
-	    					if(!fChildren.containsKey(update.getElement()))
-	    						fChildren.put(update.getElement(), new HashMap<Integer,Object>());
+	    				for(int j = 0; j < update.getLength(); j++)
+	    				{
+	    					if(isCacheWriteEnabled())
+	    					{
+		    					if(!fChildren.containsKey(update.getElement()))
+		    						fChildren.put(update.getElement(), new HashMap<Integer,Object>());
+		    					
+		    					fChildren.get(update.getElement()).put(update.getOffset() + j, getData().get(j));
+	    					}
 	    					
-	    					fChildren.get(update.getElement()).put(update.getOffset() + j, getData().get(j));
-    					}
-    					
-    					update.setChild(getData().get(j), update.getOffset() + j);
+	    					update.setChild(getData().get(j), update.getOffset() + j);
+	    				}
     				}
     				update.done();
-    			}
+				}
 			});
     	}
 
@@ -275,12 +281,34 @@ public abstract class VMCache
 	    	service.getModelData(dmc, 
 	    		new DataRequestMonitor<IDMData>(executor, null) {
 		            @Override
-		            public void handleOK() {
-		            	if(isCacheWriteEnabled())
-		            		fData.put(dmc, getData());
-		            	rm.setData(getData());
-		            	rm.done();
-		            }
+					protected void handleCompleted() {
+		            	if(getStatus().isOK())
+		            	{
+		            		if(isCacheWriteEnabled())
+			            		fData.put(dmc, getData());
+			            	rm.setData(getData());
+		            	}
+	    				rm.done();
+					}
+
+					@Override
+					public synchronized void setCanceled(boolean canceled) {
+						rm.setCanceled(canceled);
+						super.setCanceled(canceled);
+					}
+
+					@Override
+					public void setMultiStatus(String pluginId, int code,
+							String message, IStatus subStatus) {
+						rm.setMultiStatus(pluginId, code, message, subStatus);
+						super.setMultiStatus(pluginId, code, message, subStatus);
+					}
+
+					@Override
+					public synchronized void setStatus(IStatus status) {
+						rm.setStatus(status);
+						super.setStatus(status);
+					}
 		        }		
 	    	);
     	}

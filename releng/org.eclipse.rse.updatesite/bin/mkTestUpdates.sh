@@ -202,7 +202,7 @@ being contributed to the Europa coordinated release train (Eclipse 3.3).' \
     mv -f index.html.new index.html
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/milestones,g' \
         -e 's,Project 2.0 Update,Project Milestone Update,g' \
-    	-e '<!-- BEGIN_2_0_1 -->,/<!-- END_2_0_1 -->/d' \
+    	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project Milestone Update,g' \
@@ -223,7 +223,7 @@ to test them before going live.' \
     mv -f index.html.new index.html
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/interim,g' \
         -e 's,Project 2.0 Update,Project Interim Update,g' \
-    	-e '<!-- BEGIN_2_0_1 -->,/<!-- END_2_0_1 -->/d' \
+    	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project Interim Update,g' \
@@ -235,7 +235,7 @@ else
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e '<!-- BEGIN_2_0_1 -->,/<!-- END_2_0_1 -->/d' \
+    sed -e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
 fi

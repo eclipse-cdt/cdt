@@ -34,7 +34,7 @@
         	<action
                	class="org.eclipse.dd.debug.memory.renderings.actions.ExportMemoryAction"
                	helpContextId="ExportMemoryAction_context"
-               	icon="$nl$/icons/full/elcl16/pin.gif"
+               	icon="icons/export.png"
                	id="org.eclipse.dd.debug.memory.renderings.actions.ExportMemoryAction"
                	label="%ExportMemoryAction.label"
                	state="false"
@@ -44,7 +44,7 @@
             <action
                	class="org.eclipse.dd.debug.memory.renderings.actions.ImportMemoryAction"
                	helpContextId="ExportMemoryAction_context"
-               	icon="$nl$/icons/full/elcl16/pin.gif"
+               	icon="icons/import.png"
                	id="org.eclipse.dd.debug.memory.renderings.actions.ImportMemoryAction"
                	label="%ImportMemoryAction.label"
                	state="false"

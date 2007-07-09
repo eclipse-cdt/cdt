@@ -41,6 +41,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
+import org.eclipse.cdt.ui.PreferenceConstants;
+
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 
 /**
@@ -157,6 +159,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		if (fPreferenceStore != null) {
 			fPreferenceStore.addPropertyChangeListener(this);
 			initializeViewerColors();
+			// init flag here in case we start in segmented mode
+			fWasProjectionMode= fPreferenceStore.getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
 		}
 
 		fIsConfigured= true;

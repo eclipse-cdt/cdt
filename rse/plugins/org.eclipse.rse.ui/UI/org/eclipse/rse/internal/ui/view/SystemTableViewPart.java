@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight (IBM) - [191288] Up To Action doesn't go all the way back to the connections
  * Xuan Chen        (IBM)        - [192716] Refresh Error in Table View after Renaming folder shown in table
+ * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -80,6 +81,7 @@ import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.actions.SystemTablePrintAction;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.dialogs.SystemSelectAnythingDialog;
+import org.eclipse.rse.ui.internal.model.SystemRegistry;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
 import org.eclipse.rse.ui.view.IRSEViewPart;
@@ -1608,7 +1610,6 @@ public class SystemTableViewPart extends ViewPart
 	{
 		int eventType = event.getEventType();
 		Object remoteResource = event.getResource();
-		String inputAbsoluteNameWithSubSystemId = null;
 		Vector remoteResourceNames = null;
 		if (remoteResource instanceof Vector)
 		{
@@ -1621,47 +1622,14 @@ public class SystemTableViewPart extends ViewPart
 		
 		Object input = _viewer.getInput();
 		
-		//Simply doing comparason of if two object is equal is not enough
-		//If two different objects, but if their absoluate path (with subsystem id)
-		//are the same, they refer to the same remote object.
-		
-		if(input instanceof IAdaptable) 
-		{
-      	  	ISystemViewElementAdapter adapter =
-      		  (ISystemViewElementAdapter)
-      		  ((IAdaptable)input).getAdapter(ISystemViewElementAdapter.class);
-      	
-      	  	if (adapter != null ) {
-      		  // first need to check subsystems
-      		  ISubSystem subSystem = adapter.getSubSystem(input);
-      		  String subSystemId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
-      		  String absolutePath = adapter.getAbsoluteName(input);
-      		  inputAbsoluteNameWithSubSystemId = subSystemId + ":" + absolutePath;  //$NON-NLS-1$
-      			 
-	      }
-        }
-		
-		String remoteResourceAbsoluteNameWithSubSystemId = null;
-		if(child instanceof IAdaptable) 
-		{
-      	  	ISystemViewElementAdapter adapter =
-      		  (ISystemViewElementAdapter)
-      		  ((IAdaptable)child).getAdapter(ISystemViewElementAdapter.class);
-      	
-      	  	if (adapter != null ) {
-      		  // first need to check subsystems
-      		  ISubSystem subSystem = adapter.getSubSystem(child);
-      		  String subSystemId = RSECorePlugin.getTheSystemRegistry().getAbsoluteNameForSubSystem(subSystem);
-      		remoteResourceAbsoluteNameWithSubSystemId = subSystemId + ":" + event.getOldName();  //$NON-NLS-1$
-      			 
-	      }
-        }
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		
 		boolean referToSameObject = false;
-		if (inputAbsoluteNameWithSubSystemId != null && inputAbsoluteNameWithSubSystemId.equals(remoteResourceAbsoluteNameWithSubSystemId))
+		if (registry instanceof SystemRegistry)
 		{
-			referToSameObject = true;
+			referToSameObject = ((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child, event.getOldName());
 		}
+		
 		if (input == child || child instanceof Vector || referToSameObject)
 		{ 
 			switch (eventType)

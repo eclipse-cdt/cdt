@@ -31,6 +31,7 @@
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -40,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -79,6 +81,7 @@ import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.internal.core.filters.SystemFilterStartHere;
 import org.eclipse.rse.internal.core.model.SystemHostPool;
 import org.eclipse.rse.internal.core.model.SystemModelChangeEvent;
@@ -1026,6 +1029,82 @@ public class SystemRegistry implements ISystemRegistry
 		dataStream.append(":"); //$NON-NLS-1$
 		dataStream.append(factoryId);
 		return dataStream.toString();
+	}
+	
+	/**
+	 * Check if two objects refers to the same system object by comparing it absoluteName with its subsystem id.
+	 * 
+	 * @param firstObject the first object to compare
+	 * @param firstObjectFullName the full name of the firstObject.  If null, get the full name from the firstObject
+	 * @param secondObject the second object to compare
+	 * @param secondObjectFullName the full name of the secondObject. If null, get the full name from the secondObject
+	 */
+	public boolean isSameObjectByAbsoluteName(Object firstObject, String firstObjectFullName, Object secondObject, String secondObjectFullName)
+	{
+		if (firstObject == secondObject)
+		{
+			return true;
+		}
+		String firstObjectAbsoluteNameWithSubSystemId = null;
+		
+		//Simply doing comparason of if two object is equal is not enough
+		//If two different objects, but if their absoluate path (with subsystem id)
+		//are the same, they refer to the same remote object.
+		
+		if(firstObject instanceof IAdaptable) 
+		{
+			ISystemDragDropAdapter adapter = null;
+	    	
+			adapter = (ISystemDragDropAdapter)((IAdaptable)firstObject).getAdapter(ISystemDragDropAdapter.class);
+      	
+      	  	if (adapter != null ) {
+      		  // first need to check subsystems
+      		  ISubSystem subSystem = adapter.getSubSystem(firstObject);
+      		  String subSystemId = getAbsoluteNameForSubSystem(subSystem);
+      		  if (firstObjectFullName != null)
+      		  {
+      			firstObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + firstObjectFullName; //$NON-NLS-1$
+      		  }
+      		  else
+      		  {
+      			  String absolutePath = adapter.getAbsoluteName(firstObject);
+      			  firstObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + absolutePath;  //$NON-NLS-1$
+      		  }
+      			 
+	      }
+        }
+		
+		
+		String secondObjectAbsoluteNameWithSubSystemId = null;
+		if(secondObject instanceof IAdaptable) 
+		{
+			ISystemDragDropAdapter adapter = null;
+	    	
+			adapter = (ISystemDragDropAdapter)((IAdaptable)secondObject).getAdapter(ISystemDragDropAdapter.class);
+      	
+      	  	if (adapter != null ) {
+      		  // first need to check subsystems
+      		  ISubSystem subSystem = adapter.getSubSystem(secondObject);
+      		  String subSystemId = getAbsoluteNameForSubSystem(subSystem);
+      		  if (secondObjectFullName != null)
+    		  {
+    			secondObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + secondObjectFullName; //$NON-NLS-1$
+    		  }
+    		  else
+    		  {
+    			  String absolutePath = adapter.getAbsoluteName(secondObject);
+    			  secondObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + absolutePath;  //$NON-NLS-1$
+    		  }
+      			 
+	      }
+        }
+		
+		if (firstObjectAbsoluteNameWithSubSystemId != null && firstObjectAbsoluteNameWithSubSystemId.equals(secondObjectAbsoluteNameWithSubSystemId))
+		{
+			return true;
+		}
+		
+		return false;
 	}
 
 	 /*

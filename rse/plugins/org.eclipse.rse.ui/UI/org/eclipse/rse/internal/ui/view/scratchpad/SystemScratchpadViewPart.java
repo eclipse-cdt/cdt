@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [182403] Double Click on an object that can be expanded
+ * Kevin Doyle (IBM) - [195543] Double Clicking expands wrong folder when duplicate elements shown
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -28,7 +29,9 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
@@ -176,7 +179,7 @@ public class SystemScratchpadViewPart extends ViewPart
 
 	private void handleDoubleClick(DoubleClickEvent event)
 	{
-		IStructuredSelection s = (IStructuredSelection) event.getSelection();
+		ITreeSelection s = (ITreeSelection) event.getSelection();
 		Object element = s.getFirstElement();
 		
 		if (element == null)
@@ -188,13 +191,18 @@ public class SystemScratchpadViewPart extends ViewPart
 		{
 			if (adapter.hasChildren((IAdaptable)element))
 			{
-				if (_viewer.getExpandedState(element))
+				// Get the path for the element and use it for setting expanded state,
+				// so the proper TreeItem is expanded/collapsed
+				TreePath[] paths = s.getPathsFor(element);
+				if (paths == null || paths.length == 0 || paths[0] == null) return;
+				TreePath elementPath = paths[0];
+				if (_viewer.getExpandedState(elementPath))
 				{
-					_viewer.collapseToLevel(element, 1);
+					_viewer.collapseToLevel(elementPath, 1);
 				}
 				else
 				{
-					_viewer.expandToLevel(element, 1);
+					_viewer.expandToLevel(elementPath, 1);
 				}
 			}
 			else

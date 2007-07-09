@@ -65,6 +65,7 @@ import org.eclipse.cdt.internal.core.pdom.indexer.DeltaAnalyzer;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
+import org.eclipse.cdt.internal.core.pdom.indexer.TriggerNotificationTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFolder;
@@ -503,6 +504,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 					IPDOMIndexerTask task= createPolicy(project).createTask();
 					if (task != null) {
 						enqueue(task);
+					}
+					else {
+						enqueue(new TriggerNotificationTask(this, pdom));
 					}
 					return;
 				}

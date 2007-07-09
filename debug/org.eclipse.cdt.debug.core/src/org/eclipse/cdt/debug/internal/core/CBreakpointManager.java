@@ -693,7 +693,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					ICDICondition condition = createCondition( breakpoint );
 					fBreakpointProblems.add(BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID()));
 					if (bpManager2 != null)
-						bpManager2.setFunctionBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
+						b = bpManager2.setFunctionBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
 					else
 						b = cdiTarget.setFunctionBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );								
 				} else if ( breakpoints[i] instanceof ICAddressBreakpoint ) {
@@ -702,7 +702,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					ICDIAddressLocation location = cdiTarget.createAddressLocation( new BigInteger ( ( address.startsWith( "0x" ) ) ? address.substring( 2 ) : address, 16 ) ); //$NON-NLS-1$
 					ICDICondition condition = createCondition( breakpoint );
 					if (bpManager2 != null)
-						bpManager2.setAddressBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
+						b = bpManager2.setAddressBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
 					else
 						b = cdiTarget.setAddressBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );					
 				} else if ( breakpoints[i] instanceof ICLineBreakpoint ) {
@@ -713,7 +713,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					ICDICondition condition = createCondition( breakpoint );
 					fBreakpointProblems.add(BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID()));
 					if (bpManager2 != null)
-						bpManager2.setLineBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
+						b = bpManager2.setLineBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
 					else
 						b = cdiTarget.setLineBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
 				} else if ( breakpoints[i] instanceof ICWatchpoint ) {
@@ -724,7 +724,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					String expression = watchpoint.getExpression();
 					ICDICondition condition = createCondition( watchpoint );
 					if (bpManager2 != null)
-						bpManager2.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition, breakpoints[i].isEnabled() );
+						b = bpManager2.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition, breakpoints[i].isEnabled() );
 					else
 						b = cdiTarget.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
 				}

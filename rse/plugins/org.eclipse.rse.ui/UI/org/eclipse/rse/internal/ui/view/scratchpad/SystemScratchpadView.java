@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [192278] Removed handleKeyPressed
  * Kevin Doyle (IBM) - [189150] _selectionFlagsUpdated reset after clear action performed
+ * Kevin Doyle (IBM) - [195537] Use Hashlookup and ElementComparer
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -65,6 +66,7 @@ import org.eclipse.rse.internal.ui.actions.SystemCommonSelectAllAction;
 import org.eclipse.rse.internal.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.internal.ui.actions.SystemSubMenuManager;
+import org.eclipse.rse.internal.ui.view.ElementComparer;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.internal.ui.view.SystemViewDataDragAdapter;
 import org.eclipse.rse.internal.ui.view.SystemViewDataDropAdapter;
@@ -185,7 +187,9 @@ public class SystemScratchpadView
 
 			_provider = new SystemScratchpadViewProvider(this);
 
-
+			setUseHashlookup(true);
+			setComparer(new ElementComparer()); 
+			
 			setContentProvider(_provider);
 			
 			IWorkbench wb = PlatformUI.getWorkbench();

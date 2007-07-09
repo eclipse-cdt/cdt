@@ -31,6 +31,7 @@
  * Kevin Doyle (IBM) - [194602] handleDoubleClick does expand/collapse on treepath instead of element
  * David McKnight   (IBM)        - [194897] Should not remote refresh objects above subsystem.
  * Kevin Doyle - [193380] Deleting connection Refresh's Entire Remote Systems view
+ * Kevin Doyle - [195537] Move ElementComparer to Separate File
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -61,7 +62,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -4598,72 +4598,6 @@ public class SystemView extends SafeTreeViewer
 			return match;
 		}
 	}
-
-	protected class ElementComparer implements IElementComparer
-	{
-	      public boolean equals(Object a, Object b) 
-	      {
-	          if(a==b) return true;
-	          if(a==null || b==null) return false;
-	          //TODO not sure if this equals() check is a good idea.
-	          //It may be expensive and unnecessary. It might be better
-	          //to do this as a fallback instead, in case the adapter 
-	          //is not found. 
-	          if(a.equals(b)) return true;
-	 
-	          if( (a instanceof IAdaptable) && (b instanceof IAdaptable) ) {
-	        	  ISystemViewElementAdapter identa =
-	        		  (ISystemViewElementAdapter)
-	        		  ((IAdaptable)a).getAdapter(ISystemViewElementAdapter.class);
-	        	  ISystemViewElementAdapter identb = 
-	        		  (ISystemViewElementAdapter)
-	        		  ((IAdaptable)b).getAdapter(ISystemViewElementAdapter.class);
-	        	  if(identa != null && identb != null) {
-	        		  // first need to check subsystems
-	        		  ISubSystem ssa = identa.getSubSystem(a);
-	        		  ISubSystem ssb = identb.getSubSystem(b);
-	        		  if (ssa == ssb) {
-	        			  // if the subsystems are the same OR if both are null
-	        			  // (the absolute name will distinguish them)
-	        			  String ana = identa.getAbsoluteName(a);
-	        			  if (ana!=null) {
-	        				  return ana.equals(identb.getAbsoluteName(b));
-	        			  }
-		              }
-		          }
-	          }
-	          return false;
-	      }
-	      
-	      public int hashCode(Object element) 
-	      {
-	          ISystemViewElementAdapter ident=null;
-	          if(element instanceof IAdaptable) {
-	              ident = (ISystemViewElementAdapter)
-	                  ((IAdaptable)element).getAdapter(ISystemViewElementAdapter.class);
-	              if(ident!=null) {
-	                  String absName = ident.getAbsoluteName(element);
-	                  if(absName!=null) return absName.hashCode();
-	                  //Since one adapter is typically used for many elements in RSE,
-	                  //performance would be better if the original Element's hashCode
-	                  //were used rather than the adapter's hashCode. The problem with
-	                  //this is, that if the remote object changes, it cannot be 
-	                  //identified any more.
-	                  //Note that even if the SAME object is modified during refresh
-	                  //(so object a==b), the hashCode of the object can change 
-	                  //over time if properties are modified. Therefore, play it
-	                  //safe and return the adapter's hashCode which won't ever change.
-	                  return ident.hashCode();
-	              }
-	          }		          
-	          if (element != null) { // adding check because I hit a null exception here once at startup
-	        	  return element.hashCode();
-	          } else {
-	        	  //System.out.println("null element");
-	        	  return 0;
-	          }
-	      }
-	    }
 
 	/**
 	 * --------------------------------------------------------------------------------

@@ -456,6 +456,7 @@ public class CommandMinerThread extends MinerThread
 
 	public void sendBreak()
 	{
+		
 		if (!_isWindows)
 		{
 			if (_processTracker != null)
@@ -463,6 +464,8 @@ public class CommandMinerThread extends MinerThread
 				_processTracker.killLastest();
 			}
 		}
+		
+		
 	}
 
 	public void sendInput(String input)
@@ -870,6 +873,7 @@ public class CommandMinerThread extends MinerThread
 	
 	public void cleanupThread()
 	{
+		refreshStatus();
 	    /*
 		if (_isShell)
 		{
@@ -994,10 +998,13 @@ public class CommandMinerThread extends MinerThread
 			}
 		}
 		
-		_dataStore.refresh(_status);
-		_dataStore.disconnectObjects(_status);
 	}
 
+	public void refreshStatus() 
+	{
+		_dataStore.refresh(_status);
+	}
+	
 	public void createPrompt(String line, String fileName)
 	{
 		// prevent duplicate prompts    
@@ -1222,8 +1229,7 @@ public class CommandMinerThread extends MinerThread
 			    }
 			    obj.setAttribute(DE.A_SOURCE, obj.getSource() + ':' + line.toString());				
 			}
-			_dataStore.refresh(_status);
-			_dataStore.disconnectObjects(_status);
+
 			return obj;
 		}
 		else

@@ -107,6 +107,8 @@ public class OutputHandler extends Handler
 			}
 			if (!_isTerminal)
 				doPrompt();		
+			
+			_commandThread.refreshStatus();
 		}
 		else
 		{

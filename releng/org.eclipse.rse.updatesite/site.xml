@@ -65,12 +65,6 @@
    <feature url="features/org.eclipse.rse.sdk_2.0.0.v20070706-7J--E7ZoHIP4TfeXykCt2OjqBvjq.jar" id="org.eclipse.rse.sdk" version="2.0.0.v20070706-7J--E7ZoHIP4TfeXykCt2OjqBvjq">
       <category name="TM and RSE 2.0 patches (aka 2.0.0.1)"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp.patch_2.0.0.v20070706-2--7w31181817.jar" id="org.eclipse.rse.ftp.patch" version="2.0.0.v20070706-2--7w31181817" patch="true">
-      <category name="TM and RSE 2.0 patches (aka 2.0.0.1)"/>
-   </feature>
-   <feature url="features/org.eclipse.rse.core.patch_2.0.0.v20070706-2--7w31181817.jar" id="org.eclipse.rse.core.patch" version="2.0.0.v20070706-2--7w31181817" patch="true">
-      <category name="TM and RSE 2.0 patches (aka 2.0.0.1)"/>
-   </feature>
    <category-def name="TM and RSE 2.0 patches (aka 2.0.0.1)" label="TM and RSE 2.0 patches (aka 2.0.0.1)">
       <description>
          Patches for features and add-ons of the 2.0 release of Target Management / RSE.  Pick EITHER the patch-features OR the standard updated features, but not both.

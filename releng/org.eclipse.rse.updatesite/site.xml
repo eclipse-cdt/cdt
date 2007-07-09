@@ -67,7 +67,7 @@
    </feature>
    <category-def name="TM and RSE 2.0 patches (aka 2.0.0.1)" label="TM and RSE 2.0 patches (aka 2.0.0.1)">
       <description>
-         Patches for features and add-ons of the 2.0 release of Target Management / RSE.  Pick EITHER the patch-features OR the standard updated features, but not both.
+         Patches for features and add-ons of the 2.0 release of Target Management / RSE.
       </description>
    </category-def>
 <!-- END_2_0_patches -->

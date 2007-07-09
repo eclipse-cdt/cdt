@@ -17,6 +17,7 @@
  * Xuan Chen (IBM) - Fix 189487 - copy and paste a folder did not work - workbench hang
  * Xuan Chen (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
  * Xuan Chen (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
+ * Kevin Doyle (IBM) - [195709] Windows Copying doesn't work when path contains space
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -331,7 +332,8 @@ public class UniversalFileSystemMiner extends Miner {
 					if (_isWindows)
 					{
 						tgt = tgtFolder.getAbsolutePath() + File.separatorChar + srcFile.getName();
-						doCopyCommand(enQuote(src), enQuote(tgt), folderCopy, status);
+						// Both unix and windows need src quoted, so it's already done
+						doCopyCommand(src, enQuote(tgt), folderCopy, status);
 						if (status.getAttribute(DE.A_SOURCE) == IServiceConstants.FAILED)
 						{
 							break;

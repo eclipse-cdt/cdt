@@ -99,6 +99,11 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * @since 4.0
 	 */
 	private boolean fIsSetVisibleDocumentDelayed;
+	/**
+	 * Whether projection mode was enabled when switching to segmented mode.
+	 * Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=195808
+	 */
+	private boolean fWasProjectionMode;
 
 	/**
      * Creates new source viewer. 
@@ -420,4 +425,26 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		return null;
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#setVisibleRegion(int, int)
+	 */
+	public void setVisibleRegion(int start, int length) {
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=195808
+		if (!fWasProjectionMode && isProjectionMode()) {
+			fWasProjectionMode= true;
+		}
+		super.setVisibleRegion(start, length);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#resetVisibleRegion()
+	 */
+	public void resetVisibleRegion() {
+		super.resetVisibleRegion();
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=195808
+		if (fWasProjectionMode) {
+			fWasProjectionMode= false;
+			enableProjection();
+		}
+	}
 }

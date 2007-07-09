@@ -2592,6 +2592,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		fOpenInViewGroup.fillActionBars(actionBars);
 		fRefactoringActionGroup.fillActionBars(actionBars);
 		fGenerateActionGroup.fillActionBars(actionBars);
+		fFoldingGroup.updateActionBars();
 	}
 
 	/*

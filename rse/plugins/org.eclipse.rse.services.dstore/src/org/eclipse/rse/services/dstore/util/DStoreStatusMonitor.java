@@ -199,6 +199,20 @@ public class DStoreStatusMonitor implements IDomainListener
 	{
 	    _workingStatuses.remove(status);
 	    _cancelledStatuses.add(status);
+	    
+	    // send a cancel command if possible
+		if (status != null)
+		{
+			DataElement command = status.getParent();
+			DataStore dataStore = command.getDataStore();
+			DataElement cmdDescriptor = command.getDescriptor();
+			DataElement cancelDescriptor = dataStore.localDescriptorQuery(cmdDescriptor, "C_CANCEL"); //$NON-NLS-1$
+
+			if (cancelDescriptor != null)
+			{
+				dataStore.command(cancelDescriptor, command);
+			}
+		}
 	}
 	
 	public synchronized void setWorking(DataElement status)

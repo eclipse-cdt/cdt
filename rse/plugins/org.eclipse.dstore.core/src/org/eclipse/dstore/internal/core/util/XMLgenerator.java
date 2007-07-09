@@ -573,7 +573,7 @@ public class XMLgenerator
 		{
 			String tagType = XMLparser.STR_DATAELEMENT;
 
-			if (object.isUpdated() && !object.isPendingTransfer() && !_generateBuffer)
+			if (object.isUpdated() && !object.isPendingTransfer())
 			{
 			}
 			else

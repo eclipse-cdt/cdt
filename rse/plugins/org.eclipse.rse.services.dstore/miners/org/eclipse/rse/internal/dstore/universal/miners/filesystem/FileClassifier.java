@@ -40,7 +40,7 @@ import org.eclipse.rse.services.clientserver.java.BasicClassFileParser;
 
 
 /*
- * This utility class is for determing file types
+ * This utility class is for determining file types
  */
 public class FileClassifier extends Thread
 {

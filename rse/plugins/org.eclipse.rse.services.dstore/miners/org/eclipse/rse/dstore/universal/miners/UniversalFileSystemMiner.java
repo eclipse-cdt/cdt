@@ -21,11 +21,9 @@
 
 package org.eclipse.rse.dstore.universal.miners;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,13 +31,13 @@ import java.util.List;
 import org.eclipse.dstore.core.miners.Miner;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
-import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreResources;
-import org.eclipse.dstore.core.util.StringCompare;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.ArchiveQueryThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.ClassFileParser;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileClassifier;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileDescriptors;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileQueryThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.UniversalDownloadHandler;
-import org.eclipse.rse.internal.dstore.universal.miners.filesystem.UniversalFileSystemFilter;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.UniversalSearchHandler;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
@@ -75,11 +73,7 @@ public class UniversalFileSystemMiner extends Miner {
 
 //	private DataElement deFolderClassificationQuery;
 	
-	private DataElement deUniversalFileObject;
-	private DataElement deUniversalFolderObject;
-	private DataElement deUniversalVirtualFileObject;
-	private DataElement deUniversalVirtualFolderObject;
-	private DataElement deUniversalArchiveFileObject;
+
 	
 
 	protected String filterString = "*"; //$NON-NLS-1$
@@ -594,8 +588,7 @@ public class UniversalFileSystemMiner extends Miner {
 			
 			searchThread.start();
 
-			// save search thread in hashmap for retrieval during cancel
-			_cancellableThreads.put(status.getParent(), searchThread);
+			updateCancellableThreads(status.getParent(), searchThread);
 			return status;
 		}
 
@@ -606,6 +599,7 @@ public class UniversalFileSystemMiner extends Miner {
 		ICancellableHandler thread = (ICancellableHandler) _cancellableThreads
 				.get(subject);
 
+		
 		if (thread != null) {
 			if (!thread.isDone()) {
 				thread.cancel();
@@ -618,6 +612,7 @@ public class UniversalFileSystemMiner extends Miner {
 		// indicate status done
 		return statusDone(status);
 	}
+	
 
 	/**
 	 * Method to list the files and folders for a given filter.
@@ -678,196 +673,51 @@ public class UniversalFileSystemMiner extends Miner {
 			{
 				// query all files and folders for the filter
 				internalQueryAll(subject, fileobj, queryType, filter,
-						caseSensitive, IClientServerConstants.INCLUDE_ALL);
+						caseSensitive, IClientServerConstants.INCLUDE_ALL, status);
+				return status; // query done in a thread so don't mark done
 			}
 		}
-
-			// refresh datastore
-			_dataStore.refresh(subject);
-
-
+		
 		return statusDone(status);
 	}
 
 	protected void internalQueryAll(DataElement subject, File fileobj,
 			String queryType, String filter, boolean caseSensitive,
-			int inclusion) {
-		if (fileobj.exists()) 
+			int inclusion, DataElement status) {
+		
+		// do query on a thread
+		FileQueryThread queryThread = new FileQueryThread(subject, fileobj, queryType, filter, caseSensitive, inclusion, showHidden, _isWindows, status);
+		queryThread.start();		
+		
+		updateCancellableThreads(status.getParent(), queryThread);
+	}
+
+	private void updateCancellableThreads(DataElement command, ICancellableHandler thread)
+	{
+		//First Check to make sure that there are no "zombie" threads
+		Iterator iter = _cancellableThreads.keySet().iterator();
+		try
 		{
-
-			
-			boolean filterFiles = (inclusion == IClientServerConstants.INCLUDE_ALL) || (inclusion == IClientServerConstants.INCLUDE_FILES_ONLY);
-			boolean filterFolders = (inclusion == IClientServerConstants.INCLUDE_ALL) || (inclusion == IClientServerConstants.INCLUDE_FOLDERS_ONLY);
-			
-			UniversalFileSystemFilter filefilter = new UniversalFileSystemFilter(filter,filterFiles, filterFolders, caseSensitive);
-			String theOS = System.getProperty("os.name"); //$NON-NLS-1$
-			File[] list = null;
-			if (theOS.equals("z/OS")) //$NON-NLS-1$ 
+			while (iter.hasNext())
 			{
-				// filters not supported with z/OS jvm
-				File[] tempList = fileobj.listFiles();
-				List acceptedList = new ArrayList(tempList.length);
-	
-				for (int i = 0; i < tempList.length; i++) {
-					File afile = tempList[i];
-					if (filefilter.accept(fileobj, afile.getName())) {
-						acceptedList.add(afile);
-					}
+				String threadName = (String) iter.next();
+				ICancellableHandler theThread = (ICancellableHandler) _cancellableThreads.get(threadName);
+				if ((theThread == null) || 
+						theThread.isDone() || theThread.isCancelled())
+				{
+					_cancellableThreads.remove(threadName);
 				}
-				list = new File[acceptedList.size()];
-				for (int l = 0; l < acceptedList.size(); l++)
-					list[l] = (File) acceptedList.get(l);
-			} 
-			else 
-			{
-				list = fileobj.listFiles(filefilter);
 			}
+		}
+		catch (Exception e)
+		{
+			_dataStore.trace(e);
+		}
+		// save find thread in hashmap for retrieval during cancel
+		_cancellableThreads.put(command, thread);
+	}
 	
-			if (list != null)
-			{
-				createDataElement(_dataStore, subject, list, queryType, filter,inclusion);
-				String folderProperties = setProperties(fileobj);
-				if (subject.getSource() == null || subject.getSource().equals("")) //$NON-NLS-1$
-					subject.setAttribute(DE.A_SOURCE, folderProperties);
-		
-				FileClassifier clsfy = getFileClassifier(subject);
-				clsfy.start();
-			}
-		}
-		else {
-			/*
-			UniversalServerUtilities
-					.logError(
-							CLASSNAME,
-							"The path specified in handleQueryAll does not exist",
-							null);
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXIST);
-			*/
-		}
-		
-	}
-/*
-	private void internalLSQueryAll(DataElement subject, File fileobj,
-			String queryType, String filter, boolean caseSensitive, int include) {
-
-		BufferedReader reader = null; // use 'ls -l' command
-		String cmd = "ls -l";
-		try {
-			String rootSource = fileobj.getAbsolutePath();
-
-			Process theProcess = Runtime.getRuntime().exec(cmd, null,
-					new File(rootSource));
-			String specialEncoding = System
-					.getProperty("dstore.stdin.encoding");
-			if (specialEncoding != null) {
-				reader = new BufferedReader(new InputStreamReader(theProcess
-						.getInputStream(), specialEncoding));
-			} else {
-				reader = new BufferedReader(new InputStreamReader(theProcess
-						.getInputStream()));
-			}
-
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				createDataElementFromLSString(subject, rootSource, line,
-						include);
-			}
-		} catch (Exception e) {
-		}
-		if (reader != null) {
-			try {
-				reader.close();
-			} catch (Exception e) {
-			}
-		}
-		_dataStore.refresh(subject);
-	}
-
-private DataElement createDataElementFromLSString(DataElement subject,
-      String rootSource, String line, int include) 
-{ 
-	boolean isFolder = false;
-
-      boolean isExecutable = false; 
-      String name = line; 
-      int length =line.length();
-      
-      if (line.charAt(length - 1) == '/') 
-      { 
-      	isFolder = true; name =line.substring(0, length - 1); 
-      } 
-      else if (line.charAt(length - 1) == '*') 
-      {
-      	isExecutable = true; name = line.substring(0, length - 1); 
-      } 
-      else if (line.charAt(length - 1) == '@') { name = line.substring(0, length - 1); 
-      {
-      	String filePath = rootSource + File.separatorChar + name; 
-      	DataElement deObj = null; 
-      	if (include == INCLUDE_ALL) 
-      	{ 
-      		if (isFolder)
-      		{ 
-      			deObj = _dataStore.createObject(subject, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, name); 
-      		}
-      		else // file
-      		{
-      			//if (ArchiveHandlerManager.getInstance().isArchive(list[i])) 
-      			//{  
-      		//	deObj = ds.createObject(subject, IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR, name); 
-      		//	}
-      	//		else 
- //     			{ 
-      				deObj = _dataStore.createObject(subject, IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR, name); 
-   //   			}
-      		}
-      	}
-      	return deObj;
-      }
-      return null;
-      }
-  
-      	
-	  else if (include == INCLUDE_FILES_ONLY) 
-	  { 
-	  	if (!isFolder) 
-	  	{ 
-	  		if (ArchiveHandlerManager.getInstance().isArchive(list[i])) 
-	  		{  
-	  			deObj = ds.createObject(subject,  IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR, name); 
-      		}
-	  		else 
-	  		{ 
-	  			deObj = _dataStore.createObject(subject,
-      			IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR, name); 
-	  		}
-	  	}
-	  }
-      else if (include == INCLUDE_FOLDERS_ONLY) 
-      { 
-      	if (isFolder) 
-      	{ 
-      		deObj = _dataStore.createObject(subject, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, name); 
-      	} 
-      }
-      else
-      {
-      }
-      */
-     
-	  
-      
-//      if (deObj != null) 
-  //    { 
-    //  	deObj.setAttribute(DE.A_VALUE, rootSource + File.separatorChar);
-      
-      //_dataStore.command(dePropertyQuery, deObj); //File fobj = new
-     // File(rootSource + File.separatorChar + name);
-      //deObj.setAttribute(DE.A_SOURCE, setProperties(fobj, isExecutable)); }
-      
-      //classifyExecutable(newObject, false); return deObj; }
-     // }	
-  
+	
 	  /**
 		    * Method to list the files for a given filter.
 		    */
@@ -914,9 +764,9 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		}
 		else
 		{
-			internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FILES_ONLY);
+			internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FILES_ONLY, status);
+			return status; // query done in a thread so not marking done here
 		}
-		_dataStore.refresh(subject);
 		return statusDone(status);
 	}
 
@@ -970,10 +820,10 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		}
 		else
 		{
-			internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FOLDERS_ONLY);
+			internalQueryAll(subject, fileobj, queryType, filter, caseSensitive, IClientServerConstants.INCLUDE_FOLDERS_ONLY, status);
+			return status; // query done in a thread so not marking done here
 		}
 		
-		_dataStore.refresh(subject);
 		return statusDone(status);
 	}
 
@@ -1740,434 +1590,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		return null;
 	}
 
-	protected void createDataElement(DataStore ds, DataElement subject,
-			File[] list, String queryType, String filter, int include)
-	{
-		createDataElement(ds, subject, list, queryType, filter, include, null);
-	}
-	/**
-	 * Method to create the DataElement object in the datastore.
-	 */
-
-	protected void createDataElement(DataStore ds, DataElement subject,
-			File[] list, String queryType, String filter, int include, String types[]) 
-	{
-
-		HashMap filteredChildren = new HashMap();
-		List children = subject.getNestedData();
-		if (children != null)
-		{
-			long enterForTime = System.currentTimeMillis();
-			//Use a HashMap instead of array list to improve performance
-			for (int f = 0; f < children.size(); f++)
-			{
-				DataElement child = (DataElement)children.get(f);
-				if (!child.isDeleted())
-				{
-					String type = child.getType();
-					if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || type.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR))
-					{
-						if (StringCompare.compare(filter, child.getName(), false))
-						{
-							//filteredChildren.add(child);
-							filteredChildren.put(child.getName(), child);
-						}
-					}
-					else
-					{
-						//filteredChildren.add(child);
-						filteredChildren.put(child.getName(), child);
-					}
-				}
-			}
-		}
-			
-		
-			
-				boolean found = false;
-						
-				// Check if the current Objects in the DataStore are valid... exist
-				// on the remote host
-				try {
-						for (int j = 0; j < list.length; ++j) 
-						{
-							
-							found = false;
-							File file = list[j];
-							String fileName = file.getName();
-							boolean isHidden = file.isHidden() || fileName.charAt(0) == '.';
-
-							DataElement previousElement = (DataElement)filteredChildren.get(fileName);
-							if (previousElement != null && !previousElement.isDeleted()) 
-							{
-								// Type have to be equal as well
-								//String type = ((DataElement) currentObjList[i]).getType();
-								String type = previousElement.getType();
-								boolean isfile = list[j].isFile();
-								if (((type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || type.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) && isfile)
-										|| 
-									(type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR) && !isfile))
-								{
-									if (types !=null)
-									{
-										String attributes = previousElement.getAttribute(DE.A_SOURCE);
-										String thisType = types[j];
-										if (attributes.indexOf(thisType) != -1)
-										{
-										    filteredChildren.remove(list[j].getName()); //remove it from the filterChildren list
-											found = true;
-										}
-									}
-									else
-									{
-									    filteredChildren.remove(list[j].getName());
-										found = true;
-									}
-								}
-							}
-							
-							DataElement deObj = null;
-							if (!isHidden || showHidden)
-							{
-								if (found)
-								{
-									//this object already exists in the DStore
-									deObj = previousElement;
-								}
-								else
-								{
-									//We need to create a new data element for this object.
-									if (include == IClientServerConstants.INCLUDE_ALL) 
-									{
-										if (file.isDirectory())
-										{
-											deObj = ds.createObject(subject,deUniversalFolderObject,fileName);
-										}
-										else
-										// file
-										{
-											if (ArchiveHandlerManager.getInstance().isArchive(file)) 
-											{
-												deObj = ds
-														.createObject(
-																subject,
-																deUniversalArchiveFileObject,
-																fileName);
-											} 
-											else 
-											{
-												deObj = ds.createObject(subject,
-														deUniversalFileObject,
-														fileName);
-											}
-										}
-									} 
-									else if (include == IClientServerConstants.INCLUDE_FOLDERS_ONLY) 
-									{
-										if (ArchiveHandlerManager.getInstance().isArchive(file)) 
-										{
-											deObj = ds.createObject(subject,
-													deUniversalArchiveFileObject,
-													fileName);
-										} 
-										else 
-										{
-											deObj = ds.createObject(subject,
-													deUniversalFolderObject,
-													fileName);
-										}
-									} 
-									else if (include == IClientServerConstants.INCLUDE_FILES_ONLY) 
-									{
-										if (ArchiveHandlerManager.getInstance().isArchive(file)) 
-										{
-											deObj = ds.createObject(subject,
-													deUniversalArchiveFileObject,
-													fileName);
-										} 
-										else 
-										{
-											deObj = ds
-													.createObject(subject,
-															deUniversalFileObject,
-															fileName);
-										}
-									}
-									if (deObj != null)
-									{
-										if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
-										{
-											deObj.setAttribute(DE.A_VALUE, subject.getAttribute(DE.A_VALUE));
-										}
-										else 
-										{
-										
-											if (subject.getName().length() > 0) 
-											{
-												String valueStr = subject.getAttribute(DE.A_VALUE);
-												//String valueStr = list[i].getParentFile().getAbsolutePath();
-												StringBuffer valueBuffer = new StringBuffer(valueStr);
-												if ((_isWindows && valueStr.endsWith("\\"))|| valueStr.endsWith("/") || subject.getName().startsWith("/"))  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-												{
-													valueBuffer.append(subject.getName());
-													deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
-												} 
-												else 
-												{
-													valueBuffer.append(File.separatorChar);
-													valueBuffer.append(subject.getName());
-													deObj.setAttribute(DE.A_VALUE,valueBuffer.toString());
-												}
-											} 
-											else 
-											{
-												String valueStr = list[j].getParentFile().getAbsolutePath();
-												deObj.setAttribute(DE.A_VALUE, valueStr);
-											}
-										}
-									}
-								}
-								
-								String properties = setProperties(file);
-								if (deObj != null)
-								{
-									if (types != null)
-									{
-										String oldSource = deObj.getAttribute(DE.A_SOURCE);
-										String newSource = properties + "|" + types[j];
-										if (!oldSource.startsWith(newSource))
-										                                            
-									    {
-									        deObj.setAttribute(DE.A_SOURCE, newSource); //$NON-NLS-1$
-									    }
-									}
-									else
-									{
-										String oldSource = deObj.getAttribute(DE.A_SOURCE);
-										String newSource = properties;
-										if (!oldSource.startsWith(newSource))
-											deObj.setAttribute(DE.A_SOURCE, properties);
-									}
-								}
-							}
-						} // end for j
-						
-						//Object left over in the filteredChildren is no longer in the system any more.  Need to remove.
-						Iterator myIterator = filteredChildren.keySet().iterator();
-						while(myIterator.hasNext()) 
-						{
-							ds.deleteObject(subject, (DataElement)(filteredChildren.get(myIterator.next())));
-						}
-	
-				} catch (Exception e) {
-					e.printStackTrace();
-					UniversalServerUtilities.logError(CLASSNAME,
-							"createDataElement failed with exception - isFile ", e); //$NON-NLS-1$
-				}
-
-	}
-
-	/**
-	 * Method to create the DataElement object in the datastore out of a list of
-	 * VirtualChildren
-	 */
-
-	protected void createDataElement(DataStore ds, DataElement subject,
-			VirtualChild[] list, String filter, String rootPath,
-			String virtualPath) 
-	{
-
-		HashMap filteredChildren = new HashMap();
-		List children = subject.getNestedData();
-		if (children != null)
-		{
-			for (int f = 0; f < children.size(); f++)
-			{
-				DataElement child = (DataElement)children.get(f);
-				String type = child.getType();
-				if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || 
-				        type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR))
-				{
-					if (StringCompare.compare(filter, child.getName(), false))
-					{
-						filteredChildren.put(child.getName(), child);
-					}
-				}
-				else
-				{
-					filteredChildren.put(child.getName(), child);
-				}				
-			}
-		}
-			
 
 	
-				// Check if the current Objects in the DataStore are valid... exist
-				// on the remote host
-				try {
-					    boolean found = false;
-						for (int j = 0; j < list.length; ++j) 
-						{
-							found = false;
-							DataElement previousElement = (DataElement)filteredChildren.get(list[j].name);
-							if (previousElement != null &&!previousElement.isDeleted())
-							{
-								// Type have to be equal as well
-								String type = previousElement.getType();
-								boolean isfile = !list[j].isDirectory;
-								if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) 
-										|| (type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR) && !isfile)
-										)
-								{
-								    filteredChildren.remove(list[j].name);
-									found = true;
-								}
-							}
-							DataElement deObj = null;
-							VirtualChild child = list[j];
-							
-							if (found)
-							{
-								deObj = previousElement;
-							}
-							if (deObj == null) 
-							{
-								if (child.isDirectory) 
-								{
-									deObj = _dataStore.createObject(subject, IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR,child.name);
-								} 
-								else // file
-								{
-									deObj = _dataStore.createObject(subject,IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR, child.name);
-								}
-							
-							}
-							String oldValue = deObj.getAttribute(DE.A_VALUE);
-							String newValue = rootPath + ArchiveHandlerManager.VIRTUAL_SEPARATOR + virtualPath;
-							if (!oldValue.equals(newValue))  
-						    {
-						        deObj.setAttribute(DE.A_VALUE, newValue); //$NON-NLS-1$
-						    }
-							String oldSource = deObj.getAttribute(DE.A_SOURCE);
-							String newSource = setProperties(child);
-							if (!oldSource.startsWith(newSource))  
-						    {
-						        deObj.setAttribute(DE.A_SOURCE, newSource); //$NON-NLS-1$
-						    }
-
-						} // end for j
-						
-						//Object left over in the filteredChildren is no longer in the system any more.  Need to remove.
-						Iterator myIterator = filteredChildren.keySet().iterator();
-						while(myIterator.hasNext()) 
-						{
-							ds.deleteObject(subject, (DataElement)(filteredChildren.get(myIterator.next())));
-						}
-				} catch (Exception e) {
-					e.printStackTrace();
-					UniversalServerUtilities.logError(CLASSNAME,
-							"createDataElement failed with exception - isFile ", e); //$NON-NLS-1$
-				}
-	} // end currentObj not 0
-		
-
-	public String setProperties(File fileObj) {
-		return setProperties(fileObj, false);
-	}
-
-	/**
-	 * Method to obtain the properties of file or folder.
-	 */
-	public String setProperties(File fileObj, boolean doArchiveProperties) {
-		String version = IServiceConstants.VERSION_1;
-		StringBuffer buffer = new StringBuffer(500);
-		long date = fileObj.lastModified();
-		long size = fileObj.length();
-		boolean hidden = fileObj.isHidden();
-		boolean canWrite = fileObj.canWrite() ;
-		boolean canRead = fileObj.canRead();
-
-		// These extra properties here might cause problems for older clients,
-		// ie: a IndexOutOfBounds in UniversalFileImpl.
-
-		// DKM: defer this until later as it is bad for performacnes..
-		// I think we're doing the full query on an archive by instantiating a
-		// handler
-		boolean isArchive = false;//ArchiveHandlerManager.getInstance().isArchive(fileObj);
-
-		String comment;
-		if (isArchive)
-			comment = ArchiveHandlerManager.getInstance().getComment(fileObj);
-		else
-			comment = " "; //$NON-NLS-1$
-
-		long compressedSize = size;
-		String compressionMethod = " "; //$NON-NLS-1$
-		double compressionRatio = 0;
-
-		long expandedSize;
-		if (isArchive)
-			expandedSize = ArchiveHandlerManager.getInstance().getExpandedSize(
-					fileObj);
-		else
-			expandedSize = size;
-
-		buffer.append(version).append(IServiceConstants.TOKEN_SEPARATOR).append(date).append(
-				IServiceConstants.TOKEN_SEPARATOR).append(size).append(IServiceConstants.TOKEN_SEPARATOR);
-		buffer.append(hidden).append(IServiceConstants.TOKEN_SEPARATOR).append(canWrite).append(
-				IServiceConstants.TOKEN_SEPARATOR).append(canRead);
-
-		// values might not be used but we set them here just so that there are right number
-		// of properties
-		buffer.append(IServiceConstants.TOKEN_SEPARATOR);
-		buffer.append(comment).append(IServiceConstants.TOKEN_SEPARATOR).append(compressedSize)
-				.append(IServiceConstants.TOKEN_SEPARATOR).append(compressionMethod).append(
-						IServiceConstants.TOKEN_SEPARATOR);
-		buffer.append(compressionRatio).append(IServiceConstants.TOKEN_SEPARATOR).append(
-				expandedSize);
-		
-
-		String buf = buffer.toString();
-		return buf;
-	}
-
-	public String setProperties(VirtualChild fileObj) {
-		String version = IServiceConstants.VERSION_1;
-		StringBuffer buffer = new StringBuffer(500);
-		long date = fileObj.getTimeStamp();
-		long size = fileObj.getSize();
-		boolean hidden = false;
-		boolean canWrite = fileObj.getContainingArchive().canWrite();
-		boolean canRead = fileObj.getContainingArchive().canRead();
-
-		// These extra properties here might cause problems for older clients,
-		// ie: a IndexOutOfBounds in UniversalFileImpl.
-		String comment = fileObj.getComment();
-		if (comment.equals("")) //$NON-NLS-1$
-			comment = " "; // make sure this is still a //$NON-NLS-1$
-		// token
-		long compressedSize = fileObj.getCompressedSize();
-		String compressionMethod = fileObj.getCompressionMethod();
-		if (compressionMethod.equals("")) //$NON-NLS-1$
-			compressionMethod = " "; //$NON-NLS-1$
-		double compressionRatio = fileObj.getCompressionRatio();
-		long expandedSize = size;
-
-		buffer.append(version).append(IServiceConstants.TOKEN_SEPARATOR).append(date).append(
-				IServiceConstants.TOKEN_SEPARATOR).append(size).append(IServiceConstants.TOKEN_SEPARATOR);
-		buffer.append(hidden).append(IServiceConstants.TOKEN_SEPARATOR).append(canWrite).append(
-				IServiceConstants.TOKEN_SEPARATOR).append(canRead);
-
-		buffer.append(IServiceConstants.TOKEN_SEPARATOR);
-		buffer.append(comment).append(IServiceConstants.TOKEN_SEPARATOR).append(compressedSize)
-				.append(IServiceConstants.TOKEN_SEPARATOR).append(compressionMethod).append(
-						IServiceConstants.TOKEN_SEPARATOR);
-		buffer.append(compressionRatio).append(IServiceConstants.TOKEN_SEPARATOR).append(
-				expandedSize);
-
-		return buffer.toString();
-	}
-
 	/**
 	 * Method to obtain the classificatoin string of file or folder.
 	 */
@@ -2178,17 +1602,7 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		int tokens = str.length;
 		if (tokens < 10)
 		    return null;
-		/*
-		int tokens = tokenizer.countTokens();
-		if (tokens < 10)
-		    return null;
-		
-		String[] str = new String[tokens];
-		
-		for (int i = 0; i < tokens; ++i) {
-			str[i] = tokenizer.nextToken();
-		}
-*/
+
 		
 		return (str[10]);
 	}
@@ -2282,107 +1696,8 @@ private DataElement createDataElementFromLSString(DataElement subject,
 				_dataStore, this, theElement, status);
 		downloadThread.start();
 
-		// save find thread in hashmap for retrieval during cancel
-		_cancellableThreads.put(status.getParent(), downloadThread);
+		updateCancellableThreads(status.getParent(), downloadThread);
 		return status;
-
-		/*
-		 * DataElement arg1 = getCommandArgument(theElement, 1); String
-		 * elementType = arg1.getType(); String remotePath = arg1.getName();
-		 * 
-		 * String resultType = null; String resultMessage = null;
-		 * 
-		 * FileInputStream inputStream = null; BufferedInputStream
-		 * bufInputStream = null;
-		 * 
-		 * try {
-		 * 
-		 * if (elementType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) ||
-		 * elementType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR) ||
-		 * elementType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)) {
-		 * _dataStore.trace("download:" + remotePath + "," + elementType);
-		 * 
-		 * File file = new File(remotePath);
-		 * 
-		 * 
-		 * if (elementType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)) {
-		 * AbsoluteVirtualPath vpath = getAbsoluteVirtualPath(remotePath);
-		 * 
-		 * ISystemArchiveHandler handler =
-		 * _archiveHandlerManager.getRegisteredHandler(new
-		 * File(vpath.getContainingArchiveString())); VirtualChild vChild =
-		 * handler.getVirtualFile(vpath.getVirtualPart()); file =
-		 * vChild.getExtractedFile(); }
-		 * 
-		 * DataElement arg2 = getCommandArgument(theElement, 2); DataElement
-		 * arg3 = getCommandArgument(theElement, 3);
-		 * 
-		 * int mode = (Integer.valueOf(arg1.getSource())).intValue(); String
-		 * localPath = arg2.getName();
-		 * 
-		 * boolean isText = (mode == TEXT_MODE);
-		 * 
-		 * String clientEncoding = null;
-		 * 
-		 * if (isText) { clientEncoding = arg2.getSource(); } // Read in the
-		 * file inputStream = new FileInputStream(file); bufInputStream = new
-		 * BufferedInputStream(inputStream, BUFFER_SIZE);
-		 * 
-		 * boolean first = true; byte[] buffer = new byte[BUFFER_SIZE]; byte[]
-		 * convBytes; int numToRead = 0;
-		 * 
-		 * int available = bufInputStream.available();
-		 * 
-		 * while (available > 0) { numToRead = (available < BUFFER_SIZE) ?
-		 * available : BUFFER_SIZE;
-		 * 
-		 * int bytesRead = bufInputStream.read(buffer, 0, numToRead);
-		 * 
-		 * if (bytesRead == -1) break;
-		 * 
-		 * if (isText) { convBytes = (new String(buffer, 0,
-		 * bytesRead)).getBytes(clientEncoding);
-		 * 
-		 * if (first) { // send first set of bytes first = false;
-		 * _dataStore.updateFile(localPath, convBytes, convBytes.length, true); }
-		 * else { // append subsequent segments
-		 * _dataStore.updateAppendFile(localPath, convBytes, convBytes.length,
-		 * true); } } else {
-		 * 
-		 * if (first) { // send first set of bytes first = false;
-		 * _dataStore.updateFile(localPath, buffer, bytesRead, true); } else { //
-		 * append subsequent segments _dataStore.updateAppendFile(localPath,
-		 * buffer, bytesRead, true); } }
-		 * 
-		 * available = bufInputStream.available(); }
-		 * 
-		 * resultType = DOWNLOAD_RESULT_SUCCESS_TYPE; resultMessage =
-		 * DOWNLOAD_RESULT_SUCCESS_MESSAGE; } } catch (FileNotFoundException e) {
-		 * UniversalServerUtilities.logError(CLASSNAME, "handleDownload: error
-		 * reading file " + remotePath, e); resultType =
-		 * DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION; resultMessage =
-		 * e.getLocalizedMessage(); } catch (UnsupportedEncodingException e) {
-		 * UniversalServerUtilities.logError(CLASSNAME, "handleDownload: error
-		 * reading file " + remotePath, e); resultType =
-		 * DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION; resultMessage =
-		 * e.getLocalizedMessage(); } catch (IOException e) {
-		 * UniversalServerUtilities.logError(CLASSNAME, "handleDownload: error
-		 * reading file " + remotePath, e); resultType =
-		 * DOWNLOAD_RESULT_IO_EXCEPTION; resultMessage =
-		 * e.getLocalizedMessage(); } catch (Exception e) { e.printStackTrace(); }
-		 * finally {
-		 * 
-		 * try {
-		 * 
-		 * if (bufInputStream != null) bufInputStream.close(); } catch
-		 * (IOException e) { UniversalServerUtilities.logError(CLASSNAME,
-		 * "handleDownload: error closing reader on " + remotePath, e);
-		 * resultType = DOWNLOAD_RESULT_IO_EXCEPTION; resultMessage =
-		 * e.getMessage(); } }
-		 * 
-		 * _dataStore.createObject(arg1, resultType, resultMessage);
-		 * _dataStore.refresh(arg1); return statusDone(status);
-		 */
 	}
 
 	/**
@@ -2612,112 +1927,132 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		// Define filesystem descriptors
 		DataElement UniversalFilter = createObjectDescriptor(schemaRoot,
 				IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
-		deUniversalFileObject = createObjectDescriptor(schemaRoot,
+		FileDescriptors._deUniversalFileObject = createObjectDescriptor(schemaRoot,
 				IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR);
-		deUniversalFolderObject = createObjectDescriptor(schemaRoot,
+		FileDescriptors._deUniversalFolderObject = createObjectDescriptor(schemaRoot,
 				IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
-		deUniversalArchiveFileObject = createObjectDescriptor(
+		FileDescriptors._deUniversalArchiveFileObject = createObjectDescriptor(
 				schemaRoot, IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR);
-		deUniversalVirtualFileObject = createObjectDescriptor(
+		FileDescriptors._deUniversalVirtualFileObject = createObjectDescriptor(
 				schemaRoot, IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
-		deUniversalVirtualFolderObject = createObjectDescriptor(
+		FileDescriptors._deUniversalVirtualFolderObject = createObjectDescriptor(
 				schemaRoot, IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR);
 
 		_dataStore.refresh(schemaRoot);
 
+		// the cancellable object descriptor
+		DataElement cancellable = _dataStore.find(schemaRoot, DE.A_NAME, DataStoreResources.model_Cancellable, 1);
+		
 		// Define command descriptors
-		createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
-		createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
-		createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		DataElement queryAllFilterDescriptor = createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryAllFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+		
+		DataElement queryFilesFilterDescriptor = createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryFilesFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		
+		DataElement queryFolderFilterDescriptor = createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryFolderFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);		
+		
 		createCommandDescriptor(UniversalFilter, "Filter", IUniversalDataStoreConstants.C_QUERY_ROOTS); //$NON-NLS-1$ 
 
+		
+		DataElement queryAllDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryAllDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+		
+		DataElement queryFilesDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryFilesDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+
+		DataElement queryFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+
+		
+		DataElement queryAllArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryAllArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+
+		DataElement queryFilesArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryFilesArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+
+		DataElement queryFolderArchiveDescriptor = createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, queryFolderArchiveDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 		
+		
 		createCommandDescriptor(UniversalFilter, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$ 
 		createCommandDescriptor(UniversalFilter, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$ 
 		createCommandDescriptor(UniversalFilter, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
 		createCommandDescriptor(UniversalFilter, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
 		createCommandDescriptor(UniversalFilter, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
 		createCommandDescriptor(UniversalFilter, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_ALL); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FILES); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalArchiveFileObject, "Filter", IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS); //$NON-NLS-1$
 
-		_dataStore.createReference(deUniversalFileObject,
-				deUniversalArchiveFileObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
-		_dataStore.createReference(deUniversalFolderObject,
-				deUniversalArchiveFileObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
-		_dataStore.createReference(deUniversalFileObject,
-				deUniversalVirtualFileObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
-		_dataStore.createReference(deUniversalFolderObject,
-				deUniversalVirtualFolderObject, "abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		// create the search descriptor and make it cacnellable
-		DataElement searchDescriptor = createCommandDescriptor(deUniversalFolderObject, "Search", IUniversalDataStoreConstants.C_SEARCH); //$NON-NLS-1$ 
-		DataElement cancellable = _dataStore.find(schemaRoot, DE.A_NAME,
-				DataStoreResources.model_Cancellable, 1);
-		_dataStore.createReference(cancellable, searchDescriptor, "abstracts", //$NON-NLS-1$
-				"abstracted by"); //$NON-NLS-1$
+		_dataStore.createReference(FileDescriptors._deUniversalFileObject,
+				FileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+		_dataStore.createReference(FileDescriptors._deUniversalFolderObject,
+				FileDescriptors._deUniversalArchiveFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+		_dataStore.createReference(FileDescriptors._deUniversalFileObject,
+				FileDescriptors._deUniversalVirtualFileObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+		_dataStore.createReference(FileDescriptors._deUniversalFolderObject,
+				FileDescriptors._deUniversalVirtualFolderObject, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
 
-		createCommandDescriptor(deUniversalFolderObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
+		// create the search descriptor and make it cancelable
+		DataElement searchDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Search", IUniversalDataStoreConstants.C_SEARCH); //$NON-NLS-1$ 
+		_dataStore.createReference(cancellable, searchDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+		
+
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
 		createCommandDescriptor(tempnode, "Filter", IUniversalDataStoreConstants.C_CREATE_TEMP); //$NON-NLS-1$ 
-		createCommandDescriptor(deUniversalFileObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$ 
-		createCommandDescriptor(deUniversalFileObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$ 
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$ 
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$ 
 
-		createCommandDescriptor(deUniversalFileObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
 
-		createCommandDescriptor(deUniversalFolderObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$ 
-		createCommandDescriptor(deUniversalFolderObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "Copy", IUniversalDataStoreConstants.C_COPY); //$NON-NLS-1$ 
-		createCommandDescriptor(deUniversalFolderObject, "CopyBatch", IUniversalDataStoreConstants.C_COPY_BATCH); //$NON-NLS-1$ 
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$ 
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Copy", IUniversalDataStoreConstants.C_COPY); //$NON-NLS-1$ 
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CopyBatch", IUniversalDataStoreConstants.C_COPY_BATCH); //$NON-NLS-1$ 
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
 
-		createCommandDescriptor(deUniversalFileObject, "GetFileClassifications", IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATIONS); //$NON-NLS-1$ 
-		createCommandDescriptor(deUniversalFolderObject, "GetFolderClassifications", IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATION); //$NON-NLS-1$ 
-		createCommandDescriptor(deUniversalFolderObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFolderObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
-		createCommandDescriptor(deUniversalFileObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetFileClassifications", IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATIONS); //$NON-NLS-1$ 
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetFolderClassifications", IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATION); //$NON-NLS-1$ 
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
 
-		// create a download command descriptor and make it cancellable
+		// create a download command descriptor and make it cancelable
 		DataElement downloadDescriptor = createCommandDescriptor(
-				deUniversalFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
+				FileDescriptors._deUniversalFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, downloadDescriptor,
-				"abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
-		_dataStore.createReference(cancellable, downloadDescriptor,
-				"abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
+				DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+
 
 		DataElement adownloadDescriptor = createCommandDescriptor(
-				deUniversalArchiveFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
+				FileDescriptors._deUniversalArchiveFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$
 		_dataStore.createReference(cancellable, adownloadDescriptor,
-				"abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
-		_dataStore.createReference(cancellable, adownloadDescriptor,
-				"abstracts", "abstracted by"); //$NON-NLS-1$ //$NON-NLS-2$
+				DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by); 
+
 		
 		createCommandDescriptor(tempnode, "SystemEncoding", IUniversalDataStoreConstants.C_SYSTEM_ENCODING); //$NON-NLS-1$
 		
 		createCommandDescriptor(tempnode, "UnusedPort", IUniversalDataStoreConstants.C_QUERY_UNUSED_PORT); //$NON-NLS-1$
 
 		// command descriptor to retrieve package name for a class file
-		createCommandDescriptor(deUniversalFileObject, "GetQualifiedClassName", IUniversalDataStoreConstants.C_QUERY_CLASSNAME); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetQualifiedClassName", IUniversalDataStoreConstants.C_QUERY_CLASSNAME); //$NON-NLS-1$
 
 		// command descriptor to retrieve qualified class name for class file
-		createCommandDescriptor(deUniversalFileObject, "GetFullClassName", //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetFullClassName", //$NON-NLS-1$
 				IUniversalDataStoreConstants.C_QUERY_QUALIFIED_CLASSNAME);
 	}
 
@@ -2772,105 +2107,17 @@ private DataElement createDataElementFromLSString(DataElement subject,
 	}
 
 	public DataElement handleQueryAllArchive(DataElement subject, DataElement attributes, 
-			DataElement status, boolean caseSensitive, boolean foldersOnly) {
-		File fileobj = null;
-		try {
-			ArchiveHandlerManager mgr = ArchiveHandlerManager.getInstance();
-			char separatorChar = File.separatorChar;
-			if (ArchiveHandlerManager.isVirtual(subject
-					.getAttribute(DE.A_VALUE))) {
-				separatorChar = '/';
-			}
-
-			String path = subject.getAttribute(DE.A_VALUE) + separatorChar
-					+ subject.getName();
-			String rootPath = path;
-			String virtualPath = ""; //$NON-NLS-1$
-
-			VirtualChild[] children = null;
-
-			if (subject.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) {
-				// it's an archive file (i.e. file.zip)
-				fileobj = new File(rootPath);
-				subject.setAttribute(DE.A_SOURCE, setProperties(fileobj, true));
-				
-				if (foldersOnly) {
-					children = mgr.getFolderContents(fileobj, ""); //$NON-NLS-1$
-				} else {
-					children = mgr.getContents(fileobj, ""); //$NON-NLS-1$
-				}
-				
-			} else if (subject.getType().equals(
-					IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-				// it's a virtual folder (i.e. a folder within zip)
-				// need to determine the associate File object
-				AbsoluteVirtualPath avp = new AbsoluteVirtualPath(path);
-				rootPath = avp.getContainingArchiveString();
-				virtualPath = avp.getVirtualPart();
-				fileobj = new File(rootPath);
-			
-				if (fileobj.exists()) {
-				    
-					if (foldersOnly) {
-						children = mgr.getFolderContents(fileobj, virtualPath);
-					} else {
-						children = mgr.getContents(fileobj, virtualPath);
-					}
-					
-					subject.setAttribute(DE.A_SOURCE, setProperties(mgr.getVirtualObject(path)));
-					if (children == null || children.length == 0) {
-						_dataStore.trace("problem with virtual:" + virtualPath); //$NON-NLS-1$
-					}
-				} else {
-					_dataStore.trace("problem with File:" + rootPath); //$NON-NLS-1$
-				}
-			}
-			createDataElement(_dataStore, subject, children, "*", rootPath, virtualPath); //$NON-NLS-1$
-			
-			_dataStore.refresh(subject);
-			
-			FileClassifier clsfy = getFileClassifier(subject);
-			clsfy.start();
-			
-			return statusDone(status);
-		} catch (Exception e) {
-			if (!(fileobj == null)) {
-				try {
-					(new FileReader(fileobj)).read();
-				} catch (IOException ex) {
-					status.setAttribute(DE.A_VALUE, IClientServerConstants.FILEMSG_NO_PERMISSION);
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-					_dataStore.refresh(subject);
-					return statusDone(status);
-				}
-			}
-			status.setAttribute(DE.A_VALUE, IClientServerConstants.FILEMSG_ARCHIVE_CORRUPTED);
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			return statusDone(status);
-		}
+			DataElement status, boolean caseSensitive, boolean foldersOnly) 
+	{
+		// do query on a thread
+		ArchiveQueryThread queryThread = new ArchiveQueryThread(subject, attributes, caseSensitive, foldersOnly, showHidden, _isWindows, status);
+		queryThread.start();		
+		
+		updateCancellableThreads(status.getParent(), queryThread);
+		return status; // query is in thread so not updating status here
 	}
 
-//	private DataElement findExistingVirtual(DataElement subject, VirtualChild vchild) {
-//		String name = vchild.name;
-//		for (int i = 0; i < subject.getNestedSize(); i++) {
-//			DataElement child = subject.get(i);
-//			String deName = child.getName();
-//			if (name.equals(deName)) {
-//				if (vchild.isDirectory) {
-//					if (child.getType().equals(
-//							IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-//						return child;
-//					}
-//				} else {
-//					if (child.getType().equals(
-//							IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)) {
-//						return child;
-//					}
-//				}
-//			}
-//		}
-//		return null;
-//	}
+
 
 	public ISystemArchiveHandler getArchiveHandlerFor(String archivePath) {
 		File file = new File(archivePath);
@@ -3066,6 +2313,105 @@ private DataElement createDataElementFromLSString(DataElement subject,
 		
 		return statusDone(status);
 	}
+	
+	/**
+	 * Method to obtain the properties of file or folder.
+	 */
+	public String setProperties(File fileObj, boolean doArchiveProperties) {
+		String version = IServiceConstants.VERSION_1;
+		StringBuffer buffer = new StringBuffer(500);
+		long date = fileObj.lastModified();
+		long size = fileObj.length();
+		boolean hidden = fileObj.isHidden();
+		boolean canWrite = fileObj.canWrite() ;
+		boolean canRead = fileObj.canRead();
+
+		// These extra properties here might cause problems for older clients,
+		// ie: a IndexOutOfBounds in UniversalFileImpl.
+
+		// DKM: defer this until later as it is bad for performacnes..
+		// I think we're doing the full query on an archive by instantiating a
+		// handler
+		boolean isArchive = false;//ArchiveHandlerManager.getInstance().isArchive(fileObj);
+
+		String comment;
+		if (isArchive)
+			comment = ArchiveHandlerManager.getInstance().getComment(fileObj);
+		else
+			comment = " "; //$NON-NLS-1$
+
+		long compressedSize = size;
+		String compressionMethod = " "; //$NON-NLS-1$
+		double compressionRatio = 0;
+
+		long expandedSize;
+		if (isArchive)
+			expandedSize = ArchiveHandlerManager.getInstance().getExpandedSize(
+					fileObj);
+		else
+			expandedSize = size;
+
+		buffer.append(version).append(IServiceConstants.TOKEN_SEPARATOR).append(date).append(
+				IServiceConstants.TOKEN_SEPARATOR).append(size).append(IServiceConstants.TOKEN_SEPARATOR);
+		buffer.append(hidden).append(IServiceConstants.TOKEN_SEPARATOR).append(canWrite).append(
+				IServiceConstants.TOKEN_SEPARATOR).append(canRead);
+
+		// values might not be used but we set them here just so that there are right number
+		// of properties
+		buffer.append(IServiceConstants.TOKEN_SEPARATOR);
+		buffer.append(comment).append(IServiceConstants.TOKEN_SEPARATOR).append(compressedSize)
+				.append(IServiceConstants.TOKEN_SEPARATOR).append(compressionMethod).append(
+						IServiceConstants.TOKEN_SEPARATOR);
+		buffer.append(compressionRatio).append(IServiceConstants.TOKEN_SEPARATOR).append(
+				expandedSize);
+		
+
+		String buf = buffer.toString();
+		return buf;
+	}
+
+	public String setProperties(VirtualChild fileObj) {
+		String version = IServiceConstants.VERSION_1;
+		StringBuffer buffer = new StringBuffer(500);
+		long date = fileObj.getTimeStamp();
+		long size = fileObj.getSize();
+		boolean hidden = false;
+		boolean canWrite = fileObj.getContainingArchive().canWrite();
+		boolean canRead = fileObj.getContainingArchive().canRead();
+
+		// These extra properties here might cause problems for older clients,
+		// ie: a IndexOutOfBounds in UniversalFileImpl.
+		String comment = fileObj.getComment();
+		if (comment.equals("")) //$NON-NLS-1$
+			comment = " "; // make sure this is still a //$NON-NLS-1$
+		// token
+		long compressedSize = fileObj.getCompressedSize();
+		String compressionMethod = fileObj.getCompressionMethod();
+		if (compressionMethod.equals("")) //$NON-NLS-1$
+			compressionMethod = " "; //$NON-NLS-1$
+		double compressionRatio = fileObj.getCompressionRatio();
+		long expandedSize = size;
+
+		buffer.append(version).append(IServiceConstants.TOKEN_SEPARATOR).append(date).append(
+				IServiceConstants.TOKEN_SEPARATOR).append(size).append(IServiceConstants.TOKEN_SEPARATOR);
+		buffer.append(hidden).append(IServiceConstants.TOKEN_SEPARATOR).append(canWrite).append(
+				IServiceConstants.TOKEN_SEPARATOR).append(canRead);
+
+		buffer.append(IServiceConstants.TOKEN_SEPARATOR);
+		buffer.append(comment).append(IServiceConstants.TOKEN_SEPARATOR).append(compressedSize)
+				.append(IServiceConstants.TOKEN_SEPARATOR).append(compressionMethod).append(
+						IServiceConstants.TOKEN_SEPARATOR);
+		buffer.append(compressionRatio).append(IServiceConstants.TOKEN_SEPARATOR).append(
+				expandedSize);
+
+		return buffer.toString();
+	}
+	
+	public String setProperties(File fileObj) {
+		return setProperties(fileObj, false);
+	}
+
+	
 	
 	/**
 	 * Quote a file name such that it is valid in a shell

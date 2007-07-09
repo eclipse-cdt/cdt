@@ -87,6 +87,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 			{
 				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
 				smon.waitForUpdate(status, monitor);
+				
 				int resultSize = subject.getNestedSize();
 
 				checkHostJVM();

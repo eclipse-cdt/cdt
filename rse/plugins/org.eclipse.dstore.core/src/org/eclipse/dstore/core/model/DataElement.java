@@ -294,7 +294,7 @@ public final class DataElement implements IDataElement
 		
 		_isReference = false;
 		_isDescriptor = false;
-		_depth = 2;
+		_depth = 1;
 
 		_referencedObject = null;
 		_isExpanded = false;
@@ -303,7 +303,7 @@ public final class DataElement implements IDataElement
 		String depthStr = getAttribute(DE.A_DEPTH);
 		if (depthStr != null && depthStr.length() > 0)
 		{
-			if (!depthStr.equals("2")) //$NON-NLS-1$
+			if (!depthStr.equals("1")) //$NON-NLS-1$
 			{
 				try
 				{
@@ -807,9 +807,9 @@ public final class DataElement implements IDataElement
 	public void setBuffer(StringBuffer buffer)
 	{
 		_buffer = buffer;
-		if (_depth < 2 && buffer.length() > 0)
+		if (_depth < 1 && buffer.length() > 0)
 		{
-			setDepth(2);
+			setDepth(1);
 		}
 
 		_isUpdated = false;
@@ -1547,7 +1547,7 @@ public final class DataElement implements IDataElement
 	{
 		_isReference = false;
 		_isDescriptor = false;
-		_depth = 2;
+		_depth = 1;
 
 		_referencedObject = null;
 		_isExpanded = false;

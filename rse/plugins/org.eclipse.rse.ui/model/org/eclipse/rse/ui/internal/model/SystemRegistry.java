@@ -1056,11 +1056,20 @@ public class SystemRegistry implements ISystemRegistry
 			ISystemDragDropAdapter adapter = null;
 	    	
 			adapter = (ISystemDragDropAdapter)((IAdaptable)firstObject).getAdapter(ISystemDragDropAdapter.class);
+			String subSystemId = null; 
       	
       	  	if (adapter != null ) {
       		  // first need to check subsystems
       		  ISubSystem subSystem = adapter.getSubSystem(firstObject);
-      		  String subSystemId = getAbsoluteNameForSubSystem(subSystem);
+      		  if (null != subSystem)
+      		  {
+      			  subSystemId = getAbsoluteNameForSubSystem(subSystem);
+      		  }
+      		  else
+      		  {
+      			  subSystemId = "";  //$NON-NLS-1$
+      		  }
+      		
       		  if (firstObjectFullName != null)
       		  {
       			firstObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + firstObjectFullName; //$NON-NLS-1$
@@ -1081,11 +1090,19 @@ public class SystemRegistry implements ISystemRegistry
 			ISystemDragDropAdapter adapter = null;
 	    	
 			adapter = (ISystemDragDropAdapter)((IAdaptable)secondObject).getAdapter(ISystemDragDropAdapter.class);
+			String subSystemId = null; 
       	
       	  	if (adapter != null ) {
       		  // first need to check subsystems
       		  ISubSystem subSystem = adapter.getSubSystem(secondObject);
-      		  String subSystemId = getAbsoluteNameForSubSystem(subSystem);
+      		  if (null != subSystem)
+    		  {
+    			  subSystemId = getAbsoluteNameForSubSystem(subSystem);
+    		  }
+    		  else
+    		  {
+    			  subSystemId = "";  //$NON-NLS-1$
+    		  }
       		  if (secondObjectFullName != null)
     		  {
     			secondObjectAbsoluteNameWithSubSystemId = subSystemId + ":" + secondObjectFullName; //$NON-NLS-1$

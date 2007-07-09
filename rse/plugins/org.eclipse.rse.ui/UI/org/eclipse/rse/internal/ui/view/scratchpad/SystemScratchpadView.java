@@ -16,6 +16,7 @@
  * Kevin Doyle (IBM) - [192278] Removed handleKeyPressed
  * Kevin Doyle (IBM) - [189150] _selectionFlagsUpdated reset after clear action performed
  * Kevin Doyle (IBM) - [195537] Use Hashlookup and ElementComparer
+ * Kevin Doyle (IBM) - [189423] Scratchpad not completely updated after Delete.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -82,6 +83,7 @@ import org.eclipse.rse.ui.SystemMenuManager;
 import org.eclipse.rse.ui.actions.ISystemAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.internal.model.SystemRegistryUI;
+import org.eclipse.rse.ui.internal.model.SystemScratchpad;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.model.ISystemShellProvider;
@@ -464,15 +466,21 @@ public class SystemScratchpadView
 				// --------------------------
 			case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED :
 				{
-			    	if (remoteResourceParent != null)
-			    	{
-			    	    internalRefresh(remoteResourceParent);
-			    	}
-			    	else
-			    	{
-			             remove(remoteResource);
-			         
-			        }
+		    		// check if remoteResource is a root in Scratchpad and if so remove it
+		    		SystemScratchpad scratchpad = SystemRegistryUI.getInstance().getSystemScratchPad();
+		    		if (scratchpad.contains(remoteResource))
+		    			scratchpad.removeChild(remoteResource);
+		    		
+		    		// find all references to the remote resource and remove them
+		    		Widget[] widgets = findItems(remoteResource);
+		    		for (int i = 0; i < widgets.length; i++)
+		    		{
+		    			if (widgets[i] instanceof TreeItem)
+		    			{
+		    				remove(getTreePathFromItem((TreeItem) widgets[i]));
+		    			}
+		    		}
+	        
 			    /*
 					{
 						Object dchild = remoteResource;

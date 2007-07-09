@@ -172,17 +172,12 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
     }
 
 
-private  UPCParserAction  action = new  UPCParserAction (this, UPCParserprs.orderedTerminalSymbols);
+private  UPCParserAction  action = new  UPCParserAction (this, new  UPCTokenMap ());
 private List commentTokens = new ArrayList();
 private IKeywordMap keywordMap = new  UPCKeywordMap ();
 
 public UPCParser() {  // constructor
-	this(new C99Lexer() {
-		// used by mapKind() to map C99 token kinds to the token kinds of a parser that extends this one
-		public String[] orderedExportedSymbols() {
-			return C99Parsersym.orderedTerminalSymbols;
-		}
-	});
+	this(new  UPCLexer ());
 }
 
 public void addToken(IToken token) {
@@ -207,7 +202,7 @@ public List getCommentTokens() {
 
 public void resetTokenStream() {
 	super.resetTokenStream();
-	action = new  UPCParserAction (this, UPCParserprs.orderedTerminalSymbols);
+	action = new  UPCParserAction (this, new  UPCTokenMap ());
 	commentTokens = new ArrayList();
 }
 

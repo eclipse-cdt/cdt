@@ -122,13 +122,10 @@ public interface UPCParsersym {
       TK_RightBrace = 52,
       TK_SemiColon = 39,
       TK_Invalid = 110,
-      TK_PlaceMarker = 111,
-      TK_Parameter = 112,
-      TK_DisabledMacroName = 113,
       TK_Completion = 5,
       TK_EndOfCompletion = 4,
-      TK_SingleLineComment = 114,
-      TK_MultiLineComment = 115,
+      TK_SingleLineComment = 111,
+      TK_MultiLineComment = 112,
       TK_ERROR_TOKEN = 58;
 
       public final static String orderedTerminalSymbols[] = {
@@ -243,9 +240,6 @@ public interface UPCParsersym {
                  "HashHash",//$NON-NLS-1$
                  "NewLine",//$NON-NLS-1$
                  "Invalid",//$NON-NLS-1$
-                 "PlaceMarker",//$NON-NLS-1$
-                 "Parameter",//$NON-NLS-1$
-                 "DisabledMacroName",//$NON-NLS-1$
                  "SingleLineComment",//$NON-NLS-1$
                  "MultiLineComment"//$NON-NLS-1$
              };

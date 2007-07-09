@@ -12,7 +12,7 @@
 %options la=2
 %options package=org.eclipse.cdt.internal.core.dom.parser.upc
 %options template=btParserTemplateD.g
-%options import_terminals=D:\workspaces\cdt-head2\org.eclipse.cdt.core.parser.c99\src\org\eclipse\cdt\internal\core\dom\parser\c99\C99Lexer.g
+%options import_terminals=UPCLexer.g
 
 
 -- Unified Parallel C (UPC) is an extension of C99.
@@ -36,6 +36,8 @@ $End
 $Define	
 	$action_class /. UPCParserAction ./
 	$keyword_map_class /. UPCKeywordMap ./
+	$token_map_class /. UPCTokenMap ./
+	$lexer_class /. UPCLexer ./
 $End
 
 

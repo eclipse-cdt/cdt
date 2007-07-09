@@ -11,14 +11,16 @@
 package org.eclipse.cdt.core.dom.upc;
 
 import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
-import org.eclipse.cdt.core.dom.c99.C99Language;
 import org.eclipse.cdt.core.dom.c99.IKeywordMap;
+import org.eclipse.cdt.core.dom.c99.ILexerFactory;
 import org.eclipse.cdt.core.dom.c99.IParser;
 import org.eclipse.cdt.core.dom.c99.IPreprocessorExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c99.C99KeywordMap;
 import org.eclipse.cdt.core.dom.parser.c99.GCCPreprocessorExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c99.ITokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCLexerFactory;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCTokenMap;
 
 
 /**
@@ -37,8 +39,8 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.core.parser.upc"; //$NON-NLS-1$ 
 	public static final String ID = PLUGIN_ID + ".upc"; //$NON-NLS-1$ 
 	
-	private static UPCKeywordMap keywordMap = new UPCKeywordMap();
-	private static final UPCLanguage myDefault = new UPCLanguage();
+	private static final UPCKeywordMap keywordMap = new UPCKeywordMap();
+	private static final UPCLanguage   myDefault  = new UPCLanguage();
 	
 	
 	public static UPCLanguage getDefault() {
@@ -67,4 +69,11 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		return GCC_PREPROCESSOR_EXTENSION;
 	}
 
+	protected ILexerFactory getLexerFactory() {
+		return new UPCLexerFactory();
+	}
+	
+	protected ITokenMap getTokenMap() {
+		return new UPCTokenMap();
+	}
 }

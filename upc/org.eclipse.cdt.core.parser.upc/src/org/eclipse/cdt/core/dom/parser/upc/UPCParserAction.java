@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.c99.IASTNodeFactory;
 import org.eclipse.cdt.core.dom.c99.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.parser.c99.ASTStack;
 import org.eclipse.cdt.core.dom.parser.c99.C99ParserAction;
+import org.eclipse.cdt.core.dom.parser.c99.ITokenMap;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
@@ -44,8 +45,8 @@ public class UPCParserAction extends C99ParserAction {
 	private final ASTStack astStack;
 	
 		
-	public UPCParserAction(IParserActionTokenProvider parser, String[] orderedTerminalSymbols) {
-		super(parser, orderedTerminalSymbols);
+	public UPCParserAction(IParserActionTokenProvider parser, ITokenMap tokenMap) {
+		super(parser, tokenMap);
 		this.astStack = super.getASTStack();
 		this.nodeFactory = (UPCASTNodeFactory) super.getNodeFactory();
 	}

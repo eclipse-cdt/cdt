@@ -1570,9 +1570,9 @@ public class SystemTableViewPart extends ViewPart
 	    for (int i = 0; i < _browseHistory.size(); i++)
 	    {
 	        HistoryItem hist = (HistoryItem)_browseHistory.get(i);
-	        if (hist.getObject() == c)
+	        Object historyObj = hist.getObject();
+	        if (historyObj == c || historyObj.equals(c))
 	        {
-	          
 	            _browseHistory.remove(hist);
 	            if (_browsePosition >= i)
 	            {
@@ -1610,11 +1610,11 @@ public class SystemTableViewPart extends ViewPart
 	{
 		int eventType = event.getEventType();
 		Object remoteResource = event.getResource();
-		Vector remoteResourceNames = null;
-		if (remoteResource instanceof Vector)
+		java.util.List remoteResourceNames = null;
+		if (remoteResource instanceof java.util.List)
 		{
-			remoteResourceNames = (Vector) remoteResource;
-			remoteResource = remoteResourceNames.elementAt(0);
+			remoteResourceNames = (java.util.List) remoteResource;
+			remoteResource = remoteResourceNames.get(0);
 		}
 
 		Object child = event.getResource();
@@ -1630,7 +1630,7 @@ public class SystemTableViewPart extends ViewPart
 			referToSameObject = ((SystemRegistry)registry).isSameObjectByAbsoluteName(input, null, child, event.getOldName());
 		}
 		
-		if (input == child || child instanceof Vector || referToSameObject)
+		if (input == child || child instanceof java.util.List || referToSameObject)
 		{ 
 			switch (eventType)
 			{
@@ -1651,12 +1651,12 @@ public class SystemTableViewPart extends ViewPart
 					// --------------------------
 				case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED :
 					{				    
-				    	if (child instanceof Vector)
+				    	if (child instanceof java.util.List)
 				    	{
-				    	    Vector vec = (Vector)child;
-				    	    for (int v = 0; v < vec.size(); v++)
+				    		java.util.List list = (java.util.List)child;
+				    	    for (int v = 0; v < list.size(); v++)
 				    	    {
-				    	        Object c = vec.get(v);
+				    	        Object c = list.get(v);
 				    	        
 				    	        removeFromHistory(c);			
 				    	        /*

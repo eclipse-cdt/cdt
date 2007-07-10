@@ -23,7 +23,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -39,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -51,6 +54,8 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
+import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
 
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
@@ -222,7 +227,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			final ArrayList elements= new ArrayList();
 			for (int i = 0; i < declNames.length; i++) {
 				try {
-					ICElement elem = IndexUI.getCElementForName(project, index, declNames[i]);
+					ICElement elem = getCElementForName(project, index, declNames[i]);
 					if (elem instanceof ISourceReference) {
 						elements.add(elem);
 					}
@@ -264,6 +269,27 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				}
 			});
 			return true;
+		}
+
+		private ICElementHandle getCElementForName(ICProject project, IIndex index, IName declName) 
+				throws CoreException {
+			if (declName instanceof IIndexName) {
+				return IndexUI.getCElementForName(project, index, (IIndexName) declName);
+			}
+			if (declName instanceof IASTName) {
+				IASTName astName = (IASTName) declName;
+				IBinding binding= astName.resolveBinding();
+				if (binding != null) {
+					ITranslationUnit tu= IndexUI.getTranslationUnit(project, astName);
+					if (tu != null) {
+						IASTFileLocation loc= astName.getFileLocation();
+						IRegion region= new Region(loc.getNodeOffset(), loc.getNodeLength());
+						return CElementHandleFactory.create(tu, binding, astName.isDefinition(), region, 0);
+					}
+				}
+				return null;
+			}
+			return null;
 		}
 
 		private IName[] findNames(IIndex index, IASTTranslationUnit ast,

@@ -10,11 +10,8 @@
  *     Markus Schorn (Wind River Systems)
  *     Andrew Ferguson (Symbian)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
-package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -1177,7 +1174,10 @@ public class CPPVisitor {
 							break;
 						}
 					} else if( prop == IASTDeclarator.DECLARATOR_NAME ){
-					    IASTNode p = name.getParent().getParent();
+					    IASTNode p = name.getParent();
+					    while (p instanceof IASTDeclarator) {
+					    	p= p.getParent();
+					    }
 					    if( p instanceof IASTSimpleDeclaration ){
 					        IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)p).getDeclSpecifier();
 					        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_typedef )

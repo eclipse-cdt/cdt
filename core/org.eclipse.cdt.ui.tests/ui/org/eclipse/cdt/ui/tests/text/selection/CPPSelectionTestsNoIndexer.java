@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -41,18 +42,19 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
@@ -175,7 +177,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); //$NON-NLS-1$
+        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); 
         
         File linkFile = new File(location.toOSString());
         if (!linkFile.exists()) {
@@ -237,8 +239,9 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
             assertFalse(true);
         }
         
-        if (part instanceof AbstractTextEditor) {
-            ((AbstractTextEditor)part).getSelectionProvider().setSelection(new TextSelection(offset,length));
+        if (part instanceof ITextEditor) {
+        	ITextEditor editor= (ITextEditor) part;
+            editor.getSelectionProvider().setSelection(new TextSelection(offset,length));
             
             final OpenDeclarationsAction action = (OpenDeclarationsAction) ((AbstractTextEditor)part).getAction("OpenDeclarations"); //$NON-NLS-1$
             action.runSync();
@@ -249,7 +252,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
             final IASTName[] result= {null};
             if (sel instanceof ITextSelection) {
             	final ITextSelection textSel = (ITextSelection)sel;
-            	ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(file);
+            	ITranslationUnit tu= CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
         		IStatus ok= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
         			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
                         IASTName[] names = language.getSelectedNames(ast, textSel.getOffset(), textSel.getLength());
@@ -921,7 +924,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         String code = buffer.toString();
         IFile file = importFileWithLink("testBug78354.cpp", code); //$NON-NLS-1$
         
-        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$ //$NON-NLS-2$
+        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$ 
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "TestTypeOne"); //$NON-NLS-1$
@@ -965,5 +968,41 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((IASTName)decl).toString(), "x"); //$NON-NLS-1$
         assertEquals(((ASTNode)decl).getOffset(), 4);
         assertEquals(((ASTNode)decl).getLength(), 1);
+    }
+    
+    //  typedef int (*functionPointer)(int);
+    //  functionPointer fctVariable;
+
+    //  typedef int (functionPointerArray[2])(int);
+    //  functionPointerArray fctVariablArray;
+    public void testBug195822() throws Exception {
+    	StringBuffer[] contents= getContentsForTest(2);
+    	String code= contents[0].toString();
+    	String appendCode= contents[1].toString();
+
+    	String[] filenames= {"testBug195822.c", "testBug195822.cpp"};
+    	for (int i=0; i<2; i++) {
+    		IFile file = importFile(filenames[i], code); 
+    		int od1 = code.indexOf("functionPointer");
+    		int or1 = code.indexOf("functionPointer", od1+1);
+
+    		IASTNode decl = testF3(file, or1);
+    		assertTrue(decl instanceof IASTName);
+    		assertEquals(((IASTName)decl).toString(), "functionPointer"); //$NON-NLS-1$
+    		assertEquals(((ASTNode)decl).getOffset(), od1);
+
+    		IEditorPart editor= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+    		assertNotNull(editor);
+    		assertTrue(editor instanceof ITextEditor);
+    		IDocument doc= ((ITextEditor) editor).getDocumentProvider().getDocument(editor.getEditorInput());
+    		doc.replace(doc.getLength(), 0, appendCode);
+    		int od2 = appendCode.indexOf("functionPointerArray");
+    		int or2 = appendCode.indexOf("functionPointerArray", od2+1);
+
+    		decl = testF3(file, code.length() + or2);
+    		assertTrue(decl instanceof IASTName);
+    		assertEquals(((IASTName)decl).toString(), "functionPointerArray"); 
+    		assertEquals(((ASTNode)decl).getOffset(), code.length() + od2);
+    	}
     }
 }

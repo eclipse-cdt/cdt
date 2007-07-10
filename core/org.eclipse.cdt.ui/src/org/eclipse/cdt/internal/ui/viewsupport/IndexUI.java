@@ -258,19 +258,17 @@ public class IndexUI {
 		return EMPTY_ELEMENTS;
 	}
 
-	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IName declName) 
-			throws CoreException {
-		if (declName instanceof IASTName) {
-			return getCElementForName(preferProject, index, (IASTName) declName);
-		}
-		else if (declName instanceof IIndexName) {
-			return getCElementForName(preferProject, index, (IIndexName) declName);
-		}
-		return null;
-	}
-
+	/**
+	 * Creates CElementHandles for definitions or declarations when you expect to find those
+	 * in the index.
+	 * @param preferProject
+	 * @param index
+	 * @param declName
+	 * @return the ICElementHandle or <code>null</code>.
+	 */
 	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IASTName declName) 
 			throws CoreException {
+		assert !declName.isReference();
 		IBinding binding= declName.resolveBinding();
 		if (binding != null) {
 			ITranslationUnit tu= getTranslationUnit(preferProject, declName);
@@ -289,7 +287,7 @@ public class IndexUI {
 		return null;
 	}
 	
-	private static ITranslationUnit getTranslationUnit(ICProject cproject, IName name) {
+	public static ITranslationUnit getTranslationUnit(ICProject cproject, IName name) {
 		IPath path= Path.fromOSString(name.getFileLocation().getFileName());
 		try {
 			return CoreModelUtil.findTranslationUnitForLocation(path, cproject);

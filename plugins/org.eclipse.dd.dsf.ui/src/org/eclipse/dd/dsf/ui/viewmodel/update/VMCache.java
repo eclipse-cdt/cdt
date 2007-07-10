@@ -95,9 +95,12 @@ public abstract class VMCache
     			@Override
     			protected void handleCompleted()
     			{
-    				if(isCacheWriteEnabled())
-    					fHasChildren.put(update.getElement(), this.getData());
-    				update.setHasChilren(getData());
+                    if(getStatus().isOK())
+                    {
+                        if(isCacheWriteEnabled())
+                            fHasChildren.put(update.getElement(), this.getData());
+                        update.setHasChilren(getData());
+                    }
     				update.done();
     			}
 			});

@@ -388,6 +388,11 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             return IModelDelta.CONTENT;
         }
         else if (e instanceof IRegisters.IRegistersChangedDMEvent) {
+            /*
+             * Flush the cache.
+             */
+            VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
+            
             return IModelDelta.CONTENT;
         }
         else if (e instanceof IRegisters.IRegisterChangedDMEvent) {

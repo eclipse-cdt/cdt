@@ -13,7 +13,11 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.dd.dsf.ui.DsfUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 
@@ -71,7 +75,12 @@ public class VMElementsUpdate extends VMViewerUpdate implements IChildrenUpdate 
     public void done() {
         @SuppressWarnings("unchecked")
         DataRequestMonitor<List<Object>> rm = (DataRequestMonitor<List<Object>>)fRequestMonitor;
-        rm.setData(fElements);
+        if (fElements.size() == fLength) {
+            rm.setData(fElements);
+        } else {
+            rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$
+        }
         super.done();
     }
+    
 }

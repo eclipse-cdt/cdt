@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c99.C99Lexer;
 import org.eclipse.cdt.internal.core.dom.parser.c99.C99Parsersym;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
+import org.eclipse.cdt.internal.core.dom.parser.c99.C99TokenMap;
 ./
 $End
 

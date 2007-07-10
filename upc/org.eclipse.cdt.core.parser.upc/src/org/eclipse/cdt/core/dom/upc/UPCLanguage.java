@@ -13,14 +13,14 @@ package org.eclipse.cdt.core.dom.upc;
 import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.c99.IKeywordMap;
 import org.eclipse.cdt.core.dom.c99.ILexerFactory;
+import org.eclipse.cdt.core.dom.c99.IPPTokenComparator;
 import org.eclipse.cdt.core.dom.c99.IParser;
 import org.eclipse.cdt.core.dom.c99.IPreprocessorExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c99.GCCPreprocessorExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c99.ITokenMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCLexerFactory;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCPPTokenComparator;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
-import org.eclipse.cdt.internal.core.dom.parser.upc.UPCTokenMap;
 
 
 /**
@@ -72,8 +72,8 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 	protected ILexerFactory getLexerFactory() {
 		return new UPCLexerFactory();
 	}
-	
-	protected ITokenMap getTokenMap() {
-		return new UPCTokenMap();
+
+	protected IPPTokenComparator getTokenComparator() {
+		return new UPCPPTokenComparator();
 	}
 }

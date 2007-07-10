@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.core.model.BinaryFilePresentation;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
@@ -53,16 +55,27 @@ public class Binary extends Openable implements IBinary {
 	
 	private long fLastModification;
 
-	IBinaryObject binaryObject;
+	private IBinaryObject binaryObject;
+	private boolean showInBinaryContainer;
 
 	public Binary(ICElement parent, IFile file, IBinaryObject bin) {
 		super(parent, file, ICElement.C_BINARY);
 		binaryObject = bin;
+		showInBinaryContainer= determineShowInBinaryContainer(bin);
+	}
+
+	private boolean determineShowInBinaryContainer(IBinaryObject bin) {
+		BinaryFilePresentation presentation= (BinaryFilePresentation) bin.getAdapter(BinaryFilePresentation.class);
+		if (presentation != null) {
+			return presentation.showInBinaryContainer();
+		}
+		return BinaryFilePresentation.showInBinaryContainer(bin);
 	}
 
 	public Binary(ICElement parent, IPath path, IBinaryObject bin) {
 		super (parent, path, ICElement.C_BINARY);
 		binaryObject = bin;
+		showInBinaryContainer= determineShowInBinaryContainer(bin);
 	}
 
 	public boolean isSharedLib() {
@@ -495,5 +508,9 @@ public class Binary extends Openable implements IBinary {
 			pinfo.vBin.removeChild(this);
 		}
 		super.closing(info);
+	}
+
+	public boolean showInBinaryContainer() {
+		return showInBinaryContainer;
 	}
 }

@@ -281,7 +281,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		ICProject cproject = null;
 		if (cfile instanceof IBinary) {
 			IBinary bin = (IBinary)cfile;
-			if (bin.isExecutable() || bin.isSharedLib()) {
+			if (bin.showInBinaryContainer()) {
 				cproject = bin.getCProject();
 				container = cproject.getBinaryContainer();
 			}

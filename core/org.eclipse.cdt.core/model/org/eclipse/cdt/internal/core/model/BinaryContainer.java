@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -41,7 +42,7 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 		for (int i = 0; i < e.length; i++) {
 			if (e[i] instanceof IBinary) {
 				IBinary bin = (IBinary)e[i];
-				if (bin.isExecutable() || bin.isSharedLib()) {
+				if (bin.showInBinaryContainer()) {
 					list.add(bin);
 				}
 			}

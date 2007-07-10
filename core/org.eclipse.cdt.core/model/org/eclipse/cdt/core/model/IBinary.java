@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,18 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
 
 /**
- * Represents a Binary file, for example an ELF excutable.
+ * Represents a Binary file, for example an ELF executable.
  * An ELF parser will inspect the binary.
+ * 
+ * <p> 
+ * This interface is not intended to be implemented by clients. 
+ * </p>
  */
 public interface IBinary extends ICElement, IParent, IOpenable {
 	/**
@@ -43,6 +48,12 @@ public interface IBinary extends ICElement, IParent, IOpenable {
 	
 	public boolean isLittleEndian();
 
+	/**
+	 * Determines whether this binary is part of the binary container. The binary container collects
+	 * binaries from a project. This is typically used to presents the executables of a project under
+	 * a common node in the CView or ProjectNavigator. 
+	 */
+	public boolean showInBinaryContainer();
 	//public IAddressFactory getAddressFactory();
 
 }

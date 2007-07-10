@@ -249,8 +249,9 @@ public class CContainer extends Openable implements ICContainer {
 							ArchiveContainer vlib = (ArchiveContainer) cproject.getArchiveContainer();
 							vlib.addChild(celement);
 						} else {
-							celement = new Binary(this, file, (IBinaryObject) bin);
-							if (bin.getType() == IBinaryFile.EXECUTABLE || bin.getType() == IBinaryFile.SHARED) {
+							final Binary binElement= new Binary(this, file, (IBinaryObject) bin);
+							celement= binElement;
+							if (binElement.showInBinaryContainer()) {
 								BinaryContainer vbin = (BinaryContainer) cproject.getBinaryContainer();
 								vbin.addChild(celement);
 							}

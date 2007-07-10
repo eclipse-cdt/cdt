@@ -3877,5 +3877,19 @@ public class AST2Tests extends AST2BaseTest {
 		StringBuffer buffer = getContents(1)[0];
 		parse( buffer.toString(), ParserLanguage.CPP, false, false, true ); 
 		parse( buffer.toString(), ParserLanguage.C, false, false, true ); 
-	}	
+	}
+	
+	public void test195943() throws Exception {
+		final int depth= 100;
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("#define M0 1\n");
+		for (int i = 1; i < depth; i++) {
+			buffer.append("#define M" + i + " (M" + (i-1) + "+1)\n");
+		}
+		buffer.append("int a= M" + (depth-1) + ";\n");
+		long time= System.currentTimeMillis();
+		parse(buffer.toString(), ParserLanguage.CPP); 
+		parse( buffer.toString(), ParserLanguage.C);
+		assertTrue(System.currentTimeMillis()-time < 1000);
+	}
 }

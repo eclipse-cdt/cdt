@@ -963,6 +963,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      */
     protected IASTTypeId typeId(boolean forNewExpression) throws EndOfFileException {
+    	if (!canBeTypeSpecifier()) {
+    		return null;
+    	}
         IToken mark = mark();
         int startingOffset = mark.getOffset();
         IASTDeclSpecifier declSpecifier = null;

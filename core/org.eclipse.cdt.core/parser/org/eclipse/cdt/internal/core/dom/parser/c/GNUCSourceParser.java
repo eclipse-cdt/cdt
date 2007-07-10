@@ -1265,6 +1265,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     protected IASTTypeId typeId(boolean forNewExpression) throws EndOfFileException {
+    	if (!canBeTypeSpecifier()) {
+    		return null;
+    	}
         IToken mark = mark();
         int startingOffset = mark.getOffset();
         IASTDeclSpecifier declSpecifier = null;

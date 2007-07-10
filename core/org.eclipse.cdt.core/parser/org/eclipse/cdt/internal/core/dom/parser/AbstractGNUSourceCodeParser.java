@@ -2406,6 +2406,47 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		return false;
 	}
 	
+	protected boolean canBeTypeSpecifier() throws EndOfFileException {
+		switch (LT(1)) {
+		// simple type specifiers:
+		case IToken.tIDENTIFIER:
+		case IToken.tCOLONCOLON:
+        case IToken.t_void:
+		case IToken.t_char:
+		case IToken.t_wchar_t:
+		case IToken.t_bool:
+		case IToken.t_short:
+        case IToken.t_int:
+        case IToken.t_long:
+        case IToken.t_float:
+        case IToken.t_double:
+        case IToken.t__Bool:
+        case IToken.t__Complex:
+        case IToken.t__Imaginary:
+        case IToken.t_signed:
+        case IToken.t_unsigned:
+
+        // class-specifier:
+        case IToken.t_class:
+        case IToken.t_struct:
+        case IToken.t_union:
+
+        // enum-specifier:
+        case IToken.t_enum:
+
+        // elaborated type specifier: (together with class, struct, union, enum
+        case IToken.t_typename:
+        	
+        // cq-qualifiers
+		case IToken.t_const:
+        case IToken.t_volatile:
+        case IToken.t_restrict:
+        	return true;
+		}
+
+		return false;
+	}
+	
 	/**
 	 * Creates the ast node for a comment.
 	 * @since 4.0

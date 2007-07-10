@@ -2650,6 +2650,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         } else
             name = createName();
 
+        // bug 195701, gcc 4.2 allows visibility attribute for namespaces.
+        __attribute_decl_seq(true, false);
+        
         if (LT(1) == IToken.tLBRACE) {
             consume();
             ICPPASTNamespaceDefinition namespaceDefinition = createNamespaceDefinition();

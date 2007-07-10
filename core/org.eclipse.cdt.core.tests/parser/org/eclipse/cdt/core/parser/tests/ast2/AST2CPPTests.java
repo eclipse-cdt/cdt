@@ -5481,4 +5481,16 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertTrue(binding instanceof IFunction);
     	assertFalse(binding instanceof IProblemBinding);
     }
+    
+
+
+
+	// #define _GLIBCXX_VISIBILITY(V) __attribute__ ((__visibility__ (#V)))
+	// #define _GLIBCXX_BEGIN_NAMESPACE(X) namespace X _GLIBCXX_VISIBILITY(default) {
+	// _GLIBCXX_BEGIN_NAMESPACE(std)
+    // } // end the namespace
+    public void testBug195701() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	parse( buffer.toString(), ParserLanguage.CPP, true, true );
+    }
 }

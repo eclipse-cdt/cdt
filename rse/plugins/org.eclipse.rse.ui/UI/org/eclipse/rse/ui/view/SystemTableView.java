@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Xuan Chen        (IBM)        - [187016] [menus] Remote Systems Details View should have Refresh on context menu
+ * David McKnight   (IBM)        - [193329] using "Resource" instead of "Name" in the label column
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -60,7 +61,7 @@ import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.internal.ui.SystemPropertyResources;
+import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonSelectAllAction;
@@ -655,7 +656,8 @@ public class SystemTableView
 			if (i == 0)
 			{ 
 				// this is the first column -- treat it special
-				name = SystemPropertyResources.RESID_PROPERTY_NAME_LABEL;
+				//name = SystemPropertyResources.RESID_PROPERTY_NAME_LABEL;
+				name = SystemResources.RESID_RENAME_COLHDG_OLDNAME;
 				if (nameDescriptor != null)
 				{
 					propertyId = (String) nameDescriptor.getId();

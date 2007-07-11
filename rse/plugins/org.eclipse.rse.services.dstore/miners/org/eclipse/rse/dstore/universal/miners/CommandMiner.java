@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)  - [191599] use specified encoding for shell
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -189,6 +189,12 @@ public class CommandMiner extends Miner
 		else if (name.equals("C_SHELL")) //$NON-NLS-1$
 		{
 			String invocation = ">"; //$NON-NLS-1$
+			DataElement encodingArg = getCommandArgument(theElement, 1);
+			if (encodingArg.getType().equals("shell.encoding"))
+			{
+				// fix for 191599
+				 System.setProperty("dstore.stdin.encoding",encodingArg.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			launchCommand(subject, invocation, status);
 		}
 		else if (name.equals("C_SEND_INPUT")) //$NON-NLS-1$

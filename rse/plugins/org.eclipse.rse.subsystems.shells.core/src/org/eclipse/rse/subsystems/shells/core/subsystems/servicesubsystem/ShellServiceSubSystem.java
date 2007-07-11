@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * David McKnight   (IBM)        - [191599] Need to pass in shell encoding
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem;
@@ -141,7 +142,8 @@ public final class ShellServiceSubSystem extends RemoteCmdSubSystem implements I
 
 
 		IShellService service = getShellService();	
-		IHostShell hostShell = service.launchShell(cwd, getUserAndHostEnvVarsAsStringArray(), monitor);
+		String encoding = getHost().getDefaultEncoding(true);
+		IHostShell hostShell = service.launchShell(cwd, encoding, getUserAndHostEnvVarsAsStringArray(), monitor);
 		IServiceCommandShell cmdShell = createRemoteCommandShell(this, hostShell);
 		if (cmdShell != null)
 		{

@@ -74,7 +74,6 @@ public class CommandMinerThread extends MinerThread
 	private boolean _isDone;
 	private boolean _isWindows;
 	private boolean _isTTY;
-	private boolean _isOS400 = false;
 	private boolean _didInitialCWDQuery = false;
 	
 	private CommandMiner.CommandMinerDescriptors _descriptors;
@@ -99,13 +98,6 @@ public class CommandMinerThread extends MinerThread
 		_patterns = thePatterns;
 		_patterns.refresh(_invocation);
 		
-		
-		
-	
-		if (theOS.toLowerCase().startsWith("os/400")) //$NON-NLS-1$
-		{		    
-		    _isOS400 = true;
-		}
 		
 		if (theOS.toLowerCase().startsWith("z")) //$NON-NLS-1$
 		{
@@ -153,7 +145,7 @@ public class CommandMinerThread extends MinerThread
 				{
 					_isTTY = false;
 				}
-				_patterns.setIsTerminal(_isTTY && !_isOS400);
+				_patterns.setIsTerminal(_isTTY);
 				
 				String property = "SHELL="; //$NON-NLS-1$
 				
@@ -168,10 +160,6 @@ public class CommandMinerThread extends MinerThread
 						{
 							theShell = "sh"; //$NON-NLS-1$
 						}
-					}
-					if (_isOS400)
-					{
-					    theShell = "/QOpenSys/usr/bin/sh";//var.substring(property.length(), var.length()); //$NON-NLS-1$
 					}
 				}
 			
@@ -237,12 +225,6 @@ public class CommandMinerThread extends MinerThread
 							args[1] = theShell;
 							args[2] = "-c"; //$NON-NLS-1$
 							args[3] = _invocation;
-				/*
-							for (int i = 0; i < inv.length; i++)
-							{
-								args[3 + i] = inv[i];
-							}
-							*/
 					
 							_theProcess = Runtime.getRuntime().exec(args, env, theDirectory);
 						}
@@ -253,12 +235,7 @@ public class CommandMinerThread extends MinerThread
 							args[0] = theShell;
 							args[1] = "-c"; //$NON-NLS-1$
 							args[2] = _invocation;
-							/*
-							for (int i = 0; i < inv.length; i++)
-							{
-								args[2 + i] = inv[i];
-							}
-							*/
+		
 
 							_theProcess = Runtime.getRuntime().exec(args, env, theDirectory);
 						}
@@ -487,14 +464,7 @@ public class CommandMinerThread extends MinerThread
 				}
 				else if (input.equals("#enter")) //$NON-NLS-1$
 				{
-					if (_isOS400)
-					{
-					    writer.write("\r"); //$NON-NLS-1$
-					}
-					else
-					{
-					    writer.newLine();
-					}
+					writer.newLine();
 					writer.flush();
 				    return;
 				}
@@ -531,15 +501,7 @@ public class CommandMinerThread extends MinerThread
 				}
 
 				writer.write(input);
-				
-				if (_isOS400)
-				{
-				    writer.write("\r"); //$NON-NLS-1$
-				}
-				else
-				{
-				    writer.newLine();
-				}
+				writer.newLine();
 				writer.flush();
 				
 

@@ -14,6 +14,7 @@
  * Contributors:
  * Javier Montalvo Orús (Symbian) - 138619: Fix codepage on Win2K
  * Lothar Werzinger (Tradescape) - 161838: Support terminating local shells
+ * David McKnight       (IBM)     - [189387] Use specified encoding for shell output
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;
@@ -247,7 +248,8 @@ public class LocalShellThread extends Thread
 				}
 			}
 
-			_stdInput = new BufferedReader(new InputStreamReader(_theProcess.getInputStream()));
+			_stdInput = new BufferedReader(new InputStreamReader(_theProcess.getInputStream(), _encoding));
+			
 			_stdError = new BufferedReader(new InputStreamReader(_theProcess.getErrorStream()));
 
 		}

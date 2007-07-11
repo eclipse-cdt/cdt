@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.templateengine;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -271,11 +275,24 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 
 		DOMSource domSource = new DOMSource(d);
 		TransformerFactory transFactory = TransformerFactory.newInstance();
-		Result fileResult = new StreamResult(xmlFile);
+		
 		try {
-			transFactory.newTransformer().transform(domSource, fileResult);
-		} catch (Throwable t) {
-			TemplateEngineUtil.log(t);
+			FileOutputStream fos= null;
+			try {
+				fos= new FileOutputStream(xmlFile);
+				Result fileResult = new StreamResult(fos);
+				transFactory.newTransformer().transform(domSource, fileResult);
+			} finally {
+				if(fos!=null) {
+					fos.close();
+				}
+			}
+		} catch(IOException ioe) {
+			TemplateEngineUtil.log(ioe);
+		} catch(TransformerConfigurationException tce) {
+			TemplateEngineUtil.log(tce);
+		} catch(TransformerException te) {
+			TemplateEngineUtil.log(te);
 		}
 		return xmlFile;
 	}

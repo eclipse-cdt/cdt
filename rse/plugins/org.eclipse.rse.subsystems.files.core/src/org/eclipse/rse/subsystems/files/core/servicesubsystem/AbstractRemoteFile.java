@@ -38,6 +38,8 @@ public abstract class AbstractRemoteFile extends RemoteFile implements IRemoteFi
 		_subSystem = subSystem;
 		_hostFile = hostFile;
 		setParentRemoteFile(parent);
+		if (_hostFile.isFile() && !_hostFile.isArchive()) // no need to query this again so marking false for stale
+    		markStale(false, false);
 	}
 	
 	public IRemoteFileSubSystem getParentRemoteFileSubSystem()

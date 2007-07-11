@@ -18,6 +18,8 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [187130] New Folder/File, Move and Rename should be available for read-only folders
+ * 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -921,7 +923,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	public String getActualHostFor(String remotePath)
 	{
 		String hostname = subsystem.getHost().getHostName();
-		if (subsystem != null && subsystem.getHost().getSystemType().isLocal())
+		if (subsystem != null 
+		//DKM		&& subsystem.getHost().getSystemType().isLocal()
+				)
 		{
 			String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
 			if (!result.equals(hostname))

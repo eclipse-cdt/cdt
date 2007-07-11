@@ -19,6 +19,7 @@ import org.eclipse.cdt.refactoring.tests.RenameRegressionTests;
 import org.eclipse.cdt.ui.tests.buildconsole.BuildConsoleTests;
 import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyTestSuite;
 import org.eclipse.cdt.ui.tests.includebrowser.IncludeBrowserTestSuite;
+import org.eclipse.cdt.ui.tests.search.SearchTestSuite;
 import org.eclipse.cdt.ui.tests.text.TextTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTestSuite;
 import org.eclipse.cdt.ui.tests.text.contentassist2.ContentAssist2TestSuite;
@@ -73,6 +74,9 @@ public class AutomatedSuite extends TestSuite {
 		
 		// tests from package org.eclipse.cdt.ui.tests.buildconsole
 		addTest(BuildConsoleTests.suite());
+		
+		// tests from package org.eclipse.cdt.ui.tests.search
+		addTest(SearchTestSuite.suite());
 	}
 	
 }

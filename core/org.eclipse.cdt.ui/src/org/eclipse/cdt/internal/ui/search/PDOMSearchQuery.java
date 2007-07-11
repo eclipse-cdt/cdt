@@ -128,6 +128,9 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	}
 
 	public final IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
+		PDOMSearchResult result= (PDOMSearchResult) getSearchResult();
+		result.removeAll();
+		
 		try {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(projects, 0);
 			try {

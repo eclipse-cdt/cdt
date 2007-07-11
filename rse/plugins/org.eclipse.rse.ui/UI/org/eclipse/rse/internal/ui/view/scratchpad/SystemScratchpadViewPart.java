@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [182403] Double Click on an object that can be expanded
  * Kevin Doyle (IBM) - [195543] Double Clicking expands wrong folder when duplicate elements shown
+ * Kevin Doyle (IBM) - [193155] Double Clicking on a String in Scratchpad Errors
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -182,7 +183,7 @@ public class SystemScratchpadViewPart extends ViewPart
 		ITreeSelection s = (ITreeSelection) event.getSelection();
 		Object element = s.getFirstElement();
 		
-		if (element == null)
+		if (element == null || !(element instanceof IAdaptable))
 			return;
 
 		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) element).getAdapter(ISystemViewElementAdapter.class);

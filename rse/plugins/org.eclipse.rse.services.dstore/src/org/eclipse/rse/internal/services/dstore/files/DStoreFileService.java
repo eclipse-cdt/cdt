@@ -16,6 +16,7 @@
  * Xuan Chen        (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
  * Kushal Munir (IBM) - [189352] Replace with appropriate line end character on upload
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
+ * David McKnight   (IBM)        - [196035] Wrapper SystemMessageExceptions for createFile and createFolder with RemoteFileSecurityException
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -60,6 +61,7 @@ import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
 public class DStoreFileService extends AbstractDStoreService implements IFileService
 {
@@ -887,7 +889,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		else
 		{
-			throw new SystemMessageException(getMessage("RSEF1302").makeSubstitution(remotePath)); //$NON-NLS-1$
+			// for 196035 - throwing security exception instead of message exception
+			Exception e= new SystemMessageException(getMessage("RSEF1302").makeSubstitution(remotePath));  //$NON-NLS-1$
+			RemoteFileSecurityException messageException = new RemoteFileSecurityException(e);
+			 throw messageException;
+			//throw new SystemMessageException(getMessage("RSEF1302").makeSubstitution(remotePath)); //$NON-NLS-1$
 		}	
 	}
 
@@ -907,7 +913,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		else
 		{
-			throw new SystemMessageException(getMessage("RSEF1304").makeSubstitution(remotePath)); //$NON-NLS-1$
+			// for 196035 - throwing security exception instead of message exception
+			Exception e= new SystemMessageException(getMessage("RSEF1304").makeSubstitution(remotePath));  //$NON-NLS-1$
+			RemoteFileSecurityException messageException = new RemoteFileSecurityException(e);
+			 throw messageException;
+			//throw new SystemMessageException(getMessage("RSEF1304").makeSubstitution(remotePath)); //$NON-NLS-1$ 
 		}	
 
 	}

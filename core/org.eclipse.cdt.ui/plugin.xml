@@ -551,6 +551,16 @@
             icon="icons/obj16/c_file_obj.gif"
             name="%ExternalSearchEditor.name"
             id="org.eclipse.cdt.ui.editor.ExternalSearchEditor"/>
+      <editor
+            class="org.eclipse.cdt.internal.ui.editor.DefaultBinaryFileEditor"
+            default="false"
+            icon="icons/obj16/bin_obj.gif"
+            id="org.eclipse.cdt.ui.binaryEditor"
+            name="%DefaultBinaryFileEditor.name">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.cdt.core.binaryFile">
+         </contentTypeBinding>
+      </editor>
       
    </extension>
    <extension

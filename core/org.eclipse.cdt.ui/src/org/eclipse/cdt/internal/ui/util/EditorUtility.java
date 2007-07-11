@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -44,6 +45,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -231,9 +234,12 @@ public class EditorUtility {
 				}
 				return new ExternalEditorInput(unit, new FileStorage(unit.getPath()));
 			}
-                        
+
 			if (element instanceof IBinary) {
-				return new ExternalEditorInput(getStorage((IBinary)element), (IPath)null);
+				IResource resource= element.getResource();
+				if (resource instanceof IFile) {
+					return new FileEditorInput((IFile)resource);
+				}
 			}
                         
 			element= element.getParent();
@@ -411,12 +417,13 @@ public class EditorUtility {
 	 * @return a valid editor id, never <code>null</code>
 	 */
 	public static String getEditorID(String name) {
-		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-		if (registry != null) {
-			IEditorDescriptor descriptor = registry.getDefaultEditor(name);
+		try {
+			IEditorDescriptor descriptor = IDE.getEditorDescriptor(name);
 			if (descriptor != null) {
 				return descriptor.getId();
 			}
+		} catch (PartInitException exc) {
+			// ignore
 		}
 		return DEFAULT_TEXT_EDITOR_ID;
 	}
@@ -433,47 +440,58 @@ public class EditorUtility {
 	 * @return a valid editor id, never <code>null</code>
 	 */
 	public static String getEditorID(IEditorInput input, Object inputObject) {
-
-		ITranslationUnit tunit = null;
-		if (inputObject instanceof ITranslationUnit) {
-			tunit= (ITranslationUnit)inputObject;
-		} else if (input instanceof IFileEditorInput) {
+		ICElement cElement= null;
+		if (input instanceof IFileEditorInput) {
 			IFileEditorInput editorInput = (IFileEditorInput)input;
 			IFile file = editorInput.getFile();
-			ICElement celement = CoreModel.getDefault().create(file);
-			if (celement instanceof ITranslationUnit) {
-				tunit = (ITranslationUnit)celement;
+			// Try file specific editor.
+			try {
+				String editorID = file.getPersistentProperty(IDE.EDITOR_KEY);
+				if (editorID != null) {
+					IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+					IEditorDescriptor desc = registry.findEditor(editorID);
+					if (desc != null) {
+						return editorID;
+					}
+				}
+			} catch (CoreException e) {
+				// do nothing
 			}
+			cElement = CoreModel.getDefault().create(file);
 		} else if (input instanceof ITranslationUnitEditorInput) {
 			ITranslationUnitEditorInput editorInput = (ITranslationUnitEditorInput)input;
-			tunit = editorInput.getTranslationUnit();
+			cElement = editorInput.getTranslationUnit();
+		} else if (inputObject instanceof ICElement) {
+			cElement= (ICElement)inputObject;
 		}
 
-		if (tunit != null) {
-			// Choose an editor based on the content type
-			String contentTypeId= tunit.getContentTypeId();
+		// Choose an editor based on the content type
+		IContentType contentType= null;
+		if (cElement instanceof ITranslationUnit) {
+			String contentTypeId= ((ITranslationUnit)cElement).getContentTypeId();
 			if (contentTypeId != null) {
-				IContentType contentType= Platform.getContentTypeManager().getContentType(contentTypeId);
-				IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-				IEditorDescriptor desc= registry.getDefaultEditor(input.getName(), contentType);
-				if (desc != null) {
-					return desc.getId();
+				contentType= Platform.getContentTypeManager().getContentType(contentTypeId);
+			}
+		}
+		if (contentType == null) {
+			IProject project= null;
+			if (cElement != null) {
+				project= cElement.getCProject().getProject();
+			} else {
+				IFile file= ResourceUtil.getFile(input);
+				if (file != null) {
+					project= file.getProject();
 				}
 			}
-			// Choose an editor based on the language (obsolete?)
-			if (tunit.isCLanguage()) {
-				return CUIPlugin.EDITOR_ID;
-			} else if (tunit.isCXXLanguage()) {
-				return CUIPlugin.EDITOR_ID;
-			} else if (tunit.isASMLanguage()) {
-				return "org.eclipse.cdt.ui.editor.asm.AsmEditor"; //$NON-NLS-1$
-			}
+			contentType= CCorePlugin.getContentType(project, input.getName());
+		}
+		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+		IEditorDescriptor desc= registry.getDefaultEditor(input.getName(), contentType);
+		if (desc != null) {
+			return desc.getId();
 		}
 
-		// Choose an editor based on filename/extension
-		String editorId = getEditorID(input.getName());
-
-		return editorId;
+		return DEFAULT_TEXT_EDITOR_ID;
 	}
 
 	/**

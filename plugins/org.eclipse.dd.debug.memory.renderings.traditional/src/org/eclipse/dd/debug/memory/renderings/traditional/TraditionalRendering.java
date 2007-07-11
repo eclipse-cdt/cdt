@@ -729,6 +729,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                                 int i= Integer.parseInt(input);
                                 if (i <= 0)
                                     return "Please enter a positive integer";  //$NON-NLS-1$
+                                if (i > 200)
+                                    return "Please enter a positive integer not greater than 200";  //$NON-NLS-1$
     
                             } catch (NumberFormatException x) {
                                 return "Please enter a positive integer";  //$NON-NLS-1$

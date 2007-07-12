@@ -50,6 +50,19 @@ public class PersistenceTest extends RSECoreTestCase {
 		super.tearDown();
 	}
 	
+	public void testPersistenceManagerStartup() {
+		IRSEPersistenceManager m = RSECorePlugin.getThePersistenceManager();
+		for (int i = 0; i < 5; i++) {
+			if (m.isRestoreComplete()) break;
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		assertTrue("Restore not complete", m.isRestoreComplete());
+	}
+	
 	public void testProfilePersistence() {
 		/*
 		 * Set up this particular test.

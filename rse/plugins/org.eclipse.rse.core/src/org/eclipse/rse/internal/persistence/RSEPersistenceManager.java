@@ -244,7 +244,9 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		for (int i = 0; i < ids.length && isComplete; i++) {
 			String id = ids[i];
 			ProviderRecord pr = getProviderRecord(id);
-			isComplete = pr.isAutostart() && pr.isRestored();
+			if (pr.isAutostart()) {
+				isComplete = isComplete && pr.isRestored();
+			}
 		}
 		return isComplete;
 	}

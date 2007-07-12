@@ -37,6 +37,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -223,23 +225,31 @@ public class TestSourceReader {
 		final IFile result[] = new IFile[1];
 		ws.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-		//Obtain file handle
-		IFile file = container.getFile(filePath);
-	
-		InputStream stream = new ByteArrayInputStream(contents.getBytes());
-		//Create file input stream
-		if (file.exists()) {
-			long timestamp= file.getLocalTimeStamp();
-			file.setContents(stream, false, false, new NullProgressMonitor());
-			if (file.getLocalTimeStamp() == timestamp) {
-				file.setLocalTimeStamp(timestamp+1000);
-			}
-		}
-		else {
-			file.create(stream, false, new NullProgressMonitor());
-		}
+				//Obtain file handle
+				IFile file = container.getFile(filePath);
+
+				InputStream stream = new ByteArrayInputStream(contents.getBytes());
+				//Create file input stream
+				if (file.exists()) {
+					long timestamp= file.getLocalTimeStamp();
+					file.setContents(stream, false, false, new NullProgressMonitor());
+					if (file.getLocalTimeStamp() == timestamp) {
+						file.setLocalTimeStamp(timestamp+1000);
+					}
+				}
+				else {
+					createFolders(file);
+					file.create(stream, true, new NullProgressMonitor());
+				}
 				result[0]= file;
-	}
+			}
+			private void createFolders(IResource res) throws CoreException {
+				IContainer container= res.getParent();
+				if (!container.exists() && container instanceof IFolder) {
+					createFolders(container);
+					((IFolder) container).create(true, true, new NullProgressMonitor());
+				}
+			}
 		}, null);
 		return result[0];
 	}

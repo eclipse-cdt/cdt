@@ -341,6 +341,61 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	public void test160281_1() throws Exception {
+		waitForIndexer();
+		IFile include= TestSourceReader.createFile(fCProject.getProject(), "inc/test160281_1.h", "");
+		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
+		TestScannerProvider.sIncludeFiles= new String[]{include.getName()};
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_1.cpp", "");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+			IIndexInclude i= includes[0];
+			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
+			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
+			assertEquals(true, i.isSystemInclude());
+			assertEquals(0, i.getNameOffset());
+			assertEquals(0, i.getNameLength());
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	public void test160281_2() throws Exception {
+		waitForIndexer();
+		IFile include= TestSourceReader.createFile(fCProject.getProject(), "inc/test160281_2.h", "#define X y\n");
+		TestScannerProvider.sIncludes= new String[]{include.getLocation().removeLastSegments(1).toString()};
+		TestScannerProvider.sMacroFiles= new String[]{include.getName()};
+		IFile file= TestSourceReader.createFile(fCProject.getProject(), "test160281_2.cpp", "int X;");
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, INDEX_WAIT_TIME);
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+			IIndexInclude i= includes[0];
+			assertEquals(file.getLocationURI(), i.getIncludedByLocation().getURI());
+			assertEquals(include.getLocationURI(), i.getIncludesLocation().getURI());
+			assertEquals(true, i.isSystemInclude());
+			assertEquals(0, i.getNameOffset());
+			assertEquals(0, i.getNameLength());
+			IIndexBinding[] bindings= fIndex.findBindings("y".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof IVariable);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
 	// #define macro164500 1
 	// #undef macro164500
 	// #define macro164500 2

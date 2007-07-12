@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -49,7 +48,6 @@ import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.CharTable;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
-import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
@@ -146,8 +144,8 @@ abstract class BaseScanner implements IScanner {
 
     protected CharArrayObjectMap definitions = new CharArrayObjectMap(512);
 
-    protected String[] stdIncludePaths;
-    protected String[] locIncludePaths = null;
+    protected String[] includePaths;
+    protected String[] quoteIncludePaths;
 
     /** Set of already included files */
     protected CharArraySet includedFiles= new CharArraySet(32);
@@ -195,8 +193,6 @@ abstract class BaseScanner implements IScanner {
     protected static EndOfFileException EOF = new EndOfFileException();
 
     protected ParserMode parserMode;
-
-    protected Iterator preIncludeFiles = EmptyIterator.EMPTY_ITERATOR;
 
     protected boolean isInitialized = false;
     protected boolean macroFilesInitialized = false;
@@ -259,9 +255,7 @@ abstract class BaseScanner implements IScanner {
                 }
             }
         }
-        stdIncludePaths = info.getIncludePaths();
-        
-
+        includePaths= quoteIncludePaths= info.getIncludePaths();
     }
 
     /**
@@ -284,33 +278,51 @@ abstract class BaseScanner implements IScanner {
      */
     protected void extendedScannerInfoSetup(CodeReader reader, IScannerInfo info) {
         IExtendedScannerInfo einfo = (IExtendedScannerInfo) info;
-        if (einfo.getMacroFiles() != null)
-            for (int i = 0; i < einfo.getMacroFiles().length; ++i) {
-                CodeReader r = createReaderDuple(einfo.getMacroFiles()[i]);
-                if (r == null)
-                    continue;
-                pushContext(r.buffer, r);
-                while (true) {
-                    try {
-                        nextToken();
-                    } catch (EndOfFileException e) {
-                        finished = false;
-                        break;
-                    }
+        // setup separate include path for quote includes.
+        String[] qip= einfo.getLocalIncludePath();
+        if (qip != null && qip.length > 0) {
+        	quoteIncludePaths= new String[qip.length + includePaths.length];
+        	System.arraycopy(qip, 0, quoteIncludePaths, 0, qip.length);
+        	System.arraycopy(includePaths, 0, quoteIncludePaths, qip.length, includePaths.length);
+        }
+        
+        // 
+        final String[] macroFiles = einfo.getMacroFiles();
+		if (macroFiles != null) {
+            for (int i = 0; i < macroFiles.length; ++i) {
+                CodeReader r= findInclusion(macroFiles[i], true, false, null);
+                if (r != null) {
+                	pushContext(r.buffer, r);
+                	while (true) {
+                		try {
+                			nextToken();
+                		} catch (EndOfFileException e) {
+                			finished = false;
+                			break;
+                		}
+                	}
                 }
             }
+		}
 
         macroFilesInitialized = true;
-        if (parserMode != ParserMode.QUICK_PARSE && einfo.getIncludeFiles() != null
-                && einfo.getIncludeFiles().length > 0)
-            preIncludeFiles = Arrays.asList(einfo.getIncludeFiles()).iterator();
-
-        locIncludePaths = einfo.getLocalIncludePath();
         pushContext(reader.buffer, reader);
 
-        while (preIncludeFiles.hasNext())
-            pushForcedInclusion();
-
+        final String[] preIncludeFiles= einfo.getIncludeFiles();
+    	if (parserMode != ParserMode.QUICK_PARSE && preIncludeFiles != null) {
+    		for (int i = 0; i < preIncludeFiles.length; i++) {
+                final String file = preIncludeFiles[i];
+				CodeReader r= findInclusion(file, true, false, null);
+                if (r != null) {
+                	int o = getCurrentOffset() + 1; 
+                	int l = getLineNumber(o);
+                	Object incObj = createInclusionConstruct(file.toCharArray(), r.filename, false, o,
+                			l, o, o, l, o, l, true);
+                	InclusionData d = new InclusionData(r, incObj, false);
+                	pushContext(r.buffer, d);
+            	}
+    		}
+    	}
         isInitialized = true;
     }
 
@@ -413,27 +425,6 @@ abstract class BaseScanner implements IScanner {
         return result;
     }
 
-    /**
-     *  
-     */
-    protected void pushForcedInclusion() {
-        CodeReader r = null;
-        while (r == null) {
-            if (preIncludeFiles.hasNext())
-                r = createReaderDuple((String) preIncludeFiles.next());
-            else
-                break;
-        }
-        if (r == null)
-            return;
-        int o = getCurrentOffset() + 1; 
-        int l = getLineNumber(o);
-        Object i = createInclusionConstruct(r.filename, r.filename, false, o,
-                l, o, o, l, o, l, true);
-        InclusionData d = new InclusionData(r, i, false);
-        pushContext(r.buffer, d);
-    }
-
     public IMacro addDefinition(char[] key, char[] value) {
         int idx = CharArrayUtils.indexOf('(', key);
         if (idx == -1) {
@@ -493,7 +484,7 @@ abstract class BaseScanner implements IScanner {
      * @see org.eclipse.cdt.core.parser.IScanner#getIncludePaths()
      */
     public String[] getIncludePaths() {
-        return stdIncludePaths;
+        return includePaths;
     }
 
     /*
@@ -1947,7 +1938,8 @@ abstract class BaseScanner implements IScanner {
         else {
         	CodeReader reader= null;
         	if (active) {
-        		reader= findInclusion(filename, local, include_next);
+        		final File currentDir= local || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
+        		reader= findInclusion(filename, local, include_next, currentDir);
         		if (reader != null) {
         			final Object inc = createInclusionConstruct(
         					fileNameArray, reader.filename, local, startOffset,	startingLineNumber, 
@@ -1972,50 +1964,36 @@ abstract class BaseScanner implements IScanner {
 		// default: do nothing
 	}
 
-    private CodeReader findInclusion(final String filename, final boolean local, final boolean include_next) {
-    	return (CodeReader) findInclusion(filename, local, include_next, createCodeReaderTester);
+    private CodeReader findInclusion(final String filename, final boolean quoteInclude, 
+    		final boolean includeNext, final File currentDir) {
+    	return (CodeReader) findInclusion(filename, quoteInclude, includeNext, currentDir, createCodeReaderTester);
     }
 
-    protected Object findInclusion(final String filename, final boolean local, final boolean include_next,
-    		final IIncludeFileTester tester) {
+    protected Object findInclusion(final String filename, final boolean quoteInclude, 
+    		final boolean includeNext, final File currentDirectory, final IIncludeFileTester tester) {
         Object reader = null;
 		// filename is an absolute path or it is a Linux absolute path on a windows machine
 		if (new File(filename).isAbsolute() || filename.startsWith("/")) { //$NON-NLS-1$
 		    return tester.checkFile( EMPTY_STRING, filename );
 		}
-        
-        File currentDirectory = null;
-        if (local || include_next) {
-            // if the include is enclosed in quotes OR we are in an include_next
-            // then we need to know what the current directory is!
-            File file = new File(String.valueOf(getCurrentFilename()));
-            currentDirectory = file.getParentFile();
-        }       
-        
-        if (local && !include_next) {
+                
+        if (currentDirectory != null && quoteInclude && !includeNext) {
             // Check to see if we find a match in the current directory
-            if (currentDirectory != null) {
-                String absolutePath = currentDirectory.getAbsolutePath();
-                reader = tester.checkFile(absolutePath, filename);
-                if (reader != null) {
-                	return reader;
-                }
-            }
+        	String absolutePath = currentDirectory.getAbsolutePath();
+        	reader = tester.checkFile(absolutePath, filename);
+        	if (reader != null) {
+        		return reader;
+        	}
         }
         
         // if we're not include_next, then we are looking for the first occurrence of 
         // the file, otherwise, we ignore all the paths before the current directory
-        String [] includePathsToUse = stdIncludePaths;
-        if( local && locIncludePaths != null && locIncludePaths.length > 0 ) {
-            includePathsToUse = new String[locIncludePaths.length + stdIncludePaths.length];
-            System.arraycopy(locIncludePaths, 0, includePathsToUse, 0, locIncludePaths.length);
-            System.arraycopy(stdIncludePaths, 0, includePathsToUse, locIncludePaths.length, stdIncludePaths.length);
-        }
-        
+        String[] includePathsToUse = quoteInclude ? quoteIncludePaths : includePaths;
         if (includePathsToUse != null ) {
             int startpos = 0;
-            if (include_next)
+            if (includeNext && currentDirectory != null) {
                 startpos = findIncludePos(includePathsToUse, currentDirectory) + 1;
+            }
             for (int i = startpos; i < includePathsToUse.length; ++i) {
                 reader = tester.checkFile(includePathsToUse[i], filename);
                 if (reader != null) {

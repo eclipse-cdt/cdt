@@ -69,7 +69,7 @@ public class IScannerInfoPluginTest extends FileBasePluginTest {
     	c = new CompleteParseBaseTest.FullParseCallback();
     	InputStream stream = code.getContents();
     	IParser parser = ParserFactory.createParser( 
-    		ParserFactory.createScanner( new CodeReader( code.getLocation().toOSString(), stream ), scannerInfo, //$NON-NLS-1$
+    		ParserFactory.createScanner( new CodeReader( code.getLocation().toOSString(), stream ), scannerInfo, 
     			ParserMode.COMPLETE_PARSE, language, c, new NullLogService(), null ), c, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	stream.close();
@@ -87,9 +87,9 @@ public class IScannerInfoPluginTest extends FileBasePluginTest {
     	IFile imacroFile = importFile( "imacros.h", imacroContent ); //$NON-NLS-1$
     	String code = "int x = ONE;\n"; //$NON-NLS-1$
     	IFile sourceCode = importFile( "source.cpp", code ); //$NON-NLS-1$
-    	String [] imacroz = new String[1];
-    	imacroz[0] = imacroFile.getFullPath().toOSString();
-    	IScannerInfo scannerInfo = new ExtendedScannerInfo( Collections.EMPTY_MAP, EMPTY_STRING_ARRAY, imacroz, EMPTY_STRING_ARRAY );
+    	String[] isp= {imacroFile.getParent().getLocation().toString()};
+    	String[] imacroz= {imacroFile.getName()};
+    	IScannerInfo scannerInfo = new ExtendedScannerInfo( Collections.EMPTY_MAP, isp, imacroz, EMPTY_STRING_ARRAY );
     	Iterator i = parse( sourceCode, ParserLanguage.C, scannerInfo ).getDeclarations();
     	assertTrue( i.hasNext() );
     	IASTVariable x = (IASTVariable) i.next();
@@ -106,9 +106,9 @@ public class IScannerInfoPluginTest extends FileBasePluginTest {
     	IFile inclFile = importFile( "includeMe.h", inclContent ); //$NON-NLS-1$
     	String code = "int y = x;\n"; //$NON-NLS-1$
     	IFile sourceCode = importFile( "source.cpp", code ); //$NON-NLS-1$
-    	String [] includez = new String[1];
-    	includez[0] = inclFile.getFullPath().toOSString();
-    	IScannerInfo scannerInfo = new ExtendedScannerInfo( Collections.EMPTY_MAP, EMPTY_STRING_ARRAY, EMPTY_STRING_ARRAY, includez );
+    	String[] isp= {inclFile.getParent().getLocation().toString()};
+    	String [] includez = {inclFile.getName()};
+    	IScannerInfo scannerInfo = new ExtendedScannerInfo( Collections.EMPTY_MAP, isp, EMPTY_STRING_ARRAY, includez );
     	Iterator i = parse( sourceCode, ParserLanguage.C, scannerInfo ).getDeclarations();
     	assertTrue( i.hasNext() );
     	assertTrue(i.next() instanceof IASTVariable );

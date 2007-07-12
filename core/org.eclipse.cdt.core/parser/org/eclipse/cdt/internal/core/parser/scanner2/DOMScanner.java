@@ -190,7 +190,8 @@ public class DOMScanner extends BaseScanner {
     		int startOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLineNumber, 
     		int nameLine, int endLine) {
     	char[] pchars= null;
-    	String path= (String) findInclusion(new String(filename), local, include_next, createPathTester);
+		final File currentDir= local || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
+    	String path= (String) findInclusion(new String(filename), local, include_next, currentDir, createPathTester);
     	if (path != null) {
     		if (codeReaderFactory instanceof IIndexBasedCodeReaderFactory) {
     			// fast indexer

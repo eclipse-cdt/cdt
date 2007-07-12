@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - Adapted from LocalHostShell.
  * Sheldon D'souza (Celunite) - Adapted from SshHostShell
  * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
+ * David McKnight  (IBM)      - [191599] Use the remote encoding specified in the host property page
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet.shell;
 
@@ -49,7 +50,15 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 			
 			fTelnetClient = fSessionProvider.makeNewTelnetClient(new NullProgressMonitor());
 
-			fStdoutHandler = new TelnetShellOutputReader(this, new BufferedReader(new InputStreamReader(fTelnetClient.getInputStream())), false);
+		    if (encoding != null)
+		    {
+		    	fStdoutHandler = new TelnetShellOutputReader(this, new BufferedReader(new InputStreamReader(fTelnetClient.getInputStream(), encoding)), false);
+		    }
+		    else
+		    {
+		    	fStdoutHandler = new TelnetShellOutputReader(this, new BufferedReader(new InputStreamReader(fTelnetClient.getInputStream())), false);
+		    }
+
 			fStderrHandler = new TelnetShellOutputReader(this, null,true);
 			OutputStream outputStream = fTelnetClient.getOutputStream();
 			//TODO check if encoding or command to execute needs to be considered

@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from LocalHostShell.
  * David McKnight   (IBM)        - [191599] Use the remote encoding specified in the host property page
+ * David McKnight   (IBM)        - [196301] Check that the remote encoding isn't null before using it
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.shell;
@@ -81,7 +82,14 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    	((ChannelShell)fChannel).setEnv(envTable);
 		    }
 
-			fStdoutHandler = new SshShellOutputReader(this, new BufferedReader(new InputStreamReader(fChannel.getInputStream(), encoding)), false);
+		    if (encoding != null)
+		    {
+		    	fStdoutHandler = new SshShellOutputReader(this, new BufferedReader(new InputStreamReader(fChannel.getInputStream(), encoding)), false);
+		    }
+		    else
+		    {
+		    	fStdoutHandler = new SshShellOutputReader(this, new BufferedReader(new InputStreamReader(fChannel.getInputStream())), false);
+		    }
 			fStderrHandler = new SshShellOutputReader(this, null,true);
 			OutputStream outputStream = fChannel.getOutputStream();
 			//TODO check if encoding or command to execute needs to be considered

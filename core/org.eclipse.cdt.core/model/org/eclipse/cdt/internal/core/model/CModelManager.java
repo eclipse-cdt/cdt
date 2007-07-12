@@ -69,8 +69,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
 import org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener;
 
@@ -544,6 +544,11 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	public IBinaryFile createBinaryFile(IFile file) {
+		BinaryParserConfig[] parsers = getBinaryParser(file.getProject());
+		if (parsers.length == 0) {
+			return null;
+		}
+		
 		// Only if file has no extension, has an extension that is an integer
 		// or is a binary file content type
 		String ext = file.getFileExtension();
@@ -556,15 +561,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					break;
 				}
 			if (!isNumber) {
-				try {
-					// make sure it's a binary file content type
-					IContentDescription contentDesc = file.getContentDescription();
-					if (contentDesc == null)
-						return null;
-					IContentType contentType = contentDesc.getContentType();
-					if (!contentType.isKindOf(Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE)))
-						return null;
-				} catch (CoreException e) {
+				boolean isBinary= false;
+				final IContentTypeManager ctm = Platform.getContentTypeManager();
+				final IContentType ctbin = ctm.getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
+				final IContentType[] cts= ctm.findContentTypesFor(file.getName());
+				for (int i=0; !isBinary && i < cts.length; i++) {
+					isBinary= cts[i].isKindOf(ctbin);
+				}
+				if (!isBinary) {
 					return null;
 				}
 			}
@@ -582,7 +586,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			//return null;
 		}
 
-		BinaryParserConfig[] parsers = getBinaryParser(file.getProject());
 		int hints = 0;
 		
 		for (int i = 0; i < parsers.length; i++) {

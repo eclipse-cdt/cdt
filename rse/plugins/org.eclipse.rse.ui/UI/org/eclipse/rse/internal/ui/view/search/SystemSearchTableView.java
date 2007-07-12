@@ -12,10 +12,12 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Kevin Doyle (IBM) - [192725] Deleting Files doesn't remove them from Search view
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.search;
 
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
@@ -82,12 +84,12 @@ public class SystemSearchTableView extends SystemTableTreeView
 				{
 					{
 						Object remoteResource = event.getResource();
-						Vector remoteResourceNames = null;
+						List remoteResourceNames = null;
 						
-						if (remoteResource instanceof Vector)
+						if (remoteResource instanceof List)
 						{
-							remoteResourceNames = (Vector) remoteResource;
-							remoteResource = remoteResourceNames.elementAt(0);
+							remoteResourceNames = (List) remoteResource;
+							remoteResource = remoteResourceNames.get(0);
 						}
 						else
 						{

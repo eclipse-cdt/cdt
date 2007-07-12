@@ -70,6 +70,8 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	private Position fLastCursorLine= new Position(0, 0);
 	/** Enablement of the cursor line highlighting */
 	private boolean fCursorLineEnabled;
+	/** Whether cursor line highlighting is active */
+	private boolean fCursorLineActive;
 	/** Map of position type to color */
 	private Map fColorMap= new HashMap();
 
@@ -120,7 +122,8 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	public void enableCursorLine(boolean enable) {
 		fCursorLineEnabled= enable;
-		if (fCursorLineEnabled) {
+		fCursorLineActive= enable;
+		if (fCursorLineActive) {
 			updateCursorLine();
 		}
 	}
@@ -260,14 +263,28 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 			return;
 		}
 		activate(false);
+
 		if (fCursorLineEnabled) {
-			// redraw in case of text changes prior to update of current cursor line
-			if (!fLastCursorLine.equals(fCursorLine)) {
+			// check selection
+			StyledText textWidget= fTextViewer.getTextWidget();
+			Point selection= textWidget.getSelection();
+			int startLine= textWidget.getLineAtOffset(selection.x);
+			int endLine= textWidget.getLineAtOffset(selection.y);
+			if (startLine != endLine) {
 				redrawPositions(Collections.singletonList(fLastCursorLine));
-				fLastCursorLine.offset= fCursorLine.offset;
-				fLastCursorLine.length= fCursorLine.length;
+				fCursorLineActive= false;
+			} else {
+				fCursorLineActive= true;
 			}
-			updateCursorLine();
+			if (fCursorLineActive) {
+				// redraw in case of text changes prior to update of current cursor line
+				if (!fLastCursorLine.equals(fCursorLine)) {
+					redrawPositions(Collections.singletonList(fLastCursorLine));
+					fLastCursorLine.offset= fCursorLine.offset;
+					fLastCursorLine.length= fCursorLine.length;
+				}
+				updateCursorLine();
+			}
 		}
 		List changedPositions= getChangedPositions();
 		if (changedPositions != null) {
@@ -286,7 +303,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 			fIsActive= true;
 			fTextWidget.addLineBackgroundListener(this);
 			if (redraw) {
-				if (fCursorLineEnabled) {
+				if (fCursorLineActive) {
 					updateCursorLine();
 				}
 				updatePositions();
@@ -510,7 +527,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	 */
 	private Position findIncludingPosition(int offset) {
 		// TLETODO [performance] Use binary search?
-		for (int i= fCursorLineEnabled ? 0 : 1, sz= fPositions.size(); i < sz; ++i) {
+		for (int i= fCursorLineActive ? 0 : 1, sz= fPositions.size(); i < sz; ++i) {
 			Position position= (Position)fPositions.get(i);
 			if (position.offset == offset || position.includes(offset)) {
 				return position;

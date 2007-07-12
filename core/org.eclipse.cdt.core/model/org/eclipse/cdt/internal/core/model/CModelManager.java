@@ -319,15 +319,12 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					}
 					if (CoreModel.isValidTranslationUnitName(cproject.getProject(), fileName)) {
 						celement = cfolder.getTranslationUnit(fileName);
-					} else {
-						IBinaryFile bin = createBinaryFile(file);
-						if (bin != null)
-							celement = create(file, bin, cproject);
 					}
 					break;
 				}
 			}
 			
+			// check for binary on output entry
 			if (celement == null && cproject.isOnOutputEntry(file)) {
 				IBinaryFile bin = createBinaryFile(file);
 				if (bin != null)
@@ -524,6 +521,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						}
 						parsers = new BinaryParserConfig[list.size()];
 						list.toArray(parsers);
+					} else {
+						// no parser configured
+						parsers = new BinaryParserConfig[0];
 					}
 				}
 			} catch (CoreException e) {

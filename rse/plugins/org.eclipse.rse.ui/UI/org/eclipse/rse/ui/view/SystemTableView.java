@@ -950,27 +950,29 @@ public class SystemTableView
 					{
 						// treat this as refresh all
 						child = _objectInput;
-					}
-					if (child == _objectInput)
-					{
-						//the whole table need to be refreshed, will be handled by code below
 						break;
 					}
 					try
 					{
 						Widget w = findItem(child);
-						if (w != null && w.getData() != _objectInput)
+						if (w != null  && w.getData() != _objectInput)
 						{		
-							child = _objectInput; // refresh the parent
-							//Only one item of table need to be updated.
-							//updateItem(w, child);
+							//child is the children of this table input.
+							//Need to refresh the whole view to handler 
+							//And we need to make _objectInput to stale, otherwise deleted object
+							//could not be removed from the table.
+							if (_objectInput instanceof ISystemContainer)
+							{
+								((ISystemContainer)_objectInput).markStale(true);
+							}
+							child = _objectInput;
 						}
 					}
 					catch (Exception e)
 					{
 						SystemBasePlugin.logError(e.getMessage());
 					}
-						
+					
 				}
 				break;
 			default :

@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Kevin Doyle (IBM) - [190010] Added cancel() method that will call the search service to cancel
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -149,5 +150,13 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		
 		OutputRefresh refresh = new OutputRefresh(this);			
 		Display.getDefault().asyncExec(refresh);							
+	}
+	
+	public void cancel()
+	{
+		if (getStatus() == IHostSearchConstants.RUNNING) 
+		{
+			getSearchService().cancelSearch(this, new NullProgressMonitor());
+		}
 	}
 }

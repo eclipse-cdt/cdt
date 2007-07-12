@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [182024] Folder field only initialized if selection supports search
  * Kevin Doyle (IBM) - [189430] Limited System Types displayed in Folder Dialog
+ * Kevin Doyle (IBM) - [187427] Selecting an Archive will check Search Archives checkbox
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -41,6 +42,7 @@ import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchUI;
 import org.eclipse.rse.internal.ui.view.search.SystemSearchViewPart;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
+import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.search.SystemSearchUtil;
@@ -442,6 +444,13 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 				String connectionName = conn.getAliasName();
 				
 				setFolderText(profileName, connectionName, folderPath);
+				
+				String absPath = remoteFile.getAbsolutePath();
+				boolean supportsSearch = remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsSearch();
+				boolean supportsArchiveManagement = remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
+				// if the file/folder is part of an archive select the search archives checkbox
+				if (supportsSearch && supportsArchiveManagement && (remoteFile.isArchive() || (absPath.indexOf(ArchiveHandlerManager.VIRTUAL_SEPARATOR) > 0)))
+					searchArchivesButton.setSelection(true);
 			}
 		}
 		
@@ -887,6 +896,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		String profileName = null;
 		String connectionName = null;
 		String folderName = null;
+		boolean isPartOfArchive = false;
 		
 		// if selection is not empty, we handle structured selection or text selection
 		if (selection != null && !selection.isEmpty()) {
@@ -915,8 +925,11 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 						IHost conn = remoteFile.getSystemConnection();
 						profileName = conn.getSystemProfileName();
 						connectionName = conn.getAliasName();
-						folderName = remoteFile.getAbsolutePath();						
+						folderName = remoteFile.getAbsolutePath();
 					}
+					String absPath = remoteFile.getAbsolutePath();
+					// Determine if we support search + archives and selection is part of an archive
+					isPartOfArchive = supportsSearch && supportsArchiveManagement && (remoteFile.isArchive() || (absPath.indexOf(ArchiveHandlerManager.VIRTUAL_SEPARATOR) > 0));
 				}
 			}
 			// otherwise, if it is a text selection
@@ -945,6 +958,12 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 		
 		// set the file name
 		fileNameEditor.setFileNamesText(fileName);
+		
+		// if the file/folder is part of an archive select the search archives checkbox
+		if (isPartOfArchive)
+		{
+			searchArchivesButton.setSelection(true);
+		}
 		
 		// set the remote folder combo properties if profile name, connection name and folder path are
 		// not null

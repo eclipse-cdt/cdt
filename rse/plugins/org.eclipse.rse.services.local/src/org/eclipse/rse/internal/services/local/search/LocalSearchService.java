@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
+ * Kevin Doyle (IBM) - [187640] Added Search config and handler to searches Map in internalSearch
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.search;
@@ -32,6 +33,7 @@ public class LocalSearchService extends AbstractSearchService
 	{
 		LocalSearchHandler handler = new LocalSearchHandler(searchConfig, fileService);
 		searchConfig.setSearchHandler(handler);
+		_searches.put(searchConfig, handler);
 		handler.search(monitor);
 		return handler;
 	}

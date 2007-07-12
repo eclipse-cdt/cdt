@@ -141,4 +141,42 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void foo(){
+	//for(;;){
+	//int a=0;
+	//switch(a){
+	//case 0:
+	//++a;
+	//break;
+	//case 1:
+	//--a;
+	//break;
+	//}
+	//}
+	//}
+	//int main(void){
+	//foo();
+	//return 1;
+	//}
+
+	//void foo() {
+	//	for (;;) {
+	//		int a=0;
+	//		switch (a) {
+	//		case 0:
+	//			++a;
+	//			break;
+	//		case 1:
+	//			--a;
+	//			break;
+	//		}
+	//	}
+	//}
+	//int main(void) {
+	//	foo();
+	//	return 1;
+	//}
+	public void testForWithEmptyExpression_Bug195942() throws Exception {
+		assertFormatterResult();
+	}
 }

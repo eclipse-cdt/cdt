@@ -1578,8 +1578,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			// probably a macro with empty expansion
 			skipToNode(node);
 		}
-		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
-		scribe.printTrailingComment();
+		if (!fInsideFor) {
+			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
+			scribe.printTrailingComment();
+		}
 		return PROCESS_SKIP;
 	}
 
@@ -1605,31 +1607,35 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	    final int line = scribe.line;
 	    scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_for);
 		fInsideFor= true;
-
-		if (preferences.insert_space_after_opening_paren_in_for) {
-			scribe.space();
-		}
-		IASTStatement initializerStmt= node.getInitializerStatement();
-		initializerStmt.accept(this);
-		if (peekNextToken() == Token.tSEMI) {
-			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
-		}
-		final IASTExpression condition = node.getConditionExpression();
-		if (condition != null) {
-			if (preferences.insert_space_after_semicolon_in_for) {
+		try {
+			if (preferences.insert_space_after_opening_paren_in_for) {
 				scribe.space();
 			}
-			condition.accept(this);
-		}
-		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
-		IASTExpression iterationExpr= node.getIterationExpression();
-		if (iterationExpr != null) {
-			if (preferences.insert_space_after_semicolon_in_for) {
-				scribe.space();
+			IASTStatement initializerStmt= node.getInitializerStatement();
+			initializerStmt.accept(this);
+			if (peekNextToken() == Token.tSEMI) {
+				scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
 			}
-			iterationExpr.accept(this);
+			final IASTExpression condition = node.getConditionExpression();
+			if (condition != null) {
+				if (preferences.insert_space_after_semicolon_in_for) {
+					scribe.space();
+				}
+				condition.accept(this);
+			}
+			if (peekNextToken() == Token.tSEMI) {
+				scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon_in_for);
+			}
+			IASTExpression iterationExpr= node.getIterationExpression();
+			if (iterationExpr != null) {
+				if (preferences.insert_space_after_semicolon_in_for) {
+					scribe.space();
+				}
+				iterationExpr.accept(this);
+			}
+		} finally {
+			fInsideFor= false;
 		}
-		fInsideFor= false;
 		scribe.printNextToken(Token.tRPAREN, preferences.insert_space_before_closing_paren_in_for);
 
 		formatAction(line, node.getBody(), preferences.brace_position_for_block, preferences.insert_space_before_opening_brace_in_block);

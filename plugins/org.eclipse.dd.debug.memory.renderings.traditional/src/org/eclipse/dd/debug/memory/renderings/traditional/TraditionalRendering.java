@@ -21,14 +21,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -50,22 +54,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.UIJob;
 
@@ -155,7 +152,121 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     		});
         
     }
+    
+    protected void logError(String message, Exception e)
+    {
+        Status status = new Status(IStatus.ERROR, getRenderingId(),
+            DebugException.INTERNAL_ERROR, message, e);
 
+        DebugUIPlugin.getDefault().getLog().log(status);
+    }
+    
+    private BigInteger fBigBaseAddress;
+    private BigInteger fStartAddress;
+    private BigInteger fEndAddress;
+    private int fAddressableSize;
+    private int fAddressSize;
+    
+    public void init(IMemoryRenderingContainer container, IMemoryBlock block)
+    {
+    	super.init(container, block);
+    	
+    	try
+    	{
+    		fBigBaseAddress = ((IMemoryBlockExtension) block).getBigBaseAddress();
+    	}
+    	catch(DebugException de)
+    	{
+    		logError(TraditionalRenderingMessages
+                .getString("TraditionalRendering.FAILURE_RETRIEVE_BASE_ADDRESS"), de); //$NON-NLS-1$ // FIXME
+    	}
+    	
+    	try
+		{
+			fAddressableSize = ((IMemoryBlockExtension) block).getAddressableSize();
+		}
+		catch(DebugException de)
+		{
+			fAddressableSize = 1;
+		}
+    	
+    	try 
+    	{	
+    		fStartAddress = ((IMemoryBlockExtension)block).getMemoryBlockStartAddress();
+		} 
+    	catch (DebugException de) {
+			fStartAddress =  null;	
+			logError(TraditionalRenderingMessages
+				.getString("TraditionalRendering.FAILURE_RETRIEVE_START_ADDRESS"), de); //$NON-NLS-1$
+		}
+    	
+    	
+        try
+        {
+            fAddressSize = ((IMemoryBlockExtension) block).getAddressSize();
+        }
+        catch(DebugException e)
+        {
+        	fAddressSize = 0;
+        }
+        
+    	BigInteger endAddress;
+		try 
+		{
+			endAddress = ((IMemoryBlockExtension) block).getMemoryBlockEndAddress();
+			if (endAddress != null)
+				fEndAddress = endAddress;
+		} 
+		catch (DebugException e) 
+		{
+			fEndAddress = null;
+		}
+		
+		if (fEndAddress == null)
+		{
+			int addressSize;
+			try {
+				addressSize = ((IMemoryBlockExtension) block).getAddressSize();
+			} catch (DebugException e) {
+				addressSize = 4;
+			}
+			
+			endAddress = BigInteger.valueOf(2);
+			endAddress = endAddress.pow(addressSize*8);
+			endAddress = endAddress.subtract(BigInteger.valueOf(1));
+			fEndAddress =  endAddress;
+		}
+		
+		// default to MAX_VALUE if we have trouble getting the end address
+		if (fEndAddress == null)
+			fEndAddress = BigInteger.valueOf(Integer.MAX_VALUE);
+    }
+    
+    public BigInteger getBigBaseAddress()
+    {
+    	return fBigBaseAddress;
+    }
+    
+    public BigInteger getMemoryBlockStartAddress()
+    {
+    	return fStartAddress;
+    }
+    
+    public BigInteger getMemoryBlockEndAddress()
+    {
+    	return fEndAddress;
+    }
+    
+    public int getAddressableSize()
+    {
+    	return fAddressableSize;
+    }
+    
+    public int getAddressSize()
+    {
+    	return fAddressSize;
+    }
+    
     public Control createControl(Composite parent)
     {
     	allocateColors();
@@ -901,7 +1012,6 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
         return super.getAdapter(adapter);
     }
-
 }
 
 class TraditionalMemoryByte extends MemoryByte

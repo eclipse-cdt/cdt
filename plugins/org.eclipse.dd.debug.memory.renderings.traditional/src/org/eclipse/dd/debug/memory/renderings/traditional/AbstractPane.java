@@ -68,7 +68,7 @@ public abstract class AbstractPane extends Canvas
 
         try
         {
-            fCaretAddress = rendering.getMemoryBlock().getBigBaseAddress();
+            fCaretAddress = rendering.getBigBaseAddress();
         }
         catch(Exception e)
         {

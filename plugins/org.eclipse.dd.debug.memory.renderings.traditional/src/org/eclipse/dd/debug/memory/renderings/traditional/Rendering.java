@@ -183,27 +183,15 @@ public class Rendering extends Composite implements IDebugEventSetListener
         this.fAddressBarControl.setVisible(false);
 
         // initialize the viewport start
-        IMemoryBlockExtension memoryBlock = getMemoryBlock();
-        if(memoryBlock != null)
+        if(fParent.getMemoryBlock() != null)
         {
-            try
-            {
-                fViewportAddress = memoryBlock.getMemoryBlockStartAddress();
-                // this will be null if memory may be retrieved at any address less than
-                // this memory block's base.  if so use the base address.
-                if (fViewportAddress == null)
-                	fViewportAddress = memoryBlock.getBigBaseAddress();
-                fBaseAddress = fViewportAddress;
-            }
-            catch(DebugException e)
-            {
-                fViewportAddress = null;
-                if(isDebug())
-                    Rendering.this
-                        .logError(
-                            TraditionalRenderingMessages
-                                .getString("TraditionalRendering.FAILURE_RETRIEVE_START_ADDRESS"), e); //$NON-NLS-1$
-            }
+            fViewportAddress = fParent.getMemoryBlockStartAddress();
+            
+             // this will be null if memory may be retrieved at any address less than
+             // this memory block's base.  if so use the base address.
+             if (fViewportAddress == null)
+               	 fViewportAddress = fParent.getBigBaseAddress();
+             fBaseAddress = fViewportAddress;
         }
 
         getHorizontalBar().addSelectionListener(new SelectionListener()
@@ -520,7 +508,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return false;
     }
 
-    protected IMemoryBlockExtension getMemoryBlock()
+    private IMemoryBlockExtension getMemoryBlock()
     {
         IMemoryBlock block = fParent.getMemoryBlock();
         if(block != null)
@@ -529,17 +517,15 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         return null;
     }
+    
+    protected BigInteger getBigBaseAddress()
+    {
+    	return fParent.getBigBaseAddress();
+    }
 
     protected int getAddressableSize()
     {
-    	try
-    	{
-    		return getMemoryBlock().getAddressableSize();
-    	}
-    	catch(DebugException e)
-    	{
-    		return 1;
-    	}
+    	return fParent.getAddressableSize();
     }
     
     protected ViewportCache getViewportCache()
@@ -925,7 +911,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
             	try
             	{
-                    getMemoryBlock().setValue(address.subtract(getMemoryBlock().getBigBaseAddress()), byteValue);
+                    getMemoryBlock().setValue(address.subtract(fParent.getBigBaseAddress()), byteValue);
                 }
                 catch(Exception e)
                 {
@@ -1334,27 +1320,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return addressString.toString();
     }
 
-    private int fAddressBytes = -1; // called often, cache
-
     protected int getAddressBytes()
     {
-        if(fAddressBytes == -1)
-        {
-            try
-            {
-                IMemoryBlockExtension block = getMemoryBlock();
-                fAddressBytes = block.getAddressSize();
-            }
-            catch(DebugException e)
-            {
-                fAddressBytes = 0;
-                logError(
-                    TraditionalRenderingMessages
-                        .getString("TraditionalRendering.FAILURE_DETERMINE_ADDRESS_SIZE"), e); //$NON-NLS-1$
-            }
-        }
-
-        return fAddressBytes;
+        return fParent.getAddressSize();
     }
 
     protected int getColumnCount()
@@ -1439,25 +1407,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	 */
 	protected BigInteger getMemoryBlockStartAddress()
 	{
-		if (fMemoryBlockStartAddress == null)
-		{
-			try {
-				IMemoryBlock memoryBlock = this.getMemoryBlock();
-				if(memoryBlock instanceof IMemoryBlockExtension)
-				{
-					BigInteger startAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockStartAddress();
-					if (startAddress != null)
-						fMemoryBlockStartAddress =  startAddress;
-				}
-			} catch (DebugException e) {
-				fMemoryBlockStartAddress =  null;			
-			}
-			
-			// default to 0 if we have trouble getting the start address
-			if (fMemoryBlockStartAddress == null)
-				fMemoryBlockStartAddress =  BigInteger.valueOf(0);
-		}
-		return fMemoryBlockStartAddress; 
+		if(fMemoryBlockStartAddress == null)
+			fMemoryBlockStartAddress =  fParent.getMemoryBlockStartAddress();
+		if(fMemoryBlockStartAddress == null)
+			fMemoryBlockStartAddress = BigInteger.ZERO;
+		
+		return fMemoryBlockStartAddress;
 	}
 	
 	/**
@@ -1465,40 +1420,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	 */
 	protected BigInteger getMemoryBlockEndAddress()
 	{
-		if (fMemoryBlockEndAddress == null)
-		{
-			IMemoryBlock memoryBlock = this.getMemoryBlock();
-			if(memoryBlock instanceof IMemoryBlockExtension)
-			{
-				BigInteger endAddress;
-				try {
-					endAddress = ((IMemoryBlockExtension)memoryBlock).getMemoryBlockEndAddress();
-					if (endAddress != null)
-						fMemoryBlockEndAddress = endAddress;
-				} catch (DebugException e) {
-					fMemoryBlockEndAddress = null;
-				}
-				
-				if (fMemoryBlockEndAddress == null)
-				{
-					int addressSize;
-					try {
-						addressSize = ((IMemoryBlockExtension)memoryBlock).getAddressSize();
-					} catch (DebugException e) {
-						addressSize = 4;
-					}
-					
-					endAddress = BigInteger.valueOf(2);
-					endAddress = endAddress.pow(addressSize*8);
-					endAddress = endAddress.subtract(BigInteger.valueOf(1));
-					fMemoryBlockEndAddress =  endAddress;
-				}
-			}
-			
-			// default to MAX_VALUE if we have trouble getting the end address
-			if (fMemoryBlockEndAddress == null)
-				fMemoryBlockEndAddress = BigInteger.valueOf(Integer.MAX_VALUE);
-		}
+		if(fMemoryBlockEndAddress == null)
+			fMemoryBlockEndAddress = fParent.getMemoryBlockEndAddress();
+		
 		return fMemoryBlockEndAddress;
 	}
 

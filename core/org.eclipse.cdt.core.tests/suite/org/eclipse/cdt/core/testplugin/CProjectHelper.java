@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Andrew Ferguson (Symbian)
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 import java.io.File;
@@ -21,6 +22,7 @@ import junit.framework.Assert;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -102,11 +104,27 @@ public class CProjectHelper {
 					addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
 					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
 				}
+				addDefaultBinaryParser(project);
 				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
 			}
 		}, null);
 
 		return newProject[0];
+	}
+
+	/**
+	 * Add the default binary parser if no binary parser configured.
+	 * 
+	 * @param project
+	 * @throws CoreException 
+	 */
+	public static void addDefaultBinaryParser(IProject project) throws CoreException {
+		ICExtensionReference[] binaryParsers= CCorePlugin.getDefault().getBinaryParserExtensions(project);
+		if (binaryParsers == null || binaryParsers.length == 0) {
+			ICProjectDescription desc= CCorePlugin.getDefault().getProjectDescription(project);
+			desc.getDefaultSettingConfiguration().create(CCorePlugin.BINARY_PARSER_UNIQ_ID, CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID);
+			CCorePlugin.getDefault().setProjectDescription(project, desc);
+		}
 	}
 
 	/**
@@ -166,6 +184,7 @@ public class CProjectHelper {
 					mngr.setProjectDescription(project, projDes);
 //					CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
 				}
+				addDefaultBinaryParser(project);
 				newProject[0] = CCorePlugin.getDefault().getCoreModel().create(project);
 			}
 		}, null);

@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
@@ -22,6 +22,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -69,7 +71,9 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 			return;
 		
 		try {
-			IPath path = new Path(((PDOMSearchMatch)match).getFileName());
+			Object element= ((PDOMSearchMatch)match).getElement();
+			IIndexFileLocation ifl= ((PDOMSearchElement)element).getLocation();
+			IPath path = IndexLocationFactory.getPath(ifl);
 			IEditorPart editor = EditorUtility.openInEditor(path, null);
 			if (editor instanceof ITextEditor) {
 				ITextEditor textEditor = (ITextEditor)editor;
@@ -80,4 +84,7 @@ public class PDOMSearchViewPage extends AbstractTextSearchViewPage {
 		}
 	}
 	
+	public StructuredViewer getViewer() {
+		return super.getViewer();
+	}
 }

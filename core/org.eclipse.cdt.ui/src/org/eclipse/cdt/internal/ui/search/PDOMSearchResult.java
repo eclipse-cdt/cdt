@@ -36,6 +36,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
@@ -91,22 +92,18 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	}
 	
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
-		try {
-			String filename = getFileName(editor);
-			if (filename != null && match instanceof PDOMSearchMatch)
-				return filename.equals(((PDOMSearchMatch)match).getFileName());
-		} catch (CoreException e) {
-			CUIPlugin.getDefault().log(e);
-		}
+		IPath filename = new Path(getFileName(editor));
+		if (filename != null && match instanceof PDOMSearchMatch)
+			return filename.equals(IndexLocationFactory.getAbsolutePath(((PDOMSearchMatch)match).getLocation()));
 		return false;
 	}
 	
 	private Match[] computeContainedMatches(AbstractTextSearchResult result, String filename) throws CoreException {
+		IPath pfilename= new Path(filename);
 		List list = new ArrayList(); 
 		Object[] elements = result.getElements();
 		for (int i = 0; i < elements.length; ++i) {
-			if (((PDOMSearchElement) elements[i]).getFileName()
-					.equals(filename)) {
+			if (pfilename.equals(IndexLocationFactory.getAbsolutePath(((PDOMSearchElement)elements[i]).getLocation()))) {
 				Match[] matches = result.getMatches(elements[i]);
 				for (int j = 0; j < matches.length; ++j) {
 					if (matches[j] instanceof PDOMSearchMatch) {

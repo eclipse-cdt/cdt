@@ -11,6 +11,9 @@
 package org.eclipse.cdt.ui.tests.search;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.TestSuite;
 
@@ -18,6 +21,17 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.search.ui.IQueryListener;
+import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
+import org.eclipse.search.ui.ISearchResultPage;
+import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.NewSearchUI;
 import org.osgi.framework.Bundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -25,15 +39,17 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.search.PDOMSearchPatternQuery;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchQuery;
 import org.eclipse.cdt.internal.ui.search.PDOMSearchResult;
+import org.eclipse.cdt.internal.ui.search.PDOMSearchViewPage;
 
-public class BasicSearchTest extends BaseTestCase {
+public class BasicSearchTest extends BaseUITestCase {
 	ICProject fCProject;
 	StringBuffer[] testData;
 
@@ -60,6 +76,79 @@ public class BasicSearchTest extends BaseTestCase {
 		}
 	}
 
+	// // empty
+
+	// #include "extHead.h"
+	// void bar() {
+	//   foo();
+	// }
+	public void testExternalPathRenderedCorrectly_79193() throws Exception {
+		// make an external file
+		File dir= CProjectHelper.freshDir();
+		File externalFile= new File(dir, "extHead.h");
+		externalFile.deleteOnExit();
+		FileWriter fw= new FileWriter(externalFile);
+		fw.write("void foo() {}\n");
+		fw.close();
+		
+		// rebuild the index
+		TestScannerProvider.sIncludes= new String[] {dir.getAbsolutePath()};
+		CCorePlugin.getIndexManager().reindex(fCProject);
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		
+		// open a query
+		PDOMSearchQuery query= makeProjectQuery("foo");
+		PDOMSearchResult result= runQuery(query);
+		assertEquals(2, result.getElements().length);
+		
+		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
+		ISearchResultPage page= vp.getActivePage();
+		assertTrue(""+page, page instanceof PDOMSearchViewPage);
+		
+		PDOMSearchViewPage pdomsvp= (PDOMSearchViewPage) page;
+		StructuredViewer viewer= pdomsvp.getViewer();
+		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
+		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
+		
+		Object result0= result.getElements()[0];
+		Object result1= result.getElements()[1];
+		
+		// check the results are rendered
+		String expected0= fCProject.getProject().getName();
+		String expected1= new Path(externalFile.getAbsolutePath()).toString();
+		assertEquals(expected0,labpv.getText(scp.getElements(result)[0]));
+		assertEquals(expected1,labpv.getText(scp.getElements(result)[1]));
+	}
+	
+	/**
+	 * Run the specified query, and return the result. When this method returns the
+	 * search page will have been opened.
+	 * @param query
+	 * @return
+	 */
+	protected PDOMSearchResult runQuery(PDOMSearchQuery query) {
+		final ISearchResult result[]= new ISearchResult[1];
+		IQueryListener listener= new IQueryListener() {
+			public void queryAdded(ISearchQuery query) {}
+			public void queryFinished(ISearchQuery query) {
+				result[0]= query.getSearchResult();
+			}
+			public void queryRemoved(ISearchQuery query) {}
+			public void queryStarting(ISearchQuery query) {}
+		};
+		NewSearchUI.addQueryListener(listener);
+		NewSearchUI.runQueryInForeground(new IRunnableContext() {
+			public void run(boolean fork, boolean cancelable,
+					IRunnableWithProgress runnable)
+					throws InvocationTargetException, InterruptedException {
+				runnable.run(NPM);
+			}
+		}, query);
+		assertTrue(result[0] instanceof PDOMSearchResult);
+		runEventQueue(500);
+		return (PDOMSearchResult) result[0];
+	}
+	
 	// void foo() {}
 
 	// void bar() {

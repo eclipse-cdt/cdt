@@ -18,10 +18,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,6 +28,13 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
 
 /**
  * @author Doug Schaefer
@@ -94,8 +97,14 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	}
 	
 	private void insertSearchElement(PDOMSearchElement element) {
-		IPath path = new Path(element.getFileName());
-		IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+		IIndexFileLocation location= element.getLocation();
+		IFile[] files;
+		if(location.getFullPath()!=null) {
+			files= new IFile[] {ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(location.getFullPath()))};
+		} else {
+			IPath path= IndexLocationFactory.getAbsolutePath(element.getLocation());
+			files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+		}
 		boolean handled= false;
 		if (files.length > 0) {
 			for (int j = 0; j < files.length; ++j) {
@@ -108,9 +117,8 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 			}
 		} 
 		if (!handled) {
-			String pathName = path.toOSString(); 
-			insertChild(pathName, element);
-			insertChild(result, pathName);
+			insertChild(element.getLocation(), element);
+			insertChild(result, element.getLocation());
 		}
 	}
 	

@@ -17,6 +17,7 @@ import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 
 /**
@@ -29,8 +30,8 @@ public class PDOMSearchMatch extends Match {
 		super(new PDOMSearchElement(index, name, binding), offset, length);
 	}
 
-	public String getFileName() throws CoreException {
-		return ((PDOMSearchElement)getElement()).getFileName();
+	IIndexFileLocation getLocation() {
+		return ((PDOMSearchElement)getElement()).getLocation();
 	}
 	
 	public boolean equals(Object obj) {

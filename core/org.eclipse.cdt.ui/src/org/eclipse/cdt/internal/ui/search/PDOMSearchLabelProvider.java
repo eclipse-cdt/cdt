@@ -11,12 +11,16 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
@@ -40,13 +44,25 @@ public class PDOMSearchLabelProvider extends LabelProvider {
 		if (element instanceof PDOMSearchElement)
 			return fTypeInfoLabelProvider.getImage(((PDOMSearchElement)element).getTypeInfo());
 
+		if (element instanceof IIndexFileLocation) {
+			return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDE);
+		}
+		
 		return fCElementLabelProvider.getImage(element);
 	}
 
 	public String getText(Object element) {
 		if (element instanceof PDOMSearchElement) {
 			return fTypeInfoLabelProvider.getText(((PDOMSearchElement)element).getTypeInfo());
-		} 
+		}
+		
+		if (element instanceof IIndexFileLocation) {
+			IPath path= IndexLocationFactory.getPath((IIndexFileLocation)element); 
+			if(path!=null) {
+				return path.toString();
+			}
+		}
+		
 		return fCElementLabelProvider.getText(element);
 	}
 	

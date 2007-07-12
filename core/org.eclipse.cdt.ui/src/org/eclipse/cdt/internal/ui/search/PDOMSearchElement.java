@@ -13,12 +13,12 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.IndexTypeInfo;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
 
 /**
@@ -29,15 +29,15 @@ import org.eclipse.cdt.core.index.IIndexName;
 public class PDOMSearchElement {
 
 	private final ITypeInfo typeInfo;
-	private final String filename;
+	private final IIndexFileLocation location;
 	
 	public PDOMSearchElement(IIndex index, IIndexName name, IIndexBinding binding) throws CoreException {
 		this.typeInfo= IndexTypeInfo.create(index, binding);
-		filename = new Path(name.getFileLocation().getFileName()).toOSString();
+		this.location= name.getFile().getLocation();
 	}
 	
 	public int hashCode() {
-		return (typeInfo.getCElementType() *31 + typeInfo.getName().hashCode())*31 + filename.hashCode();
+		return (typeInfo.getCElementType() *31 + typeInfo.getName().hashCode())*31 + location.hashCode();
 	}
 	
 	public boolean equals(Object obj) {
@@ -48,14 +48,14 @@ public class PDOMSearchElement {
 		PDOMSearchElement other = (PDOMSearchElement)obj;
 		return typeInfo.getCElementType() == other.typeInfo.getCElementType()
 			&& typeInfo.getName().equals(other.typeInfo.getName())
-			&& filename.equals(other.filename);
+			&& location.equals(other.location);
 	}
 
 	public ITypeInfo getTypeInfo() {
 		return typeInfo;
 	}
 	
-	public String getFileName() {
-		return filename;
+	IIndexFileLocation getLocation() {
+		return location;
 	}
 }

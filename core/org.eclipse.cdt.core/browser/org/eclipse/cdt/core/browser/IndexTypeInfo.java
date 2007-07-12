@@ -39,6 +39,7 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -58,6 +59,8 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	
 	/**
 	 * Creates a typeinfo suitable for the binding.
+	 * @param index a non-null index in which to locate references
+	 * @param binding
 	 * @since 4.0.1
 	 */
 	public static IndexTypeInfo create(IIndex index, IIndexBinding binding) {
@@ -80,7 +83,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				final IFunction function= (IFunction)binding;
 				final String[] paramTypes= IndexModelUtil.extractParameterTypes(function);
 				final String returnType= IndexModelUtil.extractReturnType(function);
-				return new IndexTypeInfo(fqn, elementType, paramTypes, returnType, null);
+				return new IndexTypeInfo(fqn, elementType, paramTypes, returnType, index);
 			}
 		} catch (DOMException e) {
 			// index bindings don't throw DOMExceptions.
@@ -90,31 +93,32 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return new IndexTypeInfo(fqn, elementType, index);
 	}
 
+	private IndexTypeInfo(String[] fqn, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
+		Assert.isTrue(index != null);
+		this.fqn= fqn;
+		this.elementType= elementType;
+		this.index= index;
+		this.params= params;
+		this.returnType= returnType;
+		this.reference= reference;
+	}
+	
 	/**
 	 * @deprecated, use {@link #create(IIndex, IBinding)}.
 	 */
 	public IndexTypeInfo(String[] fqn, int elementType, IIndex index) {
-		this.fqn = fqn;
-		this.elementType = elementType;
-		this.index = index;
-		this.params= null;
-		this.returnType= null;
+		this(fqn, elementType, index, null, null, null);
 	}
 
 	/**
 	 * @deprecated, use {@link #create(IIndex, IBinding)}.
 	 */
 	public IndexTypeInfo(String[] fqn, int elementType, String[] params, String returnType, IIndex index) {
-		this.fqn = fqn;
-		this.elementType = elementType;
-		this.params= params;
-		this.returnType= returnType;
-		this.index = index;
+		this(fqn, elementType, index, params, returnType, null);
 	}
 	
 	public IndexTypeInfo(IndexTypeInfo rhs, ITypeReference ref) {
-		this(rhs.fqn, rhs.elementType, rhs.params, rhs.returnType, rhs.index);
-		this.reference= ref;
+		this(rhs.fqn, rhs.elementType, rhs.index, rhs.params, rhs.returnType, ref);
 	}
 
 	public void addDerivedReference(ITypeReference location) {

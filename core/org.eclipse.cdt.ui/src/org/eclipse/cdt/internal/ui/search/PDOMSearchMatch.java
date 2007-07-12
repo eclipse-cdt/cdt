@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.search;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.search.ui.text.Match;
 
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 
@@ -24,8 +25,8 @@ import org.eclipse.cdt.core.index.IIndexName;
  */
 public class PDOMSearchMatch extends Match {
 
-	public PDOMSearchMatch(IIndexBinding binding, IIndexName name, int offset, int length) throws CoreException {
-		super(new PDOMSearchElement(name, binding), offset, length);
+	public PDOMSearchMatch(IIndex index, IIndexBinding binding, IIndexName name, int offset, int length) throws CoreException {
+		super(new PDOMSearchElement(index, name, binding), offset, length);
 	}
 
 	public String getFileName() throws CoreException {

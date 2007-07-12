@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.IndexTypeInfo;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
 
@@ -30,8 +31,8 @@ public class PDOMSearchElement {
 	private final ITypeInfo typeInfo;
 	private final String filename;
 	
-	public PDOMSearchElement(IIndexName name, IIndexBinding binding) throws CoreException {
-		this.typeInfo= IndexTypeInfo.create(null, binding);
+	public PDOMSearchElement(IIndex index, IIndexName name, IIndexBinding binding) throws CoreException {
+		this.typeInfo= IndexTypeInfo.create(index, binding);
 		filename = new Path(name.getFileLocation().getFileName()).toOSString();
 	}
 	

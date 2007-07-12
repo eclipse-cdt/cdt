@@ -115,7 +115,7 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 			if (!filterName(name)) {
 				IASTFileLocation loc = name.getFileLocation();
 				IIndexBinding binding= index.findBinding(name);
-				result.addMatch(new PDOMSearchMatch(binding, name, loc.getNodeOffset(), loc.getNodeLength()));
+				result.addMatch(new PDOMSearchMatch(index, binding, name, loc.getNodeOffset(), loc.getNodeLength()));
 			}
 		}
 	}

@@ -200,6 +200,15 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
                 update.setLabel(dmData.getName(), idx);
             }
         }
+        else if ( columnId == null ) {
+            /*
+             *  If the Column ID comes in as "null" then this is the case where the user has decided
+             *  to not have any columns. So we need a default action which makes the most sense  and
+             *  is doable. In this case we elect to simply display the name.
+             */
+            update.setLabel(dmData.getName(), idx);
+            update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP), idx);
+        }
     }
     
     @Override

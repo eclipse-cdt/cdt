@@ -314,7 +314,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                          * loops.
                          */
                         String[] localColumns = update.getPresentationContext().getColumns();
-                        if (localColumns == null) localColumns = new String[] { null };
+                        if (localColumns == null) localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME }; 
                         
                         boolean weAreExtractingFormattedData = false;
                         

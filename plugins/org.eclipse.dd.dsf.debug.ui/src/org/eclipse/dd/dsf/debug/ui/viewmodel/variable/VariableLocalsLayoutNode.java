@@ -195,7 +195,7 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
 
                         String[] localColumns = update.getPresentationContext().getColumns();
                         if (localColumns == null)
-                            localColumns = new String[] { null };
+                            localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
                         
                         boolean weAreExtractingFormattedData = false;
                         
@@ -370,6 +370,12 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
                         return;
                     }
                     
+                    if ( localsDMCs.length == 0 ) {
+                        // There are no locals so just complete the request
+                        update.done();
+                        return;
+                    }
+                    
                     // Create a List in which we store the DM data objects for the local variables.  This is
                     // necessary because there is no MultiDataRequestMonitor. :)
                     
@@ -440,9 +446,8 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
     protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
-            // } else if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-            // return IModelDelta.STATE;
         }
+        
         return IModelDelta.NO_CHANGE;
     }
 
@@ -453,11 +458,7 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
             // Create a delta that the whole register group has changed.
             parent.addFlags(IModelDelta.CONTENT);
         }
-        // if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-        // parent.addNode(new
-        // DMVMContext(((IRegisters.IRegisterChangedDMEvent)e).getDMContext()),
-        // IModelDelta.STATE);
-        // }
+
         super.buildDeltaForDMEvent(e, parent, nodeOffset, requestMonitor);
     }
 

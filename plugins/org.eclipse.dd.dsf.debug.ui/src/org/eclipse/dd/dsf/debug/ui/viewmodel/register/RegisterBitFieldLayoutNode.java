@@ -313,7 +313,7 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
                          * loops.
                          */
                         String[] localColumns = update.getPresentationContext().getColumns();
-                        if (localColumns == null) localColumns = new String[] { null };
+                        if (localColumns == null) localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
                         
                         boolean weAreExtractingFormattedData = false;
                         

@@ -42,6 +42,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 @SuppressWarnings("restriction")
 public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IExpressionDMData> {
     
+    @SuppressWarnings("unused")
     private SyncVariableDataAccess fSyncVariableDataAccess;
 
     public VariableSubExpressionsLayoutNode(AbstractVMProvider provider, DsfSession session, SyncVariableDataAccess syncVariableDataAccess) {
@@ -59,7 +60,6 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
     public IVMLayoutNode[] getChildLayoutNodes() {
         return fChildLayoutNodes;
     }
-
     
     /**
      * We override this method because we now need to perform an extra level of data fetch to get the
@@ -99,7 +99,7 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
 
                         String[] localColumns = update.getPresentationContext().getColumns();
                         if (localColumns == null)
-                            localColumns = new String[] { null };
+                            localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
                         
                         boolean weAreExtractingFormattedData = false;
                         
@@ -130,7 +130,6 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
             );
         }
     }
-
     
     /**
      *  Private data access routine which performs the extra level of data access needed to
@@ -223,7 +222,6 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
         );
     }
     
-    
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         // Get the data model context object for the current node in the hierarchy.
@@ -287,9 +285,21 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
     protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             return IModelDelta.CONTENT;
-//        } else if (e instanceof IRegisters.IExpressionsChangedDMEvent) {
-//            return IModelDelta.STATE;
         } 
+        else if (e instanceof IExpressions.IExpressionChangedDMEvent) {
+            /*
+             * Flush the cache.
+             */
+            VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
+            
+            /*
+             *  Logically one would think that STATE should be specified here. But we specifiy CONTENT
+             *  as well so that if there sub expressions which are affected in some way ( such as with
+             *  an expanded union then they will show the changes also.
+             */
+            return IModelDelta.CONTENT | IModelDelta.STATE;
+        }
+        
         return IModelDelta.NO_CHANGE;
     }
 
@@ -299,9 +309,10 @@ public class VariableSubExpressionsLayoutNode extends AbstractDMVMLayoutNode<IEx
             // Create a delta that the whole register group has changed.
             parent.addFlags(IModelDelta.CONTENT);
         } 
-//        if (e instanceof IRegisters.IRegisterChangedDMEvent) {
-//            parent.addNode( new DMVMContext(((IRegisters.IRegisterChangedDMEvent)e).getDMContext()), IModelDelta.STATE );
-//        } 
+        else if (e instanceof IExpressions.IExpressionChangedDMEvent) {
+            parent.addNode( createVMContext(((IExpressions.IExpressionChangedDMEvent)e).getDMContext()), IModelDelta.CONTENT | IModelDelta.STATE );
+        }
+        
         super.buildDeltaForDMEvent(e, parent, nodeOffset, requestMonitor);
     }
 }

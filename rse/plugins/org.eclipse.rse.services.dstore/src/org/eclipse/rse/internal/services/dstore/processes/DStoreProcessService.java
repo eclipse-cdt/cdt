@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
+ * David McKnight   (IBM)        - [159092] For to use correct process miner id
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.processes;
@@ -169,8 +170,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	    if (_minerElement == null || _minerElement.getDataStore() != getDataStore())
 	    {
 	        _minerElement = getDataStore()
-				.findMinerInformation(
-						"org.eclipse.rse.dstore.universal.miners.processes.UniversalProcessMiner"); //$NON-NLS-1$
+				.findMinerInformation(UniversalProcessMiner.MINER_ID); //$NON-NLS-1$
 	    }
 	    return _minerElement;
 	}

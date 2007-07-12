@@ -124,13 +124,11 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 	
 	private void checkApply() throws CoreException {
-		synchronized (CProjectDescriptionManager.getInstance()){
-			if(fApplyOnChange){
-				apply(false);
-				fIsDirty = false;
-			} else {
-				fIsDirty = true;
-			}
+		if(fApplyOnChange){
+			apply(false);
+			fIsDirty = false;
+		} else {
+			fIsDirty = true;
 		}
 	}
 	
@@ -323,12 +321,10 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 
 	public void saveProjectData() throws CoreException {
-		synchronized (CProjectDescriptionManager.getInstance()) {
-			if(CProjectDescriptionManager.getInstance().getDescriptorManager().reconsile(this, fCfgDes.getProjectDescription()))
-				fIsDirty = true;
-			
-			checkApply();
-		}
+		if(CProjectDescriptionManager.getInstance().getDescriptorManager().reconsile(this, fCfgDes.getProjectDescription()))
+			fIsDirty = true;
+		
+		checkApply();
 	}
 	
 	public Map getStorageDataElMap(){

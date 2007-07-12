@@ -12,8 +12,6 @@
 
 package org.eclipse.cdt.core.cdescriptor.tests;
 
-import java.util.Iterator;
-
 import junit.extensions.TestSetup;
 import junit.framework.Assert;
 import junit.framework.Test;
@@ -28,7 +26,6 @@ import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwnerInfo;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.core.resources.IProject;
@@ -76,7 +73,8 @@ public class CDescriptorTests extends TestCase {
 		suite.addTest(new CDescriptorTests("testProjectDataDelete"));
 		suite.addTest(new CDescriptorTests("testConcurrentDescriptorCreation"));
 		suite.addTest(new CDescriptorTests("testConcurrentDescriptorCreation2"));
-
+		suite.addTest(new CDescriptorTests("testDeadlockDuringProjectCreation"));
+		
 		TestSetup wrapper = new TestSetup(suite) {
 
 			protected void setUp() throws Exception {
@@ -178,8 +176,9 @@ public class CDescriptorTests extends TestCase {
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=185930
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=193503
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=196118
 	public void testConcurrentDescriptorCreation2() throws Exception {
-		for (int i=0; i<100; ++i) {
+		for (int i=0; i<20; ++i) {
 			PDOMManager pdomMgr= (PDOMManager)CCorePlugin.getIndexManager();
 			pdomMgr.shutdown();
 			fProject.close(null);
@@ -232,6 +231,33 @@ public class CDescriptorTests extends TestCase {
 			fLastEvent = null;
 		}
 	}
+
+	public void testDeadlockDuringProjectCreation() throws Exception {
+		for (int i=0; i < 10; ++i) {
+			oneTimeTearDown();
+			oneTimeSetUp();
+			Thread t= new Thread() {
+				public void run() {
+					try {
+						ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+						Element data = desc.getProjectData("testElement0");
+						data.appendChild(data.getOwnerDocument().createElement("test"));
+						desc.saveProjectData();
+					} catch (CoreException exc) {
+					}
+				}
+			};
+			t.start();
+
+			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
+			Element data = desc.getProjectData("testElement0");
+			data.appendChild(data.getOwnerDocument().createElement("test"));
+			desc.saveProjectData();
+			t.join();
+			
+			fLastEvent = null;
+		}
+ 	}
 
 	public void testDescriptorOwner() throws Exception {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);

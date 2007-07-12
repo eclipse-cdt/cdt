@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -1013,8 +1014,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		if (!file.isDirectory()) {
 			
 			// if it exists, call replace
-			if (exists(virtualPath + "/" + name)) { //$NON-NLS-1$
-				return replace(virtualPath + "/" + name, file, name); //$NON-NLS-1$
+			String fullVirtualName = getFullVirtualName(virtualPath, name);
+			if (exists(fullVirtualName)) { 
+				return replace(fullVirtualName, file, name); 
 			}
 			else {
 				File[] files = new File[1];
@@ -1099,8 +1101,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// if the entry already exists, then we should do a replace
 			// TODO (KM): should we simply replace and return?
 			// I think we should check each entry and replace or create for each one
-			if (exists(virtualPath + "/" + names[i])) { //$NON-NLS-1$
-				return replace(virtualPath + "/" + names[i], files[i], names[i]); //$NON-NLS-1$
+			String fullVirtualName = getFullVirtualName(virtualPath, names[i]);
+			if (exists(fullVirtualName)) { 
+				return replace(fullVirtualName, files[i], names[i]); 
 			}
 		}
 		
@@ -2252,5 +2255,25 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	public boolean replace(String fullVirtualName, InputStream stream, String name, String sourceEncoding, String targetEncoding, boolean isText) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	/**
+	 * Construct the full virtual name of a virtual file from its virtual path and name.
+	 * @param virtualPath the virtual path of this virtual file
+	 * @param name the name of this virtual file
+	 * @return the full virtual name of this virtual file
+	 */
+	private static String getFullVirtualName(String virtualPath, String name)
+	{
+		String fullVirtualName = null;
+		if (virtualPath == null || virtualPath.length() == 0)
+		{
+			fullVirtualName = name;
+		}
+		else
+		{
+			fullVirtualName = virtualPath + "/" + name;  //$NON-NLS-1$
+		}
+		return fullVirtualName;
 	}
 }

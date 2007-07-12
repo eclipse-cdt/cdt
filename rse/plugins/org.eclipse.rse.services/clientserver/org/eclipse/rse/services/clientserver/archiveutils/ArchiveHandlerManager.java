@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -367,8 +368,23 @@ public class ArchiveHandlerManager
 		String newPath = fullVirtualName;
 		if (j != -1)
 		{
-			realPart = fullVirtualName.substring(0, j) + VIRTUAL_SEPARATOR;
-			newPath = fullVirtualName.substring(j + VIRTUAL_SEPARATOR.length());
+			try
+			{
+				realPart = fullVirtualName.substring(0, j) + VIRTUAL_SEPARATOR;
+				if (j + VIRTUAL_SEPARATOR.length() < fullVirtualName.length())
+				{
+					newPath = fullVirtualName.substring(j + VIRTUAL_SEPARATOR.length());
+				}
+				else
+				{
+					//This is the special case where fullVirtualName ends with VIRTUAL_SEPARATOR
+					newPath = "";   //$NON-NLS-1$
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 		// use only forward slash separator
 		newPath = newPath.replace('\\', '/');

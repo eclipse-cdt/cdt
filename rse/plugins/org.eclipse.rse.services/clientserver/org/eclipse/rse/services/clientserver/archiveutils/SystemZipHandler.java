@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * Xuan Chen        (IBM)        - [192741] [Archives] Move a folder from within an Archive doesn't work if > 1 level deep
+ * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -907,10 +908,11 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			for (int i = 0; i < numFiles; i++)
 			{		
 				if (!files[i].exists() || !files[i].canRead()) return false;
-				if (exists(virtualPath + "/" + names[i])) //$NON-NLS-1$
+				String fullVirtualName = getFullVirtualName(virtualPath, names[i]);
+				if (exists(fullVirtualName)) 
 				{
 					// sorry, wrong method buddy
-					return replace(virtualPath + "/" + names[i], files[i], names[i]); //$NON-NLS-1$
+					return replace(fullVirtualName, files[i], names[i]); 
 				}
 			}
 			File outputTempFile;
@@ -2184,10 +2186,10 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
 		if (!file.isDirectory())
 		{
-			if (exists(virtualPath + "/" + name)) //$NON-NLS-1$
+			String fullVirtualName = getFullVirtualName(virtualPath, name);
+			if (exists(fullVirtualName)) 
 			{
-				// wrong method
-				return replace(virtualPath + "/" + name, file, name); //$NON-NLS-1$
+				return replace(fullVirtualName, file, name);
 			}
 			else
 			{
@@ -2236,5 +2238,25 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			if  (!newNames[children.size()].endsWith("/")) newNames[children.size()] = newNames[children.size()] + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 			return add(sources, virtualPath, newNames, sourceEncodings, targetEncodings, isTexts);
 		}
+	}
+	
+	/**
+	 * Construct the full virtual name of a virtual file from its virtual path and name.
+	 * @param virtualPath the virtual path of this virtual file
+	 * @param name the name of this virtual file
+	 * @return the full virtual name of this virtual file
+	 */
+	private static String getFullVirtualName(String virtualPath, String name)
+	{
+		String fullVirtualName = null;
+		if (virtualPath == null || virtualPath.length() == 0)
+		{
+			fullVirtualName = name;
+		}
+		else
+		{
+			fullVirtualName = virtualPath + "/" + name;  //$NON-NLS-1$
+		}
+		return fullVirtualName;
 	}
 }

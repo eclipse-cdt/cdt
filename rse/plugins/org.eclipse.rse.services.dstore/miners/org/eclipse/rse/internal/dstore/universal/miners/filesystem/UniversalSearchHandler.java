@@ -12,7 +12,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Michael Berger (IBM) - Bug 147791 - symbolic links can cause circular search.
+ * Michael Berger   (IBM) - Bug 147791 - symbolic links can cause circular search.
+ * David McKnight   (IBM)  - [190010] cancelling search
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -117,7 +118,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 		catch (Exception e) {
 			UniversalServerUtilities.logError(_miner.getName(), "Error occured when calling internal search", e); //$NON-NLS-1$
 		}
-		
+
 		_isDone = true;
 		
 		if (_isCancelled) {
@@ -144,7 +145,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 	}
 
 	public void cancel() {
-		_isCancelled = true;
+		_isCancelled = true; 
 	}
 
 	protected boolean hasSearchedDirectory(File file) 
@@ -254,7 +255,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 			}
 			
 			// do a refresh
-			_dataStore.refresh(_status, true);
+			//_dataStore.refresh(_status, true);
 		}
 
 		// if the depth is not 0, then we need to recursively search

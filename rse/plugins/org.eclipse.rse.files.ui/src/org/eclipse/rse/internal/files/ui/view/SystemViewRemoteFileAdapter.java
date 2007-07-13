@@ -265,13 +265,12 @@ public class SystemViewRemoteFileAdapter
 	{
 		int elementType = 0;
 		boolean isArchive = false;
-		boolean allHaveContents = false;
 
-		boolean canEdit = true;
+		boolean canRead = true;
+		boolean canWrite = true;
 		boolean supportsSearch = true;
 		boolean supportsArchiveManagement = false;
 
-		boolean isVirtual = false;
 
 		// perf improvement... phil	
 		Object firstSelection = selection.getFirstElement();
@@ -281,16 +280,15 @@ public class SystemViewRemoteFileAdapter
 			firstFile = (IRemoteFile) firstSelection;
 			elementType = firstFile.isDirectory() || firstFile.isRoot() ? 1 : 0;
 			isArchive = firstFile.isArchive();
-			isVirtual = firstFile instanceof IVirtualRemoteFile;
-			canEdit = firstFile.canRead();
-
+			canRead = firstFile.canRead();
+			canWrite = firstFile.canWrite();
+			
 			supportsSearch = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsSearch();
 			supportsArchiveManagement = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		}
 		else
 			return;
 
-		allHaveContents = isArchive;
 
 		if (isArchive)
 		{		    
@@ -303,7 +301,6 @@ public class SystemViewRemoteFileAdapter
 				IRemoteFile remoteObj = (IRemoteFile) element;
 				if (!remoteObj.isArchive())
 				{
-				    allHaveContents = false;
 					break;
 				}
 			}
@@ -311,7 +308,7 @@ public class SystemViewRemoteFileAdapter
 
 		if ((elementType == 1 || (isArchive && supportsArchiveManagement)))
 		{
-			if (!foldersOnly && canEdit)
+			if (!foldersOnly && canRead && canWrite)
 			{
 				if (addNewFile == null)
 				{
@@ -321,7 +318,7 @@ public class SystemViewRemoteFileAdapter
 			}
 			if (!filesOnly)
 			{
-			    if (canEdit)
+			    if (canRead && canWrite)
 			    {
 			        if (addNewFolder == null)
 			        {
@@ -342,7 +339,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		else
 		{
-		    if (canEdit)
+		    if (canRead)
 		    {		    	
 		    	// open 
 		    	String label = SystemResources.ACTION_CASCADING_OPEN_LABEL;
@@ -366,22 +363,6 @@ public class SystemViewRemoteFileAdapter
 		    }
 		}
 
-		
-		// add import and export actions for single selection of folder
-/*		if ((elementType == 1 && selection.size() == 1) && canEdit)
-		{
-		    
-		    if (importAction == null) {
-		        importAction = new SystemImportToProjectAction(shell);
-		    }
-		    
-		    if (exportAction == null) {
-		        exportAction = new SystemExportFromProjectAction(shell);
-		    }
-		    
-			menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, importAction);
-			menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, exportAction);
-		}*/
 
 		if (moveAction == null)
 			moveAction = new SystemMoveRemoteFileAction(shell);
@@ -415,7 +396,7 @@ public class SystemViewRemoteFileAdapter
 		{
 			replaceEditionAction = new SystemReplaceWithEditionAction(shell);
 		}
-		if (canEdit && supportsSearch)
+		if (canRead && supportsSearch)
 		{
 		    //menu.add(ISystemContextMenuConstants.GROUP_IMPORTEXPORT, addToArchiveAction);
 
@@ -423,7 +404,7 @@ public class SystemViewRemoteFileAdapter
 			menu.add(ISystemContextMenuConstants.GROUP_SEARCH, searchAction);
 		}
 
-		if (!firstFile.isRoot() && canEdit)
+		if (!firstFile.isRoot() && canRead)
 		{
 			menu.add(menuGroup, copyClipboardAction);
 			if (elementType == 0)
@@ -436,12 +417,12 @@ public class SystemViewRemoteFileAdapter
 
 		if (elementType == 1 || (isArchive && supportsArchiveManagement))
 		{
-		    if (canEdit)
+		    if (canRead && canWrite)
 		    {
 		        menu.add(menuGroup, pasteClipboardAction);
 		    }
 		}
-		if (!firstFile.isRoot() && canEdit)
+		if (!firstFile.isRoot() && canRead && canWrite)
 		{
 			menu.add(menuGroup, moveAction);
 		}
@@ -2309,7 +2290,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		IRemoteFile file = (IRemoteFile) element;
 		//System.out.println("INSIDE CANDELETE FOR ADAPTER: RETURNING " + !file.isRoot());
-		return !file.isRoot() && file.canRead();
+		return !file.isRoot() && file.canRead() && file.canWrite();
 	}
 
 	
@@ -2432,7 +2413,7 @@ public class SystemViewRemoteFileAdapter
 	public boolean canRename(Object element)
 	{
 		IRemoteFile file = (IRemoteFile) element;
-		return !file.isRoot() && file.canRead();
+		return !file.isRoot() && file.canRead() && file.canWrite();
 	}
 
 	private void moveTempResource(IResource localResource, IPath newLocalPath, IRemoteFileSubSystem ss, String newRemotePath)

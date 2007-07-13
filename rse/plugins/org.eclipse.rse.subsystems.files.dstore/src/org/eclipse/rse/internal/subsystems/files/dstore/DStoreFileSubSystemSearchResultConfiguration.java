@@ -158,7 +158,6 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 
 	public void domainChanged(DomainEvent e)
 	{
-		System.out.println("domain Changed: "+_status.getValue());
 		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
 			setStatus(IHostSearchConstants.FINISHED);

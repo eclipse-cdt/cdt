@@ -21,6 +21,12 @@
             class="org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory"
             id="upc"/>
    </extension>
-  
    
+   <extension point="org.eclipse.ui.editors.templates">
+   		<include
+      		file="templates/default-templates.xml"
+      		translations="$nl$/templates/default-templates.properties">
+      	</include>
+   </extension>
+  
 </plugin>

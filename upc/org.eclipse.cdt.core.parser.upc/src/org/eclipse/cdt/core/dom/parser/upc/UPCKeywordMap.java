@@ -27,7 +27,7 @@ public class UPCKeywordMap extends C99KeywordMap {
 	public static final String
 		MYTHREAD = "MYTHREAD",//$NON-NLS-1$
 		THREADS = "THREADS",//$NON-NLS-1$
-		UPC_MAX_BLOCKSIZE = "UPC",//$NON-NLS-1$
+		UPC_MAX_BLOCKSIZE = "UPC_MAX_BLOCKSIZE",//$NON-NLS-1$
 		relaxed = "relaxed",//$NON-NLS-1$
 		shared = "shared",//$NON-NLS-1$
 		strict = "strict",//$NON-NLS-1$

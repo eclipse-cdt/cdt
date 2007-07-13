@@ -29,11 +29,13 @@ public class OutputRefresh implements Runnable
 {
 	private IHostSearchResultConfiguration searchConfig;
 	private boolean isDone = false;
+	private boolean isCancelled = false;
 
 	public OutputRefresh(IHostSearchResultConfiguration searchConfig) 
 	{
 		this.searchConfig = searchConfig;
 		this.isDone = searchConfig.getStatus() == IHostSearchConstants.FINISHED;
+		this.isCancelled = searchConfig.getStatus() == IHostSearchConstants.CANCELLED;
 	}
 
 	public void run() {
@@ -42,11 +44,14 @@ public class OutputRefresh implements Runnable
 		{
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(searchConfig, ISystemResourceChangeEvents.EVENT_REFRESH, null));
-			
-			if (isDone) 
+
+			if (isDone || isCancelled) 
 			{
 				registry.fireEvent(new SystemResourceChangeEvent(searchConfig, ISystemResourceChangeEvents.EVENT_SEARCH_FINISHED, null));
 			}
+			
+		
+		
 		}
 	}
 }

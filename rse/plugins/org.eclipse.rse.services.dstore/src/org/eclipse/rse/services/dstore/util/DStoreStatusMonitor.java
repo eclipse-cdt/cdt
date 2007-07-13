@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
+ * David McKnight   (IBM)        - [190010] When status is "cancelled" the wait should complete
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -174,7 +175,9 @@ public class DStoreStatusMonitor implements IDomainListener
      */
     public boolean determineStatusDone(DataElement status) 
     {        
-        return status.getAttribute(DE.A_VALUE).equals("done") ||  status.getAttribute(DE.A_NAME).equals("done"); //$NON-NLS-1$ //$NON-NLS-2$
+        return status.getAttribute(DE.A_VALUE).equals("done") ||  //$NON-NLS-1$
+        status.getAttribute(DE.A_NAME).equals("done") ||//$NON-NLS-1$
+        status.getAttribute(DE.A_NAME).equals("cancelled"); //$NON-NLS-1$
     }
 	
 	/**

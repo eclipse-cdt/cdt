@@ -20,6 +20,7 @@
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,6 +49,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 	private FileServiceSubSystem _fileSubSystem;
 	private IRemoteFile _searchObject;
 	private HashMap _parentCache;
+	private List    _convertedResults;
 
 	public DStoreFileSubSystemSearchResultConfiguration(IHostSearchResultSet set, Object searchObject, SystemSearchString searchString, ISearchService searchService, IHostFileToRemoteFileAdapter fileAdapter)
 	{
@@ -55,6 +57,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		_searchObject = (IRemoteFile)searchObject;
 		_fileSubSystem = (FileServiceSubSystem)_searchObject.getParentRemoteFileSubSystem();
 		_parentCache = new HashMap();
+		_convertedResults = new ArrayList();
 	}
 
 	/**
@@ -78,12 +81,13 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		List results = getStatusObject().getNestedData();
 		if (results != null)
 		{
-			IProgressMonitor monitor = new NullProgressMonitor();
-			IRemoteFile[] convertedResults = new IRemoteFile[results.size()];
+			if (results.size() > _convertedResults.size())
+			{
+			IProgressMonitor monitor = new NullProgressMonitor();	
 			for (int i = 0; i < results.size(); i++)
 			{
 				DataElement fileNode = (DataElement)results.get(i);
-				if (fileNode != null)
+				if (fileNode != null && !fileNode.getType().equals("error"))
 				{
 					IRemoteFile parentRemoteFile = null;
 					try
@@ -95,7 +99,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 							_parentCache.put(fileNode.getValue(), parentRemoteFile);
 		
 						
-							if (!parentRemoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
+							if (parentRemoteFile != null && !parentRemoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
 							{
 								// query all files to save time (so we can retrieve cached files
 								IRemoteFile[] children = _fileSubSystem.listFoldersAndFiles(parentRemoteFile, monitor);
@@ -122,7 +126,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 							}
 							remoteFile.setContents(RemoteSearchResultsContentsType.getInstance(), getSearchString().getTextString(), searchResults);			
 						}
-						convertedResults[i] = remoteFile;
+						_convertedResults.add(remoteFile);
 					}
 					catch (SystemMessageException e)
 					{
@@ -134,7 +138,8 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 					}
 				}
 			}
-			return convertedResults;
+			}
+			return (IRemoteFile[])_convertedResults.toArray(new IRemoteFile[_convertedResults.size()]);
 		}
 		else
 		{

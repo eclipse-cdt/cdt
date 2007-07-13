@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Kevin Doyle (IBM) - [187640] Removed setting status to finish when search not finished
+ * David McKnight      [190010] Set the status to finish or cancelled depending on dstore status.  
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -84,6 +85,15 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 			try
 			{
 				getStatusMonitor(ds).waitForUpdate(status, monitor);
+				String statusStr = status.getName();
+				if (statusStr.equals("done"))
+				{
+					config.setStatus(IHostSearchConstants.FINISHED);
+				}
+				else if (statusStr.equals("cancelled"))
+				{
+					config.setStatus(IHostSearchConstants.CANCELLED);
+				}
 			}
 			catch (Exception e)
 			{				

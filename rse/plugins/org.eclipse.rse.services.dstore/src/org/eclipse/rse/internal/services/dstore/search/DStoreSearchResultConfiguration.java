@@ -13,7 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
- * David McKnight  (IBM)  [190010] need domain lister to keep uptodate with changed status
+ * David McKnight  (IBM)  [190010] commented why we don't need status monitor
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -37,8 +37,8 @@ public abstract class DStoreSearchResultConfiguration extends AbstractSearchResu
 	public void setStatusObject(DataElement status)
 	{
 		_status = status;
-		// need this to keep track of updated status
-		_status.getDataStore().getDomainNotifier().addDomainListener(this);
+		// no need for a domain listner because we check the status via status monitor
+		//	_status.getDataStore().getDomainNotifier().addDomainListener(this);
 	}
 	
 	public DataElement getStatusObject()

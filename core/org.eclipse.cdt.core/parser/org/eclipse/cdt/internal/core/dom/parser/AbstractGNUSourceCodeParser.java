@@ -2442,6 +2442,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         case IToken.t_volatile:
         case IToken.t_restrict:
         	return true;
+        	
+        case IToken.tCOMPLETION:
+        	return true;
 		}
 
 		return false;

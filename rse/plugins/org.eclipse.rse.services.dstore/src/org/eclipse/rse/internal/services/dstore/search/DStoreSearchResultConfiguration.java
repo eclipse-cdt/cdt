@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)  [190010] need domain lister to keep uptodate with changed status
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -36,8 +37,8 @@ public abstract class DStoreSearchResultConfiguration extends AbstractSearchResu
 	public void setStatusObject(DataElement status)
 	{
 		_status = status;
-		// don't need this anymore 
-		//_status.getDataStore().getDomainNotifier().addDomainListener(this);
+		// need this to keep track of updated status
+		_status.getDataStore().getDomainNotifier().addDomainListener(this);
 	}
 	
 	public DataElement getStatusObject()

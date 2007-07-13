@@ -128,7 +128,8 @@ public abstract class UpdateHandler extends Handler
 			if (immediate)
 			{
 				_dataObjects.add(0, object);
-				handle();
+				// none of this immediate stuff - just put it at the beginning
+				//handle();
 			}
 			else
 			{

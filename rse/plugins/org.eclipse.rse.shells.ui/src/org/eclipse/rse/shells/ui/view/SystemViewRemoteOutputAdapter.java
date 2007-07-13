@@ -597,6 +597,15 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 		
 		public IStatus run(IProgressMonitor monitor)
 		{
+			try
+			{
+				// wait for a bit so that download can complete - otherwise
+				// we could end up spawning this job too frequently
+				Thread.sleep(1000);
+			}
+			catch (Exception e)
+			{				
+			}
 			PlatformUI.getWorkbench().getDisplay().asyncExec(_gotoLine);
 			return Status.OK_STATUS;
 		}

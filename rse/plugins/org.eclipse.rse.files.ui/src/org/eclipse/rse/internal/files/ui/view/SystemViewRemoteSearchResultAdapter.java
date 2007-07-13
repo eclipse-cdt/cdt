@@ -27,6 +27,9 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -69,6 +72,33 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
  */
 public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapter implements ISystemRemoteElementAdapter
 {
+
+	public class DelayedGotoSearchResultJob extends Job
+	{
+		private DelayedGotoSearchResult _gotoLine;
+		public DelayedGotoSearchResultJob(DelayedGotoSearchResult gotoLine)
+		{
+			super("Goto Line");
+			_gotoLine = gotoLine;
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+			try
+			{
+				// wait for a bit so that download can complete - otherwise
+				// we could end up spawning this job too frequently
+				Thread.sleep(1000);
+			}
+			catch (Exception e)
+			{				
+			}
+			PlatformUI.getWorkbench().getDisplay().asyncExec(_gotoLine);
+			return Status.OK_STATUS;
+		}
+	}
+	
+	
 	
 	public class DelayedGotoSearchResult implements Runnable {
 		private IRemoteFile _file;
@@ -85,7 +115,8 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 				SystemRemoteFileSearchOpenWithMenu.handleGotoLine(_file, _searchResult);
 			}
 			else {
-				Display.getDefault().asyncExec(this);
+				DelayedGotoSearchResultJob job = new DelayedGotoSearchResultJob(this);
+				job.schedule();
 			}
 		}
 		
@@ -294,6 +325,8 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 		return result;
 	}
 
+
+	
 	/**
 	 * Returns the associated subsystem for this search result
 	 */

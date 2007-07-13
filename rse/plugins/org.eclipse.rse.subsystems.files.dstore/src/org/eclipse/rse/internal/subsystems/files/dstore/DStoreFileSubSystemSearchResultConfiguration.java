@@ -15,10 +15,12 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Kevin Doyle (IBM) - [190010] Added cancel() method that will call the search service to cancel
+ * David McKnight   (IBM)        - [190010] performance improvement to use caching for dstore search
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -45,12 +47,14 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 {
 	private FileServiceSubSystem _fileSubSystem;
 	private IRemoteFile _searchObject;
+	private HashMap _parentCache;
 
 	public DStoreFileSubSystemSearchResultConfiguration(IHostSearchResultSet set, Object searchObject, SystemSearchString searchString, ISearchService searchService, IHostFileToRemoteFileAdapter fileAdapter)
 	{
 		super(set, searchObject, searchString, searchService);
 		_searchObject = (IRemoteFile)searchObject;
 		_fileSubSystem = (FileServiceSubSystem)_searchObject.getParentRemoteFileSubSystem();
+		_parentCache = new HashMap();
 	}
 
 	/**
@@ -84,13 +88,26 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 					IRemoteFile parentRemoteFile = null;
 					try
 					{
-						parentRemoteFile = _fileSubSystem.getRemoteFileObject(fileNode.getValue(),monitor);
-						if (!parentRemoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
+						parentRemoteFile = (IRemoteFile)_parentCache.get(fileNode.getValue());
+						if (parentRemoteFile == null)
 						{
-							// query all files to save time (so we can retrieve cached files
-							_fileSubSystem.listFiles(parentRemoteFile, null);
-						}
+							parentRemoteFile = _fileSubSystem.getRemoteFileObject(fileNode.getValue(),monitor);
+							_parentCache.put(fileNode.getValue(), parentRemoteFile);
+		
 						
+							if (!parentRemoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
+							{
+								// query all files to save time (so we can retrieve cached files
+								IRemoteFile[] children = _fileSubSystem.listFoldersAndFiles(parentRemoteFile, monitor);
+								for (int c = 0; c < children.length; c++)
+								{
+									if (!children[c].isFile())
+									{
+										_parentCache.put(children[c].getAbsolutePath(), children[c]);
+									}
+								}
+							}
+						}
 						String path = fileNode.getValue() + "/" + fileNode.getName(); //$NON-NLS-1$
 						IRemoteFile remoteFile = _fileSubSystem.getRemoteFileObject(path, monitor);
 	
@@ -141,13 +158,18 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 
 	public void domainChanged(DomainEvent e)
 	{
+		System.out.println("domain Changed: "+_status.getValue());
 		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
 			setStatus(IHostSearchConstants.FINISHED);
 			
 			_status.getDataStore().getDomainNotifier().removeDomainListener(this);
 		}
-		
+		else if (_status.getValue().equals("cancelled"))
+		{
+			setStatus(IHostSearchConstants.CANCELLED);
+			_status.getDataStore().getDomainNotifier().removeDomainListener(this);
+		}
 		OutputRefresh refresh = new OutputRefresh(this);			
 		Display.getDefault().asyncExec(refresh);							
 	}

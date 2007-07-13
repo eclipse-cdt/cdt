@@ -9,7 +9,7 @@
          name="Managed Build Tools Description"
          point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
 	    <managedBuildRevision
-    	        fileVersion="4.0.0">
+    	        fileVersion="3.1.0">
      	</managedBuildRevision>
 		
 		<tool
@@ -435,7 +435,6 @@
  	 </tool>
 	
 	<projectType
-       buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe"
        id="cdt.managedbuild.target.xlc.exe"
        isAbstract="false"
        isTest="false"
@@ -574,7 +573,6 @@
 	</projectType>	      		
     
     <projectType
-          buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
           id="cdt.managedbuild.target.xlc.so"
           isAbstract="false"
           isTest="false"
@@ -708,7 +706,6 @@
     </projectType>
     
     <projectType
-          buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib"
           id="cdt.managedbuild.target.xlc.lib"
           isAbstract="false"
           isTest="false"
@@ -2516,7 +2513,7 @@
                command="-L"
                id="xlc.c.link.option.paths"
                browseType="directory"
-               valueType="libPaths">
+               valueType="stringList">
          </option>
          <option
                name="%Option.UserObjs"

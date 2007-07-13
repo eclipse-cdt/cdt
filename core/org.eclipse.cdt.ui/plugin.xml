@@ -594,6 +594,15 @@
             %cCompareFontDefiniton.description
          </description>
       </fontDefinition>
+            <fontDefinition
+            label="%asmCompareFontDefiniton.label"
+            defaultsTo="org.eclipse.cdt.ui.editors.textfont"
+            categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
+            id="org.eclipse.cdt.internal.ui.compare.AsmMergeViewer">
+         <description>
+            %asmCompareFontDefiniton.description
+         </description>
+      </fontDefinition>
       
    </extension>
    <extension
@@ -978,6 +987,13 @@
 			contentTypeId="org.eclipse.cdt.core.cxxHeader"
             contentMergeViewerId="org.eclipse.cdt.ui.compare.CContentViewerCreator">
 	  </contentTypeBinding>
+      <viewer
+            class="org.eclipse.cdt.internal.ui.compare.AsmContentViewerCreator"
+            extensions="asm"
+            id="org.eclipse.cdt.ui.compare.AsmContentViewerCreator"/>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.core.asmSource"
+            contentMergeViewerId="org.eclipse.cdt.ui.compare.AsmContentViewerCreator"/>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

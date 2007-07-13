@@ -122,8 +122,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 		_isDone = true;
 		
 		if (_isCancelled) {
-			_status.removeNestedData();
-			_dataStore.createObject(_status,"error", "cancelled");
+
 			_miner.statusCancelled(_status);
 		}
 		else {

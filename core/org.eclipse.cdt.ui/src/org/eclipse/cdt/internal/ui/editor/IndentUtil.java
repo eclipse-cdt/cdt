@@ -219,6 +219,7 @@ public final class IndentUtil {
 	 * @param line the line
 	 * @param indent the indentation to insert
 	 * @param commentlines
+	 * @param relative
 	 * @param indentInsideLineComments option whether to indent inside line comments starting at column 0
 	 * @throws BadLocationException on concurrent document modification
 	 */
@@ -241,16 +242,34 @@ public final class IndentUtil {
 
 	/**
 	 * Cuts the visual equivalent of <code>toDelete</code> characters out of the
+	 * indentation of line <code>line</code> in <code>document</code>.
+	 *
+	 * @param document
+	 * @param line
+	 * @param shiftWidth
+	 * @param tabWidth
+	 * @return number of characters deleted
+	 * @throws BadLocationException 
+	 */
+	public static int cutIndent(IDocument document, int line, int shiftWidth, int tabWidth) throws BadLocationException {
+		return cutIndent(document, line, shiftWidth, tabWidth, new boolean[1], 0, false);
+	}
+
+	/**
+	 * Cuts the visual equivalent of <code>toDelete</code> characters out of the
 	 * indentation of line <code>line</code> in <code>document</code>. Leaves
-	 * leading comment signs alone.
+	 * leading comment signs alone if desired.
 	 *
 	 * @param document the document
 	 * @param line the line
 	 * @param toDelete the number of space equivalents to delete.
+	 * @param commentLines
+	 * @param relative
 	 * @param indentInsideLineComments option whether to indent inside line comments starting at column 0
+	 * @return number of characters deleted
 	 * @throws BadLocationException on concurrent document modification
 	 */
-	private static void cutIndent(IDocument document, int line, int toDelete, int tabSize, boolean[] commentLines, int relative, boolean indentInsideLineComments) throws BadLocationException {
+	private static int cutIndent(IDocument document, int line, int toDelete, int tabSize, boolean[] commentLines, int relative, boolean indentInsideLineComments) throws BadLocationException {
 		IRegion region= document.getLineInformation(line);
 		int from= region.getOffset();
 		int endOffset= region.getOffset() + region.getLength();
@@ -276,7 +295,8 @@ public final class IndentUtil {
 		if (endOffset > to + 1 && document.get(to, 2).equals(SLASHES))
 			commentLines[relative]= true;
 
-		document.replace(from, to - from, null);
+		document.replace(from, to - from, ""); //$NON-NLS-1$
+		return to - from;
 	}
 
 	/**
@@ -322,7 +342,7 @@ public final class IndentUtil {
 	 * @param seq the string to measure
 	 * @return the visual length of <code>seq</code>
 	 */
-	private static int computeVisualLength(CharSequence seq, int tablen) {
+	public static int computeVisualLength(CharSequence seq, int tablen) {
 		int size= 0;
 
 		for (int i= 0; i < seq.length(); i++) {
@@ -597,4 +617,5 @@ public final class IndentUtil {
 		computed= new StringBuffer(previousIndent);
 		return computed.toString();
 	}
+
 }

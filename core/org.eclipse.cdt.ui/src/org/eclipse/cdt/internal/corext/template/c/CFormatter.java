@@ -31,6 +31,7 @@ import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
+import org.eclipse.jface.text.templates.GlobalTemplateVariables;
 import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateVariable;
@@ -95,7 +96,7 @@ public class CFormatter {
 			VariableTracker tracker= new VariableTracker(buffer);
 			IDocument document= tracker.getDocument();
 			
-			internalFormat(document, context);
+			internalFormat(document, context, buffer);
 			convertLineDelimiters(document);
 			convertTabs(document);
 			if (isReplacedAreaEmpty(context))
@@ -110,21 +111,21 @@ public class CFormatter {
 	/**
 	 * @param document
 	 * @param context
+	 * @param buffer 
 	 * @throws BadLocationException
 	 */
-	private void internalFormat(IDocument document, TemplateContext context) throws BadLocationException {
+	private void internalFormat(IDocument document, TemplateContext context, TemplateBuffer buffer) throws BadLocationException {
 		if (fUseCodeFormatter) {
 			// try to format and fall back to indenting
 			try {
 				format(document, (TranslationUnitContext) context);
+				return;
 			} catch (BadLocationException e) {
-				indent(document);
 			} catch (MalformedTreeException e) {
-				indent(document);
 			}
-		} else { 
-			indent(document);
 		}
+		// fallback: indent
+		indent(document, buffer);
 	}
 
 	private void convertLineDelimiters(IDocument document) throws BadLocationException {
@@ -182,11 +183,17 @@ public class CFormatter {
 	}
 
 	private void trimStart(IDocument document) throws BadLocationException {
-		int i= 0;
-		while ((i != document.getLength()) && Character.isWhitespace(document.getChar(i)))
+		trimAtOffset(0, document);
+	}
+
+	private String trimAtOffset(int offset, IDocument document) throws BadLocationException {
+		int i= offset;
+		while ((i < document.getLength()) && Character.isWhitespace(document.getChar(i)))
 			i++;
 		
-		document.replace(0, i, ""); //$NON-NLS-1$
+		String trim= document.get(offset, i - offset);
+		document.replace(offset, i - offset, ""); //$NON-NLS-1$
+		return trim;
 	}
 
 	private boolean isReplacedAreaEmpty(TemplateContext context) {
@@ -221,10 +228,54 @@ public class CFormatter {
 		edit.apply(doc, TextEdit.UPDATE_REGIONS);
 	}	
 
-	private void indent(IDocument document) throws BadLocationException, MalformedTreeException {
+	private void indent(IDocument document, TemplateBuffer buffer) throws BadLocationException, MalformedTreeException {
 		String indent = CodeFormatterUtil.createIndentString(fInitialIndentLevel, fProject);
+		prefixSelectionLines(document, buffer);
 		int lineCount= document.getNumberOfLines();
 		IndentUtil.indentLines(document, new LineRange(0, lineCount), indent);
+	}
+
+	/**
+	 * Prefix each line of <code>line_selection</code> substitutions with
+	 * the prefix of the first line.
+	 * 
+	 * @param document
+	 * @param buffer
+	 */
+	private void prefixSelectionLines(IDocument document, TemplateBuffer buffer) {
+		TemplateVariable[] variables= buffer.getVariables();
+		for (int i = 0; i < variables.length; i++) {
+			if (variables[i].getName().equals(GlobalTemplateVariables.LineSelection.NAME)) {
+				if (variables[i].getLength() > 0) {
+					final int tabWidth= CodeFormatterUtil.getTabWidth(fProject);
+					int delta= 0;
+					int[] offsets= variables[i].getOffsets();
+					for (int j= 0; j < offsets.length; j++) {
+						final int offset = offsets[j] + delta;
+						try {
+							int startLine= document.getLineOfOffset(offset);
+							int startOffset= document.getLineOffset(startLine);
+							int endLine= document.getLineOfOffset(offset+variables[i].getLength() - 1);
+							String prefix= document.get(startOffset, offset - startOffset);
+							String shift= trimAtOffset(offset, document);
+							delta -= shift.length();
+							if (shift.length() > 0 && startLine < endLine) {
+								int shiftWidth= IndentUtil.computeVisualLength(shift, tabWidth);
+								for (int line= startLine + 1; line <= endLine; ++line) {
+									delta -= IndentUtil.cutIndent(document, line, shiftWidth, tabWidth);
+									int lineOffset= document.getLineOffset(line);
+									document.replace(lineOffset, 0, prefix);
+									delta += prefix.length();
+								}
+							}
+						} catch (BadLocationException exc) {
+							break;
+						}
+					}
+				}
+				break;
+			}
+		}
 	}
 
 	/**

@@ -453,7 +453,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
                             // Check for an empty list of elements.  If it's empty then we 
                             // don't have to call the children nodes, so return here.
                             // No need to propagate error, there's no means or need to display it.
-                            if (!getStatus().isOK()) {
+                            if (!getStatus().isOK() || getData().isEmpty()) {
                                 requestMonitor.done();
                                 return;
                             }
@@ -466,6 +466,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
                             if (i == getData().size()) {
                                 // Element not found, no need to generate the delta.
                                 requestMonitor.done();
+                                return;
                             }
                             
                             VMDelta delta = parentDelta.addNode(vmc, nodeOffset + i, IModelDelta.NO_CHANGE);

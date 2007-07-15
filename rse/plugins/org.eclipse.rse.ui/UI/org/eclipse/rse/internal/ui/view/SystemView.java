@@ -1904,7 +1904,7 @@ public class SystemView extends SafeTreeViewer
 					wasSelected = isSelectedOrChildSelected(multiSource);
 					if (wasSelected) clearSelection();
 					if (_originatingViewer != null) _originatingViewer.remove(multiSource);
-					if (wasSelected) setSelection(new StructuredSelection(parent), true);
+					if (wasSelected) setSelection(parent != null ? new StructuredSelection(parent) : null, true);
 				}
 				break;
 			/* Now done below in systemRemoteResourceChanged

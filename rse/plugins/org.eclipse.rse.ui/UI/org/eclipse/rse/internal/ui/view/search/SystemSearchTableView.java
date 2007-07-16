@@ -146,6 +146,15 @@ public class SystemSearchTableView extends SystemTableTreeView
 									}
 								}
 							}
+							
+							// If the deleted object is part of an archive it might be
+							// visible in the search view, but not part of the result set
+							Widget widget = findItem(dchild);
+							if (widget != null)
+							{
+								Object data = widget.getData();
+								remove(data);
+							}
 						}
 					}
 

@@ -580,6 +580,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			{
 				SystemCommandsViewPart viewPart = SystemCommandsUI.getInstance().activateCommandsView();
 				viewPart.updateOutput(cmdshell);
+				viewPart.showPageFor(cmdshell); //196584
 				result = true;
 			}
 		}

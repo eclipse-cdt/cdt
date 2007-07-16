@@ -960,9 +960,21 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
-		String remotePath = remoteParent + getSeparator(remoteParent) + oldName;
-		DataElement de = getElementFor(remotePath);
-		de.setAttribute(DE.A_SOURCE, newName);
+		String oldPath, newPath = null;
+ 		// if remoteParent is null or empty then we are doing a move
+ 		if (remoteParent == null || remoteParent == "") //$NON-NLS-1$
+ 		{
+ 			oldPath = oldName;
+ 		 	newPath = newName;
+ 		}
+ 		else
+ 		{
+ 			 oldPath = remoteParent + getSeparator(remoteParent) + oldName;
+ 			 newPath = remoteParent + getSeparator(remoteParent) + newName;
+ 		}
+ 		
+ 		DataElement de = getElementFor(oldPath);
+ 		de.setAttribute(DE.A_SOURCE, newPath);
 		
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_RENAME, monitor);
 
@@ -983,26 +995,42 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return retVal;
 	}
 
+	protected boolean moveByCopy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
+	{
+		if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
+	 	{
+			return delete(srcParent, srcName, monitor);
+	 	}
+	 	return false;
+	}
+	
 	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
-//		String src = srcParent + getSeparator(srcParent) + srcName;
-//		String tgt = tgtParent + getSeparator(tgtParent) + tgtName;
-//		boolean isVirtual = ArchiveHandlerManager.isVirtual(src) || ArchiveHandlerManager.isVirtual(tgt);
-		//if (isVirtual || isArchive)
+		String src = srcParent + getSeparator(srcParent) + srcName;
+		String tgt = tgtParent + getSeparator(tgtParent) + tgtName;
+		boolean isVirtual = ArchiveHandlerManager.isVirtual(src) || ArchiveHandlerManager.isVirtual(tgt);
+		boolean isArchive = ArchiveHandlerManager.getInstance().isRegisteredArchive(tgt);
+		if (isVirtual || isArchive)
 		{
-			if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
+			return moveByCopy(srcParent, srcName, tgtParent, tgtName, monitor);
+		}
+		else
+		{
+			boolean movedOk = false;
+			try
 			{
-				try
-				{
-					delete(srcParent, srcName, monitor);
-				}
-				catch (Exception e)
-				{
-					return false;
-				}
-				return true;
+				movedOk = rename("", src, tgt, monitor); //$NON-NLS-1$
 			}
-			return false;
+			catch (SystemMessageException e)
+			{
+				return moveByCopy(srcParent, srcName, tgtParent, tgtName, monitor);
+			}
+			// movedOk should never be false otherwise the last DataElement status was null
+			if (!movedOk)
+			{
+				movedOk = moveByCopy(srcParent, srcName, tgtParent, tgtName, monitor);
+			}
+			return movedOk;
 		}
 
 /*

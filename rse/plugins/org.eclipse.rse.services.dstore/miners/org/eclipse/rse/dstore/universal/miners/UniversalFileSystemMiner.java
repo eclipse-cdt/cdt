@@ -18,6 +18,7 @@
  * Xuan Chen (IBM)        - [189681] [dstore][linux] Refresh Folder in My Home messes up Refresh in Root
  * Xuan Chen (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
  * Kevin Doyle (IBM) - [195709] Windows Copying doesn't work when path contains space
+ * Kevin Doyle (IBM) - [196211] DStore Move tries rename if that fails copy/delete
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -962,8 +963,7 @@ public class UniversalFileSystemMiner extends Miner {
 	public DataElement handleRename(DataElement subject, DataElement status) {
 		File fileoldname = new File(subject.getAttribute(DE.A_VALUE)
 				+ File.separatorChar + subject.getName());
-		File filerename = new File(subject.getAttribute(DE.A_VALUE)
-				+ File.separatorChar + subject.getAttribute(DE.A_SOURCE));
+		File filerename = new File(subject.getAttribute(DE.A_SOURCE));
 
 	//	System.out.println(ArchiveHandlerManager.isVirtual(fileoldname
 		//		.getAbsolutePath()));

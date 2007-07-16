@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [182221] Throwing Proper Exceptions on create file/folder
  * Xuan Chen        (IBM)        - Fix 189487 - copy and paste a folder did not work - workbench hang
  * David McKnight   (IBM)        - [192705] Exception needs to be thrown when rename fails
+ * Kevin Doyle (IBM) - [196211] Move a folder to a directory that contains a folder by that name errors
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1047,28 +1048,30 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	{
 		File sourceFolderOrFile = new File(srcParent, srcName);
 		File targetFolder = new File(tgtParent, tgtName);
+		boolean movedOk = false;
 		boolean sourceIsVirtual = ArchiveHandlerManager.isVirtual(sourceFolderOrFile.getAbsolutePath());
 		boolean targetIsVirtual = ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath());
 		boolean targetIsArchive = ArchiveHandlerManager.getInstance().isArchive(targetFolder);
-		if (sourceIsVirtual || targetIsVirtual || targetIsArchive)
+		if (!sourceIsVirtual && !targetIsVirtual && !targetIsArchive)
 				/* DKM
 				 * we shouldn't be moving archives like virtuals
 				 *|| ArchiveHandlerManager.getInstance().isRegisteredArchive(newName)
 				 *
 				 */
 		{
-			if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
-			{
-				return delete(srcParent, srcName, monitor);
-			}
-			else return false;
-		}
-		else
-		{
 			File fileToMove = new File(srcParent, srcName);
 			File newFile = new File(tgtParent, tgtName);
-			return fileToMove.renameTo(newFile);
+			movedOk = fileToMove.renameTo(newFile);
 		}
+		
+		if (!movedOk)
+		{	
+			if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
+			{
+				movedOk = delete(srcParent, srcName, monitor);
+			}
+		}
+		return movedOk;
 	}
 
 

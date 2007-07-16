@@ -32,6 +32,7 @@
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
+ * David McKnight   (IBM)        - [165674] Sort subsystem configurations to be in deterministic order
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -358,6 +359,27 @@ public class SystemRegistry implements ISystemRegistry
 								}
 								
 								v.addElement(ssFactory);
+							}
+							else // for 165674 - fix the order to be deterministic
+							{					
+								// replace with this one if this is first alphabetically
+								// find the current one
+								for (int i = 0; i < v.size(); i++)
+								{
+									if (v.get(i) instanceof IServiceSubSystemConfiguration)
+									{		
+										IServiceSubSystemConfiguration addedConfig = (IServiceSubSystemConfiguration)v.get(i);
+										if (addedConfig.getServiceType() == serviceType)
+										{
+											if (serviceFactory.getName().compareTo(addedConfig.getName()) <= 0)
+											{
+												v.remove(addedConfig);
+												v.add(serviceFactory);
+											}											
+										}
+									}
+								}
+						
 							}
 						}
 						else

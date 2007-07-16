@@ -128,7 +128,8 @@ public class CCommandDSC {
 	
 	/**
 	 * Returns a command where -imacros and -include options have been removed
-	 * @return
+	 * @param quoteIncludePaths whether or not paths for includes must be put inside double quotes.
+	 * @return the command line to run the scanner discovery.
 	 */
 	public String getSCDRunnableCommand(boolean quoteIncludePaths) {
 		String commandAsString = new String();
@@ -147,18 +148,11 @@ public class CCommandDSC {
     				optionPair.getKey().equals(SCDOptionsEnum.ISYSTEM.toString()) || 
     				optionPair.getKey().equals(SCDOptionsEnum.IQUOTE.toString())) {
     				value = makeAbsolute(project, value);
-    			}
-    			if (quoteIncludePaths) {
-    				if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE.toString()) ||
-  	    				optionPair.getKey().equals(SCDOptionsEnum.ISYSTEM.toString()) || 
-   	    				optionPair.getKey().equals(SCDOptionsEnum.IQUOTE.toString())) {
-    					commandAsString += optionPair.getKey() + SINGLE_SPACE + 
-    							"\"" + value + "\"" + SINGLE_SPACE;  //$NON-NLS-1$//$NON-NLS-2$
+    				if (quoteIncludePaths) {
+    					value= "\"" + value + "\""; //$NON-NLS-1$ //$NON-NLS-2$
     				}
     			}
-    			else {
-	    			commandAsString += optionPair.getKey() + SINGLE_SPACE + value + SINGLE_SPACE;
-    			}
+    			commandAsString += optionPair.getKey() + SINGLE_SPACE + value + SINGLE_SPACE;
             }
 		}
 		return commandAsString.trim();

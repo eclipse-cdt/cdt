@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [196588] Move Dialog doesn't show Archives
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -48,6 +49,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.util.ValidatorFileUniqueName;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
@@ -347,6 +349,16 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		  dlg.setSelectionValidator(this);
 		//RSEUIPlugin.logInfo("Calling getParentRemoteFile for '"+firstSelection.getAbsolutePath()+"'");
 		firstSelectionParent = firstSelection.getParentRemoteFile();
+		boolean supportsArchiveManagement = firstSelectionParent.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
+		if (supportsArchiveManagement)
+		{
+			// Set a new viewer filter
+			SystemActionViewerFilter _filter = new SystemActionViewerFilter();
+			Class[] types = {IRemoteFile.class};
+			_filter.addFilterCriterion(types, "isDirectory", "true"); //$NON-NLS-1$  //$NON-NLS-2$
+			_filter.addFilterCriterion(types, "isArchive", "true"); //$NON-NLS-1$  //$NON-NLS-2$
+			dlg.setCustomViewerFilter(_filter);
+		}
 		/*
 		if (firstSelectionParent != null)
 		  RSEUIPlugin.logInfo("Result of getParentRemoteFile: '"+firstSelectionParent.getAbsolutePath()+"'");

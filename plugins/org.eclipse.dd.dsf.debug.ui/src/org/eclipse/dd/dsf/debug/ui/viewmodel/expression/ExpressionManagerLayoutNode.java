@@ -22,6 +22,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.VMElementsUpdate;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
@@ -295,6 +296,7 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
     public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         // Add a flag if the list of expressions has changed.
         if (event instanceof ExpressionsChangedEvent) {
+            VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
             parentDelta.addFlags(IModelDelta.CONTENT);
         }
         

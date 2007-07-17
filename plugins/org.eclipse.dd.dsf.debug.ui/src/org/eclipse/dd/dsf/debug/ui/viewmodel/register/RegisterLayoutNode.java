@@ -47,6 +47,8 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -58,7 +60,6 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")
@@ -255,11 +256,12 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
 	                                FormattedValueDMData oldData = (FormattedValueDMData) VMCacheManager.getVMCacheManager()
 	                                	.getCache(RegisterLayoutNode.this.getVMProvider().getPresentationContext())
 	                            		.getArchivedModelData(valueDmc);
-	                                if(oldData != null && oldData.getFormattedValue().equals(getData().getFormattedValue()))
-	                                	update.setForeground(new RGB(0,0,0), labelIndex);
-	                                else
-	                                	update.setForeground(new RGB(255,0,0), labelIndex);
-	                              
+	                                if(oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue())) {
+	                                    update.setBackground(
+	                                        DebugUIPlugin.getPreferenceColor(
+	                                            IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(),
+	                                        labelIndex);
+	                                }
 	                                update.done();
 	                            }
 	                        }, 

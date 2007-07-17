@@ -3892,4 +3892,20 @@ public class AST2Tests extends AST2BaseTest {
 		parse( buffer.toString(), ParserLanguage.C);
 		assertTrue(System.currentTimeMillis()-time < 1000);
 	}
+	
+	// int array[12]= {};
+	public void testBug196468_emptyArrayInitializer() throws Exception {
+		StringBuffer buffer = getContents(1)[0];
+		final String content = buffer.toString();
+		parse( content, ParserLanguage.CPP, false); 
+		parse( content, ParserLanguage.CPP, true); 
+		parse( content, ParserLanguage.C, true);
+		try {
+			parse( content, ParserLanguage.C, false);
+			fail("C89 does not allow empty braces in array initializer");
+		}
+		catch (ParserException e) {
+		}
+	}
+	
 }

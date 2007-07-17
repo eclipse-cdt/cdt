@@ -179,6 +179,14 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             consume();
             IASTInitializerList result = createInitializerList();
             ((ASTNode) result).setOffset(startingOffset);
+            
+            // bug 196468, gcc accepts empty braces.
+            if (supportGCCStyleDesignators && LT(1) == (IToken.tRBRACE)) {
+                int l = consume().getEndOffset();
+                ((ASTNode) result).setLength(l - startingOffset);
+                return result;
+            }
+
             for (;;) {
                 int checkHashcode = LA(1).hashCode();
                 // required at least one initializer list

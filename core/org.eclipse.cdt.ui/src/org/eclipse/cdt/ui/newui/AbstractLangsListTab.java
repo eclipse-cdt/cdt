@@ -186,8 +186,8 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		} else {
 			buttonSetText(3, UIMessages.getString("AbstractLangsListTab.2")); //$NON-NLS-1$
 		}
-    	boolean canMoveUp = canDelete && index > 0;
-    	boolean canMoveDown = canDelete && (index < table.getItemCount() - 1); 
+    	boolean canMoveUp = canEdit && index > 0;
+    	boolean canMoveDown = canEdit && (index < table.getItemCount() - 1); 
     	if (canMoveDown && showBIButton.getSelection()) {
     		ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(index+1).getData());
     		if (ent.isBuiltIn()) canMoveDown = false; // cannot exchange with built in

@@ -168,15 +168,15 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	}
 	
 	public void buttonPressed(int x) {
-		String s;
 		Shell shell = usercomp.getShell();
 		TreeItem[] sel = tree.getTree().getSelection();
 		switch (x) {
 		// add
 		case 0:
-			s = getProjectDialog(shell, EMPTY_STR);
-			if (s != null) {
-				src.add(new _Entry(newEntry(new Path(s), new IPath[0], true)));
+			String[] ss = getProjectDialog(shell, EMPTY_STR);
+			if (ss != null) {
+				for (int i=0; i<ss.length; i++)
+					src.add(new _Entry(newEntry(new Path(ss[i]), new IPath[0], true)));
 				saveData();
 			}
 			break;
@@ -265,7 +265,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		return page.isForProject();
 	}
 	
-	private String getProjectDialog(Shell shell, String text) {
+	private String[] getProjectDialog(Shell shell, String text) {
 		IPath path = new Path(text);
 		
 		LocDialog dialog = new LocDialog(shell);
@@ -281,9 +281,12 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 		dialog.setTitle(WORKSPACE_DIR_DIALOG_TITLE); 
            dialog.setMessage(WORKSPACE_DIR_DIALOG_MSG); 
 		if (dialog.open() == Window.OK) {
-			IResource resource = (IResource) dialog.getFirstResult();
-			if (resource != null) { 
-				return resource.getFullPath().toString();
+			Object[] resources = dialog.getResult();
+			if (resources != null) {
+				String[] ss = new String[resources.length];
+				for (int i=0; i<resources.length; i++)
+					ss[i] = ((IResource)resources[i]).getFullPath().toString();
+				return ss;
 			}
 		}
 		return null;

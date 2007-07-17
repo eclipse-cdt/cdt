@@ -8,6 +8,7 @@ package org.eclipse.cdt.make.builder.tests;
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 import junit.framework.Test;
@@ -18,6 +19,7 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
@@ -54,10 +56,7 @@ public class StandardBuildTests extends TestCase {
 		suite.addTest(new StandardBuildTests("testProjectSettings"));
 		suite.addTest(new StandardBuildTests("testProjectConversion"));
 		suite.addTest(new StandardBuildTests("testProjectCleanup"));
-		
-		suite.addTestSuite(ScannerConfigConsoleParserTests.class);
-		suite.addTestSuite(ScannerConfigDiscoveryTests.class);
-		
+				
 		return suite;
 	}
 	
@@ -241,9 +240,9 @@ public class StandardBuildTests extends TestCase {
 		IMakeBuilderInfo builderInfo = MakeCorePlugin.createBuildInfo(project, MakeBuilder.BUILDER_ID);
 		builderInfo.setStopOnError(ON);
 		builderInfo.setUseDefaultBuildCmd(OFF);
-		builderInfo.setBuildCommand(new Path(OVR_BUILD_COMMAND));
-		builderInfo.setBuildArguments(OVR_BUILD_ARGS);
-		builderInfo.setBuildLocation(new Path(OVR_BUILD_LOCATION));
+		builderInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, OVR_BUILD_COMMAND);
+		builderInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, OVR_BUILD_ARGS);
+		builderInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, OVR_BUILD_LOCATION);
 		try {
 			project.close(new NullProgressMonitor());
 		} catch (CoreException e) {

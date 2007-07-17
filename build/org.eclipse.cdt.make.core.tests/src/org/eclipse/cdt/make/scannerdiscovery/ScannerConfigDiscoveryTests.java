@@ -8,16 +8,15 @@
  * Contributors:
  * IBM - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.builder.tests;
+package org.eclipse.cdt.make.scannerdiscovery;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
@@ -35,7 +34,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * 
  * @author vhirsl
  */
-public class ScannerConfigDiscoveryTests extends TestCase {
+public class ScannerConfigDiscoveryTests extends BaseTestCase {
 	private IProject fCProject = null;
 	private IFile fCFile = null;
 	IProgressMonitor fMonitor = null; 

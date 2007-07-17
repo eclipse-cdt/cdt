@@ -7,16 +7,19 @@
  *
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.internal.core.pdom.ITodoTaskUpdater;
 import org.eclipse.cdt.internal.core.pdom.indexer.TodoTaskParser.Task;
@@ -31,7 +34,6 @@ import org.eclipse.osgi.util.NLS;
 
 
 public class TodoTaskUpdater implements ITodoTaskUpdater {
-	private static final IMarker[] EMPTY_MARKER_ARRAY = new IMarker[0];
 	private static final String SOURCE_ID = "CDT"; //$NON-NLS-1$
 	private static final String[] TASK_MARKER_ATTRIBUTE_NAMES = {
 		IMarker.MESSAGE, 
@@ -80,15 +82,18 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
         taskParser = new TodoTaskParser(taskTags, taskPriorities, isTaskCaseSensitive);
 	}
 
-	public void updateTasks(IASTComment[] comments, IIndexFileLocation[] fileLocations) {
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+	public void updateTasks(IASTComment[] comments, IIndexFileLocation[] filesToUpdate) {
+		final IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
-		for (int i = 0; i < fileLocations.length; i++) {
-			IIndexFileLocation indexFileLocation = fileLocations[i];
-			String filepath = indexFileLocation.getFullPath();
+		// first collect all valid file-locations and remove old tasks.
+		final HashMap locationToFile= new HashMap();
+		for (int i = 0; i < filesToUpdate.length; i++) {
+			final IIndexFileLocation indexFileLocation = filesToUpdate[i];
+			final String filepath = indexFileLocation.getFullPath();
 			if (filepath != null) {
 				IFile file = workspaceRoot.getFile(new Path(filepath));
-				if (file != null && getTasksFor(file).length != 0) {
+				if (file.exists()) {
+					locationToFile.put(IndexLocationFactory.getAbsolutePath(indexFileLocation), file);
 					removeTasksFor(file);
 				}
 			}
@@ -98,19 +103,13 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 			return;
 		}
 
-		Task[] tasks = taskParser.parse(comments);
-
-		String location = null;
-		IFile[] files = null;
+		final Task[] tasks = taskParser.parse(comments);
 		for (int i = 0; i < tasks.length; i++) {
-			Task task = tasks[i];
-			if (!task.getFileLocation().equals(location)) {
-				location = task.getFileLocation();
-				files = workspaceRoot.findFilesForLocation(new Path(location));
-			}
-			for (int j = 0; j < files.length; j++) {
+			final Task task = tasks[i];
+			final IFile file= (IFile) locationToFile.get(new Path(task.getFileLocation()));
+			if (file != null) {
 				try {
-					applyTask(task, files[j]);
+					applyTask(task, file);
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
 				}
@@ -134,18 +133,8 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 				SOURCE_ID
 			});
 	}
-
-	private static IMarker[] getTasksFor(IResource resource) {
-		try {
-			if (resource != null && resource.exists())
-				return resource.findMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return EMPTY_MARKER_ARRAY;
-	}
 	
-	private static void removeTasksFor(IResource resource) {
+	public static void removeTasksFor(IResource resource) {
 		try {
 			if (resource != null && resource.exists())
 				resource.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);

@@ -90,6 +90,8 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		finally {
 			index.releaseWriteLock(0);
 		}
+		// remove task-tags.
+		TodoTaskUpdater.removeTasksFor(project.getProject());
 	}
 
 	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {

@@ -121,8 +121,11 @@ public class SystemRemoteFileLineOpenWithMenu extends SystemRemoteFileOpenWithMe
 				if (obj != null && obj instanceof IRemoteFile)
 				{
 					file = (IRemoteFile) obj;
-			
-					return file;
+					if (file.isFile())
+					{
+						return file;
+					}
+					return null;
 				} 
 			}
 		}

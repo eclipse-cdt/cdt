@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [196842] Don't have open menu for folders
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -160,8 +161,12 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 						else
 						{
 							IRemoteOutput output = (IRemoteOutput)firstSelection;
+							
 							if (output.getAbsolutePath() != null)
 							{
+								IRemoteFile rfile = SystemRemoteFileLineOpenWithMenu.outputToFile(output);
+								if (rfile != null && rfile.isFile()) // for 196842
+								{
 										//SystemCreateEditLineActions createActions = new SystemCreateEditLineActions();
 								    	//createActions.create(menu, selection, shell, menuGroup);			
 										// open with ->
@@ -173,7 +178,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 										openWithMenu.updateSelection(selection);
 										submenu.add(openWithMenu);
 										menu.getMenuManager().appendToGroup(ISystemContextMenuConstants.GROUP_OPENWITH, submenu);
-						
+								}
 							}
 						}
 					}

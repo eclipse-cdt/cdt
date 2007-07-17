@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
@@ -203,6 +204,7 @@ public class ToolSelectionDialog extends Dialog {
 			if ((c & IModificationStatus.TOOLS_CONFLICT) != 0) {
 				s = s + Messages.getString("ToolSelectionDialog.7"); //$NON-NLS-1$
 				ITool[][] tools = st.getToolsConflicts();
+				List conflictTools = new ArrayList();
 				for (int k=0; k<t2.getItemCount(); k++) {
 					TableItem ti = t2.getItem(k);
 					ITool t = (ITool)ti.getData();
@@ -210,11 +212,18 @@ public class ToolSelectionDialog extends Dialog {
 					for (int i=0;i<tools.length;i++) {
 						for (int j=0;j<tools[i].length;j++) {
 							if (t.matches(tools[i][j])) {
+								conflictTools.add(ti.getText());
 								ti.setForeground(red);
 								break loop;
 							}
 						}
 					}
+				}
+				//bug 189229 - provide more information in the error message for accessibility
+				Iterator iterator = conflictTools.iterator();
+				s = s+ " " + (String)iterator.next();
+				while (iterator.hasNext()) {
+					s = s + ", " + (String)iterator.next();
 				}
 			}
 			if ((c & IModificationStatus.TOOLS_DONT_SUPPORT_MANAGED_BUILD) != 0) {

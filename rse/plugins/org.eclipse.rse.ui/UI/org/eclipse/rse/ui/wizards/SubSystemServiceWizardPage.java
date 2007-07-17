@@ -115,11 +115,13 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 				IServiceSubSystemConfiguration factory = factories[i];
 				_serviceElements[i] = new FactoryServiceElement(dummyHost, factory);
 			
-				
-				if (factory == currentFactory)
+			
+				//if (factory == currentFactory)
+				if (i == 0) // use first
 				{
 					_serviceElements[i].setSelected(true);
 				}
+				
 			}
 		}		
 		return _serviceElements;

@@ -60,8 +60,7 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
     implements IElementEditor
 {
 
-    protected class RegisterGroupVMC extends DMVMContext
-        implements IVariable
+    protected class RegisterGroupVMC extends DMVMContext implements IVariable
     {
         private IExpression fExpression;
         public RegisterGroupVMC(IDMContext<?> dmc) {
@@ -123,8 +122,7 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
             RegisterGroupVMC registerVmc = ((RegisterGroupVMC)variable);
 
             StringBuffer exprBuf = new StringBuffer();
-            IRegisterGroupDMContext groupDmc = 
-                DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterGroupDMContext.class);
+            IRegisterGroupDMContext groupDmc = DMContexts.getAncestorOfType(registerVmc.getDMC(), IRegisterGroupDMContext.class);
             if (groupDmc != null) {
                 exprBuf.append("$$\""); //$NON-NLS-1$
                 exprBuf.append(groupDmc.getName());
@@ -282,9 +280,12 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
     @Override
     protected void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
-        if (event instanceof IRegisters.IRegistersChangedDMEvent) {
-            parentDelta.addNode(element, IModelDelta.STATE);
+        if (event instanceof IRegisters.IGroupsChangedDMEvent) {
+            parentDelta.addNode(element, IModelDelta.CONTENT);
         } 
+        if (event instanceof IRegisters.IGroupChangedDMEvent) {
+            parentDelta.addNode(element, IModelDelta.STATE);
+        }
         
         super.buildDeltaForExpressionElement(element, elementIdx, event, parentDelta, rm);
     }

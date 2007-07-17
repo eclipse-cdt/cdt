@@ -10,6 +10,7 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -17,8 +18,8 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
@@ -28,7 +29,6 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IVariableDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IVariableDMData;
@@ -41,6 +41,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugException;
@@ -61,16 +62,68 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings({"restriction", "nls"})
-public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpressionDMData> implements IElementEditor {
+public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpressionDMData> implements IElementEditor {
+    
+    /** 
+     * List of child nodes containing only a reference to this.  This is what enables the view model
+     * provider to know about the recursive nature of subexpression nodes.
+     */
+    private final IVMLayoutNode[] fChildLayoutNodes = { this };
+    
+    @Override
+    public IVMLayoutNode[] getChildLayoutNodes() {
+        return fChildLayoutNodes;
+    }
+    
+    @Override
+    public int getDeltaFlags(Object e) {
+        /*
+         * @see buildDelta()
+         */
+        
+        if (e instanceof IRunControl.ISuspendedDMEvent) {
+            return IModelDelta.CONTENT;
+        }
+        
+        if ( e instanceof IExpressions.IExpressionChangedDMEvent) {
+            return IModelDelta.STATE;
+        }
+        
+        return IModelDelta.NO_CHANGE;
+    }
+
+    @Override
+    public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+    
+        if (event instanceof IRunControl.ISuspendedDMEvent) {
+            parentDelta.addFlags(IModelDelta.CONTENT);
+        } 
+        else if ( event instanceof IExpressions.IExpressionChangedDMEvent) {
+            /*
+             * Flush the cache.
+             */
+            VMCacheManager.getVMCacheManager().flush(super.getVMProvider().getPresentationContext());
+
+            /*
+             *  Logically one would think that STATE should be specified here. But we specifiy CONTENT
+             *  as well so that if there sub expressions which are affected in some way ( such as with
+             *  an expanded union then they will show the changes also.
+             */
+            parentDelta.addNode( createVMContext(((IExpressions.IExpressionChangedDMEvent)event).getDMContext()), IModelDelta.CONTENT | IModelDelta.STATE );
+        }
+        
+        requestMonitor.done();
+    }
+    
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
     
     private final SyncVariableDataAccess fSyncVariableDataAccess;
     
-    protected class VariableLocalsVMC extends DMVMContext implements IFormattedValueVMContext, IVariable {
+    protected class VariableExpressionVMC extends DMVMContext implements IFormattedValueVMContext, IVariable {
         
         private IExpression fExpression;
         
-        public VariableLocalsVMC(IDMContext<?> dmc) {
+        public VariableExpressionVMC(IDMContext<?> dmc) {
             super(dmc);
         }
 
@@ -88,7 +141,7 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
             if (fExpression != null && adapter.isAssignableFrom(fExpression.getClass())) {
                 return fExpression;
             } else if (adapter.isAssignableFrom(IWatchExpressionFactoryAdapterExtension.class)) {
-                return fVariableLocalsExpressionFactory;
+                return fVariableExpressionFactory;
             } else {
                 return super.getAdapter(adapter);
             }
@@ -96,8 +149,8 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
         
         @Override
         public boolean equals(Object other) {
-            if (other instanceof VariableLocalsVMC && super.equals(other)) {
-                VariableLocalsVMC otherGroup = (VariableLocalsVMC)other;
+            if (other instanceof VariableExpressionVMC && super.equals(other)) {
+                VariableExpressionVMC otherGroup = (VariableExpressionVMC)other;
                 return (otherGroup.fExpression == null && fExpression == null) ||
                        (otherGroup.fExpression != null && otherGroup.fExpression.equals(fExpression));
             }
@@ -123,29 +176,28 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
         public String getModelIdentifier() { return DsfDebugUIPlugin.PLUGIN_ID; }
     }
     
-    protected class VariableLocalsExpressionFactory implements IWatchExpressionFactoryAdapterExtension {
+    protected class VariableExpressionFactory implements IWatchExpressionFactoryAdapterExtension {
 
         public boolean canCreateWatchExpression(IVariable variable) {
-            return variable instanceof VariableLocalsVMC;
+            return variable instanceof VariableExpressionVMC;
         }
 
         public String createWatchExpression(IVariable variable) throws CoreException {
             
-            //VariableLocalsVMC registerVmc = ((VariableLocalsVMC)variable);
+            VariableExpressionVMC exprVmc = (VariableExpressionVMC) variable;
+            
+            IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(exprVmc.getDMC(), IExpressionDMContext.class);
+            if (exprDmc != null) {
+                return exprDmc.getQualifiedExpression();
+            }
 
-            /*
-             *  This needs to be completed by filling in the fully qualified expression.
-             *  Currently the ExpressionDMC does not support that.  This will be changed
-             *  shortly.  For now I am creating a bugzilla about this not being complete
-             *  and checking this in.
-             */
-            return null;            
+            return null;     
         }
     }
 
-    final protected VariableLocalsExpressionFactory fVariableLocalsExpressionFactory = new VariableLocalsExpressionFactory();
+    final protected VariableExpressionFactory fVariableExpressionFactory = new VariableExpressionFactory();
 
-    public VariableLocalsLayoutNode(IFormattedValuePreferenceStore prefStore, AbstractVMProvider provider,
+    public VariableLayoutNode(IFormattedValuePreferenceStore prefStore, AbstractVMProvider provider,
                                     DsfSession session, SyncVariableDataAccess syncVariableDataAccess) {
         super(provider, session, IExpressions.IExpressionDMContext.class);
         fFormattedPrefStore = prefStore;
@@ -154,7 +206,7 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
 
     @Override
     protected IVMContext createVMContext(IDMContext<IExpressionDMData> dmc) {
-        return new VariableLocalsVMC(dmc);
+        return new VariableExpressionVMC(dmc);
     }
     
     /**
@@ -239,8 +291,6 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
     {
         final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
         /*
-         *  PREFPAGE : We are using a default format until the preference page is created
-         *  
          *  First select the format to be used. This involves checking so see that the preference
          *  page format is supported by the register service. If the format is not supported then 
          *  we will pick the first available format.
@@ -320,25 +370,156 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
             }
         );
     }
+    
+    public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
+        if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
+            return new TextCellEditor(parent);
+        }
+        else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
+            return new TextCellEditor(parent);
+        } 
 
+        return null;
+    }
+
+    public ICellModifier getCellModifier(IPresentationContext context, Object element) {
+        return new VariableLayoutValueCellModifier(fFormattedPrefStore, fSyncVariableDataAccess);
+    }
     
     @Override
-    protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-
-        // ISSUE: Do we need to explicitly get the IExecutionDMContext and ISymbolDMContext since they
-        // should be in the parent chain of the IFrameDMContext object?
+    public void getElementForExpression(final IChildrenUpdate update, final String expressionText, final IExpression expression) {
         
-        final IExecutionDMContext execDmc = findDmcInPath(update.getElementPath(), IExecutionDMContext.class);
+        /*
+         *  Create a valid DMC for this entered expression.
+         */
+        final IFrameDMContext frameDmc          = findDmcInPath(update.getElementPath(), IFrameDMContext.class);
+        final IExpressions    expressionService = getServicesTracker().getService(IExpressions.class);
+
+        IExpressionDMContext expressionDMC = expressionService.createExpression(frameDmc, expressionText);
+        
+        /*
+         *  Now create the valid VMC which wrappers it.
+         */
+        IVMContext vmc = createVMContext(expressionDMC);
+        
+        /*
+         *  Associate this expression with the newly valid DMC and return this VMC back up the chain of command
+         *  so it will be used when displaying the value in the expression view.
+         */
+        associateExpression(vmc, expression);
+        update.setChild(vmc, 0);
+        update.done();
+    }
+    
+    @Override
+    protected void associateExpression(Object element, IExpression expression) {
+        if (element instanceof VariableExpressionVMC) {
+            ((VariableExpressionVMC)element).setExpression(expression);
+        }
+    }
+
+    @Override
+    protected int getDeltaFlagsForExpressionPart(Object event) {
+        if (event instanceof IRunControl.ISuspendedDMEvent) {
+            return IModelDelta.CONTENT;
+        }
+
+        return IModelDelta.NO_CHANGE;
+    }
+    
+    @Override
+    protected void testContextForExpression(Object element, String expression, DataRequestMonitor<Boolean> rm) {
+        /*
+         * Since we are overriding "getElementForExpression" we do not need to do anything here. But
+         * we are forced to supply this routine because it is abstract in the extending class.
+         */
+    }
+
+    public int getExpressionLength(String expression) {
+        /*
+         *  Since we are overriding "getElementForExpression" we do not need to do anything here.
+         *  We just assume the entire expression is for us.
+         */
+        return expression.length() ;
+    }
+
+    @Override
+    protected void updateElementsInSessionThread(final IChildrenUpdate update) {
+        // Get the data model context object for the current node in the hierarchy.
+        
+        final IExpressionDMContext expressionDMC = findDmcInPath(update.getElementPath(), IExpressionDMContext.class);
+        
+        if ( expressionDMC != null ) {
+            getSubexpressionsUpdateElementsInSessionThread( update );
+        }
+        else {
+            getLocalsUpdateElementsInSessionThread( update );
+        }
+    }
+    
+    private void getSubexpressionsUpdateElementsInSessionThread(final IChildrenUpdate update) {
+
+        final IExpressionDMContext expressionDMC = findDmcInPath(update.getElementPath(), IExpressionDMContext.class);
+        
+        if ( expressionDMC != null ) {
+
+            // Get the services we need to use.
+            
+            final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
+            
+            if (expressionService == null) {
+                handleFailedUpdate(update);
+                return;
+            }
+
+            final DsfExecutor dsfExecutor = getSession().getExecutor();
+            
+            // Call IExpressions.getSubExpressions() to get an Iterable of IExpressionDMContext objects representing
+            // the sub-expressions of the expression represented by the current expression node.
+            
+            final DataRequestMonitor<Iterable<IExpressionDMContext>> rm =
+                new DataRequestMonitor<Iterable<IExpressionDMContext>>(dsfExecutor, null) {
+                    @Override
+                    public void handleCompleted() {
+                        if (!getStatus().isOK()) {
+                            handleFailedUpdate(update);
+                            return;
+                        }
+                        
+                        // Fill the update with the the IExpressionDMContext objects returned by
+                        // IExpressions.getSubExpressions().
+                        
+                        List<IExpressionDMContext> subExpressionDMCList = (List<IExpressionDMContext>)getData();
+                        IExpressionDMContext[] subExpressionDMCArray = new IExpressionDMContext[subExpressionDMCList.size()];
+                        Iterator<IExpressionDMContext> iter = subExpressionDMCList.iterator();
+
+                        int i = 0;
+                        while (iter.hasNext()) {
+                            subExpressionDMCArray[i++] = iter.next();
+                        }
+
+                        fillUpdateWithVMCs(update, subExpressionDMCArray);
+                        update.done();
+                    }
+            };
+
+            // Make the asynchronous call to IExpressions.getSubExpressions().  The results are processed in the
+            // DataRequestMonitor.handleCompleted() above.
+
+            expressionService.getSubExpressions(expressionDMC, rm);
+        }
+    }
+    
+    private void getLocalsUpdateElementsInSessionThread(final IChildrenUpdate update) {
+
         final IFrameDMContext frameDmc = findDmcInPath(update.getElementPath(), IFrameDMContext.class);
-        //final ISymbolDMContext symbolDmc =
-        //    findDmcInPath(update.getElementPath(), ISymbolDMContext.class);
 
         // Get the services we need to use.
         
         final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
         final IStack stackFrameService = getServicesTracker().getService(IStack.class);
         
-        if (execDmc == null || frameDmc == null || expressionService == null || stackFrameService == null) {
+        if ( frameDmc == null || expressionService == null || stackFrameService == null) {
             handleFailedUpdate(update);
             return;
         }
@@ -430,8 +611,8 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
                         
                         mrm.add(rm);
                         
-                        VMCacheManager.getVMCacheManager().getCache(VariableLocalsLayoutNode.this.getVMProvider().getPresentationContext())
-                    		.getModelData(stackFrameService, localDMC, rm, getExecutor());
+                        VMCacheManager.getVMCacheManager().getCache(VariableLayoutNode.this.getVMProvider().getPresentationContext())
+                            .getModelData(stackFrameService, localDMC, rm, getExecutor());
                     }
                 }
         };
@@ -440,97 +621,5 @@ public class VariableLocalsLayoutNode extends AbstractExpressionLayoutNode<IExpr
         // DataRequestMonitor.handleCompleted() above.
 
         stackFrameService.getLocals(frameDmc, rm);
-    }
-
-    @Override
-    protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
-            return IModelDelta.CONTENT;
-        }
-        
-        return IModelDelta.NO_CHANGE;
-    }
-
-    @Override
-    protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent,
-            int nodeOffset, RequestMonitor requestMonitor) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
-            // Create a delta that the whole register group has changed.
-            parent.addFlags(IModelDelta.CONTENT);
-        }
-
-        super.buildDeltaForDMEvent(e, parent, nodeOffset, requestMonitor);
-    }
-
-    public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
-        if (IDebugVMConstants.COLUMN_ID__VALUE.equals(columnId)) {
-            return new TextCellEditor(parent);
-        }
-        else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
-            return new TextCellEditor(parent);
-        } 
-
-        return null;
-    }
-
-    public ICellModifier getCellModifier(IPresentationContext context, Object element) {
-        return new VariableLayoutValueCellModifier(fFormattedPrefStore, fSyncVariableDataAccess);
-    }
-    
-    @Override
-    public void getElementForExpression(final IChildrenUpdate update, final String expressionText, final IExpression expression) {
-        
-        /*
-         *  Create a valid DMC for this entered expression.
-         */
-        final IFrameDMContext frameDmc          = findDmcInPath(update.getElementPath(), IFrameDMContext.class);
-        final IExpressions    expressionService = getServicesTracker().getService(IExpressions.class);
-
-        IExpressionDMContext expressionDMC = expressionService.createExpression(frameDmc, expressionText);
-        
-        /*
-         *  Now create the valid VMC which wrappers it.
-         */
-        IVMContext vmc = createVMContext(expressionDMC);
-        
-        /*
-         *  Associate this expression with the newly valid DMC and return this VMC back up the chain of command
-         *  so it will be used when displaying the value in the expression view.
-         */
-        associateExpression(vmc, expression);
-        update.setChild(vmc, 0);
-        update.done();
-    }
-    
-    @Override
-    protected void associateExpression(Object element, IExpression expression) {
-        if (element instanceof VariableLocalsVMC) {
-            ((VariableLocalsVMC)element).setExpression(expression);
-        }
-    }
-
-    @Override
-    protected int getDeltaFlagsForExpressionPart(Object event) {
-        if (event instanceof IRunControl.ISuspendedDMEvent) {
-            return IModelDelta.CONTENT;
-        }
-
-        return IModelDelta.NO_CHANGE;
-    }
-    
-    @Override
-    protected void testContextForExpression(Object element, String expression, DataRequestMonitor<Boolean> rm) {
-        /*
-         * Since we are overriding "getElementForExpression" we do not need to do anything here. But
-         * we are forced to supply this routine because it is abstract in the extending class.
-         */
-    }
-
-    public int getExpressionLength(String expression) {
-        /*
-         *  Since we are overriding "getElementForExpression" we do not need to do anything here.
-         *  We just assume the entire expression is for us.
-         */
-        return expression.length() ;
     }
 }

@@ -17,8 +17,7 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterGroupLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.SyncRegisterDataAccess;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableLocalsLayoutNode;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableSubExpressionsLayoutNode;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableLayoutNode;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
@@ -87,11 +86,11 @@ public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache
         registerGroupNode.setChildNodes(new IVMLayoutNode[] { registerNode });
         
         /*
-         *  Create the local variables nodes next. They represent the first level shown in the view.
+         *  Create the support for the SubExpressions. Anything which is brought into the expressions
+         *  view comes in as a fully qualified expression so we go directly to the SubExpression layout
+         *  node.
          */
-        IExpressionLayoutNode localsNode = new VariableLocalsLayoutNode(this, this, getSession(), syncvarDataAccess);
-        IVMLayoutNode subExpressioNode = new VariableSubExpressionsLayoutNode(this, getSession(), syncvarDataAccess);
-        localsNode.setChildNodes(new IVMLayoutNode[] { subExpressioNode });
+        IExpressionLayoutNode subExpressioNode = new VariableLayoutNode(this, this, getSession(), syncvarDataAccess);
         
         /*
          *  Tell the expression node which subnodes  it will directly support.  It is very important
@@ -104,7 +103,7 @@ public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache
          *  assume what it was passed was for it and the real node which wants to handle it would be
          *  left out in the cold.
          */
-        expressionManagerNode.setExpressionLayoutNodes(new IExpressionLayoutNode[] { registerGroupNode, localsNode });
+        expressionManagerNode.setExpressionLayoutNodes(new IExpressionLayoutNode[] { registerGroupNode, subExpressioNode });
         
         /*
          *  Let the work know which is the top level node.

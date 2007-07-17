@@ -499,6 +499,10 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             parentDelta.addNode(element, IModelDelta.STATE);
         } 
         
+        if (event instanceof IRegisters.IRegistersChangedDMEvent) {
+            parentDelta.addNode(element, IModelDelta.STATE);
+        } 
+        
         super.buildDeltaForExpressionElement(element, elementIdx, event, parentDelta, rm);
     }
 

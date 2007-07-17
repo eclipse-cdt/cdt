@@ -40,16 +40,10 @@ public class VariableVMProvider extends AbstractDebugDMVMProviderWithCache imple
         IVMRootLayoutNode debugViewSelection = new DMVMRootLayoutNode(this);
         
         /*
-         *  Create the local variables nodes next. They represent the first level shown in the view.
-         */
-        IVMLayoutNode localsNode = new VariableLocalsLayoutNode(this, this, getSession(), varAccess);
-        debugViewSelection.setChildNodes(new IVMLayoutNode[] { localsNode });
-        
-        /*
          * Create the next level which represents members of structs/unions/enums and elements of arrays.
          */
-        IVMLayoutNode subExpressioNode = new VariableSubExpressionsLayoutNode(this, getSession(), varAccess);
-        localsNode.setChildNodes(new IVMLayoutNode[] { subExpressioNode });
+        IVMLayoutNode subExpressioNode = new VariableLayoutNode(this, this, getSession(), varAccess);
+        debugViewSelection.setChildNodes(new IVMLayoutNode[] { subExpressioNode });
         
         /*
          *  Now set this schema set as the layout set.

@@ -75,7 +75,7 @@ public class VMElementsUpdate extends VMViewerUpdate implements IChildrenUpdate 
     public void done() {
         @SuppressWarnings("unchecked")
         DataRequestMonitor<List<Object>> rm = (DataRequestMonitor<List<Object>>)fRequestMonitor;
-        if (fElements.size() == fLength) {
+        if (fElements.size() == fLength || fLength == -1 ) {
             rm.setData(fElements);
         } else {
             rm.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.REQUEST_FAILED, "Incomplete elements of updates", null)); //$NON-NLS-1$

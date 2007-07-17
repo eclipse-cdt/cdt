@@ -44,6 +44,7 @@
  * Javier Montalvo Orus (Symbian) - [187531] Improve exception thrown when Login Failed on FTP
  * Javier Montalvo Orus (Symbian) - [187862] Incorrect Error Message when creating new file in read-only directory
  * Javier Montalvo Orus (Symbian) - [194204] Renaming Files/Folders moves them sometimes
+ * Javier Montalvo Orus (Symbian) - [192724] New Filter with Show Files Only still shows folders
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -499,7 +500,24 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 					if((filematcher.matches(f.getName()) || f.isDirectory()) && !(f.getName().equals(".") || f.getName().equals(".."))) //$NON-NLS-1$ //$NON-NLS-2$
 					{
-						results.add(f);
+						switch(fileType)
+						{
+							case FILE_TYPE_FOLDERS:
+								if(f.isDirectory())
+								{
+									results.add(f);	
+								}
+								break;
+							case FILE_TYPE_FILES:
+								if(f.isFile())
+								{
+									results.add(f);	
+								}
+								break;
+							case FILE_TYPE_FILES_AND_FOLDERS:
+								results.add(f);	
+								break;
+						}
 					}
 				}
 			}

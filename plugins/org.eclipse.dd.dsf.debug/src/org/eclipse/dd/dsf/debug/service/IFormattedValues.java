@@ -87,6 +87,11 @@ public interface IFormattedValues extends IDMService {
         public int hashCode() {
             return baseHashCode() + getFormatID().hashCode();
         }
+        
+        @Override
+        public String toString() {
+            return super.toString() + ".format(" + getFormatID() + ")";
+        }
     }
 
     public static class FormattedValueDMData implements IDMData {

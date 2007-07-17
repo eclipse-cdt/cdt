@@ -50,6 +50,8 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -344,7 +346,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
                     /*
                      *  Format has been validated. Get the formatted value.
                      */
-                    FormattedValueDMContext valueDmc = expressionService.getFormattedValue(dmc, finalFormatId);
+                    final FormattedValueDMContext valueDmc = expressionService.getFormattedValue(dmc, finalFormatId);
                     
                     VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
         				.getModelData(expressionService,
@@ -357,10 +359,20 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
                                     return;
                                 }
 
-                                /*
-                                 *  Fill the label/column with the properly formatted data value.
-                                 */
+                                // Fill the label/column with the properly formatted data value.
                                 update.setLabel(getData().getFormattedValue(), labelIndex);
+                                
+                                // Color based on change history
+                                FormattedValueDMData oldData = (FormattedValueDMData) VMCacheManager.getVMCacheManager()
+                                    .getCache(VariableLayoutNode.this.getVMProvider().getPresentationContext())
+                                    .getArchivedModelData(valueDmc);
+                                if (oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue())) {
+                                    update.setBackground(
+                                        DebugUIPlugin.getPreferenceColor(
+                                            IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(),
+                                        labelIndex);
+                                }
+
                                 update.done();
                             }
                         },
@@ -387,28 +399,21 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
     }
     
     @Override
-    public void getElementForExpression(final IChildrenUpdate update, final String expressionText, final IExpression expression) {
-        
+    protected void getElementForExpressionPart(IChildrenUpdate update, String expressionPartText, DataRequestMonitor<Object> rm) {
         /*
-         *  Create a valid DMC for this entered expression.
+         * Create a valid DMC for this entered expression.
          */
-        final IFrameDMContext frameDmc          = findDmcInPath(update.getElementPath(), IFrameDMContext.class);
-        final IExpressions    expressionService = getServicesTracker().getService(IExpressions.class);
+        final IFrameDMContext frameDmc = findDmcInPath(update.getElementPath(), IFrameDMContext.class);
+        final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
 
-        IExpressionDMContext expressionDMC = expressionService.createExpression(frameDmc, expressionText);
+        IExpressionDMContext expressionDMC = expressionService.createExpression(frameDmc, expressionPartText);
         
         /*
          *  Now create the valid VMC which wrappers it.
          */
         IVMContext vmc = createVMContext(expressionDMC);
-        
-        /*
-         *  Associate this expression with the newly valid DMC and return this VMC back up the chain of command
-         *  so it will be used when displaying the value in the expression view.
-         */
-        associateExpression(vmc, expression);
-        update.setChild(vmc, 0);
-        update.done();
+        rm.setData(vmc);
+        rm.done();
     }
     
     @Override

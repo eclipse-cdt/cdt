@@ -17,11 +17,11 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -40,9 +40,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
-import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -318,20 +316,7 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 * @return The list of system types known to be in existence
 	 */
 	private IRSESystemType[] getSystemTypes(boolean restoreDefaults) {
-		IRSESystemType[] types = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
-		ArrayList list = new ArrayList();
-		if (systemTypes == null || restoreDefaults) {
-			for (int i = 0; i < types.length; i++) {
-				ISubSystemConfiguration[] configurations = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(types[i], false);
-				if (configurations != null && configurations.length > 0) {
-					list.add(types[i]);
-				}
-			}
-		}
-		types = new IRSESystemType[list.size()];
-		for (int i = 0; i < list.size(); i++) {
-			types[i] = (IRSESystemType) (list.get(i));
-		}
+		IRSESystemType[] types = SystemWidgetHelpers.getValidSystemTypes(null);
 		return types;
 	}
 

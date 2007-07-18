@@ -15,6 +15,7 @@
  * Kevin Doyle (IBM) - [182024] Folder field only initialized if selection supports search
  * Kevin Doyle (IBM) - [189430] Limited System Types displayed in Folder Dialog
  * Kevin Doyle (IBM) - [187427] Selecting an Archive will check Search Archives checkbox
+ * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.search;
@@ -414,7 +415,7 @@ public class SystemSearchPage extends DialogPage implements ISearchPage {
 			
 			// limit the system types displayed to those that can support search
 			List types = new LinkedList();
-			IRSESystemType[] allSystemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
+			IRSESystemType[] allSystemTypes = SystemWidgetHelpers.getValidSystemTypes(null);
 			for (int i = 0; i < allSystemTypes.length; i++)
 			{
 				IRemoteFileSubSystemConfiguration rfssc = RemoteFileUtility.getFileSubSystemConfiguration(allSystemTypes[i]);

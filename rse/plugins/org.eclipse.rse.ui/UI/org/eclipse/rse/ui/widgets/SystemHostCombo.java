@@ -16,9 +16,12 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  ********************************************************************************/
 
 package org.eclipse.rse.ui.widgets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.jface.viewers.ISelection;
@@ -34,6 +37,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
@@ -221,10 +225,17 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 				// some one has overriden ISubSystemConfiguration.getSystemTypes(), the
 				// proxy cannot return the correct list anymore. This is especially important
 				// if the systemType <--> subsystemConfiguration association is dynamic!
+				
+				// FIXME MOB: This should be reviewed for lazy plugin loading, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=196942 
 				IRSESystemType[] types = ssfProxies[idx].getSubSystemConfiguration().getSystemTypes();
 				for (int jdx = 0; jdx < types.length; jdx++) {
-					if (!vTypes.contains(types[jdx]))
-						vTypes.addElement(types[jdx]);
+					IRSESystemType systemType = types[jdx];
+					if (!vTypes.contains(systemType)) {
+						RSESystemTypeAdapter a = (RSESystemTypeAdapter)systemType.getAdapter(RSESystemTypeAdapter.class);
+						if (a!=null && a.isEnabled(systemType)) {
+							vTypes.addElement(systemType);
+						}
+					}
 				}
 			}
 			restrictSystemTypesTo = (IRSESystemType[])vTypes.toArray(new IRSESystemType[vTypes.size()]);
@@ -682,7 +693,7 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	 * This fills the combination with the names of all the active connections of the given
 	 * system type.
 	 * @param combo composite to populate
-	 * @param systemType the system type to restrict the connection list to. Pass null or * for all system types
+	 * @param systemType the system type to restrict the connection list to. Pass null for all system types
 	 * @param defaultConnection the default system connection to preselect.
 	 * @param preSelectIfNoMatch true if we should preselect the first item if the given connection is not found
 	 * @param appendToCombo indicates whether or not to append to combo with population or replace 
@@ -693,10 +704,35 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 	{
 		boolean matchFound = false;
 		IHost[] additionalConnections = null;
-        if ( (systemType == null) || (systemType.equals("*")) ) //$NON-NLS-1$        
-          additionalConnections = RSECorePlugin.getTheSystemRegistry().getHosts();
-        else
-          additionalConnections = RSECorePlugin.getTheSystemRegistry().getHostsBySystemType(systemType);
+        if (systemType == null) {
+            additionalConnections = RSECorePlugin.getTheSystemRegistry().getHosts();
+            if (additionalConnections!=null) {
+            	boolean filtered = false;
+                List validHosts = new ArrayList(additionalConnections.length);
+                for (int i=0; i<additionalConnections.length; i++) {
+                	IRSESystemType curSysType = additionalConnections[i].getSystemType();
+                	RSESystemTypeAdapter a = (RSESystemTypeAdapter)curSysType.getAdapter(RSESystemTypeAdapter.class);
+                	if (a.isEnabled(curSysType)) {
+                		validHosts.add(additionalConnections[i]);
+                	} else {
+                		filtered = true;
+                	}
+                }
+                if (filtered) {
+                	if (validHosts.size()==0) {
+                		additionalConnections = null;
+                	} else {
+                    	additionalConnections = (IHost[])validHosts.toArray(new IHost[validHosts.size()]);
+                	}
+                }
+            }
+        }
+        else {
+        	RSESystemTypeAdapter a = (RSESystemTypeAdapter)systemType.getAdapter(RSESystemTypeAdapter.class);
+        	if (a.isEnabled(systemType)) {
+                additionalConnections = RSECorePlugin.getTheSystemRegistry().getHostsBySystemType(systemType);
+        	}
+        }
         if (additionalConnections != null)
         {
           String[] connectionNames = new String[additionalConnections.length];
@@ -759,9 +795,13 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 		 boolean anyMatch = false;
          for (int idx=0; idx<systemTypes.length; idx++)
          {
-         	match = populateConnectionCombo(combo, systemTypes[idx], defaultConnection, false, true);
-         	if (match)
-         	  anyMatch = true;
+        	 IRSESystemType systemType = systemTypes[idx];
+        	 RSESystemTypeAdapter a = (RSESystemTypeAdapter)systemType.getAdapter(RSESystemTypeAdapter.class);
+        	 if (a.isEnabled(systemType)) {
+              	match = populateConnectionCombo(combo, systemType, defaultConnection, false, true);
+             	if (match)
+             	  anyMatch = true;
+        	 }
          }
          if (!anyMatch && (combo.getItemCount()>0))
            //combo.select(0);
@@ -812,11 +852,29 @@ public class SystemHostCombo extends Composite implements ISelectionProvider,
 		connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory(ssConfigCategory);
         return addConnections(combo, connections, defaultConnection);
 	}
+	
 	/**
 	 * An attempt to get some abstraction
 	 */	
 	private boolean addConnections(Combo combo, IHost[] connections, IHost defaultConnection)
 	{
+		//bug 196936: filter connections for valid system types only
+		boolean filtered = false;
+		List filteredConnections = new ArrayList(connections.length);
+		for (int i=0; i<connections.length; i++) {
+			IRSESystemType systemType = connections[i].getSystemType();
+			RSESystemTypeAdapter a = (RSESystemTypeAdapter)systemType.getAdapter(RSESystemTypeAdapter.class);
+			if (a!=null && a.isEnabled(systemType)) {
+				filteredConnections.add(connections[i]);
+			} else {
+				filtered = true;
+			}
+			
+		}
+		if (filtered) {
+			connections = (IHost[])filteredConnections.toArray(new IHost[filteredConnections.size()]);
+			this.connections = connections;
+		}
 		boolean matchFound = false;
         if (connections != null)
         {

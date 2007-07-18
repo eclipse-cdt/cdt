@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [190195] Cannot enable new connection prompt in system view
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David Dykstal (IBM) - [191311] enable global properties action
+ * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -676,7 +677,7 @@ public class SystemViewPart
 		populateSystemViewPulldownMenu(menuMgr, getShell(), showConnectionActions, this, systemView);
 
 		// [179181] [api] Dynamic system type provider need a hook to add dynamic system type specific toolbar groups.
-		IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
+		IRSESystemType[] systemTypes = SystemWidgetHelpers.getValidSystemTypes(null);
 		for (int i = 0; i < systemTypes.length; i++) {
 			IRSESystemType systemType = systemTypes[i];
 			Object adapter = systemType.getAdapter(RSESystemTypeAdapter.class);

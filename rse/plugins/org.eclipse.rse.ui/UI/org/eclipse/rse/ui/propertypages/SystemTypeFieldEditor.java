@@ -17,11 +17,12 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
- * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
+ * Martin Oberhuber (Wind River) - [196963][181939] avoid subsystem plugin activation just for enablement checking
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -40,7 +41,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.IRSESystemType;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
@@ -316,7 +319,27 @@ public class SystemTypeFieldEditor extends FieldEditor
 	 * @return The list of system types known to be in existence
 	 */
 	private IRSESystemType[] getSystemTypes(boolean restoreDefaults) {
-		IRSESystemType[] types = SystemWidgetHelpers.getValidSystemTypes(null);
+		IRSESystemType[] types = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
+		ArrayList list = new ArrayList();
+		if (systemTypes == null || restoreDefaults) {
+			//Only get system types with at least one configuration registered.
+			//Do not consider enabled state according to the system type
+			//adapter, because this field editor is used for the preference
+			//page where enablement is made.
+			ISubSystemConfigurationProxy[] proxies = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationProxies();
+			for (int i = 0; i < types.length; i++) {
+				for (int j=0; j<proxies.length; j++) {
+					if (proxies[j].appliesToSystemType(types[i])) {
+						list.add(types[i]);
+						break;
+					}
+				}
+			}
+		}
+		types = new IRSESystemType[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			types[i] = (IRSESystemType) (list.get(i));
+		}
 		return types;
 	}
 

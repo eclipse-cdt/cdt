@@ -26,7 +26,8 @@
  * David Dykstal (IBM) - [189858] Delay the creation of the remote systems project
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
- * David Dykstal (IBM) - [191038] initialize SystemRegistryUI without a log file, it was not used                               
+ * David Dykstal (IBM) - [191038] initialize SystemRegistryUI without a log file, it was not used  
+ * David McKnight   (IBM)        - [196838] Don't recreate local after it has been deleted                             
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -39,6 +40,7 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSESystemType;
@@ -107,6 +109,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
 			    SystemResourceManager.startResourceEventListening(listener);
 				
+			    /*
 				// new support to allow products to not pre-create a local connection
 //				if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
 				if (SystemPreferencesManager.getShowLocalConnection()) {
@@ -122,7 +125,26 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 						}
 					}
 				}
+				*/
 		    	
+				Preferences prefs = RSEUIPlugin.getDefault().getPluginPreferences();
+				String key = "localConnectionCreated.mark"; //$NON-NLS-1$
+				if (!prefs.getBoolean(key)) {				  				       
+					// create the connection only if the local system type is enabled
+					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
+					if (systemType != null) {
+						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
+						if (adapter != null && adapter.isEnabled(systemType)) {
+							ISystemProfileManager profileManager = SystemProfileManager.getDefault();
+							ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
+							String userName = System.getProperty("user.name"); //$NON-NLS-1$
+							registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
+							prefs.setValue(key, true);
+						}
+					}				       
+				}
+			
+				
 				return Status.OK_STATUS;
 	    	}
 	    }

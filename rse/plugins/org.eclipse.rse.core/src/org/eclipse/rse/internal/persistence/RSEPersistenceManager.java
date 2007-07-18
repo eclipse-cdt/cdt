@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Martin Oberhuber (Wind River) - [196919] Fix deadlock with workspace operations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -94,7 +95,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.persistence.IRSEPersistenceManager#isExporting()
 	 */
-	public synchronized boolean isBusy() {
+	public boolean isBusy() {
 		return mutex.isLocked();
 	}
 
@@ -382,7 +383,7 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 	 * @param profileName the name of the profile to produce
 	 * @return the profile or null
 	 */
-	private synchronized ISystemProfile load(IRSEPersistenceProvider provider, String profileName, long timeout) {
+	private ISystemProfile load(IRSEPersistenceProvider provider, String profileName, long timeout) {
 		ISystemProfile profile = null;
 		if (mutex.waitForLock(null, timeout)) {
 			try {

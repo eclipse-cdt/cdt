@@ -109,24 +109,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	        	SystemResourceListener listener = SystemResourceListener.getListener(remoteSystemsProject);
 			    SystemResourceManager.startResourceEventListening(listener);
 				
-			    /*
-				// new support to allow products to not pre-create a local connection
-//				if (SystemResourceManager.isFirstTime() && SystemPreferencesManager.getShowLocalConnection()) {
-				if (SystemPreferencesManager.getShowLocalConnection()) {
-					// create the connection only if the local system type is enabled
-					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
-					if (systemType != null) {
-						RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
-						if (adapter != null && adapter.isEnabled(systemType)) {
-							ISystemProfileManager profileManager = SystemProfileManager.getDefault();
-							ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
-							String userName = System.getProperty("user.name"); //$NON-NLS-1$
-							registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
-						}
-					}
-				}
-				*/
-		    	
+		    	// determining whether to create an initial local connection
 				Preferences prefs = RSEUIPlugin.getDefault().getPluginPreferences();
 				String key = "localConnectionCreated.mark"; //$NON-NLS-1$
 				if (!prefs.getBoolean(key)) {				  				       

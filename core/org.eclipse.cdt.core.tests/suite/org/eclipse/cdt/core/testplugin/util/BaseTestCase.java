@@ -16,9 +16,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
+import java.util.Set;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
@@ -67,12 +68,12 @@ public class BaseTestCase extends TestCase {
 
 	private static Test getFailingTests(Class clazz, String prefix) {
 		TestSuite suite= new TestSuite("Failing Tests");
-		Vector names= new Vector();
+		HashSet names= new HashSet();
 		Class superClass= clazz;
 		while (Test.class.isAssignableFrom(superClass) && !TestCase.class.equals(superClass)) {
 			Method[] methods= superClass.getDeclaredMethods();
 			for (int i= 0; i < methods.length; i++) {
-				addFailingMethod(suite, methods[i], clazz, prefix);
+				addFailingMethod(suite, methods[i], names, clazz, prefix);
 			}
 			superClass= superClass.getSuperclass();
 		}
@@ -82,8 +83,11 @@ public class BaseTestCase extends TestCase {
 		return suite;
 	}
 
-	private static void addFailingMethod(TestSuite suite, Method m, Class clazz, String prefix) {
+	private static void addFailingMethod(TestSuite suite, Method m, Set names, Class clazz, String prefix) {
 		String name= m.getName();
+		if (!names.add(name)) {
+			return;
+		}
 		if (name.startsWith("test") || (prefix != null && !name.startsWith(prefix))) {
 			return;
 		}

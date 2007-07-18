@@ -55,19 +55,4 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 			CProjectHelper.delete(fCProject);
 		}
 	}
-	
-	public void testParsingSymbolDefinitions() {}
-	public void _testParsingSymbolDefinitions() {
-		super.testParsingSymbolDefinitions();
-	}
-
-	public void testParsingSymbolDefinitions_bug80271() {}
-	public void _testParsingSymbolDefinitions_bug80271() {
-		super.testParsingSymbolDefinitions_bug80271();
-	}
-
-	public void testParsingUnbalancedDoubleQuote_Bug186065() {}
-	public void _testParsingUnbalancedDoubleQuote_Bug186065() throws Exception {
-		super.testParsingUnbalancedDoubleQuote_Bug186065();
-	}
 }

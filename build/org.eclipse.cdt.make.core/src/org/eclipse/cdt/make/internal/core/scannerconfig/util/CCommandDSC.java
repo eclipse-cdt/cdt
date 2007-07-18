@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Gerhard Schaber (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Gerhard Schaber (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
@@ -131,7 +131,7 @@ public class CCommandDSC {
 	 * @param quoteIncludePaths whether or not paths for includes must be put inside double quotes.
 	 * @return the command line to run the scanner discovery.
 	 */
-	public String getSCDRunnableCommand(boolean quoteIncludePaths) {
+	public String getSCDRunnableCommand(boolean quoteIncludePaths, boolean quoteDefines) {
 		String commandAsString = new String();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
 			KVStringPair optionPair = (KVStringPair)i.next();
@@ -149,6 +149,15 @@ public class CCommandDSC {
     				optionPair.getKey().equals(SCDOptionsEnum.IQUOTE.toString())) {
     				value = makeAbsolute(project, value);
     				if (quoteIncludePaths) {
+    					value= "\"" + value + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+    				}
+    			}
+    			else if (quoteDefines && optionPair.getKey().equals(SCDOptionsEnum.DEFINE.toString())) {
+    				if (value.indexOf('\'') == -1) {
+    					value= "'" + value + "'";  //$NON-NLS-1$//$NON-NLS-2$
+    				}
+    				else {
+    					value= value.replaceAll("\"", "\\\\\"");  //$NON-NLS-1$//$NON-NLS-2$
     					value= "\"" + value + "\""; //$NON-NLS-1$ //$NON-NLS-2$
     				}
     			}

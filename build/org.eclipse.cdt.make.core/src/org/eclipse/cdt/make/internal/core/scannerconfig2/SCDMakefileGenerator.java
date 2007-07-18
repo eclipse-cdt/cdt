@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
@@ -84,7 +85,7 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
                     buffer.append(':');
                     buffer.append(ENDL);
                     buffer.append("\t@echo begin generating scanner info for $@"+ENDL+"\t"); //$NON-NLS-1$ //$NON-NLS-2$
-                    buffer.append(cmd.getSCDRunnableCommand(true)); // quoteIncludePaths
+                    buffer.append(cmd.getSCDRunnableCommand(true, true)); // quote includes and defines
                     buffer.append(" -E -P -v -dD "); //$NON-NLS-1$
                     buffer.append(cmd.appliesToCPPFileType() ? "specs.cpp" : "specs.c"); //$NON-NLS-1$ //$NON-NLS-2$
                     buffer.append(ENDL);

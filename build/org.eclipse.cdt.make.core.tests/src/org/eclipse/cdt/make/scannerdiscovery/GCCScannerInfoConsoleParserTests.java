@@ -58,7 +58,7 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		fOutputParser.processLine("gcc '-I /with spaces 1' -I'/with spaces 2' -c test.c"); // dirs with spaces 1,2 //$NON-NLS-1$
 		fOutputParser.processLine("gcc \"-I /with spaces 3\" -I \"/with spaces 4\" -c test.c"); // dirs with spaces 3,4 //$NON-NLS-1$
 		fOutputParser.processLine("gcc -I /with\\ spaces\\ 5 -c test.c"); // dirs with spaces 5 //$NON-NLS-1$
-		fOutputParser.processLine("gcc -I '\\\\server1\\include' '-I\\\\server2\\include' -I \"\\\\server3\\include\" -c test.c"); // UNC paths //$NON-NLS-1$
+		fOutputParser.processLine("gcc -I '\\\\server1\\include' '-I\\\\server2\\include' -I \"\\\\\\\\server3\\\\include\" -c test.c"); // UNC paths //$NON-NLS-1$
 		fOutputParser.processLine("gcc -I //server4/include -I '//server5/include' '-I//server6/include' -c test.c"); // UNC paths //$NON-NLS-1$
 		fOutputParser.processLine("gcc -I \\"); //$NON-NLS-1$
 		fOutputParser.processLine("/multiline\\"); //$NON-NLS-1$
@@ -91,10 +91,4 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		assertTrue(sumIncludes.contains("/multiline/dir")); //$NON-NLS-1$
 		assertTrue(sumIncludes.size() == 24);
 	}
-
-	public void testCommandsWithSemicolon_bug194394() {}
-	public void _testCommandsWithSemicolon_bug194394() throws Exception {
-		super.testCommandsWithSemicolon_bug194394();
-	}
-
 }

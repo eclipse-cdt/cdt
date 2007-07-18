@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
- * Gerhard Schaber (Wind River Systems) - bug 187910
+ *     IBM - Initial API and implementation
+ *     Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
+ *     Gerhard Schaber (Wind River Systems) - bug 187910
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -39,7 +40,6 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
     };
     private final static List FILE_EXTENSIONS_LIST = Arrays.asList(FILE_EXTENSIONS);
     
-    private String[] compilerInvocation;
     private GCCPerFileBOPConsoleParserUtility fUtil;
     
     /* (non-Javadoc)
@@ -49,9 +49,6 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         fUtil = (project != null && workingDirectory != null && markerGenerator != null) ?
                 new GCCPerFileBOPConsoleParserUtility(project, workingDirectory, markerGenerator) : null;
         super.startup(project, collector);
-        
-        // check additional compiler commands from extension point manifest
-        compilerInvocation = getCompilerCommands();
     }
 
     /* (non-Javadoc)
@@ -64,76 +61,46 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#processSingleLine(java.lang.String)
      */
-    protected boolean processSingleLine(String line) {
-        boolean rc = false;
+    protected boolean processCommand(String[] tokens) {
         // GCC C/C++ compiler invocation 
-        int compilerInvocationIndex = -1;
-        for (int cii = 0; cii < compilerInvocation.length; ++cii) {
-            compilerInvocationIndex = line.indexOf(compilerInvocation[cii]);
-            if (compilerInvocationIndex != -1)
-                break;
+        int compilerInvocationIndex= findCompilerInvocation(tokens);
+        if (compilerInvocationIndex < 0) {
+            return false;
         }
-        if (compilerInvocationIndex == -1)
-            return rc;
 
-        // split and unquote all segments; supports build command such as 
-        // sh -c 'gcc -g -O0 -I"includemath" -I "include abc" -Iincludeprint -c impl/testmath.c'
-        ArrayList split = splitLine(line, compilerInvocationIndex);
-
-        // get the position of the compiler command in the build command
-        for (compilerInvocationIndex=0; compilerInvocationIndex<split.size(); compilerInvocationIndex++) {
-	        String command = (String)split.get(compilerInvocationIndex);
-	        // verify that it is compiler invocation
-	        int idx = lastIndexOfCompilerCommand(command);
-        	if (idx >= 0)
-                break;
-        }    
-	    if (compilerInvocationIndex >= split.size()) {
-            TraceUtil.outputTrace("Error identifying compiler command", line, TraceUtil.EOL); //$NON-NLS-1$
-            return rc;
-        }
         // find a file name
         int extensionsIndex = -1;
         boolean found = false;
         String filePath = null;
-        for (int i = compilerInvocationIndex+1; i < split.size(); ++i) {
-        	String segment = (String)split.get(i);
-            int k = segment.lastIndexOf('.');
-            if (k != -1 && (segment.length() - k < 5)) {
-                String fileExtension = segment.substring(k);
+        for (int i = compilerInvocationIndex+1; i < tokens.length; i++) {
+        	String token= tokens[i];
+            int k = token.lastIndexOf('.');
+            if (k != -1 && (token.length() - k < 5)) {
+                String fileExtension = token.substring(k);
                 extensionsIndex = FILE_EXTENSIONS_LIST.indexOf(fileExtension);
                 if (extensionsIndex != -1) {
-                    filePath = segment;
+                    filePath = token;
                     found = true;
                     break;
                 }
             }
         }
-//              for (int j = 0; j < FILE_EXTENSIONS.length; ++j) {
-//                  if (split[i].endsWith(FILE_EXTENSIONS[j])) {
-//                      filePath = split[i];
-//                      extensionsIndex = j;
-//                      found = true;
-//                      break;
-//                  }
-//              }
-//              if (found) break;
         if (!found) {
-            TraceUtil.outputTrace("Error identifying file name :1", line, TraceUtil.EOL); //$NON-NLS-1$
-            return rc;
+            TraceUtil.outputTrace("Error identifying file name :1", tokens, TraceUtil.EOL); //$NON-NLS-1$
+            return true;
         }
         // sanity check
         if (filePath.indexOf(FILE_EXTENSIONS[extensionsIndex]) == -1) {
-            TraceUtil.outputTrace("Error identifying file name :2", line, TraceUtil.EOL); //$NON-NLS-1$
-            return rc;
+            TraceUtil.outputTrace("Error identifying file name :2", tokens, TraceUtil.EOL); //$NON-NLS-1$
+            return true;
         }
         if (fUtil != null) {
             IPath pFilePath = fUtil.getAbsolutePath(filePath);
             String shortFileName = pFilePath.removeFileExtension().lastSegment();
 
-            // generalize occurances of the file name
-            for (int i = 0; i < split.size(); i++) {
-				String token = (String)split.get(i);
+            // generalize occurrences of the file name
+            for (int i = compilerInvocationIndex+1; i < tokens.length; i++) {
+				String token = tokens[i];
 				if (token.equals("-include")) { //$NON-NLS-1$
 					++i;
 				}
@@ -141,14 +108,14 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 					++i;
 				}
 				else if (token.equals(filePath)) {
-					split.set(i, "LONG_NAME"); //$NON-NLS-1$
+					tokens[i]= "LONG_NAME"; //$NON-NLS-1$
 				}
 				else if (token.startsWith(shortFileName)) {
-					split.set(i, token.replaceFirst(shortFileName, "SHORT_NAME")); //$NON-NLS-1$
+					tokens[i]= token.replaceFirst(shortFileName, "SHORT_NAME"); //$NON-NLS-1$
 				}
 			}
             
-            CCommandDSC cmd = fUtil.getNewCCommandDSC((String[])split.toArray(new String[split.size()]), extensionsIndex > 0);
+            CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, extensionsIndex > 0);
             IPath baseDirectory = fUtil.getBaseDirectory();
             if (baseDirectory.isPrefixOf(pFilePath)) {
 	            List cmdList = new ArrayList();
@@ -157,7 +124,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 	            sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
 
 				IPath relPath = pFilePath.removeFirstSegments(baseDirectory.segmentCount());
-				//Note: We add the scannerconfig even if the resource doesnt actually
+				//Note: We add the scanner-config even if the resource doesn't actually
 				//exist below this project (which may happen when reading existing
 				//build logs, because resources can be created as part of the build
 				//and may not exist at the time of analyzing the config but re-built
@@ -166,161 +133,13 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 	            IFile file = getProject().getFile(relPath);
 	            getCollector().contributeToScannerConfig(file, sc);
             } else {
-            	//TODO limiting to pathes below this project means not being
+            	//TODO limiting to paths below this project means not being
             	//able to work with linked resources. Linked resources could
             	//be checked through IWorkspaceRoot.findFilesForLocation().
-            	TraceUtil.outputError("Build command for file outside project: "+pFilePath.toString(), line); //$NON-NLS-1$
+            	TraceUtil.outputError("Build command for file outside project: "+pFilePath.toString(), tokens); //$NON-NLS-1$
             }
             // fUtil.addGenericCommandForFile2(longFileName, genericLine);
         }
-        return rc;
-    }
-
-	private int lastIndexOfCompilerCommand(String command) {
-		int cii2 = -1;
-		for (int cii = 0; cii < compilerInvocation.length; ++cii) {
-			cii2 = command.lastIndexOf(compilerInvocation[cii]);
-			if (cii2 >= 0) {
-				break;
-			}
-		}
-		return cii2;
-	}
-
-    /**
-     * Splits and unquotes all compiler command segments; supports build command such as 
-     *    sh -c 'gcc -g -O0 -I"includemath" -I "include abc" -Iincludeprint -c impl/testmath.c'
-     */
-    private ArrayList splitLine(String line, int compilerInvocationIndex) {
-        ArrayList split = new ArrayList();
-        boolean bSingleQuotes = false;
-        boolean bIgnoreSingleQuotes = false;
-        boolean bDoubleQuotes = false;
-        boolean bIgnoreDoubleQuotes = false;
-        char[] chars = line.toCharArray();
-        int charPos = 0;
-        int length = line.length();
-        boolean quit = false;
-        boolean acceptExtraSingleQuote = false;
-        boolean acceptExtraDoubleQuote = false;
-
-        // eat whitespace
-        while (charPos < length) {
-        	char ch = chars[charPos];
-        	if (!Character.isWhitespace(ch)) {
-        		break;
-        	}
-        	charPos++;
-        }
-        // read token
-        while (charPos<length && !quit) {
-	        int startPos = -1;
-	        int endPos = -1;
-	        while (charPos<length && !quit) {
-	        	char ch = chars[charPos];
-	        	if (ch == '\'') {
-	        		// ignore quotes before the actual compiler command (the command itself including its options
-	        		// could be within quotes--in this case we nevertheless want to split the compiler command into segments)
-	        		if (charPos <= compilerInvocationIndex) {
-	        			bIgnoreSingleQuotes = !bIgnoreSingleQuotes;
-	        		}
-	        		else {
-	        			if (bIgnoreSingleQuotes) {
-	        				bIgnoreSingleQuotes = false;
-	    	        		if (startPos >= 0) {
-	    	        			endPos = charPos;  // end of a token
-	    	        		}
-    	        			quit = true;  // quit after closed quote containing the actual compiler command
-	        			}
-	        			else {
-	        				bSingleQuotes = !bSingleQuotes;
-	        			}
-	        		}
-// do split token here: allow -DMYKEY='MYVALUE' or-DMYKEY=\'MYVALUE\' 
-	        		if (startPos >= 0) {
-	        			char prevch = charPos > 0 ? chars[charPos-1] : '\0';
-	        			if (acceptExtraSingleQuote) {
-	        				acceptExtraSingleQuote = false;
-	        			}
-	        			else if (prevch != '=' && prevch != '\\') {
-	        				endPos = charPos;  // end of a token
-	        			}
-	        			else {
-	        				acceptExtraSingleQuote = true;
-	        			}
-	        		}
-	        	}
-	        	else if (ch == '"') {
-	        		// ignore quotes before the actual compiler command (the command itself including its options
-	        		// could be within quotes--in this case we nevertheless want to split the compiler command into segments)
-	        		if (charPos <= compilerInvocationIndex) {
-	        			bIgnoreDoubleQuotes = !bIgnoreDoubleQuotes;
-	        		}
-	        		else {
-	        			if (bIgnoreDoubleQuotes) {
-	        				bIgnoreDoubleQuotes = false;
-	    	        		if (startPos >= 0) {
-	    	        			endPos = charPos;  // end of a token
-	    	        		}
-    	        			quit = true;  // quit after closed quote containing the actual compiler command
-	        			}
-	        			else {
-	    	        		bDoubleQuotes = !bDoubleQuotes;
-	        			}
-	        		}
-// do split token here: allow -DMYKEY="MYVALUE" or-DMYKEY=\"MYVALUE\" 
-	        		if (startPos >= 0) {
-	        			char prevch = charPos > 0 ? chars[charPos-1] : '\0';
-	        			if (acceptExtraDoubleQuote) {
-	        				acceptExtraDoubleQuote = false;
-	        			}
-	        			else if (prevch != '=' && prevch != '\\') {
-	        				endPos = charPos;  // end of a token
-	        			}
-	        			else {
-	        				acceptExtraDoubleQuote = true;
-	        			}
-	        		}
-	        	}
-	        	else if (Character.isWhitespace(ch) || ch == ';') {
-	        		if (startPos < 0 && (bSingleQuotes || bDoubleQuotes)) {
-	        			startPos = charPos;
-	        		}
-	        		else if (startPos >= 0 && !bSingleQuotes && !bDoubleQuotes) {
-	        			endPos = charPos;  // end of a token
-	        		}
-	        	}
-	        	else {  // a valid character, starts or continues a token
-	        		if (startPos < 0) {
-	        			startPos = charPos;
-	        		}
-	        		if (charPos == length-1) {
-	        			endPos = charPos+1;   // end of token
-	        		}
-	        	}
-	        	charPos++;
-	        	// a complete token has been found
-	        	if (startPos >= 0 && endPos > startPos) {
-	        		break;
-	        	}
-	        }
-	    	if (startPos >= 0 && endPos >= 0) {
-	    		String cmdFragment = line.substring(startPos, endPos);
-	    		if (startPos >= compilerInvocationIndex) { // the compiler name or one of its options
-	    			split.add(cmdFragment);
-	    		}
-	    		else if (endPos > compilerInvocationIndex) {
-	    			// compiler name is found within another command fragment--we have to check, whether this
-	    			// is a valid compiler invocation (e.g., C:/Programs/gcc/gcc.exe) or only a part
-	    			// of a command that contains by chance the compiler name (e.g., cat testgccsettings.txt)
-	    	        int idx = lastIndexOfCompilerCommand(cmdFragment);
-	            	if (idx == 0 ||
-	            	   (idx > 0 && (cmdFragment.charAt(idx-1) == '\\' || cmdFragment.charAt(idx-1) == '/'))) {
-		    			split.add(cmdFragment);
-	            	}
-	    		}
-	    	}
-        }
-        return split;
+        return true;
     }
 }

@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Martin Oberhuber (Wind River Systems) - bug 155096
- * Gerhard Schaber (Wind River Systems)
+ *     IBM - Initial API and implementation
+ *     Martin Oberhuber (Wind River Systems) - bug 155096
+ *     Gerhard Schaber (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -177,9 +178,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                     else {
                         // ex. -I /dir
                         // take a next token
-                        ++i;
-                        if (i < tokens.length && !tokens[i].startsWith("-")) { //$NON-NLS-1$
-                            option = tokens[i];
+                        if (i+1 < tokens.length && !tokens[i+1].startsWith("-")) { //$NON-NLS-1$
+                            option = tokens[++i];
                         }
                         else break;
                     }

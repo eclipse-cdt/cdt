@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *     IBM - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
@@ -42,9 +43,19 @@ public class TraceUtil {
 		return SCANNER_CONFIG;
 	}
 	
+	public static void outputTrace(String prefix, String[] tokens, String postfix) {
+		if (isTracing()) {
+			System.out.print(prefix + ' ');
+			for (int i = 0; i < tokens.length; i++) {
+				System.out.print(tokens[i] + ' ');
+				
+			}
+			System.out.println(postfix);
+		}
+	}
+
 	public static void outputTrace(String prefix, String msg, String postfix) {
 		if (isTracing()) {
-			//System.out.println();
 			System.out.println(prefix + ' ' + msg + ' ' + postfix);
 		}
 	}
@@ -91,6 +102,17 @@ public class TraceUtil {
 		if (isTracing()) {
 			System.out.println();
 			System.out.println("Error: " + string + line); //$NON-NLS-1$
+		}
+	}
+
+	public static void outputError(String string, String[] tokens) {
+		if (isTracing()) {
+			System.out.println();
+			System.out.print("Error: " + string); //$NON-NLS-1$
+			for (int i = 0; i < tokens.length; i++) {
+				System.out.print(tokens[i] + ' ');
+			}
+			System.out.println();
 		}
 	}
 

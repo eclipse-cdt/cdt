@@ -81,7 +81,7 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 	}
 	
 	public void testParsingSymbolDefinitions_bug80271() {
-		fOutputParser.processLine("gcc -DMACRO1 -I ..\\inc -c ..\\source\\source.c");	// PR 80271 //$NON-NLS-1$
+		fOutputParser.processLine("gcc -DMACRO1 -I ..\\inc -c ..\\perfilescdtest\\source.c");	// PR 80271 //$NON-NLS-1$
 
         List sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("MACRO1")); //$NON-NLS-1$
@@ -90,14 +90,14 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 	
 	public void testParsingUnbalancedDoubleQuote_Bug186065() throws Exception {
 		fOutputParser.processLine("../src/bug186065.cc:8: error: missing terminating \" character");	// PR 80271 //$NON-NLS-1$
-		fOutputParser.processLine("gcc -DBUG186065_IS_FIXED"); //$NON-NLS-1$
+		fOutputParser.processLine("gcc -DBUG186065_IS_FIXED test.c"); //$NON-NLS-1$
 
         List sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("BUG186065_IS_FIXED")); //$NON-NLS-1$
 		assertTrue(sumSymbols.size() == 1);
 	}
 	
-	public void _testCompilerCommand_bug194394() throws Exception {
+	public void testCompilerCommand_bug194394() throws Exception {
 		fOutputParser.processLine("/usr/bin/gcc -DA test1.c"); //$NON-NLS-1$
 		fOutputParser.processLine("/usr/gcc-installs/gcc -DB test2.c"); //$NON-NLS-1$
 		fOutputParser.processLine("/usr/gcc/gcc -DC test3.c"); //$NON-NLS-1$

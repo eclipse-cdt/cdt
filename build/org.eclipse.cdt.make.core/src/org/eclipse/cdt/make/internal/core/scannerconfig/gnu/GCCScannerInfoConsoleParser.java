@@ -6,16 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Martin Oberhuber (Wind River Systems) - bug 155096
- * Sergey Prigogin (Google)
+ *     IBM - Initial API and implementation
+ *     Martin Oberhuber (Wind River Systems) - bug 155096
+ *     Sergey Prigogin (Google)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,13 +34,8 @@ import org.eclipse.core.runtime.Path;
  * @author vhirsl
  */
 public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
-	private final static String SINGLE_QUOTE_STRING = "\'"; //$NON-NLS-1$
-	private final static String DOUBLE_QUOTE_STRING = "\""; //$NON-NLS-1$
-	private final static char[] matchingChars = {'`', '\'', '\"'};
-	
-    private String[] compilerInvocation;
 
-    private ScannerInfoConsoleParserUtility fUtil = null;
+	private ScannerInfoConsoleParserUtility fUtil = null;
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
@@ -50,9 +44,6 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         fUtil = (project != null && workingDirectory != null && markerGenerator != null) ?
                 new ScannerInfoConsoleParserUtility(project, workingDirectory, markerGenerator) : null;
         super.startup(project, collector);
-
-        // check additional compiler commands from extension point manifest
-        compilerInvocation = getCompilerCommands();
     }
 
     /* (non-Javadoc)
@@ -62,290 +53,144 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         return fUtil;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.make.internal.core.scannerconfig.gnu.AbstractGCCBOPConsoleParser#processSingleLine(java.lang.String)
-     */
-    protected boolean processSingleLine(String line) {
-		boolean rc = false;
-		// Known patterns:
-		// (a) gcc|g++ ... -Dxxx -Iyyy ...
-		List allTokens = tokenize(line);
-//		ArrayList allTokens = new ArrayList(Arrays.asList(line.split("\\s+")));//$NON-NLS-1$
-		if (allTokens.size() <= 1)
-			return false;
+    protected boolean processCommand(String[] tokens) {
+        int compilerInvocationIdx= findCompilerInvocation(tokens);
+        if (compilerInvocationIdx<0) {
+        	return false;
+        }
         
-        boolean found = false;
-		Iterator I = allTokens.iterator();
-		String token;
-		for (int ti = 0; ti < 2; ++ti) {
-			token = ((String) I.next()).toLowerCase();
-	        for (int i = 0; i < compilerInvocation.length; i++) {
-	            if (token.indexOf(compilerInvocation[i]) != -1) {
-	                found = true;
-	                break;
-	            }
-	        }
-	        if (found)
-	        	break;
-		}
-		
-		if (found) {
-			// Recognized gcc or g++ compiler invocation
-			List includes = new ArrayList();
-			List symbols = new ArrayList();
-			List targetSpecificOptions = new ArrayList();
+        // Recognized gcc or g++ compiler invocation
+        List includes = new ArrayList();
+        List symbols = new ArrayList();
+        List targetSpecificOptions = new ArrayList();
 
-			rc = true;
-			String fileName = null;
-			// discover all -I options
-			parseLineForIncludePaths(line, includes);
-			// discover all -D options
-			parseLineForSymbolDefinitions(line, symbols);
-			
-			while (I.hasNext()) {
-				token = (String) I.next();
-				if (token.startsWith("-m") ||		//$NON-NLS-1$
-					token.equals("-ansi") ||		//$NON-NLS-1$
-					token.equals("-nostdinc") ||	//$NON-NLS-1$
-					token.equals("-posix") ||		//$NON-NLS-1$
-					token.equals("-pthread") ||		//$NON-NLS-1$
-					token.startsWith("-O") ||		//$NON-NLS-1$
-					token.equals("-fno-inline") ||	//$NON-NLS-1$
-					token.startsWith("-finline") ||	//$NON-NLS-1$
-					token.equals("-fno-exceptions") ||	//$NON-NLS-1$
-					token.equals("-fexceptions") ||		//$NON-NLS-1$
-					token.equals("-fshort-wchar") ||	//$NON-NLS-1$
-					token.equals("-fshort-double") ||	//$NON-NLS-1$
-					token.equals("-fno-signed-char") ||	//$NON-NLS-1$
-					token.equals("-fsigned-char") ||	//$NON-NLS-1$
-					token.startsWith("-fabi-version=")	//$NON-NLS-1$
-				) {
-					if (!targetSpecificOptions.contains(token))
-						targetSpecificOptions.add(token);
+        String fileName = null;
+        for (int j= compilerInvocationIdx+1; j < tokens.length; j++) {
+			String token = tokens[j];
+			if (token.equals(DASHIDASH)) {
+			}
+        	else if (token.startsWith(DASHI)) {
+        		String candidate= null;
+				if (token.length() > 2) {
+					candidate= token.substring(2).trim();
 				}
-				else if (fileName == null) {
-					String possibleFileName = token.toLowerCase();
-					if (possibleFileName.length() >= 5 &&  // Two quotes plus 3 characters for file name.
-						(possibleFileName.startsWith(DOUBLE_QUOTE_STRING) && 
-						 possibleFileName.endsWith(DOUBLE_QUOTE_STRING)) ||
-						(possibleFileName.startsWith(SINGLE_QUOTE_STRING) && 
-						 possibleFileName.endsWith(SINGLE_QUOTE_STRING))) {
-						possibleFileName = possibleFileName.substring(1, possibleFileName.length()-1).trim();
-					}
-					if (possibleFileName.endsWith(".c") || 		//$NON-NLS-1$
-						possibleFileName.endsWith(".cpp") ||	//$NON-NLS-1$
-						possibleFileName.endsWith(".cc") ||		//$NON-NLS-1$
-						possibleFileName.endsWith(".cxx") ||	//$NON-NLS-1$
-						possibleFileName.endsWith(".C") ||		//$NON-NLS-1$
-						possibleFileName.endsWith(".CPP") ||	//$NON-NLS-1$
-						possibleFileName.endsWith(".CC") ||		//$NON-NLS-1$
-						possibleFileName.endsWith(".CXX") ||	//$NON-NLS-1$
-						possibleFileName.endsWith(".c++")) {	//$NON-NLS-1$
-						
-						fileName = token;
-					}
-				}
-			}
-			
-			if (fileName != null && fileName.startsWith("/cygdrive/")) { //$NON-NLS-1$
-				fileName= AbstractGCCBOPConsoleParserUtility.convertCygpath(new Path(fileName)).toOSString();
-			}
-			
-			IProject project = getProject();   
-			IFile file = null;
-			List translatedIncludes = includes;
-			if (includes.size() > 0) {
-				if (fileName != null) {
-					if (fUtil != null) {
-						file = fUtil.findFile(fileName);
-						if (file != null) {
-							project = file.getProject();
-							translatedIncludes = fUtil.translateRelativePaths(file, fileName, includes);
-						}
-					}
-				}
-				else {
-					final String error = MakeMessages.getString("ConsoleParser.Filename_Missing_Error_Message"); //$NON-NLS-1$ 
-					TraceUtil.outputError(error, line);
-					if (fUtil != null) {
-						fUtil.generateMarker(getProject(), -1, error + line, IMarkerGenerator.SEVERITY_WARNING, null);
-					}
-				}
-				if (file == null && fUtil != null) {	// real world case
-					// remove include paths since there was no chance to translate them
-					translatedIncludes.clear();
-				}
-			}
-			// Contribute discovered includes and symbols to the ScannerInfoCollector
-			if (translatedIncludes.size() > 0 || symbols.size() > 0) {
-				Map scannerInfo = new HashMap();
-				scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludes);
-				scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
-				scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);
-				getCollector().contributeToScannerConfig(project, scannerInfo);
-				
-				TraceUtil.outputTrace("Discovered scanner info for file \'" + fileName + '\'',	//$NON-NLS-1$
-						"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		return rc;
-	}
-
-	/**
-	 * @param line
-	 * @return list of tokens
-	 */
-	private List tokenize(String line) {
-		List rv = new ArrayList(2);
-		// find special characters that need to be matched: `, ' and "
-		// First Matching Chararcter
-		int prevFmc = line.length();
-		int emc = -1;
-		char matchingChar = 0;
-		for (int i = 0; i < matchingChars.length; ++i) {
-			char ch = matchingChars[i];
-			int fmc = line.indexOf(ch);
-			if (fmc > -1 && fmc < prevFmc) {
-				emc = line.indexOf(ch, fmc+1);
-				if (emc > fmc) {
-					matchingChar = ch;
-					prevFmc = fmc;
-				}
-			}
-		}
-		if (matchingChar != 0) { // found matched chars
-			String prefix = line.substring(0, prevFmc).trim();
-			rv.addAll(Arrays.asList(prefix.split("\\s+")));//$NON-NLS-1$
-			
-			rv.add(line.substring(prevFmc, emc+1));
-			
-			// recursion
-			rv.addAll(tokenize(line.substring(emc+1).trim()));
-		}
-		else {
-			rv.addAll(Arrays.asList(line.split("\\s+")));//$NON-NLS-1$
-		}
-		return rv;
-	}
-
-	/**
-	 * @param line
-	 * @param includes
-	 */
-	private void parseLineForIncludePaths(String line, List includes) {
-		final String fDashI = "-I"; //$NON-NLS-1$
-		int prevIndex = 0;
-		for (int index = line.indexOf(fDashI, prevIndex); index != -1; 
-			 prevIndex = index+2, index = line.indexOf(fDashI, prevIndex)) {
-			String delimiter = "\\s+"; //$NON-NLS-1$
-			if (line.charAt(index-1) == '\'' || line.charAt(index-1) == '\"') {
-				// look for only one more ' or "
-				delimiter = String.valueOf(line.charAt(index-1));
-			}
-			String postfix = line.substring(index+2).trim();
-			if (postfix.charAt(0) == '-') {	// empty -I
-				continue;
-			}
-			if (postfix.startsWith(SINGLE_QUOTE_STRING) || postfix.startsWith(DOUBLE_QUOTE_STRING)) {
-				delimiter = postfix.substring(0, 1);
-			}
-			String[] tokens = postfix.split(delimiter);
-			int tokIndex = (tokens.length > 1 && tokens[0].length() == 0) ? 1 : 0;
-			String iPath = tokens[tokIndex];
-			String temp = iPath;
-			// check for '\ '
-			for (++tokIndex; (temp.endsWith("\\") && tokIndex < tokens.length &&  //$NON-NLS-1$
-							 tokens[tokIndex].length() > 0 && !tokens[tokIndex].startsWith("-")); //$NON-NLS-1$
-				 ++tokIndex) { 
-				int beg = postfix.indexOf(temp)+temp.length();
-				int end = postfix.indexOf(tokens[tokIndex])+tokens[tokIndex].length();
-				iPath = iPath.substring(0, iPath.length()-1) + postfix.substring(beg, end);
-				temp += postfix.substring(beg, end);
-			}
-			String nPath = iPath;
-			if (fUtil != null) {
-				nPath = fUtil.normalizePath(iPath);
-			}
-			if (!includes.contains(nPath)) {
-				includes.add(nPath);
-			}
-		}
-	}
-
-	/**
-	 * @param line
-	 * @param symbols
-	 */
-	private void parseLineForSymbolDefinitions(String line, List symbols) {
-		final String fDashD = "-D"; //$NON-NLS-1$
-		int prevIndex = 0;
-		String delimiter = null;
-		String splitRegex = "\\s+"; //$NON-NLS-1$
-		for (int index = line.indexOf(fDashD, prevIndex); index != -1; 
-			 prevIndex = index+2, index = line.indexOf(fDashD, prevIndex)) {
-			int nDelimiterSymbols = 2;
-			String postfix = line.substring(index+2).trim();
-			if (postfix.charAt(0) == '-') {	// empty -D
-				continue;
-			}
-			if (line.charAt(index-1) == '\'' || line.charAt(index-1) == '\"') {
-				// look for only one more ' or "
-				delimiter = String.valueOf(line.charAt(index-1)); 
-				nDelimiterSymbols = 1;
-			}
-			else {
-				String[] tokens = postfix.split(splitRegex, 2);
-				if (tokens.length > 0 && tokens[0].length() > 0) {
-					int sQuoteIndex = tokens[0].indexOf(SINGLE_QUOTE_STRING);
-					int dQuoteIndex = tokens[0].indexOf(DOUBLE_QUOTE_STRING);
-					if (sQuoteIndex == -1 && dQuoteIndex == -1) {
-						// simple case, no quotes
-						if (!symbols.contains(tokens[0])) {
-							symbols.add(tokens[0]);
-						}
-						continue;
+				else if (j+1 < tokens.length) {
+					candidate= tokens[j+1];
+					if (candidate.startsWith("-")) { //$NON-NLS-1$
+						candidate= null;
 					}
 					else {
-						delimiter = (sQuoteIndex != -1 && (dQuoteIndex == -1 || sQuoteIndex < dQuoteIndex)) ? SINGLE_QUOTE_STRING : DOUBLE_QUOTE_STRING;
+						j++;
 					}
 				}
-				else 
-					continue;
-			}
-			
-			// find next matching delimiter
-			int nextDelimiterIndex = -1;
-			int prevDelimiterIndex = -1;
-			do {
-				nextDelimiterIndex = postfix.indexOf(delimiter, nextDelimiterIndex+1);
-				if (nextDelimiterIndex == 0 || (nextDelimiterIndex > 0 && postfix.charAt(nextDelimiterIndex-1) != '\\')) {
-					--nDelimiterSymbols;
-					if (nDelimiterSymbols > 0) {
-						prevDelimiterIndex = nextDelimiterIndex;
+				if (candidate != null && candidate.length() > 0) {
+					if (fUtil != null) {
+						candidate= fUtil.normalizePath(candidate);
+					}
+					if (!includes.contains(candidate)) {
+						includes.add(candidate);
 					}
 				}
-			}
-			while (nDelimiterSymbols > 0 && nextDelimiterIndex != -1);
-			if (nDelimiterSymbols > 0) 
-				continue; // non matching delimiter
+        	}
+        	else if (token.startsWith(DASHD)) {
+        		String candidate= null;
+				if (token.length() > 2) {
+					candidate= token.substring(2).trim();
+				}
+				else if (j+1 < tokens.length) {
+					candidate= tokens[j+1];
+					if (candidate.startsWith("-")) { //$NON-NLS-1$
+						candidate= null;
+					}
+					else {
+						j++;
+					}
+				}
+        		if (candidate != null && candidate.length() > 0) {
+        			if (!symbols.contains(candidate)) {
+        				symbols.add(candidate);
+        			}
+        		}
+        	}
+			else if (token.startsWith("-m") ||		 //$NON-NLS-1$
+        			token.equals("-ansi") ||		 //$NON-NLS-1$
+        			token.equals("-nostdinc") ||	 //$NON-NLS-1$
+        			token.equals("-posix") ||		 //$NON-NLS-1$
+        			token.equals("-pthread") ||		 //$NON-NLS-1$
+        			token.startsWith("-O") ||		 //$NON-NLS-1$
+        			token.equals("-fno-inline") ||	 //$NON-NLS-1$
+        			token.startsWith("-finline") ||	 //$NON-NLS-1$
+        			token.equals("-fno-exceptions") ||	 //$NON-NLS-1$
+        			token.equals("-fexceptions") ||		 //$NON-NLS-1$
+        			token.equals("-fshort-wchar") ||	 //$NON-NLS-1$
+        			token.equals("-fshort-double") ||	 //$NON-NLS-1$
+        			token.equals("-fno-signed-char") ||	 //$NON-NLS-1$
+        			token.equals("-fsigned-char") ||	 //$NON-NLS-1$
+        			token.startsWith("-fabi-version="))	{  //$NON-NLS-1$
+        		if (!targetSpecificOptions.contains(token))
+        			targetSpecificOptions.add(token);
+        	}
+        	else if (fileName == null) {
+        		String possibleFileName = token.toLowerCase();
+        		if (possibleFileName.endsWith(".c") || 		 //$NON-NLS-1$
+        				possibleFileName.endsWith(".cpp") ||	 //$NON-NLS-1$
+        				possibleFileName.endsWith(".cc") ||		 //$NON-NLS-1$
+        				possibleFileName.endsWith(".cxx") ||	 //$NON-NLS-1$
+        				possibleFileName.endsWith(".C") ||		 //$NON-NLS-1$
+        				possibleFileName.endsWith(".CPP") ||	 //$NON-NLS-1$
+        				possibleFileName.endsWith(".CC") ||		 //$NON-NLS-1$
+        				possibleFileName.endsWith(".CXX") ||	 //$NON-NLS-1$
+        				possibleFileName.endsWith(".c++")) {	 //$NON-NLS-1$
+        			fileName = token;
+        		}
+        	}
+        }
 
-			// take everything up to the last delimiter
-			boolean bStartsWithDelimiter = postfix.startsWith(delimiter);
-			String symbol = postfix.substring(bStartsWithDelimiter ? 1 : 0, nextDelimiterIndex);
-			if (!bStartsWithDelimiter) {
-				// there is still a delimiter to be removed
-				if (prevDelimiterIndex != -1) {
-					symbol = symbol.substring(0, prevDelimiterIndex) + symbol.substring(prevDelimiterIndex+1);
+        if (fileName != null && fileName.startsWith("/cygdrive/")) { //$NON-NLS-1$
+        	fileName= AbstractGCCBOPConsoleParserUtility.convertCygpath(new Path(fileName)).toOSString();
+        }
+
+        IProject project = getProject();   
+        IFile file = null;
+        List translatedIncludes = includes;
+        if (includes.size() > 0) {
+        	if (fileName != null) {
+        		if (fUtil != null) {
+        			file = fUtil.findFile(fileName);
+        			if (file != null) {
+        				project = file.getProject();
+        				translatedIncludes = fUtil.translateRelativePaths(file, fileName, includes);
+        			}
+        		}
+        	}
+        	else {
+        		StringBuffer line= new StringBuffer();
+        		for (int j = 0; j < tokens.length; j++) {
+					line.append(tokens[j]);
+					line.append(' ');
 				}
-			}
-			// transform '\"' into '"'
-			if (delimiter.equals(DOUBLE_QUOTE_STRING)) {
-				symbol = symbol.replaceAll("\\\\\"", DOUBLE_QUOTE_STRING); //$NON-NLS-1$
-			}
-			if (!symbols.contains(symbol)) {
-				symbols.add(symbol);
-			}
-		}
+        		final String error = MakeMessages.getString("ConsoleParser.Filename_Missing_Error_Message"); //$NON-NLS-1$ 
+        		TraceUtil.outputError(error, line.toString());
+        		if (fUtil != null) {
+        			fUtil.generateMarker(getProject(), -1, error + line.toString(), IMarkerGenerator.SEVERITY_WARNING, null);
+        		}
+        	}
+        	if (file == null && fUtil != null) {	// real world case
+        		// remove include paths since there was no chance to translate them
+        		translatedIncludes.clear();
+        	}
+        }
+        // Contribute discovered includes and symbols to the ScannerInfoCollector
+        if (translatedIncludes.size() > 0 || symbols.size() > 0) {
+        	Map scannerInfo = new HashMap();
+        	scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludes);
+        	scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
+        	scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);
+        	getCollector().contributeToScannerConfig(project, scannerInfo);
+
+        	TraceUtil.outputTrace("Discovered scanner info for file \'" + fileName + '\'',	//$NON-NLS-1$
+        			"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$
+        }
+		return true;
 	}
-
 }

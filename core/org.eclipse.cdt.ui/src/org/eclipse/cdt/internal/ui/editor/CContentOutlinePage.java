@@ -358,6 +358,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	public void dispose() {
 		if (fTreeViewer != null) {
 			fTreeViewer.removeSelectionChangedListener(this);
+			fTreeViewer= null;
 		}
 		
 		if (fTogglePresentation != null) {
@@ -392,7 +393,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 
 		if (selectionChangedListeners != null) {
 			selectionChangedListeners.clear();
-			selectionChangedListeners= null;
+			// don't set the listeners to null, the outline page may be reused.
 		}
 
 		if (fMenu != null && !fMenu.isDisposed()) {

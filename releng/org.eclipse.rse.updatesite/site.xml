@@ -99,7 +99,7 @@
    <feature url="features/org.eclipse.rse.examples_2.0.0.qualifier.jar" id="org.eclipse.rse.examples" version="2.0.0.qualifier">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.remotecdt_2.0.0.qualifier.jar" id="org.eclipse.rse.remotecdt" version="2.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.remotecdt_2.0.1.qualifier.jar" id="org.eclipse.rse.remotecdt" version="2.0.1.qualifier">
       <category name="TM and RSE 2.0.1"/>
    </feature>
    <feature url="features/org.eclipse.tm.discovery_2.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="2.0.0.qualifier">

@@ -8,6 +8,7 @@
  * Contributors: 
  * Ewa Matejska (PalmSource) - initial API and implementation
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [196934] hide disabled system types in remotecdt combo
  *******************************************************************************/
 
 package org.eclipse.rse.internal.remotecdt;
@@ -20,10 +21,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.window.Window;
+import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -327,8 +330,13 @@ public class RemoteCMainTab extends CMainTab {
 	protected void updateConnectionPulldown() {
 		connectionCombo.removeAll();
 		IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory("shells"); //$NON-NLS-1$
-		for(int i = 0; i < connections.length; i++)
-			connectionCombo.add(connections[i].getAliasName());
+		for(int i = 0; i < connections.length; i++) {
+			IRSESystemType sysType = connections[i].getSystemType();
+			RSESystemTypeAdapter a = (RSESystemTypeAdapter)sysType.getAdapter(RSESystemTypeAdapter.class);
+			if (a!=null && a.isEnabled(sysType)) {
+				connectionCombo.add(connections[i].getAliasName());
+			}
+		}
 		
 		if(connections.length > 0)
 			connectionCombo.select(connections.length - 1);

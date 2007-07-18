@@ -98,12 +98,12 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 	}
 	
 	public void _testCompilerCommand_bug194394() throws Exception {
-		fOutputParser.processLine("/usr/bin/gcc -DA"); //$NON-NLS-1$
-		fOutputParser.processLine("/usr/gcc-installs/gcc -DB"); //$NON-NLS-1$
-		fOutputParser.processLine("/usr/gcc/gcc -DC"); //$NON-NLS-1$
-		fOutputParser.processLine("/usr/gcc.exe -DD"); //$NON-NLS-1$
-		fOutputParser.processLine("/usr/gcc-tool-x -DE"); //$NON-NLS-1$
-		fOutputParser.processLine("/usr/gcc/something_else -DF"); //$NON-NLS-1$
+		fOutputParser.processLine("/usr/bin/gcc -DA test1.c"); //$NON-NLS-1$
+		fOutputParser.processLine("/usr/gcc-installs/gcc -DB test2.c"); //$NON-NLS-1$
+		fOutputParser.processLine("/usr/gcc/gcc -DC test3.c"); //$NON-NLS-1$
+		fOutputParser.processLine("/usr/gcc.exe -DD test4.c"); //$NON-NLS-1$
+		fOutputParser.processLine("/usr/gcc-tool-x -DE test5.c"); //$NON-NLS-1$
+		fOutputParser.processLine("/usr/gcc/something_else -DF test6.c"); //$NON-NLS-1$
 
         List sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
 		assertTrue(sumSymbols.contains("A")); //$NON-NLS-1$
@@ -112,6 +112,19 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 		assertTrue(sumSymbols.contains("D")); //$NON-NLS-1$
 		assertTrue(sumSymbols.contains("E")); //$NON-NLS-1$
 		assertFalse(sumSymbols.contains("F")); //$NON-NLS-1$
-		assertTrue(sumSymbols.size() == 5);
+		assertEquals(5, sumSymbols.size());
 	}
+	
+	public void testCommandsWithSemicolon_bug194394() throws Exception {
+		fOutputParser.processLine("gcc -DA test1.c; gcc -DB test2.c"); //$NON-NLS-1$
+		fOutputParser.processLine("nix -DC; gcc -DD test2.c"); //$NON-NLS-1$
+
+        List sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
+		assertTrue(sumSymbols.contains("A")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("B")); //$NON-NLS-1$
+		assertFalse(sumSymbols.contains("C")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("D")); //$NON-NLS-1$
+		assertEquals(3, sumSymbols.size());
+	}
+
 }

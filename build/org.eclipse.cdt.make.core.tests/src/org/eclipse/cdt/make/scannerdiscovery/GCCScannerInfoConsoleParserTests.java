@@ -92,4 +92,9 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		assertTrue(sumIncludes.size() == 24);
 	}
 
+	public void testCommandsWithSemicolon_bug194394() {}
+	public void _testCommandsWithSemicolon_bug194394() throws Exception {
+		super.testCommandsWithSemicolon_bug194394();
+	}
+
 }

@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [181939] avoid subsystem plugin activation just for enablement checking
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -35,6 +36,7 @@ import org.eclipse.rse.core.RSEPreferencesManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.RSEAdapter;
 import org.eclipse.rse.internal.ui.actions.SystemClearAllPasswordsAction;
 import org.eclipse.rse.internal.ui.actions.SystemWorkOfflineAction;
@@ -191,17 +193,18 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	 * not a system type or if it is not enabled.
 	 */
 	public boolean isEnabled(Object object) {
-		boolean result = false;
 		IRSESystemType systemType = getSystemType(object);
-		if ( systemType != null) {
-			result = RSEPreferencesManager.getIsSystemTypeEnabled(systemType);
+		if ( systemType != null && RSEPreferencesManager.getIsSystemTypeEnabled(systemType)) {
 			// if enabled, check if the system type has any registered subsystems. If
 			// not, this will auto-disable the system type.
-			if (result && RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationsBySystemType(systemType, true).length == 0) {
-				result = false;
+			ISubSystemConfigurationProxy[] proxies = RSECorePlugin.getTheSystemRegistry().getSubSystemConfigurationProxies();
+			for (int i=0; i<proxies.length; i++) {
+				if (proxies[i].appliesToSystemType(systemType)) {
+					return true;
+				}
 			}
 		}
-		return result;
+		return false;
 	}
 
 	/**

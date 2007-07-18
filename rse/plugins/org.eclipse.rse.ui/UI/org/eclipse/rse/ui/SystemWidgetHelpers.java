@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [181939] avoid subsystem plugin activation just for enablement checking
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -29,6 +30,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.widgets.InheritableEntryField;
 import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
@@ -1102,9 +1104,10 @@ public class SystemWidgetHelpers {
 	 * Return the list of all registered valid system types.
 	 * 
 	 * A system type is considered valid, if at least one subsystem
-	 * configuration is registered against it. The list is ordered
-	 * alphabetically by system type label according to international
-	 * unicode rules, in the current Locale.
+	 * configuration is registered against it, and the system type
+	 * is enabled in the Preferences.
+	 * The list is ordered alphabetically by system type label
+	 * according to international unicode rules, in the current Locale.
 	 * 
 	 * @param restrictIds An array of system type IDs to restrict the
 	 *    returned list of valid system types to only those requested,
@@ -1112,30 +1115,47 @@ public class SystemWidgetHelpers {
 	 * @return an ordered list of all registered valid system types.
 	 */
 	public static IRSESystemType[] getValidSystemTypes(String[] restrictIds) {
+		// Step 1: Get all static configured valid system types,
+		// According to what subsystem configurations are registered.
 		if (validSystemTypes==null) {
 			IRSESystemType[] systemTypes = RSECorePlugin.getTheCoreRegistry().getSystemTypes();
 			ArrayList list = new ArrayList(systemTypes.length);
+			//TODO check if we shouldn't better get the IRSESystemTypeAdapter and check for isEnabled()
+			//This would do more than checking validity but also enablement
 			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			ISubSystemConfigurationProxy[] ssfProxies = sr.getSubSystemConfigurationProxies();
 			for (int i=0; i<systemTypes.length; i++) {
-				ISubSystemConfiguration[] configurations = sr.getSubSystemConfigurationsBySystemType(systemTypes[i], false);
-				if (configurations != null && configurations.length > 0) {
-					list.add(systemTypes[i]);
+				for (int j=0; j<ssfProxies.length; j++) {
+					if (ssfProxies[j].appliesToSystemType(systemTypes[i])) {
+						list.add(systemTypes[i]);
+						break;
+					}
 				}
 			}
 			systemTypes = (IRSESystemType[])list.toArray(new IRSESystemType[list.size()]);
 			sortSystemTypesByLabel(systemTypes);
+			validSystemTypes = systemTypes;
 		}
-		if (restrictIds==null) {
-			return validSystemTypes;
-		} else {
-			java.util.List result = new ArrayList(validSystemTypes.length);
-			java.util.List restrictList = Arrays.asList(restrictIds);
-			for(int i=0; i<validSystemTypes.length; i++) {
-				if (restrictList.contains(validSystemTypes[i].getId())) {
-					result.add(validSystemTypes[i]);
+		// Step 2: Restrict the list if requested
+		boolean filtered = false;
+		java.util.List result = new ArrayList(validSystemTypes.length);
+		java.util.List restrictList = (restrictIds==null) ? null : Arrays.asList(restrictIds);
+		for(int i=0; i<validSystemTypes.length; i++) {
+			IRSESystemType systemType = validSystemTypes[i];
+			if (restrictList==null || restrictList.contains(systemType)) {
+				// Step 3: check enablement in Preferences
+				RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(systemType.getAdapter(RSESystemTypeAdapter.class));
+				if (adapter != null && adapter.isEnabled(systemType)) {
+					result.add(systemType);
+				} else {
+					filtered = true;
 				}
 			}
+		}
+		if (filtered) {
 			return (IRSESystemType[])result.toArray(new IRSESystemType[result.size()]);
+		} else {
+			return validSystemTypes;
 		}
 	}
 

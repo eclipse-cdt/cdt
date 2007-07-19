@@ -800,6 +800,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         final Action[] displayColumnCounts = new Action[maxMenuColumnCount];
         for(int i = 0; i < maxMenuColumnCount; i++)
         {
+        	final int finali = i;
         	displayColumnCounts[i] = new Action(
                 TraditionalRenderingMessages
                     .getString("TraditionalRendering.COLUMN_COUNT_" + (i + 1)), //$NON-NLS-1$
@@ -807,7 +808,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             {
                 public void run()
                 {
-                	TraditionalRendering.this.fRendering.setColumnsSetting(1);  
+                	TraditionalRendering.this.fRendering.setColumnsSetting(finali + 1);  
                 }
             };
             displayColumnCounts[i].setChecked(fRendering.getColumnsSetting() == i + 1);

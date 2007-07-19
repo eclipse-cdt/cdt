@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David Dykstal (IBM) - [191311] enable global properties action
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
+ * Martin Oberhuber (Wind River) - [197025] Wait for model complete before restoring initial state
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -40,6 +41,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
@@ -80,6 +82,7 @@ import org.eclipse.rse.internal.ui.actions.SystemPreferenceQualifyConnectionName
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceRestoreStateAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceShowFilterPoolsAction;
 import org.eclipse.rse.internal.ui.actions.SystemWorkWithProfilesAction;
+import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -100,6 +103,7 @@ import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
@@ -404,8 +408,6 @@ public class SystemViewPart
 		}
 
 		// register global edit actions 		
-		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-
 		Clipboard clipboard = RSEUIPlugin.getTheSystemRegistryUI().getSystemClipboard();
 
 		CellEditorActionHandler editorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
@@ -453,12 +455,53 @@ public class SystemViewPart
 
 		// ----------------------
 		// Restore previous state
-		// ----------------------		
+		// ----------------------
+		final IRSEPersistenceManager pm = RSECorePlugin.getThePersistenceManager();
+		if (pm.isRestoreComplete() && !pm.isBusy()) {
+			restoreInitialState();
+		} else {
+			//Wait until model fully restored, then fire a callback to restore state.
+			//TODO [197167] we should have a callback for this, and also wait until InitRSEJob is complete.
+			//Remember current display, since we're definitely on the display thread here
+			final Display display = Display.getCurrent();
+			Job waitForRestoreCompleteJob = new Job("WaitForRestoreComplete") { //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						//TODO [197167] I hate polling. We should have a callback for this.
+						while (!pm.isRestoreComplete() || pm.isBusy()) {
+							Thread.sleep(100);
+						}
+						//callback
+						display.asyncExec(new Runnable() {
+							public void run() {
+								restoreInitialState();
+							}
+						});
+					} catch(InterruptedException e) {
+						//See http://michaelscharf.blogspot.com/2006/09/dont-swallow-interruptedexception-call.html
+						Thread.currentThread().interrupt();
+						return Status.CANCEL_STATUS;
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			waitForRestoreCompleteJob.setSystem(true);
+			waitForRestoreCompleteJob.schedule();
+		}
+	}
+
+	/**
+	 * Restore initial state of the SystemView. Can only be done
+	 * once the RSE Model has been fully restored, so this may
+	 * need to run in a callback.
+	 */
+	private void restoreInitialState() {
 		if ((fMemento != null) && (input instanceof ISystemRegistry))
 			restoreState(fMemento);
 		//fMemento = null;
 
 		// Register for preference change events
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		registry.addSystemPreferenceChangeListener(this);
 
 		// if this is the primary RSE view, and there are no user-defined
@@ -476,7 +519,7 @@ public class SystemViewPart
 			}
 		}
 	}
-
+	
 	/**
 	 * Handles double clicks in viewer.
 	 * Opens editor if file double-clicked.

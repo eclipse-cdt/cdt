@@ -32,15 +32,16 @@
 
 package org.eclipse.rse.ui;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.IRSESystemType;
@@ -110,9 +111,11 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 			    SystemResourceManager.startResourceEventListening(listener);
 				
 		    	// determining whether to create an initial local connection
-				Preferences prefs = RSEUIPlugin.getDefault().getPluginPreferences();
-				String key = "localConnectionCreated.mark"; //$NON-NLS-1$
-				if (!prefs.getBoolean(key)) {				  				       
+				IPath statePath = RSECorePlugin.getDefault().getStateLocation();
+				IPath markPath = statePath.append("localHostCreated.mark"); //$NON-NLS-1$
+				File markFile = new File(markPath.toOSString());
+				if (!markFile.exists() && SystemPreferencesManager.getShowLocalConnection()) 
+				{		
 					// create the connection only if the local system type is enabled
 					IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(IRSESystemType.SYSTEMTYPE_LOCAL_ID);
 					if (systemType != null) {
@@ -122,7 +125,10 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 							ISystemProfile profile = profileManager.getDefaultPrivateSystemProfile();
 							String userName = System.getProperty("user.name"); //$NON-NLS-1$
 							registry.createLocalHost(profile, SystemResources.TERM_LOCAL, userName);
-							prefs.setValue(key, true);
+							try { 
+								markFile.createNewFile(); 
+							} 
+							catch(Exception e){}
 						}
 					}				       
 				}

@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Xuan Chen        (IBM)        - [180671] [refresh] It is not possible to refresh editor with double clicking on it
  * David Dykstal (IBM) - [160776] format file size according to client system conventions and locale
+ * David McKnight   (IBM)        - [197089] Need to set the filter when there is no separator in filter string
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -603,6 +604,11 @@ public class SystemViewRemoteFileAdapter
 				if (sepIndex > 0)
 				{
 					filter = filterString.substring(sepIndex + 1);
+				}
+				else
+				{
+					// fix for 197089
+					filter = filterString;
 				}
 			}
 		}

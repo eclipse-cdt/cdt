@@ -1721,11 +1721,14 @@ public class SystemView extends SafeTreeViewer
 						if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
 							RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(RSESystemTypeAdapter.class));
 
-							if (!adapter.isEnabled(sysType))
+							if (adapter == null || !adapter.isEnabled(sysType))
 							{
 								// don't add this if our src is not enabled
 								return Status.OK_STATUS;
 							}
+						}
+						else {
+							return Status.OK_STATUS;
 						}
 					}
 					

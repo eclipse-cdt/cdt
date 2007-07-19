@@ -15,7 +15,8 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [189858] Removed the remote systems project in the team view
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
- *                                API to the user actions plugin
+ *   API to the user actions plugin
+ * Rupen Mardirossian (IBM) - [187741] Implemented the handleDoubleClick method
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -32,6 +33,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
@@ -51,9 +53,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.SameShellProvider;
@@ -387,22 +391,34 @@ public class SystemTeamViewPart
 	}
 
 	/**
-	 * Handles double clicks in viewer. It is responsible for expanding
-	 * and collapsing of folders.
+	 * Handles double-click in viewer. It is responsible for expanding
+	 * and collapsing nodes in the tree.
+	 * @param event the double click event to handle.
+	 * Contains the selection on which to operate.
 	 */
-	private void handleDoubleClick(DoubleClickEvent event) 
-	{
-		/*
-		IStructuredSelection rseSSel =
-			(IStructuredSelection) event.getSelection();
-		Object rseObject = rseSSel.getFirstElement();
-		if (treeViewer.isExpandable(rseObject)) 
-		{
-			treeViewer.setExpandedState(
-				rseObject,
-				!treeViewer.getExpandedState(rseObject));
+	private void handleDoubleClick(DoubleClickEvent event) {
+		ITreeSelection s = (ITreeSelection) event.getSelection();
+		Object element = s.getFirstElement(); // double-click only has 0 or 1 elements
+		if (element != null) {
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) element).getAdapter(ISystemViewElementAdapter.class);
+			if (adapter != null) {
+				if (adapter.hasChildren((IAdaptable) element)) {
+					// Get the path for the element and use it for setting expanded state,
+					// so the proper TreeItem is expanded/collapsed
+					TreePath[] paths = s.getPathsFor(element);
+					if (paths != null && paths.length > 0 && paths[0] != null) {
+						TreePath elementPath = paths[0];
+						if (treeViewer.getExpandedState(elementPath)) {
+							treeViewer.collapseSelected();
+						} else {
+							treeViewer.expandSelected();
+						}
+					}
+				} else {
+					adapter.handleDoubleClick(element);
+				}
+			}
 		}
-		*/
 	}
 
 	/**
@@ -547,7 +563,8 @@ public class SystemTeamViewPart
 	
 	/**
 	 * Let each object add their own actions...
-	 * @param menu
+	 * @param ourMenu the menu for the team view
+	 * @param selection the current selection in the view
 	 */
 	protected void addActions(SystemMenuManager ourMenu, IStructuredSelection selection)
 	{
@@ -690,8 +707,19 @@ public class SystemTeamViewPart
         toolBarRefreshAllAction.setSelection(selection);
 		return toolBarRefreshAllAction;
 	}
+	
 	/**
-	 * Get the New Profile actoin
+	 * Get the profile adapter for a given profile
+	 */
+	private SystemTeamViewProfileAdapter getProfileAdapter(ISystemProfile profile) {
+		RSEUIPlugin plugin = RSEUIPlugin.getDefault();
+		IAdapterFactory factory = plugin.getSystemViewAdapterFactory();
+		SystemTeamViewProfileAdapter adapter = (SystemTeamViewProfileAdapter) factory.getAdapter(profile, SystemTeamViewProfileAdapter.class);
+		return adapter;
+	}
+	
+	/**
+	 * Get the New Profile action
 	 */
 	private SystemNewProfileAction getNewProfileAction(IStructuredSelection selection)
 	{
@@ -1024,26 +1052,24 @@ public class SystemTeamViewPart
 		//System.out.println("Inside canDelete: "+ok);
 		return ok;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.ui.ISystemDeleteTarget#doDelete()
 	 */
-	public boolean doDelete(IProgressMonitor monitor)
-	{
+	public boolean doDelete(IProgressMonitor monitor) {
 		boolean ok = true;
-		IStructuredSelection selection= getStructuredSelection();		
-		Iterator elements= selection.iterator();
-		Object currObj = null;
-		while (ok && elements.hasNext())
-		{
-			currObj = elements.next();
+		IStructuredSelection selection = getStructuredSelection();
+		Iterator elements = selection.iterator();
+		while (ok && elements.hasNext()) {
+			ISystemProfile profile = (ISystemProfile) elements.next();
 			try {
-			  ok = profileAdapter.doDelete(getShell(), currObj, monitor);
-			} catch (Exception exc)
-			{
-				String msg = "Exception deleting profile "+((ISystemProfile)currObj).getName(); //$NON-NLS-1$
+				SystemTeamViewProfileAdapter profileAdapter = getProfileAdapter(profile);
+				ok = profileAdapter.doDelete(getShell(), profile, monitor);
+			} catch (Exception exc) {
+				String msg = "Exception deleting profile " + profile.getName(); //$NON-NLS-1$
 				SystemBasePlugin.logError(msg, exc);
-				SystemMessageDialog.displayExceptionMessage(getShell(),exc);
-				ok = false;				
+				SystemMessageDialog.displayExceptionMessage(getShell(), exc);
+				ok = false;
 			}
 		}
 		return ok;
@@ -1077,34 +1103,28 @@ public class SystemTeamViewPart
 		//System.out.println("Inside canRename: "+ok);
 		return ok;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.core.ui.ISystemRenameTarget#doRename(java.lang.String[])
 	 */
-	public boolean doRename(String[] newNames)
-	{
+	public boolean doRename(String[] newNames) {
 		boolean ok = true;
-		IStructuredSelection selection= getStructuredSelection();		
-		Iterator elements= selection.iterator();
-		Object currObj = null;
+		IStructuredSelection selection = getStructuredSelection();
+		Iterator elements = selection.iterator();
 		int idx = 0;
-		while (ok && elements.hasNext())
-		{
-			currObj = elements.next();
+		while (ok && elements.hasNext()) {
+			ISystemProfile profile = (ISystemProfile) elements.next();
 			try {
-		 		profileAdapter.doRename(getShell(), currObj, newNames[idx++]);
-			} 
-			catch (SystemMessageException exc)
-			{
-				SystemMessageDialog.displayMessage(getShell(), exc);	 
-			  	ok = false;  	     
-			}
-			catch (Exception exc)
-			{
-			  	String msg = "Exception renaming profile "; //$NON-NLS-1$
-			  	SystemBasePlugin.logError(msg, exc);
-			  	//System.out.println(msg + exc.getMessage() + ": " + exc.getClass().getName());
-			  	SystemMessageDialog.displayExceptionMessage(getShell(),exc);
-			  	ok = false;
+				SystemTeamViewProfileAdapter profileAdapter = getProfileAdapter(profile);
+				profileAdapter.doRename(getShell(), profile, newNames[idx++]);
+			} catch (SystemMessageException exc) {
+				SystemMessageDialog.displayMessage(getShell(), exc);
+				ok = false;
+			} catch (Exception exc) {
+				String msg = "Exception renaming profile "; //$NON-NLS-1$
+				SystemBasePlugin.logError(msg, exc);
+				SystemMessageDialog.displayExceptionMessage(getShell(), exc);
+				ok = false;
 			}
 		}
 		return ok;
@@ -1403,9 +1423,11 @@ public class SystemTeamViewPart
 				case 2: 					
 					profile = sr.getSystemProfile(token);
 					break;
-				case 3: 					
-					SystemTeamViewProfileAdapter profileAdapter = RSEUIPlugin.getDefault().getSystemViewAdapterFactory().getProfileAdapter();
-				    category = profileAdapter.restoreCategory(profile, token);
+				case 3:
+					if (profile != null) {
+						SystemTeamViewProfileAdapter profileAdapter = (SystemTeamViewProfileAdapter) RSEUIPlugin.getDefault().getSystemViewAdapterFactory().getAdapter(profile, SystemTeamViewProfileAdapter.class);
+						category = profileAdapter.restoreCategory(profile, token);
+					}
 				    //System.out.println("Restored category: "+(category==null?"null":category.getLabel()));					
 					break;
 			}

@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
+ * Martin Oberhuber (Wind River) - [174789] [performance] Don't contribute Property Pages to Wizard automatically
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -91,7 +92,6 @@ import org.eclipse.rse.ui.validators.ValidatorSpecialChar;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
 import org.eclipse.rse.ui.widgets.RemoteServerLauncherForm;
 import org.eclipse.rse.ui.wizards.SubSystemServiceWizardPage;
-import org.eclipse.rse.ui.wizards.SystemSubSystemsPropertiesWizardPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -200,23 +200,21 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				SubSystemServiceWizardPage page = new SubSystemServiceWizardPage(wizard, config);
 				return new ISystemNewConnectionWizardPage[] {page};
 			}
-			else
-			{
-				List pages = getSubSystemPropertyPages(config);
-				if (pages != null && pages.size() > 0)
-				{								
-					SystemSubSystemsPropertiesWizardPage page = new SystemSubSystemsPropertiesWizardPage(wizard, config, pages);
-					return new ISystemNewConnectionWizardPage[] {page};				
-				}
-			}
+			//MOB Removed due to performance issue -- see Eclipse Bugzilla bug 174789
+//			else
+//			{
+//				List pages = getSubSystemPropertyPages(config);
+//				if (pages != null && pages.size() > 0)
+//				{								
+//					SystemSubSystemsPropertiesWizardPage page = new SystemSubSystemsPropertiesWizardPage(wizard, config, pages);
+//					return new ISystemNewConnectionWizardPage[] {page};				
+//				}
+//			}
 			return new ISystemNewConnectionWizardPage[0];
 		}
 		
-	
-	
-		
 		/*
-		 * Return the form used in the subsyste property page.  This default implementation returns Syste
+		 * Return the form used in the subsystem property page.  This default implementation returns Syste
 		 */
 		public ISystemSubSystemPropertyPageCoreForm getSubSystemPropertyPageCoreFrom(ISubSystemConfiguration config, ISystemMessageLine msgLine, Object caller)
 		{
@@ -226,6 +224,14 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		/**
 		 * Gets the list of property pages applicable for a subsystem associated with this subsystem configuration
 		 * @return the list of subsystem property pages
+		 * 
+		 * @deprecated this method will likely be removed in the future, because the 
+		 *     underlying mechanism of finding the registered property pages for a
+		 *     SubSystemConfiguration does not scale since it activates unrelated
+		 *     plug-ins. Existing Platform functionality for getting the list of
+		 *     property pages registered against a SubSystem should be used, once
+		 *     the SubSystem class is loaded -- but not by referencing the 
+		 *     SubSystemConfiguration. See also Eclipse Bugzilla bug 197129.  
 		 */
 		protected List getSubSystemPropertyPages(ISubSystemConfiguration config)
 		{
@@ -243,7 +249,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 				
 				String objectClass = configurationElement.getAttribute("objectClass"); //$NON-NLS-1$
 				// The objectClass attribute is a) deprecated and b) optional. If null, do not
-				// try to instanciate a class from it as it will lead to a NPE. It is very bad
+				// try to instantiate a class from it as it will lead to a NPE. It is very bad
 				// style to let throw the exception and catch it with an empty catch block. If
 				// the debugger is configured to intercept NPE's, we end up always here.
 				if (objectClass == null) continue;

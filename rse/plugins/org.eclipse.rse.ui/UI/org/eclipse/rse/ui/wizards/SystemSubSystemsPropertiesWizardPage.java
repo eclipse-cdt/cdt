@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [190231] Move ISubSystemPropertiesWizardPage from UI to Core
+ * Martin Oberhuber (Wind River) - [174789] [performance] Don't contribute Property Pages to Wizard automatically
  ********************************************************************************/
 
 package org.eclipse.rse.ui.wizards;
@@ -28,6 +29,7 @@ import org.eclipse.rse.ui.ISystemVerifyListener;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.ISystemConnectionWizardErrorUpdater;
 import org.eclipse.rse.ui.propertypages.ISystemConnectionWizardPropertyPage;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -39,7 +41,13 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * Wizard page that display the property pages for a given subsystem in the
  * connection
- *  
+ * 
+ * @deprecated this class will likely be removed in the future, because the 
+ *     underlying mechanism of contributing property pages to a wizard 
+ *     does not scale since it activates unrelated plug-ins. Custom wizard
+ *     pages should be contributed through 
+ *     {@link SubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, IWizard)}
+ *     instead. See also Eclipse Bugzilla bug 197129.  
  */
 public class SystemSubSystemsPropertiesWizardPage
 	extends AbstractSystemNewConnectionWizardPage

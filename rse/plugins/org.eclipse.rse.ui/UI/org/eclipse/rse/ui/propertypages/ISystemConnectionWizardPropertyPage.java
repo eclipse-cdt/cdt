@@ -12,17 +12,27 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [174789] [performance] Don't contribute Property Pages to Wizard automatically
  ********************************************************************************/
 
 package org.eclipse.rse.ui.propertypages;
 
 
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.ui.view.SubSystemConfigurationAdapter;
 
 /**
- * interface for a property page that can be shown in the new connection wizard
+ * interface for a property page that can be shown in the new connection wizard.
+ * 
+ * @deprecated this class will likely be removed in the future, because the 
+ *     underlying mechanism of contributing property pages to a wizard 
+ *     does not scale since it activates unrelated plug-ins. Custom wizard
+ *     pages should be contributed through 
+ *     {@link SubSystemConfigurationAdapter#getNewConnectionWizardPages(ISubSystemConfiguration, IWizard)}
+ *     instead. See also Eclipse Bugzilla bug 197129.  
  */
 public interface ISystemConnectionWizardPropertyPage 
 {

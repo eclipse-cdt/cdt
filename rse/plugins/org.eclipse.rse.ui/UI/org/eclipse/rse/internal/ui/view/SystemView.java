@@ -33,6 +33,7 @@
  * Kevin Doyle - [193380] Deleting connection Refresh's Entire Remote Systems view
  * Kevin Doyle - [195537] Move ElementComparer to Separate File
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
+ * David McKnight   (IBM)        - [187205] Prevented expansion of non-expanded on remote refresh
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2974,7 +2975,8 @@ public class SystemView extends SafeTreeViewer
 						// STEP 4: If requested, select the kids in the newly refreshed object. 
 						// If the same binary object appears multiple times, select the kids in the first occurrence.
 						//  ... what else to do?
-						if (!doesDeferredQueries && !(toSelect instanceof SystemViewDummyObject)) {
+						// DKM - added wasExpanded check since we don't want to expand something that isn't already expanded
+						if (!doesDeferredQueries && wasExpanded && !(toSelect instanceof SystemViewDummyObject)) {
 							//selecting remote objects makes only sense if not deferred, because
 							//in the deferred case the objects will be retrieved in a separate job.
 							selectRemoteObjects(toSelect, null, match); // select the given kids in this parent

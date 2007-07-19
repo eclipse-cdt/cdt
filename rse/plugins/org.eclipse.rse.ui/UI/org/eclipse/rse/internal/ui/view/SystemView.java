@@ -34,6 +34,7 @@
  * Kevin Doyle - [195537] Move ElementComparer to Separate File
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  * David McKnight   (IBM)        - [187205] Prevented expansion of non-expanded on remote refresh
+ * David McKnight   (IBM)        - [196930] Don't add the connection when it's not supposed to be shown
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1712,6 +1713,22 @@ public class SystemView extends SafeTreeViewer
 						(parent == inputProvider)) // root node. Hmm, hope this is going to work in all cases
 				{
 					boolean addingConnection = (src instanceof IHost);
+					if (addingConnection)
+					{
+						// 196930 - don't add the connection when it's not supposed to be shown
+						IHost con = (IHost)src;
+						IRSESystemType sysType = con.getSystemType();
+						if (sysType != null) { // sysType can be null if workspace contains a host that is no longer defined by the workbench
+							RSESystemTypeAdapter adapter = (RSESystemTypeAdapter)(sysType.getAdapter(RSESystemTypeAdapter.class));
+
+							if (!adapter.isEnabled(sysType))
+							{
+								// don't add this if our src is not enabled
+								return Status.OK_STATUS;
+							}
+						}
+					}
+					
 					//System.out.println("ADDING CONNECTIONS.........................: " + addingConnection);
 					//System.out.println("event.getParent() instanceof SystemRegistry: " + (event.getParent() instanceof SystemRegistry));
 					//System.out.println("inputProvider.showingConnections().........: " + (inputProvider.showingConnections()));

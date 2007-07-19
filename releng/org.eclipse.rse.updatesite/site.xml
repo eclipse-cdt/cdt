@@ -108,7 +108,7 @@
    <feature url="features/org.eclipse.tm.terminal.sdk_1.0.0.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.0.qualifier">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.tests_2.0.0.qualifier.jar" id="org.eclipse.rse.tests" version="2.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.tests_2.0.1.qualifier.jar" id="org.eclipse.rse.tests" version="2.0.1.qualifier">
       <category name="TM and RSE 2.0.1"/>
    </feature>
    <category-def name="TM and RSE 2.0.1" label="TM and RSE 2.0.1">

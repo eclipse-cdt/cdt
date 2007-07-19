@@ -263,8 +263,6 @@ public class ImportMemoryDialog extends SelectionDialog
 					Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				
 				//
-				
-				BigInteger startAddress = getStartAddress();
 
 				validate();
 			}

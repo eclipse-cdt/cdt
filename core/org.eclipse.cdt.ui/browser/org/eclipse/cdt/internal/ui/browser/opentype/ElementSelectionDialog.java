@@ -244,9 +244,12 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 							return null;
 						}
 						IIndexBinding binding = bindings[i];
-						final int elementType = IndexModelUtil.getElementType(binding);
-						if (isVisibleType(elementType)) {
-							types.add(IndexTypeInfo.create(index, binding));
+						// until we have correctly modeled file-local variables and functions, don't show them. 
+						if (!binding.isFileLocal()) {
+							final int elementType = IndexModelUtil.getElementType(binding);
+							if (isVisibleType(elementType)) {
+								types.add(IndexTypeInfo.create(index, binding));
+							}
 						}
 					}
 				} finally {

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -40,6 +40,7 @@ public class TrilogyPerformanceTest extends IndexTestBase {
 	}
 
 	protected void setUp() throws Exception {
+		super.setUp();
 		Bundle b = CTestPlugin.getDefault().getBundle();
 		if (cproject == null) {
 			cproject= createProject(true, "resources/indexTests/trilogy");
@@ -48,6 +49,7 @@ public class TrilogyPerformanceTest extends IndexTestBase {
 
 	protected void tearDown() throws Exception {
 		cproject.getProject().delete(true, new NullProgressMonitor());
+		super.tearDown();
 	}
 
 	// you must have the Windows SDK installed and the INETSDK env var setup
@@ -55,18 +57,14 @@ public class TrilogyPerformanceTest extends IndexTestBase {
 		if(Platform.getOS().equals(Platform.OS_WIN32)) { 
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			TestScannerProvider.sIncludes = new String[]{EnvironmentReader.getEnvVar("INETSDK")+"\\Include"};
-			try {
-				IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
-				long start = System.currentTimeMillis();
-				CCorePlugin.getIndexManager().reindex(cproject);
-				assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
-				System.out.println("Took: "+(System.currentTimeMillis() - start));
-				IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);
-				IBinding[] binding = index.findBindings(Pattern.compile("IXMLElementCollection"), false, IndexFilter.ALL, new NullProgressMonitor());
-				assertEquals(1, binding.length);
-			} finally {
-				TestScannerProvider.sIncludes = null;
-			}
+			IndexerPreferences.set(cproject.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
+			long start = System.currentTimeMillis();
+			CCorePlugin.getIndexManager().reindex(cproject);
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+			System.out.println("Took: "+(System.currentTimeMillis() - start));
+			IIndex index= CCorePlugin.getIndexManager().getIndex(cproject);
+			IBinding[] binding = index.findBindings(Pattern.compile("IXMLElementCollection"), false, IndexFilter.ALL, new NullProgressMonitor());
+			assertEquals(1, binding.length);
 		}
 	}
 }

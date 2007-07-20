@@ -24,6 +24,10 @@ public class TestScannerProvider extends AbstractCExtension implements IScannerI
 	public static String[] sMacroFiles= null;
 	public final static String SCANNER_ID = CTestPlugin.PLUGIN_ID + ".TestScanner";
 	
+	public static void clear() {
+		sIncludes= sIncludeFiles= sMacroFiles= null;
+	}
+	
 	public IScannerInfo getScannerInformation(IResource resource) {
 		return new TestScannerInfo(sIncludes, sIncludeFiles, sMacroFiles);
 	}

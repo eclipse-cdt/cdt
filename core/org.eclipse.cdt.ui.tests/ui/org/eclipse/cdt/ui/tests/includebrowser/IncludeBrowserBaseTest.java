@@ -12,7 +12,6 @@
 package org.eclipse.cdt.ui.tests.includebrowser;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Tree;
@@ -44,7 +43,8 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 		super(name);
 	}
 
-	protected void setUp() throws CoreException {
+	protected void setUp() throws Exception {
+		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__ibTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		
 		// clear the index
@@ -52,10 +52,11 @@ public class IncludeBrowserBaseTest extends BaseUITestCase {
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
-	protected void tearDown() throws CoreException {
+	protected void tearDown() throws Exception {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
+		super.tearDown();
 	}
 	
 	protected ICProject getProject() {

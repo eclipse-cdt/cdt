@@ -53,7 +53,6 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 	}
 
 	protected void tearDown() throws Exception {
-		TestScannerProvider.sIncludes= null;
 		if (fCProject2 != null) {
 			CProjectHelper.delete(fCProject2);
 		}

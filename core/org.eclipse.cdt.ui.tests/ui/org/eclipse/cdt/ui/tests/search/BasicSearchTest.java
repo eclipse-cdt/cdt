@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
@@ -58,6 +59,7 @@ public class BasicSearchTest extends BaseUITestCase {
 	}
 	
 	protected void setUp() throws Exception {
+		super.setUp();
 		fCProject = CProjectHelper.createCCProject(getName()+System.currentTimeMillis(), "bin", IPDOMManager.ID_NO_INDEXER); 
 		Bundle b = CTestPlugin.getDefault().getBundle();
 		testData = TestSourceReader.getContentsForTest(b, "ui", this.getClass(), getName(), 2);
@@ -74,6 +76,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		if(fCProject != null) {
 			fCProject.getProject().delete(true, NPM);
 		}
+		super.tearDown();
 	}
 
 	// // empty
@@ -110,14 +113,19 @@ public class BasicSearchTest extends BaseUITestCase {
 		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
 		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
 		
-		Object result0= result.getElements()[0];
-		Object result1= result.getElements()[1];
+		String label0= labpv.getText(scp.getElements(result)[0]);
+		String label1= labpv.getText(scp.getElements(result)[1]);
+		
+		// the content provider does not sort the result, so we have to do it:
+		if (label0.compareTo(label1) < 0) {
+			String h= label0; label0= label1; label1= h;
+		}
 		
 		// check the results are rendered
 		String expected0= fCProject.getProject().getName();
 		String expected1= new Path(externalFile.getAbsolutePath()).toString();
-		assertEquals(expected0,labpv.getText(scp.getElements(result)[0]));
-		assertEquals(expected1,labpv.getText(scp.getElements(result)[1]));
+		assertEquals(expected0,label0);
+		assertEquals(expected1,label1);
 	}
 	
 	/**

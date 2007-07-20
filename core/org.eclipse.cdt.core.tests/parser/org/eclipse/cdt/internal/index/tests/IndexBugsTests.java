@@ -58,7 +58,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -75,18 +74,18 @@ public class IndexBugsTests extends BaseTestCase {
 		return suite(IndexBugsTests.class);
 	}
 
-	protected void setUp() throws CoreException {
+	protected void setUp() throws Exception {
+		super.setUp();
 		fCProject= CProjectHelper.createCCProject("__bugsTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 	
-	protected void tearDown() throws CoreException {
-		TestScannerProvider.sIncludeFiles= TestScannerProvider.sIncludes=
-			TestScannerProvider.sMacroFiles= null;
+	protected void tearDown() throws Exception {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
+		super.tearDown();
 	}
 	
 	protected IProject getProject() {

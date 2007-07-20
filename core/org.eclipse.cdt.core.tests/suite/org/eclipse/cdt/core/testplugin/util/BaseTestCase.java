@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -51,6 +52,13 @@ public class BaseTestCase extends TestCase {
 	
 	public BaseTestCase(String name) {
 		super(name);
+	}
+	
+	protected void setUp() throws Exception {
+	}
+	
+	protected void tearDown() throws Exception {
+		TestScannerProvider.clear();
 	}
 
 	protected static TestSuite suite(Class clazz) {

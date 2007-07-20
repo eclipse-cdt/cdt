@@ -68,7 +68,6 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 	
 	public void tearDown() throws Exception {
-		TestScannerProvider.sIncludes= null;
 		super.tearDown();
 	}
 		
@@ -156,113 +155,93 @@ public class IndexIncludeTest extends IndexTestBase {
 	public void testIncludeProperties() throws Exception {
 		waitForIndexer();
 		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
-		try {
-			String content= readTaggedComment("source20061107");
-			TestSourceReader.createFile(fProject.getProject(), "user20061107.h", "");
-			TestSourceReader.createFile(fProject.getProject(), "system20061107.h", "");
-			IFile file= TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", content);
-			TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
+		String content= readTaggedComment("source20061107");
+		TestSourceReader.createFile(fProject.getProject(), "user20061107.h", "");
+		TestSourceReader.createFile(fProject.getProject(), "system20061107.h", "");
+		IFile file= TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", content);
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
 
-			fIndex.acquireReadLock();
-			try {
-				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
-				assertNotNull(ifile);
-				IIndexInclude[] includes= ifile.getIncludes();
-				assertEquals(2, includes.length);
-				
-				checkInclude(includes[0], content, "user20061107.h", false);
-				checkInclude(includes[1], content, "system20061107.h", true);
-			}
-			finally {
-				fIndex.releaseReadLock();
-			}
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(2, includes.length);
+
+			checkInclude(includes[0], content, "user20061107.h", false);
+			checkInclude(includes[1], content, "system20061107.h", true);
 		}
 		finally {
-			TestScannerProvider.sIncludes= null;
+			fIndex.releaseReadLock();
 		}
 	}
 	
 	public void testIncludeProperties_2() throws Exception {
 		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
-		try {
-			TestSourceReader.createFile(fProject.getProject(), "header20061107.h", "");
-			String content = "// comment \n#include \"header20061107.h\"\n";
-			IFile file= TestSourceReader.createFile(fProject.getProject(), "intermed20061107.h", content);
-			TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", "#include \"intermed20061107.h\"\n");
-			CCorePlugin.getIndexManager().reindex(fProject);
-			waitForIndexer();
-			
+		TestSourceReader.createFile(fProject.getProject(), "header20061107.h", "");
+		String content = "// comment \n#include \"header20061107.h\"\n";
+		IFile file= TestSourceReader.createFile(fProject.getProject(), "intermed20061107.h", content);
+		TestSourceReader.createFile(fProject.getProject(), "source20061107.cpp", "#include \"intermed20061107.h\"\n");
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
 
-			fIndex.acquireReadLock();
-			try {
-				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
-				assertNotNull(ifile);
-				IIndexInclude[] includes= ifile.getIncludes();
-				assertEquals(1, includes.length);
-				
-				checkInclude(includes[0], content, "header20061107.h", false);
-			}
-			finally {
-				fIndex.releaseReadLock();
-			}
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+
+			checkInclude(includes[0], content, "header20061107.h", false);
 		}
 		finally {
-			TestScannerProvider.sIncludes= null;
+			fIndex.releaseReadLock();
 		}
 	}
 
 	public void testInactiveInclude() throws Exception {
 		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		String content = "#if 0\n#include \"inactive20070213.h\"\n#endif\n";
+		IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070213.cpp", content);
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
 		try {
-			String content = "#if 0\n#include \"inactive20070213.h\"\n#endif\n";
-			IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070213.cpp", content);
-			CCorePlugin.getIndexManager().reindex(fProject);
-			waitForIndexer();
-			
-			fIndex.acquireReadLock();
-			try {
-				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
-				assertNotNull(ifile);
-				IIndexInclude[] includes= ifile.getIncludes();
-				assertEquals(1, includes.length);
-				
-				assertFalse(includes[0].isActive());
-				checkInclude(includes[0], content, "inactive20070213.h", false);
-			}
-			finally {
-				fIndex.releaseReadLock();
-			}
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+
+			assertFalse(includes[0].isActive());
+			checkInclude(includes[0], content, "inactive20070213.h", false);
 		}
 		finally {
-			TestScannerProvider.sIncludes= null;
+			fIndex.releaseReadLock();
 		}
 	}
 
 	public void testUnresolvedInclude() throws Exception {
 		TestScannerProvider.sIncludes= new String[]{fProject.getProject().getLocation().toOSString()};
+		String content = "#include \"unresolved20070213.h\"\n";
+		IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070214.cpp", content);
+		CCorePlugin.getIndexManager().reindex(fProject);
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
 		try {
-			String content = "#include \"unresolved20070213.h\"\n";
-			IFile file= TestSourceReader.createFile(fProject.getProject(), "source20070214.cpp", content);
-			CCorePlugin.getIndexManager().reindex(fProject);
-			waitForIndexer();
-			
-			fIndex.acquireReadLock();
-			try {
-				IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
-				assertNotNull(ifile);
-				IIndexInclude[] includes= ifile.getIncludes();
-				assertEquals(1, includes.length);
-				
-				assertTrue(includes[0].isActive());
-				assertFalse(includes[0].isResolved());
-				checkInclude(includes[0], content, "unresolved20070213.h", false);
-			}
-			finally {
-				fIndex.releaseReadLock();
-			}
+			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			assertNotNull(ifile);
+			IIndexInclude[] includes= ifile.getIncludes();
+			assertEquals(1, includes.length);
+
+			assertTrue(includes[0].isActive());
+			assertFalse(includes[0].isResolved());
+			checkInclude(includes[0], content, "unresolved20070213.h", false);
 		}
 		finally {
-			TestScannerProvider.sIncludes= null;
+			fIndex.releaseReadLock();
 		}
 	}
 

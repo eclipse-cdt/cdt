@@ -16,7 +16,6 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.datamodel.IDMService;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 
 /**
  * This interface provides access to the native OS's process 
@@ -28,27 +27,56 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 public interface INativeProcesses extends IDMService {
     
     public interface IThreadDMContext extends IDMContext<IThreadDMData> {}
-    public interface IProcessDMContext extends IThreadDMContext {}
+    public interface IProcessDMContext extends IDMContext<IProcessDMData> {}
 
     /**
-     * Interface for thread and process object data.  This data provides a link
-     * to the lower level debugger services, in form of symbol, memory, and
-     * execution contexts.
+     * Interface for thread and process object data.  
      */
     public interface IThreadDMData extends IDMData {
         String getName();
         String getId();
         boolean isDebuggerAttached();
-        IDMContext<?> getDebuggingContext();
+        IDMContext<?> getDebugContext();
     }
-    
+
+    /**
+     * Interface for thread and process object data.  
+     */
+    public interface IProcessDMData extends IDMData {
+        String getName();
+        String getId();
+        boolean isDebuggerAttached();
+        IDMContext<?> getDebugContext();
+    }
+
     /**
      * Event indicating that process data has changed.
      */
-    public interface ProcessChangedDMEvent extends IDMEvent<IProcessDMContext> {}
+    public interface IProcessChangedDMEvent extends IDMEvent<IProcessDMContext> {}
 
-    public IThreadDMContext getThreadForExecutionContext(IExecutionDMContext execCtx);
 
+    public interface IProcessStartedEvent extends IDMEvent<IDMContext<INativeProcesses>> {
+        IProcessDMContext getProcess();
+    } 
+
+    public interface IProcessExitedEvent extends IDMEvent<IDMContext<INativeProcesses>> {
+        IProcessDMContext getProcess();
+    } 
+    
+    /**
+     * Returns a thread for the corresponding context.  <code>null</code> if no corresponding
+     * thread exists.
+     * @param execCtx
+     * @return
+     */
+    public IThreadDMContext getThreadForDebugContext(IDMContext<?> execCtx);
+
+    /**
+     * Returns a process context corresponding to the given context. <code>null</code> if no 
+     * corresponding process exists.    
+     */
+    public IProcessDMContext getProcessForDebugContext(IDMContext<?> execCtx);
+    
     /**
      * Retrieves the current list of processes running on target.
      * @param rm Request completion monitor, to be filled in with array of process contexts.
@@ -86,12 +114,13 @@ public interface INativeProcesses extends IDMService {
      * @param thread Thread or process to terminate.
      * @param rm Return token.
      */
-    void canTerminate(IThreadDMContext thread, DataRequestMonitor<Boolean> rm);
+    void canTerminate(IDMContext<?> ctx, DataRequestMonitor<Boolean> rm);
 
     /**
      * Terminates the selected process or thread.
      * @param thread Thread or process to terminate.
      * @param rm Request completion monitor, indicates success or failure.
      */
-    void terminate(IThreadDMContext thread, RequestMonitor requestMonitor);
+    void terminate(IDMContext<?> ctx, RequestMonitor requestMonitor);
+
 }

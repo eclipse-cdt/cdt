@@ -39,6 +39,7 @@ public interface IRunControl extends IDMService
      * for execution cotnexts, which by itself can perform run-control
      * operations. 
      */
+
     public interface IContainerDMContext extends IExecutionDMContext {}
 
     /** Flag indicating reason context state change. */
@@ -50,16 +51,17 @@ public interface IRunControl extends IDMService
     public interface ISuspendedDMEvent extends IDMEvent<IExecutionDMContext> {
         StateChangeReason getReason();
     }
+    
     public interface IResumedDMEvent extends IDMEvent<IExecutionDMContext> {
         StateChangeReason getReason();
     }
-    public interface IContainerSuspendedDMEvent extends IDMEvent<IExecutionDMContext> {
-        StateChangeReason getReason();
+
+    public interface IContainerSuspendedDMEvent extends ISuspendedDMEvent {
+    	       IExecutionDMContext getTriggeringContext();
     }
-    public interface IContainerResumedDMEvent extends IDMEvent<IExecutionDMContext> {
-        StateChangeReason getReason();
+
+    public interface IContainerResumedDMEvent extends IResumedDMEvent {
     }
-    
     /**
      * Indicates that a new execution context (thread) was started.  The DMC 
      * for the event is the container of the new exec context.

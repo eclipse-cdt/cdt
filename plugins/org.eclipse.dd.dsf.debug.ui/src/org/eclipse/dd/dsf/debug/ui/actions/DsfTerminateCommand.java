@@ -71,7 +71,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
                     } else {
                         // Check the teriminate.
                         processes.canTerminate(
-                            processes.getThreadForExecutionContext(dmc), 
+                            processes.getProcessForDebugContext(dmc), 
                             new DataRequestMonitor<Boolean>(fExecutor, null) { 
                                 @Override
                                 public void handleCompleted() {
@@ -93,7 +93,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
         fExecutor.submit(new DsfCommandRunnable(fTracker, request.getElements()[0], request) { 
             @Override public void doExecute() {
                 getProcesses().terminate(
-                    getProcesses().getThreadForExecutionContext(getContext()), new RequestMonitor(fExecutor, null));
+                    getProcesses().getProcessForDebugContext(getContext()), new RequestMonitor(fExecutor, null));
              }
         });
         return false;

@@ -19,7 +19,10 @@ import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
 import org.eclipse.dd.dsf.debug.service.IStepQueueManager;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerSuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IResumedDMEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
@@ -91,7 +94,8 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
                     }
                     // Store the VMC element array, in case we need to use it when 
                     fCachedOldFrameVMCs = dmcs2vmcs(getData());
-                    for (int i = 0; i < fCachedOldFrameVMCs.length; i++) update.setChild(fCachedOldFrameVMCs[i], i);
+                    for (int i = 0; i < fCachedOldFrameVMCs.length; i++)
+                    	update.setChild(fCachedOldFrameVMCs[i], i);
                     update.done();
                 }
             });
@@ -127,7 +131,8 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
                     // an array of VMCs with just the top frame.
                     if (fCachedOldFrameVMCs != null && fCachedOldFrameVMCs.length >= 1) {
                         fCachedOldFrameVMCs[0] = topFrameVmc;
-                        for (int i = 0; i < fCachedOldFrameVMCs.length; i++) update.setChild(fCachedOldFrameVMCs[i], i);
+                        for (int i = 0; i < fCachedOldFrameVMCs.length; i++) 
+                        	update.setChild(fCachedOldFrameVMCs[i], i);
                     } else {
                         update.setChild(topFrameVmc, 0);
                     }
@@ -209,10 +214,10 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
     protected int getNodeDeltaFlagsForDMEvent(org.eclipse.dd.dsf.datamodel.IDMEvent<?> e) {
         // This node generates delta if the timers have changed, or if the 
         // label has changed.
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
+        if (e instanceof ISuspendedDMEvent) {
             return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
-        } else if (e instanceof IRunControl.IResumedDMEvent) {
-            if (((IRunControl.IResumedDMEvent)e).getReason() == StateChangeReason.STEP) {
+        } else if (e instanceof IResumedDMEvent) {
+            if (((IResumedDMEvent)e).getReason() == StateChangeReason.STEP) {
                 return IModelDelta.STATE;
             } else {
                 return IModelDelta.CONTENT;
@@ -225,10 +230,12 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
 
     @Override
     protected void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
-            buildDeltaForSuspendedEvent((IRunControl.ISuspendedDMEvent)e, parent, nodeOffset, rm);
-        } else if (e instanceof IRunControl.IResumedDMEvent) {
-            buildDeltaForResumedEvent((IRunControl.IResumedDMEvent)e, parent, nodeOffset, rm);
+        if (e instanceof IContainerSuspendedDMEvent) {
+            buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, ((IContainerSuspendedDMEvent)e).getTriggeringContext(), parent, nodeOffset, rm);
+        } else if (e instanceof ISuspendedDMEvent) {
+            buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, ((ISuspendedDMEvent)e).getDMContext(), parent, nodeOffset, rm);
+        } else if (e instanceof IResumedDMEvent) {
+            buildDeltaForResumedEvent((IResumedDMEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof IStepQueueManager.ISteppingTimedOutEvent) {
             buildDeltaForSteppingTimedOutEvent((IStepQueueManager.ISteppingTimedOutEvent)e, parent, nodeOffset, rm);
         } else {
@@ -237,7 +244,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
         }
     }
     
-    private void buildDeltaForSuspendedEvent(final IRunControl.ISuspendedDMEvent e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
+    private void buildDeltaForSuspendedEvent(final ISuspendedDMEvent e, final IExecutionDMContext execCtx, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
         IStack stackService = getServicesTracker().getService(IStack.class);
         if (stackService == null || runControlService == null) {
@@ -249,7 +256,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
         // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
         // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
         // refresh the whole stack trace with every step would slow down stepping too much.
-        if (!runControlService.isStepping(e.getDMContext())) {
+       if (!runControlService.isStepping(execCtx)) {
             parent.addFlags(IModelDelta.CONTENT);
         }
         
@@ -278,7 +285,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
             );
     }
     
-    private void buildDeltaForResumedEvent(final IRunControl.IResumedDMEvent e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
+    private void buildDeltaForResumedEvent(final IResumedDMEvent e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         IStack stackService = getServicesTracker().getService(IStack.class);
         if (stackService == null) {
             // Required services have not initialized yet.  Ignore the event.
@@ -286,7 +293,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
             return;
         }          
 
-        IRunControl.IResumedDMEvent resumedEvent = e; 
+        IResumedDMEvent resumedEvent = e; 
         if (resumedEvent.getReason() != StateChangeReason.STEP) {
             // Refresh the list of stack frames only if the run operation is not a step.  Also, clear the list
             // of cached frames.

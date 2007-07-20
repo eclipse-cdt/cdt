@@ -390,11 +390,50 @@ public class SystemRegistry implements ISystemRegistry
 				}
 			}
 		}
+		
+		v = sortConfigurations(v);
 		ISubSystemConfiguration[] factories = new ISubSystemConfiguration[v.size()];
+		
 		for (int idx = 0; idx < v.size(); idx++)
 			factories[idx] = (ISubSystemConfiguration) v.elementAt(idx);
 		return factories;
 	}
+	
+	private Vector sortConfigurations(Vector v)
+	{
+		Vector sorted = new Vector(v.size());
+		while (v.size() > 0)
+		{
+			ISubSystemConfiguration first = firstConfiguration(v);
+			sorted.add(first);
+			v.remove(first);
+		}
+		return sorted;
+	}
+	
+	private ISubSystemConfiguration firstConfiguration(Vector v)
+	{
+		ISubSystemConfiguration first = null;
+		for (int i = 0; i < v.size(); i++)
+		{
+			ISubSystemConfiguration next = (ISubSystemConfiguration)v.get(i);
+			if (first == null)
+			{
+				first = next;
+			}
+			else
+			{
+				String name1 = first.getName();
+				String name2 = next.getName();
+				if (name2.compareTo(name1) <= 0)
+				{
+					first = next;
+				}
+			}
+		}
+		return first;
+	}
+	
 
 	// ----------------------------
 	// USER PREFERENCE METHODS...

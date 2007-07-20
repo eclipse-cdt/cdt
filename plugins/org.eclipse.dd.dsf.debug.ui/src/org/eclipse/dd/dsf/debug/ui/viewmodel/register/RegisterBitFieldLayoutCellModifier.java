@@ -15,8 +15,11 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IMnemonic;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
+@SuppressWarnings("restriction")
 public class RegisterBitFieldLayoutCellModifier extends WatchExpressionCellModifier {
     
     public static enum BitFieldEditorStyle { NOTHING, BITFIELDCOMBO, BITFIELDTEXT }
@@ -85,11 +88,25 @@ public class RegisterBitFieldLayoutCellModifier extends WatchExpressionCellModif
             if ( element != fElement ) return false; 
     
             if ( fStyle == BitFieldEditorStyle.BITFIELDTEXT ) {
-                
                 /*
                  *  We let the Model provider supply the current format.
                  */
-                String value = fDataAccess.getFormattedBitFieldValue(fElement, fFormatPrefStore.getDefaultFormatId());
+                String formatId;
+                
+                if ( element instanceof IVMContext) {
+                    /*
+                     *  Find the presentation context and then use it to get the current desired format.
+                     */
+                    IVMContext ctx = (IVMContext) element;
+                    IPresentationContext presCtx = ctx.getLayoutNode().getVMProvider().getPresentationContext();
+                    
+                    formatId = fFormatPrefStore.getCurrentNumericFormat(presCtx);
+                }
+                else {
+                    formatId = IFormattedValues.NATURAL_FORMAT;
+                }
+                
+                String value = fDataAccess.getFormattedBitFieldValue(fElement, formatId);
                 
                 if ( value == null ) { value = "..."; } //$NON-NLS-1$
                 
@@ -132,7 +149,21 @@ public class RegisterBitFieldLayoutCellModifier extends WatchExpressionCellModif
                     /*
                      *  We let the Model provider supply the current format.
                      */
-                    fDataAccess.writeBitField(element, (String) value, IFormattedValues.HEX_FORMAT);
+                    String formatId;
+                    
+                    if ( element instanceof IVMContext) {
+                        /*
+                         *  Find the presentation context and then use it to get the current desired format.
+                         */
+                        IVMContext ctx = (IVMContext) element;
+                        IPresentationContext presCtx = ctx.getLayoutNode().getVMProvider().getPresentationContext();
+                        
+                        formatId = fFormatPrefStore.getCurrentNumericFormat(presCtx);
+                    }
+                    else {
+                        formatId = IFormattedValues.NATURAL_FORMAT;
+                    }
+                    fDataAccess.writeBitField(element, (String) value, formatId);
                 }
             }
             else {

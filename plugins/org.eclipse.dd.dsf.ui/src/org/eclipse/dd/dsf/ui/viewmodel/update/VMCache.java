@@ -33,6 +33,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpd
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 
+@SuppressWarnings("restriction")
 public abstract class VMCache  
 {
 	protected Executor fExecutor = new DefaultDsfExecutor();
@@ -323,6 +324,7 @@ public abstract class VMCache
     	return fDataArchive.get(dmc);
     }
     
+    @SuppressWarnings("unchecked")
     public abstract void handleEvent(IDMEvent event);
 
 }

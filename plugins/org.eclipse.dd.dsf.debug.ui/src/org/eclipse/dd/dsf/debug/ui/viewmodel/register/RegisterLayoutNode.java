@@ -153,7 +153,6 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
         }
     }
 
-//    private WatchExpressionCellModifier fWatchExpressionCellModifier = new WatchExpressionCellModifier();
     final protected RegisterExpressionFactory fRegisterExpressionFactory = new RegisterExpressionFactory(); 
     final private SyncRegisterDataAccess fSyncRegisterDataAccess; 
     private final IFormattedValuePreferenceStore fFormattedPrefStore;
@@ -184,8 +183,10 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
          *  page format is supported by the register service. If the format is not supported then 
          *  we will pick the first available format.
          */
-        final String preferencePageFormatId = fFormattedPrefStore.getDefaultFormatId(); 
         
+        final IPresentationContext context  = update.getPresentationContext();
+        final String preferencePageFormatId = fFormattedPrefStore.getCurrentNumericFormat(context) ;
+            
         regService.getAvailableFormattedValues(
             dmc,
             new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
@@ -200,7 +201,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                      *  See if the desired format is supported.
                      */
                     String[] formatIds = getData();
-                    String   finalFormatId = IFormattedValues.HEX_FORMAT;
+                    String   finalFormatId = IFormattedValues.NATURAL_FORMAT;
                     boolean  requestedFormatIsSupported = false;
                     
                     for ( String fId : formatIds ) {
@@ -236,36 +237,33 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                      */
                     final FormattedValueDMContext valueDmc = regService.getFormattedValue(dmc, finalFormatId);
                     
-                    VMCacheManager.getVMCacheManager().getCache(RegisterLayoutNode.this.getVMProvider().getPresentationContext())
-                    	.getModelData(regService,
-	                    	valueDmc,
-	                        new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
-	                            @Override
-	                            public void handleCompleted() {
-	                                if (!getStatus().isOK()) {
-	                                    handleFailedUpdate(update);
-	                                    return;
-	                                }
-	
-	                                /*
-	                                 *  Fill the label/column with the properly formatted data value.
-	                                 */
-	                                update.setLabel(getData().getFormattedValue(), labelIndex);
-	                                
-	                                // color based on change history
-	                                FormattedValueDMData oldData = (FormattedValueDMData) VMCacheManager.getVMCacheManager()
-	                                	.getCache(RegisterLayoutNode.this.getVMProvider().getPresentationContext())
-	                            		.getArchivedModelData(valueDmc);
-	                                if(oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue())) {
-	                                    update.setBackground(
-	                                        DebugUIPlugin.getPreferenceColor(
-	                                            IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(),
-	                                        labelIndex);
-	                                }
-	                                update.done();
+                    VMCacheManager.getVMCacheManager().getCache( context ).getModelData(regService,
+	                   	valueDmc,
+	                    new DataRequestMonitor<FormattedValueDMData>(getSession().getExecutor(), null) {
+	                        @Override
+	                        public void handleCompleted() {
+	                            if (!getStatus().isOK()) {
+	                                handleFailedUpdate(update);
+	                                return;
 	                            }
-	                        }, 
-	                        getSession().getExecutor()
+	                            /*
+	                             *  Fill the label/column with the properly formatted data value.
+	                             */
+	                            update.setLabel(getData().getFormattedValue(), labelIndex);
+	                                
+	                            // color based on change history
+	                            FormattedValueDMData oldData = (FormattedValueDMData) VMCacheManager.getVMCacheManager()
+	                             	.getCache(context).getArchivedModelData(valueDmc);
+	                            if(oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue())) {
+	                                update.setBackground(
+	                                    DebugUIPlugin.getPreferenceColor(
+	                                        IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(),
+	                                    labelIndex);
+	                            }
+	                            update.done();
+	                        }
+	                    }, 
+	                    getSession().getExecutor()
                     );
                 }
             }

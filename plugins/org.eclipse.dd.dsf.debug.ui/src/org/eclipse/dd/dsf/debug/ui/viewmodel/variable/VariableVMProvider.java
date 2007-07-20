@@ -8,9 +8,8 @@
  */
 package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 
-import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.dm.AbstractDebugDMVMProviderWithCache;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.FormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
@@ -21,10 +20,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 @SuppressWarnings("restriction")
-public class VariableVMProvider extends AbstractDebugDMVMProviderWithCache implements
-		IColumnPresentationFactory, IFormattedValuePreferenceStore {
-    
-    private String defaultFormatId = IFormattedValues.NATURAL_FORMAT;
+public class VariableVMProvider extends AbstractDebugDMVMProviderWithCache implements IColumnPresentationFactory {
 
 	public VariableVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
         super(adapter, context, session);
@@ -42,7 +38,7 @@ public class VariableVMProvider extends AbstractDebugDMVMProviderWithCache imple
         /*
          * Create the next level which represents members of structs/unions/enums and elements of arrays.
          */
-        IVMLayoutNode subExpressioNode = new VariableLayoutNode(this, this, getSession(), varAccess);
+        IVMLayoutNode subExpressioNode = new VariableLayoutNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), varAccess);
         debugViewSelection.setChildNodes(new IVMLayoutNode[] { subExpressioNode });
         
         /*
@@ -59,21 +55,5 @@ public class VariableVMProvider extends AbstractDebugDMVMProviderWithCache imple
     @Override
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return VariableColumnPresentation.ID;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore#getDefaultFormatId()
-     */
-    public String getDefaultFormatId() {
-        return defaultFormatId;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore#setDefaultFormatId(java.lang.String)
-     */
-    public void setDefaultFormatId(String id) {
-        defaultFormatId = id;
     }
 }

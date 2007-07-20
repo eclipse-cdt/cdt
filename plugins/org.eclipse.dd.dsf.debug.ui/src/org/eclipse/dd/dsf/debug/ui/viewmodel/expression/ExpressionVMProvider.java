@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 
-import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.dm.AbstractDebugDMVMProviderWithCache;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.FormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterGroupLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterLayoutNode;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.register.SyncRegisterDataAccess;
@@ -34,11 +33,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * 
  */
 @SuppressWarnings("restriction")
-public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache 
-    implements IExpressionsListener, IFormattedValuePreferenceStore
+public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache implements IExpressionsListener
 {
-    private String fDefaultFormatId = IFormattedValues.HEX_FORMAT;
-    
     public static class ExpressionsChangedEvent {
         enum Type {ADDED, CHANGED, REMOVED}
         public final Type fType;
@@ -82,7 +78,7 @@ public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache
          *  The expression view wants to support fully all of the components of the register view.
          */
         IExpressionLayoutNode registerGroupNode = new RegisterGroupLayoutNode(this, getSession(), syncRegDataAccess);
-        IVMLayoutNode registerNode = new RegisterLayoutNode(this, this, getSession(), syncRegDataAccess);
+        IVMLayoutNode registerNode = new RegisterLayoutNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), syncRegDataAccess);
         registerGroupNode.setChildNodes(new IVMLayoutNode[] { registerNode });
         
         /*
@@ -90,7 +86,9 @@ public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache
          *  view comes in as a fully qualified expression so we go directly to the SubExpression layout
          *  node.
          */
-        IExpressionLayoutNode subExpressioNode = new VariableLayoutNode(this, this, getSession(), syncvarDataAccess);
+        IExpressionLayoutNode subExpressioNode = 
+            
+            new VariableLayoutNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), syncvarDataAccess);
         
         /*
          *  Tell the expression node which subnodes  it will directly support.  It is very important
@@ -163,13 +161,5 @@ public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache
     
     public void expressionsRemoved(IExpression[] expressions) {
         handleEvent(new ExpressionsChangedEvent(ExpressionsChangedEvent.Type.REMOVED, expressions));
-    }
-    
-    public String getDefaultFormatId() {
-        return fDefaultFormatId;
-    }
-    
-    public void setDefaultFormatId(String id) {
-        fDefaultFormatId = id;
     }
 }

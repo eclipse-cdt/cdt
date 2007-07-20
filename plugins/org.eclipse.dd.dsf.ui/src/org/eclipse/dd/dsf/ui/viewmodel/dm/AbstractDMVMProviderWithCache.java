@@ -23,6 +23,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 
+@SuppressWarnings("restriction")
 public abstract class AbstractDMVMProviderWithCache extends AbstractDMVMProvider 
 	implements VMCacheManager.CacheListener
 {
@@ -39,7 +40,7 @@ public abstract class AbstractDMVMProviderWithCache extends AbstractDMVMProvider
 			getModelProxy().fireModelChanged(new ModelDelta(getRootElement(),IModelDelta.CONTENT));
 	}
 
-	public AbstractDMVMProviderWithCache(AbstractVMAdapter adapter,  IPresentationContext presentationContext, DsfSession session) {
+    public AbstractDMVMProviderWithCache(AbstractVMAdapter adapter,  IPresentationContext presentationContext, DsfSession session) {
 		super(adapter, presentationContext, session);
 		
 		VMCacheManager.getVMCacheManager().addCacheListener(getPresentationContext(), this);

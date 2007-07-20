@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport;
 
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+
 /**
  * 
  */
+
+@SuppressWarnings("restriction")
 public interface IFormattedValuePreferenceStore {
-    public String getDefaultFormatId();
-    
-    public void setDefaultFormatId(String id);
+    /*
+     *  Retrieves for the specified Presentation Context the configured format.
+     *  
+     *  @param context Specified Presentation Context 
+     *  @return Format ID.
+     */
+    public String getCurrentNumericFormat( IPresentationContext context );
 }

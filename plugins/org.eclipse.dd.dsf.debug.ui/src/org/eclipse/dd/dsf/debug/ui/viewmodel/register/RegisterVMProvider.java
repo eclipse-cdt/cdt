@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
-import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.dm.AbstractDebugDMVMProviderWithCache;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.FormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
@@ -25,13 +24,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  *  Provides the VIEW MODEL for the DEBUG MODEL REGISTER view.
  */
 @SuppressWarnings("restriction")
-public class RegisterVMProvider extends AbstractDebugDMVMProviderWithCache implements IFormattedValuePreferenceStore
+public class RegisterVMProvider extends AbstractDebugDMVMProviderWithCache
 {
     /*
      *  Current default for register formatting.
      */
-    private String fDefaultFormatId = IFormattedValues.HEX_FORMAT;
-    
     public RegisterVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
         super(adapter, context, session);
         
@@ -54,13 +51,13 @@ public class RegisterVMProvider extends AbstractDebugDMVMProviderWithCache imple
         /*
          * Create the next level which is the registers themselves.
          */
-        IVMLayoutNode registerNode = new RegisterLayoutNode(this, this, getSession(), regAccess);
+        IVMLayoutNode registerNode = new RegisterLayoutNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), regAccess);
         registerGroupNode.setChildNodes(new IVMLayoutNode[] { registerNode });
         
         /*
          * Create the next level which is the bitfield level.
          */
-        IVMLayoutNode bitFieldNode = new RegisterBitFieldLayoutNode(this, this, getSession(), regAccess);
+        IVMLayoutNode bitFieldNode = new RegisterBitFieldLayoutNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), regAccess);
         registerNode.setChildNodes(new IVMLayoutNode[] { bitFieldNode });
         
         /*
@@ -77,13 +74,5 @@ public class RegisterVMProvider extends AbstractDebugDMVMProviderWithCache imple
     @Override
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return RegisterColumnPresentation.ID;
-    }
-    
-    public String getDefaultFormatId() {
-        return fDefaultFormatId;
-    }
-    
-    public void setDefaultFormatId(String id) {
-        fDefaultFormatId = id;
     }
 }

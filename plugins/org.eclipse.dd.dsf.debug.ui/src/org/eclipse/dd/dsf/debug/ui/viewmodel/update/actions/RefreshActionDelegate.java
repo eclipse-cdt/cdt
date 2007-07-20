@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
+@SuppressWarnings("restriction")
 public class RefreshActionDelegate implements IViewActionDelegate {
 
 protected IViewPart fView;
@@ -32,13 +33,10 @@ protected IViewPart fView;
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
-		
 	}
 	
-	private Object getContext()
+    private Object getContext()
 	{
-		return ((TreeModelViewer) ((AbstractDebugView) fView).getViewer())
-				.getPresentationContext();
+		return ((TreeModelViewer) ((AbstractDebugView) fView).getViewer()).getPresentationContext();
 	}
-
 }

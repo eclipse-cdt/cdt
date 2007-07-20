@@ -60,7 +60,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
         return fProvider.getExecutor();
     }
 
-    protected AbstractVMProvider getVMProvider() {
+    public IVMProvider getVMProvider() {
         return fProvider;
     }
     

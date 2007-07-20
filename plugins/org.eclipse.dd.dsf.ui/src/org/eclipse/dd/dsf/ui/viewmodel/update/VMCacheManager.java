@@ -47,7 +47,8 @@ public class VMCacheManager
 		if(!fAssociations.containsKey(context))
 			fAssociations.put(context, new VMCache()
 			{
-				@Override
+				@SuppressWarnings("unchecked")
+                @Override
 				public void handleEvent(IDMEvent event) {
 				}
 				

@@ -17,18 +17,18 @@ import org.eclipse.dd.dsf.ui.viewmodel.update.actions.AbstractRefreshActionDeleg
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.AbstractDebugView;
 
+@SuppressWarnings("restriction")
 public class RefreshManualActionDelegate extends AbstractRefreshActionDelegate 
 {
-	
-	public Object getContext()
+	@Override
+    public Object getContext()
 	{
-		return ((TreeModelViewer) ((AbstractDebugView) fView).getViewer())
-				.getPresentationContext();
+		return ((TreeModelViewer) ((AbstractDebugView) fView).getViewer()).getPresentationContext();
 	}
 	
-	public VMCache createCache()
+	@Override
+    public VMCache createCache()
 	{
 		return new VMCacheRefreshManual();
 	}
-
 }

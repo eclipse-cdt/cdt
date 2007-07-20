@@ -17,6 +17,11 @@ public interface IVMProvider
     extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory 
 {
     /**
+     * Returns the VM Adapter associated with the provider.
+     */
+    public IVMAdapter getVMAdapter();
+    
+    /**
      * Returns the root layout node that is configured in this provider.  
      * It may return null, if a root node is not yet configured.
      */
@@ -36,6 +41,12 @@ public interface IVMProvider
      * is configured for. 
      */
     public IPresentationContext getPresentationContext();
+    
+    /**
+     * Allows other subsystems to force the layout mode associated with the specified
+     * VM context to refresh. If null is passed then the RootLayoutNode is told to refresh.
+     */
+    public void refresh(IVMContext element);
     
     /**
      * Cleans up the resources associated with this provider.

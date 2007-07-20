@@ -18,7 +18,7 @@ import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
 
 public interface IFormattedValues extends IDMService {
-
+    
     /** Marker interface for a DMC that has a formatted value. */
     public interface IFormattedDataDMContext<V extends IDMData> extends IDMContext<V> {}
 
@@ -30,8 +30,8 @@ public interface IFormattedValues extends IDMService {
      */
     public final static String HEX_FORMAT     = "HEX.Format" ; //$NON-NLS-1$
     public final static String OCTAL_FORMAT   = "OCTAL.Format" ; //$NON-NLS-1$
-    public final static String BINARY_FORMAT  = "BINARY.Format" ; //$NON-NLS-1$
     public final static String NATURAL_FORMAT = "NATURAL.Format" ; //$NON-NLS-1$
+    public final static String BINARY_FORMAT  = "BINARY.Format" ; //$NON-NLS-1$
     
     /**
      * Retrieves the available formats that the given data is available in.  
@@ -90,7 +90,7 @@ public interface IFormattedValues extends IDMService {
         
         @Override
         public String toString() {
-            return super.toString() + ".format(" + getFormatID() + ")";
+            return super.toString() + ".format(" + getFormatID() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 

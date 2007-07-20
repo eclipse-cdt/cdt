@@ -33,6 +33,10 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 @SuppressWarnings("restriction")
 public interface IVMLayoutNode 
 {
+    /**
+     * Retrieves the associated VM Provider.
+     */
+    public IVMProvider getVMProvider();
     
     /**
      * Retrieves information whether for a given path in the viewer, 
@@ -55,7 +59,6 @@ public interface IVMLayoutNode
      * elements of this layout node, and not it's children.
      */
     public void updateElementCount(IChildrenCountUpdate update);
-    
     
     /**
      * Retrieves the element objects of this node for the given path in the 

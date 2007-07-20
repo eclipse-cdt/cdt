@@ -7,19 +7,23 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
+@SuppressWarnings("restriction")
 public class VariableLayoutValueCellModifier extends WatchExpressionCellModifier {
     
     private SyncVariableDataAccess fDataAccess = null;
-    private IFormattedValuePreferenceStore fFormattedValuePreferenceStore;
+    private IFormattedValuePreferenceStore fPrefStore;
     
     public VariableLayoutValueCellModifier(IFormattedValuePreferenceStore formattedValuePreferenceStore, SyncVariableDataAccess access) {
         fDataAccess = access;
-        fFormattedValuePreferenceStore = formattedValuePreferenceStore;
+        fPrefStore = formattedValuePreferenceStore;
     }
     
     /*
@@ -55,16 +59,29 @@ public class VariableLayoutValueCellModifier extends WatchExpressionCellModifier
         // the watch expression.
 
         if (IDebugVMConstants.COLUMN_ID__VALUE.equals(property)) {
-            // Make sure we are working on the editable areas.
+            /*
+             *  We let the Model provider supply the current format.
+             */
+            String formatId;
             
-            // Write the value in the currently requested format. Since they could
-            // have freeformed typed in any format this is just a guess and may not
-            // really accomplish anything.
-
-            String value = fDataAccess.getFormattedValue(element, fFormattedValuePreferenceStore.getDefaultFormatId());
+            if ( element instanceof IVMContext) {
+                /*
+                 *  Find the presentation context and then use it to get the current desired format.
+                 */
+                IVMContext ctx = (IVMContext) element;
+                IPresentationContext presCtx = ctx.getLayoutNode().getVMProvider().getPresentationContext();
+                
+                formatId = fPrefStore.getCurrentNumericFormat(presCtx);
+            }
+            else {
+                formatId = IFormattedValues.NATURAL_FORMAT;
+            }
             
-            if (value == null)
+            String value = fDataAccess.getFormattedValue(element, formatId);
+            
+            if (value == null) {
                 return "...";  //$NON-NLS-1$
+            }
 
             return value;
         }
@@ -74,13 +91,31 @@ public class VariableLayoutValueCellModifier extends WatchExpressionCellModifier
 
     @Override
     public void modify(Object element, String property, Object value) {
-        // If we're in the column value, modify the register data.  Otherwise, call the super-class to edit
-        // the watch expression.
-
+        /* 
+         * If we're in the column value, modify the register data.  Otherwise, call the super-class to edit
+         * the watch expression.
+         */ 
         if (IDebugVMConstants.COLUMN_ID__VALUE.equals(property)) {
             if (value instanceof String) {
-                 // PREFPAGE : We are using a default format until the preference page is created.
-                fDataAccess.writeVariable(element, (String) value, fFormattedValuePreferenceStore.getDefaultFormatId());
+                /*
+                 *  We let the Model provider supply the current format.
+                 */
+                String formatId;
+                
+                if ( element instanceof IVMContext) {
+                    /*
+                     *  Find the presentation context and then use it to get the current desired format.
+                     */
+                    IVMContext ctx = (IVMContext) element;
+                    IPresentationContext presCtx = ctx.getLayoutNode().getVMProvider().getPresentationContext();
+                    
+                    formatId = fPrefStore.getCurrentNumericFormat(presCtx);
+                }
+                else {
+                    formatId = IFormattedValues.NATURAL_FORMAT;
+                }
+                
+                fDataAccess.writeVariable(element, (String) value, formatId);
             }
         }
         else {

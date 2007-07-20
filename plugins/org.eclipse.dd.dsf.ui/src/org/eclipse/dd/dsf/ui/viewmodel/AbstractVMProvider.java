@@ -139,6 +139,33 @@ abstract public class AbstractVMProvider implements IVMProvider
             fRootLayoutNodeRef.get().dispose();
         }
     }
+    
+    /**
+     * Allows other subsystems to force the layout mode associated with the specified
+     * VM context to refresh. If null is passed then the RootLayoutNode is told to refresh.
+     */
+    public void refresh(final IVMContext element) {
+        try {
+            getExecutor().execute(new Runnable() {
+                public void run() {
+                    if (isDisposed()) return;
+                    
+                    if ( element == null ) {
+                        VMDelta rootDelta = new VMDelta(getRootElement(), IModelDelta.CONTENT);
+                        getModelProxy().fireModelChangedNonDispatch(rootDelta);
+                    }
+                    else {
+                        VMDelta elementDelta = new VMDelta(element, IModelDelta.CONTENT);
+                        getModelProxy().fireModelChangedNonDispatch(elementDelta);
+                    }
+    
+                }});
+        } catch (RejectedExecutionException e) {
+            // Ignore.  This exception could be thrown if the provider is being 
+            // shut down.  
+        }
+        return;
+    }
 
     protected boolean isDisposed() {
         return fDisposed;

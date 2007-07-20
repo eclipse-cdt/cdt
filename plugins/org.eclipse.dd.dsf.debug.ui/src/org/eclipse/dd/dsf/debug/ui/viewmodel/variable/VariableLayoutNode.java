@@ -297,8 +297,8 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
          *  page format is supported by the register service. If the format is not supported then 
          *  we will pick the first available format.
          */
-        
-        final String preferencePageFormatId = fFormattedPrefStore.getDefaultFormatId();
+        final IPresentationContext context  = update.getPresentationContext();
+        final String preferencePageFormatId = fFormattedPrefStore.getCurrentNumericFormat(context) ;
         
         expressionService.getAvailableFormattedValues(
             dmc,

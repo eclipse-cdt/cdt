@@ -11,37 +11,13 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 
-/**
- * 
- */
-public class SetDefaultFormatOctal implements IViewActionDelegate {
+@SuppressWarnings("restriction")
+public class SetDefaultFormatOctal extends AbstractSetFormatStyle {
 
-    private IFormattedValueVMContext fFormattedValueVMC; 
-    
-    public void init(IViewPart view) {
+    @Override
+    protected String getFormatStyle() {
+        return IFormattedValues.OCTAL_FORMAT;
     }
-
-    public void run(IAction action) {
-        if (fFormattedValueVMC != null) {
-            fFormattedValueVMC.getPreferenceStore().setDefaultFormatId(IFormattedValues.OCTAL_FORMAT);
-        }
-    }
-
-    public void selectionChanged(IAction action, ISelection selection) {
-        fFormattedValueVMC = null;
-        if (selection instanceof IStructuredSelection) {
-            Object element = ((IStructuredSelection)selection).getFirstElement();
-            if (element instanceof IFormattedValueVMContext) {
-                fFormattedValueVMC = ((IFormattedValueVMContext)element);
-            }
-        }
-        action.setEnabled(fFormattedValueVMC != null);
-    }
-
 }
+

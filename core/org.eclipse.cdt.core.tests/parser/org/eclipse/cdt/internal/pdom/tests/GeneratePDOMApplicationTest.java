@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -103,6 +104,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		});
 		assertTrue(target.exists());
 		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
+		assertEquals(36, wpdom.getDB().getVersion()); // faked version, remove for CDT 4.1
 		verifyProject1Content(wpdom);
 
 		String fid;

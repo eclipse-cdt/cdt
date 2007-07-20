@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 QNX Software Systems and others.
+ * Copyright (c) 2005, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian) - Provide B-tree deletion routine
- * Markus Schorn (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Andrew Ferguson (Symbian) - Provide B-tree deletion routine
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -47,7 +47,7 @@ public class BTree {
 	}
 
 	/**
-	 * Contructor.
+	 * Constructor.
 	 * 
 	 * @param db the database containing the btree
 	 * @param root offset into database of the pointer to the root node
@@ -160,24 +160,34 @@ public class BTree {
 			}
 		}
 
-		// search to find the insert point
-		int i;
-		for (i = 0; i < MAX_RECORDS; ++i) {
-			int record1 = getRecord(chunk, node, i);
-			if (record1 == 0) {
-				// past the end
-				break;
-			} else {
-				int compare = cmp.compare(record1, record);
-				if (compare == 0)
-					// found it, no insert, just return the record
-					return record;
-				else if (compare > 0)
-					// past it
-					break;
-			}
+		// binary search to find the insert point
+		int lower= 0; 
+		int upper= MAX_RECORDS-1;
+		while (lower < upper && getRecord(chunk, node, upper-1) == 0) {
+			upper--;
 		}
 
+		while (lower < upper) {
+			int middle= (lower+upper)/2;
+			int checkRec= getRecord(chunk, node, middle);
+			if (checkRec == 0) {
+				upper= middle;
+			}
+			else {
+				int compare= cmp.compare(checkRec, record);
+				if (compare > 0) {
+					upper= middle;
+				}
+				else if (compare < 0) {
+					lower= middle+1;
+				}
+				else {
+					// found it, no insert, just return the record
+					return record;
+				}
+			}
+		}
+		final int i= lower;
 		int	child = getChild(chunk, node, i);
 		if (child != 0) {
 			// visit the children
@@ -472,7 +482,7 @@ public class BTree {
 	 * @param src the node to read from
 	 * @param srcPos the initial index to read from (inclusive)
 	 * @param dst the node to write to
-	 * @param dstPos the intial index to write to (inclusive)
+	 * @param dstPos the initial index to write to (inclusive)
 	 * @param length the number of (key,(predecessor)child) nodes to write
 	 */
 	private void nodeContentCopy(BTNode src, int srcPos, BTNode dst, int dstPos, int length) {
@@ -538,14 +548,38 @@ public class BTree {
 
 		try {
 			Chunk chunk = db.getChunk(node);
-
-			int i= 0;
+			
+			// binary search to find first record greater or equal
+			int lower= 0; 
+			int upper= MAX_RECORDS-1;
+			while (lower < upper && getRecord(chunk, node, upper-1) == 0) {
+				upper--;
+			}
+			while (lower < upper) {
+				int middle= (lower+upper)/2;
+				int checkRec= getRecord(chunk, node, middle);
+				if (checkRec == 0) {
+					upper= middle;
+				}
+				else {
+					int compare= visitor.compare(checkRec);
+					if (compare >= 0) {
+						upper= middle;
+					}
+					else {
+						lower= middle+1;
+					}
+				}
+			}
+			
+			// start with first record greater or equal, reuse comparison results.
+			int i= lower;
 			for (; i < MAX_RECORDS; ++i) {
 				int record = getRecord(chunk, node, i);
 				if (record == 0) 
 					break;
 
-				int compare = visitor.compare(record);
+				int compare= visitor.compare(record);
 				if (compare > 0) {
 					// 	start point is to the left
 					return accept(getChild(chunk, node, i), visitor);

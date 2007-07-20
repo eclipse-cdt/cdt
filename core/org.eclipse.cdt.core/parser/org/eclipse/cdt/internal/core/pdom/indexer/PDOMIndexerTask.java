@@ -209,6 +209,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 
 		// sources first
+		sources= sortByContentType(sources);
 		for (Iterator iter = sources.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) 
 				return;
@@ -220,6 +221,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 
 		// headers with context
+		headers= sortByContentType(headers);
 		for (Iterator iter = headers.iterator(); iter.hasNext();) {
 			if (monitor.isCanceled()) 
 				return;
@@ -253,6 +255,38 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 		}
 	}
 	
+	private Collection sortByContentType(Collection sources) {
+		HashMap ctToLists= new HashMap();
+		for (Iterator iterator = sources.iterator(); iterator.hasNext();) {
+			final ITranslationUnit tu = (ITranslationUnit) iterator.next();
+			final String ct= tu.getContentTypeId();
+			List list= (List) ctToLists.get(ct);
+			if (list == null) {
+				list= new ArrayList();
+				ctToLists.put(ct, list);
+			}
+			list.add(tu);
+		}
+		if (ctToLists.size() <= 1) {
+			return sources;
+		}
+		Collection result= new ArrayList(sources.size());
+		// do C++ first
+		List list= (List) ctToLists.remove(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
+		if (list != null) {
+			result.addAll(list);
+		}
+		list= (List) ctToLists.remove(CCorePlugin.CONTENT_TYPE_CXXHEADER);
+		if (list != null) {
+			result.addAll(list);
+		}
+		for (Iterator iterator = ctToLists.values().iterator(); iterator.hasNext();) {
+			list = (List) iterator.next();
+			result.addAll(list);
+		}
+		return result;
+	}
+
 	/**
 	 * Convenience method to check whether a translation unit in the index is outdated
 	 * with respect to its timestamp.

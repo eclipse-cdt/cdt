@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial API and implementation
+ *     Andrew Ferguson (Symbian) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -43,9 +44,7 @@ public class CPPFindBinding extends FindBinding {
 			public int compare(int record) throws CoreException {
 				IString nm1 = PDOMNamedNode.getDBName(pdom, record);
 
-				int cmp = nm1.compare(name, false);
-				cmp = cmp == 0 ? nm1.compare(name, true) : cmp;
-
+				int cmp = nm1.compareCompatibleWithIgnoreCase(name);
 				if (cmp == 0) {
 					int c1 = PDOMNode.getNodeType(pdom, record);
 					cmp = c1 < c2 ? -1 : (c1 > c2 ? 1 : 0);

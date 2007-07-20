@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -90,8 +90,12 @@ public abstract class PDOMNode implements IPDOMNode {
 		return pdom.getDB().getInt(record + TYPE);
 	}
 	
+	public int getParentNodeRec() throws CoreException {
+		return pdom.getDB().getInt(record + PARENT);
+	}
+	
 	public PDOMNode getParentNode() throws CoreException {
-		int parentrec = pdom.getDB().getInt(record + PARENT);
+		int parentrec = getParentNodeRec();
 		return parentrec != 0 ? getLinkageImpl().getNode(parentrec) : null;
 	}
 	

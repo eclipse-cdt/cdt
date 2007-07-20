@@ -6,11 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
- * Andrew Ferguson (Symbian)
- * Anton Leherbauer (Wind River Systems)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     Andrew Ferguson (Symbian)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
@@ -73,7 +73,9 @@ import org.eclipse.core.runtime.Status;
 public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	protected Database db;
 
-	public static final int VERSION = 36;
+	public static final int CURRENT_VERSION = 37;
+	public static final int MIN_SUPPORTED_VERSION= 36;
+	public static final int MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX= 37;	// to be removed in 4.1
 	// 0 - the beginning of it all
 	// 1 - first change to kick off upgrades
 	// 2 - added file inclusions
@@ -111,17 +113,24 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	// 34 - fix for base classes represented by qualified names (183843)
 	// 35 - add scanner configuration hash-code (62366)
 	// 36 - changed chunk size back to 4K (184892)
+	// 37 - added index for nested bindings (189811), compatible with version 36.
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
 	public static final int PROPERTIES = Database.DATA_AREA + 8;
-
+	public static final int HAS_NESTED_BINDING_BTREES= Database.DATA_AREA + 12; 
+	public static final int END= Database.DATA_AREA + 13;
+	static {
+		assert END <= Database.CHUNK_SIZE;
+	}
+	
 	// Local caches
 	private BTree fileIndex;
 	private Map fLinkageIDCache = new HashMap();
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
 	private Map fPDOMLinkageFactoryCache;
+	private boolean fHasBTreeForNestedBindings;
 	
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
@@ -144,13 +153,22 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		fPath= dbPath;
 		final boolean lockDB= db == null || lockCount != 0;
 		
-		db = new Database(fPath, cache, VERSION, isPermanentlyReadOnly());
+		db = new Database(fPath, cache, CURRENT_VERSION, isPermanentlyReadOnly());
 		fileIndex= null;	// holds on to the database, so clear it.
 
 		db.setLocked(lockDB);
 		int version= db.getVersion();
-		if (version == VERSION) {
+		if (version >= MIN_SUPPORTED_VERSION) {
 			readLinkages();
+			fHasBTreeForNestedBindings= db.getByte(HAS_NESTED_BINDING_BTREES) == 1;
+			
+			// new PDOM with version ready to write nested bindings index
+			if (version >= MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
+				if (!fHasBTreeForNestedBindings && !isPermanentlyReadOnly()) {
+					fHasBTreeForNestedBindings= true;
+					db.putByte(HAS_NESTED_BINDING_BTREES, (byte) 1);
+				}
+			}
 		}
 		db.setLocked(lockCount != 0);
 	}
@@ -159,11 +177,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return locationConverter;
 	}
 
-	public boolean versionMismatch() throws CoreException {
-		if (db.getVersion() != VERSION) {
-			return true;
-		} else
-			return false;
+	public boolean isCurrentVersion() throws CoreException {
+		return db.getVersion() == CURRENT_VERSION;
+	}
+
+	public boolean isSupportedVersion() throws CoreException {
+		return db.getVersion() >= MIN_SUPPORTED_VERSION;
 	}
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {
@@ -247,7 +266,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		assert lockCount < 0; // needs write-lock.
 		
 		// Clear out the database, everything is set to zero.
-		getDB().clear(VERSION);
+		db.clear(CURRENT_VERSION);
+		db.putByte(HAS_NESTED_BINDING_BTREES, (byte) 1);
+		fHasBTreeForNestedBindings= true;
 		clearCaches();
 	}
 	
@@ -713,26 +734,22 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			PDOMLinkage linkage= (PDOMLinkage) iter.next();
 			if (filter.acceptLinkage(linkage)) {
 				IBinding[] bindings;
-				if(filescope) {
-					BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
-					visitor.setMonitor(monitor);
-					try {
-						linkage.accept(visitor);
+				BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
+				visitor.setMonitor(monitor);
+				try {
+					linkage.accept(visitor);
+					if (!filescope) {
+						if (fHasBTreeForNestedBindings) {
+							linkage.getNestedBindingsIndex().accept(visitor);
+						}
+						else {
+							linkage.accept(new ApplyVisitor(linkage, visitor));
+						}
 					}
-					catch (OperationCanceledException e) {
-					}
-					bindings= visitor.getBindings();
-				} else {
-					BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
-					visitor.setMonitor(monitor);
-					try {
-						linkage.accept(visitor);
-						linkage.accept(new ApplyVisitor(linkage, visitor));
-					}
-					catch (OperationCanceledException e) {
-					}
-					bindings= visitor.getBindings();
 				}
+				catch (OperationCanceledException e) {
+				}
+				bindings= visitor.getBindings();
 
 				for (int j = 0; j < bindings.length; j++) {
 					result.add(bindings[j]);

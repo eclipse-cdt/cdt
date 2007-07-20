@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
- * Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -64,8 +64,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	private static final int ID_OFFSET   = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int NEXT_OFFSET = PDOMNamedNode.RECORD_SIZE + 4;
 	private static final int INDEX_OFFSET = PDOMNamedNode.RECORD_SIZE + 8;
+	private static final int NESTED_BINDINGS_INDEX = PDOMNamedNode.RECORD_SIZE + 12;
 	
-	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 12;
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 16;
 	
 	// node types
 	protected static final int LINKAGE= 0; // special one for myself
@@ -108,6 +109,15 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	public BTree getIndex() throws CoreException {
 		return new BTree(pdom.getDB(), record + INDEX_OFFSET, getIndexComparator());
+	}
+	
+	/**
+	 * Returns the BTree for the nested bindings.
+	 * @return
+	 * @throws CoreException
+	 */
+	public BTree getNestedBindingsIndex() throws CoreException {
+		return new BTree(getPDOM().getDB(), record + NESTED_BINDINGS_INDEX, getNestedBindingsComparator());
 	}
 	
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
@@ -166,6 +176,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public abstract IBTreeComparator getIndexComparator();
+
+	public IBTreeComparator getNestedBindingsComparator() {
+		return new FindBinding.NestedBindingsBTreeComparator(this);
+	}
 	
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 	
@@ -326,6 +340,34 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public void onDeleteName(PDOMName nextName) throws CoreException {
 	}
 	
+	/**
+	 * Callback informing the linkage that a binding has been added. Used to index nested bindings.
+	 * @param pdomBinding
+	 * @throws CoreException
+	 * @since 4.0.1
+	 */
+	public void afterAddBinding(PDOMBinding pdomBinding) throws CoreException {
+		if (pdomBinding.getParentNodeRec() != record) {
+			if (pdom.getDB().getVersion() >= PDOM.MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
+				getNestedBindingsIndex().insert(pdomBinding.getRecord());
+			}
+		}
+	}
+
+	/**
+	 * Callback informing the linkage that a binding is about to be removed. Used to index nested bindings.
+	 * @param pdomBinding
+	 * @throws CoreException
+	 * @since 4.0.1
+	 */
+	public void beforeRemoveBinding(PDOMBinding pdomBinding) throws CoreException {
+		if (pdomBinding.getParentNodeRec() != record) {
+			if (pdom.getDB().getVersion() >= PDOM.MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
+				getNestedBindingsIndex().delete(pdomBinding.getRecord());
+			}
+		}
+	}
+
 	/**
 	 * Searches for the a file local scope object. If none is found depending
 	 * on the value of the parameter 'create' such an object is created.

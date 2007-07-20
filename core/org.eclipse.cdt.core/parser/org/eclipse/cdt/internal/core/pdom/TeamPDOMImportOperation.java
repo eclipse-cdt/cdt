@@ -203,7 +203,7 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		WritablePDOM pdom= (WritablePDOM) obj;
 		pdom.acquireReadLock();
 		try {
-			if (pdom.versionMismatch()) {
+			if (!pdom.isSupportedVersion()) {
 				throw new CoreException(CCorePlugin.createStatus(					
 						NLS.bind(Messages.PDOMImportTask_errorInvalidPDOMVersion, fProject.getElementName())));
 			}

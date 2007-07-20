@@ -327,7 +327,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 			}
 
 			WritablePDOM pdom= new WritablePDOM(dbFile, new PDOMProjectIndexLocationConverter(rproject), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-			if (pdom.versionMismatch() || fromScratch) {
+			if (!pdom.isSupportedVersion() || fromScratch) {
 				try {
 					pdom.acquireWriteLock();
 				} catch (InterruptedException e) {

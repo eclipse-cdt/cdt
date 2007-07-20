@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -30,7 +31,7 @@ public interface IString {
 	// strcmp equivalents
 	/**
 	 * Compare this IString record and the specified IString record
-	 * @param chars
+	 * @param string
 	 * @param caseSensitive whether to compare in a case-sensitive way
 	 * @return <ul><li> -1 if this &lt; string
 	 * <li> 0 if this == string
@@ -42,7 +43,7 @@ public interface IString {
 	
 	/**
 	 * Compare this IString record and the specified String object
-	 * @param chars
+	 * @param string
 	 * @param caseSensitive whether to compare in a case-sensitive way
 	 * @return <ul><li> -1 if this &lt; string
 	 * <li> 0 if this == string
@@ -64,6 +65,29 @@ public interface IString {
 	 */
 	public int compare(char[] chars, boolean caseSensitive) throws CoreException;
 
+	/**
+	 * Compare this IString record and the specified IString record in a case sensitive manner
+	 * such that it is compatible with case insensitive comparison.
+	 * @param string
+	 * @return <ul><li> -1 if this &lt; string
+	 * <li> 0 if this == string
+	 * <li> 1 if this &gt; string
+	 * </ul>
+	 * @throws CoreException
+	 */
+	public int compareCompatibleWithIgnoreCase(IString string) throws CoreException;
+
+	/**
+	 * Compare this IString record and the specified char array in a case sensitive manner
+	 * such that it is compatible with case insensitive comparison.
+	 * @param chars
+	 * @return <ul><li> -1 if this &lt; string
+	 * <li> 0 if this == string
+	 * <li> 1 if this &gt; string
+	 * </ul>
+	 * @throws CoreException
+	 */
+	public int compareCompatibleWithIgnoreCase(char[] chars) throws CoreException;
 	
 	/**
 	 * Compare this IString record and the specified character array

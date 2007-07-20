@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.provider;
 
@@ -74,7 +75,7 @@ class PDOMCache {
 
 						result.acquireReadLock();
 						try {
-							if(result.versionMismatch()) {
+							if(!result.isSupportedVersion()) {
 								versionMismatch.add(file);
 								String msg= MessageFormat.format(Messages.PDOMCache_VersionTooOld, new Object[] {file});
 								CCorePlugin.log(msg);

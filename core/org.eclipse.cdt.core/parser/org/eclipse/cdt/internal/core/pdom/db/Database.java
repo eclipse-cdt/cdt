@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Symbian - Add some non-javadoc implementation notes
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
+ *     QNX - Initial API and implementation
+ *     Symbian - Add some non-javadoc implementation notes
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -111,7 +111,7 @@ public class Database {
 			}
 			else {
 				fHeaderChunk.read();
-				fVersion= fHeaderChunk.getInt(0);
+				fVersion= fHeaderChunk.getInt(VERSION_OFFSET);
 				fChunks = new Chunk[nChunksOnDisk];	// chunk[0] is unused.
 			}
 		} catch (IOException e) {
@@ -139,7 +139,7 @@ public class Database {
 	
 	public void setVersion(int version) throws CoreException {
 		assert fExclusiveLock;
-		fHeaderChunk.putInt(0, version);
+		fHeaderChunk.putInt(VERSION_OFFSET, version);
 		fVersion= version;
 	}
 
@@ -574,7 +574,7 @@ public class Database {
 
 			if (isComplete) {
 				if (fHeaderChunk.fDirty || fIsMarkedIncomplete) {
-					fHeaderChunk.putInt(0, fVersion);
+					fHeaderChunk.putInt(VERSION_OFFSET, fVersion);
 					fHeaderChunk.flush();
 					fIsMarkedIncomplete= false;
 				}

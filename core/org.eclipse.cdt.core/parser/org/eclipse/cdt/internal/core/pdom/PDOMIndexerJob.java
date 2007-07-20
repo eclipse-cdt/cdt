@@ -46,6 +46,7 @@ public class PDOMIndexerJob extends Job {
 	}
 
 	protected IStatus run(IProgressMonitor monitor) {
+		final long start= System.currentTimeMillis();
 		fMonitor = monitor;
 		String taskName = CCorePlugin.getResourceString("pdom.indexer.task"); //$NON-NLS-1$
 		monitor.beginTask(taskName, TOTAL_MONITOR_WORK);
@@ -97,6 +98,16 @@ public class PDOMIndexerJob extends Job {
 				}
 			}
 			while (currentTask != null);
+			
+			// work-around for https://bugs.eclipse.org/bugs/show_bug.cgi?id=197258
+			long rest= 100-(System.currentTimeMillis()-start);
+			if (rest > 0) {
+				try {
+					Thread.sleep(rest);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			}
 			return Status.OK_STATUS;
 		}
 		catch (RuntimeException e) {

@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
- * Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -100,8 +100,9 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			} else if (binding instanceof ITypedef)
 				pdomBinding = new PDOMCTypedef(pdom, parent, (ITypedef)binding);
 
-			if(pdomBinding!=null) {
+			if (pdomBinding!=null) {
 				parent.addChild(pdomBinding);
+				afterAddBinding(pdomBinding);
 			}
 		}
 		return pdomBinding;

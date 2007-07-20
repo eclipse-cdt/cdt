@@ -364,6 +364,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 
 		if(pdomBinding!=null) {
 			parent.addChild(pdomBinding);
+			afterAddBinding(pdomBinding);
 		}
 		
 		pushPostProcesses(pdomBinding, binding);

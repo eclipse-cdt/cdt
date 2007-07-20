@@ -284,6 +284,16 @@ public class DBTest extends BaseTestCase {
 		assertSignEquals(expected, -biss.compare(aisc, caseSensitive));
 		assertSignEquals(expected, -biss.compare(a, caseSensitive));
 		assertSignEquals(expected, -biss.comparePrefix(acs, caseSensitive));
+		
+		if (!caseSensitive && expected != 0) {
+			assertSignEquals(expected, aiss.compareCompatibleWithIgnoreCase(bcs));
+			assertSignEquals(expected, aiss.compareCompatibleWithIgnoreCase(biss));
+			assertSignEquals(expected, aiss.compareCompatibleWithIgnoreCase(bisc));
+
+			assertSignEquals(expected, -biss.compareCompatibleWithIgnoreCase(acs));
+			assertSignEquals(expected, -biss.compareCompatibleWithIgnoreCase(aiss));
+			assertSignEquals(expected, -biss.compareCompatibleWithIgnoreCase(aisc));
+		}
 	}
 	
 	private void assertSignEquals(int a, int b) {

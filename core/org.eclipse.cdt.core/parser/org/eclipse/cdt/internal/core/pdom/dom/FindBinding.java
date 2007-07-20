@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial API and implementation
+ *     Andrew Ferguson (Symbian) - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -34,27 +35,46 @@ public class FindBinding {
 		public int compare(int record1, int record2) throws CoreException {
 			IString nm1 = PDOMNamedNode.getDBName(pdom, record1);
 			IString nm2 = PDOMNamedNode.getDBName(pdom, record2);
-			int cmp= nm1.compare(nm2, false);
-			cmp= cmp==0 ? nm1.compare(nm2, true) : cmp;
+			int cmp= nm1.compareCompatibleWithIgnoreCase(nm2);
 			if(cmp == 0) {
-				int t1 = PDOMNamedNode.getNodeType(pdom, record1);
-				int t2 = PDOMNamedNode.getNodeType(pdom, record2);
+				int t1 = PDOMNode.getNodeType(pdom, record1);
+				int t2 = PDOMNode.getNodeType(pdom, record2);
 				return t1 < t2 ? -1 : (t1 > t2 ? 1 : 0);
 			}
 			return cmp;
 		}
 	}
 
+	public static class NestedBindingsBTreeComparator extends DefaultBindingBTreeComparator implements IBTreeComparator {
+		protected PDOMLinkage linkage;
+		
+		public NestedBindingsBTreeComparator(PDOMLinkage linkage) {
+			super(linkage.pdom);
+			this.linkage= linkage;
+		}
+		public int compare(int record1, int record2) throws CoreException {
+			int cmp= super.compare(record1, record2);	// compare names
+			if (cmp==0) {								// any order will do.
+				if (record1 < record2) {
+					return -1;
+				}
+				else if (record1 > record2) {			
+					return 1;
+				}
+			}
+			return cmp;
+		}
+	}
+	
 	public static PDOMBinding findBinding(BTree btree, final PDOM pdom, final char[]name, final int[] constants) throws CoreException {
 		final PDOMBinding[] result = new PDOMBinding[1];
 		btree.accept(new IBTreeVisitor() {
 			public int compare(int record) throws CoreException {
 				IString nm1 = PDOMNamedNode.getDBName(pdom, record);
-				int cmp= nm1.compare(name, false); 
-				return cmp==0 ? nm1.compare(name, true) : cmp;
+				return nm1.compareCompatibleWithIgnoreCase(name); 
 			}
 			public boolean visit(int record) throws CoreException {
-				PDOMNamedNode nnode = (PDOMNamedNode) PDOMLinkage.getLinkage(pdom, record).getNode(record);
+				PDOMNamedNode nnode = (PDOMNamedNode) PDOMNode.getLinkage(pdom, record).getNode(record);
 				if(nnode.hasName(name)) {
 					int constant = nnode.getNodeType();
 					for(int i=0; i<constants.length; i++) {

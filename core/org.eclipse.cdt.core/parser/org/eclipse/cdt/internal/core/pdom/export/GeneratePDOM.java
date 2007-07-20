@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *     Andrew Ferguson (Symbian) - Initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.export;
 
@@ -21,6 +22,7 @@ import org.eclipse.cdt.core.index.export.IExportProjectProvider;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
+import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.runtime.CoreException;
@@ -77,6 +79,10 @@ public class GeneratePDOM implements ISafeRunnable {
 						Map.Entry entry = (Map.Entry) i.next();
 						exportedPDOM.setProperty((String) entry.getKey(), (String) entry.getValue());
 					}
+				}
+				// fake version of pdom, such that it works with CDT 4.0.0, also.
+				if (PDOM.CURRENT_VERSION == PDOM.MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
+					exportedPDOM.getDB().setVersion(PDOM.CURRENT_VERSION-1);
 				}
 				exportedPDOM.close();
 			}

@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -239,6 +240,94 @@ public class ShortString implements IString {
 			return 1;
 		else
 			return 0;
+	}
+	
+
+	public int compareCompatibleWithIgnoreCase(IString string) throws CoreException {
+		if (string instanceof ShortString)
+			return compareCompatibleWithIgnoreCase((ShortString)string);
+		else if (string instanceof LongString)
+			return - ((LongString)string).compareCompatibleWithIgnoreCase(this);
+		else
+			throw new IllegalArgumentException();
+	}
+
+	
+	public int compareCompatibleWithIgnoreCase(ShortString other) throws CoreException {
+		Chunk chunk1 = db.getChunk(record);
+		Chunk chunk2 = other.db.getChunk(other.record);
+
+		int i1 = record + CHARS;
+		int i2 = other.record + CHARS;
+		int n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
+		int n2 = i2 + chunk2.getInt(other.record + LENGTH) * 2;
+		int sensitiveCmp= 0;
+		while (i1 < n1 && i2 < n2) {
+			final char c1= chunk1.getChar(i1);
+			final char c2= chunk2.getChar(i2);
+			if (c1 != c2) {
+				int cmp= compareChars(c1, c2, false); // insensitive
+				if(cmp!=0)
+					return cmp;
+				
+				if (sensitiveCmp == 0) {
+					if (c1 < c2) {
+						sensitiveCmp= -1;
+					}
+					else {
+						sensitiveCmp= 1;
+					}
+				}
+			}
+			
+			i1 += 2;
+			i2 += 2;
+		}
+		
+		if (i1 == n1 && i2 != n2)
+			return -1;
+		else if (i2 == n2 && i1 != n1)
+			return 1;
+
+		return sensitiveCmp;
+	}
+
+	public int compareCompatibleWithIgnoreCase(char[] chars) throws CoreException {
+		Chunk chunk1 = db.getChunk(record);
+
+		int i1 = record + CHARS;
+		int i2 = 0;
+		int n1 = i1 + chunk1.getInt(record + LENGTH) * 2;
+		int n2 = chars.length;
+		int sensitiveCmp= 0;
+		while (i1 < n1 && i2 < n2) {
+			final char c1= chunk1.getChar(i1);
+			final char c2= chars[i2];
+			if (c1 != c2) {
+				int cmp= compareChars(c1, c2, false); // insensitive
+				if(cmp!=0)
+					return cmp;
+				
+				if (sensitiveCmp == 0) {
+					if (c1 < c2) {
+						sensitiveCmp= -1;
+					}
+					else {
+						sensitiveCmp= 1;
+					}
+				}
+			}
+			
+			i1 += 2;
+			i2++;
+		}
+		
+		if (i1 == n1 && i2 != n2)
+			return -1;
+		else if (i2 == n2 && i1 != n1)
+			return 1;
+
+		return sensitiveCmp;
 	}
 	
 	public int comparePrefix(char[] other, boolean caseSensitive) throws CoreException {

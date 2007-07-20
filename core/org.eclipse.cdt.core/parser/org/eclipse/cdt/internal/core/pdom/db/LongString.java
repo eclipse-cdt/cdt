@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
+ *     QNX - Initial API and implementation
+ *     Andrew Ferguson (Symbian)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -329,4 +330,13 @@ public class LongString implements IString {
 		return buffer.toString();
 	}
 
+	public int compareCompatibleWithIgnoreCase(IString string) throws CoreException {
+		int cmp= compare(string, false);
+		return cmp==0 ? compare(string, true) : cmp;	
+	}
+
+	public int compareCompatibleWithIgnoreCase(char[] chars) throws CoreException {
+		int cmp= compare(chars, false);
+		return cmp==0 ? compare(chars, true) : cmp;	
+	}
 }

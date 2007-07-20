@@ -62,6 +62,8 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 	}
 	
 	final public int compare(int record) throws CoreException {
+		if (monitor != null)
+			checkCancelled();
 		IString name= PDOMNamedNode.getDBName(linkage.getPDOM(), record);
 		return compare(name);
 	}
@@ -75,9 +77,11 @@ public class NamedNodeCollector implements IBTreeVisitor, IPDOMVisitor {
 			}
 			return cmp;
 		} else {
-			cmp= rhsName.compare(name, false);
 			if(caseSensitive) {
-				cmp= cmp==0 ? rhsName.compare(name, true) : cmp;
+				cmp= rhsName.compareCompatibleWithIgnoreCase(name);
+			}
+			else {
+				cmp= rhsName.compare(name, false);
 			}
 		}
 		return cmp;

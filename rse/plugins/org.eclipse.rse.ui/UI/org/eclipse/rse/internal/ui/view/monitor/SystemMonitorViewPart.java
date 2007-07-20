@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [177587] Made MonitorViewPart a SelectionProvider
+ * Kevin Doyle (IBM) - [160378] Subset action should be disabled when there are no tabs in Monitor
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -731,6 +732,7 @@ class SubSetAction extends BrowseAction
 			_selectColumnsAction.checkEnabledState();
 			_refreshAction.checkEnabledState();
 			_positionToAction.checkEnabledState();
+			_subsetAction.checkEnabledState();
 		}
 	}
 

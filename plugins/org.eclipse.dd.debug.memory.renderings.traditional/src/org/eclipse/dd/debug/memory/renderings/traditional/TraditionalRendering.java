@@ -416,13 +416,16 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
     public void applyPreferences()
     {
-    	fRendering.setBackground(getColorBackground());
+    	if(!fRendering.isDisposed())
+    	{
+    		fRendering.setBackground(getColorBackground());
     	
-    	AbstractPane panes[] = fRendering.getRenderingPanes();
-    	for(int i = 0; i < panes.length; i++)
-    		panes[i].setBackground(getColorBackground());
-    	
-    	fRendering.redrawPanes();
+	    	AbstractPane panes[] = fRendering.getRenderingPanes();
+	    	for(int i = 0; i < panes.length; i++)
+	    		panes[i].setBackground(getColorBackground());
+	    	
+	    	fRendering.redrawPanes();
+    	}
     }
     
     public Color getColorBackground()

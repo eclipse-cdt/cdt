@@ -123,7 +123,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 						monitor.beginTask("Transferring Data", jobs.intValue());
 						
 						BigInteger jobCount = BigInteger.ZERO;
-						while(transferAddress.compareTo(endAddress) < 0)
+						while(transferAddress.compareTo(endAddress) < 0 && !monitor.isCanceled())
 						{
 							BigInteger length = DATA_PER_RECORD;
 							if(endAddress.subtract(transferAddress).compareTo(length) < 0)

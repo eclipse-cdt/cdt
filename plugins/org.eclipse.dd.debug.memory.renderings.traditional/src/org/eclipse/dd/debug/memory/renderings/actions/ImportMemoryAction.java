@@ -129,7 +129,7 @@ public class ImportMemoryAction implements IViewActionDelegate {
 						
 						BigInteger jobCount = BigInteger.ZERO;
 						String line = reader.readLine();
-						while(line != null)
+						while(line != null && !monitor.isCanceled())
 						{
 							String recordType = line.substring(0, 2);
 							int recordCount = Integer.parseInt(line.substring(2, 4), 16);

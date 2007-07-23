@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Martin Oberhuber (Wind River) - [197550] Fix NPE when refreshing Pending items
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -56,10 +57,10 @@ import org.eclipse.ui.progress.PendingUpdateAdapter;
  * adapter registered. Also provides label contents, so can be used for
  * both a content and label provider for TreeViewers. 
  * <p>
- * This has a general flavour, which is used in most cases, and also has
- * a specialized flavour for universal file systems, which allows restricting
+ * This has a general flavor, which is used in most cases, and also has
+ * a specialized flavor for universal file systems, which allows restricting
  * the list to files only or folders only. It also allows further subsetting by
- * setting an input filter or filterstring.
+ * setting an input filter or filter string.
  */
 public class SystemViewLabelAndContentProvider extends LabelProvider
        implements ITreeContentProvider, ILabelProvider, ITableLabelProvider
@@ -262,12 +263,12 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
      */
     public Object[] getChildren(Object object) 
     {
-    	ISystemViewElementAdapter adapter = getViewAdapter(object);
     	Object element = object;
     	if (object instanceof IContextObject)
     	{
     		element = ((IContextObject)object).getModelObject();
     	}
+    	ISystemViewElementAdapter adapter = getViewAdapter(element);
     	if (supportsDeferredQueries())
     	{
     		  // The adapter  needs to be checked to be not null, otherwise
@@ -388,23 +389,28 @@ public class SystemViewLabelAndContentProvider extends LabelProvider
     public boolean hasChildren(Object element) 
     {
     	ISystemViewElementAdapter adapter = getViewAdapter(element);
-    	if (element instanceof IContextObject)
-    	{
-    		return adapter.hasChildren((IContextObject)element);
+    	if (adapter!=null) {
+        	if (element instanceof IContextObject)
+        	{
+        		return adapter.hasChildren((IContextObject)element);
+        	}
+        	else
+        	{
+	    	    return adapter.hasChildren((IAdaptable)element);
+        	}
     	}
     	else
     	{
-	    	if (adapter != null) 
-	    	{
-	    	    return adapter.hasChildren((IAdaptable)element);
-	    	}
-	    	if (manager != null) {
-				if (manager.isDeferredAdapter(element))
-					return manager.mayHaveChildren(element);
+    		if (element instanceof IContextObject) {
+    			element = ((IContextObject)element).getModelObject();
+    		}
+	    	if (manager != null && manager.isDeferredAdapter(element)) {
+				return manager.mayHaveChildren(element);
 			}
     	}
     	return false;
     }
+    
     /**
      * inputChanged method comment.
 	 * AS LONG AS WE DON'T SUPPORT IWORKSPACE OBJECT THIS IS NOT NEEDED.

@@ -470,6 +470,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return vendor of this subsystem configuration.
 	 * This comes from the xml "vendor" attribute of the extension point.
+	 * 
+	 * <b>Do not override this method</b>, it will likely be declared
+	 * <tt>final</tt> in the next release.
 	 */
 	public String getVendor()
 	{
@@ -479,6 +482,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return name of this subsystem configuration.
 	 * This comes from the xml "name" attribute of the extension point.
+	 * 
+	 * <b>Do not override this method</b>, it will likely be declared
+	 * <tt>final</tt> in the next release.
 	 */
 	public String getName()
 	{
@@ -488,6 +494,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return name of this subsystem configuration.
 	 * This comes from the xml "description" attribute of the extension point.
+	 * 
+	 * <b>Do not override this method</b>, it will likely be declared
+	 * <tt>final</tt> in the next release.
 	 */
 	public String getDescription()
 	{
@@ -497,6 +506,9 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	/**
 	 * Return unique id of this subsystem configuration.
 	 * This comes from the xml "id" attribute of the extension point.
+	 * 
+	 * <b>Do not override this method</b>, it will likely be declared
+	 * <tt>final</tt> in the next release.
 	 */
 	public String getId()
 	{
@@ -505,14 +517,25 @@ public abstract class SubSystemConfiguration  implements ISubSystemConfiguration
 	
 	/**
 	 * Return the category this subsystem configuration subscribes to.
+	 * This comes from the xml "category" attribute of the extension point.
 	 * @see org.eclipse.rse.core.model.ISubSystemConfigurationCategories
+	 * 
+	 * <b>Do not override this method</b>, it will likely be declared
+	 * <tt>final</tt> in the next release.
 	 */
 	public String getCategory()
 	{
 		return proxy.getCategory();
 	}
+	
 	/**
 	 * Return the system types this subsystem configuration supports.
+	 * These come from static declaration in the 
+	 * <tt>org.eclipse.rse.core.subsystemConfigurations</tt> and
+	 * <tt>org.eclipse.rse.core.systemTypes</tt> extension points. 
+	 * 
+	 * <b>Do not override this method</b>, it will likely be declared
+	 * <tt>final</tt> in the next release.
 	 */
 	public IRSESystemType[] getSystemTypes()
 	{

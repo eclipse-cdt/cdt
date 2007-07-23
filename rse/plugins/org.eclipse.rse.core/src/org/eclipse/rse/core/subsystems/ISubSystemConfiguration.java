@@ -29,6 +29,15 @@ import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.model.ISystemProfile;
 
+/**
+ * Subsystem Configuration interface.
+ * 
+ * <p>
+ * This interface is not intended to be implemented by clients. Subsystem
+ * configuration implementations must subclass {@link SubSystemConfiguration}
+ * rather than implementing this interface directly.
+ * </p>
+ */
 public interface ISubSystemConfiguration extends ISystemFilterPoolManagerProvider, IRSEPersistableContainer {
 	// ---------------------------------
 	// CONSTANTS...

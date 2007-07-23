@@ -18,13 +18,15 @@
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Martin Oberhuber (Wind River) - [160293] NPE on startup when only Core feature is installed
  * Uwe Stieber (Wind River) - [192611] RSE Core plugin may fail to initialize because of cyclic code invocation
+ * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by priority then Id
  ********************************************************************************/
 package org.eclipse.rse.core;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -282,21 +284,19 @@ public class RSECorePlugin extends Plugin {
     	IConfigurationElement[] factoryPlugins = getSubSystemConfigurationPlugins();
     	if (factoryPlugins != null)
     	{
-          Vector v = new Vector();
+          List l = new ArrayList();
           for (int idx=0; idx<factoryPlugins.length; idx++)
           {
              SubSystemConfigurationProxy ssf =
                new SubSystemConfigurationProxy(factoryPlugins[idx]);           	
           	
-             v.addElement(ssf);
-          }    	  	
-          if (v.size() != 0)
-          {
-            _subsystemConfigurations = new ISubSystemConfigurationProxy[v.size()];
-            for (int idx=0; idx<v.size(); idx++)
-               _subsystemConfigurations[idx] = (ISubSystemConfigurationProxy)v.elementAt(idx);
+             l.add(ssf);
           }
-          Arrays.sort(_subsystemConfigurations, new SubSystemConfigurationProxyComparator());
+          ISubSystemConfigurationProxy[] newProxies = (ISubSystemConfigurationProxy[])l.toArray(new ISubSystemConfigurationProxy[l.size()]);
+  		  //[149280][165674]: Sort proxies by priority then ID in order to 
+          //get deterministic results on all getSubSystemConfiguration*() queries
+          Arrays.sort(newProxies, new SubSystemConfigurationProxyComparator());
+          _subsystemConfigurations = newProxies;
     	}
     	
     	return _subsystemConfigurations;

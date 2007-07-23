@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by priority then Id
  *******************************************************************************/
 package org.eclipse.rse.internal.core.subsystems;
 
@@ -23,7 +24,7 @@ public class SubSystemConfigurationProxyComparator implements Comparator {
 	}
 
 	/**
-	 * Compares priorities of subsystem configuration proxies. 
+	 * Compares subsystem configuration proxies by Priority, then Id.
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object o1, Object o2) {
@@ -36,14 +37,11 @@ public class SubSystemConfigurationProxyComparator implements Comparator {
 				return -1;
 			}
 			else if (proxy1.getPriority() > proxy2.getPriority()) {
-				return 1;
-			}
-			else {
-				return 0;
+				return +1;
+			} else {
+				return proxy1.getId().compareTo(proxy2.getId());
 			}
 		}
-		else {
-			return 0;
-		}
+		return 0;
 	}
 }

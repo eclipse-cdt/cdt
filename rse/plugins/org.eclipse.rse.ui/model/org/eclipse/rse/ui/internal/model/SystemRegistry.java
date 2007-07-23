@@ -39,7 +39,6 @@
 package org.eclipse.rse.ui.internal.model;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -255,29 +254,17 @@ public class SystemRegistry implements ISystemRegistry
 
 	/**
 	 * Private method used by RSEUIPlugin to tell registry all registered subsystem
-	 *  factories. This way, all code can use this registry to access them versus the
-	 *  RSEUIPlugin.
+	 * factories. This way, all code can use this registry to access them versus the
+	 * RSEUIPlugin.
+	 * 
+	 * Proxies must be set sorted by priority, then ID in order to get deterministic
+	 * results for all getSubSystemConfiguration*() queries. 
 	 */
 	public void setSubSystemConfigurationProxies(ISubSystemConfigurationProxy[] proxies)
 	{
-		//[165674]: Sort proxies by ID in order to get deterministic results
-		//on all getSubSystemConfiguration*() queries
-		ISubSystemConfigurationProxy[] newProxies = (ISubSystemConfigurationProxy[])proxies.clone();
-		Arrays.sort(newProxies, new Comparator(){
-			public int compare(Object o1, Object o2) {
-				ISubSystemConfigurationProxy s1 = (ISubSystemConfigurationProxy)o1;
-				ISubSystemConfigurationProxy s2 = (ISubSystemConfigurationProxy)o2;
-				if (s1.getPriority() < s2.getPriority()) {
-					return -1;
-				} else if (s1.getPriority() > s2.getPriority()) {
-					return +1;
-				}
-				return s1.getId().compareTo(s2.getId());
-			}
-		});
-		//for (int idx=0; idx<newProxies.length; idx++)
-		// newProxies[idx].setLogFile(logFile);
-		subsystemConfigurationProxies = newProxies;
+		subsystemConfigurationProxies = proxies;
+		//for (int idx=0; idx<proxies.length; idx++)
+		// proxies[idx].setLogFile(logFile);
 	}
 	/**
 	 * Public method to retrieve list of subsystem factory proxies registered by extension points.

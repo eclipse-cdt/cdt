@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX Software Systems - Initial API and implementation
+ *    QNX Software Systems - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -22,8 +22,13 @@ import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
+import org.eclipse.cdt.core.settings.model.CSourceEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -37,7 +42,7 @@ import org.eclipse.core.runtime.Path;
 /*
  * CPathEntryTest
  */
-public class CPathEntryTest extends TestCase {
+public class CPathEntryTest extends BaseTestCase {
 	IWorkspace workspace;
 	IWorkspaceRoot root;
 	IProject project_c, project_cc;
@@ -122,7 +127,7 @@ public class CPathEntryTest extends TestCase {
 	}
 
 	public static TestSuite suite() {
-		return new TestSuite(CPathEntryTest.class);
+		return suite(CPathEntryTest.class);
 	}
 
 	public static void main(String[] args) {
@@ -220,5 +225,61 @@ public class CPathEntryTest extends TestCase {
 		//  1) the default sourceEntry becomes the project
 		//  2) the default outputEntry becomes the project
 		assertTrue("Expecting 3 pathentries from container", entries.length == (3 + 2));
+		
+	}	
+	
+	public void _testSetExclusionFilter_Bug197486() throws Exception {
+		ICProject testProject = null;
+		try {
+			testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (testProject == null) {
+			fail("Unable to create project");
+		}
+
+		// get project description
+		ICProjectDescription prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
+		ICConfigurationDescription activeCfg= prjDesc.getActiveConfiguration();
+		assertNotNull(activeCfg);
+		
+		// add filter to source entry
+		ICSourceEntry[] entries = activeCfg.getSourceEntries();
+		final String sourceEntryName = entries[0].getName();
+		final IPath[] exclusionPatterns = new IPath[] { new Path("dummy*"), new Path("dummy2/*") };
+
+		ICSourceEntry entry = new CSourceEntry(sourceEntryName, exclusionPatterns, entries[0].getFlags());
+		activeCfg.setSourceEntries(new ICSourceEntry[] {entry});
+		
+		// check the modified configuration for the exclusion patterns
+		checkExclusionPatterns(sourceEntryName, exclusionPatterns, activeCfg);
+		
+		// store the changed configuration
+		CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc);
+
+		// check again.
+		prjDesc= CoreModel.getDefault().getProjectDescription(testProject.getProject(), false);
+		ICConfigurationDescription[] allConfigs= prjDesc.getConfigurations();
+		assertEquals(1, allConfigs.length);
+		checkExclusionPatterns(sourceEntryName, exclusionPatterns, allConfigs[0]);
+		
+		activeCfg= prjDesc.getActiveConfiguration();
+		checkExclusionPatterns(sourceEntryName, exclusionPatterns, activeCfg);
+	}
+
+	private void checkExclusionPatterns(String sourceEntryName, IPath[] exclusionPatterns, ICConfigurationDescription cfg) {
+		assertNotNull(cfg);
+
+		ICSourceEntry[] entries = cfg.getSourceEntries();
+		assertEquals(1, entries.length);
+		assertEquals(sourceEntryName, entries[0].getName());
+		IPath[] actualExclusionPatterns = entries[0].getExclusionPatterns();
+		assertEquals(exclusionPatterns.length, actualExclusionPatterns.length);
+		for (int i = 0; i < actualExclusionPatterns.length; i++) {
+			IPath path = actualExclusionPatterns[i];
+			assertEquals(exclusionPatterns[i], actualExclusionPatterns[i]);
+		}
 	}
 }

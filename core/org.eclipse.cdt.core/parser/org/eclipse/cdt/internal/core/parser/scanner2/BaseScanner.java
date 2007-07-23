@@ -3202,9 +3202,7 @@ abstract class BaseScanner implements IScanner {
             escaped = false;
         }
         bufferPos[bufferStackPos]= pos;
-		
 	}
-
 
     protected char[] handleFunctionStyleMacro(FunctionStyleMacro macro,
             boolean pushContext) {
@@ -3278,24 +3276,31 @@ abstract class BaseScanner implements IScanner {
         }
 
         char[][] arglist = macro.arglist;
-        int currarg = -1;
+        int currarg = 0;
         CharArrayObjectMap argmap = new CharArrayObjectMap(arglist.length);
 
         boolean insideString = false;
         while (bufferPos[bufferStackPos] < limit) {
             skipOverWhiteSpace();
 
-            if( bufferPos[bufferStackPos] + 1 >= limit )
+            if (bufferPos[bufferStackPos] + 1 >= limit)
             	break;
             
             if (buffer[++bufferPos[bufferStackPos]] == ')') {
-                // end of macro
-                break;
-            } else if (buffer[bufferPos[bufferStackPos]] == ',') {
+                if (currarg > 0 && argmap.size() <= currarg) {
+                    argmap.put(arglist[currarg], EMPTY_CHAR_ARRAY);
+                }
+                break;	// end of macro
+            }
+            if (buffer[bufferPos[bufferStackPos]] == ',') {
+                if (argmap.size() <= currarg) {
+                    argmap.put(arglist[currarg], EMPTY_CHAR_ARRAY);
+                }
+            	currarg++;
                 continue;
             }
 
-            if ((++currarg >= arglist.length || arglist[currarg] == null)
+            if ((currarg >= arglist.length || arglist[currarg] == null)
                     && !macro.hasVarArgs() && !macro.hasGCCVarArgs()) {
                 // too many args and no variable argument
                 handleProblem(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR,
@@ -3308,14 +3313,11 @@ abstract class BaseScanner implements IScanner {
             int argend = -1;
             if ((macro.hasGCCVarArgs() || macro.hasVarArgs())
                     && currarg == macro.getVarArgsPosition()) {
-                --bufferPos[bufferStackPos]; // go back to first char of macro
-                                             // args
+                --bufferPos[bufferStackPos]; // go back to first char of macro arguments
 
-                // there are varargs and the other parms have been accounted
-                // for,
-                // the rest will replace __VA_ARGS__ or name where "name..." is
-                // the
-                // parm
+                // there are varargs and the other parameters have been accounted
+                // for, the rest will replace __VA_ARGS__ or name where
+                // "name..." is the parameter
                 do {
                     if (buffer[bufferPos[bufferStackPos]] == '"') {
                         if (insideString)
@@ -3331,8 +3333,9 @@ abstract class BaseScanner implements IScanner {
                     }
                 } while (++bufferPos[bufferStackPos] < limit);
                 argend = bufferPos[bufferStackPos];
-            } else
+            } else {
                 argend = skipOverMacroArg();
+            }
 
             // correct argend when reaching limit, (bug 179383)
             if (argend==limit) {

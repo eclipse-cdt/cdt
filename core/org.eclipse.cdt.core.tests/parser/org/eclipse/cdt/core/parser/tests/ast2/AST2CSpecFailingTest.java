@@ -101,22 +101,4 @@ public class AST2CSpecFailingTest extends AST2SpecBaseTest {
 		assertTrue(false);
 		} catch (Exception e) {}
 	}
-	
-	/**
-	 [--Start Example(C 6.10.3.5-7):
-	#define t(x,y,z) x ## y ## z
-	int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
-	t(10,,), t(,11,), t(,,12), t(,,) };
-	 --End Example]
-	 */
-	public void test6_10_3_5s7() throws Exception {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("#define t(x,y,z) x ## y ## z\n"); //$NON-NLS-1$
-		buffer.append("int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),\n"); //$NON-NLS-1$
-		buffer.append("t(10,,), t(,11,), t(,,12), t(,,) };\n"); //$NON-NLS-1$
-		try {
-		parseCandCPP(buffer.toString(), true, 0);
-		assertTrue(false);
-		} catch (Exception e) {}
-	}
 }

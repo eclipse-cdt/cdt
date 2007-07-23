@@ -79,8 +79,44 @@ public class Scanner2Test extends BaseScanner2Test
 		assertEquals( callback.problems.size(), 0 );
     }
     
-	public class TableRow
-	{
+    public void testBug195610_1() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("#define glue(x, y, z) x ## y ## z\n"); //$NON-NLS-1$
+    	buffer.append("glue(, b, c)\n"); //$NON-NLS-1$
+    	
+    	initializeScanner(buffer.toString());
+        Callback callback = new Callback(ParserMode.QUICK_PARSE);
+		initializeScanner(buffer.toString(), ParserMode.QUICK_PARSE, callback);
+        validateIdentifier("bc"); //$NON-NLS-1$
+		assertEquals(callback.problems.size(), 0);
+    }
+
+    public void testBug195610_2() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("#define glue(x, y, z) x ## y ## z\n"); //$NON-NLS-1$
+    	buffer.append("glue(a, , c)\n"); //$NON-NLS-1$
+    	
+    	initializeScanner(buffer.toString());
+        Callback callback = new Callback(ParserMode.QUICK_PARSE);
+		initializeScanner(buffer.toString(), ParserMode.QUICK_PARSE, callback);
+        validateIdentifier("ac"); //$NON-NLS-1$
+		assertEquals(callback.problems.size(), 0);
+    }
+
+    public void testBug195610_3() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("#define glue(x, y, z) x ## y ## z\n"); //$NON-NLS-1$
+    	buffer.append("glue(a, b, )\n"); //$NON-NLS-1$
+    	
+    	initializeScanner(buffer.toString());
+        Callback callback = new Callback(ParserMode.QUICK_PARSE);
+		initializeScanner(buffer.toString(), ParserMode.QUICK_PARSE, callback);
+        validateIdentifier("ab"); //$NON-NLS-1$
+		assertEquals(callback.problems.size(), 0);
+    }
+
+    public class TableRow
+    {
 		private int[] values;
 		private int length;
 

@@ -35,6 +35,7 @@
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  * David McKnight   (IBM)        - [187205] Prevented expansion of non-expanded on remote refresh
  * David McKnight   (IBM)        - [196930] Don't add the connection when it's not supposed to be shown
+ * Tobias Schwarz (Wind River)   - [197484] Provide ContextObject for queries on all levels
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3085,10 +3086,14 @@ public class SystemView extends SafeTreeViewer
 
 	protected void doOurInternalRefresh(Widget widget, Object element, boolean doStruct, boolean firstCall) {
 		if (widget instanceof Item) {
+		    Object data = element;
+            if (data instanceof IContextObject) {
+                data = ((IContextObject)data).getModelObject();
+            }
 			if (doStruct) {
-				updatePlus((Item) widget, element);
+				updatePlus((Item) widget, data);
 			}
-			updateItem(widget, element);
+			updateItem(widget, data);
 		}
 
 		// recurse
@@ -3097,6 +3102,9 @@ public class SystemView extends SafeTreeViewer
 			for (int i = 0; i < children.length; i++) {
 				Widget item = children[i];
 				Object data = item.getData();
+				if (data instanceof IAdaptable && item instanceof TreeItem) {
+					data = getContextObject((TreeItem)item);
+				}
 				if (data != null) doOurInternalRefresh(item, data, doStruct, false);
 			}
 		}
@@ -3136,6 +3144,9 @@ public class SystemView extends SafeTreeViewer
 			for (int i = 0; i < children.length; i++) {
 				Widget item = children[i];
 				Object data = item.getData();
+                if (data instanceof IAdaptable && item instanceof TreeItem) {
+					data = getContextObject((TreeItem)item);
+                }
 				if (data != null) {
 					internalRSERefreshStruct(item, data, updateLabels);
 				}

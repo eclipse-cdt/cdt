@@ -97,12 +97,12 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	public ISubSystemConfiguration getSubSystemConfiguration(String id);
 
 	/**
-	 * Return all subsystem factories which support the given system type.
+	 * Return all subsystem configurations which support the given system type.
 	 * If the type is null, returns all.
 	 * @param systemType system type to filter
-	 * @param filterDuplicateServiceSubSystemFactories set false by default
+	 * @param filterDuplicateServiceSubSystemConfigurations set false by default
 	 */
-	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories);
+	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemConfigurations);
 	
 	// ----------------------------------
 	// SYSTEMVIEWINPUTPROVIDER METHODS...

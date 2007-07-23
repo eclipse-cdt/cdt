@@ -33,11 +33,13 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
  * David McKnight   (IBM)        - [165674] Sort subsystem configurations to be in deterministic order
+ * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by Id rather than name
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -258,9 +260,19 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void setSubSystemConfigurationProxies(ISubSystemConfigurationProxy[] proxies)
 	{
-		subsystemConfigurationProxies = proxies;
-		//for (int idx=0; idx<proxies.length; idx++)
-		// proxies[idx].setLogFile(logFile);
+		//[165674]: Sort proxies by ID in order to get deterministic results
+		//on all getSubSystemConfiguration*() queries
+		ISubSystemConfigurationProxy[] newProxies = (ISubSystemConfigurationProxy[])proxies.clone();
+		Arrays.sort(newProxies, new Comparator(){
+			public int compare(Object o1, Object o2) {
+				String t1 = ((ISubSystemConfigurationProxy) o1).getId();
+				String t2 = ((ISubSystemConfigurationProxy) o2).getId();
+				return t1.compareTo(t2);
+			}
+		});
+		//for (int idx=0; idx<newProxies.length; idx++)
+		// newProxies[idx].setLogFile(logFile);
+		subsystemConfigurationProxies = newProxies;
 	}
 	/**
 	 * Public method to retrieve list of subsystem factory proxies registered by extension points.
@@ -308,10 +320,9 @@ public class SystemRegistry implements ISystemRegistry
 
 
 
-	/**
-	 * Return all subsystem factories which support the given system type.
-	 * If the type is null, returns all.
-	 * 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemRegistry#getSubSystemConfigurationsBySystemType(org.eclipse.rse.core.IRSESystemType, boolean)
 	 */
 	public ISubSystemConfiguration[] getSubSystemConfigurationsBySystemType(IRSESystemType systemType, boolean filterDuplicateServiceSubSystemFactories)
 	{
@@ -360,28 +371,7 @@ public class SystemRegistry implements ISystemRegistry
 								
 								v.addElement(ssFactory);
 							}
-							else // for 165674 - fix the order to be deterministic
-							{					
-								// replace with this one if this is first alphabetically
-								// find the current one
-								for (int i = 0; i < v.size(); i++)
-								{
-									if (v.get(i) instanceof IServiceSubSystemConfiguration)
-									{		
-										IServiceSubSystemConfiguration addedConfig = (IServiceSubSystemConfiguration)v.get(i);
-										if (addedConfig.getServiceType() == serviceType)
-										{
-											if (serviceFactory.getName().compareTo(addedConfig.getName()) <= 0)
-											{
-												v.remove(addedConfig);
-												v.add(serviceFactory);
 											}											
-										}
-									}
-								}
-						
-							}
-						}
 						else
 						{
 							v.addElement(ssFactory);
@@ -390,48 +380,8 @@ public class SystemRegistry implements ISystemRegistry
 				}
 			}
 		}
-		
-		v = sortConfigurations(v);
-		ISubSystemConfiguration[] factories = new ISubSystemConfiguration[v.size()];
-		
-		for (int idx = 0; idx < v.size(); idx++)
-			factories[idx] = (ISubSystemConfiguration) v.elementAt(idx);
+		ISubSystemConfiguration[] factories = (ISubSystemConfiguration[])v.toArray(new ISubSystemConfiguration[v.size()]);
 		return factories;
-	}
-	
-	private Vector sortConfigurations(Vector v)
-	{
-		Vector sorted = new Vector(v.size());
-		while (v.size() > 0)
-		{
-			ISubSystemConfiguration first = firstConfiguration(v);
-			sorted.add(first);
-			v.remove(first);
-		}
-		return sorted;
-	}
-	
-	private ISubSystemConfiguration firstConfiguration(Vector v)
-	{
-		ISubSystemConfiguration first = null;
-		for (int i = 0; i < v.size(); i++)
-		{
-			ISubSystemConfiguration next = (ISubSystemConfiguration)v.get(i);
-			if (first == null)
-			{
-				first = next;
-			}
-			else
-			{
-				String name1 = first.getName();
-				String name2 = next.getName();
-				if (name2.compareTo(name1) <= 0)
-				{
-					first = next;
-				}
-			}
-		}
-		return first;
 	}
 	
 

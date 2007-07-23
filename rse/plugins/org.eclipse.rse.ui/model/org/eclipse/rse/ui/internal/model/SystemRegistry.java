@@ -33,7 +33,7 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
  * David McKnight   (IBM)        - [165674] Sort subsystem configurations to be in deterministic order
- * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by Id rather than name
+ * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by priority then Id
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -265,9 +265,14 @@ public class SystemRegistry implements ISystemRegistry
 		ISubSystemConfigurationProxy[] newProxies = (ISubSystemConfigurationProxy[])proxies.clone();
 		Arrays.sort(newProxies, new Comparator(){
 			public int compare(Object o1, Object o2) {
-				String t1 = ((ISubSystemConfigurationProxy) o1).getId();
-				String t2 = ((ISubSystemConfigurationProxy) o2).getId();
-				return t1.compareTo(t2);
+				ISubSystemConfigurationProxy s1 = (ISubSystemConfigurationProxy)o1;
+				ISubSystemConfigurationProxy s2 = (ISubSystemConfigurationProxy)o2;
+				if (s1.getPriority() < s2.getPriority()) {
+					return -1;
+				} else if (s1.getPriority() > s2.getPriority()) {
+					return +1;
+				}
+				return s1.getId().compareTo(s2.getId());
 			}
 		});
 		//for (int idx=0; idx<newProxies.length; idx++)

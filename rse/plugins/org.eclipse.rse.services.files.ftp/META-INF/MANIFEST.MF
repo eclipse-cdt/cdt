@@ -9,8 +9,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)",
  org.apache.commons.net;bundle-version="[1.4.1,2.0.0)";visibility:="reexport",
- org.eclipse.rse.core;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.core.resources
+ org.eclipse.rse.core;bundle-version="[2.0.0,3.0.0)"
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.internal.services.files.ftp;x-friends:="org.eclipse.rse.subsystems.files.ftp",
  org.eclipse.rse.internal.services.files.ftp.parser;x-friends:="org.eclipse.rse.subsystems.files.ftp"

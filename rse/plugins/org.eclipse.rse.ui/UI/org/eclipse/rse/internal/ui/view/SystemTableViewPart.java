@@ -20,6 +20,7 @@
  * David McKnight (IBM) - [191288] Up To Action doesn't go all the way back to the connections
  * Xuan Chen        (IBM)        - [192716] Refresh Error in Table View after Renaming folder shown in table
  * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
+ * Kevin Doyle (IBM) - [193394] After Deleting the folder shown in Table get an error
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -28,7 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -66,6 +66,7 @@ import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
@@ -1266,7 +1267,10 @@ public class SystemTableViewPart extends ViewPart
 		selectionService.removeSelectionListener(this);
 		_viewer.removeSelectionChangedListener(this);
 
-		RSECorePlugin.getTheSystemRegistry().removeSystemResourceChangeListener(this);
+		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+		registry.removeSystemRemoteChangeListener(this);
+		registry.removeSystemResourceChangeListener(this);
+	
 		if (_viewer != null)
 		{
 			_viewer.dispose();
@@ -1549,14 +1553,11 @@ public class SystemTableViewPart extends ViewPart
 	 case ISystemResourceChangeEvents.EVENT_DELETE:   	    	  
   	  case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
   	  	{
-  	      if (child instanceof ISystemFilterReference)
-  	      {
-  	          
-  	          if (child == input)
-  	          {
-  	              removeFromHistory(input);
-	    	  }
-  	      }
+  	  		Object[] multi = event.getMultiSource();
+  	  		for (int i = 0; i < multi.length; i++) {
+  	  			// Update the history to remove all references to object
+  	  			removeFromHistory(multi[i]);
+  	  		}
   	  	}
   	      break;  
   	      default:
@@ -1567,11 +1568,12 @@ public class SystemTableViewPart extends ViewPart
 	protected void removeFromHistory(Object c)
 	{
 	    // if the object is in history, remove it since it's been deleted
+		// and remove all objects whose parent is the deleted object
 	    for (int i = 0; i < _browseHistory.size(); i++)
 	    {
 	        HistoryItem hist = (HistoryItem)_browseHistory.get(i);
 	        Object historyObj = hist.getObject();
-	        if (historyObj == c || historyObj.equals(c))
+	        if (historyObj == c || historyObj.equals(c) || isParentOf(c,historyObj))
 	        {
 	            _browseHistory.remove(hist);
 	            if (_browsePosition >= i)
@@ -1582,24 +1584,50 @@ public class SystemTableViewPart extends ViewPart
 	                    _browsePosition = 0;
 	                }
 	            }
-	            if (hist == _currentItem)
-	            {
-	                if (_browseHistory.size() > 0)
-	                {
-	                    _currentItem = (HistoryItem)_browseHistory.get(_browsePosition);
-	                    setInput(_currentItem.getObject(), null, false);
-	                }
-	                else
-	                {
-	                    _currentItem = null;
-	                    setInput((IAdaptable)null, null, false);
-	                }
-	                
-	               
-	            }
-	        }
+	            // 	Since we are removing an item the size decreased by one so i
+	            // needs to decrease by one or we will skip elements in _browseHistory
+	            i--;
+	        } 
 	    }
+	    
+	    Object currentObject = _currentItem.getObject();
+	    
+	    // Update the input of the viewer to the closest item in the history
+	    // that still exists if the current viewer item has been deleted.
+	    if (c == currentObject || c.equals(currentObject) || isParentOf(c,currentObject))
+        {
+            if (_browseHistory.size() > 0)
+            {
+                _currentItem = (HistoryItem)_browseHistory.get(_browsePosition);
+                setInput(_currentItem.getObject(), null, false);
+            }
+            else
+            {
+                _currentItem = null;
+                setInput(RSECorePlugin.getTheSystemRegistry(), null, true);
+            }
+        }
 	}
+	
+	protected boolean isParentOf(Object parent, Object child) {
+		if (parent instanceof IAdaptable && child instanceof IAdaptable) {
+			ISystemDragDropAdapter adapterParent = (ISystemDragDropAdapter) ((IAdaptable)parent).getAdapter(ISystemDragDropAdapter.class);
+			ISystemDragDropAdapter adapterChild = (ISystemDragDropAdapter) ((IAdaptable)child).getAdapter(ISystemDragDropAdapter.class);
+			// Check that both parent and child are from the same SubSystem
+			if (adapterParent != null && adapterChild != null &&
+					adapterParent.getSubSystem(parent) == adapterChild.getSubSystem(child)) {
+				String parentAbsoluteName = adapterParent.getAbsoluteName(parent);  
+				String childAbsoluteName = adapterChild.getAbsoluteName(child); 
+				// Check if the child's absolute name starts with the parents absolute name
+				// if it does then parent is the parent of child.
+				if(childAbsoluteName != null && childAbsoluteName.startsWith(parentAbsoluteName)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * This is the method in your class that will be called when a remote resource

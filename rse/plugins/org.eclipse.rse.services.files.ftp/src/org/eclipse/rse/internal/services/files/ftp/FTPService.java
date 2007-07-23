@@ -45,6 +45,7 @@
  * Javier Montalvo Orus (Symbian) - [187862] Incorrect Error Message when creating new file in read-only directory
  * Javier Montalvo Orus (Symbian) - [194204] Renaming Files/Folders moves them sometimes
  * Javier Montalvo Orus (Symbian) - [192724] New Filter with Show Files Only still shows folders
+ * Martin Oberhuber (Wind River) - [192724] Fixed logic to filter folders if FILE_TYPE_FOLDERS
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -497,26 +498,17 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				for(int i=0; i<_ftpFiles.length; i++)
 				{
 					FTPHostFile f = new FTPHostFile(parentPath, _ftpFiles[i]);
-	
-					if((filematcher.matches(f.getName()) || f.isDirectory()) && !(f.getName().equals(".") || f.getName().equals(".."))) //$NON-NLS-1$ //$NON-NLS-2$
-					{
-						switch(fileType)
-						{
-							case FILE_TYPE_FOLDERS:
-								if(f.isDirectory())
-								{
-									results.add(f);	
-								}
-								break;
-							case FILE_TYPE_FILES:
-								if(f.isFile())
-								{
-									results.add(f);	
-								}
-								break;
-							case FILE_TYPE_FILES_AND_FOLDERS:
-								results.add(f);	
-								break;
+					if (isRightType(fileType,f)) {
+						String name = f.getName();
+						if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+							//Never return the default directory names
+							continue;
+						} else if (f.isDirectory() && fileType!=FILE_TYPE_FOLDERS) {
+							//get ALL directory names (unless looking for folders only)
+							results.add(f);
+						} else if (filematcher.matches(name)) { 
+							//filter all others by name.
+							results.add(f);
 						}
 					}
 				}

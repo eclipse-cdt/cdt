@@ -10,6 +10,7 @@
  * Dave Dykstal (IBM) - fixing bug 162510: correctly process filter strings
  * Kushal Munir (IBM) - for API bug   
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Martin Oberhuber (Wind River) - [192724] Fixed logic to filter folders if FILE_TYPE_FOLDERS
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -307,7 +308,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			    			//don't show the trivial names
 			    			continue;
 			    		}
-			    		if (filematcher.matches(fileName) || lsEntry.getAttrs().isDir()) {
+			    		if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=FILE_TYPE_FOLDERS)) {
+							//get ALL directory names (unless looking for folders only)
 			    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
 			    			if (isRightType(fileType, node)) {
 			    				results.add(node);

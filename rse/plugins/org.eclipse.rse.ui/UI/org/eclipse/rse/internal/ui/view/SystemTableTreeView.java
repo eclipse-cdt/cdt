@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste with Search view open
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.Assert;
@@ -895,11 +897,11 @@ public class SystemTableTreeView
 		Object remoteResourceParent = event.getResourceParent();
 		Object remoteResource = event.getResource();
 		//boolean originatedHere = (event.getOriginatingViewer() == this);
-		Vector remoteResourceNames = null;
-		if (remoteResource instanceof Vector)
+		List remoteResourceNames = null;
+		if (remoteResource instanceof List)
 		{
-			remoteResourceNames = (Vector) remoteResource;
-			remoteResource = remoteResourceNames.elementAt(0);
+			remoteResourceNames = (List) remoteResource;
+			remoteResource = remoteResourceNames.get(0);
 		}
 		String remoteResourceParentName = getRemoteResourceAbsoluteName(remoteResourceParent);
 		String remoteResourceName = getRemoteResourceAbsoluteName(remoteResource);
@@ -1059,7 +1061,7 @@ public class SystemTableTreeView
 			remoteResourceName = (String) remoteResource;
 		else
 		{
-			IRemoteObjectIdentifier ra = getRemoteObjectIdentifier(remoteResource);
+			ISystemViewElementAdapter ra = getViewAdapter(remoteResource);
 			if (ra == null)
 				return null;
 			remoteResourceName = ra.getAbsoluteName(remoteResource);

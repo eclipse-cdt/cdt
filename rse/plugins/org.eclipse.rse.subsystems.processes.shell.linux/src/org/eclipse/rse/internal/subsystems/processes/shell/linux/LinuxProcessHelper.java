@@ -14,6 +14,7 @@
  * Yu-Fen Kuo (MontaVista) - adapted from RSE UniversalLinuxProcessHandler
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [175308] Need to use a job to wait for shell to exit
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -23,7 +24,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
 import org.eclipse.rse.services.shells.HostShellProcessAdapter;
@@ -129,14 +135,41 @@ public class LinuxProcessHelper {
         } catch (IOException e) {
             Activator.log(e);
         }
-        if (p.exitValue() != 0) {
-            String errMsg = Activator.getErrorMessage(p.getErrorStream());
-            if (!errMsg.trim().equals("")) { //$NON-NLS-1$
-                Activator.logErrorMessage(errMsg.toString());
-            }
-        }
+        
+        // Wait for remote process to exit.
+        WaiterJob waiter = new WaiterJob(p);
+        waiter.schedule();
     }
 
+    /*
+     * Job that waits until a remote process has exited
+     */
+    class WaiterJob extends Job
+    {
+    	private Process _p;
+    	public WaiterJob(Process p)
+    	{
+    		super("LinuxShellProcessWaiter"); //$NON-NLS-1$
+    		_p = p;
+    	}
+    	
+    	public IStatus run(IProgressMonitor monitor) {
+            try {
+               _p.waitFor();
+               if (_p.exitValue()!=0) 
+               {
+                   String errMsg = Activator.getErrorMessage(_p.getErrorStream());
+                   if (!errMsg.trim().equals("")) { //$NON-NLS-1$
+                       Activator.logErrorMessage(errMsg.toString());
+                   }
+               }
+            } catch(InterruptedException e) { 
+               return Status.CANCEL_STATUS;
+            }
+            return Status.OK_STATUS;
+         }
+    }
+    
     /**
      * Gets the uid associated with the given username on this system
      */

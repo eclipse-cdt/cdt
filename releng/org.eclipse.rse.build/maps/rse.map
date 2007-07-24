@@ -53,5 +53,5 @@ plugin@org.eclipse.rse.subsystems.shells.ssh=v20070606,:pserver:anonymous:none@d
 plugin@org.eclipse.rse.subsystems.shells.telnet=v20070606,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.subsystems.shells.telnet
 plugin@org.eclipse.rse.tests=v20070712,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests
 plugin@org.eclipse.rse.tests.framework=v20070620,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests.framework
-plugin@org.eclipse.rse.ui=v20070723,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui
+plugin@org.eclipse.rse.ui=v20070723a,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.ui
 plugin@org.eclipse.rse.useractions=v20070605c,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/plugins/org.eclipse.rse.useractions

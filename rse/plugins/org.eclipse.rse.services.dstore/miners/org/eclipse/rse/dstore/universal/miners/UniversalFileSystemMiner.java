@@ -669,8 +669,9 @@ public class UniversalFileSystemMiner extends Miner {
 					for (int i = children.size() - 1; i >= 0; i--)
 					{
 						_dataStore.deleteObject(subject, (DataElement)children.get(i));
-					}
+					}					
 				}
+				_dataStore.refresh(subject);
 			}
 			else
 			{

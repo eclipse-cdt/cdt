@@ -34,6 +34,19 @@ public interface IWritableIndex extends IIndex {
 		public IIndexFragmentFile fTargetFile;
 		public boolean fIsContext= false;
 	}
+	
+	/**
+	 * Checks whether the given file can be written to in this index.
+	 */
+	boolean isWritableFile(IIndexFragmentFile file);
+
+	/**
+	 * Clears the given file in the index.
+	 * @param file a file to clear.
+	 * @param a collection that receives IndexFileLocation objects for files that
+	 *     had the cleared file as a context. May be <code>null</code>.
+	 */
+	void clearFile(IIndexFragmentFile file, Collection clearedContexts) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location or returns an existing one.
@@ -51,14 +64,6 @@ public interface IWritableIndex extends IIndex {
 	 * Clears the entire index.
 	 */
 	void clear() throws CoreException;
-
-	/**
-	 * Clears the given file in the index.
-	 * @param file a file to clear.
-	 * @param a collection that receives IndexFileLocation objects for files that
-	 *     had the cleared file as a context. May be <code>null</code>.
-	 */
-	void clearFile(IIndexFragmentFile file, Collection clearedContexts) throws CoreException;
 
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.

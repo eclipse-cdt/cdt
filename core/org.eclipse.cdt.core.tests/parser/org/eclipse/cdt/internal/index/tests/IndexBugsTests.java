@@ -750,7 +750,6 @@ public class IndexBugsTests extends BaseTestCase {
 	// StructA_T gvar2;
 	public void testFileInMultipleFragments_bug192352() throws Exception {
 		StringBuffer[] contents= getContentsForTest(3);
-
 		
 		ICProject p2 = CProjectHelper.createCCProject("__bugsTest_2_", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
@@ -832,5 +831,66 @@ public class IndexBugsTests extends BaseTestCase {
 		} finally {
 			index.releaseReadLock();
 		}
+	}
+	
+	// int globalVar;
+	
+	// #include "../__bugsTest__/common.h"
+	// void func() {
+	//    globalVar++;
+	// }
+	public void testDependentProjectsWithFullIndexer_Bug197311() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		indexManager.setIndexerId(fCProject, IPDOMManager.ID_FULL_INDEXER);
+		ICProject p2 = CProjectHelper.createCCProject("bug197311", "bin", IPDOMManager.ID_FULL_INDEXER);
+		IProject[] refs = new IProject[] {fCProject.getProject()};
+		IProjectDescription pd = p2.getProject().getDescription();
+		pd.setReferencedProjects(refs);
+		p2.getProject().setDescription(pd, new NullProgressMonitor());
+		try {
+			IFile f1= TestSourceReader.createFile(fCProject.getProject(), "common.h", contents[0].toString());
+			IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
+			IFile f3= TestSourceReader.createFile(p2.getProject(), "src.cpp", contents[1].toString());
+			waitForIndexer();
+
+			IIndex index= indexManager.getIndex(p2, IIndexManager.ADD_DEPENDENCIES);
+			index.acquireReadLock();
+			try {
+				IIndexBinding[] bindings= index.findBindings("globalVar".toCharArray(), IndexFilter.ALL, NPM);
+				assertEquals(1, bindings.length);
+				IIndexBinding binding= bindings[0];
+				IIndexName[] names= index.findReferences(binding);
+				assertEquals(2, names.length);
+				names= index.findDeclarations(binding);
+				assertEquals(1, names.length);
+			}
+			finally {
+				index.releaseReadLock();
+			}
+			
+			indexManager.reindex(p2);
+			waitForIndexer();
+
+			index= indexManager.getIndex(p2, IIndexManager.ADD_DEPENDENCIES);
+			index.acquireReadLock();
+			try {
+				IIndexBinding[] bindings= index.findBindings("globalVar".toCharArray(), IndexFilter.ALL, NPM);
+				assertEquals(1, bindings.length);
+				IIndexBinding binding= bindings[0];
+				IIndexName[] names= index.findReferences(binding);
+				assertEquals(2, names.length);
+				names= index.findDeclarations(binding);
+				assertEquals(1, names.length);
+			}
+			finally {
+				index.releaseReadLock();
+			}
+		}
+		finally {
+			CProjectHelper.delete(p2);
+		}
+	
+		
 	}
 }

@@ -61,15 +61,18 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 
 		IIndexFragment indexFragment = file.getIndexFragment();
-		assert isWritableFragment(indexFragment);
-		
-		for (int i = 0; i < includes.length; i++) {
-			IncludeInformation ii= includes[i];
-			if (ii.fLocation != null) {
-				ii.fTargetFile= addFile(ii.fLocation);
-			}
+		if (!isWritableFragment(indexFragment)) {
+			assert false : "Attempt to update file of read-only fragment"; //$NON-NLS-1$
 		}
-		((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names);
+		else {
+			for (int i = 0; i < includes.length; i++) {
+				IncludeInformation ii= includes[i];
+				if (ii.fLocation != null) {
+					ii.fTargetFile= addFile(ii.fLocation);
+				}
+			}
+			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names);
+		}
 	}
 
 	public void clear() throws CoreException {
@@ -79,11 +82,18 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		}
 	}
 
+	public boolean isWritableFile(IIndexFragmentFile file) {
+		return isWritableFragment(file.getIndexFragment());
+	}
+	
 	public void clearFile(IIndexFragmentFile file, Collection clearedContexts) throws CoreException {
 		IIndexFragment indexFragment = file.getIndexFragment();
-		assert isWritableFragment(indexFragment);
-		
-		((IWritableIndexFragment) indexFragment).clearFile(file, clearedContexts);
+		if (!isWritableFragment(indexFragment)) {
+			assert false : "Attempt to clear file of read-only fragment"; //$NON-NLS-1$
+		}
+		else {
+			((IWritableIndexFragment) indexFragment).clearFile(file, clearedContexts);
+		}
 	}
 
 	

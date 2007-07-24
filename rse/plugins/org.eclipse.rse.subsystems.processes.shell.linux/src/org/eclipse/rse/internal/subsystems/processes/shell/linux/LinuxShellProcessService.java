@@ -9,6 +9,7 @@
  * Yu-Fen Kuo (MontaVista) - initial API and implementation
  * Martin Oberhuber (Wind River) - [refactor] "shell" instead of "ssh" everywhere 
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [175308] Need to use a job to wait for shell to exit
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.shell.linux;
@@ -166,12 +167,11 @@ public class LinuxShellProcessService extends AbstractProcessService {
         } catch (IOException e) {
             Activator.log(e);
         }
-        if (p.exitValue() != 0) {
-            String errMsg = Activator.getErrorMessage(p.getErrorStream());
-            if (!errMsg.trim().equals("")) { //$NON-NLS-1$
-                Activator.logErrorMessage(errMsg.toString());
-            }
-        }
+        
+        // Wait for remote process to exit.
+        WaiterJob waiter = new WaiterJob(p);
+        waiter.schedule();
+        
         return (IHostProcess[]) hostProcessList
                 .toArray(new IHostProcess[hostProcessList.size()]);
     }
@@ -253,12 +253,11 @@ public class LinuxShellProcessService extends AbstractProcessService {
         } catch (IOException e) {
             Activator.log(e);
         }
-        if (p.exitValue() != 0) {
-            String errMsg = Activator.getErrorMessage(p.getErrorStream());
-            if (!errMsg.toString().trim().equals("")) { //$NON-NLS-1$
-                Activator.logErrorMessage(errMsg.toString());
-            }
-        }
+        
+        // Wait for remote process to exit.
+        WaiterJob waiter = new WaiterJob(p);
+        waiter.schedule();
+
         if (lines == null || lines.size() <= 0) {
             Activator.logErrorMessage(LinuxShellProcessResources.LinuxRemoteProcessService_getSignalTypes_empty);
         } else {

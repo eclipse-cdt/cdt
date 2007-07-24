@@ -24,11 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.processes.ISystemProcessRemoteConstants;
@@ -141,35 +137,6 @@ public class LinuxProcessHelper {
         waiter.schedule();
     }
 
-    /*
-     * Job that waits until a remote process has exited
-     */
-    class WaiterJob extends Job
-    {
-    	private Process _p;
-    	public WaiterJob(Process p)
-    	{
-    		super("LinuxShellProcessWaiter"); //$NON-NLS-1$
-    		_p = p;
-    	}
-    	
-    	public IStatus run(IProgressMonitor monitor) {
-            try {
-               _p.waitFor();
-               if (_p.exitValue()!=0) 
-               {
-                   String errMsg = Activator.getErrorMessage(_p.getErrorStream());
-                   if (!errMsg.trim().equals("")) { //$NON-NLS-1$
-                       Activator.logErrorMessage(errMsg.toString());
-                   }
-               }
-            } catch(InterruptedException e) { 
-               return Status.CANCEL_STATUS;
-            }
-            return Status.OK_STATUS;
-         }
-    }
-    
     /**
      * Gets the uid associated with the given username on this system
      */

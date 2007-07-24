@@ -357,7 +357,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		if(paths != null && paths.length != 0){
 			ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[paths.length];
 			for(int i = 0; i < paths.length; i++){
-				entries[i] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, paths.toString(), null, null, flags);
+				entries[i] = (ICLanguageSettingEntry)CDataUtil.createEntry(kind, paths[i].toString(), null, null, flags);
 			}
 			
 			return entries;

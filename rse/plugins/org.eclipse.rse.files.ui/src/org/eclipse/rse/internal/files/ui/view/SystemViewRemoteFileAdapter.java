@@ -25,6 +25,7 @@
  * Xuan Chen        (IBM)        - [180671] [refresh] It is not possible to refresh editor with double clicking on it
  * David Dykstal (IBM) - [160776] format file size according to client system conventions and locale
  * David McKnight   (IBM)        - [197089] Need to set the filter when there is no separator in filter string
+ * David McKnight   (IBM)        - [196662] hasChildren() should return false when the file doesn't exist
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -764,6 +765,10 @@ public class SystemViewRemoteFileAdapter
 	public boolean internalHasChildren(IAdaptable element, ISystemFilterReference filterReference)
 	{
 		IRemoteFile file = (IRemoteFile) element;
+		
+		if (!file.exists())
+			return false;
+		
 		boolean supportsArchiveManagement = file.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
 		boolean hasChildren = false;
 		

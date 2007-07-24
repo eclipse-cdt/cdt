@@ -169,7 +169,7 @@ public class CDebugCorePlugin extends Plugin {
 	}
 
 	private void initializeDebugConfiguration() {
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( getUniqueIdentifier(), CDEBUGGER_EXTENSION_POINT_ID ); //$NON-NLS-1$
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( getUniqueIdentifier(), CDEBUGGER_EXTENSION_POINT_ID );
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 		fDebugConfigurations = new HashMap( infos.length );
 		for( int i = 0; i < infos.length; i++ ) {

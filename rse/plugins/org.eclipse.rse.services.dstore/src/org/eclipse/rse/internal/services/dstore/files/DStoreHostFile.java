@@ -86,7 +86,7 @@ public class DStoreHostFile implements IHostFile
 	public String getName()
 	{
 		String type = _element.getType();
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
+		if (type != null && type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
 			// filter doesn't separate path from name
 			String path = _element.getName();
@@ -123,7 +123,7 @@ public class DStoreHostFile implements IHostFile
 	public String getParentPath()
 	{
 		String type = _element.getType();
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
+		if (type != null && type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
 			// filter doesn't separate path from name
 			String path = _element.getName();
@@ -179,8 +179,8 @@ public class DStoreHostFile implements IHostFile
 	public boolean isDirectory()
 	{
 		String type = _element.getType();
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
-				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR))
+		if (type != null && (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
+				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)))
 		{
 			return true;
 		}
@@ -210,7 +210,7 @@ public class DStoreHostFile implements IHostFile
 	public boolean isFile()
 	{
 		String type = _element.getType();
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)
+		if (type != null && type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)
 				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
 				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR))
 		{

@@ -46,6 +46,9 @@
  * Javier Montalvo Orus (Symbian) - [194204] Renaming Files/Folders moves them sometimes
  * Javier Montalvo Orus (Symbian) - [192724] New Filter with Show Files Only still shows folders
  * Martin Oberhuber (Wind River) - [192724] Fixed logic to filter folders if FILE_TYPE_FOLDERS
+ * Javier Montalvo Orus (Symbian) - [191048] Remote files locally listed and being removed by other users should be reported as missing
+ * Javier Montalvo Orus (Symbian) - [195677] Rename fails on WFTPD-2.03
+ * Javier Montalvo Orus (Symbian) - [197105] Directory listing fails on Solaris when special devices are in a directory
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -497,6 +500,14 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				
 				for(int i=0; i<_ftpFiles.length; i++)
 				{
+					if(_ftpFiles[i]==null)
+					{
+						continue;
+					}
+					
+					String rawListLine = _ftpFiles[i].getRawListing()+System.getProperty("line.separator"); //$NON-NLS-1$
+					_ftpLoggingOutputStream.write(rawListLine.getBytes());
+					
 					FTPHostFile f = new FTPHostFile(parentPath, _ftpFiles[i]);
 					if (isRightType(fileType,f)) {
 						String name = f.getName();
@@ -512,6 +523,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 						}
 					}
 				}
+				
+				_ftpLoggingOutputStream.write(System.getProperty("line.separator").getBytes()); //$NON-NLS-1$
+				
 			}
 			catch (Exception e)
 			{			
@@ -666,6 +680,16 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		IHostFile remoteHostFile = getFile(remoteParent,remoteFile,null);
 		
+		if(remoteHostFile == null)
+		{
+			return false;
+		}
+		
+		if(!remoteHostFile.exists())
+		{
+			throw new RemoteFileIOException(new Exception(FTPServiceResources.FTPService_FTP_File_Service_Not_Found));
+		} 
+		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
 			try
@@ -673,7 +697,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				FTPClient ftpClient = getFTPClient();
 				
 				MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-				//IHostFile remoteHostFile = null;
+				
 				OutputStream output = null;
 				InputStream input = null;
 				
@@ -692,7 +716,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				output = new FileOutputStream(localFile);
 				input = ftpClient.retrieveFileStream(remoteFile);
 				
-				if(remoteHostFile != null && input != null)
+				if(input != null)
 				{
 					progressMonitor.init(0, remoteFile, localFile.getName(), remoteHostFile.getSize());
 					byte[] buffer = new byte[4096];
@@ -828,10 +852,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()));
 				}
 				
-				
-				String source = remoteParent.endsWith(String.valueOf(getSeparator())) ? remoteParent + oldName : remoteParent + getSeparator() + oldName;
-				
-				success = ftpClient.rename(source, newName);
+				success = ftpClient.rename(oldName, newName);
 				
 				if(!success)
 				{

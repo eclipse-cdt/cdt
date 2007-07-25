@@ -10,17 +10,25 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
+import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.settings.model.util.ResourceChangeHandlerBase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -42,6 +50,18 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 
 		public void handleProjectClose(IProject project) {
 			fMngr.setLoaddedDescription(project, null, true);
+		}
+		
+		private ICExclusionPatternPathEntry[] checkMove(IPath fromFullPath, IPath toFullPath, ICExclusionPatternPathEntry[] entries){
+			boolean modified = false;
+			for(int k = 0; k < entries.length; k++){
+				if(entries[k].getFullPath().equals(fromFullPath)){
+					ICExclusionPatternPathEntry entry = entries[k];
+					entries[k] = (ICExclusionPatternPathEntry)CDataUtil.createEntry(entry.getKind(), toFullPath.toString(), null, entry.getExclusionPatterns(), entry.getFlags());
+					modified = true;
+				}
+			}
+			return modified ? entries : null;
 		}
 	
 		public boolean handleResourceMove(IResource fromRc, IResource toRc) {
@@ -66,7 +86,44 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 				}
 			}
 				break;
-			case IResource.FOLDER:
+			case IResource.FOLDER:{
+				IPath fromFullPath = fromRc.getFullPath();
+				IPath toFullPath = toRc.getFullPath();
+				if(toFullPath.equals(fromFullPath))
+					break;
+
+				if(!toProject.equals(fromProject))
+					break;
+				
+				ICProjectDescription des = getProjectDescription(toProject, true);
+				if(des != null){
+					ICConfigurationDescription cfgDess[] = des.getConfigurations();
+					for(int i = 0; i < cfgDess.length; i++){
+						ICConfigurationDescription cfg = cfgDess[i];
+						ICExclusionPatternPathEntry entries[] = cfg.getSourceEntries();
+						entries = checkMove(fromFullPath, toFullPath, entries);
+						if(entries != null){
+							try {
+								cfg.setSourceEntries((ICSourceEntry[])entries);
+							} catch (WriteAccessException e) {
+								CCorePlugin.log(e);
+							} catch (CoreException e) {
+								CCorePlugin.log(e);
+							}
+						}
+						
+//don't do anything about output entries						ICBuildSetting bs = cfg.getBuildSetting();
+//						if(bs != null){
+//							entries = bs.getOutputDirectories();
+//							entries = checkMove(fromFullPath, toFullPath, entries);
+//							if(entries != null){
+//								bs.setOutputDirectories((ICOutputEntry[])entries);
+//							}
+//						}
+					}
+				}
+				//do not break.. proceed with rc description move
+			}
 			case IResource.FILE:{
 				IPath fromRcProjPath = fromRc.getProjectRelativePath();
 				IPath toRcProjPath = toRc.getProjectRelativePath();
@@ -109,6 +166,22 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			}
 			return des;
 		}
+		
+		private List checkRemove(IPath rcFullPath, ICExclusionPatternPathEntry[] entries){
+			List updatedList = null;
+			int num = 0;
+			for(int k = 0; k < entries.length; k++){
+				if(entries[k].getFullPath().equals(rcFullPath)){
+					if(updatedList == null){
+						updatedList = new ArrayList(Arrays.asList(entries));
+					}
+					updatedList.remove(num);
+				} else {
+					num++;
+				}
+			}
+			return updatedList;
+		}
 	
 		public boolean handleResourceRemove(IResource rc) {
 			boolean proceed = true;
@@ -120,6 +193,38 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 				proceed = false;
 				break;
 			case IResource.FOLDER:
+				if(project.exists()){
+					ICProjectDescription des = getProjectDescription(project, true);
+					if(des != null){
+						IPath rcFullPath = rc.getFullPath();
+						ICConfigurationDescription cfgDess[] = des.getConfigurations();
+						for(int i = 0; i < cfgDess.length; i++){
+							ICConfigurationDescription cfg = cfgDess[i];
+							ICExclusionPatternPathEntry[] entries = cfg.getSourceEntries();
+							List updatedList = checkRemove(rcFullPath, entries);
+							
+							if(updatedList != null){
+								try {
+									cfg.setSourceEntries((ICSourceEntry[])updatedList.toArray(new ICSourceEntry[updatedList.size()]));
+								} catch (WriteAccessException e) {
+									CCorePlugin.log(e);
+								} catch (CoreException e) {
+									CCorePlugin.log(e);
+								}
+							}
+							
+//don't do anything about output entries							ICBuildSetting bs = cfg.getBuildSetting();
+//							if(bs != null){
+//								entries = bs.getOutputDirectories();
+//								updatedList = checkRemove(rcFullPath, entries);
+//								if(updatedList != null){
+//									bs.setOutputDirectories((ICOutputEntry[])updatedList.toArray(new ICOutputEntry[updatedList.size()]));
+//								}
+//							}
+						}
+					}
+				}
+				//do not break.. proceed with rc description remove
 			case IResource.FILE:
 				if(project.exists()){
 					ICProjectDescription des = getProjectDescription(project, true);

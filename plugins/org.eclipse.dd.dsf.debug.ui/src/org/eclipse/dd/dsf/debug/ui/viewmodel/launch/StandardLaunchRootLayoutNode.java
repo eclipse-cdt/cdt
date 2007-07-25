@@ -133,6 +133,7 @@ public class StandardLaunchRootLayoutNode extends VMRootLayoutNode
         }
     }
     
+    @Override
     public Object getRootObject() {
         return fLaunch;
     }

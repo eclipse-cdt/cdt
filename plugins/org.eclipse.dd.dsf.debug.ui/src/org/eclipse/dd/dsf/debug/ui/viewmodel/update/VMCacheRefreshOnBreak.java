@@ -18,6 +18,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.update.VMCache;
 
 public class VMCacheRefreshOnBreak extends VMCache 
 {
+    @SuppressWarnings("unchecked")
 	@Override
 	public void handleEvent(IDMEvent event) {
 		if(event instanceof IRunControl.ISuspendedDMEvent)

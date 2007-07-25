@@ -30,10 +30,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * is meant to solve this problem.
  */
 
+@SuppressWarnings("restriction")
 public class AbstractDebugDMVMProviderWithCache extends
 		AbstractDMVMProviderWithCache 
 {
-	@SuppressWarnings("restriction")
+
 	public AbstractDebugDMVMProviderWithCache(AbstractVMAdapter adapter,  IPresentationContext presentationContext, DsfSession session) {
 		super(adapter, presentationContext, session);
 		

@@ -237,7 +237,33 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfService.NOT_SUPPORTED;
-                            handleFailedUpdate(update);
+                            
+                            /*
+                             *  Instead of just failing this outright we are going to attempt to do more here.
+                             *  Failing it outright causes the view to display ... for all columns in the line
+                             *  and this is uninformative about what is happening. It will be very common that
+                             *  one or more variables at that given instance in time are not evaluatable. They
+                             *  may be out of scope and will come back into scope later.
+                             */
+                            String[] localColumns = update.getPresentationContext().getColumns();
+                            if (localColumns == null)
+                                localColumns = new String[] { IDebugVMConstants.COLUMN_ID__NAME };
+                            
+                            for (int idx = 0; idx < localColumns.length; idx++) {
+                                if (IDebugVMConstants.COLUMN_ID__NAME.equals(localColumns[idx])) {
+                                    update.setLabel(dmc.getExpression(), idx);
+                                } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
+                                    update.setLabel("", idx);
+                                } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
+                                    update.setLabel("Error : " + getStatus().getMessage(), idx);
+                                } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
+                                    update.setLabel("", idx);
+                                } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
+                                    update.setLabel(dmc.getExpression(), idx);
+                                }
+                            }
+                            
+                            update.done();
                             return;
                         }
                         

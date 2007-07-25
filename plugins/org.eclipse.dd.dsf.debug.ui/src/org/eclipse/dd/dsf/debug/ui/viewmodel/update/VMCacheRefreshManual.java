@@ -16,10 +16,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.update.VMCache;
 
 public class VMCacheRefreshManual extends VMCache 
 {
-
+    @SuppressWarnings("unchecked")
 	@Override
-	public void handleEvent(IDMEvent event) {
-
-	}
-	
+	public void handleEvent(IDMEvent event) {}
 }

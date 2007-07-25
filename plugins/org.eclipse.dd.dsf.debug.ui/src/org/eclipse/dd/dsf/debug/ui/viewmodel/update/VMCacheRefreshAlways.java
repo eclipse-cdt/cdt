@@ -15,14 +15,12 @@ import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.ui.viewmodel.update.VMCache;
 
-
 public class VMCacheRefreshAlways extends VMCache  
 {
-
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public void handleEvent(IDMEvent event) {
 		if(event instanceof IRunControl.ISuspendedDMEvent)
 			flush(true);
 	}
-
 }

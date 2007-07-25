@@ -122,13 +122,7 @@ public class CDebugCorePlugin extends Plugin {
 	 * @return the unique identifier of this plugin
 	 */
 	public static String getUniqueIdentifier() {
-		if ( getDefault() == null ) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return PLUGIN_ID;
-		}
-		return getDefault().getBundle().getSymbolicName();
+		return PLUGIN_ID;
 	}
 
 	/**

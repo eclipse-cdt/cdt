@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [196664] prevent unnecessary query on the parent
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1257,10 +1258,16 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				_cachedRemoteFiles.put(path, file);
 				return;
 			}
-			
+		
 			// replace file under parent
-			if (oldFile != null && oldFile.getParentRemoteFile() != null)
-			{
+			if (oldFile instanceof RemoteFile) {
+				RemoteFile roldFile = (RemoteFile)oldFile;
+				if (roldFile._parentFile != null) // prevent parent query from bug #196664
+				{
+					roldFile._parentFile.replaceContent(oldFile, file);
+				}
+			}
+			else if (oldFile != null && oldFile.getParentRemoteFile() != null) {
 				oldFile.getParentRemoteFile().replaceContent(oldFile, file);
 			}
 			

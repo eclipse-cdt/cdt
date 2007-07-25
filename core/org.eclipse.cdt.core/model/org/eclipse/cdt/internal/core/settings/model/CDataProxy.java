@@ -115,7 +115,7 @@ public abstract class CDataProxy implements ICSettingObject {
 		setRescan(true);
 	}
 
-	protected void checkUpdate(boolean write){
+	final protected void checkUpdate(boolean write){
 		if((write && !containsWritableData()) 
 				|| isRescan())
 			fParent.updateChild(this, write);

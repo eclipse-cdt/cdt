@@ -370,7 +370,11 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	}
 
 	public CConfigurationData getConfigurationData() {
-		return getConfigurationData(true);
+		CConfigurationData data = getConfigurationData(true);
+		if(data instanceof CConfigurationDescriptionCache){
+			data = ((CConfigurationDescriptionCache)data).getConfigurationData();
+		}
+		return data;
 	}
 
 	public void setConfigurationData(String buildSystemId, CConfigurationData data) throws WriteAccessException {

@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [189150] setSelection(null) added to clear()
+ * Kevin Doyle (IBM) - [194899] Remove All should do a full reset of the scratchpad
  ********************************************************************************/
 
 
@@ -53,9 +54,14 @@ public class ClearAction extends BrowseAction
 	// clear contents of the current command viewer
 	private void clear()
 	{
-	    _scratchPad.clearChildren();
+		// Reset the SystemScratchpad
+		_scratchPad.clearChildren();
+		// Set the input of the view to SystemScratchpad if it has changed
+		if (_view.getInput() != _scratchPad) {
+			_view.setInput(_scratchPad);
+		}
+		// Refresh the Scratchpad and update action states
 	    RSECorePlugin.getTheSystemRegistry().fireEvent(new SystemResourceChangeEvent(_scratchPad, ISystemResourceChangeEvents.EVENT_REFRESH, _scratchPad));
 	    _view.setSelection(null);
-	    //_view.updateActionStates();
 	}
 }

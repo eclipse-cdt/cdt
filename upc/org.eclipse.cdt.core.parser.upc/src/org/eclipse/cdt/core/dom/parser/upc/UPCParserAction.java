@@ -42,12 +42,11 @@ import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym;
 public class UPCParserAction extends C99ParserAction {
 	
 	private final UPCASTNodeFactory nodeFactory;
-	private final ASTStack astStack;
 	
 		
-	public UPCParserAction(IParserActionTokenProvider parser, ITokenMap tokenMap) {
-		super(parser, tokenMap);
-		this.astStack = super.getASTStack();
+	public UPCParserAction(IParserActionTokenProvider parser) {
+		super(parser);
+		super.setTokenMap(UPCParsersym.orderedTerminalSymbols);
 		this.nodeFactory = (UPCASTNodeFactory) super.getNodeFactory();
 	}
 

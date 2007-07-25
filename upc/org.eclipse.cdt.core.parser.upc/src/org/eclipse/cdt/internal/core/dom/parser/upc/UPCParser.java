@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.core.dom.parser.c99.C99Lexer;
 import org.eclipse.cdt.internal.core.dom.parser.c99.C99Parsersym;
 import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
 import org.eclipse.cdt.core.dom.parser.upc.UPCParserAction;
-import org.eclipse.cdt.internal.core.dom.parser.c99.C99TokenMap;
 
 public class UPCParser extends PrsStream implements RuleAction , IParserActionTokenProvider, IParser 
 {
@@ -92,7 +91,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]); //$NON-NLS-1$              
+                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);               
             }
             System.out.println();                        
         }
@@ -173,7 +172,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
     }
 
 
-private  UPCParserAction  action = new  UPCParserAction (this, new C99TokenMap(UPCParserprs.orderedTerminalSymbols));
+private  UPCParserAction  action = new  UPCParserAction (this);
 private List commentTokens = new ArrayList();
 private IKeywordMap keywordMap = new  UPCKeywordMap ();
 
@@ -203,7 +202,7 @@ public List getCommentTokens() {
 
 public void resetTokenStream() {
 	super.resetTokenStream();
-	action = new  UPCParserAction (this, new C99TokenMap(UPCParserprs.orderedTerminalSymbols));
+	action = new  UPCParserAction (this);
 	commentTokens = new ArrayList();
 }
 

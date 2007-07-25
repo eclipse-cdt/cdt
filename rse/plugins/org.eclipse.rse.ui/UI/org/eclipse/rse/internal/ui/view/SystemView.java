@@ -36,6 +36,7 @@
  * David McKnight   (IBM)        - [187205] Prevented expansion of non-expanded on remote refresh
  * David McKnight   (IBM)        - [196930] Don't add the connection when it's not supposed to be shown
  * Tobias Schwarz (Wind River)   - [197484] Provide ContextObject for queries on all levels
+ * David McKnight   (IBM)        - [196662] Avoid main thread query to check exists when remote refreshing
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2175,6 +2176,21 @@ public class SystemView extends SafeTreeViewer
 							}
 							if (ss != null)
 							{
+								// for bug 196662
+								// if we're refreshing a previously unexpanded node, then a query will not happen
+								// so we should refresh it's parent in this case
+								Widget w = findItem(src);
+								if (w instanceof TreeItem)
+								{
+									TreeItem titem = (TreeItem)w;
+									TreeItem[] titems = titem.getItems();
+									if (titems.length >  0 && !titem.getExpanded())
+									{
+										src = adapter.getParent(src);
+									}
+								}
+									
+								/* old code - issue in 196662
 								String key = adapter.getAbsoluteName(src);
 								if (key != null)
 								{
@@ -2199,6 +2215,7 @@ public class SystemView extends SafeTreeViewer
 										e.printStackTrace();
 									}
 								}
+								*/
 							}
 						}
 					}
@@ -5741,11 +5758,12 @@ public class SystemView extends SafeTreeViewer
 			{
 				ref = getContainingFilterReference((TreeItem)match);
 			}
+			ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)parentElementOrTreePath).getAdapter(ISystemViewElementAdapter.class);
+
 			if (matches.size() > 1 && ref != null && ref != originalFilter)
 			{
 				// could have the same object under multiple filters
 				// need to apply filter
-				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)parentElementOrTreePath).getAdapter(ISystemViewElementAdapter.class);
 				
 				Object[] newChildren = null;
 				if (match instanceof TreeItem)
@@ -5757,8 +5775,24 @@ public class SystemView extends SafeTreeViewer
 				
 			}
 			else
-			{
+			{	
+	
+				
+				
 				internalAdd(match, parentElementOrTreePath, childElements);
+				
+				// refresh parent in this case because the parentElementOrTreePath may no longer exist
+				if (childElements.length == 0 || childElements[0] instanceof SystemMessageObject)
+				{
+					if (adapter.isRemote(parentElementOrTreePath) && !adapter.hasChildren((IAdaptable)parentElementOrTreePath))						
+					{
+						// refresh the parent
+						Object par = adapter.getParent(parentElementOrTreePath);					
+						ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+						sr.fireEvent(new SystemResourceChangeEvent(par, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+					}
+				}
+				
 			}
 		}
 		}

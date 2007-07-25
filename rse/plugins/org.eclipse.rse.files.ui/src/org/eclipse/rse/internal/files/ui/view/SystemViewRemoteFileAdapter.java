@@ -26,6 +26,7 @@
  * David Dykstal (IBM) - [160776] format file size according to client system conventions and locale
  * David McKnight   (IBM)        - [197089] Need to set the filter when there is no separator in filter string
  * David McKnight   (IBM)        - [196662] hasChildren() should return false when the file doesn't exist
+ * David McKnight   (IBM)        - [197784] Need to check if last separator is at 0
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -602,7 +603,7 @@ public class SystemViewRemoteFileAdapter
 				String separator = PathUtility.getSeparator(filterString);
 				
 				int sepIndex = filterString.lastIndexOf(separator);
-				if (sepIndex > 0)
+				if (sepIndex >= 0)
 				{
 					filter = filterString.substring(sepIndex + 1);
 				}

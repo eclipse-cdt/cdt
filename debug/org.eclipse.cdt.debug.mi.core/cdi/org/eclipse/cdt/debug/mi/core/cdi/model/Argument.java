@@ -34,4 +34,10 @@ public class Argument extends Variable implements ICDIArgument {
 		return new Argument(target, thread, frame, name, fullName, pos, depth, miVar);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#createDescriptor(org.eclipse.cdt.debug.mi.core.cdi.model.Target, org.eclipse.cdt.debug.mi.core.cdi.model.Thread, org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame, java.lang.String, java.lang.String, int, int)
+	 */
+	protected VariableDescriptor createDescriptor(Target target, Thread thread, StackFrame frame, String n, String fn, int pos, int depth) {
+		return new ArgumentDescriptor(target, thread, frame, n, fn, pos, depth);
+	}
 }

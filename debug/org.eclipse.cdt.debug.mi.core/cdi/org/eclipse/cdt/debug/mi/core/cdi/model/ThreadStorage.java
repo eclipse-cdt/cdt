@@ -52,4 +52,10 @@ public class ThreadStorage extends Variable implements ICDIThreadStorage {
 		return new Register(target, thread, frame, name, fullName, pos, depth, miVar);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#createDescriptor(org.eclipse.cdt.debug.mi.core.cdi.model.Target, org.eclipse.cdt.debug.mi.core.cdi.model.Thread, org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame, java.lang.String, java.lang.String, int, int)
+	 */
+	protected VariableDescriptor createDescriptor( Target target, Thread thread, StackFrame frame, String n, String fn, int pos, int depth ) {
+		return new ThreadStorageDescriptor(target, thread, frame, n, fn, pos, depth);
+	}
 }

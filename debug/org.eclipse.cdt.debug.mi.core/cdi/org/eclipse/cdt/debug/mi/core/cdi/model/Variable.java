@@ -161,7 +161,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		}
 		VariableManager vm = ((Session)((Target)getTarget()).getSession()).getVariableManager();
 		String qualName = "&(" + getQualifiedName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-		LocalVariableDescriptor desc = new LocalVariableDescriptor((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(), getName(), qualName, getPosition(), getStackDepth());
+		VariableDescriptor desc = createDescriptor((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(), getName(), qualName, getPosition(), getStackDepth());
 		Variable v = vm.createVariable( desc );
 		v.setFormat(ICDIFormat.HEXADECIMAL);
 		hexAddress = v.getValue().getValueString();		
@@ -560,4 +560,6 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	public void setMIVarCreate(MIVarCreate miVar) {
 		fVarCreateCMD = miVar;
 	}
+
+	abstract protected VariableDescriptor createDescriptor(Target target, Thread thread, StackFrame frame, String n, String fn, int pos, int depth); 
 }

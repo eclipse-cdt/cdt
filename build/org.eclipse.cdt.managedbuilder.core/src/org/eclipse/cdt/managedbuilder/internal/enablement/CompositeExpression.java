@@ -39,23 +39,24 @@ public abstract class CompositeExpression implements IBooleanExpression {
 	
 	protected IBooleanExpression createExpression(IManagedConfigElement element){
 		String name = element.getName();
-		if(AndExpression.NAME.equals(name))
+		if (AndExpression.NAME.equals(name))
 			return new AndExpression(element);
-		else if(OrExpression.NAME.equals(name))
+		else if (OrExpression.NAME.equals(name))
 			return new OrExpression(element);
-		else if(NotExpression.NAME.equals(name))
+		else if (NotExpression.NAME.equals(name))
 			return new NotExpression(element);
-		else if(CheckOptionExpression.NAME.equals(name))
+		else if (CheckOptionExpression.NAME.equals(name))
 			return new CheckOptionExpression(element);
-		else if(CheckStringExpression.NAME.equals(name))
+		else if (CheckStringExpression.NAME.equals(name))
 				return new CheckStringExpression(element);
-		else if(FalseExpression.NAME.equals(name))
+		else if (FalseExpression.NAME.equals(name))
 			return new FalseExpression(element);
-		else if(CheckHolderExpression.NAME.equals(name))
+		else if (CheckHolderExpression.NAME.equals(name))
 			return new CheckHolderExpression(element);
-		else if(CheckBuildPropertyExpression.NAME.equals(name)){
+		else if (CheckBuildPropertyExpression.NAME.equals(name))
 			return new CheckBuildPropertyExpression(element);
-		}
+		else if (HasNatureExpression.NAME.equals(name))
+			return new HasNatureExpression(element);
 		return null;
 	}
 	

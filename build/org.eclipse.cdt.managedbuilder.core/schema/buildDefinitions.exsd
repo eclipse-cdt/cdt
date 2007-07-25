@@ -922,7 +922,6 @@ The value of this attribute is used only in case languageInfoCalculator is not s
                <documentation>
                   Specifies the name of the class that implements org.eclipse.cdt.managedbuilder.core.ILanguageInfoCalculator for dinamic providing the language id info.
 Overrides language id specified with the languageId attribute.
-
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.ILanguageInfoCalculator"/>
@@ -1933,6 +1932,7 @@ If the &quot;buildPathResolver&quot; attribute is specified, the &quot;pathDelim
             <element ref="false" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="checkHolder" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="checkBuildProperty" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="hasNature" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="type" type="string" use="default" value="ALL">
             <annotation>
@@ -2319,6 +2319,23 @@ The only difference between this element and the resourceConfiguration is that r
      1.  Defaults to all tools in the order found
      2.  Use specified ordered list of children to invoke
      3.  If empty string, treat as if no resource configuration existed, i.e., use project level tool.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="hasNature">
+      <annotation>
+         <documentation>
+            Checks whether the project containing the resource has a given nature
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="natureId" type="string">
+            <annotation>
+               <documentation>
+                  The id of the nature
                </documentation>
             </annotation>
          </attribute>

@@ -377,9 +377,9 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 		String name = des.fName;
 		ResolvedMacro value = (ResolvedMacro)fResolvedMacros.get(name);
 		if(value == null){
-			if(fMacrosUnderResolution.add(name))
+			if(fMacrosUnderResolution.add(name)) {
 				fMacroDescriptors.push(des);
-			else {
+			} else {
 				// the macro of the specified name is referenced from the other macros that
 				// are referenced by the given macro
 				// e.g. ${macro1}="...${macro2}...", ${macro2}="...${macro1}..."
@@ -392,13 +392,13 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 				// In the above example the ${macro1} reference will be expanded to the value of the ${macro1} macro of the
 				// parent context or to an empty string if there is no such macro defined in the parent contexts
 				MacroDescriptor last = (MacroDescriptor)fMacroDescriptors.lastElement();
-				if(last != null && last.fName.equals(name)){
+				if(last != null && last.fName.equals(name)) {
 					value = resolveParentMacro(last);
 					if(value == null)
 						value = new ResolvedMacro(name,EMPTY_STRING,false);
-				}else if(fIncorrectlyReferencedMacroValue != null)
+				} else if(fIncorrectlyReferencedMacroValue != null) {
 					value = new ResolvedMacro(name,fIncorrectlyReferencedMacroValue,false);
-				else{
+				} else{
 					ICdtVariableStatus status = new SupplierBasedCdtVariableStatus(ICdtVariableStatus.TYPE_MACRO_REFERENCE_INCORRECT,
 							(String)null,
 							null,

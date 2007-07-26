@@ -47,7 +47,7 @@ public class EnvironmentVariableManager implements
 	
 	private static EnvironmentVariableManager fInstance = null;
 
-	private EnvVarVariableSubstitutor fVariableSubstitutor;
+//	private EnvVarVariableSubstitutor fVariableSubstitutor;
 	
 	public static final UserDefinedEnvironmentSupplier fUserSupplier = new UserDefinedEnvironmentSupplier();
 	public static final BuildSustemEnvironmentSupplier fExternalSupplier = new BuildSustemEnvironmentSupplier();
@@ -404,18 +404,19 @@ public class EnvironmentVariableManager implements
 	}
 	
 	public IVariableSubstitutor getVariableSubstitutor(IVariableContextInfo info, String inexistentMacroValue, String listDelimiter){
-		if(fVariableSubstitutor == null)
-			fVariableSubstitutor = new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
-		else {
-			try {
-				fVariableSubstitutor.setMacroContextInfo(info);
-				fVariableSubstitutor.setInexistentMacroValue(inexistentMacroValue);
-				fVariableSubstitutor.setListDelimiter(listDelimiter);
-			} catch (CdtVariableException e){
-				fVariableSubstitutor = new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
-			}
-		}
-		return fVariableSubstitutor;
+		return new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
+//		if(fVariableSubstitutor == null)
+//			fVariableSubstitutor = new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
+//		else {
+//			try {
+//				fVariableSubstitutor.setMacroContextInfo(info);
+//				fVariableSubstitutor.setInexistentMacroValue(inexistentMacroValue);
+//				fVariableSubstitutor.setListDelimiter(listDelimiter);
+//			} catch (CdtVariableException e){
+//				fVariableSubstitutor = new EnvVarVariableSubstitutor(info,inexistentMacroValue,listDelimiter);
+//			}
+//		}
+//		return fVariableSubstitutor;
 	}
 
 	public IContributedEnvironment getContributedEnvironment() {

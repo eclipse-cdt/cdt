@@ -404,6 +404,12 @@ public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, IS
 	protected void restoreWidgetValues() {
 		IDialogSettings dialogSettings = getDialogSettings();
 		if (dialogSettings != null) {
+			// Note: Current mode is that the remembered last selected system type id
+			//       has priority over the type of a host selection within the remote
+			//       systems view. We are leaving it that way for now out of consistency
+			//       reason. If the host selection within the remote system view should
+			//       get ever the priority, check for 'selectedSystemType == null' additional
+			//       to the check for 'systemTypeId != null'.
 			String systemTypeId = dialogSettings.get(LAST_SELECTED_SYSTEM_TYPE_ID);
 			if (systemTypeId != null) {
 				IRSESystemType systemType = RSECorePlugin.getTheCoreRegistry().getSystemTypeById(systemTypeId);

@@ -3908,4 +3908,20 @@ public class AST2Tests extends AST2BaseTest {
 		}
 	}
 	
+	//  #define foo(f,...)
+	//	void bar(void){}
+	//	int main(int argc, char **argv) {
+	//	   foo("a", bar);        // ok
+	//	   foo("a", bar, bar);   // ok
+	//	   foo("a", bar());      // Eclipse Syntax error
+	//	   foo("a", bar, bar()); // Eclipse Syntax error
+	//	   foo("a", bar(), bar); // Eclipse Syntax error
+	//     return 0;
+	//  }
+	public void testBug197633_parenthesisInVarargMacros() throws Exception {
+		StringBuffer buffer = getContents(1)[0];
+		final String content = buffer.toString();
+		parse( content, ParserLanguage.CPP); 
+		parse( content, ParserLanguage.C); 
+	}
 }

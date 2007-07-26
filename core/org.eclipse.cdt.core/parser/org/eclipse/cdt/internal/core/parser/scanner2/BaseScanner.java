@@ -2992,6 +2992,10 @@ abstract class BaseScanner implements IScanner {
             skipOverWhiteSpace();
         }
         --bufferPos[bufferStackPos];
+        // correct argEnd when reaching limit, (bug 179383)
+        if (argEnd==limit) {
+        	argEnd--;
+        }
         return argEnd;
     }
 
@@ -3279,7 +3283,6 @@ abstract class BaseScanner implements IScanner {
         int currarg = 0;
         CharArrayObjectMap argmap = new CharArrayObjectMap(arglist.length);
 
-        boolean insideString = false;
         while (bufferPos[bufferStackPos] < limit) {
             skipOverWhiteSpace();
 
@@ -3311,35 +3314,26 @@ abstract class BaseScanner implements IScanner {
             int argstart = bufferPos[bufferStackPos];
 
             int argend = -1;
-            if ((macro.hasGCCVarArgs() || macro.hasVarArgs())
-                    && currarg == macro.getVarArgsPosition()) {
-                --bufferPos[bufferStackPos]; // go back to first char of macro arguments
-
+            if ((macro.hasGCCVarArgs() || macro.hasVarArgs()) && currarg == macro.getVarArgsPosition()) {
                 // there are varargs and the other parameters have been accounted
                 // for, the rest will replace __VA_ARGS__ or name where
                 // "name..." is the parameter
-                do {
-                    if (buffer[bufferPos[bufferStackPos]] == '"') {
-                        if (insideString)
-                            insideString = false;
-                        else
-                            insideString = true;
+                for (;;) {
+                	argend= skipOverMacroArg();
+                    skipOverWhiteSpace();
+                    // to continue we need at least a comma and another char.
+                    if (bufferPos[bufferStackPos]+2 >= limit) { 
+                    	break;
                     }
-
-                    if (!insideString
-                            && buffer[bufferPos[bufferStackPos]] == ')') {
-                        --bufferPos[bufferStackPos];
-                        break;
+                    if (buffer[++bufferPos[bufferStackPos]] == ')') {
+                    	bufferPos[bufferStackPos]--;
+                    	break;
                     }
-                } while (++bufferPos[bufferStackPos] < limit);
-                argend = bufferPos[bufferStackPos];
+                    // it's a comma
+                    bufferPos[bufferStackPos]++;
+                } 
             } else {
                 argend = skipOverMacroArg();
-            }
-
-            // correct argend when reaching limit, (bug 179383)
-            if (argend==limit) {
-            	argend--;
             }
             
             char[] arg = EMPTY_CHAR_ARRAY;

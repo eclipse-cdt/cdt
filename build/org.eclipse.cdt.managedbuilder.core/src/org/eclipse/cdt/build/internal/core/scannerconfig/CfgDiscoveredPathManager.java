@@ -161,9 +161,16 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 
         PathInfo info = getCachedPathInfo(cInfo);
 		if (info == null) {
-			IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(project, context.getConfiguration(), cInfo);
-			
-			info = resolveCacheBaseDiscoveredInfo(cInfo, baseInfo);
+			synchronized (this) {
+				info = getCachedPathInfo(cInfo);
+
+				if(info == null){
+					IDiscoveredPathManager.IDiscoveredPathInfo baseInfo = loadPathInfo(project, context.getConfiguration(), cInfo);
+					
+					info = resolveCacheBaseDiscoveredInfo(cInfo, baseInfo);
+				}
+			}
+
 //			setCachedPathInfo(context, info);
 //			if(info instanceof DiscoveredPathInfo && !((DiscoveredPathInfo)info).isLoadded()){
 //				info = createPathInfo(project, context);

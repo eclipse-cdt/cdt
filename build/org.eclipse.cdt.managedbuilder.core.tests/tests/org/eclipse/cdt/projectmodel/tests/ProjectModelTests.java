@@ -50,6 +50,7 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.cdt.managedbuilder.testplugin.BuildSystemTestHelper;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -402,6 +403,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		for(int i = 0; i < settings.length; i++){
 			ICLanguageSetting setting = settings[i];
 			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);
+			BuildSystemTestHelper.checkDiff(entries, updatedEntries);
 			if(entries.length > 0){
 //				ICLanguageSettingEntry updated[] = new ICLanguageSettingEntry[entries.length + 1];
 //				System.arraycopy(entries, 0, updated, 1, entries.length);

@@ -441,6 +441,21 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 //			}
 //		}
 	}
+	
+	private boolean streamsMatch(InputStream stream1, InputStream stream2) throws IOException{
+		do{
+			int i1 = stream1.read();
+			int i2 = stream2.read();
+			
+			if(i1 != i2){
+				return false;
+			} else if (i1 == -1){
+				break;
+			}
+		}while(true);
+		
+		return true;
+	}
 
 	CProjectDescription checkExternalProjectFileModification(IResource rc) throws CoreException{
 		Map map = getProjectFileSerializationMap(false);
@@ -453,8 +468,25 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		CProjectDescription des = (CProjectDescription)getProjectDescription(project, GET_IF_LOADDED);
 		if(des == null || des.isLoadding())
 			return null;
+
+		//check whether contents differ 
+		try {
+			ICStorageElement oldEl = des.doGetCachedRootStorageElement();
+			if(oldEl != null){
+				InputStream newContents = getSharedProperty(project, STORAGE_FILE_NAME);
+				ByteArrayOutputStream oldOut = write(oldEl);
+				InputStream oldContents = new ByteArrayInputStream(oldOut.toByteArray());
+				if(streamsMatch(newContents, oldContents))
+					return null;
+			}
+		} catch (CoreException e){
+			CCorePlugin.log(e);
+			//continue
+		} catch (IOException e) {
+			CCorePlugin.log(e);
+			//continue
+		}
 		
-		//TODO: .cproject file is modified externally
 		des = (CProjectDescription)loadProjectDescription(project);
 		des = createWritableDescription(des);
 		des.touch();
@@ -1425,11 +1457,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 	}
 
-	
-	private void serialize(IProject project, String file, ICStorageElement element) throws CoreException{
+	private ByteArrayOutputStream write(ICStorageElement element) throws CoreException {
 		Document doc = getDocument(element);
-		
-		// Transform the document to something we can save in a file
+
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -1439,59 +1469,67 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(stream);
 			transformer.transform(source, result);
-			
-			// Save the document
-			IFile projectFile = project.getFile(file);
-			String utfString = stream.toString("UTF-8");	//$NON-NLS-1$
-	
-			aboutToSaveProjectFile(project);
-			
-			if (projectFile.exists()) {
-				if (projectFile.isReadOnly()) {						
-					// Inform Eclipse that we are intending to modify this file
-					// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
-					// reset a read-only file protection to write etc.
-					// If there is no shell, i.e. shell is null, then there will be no user UI interaction
-	
-					//TODO
-					//IStatus status = projectFile.getWorkspace().validateEdit(new IFile[]{projectFile}, shell);
-					
-					// If the file is still read-only, then we should not attempt the write, since it will
-					// just fail - just throw an exception, to be caught below, and inform the user
-					// For other non-successful status, we take our chances, attempt the write, and pass
-					// along any exception thrown
-					
-					//if (!status.isOK()) {
-					 //   if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
-					  //  	stream.close();
-	    	           //     throw new CoreException(status);						
-					    //}
-					//}
-				}
-				try {
-					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
-				} catch (CoreException e) {
-					if (projectFile.getLocation().toFile().isHidden()) {
-						String os = System.getProperty("os.name"); //$NON-NLS-1$
-						if (os != null && os.startsWith("Win")) { //$NON-NLS-1$
-							projectFile.delete(true, null);
-							projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
-							CCorePlugin.log(e.getLocalizedMessage() +
-							    "\n** Error occured because of file status <hidden>." +  //$NON-NLS-1$
-							    "\n** This status is disabled now, to allow writing.");  //$NON-NLS-1$
-						} else throw(e);
-					} else throw(e);
-				}
-			} else {
-				projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
-			}
-			doneSaveProjectFile(project);
-			// Close the streams
-			stream.close();
+
+			return stream;
 		} catch (TransformerConfigurationException e){
 			throw ExceptionFactory.createCoreException(e);
 		} catch (TransformerException e) {
 			throw ExceptionFactory.createCoreException(e);
+		}
+	}
+	
+	private void serialize(IProject project, String file, ICStorageElement element) throws CoreException{
+		try {
+			IFile projectFile = project.getFile(file);
+			ByteArrayOutputStream stream = write(element);	//$NON-NLS-1$
+	
+			String utfString = stream.toString("UTF-8");	//$NON-NLS-1$
+			aboutToSaveProjectFile(project);
+
+			try {
+				if (projectFile.exists()) {
+					if (projectFile.isReadOnly()) {						
+						// Inform Eclipse that we are intending to modify this file
+						// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
+						// reset a read-only file protection to write etc.
+						// If there is no shell, i.e. shell is null, then there will be no user UI interaction
+		
+						//TODO
+						//IStatus status = projectFile.getWorkspace().validateEdit(new IFile[]{projectFile}, shell);
+						
+						// If the file is still read-only, then we should not attempt the write, since it will
+						// just fail - just throw an exception, to be caught below, and inform the user
+						// For other non-successful status, we take our chances, attempt the write, and pass
+						// along any exception thrown
+						
+						//if (!status.isOK()) {
+						 //   if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
+						  //  	stream.close();
+		    	           //     throw new CoreException(status);						
+						    //}
+						//}
+					}
+					try {
+						projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+					} catch (CoreException e) {
+						if (projectFile.getLocation().toFile().isHidden()) {
+							String os = System.getProperty("os.name"); //$NON-NLS-1$
+							if (os != null && os.startsWith("Win")) { //$NON-NLS-1$
+								projectFile.delete(true, null);
+								projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+								CCorePlugin.log(e.getLocalizedMessage() +
+								    "\n** Error occured because of file status <hidden>." +  //$NON-NLS-1$
+								    "\n** This status is disabled now, to allow writing.");  //$NON-NLS-1$
+							} else throw(e);
+						} else throw(e);
+					}
+				} else {
+					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
+				}
+			}finally{
+				doneSaveProjectFile(project);
+				stream.close();
+			}
 		} catch (IOException e) {
 			throw ExceptionFactory.createCoreException(e);
 		}

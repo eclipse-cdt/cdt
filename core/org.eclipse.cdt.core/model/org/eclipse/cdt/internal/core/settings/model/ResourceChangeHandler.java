@@ -161,7 +161,8 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 				flags |= CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE;
 				flags |= CProjectDescriptionManager.GET_WRITABLE;
 				des = fMngr.getProjectDescription(project, flags);
-				fProjDesMap.put(project, des);
+				if(des != null)
+					fProjDesMap.put(project, des);
 			}
 			return des;
 		}

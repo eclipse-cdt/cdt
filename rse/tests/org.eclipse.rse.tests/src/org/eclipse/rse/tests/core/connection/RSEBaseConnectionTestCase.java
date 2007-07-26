@@ -84,4 +84,38 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 		
 		return connection;
 	}
+	
+	/**
+	 * Lookup and return the local system type connection. This connection
+	 * should be usually available on all systems.
+	 * 
+	 * @return The local system type connection or <code>null</code> if the lookup fails.
+	 */
+	protected IHost getRemoteSystemConnection(String systemTypeID, String systemAddress, String systemName, String userID, String password) {
+		
+		Exception exception = null;
+		String cause = null;
+		// Pre-create the local system connection properties
+		Properties properties = new Properties();
+		properties.setProperty(IRSEConnectionProperties.ATTR_SYSTEM_TYPE_ID, systemTypeID);
+		properties.setProperty(IRSEConnectionProperties.ATTR_ADDRESS, systemAddress); //$NON-NLS-1$
+		properties.setProperty(IRSEConnectionProperties.ATTR_NAME, systemName); //$NON-NLS-1$
+		properties.setProperty(IRSEConnectionProperties.ATTR_USERID, userID); //$NON-NLS-1$
+		properties.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, password); //$NON-NLS-1$
+		
+		IRSEConnectionProperties remoteSystemConnectionProperties;
+		remoteSystemConnectionProperties = getConnectionManager().loadConnectionProperties(properties, false);
+		
+		IHost connection = null;
+		try {
+			connection = getConnectionManager().findOrCreateConnection(remoteSystemConnectionProperties);
+		} catch (Exception e) {
+			exception = e;
+			cause = exception.getLocalizedMessage();
+		}
+		assertNull("Failed to find and create remote system connection! Possible cause: " + cause, exception); //$NON-NLS-1$
+		assertNotNull("Failed to find and create remote system connection! Cause unknown!", connection); //$NON-NLS-1$
+		
+		return connection;
+	}
 }

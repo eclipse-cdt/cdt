@@ -199,7 +199,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 		
 		// First lookup and create the profile
 		String profileName = properties.getProperty(IRSEConnectionProperties.ATTR_PROFILE_NAME);
-		Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid system profile name!", "unknown", profileName); //$NON-NLS-1$ //$NON-NLS-2$
+		//Assert.assertNotSame("FAILED(findOrCreateConnection): Invalid system profile name!", "unknown", profileName); //$NON-NLS-1$ //$NON-NLS-2$
 		ISystemProfile profile = profileName == null ? systemRegistry.getSystemProfileManager().getDefaultPrivateSystemProfile() : systemRegistry.getSystemProfile(profileName);
 		if (profile == null) {
 			try {
@@ -210,6 +210,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 			}
 			Assert.assertNull("FAILED(findOrCreateConnection): Failed to create system profile '" + profileName + "'! Possible cause: " + cause, exception); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		profileName = profile.getName();
 		Assert.assertNotNull("FAILED(findOrCreateConnection): Failed to find and/or create system profile '" + profileName + "'!", profile); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		String name = properties.getProperty(IRSEConnectionProperties.ATTR_NAME);
@@ -239,7 +240,7 @@ public class RSEConnectionManager implements IRSEConnectionManager {
 
 				if (userId != null && password != null) {
 					SystemSignonInformation info = new SystemSignonInformation(address, userId, password, systemType);
-					PasswordPersistenceManager.getInstance().add(info, true);
+					PasswordPersistenceManager.getInstance().add(info, true, true);
 				}
 		}
 		Assert.assertNotNull("FAILED(findOrCreateConnection): Failed to find and/or create connection IHost object!", connection); //$NON-NLS-1$

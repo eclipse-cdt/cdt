@@ -194,5 +194,4 @@ public interface ICProjectDescription  extends ICSettingContainer,
 	 * @see ICProjectDescriptionManager#createProjectDescription(IProject, boolean, boolean)
 	 */
 	void setCdtProjectCreated();
-
 }

@@ -135,7 +135,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private static final String CONVERTED_CFG_NAME = "convertedConfig"; //$NON-NLS-1$
 	private static final String CONVERTED_CFG_ID_PREFIX = "converted.config"; //$NON-NLS-1$
 	
-	private static final String STORAGE_FILE_NAME = ".cproject";	//$NON-NLS-1$
+	static final String STORAGE_FILE_NAME = ".cproject";	//$NON-NLS-1$
 //	private static final QualifiedName PROJECT_DESCRCIPTION_PROPERTY = new QualifiedName(CCorePlugin.PLUGIN_ID, "projectDescription");	//$NON-NLS-1$
 	private static final String ROOT_ELEMENT_NAME = "cproject";	//$NON-NLS-1$
 	private static final String VERSION_ELEMENT_NAME = "fileVersion";	//$NON-NLS-1$
@@ -239,6 +239,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private static class ThreadInfo {
 		Map fDescriptionLoaddingMap;
 		Map fDescriptionApplyingMap;
+		Map fProjectFileSerializationMap;
 		
 		public Map getDescriptionLoaddingMap(boolean create){
 			if(fDescriptionLoaddingMap == null && create){
@@ -253,6 +254,14 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			}
 			return fDescriptionApplyingMap;
 		}
+		
+		public Map getProjectFileSerializationMap(boolean create){
+			if(fProjectFileSerializationMap == null && create){
+				fProjectFileSerializationMap = new HashMap();
+			}
+			return fProjectFileSerializationMap;
+		}
+
 	}
 
 	private Map fProviderMap;
@@ -413,6 +422,46 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return null;
 	}
 
+	private Map getProjectFileSerializationMap(boolean create){
+		ThreadInfo info = getThreadInfo(create);
+		if(info != null)
+			return info.getProjectFileSerializationMap(create);
+		return null;
+	}
+	
+	private void aboutToSaveProjectFile(IProject project){
+		getProjectFileSerializationMap(true).put(project, Boolean.TRUE);
+	}
+
+	private void doneSaveProjectFile(IProject project){
+//		Map map = getProjectFileSerializationMap(false);
+//		if(map != null){
+//			if(map.remove(project) != null){
+//				CCorePlugin.log("incorrect .cproject file save state, ingnoring");
+//			}
+//		}
+	}
+
+	CProjectDescription checkExternalProjectFileModification(IResource rc) throws CoreException{
+		Map map = getProjectFileSerializationMap(false);
+		IProject project = rc.getProject();
+		if(map != null){
+			if(map.remove(project) != null)
+				return null;
+		}
+		
+		CProjectDescription des = (CProjectDescription)getProjectDescription(project, GET_IF_LOADDED);
+		if(des == null || des.isLoadding())
+			return null;
+		
+		//TODO: .cproject file is modified externally
+		des = (CProjectDescription)loadProjectDescription(project);
+		des = createWritableDescription(des);
+		des.touch();
+		
+		return des;
+	}
+
 	private ThreadInfo getThreadInfo(boolean create){
 		ThreadInfo info = (ThreadInfo)fThreadInfo.get();
 		if(info == null && create){
@@ -443,12 +492,15 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		SettingsContext context = null;
 		
 		des = getDescriptionApplying(project);
-		
-		if(des == null && (ignoreClose || project.isOpen()))
-			des = getLoaddedDescription(project);
 
 		if(des == null)
 			des = getDescriptionLoadding(project);
+
+		if(des == null && (ignoreClose || project.isOpen()))
+			des = getLoaddedDescription(project);
+
+//		if(des == null)
+//			des = getDescriptionLoadding(project);
 		
 		if(des == null && load && project.isOpen()){
 			try {
@@ -489,19 +541,23 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 		
 		if(des != null && write){
-			CProjectDescription cache = (CProjectDescription)des;
-			ICStorageElement el = null;
-			try {
-				el = cache.getRootStorageElement();
-				el = copyElement((InternalXmlStorageElement)el, false);
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-			
-			des = new CProjectDescription((CProjectDescription)des, false, el, des.isCdtProjectCreating());
-			CProjectDescriptionEvent event = createCopyCreatedEvent(des, cache);
-			notifyListeners(event);
+			des = createWritableDescription((CProjectDescription)des);
 		}
+		return des;
+	}
+	
+	private CProjectDescription createWritableDescription(CProjectDescription cache){
+		ICStorageElement el = null;
+		try {
+			el = cache.getRootStorageElement();
+			el = copyElement((InternalXmlStorageElement)el, false);
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		
+		CProjectDescription des = new CProjectDescription(cache, false, el, cache.isCdtProjectCreating());
+		CProjectDescriptionEvent event = createCopyCreatedEvent(des, cache);
+		notifyListeners(event);
 		return des;
 	}
 	
@@ -1173,22 +1229,24 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	
 	public void setProjectDescription(IProject project, ICProjectDescription des, int flags, IProgressMonitor monitor) throws CoreException {
 		
-		if(!des.isValid() && (!fAllowEmptyCreatingDescription || !des.isCdtProjectCreating()))
-			throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName()); //$NON-NLS-1$
-
-		if(!checkFlags(flags, SET_FORCE) && !des.isModified())
-			return;
-
-		if(((CProjectDescription)des).isLoadding()){
-			//do nothing
-//			throw ExceptionFactory.createCoreException("description is being loadded");
-			return;
-		}
-
-		if(((CProjectDescription)des).isApplying()){
-			//do nothing
-//			throw ExceptionFactory.createCoreException("description is being applied");
-			return;
+		if(des != null){
+			if(!des.isValid() && (!fAllowEmptyCreatingDescription || !des.isCdtProjectCreating()))
+				throw ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName()); //$NON-NLS-1$
+	
+			if(!checkFlags(flags, SET_FORCE) && !des.isModified())
+				return;
+	
+			if(((CProjectDescription)des).isLoadding()){
+				//do nothing
+	//			throw ExceptionFactory.createCoreException("description is being loadded");
+				return;
+			}
+	
+			if(((CProjectDescription)des).isApplying()){
+				//do nothing
+	//			throw ExceptionFactory.createCoreException("description is being applied");
+				return;
+			}
 		}
 		
 		if(monitor == null)
@@ -1386,6 +1444,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			IFile projectFile = project.getFile(file);
 			String utfString = stream.toString("UTF-8");	//$NON-NLS-1$
 	
+			aboutToSaveProjectFile(project);
+			
 			if (projectFile.exists()) {
 				if (projectFile.isReadOnly()) {						
 					// Inform Eclipse that we are intending to modify this file
@@ -1425,6 +1485,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			} else {
 				projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
 			}
+			doneSaveProjectFile(project);
 			// Close the streams
 			stream.close();
 		} catch (TransformerConfigurationException e){
@@ -2895,6 +2956,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 
 	}
+	
 	void checkRemovedConfigurations(ICDescriptionDelta delta){
 		if(delta == null)
 			return;

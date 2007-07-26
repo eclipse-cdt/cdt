@@ -613,6 +613,13 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		fIsCreating = false;
 		fIsModified = true;
 	}
+
+	public void touch() throws WriteAccessException {
+		if(fIsReadOnly)
+			throw ExceptionFactory.createIsReadOnlyException();
+		
+		fIsModified = true;
+	}
 	
 	
 }

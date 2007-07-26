@@ -693,6 +693,9 @@ public class CExternalSettingsManager implements ICExternalSettingsListener, ICP
 	}
 
 	private void checkStore(ICProjectDescription des){
+		if(des == null)
+			return;
+		
 		ICConfigurationDescription[] cfgs = des.getConfigurations();
 		for(int i = 0; i < cfgs.length; i++){
 			checkStore(cfgs[i]);

@@ -258,7 +258,7 @@ public class ConfigBasedPathEntryStore implements IPathEntryStore, ICProjectDesc
 	
 	private static ICConfigurationDescription getIndexCfg(IProject project){
 		ICProjectDescription des = CCorePlugin.getDefault().getProjectDescription(project, false);
-		return des.getDefaultSettingConfiguration();
+		return des != null ? des.getDefaultSettingConfiguration() : null;
 	}
 	
 	private static List getContainerEntries(IProject project){

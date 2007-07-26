@@ -20,10 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
-import org.eclipse.cdt.core.settings.model.ICOutputEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
@@ -33,6 +31,7 @@ import org.eclipse.cdt.core.settings.model.util.ResourceChangeHandlerBase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -44,7 +43,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 public class ResourceChangeHandler extends ResourceChangeHandlerBase implements  ISaveParticipant {
 	CProjectDescriptionManager fMngr = CProjectDescriptionManager.getInstance();
 	
-	private class RcMoveHandler implements IResourceMoveHandler {
+	class RcMoveHandler implements IResourceMoveHandler {
 		Map fProjDesMap = new HashMap();
 		Set fRemovedProjSet = new HashSet();
 
@@ -157,7 +156,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 		private ICProjectDescription getProjectDescription(IResource rc, boolean load){
 			IProject project = rc.getProject(); 
 			ICProjectDescription des = (ICProjectDescription)fProjDesMap.get(project);
-			if(des == null){
+			if(des == null && !fProjDesMap.containsKey(project)){
 				int flags = load ? 0 : CProjectDescriptionManager.GET_IF_LOADDED;
 				flags |= CProjectDescriptionManager.INTERNAL_GET_IGNORE_CLOSE;
 				flags |= CProjectDescriptionManager.GET_WRITABLE;
@@ -165,6 +164,10 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 				fProjDesMap.put(project, des);
 			}
 			return des;
+		}
+		
+		private void setProjectDescription(IProject project, ICProjectDescription des){
+			fProjDesMap.put(project, des);
 		}
 		
 		private List checkRemove(IPath rcFullPath, ICExclusionPatternPathEntry[] entries){
@@ -256,7 +259,7 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 					iter.remove();
 				} else {
 					ICProjectDescription des = (ICProjectDescription)entry.getValue();
-					if(des == null || !des.isModified())
+					if(des != null && !des.isModified())
 						iter.remove();
 				}
 			}
@@ -321,5 +324,44 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 	 */
 	public void rollback(ISaveContext context) {
 	}
+
+	protected void doHahdleResourceMove(IResourceChangeEvent event,
+			IResourceMoveHandler handler) {
+		switch(event.getType()){
+		case IResourceChangeEvent.POST_CHANGE:
+			IResourceDelta delta = event.getDelta();
+			if(delta != null){
+				IResourceDelta projs[] = delta.getAffectedChildren();
+				for(int i = 0; i < projs.length; i++){
+					IResourceDelta children[] = projs[i].getAffectedChildren();
+					for(int k = 0; k < children.length; k++){
+						IResourceDelta child = children[k];
+						IResource rc = child.getResource();
+						if(rc.getType() != IResource.FILE)
+							continue;
+						
+						if(!CProjectDescriptionManager.STORAGE_FILE_NAME.equals(rc.getName()))
+							continue;
+						
+						//the .cproject file is changed
+						try {
+							CProjectDescription des = CProjectDescriptionManager.getInstance().checkExternalProjectFileModification(rc);
+							if(des != null){
+								((RcMoveHandler)handler).setProjectDescription(rc.getProject(), des);
+							}
+						} catch (CoreException e) {
+							CCorePlugin.log(e);
+							//project file does not exist or corrupted, remove
+							((RcMoveHandler)handler).setProjectDescription(rc.getProject(), null);
+						}
+					}
+				}
+			}
+			break;
+		}
+		super.doHahdleResourceMove(event, handler);
+	}
+	
+	
 
 }

@@ -43,29 +43,31 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		
 		CProjectDescriptionEvent event = mngr.createAboutToApplyEvent(fSetDescription, fOldDescriptionCache);
 		mngr.notifyListeners(event);
-		
-		InternalXmlStorageElement el = null;
-		try {
-			el = mngr.copyElement((InternalXmlStorageElement)fSetDescription.getRootStorageElement(), false);
-		} catch (CoreException e2) {
-		}
-
-		boolean creating = fOldDescriptionCache != null ? fOldDescriptionCache.isCdtProjectCreating() : true;
-		if(creating)
-			creating = fSetDescription.isCdtProjectCreating();
-
-		if(!fSetDescription.isValid() && (!mngr.isEmptyCreatingDescriptionAllowed() || !creating))
-			throw new CModelException(ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
-
-		CProjectDescription fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
+		CProjectDescription fNewDescriptionCache = null;
 		SettingsContext context = new SettingsContext(project);
-		try {
-			mngr.setDescriptionApplying(project, fNewDescriptionCache);
-			fNewDescriptionCache.applyDatas(context);
-		} finally {
-			mngr.clearDescriptionApplying(project);
-		}
 		
+		if(fSetDescription != null){
+			InternalXmlStorageElement el = null;
+			try {
+				el = mngr.copyElement((InternalXmlStorageElement)fSetDescription.getRootStorageElement(), false);
+			} catch (CoreException e2) {
+			}
+	
+			boolean creating = fOldDescriptionCache != null ? fOldDescriptionCache.isCdtProjectCreating() : true;
+			if(creating)
+				creating = fSetDescription.isCdtProjectCreating();
+	
+			if(!fSetDescription.isValid() && (!mngr.isEmptyCreatingDescriptionAllowed() || !creating))
+				throw new CModelException(ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
+	
+			fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
+			try {
+				mngr.setDescriptionApplying(project, fNewDescriptionCache);
+				fNewDescriptionCache.applyDatas(context);
+			} finally {
+				mngr.clearDescriptionApplying(project);
+			}
+		}
 		
 		ICDescriptionDelta delta = mngr.createDelta(fNewDescriptionCache, fOldDescriptionCache);
 		mngr.checkRemovedConfigurations(delta);
@@ -81,7 +83,8 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 
 		mngr.setLoaddedDescription(project, fNewDescriptionCache, true);
 		
-		fSetDescription.switchToCachedAppliedData(fNewDescriptionCache);
+		if(fSetDescription != null)
+			fSetDescription.switchToCachedAppliedData(fNewDescriptionCache);
 		
 		try {
 			final IProjectDescription eDes = context.getEclipseProjectDescription();
@@ -99,18 +102,20 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		
 //		ExternalSettingsManager.getInstance().updateDepentents(delta);
 		
-		try {
-			((InternalXmlStorageElement)fNewDescriptionCache.getRootStorageElement()).setReadOnly(true);
-		} catch (CoreException e1) {
+		if(fNewDescriptionCache != null){
+			try {
+				((InternalXmlStorageElement)fNewDescriptionCache.getRootStorageElement()).setReadOnly(true);
+			} catch (CoreException e1) {
+			}
+	
+			fNewDescriptionCache.doneApplying();
 		}
-
-		fNewDescriptionCache.doneApplying();
 		
 		event = mngr.createAppliedEvent(fNewDescriptionCache, fOldDescriptionCache, fSetDescription, delta);
 		mngr.notifyListeners(event);
 
 		try {
-			if(!CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE))
+			if(fNewDescriptionCache != null && !CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE))
 				context.addWorkspaceRunnable(mngr.createDesSerializationRunnable(fNewDescriptionCache));
 			IWorkspaceRunnable toRun = context.createOperationRunnable();
 			

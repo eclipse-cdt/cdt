@@ -21,6 +21,7 @@
  * Xuan Chen        (IBM)        - [192716] Refresh Error in Table View after Renaming folder shown in table
  * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
  * Kevin Doyle (IBM) - [193394] After Deleting the folder shown in Table get an error
+ * Kevin Doyle (IBM) - [197971] NPE when table has no input and doing commands in Systems View
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1590,23 +1591,25 @@ public class SystemTableViewPart extends ViewPart
 	        } 
 	    }
 	    
-	    Object currentObject = _currentItem.getObject();
+	    if (_currentItem != null) {
+	    	Object currentObject = _currentItem.getObject();
 	    
-	    // Update the input of the viewer to the closest item in the history
-	    // that still exists if the current viewer item has been deleted.
-	    if (c == currentObject || c.equals(currentObject) || isParentOf(c,currentObject))
-        {
-            if (_browseHistory.size() > 0)
-            {
-                _currentItem = (HistoryItem)_browseHistory.get(_browsePosition);
-                setInput(_currentItem.getObject(), null, false);
-            }
-            else
-            {
-                _currentItem = null;
-                setInput(RSECorePlugin.getTheSystemRegistry(), null, true);
-            }
-        }
+		    // Update the input of the viewer to the closest item in the history
+		    // that still exists if the current viewer item has been deleted.
+		    if (c == currentObject || c.equals(currentObject) || isParentOf(c,currentObject))
+	        {
+	            if (_browseHistory.size() > 0)
+	            {
+	                _currentItem = (HistoryItem)_browseHistory.get(_browsePosition);
+	                setInput(_currentItem.getObject(), null, false);
+	            }
+	            else
+	            {
+	                _currentItem = null;
+	                setInput(RSECorePlugin.getTheSystemRegistry(), null, true);
+	            }
+	        }
+	    }
 	}
 	
 	protected boolean isParentOf(Object parent, Object child) {

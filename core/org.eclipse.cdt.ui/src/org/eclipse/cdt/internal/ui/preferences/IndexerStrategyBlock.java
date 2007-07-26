@@ -133,8 +133,8 @@ public class IndexerStrategyBlock extends AbstractCOptionPage {
 
     public void performDefaults() {
     	initUpdatePolicy(IndexerPreferences.getDefaultUpdatePolicy());
-    	fAutoUpdateButton.setSelection(false);
-    	fImmediateUpdateButton.setSelection(true);
+    	fUseActiveBuildButton.setSelection(false);
+    	fUseFixedBuildConfig.setSelection(true);
     	updateEnablement();
     }
 }

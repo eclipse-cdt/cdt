@@ -33,6 +33,16 @@ public class RSEDialogPageMessageLine implements ISystemMessageLine {
 		page = dialogPage;
 	}
 	
+	/**
+	 * Returns if or if not the dialog page message line has been disposed.
+	 *
+	 * @return <code>True</code> when the dialog page message line is disposed, <code>false</code> otherwise.
+	 */
+	public boolean isDisposed() {
+		assert page != null;
+		return page.getControl() != null && page.getControl().isDisposed();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#clearErrorMessage()
 	 */

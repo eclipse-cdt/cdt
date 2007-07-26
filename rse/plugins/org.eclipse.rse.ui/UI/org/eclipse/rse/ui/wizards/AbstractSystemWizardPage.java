@@ -23,7 +23,6 @@ import org.eclipse.rse.ui.Mnemonics;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
-import org.eclipse.rse.ui.messages.SystemMessageLine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -95,7 +94,7 @@ public abstract class AbstractSystemWizardPage
 {
 	// state
 	private Object input;
-	private SystemMessageLine msgLine;
+	private RSEDialogPageMessageLine msgLine;
 	private String  helpId;
 	private Composite parentComposite;
 	private SystemMessage pendingMessage, pendingErrorMessage;
@@ -268,14 +267,11 @@ public abstract class AbstractSystemWizardPage
 			Mnemonics ms = new Mnemonics();
 			ms.setMnemonic((Button)c);
 		}		
-// dwd		configureMessageLine();
-		msgLine = new SystemMessageLine(myComposite);
-		msgLine.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		if (pendingMessage!=null)
-		  setMessage(pendingMessage);
-		if (pendingErrorMessage!=null)
-		  setErrorMessage(pendingErrorMessage);
-//		 dwd		setControl(c);
+
+		msgLine = new RSEDialogPageMessageLine(this);
+		if (pendingMessage != null) setMessage(pendingMessage);
+		if (pendingErrorMessage != null) setErrorMessage(pendingErrorMessage);
+
 		setControl(myComposite);
 	}
 	
@@ -302,35 +298,30 @@ public abstract class AbstractSystemWizardPage
 	    }
     }   
 	
-	// -----------------------------
-	// ISystemMessageLine methods...
-	// -----------------------------
-	
-	/**
-	 * ISystemMessageLine method. <br>
-	 * Clears the currently displayed error message and redisplayes
-	 * the message which was active before the error message was set.
-	 */
-	public void clearErrorMessage() 
+  // -----------------------------
+  // ISystemMessageLine methods...
+  // -----------------------------
+
+  /* (non-Javadoc)
+   * @see org.eclipse.rse.ui.messages.ISystemMessageLine#clearErrorMessage()
+   */
+  public void clearErrorMessage() 
 	{
 		if (msgLine!=null && !msgLine.isDisposed())
 			msgLine.clearErrorMessage();
 	}
-	
-	/**
-	 * ISystemMessageLine method. <br>
-	 * Clears the currently displayed message.
-	 */
+
+  /* (non-Javadoc)
+   * @see org.eclipse.rse.ui.messages.ISystemMessageLine#clearMessage()
+   */
 	public void clearMessage() 
 	{
 		if (msgLine!=null && !msgLine.isDisposed())
 			msgLine.clearMessage();
 	}
-		
-	/**
-	 * ISystemMessageLine method. <br>
-	 * Get the currently displayed error text.
-	 * @return The error message. If no error message is displayed <code>null</code> is returned.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#getSystemErrorMessage()
 	 */
 	public SystemMessage getSystemErrorMessage() 
 	{
@@ -339,11 +330,9 @@ public abstract class AbstractSystemWizardPage
 	    else
 		  return null;
 	}		
-	
-	/**
-	 * ISystemMessageLine method. <br>
-	 * Display the given error message. A currently displayed message
-	 * is saved and will be redisplayed when the error message is cleared.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)
 	 */
 	public void setErrorMessage(SystemMessage message) 
 	{
@@ -357,9 +346,9 @@ public abstract class AbstractSystemWizardPage
 	    else // not configured yet
 	        pendingErrorMessage = message;
 	}	
-	/**
-	 * ISystemMessageLine method. <br>
-	 * Convenience method to set an error message from an exception
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setErrorMessage(java.lang.Throwable)
 	 */
 	public void setErrorMessage(Throwable exc)
 	{
@@ -372,24 +361,9 @@ public abstract class AbstractSystemWizardPage
            pendingErrorMessage = msg;			
 		}
 	}	
-	/**
-	 * ISystemMessageLine method. <br>
-	 * Display the given error message. A currently displayed message
-	 * is saved and will be redisplayed when the error message is cleared.
-	 */
-	public void setErrorMessage(String message)
-	{
-        if (msgLine != null)
-          msgLine.setErrorMessage(message);
-//		super.setErrorMessage(message);
-//        if (msgLine != null)
-//          ((SystemDialogPageMessageLine)msgLine).internalSetErrorMessage(message);
-	}
-		
-	/** 
-	 * ISystemMessageLine method. <br>
-	 * If the message line currently displays an error,
-	 *  the message is stored and will be shown after a call to clearErrorMessage
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.ui.messages.ISystemMessageLine#setMessage(org.eclipse.rse.services.clientserver.messages.SystemMessage)
 	 */
 	public void setMessage(SystemMessage message) 
 	{
@@ -398,18 +372,35 @@ public abstract class AbstractSystemWizardPage
 	    else // not configured yet
 	        pendingMessage = message;
 	}
-	/**
-	 * ISystemMessageLine method. <br>
-	 * Set the non-error message text. If the message line currently displays an error,
-	 * the message is stored and will be shown after a call to clearErrorMessage
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#setErrorMessage(java.lang.String)
+	 * 
+	 * Never override this method as long the ISystemMessageLine construct is not
+	 * eliminated! Overriding may easely lead to StackOverflowErrors.
 	 */
-	public void setMessage(String message) 
-	{
-		if (msgLine!=null)
-          msgLine.setMessage(message);
-//		super.setMessage(message);
-//		if (msgLine!=null)
-//          ((SystemDialogPageMessageLine)msgLine).internalSetMessage(message);
+	public final void setErrorMessage(String message) {
+		super.setErrorMessage(message);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#setMessage(java.lang.String, int)
+	 * 
+	 * Never override this method as long the ISystemMessageLine construct is not
+	 * eliminated! Overriding may easely lead to StackOverflowErrors.
+	 */
+	public final void setMessage(String newMessage, int newType) {
+		super.setMessage(newMessage, newType);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#setMessage(java.lang.String)
+	 * 
+	 * Never override this method as long the ISystemMessageLine construct is not
+	 * eliminated! Overriding may easely lead to StackOverflowErrors.
+	 */
+	public final void setMessage(String message) {
+		super.setMessage(message);
 	}
     
     // ---------------
@@ -458,21 +449,6 @@ public abstract class AbstractSystemWizardPage
     // ----------------
     // INTERNAL METHODS
     // ---------------- 
-	/**
-	 * Internal method <br>
-	 * Configure the message line
-	 */
-//	private void configureMessageLine() 
-//	{
-//		msgLine = SystemDialogPageMessageLine.createWizardMsgLine(this);    
-//		if (msgLine!=null)
-//		{
-//			if (pendingMessage!=null)
-//			  setMessage(pendingMessage);
-//			if (pendingErrorMessage!=null)
-//			  setErrorMessage(pendingErrorMessage);
-//		}
-//	}
 	
     /**
 	 * Internal method <br>

@@ -62,9 +62,14 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return C_LINKAGE_ID;
 	}
 
-	public PDOMBinding addBinding(IBinding binding) throws CoreException {
+	public PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException {
 		PDOMBinding pdomBinding = adaptBinding(binding);
-		if (pdomBinding == null) {
+		if (pdomBinding != null) {
+			if (shouldUpdate(pdomBinding, fromName)) {
+				pdomBinding.update(this, fromName.getBinding());
+			}
+		}
+		else {
 			PDOMNode parent = getAdaptedParent(binding, true, false);
 			if (parent == null)
 				return null;
@@ -108,6 +113,19 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		return pdomBinding;
 	}
 	
+	private boolean shouldUpdate(PDOMBinding pdomBinding, IASTName fromName) throws CoreException {
+		if (fromName != null) {
+			if (fromName.isDefinition()) {
+				return true;
+			}
+			if (fromName.isReference()) {
+				return false;
+			}
+			return !pdomBinding.hasDefinition();
+		}
+		return false;
+	}
+
 	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		if (name == null)
 			return null;
@@ -125,7 +143,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			// skip parameters
 			return null;
 		
-		return addBinding(binding);
+		return addBinding(binding, name);
 	}
 
 	public int getBindingType(IBinding binding) {
@@ -224,7 +242,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		} else if(type instanceof IFunctionType) {
 			return new PDOMCFunctionType(pdom, parent, (IFunctionType)type);
 		} else if (type instanceof IBinding) {
-			return addBinding((IBinding)type);
+			return addBinding((IBinding)type, null);
 		}
 		
 		return super.addType(parent, type); 

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.db;
@@ -104,6 +105,20 @@ public class PDOMNodeLinkedList {
 			firstMember.setPrev(newMember);
 			newMember.setPrev(prevMember);
 			newMember.setNext(firstMember);
+		}
+	}
+
+	public void deleteListItems() throws CoreException {
+		ListItem item = getFirstMemberItem();
+		if (item != null) {
+			int firstRec= item.record;
+
+			do {
+				ListItem nextItem= item.getNext();
+				item.delete();
+				item= nextItem;
+			}
+			while (item.record != firstRec && item.record != 0);
 		}
 	}
 }

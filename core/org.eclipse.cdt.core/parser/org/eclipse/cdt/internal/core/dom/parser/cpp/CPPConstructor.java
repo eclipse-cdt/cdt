@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Dec 21, 2004
@@ -14,7 +15,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 
@@ -42,8 +45,14 @@ public class CPPConstructor extends CPPMethod implements ICPPConstructor {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor#isExplicit()
      */
-    public boolean isExplicit() {
-        // TODO Auto-generated method stub
+    public boolean isExplicit() throws DOMException {
+    	IASTDeclaration decl= getPrimaryDeclaration();
+    	if (decl != null) {
+    		ICPPASTDeclSpecifier declspec= getDeclSpec(decl);
+    		if (declspec != null) {
+    			return declspec.isExplicit();
+    		}
+    	}
         return false;
     }
 

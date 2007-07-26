@@ -22,6 +22,7 @@ class IndexNode {
 	String fText;
 	Image fImage;
 	boolean fHasDeclarationInProject;
+	int fBindingKind= 0;
 	
 	public ICProject getProject() {
 		if (fParent instanceof IndexNode) {
@@ -38,6 +39,7 @@ class IndexNode {
 		int result = 1;
 		result = prime * result + ((fParent == null) ? 0 : fParent.hashCode());
 		result = prime * result + ((fText == null) ? 0 : fText.hashCode());
+		result = prime * result + fBindingKind;
 		return result;
 	}
 
@@ -49,6 +51,9 @@ class IndexNode {
 		if (getClass() != obj.getClass())
 			return false;
 		final IndexNode other = (IndexNode) obj;
+		if (fBindingKind != other.fBindingKind) {
+			return false;
+		}
 		if (fParent == null) {
 			if (other.fParent != null)
 				return false;

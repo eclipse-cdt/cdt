@@ -66,4 +66,13 @@ public abstract class PDOMNamedNode extends PDOMNode {
 	public boolean hasName(char[] name) throws CoreException {
 		return getDBName().equals(name);
 	}
+	
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		final Database db = pdom.getDB();
+		final int namerec= db.getInt(record + NAME);
+		if (namerec != 0) {
+			db.free(namerec);
+		}
+		super.delete(linkage);
+	}
 }

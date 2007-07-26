@@ -85,7 +85,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 		return PDOMLinkage.QUALIFIER_TYPE;
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		try {
 			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
@@ -152,5 +152,10 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 
 	public Object clone() {
 		return new QualifierTypeClone(this);
+	}
+	
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		linkage.deleteType(getType(), record);
+		super.delete(linkage);
 	}
 }

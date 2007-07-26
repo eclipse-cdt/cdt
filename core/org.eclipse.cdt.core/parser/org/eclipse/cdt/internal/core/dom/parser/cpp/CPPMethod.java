@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,18 +243,22 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
     public boolean isVirtual() throws DOMException {
     	IASTDeclaration decl = getPrimaryDeclaration();
 		if( decl != null ){
-			ICPPASTDeclSpecifier declSpec = null;
-			if( decl instanceof IASTSimpleDeclaration )
-				declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
-			else if( decl instanceof IASTFunctionDefinition )
-				declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
-			
+			ICPPASTDeclSpecifier declSpec = getDeclSpec(decl);
 			if( declSpec != null ){
 				return declSpec.isVirtual();
 			}
 		}
         return false;
     }
+
+	protected ICPPASTDeclSpecifier getDeclSpec(IASTDeclaration decl) {
+		ICPPASTDeclSpecifier declSpec = null;
+		if( decl instanceof IASTSimpleDeclaration )
+			declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)decl).getDeclSpecifier();
+		else if( decl instanceof IASTFunctionDefinition )
+			declSpec = (ICPPASTDeclSpecifier) ((IASTFunctionDefinition)decl).getDeclSpecifier();
+		return declSpec;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()

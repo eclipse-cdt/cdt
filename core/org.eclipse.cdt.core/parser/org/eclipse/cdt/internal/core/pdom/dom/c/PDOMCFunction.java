@@ -6,15 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * IBM Corporation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    IBM Corporation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -62,24 +65,65 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 	public PDOMCFunction(PDOM pdom, PDOMNode parent, IFunction function) throws CoreException {
 		super(pdom, parent, function.getNameCharArray());
 		
+		IFunctionType type;
+		IParameter[] parameters;
+		byte annotations;
 		try {
-			IFunctionType ft= function.getType();
-	
-			if (ft != null) {
-				PDOMNode typeNode = getLinkageImpl().addType(this, ft);
-				if (typeNode != null) {
-					pdom.getDB().putInt(record + FUNCTION_TYPE, typeNode.getRecord());
-				}
-			}
-			
-			IParameter[] params = function.getParameters();
-			pdom.getDB().putInt(record + NUM_PARAMS, params.length);
-			for (int i = 0; i < params.length; ++i) {
-				setFirstParameter(new PDOMCParameter(pdom, this, params[i]));
-			}
-			pdom.getDB().putByte(record + ANNOTATIONS, PDOMCAnnotation.encodeAnnotation(function));
+			type = function.getType();
+			parameters = function.getParameters();
+			annotations = PDOMCAnnotation.encodeAnnotation(function);
 		} catch(DOMException e) {
 			throw new CoreException(Util.createStatus(e));
+		}
+		setType(getLinkageImpl(), type);
+		setParameters(parameters);
+		pdom.getDB().putByte(record + ANNOTATIONS, annotations);
+	}
+
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof IFunction) {
+			IFunction func= (IFunction) newBinding;
+			IFunctionType newType;
+			IParameter[] newParams;
+			byte newAnnotation;
+			try {
+				newType= func.getType();
+				newParams = func.getParameters();
+				newAnnotation = PDOMCAnnotation.encodeAnnotation(func);
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
+				
+			IFunctionType oldType= getType();
+			setType(linkage, newType);
+			PDOMCParameter oldParams= getFirstParameter();
+			setParameters(newParams);
+			if (oldType != null) {
+				linkage.deleteType(oldType, record);
+			}
+			if (oldParams != null) {
+				oldParams.delete(linkage);
+			}
+			pdom.getDB().putByte(record + ANNOTATIONS, newAnnotation);
+		}
+	}
+
+	private void setType(PDOMLinkage linkage, IFunctionType ft) throws CoreException {
+		int rec= 0;
+		if (ft != null) {
+			PDOMNode typeNode = linkage.addType(this, ft);
+			if (typeNode != null) {
+				rec= typeNode.getRecord();
+			}
+		}
+		pdom.getDB().putInt(record + FUNCTION_TYPE, rec);
+	}
+
+	private void setParameters(IParameter[] params) throws CoreException {
+		pdom.getDB().putInt(record + NUM_PARAMS, params.length);
+		pdom.getDB().putInt(record + FIRST_PARAM, 0);
+		for (int i = 0; i < params.length; ++i) {
+			setFirstParameter(new PDOMCParameter(pdom, this, params[i]));
 		}
 	}
 	
@@ -107,13 +151,13 @@ class PDOMCFunction extends PDOMBinding implements IFunction {
 		return PDOMCLinkage.CFUNCTION;
 	}
 
-	public IFunctionType getType() throws DOMException {
+	public IFunctionType getType() {
 		/*
 		 * CVisitor binding resolution assumes any IBinding which is
 		 * also an IType should be converted to a IProblemBinding in a
 		 * route through the code that triggers errors here. This means
 		 * we can't use the convenient idea of having PDOMCFunction implement
-		 * both the IType and IBinding subinterfaces. 
+		 * both the IType and IBinding interfaces. 
 		 */
 		try {
 			int offset= pdom.getDB().getInt(record + FUNCTION_TYPE);

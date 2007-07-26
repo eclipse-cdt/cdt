@@ -60,7 +60,7 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 		return null;
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		try {
 			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
@@ -95,5 +95,10 @@ public class PDOMArrayType extends PDOMNode implements IIndexType, IArrayType, I
 	
 	public Object clone() {
 		return new ArrayTypeClone(this);
+	}
+	
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		linkage.deleteType(getType(), record);
+		super.delete(linkage);
 	}
 }

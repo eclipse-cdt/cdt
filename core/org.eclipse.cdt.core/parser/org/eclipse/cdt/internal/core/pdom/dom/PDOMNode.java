@@ -158,4 +158,14 @@ public abstract class PDOMNode implements IPDOMNode {
 		int mask = 1 << offset;
 		return (bitVector & mask) == mask;
 	}
+
+	/**
+	 * Delete this PDOMNode, make sure you are actually the owner of this record!
+	 * @param linkage 
+	 * @throws CoreException 
+	 * @throws CoreException 
+	 */
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		pdom.getDB().free(record);
+	}
 }

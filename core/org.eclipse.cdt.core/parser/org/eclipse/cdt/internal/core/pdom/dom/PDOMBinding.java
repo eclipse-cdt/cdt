@@ -309,4 +309,15 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	public final int getBindingConstant() {
 		return getNodeType();
 	}
+
+	/**
+	 * The binding is reused by a declaration or definition, we may need to update modifiers.
+	 * @throws CoreException 
+	 */
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+	}
+	
+	final public void delete(PDOMLinkage linkage) throws CoreException {
+		assert false;
+	}
 }

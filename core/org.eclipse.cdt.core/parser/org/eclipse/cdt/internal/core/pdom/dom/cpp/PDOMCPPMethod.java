@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
@@ -59,8 +61,7 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 		Database db = pdom.getDB();
 
 		try {
-			byte annotation = 0;
-			annotation |= PDOMCPPAnnotation.encodeExtraAnnotation(method);
+			byte annotation= PDOMCPPAnnotation.encodeExtraAnnotation(method);
 			db.putByte(record + ANNOTATION1, annotation);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
@@ -69,6 +70,18 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 
 	public PDOMCPPMethod(PDOM pdom, int record) {
 		super(pdom, record);
+	}
+
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ICPPMethod) {
+			ICPPMethod method= (ICPPMethod) newBinding;
+			super.update(linkage, newBinding);
+			try {
+				pdom.getDB().putByte(record + ANNOTATION1, PDOMCPPAnnotation.encodeExtraAnnotation(method));
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
+		}
 	}
 
 	protected int getRecordSize() {

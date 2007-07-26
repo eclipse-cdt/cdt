@@ -356,7 +356,7 @@ public class CPPVisitor {
 					if( template )
 	            		binding = new CPPClassTemplate( name );
 	            	else
-						binding = new CPPClassType( name );
+						binding = new CPPClassType( name, binding);
     				ASTInternal.addName( scope,  elabType.getName() );
     			}
     		} else {
@@ -396,7 +396,7 @@ public class CPPVisitor {
             	if( template )
             		binding = new CPPClassTemplate( name );
             	else
-            		binding = new CPPClassType( name );
+            		binding = new CPPClassType( name, binding );
 				if( scope != null )
 					ASTInternal.addName( scope,  compType.getName() );
     		} else {
@@ -434,7 +434,7 @@ public class CPPVisitor {
 		    IBinding binding;
 		    try{
 		        binding = scope.getBinding( alias.getAlias(), false );
-		        if( binding == null ){
+		        if(  !(binding instanceof ICPPInternalBinding) ){
 		            IBinding namespace = alias.getMappingName().resolveBinding();
 		            if( namespace instanceof IProblemBinding ){
 		            	IProblemBinding problem = (IProblemBinding) namespace;
@@ -611,7 +611,7 @@ public class CPPVisitor {
 			}
 		} else if( parent instanceof IASTSimpleDeclaration ){
     	    IType t1 = null, t2 = null;
-		    if( binding != null && binding instanceof IVariable ){
+		    if( binding != null && binding instanceof IVariable && !(binding instanceof IIndexBinding)){
 		        t1 = createType( declarator );
 		        try {
                     t2 = ((IVariable)binding).getType();

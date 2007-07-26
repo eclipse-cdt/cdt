@@ -183,7 +183,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
 	
-	public abstract PDOMBinding addBinding(IBinding binding) throws CoreException;
+	public abstract PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException;
 	
 	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
 	
@@ -292,7 +292,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			if (scopeBinding != null && scopeBinding != binding) {
 				PDOMBinding scopePDOMBinding = null;
 				if (addParent) {
-					scopePDOMBinding = addBinding(scopeBinding);
+					scopePDOMBinding = addBinding(scopeBinding, null);
 				} else {
 					scopePDOMBinding = adaptBinding(scopeBinding);
 				}
@@ -414,4 +414,24 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		return 0;
 	}
+	
+	public void deleteType(IType type, int ownerRec) throws CoreException {
+		if (type instanceof PDOMNode) {
+			PDOMNode node= (PDOMNode) type;
+			// at this point only delete types that are actually owned by the requesting party.
+			if (node.getParentNodeRec() == ownerRec) {
+				assert ! (node instanceof IBinding);
+				node.delete(this);
+			}
+		}
+	}
+	
+	public void deleteBinding(IBinding binding) throws CoreException {
+		// no implementation, yet.
+	}
+	
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		assert false; // no need to delete linkages.
+	}
+
 }

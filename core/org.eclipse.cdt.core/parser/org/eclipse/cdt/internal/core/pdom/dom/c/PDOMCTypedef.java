@@ -1,26 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -39,9 +42,7 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		
 		try {
 			IType type = typedef.getType();
-			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
-			if (typeNode != null)
-				pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
+			setType(parent.getLinkageImpl(), type);
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -51,15 +52,36 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 		super(pdom, record);
 	}
 
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ITypedef) {
+			ITypedef td= (ITypedef) newBinding;
+			IType mytype= getType();
+			try {
+				IType newType= td.getType();
+				setType(linkage, newType);
+				if (mytype != null) {
+					linkage.deleteType(mytype, record);
+				}				
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
+		}
+	}
+
+	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
+		PDOMNode typeNode = linkage.addType(this, newType);
+		pdom.getDB().putInt(record+TYPE, typeNode != null ? typeNode.getRecord() : 0);
+	}
+
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
 	public int getNodeType() {
-		return PDOMCLinkage.CTYPEDEF;
+		return IIndexCBindingConstants.CTYPEDEF;
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		try {
 			int typeRec = pdom.getDB().getInt(record + TYPE);
 			return (IType)getLinkageImpl().getNode(typeRec);

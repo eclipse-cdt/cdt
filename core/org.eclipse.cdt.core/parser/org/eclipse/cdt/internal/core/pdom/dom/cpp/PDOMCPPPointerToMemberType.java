@@ -19,6 +19,7 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.PointerTypeClone;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMPointerType;
 import org.eclipse.core.runtime.CoreException;
@@ -83,5 +84,10 @@ implements ICPPPointerToMemberType, IIndexType {
 		public Object clone() {
 			return new PDOMCPPPointerToMemberTypeClone(this);
 		}
+	}
+	
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		linkage.deleteType(getMemberOfClass(), record);
+		super.delete(linkage);
 	}
 }

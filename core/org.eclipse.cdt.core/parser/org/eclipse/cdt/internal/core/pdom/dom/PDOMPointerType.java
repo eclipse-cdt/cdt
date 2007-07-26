@@ -139,4 +139,9 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	public Object clone() {
 		return new PointerTypeClone(this);
 	}
+	
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		linkage.deleteType(getType(), record);
+		super.delete(linkage);
+	}
 }

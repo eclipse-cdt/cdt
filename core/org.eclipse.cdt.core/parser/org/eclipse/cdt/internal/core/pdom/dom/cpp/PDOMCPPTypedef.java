@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -42,10 +44,7 @@ class PDOMCPPTypedef extends PDOMCPPBinding
 			throws CoreException {
 		super(pdom, parent, typedef.getNameCharArray());
 		try {
-			IType type = typedef.getType();
-			PDOMNode typeNode = parent.getLinkageImpl().addType(this, type);
-			if (typeNode != null)
-				pdom.getDB().putInt(record + TYPE, typeNode.getRecord());
+			setType(parent.getLinkageImpl(), typedef.getType());
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
@@ -53,6 +52,27 @@ class PDOMCPPTypedef extends PDOMCPPBinding
 
 	public PDOMCPPTypedef(PDOM pdom, int record) {
 		super(pdom, record);
+	}
+
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ITypedef) {
+			ITypedef td= (ITypedef) newBinding;
+			IType mytype= getType();
+			try {
+				IType newType= td.getType();
+				setType(linkage, newType);
+				if (mytype != null) {
+					linkage.deleteType(mytype, record);
+				}				
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
+		}
+	}
+
+	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
+		PDOMNode typeNode = linkage.addType(this, newType);
+		pdom.getDB().putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
 	protected int getRecordSize() {

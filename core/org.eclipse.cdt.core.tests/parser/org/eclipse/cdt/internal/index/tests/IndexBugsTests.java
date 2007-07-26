@@ -625,7 +625,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 	
 	// typedef int T20070213;
-	public void _test173997() throws Exception {
+	public void test173997() throws Exception {
 		waitForIndexer();
 		String content= getContentsForTest(1)[0].toString();
 

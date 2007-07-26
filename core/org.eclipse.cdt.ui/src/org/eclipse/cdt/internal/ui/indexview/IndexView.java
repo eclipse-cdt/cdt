@@ -59,6 +59,7 @@ import org.eclipse.cdt.internal.core.pdom.IPDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
@@ -274,6 +275,9 @@ public class IndexView extends ViewPart implements PDOM.IListener, IElementChang
 				indexNode.fText= IndexLabelProvider.getText(node);
 				indexNode.fImage= IndexLabelProvider.getImage(node);
 				indexNode.fHasDeclarationInProject= Filter.hasDeclarationInProject(node);
+				if (node instanceof PDOMNode) {
+					indexNode.fBindingKind= ((PDOMNode) node).getNodeType();
+				}
 			}
 			return result;
 		}

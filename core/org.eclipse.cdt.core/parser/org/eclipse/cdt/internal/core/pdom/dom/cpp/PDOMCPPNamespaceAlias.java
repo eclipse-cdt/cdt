@@ -17,8 +17,10 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -36,13 +38,29 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements
 	public PDOMCPPNamespaceAlias(PDOM pdom, PDOMNode parent, ICPPNamespaceAlias alias)
 	throws CoreException {
 		super(pdom, parent, alias.getNameCharArray());
-		PDOMBinding namespace = getLinkageImpl().adaptBinding(alias.getBinding());
-		pdom.getDB().putInt(record + NAMESPACE_BINDING, 
-				namespace != null ? namespace.getRecord() : 0);
+		setTargetBinding(parent.getLinkageImpl(), alias.getBinding());
 	}
 
 	public PDOMCPPNamespaceAlias(PDOM pdom, int record) {
 		super(pdom, record);
+	}
+
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ICPPNamespaceAlias) {
+			ICPPNamespaceAlias alias= (ICPPNamespaceAlias) newBinding;
+			IBinding oldTarget= getBinding();
+			IBinding newTarget= alias.getBinding();
+			setTargetBinding(linkage, newTarget);
+			if (oldTarget != null) {
+				linkage.deleteBinding(oldTarget);
+			}				
+		}
+	}
+	
+	private void setTargetBinding(PDOMLinkage linkage, IBinding target) throws CoreException {
+		PDOMBinding namespace = getLinkageImpl().adaptBinding(target);
+		pdom.getDB().putInt(record + NAMESPACE_BINDING, 
+				namespace != null ? namespace.getRecord() : 0);
 	}
 
 	protected int getRecordSize() {
@@ -50,7 +68,7 @@ class PDOMCPPNamespaceAlias extends PDOMCPPBinding implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPNAMESPACEALIAS;
+		return IIndexCPPBindingConstants.CPPNAMESPACEALIAS;
 	}
 	
 	public ICPPNamespaceScope getNamespaceScope() throws DOMException {

@@ -51,4 +51,9 @@ public class PDOMFileLocalScope extends PDOMNamedNode implements IPDOMMemberOwne
 	public void addChild(PDOMNode child) throws CoreException {
 		addMember(child);
 	}
+	
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		// no support for deleting bindings and their scopes.
+		assert false;
+	}
 }

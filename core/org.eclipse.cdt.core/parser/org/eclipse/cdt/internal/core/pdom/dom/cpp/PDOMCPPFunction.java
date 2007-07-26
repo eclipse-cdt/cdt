@@ -17,6 +17,8 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -32,6 +34,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
@@ -85,7 +88,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 			pdom.getDB().putInt(record + SIGNATURE_MEMENTO, memento != null ? memento.intValue() : 0);
 			
 			if(setTypes) {
-				initData(function);
+				initData((ICPPFunctionType) function.getType(), function.getParameters());
 			}
 			db.putByte(record + ANNOTATION, PDOMCPPAnnotation.encodeAnnotation(function));
 		} catch (DOMException e) {
@@ -93,21 +96,53 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
-	public void initData(ICPPFunction function)  throws CoreException, DOMException {
-		Database db= pdom.getDB();
-		
-		ICPPFunctionType ft= (ICPPFunctionType) function.getType();
-		PDOMCPPFunctionType pft = (PDOMCPPFunctionType) getLinkageImpl().addType(this, ft);
-		db.putInt(record + FUNCTION_TYPE, pft.getRecord());
-		
-		IParameter[] params= function.getParameters();
+	public void initData(ICPPFunctionType ftype, IParameter[] params)  throws CoreException {
+		PDOMCPPFunctionType pft= setType(ftype);
+		setParameters(pft, params);	
+	}
+
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ICPPFunction) {
+			IFunction func= (ICPPFunction) newBinding;
+			ICPPFunctionType newType;
+			IParameter[] newParams;
+			byte newAnnotation;
+			try {
+				newType= (ICPPFunctionType) func.getType();
+				newParams = func.getParameters();
+				newAnnotation = PDOMCPPAnnotation.encodeAnnotation(func);
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
+				
+			IFunctionType oldType= getType();
+			PDOMCPPParameter oldParams= getFirstParameter();
+			initData(newType, newParams);
+			if (oldType != null) {
+				linkage.deleteType(oldType, record);
+			}
+			if (oldParams != null) {
+				oldParams.delete(linkage);
+			}
+			pdom.getDB().putByte(record + ANNOTATION, newAnnotation);
+		}
+	}
+
+	private void setParameters(PDOMCPPFunctionType pft, IParameter[] params) throws CoreException {
+		final Database db= pdom.getDB();
 		db.putInt(record + NUM_PARAMS, params.length);
-		
+		db.putInt(record + FIRST_PARAM, 0);
 		IType[] paramTypes= pft.getParameterTypes();
 		for (int i=0; i<params.length; ++i) {
 			int ptRecord= i<paramTypes.length && paramTypes[i]!=null ? ((PDOMNode) paramTypes[i]).getRecord() : 0;
 			setFirstParameter(new PDOMCPPParameter(pdom, this, params[i], ptRecord));
-		}	
+		}
+	}
+
+	private PDOMCPPFunctionType setType(ICPPFunctionType ft) throws CoreException {
+		PDOMCPPFunctionType pft = (PDOMCPPFunctionType) getLinkageImpl().addType(this, ft);
+		pdom.getDB().putInt(record + FUNCTION_TYPE, pft.getRecord());
+		return pft;
 	}
 	
 	public int getSignatureMemento() throws CoreException {
@@ -170,7 +205,7 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 		}
 	}
 
-	public IFunctionType getType() throws DOMException {		
+	public IFunctionType getType() {		
 		try {
 			int offset= pdom.getDB().getInt(record + FUNCTION_TYPE);
 			return offset==0 ? null : new PDOMCPPFunctionType(pdom, offset); 
@@ -213,12 +248,8 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		try {
-			result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
-			result.append(" "+getNodeType()); //$NON-NLS-1$
-		} catch(DOMException de) {
-			result.append(de);
-		}
+		result.append(getName()+" "+ASTTypeUtil.getParameterTypeString(getType())); //$NON-NLS-1$
+		result.append(" "+getNodeType()); //$NON-NLS-1$
 		return result.toString();
 	}
 	

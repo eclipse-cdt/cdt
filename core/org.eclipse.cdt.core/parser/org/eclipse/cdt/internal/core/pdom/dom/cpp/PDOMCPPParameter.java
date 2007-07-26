@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
@@ -150,7 +151,7 @@ class PDOMCPPParameter extends PDOMNamedNode
 		return false; 
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		try {
 			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + TYPE));
 			return node instanceof IType ? (IType)node : null;
@@ -242,5 +243,13 @@ class PDOMCPPParameter extends PDOMNamedNode
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPParameter.CPPParameterDelegate(name, this);
 	}
-	
+
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		linkage.deleteType(getType(), record);
+		PDOMCPPParameter next= getNextParameter();
+		if (next != null) {
+			next.delete(linkage);
+		}
+		super.delete(linkage);
+	}
 }

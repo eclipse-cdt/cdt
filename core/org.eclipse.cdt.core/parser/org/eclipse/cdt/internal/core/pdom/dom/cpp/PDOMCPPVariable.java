@@ -16,7 +16,9 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.Util;
@@ -25,6 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
@@ -58,14 +61,34 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 		try {
 			// Find the type record
 			Database db = pdom.getDB();
-			PDOMNode typeNode = parent.getLinkageImpl().addType(this, variable.getType());
-			if (typeNode != null)
-				db.putInt(record + TYPE_OFFSET, typeNode.getRecord());
-
+			setType(parent.getLinkageImpl(), variable.getType());
 			db.putByte(record + ANNOTATIONS, encodeFlags(variable));
 		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
+	}
+
+	public void update(final PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof IVariable) {
+			IVariable var= (IVariable) newBinding;
+			IType mytype= getType();
+			try {
+				IType newType= var.getType();
+				setType(linkage, newType);
+				pdom.getDB().putByte(record + ANNOTATIONS, PDOMCPPAnnotation.encodeAnnotation(var));
+				if (mytype != null) {
+					linkage.deleteType(mytype, record);
+				}				
+			} catch (DOMException e) {
+				throw new CoreException(Util.createStatus(e));
+			}
+		}
+	}
+
+
+	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
+		PDOMNode typeNode = linkage.addType(this, newType);
+		pdom.getDB().putInt(record + TYPE_OFFSET, typeNode != null ? typeNode.getRecord() : 0);
 	}
 
 	protected byte encodeFlags(ICPPVariable variable) throws DOMException {
@@ -89,7 +112,7 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 		return false; 
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		try {
 			int typeRec = pdom.getDB().getInt(record + TYPE_OFFSET);
 			return (IType)getLinkageImpl().getNode(typeRec);
@@ -118,5 +141,4 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPVariable.CPPVariableDelegate(name, this);
 	}
-	
 }	

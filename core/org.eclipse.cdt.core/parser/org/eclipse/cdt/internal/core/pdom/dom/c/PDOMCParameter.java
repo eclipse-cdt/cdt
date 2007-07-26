@@ -92,7 +92,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 //		TODO throw new PDOMNotImplementedError();
 	}
 
-	public IType getType() throws DOMException {
+	public IType getType() {
 		try {
 			PDOMLinkage linkage = getLinkageImpl(); 
 			PDOMNode node = linkage.getNode(pdom.getDB().getInt(record + TYPE));
@@ -176,5 +176,14 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 	
 	public int getBindingConstant() {
 		return getNodeType();
+	}
+	
+	public void delete(PDOMLinkage linkage) throws CoreException {
+		linkage.deleteType(getType(), record);
+		PDOMCParameter next= getNextParameter();
+		if (next != null) {
+			next.delete(linkage);
+		}
+		super.delete(linkage);
 	}
 }

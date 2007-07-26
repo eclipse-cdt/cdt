@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial implementation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial implementation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.c;
 
@@ -75,6 +76,23 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 		}
 	}
 
+	public void delete(final PDOMLinkage linkage) throws CoreException {
+		linkage.deleteType(getReturnType(), record);
+		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TYPELIST, getLinkageImpl(), true);
+		list.accept(new IPDOMVisitor(){
+			public void leave(IPDOMNode node) throws CoreException {
+			}
+			public boolean visit(IPDOMNode node) throws CoreException {
+				if (node instanceof IType) {
+					linkage.deleteType((IType) node, record);
+				}
+				return false;
+			}
+		});
+		list.deleteListItems();
+		super.delete(linkage);
+	}
+
 	public int getNodeType() {
 		return PDOMCLinkage.CFUNCTIONTYPE;
 	}
@@ -125,7 +143,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 	}
 
 
-	public IType[] getParameterTypes() throws DOMException {
+	public IType[] getParameterTypes() {
 		final List result= new ArrayList();
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + TYPELIST, getLinkageImpl(), true);
@@ -143,7 +161,7 @@ public class PDOMCFunctionType extends PDOMNode implements IIndexType, IFunction
 		return (IType[]) result.toArray(new IType[result.size()]);
 	}
 
-	public IType getReturnType() throws DOMException {
+	public IType getReturnType() {
 		try {
 			PDOMNode node = getLinkageImpl().getNode(pdom.getDB().getInt(record + RETURN_TYPE));
 			if (node instanceof IType) {

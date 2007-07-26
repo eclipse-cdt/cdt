@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
@@ -185,7 +186,8 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
 	private IASTName definition;
 	private IASTName [] declarations;
 	private boolean checked = false;
-	public CPPClassType( IASTName name ){
+	private ICPPClassType typeInIndex;
+	public CPPClassType( IASTName name, IBinding indexBinding ){
 	    if( name instanceof ICPPASTQualifiedName ){
 	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 	        name = ns[ ns.length - 1 ];
@@ -199,6 +201,9 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
 		else 
 			declarations = new IASTName[] { name };
 		name.setBinding( this );
+		if (indexBinding instanceof ICPPClassType && indexBinding instanceof IIndexBinding) {
+			typeInIndex= (ICPPClassType) indexBinding;
+		}
 	}
 	
     /* (non-Javadoc)
@@ -391,10 +396,21 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
 	 */
 	public IScope getCompositeScope() {
-		if( definition == null ){
+		if (definition == null) {
 			checkForDefinition();
 		}
-		return (definition != null ) ? getCompositeTypeSpecifier().getScope() : null;
+		if (definition != null) {
+			return getCompositeTypeSpecifier().getScope();
+		}
+		// fwd-declarations must be backed up from the index
+		if (typeInIndex != null) {
+			try {
+				return typeInIndex.getCompositeScope();
+			} catch (DOMException e) {
+				// index bindings don't throw DOMExeptions.
+			}
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)

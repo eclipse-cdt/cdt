@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -109,7 +111,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				ICPPTemplateParameter[] params = template.getTemplateParameters();
 				for (int i = 0; i < params.length; i++) {
 					if (params[i] != null && !(params[i] instanceof ProblemBinding)) {
-						addBinding(params[i]);
+						addBinding(params[i], null);
 					}
 				}
 			} catch (CoreException e) {
@@ -159,7 +161,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		
 		public void run() {
 			try {
-				template.initData(function);
+				template.initData((ICPPFunctionType) function.getType(), function.getParameters());
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			} catch (DOMException e) {
@@ -193,7 +195,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			// Skip parameters (TODO and others I'm sure)
 			return null;
 
-		PDOMBinding pdomBinding = addBinding(binding);
+		PDOMBinding pdomBinding = addBinding(binding, name);
 		if (pdomBinding instanceof PDOMCPPClassType || pdomBinding instanceof PDOMCPPClassSpecialization) {
 			if (binding instanceof ICPPClassType && name.isDefinition()) {
 				addImplicitMethods(pdomBinding, (ICPPClassType) binding);
@@ -205,7 +207,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return pdomBinding;
 	}
 
-	public PDOMBinding addBinding(IBinding binding) throws CoreException {
+	public PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException {
 		// assign names to anonymous types.
 		binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
 		if (binding == null) {
@@ -213,19 +215,46 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		PDOMBinding pdomBinding = adaptBinding(binding);
-		try {
-			if (pdomBinding == null) {
+		if (pdomBinding != null) {
+			if (shouldUpdate(pdomBinding, fromName)) {
+				pdomBinding.update(this, fromName.getBinding());
+			}
+		}
+		else {
+			try {
 				boolean addParent = shouldAddParent(binding);
 				PDOMNode parent = getAdaptedParent(binding, true, addParent);
 				if (parent == null)
 					return null;
 				pdomBinding = addBinding(parent, binding);
+			} catch(DOMException e) {
+				throw new CoreException(Util.createStatus(e));
 			}
-		} catch(DOMException e) {
-			throw new CoreException(Util.createStatus(e));
 		}
-
 		return pdomBinding;
+	}
+
+	private boolean shouldUpdate(PDOMBinding pdomBinding, IASTName fromName) throws CoreException {
+		if (fromName != null) {
+			if (fromName.isReference()) {
+				return false;
+			}
+			if (pdomBinding instanceof ICPPMember) {
+				IASTNode node= fromName.getParent();
+				while (node != null) {
+					if (node instanceof IASTCompositeTypeSpecifier) {
+						return true;
+					}
+					node= node.getParent();
+				}
+				return false;
+			}
+			if (fromName.isDefinition()) {
+				return true;
+			}
+			return !pdomBinding.hasDefinition();
+		}
+		return false;
 	}
 
 	private boolean shouldAddParent(IBinding binding) throws CoreException {
@@ -243,7 +272,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (binding instanceof ICPPSpecialization) {
 			IBinding specialized = ((ICPPSpecialization)binding).getSpecializedBinding();
 			if (specialized == null || specialized instanceof ProblemBinding) return null;
-			PDOMBinding pdomSpecialized = addBinding(specialized);
+			PDOMBinding pdomSpecialized = addBinding(specialized, null);
 			if (pdomSpecialized == null) return null;
 			
 			if (binding instanceof ICPPDeferredTemplateInstance) {
@@ -397,8 +426,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				ICPPMethod[] implicit= ((ICPPClassScope) scope).getImplicitMethods();
 				for (int i = 0; i < implicit.length; i++) {
 					ICPPMethod method = implicit[i];
-					if (adaptBinding(method) == null) {
+					PDOMBinding pdomBinding= adaptBinding(method);
+					if (pdomBinding == null) {
 						addBinding(type, method);
+					}
+					else {
+						if (!pdomBinding.hasDefinition()) {
+							pdomBinding.update(this, method);
+						}
 					}
 				}
 			}
@@ -561,13 +596,13 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPFunctionType(pdom, parent, (ICPPFunctionType) type);
 		}
 		if (type instanceof ICPPClassType) {
-			return addBinding((ICPPClassType) type);
+			return addBinding((ICPPClassType) type, null);
 		}
 		if (type instanceof IEnumeration) {
-			return addBinding((IEnumeration) type);
+			return addBinding((IEnumeration) type, null);
 		}
 		if (type instanceof ITypedef) {
-			return addBinding((ITypedef) type);
+			return addBinding((ITypedef) type, null);
 		}
 		if (type instanceof ICPPReferenceType) {
 			return new PDOMCPPReferenceType(pdom, parent,
@@ -578,7 +613,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					(ICPPPointerToMemberType) type);
 		}
 		if (type instanceof ICPPTemplateTypeParameter) {
-			return addBinding((ICPPTemplateTypeParameter) type);
+			return addBinding((ICPPTemplateTypeParameter) type, null);
 		}
 
 		return super.addType(parent, type); 

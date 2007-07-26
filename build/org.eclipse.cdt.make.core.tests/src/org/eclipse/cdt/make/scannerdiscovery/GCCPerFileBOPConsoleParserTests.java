@@ -10,13 +10,17 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.make.scannerdiscovery;
 
+import java.util.List;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileBOPConsoleParser;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
@@ -54,5 +58,14 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
+	}
+	
+	public void testParsingIfStatement_bug197930() throws Exception {
+		fOutputParser.processLine("if gcc -g -O0 -I\"include abc\" -c impl/testmath.c; then ; fi"); //$NON-NLS-1$
+
+        List cmds = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.COMPILER_COMMAND);
+        assertEquals(1, cmds.size());
+        CCommandDSC command= (CCommandDSC) cmds.get(0);
+        assertEquals("gcc", command.getCompilerName());
 	}
 }

@@ -115,7 +115,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 				}
 			}
             
-            CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, extensionsIndex > 0);
+            CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, compilerInvocationIndex, extensionsIndex > 0);
             IPath baseDirectory = fUtil.getBaseDirectory();
             if (baseDirectory.isPrefixOf(pFilePath)) {
 	            List cmdList = new ArrayList();

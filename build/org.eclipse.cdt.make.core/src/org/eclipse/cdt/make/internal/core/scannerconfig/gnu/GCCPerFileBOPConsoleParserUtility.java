@@ -114,7 +114,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
         compiledFileList.add(longFileName);
 
         String[] tokens = genericLine.split("\\s+"); //$NON-NLS-1$
-        CCommandDSC command = getNewCCommandDSC(tokens, false); // assume .c file type
+        CCommandDSC command = getNewCCommandDSC(tokens, 0, false); // assume .c file type
         int index = commandsList2.indexOf(command);
         if (index == -1) {
             commandsList2.add(command);
@@ -133,12 +133,12 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * @param cppFileType
      * @return CCommandDSC compile command description 
      */
-    public CCommandDSC getNewCCommandDSC(String[] tokens, boolean cppFileType) {
+    public CCommandDSC getNewCCommandDSC(String[] tokens, final int idxOfCompilerCommand, boolean cppFileType) {
 		ArrayList dirafter = new ArrayList();
 		ArrayList includes = new ArrayList();
         CCommandDSC command = new CCommandDSC(cppFileType, getProject());
-        command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[0]));
-        for (int i = 1; i < tokens.length; ++i) {
+        command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[idxOfCompilerCommand]));
+        for (int i = idxOfCompilerCommand+1; i < tokens.length; ++i) {
         	String token = tokens[i];
         	//Target specific options: see GccScannerInfoConsoleParser
 			if (token.startsWith("-m") ||		//$NON-NLS-1$

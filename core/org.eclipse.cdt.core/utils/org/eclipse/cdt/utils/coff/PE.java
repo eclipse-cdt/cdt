@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
  
 package org.eclipse.cdt.utils.coff;
@@ -745,7 +746,7 @@ public class PE {
 		try {
 			// the debug directory is the 6th entry
 			NTOptionalHeader ntHeader = getNTOptionalHeader();
-			if (ntHeader.NumberOfRvaAndSizes < IMAGE_DIRECTORY_ENTRY_DEBUG)
+			if (ntHeader==null || ntHeader.NumberOfRvaAndSizes < IMAGE_DIRECTORY_ENTRY_DEBUG)
 				return null;
 
 			int debugDir = ntHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress;
@@ -761,7 +762,7 @@ public class PE {
 			// loop through the section headers to find the .rdata section
 			for (int i = 0; i < sections.length; i++) {
 				String name = new String(sections[i].s_name).trim();
-				if (name.equals(".rdata")) {
+				if (name.equals(".rdata")) { //$NON-NLS-1$
 					// figure out the file offset of the debug ddirectory entries
 					int offsetInto_rdata = debugDir - sections[i].s_vaddr;
 					int fileOffset = sections[i].s_scnptr + offsetInto_rdata;
@@ -780,7 +781,7 @@ public class PE {
 							// sanity check.  the first four bytes of the CodeView
 							// data should be "NB11"
 							String s2 = accessFile.readLine();
-							if (s2.startsWith("NB11")) {
+							if (s2.startsWith("NB11")) { //$NON-NLS-1$
 								Attribute att = getAttribute();
 								symReader = new CodeViewReader(accessFile,
 										debugBase, att.isLittleEndian());
@@ -808,10 +809,10 @@ public class PE {
 			// loop through the section headers looking for stabs info
 			for (int i = 0; i < sections.length; i++) {
 				String name = new String(sections[i].s_name).trim();
-				if (name.equals(".stab")) {
+				if (name.equals(".stab")) { //$NON-NLS-1$
 					stab = sections[i].getRawData();
 				}
-				if (name.equals(".stabstr")) {
+				if (name.equals(".stabstr")) { //$NON-NLS-1$
 					stabstr = sections[i].getRawData();
 				}
 			}

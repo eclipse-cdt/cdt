@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
- * Markus Schorn (Wind River Systems)
- * Bryan Wilkinson (QNX)
- * Andrew Ferguson (Symbian)
+ *    IBM Rational Software - Initial API and implementation 
+ *    Markus Schorn (Wind River Systems)
+ *    Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
@@ -1220,12 +1220,13 @@ public class CVisitor {
 			    }
 			} else if ( parent instanceof IASTTranslationUnit ){
 				IASTTranslationUnit translation = (IASTTranslationUnit) parent;
-				if (!prefix || translation.getIndex() == null) {
+				if (!prefix) {
 					nodes = translation.getDeclarations();
 					scope = (ICScope) translation.getScope();
 				} else {
-					//The index will be search later
-					nodes = null;
+					// The index will be search later, still we need to look at the declarations found in
+					// the AST, bug 180883
+					nodes = translation.getDeclarations();
 					scope = null;
 				}
 			} else if( parent instanceof IASTStandardFunctionDeclarator ){

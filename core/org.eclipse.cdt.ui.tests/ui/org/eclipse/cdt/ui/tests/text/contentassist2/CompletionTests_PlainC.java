@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text.contentassist2;
@@ -126,7 +127,7 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	
 	//// to_be_replaced_
 	//void gfunc(){aNew/*cursor*/
-	public void _testGlobalVariableBeforeSave_Bug180883() throws Exception {
+	public void testGlobalVariableBeforeSave_Bug180883() throws Exception {
 		String replace=   "// to_be_replaced_";
 		String globalVar= "int aNewGlobalVar;";
 		IDocument doc= getDocument();
@@ -143,4 +144,13 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
+	// static int staticVar197990;
+	// void gFunc() {
+	//   stat/*cursor*/
+	public void testStaticVariables_Bug197990() throws Exception {
+		final String[] expected= {
+				"staticVar197990"
+		};
+		assertCompletionResults(expected);
+	}
 }

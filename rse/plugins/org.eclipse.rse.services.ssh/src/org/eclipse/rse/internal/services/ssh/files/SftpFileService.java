@@ -336,6 +336,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			} finally {
 				fDirChannelMutex.release();
 			}
+		} else {
+			throw new RemoteFileCancelledException();
 		}
 		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
 	}
@@ -607,6 +609,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			} finally {
 				fDirChannelMutex.release();
 			}
+		} else {
+			throw new RemoteFileCancelledException();
 		}
 		return result;
 	}
@@ -627,6 +631,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			} finally {
 				fDirChannelMutex.release();
 			}
+		} else {
+			throw new RemoteFileCancelledException();
 		}
 		return result;
 	}
@@ -945,7 +951,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " failed: " + e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 			throw makeSystemMessageException(e);
 		}
-		
+		if (monitor.isCanceled()) {
+			throw new RemoteFileCancelledException();
+		}
 		return stream;
 	}
 }

@@ -69,6 +69,9 @@ public class Mutex {
         if (Thread.interrupted()) {
         	return false;
 		}
+        if (monitor!=null && monitor.isCanceled()) {
+        	return false;
+        }
     	final Thread myself = Thread.currentThread();
         synchronized(fWaitQueue) {
         	if (!fLocked) {

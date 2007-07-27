@@ -285,7 +285,7 @@ public class CfgDiscoveredPathManager implements IResourceChangeListener {
 	}
 	
 	private IDiscoveredPathManager.IDiscoveredPathInfo loadPathInfo(IProject project, IConfiguration cfg, ContextInfo cInfo) throws CoreException{
-		IDiscoveredPathManager.IDiscoveredPathInfo info = fBaseMngr.getDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext());
+		IDiscoveredPathManager.IDiscoveredPathInfo info = fBaseMngr.getDiscoveredInfo(cfg.getOwner().getProject(), cInfo.fLoadContext.toInfoContext(), false);
 		if(!DiscoveredScannerInfoStore.getInstance().hasInfo(project, cInfo.fLoadContext.toInfoContext(), info.getSerializable())){
 //			setCachedPathInfo(context, info);
 			ICfgScannerConfigBuilderInfo2Set container = cInfo.fCfgInfo;

@@ -140,11 +140,15 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 	}
 
 	public IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context) throws CoreException{
+		return getDiscoveredInfo(project, context, true);
+	}
+
+	public IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context, boolean defaultToProjectSettings) throws CoreException{
 		DiscoveredInfoHolder holder = getHolder(project, true);
 		IDiscoveredPathInfo info = holder.getInfo(context);
 		
 		if(info == null){
-			info = loadPathInfo(project, context);
+			info = loadPathInfo(project, context, defaultToProjectSettings);
 			holder.setInfo(context, info);
 		}
 		
@@ -160,12 +164,12 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 		return holder;
 	}
 
-	private IDiscoveredPathInfo loadPathInfo(IProject project, InfoContext context) throws CoreException {
+	private IDiscoveredPathInfo loadPathInfo(IProject project, InfoContext context, boolean defaultToProjectSettings) throws CoreException {
         IDiscoveredPathInfo pathInfo = null;
         
         IScannerConfigBuilderInfo2Set container = ScannerConfigProfileManager.createScannerConfigBuildInfo2Set(project);
         IScannerConfigBuilderInfo2 buildInfo = container.getInfo(context);
-        if(buildInfo == null)
+        if(buildInfo == null && defaultToProjectSettings)
         	buildInfo = container.getInfo(new InfoContext(project));
 
         if(buildInfo != null){

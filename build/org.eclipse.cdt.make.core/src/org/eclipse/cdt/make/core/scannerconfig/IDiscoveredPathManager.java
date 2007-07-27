@@ -114,6 +114,8 @@ public interface IDiscoveredPathManager {
 
 	IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context) throws CoreException;
 
+	IDiscoveredPathInfo getDiscoveredInfo(IProject project, InfoContext context, boolean defaultToProjectSettings) throws CoreException;
+
 	IDiscoveredPathInfo getDiscoveredInfo(IProject project) throws CoreException;
 	void removeDiscoveredInfo(IProject project);
 	void removeDiscoveredInfo(IProject project, InfoContext context);

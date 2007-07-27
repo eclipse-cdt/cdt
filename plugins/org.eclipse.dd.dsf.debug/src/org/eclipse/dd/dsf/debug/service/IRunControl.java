@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson			  - Modified for additional functionality
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
@@ -43,7 +44,7 @@ public interface IRunControl extends IDMService
     public interface IContainerDMContext extends IExecutionDMContext {}
 
     /** Flag indicating reason context state change. */
-    public enum StateChangeReason { UNKNOWN, USER_REQUEST, STEP, BREAKPOINT, EXCEPTION, CONTAINER };
+    public enum StateChangeReason { UNKNOWN, USER_REQUEST, STEP, BREAKPOINT, EXCEPTION, CONTAINER, WATCHPOINT, SIGNAL, SHAREDLIB, ERROR };
         
     /**
      * Events signaling a state changes.

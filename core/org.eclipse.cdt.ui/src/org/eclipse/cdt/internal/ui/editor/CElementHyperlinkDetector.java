@@ -89,19 +89,21 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 		try {
 			IStatus status= ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
 				public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-					IASTName[] selectedNames= 
-						lang.getSelectedNames(ast, selection.getOffset(), selection.getLength());
+					if (ast != null) {
+						IASTName[] selectedNames= 
+							lang.getSelectedNames(ast, selection.getOffset(), selection.getLength());
 
-					IRegion linkRegion;
-					if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
-						linkRegion = new Region(selection.getOffset(), selection.getLength());
-					}
-					else { // check if we are in an include statement
-						linkRegion = matchIncludeStatement(ast, selection);
-					}
+						IRegion linkRegion;
+						if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
+							linkRegion = new Region(selection.getOffset(), selection.getLength());
+						}
+						else { // check if we are in an include statement
+							linkRegion = matchIncludeStatement(ast, selection);
+						}
 
-					if(linkRegion != null)
-						result[0]= new CElementHyperlink(linkRegion, openAction);
+						if(linkRegion != null)
+							result[0]= new CElementHyperlink(linkRegion, openAction);
+					}
 					return Status.OK_STATUS;
 				}
 			});

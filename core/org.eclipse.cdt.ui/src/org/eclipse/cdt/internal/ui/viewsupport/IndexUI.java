@@ -339,9 +339,11 @@ public class IndexUI {
 		final IASTName[] result= {null};
 		ASTProvider.getASTProvider().runOnAST(workingCopy, ASTProvider.WAIT_YES, null, new ASTRunnable() {
 			public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-				FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
-				ast.accept(finder);
-				result[0]= finder.getSelectedName();
+				if (ast != null) {
+					FindNameForSelectionVisitor finder= new FindNameForSelectionVisitor(ast.getFilePath(), selectionStart, selectionLength);
+					ast.accept(finder);
+					result[0]= finder.getSelectedName();
+				}
 				return Status.OK_STATUS;
 			}
 		});

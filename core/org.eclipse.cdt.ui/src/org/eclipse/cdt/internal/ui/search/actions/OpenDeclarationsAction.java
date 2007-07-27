@@ -114,6 +114,9 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 		}
 
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) throws CoreException {
+			if (ast == null) {
+				return Status.OK_STATUS;
+			}
 			int selectionStart = selNode.getOffset();
 			int selectionLength = selNode.getLength();
 				

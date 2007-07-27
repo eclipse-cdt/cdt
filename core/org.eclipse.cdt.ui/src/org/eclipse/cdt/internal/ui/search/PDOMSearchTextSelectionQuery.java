@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -48,12 +48,14 @@ public class PDOMSearchTextSelectionQuery extends PDOMSearchQuery {
 	protected IStatus runWithIndex(final IIndex index, IProgressMonitor monitor) {
 		return ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_YES, monitor, new ASTRunnable() {
 			public IStatus runOnAST(ILanguage language, IASTTranslationUnit ast) throws CoreException {
-				IASTName[] names = language.getSelectedNames(ast, selection.getOffset(), selection.getLength());
-				if (names != null) {
-					for (int i = 0; i < names.length; ++i) {
-						IBinding binding = names[i].resolveBinding();
-						if (binding != null)
-							createMatches(index, binding);
+				if (ast != null) {
+					IASTName[] names = language.getSelectedNames(ast, selection.getOffset(), selection.getLength());
+					if (names != null) {
+						for (int i = 0; i < names.length; ++i) {
+							IBinding binding = names[i].resolveBinding();
+							if (binding != null)
+								createMatches(index, binding);
+						}
 					}
 				}
 				return Status.OK_STATUS;

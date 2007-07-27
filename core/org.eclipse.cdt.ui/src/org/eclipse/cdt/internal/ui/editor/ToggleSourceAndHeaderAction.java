@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -104,11 +105,13 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 			shouldVisitDeclarators= true;
 		}
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
-			fIndex= ast.getIndex();
-			fFilePath= Path.fromOSString(ast.getFilePath());
-			fMap= new HashMap();
-			if (fIndex != null) {
-				ast.accept(this);
+			if (ast != null) {
+				fIndex= ast.getIndex();
+				fFilePath= Path.fromOSString(ast.getFilePath());
+				fMap= new HashMap();
+				if (fIndex != null) {
+					ast.accept(this);
+				}
 			}
 			return Status.OK_STATUS;
 		}

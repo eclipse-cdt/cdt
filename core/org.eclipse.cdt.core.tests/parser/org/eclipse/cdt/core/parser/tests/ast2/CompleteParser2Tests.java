@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -2206,11 +2206,10 @@ public class CompleteParser2Tests extends BaseTestCase {
 		writer.write( "int func3 (void) __attribute__((id,id (3)));\n" ); //$NON-NLS-1$
 		writer.write( "int func4 (void) __attribute__((id,id (1+2)));\n" ); //$NON-NLS-1$
 		writer.write( "void (****f1)(void) __attribute__((noreturn));\n" ); //$NON-NLS-1$
-/* not yet supported by the GCC compiler:	
- * 	    writer.write( "void (__attribute__((noreturn)) ****f2) (void);\n" ); //$NON-NLS-1$
- *		writer.write( "char *__attribute__((aligned(8))) *f3;\n" ); //$NON-NLS-1$
- *		writer.write( "char * __attribute__((aligned(8))) * f3;\n" ); //$NON-NLS-1$
-*/		writer.write( "void fatal1 () __attribute__ ((noreturn));\n" ); //$NON-NLS-1$
+  	    writer.write( "void (__attribute__((noreturn)) ****f2) (void);\n" ); //$NON-NLS-1$
+ 		writer.write( "char *__attribute__((aligned(8))) *f3;\n" ); //$NON-NLS-1$
+ 		writer.write( "char * __attribute__((aligned(8))) * f3;\n" ); //$NON-NLS-1$
+		writer.write( "void fatal1 () __attribute__ ((noreturn));\n" ); //$NON-NLS-1$
 		writer.write( "int square1 (int) __attribute__ ((pure));\n" ); //$NON-NLS-1$
 		writer.write( "extern int\n" ); //$NON-NLS-1$
 		writer.write( "my_printf1 (void *my_object, const char *my_format, ...)\n" ); //$NON-NLS-1$

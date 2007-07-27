@@ -542,9 +542,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
 
         for (;;) {
-// 			having __attribute__ inbetween pointers is not yet supported by the GCC compiler
-//        	if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after a *
-//            	__attribute__();
+        	// __attribute__ in-between pointers
+            __attribute_decl_seq(supportAttributeSpecifiers, false);
         	
             if (LT(1) == IToken.tAMPER) {
                 int length = LA(1).getEndOffset() - LA(1).getOffset();

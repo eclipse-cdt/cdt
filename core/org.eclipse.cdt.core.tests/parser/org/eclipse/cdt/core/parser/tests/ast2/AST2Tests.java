@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -3924,4 +3924,13 @@ public class AST2Tests extends AST2BaseTest {
 		parse( content, ParserLanguage.CPP); 
 		parse( content, ParserLanguage.C); 
 	}
+	
+    // void  ( __attribute__((__stdcall__))* foo1) (int);
+    // void  ( * __attribute__((__stdcall__)) foo2) (int);
+    // void  ( * __attribute__((__stdcall__))* foo3) (int);
+    public void testBug191450_attributesInBetweenPointers() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	parse( buffer.toString(), ParserLanguage.CPP, true, true );
+    	parse( buffer.toString(), ParserLanguage.C, true, true );
+    }
 }

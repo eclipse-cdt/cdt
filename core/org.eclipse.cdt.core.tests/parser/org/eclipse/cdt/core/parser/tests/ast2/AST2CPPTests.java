@@ -5482,9 +5482,6 @@ public class AST2CPPTests extends AST2BaseTest {
     	assertFalse(binding instanceof IProblemBinding);
     }
     
-
-
-
 	// #define _GLIBCXX_VISIBILITY(V) __attribute__ ((__visibility__ (#V)))
 	// #define _GLIBCXX_BEGIN_NAMESPACE(X) namespace X _GLIBCXX_VISIBILITY(default) {
 	// _GLIBCXX_BEGIN_NAMESPACE(std)

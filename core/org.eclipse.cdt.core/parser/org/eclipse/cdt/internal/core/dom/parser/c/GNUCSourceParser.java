@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Ed Swartz (Nokia)
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -1342,10 +1342,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     protected void consumePointerOperators(List pointerOps)
             throws EndOfFileException, BacktrackException {
         for (;;) {
-// 			having __attribute__ inbetween pointers is not yet supported by the GCC compiler
-//            if (LT(1) == IGCCToken.t__attribute__ && supportAttributeSpecifiers) // if __attribute__ is after a *
-//            	__attribute__();
-        	
+        	// __attribute__ in-between pointers
+            __attribute_decl_seq(supportAttributeSpecifiers, false);
+
             IToken mark = mark();
             IToken last = null;
 

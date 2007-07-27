@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
+ * Kevin Doyle (IBM) - [198114] Allowed to move file into existing folder/archive on first attempt
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -77,8 +78,8 @@ public abstract class SystemRemoteResourceDialog extends SystemPromptDialog
 		{
 			_form.applyViewerFilter(getViewerFilter());
 		}
-		_form.setPreSelection(_preSelection);	
 		_form.setSelectionValidator(_selectionValidator);
+		_form.setPreSelection(_preSelection);	
 	 	_form.setShowPropertySheet(_showPropertySheet);
 	 	_form.setSelectionTreeToolTipText(getTreeTip());
 	 	if (_message != null)

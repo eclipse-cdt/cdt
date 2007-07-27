@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -348,4 +349,26 @@ public class IndexCBindingResolutionTest extends IndexBindingResolutionTestBase 
 	public void _testEnumeratorInStructScope() {fail("todo");}
 	public void _testEnumeratorInUnionScope() {fail("todo");}
 	public void _testMemberAccess() {fail("todo");}
+	
+	// // header file
+	// struct myStruct {
+	//    int a;
+	// };
+	// union myUnion {
+	//    int b;
+	// };
+
+	// // referencing content
+	// struct myStruct; 
+	// union myUnion;
+	// void test() {
+	//    struct myStruct* u;
+	//    union myUnion* v;
+	//    u->a= 1;  // since we include the definition, we may use the type.
+	//    v->b= 1;  // since we include the definition, we may use the type.
+	// }
+	public void testTypeDefinitionWithFwdDeclaration() {
+		getBindingFromASTName("a= 1", 1);
+		getBindingFromASTName("b= 1", 1);
+	}
 }

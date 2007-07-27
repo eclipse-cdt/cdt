@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -1136,6 +1137,28 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		assertEquals(1, getIndex().findNames(binding2, IIndex.FIND_DEFINITIONS).length);
 	}
 
+	// // header file
+	// struct myStruct {
+	//    int a;
+	// };
+	// union myUnion {
+	//    int b;
+	// };
+
+	// // referencing content
+	// struct myStruct; 
+	// union myUnion;
+	// void test() {
+	//    struct myStruct* u;
+	//    union myUnion* v;
+	//    u->a= 1;  // since we include the definition, we may use the type.
+	//    v->b= 1;  // since we include the definition, we may use the type.
+	// }
+	public void testTypeDefinitionWithFwdDeclaration() {
+		getBindingFromASTName("a= 1", 1);
+		getBindingFromASTName("b= 1", 1);
+	}
+
 	/* CPP assertion helpers */
 	/* ##################################################################### */
 
@@ -1227,19 +1250,19 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
  	 * @param cqn
  	 * @param qn may be null
  	 */
- 	static protected void assertPTM(IType type, String cqn, String qn) {
- 		try {
- 			assertTrue(type instanceof ICPPPointerToMemberType);
- 			ICPPPointerToMemberType ptmt = (ICPPPointerToMemberType) type;
- 			ICPPClassType classType = ptmt.getMemberOfClass();
- 			assertQNEquals(cqn, classType);
- 			if(qn!=null) {
- 				assert(ptmt.getType() instanceof ICPPBinding);
- 				ICPPBinding tyBinding = (ICPPBinding) ptmt.getType();
- 				assertQNEquals(qn, tyBinding);
- 			}
- 		} catch(DOMException de) {
- 			fail(de.getMessage());
-  	}
- }
+	static protected void assertPTM(IType type, String cqn, String qn) {
+		try {
+			assertTrue(type instanceof ICPPPointerToMemberType);
+			ICPPPointerToMemberType ptmt = (ICPPPointerToMemberType) type;
+			ICPPClassType classType = ptmt.getMemberOfClass();
+			assertQNEquals(cqn, classType);
+			if(qn!=null) {
+				assert(ptmt.getType() instanceof ICPPBinding);
+				ICPPBinding tyBinding = (ICPPBinding) ptmt.getType();
+				assertQNEquals(qn, tyBinding);
+			}
+		} catch(DOMException de) {
+			fail(de.getMessage());
+		}
+	}
 }

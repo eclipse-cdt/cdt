@@ -70,6 +70,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	private IIndex fIndex= null;
 	private StringBuffer[] fContents;
 	private IFile fFile;
+	private IFile fHeader;
 	private int fContentUsed;
 	
 	public IndexUpdateTests(String name) {
@@ -87,10 +88,23 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {fCProject, fCppProject});
 	}
 
-	private void setupFile(int totalFileVersions, boolean cpp) throws Exception {
-		fContents= getContentsForTest(totalFileVersions);
+	private void setupHeader(int totalFileVersions, boolean cpp) throws Exception {
+		if (fContents == null) {
+			fContents= getContentsForTest(totalFileVersions);
+			fContentUsed= -1;
+		}
 		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
-		fFile= TestSourceReader.createFile(project, "file" + (cpp ? ".cpp" : ".c"), fContents[0].toString());
+		fFile= TestSourceReader.createFile(project, "header.h", fContents[++fContentUsed].toString());
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
+	}
+
+	private void setupFile(int totalFileVersions, boolean cpp) throws Exception {
+		if (fContents == null) {
+			fContents= getContentsForTest(totalFileVersions);
+			fContentUsed= -1;
+		}
+		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
+		fFile= TestSourceReader.createFile(project, "file" + (cpp ? ".cpp" : ".c"), fContents[++fContentUsed].toString());
 		fContentUsed= 0;
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
 	}
@@ -104,8 +118,11 @@ public class IndexUpdateTests extends IndexTestBase {
 		fIndex= null;
 		if (fFile != null) {
 			fFile.delete(true, NPM);
-			CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		}
+		if (fHeader != null) {
+			fHeader.delete(true, NPM);
+		}
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		super.tearDown();
 	}
 		
@@ -373,6 +390,23 @@ public class IndexUpdateTests extends IndexTestBase {
 		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE});
 		updateFile();
 		checkCppMethod("MyClass::method", new String[] {INT, CHAR}, new String[]{PRIVATE, INLINE});
+	}
+
+	// class MyClass {protected: int method(int a, int b);};
+	
+	// #include "header.h"
+	// int MyClass::method(int a, int b);
+	
+	// #include "header.h"
+	// char MyClass::method(int a, int b);
+	
+	public void testFixedCppMethod() throws Exception {
+		setupHeader(3, true);
+		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PROTECTED});
+		setupFile(0, true);
+		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PROTECTED});
+		updateFile();
+		checkCppMethod("MyClass::method", new String[] {INT, INT, INT}, new String[]{PROTECTED});
 	}
 
 	private void checkCppMethod(String name, String[] types, String[] modifiers) throws Exception {

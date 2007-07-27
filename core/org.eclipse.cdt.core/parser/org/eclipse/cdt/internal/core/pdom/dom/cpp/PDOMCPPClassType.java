@@ -75,11 +75,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 			throws CoreException {
 		super(pdom, parent, classType.getNameCharArray());
 
-		try {
-			pdom.getDB().putByte(record + KEY, (byte) classType.getKey());
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
+		setKind(classType);
 		// linked list is initialized by storage being zero'd by malloc
 	}
 
@@ -87,6 +83,22 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		super(pdom, bindingRecord);
 	}
 
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ICPPClassType) {
+			ICPPClassType ct= (ICPPClassType) newBinding;
+			setKind(ct);
+			super.update(linkage, newBinding);
+		}
+	}
+
+	private void setKind(ICPPClassType ct) throws CoreException {
+		try {
+			pdom.getDB().putByte(record + KEY, (byte) ct.getKey());
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
+	}
+	
 	public void addMember(PDOMNode member) throws CoreException {
 		PDOMNodeLinkedList list = new PDOMNodeLinkedList(pdom, record + MEMBERLIST, getLinkageImpl());
 		list.addMember(member);

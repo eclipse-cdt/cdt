@@ -38,6 +38,7 @@ import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
@@ -53,17 +54,29 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 	
 	public PDOMCStructure(PDOM pdom, PDOMNode parent, ICompositeType compType) throws CoreException {
-		super(pdom, parent, compType.getNameCharArray());
+		super(pdom, parent, compType.getNameCharArray());		
+		setKind(compType);
 		// linked list is initialized by malloc zeroing allocated storage
-		try {
-			pdom.getDB().putByte(record + KEY, (byte) compType.getKey());
-		} catch (DOMException e) {
-			throw new CoreException(Util.createStatus(e));
-		}
 	}
 
 	public PDOMCStructure(PDOM pdom, int record) {
 		super(pdom, record);
+	}
+	
+	public void update(PDOMLinkage linkage, IBinding newBinding) throws CoreException {
+		if (newBinding instanceof ICompositeType) {
+			ICompositeType ct= (ICompositeType) newBinding;
+			setKind(ct);
+			super.update(linkage, newBinding);
+		}
+	}
+
+	private void setKind(ICompositeType ct) throws CoreException {
+		try {
+			pdom.getDB().putByte(record + KEY, (byte) ct.getKey());
+		} catch (DOMException e) {
+			throw new CoreException(Util.createStatus(e));
+		}
 	}
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {

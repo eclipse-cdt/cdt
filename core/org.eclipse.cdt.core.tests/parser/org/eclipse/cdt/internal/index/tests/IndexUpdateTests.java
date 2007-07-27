@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -588,4 +590,124 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}	
+	
+	// struct myType {
+	//    int a;
+	// };
+	
+	// union myType {
+	//    int a;
+	// };
+
+	// typedef int myType;
+
+	// enum myType {};
+	public void testChangingTypePlainC() throws Exception {
+		setupFile(4, false);
+		IBinding binding;
+		ICompositeType ct;
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("myType");
+			assertTrue(binding instanceof ICompositeType);
+			ct = (ICompositeType) binding;
+			assertTrue(ct.getKey() == ICompositeType.k_struct);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("myType");
+			assertTrue(binding instanceof ICompositeType);
+			ct = (ICompositeType) binding;
+			assertTrue(ct.getKey() == ICompositeType.k_union);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("myType");
+			assertTrue(binding instanceof ITypedef);
+			ITypedef td = (ITypedef) binding;
+			assertEquals(INT, ASTTypeUtil.getType(td.getType()));
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("myType");
+			assertTrue(binding instanceof IEnumeration);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	
+	// class myType {
+	//    int a;
+	// };
+	
+	// struct myType {
+	//    int a;
+	// };
+	
+	// union myType {
+	//    int a;
+	// };
+
+	// typedef int myType;
+
+	// enum myType {};
+	public void testChangingTypeCPP() throws Exception {
+		setupFile(4, true);
+		IBinding binding;
+		ICompositeType ct;
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("myType");
+			assertTrue(binding instanceof ICompositeType);
+			ct = (ICompositeType) binding;
+			assertTrue(ct.getKey() == ICompositeType.k_struct);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("myType");
+			assertTrue(binding instanceof ICompositeType);
+			ct = (ICompositeType) binding;
+			assertTrue(ct.getKey() == ICompositeType.k_union);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("myType");
+			assertTrue(binding instanceof ITypedef);
+			ITypedef td = (ITypedef) binding;
+			assertEquals(INT, ASTTypeUtil.getType(td.getType()));
+		} finally {
+			fIndex.releaseReadLock();
+		}
+		
+		updateFile();
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("myType");
+			assertTrue(binding instanceof IEnumeration);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
 }

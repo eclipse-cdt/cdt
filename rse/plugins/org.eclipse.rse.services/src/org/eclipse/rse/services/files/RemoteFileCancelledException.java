@@ -22,11 +22,8 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
- * Exception thrown when attempting an operation and it fails for IO reasons, such as
- * the file is read-only.
- * <p>
- * The original remote system's io message is always embedded and retrievable
- * via getRemoteException().
+ * Exception thrown when attempting a file operation and the user
+ * canceled it before it could be completed.
  */
 public class RemoteFileCancelledException extends RemoteFileIOException {
 

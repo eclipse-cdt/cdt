@@ -54,6 +54,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -248,7 +249,6 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		//getFile() must return a dummy even for non-existent files,
 		//or the move() operation will fail. This is described in 
 		//the API docs.
-		//TODO when monitor is canceled, it is unclear whether we should return an empty file node or throw a canceled exception.
 		SftpHostFile node = null;
 		SftpATTRS attrs = null;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
@@ -267,6 +267,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			} finally {
 				fDirChannelMutex.release();
 			}
+		} else {
+			throw new RemoteFileCancelledException();
 		}
 		if (node==null) {
 			node = new SftpHostFile(remoteParent, fileName, false, false, false, 0, 0);

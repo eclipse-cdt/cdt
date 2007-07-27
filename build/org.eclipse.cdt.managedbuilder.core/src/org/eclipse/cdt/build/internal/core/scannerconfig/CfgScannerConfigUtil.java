@@ -13,6 +13,7 @@ package org.eclipse.cdt.build.internal.core.scannerconfig;
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
@@ -90,7 +91,7 @@ public class CfgScannerConfigUtil {
 				: (ToolChain)((ResourceConfiguration)rcInfo).getBaseToolChain();
 	}
 	
-	public static String getDefaultProfileId(CfgInfoContext context){
+	public static String getDefaultProfileId(CfgInfoContext context, boolean searchFirstIfNone){
 		String id = null;
 		if(context.getInputType() != null)
 			id = context.getInputType().getDiscoveryProfileId(context.getTool());
@@ -103,6 +104,32 @@ public class CfgScannerConfigUtil {
 		}
 		if(id == null){
 			id = ((Configuration)context.getConfiguration()).getDiscoveryProfileId();
+		}
+		
+		if(id == null && searchFirstIfNone){
+			id = getFirstProfileId(context.getConfiguration().getFilteredTools());
+		}
+		return id;
+	}
+	
+	public static String getFirstProfileId(ITool[] tools){
+		String id = null;
+		for(int i = 0; i < tools.length; i++){
+			ITool tool = tools[i];
+			IInputType[] types = tool.getInputTypes();
+			
+			if(types.length != 0){
+				for(int k = 0; k < types.length; k++){
+					id = types[k].getDiscoveryProfileId(tool);
+					if(id != null)
+						break;
+				}
+			} else {
+				id = ((Tool)tool).getDiscoveryProfileId();
+			}
+
+			if(id != null)
+				break;
 		}
 		
 		return id;

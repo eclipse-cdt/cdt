@@ -15,6 +15,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
@@ -122,4 +123,24 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
 		assertCompletionResults(expected2);		
 	}
+	
+	//// to_be_replaced_
+	//void gfunc(){aNew/*cursor*/
+	public void _testGlobalVariableBeforeSave_Bug180883() throws Exception {
+		String replace=   "// to_be_replaced_";
+		String globalVar= "int aNewGlobalVar;";
+		IDocument doc= getDocument();
+		int idx= doc.get().indexOf(replace);
+		doc.replace(idx, replace.length(), globalVar);
+
+		// succeeds when buffer is saved
+//		fEditor.doSave(new NullProgressMonitor());
+//		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor)fEditor);
+
+		final String[] expected= {
+				"aNewGlobalVar"
+		};
+		assertCompletionResults(expected);
+	}
+
 }

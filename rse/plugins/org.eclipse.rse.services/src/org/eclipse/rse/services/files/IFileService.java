@@ -94,7 +94,10 @@ public interface IFileService extends IService
 	 * @param remoteParent
 	 * @param name
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return the host file given the parent path and file name
+	 * @return the host file given the parent path and file name.
+	 *     Must not return <code>null</code>, non-existing files should be
+	 *     reported with an IHostFile object where {@link IHostFile#exists()}
+	 *     returns <code>false</code>.
 	 * @throws SystemMessageException if an error occurs. 
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */

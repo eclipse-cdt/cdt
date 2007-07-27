@@ -245,9 +245,10 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	
 	public IHostFile getFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
-		//TODO getFile() must return a dummy even for non-existent files,
-		//or the move() operation will fail. This needs to be described in 
+		//getFile() must return a dummy even for non-existent files,
+		//or the move() operation will fail. This is described in 
 		//the API docs.
+		//TODO when monitor is canceled, it is unclear whether we should return an empty file node or throw a canceled exception.
 		SftpHostFile node = null;
 		SftpATTRS attrs = null;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {

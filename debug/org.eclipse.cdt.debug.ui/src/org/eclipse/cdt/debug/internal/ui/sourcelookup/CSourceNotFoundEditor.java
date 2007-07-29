@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Nokia - initial API and implementation
+ * Ken Ryall (Nokia) - initial API and implementation
+ * Ken Ryall (Nokia) - Option to open disassembly view when no source ( 81353 )
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
@@ -20,6 +21,8 @@ import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -33,6 +36,7 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor;
+import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -42,7 +46,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -60,6 +64,12 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private ILaunch launch;
 	private IDebugElement context;
 
+	private Button disassemblyButton;
+
+	private Button locateFileButton;
+
+	private Button editLookupButton;
+
 	public CSourceNotFoundEditor() {
 		super();
 	}
@@ -69,9 +79,10 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ICDebugHelpContextIds.SOURCE_NOT_FOUND);
 	}
 
-	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
-			super.init(site, input);
-			Object artifact = this.getArtifact();
+	public void setInput(IEditorInput input) {
+		if (input instanceof CommonSourceNotFoundEditorInput)
+		{
+			Object artifact = ((CommonSourceNotFoundEditorInput)input).getArtifact();
 			if (artifact instanceof CSourceNotFoundElement)
 			{
 				CSourceNotFoundElement element = (CSourceNotFoundElement) artifact;
@@ -81,31 +92,90 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			}
 			else
 				missingFile = ""; //$NON-NLS-1$
+		}
+		super.setInput(input);
+		syncButtons();
+	}
+
+	private void syncButtons() {
+
+		if (locateFileButton != null)
+			locateFileButton.setVisible(missingFile.length() > 0);
+		if (editLookupButton != null)
+			editLookupButton.setVisible(missingFile.length() > 0);
 	}
 
 	protected String getText() {
 		if (missingFile.length() > 0) {
 			return MessageFormat.format(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.0" ), new String[] { missingFile });  //$NON-NLS-1$
 		}
-		return super.getText();
+		else {
+			if (context == null)
+				return super.getText();
+			return MessageFormat.format(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.3" ), new String[] { context.toString() });  //$NON-NLS-1$		
+		}
 	}
 
 	protected void createButtons(Composite parent) {
-		if (missingFile.length() > 0) {
+		
+		
+		{
 			GridData data;
-			Button button = new Button(parent, SWT.PUSH);
+			disassemblyButton = new Button(parent, SWT.PUSH);
 			data = new GridData();
 			data.grabExcessHorizontalSpace = false;
 			data.grabExcessVerticalSpace = false;
-			button.setLayoutData(data);
-			button.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.1" )); //$NON-NLS-1$
-			button.addSelectionListener(new SelectionAdapter() {
+			disassemblyButton.setLayoutData(data);
+			disassemblyButton.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.4" )); //$NON-NLS-1$
+			disassemblyButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent evt) {
+					viewDisassembly();
+				}
+			});			
+		}
+
+		{
+			GridData data;
+			locateFileButton = new Button(parent, SWT.PUSH);
+			data = new GridData();
+			data.grabExcessHorizontalSpace = false;
+			data.grabExcessVerticalSpace = false;
+			locateFileButton.setLayoutData(data);
+			locateFileButton.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.1" )); //$NON-NLS-1$
+			locateFileButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					locateFile();
 				}
 			});
 		}
-		super.createButtons(parent);
+		
+		{
+			GridData data;
+			editLookupButton = new Button(parent, SWT.PUSH);
+			data = new GridData();
+			data.grabExcessHorizontalSpace = false;
+			data.grabExcessVerticalSpace = false;
+			editLookupButton.setLayoutData(data);
+			editLookupButton.setText(SourceLookupUIMessages.getString( "CSourceNotFoundEditor.5" )); 
+			editLookupButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent evt) {
+					editSourceLookupPath();
+				}
+			});
+			
+		}
+		syncButtons();
+
+	}
+
+	protected void viewDisassembly() {		
+		IWorkbenchPage page = CUIPlugin.getActivePage();
+		if (page != null) {		
+			try {
+				page.showView(ICDebugUIConstants.ID_DISASSEMBLY_VIEW);
+			} catch (PartInitException e) {}
+		}
+
 	}
 
 	private void addSourceMapping(IPath missingPath, IPath newSourcePath) throws CoreException {

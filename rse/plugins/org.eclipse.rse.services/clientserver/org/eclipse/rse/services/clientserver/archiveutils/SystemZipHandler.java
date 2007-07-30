@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * Xuan Chen        (IBM)        - [192741] [Archives] Move a folder from within an Archive doesn't work if > 1 level deep
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
+ * Xuan Chen        (IBM)        - [181784] [archivehandlers] zipped text files have unexpected contents
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -595,7 +596,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				{
 					if (isText)
 					{
-						String bufString = new String(buf, sourceEncoding);
+						String bufString = new String(buf, 0, numRead, sourceEncoding);
 						byte[] convertedBuf = bufString.getBytes();
 						int newSize = convertedBuf.length;
 						writer.write(convertedBuf, 0, newSize);

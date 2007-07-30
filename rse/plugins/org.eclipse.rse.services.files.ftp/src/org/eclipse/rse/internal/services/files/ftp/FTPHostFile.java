@@ -16,7 +16,8 @@
  * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as 
  *    anonymous on ftp.wacom.com
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable
- * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser   
+ * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
+ * Javier Montalvo Orus (Symbian) - [197758] Unix symbolic links are not classified as file vs. folder   
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -34,6 +35,7 @@ public class FTPHostFile implements IHostFile
 	private String _name;
 	private String _parentPath;
 	private boolean _isDirectory;
+	private boolean _isLink;
 	private boolean _isArchive;
 	private long _lastModified;
 	private long _size;
@@ -65,6 +67,7 @@ public class FTPHostFile implements IHostFile
 		_name = ftpFile.getName();
 		
 		_isDirectory = ftpFile.isDirectory();
+		_isLink = ftpFile.isSymbolicLink();
 		_lastModified = ftpFile.getTimestamp().getTimeInMillis();
 		_size = ftpFile.getSize();
 		_isArchive = internalIsArchive();
@@ -90,6 +93,11 @@ public class FTPHostFile implements IHostFile
 	public boolean isFile()
 	{
 		return !(_isDirectory || _isRoot);
+	}
+	
+	public boolean isSymbolicLink()
+	{
+		return _isLink;
 	}
 	
 	public String getName()
@@ -232,6 +240,11 @@ public class FTPHostFile implements IHostFile
 	{
 		return ArchiveHandlerManager.getInstance().isArchive(new File(getAbsolutePath())) 
 		&& !ArchiveHandlerManager.isVirtual(getAbsolutePath());
+	}
+	
+	public void setIsDirectory(boolean isDirectory)
+	{
+		_isDirectory = isDirectory;
 	}
 	
 }

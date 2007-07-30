@@ -49,6 +49,8 @@
  * Javier Montalvo Orus (Symbian) - [191048] Remote files locally listed and being removed by other users should be reported as missing
  * Javier Montalvo Orus (Symbian) - [195677] Rename fails on WFTPD-2.03
  * Javier Montalvo Orus (Symbian) - [197105] Directory listing fails on Solaris when special devices are in a directory
+ * Javier Montalvo Orus (Symbian) - [197758] Unix symbolic links are not classified as file vs. folder
+ * Javier Montalvo Orus (Symbian) - [198182] FTP export problem: RSEF8057E: Error occurred while exporting FILENAME: Operation failed. File system input or output error
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -57,6 +59,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,6 +74,7 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.internal.services.files.ftp.parser.IFTPClientConfigFactory;
@@ -394,7 +398,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				return null;
+				throw new RemoteFileCancelledException();
 			}	
 		}
 		
@@ -465,7 +469,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				return null;
+				throw new RemoteFileCancelledException();
 			}	
 		}
 		
@@ -509,8 +513,17 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					_ftpLoggingOutputStream.write(rawListLine.getBytes());
 					
 					FTPHostFile f = new FTPHostFile(parentPath, _ftpFiles[i]);
+					String name = f.getName();
+					
+					if(f.isSymbolicLink()) {
+						if(name.indexOf('.')==-1) {
+							//modify FTPHostFile to be shown as a folder
+							f.setIsDirectory(true);
+						}
+					}
+					
 					if (isRightType(fileType,f)) {
-						String name = f.getName();
+						
 						if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
 							//Never return the default directory names
 							continue;
@@ -562,8 +575,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				return false;
+				throw new RemoteFileCancelledException();
 			}	
+		}
+		else{
+				monitor = new NullProgressMonitor();
 		}
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
@@ -674,21 +690,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
-				return false;
+				throw new RemoteFileCancelledException();
 			}	
 		}
 		
 		IHostFile remoteHostFile = getFile(remoteParent,remoteFile,null);
-		
-		if(remoteHostFile == null)
-		{
-			return false;
-		}
-		
-		if(!remoteHostFile.exists())
-		{
-			throw new RemoteFileIOException(new Exception(FTPServiceResources.FTPService_FTP_File_Service_Not_Found));
-		} 
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
@@ -703,21 +709,22 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				
 				ftpClient.changeWorkingDirectory(remoteParent);
 				setFileType(isBinary);
-				if (!localFile.exists())
-				{
-					File localParentFile = localFile.getParentFile();
-					if (!localParentFile.exists())
-					{
-						localParentFile.mkdirs();
-					}
-					localFile.createNewFile();
-				}
 				
-				output = new FileOutputStream(localFile);
 				input = ftpClient.retrieveFileStream(remoteFile);
 				
 				if(input != null)
 				{
+					if (!localFile.exists())
+					{
+						File localParentFile = localFile.getParentFile();
+						if (!localParentFile.exists())
+						{
+							localParentFile.mkdirs();
+						}
+						localFile.createNewFile();
+					}
+					
+					output = new FileOutputStream(localFile);
 					progressMonitor.init(0, remoteFile, localFile.getName(), remoteHostFile.getSize());
 					byte[] buffer = new byte[4096];
 					int readCount;
@@ -740,12 +747,22 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					output.close();
 					
 					ftpClient.completePendingCommand();
+					
+				}
+				else
+				{
+					throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()));
 				}
 			}
-			catch (Exception e)
+			catch (FileNotFoundException e)
 			{
 				throw new RemoteFileIOException(e);
-			} finally
+			}
+			catch (IOException e)
+			{
+				throw new RemoteFileIOException(e);
+			} 
+			finally
 			{
 				_commandMutex.release();
 			}

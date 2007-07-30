@@ -12,7 +12,6 @@
  * 
  * Contributors:
  * Javier Montalvo Orus (Symbian) - Added Externalized Strings
- * Javier Montalvo Orus (Symbian) - [191048] Remote files locally listed and being removed by other users should be reported as missing
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -29,7 +28,6 @@ public class FTPServiceResources extends NLS
 	public static String FTP_File_Service_Monitor_Format;
 	public static String FTP_File_Service_Name;
 	public static String FTP_File_Service_Description;
-	public static String FTPService_FTP_File_Service_Not_Found;
 	
 	static {
 		// load message values from bundle file

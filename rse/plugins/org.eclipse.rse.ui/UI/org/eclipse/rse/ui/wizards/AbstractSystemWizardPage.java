@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Label;
  * eclipse WizardPage class:
  * <ul>
  *  <li>Designed to work in conjunction with {@link org.eclipse.rse.ui.wizards.AbstractSystemWizard},
- *      propogating settings from the wizard to the individual wizard pages.
+ *      propagating settings from the wizard to the individual wizard pages.
  *  <li>Supports using the overall wizard page title as set by {@link org.eclipse.rse.ui.wizards.AbstractSystemWizard#setWizardPageTitle(String)}, 
  *      if no title specified in the constructor.
  *  <li>Supports a {@link #setHelp(String)} method to set the wizard page's overall contextual help
@@ -94,7 +94,7 @@ public abstract class AbstractSystemWizardPage
 {
 	// state
 	private Object input;
-	private RSEDialogPageMessageLine msgLine;
+	private ISystemMessageLine msgLine;
 	private String  helpId;
 	private Composite parentComposite;
 	private SystemMessage pendingMessage, pendingErrorMessage;
@@ -219,7 +219,7 @@ public abstract class AbstractSystemWizardPage
     /**
      * Abstract method. <br>
      * Perform error checking of the page contents, returning true only if there are no errors. 
-     * <p>Called by the main wizard when the user presses Finish. The operation will be cancelled if 
+     * <p>Called by the main wizard when the user presses Finish. The operation will be canceled if 
      * this method returns false for any page.
      */
 	public abstract boolean performFinish();    
@@ -307,7 +307,7 @@ public abstract class AbstractSystemWizardPage
    */
   public void clearErrorMessage() 
 	{
-		if (msgLine != null && getControl() != null && getControl().isDisposed())
+		if (msgLine != null && getControl() != null && !getControl().isDisposed())
 			msgLine.clearErrorMessage();
 	}
 
@@ -316,7 +316,7 @@ public abstract class AbstractSystemWizardPage
    */
 	public void clearMessage() 
 	{
-		if (msgLine != null && getControl() != null && getControl().isDisposed())
+		if (msgLine != null && getControl() != null && !getControl().isDisposed())
 			msgLine.clearMessage();
 	}
 
@@ -386,7 +386,7 @@ public abstract class AbstractSystemWizardPage
 
 	/**
 	 * <b>Note:</b> Never override this method as long the {@link ISystemMessageLine}
-	 * construct is not eliminated from RSE! Overriding does lead easely to {@link StackOverflowError}s
+	 * construct is not eliminated from RSE! Overriding does lead easily to {@link StackOverflowError}s
 	 * if the subclass implementation does call the wrong methods!
 	 * 
 	 * @see org.eclipse.jface.wizard.WizardPage#setMessage(java.lang.String, int)
@@ -397,7 +397,7 @@ public abstract class AbstractSystemWizardPage
 	
 	/**
 	 * <b>Note:</b> Never override this method as long the {@link ISystemMessageLine}
-	 * construct is not eliminated from RSE! Overriding does lead easely to {@link StackOverflowError}s
+	 * construct is not eliminated from RSE! Overriding does lead easily to {@link StackOverflowError}s
 	 * if the subclass implementation does call the wrong methods!
 	 * 
 	 * @see org.eclipse.jface.dialogs.DialogPage#setMessage(java.lang.String)

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.index.composite.cpp;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
@@ -31,7 +30,7 @@ public class CompositeCPPFunctionTemplateSpecialization
 	}
 
 	public ICPPTemplateParameter[] getTemplateParameters() throws DOMException {
-		ICPPTemplateParameter[] result= ((ICPPClassTemplate)rbinding).getTemplateParameters();
+		ICPPTemplateParameter[] result= ((ICPPFunctionTemplate)rbinding).getTemplateParameters();
 		for(int i=0; i<result.length; i++) {
 			result[i]= (ICPPTemplateParameter) cf.getCompositeBinding((IIndexFragmentBinding) result[i]);
 		}

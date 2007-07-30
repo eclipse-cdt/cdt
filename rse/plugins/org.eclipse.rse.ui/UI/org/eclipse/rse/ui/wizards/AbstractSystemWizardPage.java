@@ -307,7 +307,7 @@ public abstract class AbstractSystemWizardPage
    */
   public void clearErrorMessage() 
 	{
-		if (msgLine!=null && !msgLine.isDisposed())
+		if (msgLine != null && getControl() != null && getControl().isDisposed())
 			msgLine.clearErrorMessage();
 	}
 
@@ -316,7 +316,7 @@ public abstract class AbstractSystemWizardPage
    */
 	public void clearMessage() 
 	{
-		if (msgLine!=null && !msgLine.isDisposed())
+		if (msgLine != null && getControl() != null && getControl().isDisposed())
 			msgLine.clearMessage();
 	}
 
@@ -373,33 +373,36 @@ public abstract class AbstractSystemWizardPage
 	        pendingMessage = message;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#setErrorMessage(java.lang.String)
+	/**
+	 * <b>Note:</b> Never override this method as long the {@link ISystemMessageLine}
+	 * construct is not eliminated from RSE! Overriding does lead easely to {@link StackOverflowError}s
+	 * if the subclass implementation does call the wrong methods!
 	 * 
-	 * Never override this method as long the ISystemMessageLine construct is not
-	 * eliminated! Overriding may easely lead to StackOverflowErrors.
+	 * @see org.eclipse.jface.wizard.WizardPage#setErrorMessage(java.lang.String)
 	 */
-	public final void setErrorMessage(String message) {
+	public void setErrorMessage(String message) {
 		super.setErrorMessage(message);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#setMessage(java.lang.String, int)
+	/**
+	 * <b>Note:</b> Never override this method as long the {@link ISystemMessageLine}
+	 * construct is not eliminated from RSE! Overriding does lead easely to {@link StackOverflowError}s
+	 * if the subclass implementation does call the wrong methods!
 	 * 
-	 * Never override this method as long the ISystemMessageLine construct is not
-	 * eliminated! Overriding may easely lead to StackOverflowErrors.
+	 * @see org.eclipse.jface.wizard.WizardPage#setMessage(java.lang.String, int)
 	 */
-	public final void setMessage(String newMessage, int newType) {
+	public void setMessage(String newMessage, int newType) {
 		super.setMessage(newMessage, newType);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#setMessage(java.lang.String)
+	/**
+	 * <b>Note:</b> Never override this method as long the {@link ISystemMessageLine}
+	 * construct is not eliminated from RSE! Overriding does lead easely to {@link StackOverflowError}s
+	 * if the subclass implementation does call the wrong methods!
 	 * 
-	 * Never override this method as long the ISystemMessageLine construct is not
-	 * eliminated! Overriding may easely lead to StackOverflowErrors.
+	 * @see org.eclipse.jface.dialogs.DialogPage#setMessage(java.lang.String)
 	 */
-	public final void setMessage(String message) {
+	public void setMessage(String message) {
 		super.setMessage(message);
 	}
     

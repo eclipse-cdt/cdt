@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -98,7 +99,7 @@ class RemoteExporter {
 			// for windows
 			dest = dest.replace('/', sep);
 		}
-		rfss.upload(file.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, dest, System.getProperty("file.encoding"), null); //$NON-NLS-1$
+		rfss.upload(file.getLocation().makeAbsolute().toOSString(), SystemEncodingUtil.ENCODING_UTF_8, dest, System.getProperty("file.encoding"), new NullProgressMonitor()); //$NON-NLS-1$
 	}
 
 	/**

@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -59,7 +58,12 @@ import org.eclipse.ui.PlatformUI;
 public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	public final String foundMappingsContainerName = "Found Mappings"; //$NON-NLS-1$
-	
+	private static final String UID_KEY = ".uid"; //$NON-NLS-1$
+	private static final String UID_CLASS_NAME = CSourceNotFoundEditor.class.getName();
+	public static final String UID_DISASSEMBLY_BUTTON = UID_CLASS_NAME+ "disassemblyButton"; //$NON-NLS-1$
+	public static final String UID_LOCATE_FILE_BUTTON = UID_CLASS_NAME+ "locateFileButton"; //$NON-NLS-1$
+	public static final String UID_EDIT_LOOKUP_BUTTON = UID_CLASS_NAME+ "editLookupButton"; //$NON-NLS-1$
+		
 	private String missingFile;
 	private ILaunch launch;
 	private IDebugElement context;
@@ -131,7 +135,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				public void widgetSelected(SelectionEvent evt) {
 					viewDisassembly();
 				}
-			});			
+			});
+			disassemblyButton.setData(UID_KEY, UID_DISASSEMBLY_BUTTON);
+
 		}
 
 		{
@@ -147,6 +153,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 					locateFile();
 				}
 			});
+			locateFileButton.setData(UID_KEY, UID_LOCATE_FILE_BUTTON);
 		}
 		
 		{
@@ -162,6 +169,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 					editSourceLookupPath();
 				}
 			});
+			editLookupButton.setData(UID_KEY, UID_EDIT_LOOKUP_BUTTON); //$NON-NLS-1$
 			
 		}
 		syncButtons();

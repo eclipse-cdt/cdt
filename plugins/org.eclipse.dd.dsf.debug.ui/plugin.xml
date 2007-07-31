@@ -202,6 +202,12 @@
       </viewContribution>
    </extension>
    
-
+	<extension 
+	   point="org.eclipse.debug.ui.detailPaneFactories">
+       <detailFactories
+             class="org.eclipse.dd.dsf.debug.ui.viewmodel.detailpanesupport.DetailPaneFactory"
+             id="org.eclipse.dd.dsf.debug.ui.viewmodel.detailPaneFactory">
+       </detailFactories>
+    </extension>
 
 </plugin>

@@ -328,21 +328,27 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
                      *  
                      *  So here we specifically look for the service which knows how to  deal
                      *  with the formatted data.
+                     *  
+                     *  Please note that the order or searching for the ancestor is important.
+                     *  A BitField Data Model Context will have a Register Data Model Context 
+                     *  as its parent so if we search for a Register DMC first when we actually
+                     *  have a BitField DMC we will get the register and show the value of  the
+                     *  register not the bit field.
                      */
                     
                     DsfServicesTracker tracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), ((DMVMContext) element).getDMC().getSessionId());
                     
-                    IRegisterDMContext regDmc = DMContexts.getAncestorOfType(((DMVMContext) element).getDMC(), IRegisterDMContext.class);
-                    
-                    if ( regDmc != null ) {
-                        dmc = regDmc ;
+                    IBitFieldDMContext bitfieldDmc = DMContexts.getAncestorOfType(((DMVMContext) element).getDMC(), IBitFieldDMContext.class);
+
+                    if ( bitfieldDmc != null ) {
+                        dmc = bitfieldDmc ;
                         service = tracker.getService(IRegisters.class); 
                     }
                     else {
-                        IBitFieldDMContext bitfieldDmc = DMContexts.getAncestorOfType(((DMVMContext) element).getDMC(), IBitFieldDMContext.class);
+                        IRegisterDMContext regDmc = DMContexts.getAncestorOfType(((DMVMContext) element).getDMC(), IRegisterDMContext.class);
 
-                        if ( bitfieldDmc != null ) {
-                            dmc = bitfieldDmc ;
+                        if ( regDmc != null ) {
+                            dmc = regDmc ;
                             service = tracker.getService(IRegisters.class); 
                         }
                         else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Emanuel Graf IFS - Bugfix for #198257
  *******************************************************************************/
 
 /*
@@ -51,14 +52,22 @@ public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
     public boolean accept( ASTVisitor action ){
         if( action.shouldVisitDeclSpecifiers ){
 		    switch( action.visit( this ) ){
-	            case ASTVisitor.PROCESS_ABORT : return false;
-	            case ASTVisitor.PROCESS_SKIP  : return true;
-	            default : break;
+		    case ASTVisitor.PROCESS_ABORT : return false;
+		    case ASTVisitor.PROCESS_SKIP  : return true;
+		    default : break;
 	        }
 		}
 		if( typeOfExpression != null )
 			if( !typeOfExpression.accept( action ) ) return false;
 		
-        return true;
+		if( action.shouldVisitDeclSpecifiers ){
+			switch( action.leave( this ) ){
+			case ASTVisitor.PROCESS_ABORT : return false;
+			case ASTVisitor.PROCESS_SKIP  : return true;
+			default : break;
+			}
+		}
+
+		return true;
     }
 }

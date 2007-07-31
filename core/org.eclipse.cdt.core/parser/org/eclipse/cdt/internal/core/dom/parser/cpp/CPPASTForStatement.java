@@ -7,13 +7,13 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Emanuel Graf IFS - Bugfix for #198269
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public class CPPASTForStatement extends CPPASTNode implements IASTForStatement, IASTAmbiguityParent, ICPPASTForStatement {
+public class CPPASTForStatement extends CPPASTNode implements ICPPASTForStatement, IASTAmbiguityParent {
     private IScope scope = null;
     
     private IASTExpression condition;

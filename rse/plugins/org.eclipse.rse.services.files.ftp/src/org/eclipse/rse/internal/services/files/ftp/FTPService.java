@@ -51,6 +51,7 @@
  * Javier Montalvo Orus (Symbian) - [197105] Directory listing fails on Solaris when special devices are in a directory
  * Javier Montalvo Orus (Symbian) - [197758] Unix symbolic links are not classified as file vs. folder
  * Javier Montalvo Orus (Symbian) - [198182] FTP export problem: RSEF8057E: Error occurred while exporting FILENAME: Operation failed. File system input or output error
+ * Javier Montalvo Orus (Symbian) - [192610] EFS operations on an FTP connection make Eclipse freeze
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1201,19 +1202,27 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 
-		FTPClient ftpClient = getFTPClient();
-		
 		InputStream stream = null;
 		
-		try {
-			
-			setFileType(isBinary);
-			
-			stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
+		{
+		
+			FTPClient ftpClient = getFTPClient();
+		
+			try {
+				
+				
+				ftpClient.changeWorkingDirectory(remoteParent);
+				setFileType(isBinary);
+				stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
+			}
+			catch (Exception e) {			
+				throw new RemoteFileIOException(e);
+			}finally {
+			_commandMutex.release();
+			}
 		}
-		catch (Exception e) {			
-			throw new RemoteFileIOException(e);
-		}
+		
 		
 		return stream;
 	}
@@ -1232,20 +1241,24 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 		
-		FTPClient ftpClient = getFTPClient();
-		
 		OutputStream stream = null;
 		
-		try {
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
+		{
+		
+			FTPClient ftpClient = getFTPClient();
 			
-			ftpClient.changeWorkingDirectory(remoteParent);
-			
-			setFileType(isBinary);
-			
-			stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
-		}
-		catch (Exception e) {
-			throw new RemoteFileIOException(e);
+			try {
+				
+				ftpClient.changeWorkingDirectory(remoteParent);
+				setFileType(isBinary);
+				stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
+			}
+			catch (Exception e) {
+				throw new RemoteFileIOException(e);
+			}finally {
+				_commandMutex.release();
+			}
 		}
 		
 		return stream;

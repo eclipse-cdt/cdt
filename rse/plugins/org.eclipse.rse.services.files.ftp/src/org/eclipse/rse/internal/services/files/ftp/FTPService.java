@@ -52,6 +52,7 @@
  * Javier Montalvo Orus (Symbian) - [197758] Unix symbolic links are not classified as file vs. folder
  * Javier Montalvo Orus (Symbian) - [198182] FTP export problem: RSEF8057E: Error occurred while exporting FILENAME: Operation failed. File system input or output error
  * Javier Montalvo Orus (Symbian) - [192610] EFS operations on an FTP connection make Eclipse freeze
+ * Javier Montalvo Orus (Symbian) - [195830] RSE performs unnecessary remote list commands
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -67,6 +68,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.commons.net.ftp.FTP;
@@ -114,6 +116,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private boolean _isPassiveDataConnectionMode = false;
 	private IFTPClientConfigFactory _entryParserFactory;
 	private IFTPClientConfigProxy _clientConfigProxy;
+	
+	//workaround to access FTPHostFile objects previously retrieved from the server
+	//to avoid accessing the remote target when not necessary (bug 195830)
+	//In the future, it would be better that the IHostFile object were passed from
+	//the upper layer instead of the folder and file name.
+	private Hashtable fileMap = new Hashtable();
 	
 	private class FTPBufferedInputStream extends BufferedInputStream {
 		
@@ -540,6 +548,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				
 				_ftpLoggingOutputStream.write(System.getProperty("line.separator").getBytes()); //$NON-NLS-1$
 				
+				for (int i = 0; i < results.size(); i++) {
+					FTPHostFile file = (FTPHostFile)results.get(i);
+					fileMap.put(file.getAbsolutePath(), file);
+				}
+				
+				
 			}
 			catch (Exception e)
 			{			
@@ -695,7 +709,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 		
-		IHostFile remoteHostFile = getFile(remoteParent,remoteFile,null);
+		IHostFile remoteHostFile = (IHostFile)fileMap.get(remoteParent+getSeparator()+remoteFile);
+		
+		if(remoteHostFile == null)
+		{
+			remoteHostFile = getFile(remoteParent,remoteFile,null);
+		}
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
@@ -813,7 +832,14 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		progressMonitor.init(FTPServiceResources.FTP_File_Service_Deleting_Task+fileName, 1);  
 		
-		boolean isFile = getFile(remoteParent,fileName,null).isFile();
+		IHostFile file = (IHostFile)fileMap.get(remoteParent+getSeparator()+fileName);
+		
+		if(file == null)
+		{
+			file = getFile(remoteParent,fileName,null);
+		}	
+			
+		boolean isFile = file.isFile();
 		
 		try {
 			hasSucceeded = FTPReply.isPositiveCompletion(ftpClient.cwd(remoteParent));
@@ -1161,7 +1187,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		boolean result = false;
 		int permissions = 0;
 		
-		FTPHostFile file = (FTPHostFile)getFile(parent,name, monitor);
+		FTPHostFile file = (FTPHostFile)fileMap.get(parent+getSeparator()+name);
+		
+		if(file == null)
+		{
+			file =(FTPHostFile)getFile(parent,name, monitor);
+		}
 		
 		int userPermissions = file.getUserPermissions();
 		int groupPermissions = file.getGroupPermissions();

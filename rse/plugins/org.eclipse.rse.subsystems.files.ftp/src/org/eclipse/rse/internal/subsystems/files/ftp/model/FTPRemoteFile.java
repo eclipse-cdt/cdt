@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Javier Montalvo Orus (Symbian) - [198272] FTP should return classification for symbolic links so they show a link overlay
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.model;
@@ -48,14 +48,7 @@ public class FTPRemoteFile extends AbstractRemoteFile
 
 	public String getClassification()
 	{
-		if (isFile())
-		{
-			return "file"; //$NON-NLS-1$
-		}
-		else
-		{
-			return "directory"; //$NON-NLS-1$
-		}
+		return _ftpHostFile.getClassification();
 	}
 
 

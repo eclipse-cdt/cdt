@@ -18,6 +18,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  * Javier Montalvo Orus (Symbian) - [197758] Unix symbolic links are not classified as file vs. folder   
+ * Javier Montalvo Orus (Symbian) - [198272] FTP should return classification for symbolic links so they show a link overlay
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -95,7 +96,7 @@ public class FTPHostFile implements IHostFile
 		return !(_isDirectory || _isRoot);
 	}
 	
-	public boolean isSymbolicLink()
+	public boolean isLink()
 	{
 		return _isLink;
 	}
@@ -245,6 +246,35 @@ public class FTPHostFile implements IHostFile
 	public void setIsDirectory(boolean isDirectory)
 	{
 		_isDirectory = isDirectory;
+	}
+	
+	public String getClassification() {
+		String result;
+		String linkTarget;
+		
+		if (isLink()) {
+			result = "symbolic link"; //$NON-NLS-1$
+			if ((linkTarget = _ftpFile.getLink()) !=null) {
+				if(isDirectory()) {
+					result += "(directory):" + linkTarget; //$NON-NLS-1$
+				} else if((getUserPermissions() & 0x01) == 0x01) {
+					result += "(executable):" +  linkTarget; //$NON-NLS-1$
+				} else {
+					result += "(file):" +  linkTarget; //$NON-NLS-1$
+				}
+			}
+		} else if (isFile()) {
+			if ((getUserPermissions() & 0x01) == 0x01) {
+				result = "executable"; //$NON-NLS-1$
+			} else {
+				result = "file"; //$NON-NLS-1$
+			}
+		} else if (isDirectory()) {
+			result = "directory"; //$NON-NLS-1$
+		} else {
+			result = "unknown"; //default-fallback //$NON-NLS-1$
+		}
+		return result;
 	}
 	
 }

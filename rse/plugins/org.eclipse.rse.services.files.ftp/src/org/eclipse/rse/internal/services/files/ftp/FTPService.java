@@ -516,7 +516,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					FTPHostFile f = new FTPHostFile(parentPath, _ftpFiles[i]);
 					String name = f.getName();
 					
-					if(f.isSymbolicLink()) {
+					if(f.isLink()) {
 						if(name.indexOf('.')==-1) {
 							//modify FTPHostFile to be shown as a folder
 							f.setIsDirectory(true);

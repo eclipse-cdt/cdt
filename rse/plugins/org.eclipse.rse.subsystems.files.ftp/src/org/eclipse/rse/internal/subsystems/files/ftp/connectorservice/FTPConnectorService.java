@@ -19,6 +19,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  * Javier Montalvo Orus (Symbian) - [187531] Improve exception thrown when Login Failed on FTP
  * David Dykstal (IBM) - added RESID_FTP_SETTINGS_LABEL
+ * David McKnight       (IBM)     - [196632] [ftp] Passive mode setting does not work
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -48,21 +49,24 @@ import org.eclipse.ui.console.MessageConsole;
 public class FTPConnectorService extends StandardConnectorService 
 {
 	protected FTPService _ftpService;
-	private IPropertySet _propertySet;
 	
 	public FTPConnectorService(IHost host, int port)
 	{		
 		super(FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_NAME,FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
 		_ftpService = new FTPService();
-			
-		_propertySet = getPropertySet("FTP Settings"); //$NON-NLS-1$
+		getPropertySet();
+	}
+	
+	private IPropertySet getPropertySet()
+	{
+		IPropertySet propertySet = getPropertySet("FTP Settings"); //$NON-NLS-1$
 		
-		if(_propertySet==null)
+		if(propertySet==null)
 		{
 			
 			//Active - passive mode
-			_propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
-			_propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			propertySet = createPropertySet("FTP Settings"); //$NON-NLS-1$
+			propertySet.addProperty("passive","false",PropertyType.getEnumPropertyType(new String[]{"true","false"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 			// FTP List parser
 			String[] keys = FTPClientConfigFactory.getParserFactory().getKeySet();
@@ -74,13 +78,14 @@ public class FTPConnectorService extends StandardConnectorService
 			
 			Arrays.sort(keysArray);
 			
-			_propertySet.addProperty("parser","AUTO",PropertyType.getEnumPropertyType(keysArray)); //$NON-NLS-1$ //$NON-NLS-2$
+			propertySet.addProperty("parser","AUTO",PropertyType.getEnumPropertyType(keysArray)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (_propertySet instanceof ILabeledObject) {
+		if (propertySet instanceof ILabeledObject) {
 			String label = FTPSubsystemResources.RESID_FTP_SETTINGS_LABEL;
-			((ILabeledObject)_propertySet).setLabel(label);
+			((ILabeledObject)propertySet).setLabel(label);
 		}
-	} 
+		return propertySet;
+	}
 	
 	protected void internalConnect(IProgressMonitor monitor)  throws RemoteFileException, IOException
 	{
@@ -89,14 +94,14 @@ public class FTPConnectorService extends StandardConnectorService
 
 	private void internalConnect() throws RemoteFileException, IOException
 	{
-
+		IPropertySet propertySet = getPropertySet();
 		SystemSignonInformation info = getSignonInformation();
 		_ftpService.setHostName(info.getHostname());
 		_ftpService.setUserId(info.getUserId());
 		_ftpService.setPassword(info.getPassword());
 		_ftpService.setPortNumber(getPort());
 		_ftpService.setLoggingStream(getLoggingStream(info.getHostname(),getPort()));
-		_ftpService.setPropertySet(_propertySet);
+		_ftpService.setPropertySet(propertySet);
 		_ftpService.setFTPClientConfigFactory(FTPClientConfigFactory.getParserFactory());
 		
 		

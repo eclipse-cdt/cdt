@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight (IBM) [196632] make sure selected element is marked selected
  *******************************************************************************/
 
 package org.eclipse.rse.ui.widgets.services;
@@ -137,10 +137,17 @@ public class ServicesForm extends SystemBaseForm implements ICheckStateListener
             	if (selection instanceof StructuredSelection)
             	{
             		StructuredSelection ss = (StructuredSelection)selection;
-            		_factoryViewer.setChecked(ss.getFirstElement(), true);
-            		unCheckOthers((ServiceElement) ss.getFirstElement());
-            		_serviceViewer.setInput(ss.getFirstElement());
-            		_descriptionVerbiage.setText(getCurrentVerbiage());
+            		
+            		ServiceElement firstElement = (ServiceElement)ss.getFirstElement();
+            		if (firstElement != null)
+            		{            			
+            			_factoryViewer.setChecked(firstElement, true);            		
+            			unCheckOthers(firstElement);
+            			if (!firstElement.isSelected())
+            				firstElement.setSelected(true);
+            			_serviceViewer.setInput(firstElement);
+            			_descriptionVerbiage.setText(getCurrentVerbiage());
+            		}
             	}
             }
          });

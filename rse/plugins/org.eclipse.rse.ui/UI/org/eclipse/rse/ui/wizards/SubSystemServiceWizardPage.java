@@ -250,7 +250,7 @@ public class SubSystemServiceWizardPage extends AbstractSystemNewConnectionWizar
 	 */
 	private List getConnectorServiceElements(ServiceElement root) {
 		List result = new ArrayList(10);
-		if(root.isSelected())
+		if (!(root instanceof FactoryServiceElement) || root.isSelected())
 		{
 			if (root instanceof ConnectorServiceElement) {
 				result.add(root);

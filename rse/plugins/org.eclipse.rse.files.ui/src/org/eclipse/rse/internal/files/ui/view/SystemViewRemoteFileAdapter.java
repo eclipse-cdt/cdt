@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [197089] Need to set the filter when there is no separator in filter string
  * David McKnight   (IBM)        - [196662] hasChildren() should return false when the file doesn't exist
  * David McKnight   (IBM)        - [197784] Need to check if last separator is at 0
+ * Kevin Doyle  (IBM)            - [198576] Renaming a folder directly under a Filter doesn't update children
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -53,8 +54,6 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
-import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
-import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
@@ -2516,15 +2515,21 @@ public class SystemViewRemoteFileAdapter
 				moveTempResource(localResource, newLocalPath, ss, newRemotePath);
 			}
 
-			if (file.isDirectory())
-			{
-				// update all tree views showing this remote folder...
-				// Hmm, why do we do this, given SystemView sends a rename event? I think we needed to refresh all child cached references to parent folder name...
-				SystemResourceChangeEvent event = new SystemResourceChangeEvent(file.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null);
-				sr.fireEvent(event);
-				//sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, file, file.getParentRemoteFile(), file.getParentRemoteFileSubSystem(), null, null);
-			}		
-			file.markStale(true);
+			// Firing a refresh event before a rename event will cause views to refresh
+			// but the TreeItems contain the old data, and refresh will display an error
+			// below the TreeItem saying it's not readable as it's using the old name.
+			// This is not an issue for the SystemView as it does the refresh in a job, so
+			// the rename event is actually handled first then the refresh.
+			// Commented out for bug #198576
+//			if (file.isDirectory())
+//			{
+//				// update all tree views showing this remote folder...
+//				// Hmm, why do we do this, given SystemView sends a rename event? I think we needed to refresh all child cached references to parent folder name...
+//				SystemResourceChangeEvent event = new SystemResourceChangeEvent(file.getParentRemoteFile(), ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null);
+//				sr.fireEvent(event);
+//				//sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, file, file.getParentRemoteFile(), file.getParentRemoteFileSubSystem(), null, null);
+//			}		
+//			file.markStale(true);
 
 		}
 		catch (Exception exc)

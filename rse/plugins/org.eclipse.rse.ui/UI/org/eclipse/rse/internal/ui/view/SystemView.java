@@ -37,6 +37,7 @@
  * David McKnight   (IBM)        - [196930] Don't add the connection when it's not supposed to be shown
  * Tobias Schwarz (Wind River)   - [197484] Provide ContextObject for queries on all levels
  * David McKnight   (IBM)        - [196662] Avoid main thread query to check exists when remote refreshing
+ * Kevin Doyle  (IBM)            - [198576] Renaming a folder directly under a Filter doesn't update children
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2481,6 +2482,12 @@ public class SystemView extends SafeTreeViewer
 			// rename all existing references to the remote object...
 			renameRemoteObject(remoteResource, event.getOldName(), ss);
 
+			// refresh remoteResource if it's a directory
+			ISystemViewElementAdapter adapter = getViewAdapter(remoteResource);
+			if (remoteResource instanceof IAdaptable && adapter.hasChildren((IAdaptable) remoteResource)) {
+				refreshRemoteObject(remoteResource, remoteResource, originatedHere);
+			}
+			
 			// now, find all filters that list the contents of the OLD name container.
 			filterMatches = findAllRemoteItemFilterReferences(event.getOldName(), ss, null);
 			if (filterMatches != null) {

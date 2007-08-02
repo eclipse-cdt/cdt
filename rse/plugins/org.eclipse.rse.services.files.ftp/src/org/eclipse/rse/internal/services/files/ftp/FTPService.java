@@ -129,7 +129,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private String _fCachePreviousParent;
 	private long _fCachePreviousTimestamp;
 	private Map _fCachePreviousFiles = new HashMap();
-	private static long FTP_STATCACHE_TIMEOUT = 500; //msec
+	private static long FTP_STATCACHE_TIMEOUT = 200; //msec
 	
 	
 	private class FTPBufferedInputStream extends BufferedInputStream {
@@ -361,16 +361,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 		
 		//Just to be safe
-		synchronized (_fCachePreviousFiles) {
-			_fCachePreviousFiles.clear();
-		}
+		clearCache(null);
 	}
 	
 	public void disconnect()
 	{
-		synchronized (_fCachePreviousFiles) {
-			_fCachePreviousFiles.clear();
-		}
+		clearCache(null);
 		try
 		{
 			getFTPClient().logout();
@@ -650,6 +646,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
 				
 				FTPClient ftpClient = getFTPClient();
+				clearCache(remoteParent);
 				ftpClient.changeWorkingDirectory(remoteParent);
 				setFileType(isBinary);
 				
@@ -707,7 +704,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		try
 		{
-			
 			BufferedInputStream bis = new BufferedInputStream(stream);
 			File tempFile = File.createTempFile("ftpup", "temp"); //$NON-NLS-1$ //$NON-NLS-2$
 			FileOutputStream os = new FileOutputStream(tempFile);
@@ -877,6 +873,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			try {
 				FTPClient ftpClient = getFTPClient();
 				
+				clearCache(remoteParent);
 				hasSucceeded = FTPReply.isPositiveCompletion(ftpClient.cwd(remoteParent));
 				
 				if(hasSucceeded)
@@ -926,6 +923,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			try {
 				FTPClient ftpClient = getFTPClient(); 
+				clearCache(remoteParent);
 				
 				if(!ftpClient.changeWorkingDirectory(remoteParent))
 				{
@@ -975,6 +973,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				String source = srcParent.endsWith(String.valueOf(getSeparator())) ?  srcParent + srcName : srcParent + getSeparator() + srcName;
 				String target = tgtParent.endsWith(String.valueOf(getSeparator())) ?  tgtParent + tgtName : tgtParent + getSeparator() + tgtName;
 					
+				clearCache(srcParent);
+				clearCache(tgtParent);
 				success = ftpClient.rename(source, target);
 				
 				if(!success)
@@ -1001,7 +1001,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			try
 			{
-				FTPClient ftpClient = getFTPClient(); 
+				FTPClient ftpClient = getFTPClient();
+				clearCache(remoteParent);
 				if(!ftpClient.changeWorkingDirectory(remoteParent))
 				{
 					throw new Exception(ftpClient.getReplyString()+" ("+remoteParent+")");  //$NON-NLS-1$  //$NON-NLS-2$
@@ -1180,6 +1181,18 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 	}
 	
+	/** Clear the statCache.
+	 * @param parentPath path to clear. If <code>null, clear
+	 *    all caches.
+	 */
+	private void clearCache(String parentPath) {
+		synchronized (_fCachePreviousFiles) {
+			if (parentPath==null || parentPath.equals(_fCachePreviousParent)) {
+				_fCachePreviousFiles.clear();
+			}
+		}
+	}
+	
 	private class MyProgressMonitor
 	{
 		  private IProgressMonitor fMonitor;
@@ -1268,6 +1281,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
+				clearCache(parent);
 				result =_ftpClient.sendSiteCommand("CHMOD "+permissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException e) {
 				result = false;
@@ -1293,8 +1307,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-			FTPClient ftpClient = getFTPClient();
 			try {
+				FTPClient ftpClient = getFTPClient();
 				ftpClient.changeWorkingDirectory(remoteParent);
 				setFileType(isBinary);
 				stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
@@ -1331,11 +1345,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-		
-			FTPClient ftpClient = getFTPClient();
-			
 			try {
-				
+				FTPClient ftpClient = getFTPClient();
+				clearCache(remoteParent);
 				ftpClient.changeWorkingDirectory(remoteParent);
 				setFileType(isBinary);
 				stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
@@ -1379,8 +1391,5 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			_isBinaryFileType = isBinaryFileType;
 		}
 	}
-	
-	
-	
 	
 }

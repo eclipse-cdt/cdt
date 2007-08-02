@@ -53,6 +53,8 @@
  * Javier Montalvo Orus (Symbian) - [198182] FTP export problem: RSEF8057E: Error occurred while exporting FILENAME: Operation failed. File system input or output error
  * Javier Montalvo Orus (Symbian) - [192610] EFS operations on an FTP connection make Eclipse freeze
  * Javier Montalvo Orus (Symbian) - [195830] RSE performs unnecessary remote list commands
+ * Martin Oberhuber (Wind River) - [198638] Fix invalid caching
+ * Martin Oberhuber (Wind River) - [198645] Fix case sensitivity issues
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -68,8 +70,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -121,7 +124,12 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	//to avoid accessing the remote target when not necessary (bug 195830)
 	//In the future, it would be better that the IHostFile object were passed from
 	//the upper layer instead of the folder and file name.
-	private Hashtable fileMap = new Hashtable();
+	//See bug 162950.
+	private String _fCachePreviousParent;
+	private long _fCachePreviousTimestamp;
+	private Map _fCachePreviousFiles = new HashMap();
+	private static long FTP_STATCACHE_TIMEOUT = 500; //msec
+	
 	
 	private class FTPBufferedInputStream extends BufferedInputStream {
 		
@@ -355,6 +363,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	public void disconnect()
 	{
+		synchronized (_fCachePreviousFiles) {
+			_fCachePreviousFiles.clear();
+		}
 		try
 		{
 			getFTPClient().logout();
@@ -401,9 +412,19 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.files.IFileService#getFile(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
+	 * @see org.eclipse.rse.services.files.IFileService#getFile(String, String, IProgressMonitor)
 	 */
-	public IHostFile getFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException 
+	public IHostFile getFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
+	{
+		return getFileInternal(remoteParent, fileName, monitor);
+	}
+
+	
+	/**
+	 * Return FTPHostFile object for a given parent dir and file name.
+	 * @see org.eclipse.rse.services.files.IFileService#getFile(String, String, IProgressMonitor)
+	 */
+	protected FTPHostFile getFileInternal(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
@@ -411,8 +432,27 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 		
-		FTPHostFile file = null;
+		//Try the cache first, perhaps there is no need to acquire the Mutex
+		//The cache is case sensitive only on purpose. For case insensitive matches
+		//A fresh LIST is required.
+		//
+	    //In the future, it would be better that the
+	    //IHostFile object were passed from the upper layer instead of the
+	    //folder and file name (Bug 162950)
+		synchronized(_fCachePreviousFiles) {
+			if (_fCachePreviousParent == null ? remoteParent==null : _fCachePreviousParent.equals(remoteParent)) {
+				Object result = _fCachePreviousFiles.get(fileName);
+				if (result!=null) {
+					long diff = System.currentTimeMillis() - _fCachePreviousTimestamp;
+					//System.out.println("FTPCache: "+diff+", "+remoteParent+", "+fileName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					if (diff < FTP_STATCACHE_TIMEOUT) {
+						return (FTPHostFile)result;
+					}
+				}
+			}
+		}
 		
+		FTPHostFile file = null;
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
 		
@@ -431,15 +471,24 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					throw new RemoteFileCancelledException();
 				}
 				
-				for (int i = 0; i < _ftpFiles.length; i++) 
-				{
-					FTPHostFile tempFile = new FTPHostFile(remoteParent,_ftpFiles[i]);
-					
-					if(tempFile.getName().equalsIgnoreCase(fileName))
-					{
-						file = tempFile;
-						break;
+				synchronized(_fCachePreviousFiles) {
+					cacheFiles(remoteParent);
+
+					//Bug 198645: try exact match first
+					Object o = _fCachePreviousFiles.get(fileName);
+					if (o!=null) return (FTPHostFile)o;
+
+					//try case insensitive match (usually never executed)
+					if (!isCaseSensitive()) {
+						for (int i = 0; i < _ftpFiles.length; i++) {
+							String tempName = _ftpFiles[i].getName();
+							if(tempName.equalsIgnoreCase(fileName)) {
+								file = (FTPHostFile)_fCachePreviousFiles.get(tempName);
+								break;
+							}
+						}
 					}
+
 				}
 				
 				// if not found, create new object with non-existing flag
@@ -511,49 +560,38 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					throw new RemoteFileCancelledException();
 				}
 				
-				for(int i=0; i<_ftpFiles.length; i++)
-				{
-					if(_ftpFiles[i]==null)
+				synchronized (_fCachePreviousFiles) {
+					cacheFiles(parentPath);
+					
+					for(int i=0; i<_ftpFiles.length; i++)
 					{
-						continue;
-					}
-					
-					String rawListLine = _ftpFiles[i].getRawListing()+System.getProperty("line.separator"); //$NON-NLS-1$
-					_ftpLoggingOutputStream.write(rawListLine.getBytes());
-					
-					FTPHostFile f = new FTPHostFile(parentPath, _ftpFiles[i]);
-					String name = f.getName();
-					
-					if(f.isLink()) {
-						if(name.indexOf('.')==-1) {
-							//modify FTPHostFile to be shown as a folder
-							f.setIsDirectory(true);
-						}
-					}
-					
-					if (isRightType(fileType,f)) {
-						
-						if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
-							//Never return the default directory names
+						if(_ftpFiles[i]==null)
+						{
 							continue;
-						} else if (f.isDirectory() && fileType!=FILE_TYPE_FOLDERS) {
-							//get ALL directory names (unless looking for folders only)
-							results.add(f);
-						} else if (filematcher.matches(name)) { 
-							//filter all others by name.
-							results.add(f);
+						}
+						
+						String rawListLine = _ftpFiles[i].getRawListing()+System.getProperty("line.separator"); //$NON-NLS-1$
+						_ftpLoggingOutputStream.write(rawListLine.getBytes());
+						
+						String name = _ftpFiles[i].getName();
+						FTPHostFile f = (FTPHostFile)_fCachePreviousFiles.get(name);
+						
+						if (isRightType(fileType,f)) {
+							
+							if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+								//Never return the default directory names
+								continue;
+							} else if (f.isDirectory() && fileType!=FILE_TYPE_FOLDERS) {
+								//get ALL directory names (unless looking for folders only)
+								results.add(f);
+							} else if (filematcher.matches(name)) { 
+								//filter all others by name.
+								results.add(f);
+							}
 						}
 					}
 				}
-				
 				_ftpLoggingOutputStream.write(System.getProperty("line.separator").getBytes()); //$NON-NLS-1$
-				
-				for (int i = 0; i < results.size(); i++) {
-					FTPHostFile file = (FTPHostFile)results.get(i);
-					fileMap.put(file.getAbsolutePath(), file);
-				}
-				
-				
 			}
 			catch (Exception e)
 			{			
@@ -709,12 +747,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}	
 		}
 		
-		IHostFile remoteHostFile = (IHostFile)fileMap.get(remoteParent+getSeparator()+remoteFile);
-		
-		if(remoteHostFile == null)
-		{
-			remoteHostFile = getFile(remoteParent,remoteFile,null);
-		}
+		IHostFile remoteHostFile = getFile(remoteParent, remoteFile, monitor);
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
@@ -832,12 +865,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		progressMonitor.init(FTPServiceResources.FTP_File_Service_Deleting_Task+fileName, 1);  
 		
-		IHostFile file = (IHostFile)fileMap.get(remoteParent+getSeparator()+fileName);
-		
-		if(file == null)
-		{
-			file = getFile(remoteParent,fileName,null);
-		}	
+		IHostFile file = getFile(remoteParent, fileName, monitor);
 			
 		boolean isFile = file.isFile();
 		
@@ -1041,6 +1069,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 	public boolean isCaseSensitive()
 	{
+		//TODO find out whether remote is case sensitive or not
 		return true;
 	}
 	
@@ -1113,10 +1142,32 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			}
 				
 		}
-		
+
 		return result;
 	}
 	
+	private void cacheFiles(String parentPath) {
+		synchronized (_fCachePreviousFiles) {
+			_fCachePreviousFiles.clear();
+			_fCachePreviousTimestamp = System.currentTimeMillis();
+			_fCachePreviousParent = parentPath;
+			
+			for(int i=0; i<_ftpFiles.length; i++) {
+				if(_ftpFiles[i]==null) {
+					continue;
+				}
+				FTPHostFile f = new FTPHostFile(parentPath, _ftpFiles[i]);
+				String name = f.getName();
+				if(f.isLink()) {
+					if(name.indexOf('.') < 0) {
+						//modify FTPHostFile to be shown as a folder
+						f.setIsDirectory(true);
+					}
+				}
+				_fCachePreviousFiles.put(name, f);
+			}
+		}
+	}
 	
 	private class MyProgressMonitor
 	{
@@ -1187,17 +1238,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		boolean result = false;
 		int permissions = 0;
 		
-		FTPHostFile file = (FTPHostFile)fileMap.get(parent+getSeparator()+name);
-		
-		if(file == null)
-		{
-			file =(FTPHostFile)getFile(parent,name, monitor);
-		}
+		FTPHostFile file = getFileInternal(parent,name, monitor);
 		
 		int userPermissions = file.getUserPermissions();
 		int groupPermissions = file.getGroupPermissions();
 		int otherPermissions = file.getOtherPermissions();
-		
 		
 		if(readOnly)
 		{

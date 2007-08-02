@@ -16,6 +16,7 @@
  * Kevin Doyle (IBM) - [182403] Double Click on an object that can be expanded
  * Kevin Doyle (IBM) - [195543] Double Clicking expands wrong folder when duplicate elements shown
  * Kevin Doyle (IBM) - [193155] Double Clicking on a String in Scratchpad Errors
+ * Kevin Doyle (IBM) - [194867] Remote Scratchpad should have Refresh Action on toolbar
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -85,6 +86,7 @@ public class SystemScratchpadViewPart extends ViewPart
 	private SystemCommonRenameAction _renameAction;
 	private ClearAction _clearAction;
 	private ClearSelectedAction _clearSelectionAction;
+	private SystemRefreshAction _refreshAction;
 
 	//  for ISystemMessageLine
 	private String _message, _errorMessage;
@@ -224,24 +226,25 @@ public class SystemScratchpadViewPart extends ViewPart
 
 	public void fillLocalToolBar()
 	{
-		//if (_refreshAction == null)
-	    if (_clearAction == null)
-		{
-			// refresh action
-			//_refreshAction = new RefreshAction();
-	        _clearAction = new ClearAction(_viewer);
-	        _clearSelectionAction = new ClearSelectedAction(_viewer);
-
-		}
-
-		updateActionStates();
-
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 		IMenuManager menuMgr = actionBars.getMenuManager();
+		
+	    if (_clearAction == null) {
+	        _clearAction = new ClearAction(_viewer);
+	        _clearSelectionAction = new ClearSelectedAction(_viewer);
+		}
 
-		SystemRefreshAction refreshAction = new SystemRefreshAction(getShell());
-		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), refreshAction);
+	    if (_refreshAction == null) {
+	    	_refreshAction = new SystemRefreshAction(getShell());
+			_refreshAction.setId(ActionFactory.REFRESH.getId());
+			_refreshAction.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
+			_refreshAction.setSelectionProvider(_viewer);
+	    }
+	    actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), _refreshAction);
+	    
+		updateActionStates();
+
 		_statusLine = actionBars.getStatusLineManager();
 
 		addToolBarItems(toolBarManager);
@@ -251,16 +254,18 @@ public class SystemScratchpadViewPart extends ViewPart
 	private void addToolBarMenuItems(IMenuManager menuManager)
 	{
 		menuManager.removeAll();
-		menuManager.add(_clearSelectionAction);
+		menuManager.add(_refreshAction);
 		menuManager.add(new Separator());
+		menuManager.add(_clearSelectionAction);
 		menuManager.add(_clearAction);
 	}
 
 	private void addToolBarItems(IToolBarManager toolBarManager)
 	{
 		toolBarManager.removeAll();
-		toolBarManager.add(_clearSelectionAction);
+		toolBarManager.add(_refreshAction);
 		toolBarManager.add(new Separator());
+		toolBarManager.add(_clearSelectionAction);
 		toolBarManager.add(_clearAction);
 	}
 

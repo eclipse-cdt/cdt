@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
+ * Martin Oberhuber (Wind River) - [191581] clear local IRemoteFile handle cache when modifying remote
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -243,6 +244,12 @@ public class RSEFileStoreImpl extends FileStore
 		return subSys;
 	}
 
+	/**
+	 * Return the cached IRemoteFile handle. Used only as a handle into 
+	 * ISubSystem operations, attributes of this handle are never considered
+	 * except for exists() checking.
+	 * @return
+	 */
 	private IRemoteFile getCachedRemoteFile() {
 		return _remoteFile;
 	}
@@ -282,7 +289,7 @@ public class RSEFileStoreImpl extends FileStore
 						"Could not get remote file"));
 			}
 			try {
-				remoteFile = parent.getParentRemoteFileSubSystem().getRemoteFileObject(parent, _parent.getName(), monitor);
+				remoteFile = parent.getParentRemoteFileSubSystem().getRemoteFileObject(parent, getName(), monitor);
 			} catch(Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
@@ -468,7 +475,8 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#fetchInfo(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
-		
+		// clear cache in order to query latest info
+		cacheRemoteFile(null);
 		// connect if needed. Will throw exception if not successful.
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		
@@ -510,11 +518,11 @@ public class RSEFileStoreImpl extends FileStore
 		}
 		
 		if (remoteFile.isFile()) {
-				
 			try {
 				return subSys.getInputStream(remoteFile.getParentPath(), remoteFile.getName(), true, monitor);
 			}
 			catch (SystemMessageException e) {
+				cacheRemoteFile(null);
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
 						"Could not get input stream", e));
@@ -530,6 +538,7 @@ public class RSEFileStoreImpl extends FileStore
 	 */
 	public IFileStore mkdir(int options, IProgressMonitor monitor) throws CoreException 
 	{
+		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		if (remoteFile==null) {
 			throw new CoreException(new Status(IStatus.ERROR, 
@@ -540,6 +549,7 @@ public class RSEFileStoreImpl extends FileStore
 		if (!remoteFile.exists()) {
 			try {
 				remoteFile = subSys.createFolder(remoteFile, monitor);
+				cacheRemoteFile(remoteFile);
 			}
 			catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR,
@@ -563,7 +573,7 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#openOutputStream(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
-		
+		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		if (remoteFile==null) {
 			throw new CoreException(new Status(IStatus.ERROR,
@@ -574,6 +584,7 @@ public class RSEFileStoreImpl extends FileStore
 		if (!remoteFile.exists()) {
 			try {
 				remoteFile = subSys.createFile(remoteFile, monitor);
+				cacheRemoteFile(remoteFile);
 			}
 			catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR,
@@ -583,7 +594,6 @@ public class RSEFileStoreImpl extends FileStore
 		}
 			
 		if (remoteFile.isFile()) {
-			
 			try {
 				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), true, monitor);
 			}
@@ -611,24 +621,20 @@ public class RSEFileStoreImpl extends FileStore
 	public void delete(int options, IProgressMonitor monitor) throws CoreException 
 	{
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
-		if (remoteFile==null || !remoteFile.exists()) {
-			return;
-		}
-		else {
-			IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
-			try {
-				boolean success = subSys.delete(remoteFile, monitor);
-				if (!success) {
-					throw new CoreException(new Status(IStatus.ERROR,
-							Activator.getDefault().getBundle().getSymbolicName(),
-							"Could not delete file"));
-				}
-			}
-			catch (Exception e) {
+		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
+		try {
+			cacheRemoteFile(null);
+			boolean success = subSys.delete(remoteFile, monitor);
+			if (!success) {
 				throw new CoreException(new Status(IStatus.ERROR,
 						Activator.getDefault().getBundle().getSymbolicName(),
-						"Could not delete file", e));
+						"Could not delete file"));
 			}
+		}
+		catch (Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR,
+					Activator.getDefault().getBundle().getSymbolicName(),
+					"Could not delete file", e));
 		}
 	}
 }

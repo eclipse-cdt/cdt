@@ -18,6 +18,7 @@
  * Kevin Doyle (IBM) - [195537] Use Hashlookup and ElementComparer
  * Kevin Doyle (IBM) - [189423] Scratchpad not completely updated after Delete.
  * Kevin Doyle (IBM) - [193151] Scratchpad not updated on Move
+ * Kevin Doyle (IBM) - [189421] Scratchpad not updated after Rename
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -40,6 +41,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -47,7 +49,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvent;
@@ -59,8 +60,10 @@ import org.eclipse.rse.core.events.ISystemResourceChangeListener;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
+import org.eclipse.rse.core.subsystems.IRemoteObjectIdentifier;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.actions.SystemCommonDeleteAction;
 import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
@@ -69,6 +72,7 @@ import org.eclipse.rse.internal.ui.actions.SystemOpenExplorerPerspectiveAction;
 import org.eclipse.rse.internal.ui.actions.SystemShowInTableAction;
 import org.eclipse.rse.internal.ui.actions.SystemSubMenuManager;
 import org.eclipse.rse.internal.ui.view.ElementComparer;
+import org.eclipse.rse.internal.ui.view.SafeTreeViewer;
 import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.rse.internal.ui.view.SystemViewDataDragAdapter;
 import org.eclipse.rse.internal.ui.view.SystemViewDataDropAdapter;
@@ -126,7 +130,7 @@ import org.eclipse.ui.part.PluginTransfer;
 public class SystemScratchpadView
 	// TODO change TreeViewer to ScratchpadViewer when Eclipse fixes SWT viewer 
 //	extends ScratchpadViewer
-	extends TreeViewer
+	extends SafeTreeViewer
 	implements IMenuListener, ISystemDeleteTarget, 
 			   ISystemRenameTarget, ISystemSelectAllTarget, ISystemShellProvider,
 			   ISystemResourceChangeListener, ISystemRemoteChangeListener,
@@ -347,8 +351,9 @@ public class SystemScratchpadView
 				}
 				break;
 			case ISystemResourceChangeEvents.EVENT_REFRESH:
+			case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
 				{
-			    	internalRefresh(parent);
+			    	internalRefresh(child);
 				}
 				break;
 			case ISystemResourceChangeEvents.EVENT_REFRESH_SELECTED:
@@ -537,18 +542,7 @@ public class SystemScratchpadView
 				// --------------------------
 			case ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED :
 				{
-					Object child = event.getResource();
-
-					if (provider != null)
-					{
-					    Widget widget = findItem(child);
-					    if (widget != null)
-						{
-							widget.setData(child);
-							updateItem(widget, child);
-							return;
-						}
-					}
+					renameRemoteObject(remoteResource, event.getOldName());
 				}
 
 				break;
@@ -1612,6 +1606,70 @@ public class SystemScratchpadView
 		
 	}
 	
+	/**
+	 * Rename a remote object. 
+	 */
+	protected void renameRemoteObject(Object renameObject, String oldElementName) {
+		String[] properties = new String[1];
+		properties[0] = IBasicPropertyConstants.P_TEXT;
+		List matches = new Vector();
+		ISubSystem subsystem = null;
+		String newElementName = ""; //$NON-NLS-1$
+		Object refreshObject = null;
+		
+		// Try to determine the new element name/subsystem to help improve performance when searching for objects
+		if (renameObject instanceof String) {
+			newElementName = (String) renameObject;
+		} else {
+			ISystemViewElementAdapter rmtAdapter = getViewAdapter(renameObject);
+			if (rmtAdapter != null) {
+				subsystem = rmtAdapter.getSubSystem(renameObject);
+				newElementName = rmtAdapter.getName(renameObject);
+			}
+		}
+		
+		findAllRemoteItemReferences(oldElementName, renameObject, subsystem, matches);
+		
+		// Go through all the matches and update the properties
+		for (int i = 0; i < matches.size(); i++) {
+			Item item = (Item) matches.get(i);
+			if (item != null && !item.isDisposed()) {
+				Object data = item.getData();
+				
+				if (data != null) {
+					ISystemRemoteElementAdapter	remoteAdapter = (ISystemRemoteElementAdapter)((IAdaptable)data).getAdapter(ISystemRemoteElementAdapter.class);			
+				
+					if (remoteAdapter != null && data != renameObject)
+					{
+						remoteAdapter.refreshRemoteObject(data, renameObject);
+					}
+					item.setText(newElementName);
+					internalUpdate(item, data, properties);
+					
+					if (refreshObject == null) {
+						refreshObject = data;
+					}
+					
+				}
+			}
+		}
+
+		if (refreshObject != null) {
+			// Update the Scratchpad Model
+			SystemRegistryUI.getInstance().getSystemScratchPad().replace(oldElementName, refreshObject);
+			
+			// FTP/SSH require a new listing of files otherwise they will
+			// display the old file names.
+			// We can't depend on SystemView to do the refresh as it does it in a
+			// deferred job and we don't know when that is done or what
+			// order the listeners are in.
+			if (refreshObject instanceof ISystemContainer) {
+				((ISystemContainer) refreshObject).markStale(true);
+			}
+			internalRefresh(refreshObject);
+		}
+	}
+	
 	//TODO:
 	// ----------------------------------------------------------------
 	// Functions Below are pure copies of the ones from SystemView
@@ -1740,5 +1798,162 @@ public class SystemScratchpadView
 			if (!items[i].isDisposed()) match = recursiveFindFirstRemoteItemReference(items[i], elementName, elementObject, subsystem);
 		}
 		return match;
+	}
+	
+	/**
+	 * Recursively tries to find all occurrences of a given remote object, starting at the tree root. 
+	 * Since the object memory object for a remote object is not dependable we call getAbsoluteName() 
+	 * on the adapter to do the comparisons.
+	 * <p>
+	 * TODO: This method should not return any invalid matches, i.e. remote objects
+	 * that do match the String identifier but have been deleted already. Because the
+	 * same remote object can appear in multiple contexts in the RSE Tree, a single
+	 * remote object identifier String may evaluate to multiple different matches
+	 * to fill into the matches argument. All those context object matches, however,
+	 * reference the same real-world model objects due to the constraint that 
+	 * {@link IRemoteObjectIdentifier} uniquely identifies a remote object. 
+	 * <p>
+	 * This overload takes a string and a subsystem.
+	 * 
+	 * @param searchString the absolute name of the remote object to which
+	 *    we want to find a tree item which references it.
+	 * @param elementObject the actual remote element to find, for binary matching
+	 * @param subsystem optional subsystem to search within
+	 * @param matches the List to populate with hits (TreeItem objects), 
+	 *     or <code>null</code> to get a new List created and returned
+	 * @return the List populated with hits, or <code>null</code> if 
+	 *     <code>null</code> was passed as matches to populate and no matches
+	 *     were found.
+	 */
+	protected List findAllRemoteItemReferences(String searchString, Object elementObject, ISubSystem subsystem, List matches) {
+		Tree tree = getTree();
+		Item[] roots = tree.getItems();
+		if (roots == null) return matches;
+		if (matches == null) 
+			matches = new Vector();
+
+		boolean foundExact = false;
+		for (int idx = 0; idx < roots.length; idx++){
+			if (recursiveFindExactMatches((TreeItem)roots[idx], elementObject, subsystem, matches)){
+				foundExact = true;
+			}
+		}
+
+		if (!foundExact)
+		{
+			for (int idx = 0; idx < roots.length; idx++){
+				matches = recursiveFindAllRemoteItemReferences(roots[idx], searchString, elementObject, subsystem, matches);
+			}
+		}
+		
+		return matches;
+	}
+	
+	private boolean recursiveFindExactMatches(TreeItem root, Object elementObject, ISubSystem subsystem, List matches)
+	{
+		boolean foundSomething = false;
+		Object data = root.getData();
+		if (data == elementObject)
+		{
+			matches.add(root);
+			foundSomething = true;
+		}
+		if (subsystem != null){
+			if (data instanceof ISubSystem){
+				if (data != subsystem)
+					return false;
+			}
+			else if (data instanceof IHost){
+				if (subsystem.getHost() != data)
+					return false;
+			}
+		}
+		
+		TreeItem[] children = root.getItems();
+		for (int i = 0; i < children.length; i++)
+		{
+			if (recursiveFindExactMatches(children[i], elementObject, subsystem,  matches))
+			{
+				foundSomething = true;
+			}
+		}
+		return foundSomething;
+	}
+	
+	protected boolean mappedFindAllRemoteItemReferences(Object elementObject, List occurrences)
+	{				
+		Widget[] items = findItems(elementObject);
+		if (items.length > 0)
+		{
+			for (int i = 0; i < items.length; i++)
+			{
+				occurrences.add(items[i]);
+			}
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Recursively tries to find all references to a remote object.
+	 * @param parent the parent item at which to start the search.
+	 * @param elementName the absolute name of the remote element to find
+	 * @param elementObject the actual remote element to find, for binary matching
+	 * @param subsystem optional subsystem to search within
+	 * @param occurrences the List to populate with hits. Must not be <code>null</code>
+	 * @return the given List populated with hits
+	 */
+	protected List recursiveFindAllRemoteItemReferences(Item parent, String elementName, Object elementObject, ISubSystem subsystem, List occurrences) {
+		Object rawData = parent.getData();
+		ISystemViewElementAdapter remoteAdapter = null;
+		// ----------------------------
+		// what are we looking at here?
+		// ----------------------------
+		if (rawData != null) remoteAdapter = getViewAdapter(rawData);
+		// -----------------------------------------------------------------------
+		// if this is a remote object, test if it is the one we are looking for...
+		// -----------------------------------------------------------------------
+		if (remoteAdapter != null) {
+			// first test for binary match
+			if (elementObject == rawData) {
+				occurrences.add(parent); // found a match!
+				if (debugRemote) System.out.println("Find All: Remote item binary match found"); //$NON-NLS-1$
+				return occurrences; // no point in checking the kids
+			}
+			// now test for absolute name match
+			String fqn = remoteAdapter.getAbsoluteName(rawData);
+			if (debugRemote) System.out.println("TESTING FINDALL: '" + fqn + "' vs '" + elementName + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if ((fqn != null) && fqn.equals(elementName)) {
+				occurrences.add(parent); // found a match!
+				if (debugRemote) System.out.println("...and remote item name match found"); //$NON-NLS-1$
+				return occurrences; // no point in checking the kids
+			}
+		}
+		// -------------------------------------------------------------------------
+		// if we have been given a subsystem to restrict to, that is a hint to us...
+		// -------------------------------------------------------------------------
+		else if ((rawData != null) && (subsystem != null)) // test for hints we are in the wrong place
+		{
+			// if we are currently visiting a subsystem, and that subsystem is not from the same
+			//  factory, then we can assume the remote object occurrences we are looking for are
+			//  not to be found within this branch...
+			if ((rawData instanceof ISubSystem) && (((ISubSystem) rawData).getSubSystemConfiguration() != subsystem.getSubSystemConfiguration())) {
+				return occurrences; // they don't match, so don't bother checking the kids
+			}
+			// if we are currently visiting a connection, and that connection's hostname is not the same
+			//  as that of our given subsystem, then we can assume the remote object occurrences we are 
+			//  looking for are not to be found within this branch...
+			else if ((rawData instanceof IHost) && (!((IHost) rawData).getHostName().equals(subsystem.getHost().getHostName()))) {
+				return occurrences; // they don't match, so don't bother checking the kids
+			}
+		}
+		// recurse over children	    
+		Item[] items = getChildren(parent);
+		for (int i = 0; (i < items.length); i++) {
+					
+			if (!items[i].isDisposed()) occurrences = recursiveFindAllRemoteItemReferences(items[i], elementName, elementObject, subsystem, occurrences);
+		}
+		return occurrences;
 	}
 }

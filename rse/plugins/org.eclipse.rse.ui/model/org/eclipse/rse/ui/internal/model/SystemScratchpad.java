@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Kevin Doyle (IBM) - [160280] Added a check to see if the item to be added already exists
+ * Kevin Doyle (IBM) - [189421] Scratchpad not updated after Rename
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.internal.ui.view.SystemViewScratchpadAdapter;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
@@ -93,4 +95,31 @@ public class SystemScratchpad implements IAdaptable
         }
         return Platform.getAdapterManager().getAdapter(this, adapterType);	
     }
+    
+    public void replace(String oldName, Object newItem) {
+    	int index = -1;
+    	Object adapterObj = Platform.getAdapterManager().getAdapter(newItem, ISystemDragDropAdapter.class);
+    	ISystemDragDropAdapter adapter;
+    	ISubSystem subSystemNewItem;
+    	if (adapterObj != null && adapterObj instanceof ISystemDragDropAdapter) { 
+    		adapter = (ISystemDragDropAdapter) adapterObj;
+    		subSystemNewItem = adapter.getSubSystem(newItem);
+    		
+	    	// try to find the old item by oldName
+	    	for (int i = 0; i < _children.size() && index == -1; i++) {
+	    		Object element = _children.get(i);
+	    		if (adapter.getSubSystem(element) == subSystemNewItem) {
+	    			if (adapter.getAbsoluteName(element).equals(oldName)) {
+	    				index = i;
+	    			}
+	    		}
+	    	}
+	    	// We found the old item remove it and replace with new one
+	    	if (index != -1) {
+	    		_children.remove(index);
+	    		_children.add(index, newItem);
+	    	}    	
+    	}
+    }
+    
 }

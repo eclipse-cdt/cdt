@@ -55,6 +55,7 @@
  * Javier Montalvo Orus (Symbian) - [195830] RSE performs unnecessary remote list commands
  * Martin Oberhuber (Wind River) - [198638] Fix invalid caching
  * Martin Oberhuber (Wind River) - [198645] Fix case sensitivity issues
+ * Martin Oberhuber (Wind River) - [192610] Fix thread safety for delete(), upload(), setReadOnly() operations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -359,6 +360,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			_userHome = '/'+_userHome.substring(0,_userHome.lastIndexOf(']'));
 		}
 		
+		//Just to be safe
+		synchronized (_fCachePreviousFiles) {
+			_fCachePreviousFiles.clear();
+		}
 	}
 	
 	public void disconnect()
@@ -422,6 +427,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	/**
 	 * Return FTPHostFile object for a given parent dir and file name.
+	 * This is different than {@link #getFile(String, String, IProgressMonitor)}
+	 * in order to ensure we always return proper FTPHostFile type.
+	 * 
 	 * @see org.eclipse.rse.services.files.IFileService#getFile(String, String, IProgressMonitor)
 	 */
 	protected FTPHostFile getFileInternal(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
@@ -720,7 +728,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			 bos.close();
 			 
 			 if(retValue == true){
-				setFileType(isBinary);
 				retValue = upload(tempFile, remoteParent, remoteFile, isBinary, "", hostEncoding, monitor); //$NON-NLS-1$
 			 }
 			 
@@ -859,49 +866,50 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
 		boolean hasSucceeded = false;
 		
-		FTPClient ftpClient = getFTPClient();
-		
 		MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-		
 		progressMonitor.init(FTPServiceResources.FTP_File_Service_Deleting_Task+fileName, 1);  
 		
 		IHostFile file = getFile(remoteParent, fileName, monitor);
 			
 		boolean isFile = file.isFile();
 		
-		try {
-			hasSucceeded = FTPReply.isPositiveCompletion(ftpClient.cwd(remoteParent));
-			
-			if(hasSucceeded)
-			{
-				if(isFile)
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
+			try {
+				FTPClient ftpClient = getFTPClient();
+				
+				hasSucceeded = FTPReply.isPositiveCompletion(ftpClient.cwd(remoteParent));
+				
+				if(hasSucceeded)
 				{
-					hasSucceeded = ftpClient.deleteFile(fileName);
+					if(isFile)
+					{
+						hasSucceeded = ftpClient.deleteFile(fileName);
+					}
+					else
+					{
+						hasSucceeded = ftpClient.removeDirectory(fileName);
+					}
+				}
+				
+				if(!hasSucceeded){
+					throw new Exception(ftpClient.getReplyString()+" ("+fileName+")"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				else
 				{
-					hasSucceeded = ftpClient.removeDirectory(fileName);
+					progressMonitor.worked(1);
 				}
-			}
-			
-			if(!hasSucceeded){
-				throw new Exception(ftpClient.getReplyString()+" ("+fileName+")"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			else
-			{
-				progressMonitor.worked(1);
-			}
-			
-		}
-		catch (Exception e) {
-			if(isFile){
-				throw new RemoteFileIOException(e);
-			}
-			else{
-				throw new RemoteFolderNotEmptyException(e);
-			}
 				
-				
+			}
+			catch (Exception e) {
+				if(isFile){
+					throw new RemoteFileIOException(e);
+				}
+				else{
+					throw new RemoteFolderNotEmptyException(e);
+				}
+			} finally {
+				_commandMutex.release();
+			}
 		}
 
 		return hasSucceeded;
@@ -1073,7 +1081,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		return true;
 	}
 	
-	
+	/**
+	 * Internal method to list files.
+	 * MUST ALWAYS be called from _commandMutex protected region.
+	 */
 	private boolean listFiles(IProgressMonitor monitor) throws Exception
 	{
 		boolean result = true;
@@ -1254,40 +1265,36 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 		
 		permissions = userPermissions * 100 + groupPermissions * 10 + otherPermissions;
-		
-		try {
-			result =_ftpClient.sendSiteCommand("CHMOD "+permissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (IOException e) {
-			result = false;
-		} 
+
+		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
+			try {
+				result =_ftpClient.sendSiteCommand("CHMOD "+permissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (IOException e) {
+				result = false;
+			} finally {
+				_commandMutex.release();
+			}
+		}
 		
 		return result;
 	}
 
-	/**
-	 * Gets the input stream to access the contents of a remote file.
-	 * @since 2.0 
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getInputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		
-		if (monitor != null){
-			
-			if (monitor.isCanceled()) {
-				return null;
-			}	
+		if (monitor != null && monitor.isCanceled()){
+			throw new RemoteFileCancelledException();
 		}
 
 		InputStream stream = null;
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
-		
 			FTPClient ftpClient = getFTPClient();
-		
 			try {
-				
-				
 				ftpClient.changeWorkingDirectory(remoteParent);
 				setFileType(isBinary);
 				stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
@@ -1295,26 +1302,29 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			catch (Exception e) {			
 				throw new RemoteFileIOException(e);
 			}finally {
-			_commandMutex.release();
+				//TODO I am not 100% sure but I _think_ that the _commandMutex
+				//may only be released once reading the stream is complete,
+				//since in FTPBufferedInputStream.close() a pending command
+				//is being sent.
+				//After all, the safer solution would be to have a separate
+				//FTP client connection to the remote for the download, such 
+				//that dir channel remains free. See bug #198636
+				_commandMutex.release();
 			}
+		} else {
+			throw new RemoteFileCancelledException();
 		}
-		
-		
 		return stream;
 	}
 
-	/**
-	 * Gets the output stream to write to a remote file.
-	 * @since 2.0
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		
-		if (monitor != null){
-			
-			if (monitor.isCanceled()) {
-				return null;
-			}	
+		if (monitor != null && monitor.isCanceled()){
+			throw new RemoteFileCancelledException();
 		}
 		
 		OutputStream stream = null;

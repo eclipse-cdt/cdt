@@ -27,7 +27,7 @@ public interface ICommunicationsListener {
 	 * This method is invoked whenever the communications state is invoked
 	 * immediately before and after the state of the communications changes.
 	 * The state field in CommunicationsEvent determines which state
-	 * change is about to or has occured.
+	 * change is about to or has occurred.
 	 */
 	public void communicationsStateChange(CommunicationsEvent e);
 
@@ -35,7 +35,7 @@ public interface ICommunicationsListener {
 	 * This method determines if the communications listener is a passive or
 	 * active listener.  Typically a passive listener registers with the communications
 	 * system and responds to events as they occur.  An active listener typically 
-	 * registeres with the communications system only for the duration of the task (i.e.
+	 * registers with the communications system only for the duration of the task (i.e.
 	 * user editing a file, or outstanding communications request.)
 	 * 
 	 * The user will be prompted on a disconnect if there are any active communication

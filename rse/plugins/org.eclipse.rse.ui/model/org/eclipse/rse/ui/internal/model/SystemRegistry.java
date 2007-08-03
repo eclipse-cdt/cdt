@@ -34,6 +34,7 @@
  * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
  * David McKnight   (IBM)        - [165674] Sort subsystem configurations to be in deterministic order
  * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by priority then Id
+ * Martin Oberhuber (Wind River) - [194898] Avoid NPE when doing EVENT_REFRESH_REMOTE on a subsys without filters
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -2845,7 +2846,7 @@ public class SystemRegistry implements ISystemRegistry
 	{
 	    String elementName = getRemoteResourceAbsoluteName(resource);
 	   List results = new ArrayList();
-	    if (subsystem != null && elementName != null)
+	    if (subsystem != null && elementName != null && subsystem.getSubSystemConfiguration().supportsFilters())
 	    {
 		    ISystemFilterReference[] refs = subsystem.getFilterPoolReferenceManager().getSystemFilterReferences(subsystem);
 		    for (int i = 0; i < refs.length; i++)

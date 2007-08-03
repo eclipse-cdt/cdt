@@ -19,7 +19,11 @@ import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
+import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -28,6 +32,11 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 
 /**
  * Utility methods for C/C++ Debug UI.
@@ -162,6 +171,32 @@ public class CDebugUIUtils {
 
 	public static String getVariableName( IVariable variable ) throws DebugException {
 		return decorateText( variable, variable.getName() );
+	}
+
+	public static String getEditorFilePath( IEditorInput input ) throws CoreException {
+		if ( input instanceof IFileEditorInput ) {
+			return ((IFileEditorInput)input).getFile().getLocation().toOSString();
+		}
+		if ( input instanceof IStorageEditorInput ) {
+			return ((IStorageEditorInput)input).getStorage().getFullPath().toOSString();
+		}
+		if ( input instanceof IPathEditorInput ) {
+			return ((IPathEditorInput)input).getPath().toOSString();
+		}
+		if ( input instanceof DisassemblyEditorInput ) {
+			String sourceFile = ((DisassemblyEditorInput)input).getSourceFile();
+			if ( sourceFile != null ) {
+				return sourceFile;
+			}
+			return ((DisassemblyEditorInput)input).getModuleFile();
+		}
+		if ( input instanceof IURIEditorInput)
+		{
+			IPath uriPath = URIUtil.toPath(((IURIEditorInput)input).getURI());
+			if (uriPath != null)
+				return uriPath.toOSString();
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	public static String decorateText( Object element, String text ) {

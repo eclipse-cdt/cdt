@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
@@ -48,8 +49,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPathEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -325,23 +324,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	}
 
 	private String getSourceHandle( IEditorInput input ) throws CoreException {
-		if ( input instanceof IFileEditorInput ) {
-			return ((IFileEditorInput)input).getFile().getLocation().toOSString();
-		}
-		if ( input instanceof IStorageEditorInput ) {
-			return ((IStorageEditorInput)input).getStorage().getFullPath().toOSString();
-		}
-		if ( input instanceof IPathEditorInput ) {
-			return ((IPathEditorInput)input).getPath().toOSString();
-		}
-		if ( input instanceof DisassemblyEditorInput ) {
-			String sourceFile = ((DisassemblyEditorInput)input).getSourceFile();
-			if ( sourceFile != null ) {
-				return sourceFile;
-			}
-			return ((DisassemblyEditorInput)input).getModuleFile();
-		}
-		return ""; //$NON-NLS-1$
+		return CDebugUIUtils.getEditorFilePath(input);
 	}
 
 	private void toggleVariableWatchpoint( IWorkbenchPart part, IVariable variable ) throws CoreException {

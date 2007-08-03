@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
+import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
@@ -40,8 +41,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
  
@@ -187,13 +186,7 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 	}
 
 	private String getFileName( IEditorInput input ) throws CoreException {
-		if ( input instanceof IFileEditorInput ) {
-			return ((IFileEditorInput)input).getFile().getLocation().toOSString();
-		}
-		if ( input instanceof IStorageEditorInput ) {
-			return ((IStorageEditorInput)input).getStorage().getFullPath().toOSString();
-		}
-		return null;
+		return CDebugUIUtils.getEditorFilePath(input);
 	}
 
 	private void runInBackground( Runnable r ) {

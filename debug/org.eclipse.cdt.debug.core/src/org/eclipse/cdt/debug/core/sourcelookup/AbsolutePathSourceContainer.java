@@ -49,12 +49,14 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 			
 			// The file is not already in the workspace so try to create an external translation unit for it.
 			String projectName = getDirector().getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
-			ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
-			if (project != null)
-			{
-				IPath path = Path.fromOSString(file.getCanonicalPath());
-				String id = CoreModel.getRegistedContentTypeId(project.getProject(), path.lastSegment());
-				return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, new Path(file.getCanonicalPath()), id) };
+			if (projectName != "") {
+				ICProject project = CoreModel.getDefault().getCModel().getCProject(projectName);
+				if (project != null)
+				{
+					IPath path = Path.fromOSString(file.getCanonicalPath());
+					String id = CoreModel.getRegistedContentTypeId(project.getProject(), path.lastSegment());
+					return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, new Path(file.getCanonicalPath()), id) };
+				}
 			}
 		} catch (IOException e) { // ignore if getCanonicalPath throws
 		} catch (CoreException e) {

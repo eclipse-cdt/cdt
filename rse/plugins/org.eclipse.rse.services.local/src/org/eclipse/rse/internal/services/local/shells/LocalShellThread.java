@@ -15,6 +15,7 @@
  * Javier Montalvo Orús (Symbian) - 138619: Fix codepage on Win2K
  * Lothar Werzinger (Tradescape) - 161838: Support terminating local shells
  * David McKnight       (IBM)     - [189387] Use specified encoding for shell output
+ * Martin Oberhuber (Wind River) - [161838] local shell reports isActive() wrong
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;
@@ -359,7 +360,9 @@ public class LocalShellThread extends Thread
 			}
 			catch (IOException e)
 			{
-				System.out.println(e);
+				//MOB: Exception is expected when the process is already dead
+				//System.out.println(e);
+				
 		        // make the thread exit;
 		        _isShell = false;
 			}
@@ -381,7 +384,8 @@ public class LocalShellThread extends Thread
 			}
 			catch (InterruptedException e)
 			{
-				System.out.println(e);
+				//System.out.println(e);
+				_isCancelled = true;
 			}
 
 			//This function is where the Threads do real work, and return false when finished

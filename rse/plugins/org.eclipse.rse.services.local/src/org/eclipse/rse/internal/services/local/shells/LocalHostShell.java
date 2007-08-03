@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [161838] local shell reports isActive() wrong
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.shells;
@@ -52,7 +52,13 @@ public class LocalHostShell extends AbstractHostShell implements IHostShell
 	 */
 	public boolean isActive()
 	{
-		return _shellThread.isAlive();
+		if (_stdoutHandler.isFinished()) {
+			if (_shellThread.isAlive()) {
+				_shellThread.stopThread();
+			}
+			return false;
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)

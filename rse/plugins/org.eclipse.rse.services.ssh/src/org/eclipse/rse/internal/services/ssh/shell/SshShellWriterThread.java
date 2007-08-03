@@ -18,7 +18,7 @@ import java.io.PrintWriter;
  * a running ssh shell channel.
  * 
  * A separate Thread is needed because the PipedInputStream 
- * used by ssh requirs that the writing end of the Pipe be 
+ * used by ssh requires that the writing end of the Pipe be 
  * a Thread that remains alive during the entire lifetime 
  * of the shell.
  */

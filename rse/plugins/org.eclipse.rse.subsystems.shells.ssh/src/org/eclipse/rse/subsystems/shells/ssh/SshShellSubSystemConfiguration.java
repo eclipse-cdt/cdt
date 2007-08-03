@@ -48,7 +48,7 @@ public class SshShellSubSystemConfiguration extends
 	}
 
 	/**
-	 * Instantiate and return an instance of OUR subystem. 
+	 * Instantiate and return an instance of OUR subsystem. 
 	 * Do not populate it yet though!
 	 * @see org.eclipse.rse.core.subsystems.SubSystemConfiguration#createSubSystemInternal(IHost)
 	 */

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [197848] Fix shell terminated state when remote dies
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.servicesubsystem;
@@ -24,6 +25,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.subsystems.shells.core.ShellStrings;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCommandShell;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
@@ -86,6 +88,17 @@ public class OutputRefreshJob extends UIJob
 				{
 					registry.fireEvent(
 							new SystemResourceChangeEvent(_command, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, _command.getCommandSubSystem()));
+				}
+				
+				//Bug 197848: Artificial event for shell termination
+				if (_outputs.length == 0 && !_command.isActive()) {
+					ISubSystem subsys = _command.getCommandSubSystem();
+					//update action states in commands view
+					registry.fireEvent(
+							new SystemResourceChangeEvent(_command, ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_FINISHED, subsys));
+					//update "connected" overlay in SystemView
+					registry.fireEvent(
+							new SystemResourceChangeEvent(_command, ISystemResourceChangeEvents.EVENT_REFRESH, subsys));
 				}
 			}
 			}

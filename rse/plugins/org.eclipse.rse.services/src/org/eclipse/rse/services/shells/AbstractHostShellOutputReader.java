@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [197848] Fix shell terminated state when remote dies
  *******************************************************************************/
 
 package org.eclipse.rse.services.shells;
@@ -132,7 +132,6 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 		}
 	}
 
-
 	public void fireOutputChanged(IHostShellChangeEvent event)
 	{
 		for (int i = 0; i < _listeners.size(); i++)
@@ -158,7 +157,6 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 	{
 		if (_keepRunning)
 		{
-
 			_waitIncrement = 0;
 			//dispose();
 		}
@@ -172,15 +170,18 @@ public abstract class AbstractHostShellOutputReader  extends Thread implements I
 			{
 				Thread.sleep(_waitIncrement);
 				Thread.yield();
+				handle();
 			}
 			catch (InterruptedException e)
 			{
-				e.printStackTrace();
 				finish();
-				return;
+				_keepRunning = false;
 			}
-
-			handle();
+		}
+		if (!isErrorReader()) {
+			//Bug 197848: Fire empty event as notification that we are done
+			HostShellChangeEvent event = new HostShellChangeEvent(_hostShell, this, 0, 0);
+			fireOutputChanged(event);
 		}
 	}
 	

@@ -12,6 +12,7 @@
  *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
+ * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -70,7 +71,14 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	// <copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)>
 	//----------------------------------------------------------------------
 
-    private static Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
+	/**
+	 * Create a Jsch session.
+	 * Subclasses can override in order to replace the UserInfo wrapper
+	 * (for non-interactive usage, for instance), or in order to change
+	 * the Jsch config (for instance, in order to switch off strict
+	 * host key checking or in order to add specific ciphers).
+	 */
+    protected Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
         IJSchService service = Activator.getDefault().getJSchService();
         if (service == null)
         	return null;
@@ -102,6 +110,9 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 
 	protected void internalConnect(IProgressMonitor monitor) throws Exception
     {
+		// Fire comm event to signal state about to change
+		fireCommunicationsEvent(CommunicationsEvent.BEFORE_CONNECT);
+
         String host = getHostName();
         String user = getUserId();
         String password=""; //$NON-NLS-1$

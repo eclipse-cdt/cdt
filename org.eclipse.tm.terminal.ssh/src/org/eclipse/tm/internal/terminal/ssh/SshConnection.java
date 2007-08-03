@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
  *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
+ * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -50,7 +51,14 @@ class SshConnection extends Thread {
 	// <copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)>
 	//----------------------------------------------------------------------
 
-    private static Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
+	/**
+	 * Create a Jsch session.
+	 * Subclasses can override in order to replace the UserInfo wrapper
+	 * (for non-interactive usage, for instance), or in order to change
+	 * the Jsch config (for instance, in order to switch off strict
+	 * host key checking or in order to add specific ciphers).
+	 */
+    protected Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
         IJSchService service = Activator.getDefault().getJSchService();
         if (service == null)
         	return null;

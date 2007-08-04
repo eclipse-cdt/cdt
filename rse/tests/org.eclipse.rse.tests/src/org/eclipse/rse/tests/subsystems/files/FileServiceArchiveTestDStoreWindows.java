@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.IHost;
@@ -20,21 +22,45 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest {
 
+	public static junit.framework.Test suite() {
+		TestSuite suite = new TestSuite("FileServiceArchiveTestDStoreWindows");
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToArchiveFile")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToVirtualFileLevelOne")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToVirtualFileLevelTwo")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchVirtualFile")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchVirtualFileLevelTwo")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyToArchiveFile")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyToVirtualFileLevelOne")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyToVirtualFileLevelTwo")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyVirtualBatchToArchiveFile")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyVirtualBatchToVirtualFileLevelOne")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyVirtualBatchToVirtualFileLevelTwo")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyVirtualFile")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyVirtualFileLevelTwo")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCreateZipFile")); //$NON-NLS-1$
+		//suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testDeleteVirtualFileBigZip")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testMoveToArchiveFile")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testMoveToVirtualFileLevelOne")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testMoveToVirtualFileLevelTwo")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testMoveVirtualFile")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testMoveVirtualFileLevelTwo")); //$NON-NLS-1$
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testRenameVirtualFile")); //$NON-NLS-1$
+		//suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testRenameVirtualFileBigZip")); //$NON-NLS-1$
+		return suite;
+	}
 	
 	public void setUp() {
 		
 		//We need to delay if it is first case run after a workspace startup
 		SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_WINDOWS_ID;
-		TMP_DIR_PARENT = "D:\\tmp\\junit_test\\";
-		ZIP_SOURCE_DIR = "D:\\tmp\\junit_source\\";
 		SYSTEM_ADDRESS = "LOCALHOST";
 		SYSTEM_NAME = "LOCALHOST_ds";
-		
 		
 		//We need to delay if it is first case run after a workspace startup
 		if (!classBeenRunBefore)
@@ -67,7 +93,18 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 				fs = fss.getFileService();
 			}
 		}
-		try {
+		
+		IHost localHost = getLocalSystemConnection();
+		sr = SystemStartHere.getSystemRegistry(); 
+		ss = sr.getServiceSubSystems(localHost, IFileService.class);
+		for (int i=0; i<ss.length; i++) {
+			if (ss[i] instanceof IFileServiceSubSystem) {
+				localFss = (IFileServiceSubSystem)ss[i];
+			}
+		}
+		
+		try 
+		{
 			IConnectorService connectionService = fss.getConnectorService();
 			//If you want to change the daemon to another port, uncomment following statements
 			/*
@@ -92,17 +129,24 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 				fss.getSubSystemConfiguration().updateSubSystem(fss, false, "xuanchen", true, 4033);
 			}
 			*/
+			//End here.
 
 			connectionService.connect(mon);
-			 tempDirPath = TMP_DIR_PARENT;
-			 long currentTime = System.currentTimeMillis();
-			 tempDir = createFileOrFolder(tempDirPath, "rsetest" + currentTime, true);
-			 assertTrue(tempDir != null);
-			 assertTrue(tempDir.exists());
-			 assertTrue(tempDir.canRead());
-			 assertTrue(tempDir.canWrite());
-			 assertTrue(tempDir.isDirectory());
-			 tempDirPath = tempDir.getAbsolutePath();
+			 
+			//Create a temparory directory in My Home
+			try
+			{
+				IRemoteFile homeDirectory = fss.getRemoteFileObject(".", mon);
+				String baseFolderName = "rsetest";
+				String homeFolderName = homeDirectory.getAbsolutePath();
+				String testFolderName = FileServiceHelper.getRandomLocation(fss, homeFolderName, baseFolderName, mon);
+				tempDir = createFileOrFolder(homeFolderName, testFolderName, true);
+				tempDirPath = tempDir.getAbsolutePath();
+			}
+			catch (Exception e)
+			{
+				fail("Problem encountered: " + e.getStackTrace().toString());
+			}
 			 
 		} catch(Exception e) {
 			assertTrue("Exception creating temp dir " + e.getStackTrace().toString(), false); //$NON-NLS-1$

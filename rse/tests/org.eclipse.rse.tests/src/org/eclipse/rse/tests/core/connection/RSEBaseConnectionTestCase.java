@@ -9,6 +9,7 @@
  * David Dykstal (IBM) - initial contribution.
  * Uwe Stieber (Wind River) - refactoring and cleanup.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Xuan Chen (IBM)               - [198859] Update the API doc for getRemoteSystemConnection.
  ********************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -86,10 +87,14 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 	}
 	
 	/**
-	 * Lookup and return the local system type connection. This connection
-	 * should be usually available on all systems.
+	 * Lookup/create and return the remote system connection according to the list of system parameters.
+	 * @param systemTypeID The type id string of the remote system.
+	 * @param systemAddress The address of the remote system.
+	 * @param systemName The connection name.
+	 * @param userID The user id used to logon to the remote system.
+	 * @param password The password of the user id to logon to the remote system.
 	 * 
-	 * @return The local system type connection or <code>null</code> if the lookup fails.
+	 * @return The remote system connection or <code>null</code> if the lookup/creation fails.
 	 */
 	protected IHost getRemoteSystemConnection(String systemTypeID, String systemAddress, String systemName, String userID, String password) {
 		

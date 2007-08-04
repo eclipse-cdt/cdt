@@ -7,13 +7,24 @@
  * 
  * Contributors: 
  * Xuan Chen (IBM)               - initial API and implementation
+ *   - <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
+ *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
@@ -24,6 +35,7 @@ import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 
 	protected IFileServiceSubSystem fss;
+	protected IFileServiceSubSystem localFss;
 	protected IFileService fs;
 	protected IRemoteFile tempDir;
 	protected String tempDirPath;
@@ -48,6 +60,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 		return "a !@#${a}'` file%^&()_ =[]~+-;,."; //$NON-NLS-1$
 	}
 	
+	
 	public IRemoteFile copySourceFileOrFolder(String sourceFullName, String sourceName, String targetFolderFullName)
 	{
 		boolean ok = false;
@@ -65,7 +78,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			//Need to call resolveFilterString of the parent to make sure the newly copied child
 			//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
 			//default filter string.  And the dstore server cannot handler it correctly.
-			Object[] children = fss.resolveFilterString(targetFolder, null, mon);
+			fss.resolveFilterString(targetFolder, null, mon);
 		}
 		catch(Exception e)
 		{
@@ -99,7 +112,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			//Need to call resolveFilterString of the parent to make sure the newly created child
 			//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
 			//default filter string.  And the dstore server cannot handler it correctly.
-			Object[] children = fss.resolveFilterString(targetFolder, null, mon);
+			fss.resolveFilterString(targetFolder, null, mon);
 		}
 		catch (Exception e)
 		{
@@ -141,6 +154,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			//We need to call getRemoteFileObject to get its attribute updated.
 			//Otherwise, will get error "directory not readable"
 			folderToCheck = fss.getRemoteFileObject(folderToCheck.getAbsolutePath(), mon);
+			System.out.println("verifying the contents for folder: " + folderToCheck.getAbsolutePath());
 			Object[] children = fss.resolveFilterString(folderToCheck, null, mon);
 			//Make sure the children array includes the copied folder.
 			HashMap childrenMap = new HashMap();
@@ -154,7 +168,7 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			for (int i=0; i<names.length; i++)
 			{
 				IRemoteFile found = (IRemoteFile)(childrenMap.get(names[i]));
-				assertTrue(found != null);
+				assertTrue("Could not find " + names[i], found != null);
 				assertTrue(found.exists());
 				if (types != null && types.length != 0)
 				{
@@ -192,15 +206,108 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
         	sep = '/';
         	parentFolderPath = parentFolderPath + ArchiveHandlerManager.VIRTUAL_SEPARATOR;
         }
-        
-        // hack by Phil to fix bug when trying to create file inside root "/"... it
-        //  tried to create "//file.ext".           	
+               	
        	if ((parentFolderPath.length()==1) && (parentFolderPath.charAt(0)=='/') &&
             (parentFolderPath.charAt(0)==sep))
        	  newAbsName = sep + newName; 
         else
 	      newAbsName = parentFolderPath + sep + newName; 
 	    return newAbsName;
+	}
+	
+	//----------------------------------------------------------------------
+	// <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
+	//----------------------------------------------------------------------
+	protected IFileStore createDir(IFileStore store, boolean clear) throws CoreException {
+		if (clear && store.fetchInfo().exists())
+			store.delete(EFS.NONE, null);
+		store.mkdir(EFS.NONE, null);
+		IFileInfo info = store.fetchInfo();
+		assertTrue("createDir.1", info.exists());
+		assertTrue("createDir.1", info.isDirectory());
+		return store;
+	}
+
+	//----------------------------------------------------------------------
+	// <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
+	//----------------------------------------------------------------------
+	protected IFileStore createDir(String string, boolean clear) throws CoreException {
+		return createDir(EFS.getFileSystem(EFS.SCHEME_FILE).getStore(new Path(string)), clear);
+	}
+	
+	/**
+	 * Create a file with random content. If a resource exists in the same path,
+	 * the resource is deleted.
+	 * <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
+	 * 
+	 * @param target the file to create
+	 * @param content content of the new file
+	 * @throws CoreException
+	 */
+	protected void createFile(IFileStore target, String content) throws CoreException {
+		target.delete(EFS.NONE, null);
+		InputStream input = new ByteArrayInputStream(content.getBytes());
+		transferData(input, target.openOutputStream(EFS.NONE, null));
+		IFileInfo info = target.fetchInfo();
+		assertTrue(info.exists() && !info.isDirectory());
+	}
+	
+	/**
+	 * Copy the data from the input stream to the output stream.
+	 * Close both streams when finished.
+	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+	 * 
+	 * @param input input stream
+	 * @param output output stream
+	 */
+	protected void transferData(InputStream input, OutputStream output) {
+		try {
+			try {
+				int c = 0;
+				while ((c = input.read()) != -1)
+					output.write(c);
+			} finally {
+				input.close();
+				output.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			assertTrue(e.toString(), false);
+		}
+	}
+	
+	/**
+	 * Return String with some random text to use
+	 * as contents for a file resource.
+	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+	 * 
+	 * @return the result random string
+	 */
+	protected String getRandomString() {
+		switch ((int) Math.round(Math.random() * 10)) {
+			case 0 :
+				return "este e' o meu conteudo (portuguese)";
+			case 1 :
+				return "ho ho ho";
+			case 2 :
+				return "I'll be back";
+			case 3 :
+				return "don't worry, be happy";
+			case 4 :
+				return "there is no imagination for more sentences";
+			case 5 :
+				return "customize yours";
+			case 6 :
+				return "foo";
+			case 7 :
+				return "bar";
+			case 8 :
+				return "foobar";
+			case 9 :
+				return "case 9";
+			default :
+				return "these are my contents";
+		}
 	}
 
 }

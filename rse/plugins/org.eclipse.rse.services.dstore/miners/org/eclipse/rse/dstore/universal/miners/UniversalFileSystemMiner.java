@@ -19,6 +19,7 @@
  * Xuan Chen (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children
  * Kevin Doyle (IBM) - [195709] Windows Copying doesn't work when path contains space
  * Kevin Doyle (IBM) - [196211] DStore Move tries rename if that fails copy/delete
+ * Xuan Chen (IBM)        - [198046] [dstore] Cannot copy a folder into an archive file
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -228,6 +230,7 @@ public class UniversalFileSystemMiner extends Miner {
 		    // if target is virtual or an archive, insert into an archive
 			AbsoluteVirtualPath vpath = getAbsoluteVirtualPath(targetFolder);
 			ISystemArchiveHandler handler = getArchiveHandlerFor(vpath.getContainingArchiveString());
+			boolean result = true;
 			
 			if (handler == null) 
 			{
@@ -237,6 +240,15 @@ public class UniversalFileSystemMiner extends Miner {
 
 			File[] srcFiles = new File[numOfSources];
 			String[] names = new String[numOfSources];
+			ArrayList nonDirectoryArrayList = new ArrayList();
+			ArrayList nonDirectoryNamesArrayList = new ArrayList();
+			
+			String virtualContainer = ""; //$NON-NLS-1$
+			
+			if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) 
+			{
+				virtualContainer = vpath.getVirtualPart();
+			}
 			
 			for (int i = 0; i < numOfSources; i++)
 			{
@@ -263,20 +275,45 @@ public class UniversalFileSystemMiner extends Miner {
 					VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart());
 					srcFiles[i] = child.getExtractedFile();
 				}
+				
+				//If this source file object is directory, we will call ISystemArchiveHandler#add(File ...) method to 
+				//it and all its descendants into the archive file.
+				//If this source file object is not a directory, we will add it into a list, and then
+				//call ISystemArchiveHandler#add(File[] ...) to add them in batch.
+				if (srcFiles[i].isDirectory())
+				{
+					result = handler.add(srcFiles[i], virtualContainer, names[i]);
+					if (result == false) {
+						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
+						return statusDone(status);
+					}
+				}
+				else
+				{
+					nonDirectoryArrayList.add(srcFiles[i]);
+					nonDirectoryNamesArrayList.add(names[i]);
+				}
 			}
-			String virtualContainer = ""; //$NON-NLS-1$
 			
-			if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) 
+			if (nonDirectoryArrayList.size() > 0)
 			{
-				virtualContainer = vpath.getVirtualPart();
+				File[] resultFiles = new File[nonDirectoryArrayList.size()];
+				String[] resultNames = new String[nonDirectoryNamesArrayList.size()];
+				for (int i=0; i<nonDirectoryArrayList.size(); i++)
+				{
+					resultFiles[i] = (File)nonDirectoryArrayList.get(i);
+					resultNames[i] = (String)nonDirectoryNamesArrayList.get(i);
+				}
+				//we need to add those files into the archive file as well.
+				result = handler.add(resultFiles, virtualContainer, resultNames);
 			}
-
-			boolean result = handler.add(srcFiles, virtualContainer, names);
 			
-			if (result) {
+			if (true == result)
+			{
 				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 			}
-			else {
+			else
+			{
 				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 			}
 			return statusDone(status);

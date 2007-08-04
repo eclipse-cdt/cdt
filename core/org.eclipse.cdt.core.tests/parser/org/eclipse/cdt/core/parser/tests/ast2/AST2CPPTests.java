@@ -5503,4 +5503,12 @@ public class AST2CPPTests extends AST2BaseTest {
     	
     	parse( buffer.toString(), ParserLanguage.CPP, true, true );
     }
+
+    public void testBug179712() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "void foo (void *p) throw () ;                                   \n"); //$NON-NLS-1$
+		buffer.append( "void bar (void *p) __attribute__ (( __nonnull__(1) ));          \n"); //$NON-NLS-1$
+		buffer.append( "void zot (void *p) throw () __attribute__ (( __nonnull__(1) )); \n"); //$NON-NLS-1$
+		parse( buffer.toString(), ParserLanguage.CPP, true, true );
+    }
 }

@@ -4092,6 +4092,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                 break;
                             }
                         }
+                        
+                        // more __attribute__ after throws
+                        __attribute_decl_seq(supportAttributeSpecifiers, false);
                     }
                     // check for optional pure virtual
                     if (LT(1) == IToken.tASSIGN && LT(2) == IToken.tINTEGER) {

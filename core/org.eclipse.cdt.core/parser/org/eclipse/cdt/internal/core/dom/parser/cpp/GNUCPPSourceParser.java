@@ -303,13 +303,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             IToken mark = mark();
 
-              IASTTypeId typeId = typeId(false);
-              if (typeId != null) {
-                list.add(typeId);
-                completedArg = true;
-              } else {
-                backup(mark);
-              }
+			IASTTypeId typeId = typeId(false);
+			if (typeId == null) {
+				backup(mark);
+			} else if (LT(1) != IToken.tCOMMA && LT(1) != IToken.tGT && LT(1) != IToken.tEOC){
+				//didn't consume the whole argument, probably confused typeId with idExpression
+				//backup and try the assignmentExpression
+				backup(mark);
+			} else {
+				list.add(typeId);
+				completedArg = true;
+			}
             if (!completedArg) {
                 try {
                     IASTExpression expression = assignmentExpression();

@@ -176,31 +176,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 8.2-4):
-	template <class T>
-	struct S {
-	T *p;
-	};
-	S<int()> x; // typeid
-	S<int(1)> y; // expression (illformed)
-	 --End Example]
-	 */
-	public void test8_2s4()  { // TODO raised bug 90632
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("template <class T>\n"); //$NON-NLS-1$
-		buffer.append("struct S {\n"); //$NON-NLS-1$
-		buffer.append("T *p;\n"); //$NON-NLS-1$
-		buffer.append("};\n"); //$NON-NLS-1$
-		buffer.append("S<int()> x; // typeid\n"); //$NON-NLS-1$
-		buffer.append("S<int(1)> y; // expression (illformed)\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 8.2-7a):
 	class C { };
 	void f(int(C)) { } // void f(int (*fp)(C c)) { }
@@ -555,25 +530,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 		buffer.append("template <int I> void f(A<I>, A<I+11>);\n"); //$NON-NLS-1$
 		try {
 		parse(buffer.toString(), ParserLanguage.CPP, true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-	
-	/**
-	 [--Start Example(CPP 14.5.5.1-8b):
-	// Illformed, no diagnostic required
-	template <int I> void f(A<I>, A<I+10>);
-	template <int I> void f(A<I>, A<I+1+2+3+4>);
-	 --End Example]
-	 */
-	public void test14_5_5_1s8b()  {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("// Illformed, no diagnostic required\n"); //$NON-NLS-1$
-		buffer.append("template <int I> void f(A<I>, A<I+10>);\n"); //$NON-NLS-1$
-		buffer.append("template <int I> void f(A<I>, A<I+1+2+3+4>);\n"); //$NON-NLS-1$
-		try {
-		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
 		assertTrue(false);
 		} catch (Exception e) {
 		}

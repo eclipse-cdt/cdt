@@ -5490,4 +5490,17 @@ public class AST2CPPTests extends AST2BaseTest {
     	StringBuffer buffer = getContents(1)[0];
     	parse( buffer.toString(), ParserLanguage.CPP, true, true );
     }
+    
+    public void testBug178059() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "class A {                      \n"); //$NON-NLS-1$
+    	buffer.append( "   double operator*(const A&); \n"); //$NON-NLS-1$
+    	buffer.append( "};                             \n"); //$NON-NLS-1$
+    	buffer.append( "class B : public A {           \n"); //$NON-NLS-1$
+    	buffer.append( "   double operator*(double);   \n"); //$NON-NLS-1$
+    	buffer.append( "   using A::operator*;         \n"); //$NON-NLS-1$
+    	buffer.append( "}                              \n"); //$NON-NLS-1$
+    	
+    	parse( buffer.toString(), ParserLanguage.CPP, true, true );
+    }
 }

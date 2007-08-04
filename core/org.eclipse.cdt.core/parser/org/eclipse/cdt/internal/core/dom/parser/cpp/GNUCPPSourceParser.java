@@ -2075,7 +2075,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume();
         }
 
-        IASTName name = createName(name());
+        IASTName name = idExpression();
         int end;
         switch (LT(1)) {
         case IToken.tSEMI:

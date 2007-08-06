@@ -238,10 +238,8 @@ public class UniversalFileSystemMiner extends Miner {
 				return statusDone(status);
 			}
 
-			File[] srcFiles = new File[numOfSources];
-			String[] names = new String[numOfSources];
-			ArrayList nonDirectoryArrayList = new ArrayList();
-			ArrayList nonDirectoryNamesArrayList = new ArrayList();
+			List nonDirectoryArrayList = new ArrayList();
+			List nonDirectoryNamesArrayList = new ArrayList();
 			
 			String virtualContainer = ""; //$NON-NLS-1$
 			
@@ -254,12 +252,13 @@ public class UniversalFileSystemMiner extends Miner {
 			{
 				DataElement sourceFile = getCommandArgument(theElement, i+1);
 				String srcType = sourceFile.getType();
-				names[i] = sourceFile.getName();
+				String srcName = sourceFile.getName();
+				File srcFile;
 
 				if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
 					|| srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) 
 				{		
-					srcFiles[i] = getFileFor(sourceFile);
+					srcFile = getFileFor(sourceFile);
 				}
 				else if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) 
 				{
@@ -273,42 +272,42 @@ public class UniversalFileSystemMiner extends Miner {
 					}
 				
 					VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart());
-					srcFiles[i] = child.getExtractedFile();
+					srcFile = child.getExtractedFile();
+				}
+				else {
+					//invalid source type
+					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
+					return statusDone(status);
 				}
 				
 				//If this source file object is directory, we will call ISystemArchiveHandler#add(File ...) method to 
 				//it and all its descendants into the archive file.
 				//If this source file object is not a directory, we will add it into a list, and then
 				//call ISystemArchiveHandler#add(File[] ...) to add them in batch.
-				if (srcFiles[i].isDirectory())
+				if (srcFile.isDirectory())
 				{
-					result = handler.add(srcFiles[i], virtualContainer, names[i]);
-					if (result == false) {
+					result = handler.add(srcFile, virtualContainer, srcName);
+					if (!result) {
 						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 						return statusDone(status);
 					}
 				}
 				else
 				{
-					nonDirectoryArrayList.add(srcFiles[i]);
-					nonDirectoryNamesArrayList.add(names[i]);
+					nonDirectoryArrayList.add(srcFile);
+					nonDirectoryNamesArrayList.add(srcName);
 				}
 			}
 			
 			if (nonDirectoryArrayList.size() > 0)
 			{
-				File[] resultFiles = new File[nonDirectoryArrayList.size()];
-				String[] resultNames = new String[nonDirectoryNamesArrayList.size()];
-				for (int i=0; i<nonDirectoryArrayList.size(); i++)
-				{
-					resultFiles[i] = (File)nonDirectoryArrayList.get(i);
-					resultNames[i] = (String)nonDirectoryNamesArrayList.get(i);
-				}
+				File[] resultFiles = (File[])nonDirectoryArrayList.toArray(new File[nonDirectoryArrayList.size()]);
+				String[] resultNames = (String[])nonDirectoryArrayList.toArray(new String[nonDirectoryNamesArrayList.size()]);
 				//we need to add those files into the archive file as well.
 				result = handler.add(resultFiles, virtualContainer, resultNames);
 			}
 			
-			if (true == result)
+			if (result)
 			{
 				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 			}

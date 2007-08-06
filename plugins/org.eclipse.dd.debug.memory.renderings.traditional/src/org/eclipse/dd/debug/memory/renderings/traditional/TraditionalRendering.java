@@ -484,6 +484,24 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         // copy
 
         final Action copyAction = new CopyAction(this.fRendering);
+        
+        // copy address
+        
+        final Action copyAddressAction = new Action(
+                TraditionalRenderingMessages
+                    .getString("TraditionalRendering.COPY_ADDRESS")) //$NON-NLS-1$
+            {
+                public void run()
+                {
+                    Display.getDefault().asyncExec(new Runnable()
+                    {
+                        public void run()
+                        {
+                            TraditionalRendering.this.fRendering.copyAddressToClipboard();
+                        }
+                    });
+                }
+            };
 
         // go to address
 
@@ -925,6 +943,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                 manager.add(new Separator());
                 
                 manager.add(copyAction);
+                manager.add(copyAddressAction);
 
                 manager.add(gotoAddressAction);
                 manager.add(gotoBaseAddressAction);

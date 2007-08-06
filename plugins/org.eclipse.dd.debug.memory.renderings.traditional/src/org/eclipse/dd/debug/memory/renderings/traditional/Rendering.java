@@ -23,6 +23,9 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressComposit
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -1567,6 +1570,28 @@ public class Rendering extends Composite implements IDebugEventSetListener
         fAddressPane.settingsChanged();
         fBinaryPane.settingsChanged();
         fTextPane.settingsChanged();
+    }
+    
+    protected void copyAddressToClipboard()
+    {
+    	 Clipboard clip = null;
+         try
+         {
+             clip = new Clipboard(getDisplay());
+             
+             String addressString = "0x" + getCaretAddress().toString(16);
+
+             TextTransfer plainTextTransfer = TextTransfer.getInstance();
+             clip.setContents(new Object[] { addressString },
+                 new Transfer[] { plainTextTransfer });
+         }
+         finally
+         {
+             if(clip != null)
+             {
+                 clip.dispose();
+             }
+         }
     }
 
     static final char[] hexdigits = { '0', '1', '2', '3', '4', '5', '6', '7',

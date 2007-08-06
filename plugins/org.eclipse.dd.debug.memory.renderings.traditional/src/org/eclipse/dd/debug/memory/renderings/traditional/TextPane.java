@@ -183,6 +183,7 @@ public class TextPane extends AbstractPane
 
                 this.fCaretAddress = cellAddress;
                 this.fSubCellCaretPosition = x2;
+                setCaretAddress(fCaretAddress);
             }
         }
         catch(Exception e)

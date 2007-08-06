@@ -414,6 +414,8 @@ public abstract class AbstractPane extends Canvas
             fCaretAddress = fRendering.getMemoryBlockEndAddress().add(
             		BigInteger.valueOf(cellOffset / fRendering.getAddressableSize()));
          }  	
+        
+        fRendering.setCaretAddress(fCaretAddress);
     }
     
     protected boolean isOdd(int value)

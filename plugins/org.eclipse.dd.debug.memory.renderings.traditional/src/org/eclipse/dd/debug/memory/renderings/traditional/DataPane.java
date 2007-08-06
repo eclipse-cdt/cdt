@@ -211,6 +211,7 @@ public class DataPane extends AbstractPane
 
                 this.fCaretAddress = cellAddress;
                 this.fSubCellCaretPosition = subCellCharacterPosition;
+                setCaretAddress(fCaretAddress);
             }
         }
         catch(Exception e)

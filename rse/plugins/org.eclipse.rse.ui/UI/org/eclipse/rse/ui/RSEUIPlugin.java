@@ -83,12 +83,14 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    {
 	    	public InitRSEJob()
 	    	{
+	    		//IMPORTANT: The name of this job must not ever be changed. It is par of API, 
+	    		//because clients can use it to find the InitRSEJob by name, such that they can join it.
 	    		super("Initialize RSE"); //$NON-NLS-1$
 	    	} 
 	    	
 	    	public IStatus run(IProgressMonitor monitor)
 	    	{    		
-	            
+	            System.err.println("InitRSEJob started"); //$NON-NLS-1$
 	    		ISystemRegistry registry = getSystemRegistryInternal();
 
 	    		
@@ -133,7 +135,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 					}				       
 				}
 			
-				
+	            System.err.println("InitRSEJob done"); //$NON-NLS-1$
 				return Status.OK_STATUS;
 	    	}
 	    }
@@ -486,7 +488,8 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	}
 
     /**
-     * For pathpath access to our adapters for non-local objects in our model. Exploits the knowledge we use singleton adapters.
+     * For fastpath access to our adapters for non-local objects in our model.
+     * Exploits the knowledge we use singleton adapters.
      */
     public SystemViewAdapterFactory getSystemViewAdapterFactory()
     {

@@ -18,9 +18,9 @@ import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
@@ -37,9 +37,10 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 	private String tempDirPath;
 	private IProgressMonitor mon = new NullProgressMonitor();
 	
-	public void setUp() {
+	public void setUp() throws Exception {
+		super.setUp();
 		IHost localHost = getLocalSystemConnection();
-		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
 		ISubSystem[] ss = sr.getServiceSubSystems(localHost, IFileService.class);
 		for (int i=0; i<ss.length; i++) {
 			if (ss[i] instanceof IFileServiceSubSystem) {
@@ -57,12 +58,14 @@ public class FileServiceTest extends RSEBaseConnectionTestCase {
 		}
 	}
 	
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		try {
 			fs.delete(tempDir.getParent(), tempDir.getName(), mon);
 		} catch(SystemMessageException msg) {
-			assertFalse("Exception: "+msg.getLocalizedMessage(), true); //$NON-NLS-1$
+			//ensure that super.tearDown() can run
+			System.err.println("Exception on tearDown: "+msg.getLocalizedMessage()); //$NON-NLS-1$
 		}
+		super.tearDown();
 	}
 	
 	public boolean isWindows() {

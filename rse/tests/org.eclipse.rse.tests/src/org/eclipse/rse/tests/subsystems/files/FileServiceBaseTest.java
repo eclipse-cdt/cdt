@@ -25,13 +25,22 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.tests.core.connection.RSEBaseConnectionTestCase;
 
+/**
+ * Base class for file subsystem / file service unit tests.
+ * Contains helper methods for test environment setup.
+ */
 public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 
 	protected IFileServiceSubSystem fss;
@@ -40,11 +49,43 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	protected IRemoteFile tempDir;
 	protected String tempDirPath;
 	protected IProgressMonitor mon = new NullProgressMonitor();
-	protected static boolean classBeenRunBefore = false;
 	
 	public static int TYPE_FILE = 0;
 	public static int TYPE_FOLDER = 1;
 	
+	public void setUp() throws Exception {
+		super.setUp();
+
+		IHost localHost = getLocalSystemConnection();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
+		ISubSystem[] ss = sr.getServiceSubSystems(localHost, IFileService.class);
+		for (int i=0; i<ss.length; i++) {
+			if (ss[i] instanceof IFileServiceSubSystem) {
+				fss = (IFileServiceSubSystem)ss[i];
+				fs = fss.getFileService();
+			}
+		}
+		localFss = fss;  //Used for creating test source data.
+		assertNotNull(localFss);
+		
+		//Create a temporary directory in My Home
+		IRemoteFile homeDirectory = fss.getRemoteFileObject(".", mon);
+		String baseFolderName = "rsetest";
+		String homeFolderName = homeDirectory.getAbsolutePath();
+		String testFolderName = FileServiceHelper.getRandomLocation(fss, homeFolderName, baseFolderName, mon);
+		tempDir = createFileOrFolder(homeFolderName, testFolderName, true);
+		tempDirPath = tempDir.getAbsolutePath();
+	}
+	
+	public void tearDown() throws Exception {
+		try {
+			fss.delete(tempDir, mon);
+		} catch(SystemMessageException msg) {
+			//ensure that super.tearDown() can run
+			System.err.println("Exception on tearDown: "+msg.getLocalizedMessage()); //$NON-NLS-1$
+		}
+		super.tearDown();
+	}
 	
 	public boolean isWindows() {
 		return fss.getHost().getSystemType().isWindows(); 
@@ -61,132 +102,99 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	}
 	
 	
-	public IRemoteFile copySourceFileOrFolder(String sourceFullName, String sourceName, String targetFolderFullName)
+	public IRemoteFile copySourceFileOrFolder(String sourceFullName, String sourceName, String targetFolderFullName) throws Exception
 	{
 		boolean ok = false;
 		IRemoteFile result = null;
-		try
+		IRemoteFile originalTargetArchiveFile = fss.getRemoteFileObject(sourceFullName, mon); 
+		IRemoteFile targetFolder = fss.getRemoteFileObject(targetFolderFullName, mon);
+		ok = fss.copy(originalTargetArchiveFile, targetFolder, sourceName, mon);
+		if (ok)
 		{
-			IRemoteFile originalTargetArchiveFile = fss.getRemoteFileObject(sourceFullName, mon); 
-			IRemoteFile targetFolder = fss.getRemoteFileObject(targetFolderFullName, mon);
-			ok = fss.copy(originalTargetArchiveFile, targetFolder, sourceName, mon);
-			if (ok)
-			{
-				//copy is successful
-				result = fss.getRemoteFileObject(getNewAbsoluteName(targetFolder, sourceName), mon);
-			}
-			//Need to call resolveFilterString of the parent to make sure the newly copied child
-			//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
-			//default filter string.  And the dstore server cannot handler it correctly.
-			fss.resolveFilterString(targetFolder, null, mon);
+			//copy is successful
+			result = fss.getRemoteFileObject(getNewAbsoluteName(targetFolder, sourceName), mon);
 		}
-		catch(Exception e)
-		{
-			return null;
-		}
+		//Need to call resolveFilterString of the parent to make sure the newly copied child
+		//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
+		//default filter string.  And the dstore server cannot handler it correctly.
+		fss.resolveFilterString(targetFolder, null, mon);
 		return result;
 	}
 	
-	public IRemoteFile createFileOrFolder(String targetFolderName, String fileOrFolderName, boolean isFolder)
+	public IRemoteFile createFileOrFolder(String targetFolderName, String fileOrFolderName, boolean isFolder) throws Exception
 	{
 		IRemoteFile result = null;
-		try
+		System.out.println("createFileOrFolder: targetFolderName is " + targetFolderName);
+		IRemoteFile targetFolder = fss.getRemoteFileObject(targetFolderName, mon);
+		//fss.resolveFilterString(targetFolder, null, mon);
+		String fileOrFolderAbsName = getNewAbsoluteName(targetFolder, fileOrFolderName);
+		IRemoteFile newFileOrFolderPath = fss.getRemoteFileObject(fileOrFolderAbsName, mon); 
+		if (isFolder)
 		{
-			System.out.println("targetFolderName is " + targetFolderName);
-			if (fss == null)
-			{
-				System.out.println("fss is null ");
-			}
-			IRemoteFile targetFolder = fss.getRemoteFileObject(targetFolderName, mon);
-			//fss.resolveFilterString(targetFolder, null, mon);
-			String fileOrFolderAbsName = getNewAbsoluteName(targetFolder, fileOrFolderName);
-			IRemoteFile newFileOrFolderPath = fss.getRemoteFileObject(fileOrFolderAbsName, mon); 
-			if (isFolder)
-			{
-				result = fss.createFolder(newFileOrFolderPath, mon);
-			}
-			else
-			{
-				result = fss.createFile(newFileOrFolderPath, mon);
-			}
-			//Need to call resolveFilterString of the parent to make sure the newly created child
-			//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
-			//default filter string.  And the dstore server cannot handler it correctly.
-			fss.resolveFilterString(targetFolder, null, mon);
+			result = fss.createFolder(newFileOrFolderPath, mon);
 		}
-		catch (Exception e)
+		else
 		{
-			e.printStackTrace();
-			return null;
+			result = fss.createFile(newFileOrFolderPath, mon);
 		}
+		//Need to call resolveFilterString of the parent to make sure the newly created child
+		//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
+		//default filter string.  And the dstore server cannot handler it correctly.
+		fss.resolveFilterString(targetFolder, null, mon);
 		return result;
 	}
 	
-	public Object getChildFromFolder(IRemoteFile folderToCheck, String childName)
+	public Object getChildFromFolder(IRemoteFile folderToCheck, String childName) throws Exception
 	{
 		//then check the result of copy
 		Object[] children = null;
 		Object foundChild = null;
-		try
+		children = fss.resolveFilterString(folderToCheck, null, mon);
+		for (int i=0; i<children.length; i++)
 		{
-			children = fss.resolveFilterString(folderToCheck, null, mon);
-			for (int i=0; i<children.length; i++)
+			String thisName = ((IRemoteFile)children[i]).getName();
+			if (thisName.equals(childName))
 			{
-				String thisName = ((IRemoteFile)children[i]).getName();
-				if (thisName.equals(childName))
-				{
-					foundChild = children[i];
-				}
+				foundChild = children[i];
 			}
-		}
-		catch (Exception e)
-		{
-			foundChild = null;
 		}
 		return foundChild;
 	}
 	
-	public void checkFolderContents(IRemoteFile folderToCheck, String[] names, int[] types)
+	public void checkFolderContents(IRemoteFile folderToCheck, String[] names, int[] types) throws Exception
 	{
-		try
+		//the folder returned by the create API did not get the right attributes.
+		//We need to call getRemoteFileObject to get its attribute updated.
+		//Otherwise, will get error "directory not readable"
+		folderToCheck = fss.getRemoteFileObject(folderToCheck.getAbsolutePath(), mon);
+		System.out.println("verifying the contents for folder: " + folderToCheck.getAbsolutePath());
+		Object[] children = fss.resolveFilterString(folderToCheck, null, mon);
+		//Make sure the children array includes the copied folder.
+		HashMap childrenMap = new HashMap();
+	    //Add children name into the map
+		for (int i=0; i<children.length; i++)
 		{
-			//the folder returned by the create API did not get the right attributes.
-			//We need to call getRemoteFileObject to get its attribute updated.
-			//Otherwise, will get error "directory not readable"
-			folderToCheck = fss.getRemoteFileObject(folderToCheck.getAbsolutePath(), mon);
-			System.out.println("verifying the contents for folder: " + folderToCheck.getAbsolutePath());
-			Object[] children = fss.resolveFilterString(folderToCheck, null, mon);
-			//Make sure the children array includes the copied folder.
-			HashMap childrenMap = new HashMap();
-		    //Add children name into the map
-			for (int i=0; i<children.length; i++)
+			String thisName = ((IRemoteFile)children[i]).getName();
+			childrenMap.put(thisName, children[i]);
+		}
+		//Check contents are in the array list
+		for (int i=0; i<names.length; i++)
+		{
+			IRemoteFile found = (IRemoteFile)(childrenMap.get(names[i]));
+			assertTrue("Could not find " + names[i], found != null);
+			assertTrue(found.exists());
+			if (types != null && types.length != 0)
 			{
-				String thisName = ((IRemoteFile)children[i]).getName();
-				childrenMap.put(thisName, children[i]);
-			}
-			//Check contents are in the array list
-			for (int i=0; i<names.length; i++)
-			{
-				IRemoteFile found = (IRemoteFile)(childrenMap.get(names[i]));
-				assertTrue("Could not find " + names[i], found != null);
-				assertTrue(found.exists());
-				if (types != null && types.length != 0)
+				//If input array of types, we also need to check if the type is correct.
+				if (types[i] == TYPE_FILE)
 				{
-					//If input array of types, we also need to check if the type is correct.
-					if (types[i] == TYPE_FILE)
-					{
-						assertTrue(found.isFile());
-					}
-					else if (types[i] == TYPE_FOLDER)
-					{
-						assertTrue(found.isDirectory());
-					}
+					assertTrue(found.isFile());
+				}
+				else if (types[i] == TYPE_FOLDER)
+				{
+					assertTrue(found.isDirectory());
 				}
 			}
-		}
-		catch (Exception e)
-		{
-			fail("Problem encountered: " + e.getStackTrace().toString());
 		}
 	}
 	

@@ -28,6 +28,9 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest {
 
+	private boolean fPreference_ALERT_SSL;
+	private boolean fPreference_ALERT_NONSSL;
+
 	public static junit.framework.Test suite() {
 		TestSuite suite = new TestSuite("FileServiceArchiveTestDStoreWindows");
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToArchiveFile")); //$NON-NLS-1$
@@ -55,34 +58,24 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 		return suite;
 	}
 	
-	public void setUp() {
+	public void setUp() throws Exception {
+		super.setUp();
 		
 		//We need to delay if it is first case run after a workspace startup
 		SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_WINDOWS_ID;
 		SYSTEM_ADDRESS = "LOCALHOST";
 		SYSTEM_NAME = "LOCALHOST_ds";
 		
-		//We need to delay if it is first case run after a workspace startup
-		if (!classBeenRunBefore)
-		{
-			IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-			
-			//We need to setDefault first in order to set the value of a preference.  
-			store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
-			store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
-			store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
-			store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
-			try
-			{
-				System.out.println("need to sleep");
-				Thread.sleep(500);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-			classBeenRunBefore = true;
-		}
+		//Ensure that the SSL acknowledge dialog does not show up. 
+		//We need to setDefault first in order to set the value of a preference.  
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		store.setDefault(ISystemPreferencesConstants.ALERT_SSL, ISystemPreferencesConstants.DEFAULT_ALERT_SSL);
+		store.setDefault(ISystemPreferencesConstants.ALERT_NONSSL, ISystemPreferencesConstants.DEFAULT_ALERT_NON_SSL);
+		fPreference_ALERT_SSL = store.getBoolean(ISystemPreferencesConstants.ALERT_SSL);
+		fPreference_ALERT_NONSSL = store.getBoolean(ISystemPreferencesConstants.ALERT_NONSSL);
+		store.setValue(ISystemPreferencesConstants.ALERT_SSL, false);
+		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, false);
+
 		IHost dstoreHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, "", "");
 		assertTrue(dstoreHost != null);
 		ISystemRegistry sr = SystemStartHere.getSystemRegistry(); 
@@ -153,12 +146,11 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 		}
 	}
 	
-	public void tearDown() {
-		try {
-			fss.delete(tempDir, mon);
-		} catch(SystemMessageException msg) {
-			assertFalse("Exception: "+msg.getLocalizedMessage(), true); //$NON-NLS-1$
-		}
+	public void tearDown() throws Exception {
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		store.setValue(ISystemPreferencesConstants.ALERT_SSL, fPreference_ALERT_SSL);
+		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, fPreference_ALERT_NONSSL);
+		super.tearDown();
 	}
 
 }

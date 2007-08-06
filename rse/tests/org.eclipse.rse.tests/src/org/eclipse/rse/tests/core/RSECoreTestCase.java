@@ -43,6 +43,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.tests.RSETestsPlugin;
 import org.eclipse.rse.tests.core.RSEWaitAndDispatchUtil.IInterruptCondition;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -346,16 +348,66 @@ public class RSECoreTestCase extends TestCase {
 		}
 	}
 	
+	/**
+	 * Wait until the SystemProfileManager has finished loading all "autoload" profiles,
+	 * and the RSEUIPlugin InitRSEJob has finished filling it with the default connections.
+	 * @throws InterruptedException
+	 */
+	protected void waitForRSEWorkspaceInit() throws InterruptedException {
+		//RSEUIPlugin is loaded automatically because RSETestsPlugins extends SystemBasePlugin,
+		//which is defined in org.eclipse.rse.ui, so we KNOW org.eclipse.rse.ui is started.
+		//TODO: At one point we want the tests to run headless, so then RSETestsPlugins should
+		//not extend SystemBasePlugin any more.
+		Job[] jobs = Job.getJobManager().find(null);
+		for(int i=0; i<jobs.length; i++) {
+			if ("Initialize RSE".equals(jobs[i].getName())) { //$NON-NLS-1$
+				System.out.println("Waiting for InitRSEJob"); //$NON-NLS-1$
+				jobs[i].join();
+				break;
+			}
+		}
+		//The code below would never be necessary during normal initialization,
+		//Since the InitRSEJob takes care of loading the profiles already.
+		//We still wait here, in order to ensure that unit tests are really
+		//separate from each other.
+		final IRSEPersistenceManager pm = RSECorePlugin.getThePersistenceManager();
+		while (!pm.isRestoreComplete() || pm.isBusy()) {
+			System.err.println("Waiting for Persistence Manager"); //$NON-NLS-1$
+			Thread.sleep(100);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+		waitForRSEWorkspaceInit();
+		switchMaximizeSystemsView();
+	}
+
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		restoreMaximizeSystemsView();
+		super.tearDown();
+	}
+	
+	// ***** View and perspective management and support methods *****	
+
+	/**
+	 * Bring the RSE SystemsView to front, and toggle its "maximized" state based on what
+	 * the {@link IRSECoreTestCaseProperties#PROP_MAXIMIZE_REMOTE_SYSTEMS_VIEW} property
+	 * requires for the given test case.
+	 * In case a Workbench Intro View is hiding every else because this is the first
+	 * product launch, it is hidden.
+	 */
+	protected void switchMaximizeSystemsView() {
 		final String perspectiveId = getProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE);
 		assertNotNull("Invalid null-value for test case perspective id!", perspectiveId); //$NON-NLS-1$
 		
-		// all view managment must happen in the UI thread!
+		// all view management must happen in the UI thread!
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				// in case the test case is launched within a new workspace, the eclipse intro
@@ -382,19 +434,23 @@ public class RSECoreTestCase extends TestCase {
 		});
 		
 		// Give the UI a chance to repaint if the view zoom state changed
-		if (isProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, true)) RSEWaitAndDispatchUtil.waitAndDispatch(1000);
+		if (isProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, true)) {
+			System.err.println("Waiting for UI to repaint"); //$NON-NLS-1$
+			RSEWaitAndDispatchUtil.waitAndDispatch(1000);
+		}
 	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
+	
+	/**
+	 * Restore the RSE SystemsView to its previous state, in case the view state
+	 * has been changed by {@link #switchMaximizeSystemsView()}. 
 	 */
-	protected void tearDown() throws Exception {
+	protected void restoreMaximizeSystemsView() {
 		// restore the original view zoom state
 		if (isProperty(PROP_RSE_SYSTEMS_VIEW_ZOOM_STATE_CHANGED, true)) {
 			final String perspectiveId = getProperty(IRSECoreTestCaseProperties.PROP_SWITCH_TO_PERSPECTIVE);
 			assertNotNull("Invalid null-value for test case perspective id!", perspectiveId); //$NON-NLS-1$
 
-			// all view managment must happen in the UI thread!
+			// all view management must happen in the UI thread!
 			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					IViewReference reference = findView(IRSEViews.RSE_REMOTE_SYSTEMS_VIEW_ID, perspectiveId);
@@ -410,12 +466,8 @@ public class RSECoreTestCase extends TestCase {
 				}
 			});
 		}
-		
-		super.tearDown();
 	}
 	
-	// ***** View and perspective management and support methods *****	
-
 	/**
 	 * Finds the view reference for the view identified by the specified id.
 	 * 

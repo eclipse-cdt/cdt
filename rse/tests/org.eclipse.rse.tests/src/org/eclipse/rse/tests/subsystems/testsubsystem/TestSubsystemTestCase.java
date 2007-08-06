@@ -43,7 +43,7 @@ public class TestSubsystemTestCase extends RSEBaseConnectionTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		// all view managment must happen in the UI thread!
+		// all view management must happen in the UI thread!
 		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				// For the test subsystem test case we need the RSE remote systems view

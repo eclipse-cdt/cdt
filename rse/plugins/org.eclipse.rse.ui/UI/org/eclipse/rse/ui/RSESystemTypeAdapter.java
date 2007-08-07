@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuManager;
@@ -33,13 +34,16 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
+import org.eclipse.rse.core.model.Host;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
+import org.eclipse.rse.internal.core.RSESystemType;
 import org.eclipse.rse.internal.ui.RSEAdapter;
 import org.eclipse.rse.internal.ui.actions.SystemClearAllPasswordsAction;
 import org.eclipse.rse.internal.ui.actions.SystemWorkOfflineAction;
+import org.eclipse.rse.internal.ui.view.SystemViewConnectionAdapter;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.osgi.framework.Bundle;
@@ -296,6 +300,11 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	 * @param actionClass The contributed action. Must be not <code>null</code>.
 	 * 
 	 * @return <code>True</code> if the contributed action is accepted for the specified context, <code>false</code> otherwise.
+	 * 
+	 * @deprecated Override {@link SystemViewConnectionAdapter#addActions(SystemMenuManager, org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, String)} instead.
+	 *             In order to do so, {@link RSESystemType#createNewHostInstance(org.eclipse.rse.core.model.ISystemProfile)} needs to return
+	 *             a subclass of {@link Host} where the {@link IAdaptable#getAdapter(Class)} method is overriden to return a extended
+	 *             {@link SystemViewConnectionAdapter} subclass.
 	 */
 	public boolean acceptContextMenuActionContribution(IHost host, Class actionClass) {
 		assert host != null && actionClass != null;

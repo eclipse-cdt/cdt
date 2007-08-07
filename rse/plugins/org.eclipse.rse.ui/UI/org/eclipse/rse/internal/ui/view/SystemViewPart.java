@@ -24,6 +24,7 @@
  * David Dykstal (IBM) - [191311] enable global properties action
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  * Martin Oberhuber (Wind River) - [197025] Wait for model complete before restoring initial state
+ * Martin Oberhuber (Wind River) - [197025][197167] Improved wait for model complete
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -82,7 +83,6 @@ import org.eclipse.rse.internal.ui.actions.SystemPreferenceQualifyConnectionName
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceRestoreStateAction;
 import org.eclipse.rse.internal.ui.actions.SystemPreferenceShowFilterPoolsAction;
 import org.eclipse.rse.internal.ui.actions.SystemWorkWithProfilesAction;
-import org.eclipse.rse.persistence.IRSEPersistenceManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemIconConstants;
@@ -456,21 +456,27 @@ public class SystemViewPart
 		// ----------------------
 		// Restore previous state
 		// ----------------------
-		final IRSEPersistenceManager pm = RSECorePlugin.getThePersistenceManager();
-		if (pm.isRestoreComplete() && !pm.isBusy()) {
+		Job initRSEJob = null;
+		Job[] jobs = Job.getJobManager().find(null);
+		for(int i=0; i<jobs.length; i++) {
+		    if ("Initialize RSE".equals(jobs[i].getName())) { //$NON-NLS-1$
+		    	initRSEJob = jobs[i];
+		        break;
+		    }
+		}
+		if (initRSEJob == null) {
+			//Already initialized - Profiles are loaded, we can restore state right away without blocking
 			restoreInitialState();
 		} else {
 			//Wait until model fully restored, then fire a callback to restore state.
-			//TODO [197167] we should have a callback for this, and also wait until InitRSEJob is complete.
 			//Remember current display, since we're definitely on the display thread here
 			final Display display = Display.getCurrent();
+			final Job fInitRSEJob = initRSEJob;
 			Job waitForRestoreCompleteJob = new Job("WaitForRestoreComplete") { //$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
-						//TODO [197167] I hate polling. We should have a callback for this.
-						while (!pm.isRestoreComplete() || pm.isBusy()) {
-							Thread.sleep(100);
-						}
+						//Wait for initRSEJob. 
+						fInitRSEJob.join();
 						//callback
 						display.asyncExec(new Runnable() {
 							public void run() {
@@ -478,8 +484,6 @@ public class SystemViewPart
 							}
 						});
 					} catch(InterruptedException e) {
-						//See http://michaelscharf.blogspot.com/2006/09/dont-swallow-interruptedexception-call.html
-						Thread.currentThread().interrupt();
 						return Status.CANCEL_STATUS;
 					}
 					return Status.OK_STATUS;

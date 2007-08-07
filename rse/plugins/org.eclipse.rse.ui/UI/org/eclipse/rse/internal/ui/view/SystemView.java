@@ -201,7 +201,7 @@ public class SystemView extends SafeTreeViewer
 		ISelectionChangedListener,  ITreeViewerListener 
 {
 
-	protected Shell shell; // shell hosting this viewer
+	protected Shell shell; // shell hosting this viewer: TODO can be removed
 	protected ISystemViewInputProvider inputProvider; // who is supplying our tree root elements?
 	protected ISystemViewInputProvider previousInputProvider; // who is supplying our tree root elements?
 	protected Object previousInput;
@@ -281,6 +281,7 @@ public class SystemView extends SafeTreeViewer
 	 */
 	public SystemView(Shell shell, Composite parent, ISystemViewInputProvider inputProvider, ISystemMessageLine msgLine) {
 		super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL); // DKM - putting style here to avoid SWT.BORDER (defect 168972)
+		assert shell == parent.getShell();
 		this.shell = shell;
 		this.inputProvider = inputProvider;
 		this.inputProvider.setShell(shell); // DY:  defect 44544
@@ -299,6 +300,7 @@ public class SystemView extends SafeTreeViewer
 	 */
 	public SystemView(Shell shell, Composite parent, int style, ISystemViewInputProvider inputProvider, ISystemMessageLine msgLine) {
 		super(parent, style);
+		assert shell == parent.getShell();
 		this.shell = shell;
 		this.inputProvider = inputProvider;
 		this.inputProvider.setShell(shell); // DY:  defect 44544
@@ -318,6 +320,7 @@ public class SystemView extends SafeTreeViewer
 	 */
 	public SystemView(Shell shell, Composite parent, int style, ISystemViewInputProvider inputProvider, ISystemMessageLine msgLine, ViewerFilter[] initViewerFilters) {
 		super(parent, style);
+		assert shell == parent.getShell();
 		this.shell = shell;
 		this.inputProvider = inputProvider;
 		this.inputProvider.setShell(shell); // DY:  defect 44544
@@ -336,6 +339,7 @@ public class SystemView extends SafeTreeViewer
 	 */
 	public SystemView(Shell shell, Tree tree, ISystemViewInputProvider inputProvider, ISystemMessageLine msgLine) {
 		super(tree);
+		assert shell == tree.getShell();
 		this.shell = shell;
 		this.inputProvider = inputProvider;
 		this.inputProvider.setShell(shell); // DY:  defect 44544
@@ -352,7 +356,7 @@ public class SystemView extends SafeTreeViewer
 		inputProvider.setViewer(this);
 		inputProvider.setShell(getShell()); // DY:  Defect 44544, shell was not being set for Test dialogs, when they
 		// tried to connect there was not shell for the password prompt
-		// and an error message (expand failed) occured.
+		// and an error message (expand failed) occurred.
 		setInput(inputProvider);
 	}
 
@@ -1147,6 +1151,10 @@ public class SystemView extends SafeTreeViewer
 	 * Convenience method for returning the shell of this viewer.
 	 */
 	public Shell getShell() {
+		////getShell() can lead to "widget is disposed" errors, but avoiding them here does not really help
+		//if (!getTree().isDisposed()) {
+		//	return getTree().getShell();
+		//}
 		//return shell;
 		return getTree().getShell();
 	}

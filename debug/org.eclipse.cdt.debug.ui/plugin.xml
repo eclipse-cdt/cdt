@@ -1205,7 +1205,81 @@
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
-
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.IModuleRetrieval"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.core.model.ICElement"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.core.model.ICElement"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICVariable"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.debug.core.model.ICVariable"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CWatchExpressionFactoryAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget">
+         </adapter>
+         <adapter
+               type="org.eclipse.jface.viewers.ILabelDecorator">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.debug.core.model.IMemoryBlockExtension"
+            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.ui.actions.IAddMemoryBlocksTarget">
+         </adapter>
+         <adapter
+               type="org.eclipse.jface.viewers.ILabelDecorator">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.themes">
@@ -1373,12 +1447,6 @@
             class="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolActionPage"
             id="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolActionPage"
             actionType="org.eclipse.cdt.debug.ui.breakpointactions.ExternalToolAction"/>
-   </extension>
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.eclipse.cdt.debug.internal.ui.Startup">
-      </startup>
    </extension>
 
 </plugin>

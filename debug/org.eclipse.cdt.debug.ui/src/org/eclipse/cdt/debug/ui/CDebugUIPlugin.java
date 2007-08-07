@@ -14,12 +14,7 @@ package org.eclipse.cdt.debug.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.model.ICModule;
-import org.eclipse.cdt.debug.core.model.ICRegister;
-import org.eclipse.cdt.debug.core.model.ICVariable;
-import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
@@ -27,24 +22,17 @@ import org.eclipse.cdt.debug.internal.ui.CDebuggerPageAdapter;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
-import org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory;
-import org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementLabelProviderFactory;
-import org.eclipse.cdt.debug.internal.ui.elements.adapters.CMemoryAdapterFactory;
-import org.eclipse.cdt.debug.internal.ui.elements.adapters.CWatchExpressionFactoryAdapterFactory;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.OldDefaultSourceLocator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.model.IMemoryBlockExtension;
-import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -279,25 +267,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		super.start( context );
 		EvaluationContextManager.startup();
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
-
-		IAdapterManager manager= Platform.getAdapterManager();
-		CDebugElementAdapterFactory elementAdapterFactory = new CDebugElementAdapterFactory();
-		manager.registerAdapters( elementAdapterFactory, IModuleRetrieval.class );
-		manager.registerAdapters( elementAdapterFactory, ICModule.class );
-		manager.registerAdapters( elementAdapterFactory, ICElement.class );
-		
-		CDebugElementLabelProviderFactory labelProviderFactory = new CDebugElementLabelProviderFactory();
-		manager.registerAdapters( labelProviderFactory, ICVariable.class );
-		manager.registerAdapters( labelProviderFactory, ICRegister.class );
-		manager.registerAdapters( labelProviderFactory, ICModule.class );
-		manager.registerAdapters( labelProviderFactory, ICElement.class );
-		
-		CWatchExpressionFactoryAdapterFactory watchExpressionAdapterFactory = new CWatchExpressionFactoryAdapterFactory();
-		manager.registerAdapters( watchExpressionAdapterFactory, ICVariable.class );
-		
-		CMemoryAdapterFactory memoryAdapterFactory = new CMemoryAdapterFactory();
-		manager.registerAdapters( memoryAdapterFactory, IMemoryBlockRetrievalExtension.class );
-		manager.registerAdapters( memoryAdapterFactory, IMemoryBlockExtension.class );
 	}
 
 	/*

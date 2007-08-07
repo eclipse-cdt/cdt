@@ -90,7 +90,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 	    	
 	    	public IStatus run(IProgressMonitor monitor)
 	    	{    		
-	            System.err.println("InitRSEJob started"); //$NON-NLS-1$
+	            //System.err.println("InitRSEJob started"); //$NON-NLS-1$
 	    		ISystemRegistry registry = getSystemRegistryInternal();
 
 	    		
@@ -135,7 +135,7 @@ public class RSEUIPlugin extends SystemBasePlugin implements ISystemMessageProvi
 					}				       
 				}
 			
-	            System.err.println("InitRSEJob done"); //$NON-NLS-1$
+	            //System.err.println("InitRSEJob done"); //$NON-NLS-1$
 				return Status.OK_STATUS;
 	    	}
 	    }

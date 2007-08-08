@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [142065] fix drag and drop on Mac OS X
+ * Kevin Doyle (IBM) - [187536] Drag & Drop file to Editor launchs file in system editor
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -326,7 +327,7 @@ public class SystemViewDataDragAdapter extends DragSourceAdapter
 										IFile theFile = editable.getLocalResource();	
 									
 										IEditorDescriptor preferredEditor = editRegistry.getDefaultEditor(theFile.getName()); // may be null
-										if (preferredEditor == null)
+										if (preferredEditor == null || preferredEditor.isOpenExternal())
 										{
 											preferredEditor = getDefaultTextEditor();
 																						

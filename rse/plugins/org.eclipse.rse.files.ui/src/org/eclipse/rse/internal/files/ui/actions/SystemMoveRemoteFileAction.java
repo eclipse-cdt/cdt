@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Kevin Doyle (IBM) - [198007] Moving multiple folders allows moving to themselves
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -117,31 +118,40 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	 */
 	public SystemMessage isValid(IHost selectedConnection, Object[] selectedObjects, ISystemRemoteElementAdapter[] remoteAdaptersForSelectedObjects)
 	{
-		//if (selectedConnection != sourceConnection) {} // someday, but can't happen today. 
+		//if (selectedConnection != sourceConnection) {} // someday, but can't happen today.
+		IRemoteFile[] files = getSelectedFiles();
 		Object selectedObject = selectedObjects[0];
-		if (!(selectedObject instanceof IRemoteFile))
+		if (!(selectedObject instanceof IRemoteFile) || files == null)
 		  return null;
 		IRemoteFile selectedFolder = (IRemoteFile)selectedObject;
-        if (selectedFolder.getAbsolutePath().equals(firstSelectionParent.getAbsolutePath()))
-        {
-        	if (targetEqualsSrcMsg == null)
-              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
-            return targetEqualsSrcMsg;
-        }
-        else if (selectedFolder.getAbsolutePath().equals(firstSelection.getAbsolutePath()))
-        {
-        	if (targetEqualsSrcMsg == null)
-              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
-            return targetEqualsSrcMsg;
-        }
-        else if (selectedFolder.isDescendantOf(firstSelection))
-        {
-        	if (targetDescendsFromSrcMsg == null)
-        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE);
-        	return targetDescendsFromSrcMsg;
-        }
-        else
-		  return null;
+		String selectedFolderPath = selectedFolder.getAbsolutePath();
+		
+		for (int i = 0; i < files.length; i++) {
+			IRemoteFile selectedFile = files[i];
+			if (selectedFile != null && selectedFile.getParentRemoteFile() != null) {
+				IRemoteFile selectedParentFile = selectedFile.getParentRemoteFile();
+				
+		        if (selectedFolderPath.equals(selectedParentFile.getAbsolutePath()))
+		        {
+		        	if (targetEqualsSrcMsg == null)
+		              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
+		            return targetEqualsSrcMsg;
+		        }
+		        else if (selectedFolderPath.equals(selectedFile.getAbsolutePath()))
+		        {
+		        	if (targetEqualsSrcMsg == null)
+		              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
+		            return targetEqualsSrcMsg;
+		        }
+		        else if (selectedFolder.isDescendantOf(selectedFile))
+		        {
+		        	if (targetDescendsFromSrcMsg == null)
+		        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE);
+		        	return targetDescendsFromSrcMsg;
+		        }
+			}
+		}
+        return null;
 	}   
 
 	/**

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -39,8 +40,12 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.ListComparator;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
-import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoConsoleParserFactory;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.SCProfileInstance;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfile;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
@@ -48,7 +53,12 @@ import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
@@ -1633,6 +1643,95 @@ public class CommonBuilder extends ACBuilder {
 		return invokeMake(kind, bInfo, monitor);
 	}
 
+	private ConsoleOutputSniffer createBuildOutputSniffer(OutputStream outputStream,
+			OutputStream errorStream,
+			IProject project,
+			IConfiguration cfg,
+			IPath workingDirectory,
+			IMarkerGenerator markerGenerator,
+			IScannerInfoCollector collector){
+		ICfgScannerConfigBuilderInfo2Set container = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
+		Map map = container.getInfoMap();
+		List clParserList = new ArrayList();
+		
+		if(container.isPerRcTypeDiscovery()){
+			IResourceInfo[] rcInfos = cfg.getResourceInfos();
+			for(int q = 0; q < rcInfos.length; q++){
+				IResourceInfo rcInfo = rcInfos[q];
+				ITool tools[];
+				if(rcInfo instanceof IFileInfo){
+					tools = ((IFileInfo)rcInfo).getToolsToInvoke();
+				} else {
+					tools = ((IFolderInfo)rcInfo).getFilteredTools();
+				}
+				for(int i = 0; i < tools.length; i++){
+					ITool tool = tools[i];
+					IInputType[] types = tool.getInputTypes();
+					
+					if(types.length != 0){
+						for(int k = 0; k < types.length; k++){
+							IInputType type = types[k];
+							CfgInfoContext c = new CfgInfoContext(rcInfo, tool, type);
+							contributeToConsoleParserList(project, map, c, workingDirectory, markerGenerator, collector, clParserList);
+						}
+					} else {
+						CfgInfoContext c = new CfgInfoContext(rcInfo, tool, null);
+						contributeToConsoleParserList(project, map, c, workingDirectory, markerGenerator, collector, clParserList);
+					}
+				}
+			}
+		} 
+		
+		if(clParserList.size() == 0){
+			contributeToConsoleParserList(project, map, new CfgInfoContext(cfg), workingDirectory, markerGenerator, collector, clParserList);
+		}
+		
+		if(clParserList.size() != 0){
+			return new ConsoleOutputSniffer(outputStream, errorStream, 
+					(IScannerInfoConsoleParser[])clParserList.toArray(new IScannerInfoConsoleParser[clParserList.size()]));
+		}
+		
+		return null;
+	}
+	
+	private boolean contributeToConsoleParserList(
+			IProject project, 
+			Map map, 
+			CfgInfoContext context, 
+			IPath workingDirectory,
+			IMarkerGenerator markerGenerator,
+			IScannerInfoCollector collector,
+			List parserList){
+		IScannerConfigBuilderInfo2 info = (IScannerConfigBuilderInfo2)map.get(context);
+		InfoContext ic = context.toInfoContext();
+		boolean added = false;
+		if (info != null && 
+				info.isAutoDiscoveryEnabled() &&
+				info.isBuildOutputParserEnabled()) {
+			
+			String id = info.getSelectedProfileId();
+			ScannerConfigProfile profile = ScannerConfigProfileManager.getInstance().getSCProfileConfiguration(id);
+			if(profile.getBuildOutputProviderElement() != null){
+				// get the make builder console parser 
+				SCProfileInstance profileInstance = ScannerConfigProfileManager.getInstance().
+						getSCProfileInstance(project, ic, id);
+				
+				IScannerInfoConsoleParser clParser = profileInstance.createBuildOutputParser();
+                if (collector == null) {
+                    collector = profileInstance.getScannerInfoCollector();
+                }
+                if(clParser != null){
+					clParser.startup(project, workingDirectory, collector,
+                            info.isProblemReportingEnabled() ? markerGenerator : null);
+					parserList.add(clParser);
+					added = true;
+                }
+			
+			}
+		}
+
+		return added;
+	}
 	
 	protected boolean invokeMake(int kind, CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException {
 		boolean isClean = false;
@@ -1728,17 +1827,18 @@ public class CommonBuilder extends ACBuilder {
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
 				// Sniff console output for scanner info
-				ICfgScannerConfigBuilderInfo2Set container = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
-				CfgInfoContext context = new CfgInfoContext(cfg);
-				InfoContext baseContext; 
-				IScannerConfigBuilderInfo2 info = container.getInfo(context);
-				if(info == null){
-					baseContext = new InfoContext(currProject);
-				} else {
-					baseContext = context.toInfoContext();
-				}
-				ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
-						stdout, stderr, currProject, baseContext, workingDirectory, info, this, null);
+//				ICfgScannerConfigBuilderInfo2Set container = CfgScannerConfigProfileManager.getCfgScannerConfigBuildInfo(cfg);
+//				CfgInfoContext context = new CfgInfoContext(cfg);
+//				InfoContext baseContext; 
+//				IScannerConfigBuilderInfo2 info = container.getInfo(context);
+//				if(info == null){
+//					baseContext = new InfoContext(currProject);
+//				} else {
+//					baseContext = context.toInfoContext();
+//				}
+//				ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.getMakeBuilderOutputSniffer(
+//						stdout, stderr, currProject, baseContext, workingDirectory, info, this, null);
+				ConsoleOutputSniffer sniffer = createBuildOutputSniffer(stdout, stderr, currProject, cfg, workingDirectory, this, null);
 				OutputStream consoleOut = (sniffer == null ? stdout : sniffer.getOutputStream());
 				OutputStream consoleErr = (sniffer == null ? stderr : sniffer.getErrorStream());
 				Process p = launcher.execute(buildCommand, buildArguments, env, workingDirectory);

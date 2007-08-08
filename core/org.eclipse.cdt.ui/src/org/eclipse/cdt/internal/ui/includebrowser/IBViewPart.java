@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -151,9 +152,12 @@ public class IBViewPart extends ViewPart
         updateDescription();
     }
     
-    public void setInput(final ITranslationUnit input) {
+    public void setInput(ITranslationUnit input) {
     	if (fPagebook.isDisposed()) {
     		return;
+    	}
+    	if (input instanceof IWorkingCopy) {
+    		input= ((IWorkingCopy) input).getOriginalElement();
     	}
     	fSetInputJob.cancel();
     	if (input == null) {
@@ -730,7 +734,7 @@ public class IBViewPart extends ViewPart
     }
 
     public ShowInContext getShowInContext() {
-        return new ShowInContext(null, fTreeViewer.getSelection());
+        return new ShowInContext(null, IBConversions.nodeSelectionToRepresentedTUSelection(fTreeViewer.getSelection()));
     }
 
     public boolean show(ShowInContext context) {

@@ -141,6 +141,18 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         this.fParent = renderingParent;
 
+        // initialize the viewport start
+        if(fParent.getMemoryBlock() != null)
+        {
+            fViewportAddress = fParent.getMemoryBlockStartAddress();
+            
+             // this will be null if memory may be retrieved at any address less than
+             // this memory block's base.  if so use the base address.
+             if (fViewportAddress == null)
+               	 fViewportAddress = fParent.getBigBaseAddress();
+             fBaseAddress = fViewportAddress;
+        }
+        
         // instantiate the panes, TODO default visibility from state or
         // plugin.xml?
         this.fAddressPane = new AddressPane(this);
@@ -184,18 +196,6 @@ public class Rendering extends Composite implements IDebugEventSetListener
 		});
     	
         this.fAddressBarControl.setVisible(false);
-
-        // initialize the viewport start
-        if(fParent.getMemoryBlock() != null)
-        {
-            fViewportAddress = fParent.getMemoryBlockStartAddress();
-            
-             // this will be null if memory may be retrieved at any address less than
-             // this memory block's base.  if so use the base address.
-             if (fViewportAddress == null)
-               	 fViewportAddress = fParent.getBigBaseAddress();
-             fBaseAddress = fViewportAddress;
-        }
 
         getHorizontalBar().addSelectionListener(new SelectionListener()
         {

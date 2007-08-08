@@ -75,11 +75,7 @@ public class DataPane extends AbstractPane
             if(isSigned)
                 byteData[byteLen - 1] |= 128;
 
-            boolean shouldReorderBytes = fRendering.isLittleEndian() == bytes[0].isBigEndian(); // swapped in presentation
-            if(!bytes[0].isBigEndian()) // swapped by BigInteger/java endianness
-            	shouldReorderBytes = !shouldReorderBytes;
-            
-            if(shouldReorderBytes)
+            if(fRendering.isLittleEndian() != bytes[0].isBigEndian())
             {
                 byte[] byteDataSwapped = new byte[byteData.length];
                 for(int i = 0; i < byteData.length; i++)
@@ -103,6 +99,8 @@ public class DataPane extends AbstractPane
                 }
                 else
                 {
+                	if(bytes[i] instanceof TraditionalMemoryByte)
+                		bytesToSet[i].setEdited(((TraditionalMemoryByte) bytes[i]).isEdited());
                     bytesToSet[i].setChanged(bytes[i].isChanged());
                 }
             }

@@ -28,6 +28,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
@@ -99,6 +100,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     private Action displayEndianLittleAction;
     
     private IWorkbenchAdapter fWorkbenchAdapter;
+    private IMemoryBlockConnection fConnection;
 
     public TraditionalRendering(String id)
     {
@@ -1001,7 +1003,6 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
     public Object getAdapter(Class adapter)
     {
-
         if(adapter == IWorkbenchAdapter.class)
         {
             if(this.fWorkbenchAdapter == null)
@@ -1032,10 +1033,32 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             }
             return this.fWorkbenchAdapter;
         }
+        
+        if (adapter == IMemoryBlockConnection.class) 
+        {
+			if (fConnection == null) 
+			{
+				fConnection = new IMemoryBlockConnection() 
+				{
+					public void update() 
+					{
+						// update UI asynchronously
+						Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
+						display.asyncExec(new Runnable() {
+							public void run() {
+								TraditionalRendering.this.fRendering.refresh();
+							}
+						});
+					}
+				};
+			}
+			return fConnection;
+        }
 
         return super.getAdapter(adapter);
     }
 }
+
 
 class TraditionalMemoryByte extends MemoryByte
 {

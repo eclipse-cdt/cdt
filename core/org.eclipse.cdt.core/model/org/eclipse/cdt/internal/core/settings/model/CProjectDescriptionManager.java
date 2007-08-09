@@ -69,7 +69,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
-import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationDataProvider;
 import org.eclipse.cdt.core.settings.model.extension.CFileData;
@@ -1671,11 +1670,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		return provider.loadConfiguration(des, monitor);
 	}
 	
-	CConfigurationData applyData(ICConfigurationDescription des, ICConfigurationDescription baseDescription, CConfigurationData base, IModificationContext context, IProgressMonitor monitor) throws CoreException {
+	CConfigurationData applyData(CConfigurationDescriptionCache des, ICConfigurationDescription baseDescription, CConfigurationData base, SettingsContext context, IProgressMonitor monitor) throws CoreException {
 		if(monitor == null)
 			monitor = new NullProgressMonitor();
 		
 		CConfigurationDataProvider provider = getProvider(des);
+		context.init(des);
 		return provider.applyConfiguration(des, baseDescription, base, context, monitor);
 	}
 
@@ -3095,8 +3095,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private CConfigurationDescriptionCache createPreferenceCache(ICConfigurationDescription des) throws CoreException{
 		IInternalCCfgInfo cfgDes = (IInternalCCfgInfo)des;
 		CConfigurationData baseData = cfgDes.getConfigurationData(false);
+		CConfigurationDescriptionCache baseCache = null;
 		if(baseData instanceof CConfigurationDescriptionCache){
-			baseData = ((CConfigurationDescriptionCache)baseData).getConfigurationData();
+			baseCache = (CConfigurationDescriptionCache)baseData;
+			baseData = baseCache.getConfigurationData();
 		}
 		CConfigurationSpecSettings settings = cfgDes.getSpecSettings();
 		ICStorageElement rootEl = getBuildSystemConfigPreferenceStorage(des.getBuildSystemId(), true, false);
@@ -3104,7 +3106,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		rootParent.removeChild(rootEl);
 		ICStorageElement baseRootEl = settings.getRootStorageElement();
 		rootEl = rootParent.importChild(baseRootEl);
-		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(des, baseData, cfgDes.getSpecSettings(), null, rootEl);
+		CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache(des, baseData, baseCache, cfgDes.getSpecSettings(), null, rootEl);
 		CSettingEntryFactory factory = new CSettingEntryFactory();
 		SettingsContext context = new SettingsContext(null);
 		cache.applyData(factory, context);

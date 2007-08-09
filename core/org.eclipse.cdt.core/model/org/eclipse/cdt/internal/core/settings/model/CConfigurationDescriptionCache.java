@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
-import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
@@ -60,6 +59,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	private List fChildList = new ArrayList();
 	private CConfigurationSpecSettings fSpecSettings;
 	private CConfigurationData fData;
+	private CConfigurationDescriptionCache fBaseCache;
 	private ICSourceEntry fProjSourceEntries[];
 	private StorableCdtVariables fMacros;
 	private boolean fDataLoadded;
@@ -105,11 +105,12 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 //		fInitializing = false;
 	}
 
-	CConfigurationDescriptionCache(ICConfigurationDescription baseDescription, CConfigurationData base, CConfigurationSpecSettings settingsBase, CProjectDescription parent, ICStorageElement rootEl) throws CoreException {
+	CConfigurationDescriptionCache(ICConfigurationDescription baseDescription, CConfigurationData base, CConfigurationDescriptionCache baseCache, CConfigurationSpecSettings settingsBase, CProjectDescription parent, ICStorageElement rootEl) throws CoreException {
 		super(base.getId(), base.getName(), null);
 		fInitializing = true;
 		fParent = parent;
 		fSpecSettings = new CConfigurationSpecSettings(this, settingsBase, rootEl);
+		fSpecSettings.setModified(settingsBase.isModified());
 		fBaseDescription = baseDescription;
 		if(base instanceof CConfigurationDescriptionCache){
 			fData = ((CConfigurationDescriptionCache)base).getConfigurationData();
@@ -119,41 +120,44 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 //			base = CProjectDescriptionManager.getInstance().applyData(this, baseDescription, base);
 //			fData = base;
 		} 
-//		fDataLoadded = true;
-//		fName = fData.getName();
-//		fId = fData.getId();
-//		
-//		copySettingsFrom(base, true);
-//		
-//		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
-//		fMacros = new StorableCdtVariables(vars, true);
-//		if(saving)
-//			fSpecSettings.serialize();
-//		
-//		fInitializing = false;
+		
+		fBaseCache = baseCache;
 	}
 	
-	void applyData(CSettingEntryFactory factory, IModificationContext context) throws CoreException{
-		if(fBaseDescription == null)
-			return;
+	CConfigurationDescriptionCache getBaseCache(){
+		return fBaseCache;
+	}
+	
+	boolean applyData(CSettingEntryFactory factory, SettingsContext context) throws CoreException{
+		boolean modified = true; 
+		if(fBaseDescription != null){
 		
-		fData = CProjectDescriptionManager.getInstance().applyData(this, fBaseDescription, fData, context, null);
-		fDataLoadded = true;
-		fName = fData.getName();
-		fId = fData.getId();
-		fSettingsFactory = factory;
-		
-		copySettingsFrom(fData, true);
-		
-		fSettingsFactory = null;
-		
-		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
-		fMacros = new StorableCdtVariables(vars, true);
-//		if(saving)
+			fData = CProjectDescriptionManager.getInstance().applyData(this, fBaseDescription, fData, context, null);
+			fDataLoadded = true;
+			fName = fData.getName();
+			fId = fData.getId();
+			fSettingsFactory = factory;
+			
+			if(context.getConfiguratoinDataModifiedState() || fBaseCache == null)
+				copySettingsFrom(fData, true);
+			else {
+				copySettingsFrom(fBaseCache, true);
+				modified = fSpecSettings.isModified();
+			}
+			
+			fSettingsFactory = null;
+			
+			ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
+			fMacros = new StorableCdtVariables(vars, true);
 			fSpecSettings.serialize();
+			fSpecSettings.setModified(false);
+		
+		}
 		
 		fBaseDescription = null;
-//		fInitializing = false;
+		fBaseCache = null;
+		
+		return modified;
 	}
 	
 	CSettingEntryFactory getSettingsFactory(){

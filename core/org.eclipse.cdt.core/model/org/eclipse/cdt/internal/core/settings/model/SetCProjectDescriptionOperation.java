@@ -45,7 +45,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		mngr.notifyListeners(event);
 		CProjectDescription fNewDescriptionCache = null;
 		SettingsContext context = new SettingsContext(project);
-		
+		boolean modified;
 		if(fSetDescription != null){
 			InternalXmlStorageElement el = null;
 			try {
@@ -63,10 +63,12 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 			fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
 			try {
 				mngr.setDescriptionApplying(project, fNewDescriptionCache);
-				fNewDescriptionCache.applyDatas(context);
+				modified = fNewDescriptionCache.applyDatas(context);
 			} finally {
 				mngr.clearDescriptionApplying(project);
 			}
+		} else {
+			modified = fOldDescriptionCache != null;
 		}
 		
 		ICDescriptionDelta delta = mngr.createDelta(fNewDescriptionCache, fOldDescriptionCache);
@@ -115,8 +117,11 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		mngr.notifyListeners(event);
 
 		try {
-			if(fNewDescriptionCache != null && !CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE))
-				context.addWorkspaceRunnable(mngr.createDesSerializationRunnable(fNewDescriptionCache));
+			if(fNewDescriptionCache != null && !CProjectDescriptionManager.checkFlags(fFlags, ICProjectDescriptionManager.SET_NO_SERIALIZE)){
+				if(modified || isPersistentCoreSettingChanged(event)){
+					context.addWorkspaceRunnable(mngr.createDesSerializationRunnable(fNewDescriptionCache));
+				}
+			}
 			IWorkspaceRunnable toRun = context.createOperationRunnable();
 			
 			if(toRun != null)
@@ -124,6 +129,23 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
+	}
+	
+	private static boolean isPersistentCoreSettingChanged(CProjectDescriptionEvent event){
+		ICDescriptionDelta delta = event.getProjectDelta();
+		if(delta == null)
+			return false;
+		if(delta.getDeltaKind() != ICDescriptionDelta.CHANGED)
+			return true;
+		
+		if(delta.getChildren().length != 0)
+			return true;
+		
+		int flags = delta.getChangeFlags(); 
+		if(flags != 0 && flags != ICDescriptionDelta.ACTIVE_CFG)
+			return true;
+		
+		return false;
 	}
 	
 	public boolean isReadOnly() {

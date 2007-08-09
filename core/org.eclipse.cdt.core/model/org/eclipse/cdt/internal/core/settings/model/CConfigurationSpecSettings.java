@@ -487,11 +487,14 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		
 		return fExtSettingsProvider.isModified();
 	}
-	
-	void setModified(){
+
+	void setModified(boolean modified){
 		if(isReadOnly())
 			throw ExceptionFactory.createIsReadOnlyException();
-		fIsModified = true;
+		fIsModified = modified;
+	}
+	void setModified(){
+		setModified(true);
 	}
 	
 	private Map getSessionPropertiesMap(boolean create){

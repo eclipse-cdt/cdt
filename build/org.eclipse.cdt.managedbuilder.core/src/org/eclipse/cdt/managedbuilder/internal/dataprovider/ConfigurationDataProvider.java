@@ -100,8 +100,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		
 	}
 	static BuildConfigurationData writeConfiguration(ICConfigurationDescription des,
-			CConfigurationData base) throws CoreException {
-		BuildConfigurationData appliedCfg = (BuildConfigurationData)base;
+			BuildConfigurationData base) throws CoreException {
+		BuildConfigurationData appliedCfg = base;
 		ICStorageElement rootElement = des.getStorage(BUILD_SYSTEM_DATA_MODULE_NAME, true);
 		rootElement.clear();
 		rootElement.setAttribute(VERSION_ATTRIBUTE, ManagedBuildManager.getVersion().toString());
@@ -122,7 +122,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 	protected CConfigurationData applyPreferences(
 			ICConfigurationDescription des, CConfigurationData base) throws CoreException{
 
-		BuildConfigurationData appliedCfg = writeConfiguration(des, base);
+		BuildConfigurationData appliedCfg = writeConfiguration(des, (BuildConfigurationData)base);
 		
 		IConfiguration cfg = ((BuildConfigurationData)base).getConfiguration();
 		try {
@@ -144,38 +144,46 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		if(des.isPreferenceConfiguration())
 			return applyPreferences(des, base);
 		
-		BuildConfigurationData appliedCfg = writeConfiguration(des, base);
-		
-		IManagedBuildInfo info = getBuildInfo(des);
-		ManagedProject mProj = (ManagedProject)info.getManagedProject();
-		mProj.applyConfiguration((Configuration)appliedCfg.getConfiguration());
-		writeManagedProjectInfo(des.getProjectDescription(), mProj);
-		try {
-			CfgScannerConfigInfoFactory2.save(appliedCfg, des.getProjectDescription(), baseDescription.getProjectDescription(), !isPersistedCfg(des));
-		} catch (CoreException e){
-			ManagedBuilderCorePlugin.log(e);
-		}
-		info.setValid(true);
-		
-		setPersistedFlag(des);
-		cacheNaturesIdsUsedOnCache(des);
-		
-		if(des.isActive()){
-			IConfiguration cfg = appliedCfg.getConfiguration();
-			IBuilder builder = cfg.getEditableBuilder();
-			IProject project = context.getProject();
-			IProjectDescription eDes = context.getEclipseProjectDescription();
-			switch(BuilderFactory.applyBuilder(eDes, builder)){
-			case BuilderFactory.CMD_UNDEFINED:
-				IWorkspaceRunnable applyR = new DesApplyRunnable(project, builder);
-				context.addWorkspaceRunnable(applyR);
-				break;
-			case BuilderFactory.CMD_CHANGED:
-				context.setEclipseProjectDescription(eDes);
-				break;
+		BuildConfigurationData baseCfgData = (BuildConfigurationData)base;
+		IConfiguration baseCfg = baseCfgData.getConfiguration();
+		BuildConfigurationData appliedCfg;
+		if(context.getBaseConfigurationDataCacheState() && !baseCfg.isDirty()){
+			appliedCfg = baseCfgData;
+			context.setConfiguratoinDataModifiedState(false);
+		} else {
+			appliedCfg = writeConfiguration(des, baseCfgData);
+			context.setConfiguratoinDataModifiedState(true);
+			
+			IManagedBuildInfo info = getBuildInfo(des);
+			ManagedProject mProj = (ManagedProject)info.getManagedProject();
+			mProj.applyConfiguration((Configuration)appliedCfg.getConfiguration());
+			writeManagedProjectInfo(des.getProjectDescription(), mProj);
+			try {
+				CfgScannerConfigInfoFactory2.save(appliedCfg, des.getProjectDescription(), baseDescription.getProjectDescription(), !isPersistedCfg(des));
+			} catch (CoreException e){
+				ManagedBuilderCorePlugin.log(e);
+			}
+			info.setValid(true);
+			
+			setPersistedFlag(des);
+			cacheNaturesIdsUsedOnCache(des);
+			
+			if(des.isActive()){
+				IConfiguration cfg = appliedCfg.getConfiguration();
+				IBuilder builder = cfg.getEditableBuilder();
+				IProject project = context.getProject();
+				IProjectDescription eDes = context.getEclipseProjectDescription();
+				switch(BuilderFactory.applyBuilder(eDes, builder)){
+				case BuilderFactory.CMD_UNDEFINED:
+					IWorkspaceRunnable applyR = new DesApplyRunnable(project, builder);
+					context.addWorkspaceRunnable(applyR);
+					break;
+				case BuilderFactory.CMD_CHANGED:
+					context.setEclipseProjectDescription(eDes);
+					break;
+				}
 			}
 		}
-		
 		return appliedCfg;
 	}
 	

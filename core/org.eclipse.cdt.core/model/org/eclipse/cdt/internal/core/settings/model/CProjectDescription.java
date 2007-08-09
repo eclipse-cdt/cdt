@@ -23,7 +23,6 @@ import org.eclipse.cdt.core.settings.model.ICSettingContainer;
 import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.util.CSettingEntryFactory;
@@ -206,15 +205,17 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 //		fIsLoadding = false;
 	}
 
-	void applyDatas(IModificationContext context){
+	boolean applyDatas(SettingsContext context){
 		if(!fIsReadOnly || !fIsApplying)
-			return;
+			return false;
 		
 		CSettingEntryFactory factory = new CSettingEntryFactory();
+		boolean modified = false;
 		for(Iterator iter = fCfgMap.values().iterator(); iter.hasNext();){
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
 			try {
-				cache.applyData(factory, context);
+				if(cache.applyData(factory, context))
+					modified = true;
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				e.printStackTrace();
@@ -227,6 +228,8 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		factory.clear();
 		
 //		fIsApplying = false;
+		
+		return modified;
 	}
 	
 	
@@ -280,10 +283,12 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 				IInternalCCfgInfo cfgDes = (IInternalCCfgInfo)iter.next();
 				if(fIsReadOnly){
 					CConfigurationData baseData = cfgDes.getConfigurationData(false);
+					CConfigurationDescriptionCache baseCache = null;
 					if(baseData instanceof CConfigurationDescriptionCache){
-						baseData = ((CConfigurationDescriptionCache)baseData).getConfigurationData();
+						baseCache = (CConfigurationDescriptionCache)baseData;
+						baseData = baseCache.getConfigurationData();
 					}
-					CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache((ICConfigurationDescription)cfgDes, baseData, cfgDes.getSpecSettings(), this, null);
+					CConfigurationDescriptionCache cache = new CConfigurationDescriptionCache((ICConfigurationDescription)cfgDes, baseData, baseCache, cfgDes.getSpecSettings(), this, null);
 					configurationCreated(cache);
 				} else {
 					CConfigurationData baseData = cfgDes.getConfigurationData(false);

@@ -22,6 +22,8 @@ public final class SettingsContext implements IModificationContext{
 	private IProjectDescription fEDes;
 	private IProject fProject;
 	private CompositeWorkspaceRunnable fRunnable;
+	private boolean fCfgDataModifyState;
+	private boolean fCfgDataCacheState;
 	
 	SettingsContext(IProject project){
 		fProject = project;
@@ -31,6 +33,11 @@ public final class SettingsContext implements IModificationContext{
 		return fProject;
 	}
 	
+	void init(CConfigurationDescriptionCache cfg){
+		fCfgDataModifyState = true;
+		fCfgDataCacheState = cfg.getBaseCache() != null;
+	}
+
 	IProjectDescription getEclipseProjectDescription(boolean create) throws CoreException{
 		IProjectDescription eDes = fEDes;
 		if(eDes == null && create){
@@ -88,5 +95,17 @@ public final class SettingsContext implements IModificationContext{
 			};
 		}
 		return null;
+	}
+
+	public boolean getBaseConfigurationDataCacheState() {
+		return fCfgDataCacheState;
+	}
+
+	public void setConfiguratoinDataModifiedState(boolean modified) {
+		fCfgDataModifyState = modified;
+	}
+	
+	public boolean getConfiguratoinDataModifiedState(){
+		return fCfgDataModifyState;
 	}
 }

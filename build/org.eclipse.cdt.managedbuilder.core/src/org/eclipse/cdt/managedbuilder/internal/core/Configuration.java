@@ -960,7 +960,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 			LanguageSettingEntriesSerializer.serializeEntries(sourceEntries, el);
 		}
 		// I am clean now
-		isDirty = false;
+		setDirty(false);
 	}
 
 	/*

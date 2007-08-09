@@ -23,4 +23,14 @@ public interface IModificationContext {
 	void setEclipseProjectDescription(IProjectDescription eDes) throws CoreException;
 
 	void addWorkspaceRunnable(IWorkspaceRunnable runnable);
+	
+	/**
+	 * the CConfigurationDataProvider can call this method to indicate whether the
+	 * ICConfigurationDescription settings were changed 
+	 * @param modified
+	 */
+	void setConfiguratoinDataModifiedState(boolean modified);
+
+	boolean getBaseConfigurationDataCacheState();
+
 }

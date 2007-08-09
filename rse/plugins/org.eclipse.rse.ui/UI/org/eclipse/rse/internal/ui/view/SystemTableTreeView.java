@@ -778,7 +778,7 @@ public class SystemTableTreeView
 		Transfer[] dragtransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), FileTransfer.getInstance(),  EditorInputTransfer.getInstance()};
 		Transfer[] droptransfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), FileTransfer.getInstance(), EditorInputTransfer.getInstance()};
 		
-		addDragSupport(ops, dragtransfers, new SystemViewDataDragAdapter((ISelectionProvider) this));
+		addDragSupport(ops, dragtransfers, new SystemViewDataDragAdapter(this));
 		addDropSupport(ops | DND.DROP_DEFAULT, droptransfers, new SystemViewDataDropAdapter(this));
 	}
 	/**
@@ -1447,8 +1447,8 @@ public class SystemTableTreeView
 	 * Returns the implementation of IRemoteObjectIdentifier for the given
 	 * object.  Returns null if this object is not adaptable to this.
 	 * 
-	 * @deprecated 	should use getViewAdapter(Object) as IRemoteObjectIdentifier
-	 * 		is not defined in the adapter factories
+	 * @deprecated 	should use {@link #getViewAdapter(Object)} since
+	 *     IRemoteObjectIdentifier is not defined in the adapter factories
 	 */
 	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
 	{

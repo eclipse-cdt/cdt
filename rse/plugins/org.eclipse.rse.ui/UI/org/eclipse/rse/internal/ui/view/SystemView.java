@@ -39,6 +39,7 @@
  * David McKnight   (IBM)        - [196662] Avoid main thread query to check exists when remote refreshing
  * Kevin Doyle  (IBM)            - [198576] Renaming a folder directly under a Filter doesn't update children
  * Kevin Doyle (IBM) 			 - [196582] Deprecated getRemoteObjectIdentifier
+ * Martin Oberhuber (Wind River) - [198650] Fix assertion when restoring workbench state
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -2989,7 +2990,7 @@ public class SystemView extends SafeTreeViewer
 		List matches = new Vector();
 		// STEP 2: find all references to the object
 		findAllRemoteItemReferences(oldElementName, remoteObject, subsystem, matches);
-		if (remoteObject instanceof String) {
+		if (matches.size()>0 && remoteObject instanceof String) {
 			//TODO one String may reference multiple different context objects, so we should really iterate over all matches here
 			//See javadoc of findAllRemoteItemReferences
 			remoteObject = getFirstRemoteObject(matches);

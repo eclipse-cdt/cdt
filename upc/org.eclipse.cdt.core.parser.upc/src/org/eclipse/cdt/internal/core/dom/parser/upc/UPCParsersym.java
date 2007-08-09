@@ -15,56 +15,56 @@ package org.eclipse.cdt.internal.core.dom.parser.upc;
 
 public interface UPCParsersym {
     public final static int
-      TK_auto = 31,
+      TK_auto = 35,
       TK_break = 64,
       TK_case = 65,
-      TK_char = 40,
-      TK_const = 6,
+      TK_char = 41,
+      TK_const = 25,
       TK_continue = 59,
       TK_default = 66,
       TK_do = 67,
-      TK_double = 41,
+      TK_double = 42,
       TK_else = 93,
-      TK_enum = 53,
-      TK_extern = 32,
-      TK_float = 42,
+      TK_enum = 54,
+      TK_extern = 36,
+      TK_float = 43,
       TK_for = 68,
       TK_goto = 69,
       TK_if = 70,
-      TK_inline = 33,
-      TK_int = 43,
-      TK_long = 44,
-      TK_register = 34,
-      TK_restrict = 7,
+      TK_inline = 37,
+      TK_int = 44,
+      TK_long = 45,
+      TK_register = 38,
+      TK_restrict = 26,
       TK_return = 71,
-      TK_short = 45,
-      TK_signed = 46,
-      TK_sizeof = 17,
-      TK_static = 18,
-      TK_struct = 54,
+      TK_short = 46,
+      TK_signed = 47,
+      TK_sizeof = 11,
+      TK_static = 32,
+      TK_struct = 55,
       TK_switch = 72,
-      TK_typedef = 35,
-      TK_union = 55,
-      TK_unsigned = 47,
-      TK_void = 48,
-      TK_volatile = 8,
+      TK_typedef = 39,
+      TK_union = 56,
+      TK_unsigned = 48,
+      TK_void = 49,
+      TK_volatile = 27,
       TK_while = 60,
-      TK__Bool = 49,
-      TK__Complex = 50,
-      TK__Imaginary = 51,
-      TK_LeftBracket = 37,
+      TK__Bool = 50,
+      TK__Complex = 51,
+      TK__Imaginary = 52,
+      TK_LeftBracket = 31,
       TK_LeftParen = 1,
-      TK_LeftBrace = 36,
+      TK_LeftBrace = 24,
       TK_Dot = 80,
       TK_Arrow = 94,
-      TK_PlusPlus = 15,
-      TK_MinusMinus = 16,
-      TK_And = 14,
+      TK_PlusPlus = 9,
+      TK_MinusMinus = 10,
+      TK_And = 8,
       TK_Star = 3,
-      TK_Plus = 12,
-      TK_Minus = 13,
-      TK_Tilde = 19,
-      TK_Bang = 20,
+      TK_Plus = 6,
+      TK_Minus = 7,
+      TK_Tilde = 12,
+      TK_Bang = 13,
       TK_Slash = 81,
       TK_Percent = 82,
       TK_RightShift = 61,
@@ -93,34 +93,34 @@ public interface UPCParsersym {
       TK_AndAssign = 104,
       TK_CaretAssign = 105,
       TK_OrAssign = 106,
-      TK_Comma = 38,
+      TK_Comma = 33,
       TK_Hash = 107,
       TK_HashHash = 108,
       TK_NewLine = 109,
-      TK_MYTHREAD = 21,
-      TK_THREADS = 22,
-      TK_UPC_MAX_BLOCKSIZE = 23,
-      TK_relaxed = 9,
-      TK_shared = 10,
-      TK_strict = 11,
+      TK_MYTHREAD = 14,
+      TK_THREADS = 15,
+      TK_UPC_MAX_BLOCKSIZE = 16,
+      TK_relaxed = 28,
+      TK_shared = 29,
+      TK_strict = 30,
       TK_upc_barrier = 75,
-      TK_upc_localsizeof = 24,
-      TK_upc_blocksizeof = 25,
-      TK_upc_elemsizeof = 26,
+      TK_upc_localsizeof = 17,
+      TK_upc_blocksizeof = 18,
+      TK_upc_elemsizeof = 19,
       TK_upc_notify = 76,
       TK_upc_fence = 77,
       TK_upc_wait = 78,
       TK_upc_forall = 79,
       TK_EOF_TOKEN = 87,
       TK_identifier = 2,
-      TK_integer = 27,
-      TK_floating = 28,
-      TK_charconst = 29,
-      TK_stringlit = 30,
+      TK_integer = 20,
+      TK_floating = 21,
+      TK_charconst = 22,
+      TK_stringlit = 23,
       TK_RightBracket = 63,
-      TK_RightParen = 56,
-      TK_RightBrace = 52,
-      TK_SemiColon = 39,
+      TK_RightParen = 53,
+      TK_RightBrace = 40,
+      TK_SemiColon = 34,
       TK_Invalid = 110,
       TK_Completion = 5,
       TK_EndOfCompletion = 4,
@@ -135,19 +135,12 @@ public interface UPCParsersym {
                  "Star",//$NON-NLS-1$
                  "EndOfCompletion",//$NON-NLS-1$
                  "Completion",//$NON-NLS-1$
-                 "const",//$NON-NLS-1$
-                 "restrict",//$NON-NLS-1$
-                 "volatile",//$NON-NLS-1$
-                 "relaxed",//$NON-NLS-1$
-                 "shared",//$NON-NLS-1$
-                 "strict",//$NON-NLS-1$
                  "Plus",//$NON-NLS-1$
                  "Minus",//$NON-NLS-1$
                  "And",//$NON-NLS-1$
                  "PlusPlus",//$NON-NLS-1$
                  "MinusMinus",//$NON-NLS-1$
                  "sizeof",//$NON-NLS-1$
-                 "static",//$NON-NLS-1$
                  "Tilde",//$NON-NLS-1$
                  "Bang",//$NON-NLS-1$
                  "MYTHREAD",//$NON-NLS-1$
@@ -160,15 +153,23 @@ public interface UPCParsersym {
                  "floating",//$NON-NLS-1$
                  "charconst",//$NON-NLS-1$
                  "stringlit",//$NON-NLS-1$
+                 "LeftBrace",//$NON-NLS-1$
+                 "const",//$NON-NLS-1$
+                 "restrict",//$NON-NLS-1$
+                 "volatile",//$NON-NLS-1$
+                 "relaxed",//$NON-NLS-1$
+                 "shared",//$NON-NLS-1$
+                 "strict",//$NON-NLS-1$
+                 "LeftBracket",//$NON-NLS-1$
+                 "static",//$NON-NLS-1$
+                 "Comma",//$NON-NLS-1$
+                 "SemiColon",//$NON-NLS-1$
                  "auto",//$NON-NLS-1$
                  "extern",//$NON-NLS-1$
                  "inline",//$NON-NLS-1$
                  "register",//$NON-NLS-1$
                  "typedef",//$NON-NLS-1$
-                 "LeftBrace",//$NON-NLS-1$
-                 "LeftBracket",//$NON-NLS-1$
-                 "Comma",//$NON-NLS-1$
-                 "SemiColon",//$NON-NLS-1$
+                 "RightBrace",//$NON-NLS-1$
                  "char",//$NON-NLS-1$
                  "double",//$NON-NLS-1$
                  "float",//$NON-NLS-1$
@@ -181,11 +182,10 @@ public interface UPCParsersym {
                  "_Bool",//$NON-NLS-1$
                  "_Complex",//$NON-NLS-1$
                  "_Imaginary",//$NON-NLS-1$
-                 "RightBrace",//$NON-NLS-1$
+                 "RightParen",//$NON-NLS-1$
                  "enum",//$NON-NLS-1$
                  "struct",//$NON-NLS-1$
                  "union",//$NON-NLS-1$
-                 "RightParen",//$NON-NLS-1$
                  "Colon",//$NON-NLS-1$
                  "ERROR_TOKEN",//$NON-NLS-1$
                  "continue",//$NON-NLS-1$

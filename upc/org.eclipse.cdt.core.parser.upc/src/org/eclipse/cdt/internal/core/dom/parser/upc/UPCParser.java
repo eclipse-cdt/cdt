@@ -91,7 +91,7 @@ public class UPCParser extends PrsStream implements RuleAction , IParserActionTo
             for (int i = 0; i < unimplemented_symbols.size(); i++)
             {
                 Integer id = (Integer) unimplemented_symbols.get(i);
-                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);               
+                System.out.println("    " + UPCParsersym.orderedTerminalSymbols[id.intValue()]);       //$NON-NLS-1$        
             }
             System.out.println();                        
         }
@@ -294,7 +294,7 @@ public List getRuleTokens() {
             }
  
             //
-            // Rule 17:  primary_expression ::= ident
+            // Rule 17:  primary_expression ::= identifier_or_completion
             //
             case 17: { action.beforeConsume(); action.   consumeExpressionID();            break;
             }
@@ -324,13 +324,13 @@ public List getRuleTokens() {
             }
  
             //
-            // Rule 23:  postfix_expression ::= postfix_expression . ident
+            // Rule 23:  postfix_expression ::= postfix_expression . member_name
             //
             case 23: { action.beforeConsume(); action.   consumeExpressionFieldReference(false);            break;
             }
  
             //
-            // Rule 24:  postfix_expression ::= postfix_expression -> ident
+            // Rule 24:  postfix_expression ::= postfix_expression -> member_name
             //
             case 24: { action.beforeConsume(); action.   consumeExpressionFieldReference(true);            break;
             }
@@ -360,1359 +360,1359 @@ public List getRuleTokens() {
             }
  
             //
-            // Rule 29:  argument_expression_list ::= assignment_expression
+            // Rule 30:  argument_expression_list ::= assignment_expression
             //
-            case 29: { action.beforeConsume(); action.   consumeExpressionList(true);            break;
+            case 30: { action.beforeConsume(); action.   consumeExpressionList(true);            break;
             }
  
             //
-            // Rule 30:  argument_expression_list ::= argument_expression_list , assignment_expression
+            // Rule 31:  argument_expression_list ::= argument_expression_list , assignment_expression
             //
-            case 30: { action.beforeConsume(); action.   consumeExpressionList(false);           break;
+            case 31: { action.beforeConsume(); action.   consumeExpressionList(false);           break;
             }
  
             //
-            // Rule 32:  unary_expression ::= ++ unary_expression
+            // Rule 33:  unary_expression ::= ++ unary_expression
             //
-            case 32: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_prefixIncr);            break;
+            case 33: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_prefixIncr);            break;
             }
  
             //
-            // Rule 33:  unary_expression ::= -- unary_expression
+            // Rule 34:  unary_expression ::= -- unary_expression
             //
-            case 33: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_prefixDecr);            break;
+            case 34: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_prefixDecr);            break;
             }
  
             //
-            // Rule 34:  unary_expression ::= & cast_expression
+            // Rule 35:  unary_expression ::= & cast_expression
             //
-            case 34: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_amper);            break;
+            case 35: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_amper);            break;
             }
  
             //
-            // Rule 35:  unary_expression ::= * cast_expression
+            // Rule 36:  unary_expression ::= * cast_expression
             //
-            case 35: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_star);             break;
+            case 36: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_star);             break;
             }
  
             //
-            // Rule 36:  unary_expression ::= + cast_expression
+            // Rule 37:  unary_expression ::= + cast_expression
             //
-            case 36: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_plus);             break;
+            case 37: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_plus);             break;
             }
  
             //
-            // Rule 37:  unary_expression ::= - cast_expression
+            // Rule 38:  unary_expression ::= - cast_expression
             //
-            case 37: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_minus);            break;
+            case 38: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_minus);            break;
             }
  
             //
-            // Rule 38:  unary_expression ::= ~ cast_expression
+            // Rule 39:  unary_expression ::= ~ cast_expression
             //
-            case 38: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_tilde);            break;
+            case 39: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_tilde);            break;
             }
  
             //
-            // Rule 39:  unary_expression ::= ! cast_expression
+            // Rule 40:  unary_expression ::= ! cast_expression
             //
-            case 39: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_not);              break;
+            case 40: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_not);              break;
             }
  
             //
-            // Rule 40:  unary_expression ::= sizeof unary_expression
+            // Rule 41:  unary_expression ::= sizeof unary_expression
             //
-            case 40: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_sizeof);           break;
+            case 41: { action.beforeConsume(); action.   consumeExpressionUnaryOperator(IASTUnaryExpression.op_sizeof);           break;
             }
  
             //
-            // Rule 41:  unary_expression ::= sizeof ( type_name )
+            // Rule 42:  unary_expression ::= sizeof ( type_name )
             //
-            case 41: { action.beforeConsume(); action.   consumeExpressionUnarySizeofTypeName();            break;
+            case 42: { action.beforeConsume(); action.   consumeExpressionUnarySizeofTypeName();            break;
             }
  
             //
-            // Rule 43:  cast_expression ::= ( type_name ) cast_expression
+            // Rule 44:  cast_expression ::= ( type_name ) cast_expression
             //
-            case 43: { action.beforeConsume(); action.   consumeExpressionCast();            break;
+            case 44: { action.beforeConsume(); action.   consumeExpressionCast();            break;
             }
  
             //
-            // Rule 45:  multiplicative_expression ::= multiplicative_expression * cast_expression
+            // Rule 46:  multiplicative_expression ::= multiplicative_expression * cast_expression
             //
-            case 45: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_multiply);           break;
+            case 46: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_multiply);           break;
             }
  
             //
-            // Rule 46:  multiplicative_expression ::= multiplicative_expression / cast_expression
+            // Rule 47:  multiplicative_expression ::= multiplicative_expression / cast_expression
             //
-            case 46: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_divide);             break;
+            case 47: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_divide);             break;
             }
  
             //
-            // Rule 47:  multiplicative_expression ::= multiplicative_expression % cast_expression
+            // Rule 48:  multiplicative_expression ::= multiplicative_expression % cast_expression
             //
-            case 47: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_modulo);             break;
+            case 48: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_modulo);             break;
             }
  
             //
-            // Rule 49:  additive_expression ::= additive_expression + multiplicative_expression
+            // Rule 50:  additive_expression ::= additive_expression + multiplicative_expression
             //
-            case 49: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_plus);            break;
+            case 50: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_plus);            break;
             }
  
             //
-            // Rule 50:  additive_expression ::= additive_expression - multiplicative_expression
+            // Rule 51:  additive_expression ::= additive_expression - multiplicative_expression
             //
-            case 50: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_minus);           break;
+            case 51: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_minus);           break;
             }
  
             //
-            // Rule 52:  shift_expression ::= shift_expression << additive_expression
+            // Rule 53:  shift_expression ::= shift_expression << additive_expression
             //
-            case 52: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_shiftLeft);             break;
+            case 53: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_shiftLeft);             break;
             }
  
             //
-            // Rule 53:  shift_expression ::= shift_expression >> additive_expression
+            // Rule 54:  shift_expression ::= shift_expression >> additive_expression
             //
-            case 53: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_shiftRight);            break;
+            case 54: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_shiftRight);            break;
             }
  
             //
-            // Rule 55:  relational_expression ::= relational_expression < shift_expression
+            // Rule 56:  relational_expression ::= relational_expression < shift_expression
             //
-            case 55: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_lessThan);               break;
+            case 56: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_lessThan);               break;
             }
  
             //
-            // Rule 56:  relational_expression ::= relational_expression > shift_expression
+            // Rule 57:  relational_expression ::= relational_expression > shift_expression
             //
-            case 56: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_greaterThan);            break;
+            case 57: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_greaterThan);            break;
             }
  
             //
-            // Rule 57:  relational_expression ::= relational_expression <= shift_expression
+            // Rule 58:  relational_expression ::= relational_expression <= shift_expression
             //
-            case 57: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_lessEqual);              break;
+            case 58: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_lessEqual);              break;
             }
  
             //
-            // Rule 58:  relational_expression ::= relational_expression >= shift_expression
+            // Rule 59:  relational_expression ::= relational_expression >= shift_expression
             //
-            case 58: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_greaterEqual);           break;
+            case 59: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_greaterEqual);           break;
             }
  
             //
-            // Rule 60:  equality_expression ::= equality_expression == relational_expression
+            // Rule 61:  equality_expression ::= equality_expression == relational_expression
             //
-            case 60: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_equals);            break;
+            case 61: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_equals);            break;
             }
  
             //
-            // Rule 61:  equality_expression ::= equality_expression != relational_expression
+            // Rule 62:  equality_expression ::= equality_expression != relational_expression
             //
-            case 61: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_notequals);            break;
+            case 62: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_notequals);            break;
             }
  
             //
-            // Rule 63:  AND_expression ::= AND_expression & equality_expression
+            // Rule 64:  AND_expression ::= AND_expression & equality_expression
             //
-            case 63: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryAnd);            break;
+            case 64: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryAnd);            break;
             }
  
             //
-            // Rule 65:  exclusive_OR_expression ::= exclusive_OR_expression ^ AND_expression
+            // Rule 66:  exclusive_OR_expression ::= exclusive_OR_expression ^ AND_expression
             //
-            case 65: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryXor);            break;
+            case 66: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryXor);            break;
             }
  
             //
-            // Rule 67:  inclusive_OR_expression ::= inclusive_OR_expression | exclusive_OR_expression
+            // Rule 68:  inclusive_OR_expression ::= inclusive_OR_expression | exclusive_OR_expression
             //
-            case 67: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryOr);            break;
+            case 68: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryOr);            break;
             }
  
             //
-            // Rule 69:  logical_AND_expression ::= logical_AND_expression && inclusive_OR_expression
+            // Rule 70:  logical_AND_expression ::= logical_AND_expression && inclusive_OR_expression
             //
-            case 69: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_logicalAnd);            break;
+            case 70: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_logicalAnd);            break;
             }
  
             //
-            // Rule 71:  logical_OR_expression ::= logical_OR_expression || logical_AND_expression
+            // Rule 72:  logical_OR_expression ::= logical_OR_expression || logical_AND_expression
             //
-            case 71: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_logicalOr);            break;
+            case 72: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_logicalOr);            break;
             }
  
             //
-            // Rule 73:  conditional_expression ::= logical_OR_expression ? expression : conditional_expression
+            // Rule 74:  conditional_expression ::= logical_OR_expression ? expression : conditional_expression
             //
-            case 73: { action.beforeConsume(); action.   consumeExpressionConditional();            break;
+            case 74: { action.beforeConsume(); action.   consumeExpressionConditional();            break;
             }
  
             //
-            // Rule 75:  assignment_expression ::= unary_expression = assignment_expression
+            // Rule 76:  assignment_expression ::= unary_expression = assignment_expression
             //
-            case 75: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);            break;
+            case 76: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_assign);            break;
             }
  
             //
-            // Rule 76:  assignment_expression ::= unary_expression *= assignment_expression
+            // Rule 77:  assignment_expression ::= unary_expression *= assignment_expression
             //
-            case 76: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_multiplyAssign);            break;
+            case 77: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_multiplyAssign);            break;
             }
  
             //
-            // Rule 77:  assignment_expression ::= unary_expression /= assignment_expression
+            // Rule 78:  assignment_expression ::= unary_expression /= assignment_expression
             //
-            case 77: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_divideAssign);            break;
+            case 78: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_divideAssign);            break;
             }
  
             //
-            // Rule 78:  assignment_expression ::= unary_expression %= assignment_expression
+            // Rule 79:  assignment_expression ::= unary_expression %= assignment_expression
             //
-            case 78: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_moduloAssign);            break;
+            case 79: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_moduloAssign);            break;
             }
  
             //
-            // Rule 79:  assignment_expression ::= unary_expression += assignment_expression
+            // Rule 80:  assignment_expression ::= unary_expression += assignment_expression
             //
-            case 79: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_plusAssign);            break;
+            case 80: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_plusAssign);            break;
             }
  
             //
-            // Rule 80:  assignment_expression ::= unary_expression -= assignment_expression
+            // Rule 81:  assignment_expression ::= unary_expression -= assignment_expression
             //
-            case 80: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_minusAssign);            break;
+            case 81: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_minusAssign);            break;
             }
  
             //
-            // Rule 81:  assignment_expression ::= unary_expression <<= assignment_expression
+            // Rule 82:  assignment_expression ::= unary_expression <<= assignment_expression
             //
-            case 81: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_shiftLeftAssign);            break;
+            case 82: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_shiftLeftAssign);            break;
             }
  
             //
-            // Rule 82:  assignment_expression ::= unary_expression >>= assignment_expression
+            // Rule 83:  assignment_expression ::= unary_expression >>= assignment_expression
             //
-            case 82: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_shiftRightAssign);            break;
+            case 83: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_shiftRightAssign);            break;
             }
  
             //
-            // Rule 83:  assignment_expression ::= unary_expression &= assignment_expression
+            // Rule 84:  assignment_expression ::= unary_expression &= assignment_expression
             //
-            case 83: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryAndAssign);            break;
+            case 84: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryAndAssign);            break;
             }
  
             //
-            // Rule 84:  assignment_expression ::= unary_expression ^= assignment_expression
+            // Rule 85:  assignment_expression ::= unary_expression ^= assignment_expression
             //
-            case 84: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryXorAssign);            break;
+            case 85: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryXorAssign);            break;
             }
  
             //
-            // Rule 85:  assignment_expression ::= unary_expression |= assignment_expression
+            // Rule 86:  assignment_expression ::= unary_expression |= assignment_expression
             //
-            case 85: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryOrAssign);            break;
+            case 86: { action.beforeConsume(); action.   consumeExpressionBinaryOperator(IASTBinaryExpression.op_binaryOrAssign);            break;
             }
  
             //
-            // Rule 86:  expression_in_statement ::= expression_list
-            //
-            case 86: { action.beforeConsume(); action.   consumeExpression();            break;
-            }
- 
-            //
-            // Rule 87:  expression ::= expression_list
+            // Rule 87:  expression_in_statement ::= expression_list
             //
             case 87: { action.beforeConsume(); action.   consumeExpression();            break;
             }
  
             //
-            // Rule 88:  expression_list ::= assignment_expression
+            // Rule 88:  expression ::= expression_list
             //
-            case 88: { action.beforeConsume(); action.   consumeExpressionList(true);            break;
+            case 88: { action.beforeConsume(); action.   consumeExpression();            break;
             }
  
             //
-            // Rule 89:  expression_list ::= expression_list , assignment_expression
+            // Rule 89:  expression_list ::= assignment_expression
             //
-            case 89: { action.beforeConsume(); action.   consumeExpressionList(false);            break;
+            case 89: { action.beforeConsume(); action.   consumeExpressionList(true);            break;
             }
  
             //
-            // Rule 97:  statement ::= ERROR_TOKEN
+            // Rule 90:  expression_list ::= expression_list , assignment_expression
             //
-            case 97: { action.beforeConsume(); action.   consumeStatementProblem();            break;
+            case 90: { action.beforeConsume(); action.   consumeExpressionList(false);            break;
             }
  
             //
-            // Rule 98:  labeled_statement ::= label_identifier : statement
+            // Rule 98:  statement ::= ERROR_TOKEN
             //
-            case 98: { action.beforeConsume(); action.   consumeStatementLabeled();            break;
+            case 98: { action.beforeConsume(); action.   consumeStatementProblem();            break;
             }
  
             //
-            // Rule 99:  labeled_statement ::= case constant_expression :
+            // Rule 99:  labeled_statement ::= label_identifier : statement
             //
-            case 99: { action.beforeConsume(); action.   consumeStatementCase();            break;
+            case 99: { action.beforeConsume(); action.   consumeStatementLabeled();            break;
             }
  
             //
-            // Rule 100:  labeled_statement ::= default :
+            // Rule 100:  labeled_statement ::= case constant_expression :
             //
-            case 100: { action.beforeConsume(); action.   consumeStatementDefault();            break;
+            case 100: { action.beforeConsume(); action.   consumeStatementCase();            break;
             }
  
             //
-            // Rule 101:  label_identifier ::= identifier
+            // Rule 101:  labeled_statement ::= default :
             //
-            case 101: { action.beforeConsume(); action.   consumeName();            break;
+            case 101: { action.beforeConsume(); action.   consumeStatementDefault();            break;
             }
  
             //
-            // Rule 102:  compound_statement ::= { }
+            // Rule 102:  label_identifier ::= identifier
             //
-            case 102: { action.beforeConsume(); action.   consumeStatementEmptyCompoundStatement();            break;
+            case 102: { action.beforeConsume(); action.   consumeName();            break;
             }
  
             //
-            // Rule 103:  compound_statement ::= { <openscope> block_item_list }
+            // Rule 103:  compound_statement ::= { }
             //
-            case 103: { action.beforeConsume(); action.   consumeStatementCompoundStatement();            break;
+            case 103: { action.beforeConsume(); action.   consumeStatementEmptyCompoundStatement();            break;
             }
  
             //
-            // Rule 107:  block_item ::= declaration
+            // Rule 104:  compound_statement ::= { <openscope> block_item_list }
             //
-            case 107: { action.beforeConsume(); action.   consumeStatementDeclaration();            break;
+            case 104: { action.beforeConsume(); action.   consumeStatementCompoundStatement();            break;
             }
  
             //
-            // Rule 108:  expression_statement ::= ;
+            // Rule 108:  block_item ::= declaration
             //
-            case 108: { action.beforeConsume(); action.   consumeStatementNull();            break;
+            case 108: { action.beforeConsume(); action.   consumeStatementDeclaration();            break;
             }
  
             //
-            // Rule 109:  expression_statement ::= expression_in_statement ;
+            // Rule 109:  expression_statement ::= ;
             //
-            case 109: { action.beforeConsume(); action.   consumeStatementExpression();            break;
+            case 109: { action.beforeConsume(); action.   consumeStatementNull();            break;
             }
  
             //
-            // Rule 110:  selection_statement ::= if ( expression ) statement
+            // Rule 110:  expression_statement ::= expression_in_statement ;
             //
-            case 110: { action.beforeConsume(); action.   consumeStatementIfThen();            break;
+            case 110: { action.beforeConsume(); action.   consumeStatementExpression();            break;
             }
  
             //
-            // Rule 111:  selection_statement ::= if ( expression ) statement else statement
+            // Rule 111:  selection_statement ::= if ( expression ) statement
             //
-            case 111: { action.beforeConsume(); action.   consumeStatementIfThenElse();            break;
+            case 111: { action.beforeConsume(); action.   consumeStatementIfThen();            break;
             }
  
             //
-            // Rule 112:  selection_statement ::= switch ( expression ) statement
+            // Rule 112:  selection_statement ::= if ( expression ) statement else statement
             //
-            case 112: { action.beforeConsume(); action.   consumeStatementSwitch();            break;
+            case 112: { action.beforeConsume(); action.   consumeStatementIfThenElse();            break;
             }
  
             //
-            // Rule 113:  iteration_statement ::= do statement while ( expression ) ;
+            // Rule 113:  selection_statement ::= switch ( expression ) statement
             //
-            case 113: { action.beforeConsume(); action.   consumeStatementDoLoop();            break;
+            case 113: { action.beforeConsume(); action.   consumeStatementSwitch();            break;
             }
  
             //
-            // Rule 114:  iteration_statement ::= while ( expression ) statement
+            // Rule 114:  iteration_statement ::= do statement while ( expression ) ;
             //
-            case 114: { action.beforeConsume(); action.   consumeStatementWhileLoop();            break;
+            case 114: { action.beforeConsume(); action.   consumeStatementDoLoop();            break;
             }
  
             //
-            // Rule 115:  iteration_statement ::= for ( expression ; expression ; expression ) statement
+            // Rule 115:  iteration_statement ::= while ( expression ) statement
             //
-            case 115: { action.beforeConsume(); action.   consumeStatementForLoop(true, true, true);            break;
+            case 115: { action.beforeConsume(); action.   consumeStatementWhileLoop();            break;
             }
  
             //
-            // Rule 116:  iteration_statement ::= for ( expression ; expression ; ) statement
+            // Rule 116:  iteration_statement ::= for ( expression ; expression ; expression ) statement
             //
-            case 116: { action.beforeConsume(); action.   consumeStatementForLoop(true, true, false);            break;
+            case 116: { action.beforeConsume(); action.   consumeStatementForLoop(true, true, true);            break;
             }
  
             //
-            // Rule 117:  iteration_statement ::= for ( expression ; ; expression ) statement
+            // Rule 117:  iteration_statement ::= for ( expression ; expression ; ) statement
             //
-            case 117: { action.beforeConsume(); action.   consumeStatementForLoop(true, false, true);            break;
+            case 117: { action.beforeConsume(); action.   consumeStatementForLoop(true, true, false);            break;
             }
  
             //
-            // Rule 118:  iteration_statement ::= for ( expression ; ; ) statement
+            // Rule 118:  iteration_statement ::= for ( expression ; ; expression ) statement
             //
-            case 118: { action.beforeConsume(); action.   consumeStatementForLoop(true, false, false);            break;
+            case 118: { action.beforeConsume(); action.   consumeStatementForLoop(true, false, true);            break;
             }
  
             //
-            // Rule 119:  iteration_statement ::= for ( ; expression ; expression ) statement
+            // Rule 119:  iteration_statement ::= for ( expression ; ; ) statement
             //
-            case 119: { action.beforeConsume(); action.   consumeStatementForLoop(false, true, true);            break;
+            case 119: { action.beforeConsume(); action.   consumeStatementForLoop(true, false, false);            break;
             }
  
             //
-            // Rule 120:  iteration_statement ::= for ( ; expression ; ) statement
+            // Rule 120:  iteration_statement ::= for ( ; expression ; expression ) statement
             //
-            case 120: { action.beforeConsume(); action.   consumeStatementForLoop(false, true, false);            break;
+            case 120: { action.beforeConsume(); action.   consumeStatementForLoop(false, true, true);            break;
             }
  
             //
-            // Rule 121:  iteration_statement ::= for ( ; ; expression ) statement
+            // Rule 121:  iteration_statement ::= for ( ; expression ; ) statement
             //
-            case 121: { action.beforeConsume(); action.   consumeStatementForLoop(false, false, true);            break;
+            case 121: { action.beforeConsume(); action.   consumeStatementForLoop(false, true, false);            break;
             }
  
             //
-            // Rule 122:  iteration_statement ::= for ( ; ; ) statement
+            // Rule 122:  iteration_statement ::= for ( ; ; expression ) statement
             //
-            case 122: { action.beforeConsume(); action.   consumeStatementForLoop(false, false, false);            break;
+            case 122: { action.beforeConsume(); action.   consumeStatementForLoop(false, false, true);            break;
             }
  
             //
-            // Rule 123:  iteration_statement ::= for ( declaration expression ; expression ) statement
+            // Rule 123:  iteration_statement ::= for ( ; ; ) statement
             //
-            case 123: { action.beforeConsume(); action.   consumeStatementForLoop(true, true, true);            break;
+            case 123: { action.beforeConsume(); action.   consumeStatementForLoop(false, false, false);            break;
             }
  
             //
-            // Rule 124:  iteration_statement ::= for ( declaration expression ; ) statement
+            // Rule 124:  iteration_statement ::= for ( declaration expression ; expression ) statement
             //
-            case 124: { action.beforeConsume(); action.   consumeStatementForLoop(true, true, false);            break;
+            case 124: { action.beforeConsume(); action.   consumeStatementForLoop(true, true, true);            break;
             }
  
             //
-            // Rule 125:  iteration_statement ::= for ( declaration ; expression ) statement
+            // Rule 125:  iteration_statement ::= for ( declaration expression ; ) statement
             //
-            case 125: { action.beforeConsume(); action.   consumeStatementForLoop(true, false, true);            break;
+            case 125: { action.beforeConsume(); action.   consumeStatementForLoop(true, true, false);            break;
             }
  
             //
-            // Rule 126:  iteration_statement ::= for ( declaration ; ) statement
+            // Rule 126:  iteration_statement ::= for ( declaration ; expression ) statement
             //
-            case 126: { action.beforeConsume(); action.   consumeStatementForLoop(true, false, false);            break;
+            case 126: { action.beforeConsume(); action.   consumeStatementForLoop(true, false, true);            break;
             }
  
             //
-            // Rule 127:  jump_statement ::= goto goto_identifier ;
+            // Rule 127:  iteration_statement ::= for ( declaration ; ) statement
             //
-            case 127: { action.beforeConsume(); action.   consumeStatementGoto();            break;
+            case 127: { action.beforeConsume(); action.   consumeStatementForLoop(true, false, false);            break;
             }
  
             //
-            // Rule 128:  jump_statement ::= continue ;
+            // Rule 128:  jump_statement ::= goto goto_identifier ;
             //
-            case 128: { action.beforeConsume(); action.   consumeStatementContinue();            break;
+            case 128: { action.beforeConsume(); action.   consumeStatementGoto();            break;
             }
  
             //
-            // Rule 129:  jump_statement ::= break ;
+            // Rule 129:  jump_statement ::= continue ;
             //
-            case 129: { action.beforeConsume(); action.   consumeStatementBreak();            break;
+            case 129: { action.beforeConsume(); action.   consumeStatementContinue();            break;
             }
  
             //
-            // Rule 130:  jump_statement ::= return ;
+            // Rule 130:  jump_statement ::= break ;
             //
-            case 130: { action.beforeConsume(); action.   consumeStatementReturn(false);            break;
+            case 130: { action.beforeConsume(); action.   consumeStatementBreak();            break;
             }
  
             //
-            // Rule 131:  jump_statement ::= return expression ;
+            // Rule 131:  jump_statement ::= return ;
             //
-            case 131: { action.beforeConsume(); action.   consumeStatementReturn(true);            break;
+            case 131: { action.beforeConsume(); action.   consumeStatementReturn(false);            break;
             }
  
             //
-            // Rule 132:  goto_identifier ::= identifier
+            // Rule 132:  jump_statement ::= return expression ;
             //
-            case 132: { action.beforeConsume(); action.   consumeName();            break;
+            case 132: { action.beforeConsume(); action.   consumeStatementReturn(true);            break;
             }
  
             //
-            // Rule 133:  declaration ::= declaration_specifiers ;
+            // Rule 133:  goto_identifier ::= identifier
             //
-            case 133: { action.beforeConsume(); action.   consumeDeclaration(false);            break;
+            case 133: { action.beforeConsume(); action.   consumeName();            break;
             }
  
             //
-            // Rule 134:  declaration ::= declaration_specifiers <openscope> init_declarator_list ;
+            // Rule 134:  declaration ::= declaration_specifiers ;
             //
-            case 134: { action.beforeConsume(); action.   consumeDeclaration(true);            break;
+            case 134: { action.beforeConsume(); action.   consumeDeclaration(false);            break;
             }
  
             //
-            // Rule 135:  declaration_specifiers ::= <openscope> simple_declaration_specifiers
+            // Rule 135:  declaration ::= declaration_specifiers <openscope> init_declarator_list ;
             //
-            case 135: { action.beforeConsume(); action.   consumeDeclarationSpecifiersSimple();           break;
+            case 135: { action.beforeConsume(); action.   consumeDeclaration(true);            break;
             }
  
             //
-            // Rule 136:  declaration_specifiers ::= <openscope> struct_or_union_declaration_specifiers
+            // Rule 136:  declaration_specifiers ::= <openscope> simple_declaration_specifiers
             //
-            case 136: { action.beforeConsume(); action.   consumeDeclarationSpecifiersStructUnionEnum();           break;
+            case 136: { action.beforeConsume(); action.   consumeDeclarationSpecifiersSimple();           break;
             }
  
             //
-            // Rule 137:  declaration_specifiers ::= <openscope> enum_declaration_specifiers
+            // Rule 137:  declaration_specifiers ::= <openscope> struct_or_union_declaration_specifiers
             //
             case 137: { action.beforeConsume(); action.   consumeDeclarationSpecifiersStructUnionEnum();           break;
             }
  
             //
-            // Rule 138:  declaration_specifiers ::= <openscope> typdef_name_declaration_specifiers
+            // Rule 138:  declaration_specifiers ::= <openscope> enum_declaration_specifiers
             //
-            case 138: { action.beforeConsume(); action.   consumeDeclarationSpecifiersTypedefName();           break;
+            case 138: { action.beforeConsume(); action.   consumeDeclarationSpecifiersStructUnionEnum();           break;
             }
  
             //
-            // Rule 165:  init_declarator ::= declarator = initializer
+            // Rule 139:  declaration_specifiers ::= <openscope> typdef_name_declaration_specifiers
             //
-            case 165: { action.beforeConsume(); action.   consumeDeclaratorWithInitializer();            break;
+            case 139: { action.beforeConsume(); action.   consumeDeclarationSpecifiersTypedefName();           break;
             }
  
             //
-            // Rule 166:  storage_class_specifier ::= typedef
+            // Rule 161:  init_declarator ::= declarator = initializer
+            //
+            case 161: { action.beforeConsume(); action.   consumeDeclaratorWithInitializer();            break;
+            }
+ 
+            //
+            // Rule 162:  storage_class_specifier ::= typedef
+            //
+            case 162: { action.beforeConsume(); action.   consumeToken();            break;
+            }
+ 
+            //
+            // Rule 163:  storage_class_specifier ::= extern
+            //
+            case 163: { action.beforeConsume(); action.   consumeToken();            break;
+            }
+ 
+            //
+            // Rule 164:  storage_class_specifier ::= static
+            //
+            case 164: { action.beforeConsume(); action.   consumeToken();            break;
+            }
+ 
+            //
+            // Rule 165:  storage_class_specifier ::= auto
+            //
+            case 165: { action.beforeConsume(); action.   consumeToken();            break;
+            }
+ 
+            //
+            // Rule 166:  storage_class_specifier ::= register
             //
             case 166: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 167:  storage_class_specifier ::= extern
+            // Rule 167:  type_specifier ::= void
             //
             case 167: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 168:  storage_class_specifier ::= static
+            // Rule 168:  type_specifier ::= char
             //
             case 168: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 169:  storage_class_specifier ::= auto
+            // Rule 169:  type_specifier ::= short
             //
             case 169: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 170:  storage_class_specifier ::= register
+            // Rule 170:  type_specifier ::= int
             //
             case 170: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 171:  type_specifier ::= void
+            // Rule 171:  type_specifier ::= long
             //
             case 171: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 172:  type_specifier ::= char
+            // Rule 172:  type_specifier ::= float
             //
             case 172: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 173:  type_specifier ::= short
+            // Rule 173:  type_specifier ::= double
             //
             case 173: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 174:  type_specifier ::= int
+            // Rule 174:  type_specifier ::= signed
             //
             case 174: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 175:  type_specifier ::= long
+            // Rule 175:  type_specifier ::= unsigned
             //
             case 175: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 176:  type_specifier ::= float
+            // Rule 176:  type_specifier ::= _Bool
             //
             case 176: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 177:  type_specifier ::= double
+            // Rule 177:  type_specifier ::= _Complex
             //
             case 177: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 178:  type_specifier ::= signed
+            // Rule 178:  type_specifier ::= _Imaginary
             //
             case 178: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 179:  type_specifier ::= unsigned
+            // Rule 179:  typedef_name ::= identifier_or_completion
             //
             case 179: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 180:  type_specifier ::= _Bool
+            // Rule 180:  struct_or_union_specifier ::= struct { <openscope> struct_declaration_list_opt }
             //
-            case 180: { action.beforeConsume(); action.   consumeToken();            break;
+            case 180: { action.beforeConsume(); action.   consumeTypeSpecifierComposite(false, IASTCompositeTypeSpecifier.k_struct);            break;
             }
  
             //
-            // Rule 181:  type_specifier ::= _Complex
+            // Rule 181:  struct_or_union_specifier ::= union { <openscope> struct_declaration_list_opt }
             //
-            case 181: { action.beforeConsume(); action.   consumeToken();            break;
+            case 181: { action.beforeConsume(); action.   consumeTypeSpecifierComposite(false, IASTCompositeTypeSpecifier.k_union);            break;
             }
  
             //
-            // Rule 182:  type_specifier ::= _Imaginary
+            // Rule 182:  struct_or_union_specifier ::= struct struct_or_union_identifier { <openscope> struct_declaration_list_opt }
             //
-            case 182: { action.beforeConsume(); action.   consumeToken();            break;
+            case 182: { action.beforeConsume(); action.   consumeTypeSpecifierComposite(true, IASTCompositeTypeSpecifier.k_struct);            break;
             }
  
             //
-            // Rule 183:  typedef_name ::= ident
+            // Rule 183:  struct_or_union_specifier ::= union struct_or_union_identifier { <openscope> struct_declaration_list_opt }
             //
-            case 183: { action.beforeConsume(); action.   consumeToken();            break;
+            case 183: { action.beforeConsume(); action.   consumeTypeSpecifierComposite(true, IASTCompositeTypeSpecifier.k_union);            break;
             }
  
             //
-            // Rule 184:  struct_or_union_specifier ::= struct { <openscope> struct_declaration_list_opt }
+            // Rule 184:  struct_or_union_specifier ::= struct struct_or_union_identifier
             //
-            case 184: { action.beforeConsume(); action.   consumeTypeSpecifierComposite(false, IASTCompositeTypeSpecifier.k_struct);            break;
+            case 184: { action.beforeConsume(); action.   consumeTypeSpecifierElaborated(IASTElaboratedTypeSpecifier.k_struct);            break;
             }
  
             //
-            // Rule 185:  struct_or_union_specifier ::= union { <openscope> struct_declaration_list_opt }
+            // Rule 185:  struct_or_union_specifier ::= union struct_or_union_identifier
             //
-            case 185: { action.beforeConsume(); action.   consumeTypeSpecifierComposite(false, IASTCompositeTypeSpecifier.k_union);            break;
+            case 185: { action.beforeConsume(); action.   consumeTypeSpecifierElaborated(IASTElaboratedTypeSpecifier.k_union);            break;
             }
  
             //
-            // Rule 186:  struct_or_union_specifier ::= struct struct_or_union_identifier { <openscope> struct_declaration_list_opt }
+            // Rule 186:  struct_or_union_identifier ::= identifier
             //
-            case 186: { action.beforeConsume(); action.   consumeTypeSpecifierComposite(true, IASTCompositeTypeSpecifier.k_struct);            break;
+            case 186: { action.beforeConsume(); action.   consumeName();            break;
             }
  
             //
-            // Rule 187:  struct_or_union_specifier ::= union struct_or_union_identifier { <openscope> struct_declaration_list_opt }
+            // Rule 191:  struct_declaration ::= specifier_qualifier_list <openscope> struct_declarator_list ;
             //
-            case 187: { action.beforeConsume(); action.   consumeTypeSpecifierComposite(true, IASTCompositeTypeSpecifier.k_union);            break;
+            case 191: { action.beforeConsume(); action.   consumeStructDeclaration(true);            break;
             }
  
             //
-            // Rule 188:  struct_or_union_specifier ::= struct struct_or_union_identifier
+            // Rule 192:  struct_declaration ::= specifier_qualifier_list ;
             //
-            case 188: { action.beforeConsume(); action.   consumeTypeSpecifierElaborated(IASTElaboratedTypeSpecifier.k_struct);            break;
+            case 192: { action.beforeConsume(); action.   consumeStructDeclaration(false);            break;
             }
  
             //
-            // Rule 189:  struct_or_union_specifier ::= union struct_or_union_identifier
+            // Rule 197:  struct_declarator ::= : constant_expression
             //
-            case 189: { action.beforeConsume(); action.   consumeTypeSpecifierElaborated(IASTElaboratedTypeSpecifier.k_union);            break;
+            case 197: { action.beforeConsume(); action.   consumeStructBitField(false);            break;
             }
  
             //
-            // Rule 190:  struct_or_union_identifier ::= identifier
+            // Rule 198:  struct_declarator ::= declarator : constant_expression
             //
-            case 190: { action.beforeConsume(); action.   consumeName();            break;
+            case 198: { action.beforeConsume(); action.   consumeStructBitField(true);             break;
             }
  
             //
-            // Rule 195:  struct_declaration ::= specifier_qualifier_list <openscope> struct_declarator_list ;
+            // Rule 199:  enum_identifier ::= identifier
             //
-            case 195: { action.beforeConsume(); action.   consumeStructDeclaration(true);            break;
+            case 199: { action.beforeConsume(); action.   consumeName();            break;
             }
  
             //
-            // Rule 196:  struct_declaration ::= specifier_qualifier_list ;
+            // Rule 200:  enum_specifier ::= enum { <openscope> enumerator_list_opt }
             //
-            case 196: { action.beforeConsume(); action.   consumeStructDeclaration(false);            break;
+            case 200: { action.beforeConsume(); action.   consumeTypeSpecifierEnumeration(false);            break;
             }
  
             //
-            // Rule 201:  struct_declarator ::= : constant_expression
+            // Rule 201:  enum_specifier ::= enum enum_identifier { <openscope> enumerator_list_opt }
             //
-            case 201: { action.beforeConsume(); action.   consumeStructBitField(false);            break;
+            case 201: { action.beforeConsume(); action.   consumeTypeSpecifierEnumeration(true);            break;
             }
  
             //
-            // Rule 202:  struct_declarator ::= declarator : constant_expression
+            // Rule 202:  enum_specifier ::= enum { <openscope> enumerator_list_opt , }
             //
-            case 202: { action.beforeConsume(); action.   consumeStructBitField(true);             break;
+            case 202: { action.beforeConsume(); action.   consumeTypeSpecifierEnumeration(false);            break;
             }
  
             //
-            // Rule 203:  enum_identifier ::= identifier
+            // Rule 203:  enum_specifier ::= enum enum_identifier { <openscope> enumerator_list_opt , }
             //
-            case 203: { action.beforeConsume(); action.   consumeName();            break;
+            case 203: { action.beforeConsume(); action.   consumeTypeSpecifierEnumeration(true);            break;
             }
  
             //
-            // Rule 204:  enum_specifier ::= enum { <openscope> enumerator_list_opt }
+            // Rule 204:  enum_specifier ::= enum enum_identifier
             //
-            case 204: { action.beforeConsume(); action.   consumeTypeSpecifierEnumeration(false);            break;
+            case 204: { action.beforeConsume(); action.   consumeTypeSpecifierElaborated(IASTElaboratedTypeSpecifier.k_enum);            break;
             }
  
             //
-            // Rule 205:  enum_specifier ::= enum enum_identifier { <openscope> enumerator_list_opt }
+            // Rule 209:  enumerator ::= enum_identifier
             //
-            case 205: { action.beforeConsume(); action.   consumeTypeSpecifierEnumeration(true);            break;
+            case 209: { action.beforeConsume(); action.   consumeEnumerator(false);            break;
             }
  
             //
-            // Rule 206:  enum_specifier ::= enum { <openscope> enumerator_list_opt , }
+            // Rule 210:  enumerator ::= enum_identifier = constant_expression
             //
-            case 206: { action.beforeConsume(); action.   consumeTypeSpecifierEnumeration(false);            break;
+            case 210: { action.beforeConsume(); action.   consumeEnumerator(true);            break;
             }
  
             //
-            // Rule 207:  enum_specifier ::= enum enum_identifier { <openscope> enumerator_list_opt , }
+            // Rule 211:  type_qualifier ::= const
             //
-            case 207: { action.beforeConsume(); action.   consumeTypeSpecifierEnumeration(true);            break;
+            case 211: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 208:  enum_specifier ::= enum enum_identifier
+            // Rule 212:  type_qualifier ::= restrict
             //
-            case 208: { action.beforeConsume(); action.   consumeTypeSpecifierElaborated(IASTElaboratedTypeSpecifier.k_enum);            break;
+            case 212: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 213:  enumerator ::= enum_identifier
+            // Rule 213:  type_qualifier ::= volatile
             //
-            case 213: { action.beforeConsume(); action.   consumeEnumerator(false);            break;
+            case 213: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 214:  enumerator ::= enum_identifier = constant_expression
+            // Rule 214:  function_specifier ::= inline
             //
-            case 214: { action.beforeConsume(); action.   consumeEnumerator(true);            break;
+            case 214: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 215:  type_qualifier ::= const
+            // Rule 216:  declarator ::= <openscope> pointer direct_declarator
             //
-            case 215: { action.beforeConsume(); action.   consumeToken();            break;
+            case 216: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(true);            break;
             }
  
             //
-            // Rule 216:  type_qualifier ::= restrict
+            // Rule 217:  direct_declarator ::= identifier
             //
-            case 216: { action.beforeConsume(); action.   consumeToken();            break;
+            case 217: { action.beforeConsume(); action.   consumeDirectDeclaratorIdentifier();            break;
             }
  
             //
-            // Rule 217:  type_qualifier ::= volatile
+            // Rule 218:  direct_declarator ::= ( declarator )
             //
-            case 217: { action.beforeConsume(); action.   consumeToken();            break;
+            case 218: { action.beforeConsume(); action.   consumeDirectDeclaratorBracketed();            break;
             }
  
             //
-            // Rule 218:  function_specifier ::= inline
+            // Rule 221:  array_direct_declarator ::= direct_declarator array_modifier
             //
-            case 218: { action.beforeConsume(); action.   consumeToken();            break;
+            case 221: { action.beforeConsume(); action.   consumeDirectDeclaratorArrayDeclarator();            break;
             }
  
             //
-            // Rule 220:  declarator ::= <openscope> pointer direct_declarator
+            // Rule 222:  function_direct_declarator ::= direct_declarator ( <openscope> parameter_type_list )
             //
-            case 220: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(true);            break;
+            case 222: { action.beforeConsume(); action.   consumeDirectDeclaratorFunctionDeclarator(true);            break;
             }
  
             //
-            // Rule 221:  direct_declarator ::= identifier
+            // Rule 223:  function_direct_declarator ::= direct_declarator ( )
             //
-            case 221: { action.beforeConsume(); action.   consumeDirectDeclaratorIdentifier();            break;
+            case 223: { action.beforeConsume(); action.   consumeDirectDeclaratorFunctionDeclarator(false);            break;
             }
  
             //
-            // Rule 222:  direct_declarator ::= ( declarator )
+            // Rule 225:  function_declarator ::= <openscope> pointer function_direct_declarator
             //
-            case 222: { action.beforeConsume(); action.   consumeDirectDeclaratorBracketed();            break;
+            case 225: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(true);            break;
             }
  
             //
-            // Rule 225:  array_direct_declarator ::= direct_declarator array_modifier
+            // Rule 226:  knr_direct_declarator ::= direct_declarator ( <openscope> identifier_list )
             //
-            case 225: { action.beforeConsume(); action.   consumeDirectDeclaratorArrayDeclarator();            break;
+            case 226: { action.beforeConsume(); action.   consumeDirectDeclaratorFunctionDeclaratorKnR();            break;
             }
  
             //
-            // Rule 226:  function_direct_declarator ::= direct_declarator ( <openscope> parameter_type_list )
+            // Rule 228:  knr_function_declarator ::= <openscope> pointer knr_direct_declarator
             //
-            case 226: { action.beforeConsume(); action.   consumeDirectDeclaratorFunctionDeclarator(true);            break;
+            case 228: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(true);            break;
             }
  
             //
-            // Rule 227:  function_direct_declarator ::= direct_declarator ( )
+            // Rule 229:  array_modifier ::= [ ]
             //
-            case 227: { action.beforeConsume(); action.   consumeDirectDeclaratorFunctionDeclarator(false);            break;
+            case 229: { action.beforeConsume(); action.   consumeDirectDeclaratorArrayModifier(false);            break;
             }
  
             //
-            // Rule 229:  function_declarator ::= <openscope> pointer function_direct_declarator
+            // Rule 230:  array_modifier ::= [ <openscope> type_qualifier_list ]
             //
-            case 229: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(true);            break;
+            case 230: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true,  false);            break;
             }
  
             //
-            // Rule 230:  knr_direct_declarator ::= direct_declarator ( <openscope> identifier_list )
+            // Rule 231:  array_modifier ::= [ assignment_expression ]
             //
-            case 230: { action.beforeConsume(); action.   consumeDirectDeclaratorFunctionDeclaratorKnR();            break;
+            case 231: { action.beforeConsume(); action.   consumeDirectDeclaratorArrayModifier(true );            break;
             }
  
             //
-            // Rule 232:  knr_function_declarator ::= <openscope> pointer knr_direct_declarator
+            // Rule 232:  array_modifier ::= [ <openscope> type_qualifier_list assignment_expression ]
             //
-            case 232: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(true);            break;
+            case 232: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true,  true );            break;
             }
  
             //
-            // Rule 233:  array_modifier ::= [ ]
+            // Rule 233:  array_modifier ::= [ static assignment_expression ]
             //
-            case 233: { action.beforeConsume(); action.   consumeDirectDeclaratorArrayModifier(false);            break;
+            case 233: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(true,  false, false, true );            break;
             }
  
             //
-            // Rule 234:  array_modifier ::= [ <openscope> type_qualifier_list ]
+            // Rule 234:  array_modifier ::= [ static <openscope> type_qualifier_list assignment_expression ]
             //
-            case 234: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true,  false);            break;
+            case 234: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(true,  false, true,  true );            break;
             }
  
             //
-            // Rule 235:  array_modifier ::= [ assignment_expression ]
+            // Rule 235:  array_modifier ::= [ <openscope> type_qualifier_list static assignment_expression ]
             //
-            case 235: { action.beforeConsume(); action.   consumeDirectDeclaratorArrayModifier(true );            break;
+            case 235: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(true,  false, true,  true );            break;
             }
  
             //
-            // Rule 236:  array_modifier ::= [ <openscope> type_qualifier_list assignment_expression ]
+            // Rule 236:  array_modifier ::= [ * ]
             //
-            case 236: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(false, false, true,  true );            break;
+            case 236: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(false, true,  false, false);            break;
             }
  
             //
-            // Rule 237:  array_modifier ::= [ static assignment_expression ]
+            // Rule 237:  array_modifier ::= [ <openscope> type_qualifier_list * ]
             //
-            case 237: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(true,  false, false, true );            break;
+            case 237: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(false, true,  true,  false);            break;
             }
  
             //
-            // Rule 238:  array_modifier ::= [ static <openscope> type_qualifier_list assignment_expression ]
+            // Rule 238:  pointer ::= *
             //
-            case 238: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(true,  false, true,  true );            break;
+            case 238: { action.beforeConsume(); action.   consumePointer();            break;
             }
  
             //
-            // Rule 239:  array_modifier ::= [ <openscope> type_qualifier_list static assignment_expression ]
+            // Rule 239:  pointer ::= pointer *
             //
-            case 239: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(true,  false, true,  true );            break;
+            case 239: { action.beforeConsume(); action.   consumePointer();            break;
             }
  
             //
-            // Rule 240:  array_modifier ::= [ * ]
+            // Rule 240:  pointer ::= * <openscope> type_qualifier_list
             //
-            case 240: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(false, true,  false, false);            break;
+            case 240: { action.beforeConsume(); action.   consumePointerTypeQualifierList();            break;
             }
  
             //
-            // Rule 241:  array_modifier ::= [ <openscope> type_qualifier_list * ]
+            // Rule 241:  pointer ::= pointer * <openscope> type_qualifier_list
             //
-            case 241: { action.beforeConsume(); action.   consumeDirectDeclaratorModifiedArrayModifier(false, true,  true,  false);            break;
+            case 241: { action.beforeConsume(); action.   consumePointerTypeQualifierList();            break;
             }
  
             //
-            // Rule 242:  pointer ::= *
+            // Rule 249:  parameter_declaration ::= declaration_specifiers init_declarator
             //
-            case 242: { action.beforeConsume(); action.   consumePointer();            break;
+            case 249: { action.beforeConsume(); action.   consumeParameterDeclaration(true);            break;
             }
  
             //
-            // Rule 243:  pointer ::= pointer *
+            // Rule 250:  parameter_declaration ::= declaration_specifiers
             //
-            case 243: { action.beforeConsume(); action.   consumePointer();            break;
+            case 250: { action.beforeConsume(); action.   consumeParameterDeclaration(false);           break;
             }
  
             //
-            // Rule 244:  pointer ::= * <openscope> type_qualifier_list
+            // Rule 251:  parameter_declaration ::= declaration_specifiers abstract_declarator
             //
-            case 244: { action.beforeConsume(); action.   consumePointerTypeQualifierList();            break;
+            case 251: { action.beforeConsume(); action.   consumeParameterDeclaration(true);            break;
             }
  
             //
-            // Rule 245:  pointer ::= pointer * <openscope> type_qualifier_list
+            // Rule 252:  identifier_list ::= identifier
             //
-            case 245: { action.beforeConsume(); action.   consumePointerTypeQualifierList();            break;
+            case 252: { action.beforeConsume(); action.   consumeName();            break;
             }
  
             //
-            // Rule 253:  parameter_declaration ::= declaration_specifiers init_declarator
+            // Rule 253:  identifier_list ::= identifier_list , identifier
             //
-            case 253: { action.beforeConsume(); action.   consumeParameterDeclaration(true);            break;
+            case 253: { action.beforeConsume(); action.   consumeName();            break;
             }
  
             //
-            // Rule 254:  parameter_declaration ::= declaration_specifiers
+            // Rule 254:  type_name ::= specifier_qualifier_list
             //
-            case 254: { action.beforeConsume(); action.   consumeParameterDeclaration(false);           break;
+            case 254: { action.beforeConsume(); action.   consumeTypeId(false);            break;
             }
  
             //
-            // Rule 255:  parameter_declaration ::= declaration_specifiers abstract_declarator
+            // Rule 255:  type_name ::= specifier_qualifier_list abstract_declarator
             //
-            case 255: { action.beforeConsume(); action.   consumeParameterDeclaration(true);            break;
+            case 255: { action.beforeConsume(); action.   consumeTypeId(true);            break;
             }
  
             //
-            // Rule 256:  identifier_list ::= identifier
+            // Rule 256:  abstract_declarator ::= <openscope> pointer
             //
-            case 256: { action.beforeConsume(); action.   consumeName();            break;
+            case 256: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(false);            break;
             }
  
             //
-            // Rule 257:  identifier_list ::= identifier_list , identifier
+            // Rule 258:  abstract_declarator ::= <openscope> pointer direct_abstract_declarator
             //
-            case 257: { action.beforeConsume(); action.   consumeName();            break;
+            case 258: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(true);             break;
             }
  
             //
-            // Rule 258:  type_name ::= specifier_qualifier_list
+            // Rule 259:  direct_abstract_declarator ::= ( abstract_declarator )
             //
-            case 258: { action.beforeConsume(); action.   consumeTypeId(false);            break;
+            case 259: { action.beforeConsume(); action.   consumeDirectDeclaratorBracketed();            break;
             }
  
             //
-            // Rule 259:  type_name ::= specifier_qualifier_list abstract_declarator
+            // Rule 260:  direct_abstract_declarator ::= array_modifier
             //
-            case 259: { action.beforeConsume(); action.   consumeTypeId(true);            break;
+            case 260: { action.beforeConsume(); action.   consumeAbstractDeclaratorArrayModifier(false);            break;
             }
  
             //
-            // Rule 260:  abstract_declarator ::= <openscope> pointer
+            // Rule 261:  direct_abstract_declarator ::= direct_abstract_declarator array_modifier
             //
-            case 260: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(false);            break;
+            case 261: { action.beforeConsume(); action.   consumeAbstractDeclaratorArrayModifier(true);             break;
             }
  
             //
-            // Rule 262:  abstract_declarator ::= <openscope> pointer direct_abstract_declarator
+            // Rule 262:  direct_abstract_declarator ::= ( )
             //
-            case 262: { action.beforeConsume(); action.   consumeDeclaratorWithPointer(true);             break;
+            case 262: { action.beforeConsume(); action.   consumeAbstractDeclaratorFunctionDeclarator(false, false);           break;
             }
  
             //
-            // Rule 263:  direct_abstract_declarator ::= ( abstract_declarator )
+            // Rule 263:  direct_abstract_declarator ::= direct_abstract_declarator ( )
             //
-            case 263: { action.beforeConsume(); action.   consumeDirectDeclaratorBracketed();            break;
+            case 263: { action.beforeConsume(); action.   consumeAbstractDeclaratorFunctionDeclarator(true, false);            break;
             }
  
             //
-            // Rule 264:  direct_abstract_declarator ::= array_modifier
+            // Rule 264:  direct_abstract_declarator ::= ( <openscope> parameter_type_list )
             //
-            case 264: { action.beforeConsume(); action.   consumeAbstractDeclaratorArrayModifier(false);            break;
+            case 264: { action.beforeConsume(); action.   consumeAbstractDeclaratorFunctionDeclarator(false, true);            break;
             }
  
             //
-            // Rule 265:  direct_abstract_declarator ::= direct_abstract_declarator array_modifier
+            // Rule 265:  direct_abstract_declarator ::= direct_abstract_declarator ( <openscope> parameter_type_list )
             //
-            case 265: { action.beforeConsume(); action.   consumeAbstractDeclaratorArrayModifier(true);             break;
+            case 265: { action.beforeConsume(); action.   consumeAbstractDeclaratorFunctionDeclarator(true, true);             break;
             }
  
             //
-            // Rule 266:  direct_abstract_declarator ::= ( )
+            // Rule 266:  initializer ::= assignment_expression
             //
-            case 266: { action.beforeConsume(); action.   consumeAbstractDeclaratorFunctionDeclarator(false, false);           break;
+            case 266: { action.beforeConsume(); action.   consumeInitializer();            break;
             }
  
             //
-            // Rule 267:  direct_abstract_declarator ::= direct_abstract_declarator ( )
+            // Rule 267:  initializer ::= { <openscope> initializer_list }
             //
-            case 267: { action.beforeConsume(); action.   consumeAbstractDeclaratorFunctionDeclarator(true, false);            break;
+            case 267: { action.beforeConsume(); action.   consumeInitializerList();            break;
             }
  
             //
-            // Rule 268:  direct_abstract_declarator ::= ( <openscope> parameter_type_list )
+            // Rule 268:  initializer ::= { <openscope> initializer_list , }
             //
-            case 268: { action.beforeConsume(); action.   consumeAbstractDeclaratorFunctionDeclarator(false, true);            break;
+            case 268: { action.beforeConsume(); action.   consumeInitializerList();            break;
             }
  
             //
-            // Rule 269:  direct_abstract_declarator ::= direct_abstract_declarator ( <openscope> parameter_type_list )
+            // Rule 273:  designated_initializer ::= <openscope> designation initializer
             //
-            case 269: { action.beforeConsume(); action.   consumeAbstractDeclaratorFunctionDeclarator(true, true);             break;
+            case 273: { action.beforeConsume(); action.   consumeInitializerDesignated();            break;
             }
  
             //
-            // Rule 270:  initializer ::= assignment_expression
+            // Rule 277:  designator ::= [ constant_expression ]
             //
-            case 270: { action.beforeConsume(); action.   consumeInitializer();            break;
+            case 277: { action.beforeConsume(); action.   consumeDesignatorArrayDesignator();            break;
             }
  
             //
-            // Rule 271:  initializer ::= { <openscope> initializer_list }
+            // Rule 278:  designator ::= . identifier
             //
-            case 271: { action.beforeConsume(); action.   consumeInitializerList();            break;
+            case 278: { action.beforeConsume(); action.   consumeDesignatorFieldDesignator();            break;
             }
  
             //
-            // Rule 272:  initializer ::= { <openscope> initializer_list , }
+            // Rule 279:  translation_unit ::= external_declaration_list
             //
-            case 272: { action.beforeConsume(); action.   consumeInitializerList();            break;
+            case 279: { action.beforeConsume(); action.   consumeTranslationUnit();            break;
             }
  
             //
-            // Rule 277:  designated_initializer ::= <openscope> designation initializer
+            // Rule 280:  translation_unit ::= $Empty
             //
-            case 277: { action.beforeConsume(); action.   consumeInitializerDesignated();            break;
+            case 280: { action.beforeConsume(); action.   consumeTranslationUnit();            break;
             }
  
             //
-            // Rule 281:  designator ::= [ constant_expression ]
+            // Rule 285:  external_declaration ::= ;
             //
-            case 281: { action.beforeConsume(); action.   consumeDesignatorArrayDesignator();            break;
+            case 285: { action.beforeConsume(); action.   consumeDeclarationEmpty();           break;
             }
  
             //
-            // Rule 282:  designator ::= . identifier
+            // Rule 286:  external_declaration ::= ERROR_TOKEN
             //
-            case 282: { action.beforeConsume(); action.   consumeDesignatorFieldDesignator();            break;
+            case 286: { action.beforeConsume(); action.   consumeDeclarationProblem();            break;
             }
  
             //
-            // Rule 283:  translation_unit ::= external_declaration_list
+            // Rule 287:  function_definition ::= declaration_specifiers <openscope> function_declarator compound_statement
             //
-            case 283: { action.beforeConsume(); action.   consumeTranslationUnit();            break;
+            case 287: { action.beforeConsume(); action.   consumeFunctionDefinition(true);            break;
             }
  
             //
-            // Rule 284:  translation_unit ::= $Empty
+            // Rule 288:  function_definition ::= declaration_specifiers <openscope> knr_function_declarator <openscope> declaration_list compound_statement
             //
-            case 284: { action.beforeConsume(); action.   consumeTranslationUnit();            break;
+            case 288: { action.beforeConsume(); action.   consumeFunctionDefinitionKnR();            break;
             }
  
             //
-            // Rule 289:  external_declaration ::= ;
+            // Rule 289:  function_definition ::= function_declarator compound_statement
             //
-            case 289: { action.beforeConsume(); action.   consumeDeclarationEmpty();           break;
+            case 289: { action.beforeConsume(); action.   consumeFunctionDefinition(false);            break;
             }
  
             //
-            // Rule 290:  external_declaration ::= ERROR_TOKEN
+            // Rule 292:  constant ::= MYTHREAD
             //
-            case 290: { action.beforeConsume(); action.   consumeDeclarationProblem();            break;
+            case 292: { action.beforeConsume(); action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_mythread);           break;
             }
  
             //
-            // Rule 291:  function_definition ::= declaration_specifiers <openscope> function_declarator compound_statement
+            // Rule 293:  constant ::= THREADS
             //
-            case 291: { action.beforeConsume(); action.   consumeFunctionDefinition(true);            break;
+            case 293: { action.beforeConsume(); action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_threads);           break;
             }
  
             //
-            // Rule 292:  function_definition ::= declaration_specifiers <openscope> knr_function_declarator <openscope> declaration_list compound_statement
+            // Rule 294:  constant ::= UPC_MAX_BLOCKSIZE
             //
-            case 292: { action.beforeConsume(); action.   consumeFunctionDefinitionKnR();            break;
+            case 294: { action.beforeConsume(); action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_upc_max_block_size);           break;
             }
  
             //
-            // Rule 293:  function_definition ::= function_declarator compound_statement
+            // Rule 295:  unary_expression ::= upc_localsizeof unary_expression
             //
-            case 293: { action.beforeConsume(); action.   consumeFunctionDefinition(false);            break;
+            case 295: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_localsizeof);           break;
             }
  
             //
-            // Rule 296:  constant ::= MYTHREAD
+            // Rule 296:  unary_expression ::= upc_localsizeof ( type_name )
             //
-            case 296: { action.beforeConsume(); action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_mythread);           break;
+            case 296: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_localsizeof);           break;
             }
  
             //
-            // Rule 297:  constant ::= THREADS
+            // Rule 297:  unary_expression ::= upc_blocksizeof unary_expression
             //
-            case 297: { action.beforeConsume(); action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_threads);           break;
+            case 297: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_blocksizeof);           break;
             }
  
             //
-            // Rule 298:  constant ::= UPC_MAX_BLOCKSIZE
+            // Rule 298:  unary_expression ::= upc_blocksizeof ( type_name )
             //
-            case 298: { action.beforeConsume(); action.   consumeKeywordExpression(IUPCASTKeywordExpression.kw_upc_max_block_size);           break;
+            case 298: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_blocksizeof);           break;
             }
  
             //
-            // Rule 299:  unary_expression ::= upc_localsizeof unary_expression
+            // Rule 299:  unary_expression ::= upc_elemsizeof unary_expression
             //
-            case 299: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_localsizeof);           break;
+            case 299: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_elemsizeof);           break;
             }
  
             //
-            // Rule 300:  unary_expression ::= upc_localsizeof ( type_name )
+            // Rule 300:  unary_expression ::= upc_elemsizeof ( type_name )
             //
-            case 300: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_localsizeof);           break;
+            case 300: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_elemsizeof);           break;
             }
  
             //
-            // Rule 301:  unary_expression ::= upc_blocksizeof unary_expression
+            // Rule 304:  shared_type_qualifier ::= shared
             //
-            case 301: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_blocksizeof);           break;
+            case 304: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 302:  unary_expression ::= upc_blocksizeof ( type_name )
+            // Rule 305:  reference_type_qualifier ::= relaxed
             //
-            case 302: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_blocksizeof);           break;
+            case 305: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 303:  unary_expression ::= upc_elemsizeof unary_expression
+            // Rule 306:  reference_type_qualifier ::= strict
             //
-            case 303: { action.beforeConsume(); action.   consumeExpressionUpcSizeofOperator(IUPCASTSizeofExpression.op_upc_elemsizeof);           break;
+            case 306: { action.beforeConsume(); action.   consumeToken();            break;
             }
  
             //
-            // Rule 304:  unary_expression ::= upc_elemsizeof ( type_name )
+            // Rule 307:  layout_qualifier ::= [ constant_expression ]
             //
-            case 304: { action.beforeConsume(); action.   consumeExpressionUpcSizeofTypeName(IUPCASTSizeofExpression.op_upc_elemsizeof);           break;
+            case 307: { action.beforeConsume(); action.   consumeLayoutQualifier(true, false);            break;
             }
  
             //
-            // Rule 308:  shared_type_qualifier ::= shared
+            // Rule 308:  layout_qualifier ::= [ * ]
             //
-            case 308: { action.beforeConsume(); action.   consumeToken();            break;
+            case 308: { action.beforeConsume(); action.   consumeLayoutQualifier(false, true);            break;
             }
  
             //
-            // Rule 309:  reference_type_qualifier ::= relaxed
+            // Rule 309:  layout_qualifier ::= [ ]
             //
-            case 309: { action.beforeConsume(); action.   consumeToken();            break;
+            case 309: { action.beforeConsume(); action.   consumeLayoutQualifier(false, false);            break;
             }
  
             //
-            // Rule 310:  reference_type_qualifier ::= strict
+            // Rule 311:  synchronization_statement ::= upc_notify expression ;
             //
-            case 310: { action.beforeConsume(); action.   consumeToken();            break;
+            case 311: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, true);           break;
             }
  
             //
-            // Rule 311:  layout_qualifier ::= [ constant_expression ]
+            // Rule 312:  synchronization_statement ::= upc_notify ;
             //
-            case 311: { action.beforeConsume(); action.   consumeLayoutQualifier(true, false);            break;
+            case 312: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, false);           break;
             }
  
             //
-            // Rule 312:  layout_qualifier ::= [ * ]
+            // Rule 313:  synchronization_statement ::= upc_wait expression ;
             //
-            case 312: { action.beforeConsume(); action.   consumeLayoutQualifier(false, true);            break;
+            case 313: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, true);           break;
             }
  
             //
-            // Rule 313:  layout_qualifier ::= [ ]
+            // Rule 314:  synchronization_statement ::= upc_wait ;
             //
-            case 313: { action.beforeConsume(); action.   consumeLayoutQualifier(false, false);            break;
+            case 314: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, false);           break;
             }
  
             //
-            // Rule 315:  synchronization_statement ::= upc_notify expression ;
+            // Rule 315:  synchronization_statement ::= upc_barrier expression ;
             //
-            case 315: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, true);           break;
+            case 315: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, true);           break;
             }
  
             //
-            // Rule 316:  synchronization_statement ::= upc_notify ;
+            // Rule 316:  synchronization_statement ::= upc_barrier ;
             //
-            case 316: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_notify, false);           break;
+            case 316: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, false);           break;
             }
  
             //
-            // Rule 317:  synchronization_statement ::= upc_wait expression ;
+            // Rule 317:  synchronization_statement ::= upc_fence ;
             //
-            case 317: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, true);           break;
+            case 317: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_fence, false);           break;
             }
  
             //
-            // Rule 318:  synchronization_statement ::= upc_wait ;
+            // Rule 318:  iteration_statement ::= upc_forall ( expression ; expression ; expression ; affinity ) statement
             //
-            case 318: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_wait, false);           break;
+            case 318: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, true, true);           break;
             }
  
             //
-            // Rule 319:  synchronization_statement ::= upc_barrier expression ;
+            // Rule 319:  iteration_statement ::= upc_forall ( expression ; expression ; expression ; ) statement
             //
-            case 319: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, true);           break;
+            case 319: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, true, false);           break;
             }
  
             //
-            // Rule 320:  synchronization_statement ::= upc_barrier ;
+            // Rule 320:  iteration_statement ::= upc_forall ( expression ; expression ; ; affinity ) statement
             //
-            case 320: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_barrier, false);           break;
+            case 320: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, false, true);           break;
             }
  
             //
-            // Rule 321:  synchronization_statement ::= upc_fence ;
+            // Rule 321:  iteration_statement ::= upc_forall ( expression ; expression ; ; ) statement
             //
-            case 321: { action.beforeConsume(); action.   consumeStatementSynchronizationStatement(IUPCASTSynchronizationStatement.st_upc_fence, false);           break;
+            case 321: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, false, false);           break;
             }
  
             //
-            // Rule 322:  iteration_statement ::= upc_forall ( expression ; expression ; expression ; affinity ) statement
+            // Rule 322:  iteration_statement ::= upc_forall ( expression ; ; expression ; affinity ) statement
             //
-            case 322: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, true, true);           break;
+            case 322: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, true, true);           break;
             }
  
             //
-            // Rule 323:  iteration_statement ::= upc_forall ( expression ; expression ; expression ; ) statement
+            // Rule 323:  iteration_statement ::= upc_forall ( expression ; ; expression ; ) statement
             //
-            case 323: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, true, false);           break;
+            case 323: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, true, false);           break;
             }
  
             //
-            // Rule 324:  iteration_statement ::= upc_forall ( expression ; expression ; ; affinity ) statement
+            // Rule 324:  iteration_statement ::= upc_forall ( expression ; ; ; affinity ) statement
             //
-            case 324: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, false, true);           break;
+            case 324: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, false, true);           break;
             }
  
             //
-            // Rule 325:  iteration_statement ::= upc_forall ( expression ; expression ; ; ) statement
+            // Rule 325:  iteration_statement ::= upc_forall ( expression ; ; ; ) statement
             //
-            case 325: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, false, false);           break;
+            case 325: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, false, false);           break;
             }
  
             //
-            // Rule 326:  iteration_statement ::= upc_forall ( expression ; ; expression ; affinity ) statement
+            // Rule 326:  iteration_statement ::= upc_forall ( ; expression ; expression ; affinity ) statement
             //
-            case 326: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, true, true);           break;
+            case 326: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, true, true, true);           break;
             }
  
             //
-            // Rule 327:  iteration_statement ::= upc_forall ( expression ; ; expression ; ) statement
+            // Rule 327:  iteration_statement ::= upc_forall ( ; expression ; expression ; ) statement
             //
-            case 327: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, true, false);           break;
+            case 327: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, true, true, false);           break;
             }
  
             //
-            // Rule 328:  iteration_statement ::= upc_forall ( expression ; ; ; affinity ) statement
+            // Rule 328:  iteration_statement ::= upc_forall ( ; expression ; ; affinity ) statement
             //
-            case 328: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, false, true);           break;
+            case 328: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, true, false, true);           break;
             }
  
             //
-            // Rule 329:  iteration_statement ::= upc_forall ( expression ; ; ; ) statement
+            // Rule 329:  iteration_statement ::= upc_forall ( ; expression ; ; ) statement
             //
-            case 329: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, false, false);           break;
+            case 329: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, true, false, false);           break;
             }
  
             //
-            // Rule 330:  iteration_statement ::= upc_forall ( ; expression ; expression ; affinity ) statement
+            // Rule 330:  iteration_statement ::= upc_forall ( ; ; expression ; affinity ) statement
             //
-            case 330: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, true, true, true);           break;
+            case 330: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, false, true, true);           break;
             }
  
             //
-            // Rule 331:  iteration_statement ::= upc_forall ( ; expression ; expression ; ) statement
+            // Rule 331:  iteration_statement ::= upc_forall ( ; ; expression ; ) statement
             //
-            case 331: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, true, true, false);           break;
+            case 331: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, false, true, false);           break;
             }
  
             //
-            // Rule 332:  iteration_statement ::= upc_forall ( ; expression ; ; affinity ) statement
+            // Rule 332:  iteration_statement ::= upc_forall ( ; ; ; affinity ) statement
             //
-            case 332: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, true, false, true);           break;
+            case 332: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, false, false, true);           break;
             }
  
             //
-            // Rule 333:  iteration_statement ::= upc_forall ( ; expression ; ; ) statement
+            // Rule 333:  iteration_statement ::= upc_forall ( ; ; ; ) statement
             //
-            case 333: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, true, false, false);           break;
+            case 333: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, false, false, false);           break;
             }
  
             //
-            // Rule 334:  iteration_statement ::= upc_forall ( ; ; expression ; affinity ) statement
+            // Rule 334:  iteration_statement ::= upc_forall ( declaration expression ; expression ; affinity ) statement
             //
-            case 334: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, false, true, true);           break;
+            case 334: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, true, true);           break;
             }
  
             //
-            // Rule 335:  iteration_statement ::= upc_forall ( ; ; expression ; ) statement
+            // Rule 335:  iteration_statement ::= upc_forall ( declaration expression ; expression ; ) statement
             //
-            case 335: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, false, true, false);           break;
+            case 335: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, true, false);           break;
             }
  
             //
-            // Rule 336:  iteration_statement ::= upc_forall ( ; ; ; affinity ) statement
+            // Rule 336:  iteration_statement ::= upc_forall ( declaration expression ; ; affinity ) statement
             //
-            case 336: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, false, false, true);           break;
+            case 336: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, false, true);           break;
             }
  
             //
-            // Rule 337:  iteration_statement ::= upc_forall ( ; ; ; ) statement
+            // Rule 337:  iteration_statement ::= upc_forall ( declaration expression ; ; ) statement
             //
-            case 337: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(false, false, false, false);           break;
+            case 337: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, false, false);           break;
             }
  
             //
-            // Rule 338:  iteration_statement ::= upc_forall ( declaration expression ; expression ; affinity ) statement
+            // Rule 338:  iteration_statement ::= upc_forall ( declaration ; expression ; affinity ) statement
             //
-            case 338: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, true, true);           break;
+            case 338: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, true, true);           break;
             }
  
             //
-            // Rule 339:  iteration_statement ::= upc_forall ( declaration expression ; expression ; ) statement
+            // Rule 339:  iteration_statement ::= upc_forall ( declaration ; expression ; ) statement
             //
-            case 339: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, true, false);           break;
+            case 339: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, true, false);           break;
             }
  
             //
-            // Rule 340:  iteration_statement ::= upc_forall ( declaration expression ; ; affinity ) statement
+            // Rule 340:  iteration_statement ::= upc_forall ( declaration ; ; affinity ) statement
             //
-            case 340: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, false, true);           break;
+            case 340: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, false, true);           break;
             }
  
             //
-            // Rule 341:  iteration_statement ::= upc_forall ( declaration expression ; ; ) statement
+            // Rule 341:  iteration_statement ::= upc_forall ( declaration ; ; ) statement
             //
-            case 341: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, true, false, false);           break;
+            case 341: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, false, false);           break;
             }
  
             //
-            // Rule 342:  iteration_statement ::= upc_forall ( declaration ; expression ; affinity ) statement
+            // Rule 343:  affinity ::= continue
             //
-            case 342: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, true, true);           break;
-            }
- 
-            //
-            // Rule 343:  iteration_statement ::= upc_forall ( declaration ; expression ; ) statement
-            //
-            case 343: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, true, false);           break;
-            }
- 
-            //
-            // Rule 344:  iteration_statement ::= upc_forall ( declaration ; ; affinity ) statement
-            //
-            case 344: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, false, true);           break;
-            }
- 
-            //
-            // Rule 345:  iteration_statement ::= upc_forall ( declaration ; ; ) statement
-            //
-            case 345: { action.beforeConsume(); action.   consumeStatementUPCForallLoop(true, false, false, false);           break;
-            }
- 
-            //
-            // Rule 347:  affinity ::= continue
-            //
-            case 347: { action.beforeConsume(); action.   consumeToken();            break;
+            case 343: { action.beforeConsume(); action.   consumeToken();            break;
             }
 
     

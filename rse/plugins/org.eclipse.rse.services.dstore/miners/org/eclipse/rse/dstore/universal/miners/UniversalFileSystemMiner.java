@@ -302,7 +302,7 @@ public class UniversalFileSystemMiner extends Miner {
 			if (nonDirectoryArrayList.size() > 0)
 			{
 				File[] resultFiles = (File[])nonDirectoryArrayList.toArray(new File[nonDirectoryArrayList.size()]);
-				String[] resultNames = (String[])nonDirectoryArrayList.toArray(new String[nonDirectoryNamesArrayList.size()]);
+				String[] resultNames = (String[])nonDirectoryNamesArrayList.toArray(new String[nonDirectoryNamesArrayList.size()]);
 				//we need to add those files into the archive file as well.
 				result = handler.add(resultFiles, virtualContainer, resultNames);
 			}

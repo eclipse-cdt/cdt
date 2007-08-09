@@ -123,33 +123,42 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	
 	public IRemoteFile createFileOrFolder(String targetFolderName, String fileOrFolderName, boolean isFolder) throws Exception
 	{
+		return createFileOrFolder(fss, targetFolderName, fileOrFolderName, isFolder);
+	}
+	
+	public IRemoteFile createFileOrFolder(IFileServiceSubSystem inputFss, String targetFolderName, String fileOrFolderName, boolean isFolder) throws Exception
+	{
 		IRemoteFile result = null;
 		System.out.println("createFileOrFolder: targetFolderName is " + targetFolderName);
-		IRemoteFile targetFolder = fss.getRemoteFileObject(targetFolderName, mon);
-		//fss.resolveFilterString(targetFolder, null, mon);
+		IRemoteFile targetFolder = inputFss.getRemoteFileObject(targetFolderName, mon);
 		String fileOrFolderAbsName = getNewAbsoluteName(targetFolder, fileOrFolderName);
-		IRemoteFile newFileOrFolderPath = fss.getRemoteFileObject(fileOrFolderAbsName, mon); 
+		IRemoteFile newFileOrFolderPath = inputFss.getRemoteFileObject(fileOrFolderAbsName, mon); 
 		if (isFolder)
 		{
-			result = fss.createFolder(newFileOrFolderPath, mon);
+			result = inputFss.createFolder(newFileOrFolderPath, mon);
 		}
 		else
 		{
-			result = fss.createFile(newFileOrFolderPath, mon);
+			result = inputFss.createFile(newFileOrFolderPath, mon);
 		}
 		//Need to call resolveFilterString of the parent to make sure the newly created child
 		//is added to the DStore map.  Otherwise, next time when query it, it will just created a 
 		//default filter string.  And the dstore server cannot handler it correctly.
-		fss.resolveFilterString(targetFolder, null, mon);
+		inputFss.resolveFilterString(targetFolder, null, mon);
 		return result;
 	}
 	
 	public Object getChildFromFolder(IRemoteFile folderToCheck, String childName) throws Exception
 	{
+		return getChildFromFolder(fss, folderToCheck, childName);
+	}
+	
+	public Object getChildFromFolder(IFileServiceSubSystem inputFss, IRemoteFile folderToCheck, String childName) throws Exception
+	{
 		//then check the result of copy
 		Object[] children = null;
 		Object foundChild = null;
-		children = fss.resolveFilterString(folderToCheck, null, mon);
+		children = inputFss.resolveFilterString(folderToCheck, null, mon);
 		for (int i=0; i<children.length; i++)
 		{
 			String thisName = ((IRemoteFile)children[i]).getName();
@@ -163,12 +172,17 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	
 	public void checkFolderContents(IRemoteFile folderToCheck, String[] names, int[] types) throws Exception
 	{
+		checkFolderContents(fss, folderToCheck, names, types);
+	}
+	
+	public void checkFolderContents(IFileServiceSubSystem inputFss, IRemoteFile folderToCheck, String[] names, int[] types) throws Exception
+	{
 		//the folder returned by the create API did not get the right attributes.
 		//We need to call getRemoteFileObject to get its attribute updated.
 		//Otherwise, will get error "directory not readable"
-		folderToCheck = fss.getRemoteFileObject(folderToCheck.getAbsolutePath(), mon);
+		folderToCheck = inputFss.getRemoteFileObject(folderToCheck.getAbsolutePath(), mon);
 		System.out.println("verifying the contents for folder: " + folderToCheck.getAbsolutePath());
-		Object[] children = fss.resolveFilterString(folderToCheck, null, mon);
+		Object[] children = inputFss.resolveFilterString(folderToCheck, null, mon);
 		//Make sure the children array includes the copied folder.
 		HashMap childrenMap = new HashMap();
 	    //Add children name into the map

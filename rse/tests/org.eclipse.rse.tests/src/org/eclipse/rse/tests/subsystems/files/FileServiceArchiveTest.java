@@ -15,14 +15,17 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.model.ISystemResourceSet;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
+import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.tests.RSETestsPlugin;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 public class FileServiceArchiveTest extends FileServiceBaseTest {
 
@@ -312,12 +315,12 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects2, tempDir, mon, true);
 		
 		IRemoteFile zipSource1 = createFileOrFolder(tempDir.getAbsolutePath(), zipSourceFileName1, false);
-		assertTrue(zipSource1 != null);
+		assertNotNull(zipSource1);
 		IRemoteFile zipSourceFolder = (IRemoteFile)getChildFromFolder(tempDir, folderToCopyName1);
 		fss.copy(zipSourceFolder, zipSource1, folderToCopyName1, mon);
 		
 		IRemoteFile zipSource2 = createFileOrFolder(tempDir.getAbsolutePath(), zipSourceFileName2, false);
-		assertTrue(zipSource2 != null);
+		assertNotNull(zipSource2);
 		IRemoteFile zipSourceFolder2 = (IRemoteFile)getChildFromFolder(tempDir, folderToCopyName2);
 		fss.copy(zipSourceFolder2, zipSource2, folderToCopyName2, mon);
 		
@@ -326,6 +329,55 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		//Then, delete the temp folder in the junit workspace.
 		temp.delete(EFS.NONE, mon);
+	}
+	
+	protected void createSuperTransferFolder(IFileStore temp) throws Exception 
+	{
+		
+		String content = getRandomString();
+		
+		// create the source folder used for copy or move
+		IFileStore folderToCopy = temp.getChild(folderToCopyName3);
+		createDir(folderToCopy, true);
+		//Now, populate the contents in the folderToCopy.
+		IFileStore aaaaaaaa = folderToCopy.getChild("aaaaaaaa");
+		createDir(aaaaaaaa, true);
+		//create file inside the aaaaaaaa folder.
+		IFileStore adsf = aaaaaaaa.getChild("adsf");
+		content = getRandomString();
+		createFile(adsf, content);
+		IFileStore eclipse_SDK_3_3M6_win32_zip = aaaaaaaa.getChild("eclipse-SDK-3.3M6-win32.zip");
+		createFile(eclipse_SDK_3_3M6_win32_zip, "");
+		IFileStore epdcdump01_hex12 = aaaaaaaa.getChild("epdcdump01.hex12");
+		content = getRandomString();
+		createFile(epdcdump01_hex12, content);
+		IFileStore epdcdump01_hex12aaaa = aaaaaaaa.getChild("epdcdump01.hex12aaaa");
+		content = getRandomString();
+		createFile(epdcdump01_hex12aaaa, content);
+		
+		IFileStore aaaab = folderToCopy.getChild("aaaab");
+		createDir(aaaab, true);
+		IFileStore features = aaaab.getChild("features");
+		createDir(features, true);
+		IFileStore dummyFile = features.getChild("dummy.txt");
+		content = getRandomString();
+		createFile(dummyFile, content);
+		//create file inside the aaaab folder.
+		content = "this is just a simple content \n to a simple file \n to test a 'simple' copy";
+		IFileStore epdcdump01_hex12a = aaaab.getChild("epdcdump01.hex12a");
+		content = getRandomString();
+		createFile(epdcdump01_hex12a, content);
+		
+		IFileStore epdcdump01_hex12a1 = folderToCopy.getChild("epdcdump01.hex12a");
+		content = getRandomString();
+		createFile(epdcdump01_hex12a1, content);
+		
+		IFileStore RSE_SDK_2_0RC1_zip = folderToCopy.getChild("RSE-SDK-2.0RC1.zip");
+		content = getRandomString();
+		createFile(RSE_SDK_2_0RC1_zip, content);
+		
+		return;
+
 	}
 
 	public void testCreateZipFile() throws Exception {
@@ -364,15 +416,15 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//Now, create some files inside the folder.
 		String secondLevelChildName = "ccc.exe";
 		IRemoteFile levelTwoChild1 = createFileOrFolder(folder1.getAbsolutePath(), secondLevelChildName, false);
-		assertTrue(levelTwoChild1 != null);
+		assertNotNull(levelTwoChild1);
 		
 		secondLevelChildName = "ddd.bat";
 		IRemoteFile levelTwoChild2 = createFileOrFolder(folder1.getAbsolutePath(), secondLevelChildName, false);
-		assertTrue(levelTwoChild2 != null);
+		assertNotNull(levelTwoChild2);
 		
 		secondLevelChildName = "another Folder"; //folder with space
 		IRemoteFile levelTwoChild3 = createFileOrFolder(folder1.getAbsolutePath(), secondLevelChildName, true);
-		assertTrue(levelTwoChild3 != null);
+		assertNotNull(levelTwoChild3);
 		
 		//Now, check the contents
 		String[] namesToCheck1 = {"ccc.exe", "ddd.bat", "another Folder"};
@@ -393,16 +445,16 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//Now, we want to create a text file inside.
 		String childName = "aaa.txt";
 		IRemoteFile file1 = createFileOrFolder(newArchiveFile.getAbsolutePath(), childName, false);
-		assertTrue(file1 != null);
+		assertNotNull(file1);
 		
 		childName = "bbb.txt";
 		IRemoteFile file2 = createFileOrFolder(newArchiveFile.getAbsolutePath(), childName, false);
-		assertTrue(file2 != null);
+		assertNotNull(file2);
 		
 		//Create a folder
 		childName = "folder1";
 		IRemoteFile folder1 = createFileOrFolder(newArchiveFile.getAbsolutePath(), childName, true);
-		assertTrue(folder1 != null);
+		assertNotNull(folder1);
 		
 		//Now, check the contents
 		String[] levelOneNamesToCheck = {"aaa.txt", "bbb.txt", "folder1"};
@@ -412,15 +464,15 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//Now, create some files inside the folder.
 		String secondLevelChildName = "ccc.exe";
 		IRemoteFile levelTwoChild1 = createFileOrFolder(folder1.getAbsolutePath(), secondLevelChildName, false);
-		assertTrue(levelTwoChild1 != null);
+		assertNotNull(levelTwoChild1);
 		
 		secondLevelChildName = "ddd.bat";
 		IRemoteFile levelTwoChild2 = createFileOrFolder(folder1.getAbsolutePath(), secondLevelChildName, false);
-		assertTrue(levelTwoChild2 != null);
+		assertNotNull(levelTwoChild2);
 		
 		secondLevelChildName = "another Folder"; //folder with space
 		IRemoteFile levelTwoChild3 = createFileOrFolder(folder1.getAbsolutePath(), secondLevelChildName, true);
-		assertTrue(levelTwoChild3 != null);
+		assertNotNull(levelTwoChild3);
 		
 		//Now, check the contents
 		String[] levelTwoNamesToCheck = {"ccc.exe", "ddd.bat", "another Folder"};
@@ -463,7 +515,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//then, create a folder inside the tempDir
 		String folderName = "folder1";
 		IRemoteFile folder1 = createFileOrFolder(tempDirPath, folderName, true);
-		assertTrue(folder1 != null);
+		assertNotNull(folder1);
 		
 		String sourceZipFileName = zipSourceFileName1;
 		IRemoteFile sourceZipFile = (IRemoteFile)getChildFromFolder(tempDir, sourceZipFileName);
@@ -477,7 +529,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object movedVirtualFolder = getChildFromFolder(folder1, movedFolderName);
 		
-		assertTrue(movedVirtualFolder != null);
+		assertNotNull(movedVirtualFolder);
 		
 		String[] contents = {"Team", "TypeFilters", "xuanchentp", ".compatibility", ".project"};
 		int[] typesToCheck = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE, TYPE_FILE};
@@ -496,11 +548,11 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//then, create a folder inside the tempDir
 		String folderName = "folder1";
 		IRemoteFile folder1 = createFileOrFolder(tempDirPath, folderName, true);
-		assertTrue(folder1 != null);
+		assertNotNull(folder1);
 		
 		String sourceZipFileName = zipSourceFileName1;
 		IRemoteFile sourceZipFile = (IRemoteFile)getChildFromFolder(tempDir, sourceZipFileName);
-		assertTrue(sourceZipFile != null);
+		assertNotNull(sourceZipFile);
 		
 		//Now, move one of the level two folder from the zip file into folder1
 		IRemoteFile firstLevelChild = (IRemoteFile)getChildFromFolder(sourceZipFile, folderToCopyName1);
@@ -512,7 +564,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object movedVirtualFolder = getChildFromFolder(folder1, movedFolderName);
 		
-		assertTrue(movedVirtualFolder != null);
+		assertNotNull(movedVirtualFolder);
 		
 		String[] contents = {"Connections", "Filters", "profile.xmi"};
 		int[] typesToCheck = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE};
@@ -521,7 +573,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//Now, make sure the moved virtual folder is gone from its original zip file
 		Object originalVirtualFolder = getChildFromFolder(firstLevelChild, movedFolderName);
 		
-		assertTrue(originalVirtualFolder == null);  //we should not be able to find it.
+		assertNull(originalVirtualFolder);  //we should not be able to find it.
 	}
 	
 	public void testMoveToArchiveFile() throws Exception {
@@ -532,17 +584,17 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String targetZipFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, targetZipFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourceFolderName = folderToCopyName3;
 		IRemoteFile sourceFolder = (IRemoteFile)getChildFromFolder(tempDir, sourceFolderName);
-		assertTrue(sourceFolder != null);
+		assertNotNull(sourceFolder);
 		
 		//Now, move one of the folder from the sourceFolder into copiedTargetZipFile
 		fss.move(sourceFolder, targetZipFile, sourceFolder.getName(), mon);
 		
 		Object theMovedChild = getChildFromFolder(targetZipFile, sourceFolderName);
-		assertTrue(theMovedChild != null);
+		assertNotNull(theMovedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
@@ -554,7 +606,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//make sure the original folder is gone.
 		IRemoteFile tempDirRemoteFile = fss.getRemoteFileObject(tempDirPath, mon);
 		Object originalSource = getChildFromFolder(tempDirRemoteFile, sourceFolderName);
-		assertFalse(originalSource != null);
+		assertNull(originalSource);
 	}
 	
 	public void testMoveToVirtualFileLevelOne() throws Exception {
@@ -565,11 +617,11 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String targetZipFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, targetZipFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourceFolderName = folderToCopyName3;
 		IRemoteFile sourceFolder = (IRemoteFile)getChildFromFolder(tempDir, sourceFolderName);
-		assertTrue(sourceFolder != null);
+		assertNotNull(sourceFolder);
 		
 		//Now, move one of the folder from the sourceFolder into a first level virtual file in targetZipFile
 		//Get one of its first level children, and move the folder to there.
@@ -579,7 +631,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object theMovedChild = getChildFromFolder(firstLevelChild, sourceFolderName);
 		
-		assertTrue(theMovedChild != null);
+		assertNotNull(theMovedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
@@ -589,7 +641,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//make sure the original folder is gone.
 		IRemoteFile tempDirRemoteFile = fss.getRemoteFileObject(tempDirPath, mon);
 		Object originalSource = getChildFromFolder(tempDirRemoteFile, sourceFolderName);
-		assertFalse(originalSource != null);
+		assertNull(originalSource);
 	}
 	
 	public void testMoveToVirtualFileLevelTwo() throws Exception {
@@ -614,7 +666,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object theMovedChild = getChildFromFolder(secondLevelChild, sourceFolderName);
 		
-		assertTrue(theMovedChild != null);
+		assertNotNull(theMovedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
@@ -624,7 +676,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//make sure the original folder is gone.
 		IRemoteFile tempDirRemoteFile = fss.getRemoteFileObject(tempDirPath, mon);
 		Object originalSource = getChildFromFolder(tempDirRemoteFile, sourceFolderName);
-		assertFalse(originalSource != null);
+		assertNull(originalSource);
 	}
 	
 	
@@ -635,12 +687,12 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String sourceZipFileName = zipSourceFileName1;
 		IRemoteFile sourceZipFile = (IRemoteFile)getChildFromFolder(tempDir, sourceZipFileName);
-		assertTrue(sourceZipFile != null);
+		assertNotNull(sourceZipFile);
 		
 		//then, create a folder inside the tempDir
 		String folderName = "folder1";
 		IRemoteFile folder1 = createFileOrFolder(tempDirPath, folderName, true);
-		assertTrue(folder1 != null);
+		assertNotNull(folder1);
 		
 		//Now, copy one of the folder from the zip file into folder1
 		IRemoteFile firstLevelChild = (IRemoteFile)getChildFromFolder(sourceZipFile, folderToCopyName1);
@@ -648,7 +700,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object copiedVirtualFolder = getChildFromFolder(folder1, folderToCopyName1);
 		
-		assertTrue(copiedVirtualFolder != null);
+		assertNotNull(copiedVirtualFolder);
 		
 		String[] contents = {"Team", "TypeFilters", "xuanchentp", ".compatibility", ".project"};
 		int[] typesToCheck = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE, TYPE_FILE};
@@ -663,12 +715,12 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//copy the zip file first.
 		String sourceZipFileName = zipSourceFileName1;
 		IRemoteFile sourceZipFile = (IRemoteFile)getChildFromFolder(tempDir, sourceZipFileName);
-		assertTrue(sourceZipFile != null);
+		assertNotNull(sourceZipFile);
 		
 		//then, create a folder inside the tempDir
 		String folderName = "folder1";
 		IRemoteFile folder1 = createFileOrFolder(tempDirPath, folderName, true);
-		assertTrue(folder1 != null);
+		assertNotNull(folder1);
 		
 		//Now, copy one of the level two folder from the zip file into folder1
 		IRemoteFile firstLevelChild = (IRemoteFile)getChildFromFolder(sourceZipFile, folderToCopyName1);
@@ -678,7 +730,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object copiedVirtualFolder = getChildFromFolder(folder1, secondLevelChild.getName());
 		
-		assertTrue(copiedVirtualFolder != null);
+		assertNotNull(copiedVirtualFolder);
 		
 		String[] contents = {"Connections", "Filters", "profile.xmi"};
 		int[] typesToCheck = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE};
@@ -694,18 +746,18 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String targetZipFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile =  (IRemoteFile)getChildFromFolder(tempDir, targetZipFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourceFolderName = folderToCopyName3;
 		IRemoteFile sourceFolder = (IRemoteFile)getChildFromFolder(tempDir, sourceFolderName);
-		assertTrue(sourceFolder != null);
+		assertNotNull(sourceFolder);
 		
 		//Now, copy one of the folder from the sourceFolder into copiedTargetZipFile
 		fss.copy(sourceFolder, targetZipFile, sourceFolder.getName(), mon);
 		
 		Object theCopiedChild = getChildFromFolder(targetZipFile, sourceFolderName);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
@@ -724,11 +776,11 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String targetZipFileName = zipSourceFileName1; 
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, targetZipFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourceFolderName = folderToCopyName3;
 		IRemoteFile sourceFolder = (IRemoteFile)getChildFromFolder(tempDir, sourceFolderName);
-		assertTrue(sourceFolder != null);
+		assertNotNull(sourceFolder);
 		
 		//Now, copy one of the folder from the sourceFolder into a first level virtual file in targetZipFile
 		//Get one of its first level children, and copy the folder to there.
@@ -739,7 +791,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object theCopiedChild = getChildFromFolder(firstLevelChild, sourceFolderName);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
@@ -756,11 +808,11 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String zipTargetFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, zipTargetFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourceFolderName = folderToCopyName3;
 		IRemoteFile sourceFolder = (IRemoteFile)getChildFromFolder(tempDir, folderToCopyName3);
-		assertTrue(sourceFolder != null);
+		assertNotNull(sourceFolder);
 		
 		//Get one of its second level children, and copy the folder to there.
 		//Now, copy one of the level two folder from the zip file into folder1
@@ -771,7 +823,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object theCopiedChild = getChildFromFolder(secondLevelChild, sourceFolderName);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
@@ -787,12 +839,12 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String zipTargetFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir,zipTargetFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		//Now, copy the source folder.
 		String sourceFolderName = folderToCopyName3;
 		IRemoteFile sourceFolder = (IRemoteFile)getChildFromFolder(tempDir,sourceFolderName);
-		assertTrue(sourceFolder != null);
+		assertNotNull(sourceFolder);
 		
 		//Now, copy one of the folder from the sourceFolder into copiedTargetZipFile
 		IRemoteFile[] sourceFiles = new IRemoteFile[3];
@@ -808,7 +860,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//Checking the first copied folder
 		Object theCopiedChild = getChildFromFolder(targetZipFile, childToCopyName1);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck1 = {"adsf", "eclipse-SDK-3.3M6-win32.zip", "epdcdump01.hex12", "epdcdump01.hex12aaaa"};
@@ -819,7 +871,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//Checking the second copied folder
 		theCopiedChild = getChildFromFolder(targetZipFile, childToCopyName2);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck2 = {"features"};
@@ -829,7 +881,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		//Checking the third copied file
 		theCopiedChild = getChildFromFolder(targetZipFile, childToCopyName3);
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		assertTrue(((IRemoteFile)theCopiedChild).isDirectory() != true);
 	}
 
@@ -841,11 +893,11 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String zipTargetFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, zipTargetFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourceFolderName = folderToCopyName3;
 		IRemoteFile sourceFolder = (IRemoteFile)getChildFromFolder(tempDir, sourceFolderName);
-		assertTrue(sourceFolder != null);
+		assertNotNull(sourceFolder);
 		
 		//Now, copy one of the folder from the sourceFolder into a first level virtual file in targetZipFile
 		//Get one of its first level children, and copy the folder to there.
@@ -857,7 +909,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 
 		Object theCopiedChild = getChildFromFolder(((IRemoteFile)childrenOfTargetZipFile[0]), sourceFolderName);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
@@ -873,12 +925,12 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String zipTargetFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, zipTargetFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		//Now, copy the source folder.
 		String sourceFolderName = folderToCopyName3;
 		IRemoteFile sourceFolder = (IRemoteFile)getChildFromFolder(tempDir, sourceFolderName);
-		assertTrue(sourceFolder != null);
+		assertNotNull(sourceFolder);
 		
 		//Get one of its second level children, and copy the folder to there.
 		//Now, copy one of the level two folder from the zip file into folder1
@@ -899,7 +951,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//Checking the first copied folder
 		Object theCopiedChild = getChildFromFolder(secondLevelChild, childToCopyName1);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck1 = {"adsf", "eclipse-SDK-3.3M6-win32.zip", "epdcdump01.hex12", "epdcdump01.hex12aaaa"};
@@ -910,7 +962,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		//Checking the second copied folder
 		theCopiedChild = getChildFromFolder(secondLevelChild, childToCopyName2);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck2 = {"features"};
@@ -920,7 +972,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		//Checking the third copied file
 		theCopiedChild = getChildFromFolder(secondLevelChild, childToCopyName3);
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		assertTrue(((IRemoteFile)theCopiedChild).isDirectory() != true);
 	}
 
@@ -931,41 +983,41 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String sourceFileName = zipSourceFileName1;
 		IRemoteFile sourceZipFile = (IRemoteFile)getChildFromFolder(tempDir,sourceFileName);
-		assertTrue(sourceZipFile != null);
+		assertNotNull(sourceZipFile);
 		
 		//then, create a folder inside the tempDir
 		String folderName = "folder1";
 		IRemoteFile folder1 = createFileOrFolder(tempDirPath, folderName, true);
-		assertTrue(folder1 != null);
+		assertNotNull(folder1);
 		
 		//Now, copy one of the folder from the zip file into folder1
 		Object[] children = fss.resolveFilterString(sourceZipFile, null, mon);
 		IRemoteFile[] sourceFiles = new IRemoteFile[3];
 		String childToCopyName1 = "Team";
 		sourceFiles[0] = (IRemoteFile)getChildFromFolder((IRemoteFile)children[0], childToCopyName1);
-		assertTrue(sourceFiles[0] != null);
+		assertNotNull(sourceFiles[0]);
 		String childToCopyName2 = "xuanchentp";
 		sourceFiles[1] = (IRemoteFile)getChildFromFolder((IRemoteFile)children[0], childToCopyName2);
-		assertTrue(sourceFiles[1] != null);
+		assertNotNull(sourceFiles[1]);
 		String childToCopyName3 = ".compatibility";
 		sourceFiles[2] = (IRemoteFile)getChildFromFolder((IRemoteFile)children[0], childToCopyName3);
-		assertTrue(sourceFiles[2] != null);
+		assertNotNull(sourceFiles[2]);
 		fss.copyBatch(sourceFiles, folder1, mon);
 		
 		Object copiedVirtualFolder = getChildFromFolder(folder1, childToCopyName1);
-		assertTrue(copiedVirtualFolder != null);
+		assertNotNull(copiedVirtualFolder);
 		String[] contents1 = {"Connections", "Filters", "profile.xmi"};
 		int[] typesToCheck1 = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE};
 		checkFolderContents((IRemoteFile)copiedVirtualFolder, contents1, typesToCheck1);
 		
 		copiedVirtualFolder = getChildFromFolder(folder1, childToCopyName2);
-		assertTrue(copiedVirtualFolder != null);
+		assertNotNull(copiedVirtualFolder);
 		String[] contents2 = {"Connections", "Filters", "profile.xmi"};
 		int[] typesToCheck2 = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE};
 		checkFolderContents((IRemoteFile)copiedVirtualFolder, contents2, typesToCheck2);
 		
 		Object copiedVirtualFile = getChildFromFolder(folder1, childToCopyName3);
-		assertTrue(copiedVirtualFile != null);
+		assertNotNull(copiedVirtualFile);
 		assertTrue(((IRemoteFile)copiedVirtualFile).isDirectory() != true);
 	}
 
@@ -976,12 +1028,12 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String sourceFileName = zipSourceFileName1;
 		IRemoteFile sourceZipFile = (IRemoteFile)getChildFromFolder(tempDir, sourceFileName);
-		assertTrue(sourceZipFile != null);
+		assertNotNull(sourceZipFile);
 		
 		//then, create a folder inside the tempDir
 		String folderName = "folder1";
 		IRemoteFile folder1 = createFileOrFolder(tempDirPath, folderName, true);
-		assertTrue(folder1 != null);
+		assertNotNull(folder1);
 		
 		//Now, copy one of the level two folder from the zip file into folder1
 		IRemoteFile firstLevelChild = (IRemoteFile)getChildFromFolder(sourceZipFile, folderToCopyName1);
@@ -994,7 +1046,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object copiedVirtualFolder = getChildFromFolder(folder1, secondLevelChild.getName());
 		
-		assertTrue(copiedVirtualFolder != null);
+		assertNotNull(copiedVirtualFolder);
 		
 		String[] contents = {"Connections", "Filters", "profile.xmi"};
 		int[] typesToCheck = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE};
@@ -1008,11 +1060,11 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String zipTargetFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, zipTargetFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourcefileName = zipSourceFileName2;
 		IRemoteFile sourceFile = (IRemoteFile)getChildFromFolder(tempDir, sourcefileName);
-		assertTrue(sourceFile != null);
+		assertNotNull(sourceFile);
 		
 		//Now, copy one of the folder from the sourceFile into copiedTargetZipFile
 		IRemoteFile[] sourceFiles = new IRemoteFile[1];
@@ -1023,7 +1075,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object theCopiedChild = getChildFromFolder(targetZipFile, virutalFolderToCopyName);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"20070315a", "20070319", "20070320a", "20070404a", "dummyFolder"};
@@ -1039,11 +1091,11 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String zipTargetFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, zipTargetFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourcefileName = zipSourceFileName2;
 		IRemoteFile sourceFile = (IRemoteFile)getChildFromFolder(tempDir, sourcefileName);
-		assertTrue(sourceFile != null);
+		assertNotNull(sourceFile);
 		
 		//Now, copy one of the folder from the sourceFolder into a first level virtual file in targetZipFile
 		//Get one of its first level children, and copy the folder to there.
@@ -1058,30 +1110,30 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		String virtualChildToCopyName3 = "dummyFolder";
 		
 		sourceFiles[0] = (IRemoteFile)getChildFromFolder(parentOfVirtualFolderToCopy, virtualChildToCopyName1);
-		assertTrue(sourceFiles[0] != null);
+		assertNotNull(sourceFiles[0]);
 		sourceFiles[1] = (IRemoteFile)getChildFromFolder(parentOfVirtualFolderToCopy, virtualChildToCopyName2);
-		assertTrue(sourceFiles[1] != null);
+		assertNotNull(sourceFiles[1]);
 		sourceFiles[2] = (IRemoteFile)getChildFromFolder(parentOfVirtualFolderToCopy, virtualChildToCopyName3);
-		assertTrue(sourceFiles[2] != null);
+		assertNotNull(sourceFiles[2]);
 		fss.copyBatch(sourceFiles, ((IRemoteFile)childrenOfTargetZipFile[0]), mon);
 
 		
 		Object theCopiedChild = getChildFromFolder(((IRemoteFile)childrenOfTargetZipFile[0]), virtualChildToCopyName1);
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck1 = {"QB5ROUTaadd"};
 		int[] typesToCheck1 = {TYPE_FILE};
 		checkFolderContents((IRemoteFile)theCopiedChild, childrenToCheck1, typesToCheck1);
 		
 		theCopiedChild = getChildFromFolder(((IRemoteFile)childrenOfTargetZipFile[0]), virtualChildToCopyName2);
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck2 = {"QB5ROUTERa"};
 		int[] typesToCheck2 = {TYPE_FILE};
 		checkFolderContents((IRemoteFile)theCopiedChild, childrenToCheck2, typesToCheck2);
 		
 		theCopiedChild = getChildFromFolder(((IRemoteFile)childrenOfTargetZipFile[0]), virtualChildToCopyName3);
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck3 = {"20070404a", "epdcdump01.hex12ab"};
 		int[] typesToCheck3 = {TYPE_FOLDER, TYPE_FILE};
@@ -1095,11 +1147,11 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		String zipTargetFileName = zipSourceFileName1;
 		IRemoteFile targetZipFile = (IRemoteFile)getChildFromFolder(tempDir, zipTargetFileName);
-		assertTrue(targetZipFile != null);
+		assertNotNull(targetZipFile);
 		
 		String sourcefileName = zipSourceFileName2;
 		IRemoteFile sourceFile = (IRemoteFile)getChildFromFolder(tempDir,  sourcefileName);
-		assertTrue(sourceFile != null);
+		assertNotNull(sourceFile);
 		
 		//Get one of its second level children, and copy the folder to there.
 		//Now, copy one of the level two folder from the zip file into folder1
@@ -1119,12 +1171,52 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		
 		Object theCopiedChild = getChildFromFolder(parentOfVirtualFolderToCopy, virtualFolderToCopyName);
 		
-		assertTrue(theCopiedChild != null);
+		assertNotNull(theCopiedChild);
 		
 		//Also make sure the copied child has the right contents.
 		String[] childrenToCheck = {"20070404a", "epdcdump01.hex12ab"};
 		int[] typesToCheck = {TYPE_FOLDER, TYPE_FILE};
 		checkFolderContents((IRemoteFile)theCopiedChild, childrenToCheck, typesToCheck);
+	}
+	
+	public void testSuperTransferLocalToRemote() throws Exception {
+		String tempPath = getWorkspace().getRoot().getLocation().append("temp").toString();
+		IFileStore temp = createDir(tempPath, true);
+		
+		createSuperTransferFolder(temp);
+		
+		//Set the superTransfer preference on
+		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
+		boolean preference_DOSUPERTRANSFER = store.getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
+		store.setValue(ISystemFilePreferencesConstants.DOSUPERTRANSFER, true);
+		
+		//now, copy folderToCopy into the folder in the remote system
+		IRemoteFile sourceFolderToCopy1 = localFss.getRemoteFileObject(tempPath + '\\' + folderToCopyName3, mon);
+		ISystemDragDropAdapter srcAdapter1 = (ISystemDragDropAdapter) ((IAdaptable) sourceFolderToCopy1).getAdapter(ISystemDragDropAdapter.class);
+		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(localFss, srcAdapter1);
+		fromSet3.addResource(sourceFolderToCopy1);
+		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
+		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, tempDir, mon, true);
+		
+		//Then, we need to retrieve children of the tempDir to cache their information.
+		Object[] children = fss.resolveFilterString(tempDir, null, mon);
+		//Make sure there is no temp archive file left 
+		assertTrue(children.length == 1);
+		
+		Object theCopiedFolder = getChildFromFolder(tempDir, folderToCopyName3);
+		assertNotNull(theCopiedFolder);
+		
+		//Also make sure the copied child has the right contents.
+		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
+		
+		int[] typesToCheck = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE, TYPE_FILE};
+		checkFolderContents((IRemoteFile)theCopiedFolder, childrenToCheck, typesToCheck);
+		
+		//Then, set the preference back to its original value
+		store.setValue(ISystemFilePreferencesConstants.DOSUPERTRANSFER, preference_DOSUPERTRANSFER);
+		
+		//Then, delete the temp folder in the junit workspace.
+		temp.delete(EFS.NONE, mon);
 	}
 
 }

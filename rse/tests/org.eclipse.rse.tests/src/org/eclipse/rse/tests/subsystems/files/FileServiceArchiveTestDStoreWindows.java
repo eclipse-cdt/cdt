@@ -19,7 +19,6 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -32,7 +31,9 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 	private boolean fPreference_ALERT_NONSSL;
 
 	public static junit.framework.Test suite() {
+		
 		TestSuite suite = new TestSuite("FileServiceArchiveTestDStoreWindows");
+		
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToArchiveFile")); //$NON-NLS-1$
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToVirtualFileLevelOne")); //$NON-NLS-1$
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testCopyBatchToVirtualFileLevelTwo")); //$NON-NLS-1$
@@ -55,6 +56,9 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testMoveVirtualFileLevelTwo")); //$NON-NLS-1$
 		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testRenameVirtualFile")); //$NON-NLS-1$
 		//suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testRenameVirtualFileBigZip")); //$NON-NLS-1$
+		
+		suite.addTest(TestSuite.createTest(FileServiceArchiveTestDStoreWindows.class, "testSuperTransferLocalToRemote"));
+		 
 		return suite;
 	}
 	
@@ -152,5 +156,7 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 		store.setValue(ISystemPreferencesConstants.ALERT_NONSSL, fPreference_ALERT_NONSSL);
 		super.tearDown();
 	}
+	
+
 
 }

@@ -3421,7 +3421,7 @@ public class SystemView extends SafeTreeViewer
 
 	/**
 	 * Do an intelligent refresh of an expanded item. The inherited algorithm for refresh is stupid,
-	 * in that it reexpands children based on their original ordinal position which can change after a
+	 * in that it re-expands children based on their original ordinal position which can change after a
 	 * refresh, resulting in the wrong children being expanded. Currently this only truly comes to light
 	 * for remote objects, where refresh really can change the resulting list and hence each child's
 	 * ordinal position. So, to be safe we only override the inherited algorithm if any nested child
@@ -3458,7 +3458,7 @@ public class SystemView extends SafeTreeViewer
 				wasExpanded[idx] = false;
 			}
 		}
-		// ok, we have found all expanded descendents of all selected items. 
+		// ok, we have found all expanded descendants of all selected items. 
 
 		// If none of the expanded sub-nodes are remote simply use the inherited algorithm for refresh
 		if (!areAnyRemote) {
@@ -3498,7 +3498,7 @@ public class SystemView extends SafeTreeViewer
 				//************************************************************///
 				// FIXME!!
 				// TODO
-				// DKM - problem here is that if a query is in progress, then we won't find it untli the deferred query completes
+				// DKM - problem here is that if a query is in progress, then we won't find it until the deferred query completes
 				item = findFirstRemoteItemReference(itemToExpand.remoteName, itemToExpand.subsystem, itemToExpand.parentItem);
 				//************************************************************///
 				// if found, re-expand it

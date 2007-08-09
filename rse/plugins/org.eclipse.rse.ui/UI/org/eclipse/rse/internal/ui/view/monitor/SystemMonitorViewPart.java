@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [177587] Made MonitorViewPart a SelectionProvider
  * Kevin Doyle (IBM) - [160378] Subset action should be disabled when there are no tabs in Monitor
+ * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -926,11 +927,11 @@ class SubSetAction extends BrowseAction
 		int eventType = event.getEventType();
 		Object remoteResource = event.getResource();
 	
-		Vector remoteResourceNames = null;
-		if (remoteResource instanceof Vector)
+		java.util.List remoteResourceNames = null;
+		if (remoteResource instanceof java.util.List)
 		{
-			remoteResourceNames = (Vector) remoteResource;
-			remoteResource = remoteResourceNames.elementAt(0);
+			remoteResourceNames = (java.util.List) remoteResource;
+			remoteResource = remoteResourceNames.get(0);
 		}
 
 		Object child = event.getResource();

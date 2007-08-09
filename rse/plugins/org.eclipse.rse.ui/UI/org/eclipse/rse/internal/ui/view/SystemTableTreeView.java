@@ -1428,8 +1428,8 @@ public class SystemTableTreeView
 	}
 
 	/**
-	 * Returns the implementation of ISystemRemoteElement for the given
-	 * object.  Returns null if this object does not adaptable to this.
+	 * Returns the implementation of ISystemRemoteElementAdapter for the given
+	 * object.  Returns null if this object is not adaptable to this.
 	 */
 	protected ISystemRemoteElementAdapter getRemoteAdapter(Object o)
 	{
@@ -1445,7 +1445,10 @@ public class SystemTableTreeView
 
 	/**
 	 * Returns the implementation of IRemoteObjectIdentifier for the given
-	 * object.  Returns null if this object does not adaptable to this.
+	 * object.  Returns null if this object is not adaptable to this.
+	 * 
+	 * @deprecated 	should use getViewAdapter(Object) as IRemoteObjectIdentifier
+	 * 		is not defined in the adapter factories
 	 */
 	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 
 	{

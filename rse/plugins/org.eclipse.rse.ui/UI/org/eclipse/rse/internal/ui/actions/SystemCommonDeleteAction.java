@@ -13,12 +13,13 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [188637] Handle the caught exception in DeleteJob.run when file fails to be deleted
+ * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste with Remote Search view open
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -110,8 +111,8 @@ public class SystemCommonDeleteAction
 		public IStatus run(IProgressMonitor monitor)
 		{
 			boolean ok = true;
-			List localDeletedObjects = new ArrayList();
-			List remoteDeletedObjects = new ArrayList();
+			List localDeletedObjects = new Vector();
+			List remoteDeletedObjects = new Vector();
 			
 			// local delete is pretty straight-forward
 			for (int l = 0; l < _localResources.size() && ok; l++)
@@ -190,7 +191,7 @@ public class SystemCommonDeleteAction
 		setProcessAllSelections(true);
 		setContextMenuGroup(ISystemContextMenuConstants.GROUP_REORGANIZE);		
   	    setHelp(RSEUIPlugin.HELPPREFIX+"actn0021"); //$NON-NLS-1$
-  	    _setList = new ArrayList();
+  	    _setList = new Vector();
 	}
 	
 	/**
@@ -280,7 +281,7 @@ public class SystemCommonDeleteAction
 			if (selection instanceof IStructuredSelection)
 			{				
 				// keep track of the current set
-				List localSet = new ArrayList();
+				List localSet = new Vector();
 
 				// divide up all objects to delete
 				IStructuredSelection ssel = (IStructuredSelection)selection;

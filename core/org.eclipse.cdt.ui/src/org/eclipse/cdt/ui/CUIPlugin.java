@@ -31,9 +31,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -56,7 +58,9 @@ import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ConfigurationElementSorter;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -426,7 +430,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public IBuildConsoleManager getConsoleManager() {
 		return getConsoleManager(getResourceString("BuildConsole.name"), BuildConsoleManager.DEFAULT_CONTEXT_MENU_ID); //$NON-NLS-1$
-		}
+	}
 
 	/**
 	 * Return a console manager specified by id.
@@ -464,6 +468,28 @@ public class CUIPlugin extends AbstractUIPlugin {
 		// init ast provider
 		getASTProvider();
 		CDTContextActivator.getInstance().install();
+		
+		// start make-ui plugin, such that it can check for project conversions.
+		Job job= new Job(Messages.CUIPlugin_jobStartMakeUI) {
+			protected IStatus run(IProgressMonitor monitor) {
+				Bundle bundle= Platform.getBundle("org.eclipse.cdt.make.ui"); //$NON-NLS-1$
+				try {
+					if (bundle != null) {
+						switch (bundle.getState()) {
+						case Bundle.RESOLVED:
+						case Bundle.STARTING:  // because make.ui uses lazy activation, we need to start it.
+							bundle.start(Bundle.START_TRANSIENT);
+							break;
+						}
+					}
+				} catch (BundleException e) {
+					return new Status(IStatus.WARNING, PLUGIN_ID, e.getMessage(), e);
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	/* (non-Javadoc)

@@ -384,13 +384,6 @@
       </participant>
    </extension>
     
-   
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.eclipse.cdt.make.internal.ui.MakeStartup">
-      </startup>
-   </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension

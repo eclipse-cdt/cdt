@@ -17,12 +17,14 @@
  *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
+ * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
  ********************************************************************************/
 
 
 package org.eclipse.rse.internal.efs.ui;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.window.Window;
@@ -32,8 +34,10 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFolderDialog;
 import org.eclipse.rse.internal.efs.RSEFileStoreImpl;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ide.fileSystem.FileSystemContributor;
 
@@ -72,27 +76,57 @@ public class RSEFileSystemContributor extends FileSystemContributor {
 				}
 			}
 			
-			IRemoteFile file = (IRemoteFile)selected;
-			String path = file.getAbsolutePath();
 			IHost host = dlg.getSelectedConnection();
 			String hostName = host.getHostName();
-			
+
+			IRemoteFile file = (IRemoteFile)selected;
+			String path = file.getAbsolutePath();
+			if (host.getSystemType().isWindows()) {
+				path = path.replace('\\', '/');
+			}
+			path = fixPathForURI(path);
 			try {
 				return new URI("rse", hostName, path, null); //$NON-NLS-1$
 			}
-			catch (Exception e) {
+			catch (URISyntaxException e) {
+				SystemMessageDialog.displayErrorMessage(SystemMessageDialog.getDefaultShell(), e.getLocalizedMessage());
 			}
 		}
 		return null;
-
+	}
+	
+	/**
+	 * Adapt a local file system path such that it can be used as
+	 * path in an URI. Converts path delimiters do '/' default 
+	 * delimiter, and adds a slash in front if necessary.  
+	 * @param path the path to adapt
+	 * @return adapted path
+	 */
+	private String fixPathForURI(String path) {
+		String sep = PathUtility.getSeparator(path);
+		if (!sep.equals("/")) { //$NON-NLS-1$
+			path = path.replace(sep.charAt(0), '/');
+		}
+		//<adapted from org.eclipse.core.filesystem.URIUtil.toURI() Copyright(c) 2005, 2006 IBM>
+		final int length = path.length();
+		StringBuffer pathBuf = new StringBuffer(length + 3);
+		//There must be a leading slash in a hierarchical URI
+		if (length > 0 && (path.charAt(0) != '/'))
+			pathBuf.append('/');
+		//additional double-slash for UNC paths to distinguish from host separator
+		if (path.startsWith("//")) //$NON-NLS-1$
+			pathBuf.append('/').append('/');
+		pathBuf.append(path);
+		//</adapted from org.eclipse.core.filesystem.URIUtil.toURI() Copyright(c) 2005, 2006 IBM>
+		return pathBuf.toString();
 	}
 
 	public URI getURI(String string){
-		
 		try {
 			return new URI(string);
 		}
-		catch (Exception e) {			
+		catch (URISyntaxException e) {
+			//Do not show an error or log here, since this method is called repeatedly while typing
 		}
 		return null;
 	}

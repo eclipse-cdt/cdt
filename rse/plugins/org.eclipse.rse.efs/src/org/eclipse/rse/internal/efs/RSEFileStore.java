@@ -17,6 +17,7 @@
  *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
+ * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -82,6 +83,13 @@ public class RSEFileStore extends FileStore implements IFileStore
 		_host = host;
 		_absolutePath = new Path(absolutePath);
 		_name = _absolutePath.lastSegment();
+		if (_name == null) {
+			//Windows Root Drive has no segments but needs a name
+			_name = _absolutePath.getDevice();
+			if (_name == null) {
+				_name = ""; //$NON-NLS-1$
+			}
+		}
 	}
 	
 	/**

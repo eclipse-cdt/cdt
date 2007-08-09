@@ -871,6 +871,7 @@ implements
 					ICPropertyTab t = ((InternalTab)itabs.get(0)).tab;
 					if (! t.canBeVisible())
 						t.handleTabEvent(ICPropertyTab.VISIBLE, null);
+					return;
 				}
 				boolean willAdd = false;
 				TabItem[] ts = folder.getItems();

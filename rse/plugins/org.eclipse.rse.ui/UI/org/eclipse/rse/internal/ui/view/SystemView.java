@@ -3508,7 +3508,7 @@ public class SystemView extends SafeTreeViewer
 					((TreeItem) item).setExpanded(true);
 					if (debug) System.out.println("Re-Expanded RemoteItem: " + itemToExpand.remoteName); //$NON-NLS-1$
 				} else if (debug) System.out.println("Re-Expand of RemoteItem '" + itemToExpand.remoteName + "' failed. Not found"); //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
+			} else if (itemToExpand.data!=null) {
 				setExpandedState(itemToExpand.data, true);
 				if (debug) System.out.println("Re-Expanded non-remote Item: " + itemToExpand.data); //$NON-NLS-1$
 			}

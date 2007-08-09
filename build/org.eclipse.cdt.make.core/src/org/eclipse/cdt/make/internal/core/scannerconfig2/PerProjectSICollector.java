@@ -530,4 +530,8 @@ public class PerProjectSICollector implements IScannerInfoCollector3, IScannerIn
 		this.project = context.getProject();
 	}
 	
+	public InfoContext getContext(){
+		return this.context;
+	}
+	
 }

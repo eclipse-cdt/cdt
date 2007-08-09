@@ -15,9 +15,10 @@
  * Martin Oberhuber (Wind River) - fix 168586 - isCaseSensitive() on Windows
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Kevin Doyle (IBM) - [182221] Throwing Proper Exceptions on create file/folder
- * Xuan Chen        (IBM)        - Fix 189487 - copy and paste a folder did not work - workbench hang
- * David McKnight   (IBM)        - [192705] Exception needs to be thrown when rename fails
+ * Xuan Chen (IBM) - Fix 189487 - copy and paste a folder did not work - workbench hang
+ * David McKnight (IBM) - [192705] Exception needs to be thrown when rename fails
  * Kevin Doyle (IBM) - [196211] Move a folder to a directory that contains a folder by that name errors
+ * Martin Oberhuber (Wind River) - [199394] Allow real files/folders containing String #virtual#
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -622,20 +623,29 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	protected IHostFile[] internalFetch(String remoteParent, String fileFilter, int type, IProgressMonitor monitor) {
 		LocalFileNameFilter fFilter = new LocalFileNameFilter(fileFilter, type);
 		File localParent = new File(remoteParent);
-		// if the system type is Windows, we get the canonical path so that we have the correct case in the path
-		// this is needed because Windows paths are case insensitive
-		if (isWindows()) {
-			try {
-				localParent = localParent.getCanonicalFile();
-			} catch (IOException e) {
-				System.out.println("Can not get canonical path: " + localParent.getAbsolutePath()); //$NON-NLS-1$
+		boolean isArchive = false;
+		boolean isVirtual = false;
+		if (localParent.exists()) {
+			if (localParent.isFile()) {
+				isArchive = ArchiveHandlerManager.getInstance().isArchive(localParent);
+			}
+			// if the system type is Windows, we get the canonical path so that we have the correct case in the path
+			// this is needed because Windows paths are case insensitive
+			if (isWindows()) {
+				try {
+					localParent = localParent.getCanonicalFile();
+				} catch (IOException e) {
+					System.out.println("Can not get canonical path: " + localParent.getAbsolutePath()); //$NON-NLS-1$
+				}
 			}
 		}
-		if (remoteParent.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR)) {
-			remoteParent = remoteParent.substring(0, remoteParent.length() - ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
+		else {
+			// does not exist: is it virtual?
+			if (remoteParent.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR)) {
+				remoteParent = remoteParent.substring(0, remoteParent.length() - ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
+			}
+			isVirtual = ArchiveHandlerManager.isVirtual(remoteParent);
 		}
-		boolean isVirtual = ArchiveHandlerManager.isVirtual(remoteParent);
-		boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(localParent);
 		if (isVirtual || isArchive) {
 			try {
 				VirtualChild[] contents = null;
@@ -761,28 +771,18 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		
 		boolean isVirtualParent = false;
-		
-		if (remoteParent != null) {
-			isVirtualParent = ArchiveHandlerManager.isVirtual(remoteParent);
-		}
-		
 		boolean isArchiveParent = false;
-		
 		if (remoteParent != null) {
-			isArchiveParent = ArchiveHandlerManager.getInstance().isArchive(new File(remoteParent));
+			File remoteParentFile = new File(remoteParent);
+			if (!remoteParentFile.exists()) {
+				isVirtualParent = ArchiveHandlerManager.isVirtual(remoteParent);
+			} else if (remoteParentFile.isFile()) {
+				isArchiveParent = ArchiveHandlerManager.getInstance().isArchive(remoteParentFile);
+			}
 		}
-		
 		if (!isVirtualParent && !isArchiveParent)
 		{
-			File file = null;
-			if (remoteParent == null)
-			{
-				file = new File(name);
-			}
-			else
-			{
-				file = new File(remoteParent, name);
-			}
+			File file = remoteParent==null ? new File(name) : new File(remoteParent, name);
 			return new LocalHostFile(file);
 		}
 		else

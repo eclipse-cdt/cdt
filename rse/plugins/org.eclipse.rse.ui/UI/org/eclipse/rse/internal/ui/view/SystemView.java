@@ -38,7 +38,7 @@
  * Tobias Schwarz (Wind River)   - [197484] Provide ContextObject for queries on all levels
  * David McKnight   (IBM)        - [196662] Avoid main thread query to check exists when remote refreshing
  * Kevin Doyle  (IBM)            - [198576] Renaming a folder directly under a Filter doesn't update children
- * Kevin Doyle (IBM) 			 - [196582] Depreciated getRemoteObjectIdentifier
+ * Kevin Doyle (IBM) 			 - [196582] Deprecated getRemoteObjectIdentifier
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1330,7 +1330,7 @@ public class SystemView extends SafeTreeViewer
 	}
 
 	/**
-	 * Returns the implementation of ISystemViewElement for the given
+	 * Returns the implementation of ISystemViewElementAdapter for the given
 	 * object.  Returns null if the adapter is not defined or the
 	 * object is not adaptable.
 	 */
@@ -1354,7 +1354,7 @@ public class SystemView extends SafeTreeViewer
 	 * Returns the implementation of IRemoteObjectIdentifier for the given
 	 * object.  Returns null if this object is not adaptable to this.
 	 *
-	 * @deprecated 	should use getViewAdapter(Object) as IRemoteObjectIdentifier
+	 * @deprecated 	should use {@link #getViewAdapter(Object)} since IRemoteObjectIdentifier
 	 * 		is not defined in the adapter factories
 	 */
 	protected IRemoteObjectIdentifier getRemoteObjectIdentifier(Object o) 

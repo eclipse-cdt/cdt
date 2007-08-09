@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Martin Oberhuber (Wind River) - [191581] clear local IRemoteFile handle cache when modifying remote
+ * Martin Oberhuber (Wind River) - [197025][197167] Improved wait for model complete
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -38,6 +39,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
@@ -52,6 +54,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileContext;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 /**
  * Implementation of IFileStore for RSE.
@@ -65,7 +68,10 @@ public class RSEFileStoreImpl extends FileStore
 
 	//cached IRemoteFile object: an Object to avoid early class loading
 	private transient IRemoteFile _remoteFile;
-	
+
+	//markup to know that RSE has been initialized
+	private static boolean _initialized;
+
 	/**
 	 * Constructor to use if the parent file store is known.
 	 * @param parent the parent file store.
@@ -107,6 +113,27 @@ public class RSEFileStoreImpl extends FileStore
 	}
 
 	/**
+	 * Wait for RSE persistence to fully initialize
+	 */
+	private static void waitForRSEInit() {
+		if (!_initialized) {
+			//Force activating RSEUIPlugin, which kicks off InitRSEJob		
+			RSEUIPlugin.getDefault();
+			Job[] jobs = Job.getJobManager().find(null);
+			for (int i=0; i<jobs.length; i++) {
+				if ("Initialize RSE".equals(jobs[i].getName())) { //$NON-NLS-1$
+					try {
+						jobs[i].join();
+					} catch(InterruptedException e) {
+					}
+					break;
+				}
+			}
+			_initialized = true;
+		}
+	}
+	
+	/**
 	 * Return the best RSE connection object matching the given host name.
 	 * 
 	 * @param hostNameOrAddr IP address of requested host.
@@ -117,38 +144,13 @@ public class RSEFileStoreImpl extends FileStore
 		if (hostNameOrAddr==null) {
 			return null;
 		}
+		if (!_initialized) {
+			waitForRSEInit();
+		}
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		IHost[] connections = sr.getHosts();
-		
-		//FIXME HACK workaround until we get an API method to know when persistent data is fully restored
-		//Without this hack, the first time a directory is expanded RSEUIPlugin is activated and it
-		//is too slow reading persistent data. We wait up to 5 seconds for RSE to initialize.
-		if (connections.length==0) {
-			long startTime = System.currentTimeMillis();
-			long endTime = startTime+5000;
-			//int iterations=0;
-			do {
-				try {
-					Thread.sleep(500);
-					//iterations++;
-				} catch(InterruptedException e) {
-					break;
-				}
-				if (monitor!=null) {
-					monitor.worked(1);
-					if (monitor.isCanceled()) {
-						break;
-					}
-				}
-				connections = sr.getHosts();
-			} while((connections.length==0 || getConnectionFor(hostNameOrAddr, monitor)==null)
-					&& System.currentTimeMillis()<endTime);
-			//System.out.println("Time: "+ (System.currentTimeMillis()-startTime)+", Iterations: "+iterations);
-			//System.out.println("Dbg Breakpoint");
-		}
 
 		IHost unconnected = null;
-		
 		for (int i = 0; i < connections.length; i++) {
 			
 			IHost con = connections[i];

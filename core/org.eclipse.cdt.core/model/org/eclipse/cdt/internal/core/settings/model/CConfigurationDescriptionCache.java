@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingObject;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
+import org.eclipse.cdt.core.settings.model.IModificationContext;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
@@ -138,11 +139,13 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 			fId = fData.getId();
 			fSettingsFactory = factory;
 			
-			if(context.getConfiguratoinDataModifiedState() || fBaseCache == null)
+			if((context.getAllConfigurationSettingsFlags() & IModificationContext.CFG_DATA_SETTINGS_UNMODIFIED) == 0  || fBaseCache == null){
 				copySettingsFrom(fData, true);
-			else {
+			} else {
 				copySettingsFrom(fBaseCache, true);
 				modified = fSpecSettings.isModified();
+				if(!modified)
+					modified = (context.getAllConfigurationSettingsFlags() & IModificationContext.CFG_DATA_STORAGE_UNMODIFIED) == 0;
 			}
 			
 			fSettingsFactory = null;

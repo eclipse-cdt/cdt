@@ -147,12 +147,11 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		BuildConfigurationData baseCfgData = (BuildConfigurationData)base;
 		IConfiguration baseCfg = baseCfgData.getConfiguration();
 		BuildConfigurationData appliedCfg;
-		if(context.getBaseConfigurationDataCacheState() && !baseCfg.isDirty()){
+		if(context.isBaseDataCached() && !baseCfg.isDirty()){
 			appliedCfg = baseCfgData;
-			context.setConfiguratoinDataModifiedState(false);
+			context.setConfigurationSettingsFlags(IModificationContext.CFG_DATA_STORAGE_UNMODIFIED | IModificationContext.CFG_DATA_SETTINGS_UNMODIFIED);
 		} else {
 			appliedCfg = writeConfiguration(des, baseCfgData);
-			context.setConfiguratoinDataModifiedState(true);
 			
 			IManagedBuildInfo info = getBuildInfo(des);
 			ManagedProject mProj = (ManagedProject)info.getManagedProject();

@@ -16,6 +16,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IModificationContext {
+	public static final int CFG_DATA_SETTINGS_UNMODIFIED = 1;
+	public static final int CFG_DATA_STORAGE_UNMODIFIED = 1 << 1;
+	
 	IProject getProject();
 	
 	IProjectDescription getEclipseProjectDescription() throws CoreException;
@@ -25,12 +28,19 @@ public interface IModificationContext {
 	void addWorkspaceRunnable(IWorkspaceRunnable runnable);
 	
 	/**
-	 * the CConfigurationDataProvider can call this method to indicate whether the
-	 * ICConfigurationDescription settings were changed 
-	 * @param modified
+	 * the CConfigurationDataProvider can call this method to indicate the
+	 * CConfigurationData settings state.
+	 * 
+	 * @param flags
 	 */
-	void setConfiguratoinDataModifiedState(boolean modified);
+	void setConfigurationSettingsFlags(int flags);
 
-	boolean getBaseConfigurationDataCacheState();
+	/**
+	 * returns true if the cache data gets re-applied, i.e. there were no changes to the
+	 * current configuration data performed from the core side
+	 * 
+	 * @return boolean
+	 */
+	boolean isBaseDataCached();
 
 }

@@ -19,11 +19,14 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public final class SettingsContext implements IModificationContext{
+	private static final int USER_FLAGS_MASK = 0x0000ffff;
+	public static final int CFG_DATA_CACHED = 1 << 15;
+	
 	private IProjectDescription fEDes;
 	private IProject fProject;
 	private CompositeWorkspaceRunnable fRunnable;
-	private boolean fCfgDataModifyState;
-	private boolean fCfgDataCacheState;
+	private int fFlags;
+	
 	
 	SettingsContext(IProject project){
 		fProject = project;
@@ -34,8 +37,10 @@ public final class SettingsContext implements IModificationContext{
 	}
 	
 	void init(CConfigurationDescriptionCache cfg){
-		fCfgDataModifyState = true;
-		fCfgDataCacheState = cfg.getBaseCache() != null;
+		int flags = 0;
+		if(cfg.getBaseCache() != null)
+			flags |= CFG_DATA_CACHED;
+		fFlags = flags;
 	}
 
 	IProjectDescription getEclipseProjectDescription(boolean create) throws CoreException{
@@ -97,15 +102,17 @@ public final class SettingsContext implements IModificationContext{
 		return null;
 	}
 
-	public boolean getBaseConfigurationDataCacheState() {
-		return fCfgDataCacheState;
+	public int getAllConfigurationSettingsFlags() {
+		return fFlags;
 	}
 
-	public void setConfiguratoinDataModifiedState(boolean modified) {
-		fCfgDataModifyState = modified;
+	public void setConfigurationSettingsFlags(int flags) {
+		//system flags are read only; 
+		flags &= USER_FLAGS_MASK;
+		fFlags |= flags;
 	}
-	
-	public boolean getConfiguratoinDataModifiedState(){
-		return fCfgDataModifyState;
+
+	public boolean isBaseDataCached() {
+		return (fFlags & CFG_DATA_CACHED) != 0;
 	}
 }

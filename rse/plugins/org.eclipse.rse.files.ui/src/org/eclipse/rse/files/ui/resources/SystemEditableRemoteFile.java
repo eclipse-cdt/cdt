@@ -19,7 +19,6 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [187130] New Folder/File, Move and Rename should be available for read-only folders
- * 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -412,7 +411,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 	/**
 	 * Check if user has write authority to the file.
-	 * @return true if the file is readonly
+	 * @return true if the file is read-only
 	 */
 	public boolean isReadOnly()
 	{
@@ -989,12 +988,8 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				if (editorInput instanceof IFileEditorInput)
 				{
 					IPath path = ((IFileEditorInput) editorInput).getFile().getLocation();
-					java.io.File pathFile = new java.io.File(path.toOSString());
-
-					if (pathFile.compareTo(lFile) == 0)
-					{
+					if (path!=null && lFile.compareTo(new java.io.File(path.toOSString()))==0) {
 						//if (path.makeAbsolute().toOSString().equalsIgnoreCase(localPath))
-						//{
 						return OPEN_IN_SAME_PERSPECTIVE;
 					}
 				}
@@ -1033,7 +1028,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 					{
 						IPath path = ((IFileEditorInput) editorInput).getFile().getLocation();
 
-						if (path.makeAbsolute().toOSString().equalsIgnoreCase(localPath))
+						if (path!=null && path.makeAbsolute().toOSString().equalsIgnoreCase(localPath))
 						{
 							return OPEN_IN_DIFFERENT_PERSPECTIVE;
 						}
@@ -1513,18 +1508,21 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		}
 		catch (Exception e)
 		{
-			
-		}		
+			SystemMessageDialog.displayExceptionMessage(SystemMessageDialog.getDefaultShell(), e);
+			return;
+		}
 		boolean readOnly = !remoteFile.canWrite();
 		ResourceAttributes attr = file.getResourceAttributes();
-		attr.setReadOnly(readOnly);
-		try
-		{
-			file.setResourceAttributes(attr);
-		}
-		catch (Exception e)
-		{
-				
+		if (attr!=null) {
+			attr.setReadOnly(readOnly);
+			try
+			{
+				file.setResourceAttributes(attr);
+			}
+			catch (Exception e)
+			{
+					
+			}
 		}
 		
 		// set editor as preferred editor for this file

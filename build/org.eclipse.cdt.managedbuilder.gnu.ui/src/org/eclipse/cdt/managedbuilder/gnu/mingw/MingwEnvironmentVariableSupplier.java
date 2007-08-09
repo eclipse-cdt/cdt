@@ -11,13 +11,13 @@
 
 package org.eclipse.cdt.managedbuilder.gnu.mingw;
 
-import java.io.File;
-
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.utils.WindowsRegistry;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -55,35 +55,52 @@ public class MingwEnvironmentVariableSupplier implements
 		}
 	}
 	
-	private final IBuildEnvironmentVariable path;
+	private IBuildEnvironmentVariable path;
 	
-	public MingwEnvironmentVariableSupplier() {
+	public static IPath getBinDir() {
+		IPath subPath = new Path("mingw\\bin");
 		// 1. Try the mingw directory in the platform install directory
-		String bin = Platform.getInstallLocation().getURL().getFile().substring(1) + "mingw/bin";
+		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
+		IPath binPath = installPath.append(subPath);
+		if (binPath.toFile().isDirectory())
+			return binPath;
 		
-		if (!new File(bin).exists()) {
-			// 2. Try looking if the mingw installer ran
-			bin = WindowsRegistry.getRegistry().getLocalMachineValue(
+		// 2. Try the directory above the install dir
+		binPath = installPath.removeLastSegments(1).append(subPath);
+		if (binPath.toFile().isDirectory())
+			return binPath;
+		
+		// 3. Try looking if the mingw installer ran
+		String mingwPath = WindowsRegistry.getRegistry().getLocalMachineValue(
 					"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MinGW",
 					"InstallLocation");
-			if (bin != null)
-				bin += "\\bin";
-			
-			if (bin == null || !new File(bin).exists()) {
-				// 3. Try the standard location
-				bin = "C:/MinGW/bin";
-			}
+		if (mingwPath != null) {
+			binPath = new Path(mingwPath).append("bin");
+			if (binPath.toFile().isDirectory())
+				return binPath;
 		}
-
-		path = new MingwBuildEnvironmentVariable(
-			"PATH",
-			bin,
-			IBuildEnvironmentVariable.ENVVAR_PREPEND);
+		
+		// 4. Try the default MinGW install dir
+		binPath = new Path("C:\\MinGW\\bin");
+		if (binPath.toFile().isDirectory())
+			return binPath;
+		
+		// No dice, return null
+		return null;
+	}
+	
+	public MingwEnvironmentVariableSupplier() {
+		IPath binPath = getBinDir();
+		if (binPath != null)
+			path = new MingwBuildEnvironmentVariable(
+					"PATH",
+					binPath.toOSString(),
+					IBuildEnvironmentVariable.ENVVAR_PREPEND);
 	}
 	
 	public IBuildEnvironmentVariable getVariable(String variableName,
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
-		if (variableName.equals(path.getName()))
+		if (path != null && variableName.equals(path.getName()))
 			return path;
 		else
 			return null;
@@ -91,7 +108,9 @@ public class MingwEnvironmentVariableSupplier implements
 
 	public IBuildEnvironmentVariable[] getVariables(
 			IConfiguration configuration, IEnvironmentVariableProvider provider) {
-		return new IBuildEnvironmentVariable[] { path };
+		return path != null
+			? new IBuildEnvironmentVariable[] { path }
+			: new IBuildEnvironmentVariable[0];
 	}
 
 }

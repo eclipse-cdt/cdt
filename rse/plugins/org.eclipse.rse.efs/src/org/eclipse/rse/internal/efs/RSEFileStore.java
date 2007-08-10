@@ -18,6 +18,7 @@
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Martin Oberhuber (Wind River) - [189441] fix EFS operations on Windows (Local) systems
+ * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -266,7 +267,15 @@ public class RSEFileStore extends FileStore implements IFileStore
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		return getImpl().fetchInfo(options, monitor);
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.filesystem.provider.FileStore#putInfo(org.eclipse.core.filesystem.IFileInfo, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
+		getImpl().putInfo(info, options, monitor);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#openInputStream(int, org.eclipse.core.runtime.IProgressMonitor)

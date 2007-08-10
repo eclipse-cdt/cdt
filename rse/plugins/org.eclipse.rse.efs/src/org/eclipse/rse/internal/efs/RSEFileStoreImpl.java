@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Martin Oberhuber (Wind River) - [191581] clear local IRemoteFile handle cache when modifying remote
  * Martin Oberhuber (Wind River) - [197025][197167] Improved wait for model complete
+ * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -481,10 +482,22 @@ public class RSEFileStoreImpl extends FileStore
 		cacheRemoteFile(null);
 		// connect if needed. Will throw exception if not successful.
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
+		String classification = (remoteFile==null) ? null : remoteFile.getClassification();
 		
 		FileInfo info = new FileInfo(_parent.getName());
 		if (remoteFile == null || !remoteFile.exists()) {
 			info.setExists(false);
+			//broken symbolic link handling
+			if (classification!=null && classification.startsWith("broken symbolic link")) { //$NON-NLS-1$
+				info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
+				int i1 = classification.indexOf('\'');
+				if (i1>0) {
+					int i2 = classification.indexOf('´');
+					if (i2>i1) {
+						info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, classification.substring(i1+1,i2));
+					}
+				}
+			}
 			return info;
 		}
 		
@@ -496,6 +509,13 @@ public class RSEFileStoreImpl extends FileStore
 		info.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, remoteFile.isExecutable());
 		info.setAttribute(EFS.ATTRIBUTE_ARCHIVE, remoteFile.isArchive());
 		info.setAttribute(EFS.ATTRIBUTE_HIDDEN, remoteFile.isHidden());
+		if (classification!=null && classification.startsWith("symbolic link")) { //$NON-NLS-1$
+			info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
+			int idx = classification.indexOf(':');
+			if (idx>0) {
+				info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, classification.substring(idx+1));
+			}
+		}
 
 		if (!isDir) {
 			info.setLength(remoteFile.getLength());
@@ -503,7 +523,59 @@ public class RSEFileStoreImpl extends FileStore
 		
 		return info;
 	}
-	
+
+	/**
+	 * Return a message for logging, built from 
+	 * @param item item where failure occurred
+	 * @param e exception
+	 * @return
+	 */
+    private String getExceptionMessage(String item, Throwable e) {
+    	String exceptionText;
+    	if (e!=null) {
+    		if (e.getLocalizedMessage()!=null) {
+    			exceptionText = e.getLocalizedMessage();
+    		} else {
+    			exceptionText = e.getClass().getName();
+    		}
+    	} else {
+    		exceptionText = "Unknown exception";
+    	}
+    	if (item!=null && item.length()>0) {
+    		return exceptionText + ": " + item; //$NON-NLS-1$
+    	}
+    	return exceptionText;
+    }
+    
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.filesystem.provider.FileStore#putInfo(org.eclipse.core.filesystem.IFileInfo, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
+		boolean success = true;
+		// connect if needed. Will throw exception if not successful.
+		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
+		IRemoteFileSubSystem subSys = remoteFile.getParentRemoteFileSubSystem();
+		try {
+			if ((options & EFS.SET_ATTRIBUTES) != 0) {
+				//We cannot currently write isExecutable(), isHidden()
+				success &= subSys.setReadOnly(remoteFile, info.getAttribute(EFS.ATTRIBUTE_READ_ONLY), monitor);
+			}
+			if ((options & EFS.SET_LAST_MODIFIED) != 0) {
+				success &= subSys.setLastModified(remoteFile, info.getLastModified(), monitor);
+			}
+		} catch(Exception e) {
+			throw new CoreException(new Status(IStatus.ERROR,
+					Activator.getDefault().getBundle().getSymbolicName(),
+					getExceptionMessage(toString(), e), e));
+		}
+		if (!success) {
+			cacheRemoteFile(null);
+			//will throw exception if not exists
+			remoteFile = getRemoteFileObject(monitor, true);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.IFileStore#openInputStream(int, org.eclipse.core.runtime.IProgressMonitor)

@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * Martin Oberhuber (Wind River) - initial API and implementation
- * Dave Dykstal (IBM) - fixing bug 162510: correctly process filter strings
+ * David Dykstal (IBM) - fixing bug 162510: correctly process filter strings
  * Kushal Munir (IBM) - for API bug   
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [192724] Fixed logic to filter folders if FILE_TYPE_FOLDERS

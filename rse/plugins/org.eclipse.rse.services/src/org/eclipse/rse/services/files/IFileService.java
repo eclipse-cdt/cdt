@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -288,7 +289,7 @@ public interface IFileService extends IService
 	 * @param name the name of the file to set
 	 * @param readOnly indicates whether to make the file readonly or read-write
 	 * @param monitor the progress monitor
-	 * @return true if the readonly permission was changed successfully
+	 * @return true if the readonly permission was changed successfully, or the permission already was as desired
 	 */
 	public boolean setReadOnly(String parent, String name, boolean readOnly, IProgressMonitor monitor) throws SystemMessageException;
 	

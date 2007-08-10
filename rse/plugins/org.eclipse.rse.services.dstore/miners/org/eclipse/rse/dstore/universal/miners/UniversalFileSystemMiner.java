@@ -21,6 +21,7 @@
  * Kevin Doyle (IBM) - [196211] DStore Move tries rename if that fails copy/delete
  * Xuan Chen (IBM)        - [198046] [dstore] Cannot copy a folder into an archive file
  * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
+ * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -1230,17 +1231,13 @@ public class UniversalFileSystemMiner extends Miner {
 		else {
 			try {
 				String str = subject.getAttribute(DE.A_SOURCE);
-				boolean readOnly = false;
-				if (str.equals("true")) //$NON-NLS-1$
-				{
-					readOnly = true;
-				}
-				else
-				{
-					readOnly = false;
-				}
+				boolean readOnly = "true".equals(str); //$NON-NLS-1$
 				boolean done = false;
-				if (readOnly)
+				if (readOnly != filename.canWrite())
+				{
+					done = true;
+				}
+				else if (readOnly)
 				{
 					done = filename.setReadOnly();
 				}

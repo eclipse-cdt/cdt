@@ -11,6 +11,7 @@
  * Kushal Munir (IBM) - for API bug   
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [192724] Fixed logic to filter folders if FILE_TYPE_FOLDERS
+ * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -866,9 +867,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				int permOld = attr.getPermissions();
 				int permNew = permOld;
 				if (readOnly) {
-					permNew &= ~128;
+					permNew &= ~(128 | 16 | 2); //ugo-w
 				} else {
-					permNew |= 128;
+					permNew |= 128; //u+w
 				}
 				if (permNew != permOld) {
 					//getChannel("SftpFileService.setReadOnly").chmod(permNew, path); //$NON-NLS-1$
@@ -877,6 +878,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 					ok=true;
 					Activator.trace("SftpFileService.setReadOnly ok"); //$NON-NLS-1$
 				} else {
+					ok=true;
 					Activator.trace("SftpFileService.setReadOnly nothing-to-do"); //$NON-NLS-1$
 				}
 			} catch (Exception e) {

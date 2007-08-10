@@ -19,6 +19,7 @@
  * David McKnight (IBM) - [192705] Exception needs to be thrown when rename fails
  * Kevin Doyle (IBM) - [196211] Move a folder to a directory that contains a folder by that name errors
  * Martin Oberhuber (Wind River) - [199394] Allow real files/folders containing String #virtual#
+ * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1358,6 +1359,12 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		File file = new File(parent, name);
+		if (!file.exists()) {
+			return false;
+		}
+		if (readOnly != file.canWrite()) {
+			return true;
+		}
 		if (readOnly)
 		{
 			return file.setReadOnly();

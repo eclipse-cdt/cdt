@@ -57,6 +57,7 @@
  * Martin Oberhuber (Wind River) - [198645] Fix case sensitivity issues
  * Martin Oberhuber (Wind River) - [192610] Fix thread safety for delete(), upload(), setReadOnly() operations
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
+ * Javier Montalvo Orus (Symbian) - [199243] Renaming a file in an FTP-based EFS folder hangs all of Eclipse
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -165,6 +166,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		public void close() throws IOException {
 			super.close();
 			client.completePendingCommand();
+			client.logout();
 		}
 	}
 	
@@ -200,6 +202,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		public void close() throws IOException {
 			super.close();
 			client.completePendingCommand();
+			client.logout();
 		}
 	}
 	
@@ -411,6 +414,44 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		return _ftpClient; 
 	}
+	
+	/**
+	 * Clones the main FTP client connection, providing a separate client connected to the FTP server.
+	 * 
+	 * @param isBinary true if the FTPClient has to be using binary mode for data transfer, otherwise ASCII mode will be used
+	 * @return A new commons.net FTPClient connected to the same server. After usage it has to be disconnected.
+	 * @throws IOException
+	 */
+	private FTPClient cloneFTPClient(boolean isBinary) throws IOException
+	{
+		
+		FTPClient ftpClient = new FTPClient();
+		
+		ftpClient.connect(_ftpClient.getRemoteAddress());
+		ftpClient.login(_userId,_password);
+		
+		if (_clientConfigProxy != null) {
+			ftpClient.configure(_clientConfigProxy.getFTPClientConfig());
+		} else {
+			// UNIX parsing by default if no suitable parser found
+			ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_UNIX));
+		}
+
+		if (_isPassiveDataConnectionMode) {
+			ftpClient.enterLocalPassiveMode();
+		}
+
+		if (isBinary) {
+			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+		} else {
+			ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+		}
+		
+		ftpClient.registerSpyStream(_ftpLoggingOutputStream);
+
+		return ftpClient;
+	}
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -1305,29 +1346,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 
 		InputStream stream = null;
 		
-		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
-		{
-			try {
-				FTPClient ftpClient = getFTPClient();
-				ftpClient.changeWorkingDirectory(remoteParent);
-				setFileType(isBinary);
-				stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
+		try {
+			FTPClient ftpClient = cloneFTPClient(isBinary);
+			ftpClient.changeWorkingDirectory(remoteParent);
+			stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
 			}
 			catch (Exception e) {			
 				throw new RemoteFileIOException(e);
-			}finally {
-				//TODO I am not 100% sure but I _think_ that the _commandMutex
-				//may only be released once reading the stream is complete,
-				//since in FTPBufferedInputStream.close() a pending command
-				//is being sent.
-				//After all, the safer solution would be to have a separate
-				//FTP client connection to the remote for the download, such 
-				//that dir channel remains free. See bug #198636
-				_commandMutex.release();
 			}
-		} else {
-			throw new RemoteFileCancelledException();
-		}
+			
 		return stream;
 	}
 
@@ -1343,20 +1370,14 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
 		OutputStream stream = null;
 		
-		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
-		{
-			try {
-				FTPClient ftpClient = getFTPClient();
-				clearCache(remoteParent);
-				ftpClient.changeWorkingDirectory(remoteParent);
-				setFileType(isBinary);
-				stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
-			}
-			catch (Exception e) {
-				throw new RemoteFileIOException(e);
-			}finally {
-				_commandMutex.release();
-			}
+		try {
+			FTPClient ftpClient = cloneFTPClient(isBinary);
+			clearCache(remoteParent);
+			ftpClient.changeWorkingDirectory(remoteParent);
+			stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
+		}
+		catch (Exception e) {
+			throw new RemoteFileIOException(e);
 		}
 		
 		return stream;

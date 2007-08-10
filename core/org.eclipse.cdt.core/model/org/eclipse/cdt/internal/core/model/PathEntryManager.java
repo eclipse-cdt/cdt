@@ -412,12 +412,12 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return null;
 	}
 	
-	public PathEntryResolveInfo getResolveInfo(ICProject cproject) throws CModelException{
+	public PathEntryResolveInfo getResolveInfo(ICProject cproject, boolean useCache) throws CModelException{
 		PathEntryResolveInfo info = (PathEntryResolveInfo)resolvedInfoMap.get(cproject);
 		if(info == null){
 			getResolvedPathEntries(cproject);
 			info = (PathEntryResolveInfo)resolvedInfoMap.get(cproject);
-		} else if(!getResolveInfoValidState(cproject)){
+		} else if(!useCache || !getResolveInfoValidState(cproject)){
 			Object[] resolved = getResolvedPathEntries(cproject, false, false);
 			if(resolved != null)
 				info = (PathEntryResolveInfo)resolved[1]; 

@@ -236,7 +236,7 @@ public class PathEntryConfigurationDataProvider extends
 			throws CoreException {
 		//TODO: check external/reference info here as well.
 		if(!fFactory.isModified(base)){
-			return createData(des, base, false);
+			return createData(des, base, false, true);
 		}
 		
 		
@@ -257,13 +257,13 @@ public class PathEntryConfigurationDataProvider extends
 		
 		IPathEntry[] newEntries = (IPathEntry[])list.toArray(new IPathEntry[list.size()]);
 		PathEntryManager.getDefault().setRawPathEntries(cproject, newEntries, new NullProgressMonitor());
-		return createData(des, base, false);
+		return createData(des, base, false, false);
 	}
 	
-	private CConfigurationData createData(ICConfigurationDescription des, CConfigurationData fallbackData, boolean modifiedFlag) throws CoreException {
+	private CConfigurationData createData(ICConfigurationDescription des, CConfigurationData fallbackData, boolean modifiedFlag, boolean useCache) throws CoreException {
 		CConfigurationData dataToReturn;
 		try {
-			dataToReturn = createData(des);
+			dataToReturn = createData(des, useCache);
 		} catch (Exception e){
 			if(fallbackData != null)
 				dataToReturn = fallbackData;
@@ -288,11 +288,11 @@ public class PathEntryConfigurationDataProvider extends
 		return copy;
 	}
 	
-	private CfgData createData(ICConfigurationDescription des) throws CoreException{
+	private CfgData createData(ICConfigurationDescription des, boolean useCache) throws CoreException{
 		IProject project = des.getProjectDescription().getProject();
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cproject = manager.create(project);
-		PathEntryResolveInfo rInfo = PathEntryManager.getDefault().getResolveInfo(cproject);
+		PathEntryResolveInfo rInfo = PathEntryManager.getDefault().getResolveInfo(cproject, useCache);
 		
 		CfgData data = new CfgData(des.getId(), des.getName());
 		data.initEmptyData();
@@ -350,7 +350,7 @@ public class PathEntryConfigurationDataProvider extends
 	public CConfigurationData loadConfiguration(ICConfigurationDescription des,
 			IProgressMonitor monitor)
 			throws CoreException {
-		return createData(des, null, false);
+		return createData(des, null, false, true);
 	}
 
 	public void removeConfiguration(ICConfigurationDescription des,

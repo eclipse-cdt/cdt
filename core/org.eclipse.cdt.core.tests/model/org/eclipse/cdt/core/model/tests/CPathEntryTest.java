@@ -228,7 +228,7 @@ public class CPathEntryTest extends BaseTestCase {
 		
 	}	
 	
-	public void _testSetExclusionFilter_Bug197486() throws Exception {
+	public void testSetExclusionFilter_Bug197486() throws Exception {
 		ICProject testProject = null;
 		try {
 			testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);

@@ -56,6 +56,7 @@
  * Martin Oberhuber (Wind River) - [198638] Fix invalid caching
  * Martin Oberhuber (Wind River) - [198645] Fix case sensitivity issues
  * Martin Oberhuber (Wind River) - [192610] Fix thread safety for delete(), upload(), setReadOnly() operations
+ * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1260,29 +1261,28 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			boolean readOnly, IProgressMonitor monitor) throws SystemMessageException {
 		
 		boolean result = false;
-		int permissions = 0;
-		
 		FTPHostFile file = getFileInternal(parent,name, monitor);
 		
 		int userPermissions = file.getUserPermissions();
 		int groupPermissions = file.getGroupPermissions();
 		int otherPermissions = file.getOtherPermissions();
 		
-		if(readOnly)
-		{
+		int oldPermissions = userPermissions * 100 + groupPermissions * 10 + otherPermissions;
+		if(readOnly) {
 			userPermissions &= 5; // & 101b
-		}
-		else
-		{
+			groupPermissions &= 5; // & 101b
+			otherPermissions &= 5; // & 101b
+		} else {
 			userPermissions |= 2; // | 010b
 		}
-		
-		permissions = userPermissions * 100 + groupPermissions * 10 + otherPermissions;
+		int newPermissions = userPermissions * 100 + groupPermissions * 10 + otherPermissions;
 
-		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
+		if (newPermissions==oldPermissions) {
+			result = true;
+		} else if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
 				clearCache(parent);
-				result =_ftpClient.sendSiteCommand("CHMOD "+permissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+				result =_ftpClient.sendSiteCommand("CHMOD "+newPermissions+" "+file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException e) {
 				result = false;
 			} finally {

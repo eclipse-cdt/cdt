@@ -1083,6 +1083,17 @@ public class BuildDescription implements IBuildDescription {
 			} catch (BuildMacroException e) {
 			}
 
+			String artifactPrefix = tool.getOutputPrefix();
+			if(artifactPrefix != null && artifactPrefix.length() != 0){
+				try {
+					String tmp = ManagedBuildManager.getBuildMacroProvider().resolveValue(artifactPrefix, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, fCfg);	//$NON-NLS-1$	//$NON-NLS-2$
+					if((tmp = tmp.trim()).length() > 0)
+						artifactPrefix = tmp;
+				} catch (BuildMacroException e){
+				}
+				artifactName = artifactPrefix + artifactName;
+			}
+			
 			IPath path = new Path(artifactName);
 			if(artifactExt != null && artifactExt.length() != 0)
 				path = path.addFileExtension(artifactExt);

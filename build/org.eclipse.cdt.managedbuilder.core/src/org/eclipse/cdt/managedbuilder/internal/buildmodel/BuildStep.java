@@ -288,21 +288,35 @@ public class BuildStep implements IBuildStep {
 
 		IManagedCommandLineGenerator gen = fTool.getCommandLineGenerator();
 		FileContextData data = new FileContextData(inRcPath, outRcPath, null, fTool);
-
+		String outPrefix = fTool.getOutputPrefix();
+		outPrefix = resolveMacros(outPrefix, data, true);
+		outRcPath = rmNamePrefix(outRcPath, outPrefix);
+		
 		IManagedCommandLineInfo info = gen.generateCommandLineInfo(fTool, 
 				fTool.getToolCommand(),
 				getCommandFlags(inRcPath, outRcPath, resolveAll), 
 				fTool.getOutputFlag(), 
-				fTool.getOutputPrefix(),
-				listToString(resourcesToStrings(cwd, getPrimaryResources(false)), " "), 	//$NON-NLS-1$
+				outPrefix,
+				listToString(resourcesToStrings(cwd, getPrimaryResources(false), outPrefix), " "), 	//$NON-NLS-1$
 				getInputResources(cwd, getPrimaryResources(true)), 
 				fTool.getCommandLinePattern());
 
 		return createCommandsFromString(resolveMacros(info.getCommandLine(), data, true), cwd, getEnvironment());
 	}
 	
+	private IPath rmNamePrefix(IPath path, String prefix){
+		if(prefix != null && prefix.length() != 0){
+			String name = path.lastSegment();
+			if(name.startsWith(prefix)){
+				name = name.substring(prefix.length());
+				path = path.removeLastSegments(1).append(name);
+			}
+		}
+		return path;
+	}
+	
 	private String[] getInputResources(IPath cwd, BuildResource[] rcs) {
-		String[] resources = resourcesToStrings(cwd, rcs);
+		String[] resources = resourcesToStrings(cwd, rcs, null);
 		
 		// also need to get libraries
 		String[] libs = null;
@@ -417,14 +431,17 @@ public class BuildStep implements IBuildStep {
 		return (BuildResource[])list.toArray(new BuildResource[list.size()]);
 	}
 	
-	private String[] resourcesToStrings(IPath cwd, BuildResource rcs[]){
+	private String[] resourcesToStrings(IPath cwd, BuildResource rcs[], String prefixToRm){
 		List list = new ArrayList(rcs.length);
 		
 		for(int i = 0; i < rcs.length; i++){
-			list.add(BuildDescriptionManager.getRelPath(cwd, rcs[i].getLocation()).toOSString());
+			IPath path = BuildDescriptionManager.getRelPath(cwd, rcs[i].getLocation());
+			path = rmNamePrefix(path, prefixToRm);
+			list.add(path.toOSString());
 		}
 		return (String[])list.toArray(new String[list.size()]);
 	}
+
 	private String resolveMacros(String str, IFileContextData fileData, boolean resolveAll){
 		String result = str;
 		try {

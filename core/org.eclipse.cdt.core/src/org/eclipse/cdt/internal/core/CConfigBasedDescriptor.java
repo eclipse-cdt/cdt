@@ -15,6 +15,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
@@ -27,11 +31,14 @@ import org.eclipse.cdt.core.settings.model.util.CExtensionUtil;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.cdt.internal.core.settings.model.CStorage;
+import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
 import org.eclipse.cdt.internal.core.settings.model.InternalXmlStorageElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class CConfigBasedDescriptor implements ICDescriptor {
@@ -262,9 +269,20 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	public Element getProjectData(String id) throws CoreException {
 		synchronized(CProjectDescriptionManager.getInstance()){
 			Element el = (Element)fStorageDataElMap.get(id);
-			if(el == null){
-				InternalXmlStorageElement storageEl = (InternalXmlStorageElement)fCfgDes.getStorage(id, true);
-				el = CProjectDescriptionManager.getInstance().createXmlElementCopy(storageEl);
+			if(el == null || el.getParentNode() == null){
+				InternalXmlStorageElement storageEl = (InternalXmlStorageElement)fCfgDes.getStorage(id, false);
+				if(storageEl == null){
+					try {
+						DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+						Document doc = builder.newDocument();
+						el = CStorage.createStorageXmlElement(doc, id);
+						doc.appendChild(el);
+					} catch (ParserConfigurationException e) {
+						throw ExceptionFactory.createCoreException(e);
+					}
+				} else {
+					el = CProjectDescriptionManager.getInstance().createXmlElementCopy(storageEl);
+				}
 				fStorageDataElMap.put(id, el);
 			}
 			return el;

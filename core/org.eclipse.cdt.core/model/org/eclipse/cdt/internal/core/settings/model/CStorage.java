@@ -113,6 +113,9 @@ public class CStorage implements ICSettingsStorage{
 		
 		xmlEl = (Element)fElement.appendChild(xmlEl);
 		xmlEl.setAttribute(MODULE_ID_ATTRIBUTE, id);
+		
+		fIsDirty = true;
+		
 		return createAddStorageElement(id, xmlEl);
 	}
 
@@ -126,12 +129,18 @@ public class CStorage implements ICSettingsStorage{
 			
 			fIsDirty = true;
 			Document doc = fElement.getOwnerDocument();
-			Element child = doc.createElement(MODULE_ELEMENT_NAME);
-			child.setAttribute(MODULE_ID_ATTRIBUTE, id);
+			Element child = createStorageXmlElement(doc, id);
 			fElement.appendChild(child);
 			se = createAddStorageElement(id, child);
 		}
 		return se;
+	}
+
+	public static Element createStorageXmlElement(Document doc, String storageId){
+		Element child = doc.createElement(MODULE_ELEMENT_NAME);
+		child.setAttribute(MODULE_ID_ATTRIBUTE, storageId);
+
+		return child;
 	}
 	
 	public void removeStorage(String id){

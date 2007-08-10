@@ -18,6 +18,8 @@ import java.util.Set;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -28,10 +30,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.w3c.dom.Element;
 
 public class BackwardCompatibilityTests extends BaseTestCase {
 	private static final String PROJ_NAME_PREFIX = "BackwardCompatibilityTests_";
-	ICProject p1, p2;
+	ICProject p1, p2, p3;
 	
 	public static TestSuite suite() {
 		return suite(BackwardCompatibilityTests.class, "_");
@@ -45,6 +48,14 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 			if(p1 != null){
 				p1.getProject().delete(true, null);
 				p1 = null;
+			}
+			if(p2 != null){
+				p2.getProject().delete(true, null);
+				p2 = null;
+			}
+			if(p3 != null){
+				p3.getProject().delete(true, null);
+				p3 = null;
 			}
 		} catch (CoreException e){
 		}
@@ -149,7 +160,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		checkEntriesMatch(expectedRawEntries, entries);
 		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
 	}
-	
+
 	public void testCPathEntriesForOldStyle() throws Exception {
 		p2 = CProjectHelper.createCCProject(PROJ_NAME_PREFIX + "b", null, IPDOMManager.ID_NO_INDEXER);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -192,6 +203,25 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		
 		checkCEntriesMatch(expectedSourceEntries, sEntries);
 		checkCEntriesMatch(expectedOutputEntries, oEntries);
+	}
+	
+	public void testICDescriptorGetProjectData() throws Exception {
+		p3 = CProjectHelper.createCCProject(PROJ_NAME_PREFIX + "c", null, IPDOMManager.ID_NO_INDEXER);
+		IProject proj = p3.getProject();
+		
+		doTestRm(proj);
+		doTestRm(proj);
+		doTestRm(proj);
+		doTestRm(proj);
+		doTestRm(proj);
+	}
+	
+	private void doTestRm(IProject proj) throws CoreException{
+		final String DATA_ID = "testICDescriptorGetProjectData";
+        ICDescriptor dr = CCorePlugin.getDefault().getCProjectDescription(proj, false);
+        Element dataEl = dr.getProjectData(DATA_ID);
+        dataEl.getParentNode().removeChild(dataEl);
+        dr.saveProjectData();
 	}
 	
 	public static IPathEntry[] concatEntries(IPathEntry[] entries1, IPathEntry[] entries2){

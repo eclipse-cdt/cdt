@@ -304,13 +304,22 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 		return dr;
 	}
 
-	private CProjectDescription createProjDescriptionForDescriptor(IProject project) throws CoreException{
-		CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
-		CProjectDescription des = (CProjectDescription)mngr.createProjectDescription(project, false, true);
+	private CProjectDescription createProjDescriptionForDescriptor(final IProject project) throws CoreException{
+		final CProjectDescriptionManager mngr = CProjectDescriptionManager.getInstance();
+		final CProjectDescription des = (CProjectDescription)mngr.createProjectDescription(project, false, true);
 			
 		CConfigurationData data = mngr.createDefaultConfigData(project, PathEntryConfigurationDataProvider.getDataFactory());
 		des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);
 		
+//		mngr.runWspModification(new IWorkspaceRunnable() {
+//
+//			public void run(IProgressMonitor monitor) throws CoreException {
+//				if(mngr.getProjectDescription(project, false) == null){
+//					mngr.setProjectDescription(project, des);
+//				}
+//			}
+//			
+//		}, null);
 		return des;
 	}
 
@@ -544,7 +553,7 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 				Map.Entry entry = (Map.Entry)iter.next();
 				String id = (String)entry.getKey();
 				Element el = (Element)entry.getValue();
-				if(reconsile(id, el, des))
+				if(reconsile(id, el.getParentNode() != null ? el : null, des))
 					reconsiled = true;
 			}
 		}
@@ -570,13 +579,27 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 	private boolean reconsile(String id, Element el, ICConfigurationDescription cfg) throws CoreException{
 		CConfigurationSpecSettings setting = ((IInternalCCfgInfo)cfg).getSpecSettings();
 		InternalXmlStorageElement storEl = (InternalXmlStorageElement)setting.getStorage(id, false);
-		InternalXmlStorageElement newStorEl = CStorage.createStorageElement(el, false);
-		if(storEl == null 
-				|| (!storEl.isDirty() && !newStorEl.matches(storEl))){
-			setting.importStorage(id, newStorEl);
-			return true;
+		InternalXmlStorageElement newStorEl = el != null ? CStorage.createStorageElement(el, false) : null;
+
+		boolean modified = false;
+
+		if(storEl != null){
+			if(newStorEl == null){
+				setting.removeStorage(id);
+				modified = true;
+			} else {
+				if(!newStorEl.matches(storEl)){
+					setting.importStorage(id, newStorEl);
+					modified = true;
+				}
+			}
+		} else {
+			if(newStorEl != null){
+				setting.importStorage(id, newStorEl);
+				modified = true;
+			}
 		}
-		return false;
+		return modified;
 	}
 	
 	private CConfigBasedDescriptor getApplyingDescriptor(IProject project){

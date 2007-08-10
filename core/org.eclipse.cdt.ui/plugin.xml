@@ -2013,32 +2013,14 @@
 	         menuGroupId="org.eclipse.cdt.ui.newProject"
 	         type="new"
 	         wizardId="org.eclipse.cdt.ui.wizards.NewCWizard1">
-		 <enablement>
-			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IProject">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.cnature"/>
-	            </adapt>
-			</or>
-         </enablement>
+		 <enablement/>
 	   </commonWizard>
 	   <commonWizard
 	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
 	         menuGroupId="org.eclipse.cdt.ui.newProject"
 	         type="new"
 	         wizardId="org.eclipse.cdt.ui.wizards.NewCWizard2">
-		 <enablement>
-			<or>
-				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-	            <adapt type="org.eclipse.core.resources.IProject">
-	               <test
-	                     property="org.eclipse.core.resources.projectNature"
-	                     value="org.eclipse.cdt.core.cnature"/>
-	            </adapt>
-			</or>
-         </enablement>
+		 <enablement/>
 	   </commonWizard>
 	   <commonWizard
 	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"

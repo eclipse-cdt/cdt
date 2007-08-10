@@ -181,7 +181,16 @@
            menuGroupId="org.eclipse.cdt.ui.newProject"
            type="new"
            wizardId="org.eclipse.cdt.ui.wizards.ConvertToMakeWizard">
-         <enablement/>
+		 <enablement>
+			<and>
+	            <adapt type="org.eclipse.core.resources.IProject"/>
+	            <not>
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </not>
+			</and>
+         </enablement>
       </commonWizard>
   </extension>
   <extension

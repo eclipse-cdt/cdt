@@ -299,11 +299,12 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
     /**
      * Returns the classification of this file.  If the file is
      * an executable, then "executable(...)" will be returned. If the
-     * file is a symbolic link then it will appear as "link(....):resolvedPath".
+     * file is a symbolic link then it will appear as "symbolic link(....):resolvedPath".
      * The resolvedPath is the path that the link resolves to.
-     * A symbolic link that resolves to an executable would appear as "link(executable(...)):resolvedPath".
-     * By default this should just return "file".
-     * @return the classification.
+     * A symbolic link that resolves to an executable would appear as 
+     * "symbolic link(executable(...)):resolvedPath".
+     * By default this should just return "file" or "directory".
+     * @return the classification, or "unknown", or <code>null</code> if not classifiable.
      */
     public String getClassification();
     

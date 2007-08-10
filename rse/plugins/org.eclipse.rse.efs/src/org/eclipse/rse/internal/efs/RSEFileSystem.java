@@ -18,6 +18,7 @@
  *    - Improve performance by RSEFileStore instance factory and caching IRemoteFile.
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
+ * Martin Oberhuber (Wind River) - [199587] return attributes of RSEFileSystem
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -48,6 +49,16 @@ public class RSEFileSystem extends FileSystem
 		return _instance;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.filesystem.IFileSystem#attributes()
+	 */
+	public int attributes() {
+		//Attributes supported by RSE IFileService
+		return EFS.ATTRIBUTE_READ_ONLY | EFS.ATTRIBUTE_EXECUTABLE
+		     | EFS.ATTRIBUTE_SYMLINK | EFS.ATTRIBUTE_LINK_TARGET;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileSystem#canDelete()

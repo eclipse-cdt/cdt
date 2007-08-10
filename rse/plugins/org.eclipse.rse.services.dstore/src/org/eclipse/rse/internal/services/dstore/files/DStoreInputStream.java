@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +9,7 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [199561][efs][dstore] Eclipse hangs when manipulating empty file
  ********************************************************************************/
 package org.eclipse.rse.internal.services.dstore.files;
 
@@ -101,7 +101,7 @@ public class DStoreInputStream extends InputStream
 	{
 		if (_localFile != null)
 		{
-			while (_localFile.length() == 0)
+			while (_localFile.length() == 0 && !_cmdStatus.getValue().equals("done")) //$NON-NLS-1$)
 			{
 				try
 				{

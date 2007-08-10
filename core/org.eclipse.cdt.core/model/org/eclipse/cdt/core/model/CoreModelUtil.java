@@ -620,6 +620,9 @@ public class CoreModelUtil {
 						return (ITranslationUnit) tu;
 					}
 				} catch (CModelException e) {
+					if (e.getStatus().getCode() == ICModelStatusConstants.INVALID_PATH) {
+						return null;
+					}
 					CCorePlugin.log(e);
 				}
 			}

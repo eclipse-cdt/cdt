@@ -17,8 +17,13 @@ import java.util.Arrays;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -72,6 +77,7 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CModelException;
@@ -87,6 +93,7 @@ import org.eclipse.cdt.internal.ui.navigator.OpenCElementAction;
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
@@ -176,7 +183,7 @@ public class IBViewPart extends ViewPart
     	}
     }
 
-	private void setInputIndexerIdle(ITranslationUnit input) {
+	private void setInputIndexerIdle(final ITranslationUnit input) {
 		fShowsMessage= false;
         boolean isHeader= input.isHeaderUnit();
         
@@ -197,6 +204,39 @@ public class IBViewPart extends ViewPart
 
         updateActionEnablement();
         updateDescription();
+        final Display display= Display.getCurrent();
+        Job job= new Job(IBMessages.IBViewPart_jobCheckInput) {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					IIndex index= CCorePlugin.getIndexManager().getIndex(input.getCProject());
+					index.acquireReadLock();
+					try {
+						if (!IndexUI.isIndexed(index, input)) {
+							final String msg = IndexUI
+									.getFleNotIndexedMessage(input);
+							display.asyncExec(new Runnable() {
+								public void run() {
+									if (fTreeViewer.getInput() == input) {
+										setMessage(msg);
+										fTreeViewer.setInput(null);
+									}
+								}
+							});
+						}
+						return Status.OK_STATUS;
+					} finally {
+						index.releaseReadLock();
+					}
+				} catch (CoreException e) {
+					return Status.OK_STATUS;
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return Status.CANCEL_STATUS;
+				} 
+			}
+        };
+        job.setSystem(true);
+        job.schedule();
 	}
 
 	private void updateActionEnablement() {

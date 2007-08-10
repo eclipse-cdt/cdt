@@ -46,6 +46,7 @@ class THGraph {
 	private HashSet fRootNodes= new HashSet();
 	private HashSet fLeaveNodes= new HashSet();
 	private HashMap fNodes= new HashMap();
+	private boolean fFileIsIndexed;
 	
 	public THGraph() {
 	}
@@ -128,17 +129,13 @@ class THGraph {
 	}
 
 	public void defineInputNode(IIndex index, ICElement input) {
-		if (input instanceof ICElementHandle) {
-			fInputNode= addNode(input);
-		}
-		else if (input != null) { 
+		if (input != null) {
 			try {
-				ICElement inputHandle= null;
-				IIndexName name= IndexUI.elementToName(index, input);
-				if (name != null) {
-					inputHandle= IndexUI.getCElementForName(input.getCProject(), index, name);
-				} 
-				fInputNode= addNode(inputHandle == null ? input : inputHandle);
+				if (IndexUI.isIndexed(index, input)) {
+					fFileIsIndexed= true;
+					input= IndexUI.attemptConvertionToHandle(index, input);
+					fInputNode= addNode(input);
+				}
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);
 			}
@@ -306,5 +303,9 @@ class THGraph {
 
 	public boolean isTrivial() {
 		return fNodes.size() < 2;
+	}
+
+	public boolean isFileIndexed() {
+		return fFileIsIndexed;
 	}
 }

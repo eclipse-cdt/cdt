@@ -32,6 +32,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
 
 import org.eclipse.cdt.internal.ui.viewsupport.AsyncTreeContentProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 /** 
@@ -42,12 +43,14 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
 	private boolean fComputeReferencedBy = true;
 	private WorkingSetFilterUI fFilter;
+	private CHViewPart fView;
 
 	/**
 	 * Constructs the content provider.
 	 */
-	public CHContentProvider(Display disp) {
+	public CHContentProvider(CHViewPart view, Display disp) {
 		super(disp);
+		fView= view;
 	}
 
 	public Object getParent(Object element) {
@@ -59,11 +62,6 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 	}
 
 	protected Object[] syncronouslyComputeChildren(Object parentElement) {
-		if (parentElement instanceof ICElement) {
-			ICElement element = (ICElement) parentElement;
-			ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
-			return new Object[] { new CHNode(null, tu, 0, element) };
-		}
 		if (parentElement instanceof CHMultiDefNode) {
 			return ((CHMultiDefNode) parentElement).getChildNodes();
 		}
@@ -86,25 +84,58 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		return null;
 	}
 
-	protected Object[] asyncronouslyComputeChildren(Object parentElement,
-			IProgressMonitor monitor) {
-		if (parentElement instanceof CHNode) {
-			CHNode node = (CHNode) parentElement;
-			try {
+	protected Object[] asyncronouslyComputeChildren(Object parentElement, IProgressMonitor monitor) {
+		try {
+			if (parentElement instanceof ICElement) {
+				return asyncComputeRoot((ICElement) parentElement);
+			}
+
+			if (parentElement instanceof CHNode) {
+				CHNode node = (CHNode) parentElement;
 				if (fComputeReferencedBy) {
 					return asyncronouslyComputeReferencedBy(node);
 				}
 				else {
 					return asyncronouslyComputeRefersTo(node);
 				}
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e);
-			} catch (InterruptedException e) {
 			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 		return NO_CHILDREN;
 	}
 	
+	private Object[] asyncComputeRoot(final ICElement input) throws CoreException, InterruptedException {
+		IIndex index= CCorePlugin.getIndexManager().getIndex(input.getCProject());
+		index.acquireReadLock();
+		try {
+			ICElement element= input;
+			if (!IndexUI.isIndexed(index, input)) {
+				getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						fView.reportNotIndexed(input);
+					}
+				});
+			} 
+			else {
+				element= IndexUI.attemptConvertionToHandle(index, input);
+				final ICElement finalElement= element;
+				getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						fView.reportInputReplacement(input, finalElement);
+					}
+				});
+			}
+			ITranslationUnit tu= CModelUtil.getTranslationUnit(element);
+			return new Object[] { new CHNode(null, tu, 0, element) };
+		}
+		finally {
+			index.releaseReadLock();
+		}
+	}
+
 	private Object[] asyncronouslyComputeReferencedBy(CHNode parent) throws CoreException, InterruptedException {
 		ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
 		IIndex index= CCorePlugin.getIndexManager().getIndex(scope);

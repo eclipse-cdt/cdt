@@ -77,6 +77,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 import org.eclipse.cdt.internal.ui.viewsupport.ExtendedTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 import org.eclipse.cdt.internal.ui.viewsupport.TreeNavigator;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
@@ -169,6 +170,19 @@ public class CHViewPart extends ViewPart {
     	updateHistory(input);
     	updateActionEnablement();
     }
+
+	public void reportNotIndexed(ICElement input) {
+		if (input != null && getInput() == input) {
+			setMessage(IndexUI.getFleNotIndexedMessage(input));
+		}
+	}
+
+	public void reportInputReplacement(ICElement input, ICElement inputHandle) {
+		if (input == getInput()) {
+			fTreeViewer.setInput(inputHandle);
+			fTreeViewer.setExpandedState(inputHandle, true);
+		}
+	}
 
 	private boolean allowsRefTo(ICElement element) {
 		if (element instanceof IFunction || element instanceof IMethod) {
@@ -290,7 +304,7 @@ public class CHViewPart extends ViewPart {
         fViewerPage.setSize(100, 100);
         fViewerPage.setLayout(new FillLayout());
 
-        fContentProvider= new CHContentProvider(display); 
+        fContentProvider= new CHContentProvider(this, display); 
         fLabelProvider= new CHLabelProvider(display, fContentProvider);
         fTreeViewer= new ExtendedTreeViewer(fViewerPage);
         fTreeViewer.setContentProvider(fContentProvider);

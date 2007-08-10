@@ -166,8 +166,14 @@ public class CallHierarchyUI {
 						else {
 							ICElement[] elems= IndexUI.findAllDefinitions(index, binding);
 							if (elems.length == 0) {
-								ICElement elem= IndexUI.findAnyDeclaration(index, project, binding);
-								if (elems != null) {
+								ICElement elem= null;
+								if (name.isDeclaration()) {
+									elem= IndexUI.getCElementForName(project, index, name);
+								}
+								else {
+									elem= IndexUI.findAnyDeclaration(index, project, binding);
+								}
+								if (elem != null) {
 									elems= new ICElement[]{elem};
 								}
 							}

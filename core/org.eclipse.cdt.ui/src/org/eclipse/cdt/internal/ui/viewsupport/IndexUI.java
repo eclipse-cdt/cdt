@@ -13,8 +13,10 @@
 package org.eclipse.cdt.internal.ui.viewsupport;
 
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -24,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorInput;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -70,6 +73,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
@@ -184,6 +188,21 @@ public class IndexUI {
 		return null;
 	}
 
+	public static boolean isIndexed(IIndex index, ICElement element) throws CoreException {
+		if (element instanceof ISourceReference) {
+			ISourceReference sf = ((ISourceReference)element);
+			ITranslationUnit tu= sf.getTranslationUnit();
+			if (tu != null) {
+				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
+				if (location != null) {
+					IIndexFile file= index.getFile(location);
+					return file != null;
+				}
+			}
+		}
+		return false;
+	}
+	
 	private static IRegion getConvertedRegion(ITranslationUnit tu, IIndexFile file, int pos, int length) throws CoreException {
 		IRegion region= new Region(pos, length);
 		IPositionConverter converter= CCorePlugin.getPositionTrackerManager().findPositionConverter(tu, file.getTimestamp());
@@ -348,5 +367,41 @@ public class IndexUI {
 			}
 		});
 		return result[0];
+	}
+
+	public static String getFleNotIndexedMessage(ICElement input) {
+		ITranslationUnit tu= null;
+		if (input instanceof ISourceReference) {
+			ISourceReference ref= (ISourceReference) input;
+			tu= ref.getTranslationUnit();
+		}
+		if (tu == null) {
+			return NLS.bind(Messages.IndexUI_infoNotInSource, input.getElementName());
+		} 
+		
+		String msg= NLS.bind(Messages.IndexUI_infoNotInIndex, tu.getElementName());
+		
+		IResource res= tu.getResource();
+		if (res != null) {
+			Properties props= IndexerPreferences.getProperties(res.getProject());
+			if (props == null || !"true".equals(props.get(IndexerPreferences.KEY_INDEX_ALL_FILES))) { //$NON-NLS-1$
+				msg= msg+ " " + Messages.IndexUI_infoSelectIndexAllFiles; //$NON-NLS-1$
+			}
+		}
+		return msg;
+	}
+
+	public static ICElement attemptConvertionToHandle(IIndex index, ICElement input) throws CoreException {
+		if (input instanceof ICElementHandle) {
+			return input;
+		}
+		IIndexName name= IndexUI.elementToName(index, input);
+		if (name != null) {
+			ICElement handle= getCElementForName(input.getCProject(), index, name);
+			if (handle != null) {
+				return handle;
+			}
+		} 
+		return input;
 	}
 }

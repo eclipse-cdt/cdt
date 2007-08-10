@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
 
+import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 class THHierarchyModel {
@@ -317,7 +318,10 @@ class THHierarchyModel {
 				public void run() {
 					fGraph= graph;
 					THGraphNode inputNode= fGraph.getInputNode();
-					if (inputNode == null) {
+					if (!fGraph.isFileIndexed()) {
+						fView.setMessage(IndexUI.getFleNotIndexedMessage(fInput));
+					}
+					else if (inputNode == null) {
 						fView.setMessage(Messages.THHierarchyModel_errorComputingHierarchy);
 					}
 					else {

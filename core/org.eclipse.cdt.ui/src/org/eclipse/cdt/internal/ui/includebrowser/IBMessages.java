@@ -31,6 +31,8 @@ public class IBMessages extends NLS {
 	public static String IBViewPart_IncludedByContentDescription;
 	public static String IBViewPart_IncludesToContentDescription;
 	public static String IBViewPart_instructionMessage;
+
+	public static String IBViewPart_jobCheckInput;
 	public static String IBViewPart_nextMatch_label;
 	public static String IBViewPart_nextMatch_tooltip;
 	public static String IBViewPart_OpenWithMenu_label;

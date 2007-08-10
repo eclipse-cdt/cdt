@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,24 @@
 
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.cdt.internal.ui.CUIMessages;
 
 /**
  * A TreeContentProvider that supports asyncronous computation of child nodes.
@@ -338,5 +348,9 @@ public abstract class AsyncTreeContentProvider implements ITreeContentProvider {
             }
         }
         return children;
+    }
+    
+    final protected Display getDisplay() {
+    	return fDisplay;
     }
 }

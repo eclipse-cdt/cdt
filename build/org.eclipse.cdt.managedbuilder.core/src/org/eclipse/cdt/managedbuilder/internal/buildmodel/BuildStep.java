@@ -260,18 +260,21 @@ public class BuildStep implements IBuildStep {
 			}
 			
 			if(step != null && (step = step.trim()).length() > 0){
-				String commands[] = step.split(";"); 	//$NON-NLS-1$
-				if(cwd == null)
-					cwd = calcCWD();
-
-				List list = new ArrayList(); 
-				for(int i = 0; i < commands.length; i++){
-					IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd, getEnvironment());
-					for(int j = 0; j < cmds.length; j++){
-						list.add(cmds[j]);
+				step = resolveMacros(step, resolveAll);
+				if(step != null && (step = step.trim()).length() > 0){
+					String commands[] = step.split(";"); 	//$NON-NLS-1$
+					if(cwd == null)
+						cwd = calcCWD();
+	
+					List list = new ArrayList(); 
+					for(int i = 0; i < commands.length; i++){
+						IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd, getEnvironment());
+						for(int j = 0; j < cmds.length; j++){
+							list.add(cmds[j]);
+						}
 					}
+					return (IBuildCommand[])list.toArray(new BuildCommand[list.size()]);
 				}
-				return (IBuildCommand[])list.toArray(new BuildCommand[list.size()]);
 			}
 			return new IBuildCommand[0];
 		}
@@ -458,7 +461,22 @@ public class BuildStep implements IBuildStep {
 
 		return result;
 	}
-	
+
+	private String resolveMacros(String str, boolean resolveAll){
+		String result = str;
+		try {
+			IConfiguration cfg = getBuildDescription().getConfiguration();
+			if(resolveAll){
+				result = ManagedBuildManager.getBuildMacroProvider().resolveValue(str, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);	//$NON-NLS-1$	//$NON-NLS-2$
+			} else {
+				result = ManagedBuildManager.getBuildMacroProvider().resolveValueToMakefileFormat(str, "", " ", IBuildMacroProvider.CONTEXT_CONFIGURATION, cfg);	//$NON-NLS-1$	//$NON-NLS-2$
+			}
+		} catch (CdtVariableException e) {
+		}
+
+		return result;
+	}
+
 	private SupplierBasedCdtVariableSubstitutor createSubstitutor(IConfiguration cfg, IBuilder builder, IFileContextData fileData){
 		BuildMacroProvider prov = (BuildMacroProvider)ManagedBuildManager.getBuildMacroProvider();
 		IMacroContextInfo info = prov.getMacroContextInfo(IBuildMacroProvider.CONTEXT_FILE, fileData); 

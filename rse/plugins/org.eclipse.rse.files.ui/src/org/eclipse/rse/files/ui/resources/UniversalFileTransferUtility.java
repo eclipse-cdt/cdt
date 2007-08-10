@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Xuan Chen        (IBM)        - [187548] Editor shows incorrect file name after renaming file on Linux dstore
  * David McKnight   (IBM)        - [191472] should not use super transfer with SSH/FTP Folder Copy and Paste
+ * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -73,6 +74,7 @@ import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
@@ -1480,6 +1482,13 @@ public class UniversalFileTransferUtility
 			targetFS.copy(compressedFolder, newTargetParent, newTargetFolder.getName(), monitor);
 			
 			// delete the temp remote archive
+			//Since this archive file has never been cache before, a default filter DStore Element
+			//will be created before we send down "delete" commad to dstore server. Since "delete" 
+			//command is not a registered command for a filter
+			//element, the delete command query will not be sent to dstore server.
+			//To overcome this problem, we need to do query on it first to cache
+			//its information so that it could be deleted properly.
+			targetFS.resolveFilterString(newPath + RemoteFileFilterString.SWITCH_NOSUBDIRS, monitor);
 			targetFS.delete(remoteArchive, monitor);
 			
 			monitor.done();

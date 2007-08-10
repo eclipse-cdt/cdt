@@ -20,6 +20,7 @@
  * Kevin Doyle (IBM) - [195709] Windows Copying doesn't work when path contains space
  * Kevin Doyle (IBM) - [196211] DStore Move tries rename if that fails copy/delete
  * Xuan Chen (IBM)        - [198046] [dstore] Cannot copy a folder into an archive file
+ * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -2256,6 +2257,29 @@ public class UniversalFileSystemMiner extends Miner {
 	    String newName = nameObj.getName();
 		String targetType = targetFolder.getType();
 		String srcType = sourceFile.getType();
+		//In the case of super transfer, the source file is a virtual file/folder inside the temporary zip file, and its type information is set to 
+		//default UNIVERSAL_FILTER_DESCRIPTOR since its information never been cached before.
+		//We need to find out its real type first before going to different if statement.
+		File srcFile = null;
+		VirtualChild child = null;
+		if (IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR == srcType)
+		{
+			if (ArchiveHandlerManager.isVirtual(sourceFile.getValue()))
+			{
+				String goodFullName = ArchiveHandlerManager.cleanUpVirtualPath(sourceFile.getValue());
+				child = _archiveHandlerManager.getVirtualObject(goodFullName);
+				if (child.exists()) 
+				{
+					if (child.isDirectory) 
+					{
+						srcType = IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR;
+					} else 
+					{
+						srcType = IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR;
+					}
+				}
+			}
+		}
 		
 		if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR) || targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
 			
@@ -2268,24 +2292,29 @@ public class UniversalFileSystemMiner extends Miner {
 				return statusDone(status);
 			}
 
-			File srcFile = null;
-			
 			if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
 					|| srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) {
 				
 			    srcFile = getFileFor(sourceFile);
 			}
 			else if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
+				ISystemArchiveHandler shandler = null;
+				if (null == child)
+				{
+					AbsoluteVirtualPath svpath = getAbsoluteVirtualPath(sourceFile);
+					shandler = getArchiveHandlerFor(svpath.getContainingArchiveString());
 				
-			    AbsoluteVirtualPath svpath = getAbsoluteVirtualPath(sourceFile);
-				ISystemArchiveHandler shandler = getArchiveHandlerFor(svpath.getContainingArchiveString());
-				
-				if (shandler == null) {
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-					return statusDone(status);
+					if (shandler == null) {
+						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
+						return statusDone(status);
+					}
+					child = shandler.getVirtualFile(svpath.getVirtualPart());
 				}
-				
-				VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart());
+				else
+				{
+					//If child is not null, it means the sourceFile is a type of UNIVERSAL_FILTER_DESCRIPTOR, and has already been handled
+					shandler = child.getHandler();
+				}
 				srcFile = child.getExtractedFile();
 			}
 
@@ -2305,17 +2334,25 @@ public class UniversalFileSystemMiner extends Miner {
 			}
 		}
 		else if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
+			ISystemArchiveHandler shandler = null;
+			AbsoluteVirtualPath svpath = null;
+			if (null == child)
+			{
+				svpath = getAbsoluteVirtualPath(sourceFile);
+				shandler = getArchiveHandlerFor(svpath.getContainingArchiveString());
 			
-		    // extract from an archive to folder
-			AbsoluteVirtualPath svpath = getAbsoluteVirtualPath(sourceFile);
-			ISystemArchiveHandler shandler = getArchiveHandlerFor(svpath.getContainingArchiveString());
-			
-			if (shandler == null) {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-				return statusDone(status);
+				if (shandler == null) {
+					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
+					return statusDone(status);
+				}
+				child = shandler.getVirtualFile(svpath.getVirtualPart());
 			}
-			
-			VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart());
+			else
+			{
+				//If child is not null, it means the sourceFile is a type of UNIVERSAL_FILTER_DESCRIPTOR, and has already been handled
+				shandler = child.getHandler();
+				svpath = getAbsoluteVirtualPath(sourceFile.getValue());
+			}
 
 			File parentDir = getFileFor(targetFolder);
 			File destination = new File(parentDir, newName);
@@ -2329,7 +2366,7 @@ public class UniversalFileSystemMiner extends Miner {
 		}
 		else {
 			File tgtFolder = getFileFor(targetFolder);
-			File srcFile = getFileFor(sourceFile);
+			srcFile = getFileFor(sourceFile);
 
 			// regular copy
 			boolean folderCopy = srcFile.isDirectory();

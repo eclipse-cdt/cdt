@@ -424,31 +424,38 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	private FTPClient cloneFTPClient(boolean isBinary) throws IOException
 	{
-		
 		FTPClient ftpClient = new FTPClient();
-		
-		ftpClient.connect(_ftpClient.getRemoteAddress());
-		ftpClient.login(_userId,_password);
-		
-		if (_clientConfigProxy != null) {
-			ftpClient.configure(_clientConfigProxy.getFTPClientConfig());
-		} else {
-			// UNIX parsing by default if no suitable parser found
-			ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_UNIX));
-		}
+		boolean ok=false;
+		try {
+			ftpClient.connect(_ftpClient.getRemoteAddress());
+			ftpClient.login(_userId,_password);
+			
+			if (_clientConfigProxy != null) {
+				ftpClient.configure(_clientConfigProxy.getFTPClientConfig());
+			} else {
+				// UNIX parsing by default if no suitable parser found
+				ftpClient.configure(new FTPClientConfig(FTPClientConfig.SYST_UNIX));
+			}
 
-		if (_isPassiveDataConnectionMode) {
-			ftpClient.enterLocalPassiveMode();
-		}
+			if (_isPassiveDataConnectionMode) {
+				ftpClient.enterLocalPassiveMode();
+			}
 
-		if (isBinary) {
-			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-		} else {
-			ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+			if (isBinary) {
+				ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+			} else {
+				ftpClient.setFileType(FTP.ASCII_FILE_TYPE);
+			}
+			ftpClient.registerSpyStream(_ftpLoggingOutputStream);
+			ok=true;
+		} finally {
+			//disconnect the erroneous ftpClient, but forward the exception
+			if (!ok) {
+				try {
+					ftpClient.disconnect();
+				} catch(Throwable t) { /*ignore*/ }
+			}
 		}
-		
-		ftpClient.registerSpyStream(_ftpLoggingOutputStream);
-
 		return ftpClient;
 	}
 	
@@ -1350,10 +1357,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			FTPClient ftpClient = cloneFTPClient(isBinary);
 			ftpClient.changeWorkingDirectory(remoteParent);
 			stream = new FTPBufferedInputStream(ftpClient.retrieveFileStream(remoteFile), ftpClient);
-			}
-			catch (Exception e) {			
-				throw new RemoteFileIOException(e);
-			}
+		}
+		catch (Exception e) {			
+			throw new RemoteFileIOException(e);
+		}
 			
 		return stream;
 	}

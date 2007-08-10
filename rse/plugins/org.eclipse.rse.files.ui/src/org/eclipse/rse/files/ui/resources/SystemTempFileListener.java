@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * Martin Oberhuber (Wind River) - [199573] Fix potential threading issues in SystemTempFileListener
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -68,7 +69,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 {
 	private ArrayList _changedResources;
 	private ArrayList _ignoredFiles = new ArrayList();
-	private boolean _isSynching;
+	private volatile boolean _isSynching;
 	private boolean _isEnabled;
 
 	public SystemTempFileListener()
@@ -185,21 +186,23 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		public IStatus runInUIThread(IProgressMonitor monitor)
 		{
 			_isSynching = true;
-			synchronized (_changedResources)
-			{				
+			try {
+				IFile[] filesToSync;
+				synchronized(_changedResources) {
+					filesToSync = (IFile[])_changedResources.toArray(new IFile[_changedResources.size()]);
+					_changedResources.clear();
+				}
 				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
 				monitor.beginTask(msg.getLevelOneText(), IProgressMonitor.UNKNOWN);
 				setName(msg.getLevelOneText());
-				for (int i = 0; i < _changedResources.size(); i++)
+				for (int i = 0; i < filesToSync.length; i++)
 				{
-					IFile file = (IFile) _changedResources.get(i);
-					synchronizeTempWithRemote(file, monitor);
+					synchronizeTempWithRemote(filesToSync[i], monitor);
 				}
+			} finally {
+				_isSynching = false;
 				monitor.done();
-
-				_changedResources.clear();
 			}
-			_isSynching = false;
 			return Status.OK_STATUS;
 		}
 	}
@@ -382,7 +385,10 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 						        ISubSystem ss = RSECorePlugin.getTheSystemRegistry().getSubSystem(ssStr);
 						        if (doesHandle(ss))
 						        {
-						            _changedResources.add(resource);
+						        	synchronized(_changedResources) {
+						        		//avoid ConcurrentModificationException
+							            _changedResources.add(resource);
+						        	}
 						        }
 						    }
 						}

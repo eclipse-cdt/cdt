@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [191581] clear local IRemoteFile handle cache when modifying remote
  * Martin Oberhuber (Wind River) - [197025][197167] Improved wait for model complete
  * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
+ * Martin Oberhuber (Wind River) - [199552] fix deadlock with dstore-backed efs access
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -65,20 +66,20 @@ import org.eclipse.rse.ui.RSEUIPlugin;
  */
 public class RSEFileStoreImpl extends FileStore
 {
-	private RSEFileStore _parent;
+	private RSEFileStore _store;
 
 	//cached IRemoteFile object: an Object to avoid early class loading
-	private transient IRemoteFile _remoteFile;
+	private transient volatile IRemoteFile _remoteFile;
 
 	//markup to know that RSE has been initialized
 	private static boolean _initialized;
 
 	/**
-	 * Constructor to use if the parent file store is known.
-	 * @param parent the parent file store.
+	 * Constructor to use if the file store handle is known.
+	 * @param store the file store handle for this implementation object.
 	 */
-	public RSEFileStoreImpl(RSEFileStore parent) {
-		_parent = parent;
+	public RSEFileStoreImpl(RSEFileStore store) {
+		_store = store;
 	}
 	
 	/*
@@ -86,7 +87,7 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#getChild(java.lang.String)
 	 */
 	public IFileStore getChild(String name) {
-		return _parent.getChild(name);
+		return _store.getChild(name);
 	}
 
 	/*
@@ -94,7 +95,7 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#getName()
 	 */
 	public String getName() {
-		return _parent.getName();
+		return _store.getName();
 	}
 
 	/*
@@ -102,7 +103,7 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#getParent()
 	 */
 	public IFileStore getParent() {
-		return _parent.getParent();
+		return _store.getParent();
 	}
 
 	/*
@@ -110,7 +111,7 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#toURI()
 	 */
 	public URI toURI() {
-		return _parent.toURI();
+		return _store.toURI();
 	}
 
 	/**
@@ -270,7 +271,7 @@ public class RSEFileStoreImpl extends FileStore
 	 * @return an IRemoteFile for this file store
 	 * @throws CoreException if connecting is not possible.
 	 */
-	private synchronized IRemoteFile getRemoteFileObject(IProgressMonitor monitor, boolean forceExists) throws CoreException {
+	private IRemoteFile getRemoteFileObject(IProgressMonitor monitor, boolean forceExists) throws CoreException {
 		IRemoteFile remoteFile = getCachedRemoteFile();
 		if (remoteFile!=null) {
 			if (remoteFile.getParentRemoteFileSubSystem().isConnected()) {
@@ -282,7 +283,7 @@ public class RSEFileStoreImpl extends FileStore
 			}
 		}
 
-		RSEFileStore parentStore = _parent.getParentStore();
+		RSEFileStore parentStore = _store.getParentStore();
 		if (parentStore!=null) {
 			//Handle was created naming a parent file store
 			IRemoteFile parent = parentStore.getImpl().getRemoteFileObject(monitor, forceExists);
@@ -300,10 +301,9 @@ public class RSEFileStoreImpl extends FileStore
 			}
 		} else {
 			//Handle was created with an absolute name
-			IRemoteFileSubSystem subSys = RSEFileStoreImpl.getConnectedFileSubSystem(_parent.getHost(), monitor);
+			IRemoteFileSubSystem subSys = RSEFileStoreImpl.getConnectedFileSubSystem(_store.getHost(), monitor);
 			try {
-				//TODO method missing a progressmonitor!
-				remoteFile = subSys.getRemoteFileObject(_parent.getAbsolutePath(), monitor);
+				remoteFile = subSys.getRemoteFileObject(_store.getAbsolutePath(), monitor);
 			}
 			catch (Exception e) {
 				throw new CoreException(new Status(
@@ -484,7 +484,7 @@ public class RSEFileStoreImpl extends FileStore
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		String classification = (remoteFile==null) ? null : remoteFile.getClassification();
 		
-		FileInfo info = new FileInfo(_parent.getName());
+		FileInfo info = new FileInfo(_store.getName());
 		if (remoteFile == null || !remoteFile.exists()) {
 			info.setExists(false);
 			//broken symbolic link handling
@@ -630,7 +630,7 @@ public class RSEFileStoreImpl extends FileStore
 						Activator.getDefault().getBundle().getSymbolicName(), 
 						"The directory could not be created", e));
 			}
-			return _parent;
+			return _store;
 		}
 		else if (remoteFile.isFile()) {
 			throw new CoreException(new Status(IStatus.ERROR, 
@@ -638,7 +638,7 @@ public class RSEFileStoreImpl extends FileStore
 					"A file of that name already exists"));
 		}
 		else {
-			return _parent;
+			return _store;
 		}
 	}
 

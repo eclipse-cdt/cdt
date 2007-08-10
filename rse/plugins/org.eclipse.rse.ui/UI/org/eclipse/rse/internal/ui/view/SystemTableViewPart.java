@@ -22,6 +22,7 @@
  * Xuan Chen        (IBM)        - [194838] Move the code for comparing two objects by absolute name to a common location
  * Kevin Doyle (IBM) - [193394] After Deleting the folder shown in Table get an error
  * Kevin Doyle (IBM) - [197971] NPE when table has no input and doing commands in Systems View
+ * Martin Oberhuber (Wind River) - [199585] Fix NPE during testConnectionRemoval unit test
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1544,25 +1545,23 @@ public class SystemTableViewPart extends ViewPart
 		switch (event.getType())
 		{
 		case ISystemResourceChangeEvents.EVENT_RENAME:
-		{
 			if (child == input)
 			{
 				setTitle((IAdaptable) child);
 			}
-		}
-		break;
-	 case ISystemResourceChangeEvents.EVENT_DELETE:   	    	  
-  	  case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
-  	  	{
+			break;
+		case ISystemResourceChangeEvents.EVENT_DELETE:
+			removeFromHistory(event.getSource());
+			break;
+  	    case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
   	  		Object[] multi = event.getMultiSource();
   	  		for (int i = 0; i < multi.length; i++) {
   	  			// Update the history to remove all references to object
   	  			removeFromHistory(multi[i]);
   	  		}
-  	  	}
-  	      break;  
-  	      default:
-  	          break;
+  	  		break;  
+  	    default:
+  	    	break;
 		}
 	}
 	

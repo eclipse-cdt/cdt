@@ -22,6 +22,7 @@
  * Xuan Chen (IBM)        - [198046] [dstore] Cannot copy a folder into an archive file
  * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
+ * Kevin Doyle (IBM) - [191548]  Deleting Read-Only directory removes it from view and displays no error
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -957,6 +958,7 @@ public class UniversalFileSystemMiner extends Miner {
 						DataElement parent = subject.getParent();
 						_dataStore.deleteObject(parent, subject);
 						_dataStore.refresh(parent);
+						status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
 					}
 				} else {
 					UniversalServerUtilities
@@ -2136,6 +2138,7 @@ public class UniversalFileSystemMiner extends Miner {
 				DataElement parent = subject.getParent();
 				_dataStore.deleteObject(parent, subject);
 				_dataStore.refresh(parent);
+				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 			}
 		}
 

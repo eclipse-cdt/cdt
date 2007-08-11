@@ -17,6 +17,7 @@
  * Kushal Munir (IBM) - [189352] Replace with appropriate line end character on upload
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
  * David McKnight   (IBM)        - [196035] Wrapper SystemMessageExceptions for createFile and createFolder with RemoteFileSecurityException
+ * Kevin Doyle 		(IBM)		 - [191548] Deleting Read-Only directory removes it from view and displays no error
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -928,16 +929,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement de = getElementFor(remotePath);
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_DELETE, monitor);
 		if (status == null) return false;
-		if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))
-		{
-			if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) return true;
-			else throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	 //$NON-NLS-1$
-		}
-		else
-		{
+		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) {
 			return true;
+		} else {
+			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	 //$NON-NLS-1$
 		}
-
 	}
 	
 	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
@@ -953,9 +949,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}	
 		DataElement status = dsStatusCommand((DataElement) dataElements.get(0), dataElements, IUniversalDataStoreConstants.C_DELETE_BATCH, monitor);
 		if (status == null) return false;
-		if (FileSystemMessageUtil.getSourceMessage(status).startsWith(IServiceConstants.FAILED))
-			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status))); //$NON-NLS-1$
-		else return true;
+		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) {
+			return true;
+		} else {
+			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	 //$NON-NLS-1$
+		}
 	}
 
 	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException

@@ -45,6 +45,10 @@ public abstract class AbstractDMVMProviderWithCache extends AbstractDMVMProvider
 		
 		VMCacheManager.getVMCacheManager().addCacheListener(getPresentationContext(), this);
 	}
+    
+    public void flush() {
+        VMCacheManager.getVMCacheManager().flush(getPresentationContext());
+    }
 	
 	@Override
 	public void update(IHasChildrenUpdate[] updates) {

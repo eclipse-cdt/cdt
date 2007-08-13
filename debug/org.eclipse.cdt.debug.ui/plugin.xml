@@ -651,7 +651,7 @@
                tooltip="%RestoredefaultRegisterGroupsAction.tooltip">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui.pluginState1"
+                     id="org.eclipse.cdt.debug.ui"
                      value="activated"/>
             </enablement>
          </action>

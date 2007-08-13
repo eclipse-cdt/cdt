@@ -174,6 +174,13 @@ public abstract class AbstractViewActionDelegate extends ActionDelegate implemen
 		shell.getDisplay().asyncExec( r );
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged( IAction action, ISelection selection ) {
+		update();
+	}
+
 	protected abstract String getErrorDialogTitle();
 
 	protected abstract String getErrorDialogMessage();

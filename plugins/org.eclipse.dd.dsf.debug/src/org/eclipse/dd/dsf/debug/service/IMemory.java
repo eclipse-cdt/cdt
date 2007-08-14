@@ -8,10 +8,12 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson Communication - extended the API for IMemoryBlockExtension
+ *     Ericsson Communication - added support for 64 bit processors
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.cdt.core.IAddress;
+import java.math.BigInteger;
+
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.service.IDsfService;
@@ -24,13 +26,26 @@ import org.eclipse.debug.core.model.MemoryByte;
  */
 public interface IMemory extends IDsfService {
     
-    /**  Writes the given value to the given memory location. */
-    public void setMemory(IDMContext<?> ctx, IAddress addr, 
-                          int word_size, byte[] buf, int offs, int size, int mode, RequestMonitor requestMonitor);
+    public class MemoryChangedEvent {
+        BigInteger fAddress;
 
+        public MemoryChangedEvent(BigInteger address) {
+            fAddress = address;
+        }
+
+        public BigInteger getAddress() {
+            return fAddress;
+        }
+    }
+
+    
     /** Reads memory at the given location */
-    public void getMemory(IDMContext<?> ctx, IAddress addr, 
-                          int word_size, byte[] buf, int offs, int size, int mode, RequestMonitor requestMonitor);
+    public void getMemory(IDMContext<?> ctx, BigInteger addr, 
+    	int word_size, MemoryByte[] buf, int offs, int size, int mode, RequestMonitor rm);
+
+    /**  Writes the given value to the given memory location. */
+    public void setMemory(IDMContext<?> ctx, BigInteger addr, 
+        int word_size, byte[] buf, int offs, int size, int mode, RequestMonitor rm);
 
     /**
      * Fill target memory with given pattern.
@@ -38,25 +53,7 @@ public interface IMemory extends IDsfService {
      * Parameter 0 of sequent 'done' is assigned with Throwable if
      * there was an error.
      */
-    public void fillMemory(IDMContext<?> ctx, IAddress addr,
-                           int word_size, byte[] value, int size, int mode, RequestMonitor requestMonitor);
+    public void fillMemory(IDMContext<?> ctx, BigInteger addr,
+        int word_size, byte[] value, int size, int mode, RequestMonitor rm);
 
-    // ////////////////////////////////////////////////////////////////////////
-    // Replicated the base functions to support IMemoryBlockExtension
-    // ////////////////////////////////////////////////////////////////////////
-
-    /**  Writes the given value to the given memory location. */
-    public void setMemory(IDMContext<?> ctx, IAddress addr, 
-                          int word_size, MemoryByte[] buf, int offs, int size, int mode, RequestMonitor requestMonitor);
-
-    /** Reads memory at the given location */
-    public void getMemory(IDMContext<?> ctx, IAddress addr, 
-                          int word_size, MemoryByte[] buf, int offs, int size, int mode, RequestMonitor requestMonitor);
-
-    public void fillMemory(IDMContext<?> ctx, IAddress addr,
-            int word_size, MemoryByte[] value, int size, int mode, RequestMonitor requestMonitor);
-
-//    /** Reads memory at the given location */
-//    public void resolveMemoryAddress(IDMContext<?> ctx, String expression, BigInteger[] address, RequestMonitor requestMonitor);
-    
 }

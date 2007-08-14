@@ -9,6 +9,8 @@
  * Xuan Chen (IBM)               - initial API and implementation
  *   - <copied code from org.eclipse.core.tests.internal.localstore/LocalStoreTest (Copyright IBM)>
  *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+ *   - <copied code from org.eclipse.core.tests.resources/ResourceTest (Copyright IBM)>
+ *   - <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -272,6 +274,62 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 		transferData(input, target.openOutputStream(EFS.NONE, null));
 		IFileInfo info = target.fetchInfo();
 		assertTrue(info.exists() && !info.isDirectory());
+	}
+	
+	/**
+	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+	 * Asserts that a stream closes successfully. Null streams
+	 * are ignored, but failure to close the stream is reported as
+	 * an assertion failure.
+	 * @param stream the input stream to close
+	 */
+	protected void assertClose(InputStream stream) {
+		if (stream == null)
+			return;
+		try {
+			stream.close();
+		} catch (IOException e) {
+			fail("Failed close in assertClose");
+		}
+	}
+	
+	/**
+	 * <copied code from org.eclipse.core.tests.harness/CoreTest (Copyright IBM)>
+	 * Return an input stream with some the specified text to use
+	 * as contents for a file resource.
+	 * @param text the input text
+	 * @return the input stream of the input text
+	 */
+	public InputStream getContents(String text) {
+		return new ByteArrayInputStream(text.getBytes());
+	}
+	
+	/**
+	 * <copied code from org.eclipse.core.tests.resources/ResourceTest.java (Copyright IBM) >
+	 *
+	 * Returns a boolean value indicating whether or not the contents
+	 * of the given streams are considered to be equal. Closes both input streams.
+	 * @param a input stream a
+	 * @param b input stream b
+	 * @return if both stream are consider to be equal
+	 */
+	public boolean compareContent(InputStream a, InputStream b) {
+		int c, d;
+		if (a == null && b == null)
+			return true;
+		try {
+			if (a == null || b == null)
+				return false;
+			while ((c = a.read()) == (d = b.read()) && (c != -1 && d != -1)) {
+				//body not needed
+			}
+			return (c == -1 && d == -1);
+		} catch (IOException e) {
+			return false;
+		} finally {
+			assertClose(a);
+			assertClose(b);
+		}
 	}
 	
 	/**

@@ -382,7 +382,7 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 
 	protected IPath promptForCoreFilePath( final IProject project, final ICDebugConfiguration debugConfig ) throws CoreException {
 		IStatus fPromptStatus = new Status( IStatus.INFO, "org.eclipse.debug.ui", 200, "", null ); //$NON-NLS-1$//$NON-NLS-2$
-		IStatus processPrompt = new Status( IStatus.INFO, "org.eclipse.cdt.launch", 101, "", null ); //$NON-NLS-1$//$NON-NLS-2$
+		IStatus processPrompt = new Status( IStatus.INFO, "org.eclipse.cdt.launch", 1001, "", null ); //$NON-NLS-1$//$NON-NLS-2$
 		// consult a status handler
 		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler( fPromptStatus );
 		if ( prompter != null ) {

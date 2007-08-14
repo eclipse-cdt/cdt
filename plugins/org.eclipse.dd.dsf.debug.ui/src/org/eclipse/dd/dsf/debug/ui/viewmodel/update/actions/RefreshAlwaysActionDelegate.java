@@ -13,6 +13,7 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions;
 
 import org.eclipse.dd.dsf.debug.ui.viewmodel.update.VMCacheRefreshAlways;
 import org.eclipse.dd.dsf.ui.viewmodel.update.VMCache;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.dd.dsf.ui.viewmodel.update.actions.AbstractRefreshActionDelegate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -29,6 +30,6 @@ public class RefreshAlwaysActionDelegate extends AbstractRefreshActionDelegate
 	@Override
     public VMCache createCache()
 	{
-		return new VMCacheRefreshAlways();
+		return new VMCacheRefreshAlways(VMCacheManager.getVMCacheManager().getCache(getContext()));
 	}
 }

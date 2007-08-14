@@ -48,6 +48,30 @@ public abstract class VMCache
 	
 	protected HashMap<IDMContext<?>, IDMData> fDataArchive = fData;
 	
+	public HashMap[] getCacheData()
+	{
+		return new HashMap[] { fHasChildren, fChildrenCounts, fChildren, fData, fDataArchive };
+	}
+	
+	public VMCache()
+	{
+		
+	}
+	
+	public VMCache(VMCache oldCache)
+	{
+		if(oldCache != null)
+		{
+			HashMap oldCacheData[] = oldCache.getCacheData();
+			
+			fHasChildren = oldCacheData[0];
+			fChildrenCounts = oldCacheData[1];
+			fChildren = oldCacheData[2];
+			fData = oldCacheData[3];
+			fDataArchive = oldCacheData[4];
+		}
+	}
+	
 	protected void flush(boolean archive)
 	{
 		if(archive)

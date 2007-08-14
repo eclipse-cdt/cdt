@@ -17,6 +17,16 @@ import org.eclipse.dd.dsf.ui.viewmodel.update.VMCache;
 
 public class VMCacheRefreshAlways extends VMCache  
 {
+	public VMCacheRefreshAlways()
+	{
+		super();
+	}
+	
+	public VMCacheRefreshAlways(VMCache oldCache)
+	{
+		super(oldCache);
+	}
+	
 	@SuppressWarnings("unchecked")
     @Override
 	public void handleEvent(IDMEvent event) {

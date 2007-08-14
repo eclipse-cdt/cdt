@@ -337,6 +337,12 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	            return false;
 	        }
 
+	        if (projectFieldContents.indexOf('#') >= 0) {
+	            setErrorMessage(UIMessages.getString("CDTMainWizardPage.0"));	             //$NON-NLS-1$
+	            return false;
+	        }
+	        
+	        
 	        boolean bad = true; // should we treat existing project as error
 	        
 	        IProject handle = getProjectHandle();

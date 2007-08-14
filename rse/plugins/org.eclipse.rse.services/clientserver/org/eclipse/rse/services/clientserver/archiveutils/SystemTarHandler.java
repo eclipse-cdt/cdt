@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
+ * Xuan Chen        (IBM)        - [199132] [Archives-TAR][Local-Windows] Can't open files in tar archives
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -869,6 +870,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			if (inStream == null) {
 				destination.setLastModified(entry.getModificationTime());
 				return false;			// TODO: return true or false?
+			}
+			//Need to make sure destination file exists.
+			if (!destination.exists())
+			{
+			    File parentFile = destination.getParentFile();
+			    if (!parentFile.exists())
+			        parentFile.mkdirs();
+			    destination.createNewFile();
 			}
 		
 			outStream = new FileOutputStream(destination);
@@ -2248,8 +2257,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	public boolean add(File file, String virtualPath, String name, String sourceEncoding, String targetEncoding, ISystemFileTypes typeRegistery) {
-		// TODO Auto-generated method stub
-		return false;
+		return add(file, virtualPath, name);
 	}
 
 	public boolean replace(String fullVirtualName, InputStream stream, String name, String sourceEncoding, String targetEncoding, boolean isText) {

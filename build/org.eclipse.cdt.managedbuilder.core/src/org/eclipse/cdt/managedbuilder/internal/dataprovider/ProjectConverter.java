@@ -46,7 +46,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.BuilderFactory;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
-import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -63,6 +62,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class ProjectConverter implements ICProjectConverter {
 	private final static String OLD_MAKE_BUILDER_ID = "org.eclipse.cdt.make.core.makeBuilder";	//$NON-NLS-1$
@@ -78,7 +82,6 @@ public class ProjectConverter implements ICProjectConverter {
 	private final static String OLD_MAKE_TARGET_BUIDER_ID = "org.eclipse.cdt.make.MakeTargetBuilder"; //$NON-NLS-1$
 	private final static String NEW_MAKE_TARGET_BUIDER_ID = "org.eclipse.cdt.build.MakeTargetBuilder"; //$NON-NLS-1$
 
-	private static final Object LOCK = new Object();
 	private static ResourcePropertyHolder PROPS = new ResourcePropertyHolder(true);
 	
 	private static String CONVERSION_FAILED_MSG_ID = "conversionFailed"; //$NON-NLS-1$
@@ -133,17 +136,13 @@ public class ProjectConverter implements ICProjectConverter {
 			des.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
 		} else if(natureSet.contains(OLD_MNG_NATURE_ID)){
 			try {
-				synchronized (LOCK) {
-					if(PROPS.getProperty(project, CONVERSION_FAILED_MSG_ID) != null)
-						throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
-				}
+				if(PROPS.getProperty(project, CONVERSION_FAILED_MSG_ID) != null)
+					throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), DataProviderMessages.getString("ProjectConverter.0"))); //$NON-NLS-1$
 
 				newDes = model.createProjectDescription(project, false);
 				info = convertManagedBuildInfo(project, newDes);
 			} catch (CoreException e) {
-				synchronized (LOCK) {
-					displayInfo(project, CONVERSION_FAILED_MSG_ID, DataProviderMessages.getString("ProjectConverter.10"), DataProviderMessages.getFormattedString("ProjectConverter.11", new String[]{project.getName(), e.getLocalizedMessage()})); //$NON-NLS-1$ //$NON-NLS-2$
-				}
+				displayInfo(project, CONVERSION_FAILED_MSG_ID, DataProviderMessages.getString("ProjectConverter.10"), DataProviderMessages.getFormattedString("ProjectConverter.11", new String[]{project.getName(), e.getLocalizedMessage()})); //$NON-NLS-1$ //$NON-NLS-2$
 				throw e;
 			}
 		} 
@@ -235,9 +234,57 @@ public class ProjectConverter implements ICProjectConverter {
 	
 	static void displayInfo(IProject proj, String id, String title, String message){
 		if(PROPS.getProperty(proj, id) == null){
-			UpdateManagedProjectManager.openInformation(title, message);
+			openInformation(proj, id, title, message, false);
 			PROPS.setProperty(proj, id, Boolean.TRUE);
 		}
+	}
+	
+	public static boolean getBooleanFromQueryAnswer(String answer){
+		if(IOverwriteQuery.ALL.equalsIgnoreCase(answer) ||
+				IOverwriteQuery.YES.equalsIgnoreCase(answer))
+			return true;
+		return false;
+	}
+	
+	static public boolean openQuestion(final IResource rc, final String id, final String title, final String message, IOverwriteQuery query, final boolean multiple){
+		if(query != null)
+			return getBooleanFromQueryAnswer(query.queryOverwrite(message));
+
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window == null){
+			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+			window = windows[0];
+		}
+
+		final Shell shell = window.getShell();
+		final boolean [] answer = new boolean[1];
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				if(multiple || PROPS.getProperty(rc, id) == null){
+					PROPS.setProperty(rc, id, Boolean.TRUE);
+					answer[0] = MessageDialog.openQuestion(shell,title,message);
+				}
+			}
+		});	
+		return answer[0];
+	}
+	
+	static private void openInformation(final IResource rc, final String id, final String title, final String message, final boolean multiple){
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if(window == null){
+			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+			window = windows[0];
+		}
+
+		final Shell shell = window.getShell();
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				if(multiple || PROPS.getProperty(rc, id) == null){
+					PROPS.setProperty(rc, id, Boolean.TRUE);
+					MessageDialog.openInformation(shell,title,message);
+				}
+			}
+		});	
 	}
 	
 	private static void convertMakeTargetInfo(final IProject project, ICProjectDescription des, IProgressMonitor monitor) throws CoreException{
@@ -527,7 +574,7 @@ public class ProjectConverter implements ICProjectConverter {
 	private IManagedBuildInfo convertManagedBuildInfo(IProject project, ICProjectDescription newDes) throws CoreException {
 		IManagedBuildInfo info = ManagedBuildManager.getOldStyleBuildInfo(project);
 		
-		synchronized(LOCK){
+		synchronized(PROPS){
 			if(info != null && info.isValid()){
 				IManagedProject mProj = info.getManagedProject();
 				IConfiguration cfgs[] = mProj.getConfigurations();

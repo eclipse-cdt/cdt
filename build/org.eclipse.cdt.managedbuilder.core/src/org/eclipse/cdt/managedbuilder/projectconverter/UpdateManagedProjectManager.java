@@ -21,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.ProjectConverter;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,10 +37,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 public class UpdateManagedProjectManager {
@@ -68,13 +65,6 @@ public class UpdateManagedProjectManager {
 		fUpdateProjectQuery = updateProjectQuery;
 	}
 	
-	private static boolean getBooleanFromQueryAnswer(String answer){
-		if(IOverwriteQuery.ALL.equalsIgnoreCase(answer) ||
-				IOverwriteQuery.YES.equalsIgnoreCase(answer))
-			return true;
-		return false;
-	}
-
 	synchronized static private UpdateManagedProjectManager getUpdateManager(IProject project){
 		UpdateManagedProjectManager mngr = getExistingUpdateManager(project);
 		if(mngr == null)
@@ -184,10 +174,10 @@ public class UpdateManagedProjectManager {
 			if (dstFile.exists()) {
 				boolean shouldUpdate;
 				if(query != null)
-					shouldUpdate = getBooleanFromQueryAnswer(query.queryOverwrite(dstFile.getName()));
+					shouldUpdate = ProjectConverter.getBooleanFromQueryAnswer(query.queryOverwrite(dstFile.getName()));
 				else
-					shouldUpdate = openQuestion(ConverterMessages.getResourceString("UpdateManagedProjectManager.0"), //$NON-NLS-1$
-							ConverterMessages.getFormattedString("UpdateManagedProjectManager.1", new String[] {dstFile.getName(),project.getName()})); //$NON-NLS-1$
+					shouldUpdate = ProjectConverter.openQuestion(fProject, "UpdateManagedProjectManager.0", ConverterMessages.getResourceString("UpdateManagedProjectManager.0"), //$NON-NLS-1$ //$NON-NLS-2$
+							ConverterMessages.getFormattedString("UpdateManagedProjectManager.1", new String[] {dstFile.getName(),project.getName()}), fOpenQuestionQuery, false); //$NON-NLS-1$
 
 				if (shouldUpdate) {
 					dstFile.delete();
@@ -241,43 +231,27 @@ public class UpdateManagedProjectManager {
 		}
 	}
 	
-	static private boolean openQuestion(final String title, final String message){
-		if(fOpenQuestionQuery != null)
-			return getBooleanFromQueryAnswer(fOpenQuestionQuery.queryOverwrite(message));
-
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window == null){
-			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-			window = windows[0];
-		}
-
-		final Shell shell = window.getShell();
-		final boolean [] answer = new boolean[1];
-		shell.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				answer[0] = MessageDialog.openQuestion(shell,title,message); 
-			}
-		});	
-		return answer[0];
-	}
+//	static private boolean openQuestion(IResource rc, final String title, final String message){
+//		return ProjectConverter.openQuestion(rc, message, title, message, fOpenQuestionQuery, false);
+//	}
 	
-	static public void openInformation(final String title, final String message){
-		if(fOpenQuestionQuery != null)
-			return;// getBooleanFromQueryAnswer(fOpenQuestionQuery.queryOverwrite(message));
-
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window == null){
-			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-			window = windows[0];
-		}
-
-		final Shell shell = window.getShell();
-		shell.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				MessageDialog.openInformation(shell,title,message); 
-			}
-		});	
-	}
+//	static public void openInformation(final String title, final String message){
+//		if(fOpenQuestionQuery != null)
+//			return;// getBooleanFromQueryAnswer(fOpenQuestionQuery.queryOverwrite(message));
+//
+//		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+//		if(window == null){
+//			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+//			window = windows[0];
+//		}
+//
+//		final Shell shell = window.getShell();
+//		shell.getDisplay().syncExec(new Runnable() {
+//			public void run() {
+//				MessageDialog.openInformation(shell,title,message); 
+//			}
+//		});	
+//	}
 	
 	/**
 	 * returns ManagedBuildInfo for the current project
@@ -322,11 +296,11 @@ public class UpdateManagedProjectManager {
 
 			boolean shouldUpdate;
 			if(fUpdateProjectQuery != null)
-				shouldUpdate = getBooleanFromQueryAnswer(fUpdateProjectQuery.queryOverwrite(fProject.getFullPath().toString()));
+				shouldUpdate = ProjectConverter.getBooleanFromQueryAnswer(fUpdateProjectQuery.queryOverwrite(fProject.getFullPath().toString()));
 			else
-				shouldUpdate = openQuestion(ConverterMessages.getResourceString("UpdateManagedProjectManager.3"), //$NON-NLS-1$
-					ConverterMessages.getFormattedString("UpdateManagedProjectManager.4", new String[]{fProject.getName(),version.toString(),ManagedBuildManager.getBuildInfoVersion().toString()}) //$NON-NLS-1$
-					);
+				shouldUpdate = ProjectConverter.openQuestion(fProject, "UpdateManagedProjectManager.3", ConverterMessages.getResourceString("UpdateManagedProjectManager.3"), //$NON-NLS-1$  //$NON-NLS-2$
+					ConverterMessages.getFormattedString("UpdateManagedProjectManager.4", new String[]{fProject.getName(),version.toString(),ManagedBuildManager.getBuildInfoVersion().toString()}), //$NON-NLS-1$
+					fOpenQuestionQuery, false);
 			
 			if (!shouldUpdate){ 
 				fIsInfoReadOnly = true;

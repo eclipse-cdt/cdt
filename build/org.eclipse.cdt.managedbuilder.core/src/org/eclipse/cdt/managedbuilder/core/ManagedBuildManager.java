@@ -2026,7 +2026,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * Load the build information for the specified resource from its project
 	 * file. Pay attention to the version number too.
 	 */
-	private static ManagedBuildInfo loadBuildInfo(final IProject project) throws Exception {
+	private static ManagedBuildInfo loadOldStyleBuildInfo(final IProject project) throws Exception {
 		ManagedBuildInfo buildInfo = null;
 		IFile file = project.getFile(SETTINGS_FILE_NAME);
 		File cdtbuild = file.getLocation().toFile();
@@ -2644,7 +2644,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 //		try {
 //			mngr.beginRule(rule, null);
-			doSetLoaddedInfo(project, info);
+			doSetLoaddedInfo(project, info, true);
 //		} catch (IllegalArgumentException e) {
 //			// TODO: set anyway for now
 //			doSetLoaddedInfo(project, info);
@@ -2653,7 +2653,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 //		}
 	}
 	
-	private synchronized static void doSetLoaddedInfo(IProject project, IManagedBuildInfo info){
+	private synchronized static void doSetLoaddedInfo(IProject project, IManagedBuildInfo info, boolean overwrite){
+		if(!overwrite && fInfoMap.get(project) != null)
+			return;
+		
 		if(info != null){
 			fInfoMap.put(project, info);
 			if(BuildDbgUtil.DEBUG)
@@ -2743,6 +2746,15 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		ManagedBuildInfo buildInfo = null;
 		IProject proj = rc.getProject();
 
+		if(buildInfo == null){
+			if(BuildDbgUtil.DEBUG)
+				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$
+			buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+		}
+		
+		if(buildInfo != null)
+			return buildInfo;
+
 		// Check if there is any build info associated with this project for this session
 		try {
 			buildInfo = getLoaddedBuildInfo(proj);
@@ -2793,11 +2805,11 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 
 			
-			if(buildInfo == null){
-				if(BuildDbgUtil.DEBUG)
-					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$
-				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
-			}
+//			if(buildInfo == null){
+//				if(BuildDbgUtil.DEBUG)
+//					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$
+//				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+//			}
 		}
 //		if (buildInfo == null && resource instanceof IProject)
 //			buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);
@@ -2983,7 +2995,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return getBuildInfo(resource, true);
 	}
 
-	public static synchronized IManagedBuildInfo getOldStyleBuildInfo(IProject project) throws CoreException {
+	public static IManagedBuildInfo getOldStyleBuildInfo(IProject project) throws CoreException {
 		IManagedBuildInfo info = null;
 		try {
 			info = getLoaddedBuildInfo(project);
@@ -2992,10 +3004,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		
 		if(info == null){
 			try {
-				info = loadBuildInfo(project);
+				info = loadOldStyleBuildInfo(project);
 				
 				if(info != null)
-					setLoaddedBuildInfo(project, info);
+					doSetLoaddedInfo(project, info, false);
 			} catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), e.getLocalizedMessage(), e));
 			}

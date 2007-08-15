@@ -24,9 +24,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 @SuppressWarnings("restriction")
 public class DetailPaneFactory implements IDetailPaneFactory {
 
-    public static final String DETAIL_PANE_ID   = Messages.getString("DetailPaneFactory.0"); //$NON-NLS-1$
-    public static final String DETAIL_PANE_NAME = Messages.getString("DetailPaneFactory.1"); //$NON-NLS-1$
-    public static final String DETAIL_PANE_DESC = Messages.getString("DetailPaneFactory.2");  //$NON-NLS-1$
+    public static final String DSF_DETAIL_PANE_ID   = Messages.getString("DetailPaneFactory.0"); //$NON-NLS-1$
+    public static final String DSF_DETAIL_PANE_NAME = Messages.getString("DetailPaneFactory.1"); //$NON-NLS-1$
+    public static final String DSF_DETAIL_PANE_DESC = Messages.getString("DetailPaneFactory.2");  //$NON-NLS-1$
     
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
@@ -41,7 +41,7 @@ public class DetailPaneFactory implements IDetailPaneFactory {
     @SuppressWarnings("unchecked")
     public Set getDetailPaneTypes(IStructuredSelection selection) {
         Set<String> possibleIDs = new HashSet<String>(1);
-        possibleIDs.add(DETAIL_PANE_ID);
+        possibleIDs.add(DSF_DETAIL_PANE_ID);
         return possibleIDs;
     }
     
@@ -49,26 +49,25 @@ public class DetailPaneFactory implements IDetailPaneFactory {
      * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
      */
     public String getDefaultDetailPane(IStructuredSelection selection) {
-        return DETAIL_PANE_ID;
+        return DSF_DETAIL_PANE_ID;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getName(java.lang.String)
      */
     public String getDetailPaneName(String id) {
-        if (id.equals(DETAIL_PANE_ID)){
-            return DETAIL_PANE_NAME;
+        if (id.equals(DSF_DETAIL_PANE_ID)){
+            return DSF_DETAIL_PANE_NAME;
         }
         return null;
     }
-    
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)
      */
     public String getDetailPaneDescription(String id) {
-        if (id.equals(DETAIL_PANE_ID)){
-            return DETAIL_PANE_DESC;
+        if (id.equals(DSF_DETAIL_PANE_ID)){
+            return DSF_DETAIL_PANE_DESC;
         }
         return null;
     }

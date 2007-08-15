@@ -39,8 +39,11 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode.DMVMContext;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -49,8 +52,10 @@ import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneMaxLengthAction;
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneWordWrapAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.views.variables.IndexedValuePartition;
 import org.eclipse.debug.internal.ui.views.variables.StatusLineContributionItem;
 import org.eclipse.debug.internal.ui.views.variables.details.DetailMessages;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IDetailPane;
@@ -284,13 +289,16 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
     class DetailJob extends Job implements IValueDetailListener {
         
         private IStructuredSelection fElements;
+        private IDebugModelPresentation fModel;
         private boolean fFirst = true;
         private IProgressMonitor fMonitor;
+        private boolean fComputed = false;
         
-        public DetailJob(IStructuredSelection elements) {
+        public DetailJob(IStructuredSelection elements, IDebugModelPresentation model) {
             super("compute variable details"); //$NON-NLS-1$
             setSystem(true);
             fElements = elements;
+            fModel = model;
         }
         
         /* (non-Javadoc)
@@ -299,6 +307,7 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
         @SuppressWarnings("unchecked")
         @Override
         protected IStatus run(IProgressMonitor monitor) {
+            String message = null;
             fMonitor = monitor;
             Iterator<Object> iterator = fElements.iterator();
             while (iterator.hasNext()) {
@@ -435,6 +444,49 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
                             }
                         }
                     );
+                }
+                else {
+                    IValue val = null;
+                    if (element instanceof IVariable) {
+                        try {
+                            val = ((IVariable)element).getValue();
+                        } catch (DebugException e) {
+                            detailComputed(null, e.getStatus().getMessage());
+                        }
+                    } else if (element instanceof IExpression) {
+                        val = ((IExpression)element).getValue();
+                    }
+                    // When selecting a index partition, clear the pane
+                    if (val instanceof IndexedValuePartition) {
+                        detailComputed(null, ""); //$NON-NLS-1$
+                        val = null;
+                    }
+                    if (element instanceof String) {
+                        message = (String) element;
+                    }
+                    if (val != null && !monitor.isCanceled()) {
+                        fModel.computeDetail(val, this);
+                        synchronized (this) {
+                            try {
+                                // wait for a max of 30 seconds for result, then cancel
+                                wait(30000);
+                                if (!fComputed) {
+                                    fMonitor.setCanceled(true);
+                                }
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                        }
+                    }               
+                }
+                // If no details were computed for the selected variable, clear the pane
+                // or use the message, if the variable was a java.lang.String
+                if (!fComputed){
+                    if (message == null) {
+                        detailComputed(null,""); //$NON-NLS-1$
+                    } else {
+                        detailComputed(null, message);
+                    }
                 }
             }
             
@@ -719,7 +771,7 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
             if (fDetailJob != null) {
                 fDetailJob.cancel();
             }
-            fDetailJob = new DetailJob(selection);
+            fDetailJob = new DetailJob(selection, fModelPresentation);
             fDetailJob.schedule();
         }
     }
@@ -758,25 +810,29 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
         }
     }
     
+//    public static final String DSF_DETAIL_PANE_ID   = Messages.getString("DetailPaneFactory.0"); //$NON-NLS-1$
+//    public static final String DSF_DETAIL_PANE_NAME = Messages.getString("DetailPaneFactory.1"); //$NON-NLS-1$
+//    public static final String DSF_DETAIL_PANE_DESC = Messages.getString("DetailPaneFactory.2");  //$NON-NLS-1$
+    
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getDescription()
      */
     public String getDescription() {
-        return DESCRIPTION;
+        return DetailPaneFactory.DSF_DETAIL_PANE_DESC;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getID()
      */
     public String getID() {
-        return ID;
+        return DetailPaneFactory.DSF_DETAIL_PANE_ID;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getName()
      */
     public String getName() {
-        return NAME;
+        return DetailPaneFactory.DSF_DETAIL_PANE_NAME;
     }
     
     /* (non-Javadoc)

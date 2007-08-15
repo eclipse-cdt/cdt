@@ -16,8 +16,7 @@ import java.util.ResourceBundle;
 public class Messages {
     private static final String BUNDLE_NAME = "org.eclipse.dd.dsf.debug.ui.viewmodel.detailpanesupport.messages"; //$NON-NLS-1$
 
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
     private Messages() {
     }

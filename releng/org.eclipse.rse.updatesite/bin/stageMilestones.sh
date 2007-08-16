@@ -14,7 +14,7 @@ cd ..
 SITE=`pwd`
 
 # get newest plugins and features: to be done manually on real update site
-if [ `basename $SITE` = milestones ]; then
+if [ `basename $SITE` != milestones ]; then
     echo "Must run on milestones update site"
     cd "$curdir"
     exit 1

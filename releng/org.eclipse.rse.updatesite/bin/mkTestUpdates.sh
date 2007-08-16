@@ -218,9 +218,10 @@ This site contains Target Management Milestones (I-, S- and M- builds) which are
 being contributed to the Europa coordinated release train (Eclipse 3.3).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
+    ## keep 2.0.1 features in site.xml
+    ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/milestones,g' \
         -e 's,Project 2.0 Update,Project Milestone Update,g' \
-    	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project Milestone Update,g' \
@@ -240,9 +241,10 @@ This site contains Target Management Interim Maintenance builds (M-builds) in or
 to test them before going live.' \
     	index.html > index.html.new
     mv -f index.html.new index.html
+    ## keep 2.0.1 features in site.xml
+    ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/interim,g' \
         -e 's,Project 2.0 Update,Project Interim Update,g' \
-    	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project Interim Update,g' \

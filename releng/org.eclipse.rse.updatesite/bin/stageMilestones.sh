@@ -38,8 +38,8 @@ mv plugins/*_1.0.1.v* plugins.sav
 # copy new version
 echo "Copying new versions"
 cp ../../signedUpdates/features/*_2.0.1.v* features
-cp ../../signedUpdates/plugins/*_1.0.1.v* plugins
-cp ../../signedUpdates/features/*_2.0.1.v* features
+cp ../../signedUpdates/features/*_1.0.1.v* features
+cp ../../signedUpdates/plugins/*_2.0.1.v* plugins
 cp ../../signedUpdates/plugins/*_1.0.1.v* plugins
 
 # diff, to be safe

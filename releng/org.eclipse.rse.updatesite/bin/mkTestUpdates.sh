@@ -196,13 +196,13 @@ elif [ `basename $SITE` = signedUpdates ]; then
     ls ../updates/2.0/features | sort > f2.$$.txt
     echo "wc old-features:"
     wc f1.$$.txt
-    diff f1.$$.txt f2.$$.txt
+    diff f1.$$.txt f2.$$.txt | grep -v '^[>]'
     echo "VERIFYING VERSION CORRECNESS: Plugins"
     ls plugins | grep -v '_[12]\.0\.1\.v' | sort > p1.$$.txt
     ls ../updates/2.0/plugins | sort > p2.$$.txt
     echo "wc old-plugins:"
     wc p1.$$.txt
-    diff p1.$$.txt p2.$$.txt
+    diff p1.$$.txt p2.$$.txt | grep -v '^[>]'
     rm f1.$$.txt f2.$$.txt p1.$$.txt p2.$$.txt    
 elif [ `basename $SITE` = milestones ]; then
     echo "Working on milestone update site"

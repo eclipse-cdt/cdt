@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.ui.IWorkingSet;
@@ -39,6 +40,16 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 
 
 public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementChangedListener {
+
+	private static class SingletonRule implements ISchedulingRule {
+		public static final ISchedulingRule INSTANCE = new SingletonRule();
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	}
 
 	private static class WorkingSetCheck extends Job {
 		private final IWorkingSet fWorkingSet;
@@ -99,12 +110,15 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	 * {@inheritDoc}
 	 */
 	public void add(final IWorkingSet workingSet) {
+		checkElementExistence(workingSet);
 		// delay the check for existence - this may be called very early in the bootstrap
 		// otherwise it is causing all kinds of weird exceptions
 		Job check= new WorkingSetCheck(workingSet);
 		check.setUser(false);
 		check.setPriority(Job.SHORT);
-		check.schedule(1000);
+		// make jobs run sequential
+		check.setRule(SingletonRule.INSTANCE);
+		check.schedule(2000 + fWorkingSets.size() * 100);
 		check.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				synchronized (fWorkingSets) {

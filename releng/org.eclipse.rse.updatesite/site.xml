@@ -84,7 +84,7 @@
    <feature url="features/org.eclipse.rse.local_2.0.1.qualifier.jar" id="org.eclipse.rse.local" version="2.0.1.qualifier">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse_2.0.1.qualifier.jar" id="org.eclipse.rse" version="2.0.0.v20070609-7D--8mJIOQ6RwTkIMtp8OQKB">
+   <feature url="features/org.eclipse.rse_2.0.1.qualifier.jar" id="org.eclipse.rse" version="2.0.1.qualifier">
       <category name="TM and RSE 2.0.1"/>
    </feature>
    <feature url="features/org.eclipse.rse.sdk_2.0.1.qualifier.jar" id="org.eclipse.rse.sdk" version="2.0.1.qualifier">
@@ -105,7 +105,7 @@
    <feature url="features/org.eclipse.tm.discovery_2.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="2.0.0.qualifier">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_1.0.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.0.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_1.0.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.1.qualifier">
       <category name="TM and RSE 2.0.1"/>
    </feature>
    <feature url="features/org.eclipse.rse.tests_2.0.1.qualifier.jar" id="org.eclipse.rse.tests" version="2.0.1.qualifier">

@@ -190,6 +190,20 @@ elif [ `basename $SITE` = signedUpdates ]; then
     sed -e 's,Project 2.0 Update,Project Signed Test Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
+    ## CHECK VERSION CORRECTNESS for 2.0.1
+    echo "VERIFYING VERSION CORRECNESS: Features"
+    ls features | grep -v '_[12]\.0\.1_' | sort > f1.$$.txt
+    ls ../updates/2.0/features | sort > f2.$$.txt
+    echo "wc old-features:"
+    wc f1.$$.txt
+    diff f1.$$.txt f2.$$.txt
+    echo "VERIFYING VERSION CORRECNESS: Plugins"
+    ls plugins | grep -v '_[12]\.0\.1_' | sort > p1.$$.txt
+    ls ../updates/2.0/plugins | sort > p2.$$.txt
+    echo "wc old-plugins:"
+    wc p1.$$.txt
+    diff p1.$$.txt p2.$$.txt
+    rm f1.$$.txt f2.$$.txt p1.$$.txt p2.$$.txt    
 elif [ `basename $SITE` = milestones ]; then
     echo "Working on milestone update site"
     TYPE=milestone

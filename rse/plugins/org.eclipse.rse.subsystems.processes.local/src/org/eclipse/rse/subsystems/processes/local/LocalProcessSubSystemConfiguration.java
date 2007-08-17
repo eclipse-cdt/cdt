@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * Kevin Doyle (IBM) - [199871] LocalProcessService needs to implement getMessage()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.processes.local;
@@ -29,6 +30,7 @@ import org.eclipse.rse.services.processes.IProcessService;
 import org.eclipse.rse.subsystems.processes.core.subsystem.IHostProcessToRemoteProcessAdapter;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystem;
 import org.eclipse.rse.subsystems.processes.servicesubsystem.ProcessServiceSubSystemConfiguration;
+import org.eclipse.rse.ui.RSEUIPlugin;
 
 
 public class LocalProcessSubSystemConfiguration extends ProcessServiceSubSystemConfiguration 
@@ -108,7 +110,7 @@ public class LocalProcessSubSystemConfiguration extends ProcessServiceSubSystemC
 	public IProcessService createProcessService(IHost host)
 	{
 		//LocalConnectorService connectorService = (LocalConnectorService)getConnectorService(host);
-		return new LocalProcessService();
+		return new LocalProcessService(RSEUIPlugin.getDefault());
 	}  
 	
 	/* (non-Javadoc)

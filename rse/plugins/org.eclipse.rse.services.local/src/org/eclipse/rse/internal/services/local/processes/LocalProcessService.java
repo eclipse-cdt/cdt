@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Kevin Doyle (IBM) - [199871] LocalProcessService needs to implement getMessage()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.processes;
@@ -23,6 +24,7 @@ import java.util.SortedSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.local.ILocalService;
 import org.eclipse.rse.internal.services.local.LocalServiceResources;
+import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.clientserver.processes.IHostProcess;
@@ -36,10 +38,17 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 {	
 	protected String[] _statusTypes;
 	protected ProcessHandler handler;
+	protected ISystemMessageProvider _msgProvider;
 	
 	public LocalProcessService()
 	{
 		handler = ProcessHandlerManager.getInstance().getNewProcessHandler();
+	}
+	
+	public LocalProcessService(ISystemMessageProvider msgProvider)
+	{
+		this();
+		_msgProvider = msgProvider;
 	}
 	
 	public String getName()
@@ -156,5 +165,9 @@ public class LocalProcessService extends AbstractProcessService implements ILoca
 	
 	public void uninitService(IProgressMonitor monitor)
 	{
+	}
+
+	public SystemMessage getMessage(String messageID) {
+		return (_msgProvider != null ? _msgProvider.getMessage(messageID) : super.getMessage(messageID));	
 	}
 }

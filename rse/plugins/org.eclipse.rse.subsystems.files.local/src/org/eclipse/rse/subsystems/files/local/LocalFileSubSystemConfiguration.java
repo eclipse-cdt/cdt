@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186997] No deferred queries in Local Files
+ * Kevin Doyle (IBM) - [199871] LocalFileService needs to implement getMessage()
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.local;
@@ -45,6 +46,7 @@ import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSyst
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystemConfiguration;
 import org.eclipse.rse.subsystems.files.core.subsystems.IHostFileToRemoteFileAdapter;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 
 
@@ -222,7 +224,7 @@ public class LocalFileSubSystemConfiguration extends FileServiceSubSystemConfigu
 	
 	public IFileService createFileService(IHost host)
 	{
-		return new LocalFileService(SystemFileTransferModeRegistry.getInstance());
+		return new LocalFileService(SystemFileTransferModeRegistry.getInstance(), RSEUIPlugin.getDefault());
 	}
 	
 	public ISearchService createSearchService(IHost host)

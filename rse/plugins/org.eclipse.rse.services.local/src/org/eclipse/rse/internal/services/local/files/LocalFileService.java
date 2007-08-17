@@ -20,6 +20,7 @@
  * Kevin Doyle (IBM) - [196211] Move a folder to a directory that contains a folder by that name errors
  * Martin Oberhuber (Wind River) - [199394] Allow real files/folders containing String #virtual#
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
+ * Kevin Doyle (IBM) - [199871] LocalFileService needs to implement getMessage()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -52,6 +53,7 @@ import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
+import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
@@ -95,11 +97,18 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	private boolean _isWin95 = false;
 	private boolean _isWinNT = false;
 	private String  _osCmdShell = null;
+	
 	protected ISystemFileTypes _fileTypeRegistry;
+	protected ISystemMessageProvider _msgProvider;
 	
 	public LocalFileService(ISystemFileTypes fileTypeRegistry)
 	{
 		_fileTypeRegistry = fileTypeRegistry;
+	}
+	
+	public LocalFileService (ISystemFileTypes fileTypeRegistry, ISystemMessageProvider msgProvider) {
+		this(fileTypeRegistry);
+		_msgProvider = msgProvider;
 	}
 	
 	public String getName()
@@ -1436,7 +1445,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(String, String, boolean, IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		
 		File file = new File(remoteParent, remoteFile);
 		OutputStream stream = null;
 		
@@ -1449,4 +1457,8 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		
 		return stream;
 	}	
+	
+	public SystemMessage getMessage(String messageID) {
+		return (_msgProvider != null ? _msgProvider.getMessage(messageID) : super.getMessage(messageID));
+	}
 }

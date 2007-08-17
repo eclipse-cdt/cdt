@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui;
 
@@ -26,13 +27,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -251,7 +255,19 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 		return fWorkingCopyManager;
 	}
 
-	
+	/**
+	 * Returns a combined preference store, this store is read-only.
+	 * 
+	 * @return the combined preference store
+	 */
+	public IPreferenceStore getCombinedPreferenceStore() {
+		IPreferenceStore[] stores = new IPreferenceStore[2];
+		stores[0] = getPreferenceStore();
+		stores[1] = EditorsUI.getPreferenceStore();
+		ChainedPreferenceStore chainedStore = new ChainedPreferenceStore(stores);
+		return chainedStore;
+	}
+
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);

@@ -361,10 +361,7 @@
    </extension>
    
    <!-- Makefile Editor extensions.  -->
-   <extension
-         id="org.eclipse.cdt.make.editor"
-         name="MakefileEditor"
-         point="org.eclipse.ui.editors">
+   <extension point="org.eclipse.ui.editors">
       <editor
             name="%MakefileEditor.name"
             icon="icons/etool16/makefile.gif"
@@ -374,10 +371,7 @@
             <contentTypeBinding contentTypeId="org.eclipse.cdt.make.core.makefile"/>
       </editor>
    </extension>
-   <extension
-         id="org.eclipse.cdt.make.ui.MakefileDocumentSetupParticipant"
-         name="%MakefileDocumentSetupParticipant.name"
-         point="org.eclipse.core.filebuffers.documentSetup">
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             contentTypeId="org.eclipse.cdt.make.core.makefile"
             class="org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentSetupParticipant">
@@ -481,4 +475,18 @@
          </enabledWhen>
       </page>
       </extension>
+
+<!-- Compare viewer -->
+   <extension
+         point="org.eclipse.compare.contentMergeViewers">
+      <viewer
+            class="org.eclipse.cdt.make.internal.ui.compare.MakefileContentViewerCreator"
+            extensions="mk2"
+            id="org.eclipse.cdt.make.ui.compare.MakefileContentViewerCreator">
+      </viewer>
+      <contentTypeBinding
+			contentTypeId="org.eclipse.cdt.make.core.makefile"
+            contentMergeViewerId="org.eclipse.cdt.make.ui.compare.MakefileContentViewerCreator">
+	  </contentTypeBinding>
+   </extension>
 </plugin>

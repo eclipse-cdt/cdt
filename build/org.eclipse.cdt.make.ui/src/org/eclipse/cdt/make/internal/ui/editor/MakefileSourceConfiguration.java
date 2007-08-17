@@ -82,23 +82,26 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
 	 */
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-		ContentAssistant assistant = new ContentAssistant();
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
-		assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
+		if (fEditor != null && fEditor.isEditable()) {
+			ContentAssistant assistant = new ContentAssistant();
+			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
+			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_COMMENT_PARTITION);
+			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_DEF_BLOCK_PARTITION);
+			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_IF_BLOCK_PARTITION);
+			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_INCLUDE_BLOCK_PARTITION);
+			assistant.setContentAssistProcessor(new MakefileCompletionProcessor(fEditor), MakefilePartitionScanner.MAKEFILE_MACRO_ASSIGNEMENT_PARTITION);
+	
+			assistant.enableAutoActivation(true);
+			assistant.setAutoActivationDelay(500);
+	
+			assistant.setProposalPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
+			assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
+			//Set to Carolina blue
+			assistant.setContextInformationPopupBackground(colorManager.getColor(new RGB(0, 191, 255)));
 
-		assistant.enableAutoActivation(true);
-		assistant.setAutoActivationDelay(500);
-
-		assistant.setProposalPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
-		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_BELOW);
-		//Set to Carolina blue
-		assistant.setContextInformationPopupBackground(colorManager.getColor(new RGB(0, 191, 255)));
-
-		return assistant;
+			return assistant;
+		}
+		return null;
 	}
 
 	protected MakefileCodeScanner getCodeScanner() {
@@ -167,13 +170,19 @@ public class MakefileSourceConfiguration extends TextSourceViewerConfiguration {
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTextHover(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		return new MakefileTextHover(fEditor);
+		if (fEditor != null) {
+			return new MakefileTextHover(fEditor);
+		}
+		return super.getTextHover(sourceViewer, contentType);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAnnotationHover(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
-		return new MakefileAnnotationHover(fEditor);
+		if (fEditor != null) {
+			return new MakefileAnnotationHover(fEditor);
+		}
+		return super.getAnnotationHover(sourceViewer);
 	}
 
 	/**

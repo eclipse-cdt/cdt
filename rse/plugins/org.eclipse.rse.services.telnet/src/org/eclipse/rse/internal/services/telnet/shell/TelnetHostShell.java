@@ -16,6 +16,7 @@
  * Sheldon D'souza (Celunite) - Adapted from SshHostShell
  * Sheldon D'souza (Celunite) - [187301] support multiple telnet shells
  * David McKnight  (IBM)      - [191599] Use the remote encoding specified in the host property page
+ * Martin Oberhuber (Wind River) - [194466] Fix shell terminated state when stream is closed
  *******************************************************************************/
 package org.eclipse.rse.internal.services.telnet.shell;
 
@@ -94,7 +95,9 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 	}
 	
 	public void exit() {
-		fShellWriter.stopThread();
+		if (fShellWriter.isAlive()) {
+			fShellWriter.stopThread();
+		}
 		try {
 			//TODO disconnect should better be done via the ConnectorService!!
 			//Because like we do it here, the connector service is not notified!
@@ -118,7 +121,7 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 	}
 
 	public boolean isActive() {
-		if (fTelnetClient!=null && fTelnetClient.isConnected()) {
+		if (fTelnetClient!=null && fTelnetClient.isConnected() && !fStdoutHandler.isFinished()) {
 			return true;
 		}
 		// shell is not active: check for session lost

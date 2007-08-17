@@ -63,7 +63,7 @@ public class TelnetServiceCommandShell extends ServiceCommandShell {
 	public Object getContext()
 	{
 		String workingDir = _workingDir;
-		if (workingDir != null && workingDir.length() > 0)
+		if (workingDir != null && workingDir.length() > 0 && _fs != null)
 		{
 			try
 			{

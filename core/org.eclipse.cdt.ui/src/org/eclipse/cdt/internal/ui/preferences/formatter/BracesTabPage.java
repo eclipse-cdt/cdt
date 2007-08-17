@@ -124,7 +124,7 @@ public class BracesTabPage extends ModifyDialogTabPage {
 		
 		final Group group= createGroup(numColumns, composite, FormatterMessages.BracesTabPage_group_brace_positions_title); 
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_class_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION); 
-//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_anonymous_class_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ANONYMOUS_TYPE_DECLARATION); 
+		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_namespace_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_NAMESPACE_DECLARATION); 
 //		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_constructor_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION); 
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_method_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION); 
 //		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_enum_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ENUM_DECLARATION); 

@@ -324,6 +324,22 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                                 update.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER), idx);
                             } else if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
                                 weAreExtractingFormattedData = true;
+                            } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(localColumns[idx])) {
+                                IRegisterDMData data = getData();
+                                String typeStr      = "Unsigned"; //$NON-NLS-1$
+                                String ReadAttrStr  = "ReadNone"; //$NON-NLS-1$
+                                String WriteAddrStr = "WriteNone"; //$NON-NLS-1$
+                                
+                                if ( data.isFloat() ) { typeStr = "Floating Point"; } //$NON-NLS-1$ 
+                                
+                                     if ( data.isReadOnce() ) { ReadAttrStr = "ReadOnce"; } //$NON-NLS-1$
+                                else if ( data.isReadable() ) { ReadAttrStr = "Readable"; } //$NON-NLS-1$
+                                
+                                     if ( data.isReadOnce() ) { WriteAddrStr = "WriteOnce"; } //$NON-NLS-1$
+                                else if ( data.isReadable() ) { WriteAddrStr = "Writeable"; } //$NON-NLS-1$
+                                
+                                typeStr += " - " + ReadAttrStr + "/" + WriteAddrStr; //$NON-NLS-1$ //$NON-NLS-2$
+                                update.setLabel(typeStr, idx);
                             } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
                                 update.setLabel(getData().getDescription(), idx);
                             } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {

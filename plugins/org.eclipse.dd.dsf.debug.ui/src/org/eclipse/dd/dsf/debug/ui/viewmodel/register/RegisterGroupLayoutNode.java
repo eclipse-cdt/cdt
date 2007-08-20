@@ -189,6 +189,8 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
             update.setLabel("", idx); //$NON-NLS-1$
         } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(columnId)) {
             update.setLabel(dmData.getDescription(), idx);
+        } else if (IDebugVMConstants.COLUMN_ID__TYPE.equals(columnId)) {
+            update.setLabel("", idx); //$NON-NLS-1$
         } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
             IVMContext vmc = (IVMContext)update.getElement();
             IExpression expression = (IExpression)vmc.getAdapter(IExpression.class);

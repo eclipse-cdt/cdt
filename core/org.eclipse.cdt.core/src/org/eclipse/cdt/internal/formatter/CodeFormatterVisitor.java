@@ -1082,18 +1082,25 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		if (!preferences.indent_access_specifier_compare_to_type_header) {
 			scribe.unIndent();
 		}
-		switch (node.getVisibility()) {
-		case ICPPASTVisiblityLabel.v_private:
-			scribe.printNextToken(Token.t_private, false);
-			break;
-		case ICPPASTVisiblityLabel.v_protected:
-			scribe.printNextToken(Token.t_protected, false);
-			break;
-		case ICPPASTVisiblityLabel.v_public:
-			scribe.printNextToken(Token.t_public, false);
-			break;
+		if (node.getNodeLocations()[0] instanceof IASTMacroExpansion) {
+			skipNode(node);
+		} else {
+			switch (node.getVisibility()) {
+			case ICPPASTVisiblityLabel.v_private:
+				scribe.printNextToken(Token.t_private, false);
+				break;
+			case ICPPASTVisiblityLabel.v_protected:
+				scribe.printNextToken(Token.t_protected, false);
+				break;
+			case ICPPASTVisiblityLabel.v_public:
+				scribe.printNextToken(Token.t_public, false);
+				break;
+			}
+			if (peekNextToken() != Token.tCOLON) {
+				scribe.skipToToken(Token.tCOLON);
+			}
+			scribe.printNextToken(Token.tCOLON, false/*preferences.insert_space_before_colon_in_visibility_label */);
 		}
-		scribe.printNextToken(Token.tCOLON, false/*preferences.insert_space_before_colon_in_visibility_label */);
 		if (!preferences.indent_access_specifier_compare_to_type_header) {
 			scribe.indent();
 		}

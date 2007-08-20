@@ -179,4 +179,22 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testForWithEmptyExpression_Bug195942() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#define MY private:
+	//
+	//class ClassA
+	//{
+	//MY ClassA() {}
+	//};
+
+	//#define MY private:
+	//
+	//class ClassA {
+	//MY
+	//	ClassA() {
+	//	}
+	//};
+	public void testAccessSpecifierAsMacro_Bug197494() throws Exception {
+		assertFormatterResult();
+	}
 }

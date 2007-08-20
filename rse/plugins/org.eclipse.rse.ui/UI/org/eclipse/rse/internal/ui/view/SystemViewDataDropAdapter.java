@@ -13,11 +13,13 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight (IBM) - [192704] work around drag&drop issues from Project Explorer
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -27,6 +29,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -50,7 +54,9 @@ import org.eclipse.ui.part.PluginTransferData;
  * Drop adapter for dropping objects in the Systems views.
  * 
  */
-public class SystemViewDataDropAdapter extends ViewerDropAdapter
+public class SystemViewDataDropAdapter 
+//extends PluginDropAdapter
+extends ViewerDropAdapter
 {
 	protected Shell shell;
 	protected long hoverStart = 0;
@@ -94,6 +100,27 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 
 		return false;
 	}
+	
+	
+	// DKM - hack to see if project explorer resources can be dropped in RSE
+	private boolean isLocalSelectionResources(PluginTransferData transferData)
+	{
+		byte[] result = transferData.getData();
+
+		// get the sources	
+		String[] tokens = (new String(result)).split("\\"+SystemViewDataDropAdapter.RESOURCE_SEPARATOR); //$NON-NLS-1$
+		
+		ArrayList srcObjects = new ArrayList();
+		for (int i = 0;i < tokens.length; i++)
+		{
+			String srcStr = tokens[i];
+			if (srcStr.equals("org.eclipse.ui.navigator.ProjectExplorer"))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private ArrayList getRSESourceObjects(PluginTransferData transferData)
 	{
@@ -109,8 +136,10 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 		{
 			String srcStr = tokens[i];
 
-			Object srcObject = getObjectFor(srcStr);
-			srcObjects.add(srcObject);
+			{
+				Object srcObject = getObjectFor(srcStr);
+				srcObjects.add(srcObject);
+			}
 		}
 		return srcObjects;
 	}
@@ -124,8 +153,21 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 			if (data instanceof PluginTransferData)
 			{
 				PluginTransferData transferData = (PluginTransferData) data;
-				srcObjects = getRSESourceObjects(transferData);
-				_sourceType = SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE;
+				if (isLocalSelectionResources(transferData))
+				{
+					IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
+					Iterator selIt = selection.iterator();
+					while (selIt.hasNext())
+					{
+						srcObjects.add(selIt.next());
+					}
+					_sourceType = SystemDNDTransferRunnable.SRC_TYPE_ECLIPSE_RESOURCE;
+				}
+				else
+				{				
+					srcObjects = getRSESourceObjects(transferData);
+					_sourceType = SystemDNDTransferRunnable.SRC_TYPE_RSE_RESOURCE;
+				}
 			}
 			// different kind of data            
 			else if (data instanceof IResource[])
@@ -151,6 +193,7 @@ public class SystemViewDataDropAdapter extends ViewerDropAdapter
 
 		return srcObjects;
 	}
+
 
 	/**
 	 * Called by SWT after the drop have been validated to perform the

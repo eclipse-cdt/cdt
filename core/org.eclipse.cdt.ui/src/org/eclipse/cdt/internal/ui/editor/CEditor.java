@@ -61,6 +61,7 @@ import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.formatter.FormattingContext;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.link.ILinkedModeListener;
@@ -179,7 +180,6 @@ import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
-import org.eclipse.cdt.internal.ui.text.comment.CommentFormattingContext;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.util.CUIHelp;
 
@@ -250,7 +250,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		 * @since 3.0
 		 */
 		public IFormattingContext createFormattingContext() {
-			IFormattingContext context= new CommentFormattingContext();
+			IFormattingContext context= new FormattingContext();
 
 			Map preferences;
 			ICElement inputCElement= getInputCElement();
@@ -272,6 +272,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 				preferences.put(DefaultCodeFormatterConstants.FORMATTER_TRANSLATION_UNIT, tu);
 		        preferences.put(DefaultCodeFormatterConstants.FORMATTER_LANGUAGE, language);
 				preferences.put(DefaultCodeFormatterConstants.FORMATTER_CURRENT_FILE, tu.getResource());
+			}
+			
+			// custom formatter specified?
+			String customFormatterId= getPreferenceStore().getString(CCorePreferenceConstants.CODE_FORMATTER);
+			if (customFormatterId != null) {
+				preferences.put(CCorePreferenceConstants.CODE_FORMATTER, customFormatterId);
 			}
 			context.setProperty(FormattingContextProperties.CONTEXT_PREFERENCES, preferences);
 

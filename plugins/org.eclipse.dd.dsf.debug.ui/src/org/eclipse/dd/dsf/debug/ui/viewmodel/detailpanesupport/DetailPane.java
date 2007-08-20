@@ -424,6 +424,9 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
                                                     else if ( str == IFormattedValues.BINARY_FORMAT) {
                                                         detailComputed(null, "Binary. : " + getData().getFormattedValue()); //$NON-NLS-1$
                                                     }
+                                                    else if ( str == IFormattedValues.DECIMAL_FORMAT) {
+                                                        detailComputed(null, "Decimal : " + getData().getFormattedValue()); //$NON-NLS-1$
+                                                    }
                                                     else {
                                                         detailComputed(null, "Other.. : " + getData().getFormattedValue()); //$NON-NLS-1$
                                                     }

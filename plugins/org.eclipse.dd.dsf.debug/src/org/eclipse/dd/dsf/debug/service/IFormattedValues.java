@@ -28,10 +28,11 @@ public interface IFormattedValues extends IDMService {
      * specifically available from the backend  are what is returned from the
      * getID() method.
      */
-    public final static String HEX_FORMAT     = "HEX.Format" ; //$NON-NLS-1$
-    public final static String OCTAL_FORMAT   = "OCTAL.Format" ; //$NON-NLS-1$
+    public final static String HEX_FORMAT     = "HEX.Format"     ; //$NON-NLS-1$
+    public final static String OCTAL_FORMAT   = "OCTAL.Format"   ; //$NON-NLS-1$
     public final static String NATURAL_FORMAT = "NATURAL.Format" ; //$NON-NLS-1$
-    public final static String BINARY_FORMAT  = "BINARY.Format" ; //$NON-NLS-1$
+    public final static String BINARY_FORMAT  = "BINARY.Format"  ; //$NON-NLS-1$
+    public final static String DECIMAL_FORMAT = "DECIMAL.Format" ; //$NON-NLS-1$
     
     /**
      * Retrieves the available formats that the given data is available in.  

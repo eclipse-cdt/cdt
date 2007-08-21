@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Rupen Mardirossian (IBM) - [187713] Check to see if target is null before attempting to retrieve targetAdapter in tranferRSEResources method (line 248)
+ * Martin Oberhuber (Wind River) - [200682] Fix drag&drop for elements just adaptable to IResource, like CDT elements
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -361,11 +363,16 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				    
 				if (_sourceType == SRC_TYPE_ECLIPSE_RESOURCE)
 				{
-
-					if (srcObject instanceof IResource)
-					{
-						// Eclipse resource transfer
-						IResource resource = (IResource) srcObject;
+					// Eclipse resource transfer
+					IResource resource = null;
+					if (srcObject instanceof IResource) {
+						resource = (IResource) srcObject;
+					} else if (srcObject instanceof IAdaptable) {
+						resource = (IResource)((IAdaptable)srcObject).getAdapter(IResource.class);
+					} else {
+						resource = (IResource)Platform.getAdapterManager().getAdapter(srcObject, IResource.class);
+					}
+					if (resource!=null) {
 						Object droppedObject = targetAdapter.doDrop(resource, target, false, false, _sourceType, monitor);
 						if (droppedObject == null)
 							operationFailed(monitor);

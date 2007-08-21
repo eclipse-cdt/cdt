@@ -444,9 +444,11 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		ICBreakpoint breakpoint = null;
 		synchronized( getBreakpointMap() ) {
 			breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
-			if ( breakpoint == null ) {
-				breakpoint = createLocationBreakpoint( cdiBreakpoint );
-			}
+		}
+		if ( breakpoint == null ) {
+			breakpoint = createLocationBreakpoint( cdiBreakpoint );
+		}
+		synchronized( getBreakpointMap() ) {
 			if ( breakpoint != null )
 				getBreakpointMap().put( breakpoint, cdiBreakpoint );
 		}

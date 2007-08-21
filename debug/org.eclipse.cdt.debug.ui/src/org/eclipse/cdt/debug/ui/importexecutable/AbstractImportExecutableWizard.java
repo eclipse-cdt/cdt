@@ -282,4 +282,15 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 		return new String[] { defaultBinaryParserId };
 	}
 
+	public String getDefaultProjectName() {
+		String defaultName = new String();
+		String[] executables = getImportExecutablePage()
+				.getSelectedExecutables();
+		if (executables.length > 0) {
+			String fileName = new File(executables[0]).getName();
+			defaultName = new String(Messages.ImportExecutablePageTwo_DefaultProjectPrefix + fileName);
+		}
+		return defaultName;
+	}
+
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.ui.importexecutable;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -102,7 +101,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 	public void checkExecutableSettings() {
 		shouldUpdateButtons = false;
 		if (isCreateNewProjectSelected) {
-			String defaultName = getDefaultProjectName();
+			String defaultName = wizard.getDefaultProjectName();
 			if (defaultName.length() > 0) {
 				ICProject cProject = CoreModel.getDefault().getCModel()
 						.getCProject(defaultName);
@@ -314,17 +313,6 @@ public class ImportExecutablePageTwo extends WizardPage {
 			}
 		}
 		return (ICProject[]) list.toArray(new ICProject[list.size()]);
-	}
-
-	protected String getDefaultProjectName() {
-		String defaultName = new String();
-		String[] executables = wizard.getImportExecutablePage()
-				.getSelectedExecutables();
-		if (executables.length > 0) {
-			String fileName = new File(executables[0]).getName();
-			defaultName = new String(Messages.ImportExecutablePageTwo_DefaultProjectPrefix + fileName);
-		}
-		return defaultName;
 	}
 
 	protected ICProject getExistingCProject() {

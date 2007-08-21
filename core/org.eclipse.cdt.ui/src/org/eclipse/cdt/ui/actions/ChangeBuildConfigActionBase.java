@@ -7,15 +7,18 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     Warren Paul (Nokia) - bug 200420.
  *******************************************************************************/
 package org.eclipse.cdt.ui.actions;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
@@ -59,7 +62,7 @@ public class ChangeBuildConfigActionBase {
 		MenuItem[] items = menu.getItems();
 		for (int i = 0; i < items.length; i++) items[i].dispose();
 		
-		TreeSet configNames = new TreeSet();
+		List configNames = new ArrayList();
 		Iterator projIter = fProjects.iterator();
 		String sCurrentConfig = null;
 		boolean bCurrentConfig = true;
@@ -161,6 +164,19 @@ public class ChangeBuildConfigActionBase {
 		if (selection != null )
 		{
 			if (selection instanceof IStructuredSelection) {
+				if (selection.isEmpty()) {
+					// could be a form editor or something.  try to get the project from the active part
+					IWorkbenchPage page = CUIPlugin.getActivePage();
+					if (page != null) {
+						IWorkbenchPart part = page.getActivePart();
+						if (part != null) {
+							Object o = part.getAdapter(IResource.class);
+							if (o != null && o instanceof IResource) {
+								fProjects.add(((IResource)o).getProject());
+							}
+						}
+					}
+				}
 				Iterator iter = ((IStructuredSelection)selection).iterator();
 				while (iter.hasNext()) {
 					Object selItem = iter.next();
@@ -181,6 +197,11 @@ public class ChangeBuildConfigActionBase {
 							ICProject fCProject = irc.getCProject();
 							if (fCProject != null)
 								project = fCProject.getProject();
+						}
+					} else if (selItem instanceof IAdaptable) {
+						Object adapter = ((IAdaptable)selItem).getAdapter(IProject.class);
+						if (adapter != null && adapter instanceof IProject) {
+							project = (IProject)adapter;
 						}
 					}
 					// Check whether the project is CDT project

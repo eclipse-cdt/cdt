@@ -2289,7 +2289,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             int startOffset, int nameOffset, int nameEndOffset, int endOffset) {
         final _FunctionMacroDefinition functionMacroDefinition = new _FunctionMacroDefinition(
                 currentContext, startOffset, endOffset, m.name, nameOffset,
-                m.getExpansion(), m.getOriginalParameters());
+                m.getExpansion(), removeNullArguments(m.getOriginalParameters()));
         currentContext.addSubContext(functionMacroDefinition);
         return functionMacroDefinition;
     }

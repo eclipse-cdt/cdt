@@ -67,6 +67,16 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 
 	private HashSet fChanges = new HashSet();
 
+	/**
+	 * is fWordSize available?
+	 */
+	private boolean fHaveWordSize;
+
+	/**
+	 * The number of bytes per address.
+	 */
+	private int fWordSize;
+
 
 	/** 
 	 * Constructor for CMemoryBlockExtension. 
@@ -85,6 +95,8 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 		super( target );
 		fExpression = expression;
 		fBaseAddress = baseAddress;
+		fWordSize= wordSize;
+		fHaveWordSize= true;
 	}
 
 	/** 
@@ -129,17 +141,26 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressableSize()
 	 */
 	public int getAddressableSize() throws DebugException {
-		if (getCDIBlock() == null) {
-			try {
-				// create a CDI block of an arbitrary size so we can call into
-				// the backed to determine the memory's addressable size
-				setCDIBlock( createCDIBlock( fBaseAddress, 100 ));
-			}
-			catch( CDIException e ) {
-				targetRequestFailed( e.getMessage(), null );
+		if (!fHaveWordSize)	{
+			synchronized (this)	{
+				if (!fHaveWordSize)	{
+					ICDIMemoryBlock block= getCDIBlock();
+					if (block == null) {
+						try {
+							// create a CDI block of an arbitrary size so we can call into
+							// the backend to determine the memory's addressable size
+							setCDIBlock( block= createCDIBlock( fBaseAddress, 100 ));
+						}
+						catch( CDIException e ) {
+							targetRequestFailed( e.getMessage(), null );
+						}
+					}
+					fWordSize= block.getWordSize();
+					fHaveWordSize= true;
+				}
 			}
 		}
-		return getCDIBlock().getWordSize();
+		return fWordSize;
 	}
 
 	/* (non-Javadoc)

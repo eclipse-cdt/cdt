@@ -121,7 +121,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
     
     private final SyncVariableDataAccess fSyncVariableDataAccess;
     
-    protected class VariableExpressionVMC extends DMVMContext implements IFormattedValueVMContext, IVariable {
+    public class VariableExpressionVMC extends DMVMContext implements IFormattedValueVMContext, IVariable {
         
         private IExpression fExpression;
         

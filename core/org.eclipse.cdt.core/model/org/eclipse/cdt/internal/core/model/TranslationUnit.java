@@ -380,10 +380,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return (WorkingCopy) perFactoryWorkingCopies.get(this);
 	}
 
-	public synchronized boolean isOpen() {
-		return super.isOpen();
-	}
-
 	public synchronized CElementInfo getElementInfo(IProgressMonitor monitor) throws CModelException {
 		return super.getElementInfo(monitor);
 	}

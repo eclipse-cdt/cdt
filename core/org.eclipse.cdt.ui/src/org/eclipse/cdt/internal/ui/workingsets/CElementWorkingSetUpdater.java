@@ -110,7 +110,6 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 	 * {@inheritDoc}
 	 */
 	public void add(final IWorkingSet workingSet) {
-		checkElementExistence(workingSet);
 		// delay the check for existence - this may be called very early in the bootstrap
 		// otherwise it is causing all kinds of weird exceptions
 		Job check= new WorkingSetCheck(workingSet);

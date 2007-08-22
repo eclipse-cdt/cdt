@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
@@ -108,8 +109,12 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	private static class GetFields implements IPDOMVisitor {
 		private List fields = new ArrayList();
 		public boolean visit(IPDOMNode node) throws CoreException {
-			if (node instanceof IField)
-				fields.add(node);
+			if (node instanceof IField) {
+				IField field= (IField) node;
+				if (IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(field)) {
+					fields.add(node);
+				}
+			}
 			return false;
 		}
 		public void leave(IPDOMNode node) throws CoreException {
@@ -138,9 +143,11 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof IField) {
 				IField tField = (IField)node;
-				if (name.equals(tField.getName())) {
-					field = tField;
-					throw new CoreException(Status.OK_STATUS);
+				if (IndexFilter.ALL_DECLARED_OR_IMPLICIT.acceptBinding(tField)) {
+					if (name.equals(tField.getName())) {
+						field = tField;
+						throw new CoreException(Status.OK_STATUS);
+					}
 				}
 			}
 			return false;

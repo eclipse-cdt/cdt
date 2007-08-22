@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Anton Leherbauer (Wind River Systems)
- * Emanuel Graf (IFS)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Anton Leherbauer (Wind River Systems)
+ *    Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 

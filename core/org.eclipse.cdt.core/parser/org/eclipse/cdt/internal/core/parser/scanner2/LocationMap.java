@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Anton Leherbauer (Wind River Systems)
- * Emanuel Graf (IFS)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Anton Leherbauer (Wind River Systems)
+ *    Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -2289,7 +2289,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             int startOffset, int nameOffset, int nameEndOffset, int endOffset) {
         final _FunctionMacroDefinition functionMacroDefinition = new _FunctionMacroDefinition(
                 currentContext, startOffset, endOffset, m.name, nameOffset,
-                m.getExpansion(), removeNullArguments(m.arglist));
+                m.getExpansion(), m.getOriginalParameters());
         currentContext.addSubContext(functionMacroDefinition);
         return functionMacroDefinition;
     }

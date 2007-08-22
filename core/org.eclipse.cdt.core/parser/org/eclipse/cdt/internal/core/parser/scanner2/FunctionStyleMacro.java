@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
+
+import java.util.ArrayList;
 
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -66,6 +69,33 @@ public class FunctionStyleMacro extends ObjectStyleMacro {
 				arglist[last] = swap;
 			}
 		}
+	}
+	
+	public char[][] getOriginalParameters() {
+		if (varArgsPosition == -1) {
+			return arglist;
+		}
+		ArrayList result= new ArrayList(arglist.length);
+		for (int i = 0; i < arglist.length; i++) {
+			final char[] var= arglist[i];
+			if (var != null) {
+				if (i != varArgsPosition) {
+					result.add(var);
+				}
+				else {
+					if (CharArrayUtils.equals(var, VA_ARGS_CHARARRAY)) {
+						result.add(ELLIPSIS_CHARARRAY);
+					}
+					else {
+						char[] varell= new char[var.length+ELLIPSIS_CHARARRAY.length];
+						System.arraycopy(var, 0, varell, 0, var.length);
+						System.arraycopy(ELLIPSIS_CHARARRAY, 0, varell, var.length, ELLIPSIS_CHARARRAY.length);
+						result.add(varell);
+					}
+				}
+			}
+		}
+		return (char[][]) result.toArray(new char[result.size()][]);
 	}
 	
 	public char[] getSignature(){

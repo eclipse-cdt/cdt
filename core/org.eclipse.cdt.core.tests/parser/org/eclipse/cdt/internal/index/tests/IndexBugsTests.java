@@ -890,7 +890,60 @@ public class IndexBugsTests extends BaseTestCase {
 		finally {
 			CProjectHelper.delete(p2);
 		}
-	
-		
 	}
+	
+	// #define MAC(...) Bug200239
+	
+	// #include "header.h"
+	// int MAC(1);
+	// void func() {
+	//    MAC()= MAC(1) + MAC(1,2);
+	// }
+	public void testVariadicMacros_Bug200239_1() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
+		waitUntilFileIsIndexed(f1, INDEX_WAIT_TIME);
+		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings("Bug200239".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			IIndexName[] refs= fIndex.findReferences(bindings[0]);
+			assertEquals(3, refs.length);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+	
+	// #define GMAC(x...) Bug200239
+	
+	// #include "header.h"
+	// int GMAC(1);
+	// void func() {
+	//    GMAC()= GMAC(1) + GMAC(1,2);
+	// }
+	public void testVariadicMacros_Bug200239_2() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
+		waitUntilFileIsIndexed(f1, INDEX_WAIT_TIME);
+		IFile f2= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[1].toString());
+		waitForIndexer();
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings("Bug200239".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			IIndexName[] refs= fIndex.findReferences(bindings[0]);
+			assertEquals(3, refs.length);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
 }

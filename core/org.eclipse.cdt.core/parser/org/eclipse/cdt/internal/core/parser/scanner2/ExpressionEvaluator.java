@@ -618,7 +618,13 @@ public class ExpressionEvaluator {
                     // end of number
                     if (c == 'L' || c == 'l' || c == 'U' || c == 'u') {
                         // eat the long/unsigned
-                        ++bufferPos[bufferStackPos];
+                    	int pos= ++bufferPos[bufferStackPos];
+                    	if (pos < limit) {
+                    		c= buffer[pos];
+                    		if (c == 'L' || c == 'l' || c == 'U' || c == 'u') {
+                    			++bufferPos[bufferStackPos];
+                    		}
+                    	}
                     }
 
                     // done

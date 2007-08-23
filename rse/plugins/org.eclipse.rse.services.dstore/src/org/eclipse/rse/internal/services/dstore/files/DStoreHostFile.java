@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * Xuan Chen        (IBM)   - [189041] incorrect file name after rename a file inside a zip file - DStore Windows
  * Xuan Chen        (IBM)   - [187548] Editor shows incorrect file name after renaming file on Linux dstore
+ * Kevin Doyle 		(IBM) 	- [191548] Various NPE fixes 
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -85,6 +86,10 @@ public class DStoreHostFile implements IHostFile
 	
 	public String getName()
 	{
+		if (_element.getName() == null) {
+			// file was deleted on the host
+			return null;
+		}
 		String type = _element.getType();
 		if (type != null && type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
@@ -122,6 +127,10 @@ public class DStoreHostFile implements IHostFile
 
 	public String getParentPath()
 	{
+		if (_element.getName() == null) {
+			// file was deleted on the host
+			return null;
+		}
 		String type = _element.getType();
 		if (type != null && type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
 		{
@@ -192,6 +201,10 @@ public class DStoreHostFile implements IHostFile
 	{
 		String parentPath = _element.getValue();
 		String name = _element.getName();
+		if (name == null) {
+			// file was deleted on the host
+			return false;
+		}
 		if (parentPath == null || 
 				parentPath.length() == 0 || 
 				(name.length() == 0 && (parentPath.equals("/") || parentPath.endsWith(":\\")) || //$NON-NLS-1$ //$NON-NLS-2$
@@ -210,9 +223,9 @@ public class DStoreHostFile implements IHostFile
 	public boolean isFile()
 	{
 		String type = _element.getType();
-		if (type != null && type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)
+		if (type != null && (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)
 				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
-				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR))
+				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)))
 		{
 			return true;
 		}

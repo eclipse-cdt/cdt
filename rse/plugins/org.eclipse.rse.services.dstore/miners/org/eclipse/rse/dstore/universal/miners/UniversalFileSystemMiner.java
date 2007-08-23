@@ -2123,7 +2123,7 @@ public class UniversalFileSystemMiner extends Miner {
 					.getRegisteredHandler(new File(vpath
 							.getContainingArchiveString()));
 			if (handler == null || !handler.delete(vpath.getVirtualPart())) {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
+				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + vpath.toString()); //$NON-NLS-1$
 				_dataStore.refresh(subject);
 				return statusDone(status);
 			}

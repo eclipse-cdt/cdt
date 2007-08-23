@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Kevin Doyle (IBM) - [191548] Deleting Read-Only directory removes it from view and displays no error
  ********************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -114,7 +115,7 @@ public class ArchiveQueryThread extends QueryThread {
 					virtualPath = avp.getVirtualPart();
 					fileobj = new File(rootPath);
 
-					if (fileobj.exists()) {
+					if (fileobj.exists() && mgr.getVirtualObject(path).exists()) {
 
 						if (_foldersOnly) {
 							children = mgr.getFolderContents(fileobj,
@@ -132,6 +133,20 @@ public class ArchiveQueryThread extends QueryThread {
 						if (isCancelled())
 							return;
 					} else {
+						// Update the properties so the file's exists() will return false
+						_subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
+						_subject.setAttribute(DE.A_SOURCE, setProperties(fileobj));
+						_status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST);	
+						
+						// Update all the children showing that they are deleted.
+						if (_subject.getNestedSize() > 0)
+						{
+							List nestedChildren = _subject.getNestedData();
+							for (int i = nestedChildren.size() - 1; i >= 0; i--)
+							{
+								_dataStore.deleteObject(_subject, (DataElement) nestedChildren.get(i));
+							}					
+						}
 						_dataStore.trace("problem with File:" + rootPath); //$NON-NLS-1$
 					}
 				}
@@ -226,63 +241,64 @@ public class ArchiveQueryThread extends QueryThread {
 		// Check if the current Objects in the DataStore are valid... exist
 		// on the remote host
 		try {
-			boolean found = false;
-			for (int j = 0; j < list.length; ++j) {
-				if (isCancelled())
-					return;
-				
-				found = false;
-				DataElement previousElement = (DataElement) filteredChildren
-						.get(list[j].name);
-				if (previousElement != null && !previousElement.isDeleted()) {
-					// Type have to be equal as well
-					String type = previousElement.getType();
-					boolean isfile = !list[j].isDirectory;
-					if (type
-							.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
-							|| (type
-									.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR) && !isfile)) {
-						filteredChildren.remove(list[j].name);
-						found = true;
+			if (list != null) {
+				boolean found = false;
+				for (int j = 0; j < list.length; ++j) {
+					if (isCancelled())
+						return;
+					
+					found = false;
+					DataElement previousElement = (DataElement) filteredChildren
+							.get(list[j].name);
+					if (previousElement != null && !previousElement.isDeleted()) {
+						// Type have to be equal as well
+						String type = previousElement.getType();
+						boolean isfile = !list[j].isDirectory;
+						if (type
+								.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
+								|| (type
+										.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR) && !isfile)) {
+							filteredChildren.remove(list[j].name);
+							found = true;
+						}
 					}
-				}
-				DataElement deObj = null;
-				VirtualChild child = list[j];
-
-				if (found) {
-					deObj = previousElement;
-				}
-				if (deObj == null) {
-					if (child.isDirectory) {
-						deObj = _dataStore
-								.createObject(
-										subject,
-										IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR,
-										child.name);
-					} else // file
-					{
-						deObj = _dataStore
-								.createObject(
-										subject,
-										IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR,
-										child.name);
+					DataElement deObj = null;
+					VirtualChild child = list[j];
+	
+					if (found) {
+						deObj = previousElement;
 					}
-
-				}
-				String oldValue = deObj.getAttribute(DE.A_VALUE);
-				String newValue = rootPath
-						+ ArchiveHandlerManager.VIRTUAL_SEPARATOR + virtualPath;
-				if (!oldValue.equals(newValue)) {
-					deObj.setAttribute(DE.A_VALUE, newValue);
-				}
-				String oldSource = deObj.getAttribute(DE.A_SOURCE);
-				String newSource = setProperties(child);
-				if (!oldSource.startsWith(newSource)) {
-					deObj.setAttribute(DE.A_SOURCE, newSource);
-				}
-
-			} // end for j
-
+					if (deObj == null) {
+						if (child.isDirectory) {
+							deObj = _dataStore
+									.createObject(
+											subject,
+											IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR,
+											child.name);
+						} else // file
+						{
+							deObj = _dataStore
+									.createObject(
+											subject,
+											IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR,
+											child.name);
+						}
+	
+					}
+					String oldValue = deObj.getAttribute(DE.A_VALUE);
+					String newValue = rootPath
+							+ ArchiveHandlerManager.VIRTUAL_SEPARATOR + virtualPath;
+					if (!oldValue.equals(newValue)) {
+						deObj.setAttribute(DE.A_VALUE, newValue);
+					}
+					String oldSource = deObj.getAttribute(DE.A_SOURCE);
+					String newSource = setProperties(child);
+					if (!oldSource.startsWith(newSource)) {
+						deObj.setAttribute(DE.A_SOURCE, newSource);
+					}
+	
+				} // end for j
+			}
 			// Object left over in the filteredChildren is no longer in the
 			// system any more. Need to remove.
 			Iterator myIterator = filteredChildren.keySet().iterator();

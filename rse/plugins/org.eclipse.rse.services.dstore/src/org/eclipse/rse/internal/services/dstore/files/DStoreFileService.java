@@ -929,7 +929,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement de = getElementFor(remotePath);
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_DELETE, monitor);
 		if (status == null) return false;
-		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) {
+		String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
+		// When running a server older than 2.0.1 success is not set for directories, so we must
+		// check if the source message is an empty string
+		if (sourceMsg.equals(IServiceConstants.SUCCESS) || sourceMsg.equals("")) { //$NON-NLS-1$
 			return true;
 		} else {
 			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	 //$NON-NLS-1$
@@ -949,7 +952,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}	
 		DataElement status = dsStatusCommand((DataElement) dataElements.get(0), dataElements, IUniversalDataStoreConstants.C_DELETE_BATCH, monitor);
 		if (status == null) return false;
-		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) {
+		String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
+		// When running a server older than 2.0.1 success is not set for directories, so we must
+		// check if the source message is an empty string
+		if (sourceMsg.equals(IServiceConstants.SUCCESS) || sourceMsg.equals("")) { //$NON-NLS-1$
 			return true;
 		} else {
 			throw new SystemMessageException(getMessage("RSEF1300").makeSubstitution(FileSystemMessageUtil.getSourceLocation(status)));	 //$NON-NLS-1$

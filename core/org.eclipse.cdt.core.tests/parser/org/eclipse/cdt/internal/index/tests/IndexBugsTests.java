@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -46,6 +47,7 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -940,6 +942,100 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			IIndexName[] refs= fIndex.findReferences(bindings[0]);
 			assertEquals(3, refs.length);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	
+	// typedef bug200553_A bug200553_B;
+	// typedef bug200553_B bug200553_A;
+	public void testTypedefRecursionCpp_Bug200553() throws Exception {
+		StringBuffer[] contents= getContentsForTest(1);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "src.cpp", contents[0].toString());
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings("bug200553_A".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			checkTypedefDepth((ITypedef) bindings[0]);
+
+			bindings= fIndex.findBindings("bug200553_B".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			checkTypedefDepth((ITypedef) bindings[0]);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+
+		indexManager.update(new ICElement[] {fCProject}, IIndexManager.UPDATE_ALL);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings("bug200553_A".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			checkTypedefDepth((ITypedef) bindings[0]);
+
+			bindings= fIndex.findBindings("bug200553_B".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			checkTypedefDepth((ITypedef) bindings[0]);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	private void checkTypedefDepth(ITypedef td) throws DOMException {
+		int maxDepth= 20;
+		IType type= td;
+		while (--maxDepth > 0 && type instanceof ITypedef) {
+			type= ((ITypedef) type).getType();
+		}
+		assertTrue(maxDepth > 0);
+	}
+	
+	// typedef bug200553_A bug200553_B;
+	// typedef bug200553_B bug200553_A;
+	public void testTypedefRecursionC_Bug200553() throws Exception {
+		StringBuffer[] contents= getContentsForTest(1);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "src.c", contents[0].toString());
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings("bug200553_A".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			checkTypedefDepth((ITypedef) bindings[0]);
+
+			bindings= fIndex.findBindings("bug200553_B".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			checkTypedefDepth((ITypedef) bindings[0]);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+
+		indexManager.update(new ICElement[] {fCProject}, IIndexManager.UPDATE_ALL);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings= fIndex.findBindings("bug200553_A".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			checkTypedefDepth((ITypedef) bindings[0]);
+
+			bindings= fIndex.findBindings("bug200553_B".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			assertTrue(bindings[0] instanceof ITypedef);
+			checkTypedefDepth((ITypedef) bindings[0]);
 		}
 		finally {
 			fIndex.releaseReadLock();

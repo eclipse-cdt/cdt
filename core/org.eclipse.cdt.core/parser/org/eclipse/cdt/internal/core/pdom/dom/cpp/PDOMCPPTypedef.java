@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -15,14 +15,17 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.index.CPPTypedefClone;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -72,15 +75,50 @@ class PDOMCPPTypedef extends PDOMCPPBinding
 
 	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
 		PDOMNode typeNode = linkage.addType(this, newType);
+		if (introducesRecursion((IType) typeNode, getNameCharArray())) {
+			linkage.deleteType((IType) typeNode, record);
+			typeNode= null;
+		}
 		pdom.getDB().putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
 	}
+
+	private boolean introducesRecursion(IType type, char[] tdname) throws DOMException {
+		int maxDepth= 50;
+		while (--maxDepth > 0) {
+			if (type instanceof ITypedef && CharArrayUtils.equals(((ITypedef) type).getNameCharArray(), tdname)) {
+				return true;
+			}
+			if (type instanceof ITypeContainer) {
+				type= ((ITypeContainer) type).getType();
+			}
+			else if (type instanceof IFunctionType) {
+				IFunctionType ft= (IFunctionType) type;
+				if (introducesRecursion(ft.getReturnType(), tdname)) {
+					return true;
+				}
+				IType[] params= ft.getParameterTypes();
+				for (int i = 0; i < params.length; i++) {
+					IType param = params[i];
+					if (introducesRecursion(param, tdname)) {
+						return true;
+					}
+				}
+				return false;
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
+	}
+
 
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 	
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPTYPEDEF;
+		return IIndexCPPBindingConstants.CPPTYPEDEF;
 	}
 
 	public IType getType() {

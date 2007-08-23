@@ -15,8 +15,10 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
@@ -67,10 +69,44 @@ class PDOMCTypedef extends PDOMBinding implements ITypedef, ITypeContainer, IInd
 			}
 		}
 	}
-
+	
 	private void setType(final PDOMLinkage linkage, IType newType) throws CoreException, DOMException {
 		PDOMNode typeNode = linkage.addType(this, newType);
-		pdom.getDB().putInt(record+TYPE, typeNode != null ? typeNode.getRecord() : 0);
+		if (introducesRecursion((IType) typeNode, getNameCharArray())) {
+			linkage.deleteType((IType) typeNode, record);
+			typeNode= null;
+		}
+		pdom.getDB().putInt(record + TYPE, typeNode != null ? typeNode.getRecord() : 0);
+	}
+
+	private boolean introducesRecursion(IType type, char[] tdname) throws DOMException {
+		int maxDepth= 50;
+		while (--maxDepth > 0) {
+			if (type instanceof ITypedef && CharArrayUtils.equals(((ITypedef) type).getNameCharArray(), tdname)) {
+				return true;
+			}
+			if (type instanceof ITypeContainer) {
+				type= ((ITypeContainer) type).getType();
+			}
+			else if (type instanceof IFunctionType) {
+				IFunctionType ft= (IFunctionType) type;
+				if (introducesRecursion(ft.getReturnType(), tdname)) {
+					return true;
+				}
+				IType[] params= ft.getParameterTypes();
+				for (int i = 0; i < params.length; i++) {
+					IType param = params[i];
+					if (introducesRecursion(param, tdname)) {
+						return true;
+					}
+				}
+				return false;
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	protected int getRecordSize() {

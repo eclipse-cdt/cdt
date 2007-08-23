@@ -2609,5 +2609,60 @@ public class Scanner2Test extends BaseScanner2Test
        initializeScanner(buffer.toString());
        validateIdentifier("bug182180");
    }
+   
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
+   public void testBug200830_1() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#define string BROKEN\r\n"); 
+       buffer.append("#define macro(inst) (char*)inst\r\n"); 
+       buffer.append("macro(\"string\");\r\n"); 
+       initializeScanner( buffer.toString() );
+       validateToken( IToken.tLPAREN );
+       validateToken( IToken.t_char );
+       validateToken( IToken.tSTAR );
+       validateToken( IToken.tRPAREN );
+       validateString( "string" );
+   }
 
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
+   public void testBug200830_2() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#define string BROKEN\r\n"); 
+       buffer.append("#define macro(inst) (char*)inst\r\n"); 
+       buffer.append("macro(\" string \");\r\n"); 
+       initializeScanner( buffer.toString() );
+       validateToken( IToken.tLPAREN );
+       validateToken( IToken.t_char );
+       validateToken( IToken.tSTAR );
+       validateToken( IToken.tRPAREN );
+       validateString( " string " );
+   }
+
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
+   public void testBug200830_3() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#define string BROKEN\r\n"); 
+       buffer.append("#define macro(inst) (char*)inst\r\n"); 
+       buffer.append("macro(\"\\\"string \");\r\n"); 
+       initializeScanner( buffer.toString() );
+       validateToken( IToken.tLPAREN );
+       validateToken( IToken.t_char );
+       validateToken( IToken.tSTAR );
+       validateToken( IToken.tRPAREN );
+       validateString( "\\\"string " );
+   }
+
+   // https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
+   public void testBug200830_4() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#define s B\r\n"); 
+       buffer.append("#define macro(inst) (char*)inst\r\n"); 
+       buffer.append("macro('s');\r\n"); 
+       initializeScanner( buffer.toString() );
+       validateToken( IToken.tLPAREN );
+       validateToken( IToken.t_char );
+       validateToken( IToken.tSTAR );
+       validateToken( IToken.tRPAREN );
+       validateChar( "s" );
+   }
 }

@@ -3417,6 +3417,36 @@ abstract class BaseScanner implements IScanner {
                 }
                 end = pos - 1;
             }
+            else if (c == '"') {
+            	boolean escaped= false;
+                while (++pos < limit) {
+                    c = arg[pos];
+                    if (!escaped && c == '"') {
+                    	break;
+                    }
+                    if (c == '\\') {
+                    	escaped= !escaped;
+                    }
+                    else {
+                    	escaped= false;
+                    }
+                }
+            }
+            else if (c == '\'') {
+            	boolean escaped= false;
+                while (++pos < limit) {
+                    c = arg[pos];
+                    if (!escaped && c == '\'') {
+                    	break;
+                    }
+                    if (c == '\\') {
+                    	escaped= !escaped;
+                    }
+                    else {
+                    	escaped= false;
+                    }
+                }
+            }
 
             if (start != -1 && end >= start) {
                 //Check for macro expansion

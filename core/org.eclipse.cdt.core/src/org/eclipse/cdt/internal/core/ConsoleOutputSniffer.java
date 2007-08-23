@@ -98,9 +98,15 @@ public class ConsoleOutputSniffer {
     		String buffer = currentLine.toString();
     		int i = 0;
     		while ((i = buffer.indexOf('\n')) != -1) {
-    			String line = buffer.substring(0, i).trim(); // get rid of any trailing \r
-    			if (line.length() > 0)
+    			// get rid of any trailing whitespace but keep leading whitespaces (bug 199245)
+    			int end= i;
+    			while(end > 0 && buffer.charAt(end-1) <= ' ') { // see String.trim()
+    				end--;
+    			}
+    			if (end > 0) {
+    				String line = buffer.substring(0, end); 
     			    processLine(line);
+    			}
     			buffer = buffer.substring(i + 1); // skip the \n and advance
     		}
     		currentLine.setLength(0);

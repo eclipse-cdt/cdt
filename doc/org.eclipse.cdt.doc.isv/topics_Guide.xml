@@ -4,7 +4,9 @@
 <!-- Define topics for the main guide                                              -->
 <!-- ============================================================================= -->
 <toc label="Guide">
-	<topic label="CDT DOM" href="guide/dom/index.html"/>
+	<topic label="CDT DOM" href="guide/dom/index.html">
+		<topic label="Prebuilt Indexes in CDT 4.0" href="guide/dom/index/prebuiltIndexes.html"/>
+	</topic>
 	<topic label="Managed Build System Extensibility Document" href="guide/mbs/extensibilityGuide/Managed_Build_Extensibility.html"/>
 	<topic label="Project Template Engine" href="guide/projectTemplateEngine/index.html"/>
 	<topic label="What's new in CDT Build System 4.0" href="guide/cdt_build_system/whats_new/4.0/whats_new_CBS_40.html"/>

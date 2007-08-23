@@ -60,6 +60,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -1041,5 +1042,39 @@ public class IndexBugsTests extends BaseTestCase {
 			fIndex.releaseReadLock();
 		}
 	}
-
+	
+	// #ifndef GUARD
+	// #include "source.cpp"
+	// #endif
+	public void testIncludeSource_Bug199412() throws Exception {
+		StringBuffer[] contents= getContentsForTest(1);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[0].toString());
+		waitForIndexer();
+		
+		final ITranslationUnit tu= (ITranslationUnit) fCProject.findElement(new Path("source.cpp"));
+		Thread th= new Thread() {
+			public void run() {
+				try {
+					tu.getAST(fIndex, ITranslationUnit.AST_CONFIGURE_USING_SOURCE_CONTEXT);
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}	
+			}
+		};
+		fIndex.acquireReadLock();
+		try {
+			th.start();
+			th.join(5000);
+			assertFalse(th.isAlive());
+		}
+		finally {
+			try {
+				th.stop();
+			}
+			finally {
+				fIndex.releaseReadLock();
+			}
+		}
+	}
 }

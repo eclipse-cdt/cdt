@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -107,6 +107,10 @@ public class PDOMFile implements IIndexFragmentFile {
 		return false;
 	}
 
+	public final int hashCode() {
+		return System.identityHashCode(pdom) + 41*record;
+	}
+	
 	/**
 	 * Directly changes this record's internal location string. The format
 	 * of this string is unspecified in general and is determined by the 

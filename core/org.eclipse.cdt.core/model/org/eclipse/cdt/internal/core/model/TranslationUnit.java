@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -789,8 +790,11 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				IIndexFile context= null;
 				IIndexFile indexFile= index.getFile(IndexLocationFactory.getIFL(this));
 				if (indexFile != null) {
+					// bug 199412, when a source-file includes itself the context may recurse.
+					HashSet visited= new HashSet();
+					visited.add(indexFile);
 					indexFile = getParsedInContext(indexFile);
-					while (indexFile != null) {
+					while (indexFile != null && visited.add(indexFile)) {
 						context= indexFile;
 						indexFile= getParsedInContext(indexFile);
 					}

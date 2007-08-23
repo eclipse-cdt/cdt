@@ -64,7 +64,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 				IConfigurationElement[] ce = extension.getConfigurationElements();
 				for(int j=0; j<ce.length; j++) {
 					if(ce[j].getName().equals(READ_ONLY_PDOM_PROVIDER)) {
-						IIndexProvider provider = (IIndexProvider) ce[0].createExecutableExtension("class"); //$NON-NLS-1$
+						IIndexProvider provider = (IIndexProvider) ce[j].createExecutableExtension("class"); //$NON-NLS-1$
 						if(provider instanceof IReadOnlyPDOMProvider) {
 							provider = new ReadOnlyPDOMProviderBridge((IReadOnlyPDOMProvider)provider);
 							providers.add(provider);

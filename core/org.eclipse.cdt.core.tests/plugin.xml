@@ -30,7 +30,7 @@
    <extension
          point="org.eclipse.cdt.core.CIndex">
       <ReadOnlyPDOMProvider
-            class="org.eclipse.cdt.core.internal.index.provider.test.DummyProvider1">
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Dummy1">
       </ReadOnlyPDOMProvider>
       <ExportProjectProvider
             class="org.eclipse.cdt.internal.pdom.tests.GeneratePDOMApplicationTest$TestProjectProvider1">
@@ -136,5 +136,18 @@
          <toolChain id="org.eclipse.cdt.core.tests.toolChain6"/>
       </template>
    </extension>
-
+   <extension point="org.eclipse.cdt.core.CIndex">
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Dummy2">
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Dummy3">
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Dummy4">
+      </ReadOnlyPDOMProvider>
+      <ReadOnlyPDOMProvider
+            class="org.eclipse.cdt.core.internal.index.provider.test.Providers$Dummy5">
+      </ReadOnlyPDOMProvider>
+   </extension>
 </plugin>

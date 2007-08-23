@@ -27,7 +27,8 @@ import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.provider.IIndexProvider;
-import org.eclipse.cdt.core.internal.index.provider.test.DummyProvider1;
+import org.eclipse.cdt.core.internal.index.provider.test.DummyProviderTraces;
+import org.eclipse.cdt.core.internal.index.provider.test.Providers;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -67,6 +68,14 @@ import org.eclipse.core.runtime.QualifiedName;
  * Example usage and test for IIndexProvider
  */
 public class IndexProviderManagerTest extends IndexTestBase {
+	final static DummyProviderTraces DPT= DummyProviderTraces.getInstance();
+	final static Class DP1= Providers.Dummy1.class;
+	final static Class DP2= Providers.Dummy2.class;
+	final static Class DP3= Providers.Dummy3.class;
+	final static Class DP4= Providers.Dummy4.class;
+	final static Class DP5= Providers.Dummy5.class;
+	final static Class[] DPS= new Class[] {DP4, DP2, DP1, DP3, DP5};
+	
 	final CCorePlugin core= CCorePlugin.getDefault();
 	
 	public IndexProviderManagerTest() {
@@ -77,8 +86,10 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		return suite(IndexProviderManagerTest.class);
 	}
 
-	public void testProvider_SimpleLifeCycle() throws Exception {
-		DummyProvider1.reset();
+	public void testProvider_SimpleLifeCycle_200958() throws Exception {
+		for(int i=0; i<DPS.length; i++)
+			DPT.reset(DPS[i]);
+		
 		List cprojects = new ArrayList(), expectedTrace = new ArrayList();
 		try {
 			for(int i=0; i<3; i++) {
@@ -87,12 +98,14 @@ public class IndexProviderManagerTest extends IndexTestBase {
 				cprojects.add(cproject);
 				expectedTrace.add(cproject);
 			}
-			assertEquals(expectedTrace, DummyProvider1.getProjectsTrace());
+			for(int i=0; i<DPS.length; i++)
+				assertEquals(expectedTrace, DPT.getProjectsTrace(DPS[i]));
 			for(int i=0; i<expectedTrace.size(); i++) {
 				ICProject cproject = (ICProject) expectedTrace.get(i);
 				IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 			}
-			assertEquals(expectedTrace, DummyProvider1.getProjectsTrace());
+			for(int i=0; i<DPS.length; i++)
+				assertEquals(expectedTrace, DPT.getProjectsTrace(DPS[i]));
 		} finally {
 			for(int i=0; i<cprojects.size(); i++) {
 				ICProject cproject = (ICProject) expectedTrace.get(i);
@@ -102,7 +115,8 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	}
 
 	public void testProvider_OverDeleteAndAdd() throws Exception {
-		DummyProvider1.reset();
+		DPT.reset(DP1);
+		
 		List expectedTrace = new ArrayList();
 		ICProject cproject = null;
 		try {
@@ -110,13 +124,13 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			cproject = CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 			expectedTrace.add(cproject);
-			assertEquals(expectedTrace, DummyProvider1.getProjectsTrace());
+			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
 
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 			cproject = CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 			index = CCorePlugin.getIndexManager().getIndex(cproject);
 			expectedTrace.add(cproject);
-			assertEquals(expectedTrace, DummyProvider1.getProjectsTrace());
+			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
 		} finally {
 			if(cproject!=null) {
 				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
@@ -125,7 +139,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	}
 
 	public void testProvider_OverMove() throws Exception {
-		DummyProvider1.reset();
+		DPT.reset(DP1);
 		List cprojects = new ArrayList();
 		List expectedTrace = new ArrayList();
 
@@ -139,7 +153,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			cproject = CProjectHelper.createCProject(name, "bin", IPDOMManager.ID_NO_INDEXER);
 			IIndex index = CCorePlugin.getIndexManager().getIndex(cproject);
 			expectedTrace.add(cproject);
-			assertEquals(expectedTrace, DummyProvider1.getProjectsTrace());
+			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
 
 			// move the project to a random new location
 			File newLocation = CProjectHelper.freshDir();
@@ -148,7 +162,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 			cproject.getProject().move(description, IResource.FORCE | IResource.SHALLOW, new NullProgressMonitor());	
 
 			index = CCorePlugin.getIndexManager().getIndex(cproject);
-			assertEquals(expectedTrace, DummyProvider1.getProjectsTrace());
+			assertEquals(expectedTrace, DPT.getProjectsTrace(DP1));
 		} finally {
 			if(cproject!=null) {
 				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
@@ -170,46 +184,46 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		index= CCorePlugin.getIndexManager().getIndex(cproject);
 		CCorePlugin.getIndexManager().joinIndexer(8000, NPM);
 		
-		try {			
-			DummyProvider1.reset();
+		try {
+			DPT.reset(DP1);
 			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_LINK_SETTINGS_AND_ACTIVE);
-			assertEquals(0, DummyProvider1.getProjectsTrace().size());
-			assertEquals(0, DummyProvider1.getCfgsTrace().size());
+			assertEquals(0, DPT.getProjectsTrace(DP1).size());
+			assertEquals(0, DPT.getCfgsTrace(DP1).size());
 			
 			changeActiveConfiguration(project, cfg1);
-			DummyProvider1.reset();
+			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
-			assertEquals(0, DummyProvider1.getProjectsTrace().size());
-			assertEquals(1, DummyProvider1.getCfgsTrace().size());
-			assertEquals("project.config1", ((ICConfigurationDescription)DummyProvider1.getCfgsTrace().get(0)).getId());
+			assertEquals(0, DPT.getProjectsTrace(DP1).size());
+			assertEquals(1, DPT.getCfgsTrace(DP1).size());
+			assertEquals("project.config1", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
 			
 			changeActiveConfiguration(project, cfg2);
-			DummyProvider1.reset();
+			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
-			assertEquals(0, DummyProvider1.getProjectsTrace().size());
-			assertEquals(1, DummyProvider1.getCfgsTrace().size());
-			assertEquals("project.config2", ((ICConfigurationDescription)DummyProvider1.getCfgsTrace().get(0)).getId());
+			assertEquals(0, DPT.getProjectsTrace(DP1).size());
+			assertEquals(1, DPT.getCfgsTrace(DP1).size());
+			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
 			
-			DummyProvider1.reset();
+			DPT.reset(DP1);
 			changeConfigRelations(project, ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT);
-			assertEquals(0, DummyProvider1.getProjectsTrace().size());
-			assertEquals(0, DummyProvider1.getCfgsTrace().size());
+			assertEquals(0, DPT.getProjectsTrace(DP1).size());
+			assertEquals(0, DPT.getCfgsTrace(DP1).size());
 			
 			changeActiveConfiguration(project, cfg1);
-			DummyProvider1.reset();
+			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
-			assertEquals(0, DummyProvider1.getProjectsTrace().size());
-			assertEquals(1, DummyProvider1.getCfgsTrace().size());
+			assertEquals(0, DPT.getProjectsTrace(DP1).size());
+			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			// should still be config2, as the change in active configuration does not matter
-			assertEquals("project.config2", ((ICConfigurationDescription)DummyProvider1.getCfgsTrace().get(0)).getId());
+			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
 			
 			changeActiveConfiguration(project, cfg2);
-			DummyProvider1.reset();
+			DPT.reset(DP1);
 			index= CCorePlugin.getIndexManager().getIndex(cproject);
-			assertEquals(0, DummyProvider1.getProjectsTrace().size());
-			assertEquals(1, DummyProvider1.getCfgsTrace().size());
+			assertEquals(0, DPT.getProjectsTrace(DP1).size());
+			assertEquals(1, DPT.getCfgsTrace(DP1).size());
 			// there should be no change from the previous state (also config2)
-			assertEquals("project.config2", ((ICConfigurationDescription)DummyProvider1.getCfgsTrace().get(0)).getId());
+			assertEquals("project.config2", ((ICConfigurationDescription)DPT.getCfgsTrace(DP1).get(0)).getId());
 		} finally {
 			if (cproject != null) {
 				cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
@@ -536,22 +550,14 @@ class MockConfig implements ICConfigurationDescription {
 	}
 
 	public String[] getExternalSettingsProviderIds() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public void setExternalSettingsProviderIds(String[] ids) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void setExternalSettingsProviderIds(String[] ids) {}
 
-	public void updateExternalSettingsProviders(String[] ids) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void updateExternalSettingsProviders(String[] ids) {}
 
 	public ICSourceEntry[] getResolvedSourceEntries() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

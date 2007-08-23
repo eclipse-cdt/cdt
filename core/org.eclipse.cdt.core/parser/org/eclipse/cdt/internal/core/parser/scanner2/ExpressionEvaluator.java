@@ -622,7 +622,14 @@ public class ExpressionEvaluator {
                     	if (pos < limit) {
                     		c= buffer[pos];
                     		if (c == 'L' || c == 'l' || c == 'U' || c == 'u') {
-                    			++bufferPos[bufferStackPos];
+                    			pos= ++bufferPos[bufferStackPos];
+                    			// gcc-extension: allow ULL for unsigned long long literals
+                            	if (pos < limit) {
+                            		c= buffer[pos];
+                            		if (c == 'L' || c == 'l' || c == 'U' || c == 'u') {
+                            			pos= ++bufferPos[bufferStackPos];
+                            		}
+                            	}
                     		}
                     	}
                     }

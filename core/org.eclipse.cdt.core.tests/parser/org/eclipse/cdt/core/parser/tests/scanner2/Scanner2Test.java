@@ -2666,10 +2666,22 @@ public class Scanner2Test extends BaseScanner2Test
        validateChar( "s" );
    }
    
-   public void testBug185120() throws Exception {
+   public void testBug185120_1() throws Exception {
        StringBuffer buffer = new StringBuffer();
        buffer.append("#define TEST_DEFINE 1UL\n"); 
        buffer.append("#if TEST_DEFINE != 1UL\n"); 
+       buffer.append("-\n"); 
+       buffer.append("#else\n"); 
+       buffer.append("+\n"); 
+       buffer.append("#endif\n"); 
+       initializeScanner( buffer.toString() );
+       validateToken( IToken.tPLUS );
+   }
+
+   public void testBug185120_2() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append("#define TEST_DEFINE 1LLU\n"); 
+       buffer.append("#if TEST_DEFINE != 1ULL\n"); 
        buffer.append("-\n"); 
        buffer.append("#else\n"); 
        buffer.append("+\n"); 

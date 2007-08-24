@@ -1976,7 +1976,16 @@
              class="org.eclipse.cdt.internal.ui.navigator.CNavigatorSearchActionProvider"
              id="org.eclipse.cdt.ui.navigator.actions.search">
           <enablement>
-             <instanceof value="org.eclipse.cdt.core.model.ICElement"/>
+             <and>
+                <instanceof
+                      value="org.eclipse.cdt.core.model.ISourceReference">
+                </instanceof>
+                <not>
+                   <instanceof
+                         value="org.eclipse.cdt.core.model.ITranslationUnit">
+                   </instanceof>
+                </not>
+             </and>
           </enablement>
        </actionProvider>
        <actionProvider

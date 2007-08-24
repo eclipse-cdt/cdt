@@ -54,6 +54,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	public boolean processLine(String line) {
 		boolean rc = false;
+		line= line.trim();
 		TraceUtil.outputTrace("GCCSpecsConsoleParser parsing line: [", line, "]");	//$NON-NLS-1$ //$NON-NLS-2$
 
 		// contribution of -dD option
@@ -69,7 +70,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 						symbol = defineParts[1] + "=" + defineParts[2]; //$NON-NLS-1$
 						break;
 				}
-				if (symbol != null && !symbols.contains(symbol)) { //$NON-NLS-1$
+				if (symbol != null && !symbols.contains(symbol)) { 
 					symbols.add(symbol);
 				}
 			}

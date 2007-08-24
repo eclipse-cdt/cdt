@@ -60,6 +60,7 @@ public class GCCPerFileSIPConsoleParser implements IScannerInfoConsoleParser {
      */
     public boolean processLine(String line) {
         boolean rc = false;
+        line= line.trim();
         TraceUtil.outputTrace("GCCPerFileSIPConsoleParser parsing line: [", line, "]");  //$NON-NLS-1$//$NON-NLS-2$
 
         if (line.startsWith(COMMAND_ID_BEGIN)) {

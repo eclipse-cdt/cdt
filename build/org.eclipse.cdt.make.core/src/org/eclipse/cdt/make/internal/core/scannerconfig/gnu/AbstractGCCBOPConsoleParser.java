@@ -114,6 +114,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
             bMultiline = false;
             sMultiline = ""; //$NON-NLS-1$
         }
+        line= line.trim();
         TraceUtil.outputTrace("AbstractGCCBOPConsoleParser parsing line: [", line, "]");    //$NON-NLS-1$ //$NON-NLS-2$
         // make\[[0-9]*\]:  error_desc
         int firstColon= line.indexOf(':');
@@ -135,7 +136,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
             }
         }
         // call sublclass to process a single line
-        return processSingleLine(line);
+        return processSingleLine(line.trim());
     }
 
     private int getDirectoryLevel(String line) {

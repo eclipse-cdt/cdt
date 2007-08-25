@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Nokia - initial API and implementation
+ *     Ling Wang (Nokia) bug 201000
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -179,14 +180,17 @@ public class DwarfReader extends Dwarf implements ISymbolReader {
 		
 		
 		// Check to see if the file exists, if not, append the path information from the dir info.
-		// In cases where the file name has the full path, only the drive letter is added. 
-		// In some cases the file name has the full path except the drive letter,
-		// in other cases the file name doesn't have the path info so we need to add the complete dir path.
+		// On Win32, if the file name has the full path except the drive letter, 
+		// add the driver letter.
+		// Otherwise if the file name is not absolute, prepend the "dir".
 		
 		if ( !pa.toFile().exists() && dir.length() > 0)
 		{			
 			if (pa.isAbsolute())
-				fullName = dir.substring(0, 2) + name;
+			{
+				if (pa.getDevice() == null && dir.charAt(1) == ':')	// no drive letter
+					fullName = dir.substring(0, 2) + name;
+			}
 			else
 				fullName = dir + File.separatorChar + name;
 		}

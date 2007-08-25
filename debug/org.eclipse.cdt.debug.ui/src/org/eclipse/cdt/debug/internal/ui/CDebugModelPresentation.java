@@ -7,8 +7,9 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Nokia - Added support for CSourceNotFoundElement ( 167305 )
+ * Ken Ryall (Nokia) - Added support for CSourceNotFoundElement ( 167305 )
  * ARM Limited - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186981
+ * Ken Ryall (Nokia) - Bug 201165 don't toss images on dispose.
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui;
 
@@ -726,12 +727,4 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		return MessageFormat.format( string, args );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
-	public void dispose() {
-		getImageCache().disposeAll();
-		fAttributes.clear();
-		super.dispose();
-	}
 }

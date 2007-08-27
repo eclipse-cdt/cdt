@@ -374,7 +374,7 @@ public class CHViewPart extends ViewPart {
             public boolean select(Viewer viewer, Object parentElement, Object element) {
                 if (element instanceof CHNode) {
                 	CHNode node= (CHNode) element;
-                    return !node.isVariable();
+                    return !node.isVariableOrEnumerator();
                 }
                 return true;
             }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,8 @@ public class CHMultiDefNode extends CHNode {
 		return fChildren[0].isMacro();
 	}
 
-	public boolean isVariable() {
-		return fChildren[0].isVariable();
+	public boolean isVariableOrEnumerator() {
+		return fChildren[0].isVariableOrEnumerator();
 	}
 
 	

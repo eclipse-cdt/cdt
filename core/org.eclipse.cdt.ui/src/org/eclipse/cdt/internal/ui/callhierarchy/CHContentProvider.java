@@ -75,7 +75,7 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 					return NO_CHILDREN;
 				}
 			}
-			else if (node.isVariable() || node.isMacro()) { 
+			else if (node.isVariableOrEnumerator() || node.isMacro()) { 
 				return NO_CHILDREN;
 			}
 			

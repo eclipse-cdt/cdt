@@ -18,6 +18,7 @@
 <extension
       point="org.eclipse.ui.preferencePages">
    <page
+         category="org.eclipse.debug.ui.DebugPreferencePage"
          class="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferencePage"
          id="org.eclipse.dd.debug.memory.renderings.traditional.TraditionalRenderingPreferencePage"
          name="Traditional Memory Rendering"/>
@@ -52,6 +53,16 @@
                	toolbarPath="additions"
                	tooltip="%ImportMemoryAction.label"/>
     </viewContribution>
+ <viewContribution
+       id="org.eclipse.debug.ui.MemoryView.findReplace"
+       targetID="org.eclipse.debug.ui.MemoryView">
+    <action
+          class="org.eclipse.dd.debug.memory.renderings.actions.FindAction"
+          id="org.eclipse.dd.debug.memory.renderings.traditional.action2"
+          label="Find/Replace"
+          menubarPath="additions">
+    </action>
+ </viewContribution>
 </extension>
 
 </plugin>

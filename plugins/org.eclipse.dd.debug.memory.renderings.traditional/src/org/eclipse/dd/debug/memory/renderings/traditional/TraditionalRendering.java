@@ -326,7 +326,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		super.deactivated();
 	}
 
-	public void gotoAddress(BigInteger address)
+	public void gotoAddress(final BigInteger address)
     {
       this.fRendering.gotoAddress(address);
     }
@@ -982,8 +982,13 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		}
 	}
 
-	public void goToAddress(BigInteger address) throws DebugException {
-		fRendering.gotoAddress(address);
+	public void goToAddress(final BigInteger address) throws DebugException {
+		Display.getDefault().asyncExec(new Runnable(){
+			public void run()
+			{
+				fRendering.gotoAddress(address);
+			}
+		});
 	}
     
     protected void bytesAreLittleEndian(boolean areLE)

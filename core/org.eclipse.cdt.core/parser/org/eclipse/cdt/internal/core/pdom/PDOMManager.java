@@ -623,14 +623,10 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	void addProject(final ICProject cproject) {
 		final IProject project = cproject.getProject();
-		if (!isFullyCreated(project)) {
-			return;
-		}
-		
 		Job addProject= new Job(Messages.PDOMManager_StartJob_name) {
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask("", 100); //$NON-NLS-1$
-				if (project.isOpen()) {
+				if (project.isOpen() && isFullyCreated(project)) {
 					syncronizeProjectSettings(project, new SubProgressMonitor(monitor, 1));
 					if (getIndexer(cproject) == null) {
 						createIndexer(cproject, new SubProgressMonitor(monitor, 99));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - Initial API and implementation (Corey Ashford)
- *     
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils;
@@ -33,8 +33,7 @@ public final class Platform {
 	
 	public static final String OS_LINUX = org.eclipse.core.runtime.Platform.OS_LINUX;
 	
-	private static boolean ppcArchIsCached = false;
-	private static String cachedPpcArch = null;
+	private static String cachedArch = null;
 	
 	public static Bundle getBundle(String symbolicName) {
 		return org.eclipse.core.runtime.Platform.getBundle(symbolicName);
@@ -45,31 +44,43 @@ public final class Platform {
 	}
 	
 	public static String getOSArch() {
-		String arch = org.eclipse.core.runtime.Platform.getOSArch();
-		if (arch.equals(org.eclipse.core.runtime.Platform.ARCH_PPC)) {
-			// Determine if the platform is actually a ppc64 machine
-			if (!ppcArchIsCached) {
+		if (cachedArch == null) {
+			String arch = org.eclipse.core.runtime.Platform.getOSArch();
+			if (arch.equals(org.eclipse.core.runtime.Platform.ARCH_PPC)) {
+				// Determine if the platform is actually a ppc64 machine
 				Process unameProcess;
-				String cmd[] = {"uname", "-p"};
-
-				ppcArchIsCached = true;
+				String cmd[] = {"uname", "-p"};  //$NON-NLS-1$//$NON-NLS-2$
+	
 				try {
 					unameProcess = Runtime.getRuntime().exec(cmd);
-
+	
 					InputStreamReader inputStreamReader = new InputStreamReader(unameProcess.getInputStream());
 					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-					cachedPpcArch = bufferedReader.readLine();
-
+					arch = bufferedReader.readLine();
+	
 				} catch (IOException e) {
-					cachedPpcArch = null;
+				}
+			} else if (arch.equals(org.eclipse.core.runtime.Platform.ARCH_X86)) {
+				// Determine if the platform is actually a x86_64 machine
+				Process unameProcess;
+				String cmd[] = {"uname", "-p"};  //$NON-NLS-1$//$NON-NLS-2$
+	
+				try {
+					unameProcess = Runtime.getRuntime().exec(cmd);
+	
+					InputStreamReader inputStreamReader = new InputStreamReader(unameProcess.getInputStream());
+					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+					String unameOutput = bufferedReader.readLine();
+					if (unameOutput.endsWith("64")) { //$NON-NLS-1$
+						arch= org.eclipse.core.runtime.Platform.ARCH_X86_64;
+					}
+					unameProcess.waitFor();
+				} catch (IOException e) {
+				} catch (InterruptedException exc) {
 				}
 			}
-			if (cachedPpcArch != null) {
-				return cachedPpcArch;
-			} else {
-				return arch;
-			}
+			cachedArch= arch;
 		}
-		return arch;
+		return cachedArch;
 	}
 }

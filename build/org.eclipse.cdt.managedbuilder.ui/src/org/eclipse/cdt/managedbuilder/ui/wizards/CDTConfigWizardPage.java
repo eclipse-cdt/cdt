@@ -359,9 +359,9 @@ public class CDTConfigWizardPage extends WizardPage {
 		Set y = new TreeSet();			
 		for (int i=0; i<n; i++) {
 			x.add(tcs[i]);
-			if (ptIsNull && tcs[i] != null && tcs[i].getParent() != null) {
+			try { // Any element may be null. Do nothing in this case. 
 				y.add(tcs[i].getParent().getProjectType().getId());
-			}
+			} catch (NullPointerException e) {}
 		}
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.TOOLCHAIN, x);
 		if (ptIsNull) {

@@ -11,14 +11,22 @@
             id="org.eclipse.cdt.debug.mi.core.CDebuggerNew"
             modes="run,core,attach"
             name="%GDBMIDebugger.name"
-            platform="*"/>
+            platform="*">
+         <buildIdPattern
+               pattern="cdt\.managedbuild\.config\.gnu\..*">
+         </buildIdPattern>
+      </debugger>
       <debugger
-            platform="win32"
-            name="%CygwinGDBDebugger.name"
-            modes="run,core,attach"
-            cpu="native"
             class="org.eclipse.cdt.debug.mi.core.CygwinGDBCDIDebugger2"
-            id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger"/>
+            cpu="native"
+            id="org.eclipse.cdt.debug.mi.core.CygwinCDebugger"
+            modes="run,core,attach"
+            name="%CygwinGDBDebugger.name"
+            platform="win32">
+         <buildIdPattern
+               pattern="cdt\.managedbuild\.config\.gnu\.cygwin\..*">
+         </buildIdPattern>
+      </debugger>
       <debugger
             platform="*"
             name="%GDBServer.name"
@@ -41,7 +49,7 @@
             name="%MinGWDebugger.name"
             platform="win32">
          <buildIdPattern
-               pattern="cdt\.managedbuild\.config\.gnu\.mingw.*">
+               pattern="cdt\.managedbuild\.config\.gnu\.mingw\..*">
          </buildIdPattern>
       </debugger>
    </extension>

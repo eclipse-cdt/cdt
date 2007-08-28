@@ -120,14 +120,15 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
            	ICConfigurationDescription configDesc = projDesc.getActiveConfiguration();
            	String configId = configDesc.getId();
        		ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getActiveDebugConfigurations();
-       		outer: for (int i = 0; i < debugConfigs.length; ++i) {
+       		int matchLength = 0;
+       		for (int i = 0; i < debugConfigs.length; ++i) {
        			ICDebugConfiguration dc = debugConfigs[i];
        			String[] patterns = dc.getSupportedBuildConfigPatterns();
        			if (patterns != null) {
        				for (int j = 0; j < patterns.length; ++j) {
-       					if (configId.matches(patterns[j])) {
+       					if (patterns[j].length() > matchLength && configId.matches(patterns[j])) {
        						debugConfig = dc;
-       						break outer;
+       						matchLength = patterns[j].length();
        					}
        				}
        			}

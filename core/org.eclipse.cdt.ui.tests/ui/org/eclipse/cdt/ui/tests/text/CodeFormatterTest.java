@@ -206,4 +206,21 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testAccessSpecifierAsMacro_Bug197494() throws Exception {
 		assertFormatterResult();
 	}
+
+	//int verylooooooooooooooooooooooooooooooooooongname = 0000000000000000000000000000000;
+	
+	//int verylooooooooooooooooooooooooooooooooooongname = 
+	//		0000000000000000000000000000000;
+	public void testLineWrappingOfInitializerExpression_Bug200961() throws Exception {
+		assertFormatterResult();
+	}
+	
+	//void functionWithLooooooooooooooooooooooooooooooooooooooooooooooooongName() throw(float);
+	
+	//void functionWithLooooooooooooooooooooooooooooooooooooooooooooooooongName()
+	//		throw(float);
+	public void testLineWrappingOfThrowSpecification_Bug200959() throws Exception {
+		assertFormatterResult();
+	}
+
 }

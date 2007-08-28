@@ -785,16 +785,16 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(ICPPASTFunctionDeclarator node) {
 		visit((IASTStandardFunctionDeclarator)node);
+
 		skipConstVolatile();
+
 		final IASTTypeId[] exceptionSpecification= node.getExceptionSpecification();
 		if (exceptionSpecification != null) {
 			if (peekNextToken() == Token.t_throw) {
-				// TLETODO [formatter] need special alignment for exception specification
-				scribe.printNextToken(Token.t_throw, true);
-				final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
-				formatList(Arrays.asList(exceptionSpecification), align, true, false);
+				formatExceptionSpecification(exceptionSpecification);
 			}
 		}
+
 		final ICPPASTConstructorChainInitializer[] constructorChain= node.getConstructorChain();
 		if (constructorChain != null && constructorChain.length > 0) {
 			// TLETODO [formatter] need special constructor chain alignment
@@ -809,7 +809,51 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			// skip the rest (=0)
 			skipNode(node);
 		}
+
 		return PROCESS_SKIP;
+	}
+
+	private void formatExceptionSpecification(final IASTTypeId[] exceptionSpecification) {
+		// TLETODO [formatter] need special alignment for exception specification
+		if (exceptionSpecification.length > 0) {
+			Alignment alignment =scribe.createAlignment(
+					"exceptionSpecification", //$NON-NLS-1$
+					// need configurable alignment
+					Alignment.M_COMPACT_SPLIT,
+					exceptionSpecification.length,
+					scribe.scanner.getCurrentPosition());
+	
+			scribe.enterAlignment(alignment);
+			boolean ok = false;
+			do {
+				try {
+					scribe.alignFragment(alignment, 0);
+					scribe.printNextToken(Token.t_throw, true);
+					scribe.printNextToken(Token.tLPAREN, scribe.printComment());
+					exceptionSpecification[0].accept(this);
+					for (int i = 1; i < exceptionSpecification.length; i++) {
+						// insert_space_before_comma_in_method_declaration_throws
+						scribe.printNextToken(Token.tCOMMA, preferences.insert_space_before_comma_in_array_initializer);
+						scribe.printTrailingComment();
+						// insert_space_after_comma_in_method_declaration_throws
+						if (preferences.insert_space_after_comma_in_array_initializer) {
+							scribe.space();
+						}
+						scribe.alignFragment(alignment, i);
+		    			exceptionSpecification[i].accept(this);
+					}
+					scribe.printNextToken(Token.tRPAREN, scribe.printComment());
+					ok = true;
+				} catch (AlignmentException e) {
+					scribe.redoAlignment(e);
+				}
+			} while (!ok);
+			scribe.exitAlignment(alignment, true);
+		} else {
+			scribe.printNextToken(Token.t_throw, true);
+			scribe.printNextToken(Token.tLPAREN, scribe.printComment());
+			scribe.printNextToken(Token.tRPAREN, scribe.printComment());
+		}
 	}
 
 	private void skipConstVolatile() {
@@ -1355,7 +1399,28 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(IASTInitializerExpression node) {
-		node.getExpression().accept(this);
+    	Alignment expressionAlignment =scribe.createAlignment(
+    			"assignmentExpression", //$NON-NLS-1$
+    			// need configurable alignment
+    			Alignment.M_COMPACT_SPLIT,
+    			1,
+    			scribe.scanner.getCurrentPosition());
+
+    	scribe.enterAlignment(expressionAlignment);
+    	boolean ok = false;
+    	do {
+    		try {
+    			scribe.alignFragment(expressionAlignment, 0);
+
+    			// r-value
+   				node.getExpression().accept(this);
+
+    			ok = true;
+    		} catch (AlignmentException e) {
+    			scribe.redoAlignment(e);
+    		}
+    	} while (!ok);
+    	scribe.exitAlignment(expressionAlignment, true);
     	return PROCESS_SKIP;
 	}
 

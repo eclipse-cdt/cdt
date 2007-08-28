@@ -2002,7 +2002,10 @@
           <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
-				<instanceof value="org.eclipse.core.resources.IResource" />
+				<and>
+				   <instanceof value="org.eclipse.core.resources.IProject" />
+	               <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+				</and>
 			</or>
           </enablement>
        </actionProvider>
@@ -2012,8 +2015,11 @@
              overrides="org.eclipse.ui.navigator.resources.actions.RefactorActions">
           <enablement>
 			<or>
-			    <instanceof value="org.eclipse.cdt.core.model.ICElement" />	
-				<instanceof value="org.eclipse.core.resources.IResource" />
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<and>
+				   <instanceof value="org.eclipse.core.resources.IProject" />
+	               <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+				</and>
 			</or>
           </enablement>
        </actionProvider>

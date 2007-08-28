@@ -125,7 +125,7 @@ public class CLIProcessor {
 
 	static int getSteppingOperationKind(String operation) {
 		int type = -1;
-		/* execution commands: n, next, s, step, si, stepi, u, until, finish,
+		/* execution commands: n, next, s, step, si, stepi, u, until, finish, return,
 		   c, continue, fg */
 		if (operation.equals("n") || operation.equals("next")) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.NEXT;
@@ -140,6 +140,8 @@ public class CLIProcessor {
 				type = MIRunningEvent.UNTIL;
 		} else if (operation.startsWith("fin") && "finish".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.FINISH;
+		} else if (operation.startsWith("ret") && "return".indexOf(operation) != -1) { //$NON-NLS-1$ //$NON-NLS-2$
+			type = MIRunningEvent.RETURN;
 		} else if (operation.equals("c") || operation.equals("fg") || //$NON-NLS-1$ //$NON-NLS-2$
 			   (operation.startsWith("cont") && "continue".indexOf(operation) != -1)) { //$NON-NLS-1$ //$NON-NLS-2$
 			type = MIRunningEvent.CONTINUE;

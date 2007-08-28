@@ -347,18 +347,29 @@ public class CDTConfigWizardPage extends WizardPage {
 			for (int i=0; i<natures.length; i++) x.add(natures[i]);
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, x);
 		}
-		if (handler.getProjectType() != null) {
+		// Project type can be obtained either from Handler (for old-style projects),
+		// or multiple values will be got from separate ToolChains (for new-style).
+		boolean ptIsNull = (handler.getProjectType() == null);
+		if (!ptIsNull)
 			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, handler.getProjectType().getId());
-		} else {
-			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, null);
-		}
+
 		IToolChain[] tcs = handler.getSelectedToolChains();
 		int n = (tcs == null) ? 0 : tcs.length;
 		Set x = new TreeSet();			
+		Set y = new TreeSet();			
 		for (int i=0; i<n; i++) {
-			x.add(tcs[i]); 
+			x.add(tcs[i]);
+			if (ptIsNull && tcs[i] != null && tcs[i].getParent() != null) {
+				y.add(tcs[i].getParent().getProjectType().getId());
+			}
 		}
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.TOOLCHAIN, x);
+		if (ptIsNull) {
+			if (y.size() > 0)
+				MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, y);
+			else
+				MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, null);
+		}
 	}
 
 }

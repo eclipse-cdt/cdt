@@ -411,51 +411,6 @@
          </wizard>
       </extension>
   
-<!-- Custom wizard pages - for testing only 
-     <extension
-         point="org.eclipse.cdt.managedbuilder.ui.newWizardPages">
-      <wizardPage
-            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage"
-            pageClass="org.eclipse.cdt.managedbuilder.ui.test.AlwaysPresentWizardPage"/>
-      <wizardPage
-            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage"
-            pageClass="org.eclipse.cdt.managedbuilder.ui.test.NatureAWizardPage">
-         <nature  natureID="org.eclipse.cdt.core.cnature"/>
-      </wizardPage>
-      <wizardPage
-            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage"
-            pageClass="org.eclipse.cdt.managedbuilder.ui.test.NatureBWizardPage">
-         <nature  natureID="org.eclipse.cdt.core.ccnature"/>
-      </wizardPage>
-      <wizardPage
-            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage"
-            pageClass="org.eclipse.cdt.managedbuilder.ui.test.ToolchainCWizardPage">
-         <toolchain  toolchainID="cdt.managedbuild.toolchain.gnu.exe.debug"/>
-      </wizardPage>
-      <wizardPage
-            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCv20WizardPage"
-            pageClass="org.eclipse.cdt.managedbuilder.ui.test.ToolchainCv20WizardPage">
-         <toolchain
-               toolchainID="C"
-               versionsSupported="2.0.0"/>
-      </wizardPage>
-      <wizardPage
-            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage"
-            pageClass="org.eclipse.cdt.managedbuilder.ui.test.ProjectTypeDWizardPage">
-         <projectType  projectTypeID="D"/>
-      </wizardPage>
-      <wizardPage
-            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeEWizardPage"
-            pageClass="org.eclipse.cdt.managedbuilder.ui.test.ProjectTypeEWizardPage">
-         <projectType  projectTypeID="E"/>
-      </wizardPage>
-      <wizardPage
-            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage"
-            pageClass="org.eclipse.cdt.managedbuilder.ui.test.ToolchainFWizardPage">
-         <toolchain toolchainID="F"/>
-      </wizardPage>
-   </extension>
--->
   <extension
         point="org.eclipse.cdt.ui.newCfgDialog">
         <dialog
@@ -677,4 +632,7 @@
             name="%MBSPerProjectProfile.name"
             profileId="org.eclipse.cdt.managedbuilder.core.GCCWinManagedMakePerProjectProfileCPP"/>
    </extension>  
+   
+ 
+   
 </plugin>

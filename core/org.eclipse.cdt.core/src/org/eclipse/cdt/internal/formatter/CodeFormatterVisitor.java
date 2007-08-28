@@ -1295,9 +1295,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 	private int visit(IASTIdExpression node) {
 		node.getName().accept(this);
-		if (scribe.printComment()) {
-			scribe.space();
-		}
     	return PROCESS_SKIP;
 	}
 
@@ -1453,6 +1450,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			break;
 		case IASTUnaryExpression.op_sizeof:
 			scribe.printNextToken(Token.t_sizeof, scribe.printComment());
+			if (peekNextToken() != Token.tLPAREN) {
+				scribe.space();
+			}
 			operand.accept(this);
 			break;
 		default:
@@ -1487,7 +1487,6 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
    				// operand 2
    				final IASTExpression op2= node.getOperand2();
    				op2.accept(this);
-    			scribe.printTrailingComment();
 
     			ok = true;
     		} catch (AlignmentException e) {

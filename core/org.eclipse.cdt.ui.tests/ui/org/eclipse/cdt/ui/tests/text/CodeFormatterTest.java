@@ -141,6 +141,15 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//int x;
+	//int a = sizeof     x    ;
+	
+	//int x;
+	//int a = sizeof x;
+	public void testSizeofExpression_Bug201330() throws Exception {
+		assertFormatterResult();
+	}
+
 	//void foo(){
 	//for(;;){
 	//int a=0;

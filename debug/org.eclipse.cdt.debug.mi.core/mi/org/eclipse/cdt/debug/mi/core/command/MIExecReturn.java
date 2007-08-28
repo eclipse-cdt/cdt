@@ -26,7 +26,7 @@ public class MIExecReturn extends MICommand
 	}
 
 	public MIExecReturn(String miVersion, String arg) {
-		super(miVersion, "-exec-run", new String[] { arg }); //$NON-NLS-1$
+		super(miVersion, "-exec-return", new String[] { arg }); //$NON-NLS-1$
 	}
 
 }

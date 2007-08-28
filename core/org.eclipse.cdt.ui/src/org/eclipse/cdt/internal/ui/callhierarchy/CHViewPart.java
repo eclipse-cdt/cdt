@@ -332,7 +332,7 @@ public class CHViewPart extends ViewPart {
     }
 
     private void createActions() {
-    	// action gruops
+    	// action groups
     	fOpenViewActionGroup= new OpenViewActionGroup(this);
     	fOpenViewActionGroup.setSuppressCallHierarchy(true);
     	fOpenViewActionGroup.setSuppressProperties(true);
@@ -564,8 +564,14 @@ public class CHViewPart extends ViewPart {
 	}
         
 	protected void onShowSelectedReference(ISelection selection) {
-		fNavigationDetail= 0;
-    	fNavigationNode= selectionToNode(selection);
+		CHNode node= selectionToNode(selection);
+		if (node != null && node == fNavigationNode && node.getReferenceCount() > 0) {
+			fNavigationDetail= (fNavigationDetail + 1) % node.getReferenceCount();
+		}
+		else {
+			fNavigationDetail= 0;
+		}
+    	fNavigationNode= node; 
         showReference();
 	}
 
@@ -719,27 +725,26 @@ public class CHViewPart extends ViewPart {
     }
     	    
     private void showReference() {
-    	CHNode node= getReferenceNode();
-        if (node != null) {
-        	ITranslationUnit file= node.getFileOfReferences();
+        if (fNavigationNode != null) {
+        	ITranslationUnit file= fNavigationNode.getFileOfReferences();
         	if (file != null) {
         		IWorkbenchPage page= getSite().getPage();
-        		if (node.getReferenceCount() > 0) {
-        			long timestamp= node.getTimestamp();
+        		if (fNavigationNode.getReferenceCount() > 0) {
+        			long timestamp= fNavigationNode.getTimestamp();
         			if (fNavigationDetail < 0) {
         				fNavigationDetail= 0;
         			}
-        			else if (fNavigationDetail >= node.getReferenceCount()-1) {
-        				fNavigationDetail= node.getReferenceCount()-1;
+        			else if (fNavigationDetail >= fNavigationNode.getReferenceCount()-1) {
+        				fNavigationDetail= fNavigationNode.getReferenceCount()-1;
         			}
 
-        			CHReferenceInfo ref= node.getReference(fNavigationDetail);
+        			CHReferenceInfo ref= fNavigationNode.getReference(fNavigationDetail);
         			Region region= new Region(ref.getOffset(), ref.getLength());
         			EditorOpener.open(page, file, region, timestamp);
         		}
         		else {
         			try {
-        				EditorOpener.open(page, node.getRepresentedDeclaration());
+        				EditorOpener.open(page, fNavigationNode.getRepresentedDeclaration());
         			} catch (CModelException e) {
         				CUIPlugin.getDefault().log(e);
         			}
@@ -748,16 +753,6 @@ public class CHViewPart extends ViewPart {
         }
     }
     
-	private CHNode getReferenceNode() {
-		if (fNavigationNode != null) {
-			CHNode parent = fNavigationNode.getParent();
-			if (parent instanceof CHMultiDefNode) {
-				return parent;
-			}
-    	}
-		return fNavigationNode;
-	}
-	
 	private int getReferenceCount(CHNode node) {
 		if (node != null) {
 			CHNode parent = node.getParent();

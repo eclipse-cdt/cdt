@@ -22,6 +22,7 @@ public class CHMessages extends NLS {
 	public static String CHHistoryListAction_HistoryList_label;
 	public static String CHHistoryListAction_OpenHistory_label;
 	public static String CHHistoryListAction_Remove_label;
+	public static String CHLabelProvider_matches;
 	public static String CHViewPart_emptyPageMessage;
 	public static String CHViewPart_FilterVariables_label;
 	public static String CHViewPart_FilterVariables_tooltip;

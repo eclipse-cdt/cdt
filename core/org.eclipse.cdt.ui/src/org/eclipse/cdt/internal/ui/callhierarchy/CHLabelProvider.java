@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -72,16 +73,22 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
             CHNode node= (CHNode) element;
             ICElement decl= node.getOneRepresentedDeclaration();
             if (decl != null) {
+            	String label;
             	if (node.isMultiDef()) {
             		int options= fCLabelProvider.getTextFlags();
             		fCLabelProvider.setTextFlags(LABEL_OPTIONS_SIMPLE);
-            		String result= fCLabelProvider.getText(decl);
+            		label= fCLabelProvider.getText(decl);
             		fCLabelProvider.setTextFlags(options);
-            		return result;
             	}
-            	String label= fCLabelProvider.getText(decl);
-            	if (node.isInitializer()) {
-            		label= addInitializerDecoration(label);
+            	else {
+            		label= fCLabelProvider.getText(decl);
+            		if (node.isInitializer()) {
+            			label= addInitializerDecoration(label);
+            		}
+            	}
+            	int refCount= node.getReferenceCount();
+            	if (refCount > 1) {
+            		label += NLS.bind(" ({0} {1})", new Integer(refCount), CHMessages.CHLabelProvider_matches);  //$NON-NLS-1$
             	}
             	return label;
             }

@@ -17,6 +17,7 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -52,6 +53,12 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 		fCProject= CProjectHelper.createCCProject(prjName, "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 		fIndex= CCorePlugin.getIndexManager().getIndex(fCProject);
+		IWorkbenchPage page= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IViewReference[] refs= page.getViewReferences();
+		for (int i = 0; i < refs.length; i++) {
+			IViewReference viewReference = refs[i];
+			page.setPartState(viewReference, IWorkbenchPage.STATE_RESTORED);
+		}
 	}
 	
 	protected void tearDown() throws Exception {

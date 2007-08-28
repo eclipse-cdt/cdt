@@ -26,7 +26,7 @@ public class CHMultiDefNode extends CHNode {
 		fChildren= new CHNode[elements.length];
 		for (int i = 0; i < elements.length; i++) {
 			ICElement element = elements[i];
-			fChildren[i]= new CHNode(this, null, 0, element);
+			fChildren[i]= new CHMultiDefChildNode(this, tu, timestamp, element);
 		}
 	}
 	

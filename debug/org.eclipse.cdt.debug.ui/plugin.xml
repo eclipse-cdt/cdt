@@ -1344,6 +1344,9 @@
       <factory
             class="org.eclipse.cdt.debug.internal.ui.DebugMarkerAnnotationModelFactory"
             contentTypeId="org.eclipse.cdt.core.cSource"/>
+      <factory
+            class="org.eclipse.cdt.debug.internal.ui.DebugMarkerAnnotationModelFactory"
+            contentTypeId="org.eclipse.cdt.core.asmSource"/>
    </extension>
 <!-- Import Executable Wizard -->
   <extension

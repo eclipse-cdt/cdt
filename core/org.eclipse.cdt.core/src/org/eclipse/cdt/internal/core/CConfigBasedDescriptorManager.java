@@ -143,6 +143,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 //				}
 			}
 		}
+		
+		if(dr.isOperationStarted())
+			dr.setOpEvent(new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_ADDED, 0));
 	}
 	
 	private CConfigBasedDescriptor updateDescriptor(IProject project, CConfigBasedDescriptor dr, String ownerId) throws CoreException{
@@ -182,6 +185,9 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			dr = updateDescriptor(project, dr, id);
 			dr.apply(true);
 		}
+		
+		if(dr.isOperationStarted())
+			dr.setOpEvent(new CDescriptorEvent(dr, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.OWNER_CHANGED));
 	}
 
 	public ICDescriptor getDescriptor(IProject project) throws CoreException {
@@ -211,17 +217,25 @@ public class CConfigBasedDescriptorManager implements ICDescriptorManager {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Failed to create descriptor", null)); //$NON-NLS-1$
 		}
 
+		CDescriptorEvent event = null;
 		synchronized (CProjectDescriptionManager.getInstance()) {
 			boolean initialApplyOnChange = dr.isApplyOnChange();
 			dr.setApplyOnChange(false);
 			try {
+				dr.operationStart();
 				op.execute(dr, monitor);
 			} finally {
+				event = dr.operationStop();
 				dr.setApplyOnChange(initialApplyOnChange);
 			}
 
-			dr.apply(false);
+//			dr.apply(false);
 		}
+		
+		if(event != null){
+			CConfigBasedDescriptorManager.getInstance().notifyListeners(event);
+		}
+		
 	}
 
 	public void runDescriptorOperation(IProject project,

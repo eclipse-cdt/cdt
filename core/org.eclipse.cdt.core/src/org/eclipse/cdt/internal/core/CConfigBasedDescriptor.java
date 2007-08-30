@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
@@ -43,7 +44,7 @@ import org.w3c.dom.Element;
 
 public class CConfigBasedDescriptor implements ICDescriptor {
 	private static final String CEXTENSION_NAME = "cextension"; //$NON-NLS-1$
-
+	
 	private ICConfigurationDescription fCfgDes;
 	private IProject fProject;
 	private COwner fOwner;
@@ -51,6 +52,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	private HashMap fStorageDataElMap = new HashMap();
 	private boolean fApplyOnChange = true;
 	private boolean fIsDirty;
+	private CDescriptorEvent fOpEvent;
+	private boolean fIsOpStarted;
 	
 	class CConfigBaseDescriptorExtensionReference implements ICExtensionReference{
 		private ICConfigExtensionReference fCfgExtRef;
@@ -97,6 +100,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 				fIsDirty = true;
 				fCfgExtRef.setExtensionData(key, value);
 				checkApply();
+				if(isOperationStarted())
+					setOpEvent(new CDescriptorEvent(CConfigBasedDescriptor.this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
 			}
 		}
 	}
@@ -159,6 +164,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		ICExtensionReference r = create(ref);
 		fIsDirty = true;
 		checkApply();
+		if(isOperationStarted())
+			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 		return r;
 	}
 	
@@ -317,6 +324,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 		fIsDirty = true;
 		checkApply();
+		if(isOperationStarted())
+			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 	}
 
 	public void remove(String extensionPoint) throws CoreException {
@@ -336,6 +345,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 		}
 		fIsDirty = true;
 		checkApply();
+		if(isOperationStarted())
+			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 	}
 
 	public void saveProjectData() throws CoreException {
@@ -343,6 +354,8 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 			fIsDirty = true;
 		
 		checkApply();
+		if(isOperationStarted())
+			setOpEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
 	}
 	
 	public Map getStorageDataElMap(){
@@ -352,4 +365,39 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	public ICConfigurationDescription getConfigurationDescription() {
 		return fCfgDes;
 	}
+
+	void setOpEvent(CDescriptorEvent event) {
+		if(!isOperationStarted())
+			return;
+
+		if (event.getType() == CDescriptorEvent.CDTPROJECT_ADDED) {
+			fOpEvent = event;
+		} else if (event.getType() == CDescriptorEvent.CDTPROJECT_REMOVED) {
+			fOpEvent = event;
+		} else {
+			if (fOpEvent == null) {
+				fOpEvent = event;
+			} else if ( (fOpEvent.getFlags() & event.getFlags()) != event.getFlags()) {
+				fOpEvent = new CDescriptorEvent(event.getDescriptor(), event.getType(),
+						fOpEvent.getFlags() | event.getFlags());
+			}
+		}
+	}
+	
+	boolean isOperationStarted(){
+		return fIsOpStarted;
+	}
+	
+	void operationStart(){
+		fIsOpStarted = true;
+	}
+
+	CDescriptorEvent operationStop(){
+		fIsOpStarted = false;
+		CDescriptorEvent e = fOpEvent;
+		fOpEvent = null;
+		
+		return e;
+	}
+
 }

@@ -61,15 +61,22 @@ public final class Platform {
 					if (unameOutput != null) {
 						arch= unameOutput;
 					}
+					bufferedReader.close();
 					unameProcess.waitFor();	// otherwise the process becomes a zombie
 				} catch (IOException e) {
 				} catch (InterruptedException exc) {
-					Thread.currentThread().interrupt();
+					// clear interrupted state
+					Thread.interrupted();
 				}
 			} else if (arch.equals(org.eclipse.core.runtime.Platform.ARCH_X86)) {
 				// Determine if the platform is actually a x86_64 machine
 				Process unameProcess;
-				String cmd[] = {"uname", "-p"};  //$NON-NLS-1$//$NON-NLS-2$
+				String cmd[];
+				if (org.eclipse.core.runtime.Platform.OS_WIN32.equals(getOS())) {
+					cmd = new String[] {"cmd", "/c", "set", "PROCESSOR_ARCHITECTURE"};  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				} else {
+					cmd = new String[] {"uname", "-p"};  //$NON-NLS-1$//$NON-NLS-2$
+				}
 	
 				try {
 					unameProcess = Runtime.getRuntime().exec(cmd);
@@ -80,10 +87,12 @@ public final class Platform {
 					if (unameOutput != null && unameOutput.endsWith("64")) { //$NON-NLS-1$
 						arch= org.eclipse.core.runtime.Platform.ARCH_X86_64;
 					}
+					bufferedReader.close();
 					unameProcess.waitFor();	// otherwise the process becomes a zombie
 				} catch (IOException e) {
 				} catch (InterruptedException exc) {
-					Thread.currentThread().interrupt();
+					// clear interrupted state
+					Thread.interrupted();
 				}
 			}
 			cachedArch= arch;

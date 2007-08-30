@@ -301,26 +301,31 @@ public class BaseUITestCase extends BaseTestCase {
 	final protected TreeItem checkTreeNode(Tree tree, int i0, int i1, String label) {
 		TreeItem item= null;
 		TreeItem root= tree.getItem(i0);
+		String itemText= null;
 		for (int i=0; i<400; i++) {
 			try {
-				item= null;
-				item= root.getItem(i1);
-				if (!"...".equals(item.getText())) {
-					break;
+				TreeItem firstItem= root.getItem(0);
+				final String text= firstItem.getText();
+				if (text.length() > 0 && !text.equals("...")) {
+					item= root.getItem(i1);
+					assertNotNull("Unexpected tree node " + item.getText(), label);
+					assertEquals(label, item.getText());
+					return item;
 				}
-			} catch (SWTException e) {
-				// in case widget was disposed, item may be replaced
-			}
+			} 
 			catch (IllegalArgumentException e) {
-				if (label == null) {
-					return null;
+				if (label != null) {
+					fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
 				}
+				return null;
+			}
+			catch (SWTException e) {
+				// widget was disposed, try again.
+				root= tree.getItem(i0);
 			}
 			runEventQueue(10);
 		}
-		assertNotNull("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!", item);
-		assertNotNull("Unexpected tree node " + item.getText(), label);
-		assertEquals(label, item.getText());
-		return item;
+		fail("Timeout expired waiting for tree node " + label + "{" + i0 + "," + i1 + "}");
+		return null;
 	}
 }

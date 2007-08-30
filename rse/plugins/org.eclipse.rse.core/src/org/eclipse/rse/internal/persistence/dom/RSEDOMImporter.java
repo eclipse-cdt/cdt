@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -353,7 +354,21 @@ public class RSEDOMImporter {
 		boolean isSetStringsCaseSensitive = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE).getValue());
 		boolean isSetSupportsDuplicateFilterStrings = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS).getValue());
 		int release = getIntegerValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE).getValue());
-		boolean isSetSingleFilterStringOnly = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY).getValue());
+		
+		// Since old profiles won't have an "singleFilterStringOnlyESet" attribute
+		// we must give it a default value.
+		// False has been chosen because if the persistence is not correct then we
+		// don't know what the proper value should be, so
+		// we want it to check with the filter pool manager to decide
+		// if multi filter strings are allowed
+		boolean isSingleFilterStringOnlyESet = false;
+		boolean isSetSingleFilterStringOnly = false;
+		RSEDOMNodeAttribute attribute = node.getAttribute("singleFilterStringOnlyESet"); //$NON-NLS-1$
+		if (attribute != null) {
+			isSingleFilterStringOnlyESet = getBooleanValue(attribute.getValue());
+			isSetSingleFilterStringOnly = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY).getValue());
+		}
+		
 		String owningParentName = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_OWNING_PARENT_NAME).getValue();
 		boolean isNonRenamable = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE).getValue());
 
@@ -379,7 +394,16 @@ public class RSEDOMImporter {
 				filterPool.setStringsCaseSensitive(isSetStringsCaseSensitive);
 				filterPool.setSupportsDuplicateFilterStrings(isSetSupportsDuplicateFilterStrings);
 				filterPool.setRelease(release);
-				filterPool.setSingleFilterStringOnly(isSetSingleFilterStringOnly);
+				
+				// if single filter string only has been set in the past then set
+				// the value to the persisted one which will set ESet to true
+				// In the false case we don't do anything because the persistence
+				// could be messed up or ESet has never been set before
+				// in which case single filter string only should be false
+				if (isSingleFilterStringOnlyESet) {
+					filterPool.setSingleFilterStringOnly(isSetSingleFilterStringOnly);
+				}
+				
 				filterPool.setOwningParentName(owningParentName);
 				filterPool.setNonRenamable(isNonRenamable);
 //				filterPool.wasRestored();

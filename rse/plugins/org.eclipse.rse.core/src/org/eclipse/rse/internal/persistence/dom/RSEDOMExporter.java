@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -28,7 +29,6 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.IPropertyType;
 import org.eclipse.rse.core.model.IRSEModelObject;
@@ -201,9 +201,24 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE, getBooleanString(filterPool.isSetStringsCaseSensitive()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS, getBooleanString(filterPool.supportsDuplicateFilterStrings()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE, Integer.toString(filterPool.getRelease()));
-			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(filterPool.isSetSingleFilterStringOnly()));
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_OWNING_PARENT_NAME, filterPool.getOwningParentName());
 			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE, getBooleanString(filterPool.isNonRenamable()));
+			
+			boolean isSingleFilterStringOnly = false;
+			boolean isSingleFilterStringOnlyESet = filterPool.isSetSingleFilterStringOnly();
+			
+			// if ESet is true then calling isSingleFilterStringOnly() will return
+			// the value stored in the filter pool and not in the fp manager
+			// in the false case isSingleFilterStringOnly should be false as that what it is by default
+			if (isSingleFilterStringOnlyESet) {
+				isSingleFilterStringOnly = filterPool.isSingleFilterStringOnly();
+			} else {
+				isSingleFilterStringOnly = false;
+			}
+			
+			node.addAttribute("singleFilterStringOnlyESet", getBooleanString(isSingleFilterStringOnlyESet)); //$NON-NLS-1$
+			node.addAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY, getBooleanString(isSingleFilterStringOnly));
+			
 		}
 		ISystemFilter[] filters = filterPool.getSystemFilters();
 		for (int i = 0; i < filters.length; i++) {

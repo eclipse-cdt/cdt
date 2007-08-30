@@ -186,6 +186,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		cnt = 0;
 		for (int i=0; i<r_tools.length; i++) {
 			if (r_tools[i].isSystemObject()) continue;
+			if (r_tools[i].isAbstract()) continue;
 			v_tools[cnt++] = r_tools[i];
 		}
 		ITool[] tmp = new ITool[cnt];

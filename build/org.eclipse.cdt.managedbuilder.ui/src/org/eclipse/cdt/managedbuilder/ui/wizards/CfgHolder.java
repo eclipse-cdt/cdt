@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.ui.newui.UIMessages;
 
 /*
@@ -24,6 +25,8 @@ import org.eclipse.cdt.ui.newui.UIMessages;
  */
 public class CfgHolder {
 	private static final String DELIMITER = "_with_";  //$NON-NLS-1$
+	private static final String LBR = " (v ";  //$NON-NLS-1$
+	private static final String RBR = ")";  //$NON-NLS-1$
 
 	private String name;
 	private IConfiguration cfg;
@@ -70,10 +73,28 @@ public class CfgHolder {
     }
  
     public static CfgHolder[] unique(CfgHolder[] its) {
-    	// if names are not unique, add toolchain name
+    	// if names are not unique, add version name
     	if (hasDoubles(its)) {
        		for (int k=0; k<its.length; k++) {
-       			its[k].name = its[k].name + DELIMITER + its[k].cfg.getToolChain().getName();
+       			if (its[k].tc != null) {
+       				String ver = ManagedBuildManager.getVersionFromIdAndVersion(its[k].tc.getId());
+       				if(ver != null)
+       					its[k].name = its[k].name + LBR + ver + RBR;
+       			}
+       		}
+		}
+    	// if names are still not unique, add toolchain name
+    	if (hasDoubles(its)) {
+       		for (int k=0; k<its.length; k++) {
+       			String s = its[k].name;
+       			int x = s.indexOf(LBR);
+       			if (x >= 0) 
+       				s = s.substring(0, x); 
+       			IToolChain tc = its[k].tc;
+       			if (tc == null && its[k].cfg != null) 
+       				tc = its[k].cfg.getToolChain();
+       			if (tc != null)
+       				its[k].name = s + DELIMITER + tc.getUniqueRealName();
        		}
 		}
     	// if names are still not unique, add index

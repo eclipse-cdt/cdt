@@ -269,12 +269,13 @@ public class CDTConfigWizardPage extends WizardPage {
 			for (int i=0; i < tc.length; i++) {
 				s = s + ((tc[i] == null) ? 
 						"" : //$NON-NLS-1$
-						tc[i].getName());  
-				if (i < tc.length - 1) s = s + ", ";  //$NON-NLS-1$
+						tc[i].getUniqueRealName());  
+				if (i < tc.length - 1) s = s + "\n";  //$NON-NLS-1$
 			}
 			l_chains.setText(s);
 			l_projtype.setText(handler.getName());			
 			setPageComplete(isCustomPageComplete());
+			l_chains.getParent().pack();
 		}
 		parent.setVisible(visible);
 		if (visible) update();
@@ -282,10 +283,11 @@ public class CDTConfigWizardPage extends WizardPage {
 
     	//------------------------
     private Label setupLabel(Composite c, String name, int span, int mode) {
-		Label l = new Label(c, SWT.NONE);
+		Label l = new Label(c, SWT.WRAP);
 		l.setText(name);
 		GridData gd = new GridData(mode);
 		gd.horizontalSpan = span;
+		gd.verticalAlignment = SWT.TOP;
 		l.setLayoutData(gd);
 		Composite p = l.getParent();
 		l.setFont(p.getFont());

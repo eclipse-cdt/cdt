@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - Initial API and implementation (Corey Ashford)
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils;
@@ -56,9 +57,14 @@ public final class Platform {
 	
 					InputStreamReader inputStreamReader = new InputStreamReader(unameProcess.getInputStream());
 					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-					arch = bufferedReader.readLine();
-	
+					String unameOutput= bufferedReader.readLine();
+					if (unameOutput != null) {
+						arch= unameOutput;
+					}
+					unameProcess.waitFor();	// otherwise the process becomes a zombie
 				} catch (IOException e) {
+				} catch (InterruptedException exc) {
+					Thread.currentThread().interrupt();
 				}
 			} else if (arch.equals(org.eclipse.core.runtime.Platform.ARCH_X86)) {
 				// Determine if the platform is actually a x86_64 machine
@@ -71,12 +77,13 @@ public final class Platform {
 					InputStreamReader inputStreamReader = new InputStreamReader(unameProcess.getInputStream());
 					BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 					String unameOutput = bufferedReader.readLine();
-					if (unameOutput.endsWith("64")) { //$NON-NLS-1$
+					if (unameOutput != null && unameOutput.endsWith("64")) { //$NON-NLS-1$
 						arch= org.eclipse.core.runtime.Platform.ARCH_X86_64;
 					}
-					unameProcess.waitFor();
+					unameProcess.waitFor();	// otherwise the process becomes a zombie
 				} catch (IOException e) {
 				} catch (InterruptedException exc) {
+					Thread.currentThread().interrupt();
 				}
 			}
 			cachedArch= arch;

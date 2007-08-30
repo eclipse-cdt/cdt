@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - created and used RSEPreferencesManager
  *                     - moved SystemPreferencesManager to a new plugin
+ * Kevin Doyle (IBM) - [197199] Renaming a Profile doesn't cause a save
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -173,9 +174,13 @@ public class SystemProfileManager implements ISystemProfileManager {
 		boolean isActive = isSystemProfileActive(profile.getName());
 		String oldName = profile.getName();
 		profile.setName(newName);
-		if (isActive) RSEPreferencesManager.renameActiveProfile(oldName, newName);
-//		invalidateCache();
-		// FIXME RSEUIPlugin.getThePersistenceManager().save(this);
+		if (isActive) {
+			RSEPreferencesManager.renameActiveProfile(oldName, newName);
+		}
+		// Commit the profile to reflect the name change
+		RSECorePlugin.getThePersistenceManager().commitProfile(profile, 5000);
+		// Delete the profile by the old name, which is done in a separate job.
+		RSECorePlugin.getThePersistenceManager().deleteProfile(profile.getPersistenceProvider(), oldName);
 	}
 
 	/* (non-Javadoc)

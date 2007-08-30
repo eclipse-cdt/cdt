@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
+ * Kevin Doyle (IBM) - [197199] Renaming a Profile doesn't cause a save
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
@@ -104,6 +105,8 @@ public class RSEDOMExporter implements IRSEDOMExporter {
 		}
 
 		if (clean || profile.isDirty() || dom.isDirty()) {
+			// Doing a rename requires the dom to update it's name
+			dom.setName(profile.getName());
 			dom.clearAttributes();
 			dom.addAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT_PRIVATE, getBooleanString(profile.isDefaultPrivate()));
 			dom.addAttribute(IRSEDOMConstants.ATTRIBUTE_IS_ACTIVE, getBooleanString(profile.isActive()));

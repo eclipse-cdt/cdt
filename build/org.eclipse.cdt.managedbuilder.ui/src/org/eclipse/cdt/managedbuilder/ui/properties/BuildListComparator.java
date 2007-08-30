@@ -35,7 +35,7 @@ public class BuildListComparator extends CDTListComparator {
 			if (s1 == null) s1 = "";  //$NON-NLS-1$
 			String s2 = c2.getName();
 			if (s2 == null) s2 = "";  //$NON-NLS-1$ 
-			return s2.compareToIgnoreCase(s2);
+			return s1.compareToIgnoreCase(s2);
 		}
 		if (a instanceof IBuildPropertyValue) {
 			IBuildPropertyValue c1 = (IBuildPropertyValue)a;

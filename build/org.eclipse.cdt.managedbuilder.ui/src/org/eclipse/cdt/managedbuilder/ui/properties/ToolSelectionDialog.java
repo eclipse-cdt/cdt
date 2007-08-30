@@ -12,6 +12,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,7 +48,8 @@ public class ToolSelectionDialog extends Dialog {
 	private CLabel errorLabel;
 	public ITool[] all, used;
 	public IFolderInfo fi;
-	ArrayList added, removed, left, right;
+	ArrayList added, removed; 
+	private ArrayList left, right;
 	Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 	Color red;
 	
@@ -165,6 +167,9 @@ public class ToolSelectionDialog extends Dialog {
 		added.clear();
 		t1.removeAll();
 		t2.removeAll();
+		
+		Collections.sort(left, BuildListComparator.getInstance());
+		
 		Iterator it = left.iterator();
 		while(it.hasNext()) {
 			ITool t = (ITool)it.next();
@@ -221,9 +226,9 @@ public class ToolSelectionDialog extends Dialog {
 				}
 				//bug 189229 - provide more information in the error message for accessibility
 				Iterator iterator = conflictTools.iterator();
-				s = s+ " " + (String)iterator.next();
+				s = s+" "+ (String)iterator.next(); //$NON-NLS-1$
 				while (iterator.hasNext()) {
-					s = s + ", " + (String)iterator.next();
+					s = s + ", " + (String)iterator.next(); //$NON-NLS-1$
 				}
 			}
 			if ((c & IModificationStatus.TOOLS_DONT_SUPPORT_MANAGED_BUILD) != 0) {

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Emanuel Graf (IFS)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -26,7 +26,8 @@ public class DOMParserTestSuite extends TestCase {
 
 	public static Test suite() { 
 		TestSuite suite= new TestSuite(ParserTestSuite.class.getName());
-		suite.addTest( AST2Tests.suite() );
+		suite.addTest(DOMScannerTests.suite());
+		suite.addTest(AST2Tests.suite());
 		suite.addTestSuite( GCCTests.class );
 		suite.addTestSuite( AST2CPPTests.class );
 		suite.addTest( AST2TemplateTests.suite() );

@@ -1832,21 +1832,20 @@ abstract class BaseScanner implements IScanner {
             start = bufferPos[bufferStackPos] + 1;
             length = 0;
             boolean escaped = false;
-            while (++bufferPos[bufferStackPos] < limit) {
-                ++length;
+            for (length=0; ++bufferPos[bufferStackPos] < limit; length++) {
                 c = buffer[bufferPos[bufferStackPos]];
                 if (c == '"') {
-                    if (!escaped)
+                    if (!escaped) {
+                        filename = new String(buffer, start, length);
                         break;
+                    }
                 } else if (c == '\\') {
                     escaped = !escaped;
                     continue;
                 }
                 escaped = false;
             }
-            --length;
 
-            filename = new String(buffer, start, length);
             nameOffset = start;
             nameEndOffset = start + length;
             endOffset = start + length + 1;
@@ -1855,16 +1854,16 @@ abstract class BaseScanner implements IScanner {
             nameLine = getLineNumber(bufferPos[bufferStackPos]);
             local = false;
             start = bufferPos[bufferStackPos] + 1;
-            length = 0;
 
-            while (++bufferPos[bufferStackPos] < limit
-                    && buffer[bufferPos[bufferStackPos]] != '>')
-                ++length;
+            for (length=0; ++bufferPos[bufferStackPos] < limit; length++) {
+            	if (buffer[bufferPos[bufferStackPos]] == '>') {
+            		filename= new String(buffer, start, length);
+            		break;
+            	}
+            }
             endOffset = start + length + 1;
             nameOffset = start;
             nameEndOffset = start + length;
-
-            filename = new String(buffer, start, length);
             break;
         default:
             // handle macro expansions
@@ -2260,8 +2259,13 @@ abstract class BaseScanner implements IScanner {
         int currarg = -1;
         while (bufferPos[bufferStackPos] < limit) {
             skipOverWhiteSpace();
-            if (++bufferPos[bufferStackPos] >= limit)
+            if (++bufferPos[bufferStackPos] >= limit) {
+            	if (reportProblems) {
+                    handleProblem(IProblem.PREPROCESSOR_INVALID_MACRO_DEFN,
+                            idstart, name);
+            	}
                 return null;
+            }
             c = buffer[bufferPos[bufferStackPos]];
             int argstart = bufferPos[bufferStackPos];
             if (c == ')') {

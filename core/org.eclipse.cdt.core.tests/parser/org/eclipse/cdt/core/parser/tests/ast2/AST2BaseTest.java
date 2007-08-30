@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
@@ -103,17 +104,8 @@ public class AST2BaseTest extends BaseTestCase {
     }
     
     protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems , boolean parseComments) throws ParserException {
-        CodeReader codeReader = new CodeReader(code
-                .toCharArray());
-        ScannerInfo scannerInfo = new ScannerInfo();
-        IScannerExtensionConfiguration configuration = null;
-        if( lang == ParserLanguage.C )
-            configuration = new GCCScannerExtensionConfiguration();
-        else
-            configuration = new GPPScannerExtensionConfiguration();
-        IScanner scanner = new DOMScanner( codeReader, scannerInfo, ParserMode.COMPLETE_PARSE, lang, NULL_LOG, configuration, FileCodeReaderFactory.getInstance() );
-        scanner.setScanComments(parseComments);
-        
+        IScanner scanner = createScanner(new CodeReader(code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
+        		new ScannerInfo(), parseComments);
         ISourceCodeParser parser2 = null;
         if( lang == ParserLanguage.CPP )
         {
@@ -157,6 +149,18 @@ public class AST2BaseTest extends BaseTestCase {
         
         return tu;
     }
+
+	public static IScanner createScanner(CodeReader codeReader, ParserLanguage lang, ParserMode mode,
+			ScannerInfo scannerInfo, boolean parseComments) {
+		IScannerExtensionConfiguration configuration = null;
+        if( lang == ParserLanguage.C )
+            configuration = new GCCScannerExtensionConfiguration();
+        else
+            configuration = new GPPScannerExtensionConfiguration();
+        IScanner scanner = new DOMScanner( codeReader, scannerInfo, mode, lang, NULL_LOG, configuration, FileCodeReaderFactory.getInstance() );
+        scanner.setScanComments(parseComments);
+		return scanner;
+	}
 
     /**
      * @param string

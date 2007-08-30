@@ -122,7 +122,10 @@ public class BaseTestCase extends TestCase {
 				}
 			}
 		};
-		CCorePlugin.getDefault().getLog().addLogListener(logListener);
+		final CCorePlugin corePlugin = CCorePlugin.getDefault();
+		if (corePlugin != null) { // if we don't run a JUnit Plugin Test
+			corePlugin.getLog().addLogListener(logListener);
+		}
 		
 		Throwable testThrowable= null;
 		try {
@@ -151,7 +154,9 @@ public class BaseTestCase extends TestCase {
 				throw afe;
 			}
 		} finally {
-			CCorePlugin.getDefault().getLog().removeLogListener(logListener);
+			if (corePlugin != null) {
+				corePlugin.getLog().removeLogListener(logListener);
+			}
 		}
 		
 		if(testThrowable!=null)

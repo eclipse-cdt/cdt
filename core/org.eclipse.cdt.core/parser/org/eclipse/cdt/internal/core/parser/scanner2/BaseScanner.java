@@ -1831,19 +1831,15 @@ abstract class BaseScanner implements IScanner {
             local = true;
             start = bufferPos[bufferStackPos] + 1;
             length = 0;
-            boolean escaped = false;
             for (length=0; ++bufferPos[bufferStackPos] < limit; length++) {
                 c = buffer[bufferPos[bufferStackPos]];
                 if (c == '"') {
-                    if (!escaped) {
-                        filename = new String(buffer, start, length);
-                        break;
-                    }
-                } else if (c == '\\') {
-                    escaped = !escaped;
-                    continue;
+                	filename = new String(buffer, start, length);
+                	break;
+                } 
+                else if (c == '\n' || c == '\r') {
+                	break;
                 }
-                escaped = false;
             }
 
             nameOffset = start;
@@ -1856,8 +1852,12 @@ abstract class BaseScanner implements IScanner {
             start = bufferPos[bufferStackPos] + 1;
 
             for (length=0; ++bufferPos[bufferStackPos] < limit; length++) {
-            	if (buffer[bufferPos[bufferStackPos]] == '>') {
+                c = buffer[bufferPos[bufferStackPos]];
+            	if (c == '>') {
             		filename= new String(buffer, start, length);
+            		break;
+            	}
+            	else if (c == '\n' || c == '\r') {
             		break;
             	}
             }

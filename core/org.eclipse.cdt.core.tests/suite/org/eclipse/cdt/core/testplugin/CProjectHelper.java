@@ -118,13 +118,18 @@ public class CProjectHelper {
 	 * @param project
 	 * @throws CoreException 
 	 */
-	public static void addDefaultBinaryParser(IProject project) throws CoreException {
+	public static boolean addDefaultBinaryParser(IProject project) throws CoreException {
 		ICExtensionReference[] binaryParsers= CCorePlugin.getDefault().getBinaryParserExtensions(project);
 		if (binaryParsers == null || binaryParsers.length == 0) {
 			ICProjectDescription desc= CCorePlugin.getDefault().getProjectDescription(project);
+			if (desc == null) {
+				return false;
+			}
+			
 			desc.getDefaultSettingConfiguration().create(CCorePlugin.BINARY_PARSER_UNIQ_ID, CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID);
 			CCorePlugin.getDefault().setProjectDescription(project, desc);
 		}
+		return true;
 	}
 
 	/**

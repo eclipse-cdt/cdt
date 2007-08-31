@@ -15,7 +15,8 @@
  *******************************************************************************/
 
 #define STRICT
-#include <Windows.h>
+#define _WIN32_WINNT 0x0500
+#include <windows.h>
 #include <process.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -270,23 +271,18 @@ int main() {
 	swprintf(buffer, _T("Starting: %s\n"), szCmdLine);
 	OutputDebugStringW(buffer);
 #endif
-	// Create job object if it is possible
-	HMODULE hKernel = GetModuleHandle(L"kernel32.dll");
-	HANDLE hJob = NULL;
-	HANDLE (WINAPI * pCreateJobObject)(LPSECURITY_ATTRIBUTES lpJobAttributes,
-			char * lpName);
-	*(FARPROC *)&pCreateJobObject =
-	GetProcAddress(hKernel, "CreateJobObjectA");
-
-	if(NULL != pCreateJobObject)
-	hJob = pCreateJobObject(NULL, NULL);
+	// Create job object
+	HANDLE hJob = CreateJobObject(NULL, NULL);
+	
 	// Spawn the other processes as part of this Process Group
 	BOOL f = CreateProcessW(NULL, szCmdLine, NULL, NULL, TRUE,
 			0, NULL, NULL, &si, &pi);
+
 	// We don't need them any more
 	CloseHandle(stdHandles[0]);
 	CloseHandle(stdHandles[1]);
 	CloseHandle(stdHandles[2]);
+	
 	if (f) {
 #ifdef DEBUG_MONITOR
 		swprintf(buffer, _T("Process %i started\n"), pi.dwProcessId);
@@ -297,11 +293,7 @@ int main() {
 		h[1] = pi.hProcess;
 
 		if(NULL != hJob) {
-			HANDLE (WINAPI * pAssignProcessToJobObject)(HANDLE job, HANDLE process);
-			*(FARPROC *)&pAssignProcessToJobObject =
-			GetProcAddress(hKernel, "AssignProcessToJobObjectA");
-			if(NULL != pAssignProcessToJobObject)
-			if(!pAssignProcessToJobObject(hJob, pi.hProcess)) {
+			if(!AssignProcessToJobObject(hJob, pi.hProcess)) {
 #ifdef DEBUG_MONITOR
 				swprintf(buffer, _T("Cannot assign process %i to a job\n"), pi.dwProcessId);
 				OutputDebugStringW(buffer);
@@ -367,16 +359,11 @@ int main() {
 				SetEvent(waitEvent);
 				
 				if(NULL != hJob) {
-					HANDLE (WINAPI * pTerminateJobObject)(HANDLE job, UINT uExitCode);
-					*(FARPROC *)&pTerminateJobObject =
-					GetProcAddress(hKernel, "TerminateJobObjectA");
-					if(NULL != pTerminateJobObject) {
-						if(!pTerminateJobObject(hJob, (DWORD)-1)) {
+					if(!TerminateJobObject(hJob, (DWORD)-1)) {
 #ifdef DEBUG_MONITOR
-							OutputDebugStringW(_T("Cannot terminate job\n"));
-							DisplayErrorMessage();
+						OutputDebugStringW(_T("Cannot terminate job\n"));
+						DisplayErrorMessage();
 #endif
-						}
 					}
 				} else
 				exitProc = TRUE;

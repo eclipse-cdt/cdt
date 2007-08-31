@@ -187,21 +187,23 @@ public class PropertyManager {
 	}
 	
 	protected Properties getPropsFromData(Map data, IBuildObject bo){
-		Object oVal = data.get(bo.getId());
-		Properties props = null;
-		if(oVal instanceof String){
-			props = stringToProps((String)oVal);
-			data.put(bo.getId(), props);
-		} else if (oVal instanceof Properties){
-			props = (Properties)oVal;
-		}
-		
-		if(props == null){
-			props = new Properties();
-			data.put(bo.getId(), props);
-		} 
+		synchronized (data) {
+			Object oVal = data.get(bo.getId());
+			Properties props = null;
+			if(oVal instanceof String){
+				props = stringToProps((String)oVal);
+				data.put(bo.getId(), props);
+			} else if (oVal instanceof Properties){
+				props = (Properties)oVal;
+			}
+			
+			if(props == null){
+				props = new Properties();
+				data.put(bo.getId(), props);
+			} 
 
-		return props;
+			return props;
+		}
 	}
 
 
@@ -214,21 +216,25 @@ public class PropertyManager {
 
 	protected Properties mapToProps(Map map){
 		Properties props = null;
-		if(map != null && map.size() > 0){
-			props = new Properties();
-			for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
-				Map.Entry entry = (Map.Entry)iter.next();
-				String key = (String)entry.getKey();
-				String value = null;
-				Object oVal = entry.getValue();
-				if(oVal instanceof Properties){
-					value = propsToString((Properties)oVal);
-				} else if (oVal instanceof String){
-					value = (String)oVal;
+		if(map != null){
+			synchronized(map){
+				if(map.size() > 0){
+					props = new Properties();
+					for(Iterator iter = map.entrySet().iterator(); iter.hasNext();){
+						Map.Entry entry = (Map.Entry)iter.next();
+						String key = (String)entry.getKey();
+						String value = null;
+						Object oVal = entry.getValue();
+						if(oVal instanceof Properties){
+							value = propsToString((Properties)oVal);
+						} else if (oVal instanceof String){
+							value = (String)oVal;
+						}
+						
+						if(key != null && value != null)
+							props.setProperty(key, value);
+					}
 				}
-				
-				if(key != null && value != null)
-					props.setProperty(key, value);
 			}
 		}
 		

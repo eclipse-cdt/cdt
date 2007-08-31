@@ -1269,7 +1269,10 @@ public final class DataStore
 			parent.addNestedData(newObject, false);
 		}
 
-		_hashMap.put(id, newObject);
+		synchronized(_hashMap)
+		{
+			_hashMap.put(id, newObject);
+		}
 		
 		if (_autoRefresh)
 			refresh(parent);

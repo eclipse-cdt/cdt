@@ -1657,7 +1657,7 @@ public final class DataElement implements IDataElement
 			_isUpdated = false;
 			_isExpanded = true;
 			_buffer = null;
-			_nestedData = null;
+			//_nestedData = null;
 		}
 	}
 	

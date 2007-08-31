@@ -78,9 +78,17 @@ public abstract class UpdateHandler extends Handler
 				DataElement child = (DataElement) deletedList.get(i);
 				if (child != null && child.isDeleted())
 				{
+					clean(child, depth - 1);
 					DataElement parent = child.getParent();
-					if (child.isSpirit()) DataElementRemover.addToRemovedCount();
+					DataElementRemover.addToRemovedCount();
+					
+					if (child.isSpirit())
+					{
+						// officially delete this now
+						child.delete();
+					}
 					child.clear();
+					
 					if (parent != null)
 					{
 						parent.removeNestedData(child);

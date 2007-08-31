@@ -18,6 +18,7 @@
 package org.eclipse.dstore.internal.core.util;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
@@ -38,8 +39,8 @@ public class DataElementRemover extends Handler
 	// that are older than _expiryTime milliseconds are removed.
 	public static final int DEFAULT_EXPIRY_TIME = 600; // in seconds
 	public static final int DEFAULT_INTERVAL_TIME = 60; // in seconds
-	private int _intervalTime = DEFAULT_INTERVAL_TIME * 1000;
-	private int _expiryTime = DEFAULT_EXPIRY_TIME * 1000;
+	private int _intervalTime = DEFAULT_INTERVAL_TIME * 100;
+	private int _expiryTime = DEFAULT_EXPIRY_TIME * 100;
 	public static final String EXPIRY_TIME_PROPERTY_NAME = "SPIRIT_EXPIRY_TIME"; //$NON-NLS-1$
 	public static final String INTERVAL_TIME_PROPERTY_NAME = "SPIRIT_INTERVAL_TIME"; //$NON-NLS-1$
 	
@@ -149,7 +150,7 @@ public class DataElementRemover extends Handler
 				{
 					//_dataStore.memLog(toBeDisconnected.toString());
 				}
-				_dataStore.getHashMap().remove(toBeDisconnected.getId());
+				unmap(toBeDisconnected);
 			}
 			_dataStore.memLog("Disconnected " + disconnected + " DataElements."); //$NON-NLS-1$ //$NON-NLS-2$
 			_dataStore.memLog("Elements created so far: " + numCreated); //$NON-NLS-1$
@@ -158,6 +159,21 @@ public class DataElementRemover extends Handler
 			_dataStore.memLog("DataElements GCed so far: " + numGCed); //$NON-NLS-1$
 		}
 	}
+	
+	private void unmap(DataElement element)
+	{	 
+		List children = element.getNestedData();
+		if (children != null)
+		{
+			for (int i = 0; i < children.size(); i++)
+			{
+				DataElement child = (DataElement)children.get(i);
+				unmap(child);
+			}
+		}
+		_dataStore.getHashMap().remove(element.getId());
+	}
+	
 	
 	protected class QueueItem
 	{

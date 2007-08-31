@@ -3753,7 +3753,7 @@ public final class DataStore
 			for (int i = 0; i < toDelete.getNestedSize(); i++)
 			{
 				DataElement subDelete = toDelete.get(i);
-				if (subDelete != null && subDelete.getDataStore() == this && !subDelete.isDeleted())
+				if (subDelete != null && subDelete.getDataStore() == this/* && !subDelete.isDeleted()*/) // on server, spirited are considered deleted
 				{
 					deleteObjectHelper(toDelete, subDelete, depth);
 				}
@@ -4201,4 +4201,6 @@ public final class DataStore
 	{
 		referenceTag = tag;
 	}
+	
+
 }

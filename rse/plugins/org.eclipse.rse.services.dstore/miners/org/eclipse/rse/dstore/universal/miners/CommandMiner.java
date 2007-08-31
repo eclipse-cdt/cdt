@@ -203,6 +203,7 @@ public class CommandMiner extends Miner
 //			DataElement de = (DataElement) subject.dereference().get(1);
 			subject.dereference().get(1);
 			sendInputToCommand(input.getName(), getCommandStatus(subject));
+			status.setAttribute(DE.A_NAME, "done");
 		}
 		else if (name.equals("C_CANCEL")) //$NON-NLS-1$
 		{

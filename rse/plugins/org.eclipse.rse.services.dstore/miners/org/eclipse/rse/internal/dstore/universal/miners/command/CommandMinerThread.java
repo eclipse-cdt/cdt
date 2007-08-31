@@ -835,6 +835,23 @@ public class CommandMinerThread extends MinerThread
 	
 	public void cleanupThread()
 	{
+		// disconnecting all
+		_dataStore.disconnectObjects(_status);
+		
+
+		// clean up the associated environment
+		List projectEnvReference = _subject.getAssociated("inhabits"); //$NON-NLS-1$
+
+		if (projectEnvReference != null)
+		{
+			DataElement env = (DataElement)projectEnvReference.get(0);
+			DataElement envParent = env.getParent();			
+			_dataStore.deleteObject(envParent, env);
+			_dataStore.refresh(envParent);
+		}
+		_dataStore.disconnectObject(_subject); //bug 70420
+		
+		
 		refreshStatus();
 	    /*
 		if (_isShell)

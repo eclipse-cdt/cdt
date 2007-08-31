@@ -89,13 +89,23 @@ public class MingwEnvironmentVariableSupplier implements
 		return null;
 	}
 	
+	public static IPath getMsysBinDir() {
+		// Just look in the install location parent dir
+		IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile()).removeLastSegments(1);
+		IPath msysBinPath = installPath.append("msys\\bin");
+		return msysBinPath.toFile().isDirectory() ? msysBinPath : null;
+	}
+	
 	public MingwEnvironmentVariableSupplier() {
 		IPath binPath = getBinDir();
-		if (binPath != null)
-			path = new MingwBuildEnvironmentVariable(
-					"PATH",
-					binPath.toOSString(),
-					IBuildEnvironmentVariable.ENVVAR_PREPEND);
+		if (binPath != null) {
+			String pathStr = binPath.toOSString();
+			IPath msysBinPath = getMsysBinDir();
+			if (msysBinPath != null)
+				pathStr += ';' + msysBinPath.toOSString();
+			
+			path = new MingwBuildEnvironmentVariable("PATH", pathStr, IBuildEnvironmentVariable.ENVVAR_PREPEND);
+		}
 	}
 	
 	public IBuildEnvironmentVariable getVariable(String variableName,

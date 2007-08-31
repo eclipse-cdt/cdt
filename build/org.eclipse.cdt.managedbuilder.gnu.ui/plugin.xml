@@ -1662,12 +1662,13 @@
 			  </toolChain>
  
               <toolChain
-                     archList="all"
-                     osList="win32"
-                     name="%ToolChainName.Cygwin"
-                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
-                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;cdt.managedbuild.tool.gnu.c.linker.cygwin.base;cdt.managedbuild.tool.gnu.archiver"
-                     id="cdt.managedbuild.toolchain.gnu.cygwin.base">
+                    archList="all"
+                    configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier"
+                    id="cdt.managedbuild.toolchain.gnu.cygwin.base"
+                    isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.cygwin.IsGnuCygwinToolChainSupported"
+                    name="%ToolChainName.Cygwin"
+                    osList="win32"
+                    targetTool="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base;cdt.managedbuild.tool.gnu.c.linker.cygwin.base;cdt.managedbuild.tool.gnu.archiver">
                   <targetPlatform
 					  id="cdt.managedbuild.target.gnu.platform.cygwin.base"
 				 	  name="%PlatformName.Dbg"
@@ -1733,6 +1734,7 @@
                     archList="all"
                     configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwEnvironmentVariableSupplier"
                     id="cdt.managedbuild.toolchain.gnu.mingw.base"
+                    isToolChainSupported="org.eclipse.cdt.managedbuilder.gnu.mingw.MingwIsToolChainSupported"
                     name="%ToolChainName.MinGW"
                     osList="win32"
                     targetTool="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base;cdt.managedbuild.tool.gnu.c.linker.mingw.base;cdt.managedbuild.tool.gnu.archiver">

@@ -16,6 +16,8 @@ package org.eclipse.cdt.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import org.eclipse.cdt.core.CCorePlugin;
 import org.osgi.framework.Bundle;
 
 public final class Platform {
@@ -64,9 +66,10 @@ public final class Platform {
 					bufferedReader.close();
 					unameProcess.waitFor();	// otherwise the process becomes a zombie
 				} catch (IOException e) {
+					CCorePlugin.log(e);
 				} catch (InterruptedException exc) {
-					// clear interrupted state
-					Thread.interrupted();
+					// restore interrupted flag
+					Thread.currentThread().interrupt();
 				}
 			} else if (arch.equals(org.eclipse.core.runtime.Platform.ARCH_X86)) {
 				// Determine if the platform is actually a x86_64 machine
@@ -90,9 +93,10 @@ public final class Platform {
 					bufferedReader.close();
 					unameProcess.waitFor();	// otherwise the process becomes a zombie
 				} catch (IOException e) {
+					CCorePlugin.log(e);
 				} catch (InterruptedException exc) {
-					// clear interrupted state
-					Thread.interrupted();
+					// restore interrupted flag
+					Thread.currentThread().interrupt();
 				}
 			}
 			cachedArch= arch;

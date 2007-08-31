@@ -14,14 +14,14 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
 /**
  * This interface is intended for ISVs to implement when plugging a mechanism
- * for read-only/offline indexes into the CIndex.ReadOnlyPDOMProvider extension point element.
+ * for read-only/off-line indexes into the CIndex.ReadOnlyPDOMProvider extension point element.
+ * @since 4.0.0
  */
 public interface IReadOnlyPDOMProvider extends IIndexProvider {
 	/**
-	 * Returns the descriptors 
-	 * @param cproject
-	 * @param config
-	 * @return
+	 * Returns an array of IPDOMDescriptors that should contribute to the logical index
+	 * for the specified {@link ICConfigurationDescription}
+	 * @param config the configuration description whose logical index should be augmented
 	 */
 	public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config);
 }

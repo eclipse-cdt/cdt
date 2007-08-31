@@ -15,7 +15,12 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IIndexFragmentInclude extends IIndexInclude {
-
+	/**
+	 * Empty array constant
+	 * @since 4.0.1
+	 */
+	IIndexFragmentInclude[] EMPTY_FRAGMENT_INCLUDES_ARRAY = new IIndexFragmentInclude[0];
+	
 	/**
 	 * Returns the fragment that owns this include.
 	 */

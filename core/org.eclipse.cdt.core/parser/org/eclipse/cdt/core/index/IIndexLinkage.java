@@ -29,4 +29,9 @@ import org.eclipse.cdt.core.dom.ILinkage;
  * @since 4.0
  */
 public interface IIndexLinkage extends ILinkage {
+	/**
+	 * Empty IIndexLinkage array constant
+	 * @since 4.0.1
+	 */
+	IIndexLinkage[] EMPTY_INDEX_LINKAGE_ARRAY= new IIndexLinkage[0];
 }

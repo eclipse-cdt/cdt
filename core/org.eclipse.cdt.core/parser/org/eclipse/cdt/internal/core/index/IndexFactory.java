@@ -37,7 +37,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Class that creates indexes based on pdoms
+ * Class that creates indexes based on PDOMs
  * @since 4.0
  */
 public class IndexFactory {
@@ -192,7 +192,7 @@ public class IndexFactory {
 	}
 	
 	/**
-	 * Add an entry for the specified fragment. This copes with problems occuring when reading
+	 * Add an entry for the specified fragment. This copes with problems occurring when reading
 	 * the fragment ID.
 	 * @param id2fragment the map to add the entry to
 	 * @param fragment the fragment or null (which will result in no action)

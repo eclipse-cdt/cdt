@@ -78,6 +78,9 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 
+/**
+ * CCorePlugin is the life-cycle owner of the core plug-in, and starting point for access to many core APIs.
+ */
 public class CCorePlugin extends Plugin {
 
 	public static final int STATUS_CDTPROJECT_EXISTS = 1;
@@ -342,7 +345,7 @@ public class CCorePlugin extends Plugin {
         
         // bug 186755, when started after the platform has been started the job manager
         // is no longer suspended. So we have to start a job at the very end to make
-        // sure we don't trigger a concurrent plugin activation from within the job.
+        // sure we don't trigger a concurrent plug-in activation from within the job.
 		post1.schedule();
 		post2.schedule();
 	}
@@ -1040,7 +1043,7 @@ public class CCorePlugin extends Plugin {
 	//private static final String CONTENTASSIST = CCorePlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 
 	/**
-	 * Configure the plugin with respect to option settings defined in ".options" file
+	 * Configure the plug-in with respect to option settings defined in ".options" file
 	 */
 	public void configurePluginDebugOptions() {
 		
@@ -1208,7 +1211,7 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * aswers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 * @param project
 	 * @return
 	 */
@@ -1217,7 +1220,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	/**
-	 * aswers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
+	 * Answers whether the given project is a new-style project, i.e. CConfigurationDataProvider-driven
 	 * @param des
 	 * @return
 	 */

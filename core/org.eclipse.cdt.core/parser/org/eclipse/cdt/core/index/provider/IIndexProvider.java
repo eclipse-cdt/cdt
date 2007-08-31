@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * An IIndexProvider implementation provides additional indexing information for CDT projects
  * This interface only exists to hold commonality from sub-interfaces.
+ * @since 4.0.0
  */
 public interface IIndexProvider {
 	/**
@@ -25,9 +26,6 @@ public interface IIndexProvider {
 	 * <p>
 	 * The method will only be called once per project per eclipse session. This method will be called when a project is deleted
 	 * and a new project of the same name added. It also may be called lazily (at the point of first logical index use).
-	 * <p>
-	 * It is also expected the provider implementation will want to watch some properties of the project to determine
-	 * what index content to provide.
 	 * @param project
 	 * @return
 	 */

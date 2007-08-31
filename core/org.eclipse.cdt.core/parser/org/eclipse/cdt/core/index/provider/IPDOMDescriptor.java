@@ -14,7 +14,8 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * 
+ * Describes a PDOM format file in the local file system.
+ * @since 4.0.0
  */
 public interface IPDOMDescriptor {
 	/**

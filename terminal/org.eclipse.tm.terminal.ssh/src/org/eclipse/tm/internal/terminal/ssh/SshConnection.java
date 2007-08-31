@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [175686] Adapted to new IJSchService API 
  *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
  * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
+ * Mikhail Kalugin <fourdman@xored.com> - [201864] Fix Terminal SSH keyboard interactive authentication
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -33,6 +34,7 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
 class SshConnection extends Thread {
@@ -169,7 +171,7 @@ class SshConnection extends Thread {
     	return display;
     }
     
-    private static class MyUserInfo implements UserInfo {
+    private static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
     	private final String fConnectionId;
     	private final String fUser;
     	private String fPassword;

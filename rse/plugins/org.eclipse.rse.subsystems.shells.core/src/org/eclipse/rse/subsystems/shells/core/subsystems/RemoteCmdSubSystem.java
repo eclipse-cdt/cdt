@@ -567,6 +567,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 			{
 				_defaultShell = null;
 			}
+			cmdShell.removeOutput();
 			_cmdShells.remove(command);
 			Display.getDefault().asyncExec(new RefreshRemovedShell(this, cmdShell));
 		}

@@ -400,10 +400,20 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     
     @Override
     protected int getNodeDeltaFlagsForDMEvent(IDMEvent<?> e) {
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
-            return IModelDelta.CONTENT;
-        }
-        else if (e instanceof IRegisters.IRegistersChangedDMEvent) {
+        // In theory we want each node to act independently in terms of events. It might be
+        // the case that we would only have elements of this type at the root level.  It is
+        // the case that the current layout model always starts with the GROUPS followed by
+        // REGISTERS followed by BITFIELDS. But if we do this when a run-control event  has
+        // occured we generate a DELTA for every element,  which can create  a massive list
+        // of entries all of which say update the entire view. So for now we will just have
+        // the GROUP LAYOUT node do this.  Later we need to revisit the logic and make sure
+        // there is a way for the nodes to operate independently and efficiently.
+        //
+        // if (e instanceof IRunControl.ISuspendedDMEvent) {
+        //     return IModelDelta.CONTENT;
+        // }
+        
+        if (e instanceof IRegisters.IRegistersChangedDMEvent) {
             /*
              * Flush the cache.
              */
@@ -411,7 +421,8 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
             
             return IModelDelta.CONTENT;
         }
-        else if (e instanceof IRegisters.IRegisterChangedDMEvent) {
+        
+        if (e instanceof IRegisters.IRegisterChangedDMEvent) {
             /*
              * Flush the cache.
              */
@@ -429,11 +440,19 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
 
     @Override
     protected void buildDeltaForDMEvent(IDMEvent<?> e, VMDelta parent, int nodeOffset, RequestMonitor rm) {
-        
-        if (e instanceof IRunControl.ISuspendedDMEvent) {
-            // Create a delta that the whole register group has changed.
-            parent.addFlags(IModelDelta.CONTENT);
-        } 
+        // In theory we want each node to act independently in terms of events. It might be
+        // the case that we would only have elements of this type at the root level.  It is
+        // the case that the current layout model always starts with the GROUPS followed by
+        // REGISTERS followed by BITFIELDS. But if we do this when a run-control event  has
+        // occured we generate a DELTA for every element,  which can create  a massive list
+        // of entries all of which say update the entire view. So for now we will just have
+        // the GROUP LAYOUT node do this.  Later we need to revisit the logic and make sure
+        // there is a way for the nodes to operate independently and efficiently.
+        //
+        // if (e instanceof IRunControl.ISuspendedDMEvent) {
+        //     // Create a delta that the whole register group has changed.
+        //     parent.addFlags(IModelDelta.CONTENT);
+        // } 
         
         if (e instanceof IRegisters.IRegistersChangedDMEvent) {
             parent.addFlags(IModelDelta.CONTENT);;

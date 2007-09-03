@@ -8,6 +8,7 @@
  * Contributors: 
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Mikhail Kalugin <fourdman@xored.com> - [201867] Improve Terminal SSH connection summary string
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -28,8 +29,11 @@ public class SshSettings implements ISshSettings {
 	}
 
 	public String getSummary() {
-		return getHost() + ":" + getUser(); //$NON-NLS-1$
-			
+		String settings = getUser()+'@'+getHost();
+		if(getPort()!=22) {
+			settings += ':' + getPort();
+		}
+		return settings;
 	}
 
 	public void load(ISettingsStore store) {

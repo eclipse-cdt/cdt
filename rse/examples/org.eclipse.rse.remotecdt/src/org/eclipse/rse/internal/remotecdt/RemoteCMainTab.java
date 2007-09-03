@@ -18,7 +18,11 @@ import org.eclipse.cdt.launch.ui.CMainTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.window.Window;
@@ -40,6 +44,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
@@ -65,6 +70,8 @@ public class RemoteCMainTab extends CMainTab {
 	protected Text remoteProgText;
 	protected Button skipDownloadButton;
 	protected Button useLocalPathButton;
+	
+	private static int initializedRSE = 0;  //0=not initialized; -1=initializing; 1=initialized 
 	
 	SystemNewConnectionAction action = null;
 	
@@ -329,11 +336,57 @@ public class RemoteCMainTab extends CMainTab {
 		}
 	}
 	
+	private void waitForRSEInit(final Runnable callback) {
+		Job initRSEJob = null;
+		Job[] jobs = Job.getJobManager().find(null);
+		for(int i=0; i<jobs.length; i++) {
+		    if ("Initialize RSE".equals(jobs[i].getName())) { //$NON-NLS-1$
+		    	initRSEJob = jobs[i];
+		        break;
+		    }
+		}
+		if (initRSEJob == null) {
+			//Already initialized - we can continue right away
+			callback.run();
+		} else {
+			//Wait until model fully restored, then fire a callback to restore state.
+			//Remember current display, since we're definitely on the display thread here
+			final Display display = Display.getCurrent();
+			final Job fInitRSEJob = initRSEJob;
+			Job waitForRestoreCompleteJob = new Job("WaitForRestoreComplete") { //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						fInitRSEJob.join();
+						display.asyncExec(callback);
+					} catch(InterruptedException e) {
+						return Status.CANCEL_STATUS;
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			waitForRestoreCompleteJob.setSystem(true);
+			waitForRestoreCompleteJob.schedule();
+		}
+	}
+	
 	protected void updateConnectionPulldown() {
-	    connectionCombo.removeAll();
-	    // start RSEUIPlugin to make sure the SystemRegistry is initialized.
-	    boolean isRegistryActive = RSEUIPlugin.isTheSystemRegistryActive();
-	    if (isRegistryActive) {
+		if (initializedRSE==0) {
+		    // start RSEUIPlugin to make sure the SystemRegistry is initialized.
+		    boolean isRegistryActive = RSEUIPlugin.isTheSystemRegistryActive();
+		    if (isRegistryActive) {
+				initializedRSE = 1;
+		        waitForRSEInit(new Runnable() {
+		        	public void run() {
+		        		initializedRSE = 2;
+		        		updateConnectionPulldown();
+		        	}
+		        });
+		    }
+		} else if (initializedRSE<0) {
+			//initializing: nothing to do, callback will come soon
+		} else {
+			//already initialized
+		    connectionCombo.removeAll();
 			IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory("shells"); //$NON-NLS-1$
 			for(int i = 0; i < connections.length; i++) {
 				IRSESystemType sysType = connections[i].getSystemType();
@@ -345,7 +398,7 @@ public class RemoteCMainTab extends CMainTab {
 			
 			if(connections.length > 0)
 				connectionCombo.select(connections.length - 1);
-	    }
+		}
 	}
     
 	protected void updateTargetProgFromConfig(ILaunchConfiguration config) {

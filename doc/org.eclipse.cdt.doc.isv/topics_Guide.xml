@@ -6,6 +6,7 @@
 <toc label="Guide">
 	<topic label="CDT DOM" href="guide/dom/index.html">
 		<topic label="Prebuilt Indexes in CDT 4.0" href="guide/dom/index/prebuiltIndexes.html"/>
+		<topic label="Versioning of Prebuilt Indexes" href="guide/dom/index/prebuiltVersioning.html"/>
 	</topic>
 	<topic label="Managed Build System Extensibility Document" href="guide/mbs/extensibilityGuide/Managed_Build_Extensibility.html"/>
 	<topic label="Project Template Engine" href="guide/projectTemplateEngine/index.html"/>

@@ -73,47 +73,60 @@ import org.eclipse.core.runtime.Status;
 public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	protected Database db;
 
+	/**
+	 * Identifier for PDOM format
+	 * @see IIndexFragment#PROPERTY_FRAGMENT_FORMAT_ID
+	 */
+	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
+	
 	public static final int CURRENT_VERSION = 37;
 	public static final int MIN_SUPPORTED_VERSION= 36;
 	public static final int MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX= 37;	// to be removed in 4.1
-	// 0 - the beginning of it all
-	// 1 - first change to kick off upgrades
-	// 2 - added file inclusions
-	// 3 - added macros and change string implementation
-	// 4 - added parameters in C++
-	// 5 - added types and restructured nodes a bit
-	// 6 - function style macros.
-	// 7 - class key
-	// 8 - enumerators
-	// 9 - base classes
-	// 10 - typedefs, types on C++ variables
-	// 11 - changed how members work
-	// 12 - one more change for members (is-a list -> has-a list)
-	// 13 - CV-qualifiers, storage class specifiers, function/method annotations
-	// 14 - added timestamps for files (bug 149571)
-	// 15 - fixed offsets for pointer types and qualifier types and PDOMCPPVariable (bug 160540). 
-	// 16 - have PDOMCPPField store type information, and PDOMCPPNamespaceAlias store what it is aliasing
-	// 17 - use single linked list for names in file, adds a link to enclosing definition name.
-	// 18 - distinction between c-unions and c-structs.
-    // 19 - alter representation of paths in the pdom (162172)
-	// 20 - add pointer to member types, array types, return types for functions
-	// 21 - change representation of paths in the pdom (167549)
-	// 22 - fix inheritance relations (167396)
-	// 23 - types on c-variables, return types on c-functions
-	// 24 - file local scopes (161216)
-	// 25 - change ordering of bindings (175275)
-	// 26 - add properties storage
-	// 27 - templates: classes, functions, limited nesting support, only template type parameters
-	// 28 - templates: class instance/specialization base classes
-	// 29 - includes: fixed modeling of unresolved includes (180159)
-	// 30 - templates: method/constructor templates, typedef specializations
-	// 31 - macros: added file locations
-	// 32 - support stand-alone function types (181936)
-	// 33 - templates: constructor instances
-	// 34 - fix for base classes represented by qualified names (183843)
-	// 35 - add scanner configuration hash-code (62366)
-	// 36 - changed chunk size back to 4K (184892)
-	// 37 - added index for nested bindings (189811), compatible with version 36.
+	
+	/* 
+	 * PDOM internal format history
+	 * 
+	 *    #x# = the version was used in an official release
+	 * 
+	 *   0 - the beginning of it all
+	 *   1 - first change to kick off upgrades
+	 *   2 - added file inclusions  
+	 *   3 - added macros and change string implementation
+	 *   4 - added parameters in C++
+	 *   5 - added types and restructured nodes a bit
+	 *   6 - function style macros	 
+	 * # 7#- class key - <<CDT 3.1>>
+	 *   8 - enumerators
+	 *   9 - base classes
+	 *  10 - typedefs, types on C++ variables
+	 * #11#- changed how members work - <<CDT 3.1.1>>, <<CDT 3.1.2>>
+	 *  12 - one more change for members (is-a list -> has-a list)
+	 *  13 - CV-qualifiers, storage class specifiers, function/method annotations
+	 *  14 - added timestamps for files (bug 149571)
+	 *  15 - fixed offsets for pointer types and qualifier types and PDOMCPPVariable (bug 160540). 
+	 *  16 - have PDOMCPPField store type information, and PDOMCPPNamespaceAlias store what it is aliasing
+	 *  17 - use single linked list for names in file, adds a link to enclosing definition name.
+	 *  18 - distinction between c-unions and c-structs.
+	 *  19 - alter representation of paths in the pdom (162172)
+	 *  20 - add pointer to member types, array types, return types for functions
+	 *  21 - change representation of paths in the pdom (167549)
+	 *  22 - fix inheritance relations (167396)
+	 *  23 - types on c-variables, return types on c-functions
+	 *  24 - file local scopes (161216)
+	 *  25 - change ordering of bindings (175275)
+	 *  26 - add properties storage
+	 *  27 - templates: classes, functions, limited nesting support, only template type parameters
+	 *  28 - templates: class instance/specialization base classes
+	 *  29 - includes: fixed modeling of unresolved includes (180159)
+	 *  30 - templates: method/constructor templates, typedef specializations
+	 *  31 - macros: added file locations
+	 *  32 - support stand-alone function types (181936)
+	 *  33 - templates: constructor instances
+	 *  34 - fix for base classes represented by qualified names (183843)
+	 *  35 - add scanner configuration hash-code (62366)
+	 * #36#- changed chunk size back to 4K (184892) - <<CDT 4.0>>
+	 * #37#- added index for nested bindings (189811), compatible with version 36 - <<CDT 4.0.1>>
+	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
@@ -760,6 +773,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public String getProperty(String propertyName) throws CoreException {
+		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
+			return FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
+		}
+		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
+			return ""+db.getVersion(); //$NON-NLS-1$
+		}
 		return new DBProperties(db, PROPERTIES).getProperty(propertyName);
 	}
 

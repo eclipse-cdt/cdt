@@ -52,16 +52,33 @@ public interface IIndexFragment {
 	final int FIND_ALL_OCCURENCES = 		  IIndex.FIND_ALL_OCCURENCES;
 	
 	/**
-	 * Property key constant for the fragment ID. The fragment ID should uniquely identify the fragments usage within
+	 * Property key for the fragment ID. The fragment ID should uniquely identify the fragments usage within
 	 * a logical index.
+	 * @since 4.0
 	 */
 	public static final String PROPERTY_FRAGMENT_ID= "org.eclipse.cdt.internal.core.index.fragment.id"; //$NON-NLS-1$
+
+	/**
+	 * Property key for the fragment format ID. The fragment format ID should uniquely identify a format of an index fragment
+	 * up to version information. That is, as a particular format changes version its ID should remain the same.
+	 * @since 4.0.1
+	 */
+	public static final String PROPERTY_FRAGMENT_FORMAT_ID= "org.eclipse.cdt.internal.core.index.fragment.format.id"; //$NON-NLS-1$
+	
+	/**
+	 * Property key for the fragment format's version. Version numbers belonging to the same format (identified by format ID) should be
+	 * comparable with each other. The version scheme exposed should be compatible with the OSGi framework's
+	 * version scheme - i.e. it should be successfully parsed by org.osgi.framework.Version.parseVersion(String). A null value
+	 * for this property is interpreted as Version(0.0.0)
+	 * @since 4.0.1
+	 */
+	public static final String PROPERTY_FRAGMENT_FORMAT_VERSION= "org.eclipse.cdt.internal.core.index.fragment.format.version"; //$NON-NLS-1$
 	
 	/**
 	 * Returns the file for the given location. May return <code>null</code>, if no such file exists.
-	 * This method may only return files that are actually managed by this fragement.
+	 * This method may only return files that are actually managed by this fragment.
 	 * @param location the IIndexFileLocation representing the location of the file
-	 * @return the file for the location
+	 * @return the file for the location, or <code>null</code> if the file is not present in the index
 	 * @throws CoreException
 	 */
 	IIndexFragmentFile getFile(IIndexFileLocation location) throws CoreException;
@@ -167,11 +184,17 @@ public interface IIndexFragment {
 	
 	/**
 	 * Read the named property in this fragment. All fragments are expected to return a non-null value for 
-	 *    <pre>PROPERTY_FRAGMENT_ID</pre>
+	 *    <ul>
+	 *    <li>PROPERTY_FRAGMENT_ID</li>
+	 *    <li>PROPERTY_FRAGMENT_FORMAT_ID</li>
+	 *    <li>PROPERTY_FRAGMENT_FORMAT_VERSION</li>
+	 *    </ul>
 	 * @param key a case-sensitive identifier for a property, or null
 	 * @return the value associated with the key, or null if either no such property is set, or the specified key was null
 	 * @throws CoreException
 	 * @see IIndexFragment#PROPERTY_FRAGMENT_ID
+	 * @see IIndexFragment#PROPERTY_FRAGMENT_FORMAT_ID
+	 * @see IIndexFragment#PROPERTY_FRAGMENT_FORMAT_VERSION
 	 */
 	public String getProperty(String propertyName) throws CoreException;
 

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
@@ -88,11 +89,18 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return result;
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.IWritableIndexFragment#setProperty(java.lang.String, java.lang.String)
+	 */
 	public void setProperty(String propertyName, String value) throws CoreException {
+		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName) 
+		|| IIndexFragment.PROPERTY_FRAGMENT_FORMAT_VERSION.equals(propertyName)) {
+			throw new IllegalArgumentException("Property "+value+" may not be written to"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		new DBProperties(db, PROPERTIES).setProperty(propertyName, value);
 	}
 	
-
 	/**
 	 * Use the specified location converter to update each internal representation of a file location.
 	 * The file index is rebuilt with the new representations. Individual PDOMFile records are unmoved so

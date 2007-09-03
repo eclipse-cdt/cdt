@@ -9,6 +9,7 @@
  * Ewa Matejska (PalmSource) - initial API and implementation
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [196934] hide disabled system types in remotecdt combo
+ * Yu-Fen Kuo (MontaVista) - [190613] Fix NPE in Remotecdt when RSEUIPlugin has not been loaded
  *******************************************************************************/
 
 package org.eclipse.rse.internal.remotecdt;
@@ -27,6 +28,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.files.ui.dialogs.SystemRemoteFileDialog;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
+import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemNewConnectionAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -328,18 +330,22 @@ public class RemoteCMainTab extends CMainTab {
 	}
 	
 	protected void updateConnectionPulldown() {
-		connectionCombo.removeAll();
-		IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory("shells"); //$NON-NLS-1$
-		for(int i = 0; i < connections.length; i++) {
-			IRSESystemType sysType = connections[i].getSystemType();
-			RSESystemTypeAdapter a = (RSESystemTypeAdapter)sysType.getAdapter(RSESystemTypeAdapter.class);
-			if (a!=null && a.isEnabled(sysType)) {
-				connectionCombo.add(connections[i].getAliasName());
+	    connectionCombo.removeAll();
+	    // start RSEUIPlugin to make sure the SystemRegistry is initialized.
+	    boolean isRegistryActive = RSEUIPlugin.isTheSystemRegistryActive();
+	    if (isRegistryActive) {
+			IHost[] connections = RSECorePlugin.getTheSystemRegistry().getHostsBySubSystemConfigurationCategory("shells"); //$NON-NLS-1$
+			for(int i = 0; i < connections.length; i++) {
+				IRSESystemType sysType = connections[i].getSystemType();
+				RSESystemTypeAdapter a = (RSESystemTypeAdapter)sysType.getAdapter(RSESystemTypeAdapter.class);
+				if (a!=null && a.isEnabled(sysType)) {
+					connectionCombo.add(connections[i].getAliasName());
+				}
 			}
-		}
-		
-		if(connections.length > 0)
-			connectionCombo.select(connections.length - 1);
+			
+			if(connections.length > 0)
+				connectionCombo.select(connections.length - 1);
+	    }
 	}
     
 	protected void updateTargetProgFromConfig(ILaunchConfiguration config) {

@@ -21,6 +21,7 @@
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
+ * Remy Chi Jian Suen (Independent) - [192906][efs] No Error when trying to Create Remote Project when project with name exists
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs.ui;
@@ -126,15 +127,17 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 	 * Creates a remote project.
 	 * 
 	 * @param directory
-	 *            the remote folder on which the EFS project should be locaed
+	 *            the remote folder on which the EFS project should be located
 	 * @return <code>true</code> if the copy operation completed, and
 	 *         <code>false</code> if it was abandoned part way
 	 */
 	boolean performCreateRemoteProject(final IRemoteFile directory) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 			        createRemoteProject(directory, monitor);
+				} catch (InvocationTargetException e) {
+					throw e;
 				} catch (Exception e) {
 					if (e.getCause() instanceof CoreException) {
 						recordError((CoreException)e.getCause());
@@ -172,43 +175,38 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 	// (Copyright 2000, 2006 IBM Corporation and others)
 	//----------------------------------------------------------------------------
 
-	private IProject createRemoteProject(IRemoteFile directory, IProgressMonitor monitor)
+	private IProject createRemoteProject(IRemoteFile directory, IProgressMonitor monitor) throws InvocationTargetException
 	{
 		IWorkspaceRoot root = SystemBasePlugin.getWorkspaceRoot();
 
-		IProject editProject = root.getProject(directory.getName());
+		String directoryName = directory.getName();
+		IProject editProject = root.getProject(directoryName);
 
-		if ((editProject != null) && (editProject.exists()) && (editProject.isOpen()))
-		{
-			return editProject;
-		}
-		
-		if (editProject == null) {
-			return null;
-		}
-
-		try
-		{
-			IProjectDescription description = root.getWorkspace().newProjectDescription(directory.getName());
+		try {
+			//FIXME re-enable for 3.0 -- just allowing editProject.create() throw for now to avoid NLS change
+			//Should apply the patch from bug 192906 to Messages.java and messages.properties
+//			if (editProject.exists())
+//			{
+//				throw new CoreException(new Status(IStatus.ERROR,
+//						Activator.getDefault().getBundle().getSymbolicName(),
+//						NLS.bind(Messages.CreateRemoteProjectActionDelegate_PROJECT_EXISTS, directoryName)));
+//			}
+	
+			IProjectDescription description = root.getWorkspace().newProjectDescription(directoryName);
 			String hostNameOrAddr = directory.getParentRemoteFileSubSystem().getHost().getHostName();
 			String absolutePath = directory.getAbsolutePath();
 			URI location = RSEFileSystem.getURIFor(hostNameOrAddr, absolutePath);
 			description.setLocationURI(location);
-
+	
 			editProject.create(description, monitor);
 			
 			editProject.open(monitor);
 			
 		    editProject.refreshLocal(IResource.DEPTH_ONE, monitor);
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
 		}
-		catch (CoreException e)
-		{
-			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
-		}
-		catch (Exception e)
-		{
-			SystemBasePlugin.logError("Error creating temp project", e); //$NON-NLS-1$
-		}
+		    
 		return editProject;
 	}
 	

@@ -12,6 +12,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [192724] Fixed logic to filter folders if FILE_TYPE_FOLDERS
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
+ * Benjamin Muskalla (b.muskalla@gmx.net) - [174690][ssh] cannot delete symbolic links on remote systems
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -647,7 +648,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				String fullPath = remoteParent + '/' + fileName;
 				SftpATTRS attrs = null;
 				try {
-					attrs = getChannel("SftpFileService.delete").stat(fullPath); //$NON-NLS-1$
+					attrs = getChannel("SftpFileService.delete").lstat(fullPath); //$NON-NLS-1$
 				} catch (SftpException e) {
 					//bug 154419: test for dangling symbolic link 
 					if (e.id == ChannelSftp.SSH_FX_NO_SUCH_FILE) {

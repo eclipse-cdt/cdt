@@ -734,25 +734,38 @@ public class CUIPlugin extends AbstractUIPlugin {
 	
 			CEditorTextHoverDescriptor hoverDescriptor= null;
 			
-			if (first > -1 && problemHoverIndex > -1 && problemHoverIndex != first) {
+			if (first > -1 && problemHoverIndex > -1 && problemHoverIndex > first) {
 				// move problem hover to beginning
-				hoverDescriptor= fCEditorTextHoverDescriptors[first];
-				fCEditorTextHoverDescriptors[first]= fCEditorTextHoverDescriptors[problemHoverIndex];
-				fCEditorTextHoverDescriptors[problemHoverIndex]= hoverDescriptor;
+				hoverDescriptor= fCEditorTextHoverDescriptors[problemHoverIndex];
+				System.arraycopy(fCEditorTextHoverDescriptors, first, fCEditorTextHoverDescriptors, first+1, problemHoverIndex - first);
+				fCEditorTextHoverDescriptors[first]= hoverDescriptor;
 
 				// update annotation hover index if needed
-				if (annotationHoverIndex == first)
-					annotationHoverIndex= problemHoverIndex;
+				if (annotationHoverIndex > first && annotationHoverIndex < problemHoverIndex)
+					annotationHoverIndex++;
 			}
 			
-			if (annotationHoverIndex > -1 && annotationHoverIndex != last) {
+			if (annotationHoverIndex > -1 && annotationHoverIndex < last) {
 				// move annotation hover to end
-				hoverDescriptor= fCEditorTextHoverDescriptors[last];
-				fCEditorTextHoverDescriptors[last]= fCEditorTextHoverDescriptors[annotationHoverIndex];
-				fCEditorTextHoverDescriptors[annotationHoverIndex]= hoverDescriptor;
+				hoverDescriptor= fCEditorTextHoverDescriptors[annotationHoverIndex];
+				System.arraycopy(fCEditorTextHoverDescriptors, annotationHoverIndex+1, fCEditorTextHoverDescriptors, annotationHoverIndex, last - annotationHoverIndex);
+				fCEditorTextHoverDescriptors[last]= hoverDescriptor;
+			}
+
+			// Move Best Match hover to front
+			for (int i= 0; i < length; i++) {
+				if (PreferenceConstants.ID_BESTMATCH_HOVER.equals(fCEditorTextHoverDescriptors[i].getId())) {
+					if (i > 0) {
+						// move to top
+						CEditorTextHoverDescriptor bestMatchHover= fCEditorTextHoverDescriptors[i];
+						System.arraycopy(fCEditorTextHoverDescriptors, 0, fCEditorTextHoverDescriptors, 1, i);
+						fCEditorTextHoverDescriptors[0]= bestMatchHover;
+					}
+					break;
+				}
+				
 			}
 		}
-		
 		return fCEditorTextHoverDescriptors;
 	} 
 

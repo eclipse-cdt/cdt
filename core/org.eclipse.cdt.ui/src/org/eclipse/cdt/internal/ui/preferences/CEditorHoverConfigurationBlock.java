@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -361,23 +361,6 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 	}
 
 	CEditorTextHoverDescriptor[] getContributedHovers() {
-		CEditorTextHoverDescriptor[] hoverDescriptors= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
-
-		// Move Best Match hover to front
-		
-		boolean done= false;
-		for (int i= 0; !done && i < hoverDescriptors.length; i++) {
-			if (PreferenceConstants.ID_BESTMATCH_HOVER.equals(hoverDescriptors[i].getId())) {
-				// Swap with first one
-				CEditorTextHoverDescriptor tmpHover= hoverDescriptors[0];
-				hoverDescriptors[0]= hoverDescriptors[i];
-				hoverDescriptors[i]= tmpHover;
-				return hoverDescriptors;
-			}
-			
-		}
-		
-		// return unchanged array if best match hover can't be found
 		return CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 	}
 

@@ -27,7 +27,6 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -121,16 +120,10 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             IPath baseDirectory = fUtil.getBaseDirectory();
             boolean isValidPath = baseDirectory.isPrefixOf(pFilePath);
             if (!isValidPath) {
-                IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
-                IFile[] foundOccurrences = wsRoot.findFilesForLocation(pFilePath);
-                if (foundOccurrences != null) {
-                	for (int j=0; j<foundOccurrences.length; j++) {
-                		IProject foundProject = foundOccurrences[j].getProject();
-                		if (foundProject != null && foundProject.getLocation().equals(baseDirectory)) {
-                			isValidPath = true;
-                			break;
-                		}
-                	}
+            	final IProject prj= fUtil.getProject();
+                IFile[] foundOccurrences = ((IWorkspaceRoot) prj.getParent()).findFilesForLocation(pFilePath);
+                for (int j=0; !isValidPath && j<foundOccurrences.length; j++) {
+                	isValidPath= prj.equals(foundOccurrences[j].getProject());
                 }
             }
             if (isValidPath) {

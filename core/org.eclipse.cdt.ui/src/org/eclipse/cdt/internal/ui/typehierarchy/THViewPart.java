@@ -529,6 +529,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
     	fOpenViewActionGroup= new OpenViewActionGroup(this);
     	fOpenViewActionGroup.setSuppressTypeHierarchy(true);
     	fOpenViewActionGroup.setSuppressProperties(true);
+    	fOpenViewActionGroup.setEnableIncludeBrowser(true);
     	fSelectionSearchGroup= new SelectionSearchGroup(getSite());
     	fRefactoringActionGroup= new CRefactoringActionGroup(this);
     	

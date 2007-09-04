@@ -133,6 +133,9 @@
 		<xslt style="${basedir}/JUNIT.XSL"
 			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
 			out="${zipsdir}/junits.html"/>
+		<copy file="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
+		    tofile="${zipsdir}/org.eclipse.cdt.testing.xml"
+		    failonerror="false"/>
 	</target>
 	
 	<target name="sign" depends="init" unless="hasErrors">

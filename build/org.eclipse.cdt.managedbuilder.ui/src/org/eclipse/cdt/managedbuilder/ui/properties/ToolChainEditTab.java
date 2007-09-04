@@ -153,7 +153,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			c_toolchain.add(NO_TC);
 		if (pos != -1) {
 			c_toolchain.select(pos);
-			c_builder.setEnabled(true);
+			c_builder.setEnabled(page.isForProject());
 		}
 		else {
 			if (cfg.getBuilder().isManagedBuildOn()) {
@@ -255,8 +255,86 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	}
 	
 	protected void performDefaults() {
+		if (page.isForProject()) {
+//			1.Per-project : change to the "default" tool-chain defined in the extension
+//			super-class of the project configuration. NOTE: the makefile project case might
+//			need a special handling in this case.
+			
+			//TODO: makefile case ?
+
+			IConfiguration cfg1 = cfg.getParent(); 
+			IBuilder b = cfg1.getBuilder();
+			cfg.changeBuilder(b, ManagedBuildManager.calculateChildId(b.getId(), null), b.getUniqueRealName());
+			IResourceInfo ri1 = cfg1.getResourceInfo(ri.getPath(), false);
+			copyFI(ri1, ri);
+		} else if (page.isForFolder()) {
+//			2.per-folder : change to the same tool-chain as the one used by the parent
+//			folder.
+			IResourceInfo ri1 = cfg.getResourceInfo(ri.getPath().removeLastSegments(1), false);
+			copyFI(ri1, ri);
+			
+		} else if (page.isForFile()) {
+//			3.per-file : change to the tool from the parent folder's tool-chain suitable
+//			for the given file. NOTE: the custom build step tool should be preserved!
+			
+			IResourceInfo ri1 = cfg.getResourceInfo(ri.getPath().removeLastSegments(1), false);
+			String ext = ri.getPath().getFileExtension();
+
+			ITool[] ts1 = ri1.getTools();
+			ITool newTool = null; 
+			for (int i=0; i<ts1.length; i++) {
+				if (ts1[i].isInputFileType(ext)) {
+					newTool = ts1[i];
+					break;
+				}				
+			}
+			
+			ITool[] tools = ri.getTools();
+			int pos = -1;
+			for (int i=0; i<tools.length; i++) {
+				if (tools[i] != null && !tools[i].getCustomBuildStep()) {
+					pos = i; 
+					break;
+				}
+			}
+
+			if (newTool != null) {
+				if (pos == -1) { // 1: NO TOOL -> tool 
+					ITool[] ts2 = new ITool[tools.length + 1];
+					System.arraycopy(tools, 0, ts2, 0, tools.length);
+					ts2[tools.length] = newTool;
+					tools = ts2;
+				} else          // 2: tool -> tool
+					tools[pos] = newTool;
+			} else if (pos != -1){ // 3: tool -> NO TOOL;
+				ITool[] ts2 = new ITool[tools.length - 1];
+				if (pos > 0)
+					System.arraycopy(tools, 0, ts2, 0, pos-1);
+				if (pos < ts2.length)
+					System.arraycopy(tools, pos+1, ts2, pos, ts2.length - pos);
+			}
+			((IFileInfo)ri).setTools(tools);
+		}			
 		updateData();
 	}
+	
+	private void copyFI(IResourceInfo src, IResourceInfo dst) {
+		if (src == null || dst == null)
+			return;
+		if (src instanceof IFolderInfo && dst instanceof IFolderInfo) { 
+			IFolderInfo fi1 = (IFolderInfo)src;
+			IFolderInfo fi = (IFolderInfo)dst;
+			IToolChain tc = fi1.getToolChain();
+			ITool[] tools1 = fi1.getTools();
+			ITool[] tools2 = fi.getTools();
+			try {
+				fi.changeToolChain(tc, ManagedBuildManager.calculateChildId(tc.getId(), null), tc.getUniqueRealName());
+				fi.modifyToolChain(tools2, tools1);
+			} catch (BuildException e) {}
+		}
+	}
+	
+	
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 	
 	private void saveToolSelected() {

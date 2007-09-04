@@ -26,6 +26,8 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -117,7 +119,21 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             
             CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, compilerInvocationIndex, extensionsIndex > 0);
             IPath baseDirectory = fUtil.getBaseDirectory();
-            if (baseDirectory.isPrefixOf(pFilePath)) {
+            boolean isValidPath = baseDirectory.isPrefixOf(pFilePath);
+            if (!isValidPath) {
+                IWorkspaceRoot wsRoot = ResourcesPlugin.getWorkspace().getRoot();
+                IFile[] foundOccurrences = wsRoot.findFilesForLocation(pFilePath);
+                if (foundOccurrences != null) {
+                	for (int j=0; j<foundOccurrences.length; j++) {
+                		IProject foundProject = foundOccurrences[j].getProject();
+                		if (foundProject != null && foundProject.getLocation().equals(baseDirectory)) {
+                			isValidPath = true;
+                			break;
+                		}
+                	}
+                }
+            }
+            if (isValidPath) {
 	            List cmdList = new ArrayList();
 	            cmdList.add(cmd);
 	            Map sc = new HashMap(1);

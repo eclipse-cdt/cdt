@@ -504,7 +504,9 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     protected void fillUpdateWithVMCs(IChildrenUpdate update, IDMContext<V>[] dmcs) {
         int startIdx = update.getOffset() != -1 ? update.getOffset() : 0;
         int endIdx = update.getLength() != -1 ? startIdx + update.getLength() : dmcs.length;
-        for (int i = startIdx; i < endIdx; i++) {
+        // Ted: added bounds limitation of dmcs.length
+        // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
+        for (int i = startIdx; i < endIdx && i < dmcs.length; i++) {
             update.setChild(createVMContext(dmcs[i]), i);
         }
     }

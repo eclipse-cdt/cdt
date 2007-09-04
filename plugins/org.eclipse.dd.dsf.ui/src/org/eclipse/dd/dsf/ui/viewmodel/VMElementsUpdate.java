@@ -29,7 +29,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentPr
 public class VMElementsUpdate extends VMViewerUpdate implements IChildrenUpdate {
     private final int fOffset;
     private final int fLength;
-    private final List<Object> fElements;
+    protected final List<Object> fElements;
     
     public VMElementsUpdate(IChildrenUpdate clientUpdate, int offset, int length, DataRequestMonitor<List<Object>> requestMonitor) {
         super(clientUpdate, requestMonitor);

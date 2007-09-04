@@ -272,9 +272,9 @@ public abstract class VMCache
     			@Override
     			protected void handleCompleted()
     			{
-    				if(getStatus().isOK())
+    				if(getData() != null)
     				{
-	    				for(int j = 0; j < update.getLength(); j++)
+	    				for(int j = 0; j < getData().size(); j++)
 	    				{
 	    					if(isCacheWriteEnabled())
 	    					{
@@ -289,7 +289,43 @@ public abstract class VMCache
     				}
     				update.done();
 				}
-			});
+			})
+    		{
+    			/* See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
+    			 * 
+    			 * A flexible hierarchy bug/optimization causes query with incorrect
+                 * IChildrenUpdate[] array length.
+                 *
+                 * We found this while deleting a register node. Example:
+                 * 
+                 *  the register view displays:
+                 *     PC
+                 *     EAX
+                 *     EBX
+                 *     ECX
+                 *     EDX
+                 * 
+                 *   we delete EBX and force a context refresh.
+                 * 
+                 *   flexible hierarchy queries for IChildrenUpdate[5] and IChildrenCountUpdate at
+                 * the same time.
+                 * 
+                 *   VMElementsUpdate, used by VMCache to wrap the IChildrenUpdate, generates an
+                 * IStatus.ERROR with message "Incomplete elements of updates" when fElements
+                 * count (provided by service) does not match the length provided by the original
+                 * update query.
+                 * 
+                 * Workaround, respect getData() != null instead of IStatus.OK, override
+                 * VMElementsUpdate.done() to set elements regardless of count
+    			 */
+    			@Override
+    		    public void done() {
+    		        @SuppressWarnings("unchecked")
+    		        DataRequestMonitor<List<Object>> rm = (DataRequestMonitor<List<Object>>)fRequestMonitor;
+    		        rm.setData(fElements);
+    		        super.done();
+    		    }
+    		};
     	}
 
     	return updates;

@@ -24,6 +24,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,13 +42,14 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private static final IToolChain[] r_tcs = ManagedBuildManager.getRealToolChains();
 	private static final IBuilder[]    r_bs = ManagedBuildManager.getRealBuilders();
 	private static final ITool[]    r_tools = ManagedBuildManager.getRealTools();
-
+	
 	private Text text;
 	private Button b_dispCompatible;
 	private Combo  c_toolchain;
 	private Combo  c_builder;
 	private Combo  c_tool; 
-//	private Button button_edit;
+	private Button button_edit;
+	private Group tools_group;
 	
 	private IBuilder[] v_bs;
 	private IToolChain[] v_tcs;
@@ -96,15 +98,15 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 					saveToolSelected();
 				}});
 		} else { // Folder or Project
-			Group g = setupGroup(usercomp, Messages.getString("ToolChainEditTab.3"), 2, GridData.FILL_BOTH); //$NON-NLS-1$
+			tools_group = setupGroup(usercomp, Messages.getString("ToolChainEditTab.3"), 2, GridData.FILL_BOTH); //$NON-NLS-1$
 
-			text = new Text(g, SWT.BORDER | SWT.WRAP | SWT.MULTI |
+			text = new Text(tools_group, SWT.BORDER | SWT.WRAP | SWT.MULTI |
 					SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL);
 			gd = new GridData(GridData.FILL_BOTH);
 			gd.grabExcessHorizontalSpace = true;
 			text.setLayoutData(gd);
 
-			Button button_edit = new Button(g, SWT.PUSH);
+			button_edit = new Button(tools_group, SWT.PUSH);
 			GridData gdb = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 			gdb.grabExcessHorizontalSpace = false;
 			gdb.horizontalAlignment = SWT.FILL;
@@ -134,9 +136,16 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			tc = ManagedBuildManager.getRealToolChain(((IFolderInfo)ri).getToolChain());
 		int cnt = 0;
 		int pos = -1;
+		
 		c_toolchain.removeAll();
+		boolean isMng = cfg.getBuilder().isManagedBuildOn();
 		for (int i=0; i<r_tcs.length; i++) {
-			if (r_tcs[i].isSystemObject()) continue;
+			if (r_tcs[i].isSystemObject() && 
+			    !( 
+					  ((ToolChain)r_tcs[i]).isPreferenceToolChain() &&
+			           !isMng)
+			     ) // NO TOOLCHAIN 
+				continue;
 			
 			if (b_dispCompatible.getSelection() &&
 				(ri instanceof IFolderInfo) && 
@@ -147,20 +156,12 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			if (r_tcs[i].equals(tc)) pos = cnt;
 			cnt++;
 		}
-		// "No toolchain" is enabled for Make projects only.
-		if (!b_dispCompatible.getSelection() && 
-			!cfg.getBuilder().isManagedBuildOn())
-			c_toolchain.add(NO_TC);
 		if (pos != -1) {
 			c_toolchain.select(pos);
 			c_builder.setEnabled(page.isForProject());
 		}
 		else {
-			if (cfg.getBuilder().isManagedBuildOn()) {
-				c_toolchain.setText(EMPTY_STR); // unprobable case
-			} else {
-				c_toolchain.select(c_toolchain.getItemCount() - 1);
-			}
+			c_toolchain.setText(EMPTY_STR); // unprobable case
 			c_builder.setEnabled(false);
 		}
 		
@@ -219,7 +220,10 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}
 			c_tool.add(Messages.getString("ToolChainEditTab.6")); //$NON-NLS-1$
 			c_tool.select(pos);
-		} else { // display tools list for Folder and Project
+		} else if (((ToolChain)tc).isPreferenceToolChain()){ // display tools list for Folder and Project
+			tools_group.setVisible(false);
+		} else {
+			tools_group.setVisible(true);
 			String s = EMPTY_STR;
 			ITool[] tools = ri.getTools();
 			for (int i = 0; i < tools.length; i++)
@@ -260,13 +264,36 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 //			super-class of the project configuration. NOTE: the makefile project case might
 //			need a special handling in this case.
 			
-			//TODO: makefile case ?
-
-			IConfiguration cfg1 = cfg.getParent(); 
-			IBuilder b = cfg1.getBuilder();
-			cfg.changeBuilder(b, ManagedBuildManager.calculateChildId(b.getId(), null), b.getUniqueRealName());
-			IResourceInfo ri1 = cfg1.getResourceInfo(ri.getPath(), false);
-			copyFI(ri1, ri);
+			IConfiguration cfg1 = cfg.getParent();
+			if (cfg1.getToolChain() == null) {
+				if (cfg.getToolChain() != null) {
+					IToolChain tc1 = cfg.getToolChain().getSuperClass();
+					if (tc1 != null) {
+						IBuilder b = tc1.getBuilder();
+						cfg.changeBuilder(b, ManagedBuildManager.calculateChildId(b.getId(), null), b.getUniqueRealName());
+						try {
+							((IFolderInfo)ri).modifyToolChain(ri.getTools(), tc1.getTools());
+						} catch (BuildException e) {}
+					}
+				} else {
+					cfg1 = ManagedBuildManager.getPreferenceConfiguration(true);
+				}
+			} else {
+				IBuilder b = cfg1.getBuilder();
+				cfg.changeBuilder(b, ManagedBuildManager.calculateChildId(b.getId(), null), b.getUniqueRealName());
+				IResourceInfo ri1 = cfg1.getResourceInfo(ri.getPath(), false);
+				if (!((ToolChain)cfg1.getToolChain()).isPreferenceToolChain())
+					copyFI(ri1, ri);
+				else {
+					cfg1 = ManagedBuildManager.getPreferenceConfiguration(false);
+					IToolChain tc = cfg1.getToolChain();
+					try {
+						((IFolderInfo)ri).changeToolChain(tc, ManagedBuildManager.calculateChildId(tc.getId(), null), tc.getUniqueRealName());
+						((IFolderInfo)ri).modifyToolChain(ri.getTools(), tc.getTools());
+						
+					} catch (BuildException e) {}
+				}
+			}
 		} else if (page.isForFolder()) {
 //			2.per-folder : change to the same tool-chain as the one used by the parent
 //			folder.
@@ -276,7 +303,6 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		} else if (page.isForFile()) {
 //			3.per-file : change to the tool from the parent folder's tool-chain suitable
 //			for the given file. NOTE: the custom build step tool should be preserved!
-			
 			IResourceInfo ri1 = cfg.getResourceInfo(ri.getPath().removeLastSegments(1), false);
 			String ext = ri.getPath().getFileExtension();
 
@@ -312,6 +338,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 					System.arraycopy(tools, 0, ts2, 0, pos-1);
 				if (pos < ts2.length)
 					System.arraycopy(tools, pos+1, ts2, pos, ts2.length - pos);
+				tools = ts2;
 			}
 			((IFileInfo)ri).setTools(tools);
 		}			
@@ -333,7 +360,6 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			} catch (BuildException e) {}
 		}
 	}
-	
 	
 	protected void updateButtons() {} // Do nothing. No buttons to update.
 	

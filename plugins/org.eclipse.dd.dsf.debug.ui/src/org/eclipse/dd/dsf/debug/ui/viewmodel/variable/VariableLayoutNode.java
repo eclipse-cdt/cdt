@@ -77,6 +77,8 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
         return fChildLayoutNodes;
     }
     
+    private final static int MAX_STRING_VALUE_LENGTH = 40;
+    
     @Override
     public int getDeltaFlags(Object e) {
         /*
@@ -298,7 +300,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
                         } else {
                             for (int idx = 0; idx < localColumns.length; idx++) {
                                 if (IDebugVMConstants.COLUMN_ID__VALUE.equals(localColumns[idx])) {
-                                    updateFormattedExpressionValue(update, idx, dmc);
+                                	updateFormattedExpressionValue(update, idx, dmc, getData());
                                 }
                             }
                         }
@@ -315,8 +317,8 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
      *  get the formatted data value for a specific register.
      */
     private void updateFormattedExpressionValue(final ILabelUpdate update, final int labelIndex,
-                                                final IExpressionDMContext dmc)
-    {
+                                                final IExpressionDMContext dmc, final IExpressionDMData expressionDMData)
+    { 
         final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
         /*
          *  First select the format to be used. This involves checking so see that the preference
@@ -385,14 +387,27 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
                                     return;
                                 }
 
-                                // Fill the label/column with the properly formatted data value.
-                                update.setLabel(getData().getFormattedValue(), labelIndex);
+                                // Fill the label/column with the properly formatted data value. 
+                                StringBuffer stringValueBuf = new StringBuffer(getData().getFormattedValue());
+                                String stringValue = expressionDMData.getStringValue();
+                                if(stringValue != null && stringValue.length() > 0)
+                                {
+                                	stringValueBuf.append(" ");
+                                	stringValueBuf.append(stringValue.length() > MAX_STRING_VALUE_LENGTH ? stringValue.substring(0, MAX_STRING_VALUE_LENGTH) : stringValue);
+                                }
+                                update.setLabel(stringValueBuf.toString(), labelIndex);
                                 
                                 // Color based on change history
                                 FormattedValueDMData oldData = (FormattedValueDMData) VMCacheManager.getVMCacheManager()
                                     .getCache(VariableLayoutNode.this.getVMProvider().getPresentationContext())
                                     .getArchivedModelData(valueDmc);
-                                if (oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue())) {
+
+                        		IExpressionDMData oldDMData = (IExpressionDMData) VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext()).getArchivedModelData(dmc);
+                                String oldStringValue = oldDMData == null ? null : oldDMData.getStringValue();
+                                
+                                // highlight the value if either the value (address) has changed or the string (memory at the value) has changed
+                        		if ((oldData != null && !oldData.getFormattedValue().equals(getData().getFormattedValue()))
+                        			|| (oldStringValue != null && !oldStringValue.equals(stringValue))) {
                                     update.setBackground(
                                         DebugUIPlugin.getPreferenceColor(
                                             IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND).getRGB(),

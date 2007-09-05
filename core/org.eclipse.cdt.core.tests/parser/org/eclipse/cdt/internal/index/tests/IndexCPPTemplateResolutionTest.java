@@ -645,4 +645,18 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		IBinding b5 = getBindingFromASTName("left(a,b)", 4);
 		IBinding b6 = getBindingFromASTName("left(a,b)", 4);
 	}
+	
+	// class A {};
+	// template<typename T1, typename T2> class D {};
+	// template<typename X1> class D<X1,X1> {};
+	
+	// D<A,A> daa;
+	public void testClassPartialSpecializations_199572() throws Exception {
+		IBinding b0= getBindingFromASTName("D<A,A>", 6);
+		assertInstance(b0, ICPPTemplateInstance.class);
+		assertInstance(b0, ICPPClassType.class);
+		IBinding b1= getBindingFromASTName("D<A,A>", 1);
+		assertInstance(b1, ICPPTemplateDefinition.class);
+		assertInstance(b1, ICPPClassType.class);
+	}
 }

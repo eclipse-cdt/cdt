@@ -33,8 +33,9 @@ public class CompositeCPPClassTemplatePartialSpecialization extends CompositeCPP
 		return (ICPPClassTemplate) cf.getCompositeBinding((IIndexFragmentBinding)preresult);
 	}
 
-	public IType[] getArguments() { return TemplateInstanceUtil.getArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding);	}
+	public IType[] getArguments() { return TemplateInstanceUtil.getArguments(cf, (ICPPClassTemplatePartialSpecialization) rbinding); }
 	public ObjectMap getArgumentMap() {	return TemplateInstanceUtil.getArgumentMap(cf, rbinding); }
 	public IBinding getSpecializedBinding() { return TemplateInstanceUtil.getSpecializedBinding(cf, rbinding); }
 	public int getSignatureMemento() throws CoreException { return ((IPDOMOverloader) rbinding).getSignatureMemento(); }
+	public IBinding instantiate(IType[] args) { return InternalTemplateInstantiatorUtil.instantiate(args, cf, rbinding); }
 }

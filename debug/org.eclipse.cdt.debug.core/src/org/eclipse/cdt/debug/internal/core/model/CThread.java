@@ -868,6 +868,9 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		if ( adapter == IMemoryBlockRetrieval.class ) {
 			return getDebugTarget().getAdapter( adapter );
 		}
+		if ( adapter == ICDIThread.class ) {
+			return getCDIThread();
+		}
 		return super.getAdapter( adapter );
 	}
 

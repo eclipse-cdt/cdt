@@ -334,7 +334,11 @@ public class ResourceChangeHandler extends ResourceChangeHandlerBase implements 
 			if(delta != null){
 				IResourceDelta projs[] = delta.getAffectedChildren();
 				for(int i = 0; i < projs.length; i++){
-					IResourceDelta children[] = projs[i].getAffectedChildren();
+					IResourceDelta projDelta = projs[i];
+					if(!shouldVisit((IProject)projDelta.getResource()))
+						continue;
+							
+					IResourceDelta children[] = projDelta.getAffectedChildren();
 					for(int k = 0; k < children.length; k++){
 						IResourceDelta child = children[k];
 						IResource rc = child.getResource();

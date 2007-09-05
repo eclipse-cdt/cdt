@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -74,6 +75,9 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource dResource = delta.getResource();
 			
+			if(dResource.getType() == IResource.PROJECT && !shouldVisit((IProject)dResource))
+				return false;
+					
 			boolean resume = true;
 			boolean removed = false;
 			
@@ -126,10 +130,21 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 		}
 	}
 	
+	protected boolean shouldVisit(IProject project){
+		try {
+			return project.isOpen() ? project.hasNature(CProjectNature.C_NATURE_ID) : true;
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
+	}
+	
 	protected void doHahdleResourceMove(IResourceChangeEvent event, IResourceMoveHandler handler){
 		switch (event.getType()) {
 			case IResourceChangeEvent.PRE_CLOSE:
-				handler.handleProjectClose((IProject)event.getResource());
+				IProject project = (IProject)event.getResource();
+				if(shouldVisit(project))
+					handler.handleProjectClose(project);
 				break;
 //				case IResourceChangeEvent.PRE_DELETE :
 //					handler.handleResourceRemove(event.getResource());

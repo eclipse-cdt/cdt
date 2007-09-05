@@ -117,6 +117,7 @@
 	</target>
 
 	<target name="test" depends="init" unless="hasErrors">
+		<record name="${zipsdir}/testsLog.txt" action="start" loglevel="verbose"/>
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
 			dest="${buildDirectory}/eclipse"/>
 		<unjar src="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
@@ -136,6 +137,7 @@
 		<copy file="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
 		    tofile="${zipsdir}/org.eclipse.cdt.testing.xml"
 		    failonerror="false"/>
+		<record name="${zipsdir}/testsLog.txt" action="stop"/>
 	</target>
 	
 	<target name="sign" depends="init" unless="hasErrors">

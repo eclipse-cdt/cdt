@@ -1559,4 +1559,19 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	public boolean isFolderInfo() {
 		return true;
 	}
+
+	void performPostModificationAdjustments(ToolListModificationInfo info) {
+		adjustTargetTools(info.getRemovedTools(), info.getAddedTools(true));
+		
+		super.performPostModificationAdjustments(info);
+	}
+
+	void applyToolsInternal(ITool[] resultingTools,
+			ToolListModificationInfo info) {
+		toolChain.setToolsInternal(resultingTools);
+		
+		adjustTargetTools(info.getRemovedTools(), info.getAddedTools(true));
+		
+		setRebuildState(true);
+	}
 }

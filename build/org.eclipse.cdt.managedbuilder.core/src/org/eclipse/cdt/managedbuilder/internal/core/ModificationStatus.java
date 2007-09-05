@@ -27,7 +27,23 @@ public class ModificationStatus extends Status implements IModificationStatus {
 	private HashSet fUndefinedProperties = new HashSet();
 	private ITool[][] fToolConflicts;
 	private ITool[] fNonManagedBuildTools;
+
+	public static final ModificationStatus OK = new ModificationStatus(IStatus.OK, "", null);
 	
+	ModificationStatus(String msg){
+		this(msg, null);
+	}
+
+	ModificationStatus(String msg, Throwable t){
+		this(IStatus.ERROR, msg, t);
+	}
+
+	ModificationStatus(int severity, String msg, Throwable t){
+		super(severity, ManagedBuilderCorePlugin.getUniqueIdentifier(), msg, t);
+		fToolConflicts = new ITool[0][];
+		fNonManagedBuildTools = new ITool[0];
+	}
+
 	ModificationStatus(Map unsupportedRequiredProps,
 			Map unsupportedProps,
 			Set undefinedProps,

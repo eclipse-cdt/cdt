@@ -38,6 +38,7 @@ import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IEnvVarBuildPath;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IInputType;
 import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
@@ -3823,6 +3824,13 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	
 	void updateParent(IBuildObject parent){
 		this.parent = parent; 
+	}
+
+	void updateParentResourceInfo(IResourceInfo rcInfo){
+		if(rcInfo instanceof IFileInfo)
+			this.parent = rcInfo;
+		else
+			this.parent = ((IFolderInfo)rcInfo).getToolChain();
 	}
 
 	public List getIdenticalList() {

@@ -1135,6 +1135,20 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		getToolMap().put(tool.getId(), tool);
 	}
 	
+	void setToolsInternal(ITool[] tools){
+		List list = getToolList();
+		Map map = getToolMap();
+		
+		list.clear();
+		map.clear();
+		
+		list.addAll(Arrays.asList(tools));
+		for(int i = 0; i < tools.length; i++){
+			ITool tool = tools[i];
+			map.put(tool.getId(), tool);
+		}
+	}
+	
 	public void removeTool(Tool tool){
 		getToolList().remove(tool);
 		getToolMap().remove(tool.getId());

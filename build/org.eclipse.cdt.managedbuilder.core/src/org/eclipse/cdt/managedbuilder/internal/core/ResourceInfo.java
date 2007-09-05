@@ -26,6 +26,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -527,4 +528,40 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	abstract void resolveProjectReferences(boolean onLoad);
 
 	abstract public boolean hasCustomSettings();
+	
+	public ToolListModificationInfo getToolListModificationInfo(ITool[] tools) {
+		ITool[] curTools = getTools();
+		return ToolChainModificationHelper.getModificationInfo(this, curTools, tools);
+	}
+
+	static ITool[][] getRealPairs(ITool[] tools){
+		ITool[][] pairs = new ITool[tools.length][];
+		for(int i = 0; i < tools.length; i++){
+			ITool[] pair = new ITool[2];
+			pair[0] = ManagedBuildManager.getRealTool(tools[i]);
+			if(pair[0] == null)
+				pair[0] = tools[i];
+			pair[1] = tools[i];
+			pairs[i] = pair;
+		}
+		return pairs;
+	}
+	
+	abstract void applyToolsInternal(ITool[] resultingTools, ToolListModificationInfo info);
+
+	void doApply(ToolListModificationInfo info){
+		ITool[] resulting = info.getResultingTools();
+		
+		ITool[] removed = info.getRemovedTools();
+		
+		BuildSettingsUtil.disconnectDepentents(getParent(), removed);
+		
+		applyToolsInternal(resulting, info);
+
+		performPostModificationAdjustments(info);
+	}
+	
+	void performPostModificationAdjustments(ToolListModificationInfo info){
+		propertiesChanged();
+	}
 }

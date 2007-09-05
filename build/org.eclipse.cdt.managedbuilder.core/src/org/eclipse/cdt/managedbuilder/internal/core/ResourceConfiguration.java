@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -86,7 +87,8 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		IManagedConfigElement[] tools = element.getChildren(ITool.TOOL_ELEMENT_NAME);
 		for (int n = 0; n < tools.length; ++n) {
 			Tool toolChild = new Tool(this, tools[n], getManagedBuildRevision());
-			toolList.add(toolChild);
+			getToolList().add(toolChild);
+			getToolMap().put(toolChild.getId(), toolChild);
 		}
 		
 		setDirty(false);
@@ -1003,89 +1005,29 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		return false;
 	}
 	
-	private ITool[][] getRealPairs(ITool[] tools){
-		ITool[][] pairs = new ITool[tools.length][];
-		for(int i = 0; i < tools.length; i++){
-			ITool[] pair = new ITool[2];
-			pair[0] = ManagedBuildManager.getRealTool(tools[i]);
-			if(pair[0] == null)
-				pair[0] = tools[i];
-			pair[1] = tools[i];
-			pairs[i] = pair;
-		}
-		return pairs;
-	}
-	
-	private int getPairIndex(ITool[][] pairs, ITool tool, int startIndex){
-		for(; startIndex < pairs.length; startIndex++){
-			if(pairs[startIndex][0] == tool)
-				return startIndex;
-		}
-		return -1;
-	}
-	
-	private int getNextIndex(Map map, ITool[][] pairs, ITool tool){
-		Integer indexInt = (Integer)map.get(tool.getId());
-		int index = 0;
-		if(indexInt != null){
-			index = indexInt.intValue();
-			if(index >= 0)
-				index++;
-		}
-		
-		if(index >= 0){
-			index = getPairIndex(pairs, tool, index);
-			map.put(tool.getId(), new Integer(index));
-		}
-
-		return index;
-	}
-	
-	private static IConfiguration getConfiguration(ITool tool){
-		IBuildObject bo = tool.getParent();
-		if(bo instanceof IToolChain)
-			return ((IToolChain)bo).getParent();
-		else if(bo instanceof IFileInfo)
-			return ((IFileInfo)bo).getParent();
-		return null;
-	}
-	
 	public void setTools(ITool[] tools){
-		if(isExtensionElement())
-			return;
-		
-		ITool[][] newPairs = getRealPairs(tools);
-		ITool[][] curPairs = getRealPairs(getTools());
-		Map realIdToPickedIndexMap = new HashMap();
-		
-		List newToolList = new ArrayList(tools.length);
-		
-		for(int i = 0; i < newPairs.length; i++){
-			ITool[] pair = newPairs[i];
-			int index = getNextIndex(realIdToPickedIndexMap, curPairs, pair[0]);
-			if(index >= 0){
-				newToolList.add(curPairs[index][1]);
-			} else {
-				ITool newBase = pair[1];
-				IConfiguration cfg = getConfiguration(newBase);
-				if(cfg != getParent()){
-					newBase = ManagedBuildManager.getExtensionTool(newBase);
-				}
-				
-				Tool newTool = new Tool(this, 
-						newBase, 
-						ManagedBuildManager.calculateChildId(newBase.getId(), null),
-						pair[1].getName(),
-						false);
-				
-				newToolList.add(newTool);
-			}
-		}
-		
-		toolList = newToolList;
+		ToolListModificationInfo info = getToolListModificationInfo(tools);
+		info.apply();
 	}
 
 	public boolean isFolderInfo() {
 		return false;
+	}
+
+	void applyToolsInternal(ITool[] resultingTools,
+			ToolListModificationInfo info) {
+		List list = getToolList();
+		Map map = getToolMap();
+		
+		list.clear();
+		map.clear();
+		
+		list.addAll(Arrays.asList(resultingTools));
+		for(int i = 0; i < resultingTools.length; i++){
+			ITool tool = resultingTools[i];
+			map.put(tool.getId(), tool);
+		}
+		
+		setRebuildState(true);
 	}
 }

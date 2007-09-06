@@ -1,37 +1,33 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2007 ENEA Software AB and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation
  *     ENEA Software AB - CLI command extension - fix for bug 190277
  *******************************************************************************/
+
 package org.eclipse.cdt.debug.mi.core.output;
 
 import java.util.StringTokenizer;
 
 
 /**
- * GDB/MI info program parsing.
-(gdb)
-info program
-&"info program\n"
-~"\tUsing the running image of child process 21301.\n"
-~"Program stopped at 0x804853f.\n"
-~"It stopped at breakpoint 1.\n"
-~"Type \"info stack\" or \"info registers\" for more information.\n"
-^done
-(gdb)
-
+ * GDB/CLI info proc parsing.
+(gdb) info proc
+process 19127 flags:
+PR_STOPPED Process (LWP) is stopped
+PR_ISTOP Stopped on an event of interest
+PR_RLC Run-on-last-close is in effect
+PR_FAULTED : Incurred a traced hardware fault FLTBPT: Breakpoint trap
  */
-public class CLIInfoProgramInfo extends MIInfo {
+public class CLIInfoProcInfo extends MIInfo {
 
 	int pid;
 
-	public CLIInfoProgramInfo(MIOutput out) {
+	public CLIInfoProcInfo(MIOutput out) {
 		super(out);
 		parse();
 	}
@@ -48,7 +44,7 @@ public class CLIInfoProgramInfo extends MIInfo {
 				if (oobs[i] instanceof MIConsoleStreamOutput) {
 					MIStreamRecord cons = (MIStreamRecord) oobs[i];
 					String str = cons.getString();
-					// We are interested in the signal info
+					// We are interested in the process info and PID
 					parseLine(str);
 				}
 			}
@@ -57,24 +53,22 @@ public class CLIInfoProgramInfo extends MIInfo {
 
 	void parseLine(String str) {
 		if (str != null && str.length() > 0) {
-			str = str.replace('.', ' ');
 			str = str.trim();
-			if (str.startsWith("Using")) { //$NON-NLS-1$
-				StringTokenizer st = new StringTokenizer(str);
-				while (st.hasMoreTokens()) {
-					String s = st.nextToken();
-					/* Not a process id if LWP is reported */
-					if (s.equals("LWP")) break; //$NON-NLS-1$
-
-					if (Character.isDigit(s.charAt(0))) {
-						try {
-							pid = Integer.decode(s).intValue();
-							break;
-						} catch (NumberFormatException e) {
-						}
+			if (!str.startsWith("process")) {  //$NON-NLS-1$
+				return;
+			}
+			StringTokenizer st = new StringTokenizer(str);
+			while (st.hasMoreTokens()) {
+				String s = st.nextToken();
+				if (Character.isDigit(s.charAt(0))) {
+					try {
+						pid = Integer.decode(s).intValue();
+						break;
+					} catch (NumberFormatException e) {
 					}
 				}
 			}
 		}
 	}
+
 }

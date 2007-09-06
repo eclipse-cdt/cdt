@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     ENEA Software AB - CLI command extension - fix for bug 190277
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.mi.core.command;
@@ -45,7 +46,7 @@ public class CommandFactory {
 	public MIBreakAfter createMIBreakAfter(int brknum, int count) {
 		return new MIBreakAfter(getMIVersion(), brknum, count);
 	}
-	
+
 	public MIBreakCondition createMIBreakCondition (int brknum, String expr) {
 		return new MIBreakCondition(getMIVersion(), brknum, expr);
 	}
@@ -307,13 +308,13 @@ public class CommandFactory {
 		return new MITargetDetach(getMIVersion());
 	}
 
-    public MITargetDownload createMITargetDownload(String file) {
-        return new MITargetDownload(getMIVersion(), file);
-    }
+	public MITargetDownload createMITargetDownload(String file) {
+		return new MITargetDownload(getMIVersion(), file);
+	}
 
-    public MITargetSelect createMITargetSelect(String[] params) {
-        return new MITargetSelect(getMIVersion(), params);
-    }
+	public MITargetSelect createMITargetSelect(String[] params) {
+		return new MITargetSelect(getMIVersion(), params);
+	}
 
 	public MIThreadListIds createMIThreadListIds() {
 		return new MIThreadListIds(getMIVersion());
@@ -361,6 +362,10 @@ public class CommandFactory {
 
 	public CLIPType createCLIPType(String name) {
 		return new CLIPType(name);
+	}
+
+	public CLIInfoProc createCLIInfoProc() {
+		return new CLIInfoProc();
 	}
 
 	public CLIInfoProgram createCLIInfoProgram() {

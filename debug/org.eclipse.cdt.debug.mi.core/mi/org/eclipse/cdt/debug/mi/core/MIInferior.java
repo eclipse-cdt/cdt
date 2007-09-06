@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Hewlett-Packard Development Company - fix for bug 109733
+ *     ENEA Software AB - CLI command extension - fix for bug 190277
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 
@@ -21,9 +22,11 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.CLIExecAbort;
 import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
+import org.eclipse.cdt.debug.mi.core.command.CLIInfoProc;
 import org.eclipse.cdt.debug.mi.core.command.CLIInfoProgram;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
+import org.eclipse.cdt.debug.mi.core.output.CLIInfoProcInfo;
 import org.eclipse.cdt.debug.mi.core.output.CLIInfoProgramInfo;
 
 /**
@@ -328,15 +331,27 @@ public class MIInferior extends Process {
 			int pid = 0;
 			// Do not try this on attach session.
 			if (!isConnected()) {
-				// Try to discover the pid
+				// Try to discover the pid using GDB/CLI Command "info proc"
 				CommandFactory factory = session.getCommandFactory();
-				CLIInfoProgram prog = factory.createCLIInfoProgram();
+				CLIInfoProc proc = factory.createCLIInfoProc();
 				try {
 					RxThread rxThread = session.getRxThread();
 					rxThread.setEnableConsole(false);
+					session.postCommand(proc); 
+					CLIInfoProcInfo infoProc = proc.getMIInfoProcInfo();
+					pid = infoProc.getPID();
+				} catch (MIException e) {
+					// no rethrown.
+				}
+				
+				// Try to discover the pid using GDB/CLI Command "info program" if "info proc" failed
+				try {
+					if(pid <= 0){ 
+					CLIInfoProgram prog = factory.createCLIInfoProgram();
 					session.postCommand(prog);
 					CLIInfoProgramInfo info = prog.getMIInfoProgramInfo();
 					pid = info.getPID();
+					}
 				} catch (MIException e) {
 					// no rethrown.
 				} finally {

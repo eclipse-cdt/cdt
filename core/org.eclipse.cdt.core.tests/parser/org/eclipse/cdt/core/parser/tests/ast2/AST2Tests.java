@@ -86,7 +86,9 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
@@ -3932,5 +3934,20 @@ public class AST2Tests extends AST2BaseTest {
     	StringBuffer buffer = getContents(1)[0];
     	parse( buffer.toString(), ParserLanguage.CPP, true, true );
     	parse( buffer.toString(), ParserLanguage.C, true, true );
+    }
+    
+    // class NameClash {}; 
+    // namespace NameClash {};
+    // namespace NameClash2 {};
+    // class NameClash2 {}; 
+    public void testBug202271_nameClash() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu= parseAndCheckBindings( buffer.toString(), ParserLanguage.CPP, true );
+		CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        assertInstance(col.getName(0).resolveBinding(), ICPPClassType.class);
+        assertInstance(col.getName(1).resolveBinding(), ICPPNamespace.class);
+        assertInstance(col.getName(2).resolveBinding(), ICPPNamespace.class);
+        assertInstance(col.getName(3).resolveBinding(), ICPPClassType.class);
     }
 }

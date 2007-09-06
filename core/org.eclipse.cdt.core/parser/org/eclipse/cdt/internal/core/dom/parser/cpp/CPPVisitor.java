@@ -418,7 +418,8 @@ public class CPPVisitor {
 			IBinding binding;
             try {
                 binding = scope.getBinding( namespaceDef.getName(), false );
-                if( !(binding instanceof ICPPInternalBinding) || binding instanceof IProblemBinding ){
+                if( !(binding instanceof ICPPInternalBinding) || binding instanceof IProblemBinding 
+                		|| !(binding instanceof ICPPNamespace)){
     				binding = new CPPNamespace( namespaceDef );
     				ASTInternal.addName( scope,  namespaceDef.getName() );
     			}

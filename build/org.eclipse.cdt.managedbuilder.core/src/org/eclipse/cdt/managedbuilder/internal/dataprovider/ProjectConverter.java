@@ -260,9 +260,13 @@ public class ProjectConverter implements ICProjectConverter {
 		final boolean [] answer = new boolean[1];
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				if(multiple || PROPS.getProperty(rc, id) == null){
+				Object ob = PROPS.getProperty(rc, id);
+				if(multiple || ob == null){
 					PROPS.setProperty(rc, id, Boolean.TRUE);
 					answer[0] = MessageDialog.openQuestion(shell,title,message);
+					PROPS.setProperty(rc, id, answer[0] ? Boolean.TRUE : Boolean.FALSE);
+				} else {
+					answer[0] = ((Boolean)ob).booleanValue();
 				}
 			}
 		});	

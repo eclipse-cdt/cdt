@@ -390,6 +390,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			else
 				((IFileInfo)ri).setTools(new ITool[] {v_tools[pos]});				
 		}
+		updateData();
 	}
 	
 	private void modifyTools() {

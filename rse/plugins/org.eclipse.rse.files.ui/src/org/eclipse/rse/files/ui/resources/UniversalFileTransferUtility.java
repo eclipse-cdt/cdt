@@ -23,6 +23,7 @@
  * Xuan Chen        (IBM)        - [187548] Editor shows incorrect file name after renaming file on Linux dstore
  * David McKnight   (IBM)        - [191472] should not use super transfer with SSH/FTP Folder Copy and Paste
  * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
+ * Xuan Chen (IBM)        - [201790] [dnd] Copy and Paste across connections to a Drive doesn't work
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1018,7 +1019,11 @@ public class UniversalFileTransferUtility
 		}
 		else
 		{
-			newPathBuf.append(targetFolder.getSeparatorChar());
+			int newPathBufLenth = newPathBuf.length();
+			if (newPathBufLenth > 0 && !((newPathBuf.charAt(newPathBufLenth - 1) == targetFolder.getSeparatorChar())))
+			{
+				newPathBuf.append(targetFolder.getSeparatorChar());
+			}
 		}
 
 		List resources = workspaceSet.getResourceSet();

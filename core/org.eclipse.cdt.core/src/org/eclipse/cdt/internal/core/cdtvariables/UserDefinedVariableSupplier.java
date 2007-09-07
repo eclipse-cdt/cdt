@@ -98,10 +98,16 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 
 	public static UserDefinedVariableSupplier getInstance(){
 		if(fInstance == null)
+			fInstance = getInstanceSynch();
+		return fInstance;
+	}
+
+	private static UserDefinedVariableSupplier getInstanceSynch(){
+		if(fInstance == null)
 			fInstance = new UserDefinedVariableSupplier();
 		return fInstance;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.macros.IBuildMacroSupplier#getMacro(java.lang.String, int, java.lang.Object)

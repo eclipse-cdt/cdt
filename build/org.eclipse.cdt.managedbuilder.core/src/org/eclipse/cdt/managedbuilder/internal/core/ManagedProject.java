@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -55,7 +56,7 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 	//holds the user-defined macros
 //	private StorableMacros userDefinedMacros;
 	//holds user-defined environment
-	private StorableEnvironment userDefinedEnvironment;
+//	private StorableEnvironment userDefinedEnvironment;
 	
 	private BuildObjectProperties buildProperties;
 
@@ -138,17 +139,23 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 			
 			if(loadConfigs){
 				// Load children
+				StorableCdtVariables vars = null;
 				ICStorageElement configElements[] = element.getChildren();
 				for (int i = 0; i < configElements.length; ++i) {
 					ICStorageElement configElement = configElements[i];
 					if (configElement.getName().equals(IConfiguration.CONFIGURATION_ELEMENT_NAME)) {
 						Configuration config = new Configuration(this, configElement, managedBuildRevision, false);
-					}/*else if (configElement.getNodeName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
-						//load user-defined macros
-						ICStorageElement el = new XmlStorageElement((Element)configElement);
-						userDefinedMacros = new StorableMacros(el);
-					}*/
+					} else if (configElement.getName().equals("macros")) {	//$NON-NLS-1$
+						vars = new StorableCdtVariables(configElement, false);
+					}
 	
+				}
+				
+				if(vars != null){
+					for(Iterator iter = getConfigurationMap().values().iterator(); iter.hasNext(); ){
+						Configuration cfg = (Configuration)iter.next();
+						((ToolChain)cfg.getToolChain()).addProjectVariables(vars);
+					}
 				}
 			}
 		} else {
@@ -484,8 +491,8 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 //			return true;
 
 		//check whether the project - specific environment is dirty
-		if(userDefinedEnvironment != null && userDefinedEnvironment.isDirty())
-			return true;
+//		if(userDefinedEnvironment != null && userDefinedEnvironment.isDirty())
+//			return true;
 		
 		
 		// Otherwise see if any configurations need saving
@@ -555,13 +562,13 @@ public class ManagedProject extends BuildObject implements IManagedProject, IBui
 		return userDefinedMacros;
 	}
 */
-	public StorableEnvironment getUserDefinedEnvironmet(){
-		return userDefinedEnvironment;
-	}
-
-	public void setUserDefinedEnvironmet(StorableEnvironment env){
-		userDefinedEnvironment = env;
-	}
+//	public StorableEnvironment getUserDefinedEnvironmet(){
+//		return userDefinedEnvironment;
+//	}
+//
+//	public void setUserDefinedEnvironmet(StorableEnvironment env){
+//		userDefinedEnvironment = env;
+//	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.internal.core.BuildObject#updateManagedBuildRevision(java.lang.String)

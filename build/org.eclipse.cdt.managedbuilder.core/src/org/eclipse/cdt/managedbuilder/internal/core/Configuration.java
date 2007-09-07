@@ -139,7 +139,7 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	
 	//property name for holding the rebuild state
 	private static final String REBUILD_STATE = "rebuildState";  //$NON-NLS-1$
-
+	
 	//The resource delta passed to the builder is not always up-to-date
 	//for the given configuration because between two builds of the same configuration
 	//any number of other configuration builds may occur

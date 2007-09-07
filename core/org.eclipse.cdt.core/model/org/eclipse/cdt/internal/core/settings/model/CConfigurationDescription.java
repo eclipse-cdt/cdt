@@ -376,7 +376,7 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		}
 		return data;
 	}
-
+	
 	public void setConfigurationData(String buildSystemId, CConfigurationData data) throws WriteAccessException {
 		String oldId = getId();
 		setData(data);
@@ -385,8 +385,8 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 		}
 		try {
 			CConfigurationSpecSettings settings = getSpecSettings();
-			settings.setId(getId());
-			settings.setName(getName());
+			settings.setId(data.getId());
+			settings.setName(data.getName());
 			settings.setBuildSystemId(buildSystemId);
 		} catch (CoreException e) {
 		}

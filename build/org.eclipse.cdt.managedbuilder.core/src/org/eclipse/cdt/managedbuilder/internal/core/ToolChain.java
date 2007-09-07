@@ -26,6 +26,7 @@ import org.eclipse.cdt.build.internal.core.scannerconfig.CfgDiscoveredPathManage
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CTargetPlatformData;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -102,8 +103,9 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	private boolean isExtensionToolChain = false;
 	private boolean isDirty = false;
 	private boolean resolved = resolvedDefault;
-	//holds the user-defined macros
-//	private StorableMacros userDefinedMacros;
+
+	//used for loadding pre-4.0 projects only
+	private StorableCdtVariables userDefinedMacros;
 	//holds user-defined macros
 //	private StorableEnvironment userDefinedEnvironment;
 
@@ -270,11 +272,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 					// TODO: report error
 				}
 				builder = new Builder(this, configElement, managedBuildRevision);
-			}/*else if (configElement.getName().equals(StorableMacros.MACROS_ELEMENT_NAME)) {
+			} else if (configElement.getName().equals("macros")) {	//$NON-NLS-1$
 				//load user-defined macros
-				userDefinedMacros = new StorableMacros(configElement);
-
-			}*/
+				userDefinedMacros = new StorableCdtVariables(configElement, false);
+			}
 		}
 		
 		String rebuild = PropertyManager.getInstance().getProperty(this, REBUILD_STATE);
@@ -360,6 +361,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		nonInternalBuilderId = toolChain.nonInternalBuilderId;
 		
 		discoveredInfo = toolChain.discoveredInfo;
+		
+		userDefinedMacros = toolChain.userDefinedMacros;
 		
 		//  Clone the children in superclass
 		boolean copyIds = toolChain.getId().equals(id);
@@ -2751,5 +2754,22 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	
 	private String translateUnusedIdSetToString(Set set){
 		return CDataUtil.arrayToString(set.toArray(), ";"); //$NON-NLS-1$
+	}
+	
+	void addProjectVariables(StorableCdtVariables vars){
+		if(vars != null && !vars.isEmpty()){
+			StorableCdtVariables cfgVars = new StorableCdtVariables(vars, false);
+			if(userDefinedMacros != null){
+				cfgVars.createMacros(userDefinedMacros.getMacros());
+			}
+			
+			userDefinedMacros = cfgVars;
+		}
+	}
+	
+	public StorableCdtVariables getResetOldStyleProjectVariables(){
+		StorableCdtVariables vars = userDefinedMacros;
+		userDefinedMacros = null;
+		return vars;
 	}
 }

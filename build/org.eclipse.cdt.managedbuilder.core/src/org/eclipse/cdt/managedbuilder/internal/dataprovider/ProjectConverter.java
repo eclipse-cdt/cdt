@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
@@ -33,6 +34,9 @@ import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.util.PathEntryTranslator;
 import org.eclipse.cdt.core.settings.model.util.PathEntryTranslator.ReferenceSettingsInfo;
+import org.eclipse.cdt.internal.core.cdtvariables.ICoreVariableContextInfo;
+import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariables;
+import org.eclipse.cdt.internal.core.cdtvariables.UserDefinedVariableSupplier;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.IMakeTargetManager;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -585,7 +589,9 @@ public class ProjectConverter implements ICProjectConverter {
 				if(cfgs.length != 0){
 					Configuration cfg;
 					CConfigurationData data;
-	
+
+					UserDefinedVariableSupplier usrSupplier = UserDefinedVariableSupplier.getInstance();
+
 					for(int i = 0; i < cfgs.length; i++){
 						cfg = (Configuration)cfgs[i];
 						data = cfg.getConfigurationData();
@@ -594,8 +600,17 @@ public class ProjectConverter implements ICProjectConverter {
 							if(cfg.getConfigurationDescription() != null) {
 								//copy cfg to avoid raise conditions
 								cfg = ConfigurationDataProvider.copyCfg(cfg, cfgDes);
+								cfgDes.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, cfg.getConfigurationData());
 							}
 							cfg.setConfigurationDescription(cfgDes);
+							
+							StorableCdtVariables vars = ((ToolChain)cfg.getToolChain()).getResetOldStyleProjectVariables();
+							if(vars != null){
+								ICdtVariable vs[] = vars.getMacros();
+								for(int k = 0; k < vs.length; k++){
+									usrSupplier.createMacro(vs[k], ICoreVariableContextInfo.CONTEXT_CONFIGURATION, cfgDes);
+								}
+							}
 //						} catch (WriteAccessException e) {
 //							ManagedBuilderCorePlugin.log(e);
 //						} catch (CoreException e) {

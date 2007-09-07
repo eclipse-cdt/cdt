@@ -13,9 +13,8 @@ package org.eclipse.cdt.debug.ui.importexecutable;
 import java.io.File;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -28,11 +27,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.DebugUITools;
@@ -60,44 +58,14 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 
 	protected ImportExecutablePageTwo pageTwo;
 
-	private String parserID;
-
-	
-	private void waitForJob(String name)
-	{
-		IJobManager jobMan = Job.getJobManager();
-		Job[] jobs = jobMan.find(null);
-
-		for (int i = 0; i < jobs.length; i++) {
-			if (jobs[i].getName().equals(name)) {
-				try {
-					jobs[i].join();
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-	}
-
-	private void waitForDescSave() {
-		String taskName = CCorePlugin.getResourceString("CDescriptorManager.async_updater"); //$NON-NLS-1$
-		waitForJob(taskName);
-	}
-
 	public void addBinaryParsers(IProject newProject) throws CoreException {
-		ICDescriptorOperation op = new ICDescriptorOperation() {
-
-			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
-				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, parserID);	
-				}
-		};
-
+		ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(newProject);
 		String[] parserIDs = pageOne.getSupportedBinaryParserIds();
 		for (int i = 0; i < parserIDs.length; i++) {
-			parserID = parserIDs[i];
-			CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(newProject.getProject(), op, null);
-			waitForDescSave();
-			}
+			pd.getDefaultSettingConfiguration().create(CCorePlugin.BINARY_PARSER_UNIQ_ID, parserIDs[i]);
 		}
+		CCorePlugin.getDefault().setProjectDescription(newProject, pd, true, new NullProgressMonitor());
+	}
 	
 	/**
 	 * Adds the executables to a new or existing project. The executables are

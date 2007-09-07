@@ -48,9 +48,9 @@ public abstract class VMCache
 	
 	protected HashMap<IDMContext<?>, IDMData> fDataArchive = fData;
 	
-	public HashMap[] getCacheData()
+	public HashMap<?,?>[] getCacheData()
 	{
-		return new HashMap[] { fHasChildren, fChildrenCounts, fChildren, fData, fDataArchive };
+		return new HashMap<?,?>[] { fHasChildren, fChildrenCounts, fChildren, fData, fDataArchive };
 	}
 	
 	public VMCache()
@@ -58,17 +58,19 @@ public abstract class VMCache
 		
 	}
 	
-	public VMCache(VMCache oldCache)
+	// Suppress warnings related to the lost type information in getCacheData()
+    @SuppressWarnings("unchecked")
+    public VMCache(VMCache oldCache)
 	{
 		if(oldCache != null)
 		{
-			HashMap oldCacheData[] = oldCache.getCacheData();
+			HashMap<?,?> oldCacheData[] = oldCache.getCacheData();
 			
-			fHasChildren = oldCacheData[0];
-			fChildrenCounts = oldCacheData[1];
-			fChildren = oldCacheData[2];
-			fData = oldCacheData[3];
-			fDataArchive = oldCacheData[4];
+			fHasChildren = (HashMap<Object, Boolean>)oldCacheData[0];
+			fChildrenCounts = (HashMap<Object, Integer>)oldCacheData[1];
+			fChildren = (HashMap<Object, HashMap<Integer,Object>>)oldCacheData[2];
+			fData = (HashMap<IDMContext<?>, IDMData>)oldCacheData[3];
+			fDataArchive = (HashMap<IDMContext<?>, IDMData>)oldCacheData[4];
 		}
 	}
 	
@@ -81,12 +83,23 @@ public abstract class VMCache
 		fChildren.clear();
 		fHasChildren.clear();
 	}
-	
+
+	/**
+	 * Returns whether the data in this cache should used when servicing
+	 * view updates.  If this method returns false all updates will be 
+	 * sent to the view model, although the retrieved data should still
+	 * be stored in the cache if {@link #isCacheWriteEnabled()} returns true.
+	 * @return
+	 */
 	protected boolean isCacheReadEnabled()
 	{
 		return true;
 	}
 	
+	/**
+	 * Returns true if data retrieved from the view model should be cached. 
+	 * If this returns false, then the state of the cache is frozen.
+	 */
 	protected boolean isCacheWriteEnabled()
 	{
 		return true;
@@ -266,66 +279,68 @@ public abstract class VMCache
     	for(int i = 0; i < updates.length; i++)
     	{
     		final IChildrenUpdate update = updatesEntirelyMissingFromCache.elementAt(i);
-    		updates[i] = new VMElementsUpdate(update, update.getOffset(), update.getLength(),
-    			new DataRequestMonitor<List<Object>>(fExecutor, null)
-			{
-    			@Override
-    			protected void handleCompleted()
-    			{
-    				if(getData() != null)
-    				{
-	    				for(int j = 0; j < getData().size(); j++)
-	    				{
-	    					if(isCacheWriteEnabled())
-	    					{
-		    					if(!fChildren.containsKey(update.getElement()))
-		    						fChildren.put(update.getElement(), new HashMap<Integer,Object>());
-		    					
-		    					fChildren.get(update.getElement()).put(update.getOffset() + j, getData().get(j));
-	    					}
-	    					
-	    					update.setChild(getData().get(j), update.getOffset() + j);
-	    				}
-    				}
-    				update.done();
-				}
-			})
-    		{
-    			/* See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
-    			 * 
-    			 * A flexible hierarchy bug/optimization causes query with incorrect
-                 * IChildrenUpdate[] array length.
-                 *
-                 * We found this while deleting a register node. Example:
-                 * 
-                 *  the register view displays:
-                 *     PC
-                 *     EAX
-                 *     EBX
-                 *     ECX
-                 *     EDX
-                 * 
-                 *   we delete EBX and force a context refresh.
-                 * 
-                 *   flexible hierarchy queries for IChildrenUpdate[5] and IChildrenCountUpdate at
-                 * the same time.
-                 * 
-                 *   VMElementsUpdate, used by VMCache to wrap the IChildrenUpdate, generates an
-                 * IStatus.ERROR with message "Incomplete elements of updates" when fElements
-                 * count (provided by service) does not match the length provided by the original
-                 * update query.
-                 * 
-                 * Workaround, respect getData() != null instead of IStatus.OK, override
-                 * VMElementsUpdate.done() to set elements regardless of count
-    			 */
-    			@Override
-    		    public void done() {
-    		        @SuppressWarnings("unchecked")
-    		        DataRequestMonitor<List<Object>> rm = (DataRequestMonitor<List<Object>>)fRequestMonitor;
-    		        rm.setData(fElements);
-    		        super.done();
-    		    }
-    		};
+    		updates[i] = 
+    		    new VMElementsUpdate(
+    		        update, update.getOffset(), update.getLength(),
+    		        new DataRequestMonitor<List<Object>>(fExecutor, null)
+    		        {
+            			@Override
+            			protected void handleCompleted()
+            			{
+            				if(getData() != null)
+            				{
+        	    				for(int j = 0; j < getData().size(); j++)
+        	    				{
+        	    					if(isCacheWriteEnabled())
+        	    					{
+        		    					if(!fChildren.containsKey(update.getElement()))
+        		    						fChildren.put(update.getElement(), new HashMap<Integer,Object>());
+        		    					
+        		    					fChildren.get(update.getElement()).put(update.getOffset() + j, getData().get(j));
+        	    					}
+        	    					
+        	    					update.setChild(getData().get(j), update.getOffset() + j);
+        	    				}
+            				}
+            				update.done();
+        				}
+    		        })
+            		{
+            			/* See https://bugs.eclipse.org/bugs/show_bug.cgi?id=202109
+            			 * 
+            			 * A flexible hierarchy bug/optimization causes query with incorrect
+                         * IChildrenUpdate[] array length.
+                         *
+                         * We found this while deleting a register node. Example:
+                         * 
+                         *  the register view displays:
+                         *     PC
+                         *     EAX
+                         *     EBX
+                         *     ECX
+                         *     EDX
+                         * 
+                         *   we delete EBX and force a context refresh.
+                         * 
+                         *   flexible hierarchy queries for IChildrenUpdate[5] and IChildrenCountUpdate at
+                         * the same time.
+                         * 
+                         *   VMElementsUpdate, used by VMCache to wrap the IChildrenUpdate, generates an
+                         * IStatus.ERROR with message "Incomplete elements of updates" when fElements
+                         * count (provided by service) does not match the length provided by the original
+                         * update query.
+                         * 
+                         * Workaround, respect getData() != null instead of IStatus.OK, override
+                         * VMElementsUpdate.done() to set elements regardless of count
+            			 */
+            			@Override
+            		    public void done() {
+            		        @SuppressWarnings("unchecked")
+            		        DataRequestMonitor<List<Object>> rm = (DataRequestMonitor<List<Object>>)fRequestMonitor;
+            		        rm.setData(fElements);
+            		        super.done();
+            		    }
+            		};
     	}
 
     	return updates;

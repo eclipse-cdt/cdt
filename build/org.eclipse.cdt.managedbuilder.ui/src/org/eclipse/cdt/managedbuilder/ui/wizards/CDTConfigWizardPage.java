@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -360,10 +361,16 @@ public class CDTConfigWizardPage extends WizardPage {
 		Set x = new TreeSet();			
 		Set y = new TreeSet();			
 		for (int i=0; i<n; i++) {
+			if (tcs[i] == null) // --- NO TOOLCHAIN ---
+				continue;       // has no custom pages. 
 			x.add(tcs[i]);
-			try { // Any element may be null. Do nothing in this case. 
-				y.add(tcs[i].getParent().getProjectType().getId());
-			} catch (NullPointerException e) {}
+
+			IConfiguration cfg = tcs[i].getParent();
+			if (cfg == null)
+				continue;
+			IProjectType pt = cfg.getProjectType();
+			if (pt != null)
+				y.add(pt.getId());
 		}
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.TOOLCHAIN, x);
 		if (ptIsNull) {

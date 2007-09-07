@@ -419,6 +419,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		info.setManagedProject(mProj);
 
 		cfgs = CfgHolder.unique(cfgs);
+		cfgs = CfgHolder.reorder(cfgs);
 		
 		ICConfigurationDescription cfgDebug = null;
 		ICConfigurationDescription cfgFirst = null;

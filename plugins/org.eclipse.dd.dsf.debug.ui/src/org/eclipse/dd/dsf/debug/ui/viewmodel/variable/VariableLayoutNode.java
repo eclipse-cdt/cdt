@@ -10,7 +10,6 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.variable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -192,7 +191,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
             
             IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(exprVmc.getDMC(), IExpressionDMContext.class);
             if (exprDmc != null) {
-                return exprDmc.getQualifiedExpression();
+                return exprDmc.getExpression();
             }
 
             return null;     
@@ -523,28 +522,15 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
             // Call IExpressions.getSubExpressions() to get an Iterable of IExpressionDMContext objects representing
             // the sub-expressions of the expression represented by the current expression node.
             
-            final DataRequestMonitor<Iterable<IExpressionDMContext>> rm =
-                new DataRequestMonitor<Iterable<IExpressionDMContext>>(dsfExecutor, null) {
+            final DataRequestMonitor<IExpressionDMContext[]> rm =
+                new DataRequestMonitor<IExpressionDMContext[]>(dsfExecutor, null) {
                     @Override
                     public void handleCompleted() {
                         if (!getStatus().isOK()) {
                             handleFailedUpdate(update);
                             return;
                         }
-                        
-                        // Fill the update with the the IExpressionDMContext objects returned by
-                        // IExpressions.getSubExpressions().
-                        
-                        List<IExpressionDMContext> subExpressionDMCList = (List<IExpressionDMContext>)getData();
-                        IExpressionDMContext[] subExpressionDMCArray = new IExpressionDMContext[subExpressionDMCList.size()];
-                        Iterator<IExpressionDMContext> iter = subExpressionDMCList.iterator();
-
-                        int i = 0;
-                        while (iter.hasNext()) {
-                            subExpressionDMCArray[i++] = iter.next();
-                        }
-
-                        fillUpdateWithVMCs(update, subExpressionDMCArray);
+                        fillUpdateWithVMCs(update, getData());
                         update.done();
                     }
             };

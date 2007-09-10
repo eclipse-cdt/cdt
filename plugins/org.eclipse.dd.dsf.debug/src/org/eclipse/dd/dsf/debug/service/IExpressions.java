@@ -29,7 +29,7 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
 public interface IExpressions extends IDMService, IFormattedValues {
     
     /**
-     * Expression context. Since some expressions have children, expression contexts can be have an
+     * Expression context. Since some expressions have children, expression contexts can have an
      * arbitrary number of parents of type IExpressionDMContext.
      */
     public interface IExpressionDMContext extends IFormattedDataDMContext<IExpressionDMData> {
@@ -37,14 +37,6 @@ public interface IExpressions extends IDMService, IFormattedValues {
          * Returns a fully qualified expression string represented by this context.  This 
          * expression string is the same as the string that is sent to the debug engine to be
          * evaluated in context of a stack frame, thread, or a symbol context.   
-         * @return
-         */
-        String getQualifiedExpression();
-
-        /**
-         * If this expression is a sub-expression of another expression, this method returns 
-         * the expression relative to the parent of this expression.  Otherwise this method 
-         * will return the same string as {@link #getQualifiedExpression()}. 
          */
         String getExpression();
     }
@@ -79,9 +71,9 @@ public interface IExpressions extends IDMService, IFormattedValues {
         }
 
         /**
-         * ISSUE: Should this method be named getExpression() instead?
-         * 
-         * @return The original expression string that was supplied to IExpressions.createExpression().
+         * If this expression is a sub-expression of another expression, this method returns 
+         * the expression relative to the parent of this expression.  Otherwise this method 
+         * will return the same string as {@link #getExpression()}. 
          */
         String getName();
         
@@ -113,7 +105,7 @@ public interface IExpressions extends IDMService, IFormattedValues {
          *         of bits in the field.  For other types, this is 8 times the number of bytes in the value.
          */
         int getBitCount();
-        
+
         /**
          * @return A string containing the value of the expression as returned by the debugger backend.
          */
@@ -123,8 +115,6 @@ public interface IExpressions extends IDMService, IFormattedValues {
          * @return An IAddress object representing the memory address of the value of the expression (if it
          *         has one).  Non-lvalues do not have memory addresses (e.g., "x + 5").  When the expression
          *         has no address, this method returns an IAddress object on which isZero() returns true.
-         *         ISSUE: It would be nice if there was a method IAddress.isValid() which could return false
-         *         in this case.
          */
         IAddress getAddress();
         
@@ -148,10 +138,10 @@ public interface IExpressions extends IDMService, IFormattedValues {
     interface IExpressionChangedDMEvent extends IDMEvent<IExpressionDMContext> {}
 
     /**
-     * Returns the data model context object for the specified expression in the context of 
+     * Returns the data model context object for the specified expression in the context
      * specified by <b>ctx</b>.
      * 
-     * @param symbolsDmc: Context in which to evaluate the expression.  This context could include the
+     * @param ctx: Context in which to evaluate the expression.  This context could include the
      * PC location, stack frame, thread, or just a symbol context.
      *                
      * @param expression: The expression to evaluate.
@@ -167,11 +157,36 @@ public interface IExpressions extends IDMService, IFormattedValues {
      * 
      * @param exprCtx: The data model context representing an expression.
      * 
-     * @param rm: The return parameter is an Iterable because it's possible that the sub-expressions as
-     *            members of an array which could be very large.    
+     * @param rm: Request completion monitor containing an array of all sub-expressions   
      */
-    void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<Iterable<IExpressionDMContext>> rm);
+    void getSubExpressions(IExpressionDMContext exprCtx, DataRequestMonitor<IExpressionDMContext[]> rm);
+
+    /**
+     * Retrieves a particular range of sub-expressions of the given expression.  
+     * Sub-expressions are fields of a struct, union, or class, the enumerators 
+     * of an enumeration, and the element of an array.
+     * 
+     * @param exprCtx: The data model context representing an expression.
+     *        startIndex: Index of the first sub-expression to retrieve
+     *        length: Total number of sub-expressions to retrieve
+     * 
+     * @param rm: Request completion monitor containing an array of the requested
+     *            range of sub-expressions
+     */
+    void getSubExpressions(IExpressionDMContext exprCtx, int startIndex, int length, 
+    		DataRequestMonitor<IExpressionDMContext[]> rm);
     
+    /**
+     * Retrieves the number of sub-expressions of the given expression.  Sub-expressions are fields of a struct, union,
+     * or class, the enumerators of an enumeration, and the element of an array.
+     * 
+     * @param exprCtx: The data model context representing an expression.
+     * 
+     * @param rm: Request completion monitor containing the number of sub-expressions
+     *            of the specified expression
+     */
+    void getSubExpressionCount(IExpressionDMContext exprCtx, DataRequestMonitor<Integer> rm);
+
     /**
      * For object oriented languages, this method returns the expressions representing base types of
      * the given expression type.

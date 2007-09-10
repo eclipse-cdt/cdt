@@ -222,7 +222,7 @@ public class BooleanExpressionApplicabilityCalculator implements IOptionApplicab
 	
 	public String[] getReferencedPropertyIds(){
 		Map map = getReferencedProperties();
-		return (String[])map.entrySet().toArray(new String[map.size()]);
+		return (String[])map.keySet().toArray(new String[map.size()]);
 	}
 
 	public String[] getReferencedValueIds(String propertyId){

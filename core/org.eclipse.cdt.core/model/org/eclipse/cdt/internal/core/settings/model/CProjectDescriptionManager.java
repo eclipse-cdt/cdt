@@ -1186,7 +1186,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		Set curSet = new HashSet(Arrays.asList(natureIds));
 //		Set newSet = new HashSet(Arrays.asList(newNatures));
 //		Set oldSet = new HashSet(Arrays.asList(oldNatures));
-		Set newCurSet = new HashSet(curSet);
+		HashSet newCurSet = new HashSet(curSet);
 //		newSet.removeAll(oldSet);
 //		oldSet.removeAll(tmp);
 		
@@ -1201,46 +1201,10 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		}
 		
 		return false;
-			
-////		List[] natureDiff = ListComparator.compare(newNatures, oldNatures);
-//		
-////		String newBuilderIds[] = newDr.getBuilderIds();
-////		String oldBuilderIds[] = oldDr.getBuilderIds();
-////		List[] builderDiff = ListComparator.compare(newBuilderIds, oldBuilderIds);
-//		
-//		if(natureDiff != null /*|| builderDiff != null*/){
-////			boolean applyDes = false;
-////			if(des == null){
-////				des = project.getDescription();
-////				applyDes = true;
-////			}
-//			
-//			String natureIds[] = des.getNatureIds();
-//			if(natureDiff[1] != null){
-//				List remaining = ListComparator.getAdded(natureIds, natureDiff[1].toArray());
-//				if(remaining != null){
-//					natureIds = (String[])remaining.toArray(new String[remaining.size()]); 
-//				}
-//			}
-//			
-//			if(natureDiff[0] != null){
-//				Set set = new HashSet();
-//				set.addAll(Arrays.asList(natureIds));
-//				set.addAll(natureDiff[0]);
-//				natureIds = (String[])set.toArray(new String[set.size()]);
-//			}
-////			if(builderDiff != null){
-////	
-////			}
-//
-//			if(natureDiff != null)
-//				des.setNatureIds(natureIds);
-//			
-////			if(applyDes)
-////				project.setDescription(des, monitor);
-//			return true;
-//		}
-//		return false;
+
+
+
+
 	}
 
 	public void setProjectDescription(IProject project, ICProjectDescription des) throws CoreException {

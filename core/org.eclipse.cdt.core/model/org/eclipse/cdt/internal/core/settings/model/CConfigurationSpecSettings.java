@@ -392,7 +392,7 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 			return CfgExportSettingContainerFactory.getReferenceMap(fCfg);
 		if(fRefMapCache == null)
 			fRefMapCache = CfgExportSettingContainerFactory.getReferenceMap(fCfg);
-		return fRefMapCache;
+		return new HashMap(fRefMapCache);
 //		if(fRefInfoMap == null || fRefInfoMap.size() == 0)
 //			return new HashMap(0);
 //		

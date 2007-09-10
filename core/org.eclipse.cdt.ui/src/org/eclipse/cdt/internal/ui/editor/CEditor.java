@@ -1246,17 +1246,18 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			ICElement ce= null;
 			try {
 				ce= SelectionConverter.getElementAtOffset(this);
+				if (ce instanceof ITranslationUnit) {
+					ce = null;
+				}
 			} catch (CModelException ex) {
 				ce= null;
 			}
-			if (ce != null) { 
-				final ISelection selection= new StructuredSelection(ce);
-				return new IShowInSource() {
-					public ShowInContext getShowInContext() {
-						return new ShowInContext(getEditorInput(), selection);
-					}
-				};
-			}
+			final ISelection selection= ce != null ? new StructuredSelection(ce) : null;
+			return new IShowInSource() {
+				public ShowInContext getShowInContext() {
+					return new ShowInContext(getEditorInput(), selection);
+				}
+			};
 		}
 		if (ProjectionAnnotationModel.class.equals(required)) {
 			if (fProjectionSupport != null) {

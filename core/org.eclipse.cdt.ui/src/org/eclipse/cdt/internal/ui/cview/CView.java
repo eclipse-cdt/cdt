@@ -1047,7 +1047,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 */
 	public boolean show(ShowInContext context) {
 		ISelection selection= context.getSelection();
-		if (selection != null) {
+		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
 			selectReveal(selection);
 			return true;
 		}

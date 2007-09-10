@@ -55,11 +55,13 @@ import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
@@ -377,8 +379,10 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		if(builder.customizedEnvironment != null)
 			customizedEnvironment = (HashMap)builder.customizedEnvironment.clone();
 		appendEnvironment = builder.appendEnvironment;
-		if(!getBuildPath().equals(builder.getBuildPath()))
-			setBuildPath(builder.getBuildPath());
+		if(isBuildPathEditable()){
+			if(!getBuildPath().equals(builder.getBuildPath()))
+				setBuildPath(builder.getBuildPath());
+		}
 		if(builder.customBuildProperties != null)
 			customBuildProperties = (HashMap)builder.customBuildProperties.clone();
 
@@ -1728,31 +1732,62 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		return path;
 	}
 	
+	private boolean isBuildPathEditable(){
+		return !isManagedBuildOn();
+	}
+	
 	public String getDefaultBuildPath(){
 		Configuration cfg = (Configuration)getConfguration();
-		String path = null;
+		IPath buildPath;
+		String result;
+		
+//		Builder extBuilder = (Builder)ManagedBuildManager.getExtensionBuilder(this);
+//		String attr = extBuilder.getBuildPathAttribute();
 		if(cfg != null){
-			if(isManagedBuildOn()){
-				path = cfg.getName();
-			}
-			
 			if(!isExtensionElement() && !cfg.isPreference()){
 				IProject project = cfg.getOwner().getProject();
-				IPath buildPath = project.getFullPath();
-				IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
-				if(path != null)
-					buildPath = buildPath.append(path);
-
-				path = buildPath.toString();
-				path = mngr.generateVariableExpression("workspace_loc", path); //$NON-NLS-1$
+//				if(attr == null){
+					if(isManagedBuildOn()){
+						IManagedBuilderMakefileGenerator gen = getBuildFileGenerator();
+						if(gen instanceof IManagedBuilderMakefileGenerator2){
+							((IManagedBuilderMakefileGenerator2)gen).initialize(IncrementalProjectBuilder.FULL_BUILD, cfg, this, new NullProgressMonitor());
+						} else {
+							gen.initialize(project, ManagedBuildManager.getBuildInfo(project), new NullProgressMonitor());
+						}
+						
+						buildPath = gen.getBuildWorkingDir();
+						if(buildPath == null)
+							buildPath = new Path(cfg.getName());
+					} else {
+						buildPath = Path.EMPTY;
+					}
+//				} else {
+//					buildPath = new Path(attr);
+//				}
+				
+				if(!buildPath.isAbsolute()){
+					buildPath = project.getFullPath().append(buildPath);
+					IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
+	
+					result = buildPath.toString();
+					result = mngr.generateVariableExpression("workspace_loc", result); //$NON-NLS-1$
+				} else {
+					result = buildPath.toString();
+				}
+			} else {
+				if(isManagedBuildOn()){
+					result = cfg.getName();
+					if(result == null)
+						result = ""; //$NON-NLS-1$
+				} else {
+					result = ""; //$NON-NLS-1$ 
+				}
 			}
+		} else {
+			result = ""; //$NON-NLS-1$ 
 		}
 		
-		if(path == null){
-			path = "";  //$NON-NLS-1$
-		}
-		
-		return path;
+		return result;
 	}
 	
 /*	public boolean isWorkspaceBuildPath(){

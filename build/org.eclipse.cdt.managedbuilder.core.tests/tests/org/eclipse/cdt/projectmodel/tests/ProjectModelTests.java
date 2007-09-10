@@ -357,7 +357,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		cfgDes = cfgDess[0];
 		rf = cfgDes.getRootFolderDescription();
 		settings = rf.getLanguageSettings();
-		ICLanguageSettingEntry updatedEntries[] = null;
+		ICLanguageSettingEntry updatedEntries[] = new ICLanguageSettingEntry[0];
 		for(int i = 0; i < settings.length; i++){
 			ICLanguageSetting setting = settings[i];
 			ICLanguageSettingEntry[] entries = setting.getSettingEntries(ICLanguageSettingEntry.INCLUDE_PATH);

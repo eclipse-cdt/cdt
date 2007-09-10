@@ -21,7 +21,6 @@ import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * This is the Environment Variable Supplier used to supply variables
@@ -30,10 +29,10 @@ import org.eclipse.core.runtime.Path;
  * @since 3.0
  */
 public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
-	private static final String fVariableNames[] = new String[]{
-		"CWD",	//$NON-NLS-1$
-		"PWD"	//$NON-NLS-1$
-	};
+//	private static final String fVariableNames[] = new String[]{
+//		"CWD",	//$NON-NLS-1$
+//		"PWD"	//$NON-NLS-1$
+//	};
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableSupplier#getVariable()
@@ -76,14 +75,14 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 	 */
 	public IEnvironmentVariable[] getVariables(Object context) {
 		if(context instanceof IConfiguration){
-			List variables = new ArrayList(fVariableNames.length);
-			for(int i = 0; i < fVariableNames.length; i++){
-				IBuildEnvironmentVariable var = getConfigurationVariable(fVariableNames[i],(IConfiguration)context);
-				if(var != null)
-					variables.add(var);
-			}
-			if(variables.size() == 0)
+			List variables = new ArrayList(2);
+			IBuildEnvironmentVariable var = getConfigurationVariable("CWD",(IConfiguration)context);
+			if(var != null){
+				variables.add(var);
+				variables.add(new BuildEnvVar("PWD", var.getValue(), IBuildEnvironmentVariable.ENVVAR_REPLACE, null));
+			} else {
 				return null;
+			}
 			return (IEnvironmentVariable[])variables.toArray(new IBuildEnvironmentVariable[variables.size()]);
 		}
 		return null;

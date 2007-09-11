@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * David McKnight   (IBM)        - [198802] Incorrect logic for getting dummy host	
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -88,7 +89,7 @@ public abstract class AbstractConnectorServiceManager implements IConnectorServi
     	Hashtable connHT = (Hashtable)systemConnectionRegistry.get(host);
     	if (connHT == null)
     	{
-    		if (!(host instanceof DummyHost))
+    		if (host instanceof DummyHost)
     		{
     			connHT = findConnHTForDummyHost(host);
     		}

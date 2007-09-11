@@ -15,23 +15,6 @@ package org.eclipse.cdt.ui;
 
 import java.util.HashSet;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.model.ArchiveContainer;
-import org.eclipse.cdt.internal.core.model.BinaryContainer;
-import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.jface.text.IRegion;
@@ -44,6 +27,27 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+
+import org.eclipse.cdt.internal.core.model.ArchiveContainer;
+import org.eclipse.cdt.internal.core.model.BinaryContainer;
+
+import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 /**
  * A content provider for C elements.
@@ -169,8 +173,10 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		// well, we do see bugzilla 147694
 		if (element instanceof ITranslationUnit) {
 			ITranslationUnit unit = (ITranslationUnit) element;
-			if (!getProvideWorkingCopy() && unit.isWorkingCopy()) {
-				return;
+			if (unit.isWorkingCopy()) {
+				if (!getProvideWorkingCopy() || kind == ICElementDelta.REMOVED || kind == ICElementDelta.ADDED) {
+					return;
+				}
 			}
 			if (!getProvideMembers() && kind == ICElementDelta.CHANGED) {
 				return;
@@ -230,8 +236,10 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		if (deltas == null)
 			return false;
 		
-		if (deltas.length > 1) {
+		if (deltas.length > 1 && !(parent instanceof ICModel)) {
 			// more than one child changed, refresh from here downwards
+			// but not if the parent is ICModel
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=202085
 			postRefresh(parent);
 			return true;
 		}

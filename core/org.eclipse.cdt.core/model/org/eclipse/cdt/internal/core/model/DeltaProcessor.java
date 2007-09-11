@@ -458,7 +458,11 @@ public class DeltaProcessor {
 			IResource resource = delta.getResource();
 			ICElement current = createElement(resource);
 			updateChildren = updateCurrentDeltaAndIndex(current, delta);
-			if (current == null || current instanceof ISourceRoot) {
+			if (current == null) {
+				nonCResourcesChanged(parent, delta);
+				// no corresponding ICElement - we are done
+				return;
+			} else if (current instanceof ISourceRoot) {
 				nonCResourcesChanged(parent, delta);
 			} else if (current instanceof ICProject) {
 				ICProject cprj = (ICProject)current;
@@ -467,9 +471,7 @@ public class DeltaProcessor {
 					nonCResourcesChanged(parent, delta);
 				}
 			}
-			if (current != null) {
-				parent = current;
-			}
+			parent = current;
 		} catch (CModelException e) {
 		}
 		if (updateChildren){

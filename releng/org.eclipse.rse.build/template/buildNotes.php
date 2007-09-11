@@ -27,17 +27,24 @@
   Other components may work with earlier Eclipse versions, but these have not been tested.
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
+<li>Highlights of bug fixes:
+    <ul>
 <!--
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-  Use 
+<li>Several EFS related bugs have been fixed, and the EFS provider works reliably now.</li>
+<li>Some deadlocks have been discovered and fixed.</li>
+<li>Initial startup and initialization, as well as reading saved profiles, have been made more reliable.</li>
+<li>FTP passive mode has been fixed.</li>
+</ul></li>
+<li>Use 
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-06-28&chfieldto=2007-08-16&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0.1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-2.0-200706270925/index.php">
-  TM 2.0</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-2.0-200706270925/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-2.0.0.1-200707061039/index.php">
+  TM 2.0.0.1</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-2.0.0.1-200707061039/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -137,8 +144,12 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=192741">bug 192741</a> - cri -   	[Archives] Move a folder from within an Archive doesn't work if > 1 level deep</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=192610">bug 192610</a> - maj -   	[efs] Create a link to an RSE folder makes eclipse freeze</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187739">bug 187739</a> - maj - [refresh] Sub Directories are collapsed when Parent Directory is Refreshed on Remote Systems</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196662">bug 196662</a> - maj - [refresh] Refresh performs queries in the Dispatch thread</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198143">bug 198143</a> - maj - [dstore][performance] Refresh a big directory takes very long time, and freezes workbench</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=199773">bug 199773</a> - maj - [ftp][regression] FTP always uploads remote files as binary</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=202866">bug 202866</a> - maj - ArrayIndexOutOfBounds in RSEFileSystemContributor.browseFileSystem()</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

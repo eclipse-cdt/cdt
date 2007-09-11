@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [190442] made SystemActionViewerFilter API
+ * Martin Oberhuber (Wind River) - [202866] Fix exceptions in RSE browse dialog when SystemRegistry is not yet fully initialized
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -128,7 +129,6 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
     }
     /**
      * Return all selected objects. 
-     * @see #setMultipleSelectionMode(boolean)
      */	
     public Object[] getSelectedObjects()
     {
@@ -199,6 +199,7 @@ public class SystemResourceSelectionForm implements ISelectionChangedListener
 					   connectionChanged(connection);
 				   }}
 					);	
+			_connectionCombo.listenToConnectionEvents(true);
 		}
 		
 		_pathText = SystemWidgetHelpers.createReadonlyTextField(composite_prompts);

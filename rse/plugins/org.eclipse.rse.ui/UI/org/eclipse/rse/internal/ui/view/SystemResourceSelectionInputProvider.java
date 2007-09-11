@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Martin Oberhuber (Wind River) - [202866] Fix exceptions in RSE browse dialog when SystemRegistry is not yet fully initialized
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -25,7 +26,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 
 public abstract class SystemResourceSelectionInputProvider extends SystemAbstractAPIProvider
 {		
-	private IHost _connection;
+	private IHost _connection = null;
 	private boolean _onlyConnection = false;
 	private boolean _allowNew = true;
 	private IRSESystemType[] _systemTypes;
@@ -41,8 +42,9 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 		// choose random host
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		IHost[] hosts = registry.getHosts();
-		if (hosts != null)
+		if (hosts != null && hosts.length>0) {
 			_connection = hosts[0];
+		}
 	}
 	
 	public IHost getSystemConnection()
@@ -86,8 +88,10 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 		if (_connection == null)
 		{
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-			_connection = registry.getHosts()[0];
-			
+			IHost[] hosts = registry.getHosts();
+			if (hosts!=null && hosts.length!=0) {
+				_connection = registry.getHosts()[0];
+			}
 		}
 		return getConnectionChildren(_connection);
 	}
@@ -101,16 +105,22 @@ public abstract class SystemResourceSelectionInputProvider extends SystemAbstrac
 	{
 		if (selectedConnection != null)
 		{
-			return getSubSystem(selectedConnection).getChildren();
+			ISubSystem ss = getSubSystem(selectedConnection);
+			if (ss!=null) {
+				return ss.getChildren();
+			}
 		}
-		return null;
+		return new Object[0];
 	}
 
 	public boolean hasConnectionChildren(IHost selectedConnection)
 	{
 		if (selectedConnection != null)
 		{
-			return getSubSystem(selectedConnection).hasChildren();
+			ISubSystem ss = getSubSystem(selectedConnection);
+			if (ss!=null) {
+				return ss.hasChildren();
+			}
 		}
 		return false;
 	}

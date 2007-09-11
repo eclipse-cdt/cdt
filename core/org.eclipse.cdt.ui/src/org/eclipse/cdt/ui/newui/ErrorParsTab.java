@@ -100,9 +100,11 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			
 		case 3: // check all
 			tv.setAllChecked(true);
+			saveChecked();
 			break;
 		case 4: // uncheck all	
 			tv.setAllChecked(false);
+			saveChecked();
 			break;
 		default:
 			break;

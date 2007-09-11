@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Martin Oberhuber (Wind River) - [196919] Fix deadlock with workspace operations
+ * Martin Oberhuber (Wind River) - [202416] Protect against NPEs when importing DOM
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence;
@@ -371,7 +372,9 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 		for (int i = 0; i < profileNames.length; i++) {
 			String profileName = profileNames[i];
 			ISystemProfile profile = load(persistenceProvider, profileName, timeout);
-			profiles.add(profile);
+			if (profile!=null) {
+				profiles.add(profile);
+			}
 		}
 		return profiles;
 	}
@@ -391,8 +394,10 @@ public class RSEPersistenceManager implements IRSEPersistenceManager {
 				if (dom != null) {
 					SystemProfileManager.getDefault().setRestoring(true);
 					profile = _importer.restoreProfile(dom);
-					profile.setPersistenceProvider(provider);
-					cleanTree(profile);
+					if (profile!=null) {
+						profile.setPersistenceProvider(provider);
+						cleanTree(profile);
+					}
 					SystemProfileManager.getDefault().setRestoring(false);
 				}
 			} finally {

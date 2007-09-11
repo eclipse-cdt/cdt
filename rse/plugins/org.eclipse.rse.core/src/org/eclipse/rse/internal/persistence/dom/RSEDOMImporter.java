@@ -15,12 +15,15 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Kevin Doyle (IBM) - [163883] Multiple filter strings are disabled
+ * Martin Oberhuber (Wind River) - [202416] Protect against NPEs when importing DOM
  ********************************************************************************/
 
 package org.eclipse.rse.internal.persistence.dom;
 
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.rse.core.IRSECoreRegistry;
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.RSECorePlugin;
@@ -73,26 +76,35 @@ public class RSEDOMImporter {
 	 * @return the restored profile
 	 */
 	public ISystemProfile restoreProfile(RSEDOM dom) {
+		ISystemProfile profile = null;
 		String profileName = dom.getName();
-		boolean defaultPrivate = getBooleanValue(dom.getAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT_PRIVATE).getValue());
-		boolean isActive = getBooleanValue(dom.getAttribute(IRSEDOMConstants.ATTRIBUTE_IS_ACTIVE).getValue());
-		ISystemProfile profile = new SystemProfile(profileName, isActive);
-		if (profile != null) {
+		if (profileName != null) {
+			boolean defaultPrivate = getBooleanValue(dom, IRSEDOMConstants.ATTRIBUTE_DEFAULT_PRIVATE);
+			boolean isActive = getBooleanValue(dom, IRSEDOMConstants.ATTRIBUTE_IS_ACTIVE);
+			profile = new SystemProfile(profileName, isActive);
 			profile.setDefaultPrivate(defaultPrivate);
 			SystemProfileManager.getDefault().addSystemProfile(profile);
 			// restore the children for the profile
 			RSEDOMNode[] children = dom.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				RSEDOMNode child = children[i];
-				String type = child.getType();
-				if (type.equals(IRSEDOMConstants.TYPE_HOST)) {
-					restoreHost(profile, child);
-				} else if (type.equals(IRSEDOMConstants.TYPE_FILTER_POOL)) {
-					restoreFilterPool(profile, child);
-				} else if (type.equals(IRSEDOMConstants.TYPE_PROPERTY_SET)) {
-					restorePropertySet(profile, child);
+				try {
+					RSEDOMNode child = children[i];
+					String type = child.getType();
+					if (IRSEDOMConstants.TYPE_HOST.equals(type)) {
+						restoreHost(profile, child);
+					} else if (IRSEDOMConstants.TYPE_FILTER_POOL.equals(type)) {
+						restoreFilterPool(profile, child);
+					} else if (IRSEDOMConstants.TYPE_PROPERTY_SET.equals(type)) {
+						restorePropertySet(profile, child);
+					} else {
+					    logNullAttribute(child, "type"); //$NON-NLS-1$
+					}
+				} catch(Exception e) {
+					logException(e);
 				}
 			}
+		} else {
+			logNullAttribute(dom, "name"); //$NON-NLS-1$
 		}
 		return profile;
 	}
@@ -105,12 +117,13 @@ public class RSEDOMImporter {
 
 		// get host node attributes
 		String connectionName = hostNode.getName();
-		String systemTypeName = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_TYPE);
-		String systemTypeId = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_SYSTEM_TYPE);
+		// we changed from storing names to storing IDs, so these may be null
+		String systemTypeName = getAttributeValueMaybeNull(hostNode, IRSEDOMConstants.ATTRIBUTE_TYPE);
+		String systemTypeId = getAttributeValueMaybeNull(hostNode, IRSEDOMConstants.ATTRIBUTE_SYSTEM_TYPE);
 		String hostName = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_HOSTNAME);
 		String description = getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_DESCRIPTION);
-		boolean isOffline = getBooleanValue(getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_OFFLINE));
-		boolean isPromptable = getBooleanValue(getAttributeValue(hostNode, IRSEDOMConstants.ATTRIBUTE_PROMPTABLE));
+		boolean isOffline = getBooleanValue(hostNode, IRSEDOMConstants.ATTRIBUTE_OFFLINE);
+		boolean isPromptable = getBooleanValue(hostNode, IRSEDOMConstants.ATTRIBUTE_PROMPTABLE);
 
 		// create host and set it's attributes
 		try {
@@ -123,22 +136,40 @@ public class RSEDOMImporter {
 			} else if (systemTypeName != null) {
 				systemType = registry.getSystemType(systemTypeName);
 			}
-			host = profile.createHost(systemType, connectionName, hostName, description);
-			host.setOffline(isOffline);
-			host.setPromptable(isPromptable);
+			//cannot create a host from a profile if we do not know the systemType
+			if (systemType != null) {
+				host = profile.createHost(systemType, connectionName, hostName, description);
+				host.setOffline(isOffline);
+				host.setPromptable(isPromptable);
+			} else {
+			    StringBuffer msg = new StringBuffer(80);
+			    msg.append("unknown systemType \""); //$NON-NLS-1$
+		        msg.append(systemTypeName);
+		        msg.append("\" ("); //$NON-NLS-1$
+		        msg.append(systemTypeId);
+		        msg.append(") in "); //$NON-NLS-1$
+			    msg.append(profile.getName());
+			    msg.append(':');
+			    msg.append(connectionName);
+				logWarning(msg.toString());
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logException(e);
 		}
 
 		// restore children of host
-		RSEDOMNode[] children = hostNode.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			RSEDOMNode child = children[i];
-			String type = child.getType();
-			if (type.equals(IRSEDOMConstants.TYPE_CONNECTOR_SERVICE)) {
-				restoreConnectorService(host, child);
-			} else if (type.equals(IRSEDOMConstants.TYPE_PROPERTY_SET)) {
-				restorePropertySet(host, child);
+		if (host!=null) {
+			RSEDOMNode[] children = hostNode.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				RSEDOMNode child = children[i];
+				String type = child.getType();
+				if (IRSEDOMConstants.TYPE_CONNECTOR_SERVICE.equals(type)) {
+					restoreConnectorService(host, child);
+				} else if (IRSEDOMConstants.TYPE_PROPERTY_SET.equals(type)) {
+					restorePropertySet(host, child);
+				} else {
+				    logNullAttribute(child, "type"); //$NON-NLS-1$
+				}
 			}
 		}
 		return host;
@@ -156,12 +187,8 @@ public class RSEDOMImporter {
 		//		String name = connectorServiceNode.getName();
 		//		String type = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
 		//		String group = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_GROUP).getValue();
-		boolean useSSL = getBooleanValue(connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_USE_SSL).getValue());
-		RSEDOMNodeAttribute att = connectorServiceNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_PORT);
-		int port = 0;
-		if (att != null) {
-			port = getIntegerValue(att.getValue());
-		}
+		boolean useSSL = getBooleanValue(connectorServiceNode, IRSEDOMConstants.ATTRIBUTE_USE_SSL);
+		int port = getIntegerValue(connectorServiceNode, IRSEDOMConstants.ATTRIBUTE_PORT);
 
 		// first restore subsystems (since right now we need subsystem to get at service
 		RSEDOMNode[] ssChildren = connectorServiceNode.getChildren(IRSEDOMConstants.TYPE_SUBSYSTEM);
@@ -222,8 +249,8 @@ public class RSEDOMImporter {
 		// in most cases (if not all) the subsystem already exists
 		// since createHost() ends up recreating subsystems for each factory		
 		String name = subSystemNode.getName();
-		String type = subSystemNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
-		boolean isHidden = getBooleanValue(subSystemNode.getAttribute(IRSEDOMConstants.ATTRIBUTE_HIDDEN).getValue());
+		String type = getAttributeValue(subSystemNode, IRSEDOMConstants.ATTRIBUTE_TYPE);
+		boolean isHidden = getBooleanValue(subSystemNode, IRSEDOMConstants.ATTRIBUTE_HIDDEN);
 		ISubSystem subSystem = null;
 		ISubSystemConfiguration factory = getSubSystemConfiguration(type);
 		if (factory != null) {
@@ -288,18 +315,18 @@ public class RSEDOMImporter {
 	public ISystemFilter restoreFilter(ISystemFilterPool filterPool, RSEDOMNode node) {
 		// get the node attributes for a filter
 		String name = node.getName();
-		boolean supportsNestedFilters = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_NESTED_FILTERS).getValue());
-		int relativeOrder = getIntegerValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_RELATIVE_ORDER).getValue());
-		boolean isDefault = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT).getValue());
-		boolean isSetStringsCaseSensitive = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE).getValue());
-		boolean isPromptable = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_PROMPTABLE).getValue());
-		boolean isSetSupportsDuplicateFilterStrings = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS).getValue());
-		boolean isNonDeletable = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_NON_DELETABLE).getValue());
-		boolean isNonRenamable = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE).getValue());
-		boolean isNonChangable = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_NON_CHANGEABLE).getValue());
-		boolean isStringsNonChangable = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_STRINGS_NON_CHANGABLE).getValue());
-		int release = getIntegerValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE).getValue());
-		boolean isSetSingleFilterStringOnly = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY).getValue());
+		boolean supportsNestedFilters = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SUPPORTS_NESTED_FILTERS);
+		int relativeOrder = getIntegerValue(node, IRSEDOMConstants.ATTRIBUTE_RELATIVE_ORDER);
+		boolean isDefault = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_DEFAULT);
+		boolean isSetStringsCaseSensitive = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE);
+		boolean isPromptable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_PROMPTABLE);
+		boolean isSetSupportsDuplicateFilterStrings = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS);
+		boolean isNonDeletable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_NON_DELETABLE);
+		boolean isNonRenamable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE);
+		boolean isNonChangable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_NON_CHANGEABLE);
+		boolean isStringsNonChangable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_STRINGS_NON_CHANGABLE);
+		int release = getIntegerValue(node, IRSEDOMConstants.ATTRIBUTE_RELEASE);
+		boolean isSetSingleFilterStringOnly = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY);
 
 		Vector filterStrings = new Vector();
 
@@ -346,14 +373,14 @@ public class RSEDOMImporter {
 
 		// get the node attributes for a filter pool
 		String name = node.getName();
-		String type = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
-		String id = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_ID).getValue();
-		boolean supportsNestedFilters = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_NESTED_FILTERS).getValue());
-		boolean isDeletable = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_DELETABLE).getValue());
-		boolean isDefault = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_DEFAULT).getValue());
-		boolean isSetStringsCaseSensitive = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE).getValue());
-		boolean isSetSupportsDuplicateFilterStrings = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS).getValue());
-		int release = getIntegerValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_RELEASE).getValue());
+		String type = getAttributeValue(node, IRSEDOMConstants.ATTRIBUTE_TYPE);
+		String id = getAttributeValue(node, IRSEDOMConstants.ATTRIBUTE_ID);
+		boolean supportsNestedFilters = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SUPPORTS_NESTED_FILTERS);
+		boolean isDeletable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_DELETABLE);
+		boolean isDefault = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_DEFAULT);
+		boolean isSetStringsCaseSensitive = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_STRING_CASE_SENSITIVE);
+		boolean isSetSupportsDuplicateFilterStrings = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SUPPORTS_DUPLICATE_FILTER_STRINGS);
+		int release = getIntegerValue(node, IRSEDOMConstants.ATTRIBUTE_RELEASE);
 		
 		// Since old profiles won't have an "singleFilterStringOnlyESet" attribute
 		// we must give it a default value.
@@ -366,11 +393,11 @@ public class RSEDOMImporter {
 		RSEDOMNodeAttribute attribute = node.getAttribute("singleFilterStringOnlyESet"); //$NON-NLS-1$
 		if (attribute != null) {
 			isSingleFilterStringOnlyESet = getBooleanValue(attribute.getValue());
-			isSetSingleFilterStringOnly = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY).getValue());
+			isSetSingleFilterStringOnly = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_SINGLE_FILTER_STRING_ONLY);
 		}
 		
-		String owningParentName = node.getAttribute(IRSEDOMConstants.ATTRIBUTE_OWNING_PARENT_NAME).getValue();
-		boolean isNonRenamable = getBooleanValue(node.getAttribute(IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE).getValue());
+		String owningParentName = getAttributeValue(node, IRSEDOMConstants.ATTRIBUTE_OWNING_PARENT_NAME);
+		boolean isNonRenamable = getBooleanValue(node, IRSEDOMConstants.ATTRIBUTE_NON_RENAMABLE);
 
 		// create the filter pool and set it's attributes
 		try {
@@ -409,20 +436,22 @@ public class RSEDOMImporter {
 //				filterPool.wasRestored();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logException(e);
 		}
 
 		// restore children
-		RSEDOMNode[] children = node.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			RSEDOMNode child = children[i];
-			String ctype = child.getType();
-			if (ctype.equals(IRSEDOMConstants.TYPE_FILTER)) {
-				if (filterPool != null) {
+		if (filterPool != null) {
+			RSEDOMNode[] children = node.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				RSEDOMNode child = children[i];
+				String ctype = child.getType();
+				if (IRSEDOMConstants.TYPE_FILTER.equals(ctype)) {
 					restoreFilter(filterPool, child);
+				} else if (IRSEDOMConstants.TYPE_PROPERTY_SET.equals(ctype)) {
+					restorePropertySet(filterPool, child);
+				} else {
+				    logNullAttribute(child, "type"); //$NON-NLS-1$
 				}
-			} else if (ctype.equals(IRSEDOMConstants.TYPE_PROPERTY_SET)) {
-				restorePropertySet(filterPool, child);
 			}
 		}
 		return filterPool;
@@ -466,7 +495,7 @@ public class RSEDOMImporter {
 		RSEDOMNodeAttribute[] attributes = propertySetNode.getAttributes();
 		for (int i = 0; i < attributes.length; i++) {
 			RSEDOMNodeAttribute attribute = attributes[i];
-			if (attribute.getKey().equals(IRSEDOMConstants.ATTRIBUTE_DESCRIPTION)) { // descriptions really are stored as attributes
+			if (IRSEDOMConstants.ATTRIBUTE_DESCRIPTION.equals(attribute.getKey())) { // descriptions really are stored as attributes
 				set.setDescription(attribute.getValue());
 			} else {
 				String typeStr = attribute.getType();
@@ -479,10 +508,10 @@ public class RSEDOMImporter {
 		for (int i = 0; i < children.length; i++) {
 			RSEDOMNode child = children[i];
 			String propertyName = child.getName();
-			String propertyValue = child.getAttribute(IRSEDOMConstants.ATTRIBUTE_VALUE).getValue();
-			String propertyTypeName = child.getAttribute(IRSEDOMConstants.ATTRIBUTE_TYPE).getValue();
+			String propertyValue = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_VALUE);
+			String propertyTypeName = getAttributeValue(child, IRSEDOMConstants.ATTRIBUTE_TYPE);
 			IPropertyType propertyType = PropertyType.fromString(propertyTypeName);
-			if (propertyName.equals(IPropertySet.DESCRIPTION_KEY)) { // any descriptions found as properties should be set directly
+			if (IPropertySet.DESCRIPTION_KEY.equals(propertyName)) { // any descriptions found as properties should be set directly
 				set.setDescription(propertyValue);
 			} else {
 				set.addProperty(propertyName, propertyValue, propertyType);
@@ -518,9 +547,60 @@ public class RSEDOMImporter {
 	private String getAttributeValue(RSEDOMNode node, String attributeName) {
 		String result = null;
 		RSEDOMNodeAttribute attribute = node.getAttribute(attributeName);
+		if (attribute == null) {
+			logNullAttribute(node, attributeName);
+		} else {
+			result = attribute.getValue();
+		}
+		return result;
+	}
+
+	private String getAttributeValueMaybeNull(RSEDOMNode node, String attributeName) {
+		String result = null;
+		RSEDOMNodeAttribute attribute = node.getAttribute(attributeName);
 		if (attribute != null) {
 			result = attribute.getValue();
 		}
 		return result;
 	}
+
+	private boolean getBooleanValue(RSEDOMNode node, String attributeName) {
+		String booleanStr = getAttributeValue(node, attributeName);
+		if (booleanStr==null) logNullAttribute(node, attributeName);
+		return getBooleanValue(booleanStr);
+	}
+
+	private int getIntegerValue(RSEDOMNode node, String attributeName) {
+		String intStr = getAttributeValue(node, attributeName);
+		if (intStr==null) logNullAttribute(node, attributeName);
+		return getIntegerValue(intStr);
+	}
+	
+	private void logException(Exception e) {
+		RSECorePlugin.getDefault().getLog().log(
+				new Status(IStatus.ERROR, RSECorePlugin.getDefault().getBundle().getSymbolicName(), -1, e.getMessage(), e));
+	}
+	
+	private void logWarning(String msg) {
+		RSECorePlugin.getDefault().getLog().log(
+				new Status(IStatus.WARNING, RSECorePlugin.getDefault().getBundle().getSymbolicName(), -1, "RSEDOMImporter: "+msg, null)); //$NON-NLS-1$
+	}
+
+	private void logNullAttribute(RSEDOMNode node, String attributeName) {
+		StringBuffer msg = new StringBuffer(80);
+		msg.append("RSEDOMImporter: null attr \""); //$NON-NLS-1$
+		msg.append(attributeName==null ? "null" : attributeName); //$NON-NLS-1$
+		msg.append("\" in "); //$NON-NLS-1$
+		int len = msg.length();
+		RSEDOMNode parent = node.getParent();
+		while (parent!=null) {
+			String parentName = parent.getName();
+			msg.insert(len, parentName==null ? "null/" : parentName+'/'); //$NON-NLS-1$
+			parent = parent.getParent();
+		}
+		msg.append(node.getName()==null ? "null" : node.getName()); //$NON-NLS-1$
+		RSECorePlugin.getDefault().getLog().log(
+				new Status(IStatus.WARNING, RSECorePlugin.getDefault().getBundle().getSymbolicName(), -1, msg.toString(), null));
+	}
+
 }

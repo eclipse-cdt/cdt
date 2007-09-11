@@ -34,6 +34,8 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
@@ -104,7 +106,13 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 								} break;
 		
 								case IOption.BROWSE_NONE: {
-									stringField = new StringFieldEditor(optId, opt.getName(), fieldEditorParent);
+									final StringFieldEditorM local = new StringFieldEditorM(optId, opt.getName(), fieldEditorParent);
+									stringField = local;
+									local.getTextControl().addModifyListener(new ModifyListener() {
+							            public void modifyText(ModifyEvent e) {
+							            	local.valueChanged();
+							            }
+									});
 								} break;
 		
 								default: {

@@ -21,6 +21,7 @@
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Kevin Doyle (IBM) - [187707] Added separator between New Folder and New File in context menu
+ * David McKnight   (IBM)        - [199566] Remove synchronzied from internalGetChildren
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -279,7 +280,7 @@ public class SystemViewFilterReferenceAdapter
 	 * the context is assumed to be modal and, as such, the modal version of ss.resolveFilterStrings
 	 * is called rather than the main thread version.
 	 */
-	protected synchronized Object[] internalGetChildren(Object element, IProgressMonitor monitor)
+	protected Object[] internalGetChildren(Object element, IProgressMonitor monitor)
 	{
 		Object[] children = null;
 		ISystemFilterReference fRef = getFilterReference(element);

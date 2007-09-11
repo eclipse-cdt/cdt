@@ -28,6 +28,7 @@
  * David McKnight   (IBM)        - [196662] hasChildren() should return false when the file doesn't exist
  * David McKnight   (IBM)        - [197784] Need to check if last separator is at 0
  * Kevin Doyle  (IBM)            - [198576] Renaming a folder directly under a Filter doesn't update children
+ * David McKnight   (IBM)        - [199568] Removing synchronized from internalGetChildren
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -550,7 +551,7 @@ public class SystemViewRemoteFileAdapter
 		return internalGetChildren(context.getModelObject(), context.getFilterReference(), monitor);
 	}
 
-	private synchronized Object[] internalGetChildren(IAdaptable element, ISystemFilterReference filterReference, IProgressMonitor monitor)
+	private Object[] internalGetChildren(IAdaptable element, ISystemFilterReference filterReference, IProgressMonitor monitor)
 	{
 		//System.out.println("Inside getChildren for: "+element);
 		IRemoteFile file = (IRemoteFile) element;

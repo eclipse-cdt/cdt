@@ -188,6 +188,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 				src.add(new _Entry(newEntry(f, new IPath[0], !f.isLinked())));
 				saveData();
 			}
+			break;
 		// edit filter	
 		case 2:
 			if (sel.length == 0) return;

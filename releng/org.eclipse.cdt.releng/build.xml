@@ -35,10 +35,13 @@
 		<property name="basearch" value="${osgi.arch}"/>
 		<property name="tagbranch" value=""/>
 		<property name="tagname" value="v${timestamp}"/>
+		<property name="testReports" value="${zipsdir}/testReports"/>
+		<property name="junit-report-output" value="${testReports}"/>
 		<condition property="onWindows">
 			<os family="windows"/>
 		</condition>
 		<mkdir dir="${buildDirectory}"/>
+		<mkdir dir="${testReports}"/>
 	</target>
 	
 	<target name="fetch" depends="init">
@@ -117,7 +120,7 @@
 	</target>
 
 	<target name="test" depends="init" unless="hasErrors">
-		<record name="${zipsdir}/testsLog.txt" action="start" loglevel="verbose"/>
+		<record name="${testReports}/testsLog.txt" action="start" loglevel="verbose"/>
 		<unzip src="${zipsdir}/cdt-master-${branchVersion}-${buildId}.zip"
 			dest="${buildDirectory}/eclipse"/>
 		<unjar src="${buildDirectory}/eclipse/plugins/org.eclipse.cdt.testing_${branchVersion}.${timestamp}.jar"
@@ -135,9 +138,9 @@
 			in="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
 			out="${zipsdir}/junits.html"/>
 		<copy file="${buildDirectory}/eclipse/org.eclipse.cdt.testing.xml"
-		    tofile="${zipsdir}/org.eclipse.cdt.testing.xml"
+		    tofile="${testReports}/org.eclipse.cdt.testing.xml"
 		    failonerror="false"/>
-		<record name="${zipsdir}/testsLog.txt" action="stop"/>
+		<record name="${testReports}/testsLog.txt" action="stop"/>
 	</target>
 	
 	<target name="sign" depends="init" unless="hasErrors">

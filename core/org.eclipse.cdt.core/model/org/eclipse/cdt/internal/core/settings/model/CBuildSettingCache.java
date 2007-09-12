@@ -32,12 +32,15 @@ public class CBuildSettingCache extends CDefaultBuildData implements
 	private ICOutputEntry[] fResolvedOutputEntries;
 
 	CBuildSettingCache(CBuildData base, CConfigurationDescriptionCache cfgCache){
-		super(base.getId(), base);
+		super(/*base.getId(), base*/);
+		
+		fId = base.getId();
 		
 		fCfgCache = cfgCache;
 		
 		fCfgCache.addBuildSetting(this);
 		
+		copySettingsFrom(base);
 	}
 	
 	void initEnvironmentCache(){

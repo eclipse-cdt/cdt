@@ -204,6 +204,7 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 	
 	void addBuildSetting(ICBuildSetting bs){
 		fChildList.add(bs);
+		fBuildData = (CBuildData)bs;
 	}
 
 	public ICProjectDescription getProjectDescription() {

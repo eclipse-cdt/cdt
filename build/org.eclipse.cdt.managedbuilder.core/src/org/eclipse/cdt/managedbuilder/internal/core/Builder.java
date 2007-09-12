@@ -2620,25 +2620,30 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 	
 	public ICOutputEntry[] getOutputEntries(){
 		if(isManagedBuildOn()){
-			return getDefaultOutputSettings(true);
+			return getDefaultOutputSettings();
 		}
 		ICOutputEntry[] entries = getOutputEntrySettings();
 		if(entries == null || entries.length == 0){
-			entries = getDefaultOutputSettings(false);
+			entries = getDefaultOutputSettings();
 		}
 		return entries;
 	}
 	
-	private ICOutputEntry[] getDefaultOutputSettings(boolean managedBuildOn){
+	private ICOutputEntry[] getDefaultOutputSettings(){
 		Configuration cfg = (Configuration)getConfguration();
 		if(cfg == null || cfg.isPreference() || cfg.isExtensionElement()){
 			return new ICOutputEntry[]{new COutputEntry(Path.EMPTY, null, ICLanguageSettingEntry.VALUE_WORKSPACE_PATH | ICLanguageSettingEntry.RESOLVED)};
 		}
 		
-		IPath path = cfg.getOwner().getProject().getFullPath();;
-		if(managedBuildOn){
-			path = path.append(cfg.getName());
+		IPath path = ManagedBuildManager.getBuildFullPath(cfg, this);
+		IProject proj = cfg.getOwner().getProject();
+		IPath projFullPath = proj.getFullPath(); 
+		if(projFullPath.isPrefixOf(path)){
+			path = path.removeFirstSegments(projFullPath.segmentCount()).makeRelative();
+		} else {
+			path = Path.EMPTY;
 		}
+			
 		return new ICOutputEntry[]{new COutputEntry(path, null, ICLanguageSettingEntry.VALUE_WORKSPACE_PATH | ICLanguageSettingEntry.RESOLVED)};
 	}
 

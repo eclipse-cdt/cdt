@@ -98,7 +98,6 @@ public class DataElementRemover extends Handler
 
 	public synchronized void addToQueueForRemoval(DataElement element)
 	{		
-		System.out.println("dis:"+element.getName());
 		synchronized (_queue) 
 		{
 			
@@ -119,8 +118,6 @@ public class DataElementRemover extends Handler
 	{
 		synchronized (_queue)
 		{
-			
-			System.out.println("spiriting");
 			_dataStore.memLog("           "); //$NON-NLS-1$
 			int disconnected = 0;
 			if (!_dataStore.isDoSpirit())

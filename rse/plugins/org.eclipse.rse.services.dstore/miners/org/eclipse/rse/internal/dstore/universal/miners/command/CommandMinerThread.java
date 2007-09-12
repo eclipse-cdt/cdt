@@ -541,7 +541,6 @@ public class CommandMinerThread extends MinerThread
 			catch (IOException e)
 			{
 			    cleanupThread();
-				System.out.println(e);
 			}
 		}
 	}
@@ -882,8 +881,6 @@ public class CommandMinerThread extends MinerThread
 			
 			_status.setAttribute(DE.A_NAME, "done");
 			_dataStore.refresh(_status);
-	
-			System.out.println("cleaupThread");
 		
 		// disconnecting all
 	

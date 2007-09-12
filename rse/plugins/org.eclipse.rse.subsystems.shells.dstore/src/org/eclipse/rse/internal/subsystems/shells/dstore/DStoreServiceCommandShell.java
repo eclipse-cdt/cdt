@@ -84,7 +84,6 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 					int ssize = _status.getNestedSize();
 				if (_status.get(ssize - 1).isSpirit())
 				{
-					System.out.println("deleting for "+ _name);
 					// delete
 					_ds.deleteObjects(_status);
 					_ds.refresh(_status);			
@@ -253,18 +252,13 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 			cleanUp.start();
 		}
 
-		
-		// cleanup on host should be taking care of that
-		// ds.setObject(_commandElement);	
+	
 		
 		synchronized(_output)
 		{
 			_output.clear();			
 		}
-		
-	//	noDE = ds.getHashMap().size();
-	//	System.out.println("DataElements:"+noDE);
-		//ds.printTree("2>", ds.getLogRoot());
+
 	}
 	
 }

@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
+ * Martin Oberhuber (wind River) - [203105] Decouple recursive plugin activation of UI adapters
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -47,7 +48,12 @@ public class Activator extends AbstractUIPlugin {
 		// make sure that required adapters factories are loaded 
 		//(will typically activate org.eclipse.rse.files.ui)
 		//TODO Check that this does not fire up the UI if we want to be headless
-		Platform.getAdapterManager().loadAdapter(new RemoteFileEmpty(), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
+		//Decouple from the current Thread
+		new Thread("files.ui adapter loader") { //$NON-NLS-1$
+			public void run() {
+				Platform.getAdapterManager().loadAdapter(new RemoteFileEmpty(), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
+			}
+		}.start();
 		// Others (RemoteSearchResultSet, RemoteSearchResult, 
 		// RemoteFileSystemConfigurationAdapter will be available
 		// automatically once the plugin is loaded

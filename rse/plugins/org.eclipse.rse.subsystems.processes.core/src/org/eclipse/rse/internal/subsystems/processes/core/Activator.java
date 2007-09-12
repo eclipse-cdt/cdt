@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register rse.processes.ui adapter factories
+ * Martin Oberhuber (wind River) - [203105] Decouple recursive plugin activation of UI adapters
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.processes.core;
@@ -44,8 +45,13 @@ public class Activator extends AbstractUIPlugin {
 		// make sure that required adapters factories are loaded 
 		//(will typically activate org.eclipse.rse.processes.ui)
 		//TODO Check that this does not fire up the UI if we want to be headless
-		Platform.getAdapterManager().loadAdapter(new RemoteProcessImpl(null,null), 
+		//Decouple from the current Thread
+		new Thread("processes.ui adapter loader") { //$NON-NLS-1$
+			public void run() {
+				Platform.getAdapterManager().loadAdapter(new RemoteProcessImpl(null,null), 
 				"org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$
+			}
+		}.start();
 		//others will be loaded automatically when the processes.ui plugin is activated
 	}
 

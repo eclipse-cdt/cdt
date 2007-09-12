@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519] declaratively register rse.shells.ui. adapter factories
+ * Martin Oberhuber (wind River) - [203105] Decouple recursive plugin activation of UI adapters
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.core;
@@ -46,7 +47,12 @@ public class Activator extends AbstractUIPlugin {
 		// make sure that required adapters factories are loaded 
 		//(will typically activate org.eclipse.rse.shells.ui)
 		//TODO Check that this does not fire up the UI if we want to be headless
-		Platform.getAdapterManager().loadAdapter(new RemoteOutput(null,""), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$ //$NON-NLS-2$
+		//Decouple from the current Thread
+		new Thread("shells.ui adapter loader") { //$NON-NLS-1$
+			public void run() {
+				Platform.getAdapterManager().loadAdapter(new RemoteOutput(null,""), "org.eclipse.rse.ui.view.ISystemViewElementAdapter"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}.start();
 		// Others (IRemoteError, ShellServiceSubSystemConfigurationAdapter 
 		// will be available automatically once the shells.ui plugin is loaded
 	}

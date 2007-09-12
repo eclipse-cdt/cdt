@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * David McKnight  (IBM) - [191367] setting supertransfer to be disabled by default
  * Xuan Chen (IBM)       - [191367] setting supertransfer back to enabled by default
+ * Xuan Chen (IBM)       - [202686] Supertransfer should be disabled by default for 2.0.1
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.core;
@@ -47,7 +48,7 @@ public interface ISystemFilePreferencesConstants
 	public static final int FILETRANSFERMODE_TEXT 				= 1;
 	
 	public static final String DEFAULT_SUPERTRANSFER_ARCHIVE_TYPE 	= "zip"; //$NON-NLS-1$
-	public static final boolean DEFAULT_DOSUPERTRANSFER 			= true;
+	public static final boolean DEFAULT_DOSUPERTRANSFER 			= false;
 	
 	public static final int DEFAULT_DOWNLOAD_BUFFER_SIZE        = 40;
 	

@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * David McKnight   (IBM)        - [202822] need to enable spiriting on the server side
+ * David McKnight   (IBM)        - [199565] taking out synchronize for internalConnect
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -488,7 +489,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 	/**
 	 * @see org.eclipse.rse.core.subsystems.IConnectorService#connect(IProgressMonitor)
 	 */
-	protected synchronized void internalConnect(IProgressMonitor monitor) throws Exception
+	protected void internalConnect(IProgressMonitor monitor) throws Exception
 	{
 	    if (isConnected()) {
 	        return;

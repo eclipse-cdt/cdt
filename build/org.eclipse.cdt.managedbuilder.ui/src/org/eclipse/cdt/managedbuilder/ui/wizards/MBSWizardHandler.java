@@ -140,7 +140,7 @@ public class MBSWizardHandler extends CWizardHandler {
 					break;
 			
 				projectTypeId = path[0];
-				if(path.length > 1){
+				if(path.length > 1 && (!path[0].equals(ManagedBuildWizard.OTHERS_LABEL))){
 					templateId = path[path.length - 1]; 
 					Template templates[] = TemplateEngineUI.getDefault().getTemplates(projectTypeId);
 					if(templates.length == 0)

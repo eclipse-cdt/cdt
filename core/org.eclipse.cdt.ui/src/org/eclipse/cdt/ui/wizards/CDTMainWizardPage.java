@@ -536,27 +536,22 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		}
 
 		private void switchTo(CWizardHandler h, EntryDescriptor ed) {
-
-			if (h == null) h = ed.getHandler();
-
+			if (h == null) 
+				h = ed.getHandler();
 			try {
-
-			if (h != null && ed != null) h.initialize(ed);
-
-			} catch (CoreException e) { h = null; }
-
-			if (h_selected != null) h_selected.handleUnSelection();
-
+				if (h != null && ed != null) 
+					h.initialize(ed);
+			} catch (CoreException e) { 
+				h = null; 
+			}
+			if (h_selected != null) 
+				h_selected.handleUnSelection();
 			h_selected = h;
-
-			if (h == null) return;
-
+			if (h == null) 
+				return;
 			right_label.setText(h_selected.getHeader());
-
 			h_selected.handleSelection();
-
 			h_selected.setSupportedOnly(show_sup.getSelection());
-
 		}
 
 

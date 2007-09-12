@@ -40,6 +40,7 @@
  * Kevin Doyle  (IBM)            - [198576] Renaming a folder directly under a Filter doesn't update children
  * Kevin Doyle (IBM) 			 - [196582] Deprecated getRemoteObjectIdentifier
  * Martin Oberhuber (Wind River) - [198650] Fix assertion when restoring workbench state
+ * Martin Oberhuber (Wind River) - [183176] Fix "widget is disposed" during Platform shutdown
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -55,6 +56,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -1153,12 +1155,11 @@ public class SystemView extends SafeTreeViewer
 	 * Convenience method for returning the shell of this viewer.
 	 */
 	public Shell getShell() {
-		////getShell() can lead to "widget is disposed" errors, but avoiding them here does not really help
-		//if (!getTree().isDisposed()) {
-		//	return getTree().getShell();
-		//}
-		//return shell;
-		return getTree().getShell();
+		//getShell() can lead to "widget is disposed" errors, but avoiding them here does not really help
+		if (!getTree().isDisposed()) {
+			return getTree().getShell();
+		}
+		return shell;
 	}
 
 	/**
@@ -1620,22 +1621,38 @@ public class SystemView extends SafeTreeViewer
 	 * Called when something changes in the model
 	 */
 	public void systemResourceChanged(ISystemResourceChangeEvent event) {
-		ResourceChangedJob job = new ResourceChangedJob(event, this);
-		job.setPriority(Job.INTERACTIVE);
-		//job.setUser(true);
-		job.schedule();
-		/*
-		Display display = Display.getCurrent();
-		try {
-			while (job.getResult() == null) {
-				while (display != null && display.readAndDispatch()) {
-					//Process everything on event queue
+		if (!getControl().isDisposed()) {
+			ResourceChangedJob job = new ResourceChangedJob(event, this);
+			job.setPriority(Job.INTERACTIVE);
+			//job.setUser(true);
+			job.schedule();
+			/*
+			Display display = Display.getCurrent();
+			try {
+				while (job.getResult() == null) {
+					while (display != null && display.readAndDispatch()) {
+						//Process everything on event queue
+					}
+					if (job.getResult() == null) Thread.sleep(200);
 				}
-				if (job.getResult() == null) Thread.sleep(200);
+			} catch (InterruptedException e) {
 			}
-		} catch (InterruptedException e) {
+			*/
+		} else {
+			trace("resource changed while shutting down"); //$NON-NLS-1$
 		}
-		*/
+	}
+	
+	public void trace(String str) {
+		String id = RSEUIPlugin.getDefault().getBundle().getSymbolicName();
+		String val = Platform.getDebugOption(id + "/debug"); //$NON-NLS-1$
+		if ("true".equals(val)) { //$NON-NLS-1$
+			try { 
+				throw new IllegalStateException(str);
+			} catch(IllegalStateException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
@@ -1657,6 +1674,10 @@ public class SystemView extends SafeTreeViewer
 		}
 
 		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if (getControl().isDisposed()) {
+				trace("SystemView: refresh after disposed"); //$NON-NLS-1$
+				return Status.CANCEL_STATUS;
+			}
 			int type = _event.getType();
 			Object src = _event.getSource();
 			Object parent = _event.getParent();

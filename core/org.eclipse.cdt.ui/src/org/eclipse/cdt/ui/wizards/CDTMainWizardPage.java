@@ -565,6 +565,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 		
 		public void toolChainListChanged(int count) {
 			setPageComplete(validatePage());
+			getWizard().getContainer().updateButtons();
 		}
 
 		public boolean isCurrent() { return isCurrentPage(); }

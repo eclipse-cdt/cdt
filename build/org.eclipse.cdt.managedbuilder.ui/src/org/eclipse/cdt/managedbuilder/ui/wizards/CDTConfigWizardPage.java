@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -72,6 +73,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	public boolean isVisible = false;
 	private MBSWizardHandler handler;
 	public boolean pagesLoaded = false;
+	private IToolChain[] visitedTCs = null;
 	
 	public CDTConfigWizardPage(MBSWizardHandler h) {
         super(UIMessages.getString("CDTConfigWizardPage.0")); //$NON-NLS-1$
@@ -232,6 +234,21 @@ public class CDTConfigWizardPage extends WizardPage {
 		return (CfgHolder[])out.toArray(new CfgHolder[out.size()]);
 	}
 	
+	/**
+	 * Checks whether we've already worked with
+	 * given set of selected toolchains
+	 *  
+	 * @return true if toolchain(s) is the same as before 
+	 */
+	private boolean isVisited() {
+		if (table == null || handler == null)
+			return false;
+		
+		return Arrays.equals(
+				handler.getSelectedToolChains(), 
+				visitedTCs);
+	}
+	
     /**
      * Returns whether this page's controls currently all contain valid 
      * values.
@@ -240,7 +257,8 @@ public class CDTConfigWizardPage extends WizardPage {
      *   <code>false</code> if at least one is invalid
      */
     public boolean isCustomPageComplete() {
-    	if (!isVisible) return true;
+    	if (!isVisited()) 
+    		return true;
     	
 		if (table.getItemCount() == 0) {
 			errorMessage = UIMessages.getString("CConfigWizardPage.10"); //$NON-NLS-1$
@@ -262,16 +280,16 @@ public class CDTConfigWizardPage extends WizardPage {
      */
     public void setVisible(boolean visible) {
     	isVisible = visible;
-		if (visible && handler != null) {
+		if (visible && handler != null && !isVisited()) {
 			tv.setInput(CfgHolder.unique(getDefaultCfgs(handler)));
 			tv.setAllChecked(true);
 			String s = EMPTY_STR;
-			IToolChain[] tc = handler.getSelectedToolChains();
-			for (int i=0; i < tc.length; i++) {
-				s = s + ((tc[i] == null) ? 
+			visitedTCs = handler.getSelectedToolChains();
+			for (int i=0; i < visitedTCs.length; i++) {
+				s = s + ((visitedTCs[i] == null) ? 
 						"" : //$NON-NLS-1$
-						tc[i].getUniqueRealName());  
-				if (i < tc.length - 1) s = s + "\n";  //$NON-NLS-1$
+							visitedTCs[i].getUniqueRealName());  
+				if (i < visitedTCs.length - 1) s = s + "\n";  //$NON-NLS-1$
 			}
 			l_chains.setText(s);
 			l_projtype.setText(handler.getName());			

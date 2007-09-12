@@ -203,7 +203,7 @@ public class MBSWizardHandler extends CWizardHandler {
 			return followingPage;
 		}
 		
-		public boolean canFinish(IWizardPage predatingPage, IWizardPage followingPage){
+		private boolean canFinish(IWizardPage predatingPage, IWizardPage followingPage){
 			getNextPage(predatingPage, followingPage);
 			for(int i = 0; i < templatePages.length; i++){
 				if(!templatePages[i].isPageComplete())
@@ -488,10 +488,6 @@ public class MBSWizardHandler extends CWizardHandler {
 	
 	public IWizardPage getSpecificPage() {
 		return entryInfo.getNextPage(getStartingPage(), getConfigPage());
-//		if (fConfigPage == null) {
-//			fConfigPage = new CDTConfigWizardPage(this);
-//		}
-//		return fConfigPage; 
 	}
 	
 	/**
@@ -569,8 +565,6 @@ public class MBSWizardHandler extends CWizardHandler {
 		TableItem[] tis = table.getSelection();
 		if (tis == null || tis.length == 0)
 			return Messages.getString("MBSWizardHandler.0"); //$NON-NLS-1$
-		if (fConfigPage != null && fConfigPage.isVisible && !fConfigPage.isCustomPageComplete())
-			return Messages.getString("MBSWizardHandler.1"); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -653,7 +647,10 @@ public class MBSWizardHandler extends CWizardHandler {
 		if(entryInfo == null)
 			return false;
 		
-		if(!entryInfo.canFinish(getStartingPage(), getConfigPage()))
+		if (!getConfigPage().isCustomPageComplete())
+			return false;
+		
+		if(!entryInfo.canFinish(startingPage, getConfigPage()))
 			return false;
 		
 		return super.canFinich();

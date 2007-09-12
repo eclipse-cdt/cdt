@@ -21,7 +21,7 @@
  *    - Also remove unnecessary class RSEFileCache and obsolete branding files.
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
- * Remy Chi Jian Suen (Independent) - [192906][efs] No Error when trying to Create Remote Project when project with name exists
+ * Remy Chi Jian Suen (IBM) - [192906][efs] No Error when trying to Create Remote Project when project with name exists
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs.ui;

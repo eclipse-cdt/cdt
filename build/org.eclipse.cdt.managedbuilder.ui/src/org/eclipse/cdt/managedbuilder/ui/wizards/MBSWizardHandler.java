@@ -400,14 +400,10 @@ public class MBSWizardHandler extends CWizardHandler {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		ICProjectDescription des = mngr.createProjectDescription(project, false, !onFinish);
 		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-		if (defaults) {
+
+		cfgs = fConfigPage.getCfgItems(false);
+		if (cfgs == null || cfgs.length == 0) 
 			cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
-		} else {
-			getConfigPage(); // ensure that page is created
-			cfgs = fConfigPage.getCfgItems(defaults);
-			if (cfgs == null || cfgs.length == 0) 
-				cfgs = CDTConfigWizardPage.getDefaultCfgs(this);
-		}
 		
 		if (cfgs == null || cfgs.length == 0 || cfgs[0].getConfiguration() == null) {
 			throw new CoreException(new Status(IStatus.ERROR, 

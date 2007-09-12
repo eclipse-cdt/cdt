@@ -111,7 +111,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	
 	public CfgHolder[] getCfgItems(boolean getDefault) {
 		CfgHolder[] its;
-		if (getDefault || table == null)  
+		if (getDefault || table == null || !isVisited())  
 			its = getDefaultCfgs(handler);
 		else {
 			ArrayList out = new ArrayList(table.getItemCount());

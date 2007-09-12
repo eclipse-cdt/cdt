@@ -144,12 +144,9 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187739">bug 187739</a> - maj - [refresh] Sub Directories are collapsed when Parent Directory is Refreshed on Remote Systems</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196662">bug 196662</a> - maj - [refresh] Refresh performs queries in the Dispatch thread</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198143">bug 198143</a> - maj - [dstore][performance] Refresh a big directory takes very long time, and freezes workbench</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=199773">bug 199773</a> - maj - [ftp][regression] FTP always uploads remote files as binary</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=202866">bug 202866</a> - maj - ArrayIndexOutOfBounds in RSEFileSystemContributor.browseFileSystem()</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

@@ -127,4 +127,31 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 		assertEquals(3, sumSymbols.size());
 	}
 
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=203059
+	public void _testCompilerCommandInsideShellInvocation_bug203059() throws Exception {
+		fOutputParser.processLine("sh -c '/usr/bin/gcc -DA test1.c'"); //$NON-NLS-1$
+		fOutputParser.processLine("sh -c '/usr/gcc-installs/gcc -DB test2.c;"); //$NON-NLS-1$
+		fOutputParser.processLine("sh -c '/usr/gcc/gcc -DC test3.c'"); //$NON-NLS-1$
+		fOutputParser.processLine("sh -c '/usr/gcc.exe -DD test4.c'"); //$NON-NLS-1$
+		fOutputParser.processLine("sh -c '/usr/gcc-tool-x -DE test5.c'"); //$NON-NLS-1$
+		fOutputParser.processLine("sh -c '/usr/gcc/something_else -DF test6.c'"); //$NON-NLS-1$
+		// with semicolon
+		fOutputParser.processLine("sh -c 'gcc -DAA test1.c; gcc -DBB test2.c'"); //$NON-NLS-1$
+		fOutputParser.processLine("sh -c 'nix -DCC; gcc -DDD test2.c'"); //$NON-NLS-1$
+
+        List sumSymbols = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.SYMBOL_DEFINITIONS); 
+		assertTrue(sumSymbols.contains("A")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("B")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("C")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("D")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("E")); //$NON-NLS-1$
+		assertFalse(sumSymbols.contains("F")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("AA")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("BB")); //$NON-NLS-1$
+		assertFalse(sumSymbols.contains("CC")); //$NON-NLS-1$
+		assertTrue(sumSymbols.contains("DD")); //$NON-NLS-1$
+		assertEquals(8, sumSymbols.size());
+	}
+	
+
 }

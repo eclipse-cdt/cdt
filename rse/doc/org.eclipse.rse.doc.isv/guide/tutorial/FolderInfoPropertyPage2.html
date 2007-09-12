@@ -128,7 +128,7 @@ public class FolderInfoPropertyPage
 	 */
 	private void killThread()
 	{
-		if (!stopped && workerThread.isAlive())
+		if (!stopped &amp;&amp; workerThread.isAlive())
 		{
 		    stopped = true;
 		    try {
@@ -199,9 +199,9 @@ public class FolderInfoPropertyPage
 			try
 			{
 			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().listFoldersAndFiles( currFolder, null);
-			if ((folders != null) && (folders.length>0))
+			if ((folders != null) &amp;&amp; (folders.length&gt;0))
 			{
-				for (int idx=0; !stopped && (idx&lt;folders.length); idx++)
+				for (int idx=0; !stopped &amp;&amp; (idx&lt;folders.length); idx++)
 				{
 					// is this a folder? 
 					if (folders[idx].isDirectory())

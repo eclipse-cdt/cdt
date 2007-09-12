@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- ===================================================================== -->
 <!-- Custom targets called from a project's generated build.xml            -->
 <!-- Set customBuildCallbacks=<path/to/this/file> in your build.properties.-->

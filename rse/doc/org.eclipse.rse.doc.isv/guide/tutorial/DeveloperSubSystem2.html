@@ -108,7 +108,7 @@ public class DeveloperSubSystem extends SubSystem
 			// Now, subset master list, based on filter string...
 			NamePatternMatcher subsetter = new NamePatternMatcher(filterString);
 			Vector v = new Vector();
-			for (int idx=0; idx &lt1; allTeams.length; idx++)
+			for (int idx=0; idx &lt; allTeams.length; idx++)
 			{
 				if (subsetter.matches(allTeams[idx].getName()))
 				  v.addElement(allTeams[idx]);
@@ -124,7 +124,7 @@ public class DeveloperSubSystem extends SubSystem
 			String devrName = filterString.substring(slashIdx+1);
 			TeamResource[] allTeams = getAllTeams();
 			TeamResource match = null;
-			for (int idx=0; (match==null) && (idx &lt; allTeams.length); idx++)
+			for (int idx=0; (match==null) &amp;&amp; (idx &lt; allTeams.length); idx++)
 			   if (allTeams[idx].getName().equals(teamName))
 			     match = allTeams[idx];
 			if (match != null)

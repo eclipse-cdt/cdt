@@ -97,7 +97,7 @@ Use the "Source -&gt; Organize Imports" context menu item to add the appropriate
 <pre><code>
 	public void runCommand(String command) {
 		IRemoteCmdSubSystem cmdss = getRemoteCmdSubSystem();
-		if (cmdss != null && cmdss.isConnected()) {
+		if (cmdss != null &amp;&amp; cmdss.isConnected()) {
 			// Run the command in a visible shell
 			RemoteCommandHelpers.runUniversalCommand(getShell(), command, ".", cmdss); //$NON-NLS-1$
 		} else {
@@ -111,7 +111,7 @@ Use the "Source -&gt; Organize Imports" context menu item to add the appropriate
 	public IRemoteCmdSubSystem getRemoteCmdSubSystem() {
 		IHost myHost = getSubSystem().getHost();
 		IRemoteCmdSubSystem[] subsys = RemoteCommandHelpers.getCmdSubSystems(myHost);
-		for (int i = 0; i < subsys.length; i++) {
+		for (int i = 0; i &lt; subsys.length; i++) {
 			if (subsys[i].getSubSystemConfiguration().supportsCommands()) {
 				return subsys[i];
 			}

@@ -66,7 +66,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#getAbsoluteName(java.lang.Object)
 	 */
-	<a id="getAbsoluteName"/>public String getAbsoluteName(Object object)
+	<a id="getAbsoluteName"></a>public String getAbsoluteName(Object object)
 	{
 		<strong>TeamResource team = (TeamResource)object;
 		return "Team_"+team.getName();</strong>
@@ -124,7 +124,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	 * Intercept of parent method to indicate these objects can be renamed using the RSE-supplied
 	 *  rename action.
 	 */
-	<a id="canRename"/>public boolean canRename(Object element)
+	<a id="canRename"></a>public boolean canRename(Object element)
 	{
 		<strong>return true;</strong>
 	}
@@ -133,7 +133,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	 * Intercept of parent method to actually do the rename. RSE supplies the rename GUI, but 
 	 *  defers the action work of renaming to this adapter method.
 	 */
-	<a id="doRename"/>public boolean doRename(Shell shell, Object element, String newName)
+	<a id="doRename"></a>public boolean doRename(Shell shell, Object element, String newName)
 	{
 		<strong>((TeamResource)element).setName(newName);
 		return true;</strong>
@@ -185,7 +185,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#refreshRemoteObject(java.lang.Object, java.lang.Object)
 	 */
-	<a id="refreshRemoteObject"/>public boolean refreshRemoteObject(Object oldElement, Object newElement)
+	<a id="refreshRemoteObject"></a>public boolean refreshRemoteObject(Object oldElement, Object newElement)
 	{
 		<strong>TeamResource oldTeam = (TeamResource)oldElement;
 		TeamResource newTeam = (TeamResource)newElement;
@@ -204,7 +204,7 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.ui.view.ISystemRemoteElementAdapter#getRemoteParentNamesInUse(org.eclipse.swt.widgets.Shell, java.lang.Object)
 	 */
-	<a id="getNames"/>public String[] getRemoteParentNamesInUse(Shell shell, Object element)
+	<a id="getNames"></a>public String[] getRemoteParentNamesInUse(Shell shell, Object element)
 			throws Exception
 	{
 		<strong>DeveloperSubSystem ourSS = (DeveloperSubSystem)getSubSystem(element);

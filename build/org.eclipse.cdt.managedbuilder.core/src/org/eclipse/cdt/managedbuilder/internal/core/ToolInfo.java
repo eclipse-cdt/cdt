@@ -92,7 +92,7 @@ class ToolInfo {
 				if(fConverterInfo != null){
 					IBuildObject resultBo = fConverterInfo.getConvertedFromObject();
 					if(!(resultBo instanceof Tool)) {
-						status = new ModificationStatus("conversion failure");
+						status = new ModificationStatus(ManagedMakeMessages.getString("ToolInfo.0")); //$NON-NLS-1$
 					} else {
 						result = (Tool)resultBo;
 						status = ModificationStatus.OK;
@@ -130,7 +130,7 @@ class ToolInfo {
 			}
 			return fResultingTool;
 		case REMOVED:
-			fModificationStatus = new ModificationStatus("the tool is removed");
+			fModificationStatus = new ModificationStatus(ManagedMakeMessages.getString("ToolInfo.1")); //$NON-NLS-1$
 			return null;
 		case REMAINED:
 		default:

@@ -27,9 +27,9 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class HasNatureExpression implements IBooleanExpression {
 
-	public static final String NAME = "hasNature";
+	public static final String NAME = "hasNature"; //$NON-NLS-1$
 	
-	private static final String NATURE_ID = "natureId";
+	private static final String NATURE_ID = "natureId"; //$NON-NLS-1$
 	
 	private String natureId;
 	

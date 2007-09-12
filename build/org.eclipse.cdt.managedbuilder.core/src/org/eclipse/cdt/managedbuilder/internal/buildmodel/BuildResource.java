@@ -198,12 +198,12 @@ public class BuildResource implements IBuildResource {
 
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
-		buf.append("BR ");
+		buf.append("BR "); //$NON-NLS-1$
 		IPath fullPath = getFullPath();
 		if(fullPath != null)
-			buf.append("WSP|").append(fullPath);
+			buf.append("WSP|").append(fullPath); //$NON-NLS-1$
 		else
-			buf.append("FS|").append(getLocation());
+			buf.append("FS|").append(getLocation()); //$NON-NLS-1$
 			
 		return buf.toString();
 	}

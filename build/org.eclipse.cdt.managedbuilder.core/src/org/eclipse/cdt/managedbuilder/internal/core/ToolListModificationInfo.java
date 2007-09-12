@@ -137,8 +137,8 @@ public class ToolListModificationInfo {
 		}
 		
 		if(statusList.size() != 0)
-			return new MultiStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.INFO, "", null);
-		return new MultiStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.ERROR, "", null);
+			return new MultiStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.INFO, "", null); //$NON-NLS-1$
+		return new MultiStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.ERROR, "", null); //$NON-NLS-1$
 	}
 
 	private ToolInfo[][] calculateConflictingTools(ToolInfo[] infos){

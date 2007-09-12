@@ -28,7 +28,7 @@ public class ModificationStatus extends Status implements IModificationStatus {
 	private ITool[][] fToolConflicts;
 	private ITool[] fNonManagedBuildTools;
 
-	public static final ModificationStatus OK = new ModificationStatus(IStatus.OK, "", null);
+	public static final ModificationStatus OK = new ModificationStatus(IStatus.OK, "", null); //$NON-NLS-1$
 	
 	ModificationStatus(String msg){
 		this(msg, null);

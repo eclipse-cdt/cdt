@@ -97,7 +97,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		Map scannerInfo = new HashMap();
 		scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
 		scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
-		fCollector.contributeToScannerConfig(fProject, scannerInfo);
+		if (fCollector != null) fCollector.contributeToScannerConfig(fProject, scannerInfo);
 		TraceUtil.outputTrace("Scanner info from \'specs\' file",	//$NON-NLS-1$
 				"Include paths", includes, new ArrayList(), "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$);
 	}

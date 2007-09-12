@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ *  David McKnight  (IBM)  - [202822] updating cleanup
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -833,41 +834,23 @@ public class CommandMinerThread extends MinerThread
 	    }
 	}
 	
+
+	
 	public void cleanupThread()
 	{
-		// disconnecting all
-		_dataStore.disconnectObjects(_status);
 		
-
-		// clean up the associated environment
-		List projectEnvReference = _subject.getAssociated("inhabits"); //$NON-NLS-1$
-
-		if (projectEnvReference != null)
+		_isDone = true;
+		try
 		{
-			DataElement env = (DataElement)projectEnvReference.get(0);
-			DataElement envParent = env.getParent();			
-			_dataStore.deleteObject(envParent, env);
-			_dataStore.refresh(envParent);
-		}
-		_dataStore.disconnectObject(_subject); //bug 70420
+
 		
-		
-		refreshStatus();
+
 	    /*
 		if (_isShell)
 		{
 			sendInput("#exit");
 		}*/
-		
-		_isDone = true;
-		try
-		{
-			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
-			_dataStore.refresh(_status, true);
-			_stdOutputHandler.finish();
-			_stdErrorHandler.finish();
-			_stdInput.close();
-			_stdError.close();
+
 			if (_theProcess != null)
 			{
 				int exitcode;
@@ -880,7 +863,7 @@ public class CommandMinerThread extends MinerThread
 					else
 					{
 						exitcode = _theProcess.exitValue();
-						createObject("prompt", "> Shell Completed (exit code = " + exitcode + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						createObject("prompt", "> Shell Completed (exit code = " + exitcode + ")");
 					}
 				}
 				catch (IllegalThreadStateException e)
@@ -890,13 +873,41 @@ public class CommandMinerThread extends MinerThread
 				}
 				_theProcess = null;
 			}
+			
+
+			_stdOutputHandler.finish();
+			_stdErrorHandler.finish();
+			_stdInput.close();
+			_stdError.close();
+			
+			_status.setAttribute(DE.A_NAME, "done");
+			_dataStore.refresh(_status);
+	
+			System.out.println("cleaupThread");
+		
+		// disconnecting all
+	
+		_dataStore.disconnectObjects(_status);
+		
+
+		// clean up the associated environment
+		List projectEnvReference = _subject.getAssociated("inhabits");
+
+		if (projectEnvReference != null)
+		{
+			DataElement env = (DataElement)projectEnvReference.get(0);
+			DataElement envParent = env.getParent();			
+			_dataStore.deleteObject(envParent, env);
+			_dataStore.refresh(envParent);
+		}
+		_dataStore.disconnectObject(_subject); //bug 70420
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
-		}
+		}				
 	}
-
+	
 	public void interpretLine(String line, boolean stdError)
 	{
 		// for prompting

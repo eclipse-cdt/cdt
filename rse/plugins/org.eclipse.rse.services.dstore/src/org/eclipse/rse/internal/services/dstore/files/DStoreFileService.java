@@ -200,11 +200,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			String hostEncoding, IProgressMonitor monitor)
 	{
 		BufferedInputStream bufInputStream = null;
-
 	
-		boolean isCancelled = false;
-
-	
+		boolean isCancelled = false;	
 	
 		try
 		{	

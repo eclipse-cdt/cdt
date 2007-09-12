@@ -13,12 +13,13 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ *  David McKnight  (IBM)  - [202822] don't need to remove children from map here
  *******************************************************************************/
 
 package org.eclipse.dstore.internal.core.util;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
@@ -39,8 +40,8 @@ public class DataElementRemover extends Handler
 	// that are older than _expiryTime milliseconds are removed.
 	public static final int DEFAULT_EXPIRY_TIME = 600; // in seconds
 	public static final int DEFAULT_INTERVAL_TIME = 60; // in seconds
-	private int _intervalTime = DEFAULT_INTERVAL_TIME * 100;
-	private int _expiryTime = DEFAULT_EXPIRY_TIME * 100;
+	private int _intervalTime = DEFAULT_INTERVAL_TIME * 10;
+	private int _expiryTime = DEFAULT_EXPIRY_TIME * 10;
 	public static final String EXPIRY_TIME_PROPERTY_NAME = "SPIRIT_EXPIRY_TIME"; //$NON-NLS-1$
 	public static final String INTERVAL_TIME_PROPERTY_NAME = "SPIRIT_INTERVAL_TIME"; //$NON-NLS-1$
 	
@@ -96,9 +97,11 @@ public class DataElementRemover extends Handler
 	}
 
 	public synchronized void addToQueueForRemoval(DataElement element)
-	{
+	{		
+		System.out.println("dis:"+element.getName());
 		synchronized (_queue) 
 		{
+			
 			if (_dataStore.isDoSpirit() && _dataStore == element.getDataStore())
 			{
 				QueueItem item = new QueueItem(element, System.currentTimeMillis());
@@ -116,6 +119,8 @@ public class DataElementRemover extends Handler
 	{
 		synchronized (_queue)
 		{
+			
+			System.out.println("spiriting");
 			_dataStore.memLog("           "); //$NON-NLS-1$
 			int disconnected = 0;
 			if (!_dataStore.isDoSpirit())
@@ -136,13 +141,20 @@ public class DataElementRemover extends Handler
 			
 			_dataStore.memLog("Size of queue: " + _queue.size()); //$NON-NLS-1$
 			
+			ArrayList toRefresh = new ArrayList();
 			while (_queue.size() > 0 && System.currentTimeMillis() - ((QueueItem) _queue.getFirst()).timeStamp > _expiryTime)
 			{
 				DataElement toBeDisconnected = ((QueueItem) _queue.removeFirst()).dataElement;
 				if (!toBeDisconnected.isSpirit()) 
 				{
 					toBeDisconnected.setSpirit(true);
-					_dataStore.refresh(toBeDisconnected);
+					toBeDisconnected.setUpdated(false);
+					DataElement parent = toBeDisconnected.getParent();
+					if (!toRefresh.contains(parent))
+					{
+						toRefresh.add(toBeDisconnected.getParent());
+					}
+						//_dataStore.refresh(toBeDisconnected);
 					disconnected++;
 					numDisconnected++;
 				}
@@ -152,6 +164,9 @@ public class DataElementRemover extends Handler
 				}
 				unmap(toBeDisconnected);
 			}
+	
+			_dataStore.refresh(toRefresh);
+			
 			_dataStore.memLog("Disconnected " + disconnected + " DataElements."); //$NON-NLS-1$ //$NON-NLS-2$
 			_dataStore.memLog("Elements created so far: " + numCreated); //$NON-NLS-1$
 			_dataStore.memLog("Elements disconnected so far: " + numDisconnected); //$NON-NLS-1$
@@ -162,15 +177,6 @@ public class DataElementRemover extends Handler
 	
 	private void unmap(DataElement element)
 	{	 
-		List children = element.getNestedData();
-		if (children != null)
-		{
-			for (int i = 0; i < children.size(); i++)
-			{
-				DataElement child = (DataElement)children.get(i);
-				unmap(child);
-			}
-		}
 		_dataStore.getHashMap().remove(element.getId());
 	}
 	

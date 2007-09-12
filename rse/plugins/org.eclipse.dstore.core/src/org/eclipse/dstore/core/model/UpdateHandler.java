@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)   [202822] should not be synchronizing on clean method
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -67,7 +68,7 @@ public abstract class UpdateHandler extends Handler
 		clean(object, 2);
 	}
 
-	protected synchronized void clean(DataElement object, int depth)
+	protected void clean(DataElement object, int depth)
 	{
 		if ((depth > 0) && (object != null) && object.getNestedSize() > 0)
 		{
@@ -78,7 +79,6 @@ public abstract class UpdateHandler extends Handler
 				DataElement child = (DataElement) deletedList.get(i);
 				if (child != null && child.isDeleted())
 				{
-					clean(child, depth - 1);
 					DataElement parent = child.getParent();
 					DataElementRemover.addToRemovedCount();
 					
@@ -91,15 +91,19 @@ public abstract class UpdateHandler extends Handler
 					
 					if (parent != null)
 					{
-						parent.removeNestedData(child);
+						synchronized (parent)
+						{
+							parent.removeNestedData(child);
+						}
 					}
-				  _dataStore.addToRecycled(child);
+				//  _dataStore.addToRecycled(child);
 				}
 			}
 
 			deletedList.clear();
 		}
-		
+		// delete objects under temproot
+		_dataStore.getTempRoot().removeNestedData();
 		
 	}
 

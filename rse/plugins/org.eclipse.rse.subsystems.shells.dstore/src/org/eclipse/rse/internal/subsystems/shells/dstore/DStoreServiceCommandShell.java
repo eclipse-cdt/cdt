@@ -13,12 +13,16 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ *  David McKnight  (IBM)  - [202822] cleanup output datalements after use
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.dstore;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
+import org.eclipse.dstore.core.model.DataStore;
+import org.eclipse.dstore.extra.DomainEvent;
+import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreHostOutput;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreHostShell;
 import org.eclipse.rse.internal.services.dstore.shells.DStoreShellOutputReader;
@@ -32,10 +36,79 @@ import org.eclipse.rse.subsystems.shells.core.model.RemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteCmdSubSystem;
 import org.eclipse.rse.subsystems.shells.core.subsystems.IRemoteOutput;
 import org.eclipse.rse.subsystems.shells.core.subsystems.servicesubsystem.ServiceCommandShell;
+import org.eclipse.swt.widgets.Shell;
 
 public class DStoreServiceCommandShell extends ServiceCommandShell
 {
+	private class CleanUpSpirited extends Thread implements IDomainListener
+	{
+		private DataElement _status;
+		private DataStore _ds;
+		private String _name;
+		private boolean _done = false;
+		
+		public CleanUpSpirited(DataElement status, String name)
+		{
+			_status = status;
+			_ds = status.getDataStore();
+			_ds.getDomainNotifier().addDomainListener(this);
+			_name = name;
+		}
+		
+		public void domainChanged(DomainEvent e) 
+		{
+			deleteElements();
+		}
+		
+		public void run()
+		{			
+			while (!_done)
+			{
+				try
+				{
+					Thread.sleep(10000);
+				}
+				catch (Exception e)
+				{					
+				}
+				deleteElements();
+			}
+		}
+		
+		private void deleteElements()
+		{
+			if (_status.getNestedSize() > 0)
+			{
+				//synchronized (_status)
+				{
+					int ssize = _status.getNestedSize();
+				if (_status.get(ssize - 1).isSpirit())
+				{
+					System.out.println("deleting for "+ _name);
+					// delete
+					_ds.deleteObjects(_status);
+					_ds.refresh(_status);			
+					
+					_ds.getDomainNotifier().removeDomainListener(this);
+					_done = true;
+				}
+				}
+			}		
+		}
 
+		public Shell getShell() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public boolean listeningTo(DomainEvent e) {
+			if (e.getParent() == _status)
+				return true;
+			return false;
+		}
+		
+	}
+	
 	public DStoreServiceCommandShell(IRemoteCmdSubSystem cmdSS, IHostShell hostShell)
 	{
 		super(cmdSS, hostShell);
@@ -156,6 +229,42 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 			}				
 		}
 		return activeShell;
+	}
+	
+	public void removeOutput()
+	{			
+		DStoreHostShell shell = (DStoreHostShell)getHostShell();
+		DataElement status = shell.getStatus();
+		DataStore ds = status.getDataStore();
+
+		int ssize = status.getNestedSize();
+		if (status.get(ssize - 1).isSpirit() || !ds.isDoSpirit()) 
+		{
+			// objects can be deleted directly at this point since there will be no more updates from the server
+			ds.deleteObjects(status);
+			ds.refresh(status);
+		}
+		else
+		{
+			// cleanup later
+			// objects need to be deleted later since the server will still be sending spirited update
+			// if we don't defer this, then the deleted elements would get recreated when the spirits are updated
+			CleanUpSpirited cleanUp = new CleanUpSpirited(status, getId());					
+			cleanUp.start();
+		}
+
+		
+		// cleanup on host should be taking care of that
+		// ds.setObject(_commandElement);	
+		
+		synchronized(_output)
+		{
+			_output.clear();			
+		}
+		
+	//	noDE = ds.getHashMap().size();
+	//	System.out.println("DataElements:"+noDE);
+		//ds.printTree("2>", ds.getLogRoot());
 	}
 	
 }

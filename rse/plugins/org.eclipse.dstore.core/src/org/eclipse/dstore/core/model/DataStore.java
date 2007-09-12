@@ -14,6 +14,7 @@
  * Contributors:
  * Michael Berger (IBM) - 146326 fixed erroneously disconnected dstore elements.
  * Michael Berger (IBM) - 145799 added refresh() method with depth parameter.
+ * David McKnight (IBM) - 202822 findDeleted should not be synchronized
  *******************************************************************************/
 
 package org.eclipse.dstore.core.model;
@@ -1657,7 +1658,11 @@ public final class DataStore
 	 */
 	public void disconnectObjects(DataElement from)
 	{
-		if (!isDoSpirit()) return;
+		if (!isDoSpirit())
+			{
+			System.out.println("not doing spirit");
+			return;
+			}
 		if (from != null)
 		{
 			for (int i = from.getNestedSize() - 1; i >= 0; i--)
@@ -2629,7 +2634,7 @@ public final class DataStore
 	 * @param root where to search from 
 	 * @return a list of elements
 	 */
-	public synchronized List findDeleted(DataElement root)
+	public List findDeleted(DataElement root)
 	{
 		return findDeleted(root, 10);
 	}
@@ -2641,10 +2646,12 @@ public final class DataStore
 	 * @param type the descriptor representing the type of the objects to search for 
 	 * @return a list of elements
 	 */
-	public synchronized List findDeleted(DataElement root, int depth)
+	public List findDeleted(DataElement root, int depth)
 	{
 		ArrayList results = new ArrayList();
-		synchronized (root)
+//		synchronized (root)
+		// synchronized can cause hang here..but may not be necessary anyway since
+		// we're not adding or removing anything here
 		{
 			if (root != null && root.getDataStore() == this)
 			{
@@ -3756,8 +3763,7 @@ public final class DataStore
 			for (int i = 0; i < toDelete.getNestedSize(); i++)
 			{
 				DataElement subDelete = toDelete.get(i);
-				if (subDelete != null && subDelete.getDataStore() == this/* && !subDelete.isDeleted()*/) // on server, spirited are considered deleted
-				{
+				if (subDelete != null && subDelete.getDataStore() == this && !subDelete.isDeleted()) 				{
 					deleteObjectHelper(toDelete, subDelete, depth);
 				}
 			}
@@ -4204,6 +4210,35 @@ public final class DataStore
 	{
 		referenceTag = tag;
 	}
-	
+	/*
+	public int printTree(String indent, DataElement root)
+	{
+		return printTree(indent, 0, root);
+	}
 
+	public int printTree(String indent, int number, DataElement root)
+	{
+		int total = number;
+		if (root != null)
+		{
+			total++;
+			boolean isSpirit = root.isSpirit();
+			boolean isDeleted = root.isDeleted();
+			String prefix = "DataElement";
+			if (isSpirit)
+				prefix += "<spirit>";
+			if (isDeleted)
+				prefix += "<deleted>";
+			
+			String msg = indent + prefix + "["+ total + "]("+root.getType()+", "+root.getName()+")";
+			System.out.println(msg);
+			for (int i = 0; i < root.getNestedSize(); i++)
+			{
+				DataElement currentElement = (DataElement) root.get(i);				
+				total = printTree(indent + " ", total, currentElement);
+			}
+		}
+		return total;
+	}
+*/
 }

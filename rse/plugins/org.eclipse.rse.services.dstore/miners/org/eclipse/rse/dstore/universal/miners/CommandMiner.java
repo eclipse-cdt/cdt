@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * David McKnight  (IBM)  - [191599] use specified encoding for shell
+ * David McKnight  (IBM)  - [202822] canceled output should be created before thread cleanup
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -265,7 +266,9 @@ public class CommandMiner extends Miner
 	{
 		CommandMinerThread theThread = (CommandMinerThread) _threads.get(status.getAttribute(DE.A_ID));
 		if (theThread != null)
-		{		    
+		{	
+			_dataStore.createObject(status, "stdout", "Command Cancelled by User Request"); //$NON-NLS-1$ //$NON-NLS-2$
+
 			theThread.stopThread();
 			theThread.sendExit();
 			
@@ -274,14 +277,12 @@ public class CommandMiner extends Miner
 			while (!done)
 				if ((!theThread.isAlive()) || (stopIn < System.currentTimeMillis()))
 					done = true;
-			_dataStore.createObject(status, "stdout", "Command Cancelled by User Request"); //$NON-NLS-1$ //$NON-NLS-2$
-			_dataStore.refresh(status);
 		}
 	}
 
 	public String getVersion()
 	{
-		return "6.4.0"; //$NON-NLS-1$
+		return "8.0.0"; //$NON-NLS-1$
 	}
 
 }

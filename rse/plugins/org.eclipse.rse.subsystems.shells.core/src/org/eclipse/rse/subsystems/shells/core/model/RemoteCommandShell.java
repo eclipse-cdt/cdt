@@ -127,7 +127,12 @@ public abstract class RemoteCommandShell implements IAdaptable, IRemoteCommandSh
 
 	public Object[] listOutput()
 	{
-		return _output.toArray();
+		Object[] array = new Object[_output.size()];
+		synchronized (_output)
+		{
+		  _output.toArray(array);
+		}
+		return array;
 	}
 
 	public int getIndexOf(Object output)

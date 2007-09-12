@@ -1657,7 +1657,7 @@ public final class DataElement implements IDataElement
 			_isUpdated = false;
 			_isExpanded = true;
 			_buffer = null;
-			//_nestedData = null;
+			//_nestedData = null; // commented out this null setting so that the children of this element can be properly deleted
 		}
 	}
 	

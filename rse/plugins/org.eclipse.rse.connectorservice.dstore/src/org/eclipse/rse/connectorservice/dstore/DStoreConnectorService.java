@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty()
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * David McKnight   (IBM)        - [202822] need to enable spiriting on the server side
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -85,6 +86,20 @@ import org.osgi.framework.Version;
  */
 public class DStoreConnectorService extends StandardConnectorService implements IDataStoreProvider
 {
+	private class StartSpiritThread extends Thread
+	{
+		private DataStore _dataStore;
+		public StartSpiritThread(DataStore dataStore)
+		{
+			_dataStore = dataStore;
+		}
+		
+		public void run()
+		{
+			if (_dataStore.isDoSpirit()) _dataStore.queryServerSpiritState();
+		}
+	}
+	
 	private ClientConnection clientConnection = null;
 	private ConnectionStatusListener _connectionStatusListener = null;
 	private IServerLauncher starter = null;
@@ -834,7 +849,9 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				dataStore.showTicket(null);
 			}
 			
-	        if (dataStore.isDoSpirit()) dataStore.queryServerSpiritState();
+	      //  if (dataStore.isDoSpirit()) dataStore.queryServerSpiritState();
+			StartSpiritThread thread = new StartSpiritThread(dataStore);
+			thread.start();
 
 			// Fire comm event to signal state changed
 			fireCommunicationsEvent(CommunicationsEvent.AFTER_CONNECT);
@@ -869,6 +886,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				boolean cacheRemoteClasses = store.getBoolean(IUniversalDStoreConstants.RESID_PREF_CACHE_REMOTE_CLASSES);
 				
 				dataStore.setPreference(RemoteClassLoader.CACHING_PREFERENCE, cacheRemoteClasses ? "true" : "false"); //$NON-NLS-1$  //$NON-NLS-2$
+				
 			}
 			else
 			{						

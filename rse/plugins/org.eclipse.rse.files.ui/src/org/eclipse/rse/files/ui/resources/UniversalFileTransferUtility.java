@@ -24,6 +24,8 @@
  * David McKnight   (IBM)        - [191472] should not use super transfer with SSH/FTP Folder Copy and Paste
  * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
  * Xuan Chen (IBM)        - [201790] [dnd] Copy and Paste across connections to a Drive doesn't work
+ * Xuan Chen (IBM)        - [202668] [Supertransfer] Subfolders not copied when doing first copy from dstore to Local
+ * Xuan Chen (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1175,6 +1177,9 @@ public class UniversalFileTransferUtility
 					}
 					else
 					{
+					    //sometimes, IContainer#members does not return the right members under
+					    //this folder.  We need to call refreshLocal() first to overcome this problem
+						directory.refreshLocal(IResource.DEPTH_ONE, monitor);
 						IResource[] children = directory.members();
 						SystemWorkspaceResourceSet childSet = new SystemWorkspaceResourceSet(children);			
 						SystemRemoteResourceSet childResults = copyWorkspaceResourcesToRemote(childSet, newTargetFolder, monitor, checkForCollisions);																	
@@ -1487,13 +1492,10 @@ public class UniversalFileTransferUtility
 			targetFS.copy(compressedFolder, newTargetParent, newTargetFolder.getName(), monitor);
 			
 			// delete the temp remote archive
-			//Since this archive file has never been cache before, a default filter DStore Element
-			//will be created before we send down "delete" commad to dstore server. Since "delete" 
-			//command is not a registered command for a filter
-			//element, the delete command query will not be sent to dstore server.
-			//To overcome this problem, we need to do query on it first to cache
-			//its information so that it could be deleted properly.
-			targetFS.resolveFilterString(newPath + RemoteFileFilterString.SWITCH_NOSUBDIRS, monitor);
+			// now, DStoreFileService#getFile() (which is invoked by getRemoteFileObject() call)
+			// has been updated to also put the query object into the dstore file map,
+			// we don't need to do the query on the remoteArchive object before the 
+			// delete.
 			targetFS.delete(remoteArchive, monitor);
 			
 			monitor.done();

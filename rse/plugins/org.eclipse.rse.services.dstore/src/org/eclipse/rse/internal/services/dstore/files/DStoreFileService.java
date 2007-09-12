@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
  * David McKnight   (IBM)        - [196035] Wrapper SystemMessageExceptions for createFile and createFolder with RemoteFileSecurityException
  * Kevin Doyle 		(IBM)		 - [191548] Deleting Read-Only directory removes it from view and displays no error
+ * Xuan Chen        (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -775,7 +776,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			de = getElementFor(buf.toString());
 		}
 		dsQueryCommand(de, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
-		return new DStoreHostFile(de);
+		//getFile call should also need to convert this DataElement into a HostFile using
+		//convertToHostFile() call.  This way, this DataElement will be put into _fileMap.
+		return convertToHostFile(de);
 	}
 
 	/**

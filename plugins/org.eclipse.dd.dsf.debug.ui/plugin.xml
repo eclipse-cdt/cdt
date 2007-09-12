@@ -51,121 +51,6 @@
       </specification>
    </extension>
    <extension
-         point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
-            targetID="org.eclipse.debug.ui.RegisterView">
-         <menu
-               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
-               label="Update Mode"
-               path="additions">
-            <groupMarker
-                  name="content">
-            </groupMarker>
-            <separator
-                  name="additions">
-            </separator>
-         </menu>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
-               label="Manual"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
-               label="On Breakpoint Hit"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
-               definitionId="org.eclipse.debug.ui.RegisterView"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
-               label="Always"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               state="true"
-               style="radio">
-         </action>
-      </viewerContribution>
-      <viewerContribution
-            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
-            targetID="org.eclipse.debug.ui.ExpressionView">
-         <menu
-               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
-               label="Update Mode"
-               path="additions">
-            <groupMarker
-                  name="content">
-            </groupMarker>
-            <separator
-                  name="additions">
-            </separator>
-         </menu>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
-               label="Manual"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
-               label="On Breakpoint Hit"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
-               label="Always"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               state="true"
-               style="radio">
-         </action>
-      </viewerContribution>
-      <viewerContribution
-            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
-            targetID="org.eclipse.debug.ui.VariableView">
-         <menu
-               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
-               label="Update Mode"
-               path="additions">
-            <groupMarker
-                  name="content">
-            </groupMarker>
-            <separator
-                  name="additions">
-            </separator>
-         </menu>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
-               label="Manual"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
-               label="On Breakpoint Hit"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
-               label="Always"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               state="true"
-               style="radio">
-         </action>
-      </viewerContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
             id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.Refresh"
@@ -197,6 +82,126 @@
                icon="icons/refresh.gif"
                id="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.Refresh"
                label="Refresh"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
+            targetID="org.eclipse.debug.ui.VariableView">
+            <menu
+               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
+               label="Update Mode"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
+               label="Manual"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               style="radio"
+               toolbarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
+               label="On Breakpoint Hit"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
+               definitionId="org.eclipse.debug.ui.RegisterView"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
+               label="Always"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               state="true"
+               style="radio"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
+            targetID="org.eclipse.debug.ui.ExpressionView">
+            <menu
+               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
+               label="Update Mode"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
+               label="Manual"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               style="radio"
+               toolbarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
+               label="On Breakpoint Hit"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
+               definitionId="org.eclipse.debug.ui.RegisterView"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
+               label="Always"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               state="true"
+               style="radio"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+      <viewContribution
+            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
+            targetID="org.eclipse.debug.ui.RegisterView">
+            <menu
+               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
+               label="Update Mode"
+               path="additions">
+            <groupMarker
+                  name="content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+         </menu>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
+               label="Manual"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               style="radio"
+               toolbarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
+               label="On Breakpoint Hit"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               style="radio">
+         </action>
+         <action
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
+               definitionId="org.eclipse.debug.ui.RegisterView"
+               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
+               label="Always"
+               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
+               state="true"
+               style="radio"
                toolbarPath="additions">
          </action>
       </viewContribution>

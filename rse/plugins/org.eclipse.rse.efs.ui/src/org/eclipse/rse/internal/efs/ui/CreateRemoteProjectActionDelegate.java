@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * Martin Oberhuber (Wind River) - [188360] renamed from plugin org.eclipse.rse.eclipse.filesystem
  * Remy Chi Jian Suen (IBM) - [192906][efs] No Error when trying to Create Remote Project when project with name exists
+ * Martin Oberhuber (Wind River) - [182350] Support creating remote project on Windows Drive
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs.ui;
@@ -179,8 +180,9 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 	{
 		IWorkspaceRoot root = SystemBasePlugin.getWorkspaceRoot();
 
-		String directoryName = directory.getName();
-		IProject editProject = root.getProject(directoryName);
+		String projectName = directory.getSystemConnection().getAliasName() + '_' + directory.getName();
+		projectName = projectName.replaceAll("[/:*?\"<>|\\\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		IProject editProject = root.getProject(projectName);
 
 		try {
 			//FIXME re-enable for 3.0 -- just allowing editProject.create() throw for now to avoid NLS change
@@ -192,7 +194,7 @@ public class CreateRemoteProjectActionDelegate implements IActionDelegate {
 //						NLS.bind(Messages.CreateRemoteProjectActionDelegate_PROJECT_EXISTS, directoryName)));
 //			}
 	
-			IProjectDescription description = root.getWorkspace().newProjectDescription(directoryName);
+			IProjectDescription description = root.getWorkspace().newProjectDescription(projectName);
 			String hostNameOrAddr = directory.getParentRemoteFileSubSystem().getHost().getHostName();
 			String absolutePath = directory.getAbsolutePath();
 			URI location = RSEFileSystem.getURIFor(hostNameOrAddr, absolutePath);

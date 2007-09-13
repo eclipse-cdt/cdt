@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.connectorservice.dstore
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.0.1.qualifier
 Bundle-Activator: org.eclipse.rse.internal.connectorservice.dstore.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,

@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * Javier Montalvo Orus (Symbian) - [199773] Default file transfer mode is ignored for some file types
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -452,10 +453,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	
 	protected boolean isBinary(String localEncoding, String hostEncoding, String remotePath)
 	{
-		boolean isText = !hostEncoding.equals(localEncoding) && 
-		SystemFileTransferModeRegistry.getInstance().isText(remotePath) && 
-		!SystemEncodingUtil.getInstance().isXML(remotePath) ;
-		return !isText;
+		return SystemFileTransferModeRegistry.getInstance().isBinary(remotePath) ||
+		       SystemEncodingUtil.getInstance().isXML(remotePath);	
 	}
 	
 	protected boolean isBinary(IRemoteFile source)

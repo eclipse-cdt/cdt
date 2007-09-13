@@ -243,4 +243,9 @@ public class TestFolderInfo implements IFolderInfo {
 		return null;
 	}
 
+	public boolean isSupported() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

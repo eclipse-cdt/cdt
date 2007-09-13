@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -1029,5 +1030,19 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 		}
 		
 		setRebuildState(true);
+	}
+	
+	public boolean isSupported(){
+		IFolderInfo foInfo = getParentFolderInfo();
+		if(foInfo == null){
+			IConfiguration cfg = getParent();
+			if(cfg != null) {
+				foInfo = cfg.getRootFolderInfo();
+			}
+		}
+		
+		if(foInfo != null)
+			return foInfo.isSupported();
+		return false;
 	}
 }

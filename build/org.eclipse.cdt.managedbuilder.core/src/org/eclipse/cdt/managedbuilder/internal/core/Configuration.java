@@ -1619,9 +1619,9 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isSupported()
 	 */
 	public boolean isSupported(){
-		IToolChain toolChain = getToolChain();
-		if(toolChain != null)
-			return toolChain.isSupported();
+		IFolderInfo foInfo = getRootFolderInfo();
+		if(foInfo != null)
+			return foInfo.isSupported();
 		return false;
 	}
 	

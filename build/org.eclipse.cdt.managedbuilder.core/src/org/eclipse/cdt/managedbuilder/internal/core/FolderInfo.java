@@ -1574,4 +1574,10 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		
 		setRebuildState(true);
 	}
+	
+	public boolean isSupported(){
+		if(toolChain != null)
+			return toolChain.isSupported();
+		return false;
+	}
 }

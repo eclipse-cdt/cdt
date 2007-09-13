@@ -1660,7 +1660,6 @@ public final class DataStore
 	{
 		if (!isDoSpirit())
 			{
-			System.out.println("not doing spirit");
 			return;
 			}
 		if (from != null)

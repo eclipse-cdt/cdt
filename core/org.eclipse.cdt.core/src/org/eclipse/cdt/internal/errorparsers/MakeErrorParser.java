@@ -62,12 +62,14 @@ public class MakeErrorParser extends AbstractErrorParser {
 		},
 		
 		//[foo]  signal description
-		new ErrorPattern("(make.*\\d+\\s+\\w+.*)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
-			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				
-				super.recordError(matcher, eoParser);
-				return true;
-			}
-		},
+		// Turning off for now, bug 203269
+		// This is reporting an error on the line 'make -j8 ...'
+//		new ErrorPattern("(make.*\\d+\\s+\\w+.*)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
+//			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				
+//				super.recordError(matcher, eoParser);
+//				return true;
+//			}
+//		},
 		//missing separator. Stop.
 		new ErrorPattern("(make.*missing separator.\\s*Stop.)", 1, IMarkerGenerator.SEVERITY_ERROR_RESOURCE) { //$NON-NLS-1
 			protected boolean recordError(Matcher matcher, ErrorParserManager eoParser) {				

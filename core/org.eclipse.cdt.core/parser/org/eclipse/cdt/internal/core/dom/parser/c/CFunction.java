@@ -70,10 +70,16 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
     	return null;
     }
     public void addDeclarator( IASTFunctionDeclarator fnDeclarator ){
-        updateParameterBindings( fnDeclarator );
-        if( fnDeclarator.getParent() instanceof IASTFunctionDefinition || fnDeclarator instanceof ICASTKnRFunctionDeclarator ) 
+        if( fnDeclarator.getParent() instanceof IASTFunctionDefinition || fnDeclarator instanceof ICASTKnRFunctionDeclarator ) {
+        	if (definition == fnDeclarator) {
+        		// recursion?
+        		return;
+        	}
+            updateParameterBindings( fnDeclarator );
             definition = fnDeclarator;
-        else {
+            return;
+        } else {
+            updateParameterBindings( fnDeclarator );
             if( declarators == null ){
                 declarators = new IASTStandardFunctionDeclarator[] { (IASTStandardFunctionDeclarator) fnDeclarator };
             	return;

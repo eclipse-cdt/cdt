@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Rational Software - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -19,8 +20,10 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
@@ -654,4 +657,43 @@ public class AST2KnRTests extends AST2BaseTest {
         assertTrue( stmts[2] instanceof IASTCompoundStatement );
         assertTrue( stmts[3] instanceof IASTNullStatement );
     }
+    
+    // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=203050
+    public void testBug203050() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("typedef long time_t;\n" +  //$NON-NLS-1$
+    			"\n" +  //$NON-NLS-1$
+    			"void (foo)(timep)\n" +  //$NON-NLS-1$
+    			"	const time_t * const timep;\n" +  //$NON-NLS-1$
+    			"{\n" +  //$NON-NLS-1$
+    			"	struct tm tmp;\n" +  //$NON-NLS-1$
+    			"	bar(timep, &tmp);\n" +  //$NON-NLS-1$
+    			"}\n" +  //$NON-NLS-1$
+    			"int (bar)(timep, tmp)\n" +  //$NON-NLS-1$
+    			"	const time_t * const	timep;\n" +  //$NON-NLS-1$
+    			"	struct tm * tmp;\n" +  //$NON-NLS-1$
+    			"{\n" +  //$NON-NLS-1$
+    			"	return 0;\n" +  //$NON-NLS-1$
+    			"}\n"); //$NON-NLS-1$
+    	
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C, true, true);
+        assertTrue( tu.getDeclarations()[0] instanceof IASTSimpleDeclaration );
+        assertTrue( tu.getDeclarations()[1] instanceof IASTFunctionDefinition );
+        assertTrue( tu.getDeclarations()[2] instanceof IASTFunctionDefinition );
+        IASTStatement[] stmts = ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[1]).getBody()).getStatements();
+        assertTrue( stmts[0] instanceof IASTDeclarationStatement );
+        assertTrue( stmts[1] instanceof IASTExpressionStatement );
+        IASTExpression expr= ((IASTExpressionStatement)stmts[1]).getExpression();
+        assertTrue(expr instanceof IASTFunctionCallExpression);
+        IASTIdExpression fnameExpr= (IASTIdExpression)((IASTFunctionCallExpression)expr).getFunctionNameExpression();
+        fnameExpr.getName().resolveBinding();
+        
+        IASTName fname= ((IASTFunctionDefinition)tu.getDeclarations()[2]).getDeclarator().getName();
+        try {
+        	fname.resolveBinding();
+        } catch (StackOverflowError e) {
+        	fail(e.getMessage());
+        }
+    }
+
 }

@@ -2745,7 +2745,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return unusedChildrenSet;
 	}
 	
-	private void addUnusedChild(ITool tool){
+	void addUnusedChild(ITool tool){
 		Set set = getUnusedChilrenSet();
 		set.add(tool.getId());
 		unusedChildrenSet = set;

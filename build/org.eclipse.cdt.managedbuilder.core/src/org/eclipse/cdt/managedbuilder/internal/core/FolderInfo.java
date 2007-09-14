@@ -1054,6 +1054,11 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 	}
 	
 	public void modifyToolChain(ITool[] removed, ITool[] added){
+		if(true){
+			ToolListModificationInfo info = ToolChainModificationHelper.getModificationInfo(this, getTools(), added, removed);
+			info.apply();
+			return;
+		}
 		ITool[][] checked = checkDups(removed, added);
 		removed = checked[0];
 		added = checked[1];
@@ -1568,9 +1573,19 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 
 	void applyToolsInternal(ITool[] resultingTools,
 			ToolListModificationInfo info) {
+		ITool[] removedTools = info.getRemovedTools();
+		
+		for(int i = 0; i < removedTools.length; i++){
+			ITool tool = removedTools[i];
+			ITool extTool = ManagedBuildManager.getExtensionTool(tool);
+			if(extTool.getParent() == toolChain.getSuperClass())
+				toolChain.addUnusedChild(extTool);
+		}
+
 		toolChain.setToolsInternal(resultingTools);
 		
-		adjustTargetTools(info.getRemovedTools(), info.getAddedTools(true));
+		
+		adjustTargetTools(removedTools, info.getAddedTools(true));
 		
 		setRebuildState(true);
 	}

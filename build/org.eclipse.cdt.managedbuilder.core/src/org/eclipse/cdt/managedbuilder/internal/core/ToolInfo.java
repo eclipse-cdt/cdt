@@ -15,6 +15,7 @@ import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 
 class ToolInfo {
@@ -36,12 +37,44 @@ class ToolInfo {
 		fRcInfo = rcInfo;
 		fInitialTool = tool;
 		
-		if(tool.isExtensionElement())
-			fBaseTool = tool;
-		else if (rcInfo != tool.getParentResourceInfo())
-			fBaseTool = tool;
+		fBaseTool = calculateBaseTool(rcInfo, tool);
 		
 		fFlag = flag;
+	}
+	
+	private static ITool calculateBaseTool(IResourceInfo rcInfo, ITool tool){
+		ITool baseTool = null;
+		if(tool.isExtensionElement()) {
+			IToolChain baseTc;
+			if(rcInfo instanceof IFolderInfo){
+				baseTc = ((IFolderInfo)rcInfo).getToolChain();
+			} else {
+				IFolderInfo foInfo = ((ResourceConfiguration)rcInfo).getParentFolderInfo();
+				baseTc = foInfo.getToolChain();
+			}
+			
+			ITool realTool = ManagedBuildManager.getRealTool(tool);
+			if(realTool == null){
+				baseTool = tool;
+			} else {
+				ITool[] tcTools = baseTc.getTools();
+				for(int i = 0; i < tcTools.length; i++){
+					ITool extTool = ManagedBuildManager.getExtensionTool(tcTools[i]);
+					if(extTool != null && realTool == ManagedBuildManager.getRealTool(extTool)){
+						baseTool = extTool;
+						break;
+					}
+				}
+				
+				if(baseTool == null){
+					baseTool = tool;
+				}
+			}
+		} else if (rcInfo != tool.getParentResourceInfo()) {
+			baseTool = tool;
+		}
+		
+		return baseTool;
 	}
 	
 	public int getType(){
@@ -133,8 +166,11 @@ class ToolInfo {
 			fModificationStatus = new ModificationStatus(ManagedMakeMessages.getString("ToolInfo.1")); //$NON-NLS-1$
 			return null;
 		case REMAINED:
-		default:
-			fModificationStatus = ModificationStatus.OK;
+		default: 
+			if(fResultingTool == null){
+				fModificationStatus = ModificationStatus.OK;
+				fResultingTool = fInitialTool;
+			}
 			return fResultingTool; 
 		}
 	}

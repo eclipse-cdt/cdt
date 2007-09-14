@@ -70,8 +70,8 @@ class ToolChainModificationHelper {
 				return fEntry.getKey();
 			}
 			
-			public Collection getValue(){
-				return (Collection)fEntry.getValue();
+			public List getValue(){
+				return (List)fEntry.getValue();
 			}
 
 			public boolean equals(Object obj) {
@@ -133,6 +133,10 @@ class ToolChainModificationHelper {
 			List l = get(key, true);
 			l.add(value);
 		}
+		
+		public List removeAll(Object key){
+			return (List)fMap.remove(key);
+		}
 
 		public List get(Object key, boolean create){
 			List l = (List)fMap.get(key);
@@ -162,6 +166,14 @@ class ToolChainModificationHelper {
 
 		protected List cloneList(List l){
 			return (List)((ArrayList)l).clone();
+		}
+		
+		public Collection putValuesToCollection(Collection c){
+			for(Iterator iter = collectionEntrySet().iterator(); iter.hasNext(); ){
+				List l = ((CollectionEntry)iter.next()).getValue();
+				c.addAll(l);
+			}
+			return c;
 		}
 
 		public void remove(Object key, Object value){
@@ -340,7 +352,73 @@ class ToolChainModificationHelper {
 		
 		return m1;
 	}
-	
+
+	static public ToolListModificationInfo getModificationInfo(IResourceInfo rcInfo, ITool[] fromTools, ITool[] addedTools, ITool[] removedTools){
+		ListMap addedMap = createRealToToolMap(addedTools, false);
+		for(int i = 0; i < removedTools.length; i++){
+			ITool removedTool = removedTools[i];
+			ITool realTool = ManagedBuildManager.getRealTool(removedTool);
+			if(realTool == null)
+				realTool = removedTool;
+			
+			addedMap.remove(realTool, 0);
+		}
+		
+		ListMap removedMap = createRealToToolMap(removedTools, false);
+		for(int i = 0; i < addedTools.length; i++){
+			ITool addedTool = addedTools[i];
+			ITool realTool = ManagedBuildManager.getRealTool(addedTool);
+			if(realTool == null)
+				realTool = addedTool;
+			
+			removedMap.remove(realTool, 0);
+		}
+		
+		addedMap.clearEmptyLists();
+		removedMap.clearEmptyLists();
+		
+		ListMap curMap = createRealToToolMap(fromTools, false);
+		for(Iterator iter = removedMap.collectionEntrySet().iterator(); iter.hasNext();){
+			CollectionEntry entry = (CollectionEntry)iter.next();
+			List cur = curMap.get(entry.getKey(), false);
+			List removed = entry.getValue();
+			if(cur != null){
+				int numToRemove = removed.size();
+				int curSize = cur.size();
+				if(curSize <= numToRemove){
+					curMap.removeAll(entry.getKey());
+				} else {
+					for(int i = 0; i < numToRemove; i++){
+						cur.remove(0);
+					}
+				}
+			}
+		}
+
+		curMap.clearEmptyLists();
+		
+		for(Iterator iter = addedMap.collectionEntrySet().iterator(); iter.hasNext();){
+			CollectionEntry entry = (CollectionEntry)iter.next();
+			List cur = curMap.get(entry.getKey(), true);
+			List added = entry.getValue();
+			int numToAdd = added.size();
+			numToAdd -= cur.size();
+			for(int i = 0; i < numToAdd; i++){
+				cur.add(added.get(i));
+			}
+			
+			if(cur.size() == 0)
+				curMap.removeAll(entry.getKey());
+		}
+		
+		curMap.clearEmptyLists();
+		
+		List resultingList = new ArrayList();
+		curMap.putValuesToCollection(resultingList);
+		
+		return getModificationInfo(rcInfo, fromTools, (ITool[])resultingList.toArray(new ITool[resultingList.size()]));
+	}
+
 	static public ToolListModificationInfo getModificationInfo(IResourceInfo rcInfo, ITool[] fromTools, ITool[] toTools){
 		
 		ListMap curMap = createRealToToolMap(fromTools, false);

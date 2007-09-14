@@ -46,7 +46,6 @@ public class IsGnuCygwinToolChainSupported implements
 			PluginVersionIdentifier version, String instance) {
 		
 		if (suppChecked) return toolchainIsSupported;
-		suppChecked = true;
 
 		String etcCygwin = CygwinPathResolver.getEtcPath();
 		if (etcCygwin != null) {
@@ -71,6 +70,9 @@ public class IsGnuCygwinToolChainSupported implements
 			} catch (IOException e) {
 			}
 		}
+		
+		suppChecked = true;
+
 		return toolchainIsSupported;
 	}	
 }

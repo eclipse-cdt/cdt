@@ -192,9 +192,10 @@ public class CReconciler extends MonoReconciler {
 		public void elementChanged(ElementChangedEvent event) {
 			if (event.getType() == ElementChangedEvent.POST_CHANGE) {
 				if (isRelevantDelta(event.getDelta())) {
-					setCModelChanged(true);
 					if (!fIsReconciling && isEditorActive()) {
 						CReconciler.this.scheduleReconciling();
+					} else {
+						setCModelChanged(true);
 					}
 				}
 			}
@@ -207,7 +208,7 @@ public class CReconciler extends MonoReconciler {
 					// mark model changed, but don't update immediately
 					fIndexerListener.ignoreChanges(false);
 					setCModelChanged(true);
-				} else {
+				} else if (delta.getElement() instanceof ITranslationUnit) {
 					fIndexerListener.ignoreChanges(true);
 				}
 			}
@@ -241,13 +242,14 @@ public class CReconciler extends MonoReconciler {
 		public void indexChanged(IIndexerStateEvent event) {
 			if (event.indexerIsIdle()) {
 				if (fIndexChanged || hasCModelChanged()) {
-					setCModelChanged(true);
+					fIndexChanged= false;
 					if (!fIsReconciling && isEditorActive()) {
 						CReconciler.this.scheduleReconciling();
+					} else {
+						setCModelChanged(true);
 					}
 				}
 				fIgnoreChanges= false;
-				fIndexChanged= false;
 			}
 		}
 

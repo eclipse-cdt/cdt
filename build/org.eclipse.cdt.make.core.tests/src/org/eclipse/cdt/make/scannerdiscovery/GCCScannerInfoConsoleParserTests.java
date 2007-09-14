@@ -63,6 +63,9 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		fOutputParser.processLine("gcc -I \\"); //$NON-NLS-1$
 		fOutputParser.processLine("/multiline\\"); //$NON-NLS-1$
 		fOutputParser.processLine("/dir -c test.c"); // multiline //$NON-NLS-1$
+		fOutputParser.processLine("gcc -Imultiline2 \\"); //$NON-NLS-1$
+		fOutputParser.processLine("-Imultiline3\\"); //$NON-NLS-1$
+		fOutputParser.processLine(" -DAA=\"BB\" test.c"); //$NON-NLS-1$
 		
 		List sumIncludes = fCollector.getCollectedScannerInfo(null, ScannerInfoTypes.INCLUDE_PATHS);
         assertTrue(sumIncludes.contains("/dir/include")); //$NON-NLS-1$
@@ -89,6 +92,8 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 		assertTrue(sumIncludes.contains("//server5/include")); //$NON-NLS-1$
 		assertTrue(sumIncludes.contains("//server6/include")); //$NON-NLS-1$
 		assertTrue(sumIncludes.contains("/multiline/dir")); //$NON-NLS-1$
-		assertTrue(sumIncludes.size() == 24);
+		assertTrue(sumIncludes.contains("multiline2")); //$NON-NLS-1$
+		assertTrue(sumIncludes.contains("multiline3")); //$NON-NLS-1$
+		assertTrue(sumIncludes.size() == 26);
 	}
 }

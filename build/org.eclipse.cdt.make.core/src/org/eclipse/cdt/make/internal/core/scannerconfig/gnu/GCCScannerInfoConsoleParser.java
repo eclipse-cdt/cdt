@@ -59,6 +59,10 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         	return false;
         }
         
+        if (compilerInvocationIdx+1 >= tokens.length) {
+        	return false;
+        }
+
         // Recognized gcc or g++ compiler invocation
         List includes = new ArrayList();
         List symbols = new ArrayList();
@@ -148,6 +152,9 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 
         if (fileName != null && fileName.startsWith("/cygdrive/")) { //$NON-NLS-1$
         	fileName= AbstractGCCBOPConsoleParserUtility.convertCygpath(new Path(fileName)).toOSString();
+        }
+        if (fileName == null) {
+        	return false;  // return when no file was given (analogous to GCCPerFileBOPConsoleParser)
         }
 
         IProject project = getProject();   

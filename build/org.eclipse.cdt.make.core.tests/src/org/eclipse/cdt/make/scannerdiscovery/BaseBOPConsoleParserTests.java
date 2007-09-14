@@ -128,7 +128,7 @@ public abstract class BaseBOPConsoleParserTests extends BaseTestCase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=203059
-	public void _testCompilerCommandInsideShellInvocation_bug203059() throws Exception {
+	public void testCompilerCommandInsideShellInvocation_bug203059() throws Exception {
 		fOutputParser.processLine("sh -c '/usr/bin/gcc -DA test1.c'"); //$NON-NLS-1$
 		fOutputParser.processLine("sh -c '/usr/gcc-installs/gcc -DB test2.c;"); //$NON-NLS-1$
 		fOutputParser.processLine("sh -c '/usr/gcc/gcc -DC test3.c'"); //$NON-NLS-1$

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Gerhard Schaber (Wind River Systems) - bug 203059
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig.gnu;
 
@@ -74,7 +75,7 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 	        if (boProvider != null) {
 	            String compilerCommandsString = boProvider.getScannerInfoConsoleParser().getCompilerCommands();
 	            if (compilerCommandsString != null && compilerCommandsString.length() > 0) {
-	                String[] compilerCommands = compilerCommandsString.split(",\\s+"); //$NON-NLS-1$
+	                String[] compilerCommands = compilerCommandsString.split(",\\s*"); //$NON-NLS-1$
 	                if (compilerCommands.length > 0) {
 	                    String[] compilerInvocation = new String[COMPILER_INVOCATION.length + compilerCommands.length];
 	                    System.arraycopy(COMPILER_INVOCATION, 0, compilerInvocation, 0, COMPILER_INVOCATION.length);
@@ -297,6 +298,19 @@ public abstract class AbstractGCCBOPConsoleParser implements IScannerInfoConsole
 			String[] command = tokens[i];
 			if (processCommand(command)) {
 				rc= true;
+			}
+			else {  // go inside quotes, if the compiler is called per wrapper or shell script
+				for (int j = 0; j < command.length; j++) {
+					String[][] subtokens= tokenize(command[j], true);
+					for (int k = 0; k < subtokens.length; k++) {
+						String[] subcommand = subtokens[k];
+						if (subcommand.length > 1) {  // only proceed if there is any additional info
+							if (processCommand(subcommand)) {
+								rc= true;
+							}
+						}
+					}
+				}
 			}
 		}
 		return rc;

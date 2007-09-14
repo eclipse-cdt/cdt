@@ -88,12 +88,12 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
         }
         if (!found) {
             TraceUtil.outputTrace("Error identifying file name :1", tokens, TraceUtil.EOL); //$NON-NLS-1$
-            return true;
+            return false;
         }
         // sanity check
         if (filePath.indexOf(FILE_EXTENSIONS[extensionsIndex]) == -1) {
             TraceUtil.outputTrace("Error identifying file name :2", tokens, TraceUtil.EOL); //$NON-NLS-1$
-            return true;
+            return false;
         }
         if (fUtil != null) {
             IPath pFilePath = fUtil.getAbsolutePath(filePath);

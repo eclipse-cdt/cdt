@@ -101,6 +101,7 @@
          </menu>
          <action
                class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
+               icon="icons/refreshmanual.gif"
                id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
                label="Manual"
                menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
@@ -117,6 +118,7 @@
          <action
                class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
                definitionId="org.eclipse.debug.ui.RegisterView"
+               icon="icons/refreshalways.gif"
                id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
                label="Always"
                menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
@@ -141,6 +143,7 @@
          </menu>
          <action
                class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
+               icon="icons/refreshmanual.gif"
                id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
                label="Manual"
                menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
@@ -157,6 +160,7 @@
          <action
                class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
                definitionId="org.eclipse.debug.ui.RegisterView"
+               icon="icons/refreshalways.gif"
                id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
                label="Always"
                menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
@@ -181,6 +185,7 @@
          </menu>
          <action
                class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
+               icon="icons/refreshmanual.gif"
                id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
                label="Manual"
                menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
@@ -197,6 +202,7 @@
          <action
                class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
                definitionId="org.eclipse.debug.ui.RegisterView"
+               icon="icons/refreshalways.gif"
                id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
                label="Always"
                menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"

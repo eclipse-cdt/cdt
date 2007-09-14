@@ -13,6 +13,7 @@
  * Martin Oberhuber (Wind River) - [192724] Fixed logic to filter folders if FILE_TYPE_FOLDERS
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Benjamin Muskalla (b.muskalla@gmx.net) - [174690][ssh] cannot delete symbolic links on remote systems
+ * Martin Oberhuber (Wind River) - [203490] Fix NPE in SftpService.getUserHome()
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -574,16 +575,19 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	
 	public IHostFile getUserHome() {
 		//TODO Assert: this is only called after we are connected
-		int lastSlash = fUserHome.lastIndexOf('/');
-		String name = fUserHome.substring(lastSlash + 1);	
-		String parent = fUserHome.substring(0, lastSlash);
-		try {
-			return getFile(parent, name, null);
-		} catch(SystemMessageException e) {
-			//Could not determine user home
-			//return new SftpHostFile(".",".",true,false,false,0,0); //$NON-NLS-1$ //$NON-NLS-2$
-			return new SftpHostFile("/", "/", true, true, false, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fUserHome!=null) {
+			int lastSlash = fUserHome.lastIndexOf('/');
+			String name = fUserHome.substring(lastSlash + 1);	
+			String parent = fUserHome.substring(0, lastSlash);
+			try {
+				return getFile(parent, name, null);
+			} catch(SystemMessageException e) {
+				//Error getting user home -> return a default below
+			}
 		}
+		//Could not determine user home
+		//return new SftpHostFile(".",".",true,false,false,0,0); //$NON-NLS-1$ //$NON-NLS-2$
+		return new SftpHostFile("/", "/", true, true, false, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public IHostFile[] getRoots(IProgressMonitor monitor) {

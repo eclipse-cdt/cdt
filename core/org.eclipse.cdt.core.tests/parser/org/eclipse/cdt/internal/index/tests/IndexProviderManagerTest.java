@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.internal.index.provider.test.Providers;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -682,6 +683,10 @@ class MockConfig implements ICConfigurationDescription {
 
 	public ICSourceEntry[] getResolvedSourceEntries() {
 		return null;
+	}
+
+	public CConfigurationStatus getConfigurationStatus() {
+		return CConfigurationStatus.CFG_STATUS_OK;
 	}
 }
 

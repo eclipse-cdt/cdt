@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -507,4 +508,10 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		}
 		return fResolvedSourceEntries;
 	}
+
+	public CConfigurationStatus getConfigurationStatus() {
+		CConfigurationStatus status = getStatus();
+		return status != null ? status : CConfigurationStatus.CFG_STATUS_OK;
+	}
+
 }

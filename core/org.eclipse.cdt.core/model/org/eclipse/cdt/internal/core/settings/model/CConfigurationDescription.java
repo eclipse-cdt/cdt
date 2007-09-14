@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -745,5 +746,11 @@ public class CConfigurationDescription extends CDataProxyContainer implements IC
 	public ICSourceEntry[] getResolvedSourceEntries() {
 		ICSourceEntry[] entries = getSourceEntries();
 		return CDataUtil.resolveEntries(entries, this);
+	}
+
+	public CConfigurationStatus getConfigurationStatus() {
+		CConfigurationData data = getConfigurationData(false);
+		CConfigurationStatus status = data.getStatus();
+		return status != null ? status : CConfigurationStatus.CFG_STATUS_OK;
 	}
 }

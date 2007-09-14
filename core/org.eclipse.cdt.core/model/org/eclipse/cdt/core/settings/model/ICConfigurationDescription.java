@@ -387,4 +387,6 @@ public interface ICConfigurationDescription extends ICSettingContainer, ICSettin
 	 * @see ICProjectDescriptionManager#updateExternalSettingsProviders(String[])
 	 */
 	void updateExternalSettingsProviders(String[] ids) throws WriteAccessException;
+	
+	CConfigurationStatus getConfigurationStatus();
 }

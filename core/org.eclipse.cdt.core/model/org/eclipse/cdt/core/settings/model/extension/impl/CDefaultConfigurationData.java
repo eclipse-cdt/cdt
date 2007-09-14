@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
@@ -39,6 +40,7 @@ public class CDefaultConfigurationData extends CConfigurationData {
 	protected ICSourceEntry[] fSourceEntries;
 	private CDataFacroty fFactory;
 	protected boolean fIsModified;
+	private CConfigurationStatus fStatus = CConfigurationStatus.CFG_STATUS_OK;
 	
 	protected CDefaultConfigurationData(CDataFacroty factory){
 		if(factory == null)
@@ -102,6 +104,10 @@ public class CDefaultConfigurationData extends CConfigurationData {
 		fTargetPlatformData = copyTargetPlatformData(base.getTargetPlatformData(), clone);
 		fSourceEntries = base.getSourceEntries();
 		fBuildData = copyBuildData(base.getBuildData(), clone);
+		
+		fStatus = base.getStatus();
+		if(fStatus == null)
+			fStatus = CConfigurationStatus.CFG_STATUS_OK;
 		
 		CFolderData baseRootFolderData = base.getRootFolderData();
 		fRootFolderData = copyFolderData(baseRootFolderData.getPath(), baseRootFolderData, clone);
@@ -304,6 +310,9 @@ public class CDefaultConfigurationData extends CConfigurationData {
 				fFactory.setModified(rcDatas[i], false);
 			}
 		}
+	}
 
+	public CConfigurationStatus getStatus() {
+		return fStatus;
 	}
 }

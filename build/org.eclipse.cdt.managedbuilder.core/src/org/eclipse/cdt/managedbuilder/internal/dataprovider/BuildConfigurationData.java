@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.dataprovider;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
+import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CBuildData;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -150,5 +152,19 @@ public class BuildConfigurationData extends CConfigurationData {
 				((BuildFileData)data).clearCachedData();
 			}
 		}
+	}
+
+	public CConfigurationStatus getStatus() {
+		int flags = 0;
+		String msg = null;
+		if(!fCfg.isSupported()){
+			flags |= CConfigurationStatus.TOOLCHAIN_NOT_SUPPORTED;
+			msg = DataProviderMessages.getString("BuildConfigurationData.0"); //$NON-NLS-1$
+		}
+		
+		if(flags != 0)
+			return new CConfigurationStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), flags, msg, null);
+		
+		return CConfigurationStatus.CFG_STATUS_OK;
 	}
 }

@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
+ * Kevin Doyle (IBM) - [203365] Profile should not be saved as a result of file transfer
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -555,7 +556,7 @@ public class Host extends RSEModelObject implements IHost {
 	 * @see org.eclipse.rse.core.model.IHost#setDefaultEncoding(java.lang.String, boolean)
 	 */
 	public void setDefaultEncoding(String encoding, boolean fromRemote) {
-		
+		boolean commit = false;
 		IPropertySet encPropertySet = getPropertySet(ENCODING_PROPERTY_SET);
 		
 		if (encPropertySet == null) {
@@ -563,27 +564,35 @@ public class Host extends RSEModelObject implements IHost {
 		}
 		
 		if (encPropertySet != null) {
+			String savedNonRemoteEncoding = encPropertySet.getPropertyValue(ENCODING_NON_REMOTE_PROPERTY_KEY);
+			String savedRemoteEncoding = encPropertySet.getPropertyValue(ENCODING_REMOTE_PROPERTY_KEY);
 			
 			if (encoding != null) {
 				
-				if (!fromRemote) {
+				if (!fromRemote && !encoding.equals(savedNonRemoteEncoding)) {
 					encPropertySet.addProperty(ENCODING_NON_REMOTE_PROPERTY_KEY, encoding);
+					commit = true;
 				}
-				else {
+				else if (fromRemote && !encoding.equals(savedRemoteEncoding)) {
 					encPropertySet.addProperty(ENCODING_REMOTE_PROPERTY_KEY, encoding);
+					commit = true;
 				}
 			}
 			else {
 				
-				if (!fromRemote) {
+				if (!fromRemote && savedNonRemoteEncoding != null) {
 					encPropertySet.removeProperty(ENCODING_NON_REMOTE_PROPERTY_KEY);
+					commit = true;
 				}
-				else {
+				else if (fromRemote && savedRemoteEncoding != null) {
 					encPropertySet.removeProperty(ENCODING_REMOTE_PROPERTY_KEY);
+					commit = true;
 				}
 			}
 		}
-		
-		commit();
+		// Only commit if the encoding has changed
+		if (commit) {
+			commit();
+		}
 	}
 }

@@ -66,6 +66,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -73,6 +74,8 @@ import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+
+import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * It is a parent for all standard CDT property pages
@@ -123,12 +126,16 @@ implements
 	private static final int SAVE_MODE_APPLY = 2;
 	private static final int SAVE_MODE_APPLYOK = 3;
 	
+	private final Image IMG_WARN = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
 	/*
 	 * Dialog widgets
 	 */
 	private Combo configSelector;
 	private Button manageButton;
 	private Button excludeFromBuildCheck;
+	private Label errIcon;
+	private Label errMessage;
+	private Composite errPane;
 	/*
 	 * Bookeeping variables
 	 */
@@ -225,13 +232,11 @@ implements
 
 		// Add a config selection area
 		Group configGroup = ControlFactory.createGroup(composite, EMPTY_STR, 1);
-//		Composite configGroup = new Composite(composite, SWT.NONE);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.grabExcessHorizontalSpace = true;
 		configGroup.setLayoutData(gd);
-		// Use the form layout inside the group composite
-		GridLayout ff = new GridLayout(3, false);
-		configGroup.setLayout(ff);
+		configGroup.setLayout(new GridLayout(3, false));
+		
 		Label configLabel = new Label(configGroup, SWT.NONE);
 		configLabel.setText(UIMessages.getString("AbstractPage.6")); //$NON-NLS-1$
 		configLabel.setLayoutData(new GridData(GridData.BEGINNING));
@@ -269,7 +274,25 @@ implements
 		} else { // dummy object to avoid breaking layout
 			new Label(configGroup, SWT.NONE).setLayoutData(new GridData(GridData.END));
 		}
+
+		errPane = new Composite(configGroup, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		errPane.setLayoutData(gd);
+		GridLayout gl = new GridLayout(2, false);
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+		gl.verticalSpacing = 0;
+		gl.horizontalSpacing = 0;
+		errPane.setLayout(gl);
 		
+		errIcon = new Label(errPane, SWT.LEFT);
+		errIcon.setLayoutData(new GridData(GridData.BEGINNING));
+		errIcon.setImage(IMG_WARN);
+		
+		errMessage = new Label(errPane, SWT.LEFT);
+		errMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		if (isForFolder() || isForFile()) {
 			excludeFromBuildCheck = new Button(configGroup, SWT.CHECK);
 			excludeFromBuildCheck.setText(UIMessages.getString("AbstractPage.7")); //$NON-NLS-1$
@@ -687,6 +710,15 @@ implements
 	}
 	
 	protected void cfgChanged(ICConfigurationDescription _cfgd) {
+		
+		CConfigurationStatus st = _cfgd.getConfigurationStatus();
+		if (st.isOK()) {
+			errPane.setVisible(false);
+		} else {
+			errMessage.setText(st.getMessage());
+			errPane.setVisible(true);
+		}
+
 		resd = getResDesc(_cfgd);
 		
 		if (excludeFromBuildCheck != null) {

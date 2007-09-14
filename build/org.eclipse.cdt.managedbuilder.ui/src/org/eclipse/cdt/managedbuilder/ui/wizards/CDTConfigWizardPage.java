@@ -26,7 +26,6 @@ import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -127,18 +126,27 @@ public class CDTConfigWizardPage extends WizardPage {
 
 	public void createControl(Composite p) {
 		parent = new Composite(p, SWT.NONE);
+        parent.setFont(parent.getFont());
+		parent.setLayout(new GridLayout());
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-		parent.setLayout(new GridLayout(3, false));
 		
-		setupLabel(parent, UIMessages.getString("CConfigWizardPage.4"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		l_projtype = setupLabel(parent, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
-		setupLabel(parent, UIMessages.getString("CConfigWizardPage.5"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		l_chains = setupLabel(parent, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
-		setupLabel(parent, UIMessages.getString("CConfigWizardPage.6"), 3, GridData.BEGINNING); //$NON-NLS-1$
+		Composite c1 = new Composite(parent, SWT.NONE);
+		c1.setLayout(new GridLayout(2, false));
+		c1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		table = new Table(parent, SWT.BORDER | SWT.CHECK);
+		setupLabel(c1, UIMessages.getString("CConfigWizardPage.4"), GridData.BEGINNING); //$NON-NLS-1$
+		l_projtype = setupLabel(c1, EMPTY_STR, GridData.FILL_HORIZONTAL);
+		setupLabel(c1, UIMessages.getString("CConfigWizardPage.5"), GridData.BEGINNING); //$NON-NLS-1$
+		l_chains = setupLabel(c1, EMPTY_STR, GridData.FILL_HORIZONTAL);
+		setupLabel(c1, UIMessages.getString("CConfigWizardPage.6"), GridData.BEGINNING); //$NON-NLS-1$
+		setupLabel(c1, EMPTY_STR, GridData.BEGINNING);
+
+		Composite c2 = new Composite(parent, SWT.NONE);
+		c2.setLayout(new GridLayout(2, false));
+		c2.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		table = new Table(c2, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
 		table.setLayoutData(gd);
 		
 		tv = new CheckboxTableViewer(table);
@@ -160,9 +168,9 @@ public class CDTConfigWizardPage extends WizardPage {
 				setPageComplete(isCustomPageComplete());
 				update();
 			}});
-		Composite c = new Composite(parent, SWT.NONE);
+		Composite c = new Composite(c2, SWT.NONE);
 		c.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		c.setLayout(new GridLayout(1, false));
+		c.setLayout(new GridLayout());
 
 		Button b1 = new Button(c, SWT.PUSH);
 		b1.setText(UIMessages.getString("CConfigWizardPage.7")); //$NON-NLS-1$
@@ -197,11 +205,13 @@ public class CDTConfigWizardPage extends WizardPage {
 		
 		Group gr = new Group(parent, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 2;
 		gr.setLayoutData(gd);
 		gr.setLayout(new FillLayout());
 		Label lb = new Label(gr, SWT.NONE);
-		lb.setText(COMMENT);
+		lb.setText(COMMENT);		
+		
+        setControl(parent);
 	}
 
 	/**
@@ -279,6 +289,7 @@ public class CDTConfigWizardPage extends WizardPage {
      * 
      */
     public void setVisible(boolean visible) {
+		parent.setVisible(visible);
     	isVisible = visible;
 		if (visible && handler != null && !isVisited()) {
 			tv.setInput(CfgHolder.unique(getDefaultCfgs(handler)));
@@ -296,16 +307,17 @@ public class CDTConfigWizardPage extends WizardPage {
 			setPageComplete(isCustomPageComplete());
 			l_chains.getParent().pack();
 		}
-		parent.setVisible(visible);
-		if (visible) update();
+		if (visible) {
+			parent.getParent().layout(true, true);
+			update();
+		}
     }
 
     	//------------------------
-    private Label setupLabel(Composite c, String name, int span, int mode) {
+    private Label setupLabel(Composite c, String name, int mode) {
 		Label l = new Label(c, SWT.WRAP);
 		l.setText(name);
 		GridData gd = new GridData(mode);
-		gd.horizontalSpan = span;
 		gd.verticalAlignment = SWT.TOP;
 		l.setLayoutData(gd);
 		Composite p = l.getParent();
@@ -314,17 +326,10 @@ public class CDTConfigWizardPage extends WizardPage {
 	}
 
 	public String getName() { return TITLE; }
-	public void dispose() {}
 	public Control getControl() { return parent; }
-	public String getDescription() { return null; }
 	public String getErrorMessage() { return errorMessage; }
-//	public Image getImage() { return wizard.getDefaultPageImage(); }
 	public String getMessage() { return message; }
 	public String getTitle()   { return TITLE; }
-	public void performHelp() {}
-	public void setDescription(String description) {}
-	public void setImageDescriptor(ImageDescriptor image) {}
-	public void setTitle(String _title) {}
 
 	protected void update() {
 		getWizard().getContainer().updateButtons();

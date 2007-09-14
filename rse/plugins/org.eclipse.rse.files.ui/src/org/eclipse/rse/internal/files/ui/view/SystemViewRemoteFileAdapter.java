@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [197784] Need to check if last separator is at 0
  * Kevin Doyle  (IBM)            - [198576] Renaming a folder directly under a Filter doesn't update children
  * David McKnight   (IBM)        - [199568] Removing synchronized from internalGetChildren
+ * Kevin Doyle (IBM) 			 - [197855] Can't Delete/Rename/Move a Read-Only File
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -311,7 +312,7 @@ public class SystemViewRemoteFileAdapter
 
 		if ((elementType == 1 || (isArchive && supportsArchiveManagement)))
 		{
-			if (!foldersOnly && canRead && canWrite)
+			if (!foldersOnly && canRead)
 			{
 				if (addNewFile == null)
 				{
@@ -321,7 +322,7 @@ public class SystemViewRemoteFileAdapter
 			}
 			if (!filesOnly)
 			{
-			    if (canRead && canWrite)
+			    if (canRead)
 			    {
 			        if (addNewFolder == null)
 			        {
@@ -420,12 +421,12 @@ public class SystemViewRemoteFileAdapter
 
 		if (elementType == 1 || (isArchive && supportsArchiveManagement))
 		{
-		    if (canRead && canWrite)
+		    if (canRead)
 		    {
 		        menu.add(menuGroup, pasteClipboardAction);
 		    }
 		}
-		if (!firstFile.isRoot() && canRead && canWrite)
+		if (!firstFile.isRoot() && canRead)
 		{
 			menu.add(menuGroup, moveAction);
 		}
@@ -2302,7 +2303,7 @@ public class SystemViewRemoteFileAdapter
 	{
 		IRemoteFile file = (IRemoteFile) element;
 		//System.out.println("INSIDE CANDELETE FOR ADAPTER: RETURNING " + !file.isRoot());
-		return !file.isRoot() && file.canRead() && file.canWrite();
+		return !file.isRoot() && file.canRead();
 	}
 
 	
@@ -2425,7 +2426,7 @@ public class SystemViewRemoteFileAdapter
 	public boolean canRename(Object element)
 	{
 		IRemoteFile file = (IRemoteFile) element;
-		return !file.isRoot() && file.canRead() && file.canWrite();
+		return !file.isRoot() && file.canRead();
 	}
 
 	private void moveTempResource(IResource localResource, IPath newLocalPath, IRemoteFileSubSystem ss, String newRemotePath)

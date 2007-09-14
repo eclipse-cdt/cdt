@@ -130,6 +130,8 @@ public class BuildDescription implements IBuildDescription {
 	
 	private PathSettingsContainer fToolInfos;
 	
+	private BuildStep fCleanStep;
+	
 	private class ToolInfoHolder {
 		Map fExtToToolAndTypeListMap;
 		Map fInTypeToGroupMap = new HashMap();
@@ -1452,6 +1454,18 @@ public class BuildDescription implements IBuildDescription {
 		}
 		return (IBuildResource[])list.toArray(new IBuildResource[list.size()]);
 	}
+	
+	public IBuildResource[] getResources(boolean generated){
+		IBuildResource[] rcs = getResources();
+		List list = new ArrayList();
+		for(int i = 0; i < rcs.length; i++){
+			IBuildResource rc = rcs[i];
+			if(generated == (rc.getProducerStep() != fInputStep))
+				list.add(rc);
+		}
+		
+		return (IBuildResource[])list.toArray(new IBuildResource[list.size()]);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildDescription#getConfiguration()
@@ -2231,4 +2245,12 @@ public class BuildDescription implements IBuildDescription {
 		}
 		return h;
 	}
+	
+	public IBuildStep getCleanStep(){
+		if(fCleanStep == null){
+			fCleanStep = new BuildStep(this, null, null);
+		}
+		return fCleanStep;
+	}
+
 }

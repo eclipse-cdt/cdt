@@ -251,20 +251,42 @@ public class BuildStep implements IBuildStep {
 	 * @see org.eclipse.cdt.managedbuilder.builddescription.IBuildStep#getCommands(org.eclipse.core.runtime.IPath, java.util.Map, java.util.Map, boolean)
 	 */
 	public IBuildCommand[] getCommands(IPath cwd, Map inputArgValues, Map outputArgValues, boolean resolveAll) {
+		if(cwd == null)
+			cwd = calcCWD();
+
+		
 		if(fTool == null){
 			String step = null;
+			String appendToLastStep = null;
 			if(this == fBuildDescription.getInputStep()){
 				step = fBuildDescription.getConfiguration().getPrebuildStep();
 			} else if(this == fBuildDescription.getOutputStep()){
 				step = fBuildDescription.getConfiguration().getPostbuildStep();
+			} else if(this == fBuildDescription.getCleanStep()){
+				step = fBuildDescription.getConfiguration().getCleanCommand();
+				
+				IBuildResource[] generated = fBuildDescription.getResources(true);
+
+				if(generated.length != 0){
+					StringBuffer buf = new StringBuffer();
+					for(int i = 0; i < generated.length; i++){
+						buf.append(' ');
+						
+						IPath rel = BuildDescriptionManager.getRelPath(cwd, generated[i].getLocation());
+						buf.append(rel.toString());
+					}
+					appendToLastStep = buf.toString();
+				}
 			}
 			
 			if(step != null && (step = step.trim()).length() > 0){
 				step = resolveMacros(step, resolveAll);
 				if(step != null && (step = step.trim()).length() > 0){
 					String commands[] = step.split(";"); 	//$NON-NLS-1$
-					if(cwd == null)
-						cwd = calcCWD();
+					
+					if(appendToLastStep != null && commands.length != 0){
+						commands[commands.length - 1] = commands[commands.length - 1] + appendToLastStep;
+					}
 	
 					List list = new ArrayList(); 
 					for(int i = 0; i < commands.length; i++){
@@ -279,8 +301,6 @@ public class BuildStep implements IBuildStep {
 			return new IBuildCommand[0];
 		}
 		
-		if(cwd == null)
-			cwd = calcCWD();
 		
 		performAsignToOption(cwd);
 		

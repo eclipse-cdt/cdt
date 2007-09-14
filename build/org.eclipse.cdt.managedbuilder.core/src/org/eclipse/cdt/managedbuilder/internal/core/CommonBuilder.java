@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariableManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -61,6 +62,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildDescription;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.DescriptionBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
@@ -128,6 +130,8 @@ public class CommonBuilder extends ACBuilder {
 	public static boolean VERBOSE = false;
 
 	private static CfgBuildSet fBuildSet = new CfgBuildSet();
+	
+	private boolean fBuildErrOccured;
 
 	public CommonBuilder() {
 	}
@@ -1492,6 +1496,19 @@ public class CommonBuilder extends ACBuilder {
 		}
 	}
 	
+	public void addMarker(IResource file, int lineNumber, String errorDesc,
+			int severity, String errorVar) {
+		super.addMarker(file, lineNumber, errorDesc, severity, errorVar);
+		if(severity == IStatus.ERROR)
+			fBuildErrOccured = true;
+	}
+
+	public void addMarker(ProblemMarkerInfo problemMarkerInfo) {
+		super.addMarker(problemMarkerInfo);
+		if(problemMarkerInfo.severity == IStatus.ERROR)
+			fBuildErrOccured = true;
+	}
+
 	protected void clean(CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException{
 		if (shouldBuild(CLEAN_BUILD, bInfo.getBuilder())) {
 			BuildStateManager bsMngr = BuildStateManager.getInstance();
@@ -1504,17 +1521,28 @@ public class CommonBuilder extends ACBuilder {
 				bsMngr.setProjectBuildState(project, pbs);
 			}
 			
-			boolean performExternalClean = true;
-			if(shouldCleanProgrammatically(bInfo)){
-				try {
-					cleanProgrammatically(bInfo, monitor);
-					performExternalClean = false;
-				} catch (CoreException e) {
-				}
-			}
-			
-			if(performExternalClean){
+			if(!cfg.getEditableBuilder().isManagedBuildOn()){
 				performExternalClean(bInfo, false, monitor);
+			} else {
+				boolean programmatically = true;
+				if(!cfg.getEditableBuilder().isInternalBuilder()){
+					fBuildErrOccured = false;
+					try {
+						performExternalClean(bInfo, false, monitor);
+					} catch (CoreException e) {
+						fBuildErrOccured = true;
+					}
+					if(!fBuildErrOccured)
+						programmatically = false;
+				}
+				
+				if(programmatically){
+					try {
+						cleanWithInternalBuilder(bInfo, monitor);
+					} catch (CoreException e) {
+						cleanProgrammatically(bInfo, monitor);
+					}
+				}
 			}
 		}
 		
@@ -1565,6 +1593,51 @@ public class CommonBuilder extends ACBuilder {
 //			return false;
 //		
 //		return cfg.getOwner().getProject().getFullPath().isPrefixOf(path);
+	}
+	
+	protected void cleanWithInternalBuilder(CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException {
+//		referencedProjects = getProject().getReferencedProjects();
+		IProject curProject = bInfo.getProject();
+		outputTrace(curProject.getName(), "Clean build with Internal Builder requested");	//$NON-NLS-1$
+		IConfiguration cfg = bInfo.getConfiguration();
+		int flags = BuildDescriptionManager.DEPFILES;
+		BuildDescription des = (BuildDescription)BuildDescriptionManager.createBuildDescription(cfg, null, null, flags);
+		
+		IBuildStep cleanStep = des.getCleanStep();
+		
+		StepBuilder sBuilder = new StepBuilder(cleanStep, null, null);
+		
+		try {
+			// try the brute force approach first
+			StringBuffer buf = new StringBuffer();
+			// write to the console
+//			
+//			IConsole console = CCorePlugin.getDefault().getConsole();
+//			console.start(getProject());
+			IConsole console = bInfo.getConsole();
+			ConsoleOutputStream consoleOutStream = console.getOutputStream();
+			String[] consoleHeader = new String[3];
+			consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
+			consoleHeader[1] = cfg.getName();
+			consoleHeader[2] = curProject.getName();
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+			buf = new StringBuffer();
+			
+			sBuilder.build(consoleOutStream, consoleOutStream, monitor);
+
+			// Report a successful clean
+			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, curProject.getName());
+			buf.append(successMsg);
+			buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+			consoleOutStream.close();
+		}  catch (IOException io) {}	//  Ignore console failures...		
+
 	}
 	
 	protected void cleanProgrammatically(CfgBuildInfo bInfo, IProgressMonitor monitor) throws CoreException {

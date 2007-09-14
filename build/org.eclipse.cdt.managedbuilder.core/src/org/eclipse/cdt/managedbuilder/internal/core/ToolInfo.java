@@ -35,9 +35,8 @@ class ToolInfo {
 
 	ToolInfo(IResourceInfo rcInfo, ITool tool, int flag){
 		fRcInfo = rcInfo;
-		fInitialTool = tool;
 		
-		fBaseTool = calculateBaseTool(rcInfo, tool);
+		updateInitialTool(tool);
 		
 		fFlag = flag;
 	}
@@ -57,14 +56,15 @@ class ToolInfo {
 			if(realTool == null){
 				baseTool = tool;
 			} else {
-				ITool[] tcTools = baseTc.getTools();
-				for(int i = 0; i < tcTools.length; i++){
-					ITool extTool = ManagedBuildManager.getExtensionTool(tcTools[i]);
-					if(extTool != null && realTool == ManagedBuildManager.getRealTool(extTool)){
-						baseTool = extTool;
-						break;
-					}
-				}
+//				ITool[] tcTools = baseTc.getTools();
+//				baseTool = getBestMatchTool(realTool, tcTools);
+//				
+//				if(baseTool == null){
+//					IToolChain extTc = ManagedBuildManager.getExtensionToolChain(baseTc);
+//					if(extTc != null){
+//						baseTool = getBestMatchTool(realTool, extTc.getTools());
+//					}
+//				}
 				
 				if(baseTool == null){
 					baseTool = tool;
@@ -91,6 +91,20 @@ class ToolInfo {
 		return fRealTool;
 	}
 	
+	void updateInitialTool(ITool tool){
+		if(fInitialTool == tool)
+			return;
+
+		fResultingTool = null;
+		fRealTool = null;
+		
+		fInitialTool = tool;
+		
+		fModificationStatus = null;
+		
+		fBaseTool = calculateBaseTool(fRcInfo, tool);
+	}
+
 	public ITool getBaseTool(){
 		if(fBaseTool == null){
 			fBaseTool = ManagedBuildManager.getExtensionTool(fInitialTool);

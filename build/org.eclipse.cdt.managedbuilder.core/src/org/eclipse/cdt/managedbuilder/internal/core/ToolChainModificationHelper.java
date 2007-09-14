@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -452,30 +453,95 @@ class ToolChainModificationHelper {
 			iter.set(new ToolInfo(rcInfo, t, ToolInfo.REMOVED));
 		}
 		
-		calculateConverterTools(rcInfo, removedList, addedList, null, null);
+		ToolInfo[] added = listToArray(addedList);
+		ToolInfo[] removed = listToArray(removedList);
 		
+		adjustAddedList(added, removed);
+
+		calculateConverterTools(rcInfo, removed, added, null, null);
+
 		return new ToolListModificationInfo(rcInfo,
 				listToArray(resultingList),
-				listToArray(addedList), 
-				listToArray(removedList),
+				added, 
+				removed,
 				listToArray(remainedList));
+	}
+	
+	private static ITool getCommonSuperClass(ITool tool1, ITool tool2){
+		for(int i = 0; tool2 != null; tool2 = tool2.getSuperClass(), i++){
+			if(getSuperClassLevel(tool1, tool2) != -1)
+				return tool2;
+		}
+		
+		return null;
+	}
+	
+	private static int getSuperClassLevel(ITool tool, ITool superClass){
+		for(int i = 0; tool != null; tool = tool.getSuperClass(), i++){
+			if(superClass == tool)
+				return i;
+		}
+		
+		return -1;
+	}
+	
+	private static int getLevel(ITool tool){
+		int i= 0;
+		for(; tool != null; tool = tool.getSuperClass(), i++);
+		return i;
+	}
+	
+	private static ITool getBestMatchTool(ITool realTool, ToolInfo[] tools){
+		int num = -1;
+		ITool bestMatch = null;
+		ITool[] identicTools = ManagedBuildManager.findIdenticalTools(realTool);
+		
+		for(int i = 0; i < tools.length; i++){
+			ITool extTool = ManagedBuildManager.getExtensionTool(tools[i].getInitialTool());
+			
+			for(int k = 0; k < identicTools.length; k++){
+				ITool identic = identicTools[k];
+				ITool commonSuper = getCommonSuperClass(extTool, identic);
+				
+				if(commonSuper != null){
+					int level = getLevel(commonSuper);
+					if(level > num){
+						bestMatch = identic;
+						num = level;
+					}
+				}
+			}
+		}
+
+		return bestMatch;
+	}
+	
+	private static void adjustAddedList(ToolInfo[] adds, ToolInfo[] removes){
+		for(int i = 0; i < adds.length; i++){
+			ToolInfo add = adds[i];
+			
+			ITool bestMatch = getBestMatchTool(add.getRealTool(), removes);
+			if(bestMatch != null){
+				add.updateInitialTool(bestMatch);
+			}
+		}
 	}
 	
 	private static ToolInfo[] listToArray(List list){
 		return (ToolInfo[])list.toArray(new ToolInfo[list.size()]);
 	}
 	
-	private static Map calculateConverterTools(IResourceInfo rcInfo, List removedList, List addedList, List remainingRemoved, List remainingAdded){
+	private static Map calculateConverterTools(IResourceInfo rcInfo, ToolInfo[] removed, ToolInfo[] added, List remainingRemoved, List remainingAdded){
 		if(remainingAdded == null)
-			remainingAdded = new ArrayList(addedList.size());
+			remainingAdded = new ArrayList(added.length);
 		if(remainingRemoved == null)
-			remainingRemoved = new ArrayList(removedList.size());
+			remainingRemoved = new ArrayList(removed.length);
 		
 		remainingAdded.clear();
 		remainingRemoved.clear();
 		
-		remainingAdded.addAll(addedList);
-		remainingRemoved.addAll(removedList);
+		remainingAdded.addAll(Arrays.asList(added));
+		remainingRemoved.addAll(Arrays.asList(removed));
 		
 		Map resultMap = new HashMap();
 		

@@ -74,4 +74,10 @@ public interface ICDebugUIConstants {
 	 * Identifier for a shared libraries group in a menu (value <code>"modulesGroup"</code>).
 	 */
 	public static final String MODULES_GROUP = "modulesGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Editor ID for the CSourceNotFoundEditor.
+	 */
+	public static final String CSOURCENOTFOUND_EDITOR_ID = PREFIX + "SourceNotFoundEditor"; //$NON-NLS-1$
+	
 }

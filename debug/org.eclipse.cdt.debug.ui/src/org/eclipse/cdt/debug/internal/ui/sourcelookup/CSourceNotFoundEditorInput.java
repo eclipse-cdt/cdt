@@ -11,17 +11,12 @@
 
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 
 public class CSourceNotFoundEditorInput extends CommonSourceNotFoundEditorInput {
 
-	public CSourceNotFoundElement getElement() {
-		return (CSourceNotFoundElement) getArtifact();
-	}
-
-	public CSourceNotFoundEditorInput(CSourceNotFoundElement artifact) {
+	public CSourceNotFoundEditorInput(Object artifact) {
 		super(artifact);
 	}
-  
+
 }

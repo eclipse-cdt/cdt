@@ -17,11 +17,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.sourcelookup.MappingSourceContainer;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLookupDirector;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.MapEntrySourceContainer;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -35,8 +40,8 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor;
-import org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -67,12 +72,15 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	private String missingFile;
 	private ILaunch launch;
 	private IDebugElement context;
+	private ITranslationUnit tunit;
 
 	private Button disassemblyButton;
 
 	private Button locateFileButton;
 
 	private Button editLookupButton;
+	private boolean isDebugElement;
+	private boolean isTranslationUnit;
 
 	public CSourceNotFoundEditor() {
 		super();
@@ -84,17 +92,23 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	}
 
 	public void setInput(IEditorInput input) {
-		if (input instanceof CommonSourceNotFoundEditorInput)
-		{
-			Object artifact = ((CommonSourceNotFoundEditorInput)input).getArtifact();
-			if (artifact instanceof CSourceNotFoundElement)
-			{
+		if (input instanceof CSourceNotFoundEditorInput) {
+			isDebugElement = false;
+			isTranslationUnit =  false;
+			Object artifact = ((CSourceNotFoundEditorInput) input).getArtifact();
+			if (artifact instanceof CSourceNotFoundElement) {
 				CSourceNotFoundElement element = (CSourceNotFoundElement) artifact;
 				missingFile = element.getFile();
 				launch = element.getLaunch();
 				context = element.getElement();
-			}
-			else
+				isDebugElement = true;
+			} else if (artifact instanceof ITranslationUnit) {
+				isTranslationUnit = true;
+				tunit = (ITranslationUnit) artifact;
+				IPath tuPath = tunit.getLocation();
+				if (tuPath != null)
+					missingFile = tuPath.toOSString();
+			} else
 				missingFile = ""; //$NON-NLS-1$
 		}
 		super.setInput(input);
@@ -102,7 +116,6 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 	}
 
 	private void syncButtons() {
-
 		if (locateFileButton != null)
 			locateFileButton.setVisible(missingFile.length() > 0);
 		if (editLookupButton != null)
@@ -122,7 +135,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 
 	protected void createButtons(Composite parent) {
 		
-		
+		if (isDebugElement)
 		{
 			GridData data;
 			disassemblyButton = new Button(parent, SWT.PUSH);
@@ -137,7 +150,6 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				}
 			});
 			disassemblyButton.setData(UID_KEY, UID_DISASSEMBLY_BUTTON);
-
 		}
 
 		{
@@ -156,6 +168,7 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 			locateFileButton.setData(UID_KEY, UID_LOCATE_FILE_BUTTON);
 		}
 		
+		if (isDebugElement)
 		{
 			GridData data;
 			editLookupButton = new Button(parent, SWT.PUSH);
@@ -183,10 +196,43 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				page.showView(ICDebugUIConstants.ID_DISASSEMBLY_VIEW);
 			} catch (PartInitException e) {}
 		}
-
 	}
 
-	private void addSourceMapping(IPath missingPath, IPath newSourcePath) throws CoreException {
+	private void addSourceMappingToDirector(IPath missingPath, IPath newSourcePath, AbstractSourceLookupDirector director) throws CoreException {
+
+		ArrayList containerList = new ArrayList(Arrays.asList(director.getSourceContainers()));
+
+		boolean hasFoundMappings = false;
+
+		MappingSourceContainer foundMappings = null;
+		
+		for (Iterator iter = containerList.iterator(); iter.hasNext() && !hasFoundMappings;) {
+			ISourceContainer container = (ISourceContainer) iter.next();
+			if (container instanceof MappingSourceContainer)
+			{
+				hasFoundMappings = container.getName().equals(foundMappingsContainerName);
+				if (hasFoundMappings)
+					foundMappings = (MappingSourceContainer) container;
+			}
+		}
+
+		if (!hasFoundMappings) {
+			foundMappings = new MappingSourceContainer(foundMappingsContainerName);
+			foundMappings.init(director);
+			containerList.add(foundMappings);
+		}
+		
+		foundMappings.addMapEntry(new MapEntrySourceContainer(missingPath, newSourcePath));
+		director.setSourceContainers((ISourceContainer[]) containerList.toArray(new ISourceContainer[containerList.size()]));
+	}
+
+	private void addSourceMappingToCommon(IPath missingPath, IPath newSourcePath) throws CoreException {
+		CSourceLookupDirector director = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector();
+		addSourceMappingToDirector(missingPath, newSourcePath, director);
+		CDebugCorePlugin.getDefault().savePluginPreferences();
+	}
+	
+	private void addSourceMappingToLaunch(IPath missingPath, IPath newSourcePath) throws CoreException {
 		String memento = null;
 		String type = null;
 
@@ -206,30 +252,8 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 				director.initializeFromMemento(memento, configuration);
 			}
 
-			ArrayList containerList = new ArrayList(Arrays.asList(director.getSourceContainers()));
-
-			boolean hasFoundMappings = false;
-
-			MappingSourceContainer foundMappings = null;
+			addSourceMappingToDirector(missingPath, newSourcePath, director);
 			
-			for (Iterator iter = containerList.iterator(); iter.hasNext() && !hasFoundMappings;) {
-				ISourceContainer container = (ISourceContainer) iter.next();
-				if (container instanceof MappingSourceContainer)
-				{
-					hasFoundMappings = container.getName().equals(foundMappingsContainerName);
-					if (hasFoundMappings)
-						foundMappings = (MappingSourceContainer) container;
-				}
-			}
-
-			if (!hasFoundMappings) {
-				foundMappings = new MappingSourceContainer(foundMappingsContainerName);
-				foundMappings.init(director);
-				containerList.add(foundMappings);
-				director.setSourceContainers((ISourceContainer[]) containerList.toArray(new ISourceContainer[containerList.size()]));
-			}
-			
-			foundMappings.addMapEntry(new MapEntrySourceContainer(missingPath, newSourcePath));
 			configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, director.getMemento());
 			configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, director.getId());
 			configuration.doSave();
@@ -260,18 +284,59 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 					IPath compPath = missingPath.removeLastSegments(missingPath.segmentCount() - missingPathSegCount - 1);
 					IPath newSourcePath = newPath.removeLastSegments(newPath.segmentCount() - newPathSegCount - 1);
 					try {
-						addSourceMapping(compPath, newSourcePath);
+						if (isDebugElement)
+							addSourceMappingToLaunch(compPath, newSourcePath);
+						else
+							addSourceMappingToCommon(compPath, newSourcePath);							
 					} catch (CoreException e) {}					
 					
 				}
 				
 				IWorkbenchPage page = getEditorSite().getPage();
-				ISourceDisplay adapter = (ISourceDisplay)context.getAdapter(ISourceDisplay.class);
-				if (adapter != null) {						
-					adapter.displaySource(context, page, true);
+				
+				if (isDebugElement)
+				{
+					ISourceDisplay adapter = (ISourceDisplay)context.getAdapter(ISourceDisplay.class);
+					if (adapter != null) {						
+						adapter.displaySource(context, page, true);
+					}					
+				}
+				else
+				if (isTranslationUnit)
+				{
+					reopenTranslationUnit(tunit);
 				}
 				closeEditor();
 			}
 		}
 	}
+
+	private boolean reopenTranslationUnit(ITranslationUnit tu)
+	{
+		if (tu != null)
+		{
+			IPath tuPath = tu.getLocation();
+			if (tuPath != null)
+			{
+				String filePath = tuPath.toOSString();
+				try {
+					Object[] foundElements = CDebugCorePlugin.getDefault().getCommonSourceLookupDirector().findSourceElements(filePath);
+					if (foundElements.length == 1 && foundElements[0] instanceof LocalFileStorage)
+					{
+						LocalFileStorage newLocation = (LocalFileStorage) foundElements[0];
+						if (newLocation.getFullPath().toFile().exists())
+						{
+							ITranslationUnit remappedTU = tu;
+							if (tu instanceof ExternalTranslationUnit)
+								remappedTU = new ExternalTranslationUnit(tu.getParent(), newLocation.getFullPath(), tu.getContentTypeId());										
+							EditorUtility.openInEditor(remappedTU);
+							return true;
+						}
+					}
+				} catch (CoreException e) {}
+			}
+		}
+		return false;
+	}
+
 }

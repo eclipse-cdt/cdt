@@ -51,6 +51,7 @@ import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceNotFoundElement;
 import org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -186,7 +187,7 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	 */
 	public String getEditorId( IEditorInput input, Object element ) {
 		if (element instanceof CSourceNotFoundElement)
-			return "org.eclipse.cdt.debug.internal.ui.sourcelookup.CSourceNotFoundEditor";
+			return ICDebugUIConstants.CSOURCENOTFOUND_EDITOR_ID;
 		String id = null;
 		if ( input != null ) {
 			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();

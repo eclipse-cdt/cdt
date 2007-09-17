@@ -76,13 +76,13 @@
    	label="&srcPrefs;"/>
 </context>
 	
-<context id ="IMPORT_EXECUTABLE_PAGE_ONE">
+<context id ="import_executable_page_one">
    <description>Select or search for C/C++ executable files.</description>
    <topic href="tasks/cdt_t_debug_exes.htm"
 	   label="&importExe;"/>
 </context>
 
-<context id ="IMPORT_EXECUTABLE_PAGE_TWO">
+<context id ="import_executable_page_two">
    <description>Choose or create a project to hold the executable.</description>
    <topic href="tasks/cdt_t_debug_exes.htm"
 	   label="&chooseProj;"/>

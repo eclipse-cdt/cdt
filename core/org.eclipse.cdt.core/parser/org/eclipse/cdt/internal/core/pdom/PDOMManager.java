@@ -654,11 +654,11 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		// have to check for that.
 		ISchedulingRule rule= project.getWorkspace().getRuleFactory().refreshRule(project.getFolder(SETTINGS_FOLDER_NAME));
 		if (project.contains(rule)) {
-			rule= project;
+			rule= new MultiRule(new ISchedulingRule[] {project, INDEXER_SCHEDULING_RULE });
 		}
 		else if (!rule.contains(project)) {
-			rule= new MultiRule(new ISchedulingRule[] {rule, project});
-		}	
+			rule= new MultiRule(new ISchedulingRule[] {rule, project, INDEXER_SCHEDULING_RULE });
+		}
 		addProject.setRule(rule); 
 		addProject.setSystem(true);
 		addProject.schedule();

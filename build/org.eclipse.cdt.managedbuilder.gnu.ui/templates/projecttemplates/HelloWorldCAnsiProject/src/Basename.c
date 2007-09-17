@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : $(baseName).cpp
+ Name        : $(baseName).c
  Author      : $(author)
  Version     :
  Copyright   : $(copyright)

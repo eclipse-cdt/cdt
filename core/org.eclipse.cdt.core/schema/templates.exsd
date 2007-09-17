@@ -6,14 +6,14 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="templates" name="Template Extension point"/>
       </appInfo>
       <documentation>
-         This templates extension point facilitates the users to contribute their Template XMLs to the Template Engine plugin.
+         This templates extension point facilitates the users to contribute their Template XMLs to the Template Engine plug-in.
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
          <documentation>
-            Extension point added to Template Engine plugin.  Any plugin, which intends to contribute XML templates to Temaplate Engine has to extend this extension point, and add template element.
+            Extension point added to Template Engine plugin.  Any plugin, which intends to contribute XML templates to Template Engine has to extend this extension point, and add template element.
          </documentation>
       </annotation>
       <complexType>
@@ -57,30 +57,41 @@
          <sequence>
             <element ref="toolChain" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this template contribution. This does not need to be the same as the id of the template (as defined in template.xml) it is contributing. This allows contributing the same template.xml more than once (for example for multiple project types, or with alternate page sequences).
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="location" type="string" use="required">
             <annotation>
                <documentation>
-                  The location of the template(relative within the extender plugin).
-This is a must enter, attribute.
+                  The path of template.xml (relative to the base of the containing plug-in). For example &quot;templates/TemplateOne/template.xml&quot;. This attribute is mandatory. 
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="filterPattern" type="string">
+         <attribute name="projectType" type="string" use="required">
             <annotation>
                <documentation>
-                  Any filterPatter associated with this Template to be used by TemplateEngine.
-This is an optional attribute.
+                  This id refers to the cdt project type that the template will be associated with. Project types are contributed to the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension-point. See the CDT Build System documentation in the developer guide for built-in project type ids.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="usageDescription" type="string">
+         <attribute name="isCategory" type="boolean">
             <annotation>
                <documentation>
-                  A notation describing how this template is used. Usually used to filter the list of templates on offer depending on other wizard attributes.
-This is an optional attribute.
+                  If true this template contribution should appear as a folder. Defaults to false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filterPattern" type="string">
+            <annotation>
+               <documentation>
+                  filterPattern is a java.util.regex.Pattern format string which is used to match against build configuration ids. This is an optional attribute, if absent will all configurations will match.
                </documentation>
             </annotation>
          </attribute>
@@ -92,27 +103,6 @@ This is an optional attribute.
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.templateengine.IPagesAfterTemplateSelectionProvider"/>
                </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="isCategory" type="boolean">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="projectType" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -147,17 +137,13 @@ This is an optional attribute.
          The following is an example of the extension point usage:
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension
-         id=&quot;simpleEXETemplateExample&quot;
-         name=&quot;Simple EXE Template Example&quot;
-         point=&quot;org.eclipse.cdt.templateengine.templates&quot;&gt;
-      &lt;template 
-            filterPattern=&quot;.*&quot;
-            usageDescription=&quot;Simple EXE&quot;
-            location=&quot;templates/org/eclipse/cdt/templates/projecttemplates/Simple EXE/template.xml&quot;
-            projectType=&quot;org.eclipse.cdt.build.projectType.exe&quot;
-            wizardId=&quot;org.eclipse.cdt.templates.ui.NewManagedProjectWizard&quot;&gt;
-      &lt;/template&gt; 
+   &lt;extension point=&quot;org.eclipse.cdt.core.templates&quot;&gt;
+      &lt;template
+         id=&quot;org.foobar.templates.MyExampleTemplate&quot;
+         location=&quot;templates/MyExampleTemplate/template.xml&quot;
+         projectType=&quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot;
+         filterPattern=&quot;.*&quot;&gt;
+      &lt;/template&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;            
 

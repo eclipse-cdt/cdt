@@ -111,7 +111,7 @@ public class TemplateEngine {
 	}
 
 	/**
-	 * This method will be called by Contianer UIs (Wizard, PropertyPage,
+	 * This method will be called by Container UIs (Wizard, PropertyPage,
 	 * PreferencePage). Create a Template instance, update the ValueStore, with
 	 * SharedDefaults. This method calls the getTemplate(URL), after getting URL
 	 * for the given String TemplateDescriptor.
@@ -209,7 +209,6 @@ public class TemplateEngine {
 		String pluginId = null;
 		String projectType = null;
 		String filterPattern = null;
-		String usage = null;
 		boolean isCategory = false;
 		String extraPagesProvider = null;
 
@@ -217,14 +216,13 @@ public class TemplateEngine {
 		for(int i=0; i<extensions.length; i++) {
 			IExtension extension = extensions[i];
 			IConfigurationElement[] configElements = extension.getConfigurationElements();
-			pluginId = extension.getNamespaceIdentifier(); // Plugin-id of the extending plugin.
+			pluginId = extension.getNamespaceIdentifier(); // Plug-in id of the extending plug-in.
 			for(int j=0; j<configElements.length; j++) {
 				IConfigurationElement config = configElements[j];
 				templateId = config.getAttribute(TemplateEngineHelper.ID);
 				location = config.getAttribute(TemplateEngineHelper.LOCATION);
 				projectType = config.getAttribute(TemplateEngineHelper.PROJECT_TYPE);
 				filterPattern = config.getAttribute(TemplateEngineHelper.FILTER_PATTERN);
-				usage = config.getAttribute(TemplateEngineHelper.USAGE_DESCRIPTION);
 				isCategory = Boolean.valueOf(config.getAttribute(TemplateEngineHelper.IS_CATEGORY)).booleanValue();
 				extraPagesProvider = config.getAttribute(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
 				
@@ -236,7 +234,7 @@ public class TemplateEngine {
 				
 				TemplateInfo templateInfo = new TemplateInfo(templateId, projectType, filterPattern, location, 
 														pluginId, toolChainIdSet,
-														usage, extraPagesProvider, isCategory);
+														extraPagesProvider, isCategory);
 				if (!templateInfoMap.containsKey(projectType)) {
 					templateInfoMap.put(projectType, new ArrayList/*<TemplateInfo>*/());
 				}
@@ -280,12 +278,12 @@ public class TemplateEngine {
 	}
 	
 	/**
-	 * Gets an array of template info objects matching the criteria passed as params.
+	 * Gets an array of template info objects matching the criteria passed as parameters.
 	 * @param projectType may not be null
 	 * @param toolChain may be null to indicate no tool-chain
 	 * @param usageFilter a usage string which is matched against the filter from the template, may be null
 	 * to indicate no usage filtering
-	 * @return an array of template infos (never null)
+	 * @return an array of TemplateInfo objects (never null)
 	 */
 	public TemplateInfo[] getTemplateInfos(String projectType, String toolChain, String usageFilter) {
 		List/*<TemplateInfo>*/ templateInfoList = (List/*<TemplateInfo*/) templateInfoMap.get(projectType.trim());
@@ -364,7 +362,7 @@ public class TemplateEngine {
 	/**
 	 * Returns the Children of the Element.
 	 * @param element
-	 * @return List of the child elelments
+	 * @return List of the child elements
      * 
      * @since 4.0
 	 */
@@ -374,7 +372,7 @@ public class TemplateEngine {
 		for (int i = 0, l = children.getLength(); i < l; i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				list.add((Element) child);
+				list.add(child);
 			}
 		}
 		return list;
@@ -395,7 +393,7 @@ public class TemplateEngine {
 		for (int i = 0, l = children.getLength(); i < l; i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(tag)) {
-				list.add((Element) child);
+				list.add(child);
 			}
 		}
 		return list;

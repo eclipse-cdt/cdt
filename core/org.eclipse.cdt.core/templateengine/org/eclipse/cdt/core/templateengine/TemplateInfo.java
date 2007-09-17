@@ -21,7 +21,6 @@ import java.util.Set;
 public class TemplateInfo {
 	private String projectTypeId;
 	private String filterPattern;
-	private String usageDescription;
 	private String templatePath;
 	private String pluginId;
 	private Set toolChainIdSet;
@@ -32,7 +31,7 @@ public class TemplateInfo {
 	private List configs;
 	
 	public TemplateInfo(String templateId, String projectTypeId, String filterPattern, String templatePath, 
-			String pluginId, Set toolChainIdSet, String usageDescription, 
+			String pluginId, Set toolChainIdSet, 
 			String pagesProvider, boolean isCategory) {
 		this.templateId = templateId;
 		this.filterPattern = filterPattern;
@@ -40,7 +39,6 @@ public class TemplateInfo {
 		this.pluginId = pluginId;
 		this.projectTypeId = projectTypeId;
 		this.toolChainIdSet = toolChainIdSet;
-		this.usageDescription = usageDescription != null ? usageDescription : ""; //$NON-NLS-1$
 		this.pagesProvider = pagesProvider;
 		this.isCategory = isCategory;
 		this.configs = null;
@@ -76,13 +74,6 @@ public class TemplateInfo {
 	 */
 	public String getFilterPattern() {
 		return filterPattern;
-	}
-
-	/**
-	 * @return   the usageDescription
-	 */
-	public String getUsageDescription() {
-		return usageDescription;
 	}
 	
 	public String getExtraPagesProvider() {

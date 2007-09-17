@@ -29,7 +29,7 @@ How&nbsp;to&nbsp;register&nbsp;a&nbsp;template&nbsp;with&nbsp;Eclipse</p>
 
 </div><div class="Head1">
 
-<h1>How to register a template with Eclipse</h1>
+<h1>How to register a project template with CDT</h1>
 </div><div class="Bodytext">
 <p>
 Once the project template is ready, you need to register it with Eclipse
@@ -40,7 +40,7 @@ group all the resources required for this application in a folder
 "HelloWorld". 
 </p>
 <p>
-To register a project template with Eclipse follow the steps given below:
+To register a project template with CDT follow the steps given below:
 </p>
 <ol>
 <li>
@@ -50,9 +50,9 @@ the source folders.
 </p>
 <li>
 <p>
-Create a folder and copy the project template along with all the
-resources required to create the project. For example, all the hearder files,
-source files, resource files etc. 
+Create a new folder to contain the template project's content e.g. "MyExampleProject/templates/MyExampleTemplate".
+Copy the project template.xml along with all the resources required to create the project. For example, all the
+header files, source files, resource files etc. 
 </p>
 <li>
 <p>
@@ -65,7 +65,9 @@ editor, refer to <i>PDE
 <li>
 <p>
 Click <code>Add</code> to select
-<code class="filename">org.eclipse.cdt.templateengine</code> plug-in from the list.
+<code class="filename">org.eclipse.cdt.core</code> and
+<code class="filename">org.eclipse.cdt.ui</code>
+plug-ins from the list.
 </p>
 <li>
 <p>
@@ -79,29 +81,31 @@ Click <code>Add</code> to create an extension to the extension-point.
 <li>
 <p>
 Select the extension-point with ID
-<code class="filename">org.eclipse.cdt.templateengine.templates</code> from the list of
-extensions-points.
+<code class="filename">org.eclipse.cdt.core.templates</code> from the list of
+extension-points.
 </p>
 <li>
 <p>
 Right-click on the newly added extension, and select
 <code class="ProgramOutput">New</code> &gt;  
 <code class="ProgramOutput">template</code> from the context menu.
+The first one has already been added for you, <code class="ProgramOutput">"(template)"</code>.
 </p>
 <li>
 <p>
-Choose the new template added in step 6 from the <code class="ProgramOutput">All
-Extensions</code> list.
+Select the new template added in the previous step from the <code class="ProgramOutput">All
+Extensions</code> list.  Its name is initially <code class="ProgramOutput">"(template)"</code>.
 </p>
 <li>
 <p>
-Specify the <code class="ProgramOutput">wizardId</code> attribute of the template as
-"<em>org.eclipse.cdt.project.ui.NewProjectWizard</em>". This
-attribute is mandatory.
+Specify the <code class="ProgramOutput">id</code> attribute of this template contribution, for example
+"<em>com.foobar.templates.contrib.MyTemplate1</em>". This attribute is mandatory. The id need not be
+the same as the template id (from template.xml). This allows contributing the same template.xml multiple
+times. It will replace <code class="ProgramOutput">"(template)"</code> in the list.
 </p>
 <li>
 <p>
-Specify the location of the template relative to the plug-in created
+Specify the location of the template XML file, relative to the plug-in created
 in step 1. This attribute is mandatory.
 </p>
 <li>
@@ -127,31 +131,15 @@ API document for
 </p>
 <li>
 <p>
-Select an appropriate project type from the
-<code class="ProgramOutput">projectType</code> drop-down list. This is an optional attribute. 
-</p>
-<li>
-<p>
-Specify the <code class="ProgramOutput">usageDescription</code>, which is a notation
-describing how this template is used. Usually used to filter the list of
-templates on offer depending on other wizard attributes. This is an optional
-attribute. For more information, refer to Java API document for
-<a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html">java.util.regex.Pattern</a>.
-</p>
-<p>
-The New Project wizard will list only those templates, which are
-relevant for the build Configurations choosen for the project. For a example, if the developer
-choose to create a <code class="ProgramOutput">C++ Application for Symbian OS</code>, the wizard
-will list all the templates with the relevant
-<code class="ProgramOutput">usageDescription</code>. Otherwise, for a standard <code class="ProgramOutput">CDT
-C++ Project</code> the wizard will list all the templates, irrespective of
-whether the <code class="ProgramOutput">usageDescription</code> is specified or not. 
+Specify the project type you wish the template to be associated with. The project type id can be
+found by looking at the project types contributed to the  buildDefinitions extension point. See the CDT Build System documentation in the developer guide for built-in project type ids.
+<code class="ProgramOutput">projectType</code> drop-down list. This is an mandatory attribute.
 </p>
 <li>
 <p>
 Specify the <code class="ProgramOutput">pagesAfterTemplateSelectionProvider</code>,
 which is a fully qualified name of the class that implements
-<code class="filename">org.eclipse.cdt.templateengine.IPagesAfterTemplateSelectionProvider</code>
+<code class="filename">org.eclipse.cdt.ui.templateengine.IPagesAfterTemplateSelectionProvider</code>
 interface. This is an optional attribute. 
 </p>
 </li>

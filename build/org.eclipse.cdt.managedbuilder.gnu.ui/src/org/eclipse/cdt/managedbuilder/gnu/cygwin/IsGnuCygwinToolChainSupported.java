@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 public class IsGnuCygwinToolChainSupported implements
 		IManagedIsToolChainSupported {
 	
-	static final String[] CHECKED_NAMES = {"gcc ", "binutils ", "make "};  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	static final String[] CHECKED_NAMES = {"gcc-core ", "binutils ", "make "};  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	static boolean suppChecked = false;
 	static boolean toolchainIsSupported = false; 

@@ -19,4 +19,4 @@ cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 cd ..
 
 java -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
-	-ws gtk -application org.eclipse.ant.core.antRunner $*
+	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*

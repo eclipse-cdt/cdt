@@ -45,11 +45,14 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 		mngr.notifyListeners(event);
 		CProjectDescription fNewDescriptionCache = null;
 		SettingsContext context = new SettingsContext(project);
-		boolean modified;
+		boolean modified = false;
+		
 		if(fSetDescription != null){
 			InternalXmlStorageElement el = null;
 			try {
-				el = mngr.copyElement((InternalXmlStorageElement)fSetDescription.getRootStorageElement(), false);
+				InternalXmlStorageElement base = (InternalXmlStorageElement)fSetDescription.getRootStorageElement();
+				modified = base.isDirty();
+				el = mngr.copyElement(base, false);
 			} catch (CoreException e2) {
 			}
 	
@@ -63,7 +66,7 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 			fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
 			try {
 				mngr.setDescriptionApplying(project, fNewDescriptionCache);
-				modified = fNewDescriptionCache.applyDatas(context);
+				modified |= fNewDescriptionCache.applyDatas(context);
 			} finally {
 				mngr.clearDescriptionApplying(project);
 			}
@@ -105,11 +108,6 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 //		ExternalSettingsManager.getInstance().updateDepentents(delta);
 		
 		if(fNewDescriptionCache != null){
-			try {
-				((InternalXmlStorageElement)fNewDescriptionCache.getRootStorageElement()).setReadOnly(true);
-			} catch (CoreException e1) {
-			}
-	
 			fNewDescriptionCache.doneApplying();
 		}
 		

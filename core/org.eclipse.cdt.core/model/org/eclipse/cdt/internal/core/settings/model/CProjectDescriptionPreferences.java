@@ -95,6 +95,10 @@ public class CProjectDescriptionPreferences implements ICProjectDescriptionPrefe
 					&& !fSuperPreference.settingsEqual((CProjectDescriptionPreferences)CProjectDescriptionManager.getInstance().getProjectDescriptionWorkspacePreferences(false)));
 	}
 	
+	void setModified(boolean modified){
+		fIsModified = modified;
+	}
+	
 	public boolean isReadOnly(){
 		return fIsReadOnly;
 	}

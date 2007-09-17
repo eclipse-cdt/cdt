@@ -170,11 +170,12 @@ public class CStorage implements ICSettingsStorage{
 		return false;
 	}
 	
-	void setReadOnly(boolean readOnly){
+	void setReadOnly(boolean readOnly, boolean keepModify){
 		fIsReadOnly = readOnly;
+		fIsDirty &= keepModify;
 		for(Iterator iter = fStorageElementMap.values().iterator(); iter.hasNext();){
 			InternalXmlStorageElement el = (InternalXmlStorageElement)iter.next();
-			el.setReadOnly(readOnly);
+			el.setReadOnly(readOnly, keepModify);
 		}
 	}
 

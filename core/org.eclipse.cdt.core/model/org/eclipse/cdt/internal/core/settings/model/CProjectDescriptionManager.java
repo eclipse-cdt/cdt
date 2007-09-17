@@ -709,11 +709,6 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				} finally {
 					clearDescriptionApplying(project);
 				}
-				
-				try {
-					((InternalXmlStorageElement)des.getRootStorageElement()).setReadOnly(true);
-				} catch (CoreException e1) {
-				}
 			}
 		}finally{
 			CProjectDescription d = clearDescriptionLoadding(project);

@@ -232,11 +232,16 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		return modified;
 	}
 	
-	
-
 	void doneApplying(){
 		doneInitializing();
 		fIsApplying = false;
+		
+		try {
+			((InternalXmlStorageElement)getRootStorageElement()).setReadOnly(true, false);
+		} catch (CoreException e1) {
+		}
+		
+		setModified(false);
 	}
 
 	void doneLoadding(){
@@ -501,6 +506,20 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 				return true;
 		}
 		return false;
+	}
+	
+	private void setModified(boolean modified){
+		fIsModified = modified;
+		
+		if(!modified){
+			fActiveCfgInfo.fIsModified = false;
+
+			fSettingCfgInfo.fIsModified = false;
+
+			fPrefs.setModified(false);
+
+			//no need to do that for config cache since they always maintain the "isModified == false"
+		}
 	}
 
 	public boolean isReadOnly() {

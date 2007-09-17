@@ -279,11 +279,11 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 	void doneInitialization(){
 		if(isReadOnly()){
 			if(fRootStorageElement != null)
-				((InternalXmlStorageElement)fRootStorageElement).setReadOnly(true);
+				((InternalXmlStorageElement)fRootStorageElement).setReadOnly(true, false);
 			if(fSettingsStorageElement != null)
-				((InternalXmlStorageElement)fSettingsStorageElement).setReadOnly(true);
+				((InternalXmlStorageElement)fSettingsStorageElement).setReadOnly(true, false);
 			if(fStorage != null)
-				fStorage.setReadOnly(true);
+				fStorage.setReadOnly(true, false);
 		}
 	}
 	
@@ -492,7 +492,16 @@ public class CConfigurationSpecSettings implements ICSettingsStorage{
 		if(isReadOnly())
 			throw ExceptionFactory.createIsReadOnlyException();
 		fIsModified = modified;
+		
+		if(!modified){
+			if(fMacros != null)
+				fMacros.setDirty(false);
+			
+			if(fEnvironment != null)
+				fEnvironment.setDirty(false);
+		}
 	}
+
 	void setModified(){
 		setModified(true);
 	}

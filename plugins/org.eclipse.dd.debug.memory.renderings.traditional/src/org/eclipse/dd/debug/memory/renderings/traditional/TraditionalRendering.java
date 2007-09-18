@@ -101,6 +101,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
     
     private IWorkbenchAdapter fWorkbenchAdapter;
     private IMemoryBlockConnection fConnection;
+    
+    private final static int MAX_MENU_COLUMN_COUNT = 8;
 
     public TraditionalRendering(String id)
     {
@@ -819,9 +821,8 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
         };
         displayColumnCountAuto.setChecked(fRendering.getColumnsSetting() == Rendering.COLUMNS_AUTO_SIZE_TO_FIT);
         
-        final int maxMenuColumnCount = 8;
-        final Action[] displayColumnCounts = new Action[maxMenuColumnCount];
-        for(int i = 0; i < maxMenuColumnCount; i++)
+        final Action[] displayColumnCounts = new Action[MAX_MENU_COLUMN_COUNT];
+        for(int i = 0; i < MAX_MENU_COLUMN_COUNT; i++)
         {
         	final int finali = i;
         	displayColumnCounts[i] = new Action(
@@ -874,7 +875,21 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
                         }                    
                     }
                 );
-                if (inputDialog.open() != Window.OK) return;
+            
+                if (inputDialog.open() != Window.OK)
+                {
+                	this.setChecked(false);
+                	int currentColumnSetting = TraditionalRendering.this.fRendering.getColumnsSetting();
+                	if(currentColumnSetting == Rendering.COLUMNS_AUTO_SIZE_TO_FIT)
+                		displayColumnCountAuto.setChecked(true);
+                	else if(currentColumnSetting > 0 && currentColumnSetting <= MAX_MENU_COLUMN_COUNT)
+                		displayColumnCounts[currentColumnSetting - 1].setChecked(true);
+                	else
+                		displayColumnCountCustomValue.setChecked(true);
+                
+                	return;
+                }
+                
                 int newColumnCount = -1;
                 try {
                     newColumnCount = Integer.parseInt(inputDialog.getValue());
@@ -882,11 +897,12 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             	
             	TraditionalRendering.this.fRendering.setColumnsSetting(newColumnCount);
             	this.setChecked(false);
+            	
             	displayColumnCountCustomValue.setChecked(true);
             	displayColumnCountCustomValue.setText(Integer.valueOf(
             		fRendering.getColumnsSetting()).toString());
             }
-        };
+        }; 
         
         getPopupMenuManager().addMenuListener(new IMenuListener()
         {

@@ -1525,22 +1525,27 @@ public class CommonBuilder extends ACBuilder {
 				performExternalClean(bInfo, false, monitor);
 			} else {
 				boolean programmatically = true;
-				if(!cfg.getEditableBuilder().isInternalBuilder()){
-					fBuildErrOccured = false;
-					try {
-						performExternalClean(bInfo, false, monitor);
-					} catch (CoreException e) {
-						fBuildErrOccured = true;
-					}
-					if(!fBuildErrOccured)
-						programmatically = false;
-				}
+				IPath path = ManagedBuildManager.getBuildFullPath(cfg, bInfo.getBuilder());
+				IResource rc = path != null ? ResourcesPlugin.getWorkspace().getRoot().findMember(path) : null;
 				
-				if(programmatically){
-					try {
-						cleanWithInternalBuilder(bInfo, monitor);
-					} catch (CoreException e) {
-						cleanProgrammatically(bInfo, monitor);
+				if(path == null || (rc != null && rc.getType() != IResource.FILE)){
+					if(!cfg.getEditableBuilder().isInternalBuilder()){
+						fBuildErrOccured = false;
+						try {
+							performExternalClean(bInfo, false, monitor);
+						} catch (CoreException e) {
+							fBuildErrOccured = true;
+						}
+						if(!fBuildErrOccured)
+							programmatically = false;
+					}
+					
+					if(programmatically){
+						try {
+							cleanWithInternalBuilder(bInfo, monitor);
+						} catch (CoreException e) {
+							cleanProgrammatically(bInfo, monitor);
+						}
 					}
 				}
 			}

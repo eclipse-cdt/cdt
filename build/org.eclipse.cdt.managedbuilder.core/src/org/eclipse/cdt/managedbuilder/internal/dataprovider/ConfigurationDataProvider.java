@@ -249,6 +249,8 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		Configuration newCfg = new Configuration(mProj, cfg, des.getId(), true, true, false);
 		newCfg.setConfigurationDescription(des);
 		newCfg.setName(des.getName());
+		ManagedBuildManager.performValueHandlerEvent(newCfg, IManagedOptionValueHandler.EVENT_OPEN);
+
 //		if(!newCfg.getId().equals(cfg.getId())){
 //			newCfg.exportArtifactInfo();
 //		}

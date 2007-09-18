@@ -16,8 +16,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
-import org.eclipse.cdt.utils.spawner.ProcessFactory;
-
 public class DiffUtil {
 	private static final String DIFF_CMD = "diff -ub";
 	private static DiffUtil fInstance;
@@ -75,7 +73,7 @@ public class DiffUtil {
 	
 	private InputStream invokeDiff(String location1, String location2){
 		try {
-			Process p = ProcessFactory.getFactory().exec(createCommand(location1, location2));
+			Process p = Runtime.getRuntime().exec(createCommand(location1, location2));
 			return p.getInputStream();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

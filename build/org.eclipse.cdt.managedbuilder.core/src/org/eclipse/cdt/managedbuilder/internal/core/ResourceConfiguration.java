@@ -981,15 +981,15 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 			String ext = path.getFileExtension();
 			if(ext == null)
 				ext = ""; //$NON-NLS-1$
-			ITool tool = ((FolderInfo)parentRc).getToolFromInputExtension(ext);
-			if(tool == null)
+			ITool otherTool = ((FolderInfo)parentRc).getToolFromInputExtension(ext);
+			if(otherTool == null)
 				return true;
 			
 			ITool[] tti = getToolsToInvoke();
 			if(tti.length != 1)
 				return true;
 			
-			return ((Tool)tool).hasCustomSettings((Tool)tti[0]);
+			return ((Tool)tti[0]).hasCustomSettings((Tool)otherTool);
 		}
 		ITool[] tools = getTools();
 		ITool[] otherTools = ((IFileInfo)parentRc).getTools();

@@ -2705,7 +2705,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		ITool[] tools = getTools();
 		ITool[] otherTools = tCh.getTools();
 		if(tools.length != otherTools.length)
-			return false;
+			return true;
 		
 		for(int i = 0; i < tools.length; i++){
 			Tool tool = (Tool)tools[i];

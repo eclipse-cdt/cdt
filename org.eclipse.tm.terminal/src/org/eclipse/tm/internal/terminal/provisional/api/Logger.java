@@ -168,7 +168,8 @@ public final class Logger {
 	 */
 	public static final void logException(Exception ex) {
 		// log in eclipse error log
-		TerminalPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
+		if(TerminalPlugin.getDefault()!=null)
+			TerminalPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TerminalPlugin.PLUGIN_ID, IStatus.OK, ex.getMessage(), ex));
 		// Read my own stack to get the class name, method name, and line number
 		// of
 		// where this method was called.
@@ -189,6 +190,8 @@ public final class Logger {
 					+ "." + methodName + ":" + lineNumber + ": " + //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 					"Caught exception: " + ex); //$NON-NLS-1$
 			ex.printStackTrace(tmpStream);
+		} else {
+			ex.printStackTrace();
 		}
 	}
 }

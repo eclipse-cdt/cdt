@@ -201,7 +201,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		fSelectionStartCoumn = startColumn;
 		fSelectionEndColumn = endColumn;
 		if(fSelectionSnapshot!=null) {
-			fSelectionSnapshot.setInterestWindow(0, fSeletionEndLine);
+			fSelectionSnapshot.setInterestWindow(0, fSeletionEndLine+1);
 		}
 		int changedStart;
 		int changedEnd;
@@ -239,7 +239,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 			if(chars!=null) {
 				text=new String(chars);
 				if(line==fSeletionEndLine)
-					text=text.substring(0, Math.min(fSelectionEndColumn,text.length()));
+					text=text.substring(0, Math.min(fSelectionEndColumn+1,text.length()));
 				if(line==fSelectionStartLine)
 					text=text.substring(Math.min(fSelectionStartCoumn,text.length()));
 				// get rid of the empty space at the end of the lines
@@ -282,7 +282,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 			// update the observed window...
 			if (fSelectionSnapshot != null)
 				// todo make -1 to work!
-				fSelectionSnapshot.setInterestWindow(0, fSeletionEndLine);
+				fSelectionSnapshot.setInterestWindow(0, fSeletionEndLine+1);
 		}
 	}
 

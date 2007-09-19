@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This Ant script will extract the source for projects used by IBM.
+To run this bring the synchronize the workspace with the version you wish to extract
+and run "Ant Build" on this script.
+
+You may wish to modify the zip-file property below prior to running to name the resulting
+zip file appropriately. Be sure to keep it in the results directory.
+
+Results are generated into the workspace, but team support is told to ignore them during 
+synchronization so they will not end up in the repository.
+-->
+
+<project name="extract" default="main">
+	
+	<property name="zip-file" value="results/source201.zip"/>
+	
+	<target name="main">
+		<delete file="#{zip-file}"/>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse-feature"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.core-feature"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.dstore-feature"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.ftp-feature"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.local-feature"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.sdk-feature"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.ssh-feature"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.telnet-feature"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.apache.commons.net"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.apache.oro"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.dstore.core"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.dstore.doc.isv"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.dstore.extra"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.connectorservice.dstore"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.connectorservice.local"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.connectorservice.ssh"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.connectorservice.telnet"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.core"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.doc.isv"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.doc.user"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.dstore.security"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.efs"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.efs.ui"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.files.ui"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.importexport"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.processes.ui"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.sdk"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.dstore"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.files.ftp"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.local"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.ssh"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.services.telnet"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.shells.ui"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.files.core"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.files.dstore"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.files.ftp"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.files.local"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.files.ssh"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.processes.core"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.processes.dstore"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.processes.local"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.processes.shell.linux"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.core"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.dstore"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.local"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.ssh"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.subsystems.shells.telnet"/></antcall>
+		<antcall target="process-element"><param name="element" value="org.eclipse.rse.ui"/></antcall>
+    </target>
+	
+    <target name="process-element">
+    	<echo message="processing ${element}"/>
+    	<zip destfile="${zip-file}" basedir="../.." update="true">
+    		<include name="${element}/**"/>
+    		<exclude name="**/*.gif"/>
+    		<exclude name="**/*.jpg"/>
+    		<exclude name="**/*.png"/>
+    		<exclude name="**/*.zip"/>
+    		<exclude name="**/*.class"/>
+    		<exclude name="**/CVS/**"/>
+    		<exclude name="${element}/bin/**"/>
+    	</zip>
+    </target>
+
+</project>

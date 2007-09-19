@@ -488,15 +488,22 @@ public class NewBuildConfigurationDialog extends Dialog {
 	/**
 	 * Create a new configuration, using the values currently set in 
 	 * the dialog.
+	 * 
+	 * Always returns null - in fact, return value
+	 * is kept for compatibility only.
 	 */
 	public ICConfigurationDescription newConfiguration() {
 		Configuration cfg = (Configuration)parentConfig;
 		String id = ManagedBuildManager.calculateChildId(cfg.getId(), null);
 		ManagedProject mp = (ManagedProject)ManagedBuildManager.getBuildInfo(des.getProject()).getManagedProject();
-//		Configuration config = new Configuration(mp, (ToolChain)cfg.getToolChain(), id, getNewName());
 		Configuration config = new Configuration(mp, cfg, id, true, false);
 		config.setName(getNewName());
 		config.setDescription(getNewDescription());
+		
+		String target = config.getArtifactName();
+		if (target == null || target.length() == 0)
+			config.setArtifactName(mp.getDefaultArtifactName());
+
 		CConfigurationData data = config.getConfigurationData();
 		try {
 			des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
@@ -504,41 +511,6 @@ public class NewBuildConfigurationDialog extends Dialog {
 			System.out.println(Messages.getString("NewBuildConfigurationDialog.0")); //$NON-NLS-1$
 			System.out.println(Messages.getString("NewBuildConfigurationDialog.1") + e.getLocalizedMessage()); //$NON-NLS-1$
 		}
-		/*
-		String id = ManagedBuildManager.calculateChildId(base.getId(), null);
-		Configuration config = new Configuration(m, base, id, false, true);
-		CConfigurationData data = config.getConfigurationData();
-		mp.getProjectType().createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-		IBuilder bld = config.getEditableBuilder();
-		if (bld != null) { 	bld.setManagedBuildOn(true); }
-		
-		
-		String newId = null;
-		ICConfiguration newConfig;
-				
-		if (parentConfig.isExtensionElement()) {
-			// If parent config is an extension element,
-			// Create ID for the new component based on the parentConfig's id and random component
-			newId = ManagedBuildManager.calculateChildId(parentConfig.getId(), null);
-			newConfig = info.getManagedProject().createConfiguration(parentConfig, newId);
-		} else {
-			// If parent config is not an extension element, then
-			// Create ID for the new component based on the parentConfig's parent id and random component
-			newId = ManagedBuildManager.calculateChildId(parentConfig.getParent().getId(), null);
-			newConfig = info.getManagedProject().createConfigurationClone(parentConfig, newId);
-		}
-		
-		newConfig.setName(newName);
-		newConfig.setDescription(newDescription);
-		newConfig.setArtifactName(info.getManagedProject().getDefaultArtifactName());
-		return newConfig;
-		*/
-		
-		/*
-
-		 */
-
 		return null;
 	}
-	
 }

@@ -469,6 +469,10 @@ public class NewCfgDialog implements INewCfgDialog {
 					config.exportArtifactInfo();
 					config.setName(newName);
 					config.setDescription(newDescription);
+					
+					String target = config.getArtifactName();
+					if (target == null || target.length() == 0)
+						config.setArtifactName(mp.getDefaultArtifactName());
 				}
 			}
 			if (config == null || cfgDes == null) {

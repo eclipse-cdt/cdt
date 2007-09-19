@@ -121,11 +121,13 @@ public class FindReplaceDialog extends SelectionDialog
 		}
 		else if(formatHexButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText(), 16), 16);
+			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText().toUpperCase().startsWith("0X") 
+				? findText.getText().substring(2) : findText.getText(), 16), 16);
 		}
 		else if(formatOctalButton.getSelection())
 		{
-			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText(), 8), 8);
+			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText().startsWith("0") 
+					? findText.getText().substring(1) : findText.getText(), 8), 8);
 		}
 		else if(formatBinaryButton.getSelection())
 		{
@@ -144,9 +146,9 @@ public class FindReplaceDialog extends SelectionDialog
 		if(formatAsciiButton.getSelection())
 			return replaceText.getText().getBytes();
 		else if(formatHexButton.getSelection())
-			return new BigInteger(replaceText.getText(), 16).toByteArray();
+			return new BigInteger(replaceText.getText().toUpperCase().startsWith("0X") ? replaceText.getText().substring(2) : replaceText.getText(), 16).toByteArray();
 		else if(formatOctalButton.getSelection())
-			return new BigInteger(replaceText.getText(), 8).toByteArray();
+			return new BigInteger(replaceText.getText().startsWith("0") ? replaceText.getText().substring(1) : replaceText.getText(), 8).toByteArray();
 		else if(formatBinaryButton.getSelection())
 			return new BigInteger(replaceText.getText(), 2).toByteArray();
 		else if(formatDecimalButton.getSelection())

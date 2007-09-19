@@ -28,11 +28,11 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.tm.internal.terminal.actions.TerminalAction;
@@ -522,12 +522,12 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	}
 
 	protected void setupContextMenus() {
-		StyledText ctlText;
+		Control ctlText;
 		MenuManager menuMgr;
 		Menu menu;
 		TerminalContextMenuHandler contextMenuHandler;
 
-		ctlText = fCtlTerminal.getCtlText();
+		ctlText = fCtlTerminal.getControl();
 		menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menu = menuMgr.createContextMenu(ctlText);
 		contextMenuHandler = new TerminalContextMenuHandler();
@@ -675,6 +675,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			fMenuAboutToShow = true;
 			updateEditCopy();
 			updateEditCut();
+			updateEditSelectAll();
 			updateEditPaste();
 			updateEditClearAll();
 

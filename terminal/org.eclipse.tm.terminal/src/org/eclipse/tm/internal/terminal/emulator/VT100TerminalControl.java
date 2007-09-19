@@ -14,19 +14,21 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
-package org.eclipse.tm.internal.terminal.control.impl;
+package org.eclipse.tm.internal.terminal.emulator;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketException;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.FocusEvent;
@@ -34,25 +36,35 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
+import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
+import org.eclipse.tm.internal.terminal.control.impl.TerminalMessages;
+import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.tm.internal.terminal.textcanvas.ITextCanvasModel;
+import org.eclipse.tm.internal.terminal.textcanvas.PipedInputStream;
+import org.eclipse.tm.internal.terminal.textcanvas.PollingTextCanvasModel;
+import org.eclipse.tm.internal.terminal.textcanvas.TextCanvas;
+import org.eclipse.tm.internal.terminal.textcanvas.TextLineRenderer;
+import org.eclipse.tm.terminal.model.ITerminalTextData;
+import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
+import org.eclipse.tm.terminal.model.TerminalTextDataFactory;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
@@ -68,7 +80,7 @@ import org.eclipse.ui.keys.IBindingService;
  *
  * @author Chris Thew <chris.thew@windriver.com>
  */
-public class TerminalControl implements ITerminalControlForText, ITerminalControl, ITerminalViewControl
+public class VT100TerminalControl implements ITerminalControlForText, ITerminalControl, ITerminalViewControl
 {
     protected final static String[] LINE_DELIMITERS = { "\n" }; //$NON-NLS-1$
 
@@ -77,30 +89,36 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
      * text processing on data received from the remote host and controls how text is
      * displayed using the view's StyledText widget.
      */
-    private TerminalText              fTerminalText;
-
+    private VT100Emulator			  fTerminalText;
     private Display                   fDisplay;
-    private StyledText                fCtlText;
+    private TextCanvas                fCtlText;
     private Composite                 fWndParent;
     private Clipboard                 fClipboard;
-    private TerminalModifyListener    fModifyListener;
     private KeyListener               fKeyHandler;
     private ITerminalListener         fTerminalListener;
     private String                    fMsg = ""; //$NON-NLS-1$
-    private VerifyKeyListener         fVerifyKeyListener;
     private FocusListener             fFocusListener;
     private ITerminalConnectorInfo		  fConnectorInfo;
     private final ITerminalConnectorInfo[]      fConnectors;
+    PipedInputStream fInputStream;
 
 	private ICommandInputField fCommandInputField;
 
 	private volatile TerminalState fState;
 
-	public TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnectorInfo[] connectors) {
+	private ITerminalTextData fTerminalModel;
+
+	volatile private Job fJob;
+
+	public VT100TerminalControl(ITerminalListener target, Composite wndParent, ITerminalConnectorInfo[] connectors) {
 		fConnectors=connectors;
 		fTerminalListener=target;
-		setTerminalText(new TerminalText(this));
-
+		fTerminalModel=TerminalTextDataFactory.makeTerminalTextData();
+		fTerminalModel.setDimensions(24, 80);
+		fTerminalModel.setMaxHeight(1000);
+		fInputStream=new PipedInputStream(8*1024);
+		fTerminalText=new VT100Emulator(fTerminalModel,this,fInputStream);
+		
 		setupTerminal(wndParent);
 	}
 
@@ -209,7 +227,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#isEmpty()
 	 */
 	public boolean isEmpty() {
-		return (getCtlText().getCharCount() == 0);
+		return getCtlText().isEmpty();
 	}
 
 	/* (non-Javadoc)
@@ -292,8 +310,48 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 			disconnectTerminal();
 			return;
 		}
-	
 		getCtlText().setFocus();
+		startReaderJob();
+
+	}
+
+	private void startReaderJob() {
+		if(fJob==null) {
+			fJob=new Job("Terminal data reader") { //$NON-NLS-1$
+				protected IStatus run(IProgressMonitor monitor) {
+					IStatus status=Status.OK_STATUS;
+					while(true) {
+						while(fInputStream.available()==0 && !monitor.isCanceled()) {
+							try {
+								fInputStream.waitForAvailable(500);
+							} catch (InterruptedException e) {
+								Thread.currentThread().interrupt();
+							}
+						}
+						if(monitor.isCanceled()) {
+							disconnectTerminal();
+							status=Status.CANCEL_STATUS;
+							break;
+						}
+						try {
+							// TODO: should block when no text is available!
+							fTerminalText.processText();
+							
+						} catch (Exception e) {
+							disconnectTerminal();
+							status=new Status(IStatus.ERROR,TerminalPlugin.PLUGIN_ID,e.getLocalizedMessage(),e);
+							break;
+						}
+					}
+					// clean the job: start a new one when the connection getst restarted
+					fJob=null;
+					return status;
+				}
+
+			};
+			fJob.setSystem(true);
+			fJob.schedule();
+		}
 	}
 
 	private void showErrorMessage(String message) {
@@ -426,27 +484,39 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		layout.marginHeight=0;
 		
 		fWndParent.setLayout(layout);
-		setCtlText(new StyledText(fWndParent, SWT.V_SCROLL));
-		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		//fCtlText.setWordWrap(false);
 		
+		ITerminalTextDataSnapshot snapshot=fTerminalModel.makeSnapshot();
+		// TODO how to get the initial size correctly!
+		snapshot.updateSnapshot(false);
+		ITextCanvasModel canvasModel=new PollingTextCanvasModel(snapshot);
+		fCtlText=new TextCanvas(fWndParent,canvasModel,SWT.NONE);
+		fCtlText.setCellRenderer(new TextLineRenderer(fCtlText,canvasModel));
+
+		fCtlText.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		fCtlText.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event e) {
+				Rectangle bonds=fCtlText.getClientArea();
+				int lines=bonds.height/fCtlText.getCellHeight();
+				int columns=bonds.width/fCtlText.getCellWidth();
+				fTerminalText.setDimensions(lines, columns);
+			}
+		});
+
+
 		fDisplay = getCtlText().getDisplay();
 		fClipboard = new Clipboard(fDisplay);
 //		fViewer.setDocument(new TerminalDocument());
-		getCtlText().setFont(JFaceResources.getTextFont());
+		setFont(JFaceResources.getTextFont());
 	}
 
 	protected void setupListeners() {
 		fKeyHandler = new TerminalKeyHandler();
-		fModifyListener = new TerminalModifyListener();
-		fVerifyKeyListener = new TerminalVerifyKeyListener();
 		fFocusListener = new TerminalFocusListener();
 
-		getCtlText().addVerifyKeyListener(fVerifyKeyListener);
 		getCtlText().addKeyListener(fKeyHandler);
-		getCtlText().addModifyListener(fModifyListener);
-		getCtlText().addVerifyKeyListener(fVerifyKeyListener);
 		getCtlText().addFocusListener(fFocusListener);
+
 	}
 
 	/**
@@ -484,7 +554,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 	
 	public OutputStream getRemoteToTerminalOutputStream() {
-		return getTerminalText().getOutputStream();
+		return fInputStream.getOutputStream();
 	}
 	protected boolean isLogCharEnabled() {
 		return TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_CHAR);
@@ -512,26 +582,17 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		return fMsg;
 	}
 
-	void setCtlText(StyledText ctlText) {
-		fCtlText = ctlText;
-		fTerminalText.setStyledText(ctlText);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#getCtlText()
 	 */
-	protected StyledText getCtlText() {
+	protected TextCanvas getCtlText() {
 		return fCtlText;
-	}
-
-	void setTerminalText(TerminalText terminalText) {
-		fTerminalText = terminalText;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl#getTerminalText()
 	 */
-	public TerminalText getTerminalText() {
+	public VT100Emulator getTerminalText() {
 		return fTerminalText;
 	}
 
@@ -539,14 +600,6 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	 */
 	public ITerminalConnectorInfo getTerminalConnectorInfo() {
 		return fConnectorInfo;
-	}
-	protected class TerminalModifyListener implements ModifyListener {
-		public void modifyText(ModifyEvent e) {
-			if (e.getSource() instanceof StyledText) {
-				StyledText text = (StyledText) e.getSource();
-				text.setSelection(text.getText().length());
-			}
-		}
 	}
 
 	protected class TerminalFocusListener implements FocusListener {
@@ -593,19 +646,6 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		}
 	}
 
-	protected class TerminalVerifyKeyListener implements VerifyKeyListener {
-		public void verifyKey(VerifyEvent event) {
-			// We set event.doit to false to prevent keyboard input from locally
-			// modifying the contents of the StyledText widget.  The only text we
-			// display is text received from the remote endpoint.  This also prevents
-			// the caret from moving locally when the user presses an arrow key or the
-			// PageUp or PageDown keys.  For some reason, doing this in
-			// TerminalKeyHandler.keyPressed() does not work, hence the need for this
-			// class.
-
-			event.doit = false;
-		}
-	}
 	protected class TerminalKeyHandler extends KeyAdapter {
 		public void keyPressed(KeyEvent event) {
 			if (getState()==TerminalState.CONNECTING)
@@ -851,15 +891,16 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	}
 
 	public int getBufferLineLimit() {
-		if(getTerminalText().isLimitOutput())
-			return getTerminalText().getBufferLineLimit();
-		return -1;
+		return fTerminalModel.getMaxHeight();
 	}
 
 	public void setBufferLineLimit(int bufferLineLimit) {
-		getTerminalText().setLimitOutput(bufferLineLimit!=-1);
-		getTerminalText().setBufferLineLimit(bufferLineLimit);
-		
+		if(bufferLineLimit<=0)
+			return;
+		synchronized (fTerminalModel) {
+			if(fTerminalModel.getHeight()>bufferLineLimit)
+				fTerminalModel.setDimensions(bufferLineLimit, fTerminalModel.getWidth());
+			fTerminalModel.setMaxHeight(bufferLineLimit);
+		}
 	}
-
 }

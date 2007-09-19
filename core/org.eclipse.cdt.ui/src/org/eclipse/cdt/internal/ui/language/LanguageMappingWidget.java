@@ -44,6 +44,8 @@ public abstract class LanguageMappingWidget {
 	
 	protected Set fOverriddenContentTypes;
 	
+	private boolean fIsChanged;
+	
 	public LanguageMappingWidget() {
 		fOverriddenFont = JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
 		fOverriddenContentTypes = Collections.EMPTY_SET;
@@ -89,6 +91,14 @@ public abstract class LanguageMappingWidget {
 	
 	public void setChild(LanguageMappingWidget child) {
 		fChild = child;
+	}
+	
+	public boolean isChanged() {
+		return fIsChanged;
+	}
+
+	public void setChanged(boolean changed) {
+		fIsChanged = changed;
 	}
 	
 	protected void createHeader(Composite parent, String description) {

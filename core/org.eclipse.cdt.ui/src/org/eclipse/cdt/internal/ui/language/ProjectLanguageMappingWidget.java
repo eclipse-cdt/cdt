@@ -133,6 +133,7 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 						fConfigurationContentTypeMappings.put(configuration, contentTypeMappings);
 					}
 					contentTypeMappings.put(contentType, language);
+					setChanged(true);
 					
 					IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 					fAffectedContentTypes.add(contentTypeManager.getContentType(contentType));
@@ -167,6 +168,10 @@ public class ProjectLanguageMappingWidget extends LanguageMappingWidget {
 
 					IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 					fAffectedContentTypes.add(contentTypeManager.getContentType(contentType));
+				}
+				
+				if (selection.length > 0) {
+					setChanged(true);
 				}
 
 				refreshMappings();

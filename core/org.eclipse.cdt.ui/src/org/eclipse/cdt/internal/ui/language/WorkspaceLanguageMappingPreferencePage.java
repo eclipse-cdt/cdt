@@ -69,11 +69,16 @@ public class WorkspaceLanguageMappingPreferencePage extends PreferencePage imple
 	
 	public boolean performOk() {
 		try {
+			if (!fMappingWidget.isChanged()) {
+				return true;
+			}
+			
 			IContentType[] affectedContentTypes = fMappingWidget.getAffectedContentTypes();
 			LanguageManager manager = LanguageManager.getInstance();
 			WorkspaceLanguageConfiguration config = manager.getWorkspaceLanguageConfiguration();
 			config.setWorkspaceMappings(fMappingWidget.getContentTypeMappings());
 			manager.storeWorkspaceLanguageConfiguration(affectedContentTypes);
+			fMappingWidget.setChanged(false);
 			return true;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

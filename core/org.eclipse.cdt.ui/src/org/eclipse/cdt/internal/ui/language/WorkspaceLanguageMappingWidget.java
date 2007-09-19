@@ -100,6 +100,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 						String contentType = dialog.getContentTypeID();
 						String language = dialog.getLanguageID();
 						fContentTypeMappings.put(contentType, language);
+						setChanged(true);
 						IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 						fAffectedContentTypes.add(contentTypeManager.getContentType(contentType));
 						refreshMappings();
@@ -122,6 +123,10 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 	
 						IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 						fAffectedContentTypes.add(contentTypeManager.getContentType(contentType));
+					}
+					
+					if (selection.length > 0) {
+						setChanged(true);
 					}
 	
 					refreshMappings();

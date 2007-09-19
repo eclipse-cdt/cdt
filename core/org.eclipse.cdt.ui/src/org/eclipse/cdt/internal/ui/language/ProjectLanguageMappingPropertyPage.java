@@ -161,9 +161,14 @@ public class ProjectLanguageMappingPropertyPage extends PropertyPage {
 
 	public boolean performOk() {
 		try {
+			if (!fMappingWidget.isChanged()) {
+				return true;
+			}
+			
 			fMappings.setContentTypeMappings(fMappingWidget.getContentTypeMappings());
 			IContentType[] affectedContentTypes = fMappingWidget.getAffectedContentTypes();
 			LanguageManager.getInstance().storeLanguageMappingConfiguration(getProject(), affectedContentTypes);
+			fMappingWidget.setChanged(false);
 			return true;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

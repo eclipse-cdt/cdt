@@ -72,6 +72,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 	private Table fTable;
 	private ILanguage[] fLanguages;
 	private Map fLanguageIds;
+	private boolean fHasChanges;
 	
 	public FileLanguageMappingPropertyPage() {
 		super();
@@ -178,6 +179,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 							String selectedLanguage = ((String[]) combo.getData())[index];
 							LanguageTableData data = (LanguageTableData) item.getData();
 							data.languageId = selectedLanguage;
+							fHasChanges = true;
 							
 							try {
 								refreshMappings();
@@ -307,6 +309,10 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 
 	public boolean performOk() {
 		try {
+			if (!fHasChanges) {
+				return true;
+			}
+			
 			IFile file = getFile();
 			IProject project = file.getProject();
 			LanguageManager manager = LanguageManager.getInstance();
@@ -330,6 +336,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			}
 			config.setFileMappings(file, mappings);
 			manager.storeLanguageMappingConfiguration(file);
+			fHasChanges = false;
 			return true;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

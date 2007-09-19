@@ -467,6 +467,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     public void handleDebugEvents(DebugEvent[] events)
     {
+    	if(this.isDisposed())
+    		return;
+    	
     	for(int i = 0; i < events.length; i++)
         {
             if(events[0].getSource() instanceof IDebugElement)
@@ -979,6 +982,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     public void dispose()
     {
+        DebugPlugin.getDefault().removeDebugEventListener(this);
         if(fViewportCache != null)
         {
             fViewportCache.dispose();

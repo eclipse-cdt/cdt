@@ -22,9 +22,12 @@
 
 package org.eclipse.rse.internal.core.model;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
@@ -406,68 +409,83 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     }
 
     /**
-     * Move existing connections a given number of positions in the same pool.
-     * If the delta is negative, they are all moved up by the given amount. If 
-     * positive, they are all moved down by the given amount.<p>
-     * <ul>
-     * <li>After the move, the pool containing the moved connection is saved to disk.
-     * <li>The connection's alias name must be unique in pool.
-     * </ul>
-     * <b>TODO PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
-     * @param conns Array of SystemConnections to move.
-     * @param delta the amount by which to move the connections
-     */
-    public void moveHosts(IHost conns[], int delta)
-    {
-    	int[] oldPositions = new int[conns.length];
-    	for (int idx=0; idx<conns.length; idx++)
-    	   oldPositions[idx] = getHostPosition(conns[idx]);    	
-    	if (delta > 0) // moving down, process backwards
-          for (int idx=conns.length-1; idx>=0; idx--)
-             moveConnection(conns[idx], oldPositions[idx]+delta);	
-        else    	   
-          for (int idx=0; idx<conns.length; idx++)
-             moveConnection(conns[idx], oldPositions[idx]+delta);	
-
-          commit();    	
-    }
+	 * Move existing hosts a given number of positions in the same pool.
+	 * If the delta is negative, they are all moved up (left) by the given amount. If 
+	 * positive, they are all moved down (right) by the given amount.<p>
+	 * After the move, the pool containing the moved host is committed.
+	 * @param hosts an Array of hosts to move, can be empty but must not be null.
+	 * @param delta the amount by which to move the hosts
+	 */
+	public void moveHosts(IHost hosts[], int delta) {
+		/* 
+		 * Determine the indices of the supplied hosts in this pool.
+		 * If the delta is positive this list should be in descending order,
+		 * if negative, the list should be in ascending oder.
+		 */
+		final int m = (delta > 0) ? -1 : 1; // modifier that determines the ordering
+		SortedSet indices = new TreeSet(new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return  m * ((Integer)o1).compareTo((Integer)o2);
+			}
+		});
+		List hostList = getHostList();
+		for (int i = 0; i < hosts.length; i++) {
+			IHost host = hosts[i];
+			int index = hostList.indexOf(host);
+			if (index >= 0) {
+				indices.add(new Integer(index));
+			}
+		}
+		// Go through the sorted list of indices.
+		boolean moved = indices.size() > 0;
+		for (Iterator z = indices.iterator(); z.hasNext() && moved;) {
+			int index = ((Integer) z.next()).intValue();
+			moved &= moveHost(hostList, index, delta);
+		}
+		if (moved) {
+			invalidateCache();
+			commit();
+		}
+	}
     
     /**
-     * Move one connection to a new location
-     * <b>TODO PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
-     */
-    private void moveConnection(IHost conn, int newPos)
-    {
-    	/*
-    	 * DWD revisit, make sure that connections can be "moved", whatever that means.
-    	 * It appears that connections can be moved up and down in the list which
-    	 * probably provides for some rational for keeping this around.
-    	 */
-//        java.util.List connList = getHostList();
-       //FIXME connList.move(newPos, conn);
-        invalidateCache();
-    }
+	 * Move a host to a new location in the host pool.
+	 * @param hostList the list of hosts to modify
+	 * @param oldPos the index of the host to move. If outside the bounds of the list, the list is not altered.
+	 * @param delta the amount by which to move the host. If the resulting
+	 * position would be outside the bounds of the list, the list is not altered.
+	 * If 0 then the list is not altered. 
+	 * @return true if the host was moved, false if not
+	 */
+	private boolean moveHost(List hostList, int oldPos, int delta) {
+		boolean moved = false; // assume the element will not be moved
+		if (0 <= oldPos && oldPos < hostList.size() && delta != 0) {
+			int newPos = oldPos + delta;
+			if (0 <= newPos && newPos < hostList.size()) {
+				IHost host = (IHost) hostList.remove(oldPos);
+				hostList.add(newPos, host);
+				moved = true;
+			}
+		}
+		return moved;
+	}
 
-    /**
-     * Order connections according to user preferences.
-     * Called after restore.
-     */
-    public void orderHosts(String[] names)
-    {
-    	java.util.List connList = getHostList();
-    	IHost[] conns = new IHost[names.length];
-    	for (int idx=0; idx<conns.length; idx++)
-    	   conns[idx] = getHost(names[idx]);
-    	connList.clear();
-    	//System.out.println("Ordering connections within pool " + getName() + "...");
-    	for (int idx=0; idx<conns.length; idx++)
-    	{
-    	   connList.add(conns[idx]); 
-    	   //System.out.println("  '"+conns[idx].getAliasName()+"'");
-    	}
-    	//System.out.println();
-        invalidateCache();
-    }
+	/**
+	 * Order connections according to user preferences.
+	 * Called after restore.
+	 */
+	public void orderHosts(String[] names) {
+		List connList = getHostList();
+		IHost[] conns = new IHost[names.length];
+		for (int idx = 0; idx < conns.length; idx++) {
+			conns[idx] = getHost(names[idx]);
+		}
+		connList.clear();
+		for (int idx = 0; idx < conns.length; idx++) {
+			connList.add(conns[idx]);
+		}
+		invalidateCache();
+	}
 
 	/**
      * Return the unqualified save file name with the extension .xmi

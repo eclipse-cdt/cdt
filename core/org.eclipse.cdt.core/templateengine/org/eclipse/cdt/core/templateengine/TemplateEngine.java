@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,7 +58,7 @@ public class TemplateEngine {
 	 * TemplateEngine constructor, create and initialize SharedDefaults.
 	 */
 	private TemplateEngine() {
-		templateInfoMap = new HashMap/*<String, List<TemplateInfo>>*/();
+		templateInfoMap = new LinkedHashMap/*<String, List<TemplateInfo>>*/();
 		initializeTemplateInfoMap();
 	}
 

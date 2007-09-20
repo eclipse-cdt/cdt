@@ -12,6 +12,7 @@
 package org.eclipse.dd.debug.memory.renderings.actions;
 
 import java.math.BigInteger;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -74,6 +75,7 @@ public class FindReplaceDialog extends SelectionDialog
 	Button formatOctalButton;
 	Button formatBinaryButton;
 	Button formatDecimalButton;
+	Button formatByteSequenceButton;
 	
 	Button caseInSensitiveCheckbox;
 	
@@ -137,8 +139,41 @@ public class FindReplaceDialog extends SelectionDialog
 		{
 			phrase = new BigIntegerSearchPhrase(new BigInteger(findText.getText(), 10), 10);
 		}
+		else if(formatByteSequenceButton.getSelection())
+		{
+			phrase = new ByteSequenceSearchPhrase(findText.getText());
+		}
 		
 		return phrase;
+	}
+	
+	protected byte[] parseByteSequence(String s)
+	{
+		Vector<Byte> sequence = new Vector<Byte>();
+		StringTokenizer st = new StringTokenizer(s, " ");
+		while(st.hasMoreElements())
+		{
+			String element = ((String) st.nextElement()).trim();
+			if(element.length() > 0)
+			{
+				BigInteger value;
+				if(element.toUpperCase().startsWith("0X"))
+					value = new BigInteger(element.substring(2), 16);
+				else
+					value = new BigInteger(element, 10);
+				Byte b = new Byte(value.byteValue());
+				
+				if(value.compareTo(BigInteger.valueOf(255)) > 0)
+					return null;
+				
+				sequence.addElement(b);
+			}
+		}
+		Byte seq[] = sequence.toArray(new Byte[sequence.size()]);
+		byte[] bytes = new byte[seq.length];
+		for(int i = 0; i < seq.length; i++)
+			bytes[i] = seq[i].byteValue();
+		return bytes;
 	}
 	
 	private byte[] getReplaceData()
@@ -153,6 +188,8 @@ public class FindReplaceDialog extends SelectionDialog
 			return new BigInteger(replaceText.getText(), 2).toByteArray();
 		else if(formatDecimalButton.getSelection())
 			return new BigInteger(replaceText.getText(), 10).toByteArray();
+		else if(formatByteSequenceButton.getSelection())
+			return parseByteSequence(replaceText.getText());
 		
 		return new byte[0];
 	}
@@ -267,7 +304,28 @@ public class FindReplaceDialog extends SelectionDialog
 	
 	private void validate()
 	{
-		// TODO: make sure start & end are valid in relation to the direction
+		boolean valid = false;
+		boolean replaceValid = false;
+		
+		try
+		{
+			BigInteger endAddress = getEndAddress();
+			BigInteger startAddress = getStartAddress();
+			if(getSearchPhrase() != null && getSearchPhrase().getByteLength() > 0)
+				valid = true;
+			
+			if(getReplaceData() != null && getReplaceData().length > 0)
+				replaceValid = true;
+		}
+		catch(Throwable ex)
+		{
+			
+		}
+		
+		findButton.setEnabled(valid);
+		replaceButton.setEnabled(replaceValid);
+		replaceFindButton.setEnabled(replaceValid);
+		replaceAllButton.setEnabled(replaceValid);
 	}
 	
 	private String pad(int characterCount, String value)
@@ -503,6 +561,9 @@ public class FindReplaceDialog extends SelectionDialog
 		formatDecimalButton = new Button(formatGroup, SWT.RADIO);
 		formatDecimalButton.setText(Messages.getString("FindReplaceDialog.ButtonDecimal")); //$NON-NLS-1$
 		
+		formatByteSequenceButton = new Button(formatGroup, SWT.RADIO);
+		formatByteSequenceButton.setText(Messages.getString("FindReplaceDialog.ButtonByteSequence")); //$NON-NLS-1$
+		
 		data = new FormData();
 		data.top = new FormAttachment(rangeGroup);
 		formatGroup.setLayoutData(data);
@@ -554,6 +615,7 @@ public class FindReplaceDialog extends SelectionDialog
 		formatOctalButton.addSelectionListener(nonAsciiListener);
 		formatBinaryButton.addSelectionListener(nonAsciiListener);
 		formatDecimalButton.addSelectionListener(nonAsciiListener);
+		formatByteSequenceButton.addSelectionListener(nonAsciiListener);
 
 		startText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -570,12 +632,6 @@ public class FindReplaceDialog extends SelectionDialog
 				startText.setForeground(valid ? Display.getDefault().getSystemColor(SWT.COLOR_BLACK) : 
 					Display.getDefault().getSystemColor(SWT.COLOR_RED));
 				
-				//
-				
-				BigInteger endAddress = getEndAddress();
-				BigInteger startAddress = getStartAddress();
-
-				
 				validate();
 			}
 			
@@ -587,10 +643,6 @@ public class FindReplaceDialog extends SelectionDialog
 				{
 					getEndAddress();
 					endText.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-					
-					BigInteger endAddress = getEndAddress();
-					BigInteger startAddress = getStartAddress();
-					
 				}
 				catch(Exception ex)
 				{
@@ -600,6 +652,20 @@ public class FindReplaceDialog extends SelectionDialog
 				validate();
 			}
 			
+		});
+		
+		findText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e)
+			{
+				validate();
+			}
+		});
+		
+		replaceText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e)
+			{
+				validate();
+			}
 		});
 		
 		forwardButton.setSelection(true);
@@ -623,9 +689,9 @@ public class FindReplaceDialog extends SelectionDialog
 				
 				BigInteger jobs = range.subtract(searchPhraseLength);
 				BigInteger factor = BigInteger.ONE;
-				if(jobs.compareTo(BigInteger.valueOf(0x7FFFFFFF)) > 0)
+				if(jobs.compareTo(BigInteger.valueOf(0x07FFFFFF)) > 0)
 				{
-					factor = jobs.divide(BigInteger.valueOf(0x7FFFFFFF));
+					factor = jobs.divide(BigInteger.valueOf(0x07FFFFFF));
 					jobs = jobs.divide(factor);
 				}
 				
@@ -776,6 +842,39 @@ public class FindReplaceDialog extends SelectionDialog
 			}
 	
 			return searchString.equals(targetString);
+		}
+	}
+	
+	class ByteSequenceSearchPhrase implements SearchPhrase
+	{
+		private byte[] fBytes = null;
+		
+		public ByteSequenceSearchPhrase(String phrase)
+		{
+			fBytes = parseByteSequence(phrase);
+		}
+		
+		public int getByteLength()
+		{
+			return fBytes.length;
+		}
+		
+		public String toString()
+		{
+			if(fBytes == null)
+				return "";
+			StringBuffer buf = new StringBuffer();
+			for(int i = 0; i < fBytes.length; i++)
+				buf.append(BigInteger.valueOf(fBytes[i]).toString(16) + " ");
+			return buf.toString();
+		}
+		
+		public boolean isMatch(MemoryByte[] bytes)
+		{
+			for(int i = 0; i < bytes.length; i++)
+				if(bytes[i].getValue() != fBytes[i])
+					return false;
+			return true;
 		}
 	}
 	

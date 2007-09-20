@@ -15,9 +15,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -228,7 +228,7 @@ public class TemplateEngine {
 				extraPagesProvider = config.getAttribute(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
 				
 				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
-				Set toolChainIdSet = new HashSet();
+				Set toolChainIdSet = new LinkedHashSet();
 				for (int k=0; k < toolChainConfigs.length; k++) {
 					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
 				}
@@ -259,7 +259,7 @@ public class TemplateEngine {
 				templateId = config.getAttribute(TemplateEngineHelper.ID);
 				
 				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
-				Set toolChainIdSet = new HashSet();
+				Set toolChainIdSet = new LinkedHashSet();
 				for (int k=0; k < toolChainConfigs.length; k++) {
 					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
 				}

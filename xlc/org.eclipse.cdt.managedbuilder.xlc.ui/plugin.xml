@@ -13,7 +13,7 @@
      	</managedBuildRevision>
 		
 		<tool
-        command="xlc"
+        command="${XL_compilerRoot}/xlc"
         id="cdt.managedbuild.tool.xlc.c.linker"
         name="%ToolName.linker.xlc.c"
         natureFilter="cnature"
@@ -21,7 +21,7 @@
  
       </tool>
       <tool
-            command="xlC"
+            command="${XL_compilerRoot}/xlC"
             id="cdt.managedbuild.tool.xlc.cpp.linker"
             name="%ToolName.linker.xlc.cpp"
             natureFilter="ccnature"
@@ -69,7 +69,7 @@
          </outputType>
      </tool>
     <tool
-          command="xlc"
+          command="${XL_compilerRoot}/xlc"
           id="cdt.managedbuild.tool.xlc.c.linker.so"
           isAbstract="false"
           name="%ToolName.linker.xlc.c.so"
@@ -77,7 +77,7 @@
           superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.linker.abstractSOLinker">
     </tool>
     <tool
-          command="xlC"
+          command="${XL_compilerRoot}/xlC"
           id="cdt.managedbuild.tool.xlc.cpp.linker.so"
           isAbstract="false"
           name="%ToolName.linker.xlc.cpp.so"
@@ -126,7 +126,7 @@
          </outputType>
       </tool>
 	<tool
-       command="xlc"
+       command="${XL_compilerRoot}/xlc"
        id="cdt.managedbuild.tool.xlc.c.compiler"
        isAbstract="true"
        name="%ToolName.compiler.xlc.c"
@@ -221,7 +221,7 @@
   </option>
 	  </tool>
 	  <tool
-         command="xlC"
+         command="${XL_compilerRoot}/xlC"
          id="cdt.managedbuild.tool.xlc.cpp.compiler"
          isAbstract="true"
          name="%ToolName.compiler.xlc.cpp"
@@ -439,7 +439,8 @@
        id="cdt.managedbuild.target.xlc.exe"
        isAbstract="false"
        isTest="false"
-       name="%TargetName.xlc.exe">
+       name="%TargetName.xlc.exe"
+       projectMacroSupplier="org.eclipse.cdt.managedbuilder.xlc.ui.XLCProjectMacroSupplier">
       	<configuration
       		name="%ConfigName.Dbg"
       		artifactExtension="exe"
@@ -457,7 +458,7 @@
 					  id="cdt.managedbuild.target.xlc.platform.exe.debug"
 				 	  name="%PlatformName.Dbg"
                       binaryParser="org.eclipse.cdt.core.XCOFF32"            					  
-					  osList="aix"					  
+					  osList="all"					  
 					  archList="all">
 				  </targetPlatform>
 			  	  <builder
@@ -514,7 +515,7 @@
 			id="cdt.managedbuild.config.xlc.exe.release">
 			<toolChain
                      archList="all"
-                     osList="aix"
+                     osList="all"
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release"
                      id="cdt.managedbuild.toolchain.xlc.exe.release">
@@ -522,7 +523,7 @@
 		              id="cdt.managedbuild.target.xlc.platform.exe.release"
 		              name="%PlatformName.Rel"		             
 		              binaryParser="org.eclipse.cdt.core.XCOFF32"
-		              osList="aix"
+		              osList="all"
 		              archList="all">		              
 		          </targetPlatform>
 				  <builder
@@ -578,7 +579,8 @@
           id="cdt.managedbuild.target.xlc.so"
           isAbstract="false"
           isTest="false"
-          name="%TargetName.xlc.so">
+          name="%TargetName.xlc.so"
+          projectMacroSupplier="org.eclipse.cdt.managedbuilder.xlc.ui.XLCProjectMacroSupplier">
          <configuration
                name="%ConfigName.Dbg"
                cleanCommand="rm -rf"
@@ -593,7 +595,7 @@
 		              id="cdt.managedbuild.target.xlc.platform.so.debug"
 		              name="%PlatformName.Dbg"
 		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
-		              osList="aix"
+		              osList="all"
 		              archList="all">
 		          </targetPlatform>
 				  <builder
@@ -656,7 +658,7 @@
 		              id="cdt.managedbuild.target.xlc.platform.so.release"
 		              name="%PlatformName.Rel"
 		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
-		              osList="aix"
+		              osList="all"
 		              archList="all">
 		          </targetPlatform>
 				  <builder
@@ -712,7 +714,8 @@
           id="cdt.managedbuild.target.xlc.lib"
           isAbstract="false"
           isTest="false"
-          name="%TargetName.xlc.lib">
+          name="%TargetName.xlc.lib"
+          projectMacroSupplier="org.eclipse.cdt.managedbuilder.xlc.ui.XLCProjectMacroSupplier">
          <configuration
                name="%ConfigName.Dbg"
                cleanCommand="rm -rf"
@@ -727,7 +730,7 @@
 					  id="cdt.managedbuild.target.xlc.platform.lib.debug"
 				 	  name="%PlatformName.Dbg"
 					  binaryParser="org.eclipse.cdt.core.XCOFF32"		            
-					  osList="aix"
+					  osList="all"
 					  archList="all">
 				  </targetPlatform>
 			  	  <builder
@@ -786,7 +789,7 @@
 		              id="cdt.managedbuild.target.xlc.platform.lib.release"
 		              name="%PlatformName.Rel"
 		              binaryParser="org.eclipse.cdt.core.XCOFF32"		            
-		              osList="aix"
+		              osList="all"
 		              archList="all">
 		          </targetPlatform>
 				  <builder
@@ -894,18 +897,18 @@
 			id="xlc.c.compiler.option.input.asm"
 			valueType="enumerated">
      <enumeratedOptionValue
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue2"
+           id="xlc.c.compiler.option.input.asm.default"
            isDefault="true"
            name="Default">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qasm=stdcpp"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue6"
+           id="xlc.c.compiler.option.input.asm.stdcpp"
            name="Standard (-qasm=stdcpp)">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qasm=gcc"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue4"
+           id="xlc.c.compiler.option.input.asm.gcc"
            name="GCC (-qasm=gcc)">
      </enumeratedOptionValue>
 		</option> 
@@ -915,7 +918,7 @@
 			name="%Option.qcomplexgccincl"
 			category="xlc.c.compiler.category.Input"
 			command="-qcomplexgccincl"
-			id="xlc.c.compiler.option.include.qcomplexgccincl"
+			id="xlc.c.compiler.option.input.qcomplexgccincl"
 			valueType="includePath"
 			browseType="directory">
 		</option>
@@ -925,7 +928,7 @@
 			name="%Option.Mbcs"
 			category="xlc.c.compiler.category.Input"
 			command="-qmbcs"
-			id="xlc.c.compiler.option.misc.mbcs"
+			id="xlc.c.compiler.option.input.mbcs"
 			valueType="boolean"> 
 		</option>
 
@@ -934,7 +937,7 @@
 			name="%Option.Digraph"
 			category="xlc.c.compiler.category.Input"
 			command="-qdigraph"
-			id="xlc.c.compiler.option.misc.digraph"
+			id="xlc.c.compiler.option.input.digraph"
 			valueType="boolean"> 
 		</option>
 
@@ -943,7 +946,7 @@
 			name="%Option.Dollar"
 			category="xlc.c.compiler.category.Input"
 			command="-qdollar"
-			id="xlc.c.compiler.option.misc.dollar"
+			id="xlc.c.compiler.option.input.dollar"
 			valueType="boolean"> 
 		</option>
 
@@ -952,7 +955,7 @@
 			name="%Option.Incdirfirst"
 			category="xlc.c.compiler.category.Input"
 			command="-qidirfirst"
-			id="xlc.c.compiler.option.include.dirfirst"
+			id="xlc.c.compiler.option.input.dirfirst"
 			valueType="boolean"> 
 		</option>
 
@@ -1000,7 +1003,7 @@
 		<option
         category="xlc.c.compiler.category.Input"
         command="-qkeyword="
-        id="xlc.c.compiler.option.misc.keyword"
+        id="xlc.c.compiler.option.input.keyword"
         name="%Option.Keyword"
         valueType="boolean"> 
 		</option>
@@ -1076,7 +1079,7 @@
 			name="%Option.Macpstr"
 			category="xlc.c.compiler.category.Input"
 			command="-qmacpstr"
-			id="xlc.c.compiler.option.misc.macpstr"
+			id="xlc.c.compiler.option.input.macpstr"
 			valueType="boolean"> 
 		</option>
 
@@ -1118,7 +1121,7 @@
   <option
         category="xlc.c.compiler.category.Input"
         command="-qstdframework"
-        id="org.eclipse.cdt.managedbuilder.xlc.ui.option2"
+        id="xlc.c.compiler.option.input.qstdframework"
         isAbstract="false"
         name="%Option.stdframework"
         resourceFilter="all"
@@ -1126,7 +1129,7 @@
   </option>
   <option
         command="-qframeworkdir"
-        id="org.eclipse.cdt.managedbuilder.xlc.ui.option4"
+        id="xlc.c.compiler.option.input.qframeworkdir"
         isAbstract="false"
         name="%Option.frameworkdirs"
         resourceFilter="all"
@@ -1138,7 +1141,7 @@
 			name="%Option.Input"
 			category="xlc.c.compiler.category.Input"
 			command="-qnostdinc"
-			id="xlc.c.compiler.option.preprocessor.nostdinc"
+			id="xlc.c.compiler.option.input.nostdinc"
 			valueType="boolean">
 		</option>
 
@@ -1147,7 +1150,7 @@
 			name="%Option.Trigraph"
 			category="xlc.c.compiler.category.Input"
 			command="-qtrigraph"
-			id="xlc.c.compiler.option.misc.trigraph"
+			id="xlc.c.compiler.option.input.trigraph"
 			valueType="boolean"> 
 		</option>
 		<option
@@ -1155,7 +1158,7 @@
 			name="%Option.Utf"
 			category="xlc.c.compiler.category.Input"
 			command="-qutf"
-			id="xlc.c.compiler.option.misc.utf"
+			id="xlc.c.compiler.option.input.utf"
 			valueType="boolean"> 
 		</option>
 
@@ -1180,7 +1183,7 @@
 			valueType="string"> 
 		</option>
 		<option
-        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.HiddenOptionApplicabilityCalculator"
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.HiddenOptionApplicabilityCalculator"
         category="xlc.c.compiler.category.output"
         command="-c"
         defaultValue="true"
@@ -1201,7 +1204,7 @@
 			name="%Option.M"
 			category="xlc.c.compiler.category.output"
 			command="-M"
-			id="xlc.c.compiler.option.preprocessor.M"
+			id="xlc.c.compiler.option.output.M"
 			valueType="boolean">
 		</option>
 
@@ -1210,7 +1213,7 @@
 			name="%Option.P"
 			category="xlc.c.compiler.category.output"
 			command="-P"
-			id="xlc.c.compiler.option.preprocessor.P"
+			id="xlc.c.compiler.option.output.P"
 			valueType="boolean">
 		</option>
 
@@ -1219,7 +1222,7 @@
 			name="%Option.Assem"
 			category="xlc.c.compiler.category.output"
 			command="-S"
-			id="xlc.c.compiler.option.misc.assem"
+			id="xlc.c.compiler.option.output.assem"
 			valueType="boolean"> 
 		</option>
 
@@ -1236,7 +1239,7 @@
 			name="%Option.64"
 			category="xlc.c.compiler.category.output"
 			command="-q64"
-			id="xlc.c.compiler.option.misc.64"
+			id="xlc.c.compiler.option.output.64"
 			valueType="boolean">
 		 </option>
 		<option
@@ -1291,7 +1294,7 @@
 			name="%Option.alloca"
 			category="xlc.c.compiler.category.output"
 			command="-qalloca"
-			id="xlc.c.compiler.option.misc.alloca"
+			id="xlc.c.compiler.option.output.alloca"
 			valueType="boolean">
 		 </option>
 
@@ -1299,21 +1302,21 @@
 			  defaultValue="false"
 			  name="%Option.Bitfields"
 			  category="xlc.c.compiler.category.output"
-			  id="xlc.c.compiler.option.signedness.bitfields"
+			  id="xlc.c.compiler.option.output.bitfields"
 			  valueType="enumerated">
      <enumeratedOptionValue
-           id="xlc.c.compiler.option.signedness.bitfields.default"
+           id="xlc.c.compiler.option.output.bitfields.default"
            isDefault="true"
            name="%Option.default">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qbitfields=signed"
-           id="xlc.c.compiler.option.signedness.bitfields.signed"
+           id="xlc.c.compiler.option.output.bitfields.signed"
            name="%Option.Bitfields.signed">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qbitfields=unsigned"
-           id="xlc.c.compiler.option.signedness.bitfields.unsigned"
+           id="xlc.c.compiler.option.output.bitfields.unsigned"
            name="%Option.Bitfields.unsigned">
      </enumeratedOptionValue>
 	 </option>
@@ -1322,20 +1325,20 @@
 			  defaultValue="false"
 			  name="%Option.Chars"
 			  category="xlc.c.compiler.category.output"
-			  id="xlc.c.compiler.option.signedness.chars"
+			  id="xlc.c.compiler.option.output.chars"
 			  valueType="enumerated">
      <enumeratedOptionValue
-           id="xlc.c.compiler.option.signedness.chars.default"
+           id="xlc.c.compiler.option.output.chars.default"
            name="%Option.default">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qchars=signed"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue2"
+           id="xlc.c.compiler.option.output.chars.signed"
            name="%Option.chars.signed">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-qchars=unsigned"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue4"
+           id="xlc.c.compiler.option.output.chars.unsigned"
            name="%Option.chars.unsigned">
      </enumeratedOptionValue>
 		  </option>
@@ -1344,84 +1347,84 @@
 			  name="%Option.enablevmx"
 			  category="xlc.c.compiler.category.output"
 			  command="-qenablevmx"
-			  id="xlc.c.compiler.option.objectcode.enablevmx"
+			  id="xlc.c.compiler.option.output.enablevmx"
 			  valueType="boolean">
 		  </option>
 		<option
 			  name="%Option.Enum"
 			  category="xlc.c.compiler.category.output"
-			  id="xlc.c.compiler.option.alignment.enum"
+			  id="xlc.c.compiler.option.output.alignment.enum"
 			  valueType="enumerated">
 			  <enumeratedOptionValue
 					  name="%Option.none"
 					  isDefault="false"
-					  id="xlc.c.alignment.enum.none">
+					  id="xlc.c.option.output.alignment.enum.none">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.enum.Int"
 					  isDefault="false"
 					  command="-qenum=int"
-					  id="xlc.c.alignment.enum.int">
+					  id="xlc.c.option.output.alignment.enum.int">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.enum.Intlong"
 					  isDefault="false"
 					  command="-qenum=intlong"
-					  id="xlc.c.alignment.enum.intlong">
+					  id="xlc.c.option.output.alignment.enum.intlong">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.enum.small"
 					  isDefault="false"
 					  command="-qenum=small"
-					  id="xlc.c.alignment.enum.small">
+					  id="xlc.c.option.output.alignment.enum.small">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.enum.1"
 					  isDefault="false"
 					  command="-qenum=1"
-					  id="xlc.c.alignment.enum.1">
+					  id="xlc.c.option.output.alignment.enum.1">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.enum.2"
 					  isDefault="false"
 					  command="-qenum=2"
-					  id="xlc.c.alignment.enum.2">
+					  id="xlc.c.option.output.alignment.enum.2">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.enum.4"
 					  isDefault="false"
 					  command="-qenum=4"
-					  id="xlc.c.alignment.enum.4">
+					  id="xlc.c.option.output.alignment.enum.4">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.enum.8"
 					  isDefault="false"
 					  command="-qenum=8"
-					  id="xlc.c.alignment.enum.8">
+					  id="xlc.c.option.output.alignment.enum.8">
 			  </enumeratedOptionValue>
 		  </option>
 
 		<option
 			  name="%Option.Pic"
 			  category="xlc.c.compiler.category.output"
-			  id="xlc.c.compiler.option.objectcode.pic"
+			  id="xlc.c.compiler.option.output.pic"
 			  valueType="enumerated">
 			  <enumeratedOptionValue
 					  name="%Option.none"
 					  isDefault="false"
-					  id="xlc.c.objectcode.pic.none">
+					  id="xlc.c.output.pic.none">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.Pic.Small"
 					  isDefault="false"
 					  command="-qpic=small"
-					  id="xlc.c.objectcode.pic.small">
+					  id="xlc.c.output.pic.small">
 			  </enumeratedOptionValue>
 			  <enumeratedOptionValue
 					  name="%Option.Pic.Large"
 					  isDefault="false"
 					  command="-qpic=large"
-					  id="xlc.c.objectcode.pic.large">
+					  id="xlc.c.output.pic.large">
 			  </enumeratedOptionValue>
 		  </option>
 		  
@@ -1429,7 +1432,7 @@
           category="xlc.c.compiler.category.output"
           command="-qfuncset"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.funcset"
+          id="xlc.c.compiler.option.output.funcset"
           name="%Option.funcset"
           valueType="boolean">
 		  </option>
@@ -1437,7 +1440,7 @@
           category="xlc.c.compiler.category.output"
           command="-qppline"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.ppline"
+          id="xlc.c.compiler.option.output.ppline"
           name="%Option.ppline"
           valueType="boolean">
 		  </option>
@@ -1445,7 +1448,7 @@
           category="xlc.c.compiler.category.output"
           command="-qnoro"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.noro"
+          id="xlc.c.compiler.option.output.noro"
           name="%Option.noro"
           valueType="boolean">
 		  </option>
@@ -1453,7 +1456,7 @@
           category="xlc.c.compiler.category.output"
           command="-qnoroconst"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.noroconst"
+          id="xlc.c.compiler.option.output.noroconst"
           name="%Option.noroconst"
           valueType="boolean">
 		  </option>
@@ -1461,7 +1464,7 @@
           category="xlc.c.compiler.category.output"
           command="-qroptr"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.roptr"
+          id="xlc.c.compiler.option.output.roptr"
           name="%Option.roptr"
           valueType="boolean">
 		  </option>
@@ -1469,7 +1472,7 @@
           category="xlc.c.compiler.category.output"
           command="-qsaveopt"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.saveopt"
+          id="xlc.c.compiler.option.output.saveopt"
           name="%Option.saveopt"
           valueType="boolean">
 		  </option>
@@ -1477,7 +1480,7 @@
           category="xlc.c.compiler.category.output"
           command="-qstaticinline"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.staticinline"
+          id="xlc.c.compiler.option.output.staticinline"
           name="%Option.staticinline"
           valueType="boolean">
 		  </option>
@@ -1485,7 +1488,7 @@
           category="xlc.c.compiler.category.output"
           command="-qstatsym"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.statsym"
+          id="xlc.c.compiler.option.output.statsym"
           name="%Option.statsym"
           valueType="boolean">
 		  </option>
@@ -1493,7 +1496,7 @@
           category="xlc.c.compiler.category.output"
           command="-qthreaded"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.threaded"
+          id="xlc.c.compiler.option.output.threaded"
           name="%Option.threaded"
           valueType="boolean">
 		  </option>	
@@ -1501,7 +1504,7 @@
           category="xlc.c.compiler.category.output"
           command="-qvrsave"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.vrsave"
+          id="xlc.c.compiler.option.output.vrsave"
           name="%Option.vrsave"
           valueType="boolean">
 		  </option>
@@ -1509,7 +1512,7 @@
           category="xlc.c.compiler.category.output"
           command="-qweaksymbol"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.weaksymbol"
+          id="xlc.c.compiler.option.output.weaksymbol"
           name="%Option.weaksymbol"
           valueType="boolean">
 		  </option>
@@ -1517,7 +1520,7 @@
           category="xlc.c.compiler.category.output"
           command="-qxcall"
           defaultValue="false"
-          id="xlc.c.compiler.option.objectcode.xcall"
+          id="xlc.c.compiler.option.output.xcall"
           name="%Option.xcall"
           valueType="boolean">
 		  </option>	
@@ -1569,55 +1572,27 @@
 			valueType="enumerated"
 			>
      <enumeratedOptionValue
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue12"
+           id="xlc.c.compiler.option.optimization.inlining.default"
            isDefault="true"
            name="%Option.default">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-Q"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue14"
+           id="xlc.c.compiler.option.optimization.inlining.Q"
            name="%Option.inlining.Q">
      </enumeratedOptionValue>
      <enumeratedOptionValue
            command="-Q!"
-           id="org.eclipse.cdt.managedbuilder.xlc.ui.enumeratedOptionValue16"
+           id="xlc.c.compiler.option.optimization.inlining.Qexclamation"
            name="%Option.inlining.Qexclamation">
      </enumeratedOptionValue> 
 		</option>
-		<option
-			name="%Option.aggrcopy"
-			category="xlc.c.compiler.category.optimization"
-			id="xlc.c.compiler.option.optimization.aggrcopy"
-			valueType="enumerated">
-			<enumeratedOptionValue
-				name="%Option.none"
-				isDefault="false"
-				id="xlc.c.optimization.aggrcopy.none">
-			</enumeratedOptionValue>
-			<enumeratedOptionValue
-				name="%Option.aggrcopy.nooverlap"
-				command="-qaggrcopy=nooverlap"
-				id="xlc.c.optimization.aggrcopy.nooverlap">
-			</enumeratedOptionValue>
-			<enumeratedOptionValue
-				name="%Option.aggrcopy.overlap"
-				command="-qaggrcopy=overlap"
-				id="xlc.c.optimization.aggrcopy.overlap">
-			</enumeratedOptionValue>
-		</option>
-
-		<option
-			name="%Option.alias"
-			category="xlc.c.compiler.category.optimization"
-			command="-qalias="
-			id="xlc.c.compiler.option.optimization.alias"
-			valueType="string"> 
-		</option>
-		<option
-			name="%Option.optimization.arch"
-			category="xlc.c.compiler.category.optimization"
-			id="xlc.c.compiler.option.optimization.arch"
-			valueType="enumerated">
+				<option
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv8ApplicabiltyCalculator"
+        category="xlc.c.compiler.category.optimization"
+        id="xlc.c.compiler.option.optimization.arch"
+        name="%Option.optimization.arch"
+        valueType="enumerated">
      <enumeratedOptionValue
            id="xlc.c.compiler.option.optimization.arch.default"
            isDefault="true"
@@ -1743,6 +1718,357 @@
            id="xlc.c.compiler.option.optimization.arch.rs64c"
            name="RS64III">
      </enumeratedOptionValue>
+		</option>
+        <option
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              category="xlc.c.compiler.category.optimization"
+              id="xlc.c.compiler.option.optimization.arch.9.0"
+              name="%Option.optimization.arch"
+              valueType="enumerated">
+                   <enumeratedOptionValue
+           id="xlc.c.compiler.option.optimization.arch.default"
+           isDefault="true"
+           name="%Option.default">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=auto"
+           id="xlc.c.compiler.option.optimization.arch.auto"
+           name="auto">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=403"
+           id="xlc.c.compiler.option.optimization.arch.403"
+           name="PowerPC® 403">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=604"
+           id="xlc.c.compiler.option.optimization.arch.604"
+           name="PowerPC® 604">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=pwr3"
+           id="xlc.c.compiler.option.optimization.arch.pwr3"
+           name="POWER3(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=pwr4"
+           id="xlc.c.compiler.option.optimization.arch.pwr4"
+           name="POWER4(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=pwr5"
+           id="xlc.c.compiler.option.optimization.arch.pwr5"
+           name="POWER5(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=ppc"
+           id="xlc.c.compiler.option.optimization.arch.ppc"
+           name="PowerPC®">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=ppc64"
+           id="xlc.c.compiler.option.optimization.arch.ppc64"
+           name="%Option.optimization.arch.ppc64">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=ppcgr"
+           id="xlc.c.compiler.option.optimization.arch.ppcgr"
+           name="%Option.optimization.arch.ppcgr">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=ppc64gr"
+           id="xlc.c.compiler.option.optimization.arch.ppc64gr"
+           name="%Option.optimization.arch.ppc64gr">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=ppcs4grsq"
+           id="xlc.c.compiler.option.optimization.arch.ppc64grsq"
+           name="%Option.optimization.arch.ppc64grsq">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=ppc64v"
+           id="xlc.c.compiler.option.optimization.arch.ppc64v"
+           name="%Option.optimization.arch.ppc64v">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=ppc970"
+           id="xlc.c.compiler.option.optimization.arch.ppc970"
+           name="PowerPC® 970">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=rs64a"
+           id="xlc.c.compiler.option.optimization.arch.rs64a"
+           name="RS64I">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=rs64b"
+           id="xlc.c.compiler.option.optimization.arch.rs64b"
+           name="RS64II">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qarch=rs64c"
+           id="xlc.c.compiler.option.optimization.arch.rs64c"
+           name="RS64III">
+     </enumeratedOptionValue>
+           <enumeratedOptionValue
+                 command="-qarch=pwr6"
+                 id="xlc.c.compiler.option.optimization.arch.pwr6"
+                 name="POWER6 (TM)">
+           </enumeratedOptionValue>
+           <enumeratedOptionValue
+                 command="-qarch=pwr6e"
+                 id="xlc.c.compiler.option.optimization.arch.pwr6e"
+                 name="POWER6 (TM) e">
+           </enumeratedOptionValue>
+        </option>
+  <option
+        applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv8ApplicabiltyCalculator"
+        category="xlc.c.compiler.category.optimization"
+        id="xlc.c.compiler.option.optimization.tune"
+        name="%Option.optimization.tune"
+        valueType="enumerated">
+             <enumeratedOptionValue
+           id="xlc.c.compiler.option.optimization.tune.default"
+           isDefault="true"
+           name="%Option.default">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=auto"
+           id="xlc.c.compiler.option.optimization.tune.auto"
+           name="auto">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=403"
+           id="xlc.c.compiler.option.optimization.tune.403"
+           name="PowerPC® 403">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=601"
+           id="xlc.c.compiler.option.optimization.tune.601"
+           name="PowerPC® 601">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=602"
+           id="xlc.c.compiler.option.optimization.tune.602"
+           name="PowerPC® 602">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=603"
+           id="xlc.c.compiler.option.optimization.tune.603"
+           name="PowerPC® 603">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=604"
+           id="xlc.c.compiler.option.optimization.tune.604"
+           name="PowerPC® 604">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr"
+           id="xlc.c.compiler.option.optimization.tune.pwr"
+           name="POWER(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr2"
+           id="xlc.c.compiler.option.optimization.tune.pwr2"
+           name="POWER2(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr2s"
+           id="xlc.c.compiler.option.optimization.tune.pwr2s"
+           name="POWER2(TM) s">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr2sc"
+           id="xlc.c.compiler.option.optimization.tune.pwr2sc"
+           name="POWER2(TM) Super Chip">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr3"
+           id="xlc.c.compiler.option.optimization.tune.pwr3"
+           name="POWER3(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr4"
+           id="xlc.c.compiler.option.optimization.tune.pwr4"
+           name="POWER4(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr5"
+           id="xlc.c.compiler.option.optimization.tune.pwr5"
+           name="POWER5(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc"
+           id="xlc.c.compiler.option.optimization.tune.ppc"
+           name="PowerPC®">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc64"
+           id="xlc.c.compiler.option.optimization.tune.ppc64"
+           name="%Option.optimization.arch.ppc64">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppcgr"
+           id="xlc.c.compiler.option.optimization.tune.ppcgr"
+           name="%Option.optimization.arch.ppcgr">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc64gr"
+           id="xlc.c.compiler.option.optimization.tune.ppc64gr"
+           name="%Option.optimization.arch.ppc64gr">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppcs4grsq"
+           id="xlc.c.compiler.option.optimization.tune.ppc64grsq"
+           name="%Option.optimization.arch.ppc64grsq">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc64v"
+           id="xlc.c.compiler.option.optimization.tune.ppc64v"
+           name="%Option.optimization.arch.ppc64v">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc970"
+           id="xlc.c.compiler.option.optimization.tune.ppc970"
+           name="PowerPC® 970">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=rs64a"
+           id="xlc.c.compiler.option.optimization.tune.rs64a"
+           name="RS64I">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=rs64b"
+           id="xlc.c.compiler.option.optimization.tune.rs64b"
+           name="RS64II">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=rs64c"
+           id="xlc.c.compiler.option.optimization.tune.rs64c"
+           name="RS64III">
+     </enumeratedOptionValue>
+  </option>
+        <option
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              category="xlc.c.compiler.category.optimization"
+              id="xlc.c.compiler.option.optimization.tune.9.0"
+              name="%Option.optimization.tune"
+              valueType="enumerated">
+             <enumeratedOptionValue
+           id="xlc.c.compiler.option.optimization.tune.default"
+           isDefault="true"
+           name="%Option.default">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=auto"
+           id="xlc.c.compiler.option.optimization.tune.auto"
+           name="auto">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=403"
+           id="xlc.c.compiler.option.optimization.tune.403"
+           name="PowerPC® 403">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=604"
+           id="xlc.c.compiler.option.optimization.tune.604"
+           name="PowerPC® 604">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr3"
+           id="xlc.c.compiler.option.optimization.tune.pwr3"
+           name="POWER3(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr4"
+           id="xlc.c.compiler.option.optimization.tune.pwr4"
+           name="POWER4(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=pwr5"
+           id="xlc.c.compiler.option.optimization.tune.pwr5"
+           name="POWER5(TM)">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc"
+           id="xlc.c.compiler.option.optimization.tune.ppc"
+           name="PowerPC®">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc64"
+           id="xlc.c.compiler.option.optimization.tune.ppc64"
+           name="%Option.optimization.arch.ppc64">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppcgr"
+           id="xlc.c.compiler.option.optimization.tune.ppcgr"
+           name="%Option.optimization.arch.ppcgr">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc64gr"
+           id="xlc.c.compiler.option.optimization.tune.ppc64gr"
+           name="%Option.optimization.arch.ppc64gr">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppcs4grsq"
+           id="xlc.c.compiler.option.optimization.tune.ppc64grsq"
+           name="%Option.optimization.arch.ppc64grsq">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc64v"
+           id="xlc.c.compiler.option.optimization.tune.ppc64v"
+           name="%Option.optimization.arch.ppc64v">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=ppc970"
+           id="xlc.c.compiler.option.optimization.tune.ppc970"
+           name="PowerPC® 970">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=rs64a"
+           id="xlc.c.compiler.option.optimization.tune.rs64a"
+           name="RS64I">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=rs64b"
+           id="xlc.c.compiler.option.optimization.tune.rs64b"
+           name="RS64II">
+     </enumeratedOptionValue>
+     <enumeratedOptionValue
+           command="-qtune=rs64c"
+           id="xlc.c.compiler.option.optimization.tune.rs64c"
+           name="RS64III">
+     </enumeratedOptionValue>
+  </option>
+		
+		<option
+			name="%Option.aggrcopy"
+			category="xlc.c.compiler.category.optimization"
+			id="xlc.c.compiler.option.optimization.aggrcopy"
+			valueType="enumerated">
+			<enumeratedOptionValue
+				name="%Option.none"
+				isDefault="false"
+				id="xlc.c.optimization.aggrcopy.none">
+			</enumeratedOptionValue>
+			<enumeratedOptionValue
+				name="%Option.aggrcopy.nooverlap"
+				command="-qaggrcopy=nooverlap"
+				id="xlc.c.optimization.aggrcopy.nooverlap">
+			</enumeratedOptionValue>
+			<enumeratedOptionValue
+				name="%Option.aggrcopy.overlap"
+				command="-qaggrcopy=overlap"
+				id="xlc.c.optimization.aggrcopy.overlap">
+			</enumeratedOptionValue>
+		</option>
+
+		<option
+			name="%Option.alias"
+			category="xlc.c.compiler.category.optimization"
+			command="-qalias="
+			id="xlc.c.compiler.option.optimization.alias"
+			valueType="string"> 
 		</option>
 		<option
 			name="%Option.optimization.Cache"
@@ -2474,6 +2800,51 @@
 			  id="xlc.c.compiler.option.misc.other"
 			  valueType="string">
 		  </option>
+
+
+		<!-- Version 9 Options -->
+		       <option
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              category="xlc.c.compiler.category.ifp"
+              id="xlc.c.compiler.option.ifp.dfp"
+              name="%Option.dfp"
+              valueType="enumerated">
+           <enumeratedOptionValue
+                 id="xlc.c.compiler.option.ifp.dfp.default"
+                 isDefault="true"
+                 name="%Option.default">
+           </enumeratedOptionValue>
+           <enumeratedOptionValue
+                 command="-qdfp"
+                 id="xlc.c.compiler.option.ifp.dfp.enabled"
+                 name="%Option.dfp.enabled">
+           </enumeratedOptionValue>
+           <enumeratedOptionValue
+                 command="-qnodfp"
+                 id="xlc.c.compiler.option.ifp.dfp.disabled"
+                 name="%Option.dfp.disabled">
+           </enumeratedOptionValue>
+        </option>
+
+        <option
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              category="xlc.c.compiler.category.output"
+              command="-C!"
+              defaultValue="false"
+              id="xlc.c.compiler.option.preprocessor.PreprocessRemoveComments"
+              name="%Option.PreprocRemoveComments"
+              valueType="boolean">
+        </option>
+        <option
+              applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCv9ApplicabilityCalculator"
+              category="xlc.c.compiler.category.ecd"
+              command="-qoptdebug"
+              defaultValue="false"
+              id="xlc.c.compiler.option.ecd.optdebug"
+              name="%Option.optdebug"
+              valueType="boolean">
+        </option>
+
 		  
           <inputType
               sourceContentType="org.eclipse.cdt.core.cSource"
@@ -2639,7 +3010,7 @@
                category="xlc.c.compiler.category.linking"
                command="-qmkshrobj"
                id="xlc.c.link.option.mkshrobj"
-	       applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.HiddenOptionApplicabilityCalculator"
+	       applicabilityCalculator="org.eclipse.cdt.managedbuilder.xlc.ui.properties.HiddenOptionApplicabilityCalculator"
                valueType="boolean">
          </option>
          <option
@@ -2725,7 +3096,69 @@
 			    id="cdt.managedbuild.tool.xlc.c.linker.so.debug.output">
 			</outputType>
     </tool>
+
+
+
+
+    
 	</extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.managedbuilder.xlc.ui.preferences.XLCompilerPreferencePage"
+            id="org.eclipse.cdt.managedbuilder.xlc.ui.preferences.XLCompilerPreferencePage"
+            name="XL C/C++ Compiler">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.managedbuilder.xlc.ui.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            category="org.eclipse.cdt.managedbuilder.ui.properties.Page_head_build"
+            class="org.eclipse.cdt.managedbuilder.xlc.ui.properties.XLCompilerPropertyPage"
+            id="org.eclipse.cdt.managedbuilder.xlc.ui.properties.samplePropertyPage"
+            name="XL C/C++ Compiler">
+         <filter
+               name="projectNature"
+               value="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
+         </filter>            
+         <enabledWhen>
+            <or>
+		     <instanceof value="org.eclipse.core.resources.IProject"/>
+		     <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+		     
+		     <instanceof value="org.eclipse.core.resources.IFolder"/>
+		     <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
+
+         	 <instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
+	         <instanceof value="org.eclipse.core.resources.IFile"/>
+		    </or>          
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.managedbuilder.ui.newWizardPages">
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.xlc.ui.XlcSettingsWizardPage"
+            operationClass="org.eclipse.cdt.managedbuilder.xlc.ui.wizards.XLCSettingsWizardRunnable"
+            pageClass="org.eclipse.cdt.managedbuilder.xlc.ui.wizards.XLCSettingsWizardPage">
+         <projectType
+               projectTypeID="cdt.managedbuild.target.xlc.exe">
+         </projectType>
+         <projectType
+               projectTypeID="cdt.managedbuild.target.xlc.so">
+         </projectType>
+         <projectType
+               projectTypeID="cdt.managedbuild.target.xlc.lib">
+         </projectType>
+      </wizardPage>
+   </extension>
 </plugin>
 
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,22 +12,23 @@
 package org.eclipse.cdt.managedbuilder.xlc.ui;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import java.util.*;
 
 /**
  * The main plugin class to be used in the desktop.
  */
-public class XlcUIPlugin extends Plugin {
+public class XLCUIPlugin extends AbstractUIPlugin {
 	//The shared instance.
-	private static XlcUIPlugin plugin;
+	private static XLCUIPlugin plugin;
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	
 	/**
 	 * The constructor.
 	 */
-	public XlcUIPlugin() {
+	public XLCUIPlugin() {
 		super();
 		plugin = this;
 	}
@@ -51,7 +52,7 @@ public class XlcUIPlugin extends Plugin {
 	/**
 	 * Returns the shared instance.
 	 */
-	public static XlcUIPlugin getDefault() {
+	public static XLCUIPlugin getDefault() {
 		return plugin;
 	}
 
@@ -60,7 +61,7 @@ public class XlcUIPlugin extends Plugin {
 	 * or 'key' if not found.
 	 */
 	public static String getResourceString(String key) {
-		ResourceBundle bundle = XlcUIPlugin.getDefault().getResourceBundle();
+		ResourceBundle bundle = XLCUIPlugin.getDefault().getResourceBundle();
 		try {
 			return (bundle != null) ? bundle.getString(key) : key;
 		} catch (MissingResourceException e) {

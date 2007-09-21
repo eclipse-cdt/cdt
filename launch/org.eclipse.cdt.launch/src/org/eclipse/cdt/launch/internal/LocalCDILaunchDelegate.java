@@ -184,10 +184,11 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			}
 			wc = config.getWorkingCopy();
 			wc.setAttribute( ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, pid );
-			wc.launch( ILaunchManager.DEBUG_MODE, new SubProgressMonitor( monitor, 9 ) );
+			wc.doSave().launch( ILaunchManager.DEBUG_MODE, new SubProgressMonitor( monitor, 9 ) );
 			// We need to reset the process id because the working copy will be saved 
 			// when the target is terminated
 			wc.setAttribute( ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, (String)null );
+			wc.doSave();
 			cancel( "", -1 ); //$NON-NLS-1$
 		}
 		IPath exePath = verifyProgramPath( config );

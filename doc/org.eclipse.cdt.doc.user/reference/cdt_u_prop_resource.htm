@@ -8,30 +8,74 @@
 </head>
 <body>
 <h1>C/C++ Project Properties, Resource</h1>
+<p>Shows resource information for the selected type.</p>
+<br>
 <p><img img="" src="../images/prop_resource.png"
  alt="C/C++ Project Properties, Resource"></p>
-<dl>
-  <dt>Resource</dt>
-  <dd>Shows resource information.</dd>
-  <dt>Text file encoding</dt>
-  <dd>Sets an alternate text encoding.</dd>
-  <dt>New text file line delimiter</dt>
-  <dd>Specifies the line delimiter.</dd>
-  <dt><br>Available for :</dt>
-  <dd>Any projects, folders and files regardless of project kind</dd>
-</dl>
+ <p></p>
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><b>Resource properties</b></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr>
+			<td><dt>Path</dt></td>
+			<td>Specifies the location of the selected resource type within the workspace. For example, similar to folders, projects map to directories in the file system.</td>
+		</tr>
+		<tr>
+			<td><dt>Type</dt></td>
+			<td>Indicates the type for the selected resource: <b>Folder</b>, <b>Project</b>, or <b>File</b>.</td>
+		</tr>
+				<tr>
+			<td><dt>Location</dt></td>
+			<td>Specifics the location of the selected resource within the file system.</td>
+		</tr>
+        <tr>
+			<td><dt>Last modified</dt></td>
+			<td>Shows the date that the selected resource was last modified.</td>
+		</tr>
+		<tr>
+			<td><dt>Text file encoding</dt></td>
+			<td>Sets an alternate text encoding. Because text files are encoded differently (depending on the locale and platform), use the default text file encoding for the locale of your host operating system. However, if you want to work with text files that originate from another source (for example, to work with text files that use a different encoding scheme than your native one, so that you can easily exchange files with another team), choose <b>Other</b> and select an appropriate one from the list.</td>
+		</tr>
+		<tr>
+			<td><dt>Inherited from container</dt></td>
+			<td>When enabled, the selected resource inherits the text encoding specified for it's container resource.</td>
+		</tr>
+		<tr>
+			<td><dt>Other</dt></td>
+			<td>When enabled, the selected resource uses an alternate text encoding other than that specified for its container resource. You can enable this option if you want to work with text files that originate from another source (ones that use a different encoding scheme than your native one), so that you can easily exchange files with others.</td>
+		</td>
+		</tr>
+		<tr>
+			<td><dt>New text file line delimiter</dt></td>
+			<td>Specifies the end of line character(s) to use for new text files being created.</td>
+		</tr>
+		<tr>
+			<td><dt>Inherited from container</dt></td>
+			<td>When enabled, the selected resource inherits the character line ending for new text files from that specified for it's container resource.</td>
+		</tr>
+		<tr>
+			<td><dt>Other</dt></td>
+			<td>When enabled, the selected resource uses an alternate end of line character(s) for new text files other than that specified for its container resource. For example, you can set the <b>Text file encoding</b> option to UTF-8, and then set the line endings character for new files to <b>Unix</b>, so that text files are saved in a format that is not specific to the Windows operating system, and the files can easily be shared amongst various developer systems.</td>
+		</td>
+		</tr>
+   </tbody>
+</table>
+
+<br>
+  <p><b>Available for:</b> Any projects, folders and files regardless of project kind.</p>
+
 <p><img border="0" src="../images/ngref.gif" alt="Related reference"
  width="143" height="21"><br>
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
 <li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
-<li><a href="cdt_u_prop_all.htm">Project Properties, common C/C++ Configurations handling</a>
-   <ul type="disc">
-   <li><a href="cdt_u_prop_manage_dialog.htm">Manage Configurations dialog</a>
-   <li><a href="cdt_u_prop_manage_newdialog.htm">Create Configuration dialog</a>
-   <li><a href="cdt_u_prop_manage_rendialog.htm">Rename Configuration dialog</a>
-   </ul>
 <li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
    <ul type="disc">
    <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
@@ -50,13 +94,6 @@
 <li>Project Properties, C/C++ General category
    <ul type="disc"> 
    <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
-   <li><a href="cdt_u_prop_general_exp.htm">Export Settings page</a>
-       <!--ul>
-       <li><a href="cdt_u_prop_general_exp_inc.htm">Includes tab</a>
-       <li><a href="cdt_u_prop_general_exp_sym.htm">Symbols tab</a>
-       <li><a href="cdt_u_prop_general_exp_lib.htm">Libraries tab</a>
-       <li><a href="cdt_u_prop_general_exp_libpath.htm">Libraries path tab</a>
-       </ul-->
    <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
    <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
    <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
@@ -64,15 +101,15 @@
        <ul>
        <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
        <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
-       <li><a href="cdt_u_prop_general_pns_lib.htm">Libraries tab</a>
        <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
        <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
-       <li><a href="cdt_u_prop_general_pns_out.htm">Output Location tab</a>
        <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
-       <li><a href="cdt_u_prop_general_pns_hier.htm">Data Hierarchy tab</a>
        </ul>
    </ul>
 <li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_refactoring_history.htm">C/C++ Project Properties, Refactoring History 
+
+page</a>
 <li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
 </ul>
 </p>

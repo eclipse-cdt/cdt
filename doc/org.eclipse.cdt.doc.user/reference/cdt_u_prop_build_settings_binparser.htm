@@ -9,36 +9,63 @@
 <body>
 <h1>C/C++ Project Properties, Build, Settings, Binary Parser</h1>
 <p>You can select the Binary Parsers you require for a project to
-ensure the accuracy of the C/C++ Projects view and to successfully run
+ensure the accuracy of the C/C++ Projects view, and to successfully run
 and debug your programs. After you select the correct parser for your
 development environment and build your project, you can view the
-symbols of the object file in the C/C++ Projects view.</p>
+symbols of the object file using the C/C++ Projects view.</p>
+
 <p><img img="" src="../images/prop_bin.png"
  alt="C/C++ Project Properties, Build, Settings, Binary Parser"></p>
-<dl>
-  <dt>Binary Parser (left pane)</dt>
-  <dd>List of all binary parsers known to CDT.<br>
-      Mark parsers you wish to use with checkmark.<br>
-      Select corresponding line to edit parser's options, if any</dd>
-  <dt>'Move up' and 'Move down' </dt>
-  <dd>Move selected parser upper (or lower) in list. Note that order matters 
-      for checked parsers only: they are applied to binaries in the
-      same sequence as defined by user. Order is not preserved for unchecked 
-      parsers, so it's useless to move them up/down.
-  </dd>
-  <dt>Binary Parser Option</dt>
-  <dd>Parser-specific parameters. Different parsers may have different options list (in particular, they may have no options at all).</dd>
 
-  <dt><br>Available for :</dt>
-  <dd>CDT projects</dd>
-</dl>
+
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><b>Binary parser options</b></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr>
+			<td><dt>Configuration</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Manage configurations</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Binary Parser</dt> (top pane)</td>
+			<td>Lists all of the binary parsers currently known to CDT. Select the parsers that you want to use, and select the corresponding line to edit parser's options, if required.</td>
+			</tr>		
+		<tr>
+			<td><dt>Binary Parser Option</dt></td>
+			<td>Shows the parameters for the currently selected parser in the list above. Depending on the parser you select, the options in the list will be different (in particular, some may have no options at all).</td>
+			</tr>	
+		<tr>
+			<td><dt>Move up</dt></td>
+			<td>Moves the selected parser higher in list. <b>Note:</b> The order matters for selected parsers only: they are applied to binaries in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			</tr>		
+		<tr>
+			<td><dt>Move down</dt></td>
+			<td>Move the selected parser lower in list. <b>Note:</b> The order matters for selected parsers only: they are applied to binaries in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			</tr>		
+	</tbody>
+</table>
+<br>
+<p><b>Available for:</b> CDT projects.</p>
+
 <p><img border="0" src="../images/ngtasks.gif" alt="Related tasks"
  width="143" height="21">
 <br>
 <a href="../tasks/cdt_t_proj_parser.htm">Selecting a binary parser</a></p>
 
-<p><img border="0" src="../images/ngref.gif" alt="Related reference"
- width="143" height="21"><br>
+
+<p style="margin-top: 0pt; margin-bottom: 0pt;"><img border="0"
+ src="../images/ngref.gif" alt="Related reference" width="143"
+ height="21"><br>
+
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>

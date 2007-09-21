@@ -9,33 +9,77 @@
 
 <body>
 <h1>C/C++ Project Properties, Environment</h1>
-Customizes the environment variables to be used in building selected configuration.
+Customizes the build environment for all projects in the workspace; it lets you control the environment variables used by the build.
 <p><img img="" src="../images/prop_environment.png"
  alt="C/C++ Project Properties, Environment"></p>
 <p></p>
-<dl>
-  <dt>Environment variables to set</dt>
-  <dd>List of existing Eclipse-specific environment variables. 
-     It is not the same as native environment variables list.
-     See details below.<br>
-     User-defined variables are marked with <b>bold font</b>.
-  </dd>
 
-  <dt>New...</dt>
-  <dd>Add new environment variable to the list</dd>
-  <dt>Select...</dt>
-  <dd>Add one or more native environment variable(s) to the list</dd>
-  <dt>Edit...</dt>
-  <dd>Change value of existing variable. If system variable is changed, it becames user's.</dd>
-  <dt>Remove</dt>
-  <dd>Removes selected variable. Note that some variables are read-only and cannot be removed.</dd>
-  <dt>Undefine</dt>
-  <dd>Clear variable's value but leave it present.</dd>
-  <dt>Append variables to native environment</dt>
-  <dd>Eclipse will be able to access both native environment and variables defined on this page.</dd>
-  <dt>Replace native environment with specified one</dt>
-  <dd>Eclipse will be able to access only variables defined on this page.</dd>
-</dl>
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><b>Environment preference options</b></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr>
+			<td><dt>Configuration</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Manage configurations</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Environment variables to set</dt></td>
+			<td>Shows the current list of environment variables and their corresponding value. These are the environment variable values used when building.</td>
+		</tr>		
+		<tr>
+			<td><dt>Variable</dt></td>
+			<td>Specifies the name of the environment variable.</td>
+		</tr>
+		<tr>
+			<td><dt>Value</dt></td>
+			<td>Specifies the value of the environment variable.</td>
+		</tr>
+				<tr>
+			<td><dt>Append variables to native environment</dt></td>
+			<td>Appends the variables to the native environment during its execution.</td>
+		</tr>
+		<tr>
+			<td><dt>Replace native environment with specified one </dt></td>
+			<td>Replaces the native environment with the specified variables, and then restores the native environment upon its completion.</td>
+		</tr>		
+		<tr>
+			<td><dt>New</dt></td>
+			<td>Opens a dialog to create a new environment variable and value. Custom environment variables that you create appear in bold within the list.
+			<p><img img="" src="../images/cdt_buildenv_newenvvar.png" alt="C/C++ Project Properties, Environment, New environment variable"></p>            <br>
+            <p>Click <b>Variables</b> to Select variables by name to include in the value. Select <b>Add to all configurations</b> to make this new environment variable available to all configurations for the selected project; otherwise, the variable is only available for the currently selected configuration.</p>
+			</td>
+		</tr>
+		<tr>
+			<td><dt>Select</dt></td>
+			<td>Opens the Select variables dialog where you can choose from a list of system variables.
+			<p><img img="" src="../images/cdt_buildenv_selectvar.png" alt="C/C++ Project Properties, Environment, New environment variable"></p></td>
+            </td>
+		</tr>
+		<tr>
+			<td><dt>Edit</dt></td>
+			<td>Modifies the name and value of the selected environment variable.</td>
+		</tr>
+		<tr>
+			<td><dt>Remove</dt></td>
+			<td>Removes the selected environment variables from the list.</td>
+		</tr>
+		<tr>
+			<td><dt>Undefine</dt></td>
+			<td>Undefines the currently selected variable; however, some variables, such as the PATH variable, cannot be undefined. 
+			</td>
+		</tr>
+	</tbody>
+</table>
+
 <p style="margin-top: 0pt; margin-bottom: 0pt;"><img border="0"
  src="../images/ngref.gif" alt="Related reference" width="143"
  height="21"><br>

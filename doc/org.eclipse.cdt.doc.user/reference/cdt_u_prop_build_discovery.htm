@@ -7,50 +7,124 @@
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>C/C++ Project Properties, Discovery Options</h1>
-<p>You can define the discovery options on the Discovery Options page
-of a C/C++ project's properties window.<br>
-</p>
-<dl>
-</dl>
-<p style="margin-left: 40px;"><img img=""
- src="../images/prop_discovery.png"
- alt="C/C++ Project Properties, Discovery Options"
- ><br>
-</p>
-<dl>
-  <dt>Discovery profile scope</dt>
-  <dd>Select either <b>per Language</b> or <b>Configuration-wide</b> scope.</dd>
 
-  <dt>Left pane (list)</dt>
-  <dd>When scope is 'per Language', select required language here. 
-      In case of 'Configuration-wide' scope, only one item is displayed.</dd>
+<h1>Discovery options preferences </h1>
+<br>
+<p style="margin-top: 0">Controls how to discover information required to build your project, enhance search and Content Assist functionality, and automatically enhance your makefile, such as include paths and symbol definitions.</p>
+<p style="margin-top: 0">
+<img border="0" src="../images/mpref_discovopts.png" </p>
 
-  <dt>Automate scanner configuration discovery</dt>
-  <dd>Select this checkbox to configure the automatic discovery of
-paths and symbols. When unchecked, all controls below became disabled.</dd>
-
-  <dt>Report path detection problems</dt>
-  <dd>Enables or disables corresponding diagnostic messages.</dd>
-
-  <dt>Discovery profile</dt>
-  <dd>Select discovery profile from list.</dd>
-
-  <dt>Discovery profile options</dt>
-  <dd>This set of controls is profile-specific. It may vary from one profile to another.</dd>
-</dl>
-<p><img src="../images/ngref.gif" alt="Related reference" border="0"
- height="21" width="143"><br>
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><b>Discovery options preferences</b></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr>
+			<td><dt>Configuration</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Manage configurations</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Discovery Profiles Scope</dt></td>
+			<td>Specifies the type of profile to set for discovery:
+			  <ul>
+			    <li><b>Per Language</b> - Enables the association of different profiles with different resource types (different tools and input types), to have different settings discovered, e.g. for C and C++ source files and for different tools used by the project.
+In addition, selecting this option lets you have different profile settings for different folders; however, only project profile types are allowed.
+			    
+			    <li><b>Configuration-wide</b> - The Eclipse CDT uses only one profile for discovering scanner information for
+the entire project (configuration). This means that both the project and per-file discovery profiles are allowed.
+			    
+			  </ul>			
+			
+			</td>
+		</tr>
+		<tr>
+			<td>Left pane list (language specific)</td>
+			<td>Shows a list of language specific compilers. Select a language from the list.</td>
+		</tr>
+		<tr>
+			<td><dt>Automate discovery of paths and symbols</dt></td>
+			<td>Scans the build output to populate the path and symbol tables, such as symbol definitions, system include directories, local include directories, macros, and include files.</td>
+		</tr>
+				<tr>
+			<td><dt>Report path detection problems</dt></td>
+			<td>Sets the notification of diagnostic errors for include paths that the Eclipse CDT is unable to resolve as it parses the build output.</td>
+		</tr>
+		<tr>
+			<td><dt>Discovery profile</dt></td>
+			<td>Indicates the discovery profile to use for paths and symbol detection. The type of <b>Configuration</b> and <b>Discovery Profile Scope</b> you specify determine what which <b>Discovery Profile</b> options display on this tab.</td>
+		</tr>		
+		<tr>
+			<td><dt>Enable build output scanner info discovery</dt></td>
+			<td>Configures the scanner to parse the output from a build for compiler commands with options that specify the definition of preprocessor symbols, and include search paths (for GCC compiler, -D and -I respectively). This button is only visible when <b>Configuration</b> is set to Release and the <b>Discovery Profiles Scope</b> is set to <b>Configuration-wide</b>.</td>
+		</tr>
+		<tr>
+			<td><dt>Load</dt></td>
+			<td>Lets you load a file to discover paths and symbols based on a previous builds' output. To activate the discovery select a build log file and then the <b>Load</b> button. This button is only visible when <b>Configuration</b> is set to Release and the <b>Discovery Profiles Scope</b> is set to <b>Configuration-wide</b>.
+			<p><b>Note:</b> Click <b>Variables</b> to open the Select Variables window to define a build output file.</p>
+			</td>
+		</tr>
+		<tr>
+			<td><dt>Load build output from file</dt></td>
+			<td>Specifies the name of the file you selected to load the build output from. This button is only visible when <b>Configuration</b> is set to Release and the <b>Discovery Profiles Scope</b> is set to <b>Configuration-wide</b>.</td>
+		</tr>
+		<tr>
+			<td><dt>Browse</dt></td>
+			<td>Click to locate a previously built output file to load the build output from. This button is only visible when <b>Configuration</b> is set to Release and the <b>Discovery Profiles Scope</b> is set to <b>Configuration-wide</b>.</td>
+		</tr>
+		<tr>
+			<td><dt>Variables</dt></td>
+			<td>Click to specify an argument for, or create and configure simple launch variables which you can reference in launch configurations that support variables. This button is only visible when <b>Configuration</b> is set to Release and the <b>Discovery Profiles Scope</b> is set to <b>Configuration-wide</b>.</td>
+		</tr>
+		<tr>
+			<td><dt>Enable generate scanner info command</dt></td>
+			<td>Enables the retrieval of information from the scanner. If it is not selected, the includes will be populated with default gcc system includes; Eclipse gathers the compiler settings based on the specified toolchain. This means that the Eclipse CDT can obtain the default gcc system includes to associate with the project. 
+				<p>When selected, you can specify any required compiler specific commands in the <b>Compiler invocation command</b> field.</p>
+			</td>
+		</tr>
+		<tr>
+			<td><dt>Compiler invocation command</dt></td>
+			<td>Indicates the compiler specific command used to invoke the compiler (such as <tt>gcc</tt>, or more complicated commands used to perform all necessary steps for compiling C/C++ source files into .o files, and linking the object files and libraries into an executable program. For example, the command <b>gcc -E -P -v hello.c | hello.cpp</b> reads a compiler's configuration file and prints out information that includes the compiler's internally defined preprocessor symbols and include search paths. The information is complementary to the scanner configuration discovered when the output is parsed (if you've enabled the <b>Enable build output scanner info discovery</b> option), and is added to the project's scanner configuration. You can click <b>Browse</b> to locate this command, if required.
+			
+			<p><b>Note:</b> The parsing of build output for scanner information is compiler specific. For example, the GNU toolchain compilers (gcc and g++) use -I for include paths, and -D for symbol definitions. Consult your compiler specific documentation for more information about scanner information commands, such as the following gcc commands:</p>
+     <ul>
+        <li><samp>-D <span style="font-style: italic;">name</span></samp></li>
+        <li><samp>-I</samp></li>     
+        <li><samp>-U <span style="font-style: italic;">name</span></samp></li>
+        <li><samp>-I-</samp></li>
+        <li><samp>-nostdinc</samp></li>
+        <li><samp>-nostdinc++</samp></li>
+        <li><samp>-include <span style="font-style: italic;">file</span></samp></li>
+        <li><samp>-imacros <span style="font-style: italic;">file</span></samp></li>
+        <li><samp>-idirafter <span style="font-style: italic;">dir</span></samp></li>
+        <li><samp>-isystem <span style="font-style: italic;">dir</span></samp></li>
+        <li><samp>-iprefix <span style="font-style: italic;">prefix</span></samp></li>
+        <li><samp>-iwithprefix <span style="font-style: italic;">dir</span></samp></li>
+        <li><samp>-iwithprefixbefore <span style="font-style: italic;">dir</span></samp></li>
+      </ul>
+			</td>
+		</tr>
+			<tr>
+			<td><dt>Browse</dt></td>
+			<td>Click to browse for a file to include in the compiler invocation command. This button is only visible when <b>Configuration</b> is set to Release and the <b>Discovery Profiles Scope</b> is set to <b>Configuration-wide</b>.</td>
+		</tr>
+		</tbody>
+</table>
+	
+<p><img border="0" src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21"><br>
 
 <ul>
+<li><a href="cdt_o_mproj_pref_macro.htm">Build Project preferences, Macros</a>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
 <li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
-<li><a href="cdt_u_prop_all.htm">Project Properties, common C/C++ Configurations handling</a>
-   <ul type="disc">
-   <li><a href="cdt_u_prop_manage_dialog.htm">Manage Configurations dialog</a>
-   <li><a href="cdt_u_prop_manage_newdialog.htm">Create Configuration dialog</a>
-   <li><a href="cdt_u_prop_manage_rendialog.htm">Rename Configuration dialog</a>
-   </ul>
 <li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
    <ul type="disc">
    <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
@@ -69,13 +143,6 @@ paths and symbols. When unchecked, all controls below became disabled.</dd>
 <li>Project Properties, C/C++ General category
    <ul type="disc"> 
    <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
-   <li><a href="cdt_u_prop_general_exp.htm">Export Settings page</a>
-       <!--ul>
-       <li><a href="cdt_u_prop_general_exp_inc.htm">Includes tab</a>
-       <li><a href="cdt_u_prop_general_exp_sym.htm">Symbols tab</a>
-       <li><a href="cdt_u_prop_general_exp_lib.htm">Libraries tab</a>
-       <li><a href="cdt_u_prop_general_exp_libpath.htm">Libraries path tab</a>
-       </ul-->
    <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
    <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
    <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
@@ -83,19 +150,19 @@ paths and symbols. When unchecked, all controls below became disabled.</dd>
        <ul>
        <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
        <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
-       <li><a href="cdt_u_prop_general_pns_lib.htm">Libraries tab</a>
        <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
        <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
-       <li><a href="cdt_u_prop_general_pns_out.htm">Output Location tab</a>
        <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
-       <li><a href="cdt_u_prop_general_pns_hier.htm">Data Hierarchy tab</a>
        </ul>
    </ul>
 <li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_refactoring_history.htm">C/C++ Project Properties, Refactoring History 
+
+page</a>
 <li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
 </ul>
 </p>
-<p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
 
+<p><img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" ></p>
 </body>
 </html>

@@ -8,35 +8,62 @@
 </head>
 <body>
 <h1>C/C++ Project Properties,  Build, Settings, Error Parsers</h1>
-<p>Customizes the list of the filters that detect error patterns in the
+<p>Customizes the list of filters that detect error patterns in the
 build output log.</p>
 <p><img img="" src="../images/prop_error.png"
  alt="C/C++ Project Properties,  Build, Settings, Error Parsers"></p>
-<dl>
-  <dt>Error Parsers (left pane)</dt>
-  <dd>List of all error parsers known to CDT.<br>
-      Mark parsers you wish to use with checkmark.<br>
-      Select corresponding line to edit parser's options, if any</dd>
-  <dt>'Move up' and 'Move down' </dt>
-  <dd>Move selected parser upper (or lower) in list. Note that order matters 
-      for checked parsers only: they are applied to error logs in the
-      same sequence as defined by user. Order is not preserved for unchecked 
-      parsers, so it's useless to move them up/down.
-  <dt>Check all</dt>
-  <dd>Makes all error parsers selected.</dd>
-  <dt>Uncheck all</dt>
-  <dd>Makes all error parsers unselected.</dd>
-  <dt><br>Available for :</dt>
-  <dd>CDT projects</dd>
-</dl>
+
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><b>Binary parser options</b></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr>
+			<td><dt>Configuration</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Manage configurations</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Error Parsers</dt></td>
+			<td>Lists all of the error parsers currently known to CDT. Select the parsers that you want to use, and select the corresponding line to edit parser's options, if required.</td>
+			</tr>		
+		<tr>
+			<td><dt>Move up</dt></td>
+			<td>Moves the selected parser higher in list. <b>Note:</b> The order matters for selected parsers only: they are applied to error logs in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			</tr>		
+		<tr>
+			<td><dt>Move down</dt></td>
+			<td>Move the selected parser lower in list. <b>Note:</b> The order matters for selected parsers only: they are applied to error logs in the same sequence as defined by the user. The order is not preserved for unchecked parsers, so you do not have to move them.</td>
+			</tr>	
+					<tr>
+			<td><dt>Check all</dt></td>
+			<td>Selects all error parsers in the list.</td>
+			</tr>	
+								<tr>
+			<td><dt>Uncheck all</dt></td>
+			<td>Makes all error parsers in the list unselected.</td>
+			</tr>		
+	</tbody>
+</table>
+<br>
+<p><b>Available for:</b> CDT projects.</p>
 
 <p><img border="0" src="../images/ngtasks.gif" alt="Related tasks"
  width="143" height="21">
 <br>
 <a href="../tasks/cdt_t_proj_error_parser.htm">Filtering errors</a></p>
 
-<p><img border="0" src="../images/ngref.gif" alt="Related reference"
- width="143" height="21"><br>
+<p style="margin-top: 0pt; margin-bottom: 0pt;"><img border="0"
+ src="../images/ngref.gif" alt="Related reference" width="143"
+ height="21"><br>
+
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>

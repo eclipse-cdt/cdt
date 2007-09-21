@@ -8,57 +8,78 @@
 </head>
 <body>
 <h1>C/C++ Properties, Build, Settings, Build Steps tab</h1>
-Customizes the selected build configuration allowing the specification
-of user defined build command steps, as well as a descriptive message
-to be displayed in the
-build output, immediately prior to and immediately after normal build
-processing executes.
+<p>Customizes the selected build configuration allowing for the specification
+of user defined build command steps, as well displaying a descriptive message
+in the build output, immediately before and after, normal build
+processing executes.</p>
 <p><img img="" src="../images/prop_steps.png"
  alt="C/C++ Properties, Build, Settings, Build Steps tab"></p>
 <p></p>
-<dl>
-  <dt>Pre-build Steps</dt>
-  <dt>&nbsp;&nbsp;&nbsp; Command</dt>
-  <dd>Specifies a command, or a list of semicolon separated commands,
-to be executed immediately prior to execution of the build.</dd>
-  <dt>&nbsp;&nbsp;&nbsp; Description</dt>
-  <dd>Specifies optional descriptive text that is associated with the
-pre-build step to be displayed in the build output immediately prior to
-execution of the pre-build step command or commands.</dd>
-  <dt>Post-build Steps</dt>
-  <dt>&nbsp;&nbsp;&nbsp; Command</dt>
-  <dd>Specifies a command, or a list of semicolon separated commands,
-to be executed immediately after the execution of the build.</dd>
-  <dt>&nbsp;&nbsp;&nbsp; Description</dt>
-  <dd>Specifies optional descriptive text that is associated with the
-post-build step to be displayed in the build output immediately prior
-to execution of the post-build step command or commands.</dd>
-  <dt><br>Available for :</dt>
-  <dd>CDT projects</dd>
-</dl>
-<h2></h2>
-<h2>Detailed Specification</h2>
-<p>To ensure reasonable custom build step behavior, sensible input must
-be provided when specifying custom build step input. Custom build steps
+
+<p><b>Note:</b> To ensure reasonable custom build step behavior, sensible input must
+be provided when specifying custom build step information. Custom build steps
 are not verified for correctness in any regard and are passed exactly
 as entered into the build stream. <br>
 <br>
 In the descriptive text, below, the term "main build" is defined as the
-sequence of commands to be executed when a build is invoked, not
+sequence of commands to execute when a build is invoked, not
 including pre-build or post-build steps.<br>
-<br>
-The pre-build step is not executed if the state of the main build is
-determined to be up to date; otherwise it is executed. An attempt to
-execute the main build will occur regardless of the success or failure
-of executing the pre-build step.
-<br>
-<br>
-The post-build step is not executed if the state of the main build is
-determined to be up to date. It will be executed only if the main-build
-has executed successfully. </p>
+</p>
 
-<p><img border="0" src="../images/ngref.gif" alt="Related reference"
- width="143" height="21"><br>
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><b>Build step options</b></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr>
+			<td><dt>Configuration</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Manage configurations</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Pre-build Steps</dt></td>
+			<td>Identifies any steps that are to occur before the build takes place.
+			<p><b>Note:</b> The pre-build step is not executed if the state of the main build is determined to be up to date; otherwise it is executed. An attempt to execute the main build will occur regardless of the success or failure of executing the pre-build step.</p>
+			</td>
+			</tr>		
+		<tr>
+			<td><dt>Command</dt></td>
+			<td>Specifies one or more commands to execute immediately before the execution of the build. Use semicolons to separate multiple commands.</td>
+		</tr>
+		<tr>
+			<td><dt>Description</dt></td>
+			<td>Specifies optional descriptive text associated with the pre-build step that is displayed in the build output immediately before the execution of the pre-build step command (or commands).</td>
+		</tr>
+		<tr>
+			<td><dt>Post-build steps</dt></td>
+			<td>Identifies any steps that are to occur after the build takes place.
+			<p><b>Note:</b> The post-build step is not executed if the state of the main build is determined to be up to date. It will be executed only if the main-build has executed successfully.</p>
+			</td>
+		</tr>
+		<tr>
+			<td><dt>Command</dt></td>
+			<td>Specifies one or more commands to execute immediately after the execution of the build. Use semicolons to separate multiple commands.</td>
+		</tr>
+		<tr>
+			<td><dt>Description</dt></td>
+			<td>Specifies optional descriptive text associated with the post-build step that is displayed in the build output immediately after the execution of the post-build step command (or commands).</td>
+		</tr>				
+	</tbody>
+</table>
+<br>
+<p><b>Available for:</b> CDT projects.</p>
+
+<p style="margin-top: 0pt; margin-bottom: 0pt;"><img border="0"
+ src="../images/ngref.gif" alt="Related reference" width="143"
+ height="21"><br>
+
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>

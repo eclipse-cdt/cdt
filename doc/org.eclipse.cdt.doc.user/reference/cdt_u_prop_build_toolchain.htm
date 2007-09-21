@@ -7,37 +7,59 @@
   <link rel="stylesheet" type="text/css" href="../help.css">
 </head>
 <body>
-<h1>C/C++ Project Properties, Tool Chain edit</h1>
-Customizes the toolchain used in your build configuration.
-<p><img img="" src="../images/prop_tc_edit.png"
- alt="C/C++ Project Properties, Tool Chain edit"></p>
-<p></p>
-<dl>
-  <dt>Display compatible toolchains only.</dt>
-  <dd>Allows to show either all toolchains known to CDT, or compatible ones only. 
-  Toolchain is compatible if it can run on given platform.</dd>
-  <dt>Current toolchain</dt>
-  <dd>Select the toolchain to be used with selected configuration.</dd>
-  <dt>Current builder</dt>
-  <dd>Select builder to be used to build selected configuration.</dd>
-  <dt>Used tools</dt>
-  <dd>A list of tools currently included to selected toolchain. 
-      User can modify it (add/remove tools) by 'Select tools' button.</dd>
-  <dt><br>Available for :</dt>
-  <dd>CDT projects only</dd>
-</dl>
+<h1>Tool chain editor preferences (C/C++ Project Properties)</h1>
+<br>
+<p style="margin-top: 0">Customizes the toolchain used in your build configuration; it lets
+you specify which tools the builder needs to include when it builds the project for a specified toolchain and configuration.</p>
+<p style="margin-top: 0">
+<img border="0" src="../images/mpref_toolchain.png" </p>
+
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><b>Tool chain editor properties</b></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr>
+			<td><dt>Configuration</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Manage configurations</dt></td>
+			<td><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td><dt>Display compatible toolchains only</dt></td>
+			<td>When selected, it shows a list of toochains that are only compatible with the current configuration. When this option is not selected, it shows a list of all toolchains known to the Eclipse CDT. A Toolchain is compatible if it can run on given platform. .</td>
+		</tr>
+		<tr>
+			<td><dt>Current toolchain</dt></td>
+			<td>Indicates the toolchain to use with the current configuration. A toolchain is a set of tools (such as a compiler, linker, and assembler) intended to build your project. Additional tools, such as a debugger, can be associated with a toolchain. There can be several toolchains available, depending on the compilers installed on your system.</td>
+		</tr>
+				<tr>
+			<td><dt>Current builder</dt></td>
+			<td>Indicates the builder used to build the selected configuration. A builder refers to an external <b>make</b> utility, such as GNU make, that the Eclipse CDT uses (and relies on) to build a project. The CDT can generate <b>makefiles</b> automatically when you create a Make C or C++ project, or you have the option of creating a C or C++ Make project where you provide the makefile yourself.</td>
+		</tr>
+		<tr>
+			<td><dt>Used tools</dt></td>
+			<td>Shows a list of tools currently included for the selected toolchain. You can click <b>Select Tools</b> to modify this list.</td>
+		</tr>		
+		<tr>
+			<td><dt>Select Tools</dt></td>
+			<td>Opens the Select Tools dialog that lets you add or remove tools from the list of tools for the selected toolchain.</td>
+		</tr>
+	</tbody>
+</table>
+<br>
 <p><img border="0" src="../images/ngref.gif" alt="Related reference"
  width="143" height="21"><br>
 
 <ul>
 <li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
 <li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
-<li><a href="cdt_u_prop_all.htm">Project Properties, common C/C++ Configurations handling</a>
-   <ul type="disc">
-   <li><a href="cdt_u_prop_manage_dialog.htm">Manage Configurations dialog</a>
-   <li><a href="cdt_u_prop_manage_newdialog.htm">Create Configuration dialog</a>
-   <li><a href="cdt_u_prop_manage_rendialog.htm">Rename Configuration dialog</a>
-   </ul>
 <li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
    <ul type="disc">
    <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
@@ -56,13 +78,6 @@ Customizes the toolchain used in your build configuration.
 <li>Project Properties, C/C++ General category
    <ul type="disc"> 
    <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
-   <li><a href="cdt_u_prop_general_exp.htm">Export Settings page</a>
-       <!--ul>
-       <li><a href="cdt_u_prop_general_exp_inc.htm">Includes tab</a>
-       <li><a href="cdt_u_prop_general_exp_sym.htm">Symbols tab</a>
-       <li><a href="cdt_u_prop_general_exp_lib.htm">Libraries tab</a>
-       <li><a href="cdt_u_prop_general_exp_libpath.htm">Libraries path tab</a>
-       </ul-->
    <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
    <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
    <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
@@ -70,15 +85,15 @@ Customizes the toolchain used in your build configuration.
        <ul>
        <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
        <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
-       <li><a href="cdt_u_prop_general_pns_lib.htm">Libraries tab</a>
        <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
        <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
-       <li><a href="cdt_u_prop_general_pns_out.htm">Output Location tab</a>
        <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
-       <li><a href="cdt_u_prop_general_pns_hier.htm">Data Hierarchy tab</a>
        </ul>
    </ul>
 <li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_refactoring_history.htm">C/C++ Project Properties, Refactoring History 
+
+page</a>
 <li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
 </ul>
 </p>

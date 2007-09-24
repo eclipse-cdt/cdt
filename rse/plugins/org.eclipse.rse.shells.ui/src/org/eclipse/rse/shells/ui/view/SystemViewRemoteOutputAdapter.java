@@ -1241,16 +1241,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			}
 			else if (name.equals(ISystemPropertyConstants.P_SHELL_CONTEXT))
 			{
-			    Object context = cmdShell.getContext();
-			    if (context instanceof IRemoteFile)
-			    {			        
-			        IRemoteFile cwd = (IRemoteFile)context;
-			        return cwd.getAbsolutePath();			        	
-			    }
-			    else
-			     {
-			        return context;
-			     }
+				return cmdShell.getContextString();
 			}
 		}
 		return ""; //$NON-NLS-1$

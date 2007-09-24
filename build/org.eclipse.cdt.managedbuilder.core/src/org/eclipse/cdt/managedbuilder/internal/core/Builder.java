@@ -2638,7 +2638,7 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 		IPath path = ManagedBuildManager.getBuildFullPath(cfg, this);
 		IProject proj = cfg.getOwner().getProject();
 		IPath projFullPath = proj.getFullPath(); 
-		if(projFullPath.isPrefixOf(path)){
+		if(path != null && projFullPath.isPrefixOf(path)){
 			path = path.removeFirstSegments(projFullPath.segmentCount()).makeRelative();
 		} else {
 			path = Path.EMPTY;

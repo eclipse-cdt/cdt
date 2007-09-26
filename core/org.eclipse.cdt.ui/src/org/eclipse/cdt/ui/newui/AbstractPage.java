@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IWorkbenchPart;
@@ -136,6 +137,7 @@ implements
 	private Label errIcon;
 	private Label errMessage;
 	private Composite errPane;
+	private Composite parentComposite;
 	/*
 	 * Bookeeping variables
 	 */
@@ -317,16 +319,16 @@ implements
 	}
 	
 	public void createWidgets(Composite c) {
-		Composite comp = new Composite(c, SWT.NONE);
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		parentComposite = new Composite(c, SWT.NONE);
+		parentComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		itabs.clear(); 
 		if (!isSingle()) {
-			comp.setLayout(new FillLayout());
-			folder = new TabFolder(comp, SWT.NONE);
+			parentComposite.setLayout(new FillLayout());
+			folder = new TabFolder(parentComposite, SWT.NONE);
 //			folder.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
-		loadExtensionsSynchronized(comp);
+		loadExtensionsSynchronized(parentComposite);
 		
 		// Set listener after data load, to avoid firing
 		// selection event on not-initialized tab items 
@@ -1007,4 +1009,10 @@ implements
 				((IPropertyChangeListener)part).propertyChange(new PropertyChangeEvent(res, PreferenceConstants.PREF_SHOW_CU_CHILDREN, null, null));
 		}
 	}
+	
+	public void resize() {
+		Shell sh = parentComposite.getShell();
+		sh.setSize(sh.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+	}
+	
 }

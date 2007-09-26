@@ -29,6 +29,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
+import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -50,6 +51,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
 
 
 public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPreferencePageContainer {
@@ -380,6 +382,13 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					displayOptionsForCategory(toolListElement);
 				} else {
 					displayOptionsForTool(toolListElement);
+				}
+				
+				ScrollBar sb = containerSC.getHorizontalBar();
+				if (sb != null && sb.isVisible()) {
+					settingsPageContainer.pack(true);
+					containerSC.setMinSize(settingsPageContainer.getSize());
+					((AbstractPage)page).resize();
 				}
 			}
 		}

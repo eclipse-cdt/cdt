@@ -41,6 +41,7 @@
  * Kevin Doyle (IBM) 			 - [196582] Deprecated getRemoteObjectIdentifier
  * Martin Oberhuber (Wind River) - [198650] Fix assertion when restoring workbench state
  * Martin Oberhuber (Wind River) - [183176] Fix "widget is disposed" during Platform shutdown
+ * David McKnight (IBM)          - [204684] CheckExistsJob used for determining if a remote object exists after a query of it's children
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -170,6 +171,7 @@ import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -5738,6 +5740,103 @@ public class SystemView extends SafeTreeViewer
 	}
 */
 
+		/**
+		 * For bug 204684: 
+		 * 
+		 * Because we don't have an API for ISystemViewElementAdapter.exists()...
+		 * This class is used to determine whether an object exists and consequently whether to remove it from the view
+		 * after a query comes back with either no children or a SystemMessageObject.  We query the parent to determine
+		 * whether the remote object exists - in that case we just leave the message as is in the view.  In the case where
+		 * we detect that the object does not exist, we re-populate the parent node with the new children.
+		 */
+		public static class CheckExistenceJob extends Job
+		{
+			
+			
+			private IAdaptable _remoteObject;
+			//private TreeItem _parentItem;
+			private IContextObject _context;
+			public CheckExistenceJob(IAdaptable remoteObject, TreeItem parentItem, IContextObject context)
+			{
+				super("Check existence"); //$NON-NLS-1$
+				_remoteObject = remoteObject;
+				//_parentItem = parentItem;
+				_context = context;
+			}
+			
+			public IStatus run(IProgressMonitor monitor)
+			{				
+				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)_remoteObject.getAdapter(ISystemViewElementAdapter.class);
+				if (adapter != null)
+				{
+					final Object[] children =  adapter.getChildren(_context, monitor);
+					if (contains(children, _remoteObject))
+					{
+						// we want to end this so the user sees the error message
+					}
+					else
+					{
+						Display.getDefault().asyncExec(new Runnable(){
+							public void run()
+							{
+								/*
+								// first need to remove the old items
+								TreeItem[] items = _parentItem.getItems();
+								for (int i = 0; i < items.length; i++) {
+									if (items[i].getData() != null) {
+										disassociate(items[i]);
+										items[i].dispose();
+									} else {
+										items[i].dispose();
+										}
+									}
+								
+	
+								// we want to propagate the changes to the view
+								add(_context.getModelObject(), children);
+								*/
+								// refresh using the event since other views may need updating
+								IAdaptable par = _context.getModelObject();
+								ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+								sr.fireEvent(new SystemResourceChangeEvent(par, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+						
+							}		
+						});
+					}
+				}
+				
+				return Status.OK_STATUS;
+			}
+			
+			public static boolean contains(Object[] children, IAdaptable remoteObject)
+			{
+				ISystemViewElementAdapter adapter1 = (ISystemViewElementAdapter)remoteObject.getAdapter(ISystemViewElementAdapter.class);
+				String path1 = adapter1==null ? null : adapter1.getAbsoluteName(remoteObject);
+				for (int i = 0; i < children.length; i++)
+				{
+					if (remoteObject==children[i] || remoteObject.equals(children[i]))
+					{
+						return true;
+					}
+					else if (children[i] instanceof IAdaptable)
+					{
+						IAdaptable remoteObject2 = (IAdaptable)children[i];
+						ISystemViewElementAdapter adapter2 = (ISystemViewElementAdapter)remoteObject2.getAdapter(ISystemViewElementAdapter.class);
+						if (adapter2 != null)
+						{
+							String path2 = adapter2.getAbsoluteName(remoteObject2);
+							if (path1 != null && path2 != null && path1.equals(path2))
+							{
+								return true;
+							}
+						}
+					}
+				}
+				return false;
+			}
+		}
+		
+
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
 		assertElementsNotNull(childElements);
 		
@@ -5817,13 +5916,9 @@ public class SystemView extends SafeTreeViewer
 					newChildren = adapter.getChildren(contextObject, new NullProgressMonitor());
 					internalAdd(match, parentElementOrTreePath, newChildren);
 				}	
-				
 			}
 			else
 			{	
-	
-				
-				
 				internalAdd(match, parentElementOrTreePath, childElements);
 				
 				// refresh parent in this case because the parentElementOrTreePath may no longer exist
@@ -5831,10 +5926,34 @@ public class SystemView extends SafeTreeViewer
 				{
 					if (adapter.isRemote(parentElementOrTreePath) && !adapter.hasChildren((IAdaptable)parentElementOrTreePath))						
 					{
-						// refresh the parent
-						Object par = adapter.getParent(parentElementOrTreePath);					
-						ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-						sr.fireEvent(new SystemResourceChangeEvent(par, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+						/*
+							// refresh the parent
+							Object par = adapter.getParent(parentElementOrTreePath);					
+							ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+							sr.fireEvent(new SystemResourceChangeEvent(par, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+					
+							*/
+						
+						// for bug 204684, using this job to determine whether or not the object exists before trying to update
+						if (match instanceof TreeItem)
+						{
+							TreeItem parentItem = ((TreeItem)match).getParentItem();
+							if (parentItem != null)
+							{
+								IContextObject context = getContextObject(parentItem);
+								if (adapter.supportsDeferredQueries(context.getSubSystem())) {
+									CheckExistenceJob job = new CheckExistenceJob((IAdaptable)parentElementOrTreePath, parentItem, context);
+									job.schedule();
+								} else {
+									Object[] children =  adapter.getChildren(context, new NullProgressMonitor());
+									if (!CheckExistenceJob.contains(children, (IAdaptable)parentElementOrTreePath)) {
+										IAdaptable par = context.getModelObject();
+										ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+										sr.fireEvent(new SystemResourceChangeEvent(par, ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE, null));
+									}
+								}
+							}
+						}
 					}
 				}
 				

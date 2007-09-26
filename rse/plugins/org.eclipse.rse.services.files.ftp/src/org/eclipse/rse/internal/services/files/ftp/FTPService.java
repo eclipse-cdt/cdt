@@ -59,6 +59,7 @@
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Javier Montalvo Orus (Symbian) - [199243] Renaming a file in an FTP-based EFS folder hangs all of Eclipse
  * Martin Oberhuber (Wind River) - [203306] Fix Deadlock comparing two files on FTP
+ * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -93,6 +94,7 @@ import org.eclipse.rse.services.Mutex;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
@@ -135,7 +137,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private static long FTP_STATCACHE_TIMEOUT = 200; //msec
 	
 	
-	private class FTPBufferedInputStream extends BufferedInputStream {
+	private static class FTPBufferedInputStream extends BufferedInputStream {
 		
 		private FTPClient client;
 		
@@ -379,6 +381,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 		catch (IOException e)
 		{
+		}
+		finally {
 			_ftpClient = null;
 		}
 		
@@ -661,15 +665,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	private char getSeparator()
 	{
-		char separator =  '/'; 
-		
-		if(_userHome.indexOf('\\')!=-1 && _userHome.indexOf('/')==-1) 
-		{
-			separator = '\\';  
-		}
-		
-		return separator;
-		
+		return PathUtility.getSeparator(_userHome).charAt(0);
 	}
 	
 	/*

@@ -13,12 +13,14 @@
  * 
  * Contributors:
  * Javier Montalvo Orus (Symbian) - [198272] FTP should return classification for symbolic links so they show a link overlay
+ * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.model;
 
 
 import org.eclipse.rse.internal.services.files.ftp.FTPHostFile;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.AbstractRemoteFile;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -51,11 +53,26 @@ public class FTPRemoteFile extends AbstractRemoteFile
 		return _ftpHostFile.getClassification();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile#getSeparator()
+	 */
+	public String getSeparator() {
+		String absPath = getAbsolutePath();
+		if (absPath!=null && absPath.length()>1) {
+			return PathUtility.getSeparator(absPath);
+		}
+		String home = getParentRemoteFileSubSystem().getConnectorService().getHomeDirectory();
+		if (home!=null && home.length()>1) {
+			return PathUtility.getSeparator(home);
+		}
+		return PathUtility.getSeparator(absPath);
+	}
 
-
-
-
-
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile#getSeparatorChar()
+	 */
+	public char getSeparatorChar() {
+		return getSeparator().charAt(0);
+	}
 
 }

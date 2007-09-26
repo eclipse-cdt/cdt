@@ -19,7 +19,8 @@
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  * Javier Montalvo Orus (Symbian) - [187531] Improve exception thrown when Login Failed on FTP
  * David Dykstal (IBM) - added RESID_FTP_SETTINGS_LABEL
- * David McKnight       (IBM)     - [196632] [ftp] Passive mode setting does not work
+ * David McKnight (IBM) - [196632] [ftp] Passive mode setting does not work
+ * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -38,6 +39,7 @@ import org.eclipse.rse.internal.services.files.ftp.FTPService;
 import org.eclipse.rse.internal.subsystems.files.ftp.FTPSubsystemResources;
 import org.eclipse.rse.internal.subsystems.files.ftp.parser.FTPClientConfigFactory;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.ui.subsystems.StandardConnectorService;
 import org.eclipse.ui.console.ConsolePlugin;
@@ -49,7 +51,7 @@ import org.eclipse.ui.console.MessageConsole;
 public class FTPConnectorService extends StandardConnectorService 
 {
 	protected FTPService _ftpService;
-	
+
 	public FTPConnectorService(IHost host, int port)
 	{		
 		super(FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_NAME,FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
@@ -109,7 +111,21 @@ public class FTPConnectorService extends StandardConnectorService
 		
 		
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.AbstractConnectorService#getHomeDirectory()
+	 */
+	public String getHomeDirectory() {
+		if (_ftpService!=null) {
+			IHostFile f = _ftpService.getUserHome();
+			if (f!=null) {
+				return f.getAbsolutePath();
+			}
+		}
+		//fallback while not yet connected
+		return super.getHomeDirectory();
+	}
+
 	private OutputStream getLoggingStream(String hostName,int portNumber)
 	{
 		MessageConsole messageConsole=null;

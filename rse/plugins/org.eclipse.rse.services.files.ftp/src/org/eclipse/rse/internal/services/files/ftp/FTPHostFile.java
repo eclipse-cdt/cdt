@@ -13,12 +13,12 @@
  * Contributors:
  * Michael Berger (IBM) - Fixing 140408 - FTP upload does not work
  * Javier Montalvo Orús (Symbian) - Migrate to jakarta commons net FTP client
- * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as 
- *    anonymous on ftp.wacom.com
+ * Javier Montalvo Orus (Symbian) - Fixing 161211 - Cannot expand /pub folder as anonymous on ftp.wacom.com
  * Javier Montalvo Orus (Symbian) - Fixing 161238 - [ftp] connections to VMS servers are not usable
  * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
  * Javier Montalvo Orus (Symbian) - [197758] Unix symbolic links are not classified as file vs. folder   
  * Javier Montalvo Orus (Symbian) - [198272] FTP should return classification for symbolic links so they show a link overlay
+ * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -27,6 +27,7 @@ package org.eclipse.rse.internal.services.files.ftp;
 import java.io.File;
 
 import org.apache.commons.net.ftp.FTPFile;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IHostFile;
 
@@ -123,15 +124,19 @@ public class FTPHostFile implements IHostFile
 		if (isRoot() || _parentPath==null) {
 			return getName();
 		} else {
-			StringBuffer path = new StringBuffer(getParentPath());
-			if (!_parentPath.endsWith("/") && !_parentPath.endsWith("\\"))//$NON-NLS-1$ //$NON-NLS-2$
+			String parentPath = getParentPath();
+			StringBuffer path = new StringBuffer(parentPath);
+			if (!parentPath.endsWith("/") && !parentPath.endsWith("\\"))//$NON-NLS-1$ //$NON-NLS-2$
 			{
-				path.append('/');
+				//TODO IFileService should have a method for this
+				String sep = PathUtility.getSeparator(parentPath);
+				if (!parentPath.endsWith(sep)) {
+					path.append(sep);
+				}
 			}
 			path.append(getName());
 			return path.toString();
 		}
-		
 	}
 
 	public long getModifiedDate()

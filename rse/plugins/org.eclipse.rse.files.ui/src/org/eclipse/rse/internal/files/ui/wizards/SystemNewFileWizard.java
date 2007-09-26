@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Rupen Mardirossian	(IBM) - [187530] Commented out line 192, in order to stop logging of SystemMessageException
+ * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
@@ -174,7 +175,7 @@ public class SystemNewFileWizard
             IRemoteFile newFile = null;         
             IProgressMonitor monitor = new NullProgressMonitor();
             try {    	
-                IRemoteFile newFilePath = rfss.getRemoteFileObject(absName, monitor); 
+                IRemoteFile newFilePath = rfss.getRemoteFileObject(parentFolder, name, monitor); 
                 newFile = rfss.createFile(newFilePath, monitor);
             } catch (RemoteFileIOException exc ) {
                SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

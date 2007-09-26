@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - Adapted from LocalHostShell.
  * David McKnight   (IBM)        - [191599] Use the remote encoding specified in the host property page
  * David McKnight   (IBM)        - [196301] Check that the remote encoding isn't null before using it
+ * Martin Oberhuber (Wind River) - [204744] Honor encoding in SSH command input field
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.shell;
@@ -22,7 +23,9 @@ package org.eclipse.rse.internal.services.ssh.shell;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
 
@@ -64,7 +67,7 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    //	((ChannelShell)fChannel).setPty(false);
 		    //}
 		    
-		    //Try to set the user envionment. On most sshd configurations, this will
+		    //Try to set the user environment. On most sshd configurations, this will
 		    //not work since in sshd_config, PermitUserEnvironment and AcceptEnv
 		    //settings are disabled. Still, it's worth a try.
 		    if (environment!=null && environment.length>0 && fChannel instanceof ChannelShell) {
@@ -92,13 +95,16 @@ public class SshHostShell extends AbstractHostShell implements IHostShell {
 		    }
 			fStderrHandler = new SshShellOutputReader(this, null,true);
 			OutputStream outputStream = fChannel.getOutputStream();
-			//TODO check if encoding or command to execute needs to be considered
-			//If a command is given, it might be possible to do without a Thread
-			//Charset cs = Charset.forName(encoding);
-			//PrintWriter outputWriter = new PrintWriter(
-			//		new BufferedWriter(new OutputStreamWriter(outputStream,cs)));
-			PrintWriter outputWriter = new PrintWriter(outputStream);
-			fShellWriter = new SshShellWriterThread(outputWriter);
+			if (encoding!=null) {
+				//use specified encoding
+				Charset cs = Charset.forName(encoding);
+				PrintWriter outputWriter = new PrintWriter(
+						new OutputStreamWriter(outputStream,cs));
+				fShellWriter = new SshShellWriterThread(outputWriter);
+			} else {
+				PrintWriter outputWriter = new PrintWriter(outputStream);
+				fShellWriter = new SshShellWriterThread(outputWriter);
+			}
 		    fChannel.connect();
 		    if (initialWorkingDirectory!=null && initialWorkingDirectory.length()>0 
 		    	&& !initialWorkingDirectory.equals(".") //$NON-NLS-1$

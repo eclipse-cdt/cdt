@@ -64,7 +64,7 @@ import org.eclipse.rse.services.files.RemoteFileSecurityException;
 public class SftpFileService extends AbstractFileService implements IFileService, ISshService
 {
 
-	private class SftpBufferedInputStream extends BufferedInputStream {
+	private static class SftpBufferedInputStream extends BufferedInputStream {
 		
 		private ChannelSftp channel;
 		
@@ -99,7 +99,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 	}
 	
-	private class SftpBufferedOutputStream extends BufferedOutputStream {
+	private static class SftpBufferedOutputStream extends BufferedOutputStream {
 		
 		private ChannelSftp channel;
 		
@@ -574,7 +574,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	}
 	
 	public IHostFile getUserHome() {
-		//TODO Assert: this is only called after we are connected
+		//As per bug 204710, this may be called before we are connected
 		if (fUserHome!=null) {
 			int lastSlash = fUserHome.lastIndexOf('/');
 			String name = fUserHome.substring(lastSlash + 1);	
@@ -582,12 +582,15 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			try {
 				return getFile(parent, name, null);
 			} catch(SystemMessageException e) {
-				//Error getting user home -> return a default below
+				//Error getting user home -> return a handle
+				//Returning the home path as a Root is the safest we can do, since it will
+				//let users know what the home path is, and the "My Home" filter will be
+				//set to correct target. See also bug 204710.
+				return new SftpHostFile("", fUserHome, true, true, false, 0, 0); //$NON-NLS-1$
 			}
 		}
-		//Could not determine user home
-		//return new SftpHostFile(".",".",true,false,false,0,0); //$NON-NLS-1$ //$NON-NLS-2$
-		return new SftpHostFile("/", "/", true, true, false, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
+		//Bug 203490, bug 204710: Could not determine user home
+		return null;
 	}
 
 	public IHostFile[] getRoots(IProgressMonitor monitor) {

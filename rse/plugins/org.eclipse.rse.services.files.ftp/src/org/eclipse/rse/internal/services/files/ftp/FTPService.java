@@ -60,6 +60,7 @@
  * Javier Montalvo Orus (Symbian) - [199243] Renaming a file in an FTP-based EFS folder hangs all of Eclipse
  * Martin Oberhuber (Wind River) - [203306] Fix Deadlock comparing two files on FTP
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
+ * Martin Oberhuber (Wind River) - [203490] Fix NPE in FTPService.getUserHome()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -888,8 +889,14 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile getUserHome()
 	{
+		if (_userHome==null) {
+			//As per bug 204710, this may be called before we are connected.
+			//Returning null in this case is safest, see also SftpFileService.
+			return null;
+		}
 		return new FTPHostFile("",_userHome,true,true,0,0,true); //$NON-NLS-1$
 	}
+
 
 	/*
 	 * (non-Javadoc)

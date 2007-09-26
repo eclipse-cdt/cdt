@@ -16,18 +16,17 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-
 import gnu.io.CommPortOwnershipListener;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
+
+import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 /**
  * UNDER CONSTRUCTION
@@ -68,11 +67,6 @@ public class SerialPortHandler implements
 	}
 
 	public void onSerialOwnershipRequested(Object data) {
-		if (fConn.isPortInUse()) {
-			fConn.setPortInUse(false);
-			return;
-		}
-
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				String[] args = new String[] { fConn.getSerialSettings().getSerialPort() };
@@ -80,7 +74,7 @@ public class SerialPortHandler implements
 
 				if (!MessageDialog.openQuestion(fControl.getShell(), SerialMessages.PROP_TITLE, strMsg))
 					return;
-				fControl.setState(TerminalState.CONNECTING);
+				fConn.disconnect();
 			}
 			
 		});

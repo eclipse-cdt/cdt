@@ -13,6 +13,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
  * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
+ * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -61,6 +62,8 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	private static final int CONNECT_DEFAULT_TIMEOUT = 60; //seconds
     private Session session;
     private SessionLostHandler fSessionLostHandler;
+	/** Indicates the default string encoding on this platform */
+	private static String _defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 
 	public SshConnectorService(IHost host) {
 		super(SshConnectorResources.SshConnectorService_Name, SshConnectorResources.SshConnectorService_Description, host, SSH_DEFAULT_PORT);
@@ -208,6 +211,15 @@ public class SshConnectorService extends StandardConnectorService implements ISs
 	//and IFileService getFileService().
     public Session getSession() {
     	return session;
+    }
+    
+    public String getControlEncoding() {
+		//TODO this code should be in IHost
+		String encoding = getHost().getDefaultEncoding(false);
+		if (encoding==null) encoding = getHost().getDefaultEncoding(true);
+		if (encoding==null) encoding = _defaultEncoding;
+		//</code to be in IHost>
+		return encoding;
     }
 
     /**

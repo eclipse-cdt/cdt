@@ -37,7 +37,7 @@
  * Javier Montalvo Orus (Symbian) - Fixing 168120 - [ftp] root filter resolves to home dir
  * Javier Montalvo Orus (Symbian) - Fixing 169680 - [ftp] FTP files subsystem and service should use passive mode
  * Javier Montalvo Orus (Symbian) - Fixing 174828 - [ftp] Folders are attempted to be removed as files
- * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP sould provide API to allow clients register their own FTPListingParser
+ * Javier Montalvo Orus (Symbian) - Fixing 176216 - [api] FTP should provide API to allow clients register their own FTPListingParser
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Javier Montalvo Orus (Symbian) - improved autodetection of FTPListingParser
  * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
@@ -61,6 +61,7 @@
  * Martin Oberhuber (Wind River) - [203306] Fix Deadlock comparing two files on FTP
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  * Martin Oberhuber (Wind River) - [203490] Fix NPE in FTPService.getUserHome()
+ * Martin Oberhuber (Wind River) - [203500] Support encodings for FTP paths
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -74,6 +75,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +98,8 @@ import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.PathUtility;
+import org.eclipse.rse.services.clientserver.messages.IndicatorException;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
@@ -117,6 +121,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	private transient String _userId;
 	private transient String _password;
 	private transient int _portNumber;
+	private transient String _controlEncoding; //Encoding to be used for file and path names
 	
 	private OutputStream _ftpLoggingOutputStream;
 	private IPropertySet _ftpPropertySet;
@@ -273,13 +278,69 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	{
 		_entryParserFactory = entryParserFactory;
 	}
+	
+	/**
+     * Set the character encoding to be used on the FTP command channel.
+     * The encoding must be compatible with ASCII since FTP commands will
+     * be sent with the same encoding. Therefore, wide
+     * (16-bit) encodings are not supported.
+     * @param encoding Encoding to set
+     */ 
+	public void setControlEncoding(String encoding)
+	{
+		_controlEncoding = encoding;
+	}
 
+	/**
+	 * Check whether the given Unicode String can be properly represented with the
+	 * specified control encoding. Throw a SystemMessageException if it turns out
+	 * that information would be lost.
+	 * @param s String to check
+	 * @return the original String or a quoted or re-coded version if possible
+	 * @throws SystemMessageException if information is lost
+	 */
+	protected String checkEncoding(String s) throws SystemMessageException {
+		String encoding = _controlEncoding!=null ? _controlEncoding : getFTPClient().getControlEncoding();
+		try {
+			byte[] bytes = s.getBytes(encoding);
+			String decoded = new String(bytes, encoding);
+			if (!s.equals(decoded)) {
+				int i=0;
+				int lmax = Math.min(s.length(), decoded.length()); 
+				while( (i<lmax) && (s.charAt(i)==decoded.charAt(i))) {
+					i++;
+				}
+				//String sbad=s.substring(Math.max(i-2,0), Math.min(i+2,lmax));
+				char sbad = s.charAt(i);
+				//FIXME Need to externalize this message in 3.0
+				String msg = "Cannot express character \'"+sbad+"\'(0x"+Integer.toHexString(sbad)  +") with " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					+ "encoding \""+encoding+"\". "; //$NON-NLS-1$ //$NON-NLS-2$ 
+				msg += "Please specify a different encoding in host properties.";  //$NON-NLS-1$
+				throw new UnsupportedEncodingException(msg);
+			}
+			return s;
+		} catch(UnsupportedEncodingException e) {
+			try {
+				//SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),"Please specify a different encoding in host properties."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				SystemMessage msg = new SystemMessage("RSE","F","9999",'E',e.getMessage(),""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				//throw new RemoteFileIOException(new SystemMessageException(msg));
+				throw new SystemMessageException(msg);
+			} catch(IndicatorException ind) {
+				throw new RemoteFileIOException(e);
+			}
+		}
+	}
+	
 	public void connect() throws RemoteFileSecurityException,IOException
 	{
 		
 		if (_ftpClient == null)
 		{
 			_ftpClient = new FTPClient();
+			// Encoding of control connection
+			if(_controlEncoding!=null) {
+				_ftpClient.setControlEncoding(_controlEncoding);
+			}
 		}
 
 		if(_ftpLoggingOutputStream!=null)
@@ -403,6 +464,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		if (_ftpClient == null)
 		{
 			_ftpClient = new FTPClient();
+			// Encoding of control connection
+			if(_controlEncoding!=null) {
+				_ftpClient.setControlEncoding(_controlEncoding);
+			}
 		}
 		
 		if(_hostName!=null)
@@ -433,6 +498,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		FTPClient ftpClient = new FTPClient();
 		boolean ok=false;
 		try {
+			ftpClient.setControlEncoding(_ftpClient.getControlEncoding());
 			ftpClient.connect(_ftpClient.getRemoteAddress());
 			ftpClient.login(_userId,_password);
 			
@@ -485,6 +551,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	protected FTPHostFile getFileInternal(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
+    	remoteParent = checkEncoding(remoteParent);
+    	fileName = checkEncoding(fileName);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
 				throw new RemoteFileCancelledException();
@@ -584,6 +652,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	protected IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException
 	{
+    	parentPath = checkEncoding(parentPath);
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
 				throw new RemoteFileCancelledException();
@@ -676,6 +745,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{ 
 		boolean retValue = true;
+    	remoteParent = checkEncoding(remoteParent);
+    	remoteFile = checkEncoding(remoteFile);
 		
 		if (monitor!=null){
 			if (monitor.isCanceled()) {
@@ -758,6 +829,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean retValue = true;
+    	remoteParent = checkEncoding(remoteParent);
+    	remoteFile = checkEncoding(remoteFile);
 		
 		try
 		{
@@ -897,7 +970,6 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		return new FTPHostFile("",_userHome,true,true,0,0,true); //$NON-NLS-1$
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.IFileService#getRoots(org.eclipse.core.runtime.IProgressMonitor)
@@ -924,7 +996,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public boolean delete(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException {
 		boolean hasSucceeded = false;
-		
+    	remoteParent = checkEncoding(remoteParent);
+    	fileName = checkEncoding(fileName);
+				
 		MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
 		progressMonitor.init(FTPServiceResources.FTP_File_Service_Deleting_Task+fileName, 1);  
 		
@@ -980,8 +1054,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * @see org.eclipse.rse.services.files.IFileService#rename(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean rename(String remoteParent, String oldName, String newName, IProgressMonitor monitor) throws SystemMessageException {
-
 		boolean success = false;
+    	remoteParent = checkEncoding(remoteParent);
+    	oldName = checkEncoding(oldName);
+    	newName = checkEncoding(newName);
 		
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
@@ -1026,8 +1102,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * @see org.eclipse.rse.services.files.IFileService#move(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException{
-		
 		boolean success = false;
+    	srcParent = checkEncoding(srcParent);
+    	srcName = checkEncoding(srcName);
+    	tgtParent = checkEncoding(tgtParent);
+    	tgtName = checkEncoding(tgtName);
 
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
@@ -1061,6 +1140,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 */
 	public IHostFile createFolder(String remoteParent, String folderName, IProgressMonitor monitor) throws SystemMessageException
 	{
+		remoteParent = checkEncoding(remoteParent);
+		folderName = checkEncoding(folderName);
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE))
 		{
 			try
@@ -1093,7 +1174,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
      * @see org.eclipse.rse.services.files.IFileService#createFile(org.eclipse.core.runtime.IProgressMonitor, java.lang.String, java.lang.String)
      */
     public IHostFile createFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException{
-
+    	remoteParent = checkEncoding(remoteParent);
+    	fileName = checkEncoding(fileName);
     	try {
 			File tempFile = File.createTempFile("ftp", "temp");  //$NON-NLS-1$  //$NON-NLS-2$
 			tempFile.deleteOnExit();
@@ -1385,7 +1467,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		
+    	remoteParent = checkEncoding(remoteParent);
+    	remoteFile = checkEncoding(remoteFile);
+				
 		if (monitor != null && monitor.isCanceled()){
 			throw new RemoteFileCancelledException();
 		}

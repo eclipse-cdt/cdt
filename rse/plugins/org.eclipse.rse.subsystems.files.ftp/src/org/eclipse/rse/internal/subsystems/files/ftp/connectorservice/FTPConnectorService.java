@@ -21,6 +21,7 @@
  * David Dykstal (IBM) - added RESID_FTP_SETTINGS_LABEL
  * David McKnight (IBM) - [196632] [ftp] Passive mode setting does not work
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
+ * Martin Oberhuber (Wind River) - [203500] Support encodings for FTP paths
  ********************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.connectorservice;
@@ -52,6 +53,9 @@ public class FTPConnectorService extends StandardConnectorService
 {
 	protected FTPService _ftpService;
 
+	/** Indicates the default string encoding on this platform */
+	private static String _defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
+	
 	public FTPConnectorService(IHost host, int port)
 	{		
 		super(FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_NAME,FTPSubsystemResources.RESID_FTP_CONNECTORSERVICE_DESCRIPTION, host, port);
@@ -105,11 +109,17 @@ public class FTPConnectorService extends StandardConnectorService
 		_ftpService.setLoggingStream(getLoggingStream(info.getHostname(),getPort()));
 		_ftpService.setPropertySet(propertySet);
 		_ftpService.setFTPClientConfigFactory(FTPClientConfigFactory.getParserFactory());
-		
+		//TODO this code should be in IHost
+		String encoding = getHost().getDefaultEncoding(false);
+		if (encoding==null) encoding = getHost().getDefaultEncoding(true);
+		//TODO Here, we set the FTP default encoding same as the local encoding.
+		//Another alternative would be to set ISO-8859-1, which is the
+		//default-default internal to FTP, or keep it "null".
+		if (encoding==null) encoding = _defaultEncoding;
+		//</code to be in IHost>
+		_ftpService.setControlEncoding(encoding);
 		
 		_ftpService.connect();
-		
-		
 	}
 
 	/* (non-Javadoc)

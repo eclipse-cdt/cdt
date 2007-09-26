@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
  *******************************************************************************/
 package org.eclipse.rse.internal.services.ssh;
 
@@ -25,5 +25,8 @@ public interface ISshSessionProvider
 	
 	/* Inform the connectorService that a session has been lost. */
 	public void handleSessionLost();
+	
+	/* Return the encoding to be used for file and directory names */
+	public String getControlEncoding();
 	
 }

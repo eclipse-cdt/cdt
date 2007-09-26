@@ -338,46 +338,39 @@ public final class MBSCustomPageManager
 		if(page == null)
 			return false;
 		
-		if (getPageHideStatus(pageID)) return false; 
+		if (getPageHideStatus(pageID)) 
+			return false; 
 		
 		//	first, find out what project type, toolchain, and nature have been set
 		Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(PAGE_ID);
 
 		Object projectType = pagePropertiesMap.get(PROJECT_TYPE);
-		Set toolchainSet = (Set) pagePropertiesMap.get(TOOLCHAIN);
+		List toolchainList = (List) pagePropertiesMap.get(TOOLCHAIN);
 		Object nature = pagePropertiesMap.get(NATURE);
 
 		//		 does the page follow nature and project type constraints?
 		if (page.shouldBeVisibleForNature(nature)
 				&& page.shouldBeVisibleForProjectType(projectType))
 		{
-
 			MBSCustomPageData.ToolchainData[] toolchainData = page.getToolchains();
-
 			// if no toolchains are specified then we're done
-			if (toolchainData == null || toolchainSet == null)
-			{
+			if (toolchainData == null || toolchainList == null)
 				return true;
-			}
 
 			// otherwise, iterate through the toolchains to see if one matches
 			for (int k = 0; k < toolchainData.length; k++)
 			{
 				// check all toolchains, see if there is one for which we should be present
-				Iterator toolchainIterator = toolchainSet.iterator();
-
+				Iterator toolchainIterator = toolchainList.iterator();
 				while (toolchainIterator.hasNext())
 				{
 					IToolChain toolchain = (IToolChain) toolchainIterator.next();
 					if(toolchain != null){
 						String id = ManagedBuildManager.getIdFromIdAndVersion(toolchain.getId());
 						String version = ManagedBuildManager.getVersionFromIdAndVersion(toolchain.getId());
-	
 						// check the ID and version
 						if (page.shouldBeVisibleForToolchain(id, version))
-						{
 							return true;
-						}
 					}
 				}
 			}
@@ -459,56 +452,20 @@ public final class MBSCustomPageManager
 	{
 		// find the current page in the set of pages
 		MBSCustomPageData pageData = getPageData(currentPageID);
-		MBSCustomPageData currentData = null;
-
 		Iterator iterator = pageSet.iterator();
-
 		while (iterator.hasNext())
 		{
-			currentData = (MBSCustomPageData) iterator.next();
-
-			if (currentData == pageData)
-			{
-
-				// we found the page we're looking for so stop looking
-				break;
-			}
-		}
-
-		if (currentData == pageData)
-		{
-			// we found our page
-			// look for the next page that satisfies all project type, toolchain, and nature criteria
-
-			// first, find out what project type, toolchain, and nature have been set
-//			Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(PAGE_ID);
-
-//			String projectType = pagePropertiesMap.get(PROJECT_TYPE).toString();
-
-//			Set toolchainSet = (Set) pagePropertiesMap.get(TOOLCHAIN);
-
-//			String nature = pagePropertiesMap.get(NATURE).toString();
-
-			IWizardPage nextPage = null;
-
-			boolean pageFound = false;
-
-			while (iterator.hasNext() && !pageFound)
-			{
-				MBSCustomPageData potentialPage = (MBSCustomPageData) iterator.next();
-
-				if (isPageVisible(potentialPage.getID()))
+			if (pageData.equals((MBSCustomPageData)iterator.next())) {
+				IWizardPage nextPage = null;
+				while (iterator.hasNext() && nextPage == null)
 				{
-					pageFound = true;
-					nextPage = potentialPage.getWizardPage();
+					MBSCustomPageData potentialPage = (MBSCustomPageData) iterator.next();
+					if (isPageVisible(potentialPage.getID()))
+						nextPage = potentialPage.getWizardPage();
 				}
-			}
-
-			if (pageFound)
 				return nextPage;
-
+			}
 		}
-
 		return null;
 	}
 

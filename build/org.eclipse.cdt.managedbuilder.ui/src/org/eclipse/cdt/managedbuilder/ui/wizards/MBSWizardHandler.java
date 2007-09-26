@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -30,6 +31,7 @@ import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
@@ -45,6 +47,7 @@ import org.eclipse.cdt.ui.templateengine.Template;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUI;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUIUtil;
 import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
+import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.cdt.ui.wizards.EntryDescriptor;
@@ -96,6 +99,7 @@ public class MBSWizardHandler extends CWizardHandler {
 //	private EntryDescriptor entryDescriptor = null;
 	private EntryInfo entryInfo;
 	protected CfgHolder[] cfgs = null;
+	protected IWizardPage[] customPages;
 	
 	protected static final class EntryInfo {
 		private SortedMap tcs;
@@ -365,16 +369,106 @@ public class MBSWizardHandler extends CWizardHandler {
 			}			
 			table.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					if (listener != null)
-						listener.toolChainListChanged(table.getSelectionCount());
+					handleToolChainSelection();
 				}});
 		}
 		updatePreferred(preferred);
+		loadCustomPages();
 		table.setVisible(true);
 		parent.layout();
 		if (fConfigPage != null) fConfigPage.pagesLoaded = false;
 	}
 
+	private void handleToolChainSelection() {
+		loadCustomPages();
+		// Notify listener, if any.
+		if (listener != null)
+			listener.toolChainListChanged(table.getSelectionCount());
+	}
+	
+	private void loadCustomPages() {
+		if (! (getWizard() instanceof CDTCommonProjectWizard)) 
+			return; // not probable 
+		
+		CDTCommonProjectWizard wz = (CDTCommonProjectWizard)getWizard();
+		
+		if (customPages == null) {
+			MBSCustomPageManager.init();
+			MBSCustomPageManager.addStockPage(getStartingPage(), CDTMainWizardPage.PAGE_ID);
+			MBSCustomPageManager.addStockPage(getConfigPage(), CDTConfigWizardPage.PAGE_ID);
+
+			// load all custom pages specified via extensions
+			try	{
+				MBSCustomPageManager.loadExtensions();
+			} catch (BuildException e) { e.printStackTrace(); }
+
+			customPages = MBSCustomPageManager.getCustomPages();
+
+			if (customPages == null) 
+				customPages = new IWizardPage[0];
+			
+			for (int k = 0; k < customPages.length; k++) 
+				customPages[k].setWizard(wz);
+		}
+		setCustomPagesFilter(wz);
+	}
+
+	private void setCustomPagesFilter(CDTCommonProjectWizard wz) {
+		String[] natures = wz.getNatures();
+		if (natures == null || natures.length == 0)
+			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, null);
+		else if (natures.length == 1)
+			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, natures[0]);
+		else {
+			Set x = new TreeSet();
+			for (int i=0; i<natures.length; i++) x.add(natures[i]);
+			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, x);
+		}
+		// Project type can be obtained either from Handler (for old-style projects),
+		// or multiple values will be got from separate ToolChains (for new-style).
+		boolean ptIsNull = (getProjectType() == null);
+		if (!ptIsNull)
+			MBSCustomPageManager.addPageProperty(
+					MBSCustomPageManager.PAGE_ID, 
+					MBSCustomPageManager.PROJECT_TYPE, 
+					getProjectType().getId()
+				);
+
+		IToolChain[] tcs = getSelectedToolChains();
+		int n = (tcs == null) ? 0 : tcs.length;
+		List x = new ArrayList();			
+		Set y = new TreeSet();	
+		for (int i=0; i<n; i++) {
+			if (tcs[i] == null) // --- NO TOOLCHAIN ---
+				continue;       // has no custom pages.
+			x.add(tcs[i]);
+
+			IConfiguration cfg = tcs[i].getParent();
+			if (cfg == null)
+				continue;
+			IProjectType pt = cfg.getProjectType();
+			if (pt != null)
+				y.add(pt.getId());
+		}
+		MBSCustomPageManager.addPageProperty(
+				MBSCustomPageManager.PAGE_ID, 
+				MBSCustomPageManager.TOOLCHAIN, 
+				x);
+		
+		if (ptIsNull) {
+			if (y.size() > 0)
+				MBSCustomPageManager.addPageProperty(
+						MBSCustomPageManager.PAGE_ID, 
+						MBSCustomPageManager.PROJECT_TYPE, 
+						y);
+			else
+				MBSCustomPageManager.addPageProperty(
+						MBSCustomPageManager.PAGE_ID, 
+						MBSCustomPageManager.PROJECT_TYPE, 
+						null);
+		}
+	}
+	
 	public void handleUnSelection() {
 		if (table != null) {
 			table.setVisible(false);
@@ -450,8 +544,6 @@ public class MBSWizardHandler extends CWizardHandler {
 		doPostProcess(project);
 		
 		// process custom pages
-//		if (fConfigPage != null && fConfigPage.pagesLoaded)
-		getConfigPage().addCustomPages();
 		doCustom();
 	}
 	
@@ -499,8 +591,6 @@ public class MBSWizardHandler extends CWizardHandler {
 		}
 	}
 	public String getHeader() { return head; }
-//	public String getName() { return name; }
-//	public Image getIcon() { return null; /*image;*/ }
 	public boolean isDummy() { return false; }
 	public boolean supportsPreferred() { return true; }
 
@@ -648,6 +738,11 @@ public class MBSWizardHandler extends CWizardHandler {
 		
 		if(!entryInfo.canFinish(startingPage, getConfigPage()))
 			return false;
+		
+		if (customPages != null)
+			for (int i=0; i<customPages.length; i++)
+				if (!customPages[i].isPageComplete())
+					return false;
 		
 		return super.canFinich();
 	}

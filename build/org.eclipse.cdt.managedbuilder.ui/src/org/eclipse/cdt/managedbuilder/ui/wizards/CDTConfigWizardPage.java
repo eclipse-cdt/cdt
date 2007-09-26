@@ -12,11 +12,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
 
-import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -24,7 +20,6 @@ import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIImages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.UIMessages;
 import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
-import org.eclipse.cdt.ui.wizards.CDTMainWizardPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -73,6 +68,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	private MBSWizardHandler handler;
 	public boolean pagesLoaded = false;
 	private IToolChain[] visitedTCs = null;
+	IWizardPage[] customPages = null;
 	
 	public CDTConfigWizardPage(MBSWizardHandler h) {
         super(UIMessages.getString("CDTConfigWizardPage.0")); //$NON-NLS-1$
@@ -80,33 +76,6 @@ public class CDTConfigWizardPage extends WizardPage {
         handler = h;
         setWizard(h.getWizard());
     }
-	
-	void addCustomPages() {
-		if (pagesLoaded) return;
-		pagesLoaded = true;
-		
-		if (! (getWizard() instanceof CDTCommonProjectWizard)) return; 
-		CDTCommonProjectWizard wz = (CDTCommonProjectWizard)getWizard();
-		
-		IWizardPage p = getWizard().getStartingPage();  
-		MBSCustomPageManager.init();
-		MBSCustomPageManager.addStockPage(p, CDTMainWizardPage.PAGE_ID);
-		MBSCustomPageManager.addStockPage(this, CDTConfigWizardPage.PAGE_ID);
-		
-		 setCustomPagesFilter(wz);
-		// load all custom pages specified via extensions
-		try	{
-			MBSCustomPageManager.loadExtensions();
-		} catch (BuildException e) { e.printStackTrace(); }
-		
-		IWizardPage[] customPages = MBSCustomPageManager.getCustomPages();
-		if (customPages != null) {
-			for (int k = 0; k < customPages.length; k++) {
-				wz.addPage(customPages[k]);
-			}
-		}
-	}
-	
 	
 	public CfgHolder[] getCfgItems(boolean getDefault) {
 		CfgHolder[] its;
@@ -358,50 +327,7 @@ public class CDTConfigWizardPage extends WizardPage {
 	}
 	
 	public IWizardPage getNextPage() {
-		addCustomPages();
+		pagesLoaded = true;
 		return MBSCustomPageManager.getNextPage(PAGE_ID);
-	}
-	
-	private void setCustomPagesFilter(CDTCommonProjectWizard wz) {
-		String[] natures = wz.getNatures();
-		if (natures == null || natures.length == 0)
-			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, null);
-		else if (natures.length == 1)
-			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, natures[0]);
-		else {
-			Set x = new TreeSet();
-			for (int i=0; i<natures.length; i++) x.add(natures[i]);
-			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.NATURE, x);
-		}
-		// Project type can be obtained either from Handler (for old-style projects),
-		// or multiple values will be got from separate ToolChains (for new-style).
-		boolean ptIsNull = (handler.getProjectType() == null);
-		if (!ptIsNull)
-			MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, handler.getProjectType().getId());
-
-		IToolChain[] tcs = handler.getSelectedToolChains();
-		int n = (tcs == null) ? 0 : tcs.length;
-		Set x = new TreeSet();			
-		Set y = new TreeSet();			
-		for (int i=0; i<n; i++) {
-			if (tcs[i] == null) // --- NO TOOLCHAIN ---
-				continue;       // has no custom pages. 
-			x.add(tcs[i]);
-
-			IConfiguration cfg = tcs[i].getParent();
-			if (cfg == null)
-				continue;
-			IProjectType pt = cfg.getProjectType();
-			if (pt != null)
-				y.add(pt.getId());
-		}
-		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.TOOLCHAIN, x);
-		if (ptIsNull) {
-			if (y.size() > 0)
-				MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, y);
-			else
-				MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, null);
-		}
-	}
-
+	}	
 }

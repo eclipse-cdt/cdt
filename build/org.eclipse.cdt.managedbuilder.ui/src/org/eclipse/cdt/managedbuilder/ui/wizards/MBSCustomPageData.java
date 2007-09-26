@@ -238,13 +238,11 @@ public final class MBSCustomPageData
 		// if no toolchains specified then always return true
 		if (toolchainSet.size() == 0)
 			return true;
-
+		
 		Iterator iterator = toolchainSet.iterator();
-
 		while (iterator.hasNext())
 		{
 			ToolchainData tcd = (ToolchainData) iterator.next();
-
 			// look for toolchain with same id.  The id in the tool-chain data should never
 			// contain a version suffix.
 			if (tcd.getId().equals(id))
@@ -252,22 +250,13 @@ public final class MBSCustomPageData
 				// if we don't check versions then we're done
 				if (tcd.getVersionsSupported() == null)
 					return true;
-
-				
-				
 				// is the toolchain of one of the specified versions?
-				for (int k = 0; k < tcd.getVersionsSupported().length; k++)
-				{
-					// check for an exact version match
+				for (int k = 0; k < tcd.getVersionsSupported().length; k++) {
 					if (tcd.getVersionsSupported()[k].equals(version))
-					{
 						return true;
-					}
 				}
-
 			}
 		}
-
 		return false;
 	}
 

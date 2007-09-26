@@ -40,7 +40,6 @@ public class SerialConnector implements ITerminalConnector {
 	private SerialPort fSerialPort;
     private CommPortIdentifier fSerialPortIdentifier;
 	private SerialPortHandler fTerminalSerialPortHandler;
-	private boolean fIsPortInUse;
 	private SerialSettings fSettings;
 	public SerialConnector() {
 	}
@@ -167,13 +166,6 @@ public class SerialConnector implements ITerminalConnector {
 	}
 	SerialPortHandler getSerialPortHandler() {
 		return fTerminalSerialPortHandler;
-	}
-	public boolean isPortInUse() {
-		return fIsPortInUse;
-	}
-	public void setPortInUse(boolean b) {
-		fIsPortInUse=true;
-		
 	}
 	public ISerialSettings getSerialSettings() {
 		return fSettings;

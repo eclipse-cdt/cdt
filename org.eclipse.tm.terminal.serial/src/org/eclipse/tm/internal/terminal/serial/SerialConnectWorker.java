@@ -58,7 +58,6 @@ public class SerialConnectWorker extends Thread {
 			fConn.setSerialPort(serialPort);
 			fControl.setState(TerminalState.CONNECTED);
 		} catch (PortInUseException portInUseException) {
-			fConn.setPortInUse(true);
 			fControl.setState(TerminalState.CLOSED);
 			fControl.setMsg("Connection Error!\n" + portInUseException.getMessage()); //$NON-NLS-1$
 

@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * David Dykstal (IBM) - [176577] wrong enablement of "Move up/down" in connection context menu
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;

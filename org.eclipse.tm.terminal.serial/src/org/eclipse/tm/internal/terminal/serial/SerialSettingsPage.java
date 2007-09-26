@@ -85,16 +85,25 @@ public class SerialSettingsPage implements ISettingsPage {
 		if(value==null)
 			return;
 		int nIndex = combo.indexOf(value);
-		if (nIndex == -1)
-			return;
+		if (nIndex == -1) {
+			if((combo.getStyle() & SWT.READ_ONLY)==0) {
+				combo.add(value);
+				nIndex = combo.indexOf(value);
+			} else {
+				return;
+			}			
+		}
 
 		combo.select(nIndex);
 		
 	}
 	private String getComboValue(Combo combo) {
 		int nIndex = combo.getSelectionIndex();
-		if (nIndex == -1)
-			return ""; //$NON-NLS-1$
+		if (nIndex == -1) {
+			if((combo.getStyle() & SWT.READ_ONLY)!=0)
+				return ""; //$NON-NLS-1$
+			return combo.getText();
+		}
 
 		return combo.getItem(nIndex);
 		
@@ -109,7 +118,7 @@ public class SerialSettingsPage implements ISettingsPage {
 		composite.setLayout(gridLayout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		fSerialPortCombo=addLabeledCombo(composite, SerialMessages.PORT + ":"); //$NON-NLS-1$
+		fSerialPortCombo=addLabeledCombo(composite, SerialMessages.PORT + ":",false); //$NON-NLS-1$
 		fBaudRateCombo=addLabeledCombo(composite, SerialMessages.BAUDRATE + ":"); //$NON-NLS-1$
 		fDataBitsCombo=addLabeledCombo(composite, SerialMessages.DATABITS + ":"); //$NON-NLS-1$
 		fStopBitsCombo=addLabeledCombo(composite, SerialMessages.STOPBITS + ":"); //$NON-NLS-1$
@@ -123,11 +132,18 @@ public class SerialSettingsPage implements ISettingsPage {
 	}
 
 	private Combo addLabeledCombo(Composite composite, String label) {
+		return addLabeledCombo(composite, label, true);
+	}
+	private Combo addLabeledCombo(Composite composite, String label,boolean readonly) {
 		new Label(composite, SWT.RIGHT).setText(label);
-		Combo combo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
+		int flags=SWT.DROP_DOWN;
+		if(readonly)
+			flags|=SWT.READ_ONLY;
+		Combo combo = new Combo(composite, flags);
 		combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		return combo;
 	}
+
 	private void loadCombo(Combo ctlCombo, List table) {
 		for (Iterator iter = table.iterator(); iter.hasNext();) {
 			String label = (String) iter.next();

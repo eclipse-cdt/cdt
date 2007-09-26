@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
+ * Martin Oberhuber (Wind River) - [204710] Update Javadoc to mention that getUserHome() may return null
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -153,8 +154,18 @@ public interface IFileService extends IService
 	public IHostFile[] getRoots(IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
-	 * @return the String containing the name of the user's home directory on this
-	 * connection that would be contained in implementations of this service.
+	 * Return the user's home directory on this connection.
+	 * 
+	 * The resulting IHostFile object is just a handle, so there is no guarantee 
+	 * that it refers to an existing file.
+	 * 
+	 * This method may also return <code>null</code> if the home directory could
+	 * not be determined (for instance, because the connection is not yet connected).
+	 * In this case, clients are encouraged to query the home directory again once
+	 * the connection is connected.
+	 *  
+	 * @return A handle to the current user's home directory, or <code>null</code>
+	 *     if the home directory could not be determined.  
 	 */
 	public IHostFile getUserHome();
 

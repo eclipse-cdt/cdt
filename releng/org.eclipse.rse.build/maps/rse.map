@@ -1,5 +1,5 @@
 feature@org.eclipse.rse=v20070926,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
-feature@org.eclipse.rse.core=v20070704,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
+feature@org.eclipse.rse.core=v20070926,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
 feature@org.eclipse.rse.dstore=v20070926,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
 feature@org.eclipse.rse.examples=v20070609,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/examples/org.eclipse.rse.examples-feature
 feature@org.eclipse.rse.ftp=v20070926,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature

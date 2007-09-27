@@ -33,6 +33,8 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	private int fSelectionStartCoumn;
 	private int fSelectionEndColumn;
 	private ITerminalTextDataSnapshot fSelectionSnapshot;
+	private String fCurrentSelection=""; //$NON-NLS-1$
+	private final Point fSelectionAnchor=new Point(0,0);
 
 	public AbstractTextCanvasModel(ITerminalTextDataSnapshot snapshot) {
 		fSnapshot=snapshot;
@@ -182,8 +184,22 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		else
 			return new Point(fSelectionStartCoumn,fSelectionStartLine);
 	}
+	public Point getSelectionAnchor() {
+		if(fSelectionStartLine<0)
+			return null;
+		return new Point(fSelectionAnchor.x,fSelectionAnchor.y);
+	}
+	public void setSelectionAnchor(Point anchor) {
+		fSelectionAnchor.x=anchor.x;
+		fSelectionAnchor.y=anchor.y;
+	}
 
 	public void setSelection(int startLine, int endLine, int startColumn, int endColumn) {
+//		System.err.println(startLine+","+endLine+","+startColumn+","+endColumn);
+		doSetSelection(startLine, endLine, startColumn, endColumn);
+		fCurrentSelection=extractSelectedText();
+	}
+	private void doSetSelection(int startLine, int endLine, int startColumn, int endColumn) {
 		assert(startLine<0 || startLine<=endLine);
 		if(startLine>=0) {
 			if(fSelectionSnapshot==null) {
@@ -201,7 +217,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		fSelectionStartCoumn = startColumn;
 		fSelectionEndColumn = endColumn;
 		if(fSelectionSnapshot!=null) {
-			fSelectionSnapshot.setInterestWindow(0, fSeletionEndLine+1);
+			fSelectionSnapshot.setInterestWindow(0, fSelectionSnapshot.getHeight());
 		}
 		int changedStart;
 		int changedEnd;
@@ -228,6 +244,13 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	}
 	
 	public String getSelectedText() {
+		return fCurrentSelection;
+	}
+	/**
+	 * Calculates the currently selected text
+	 * @return the currently selected text
+	 */
+	private String extractSelectedText() {
 		if(fSelectionStartLine<0 || fSelectionStartCoumn<0|| fSelectionSnapshot==null)
 			return ""; //$NON-NLS-1$
 		StringBuffer buffer=new StringBuffer();
@@ -255,8 +278,6 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	}
 	private void updateSelection() {
 		if (fSelectionSnapshot != null && fSelectionSnapshot.isOutOfDate()) {
-			// let's see if the selection text has changed since the last snapshot
-			String oldSelection = getSelectedText();
 			fSelectionSnapshot.updateSnapshot(true);
 			// has the selection moved?
 			if (fSelectionSnapshot != null && fSelectionStartLine >= 0 && fSelectionSnapshot.getScrollWindowSize() > 0) {
@@ -267,20 +288,22 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 						start = 0;
 					else
 						start = -1;
-				setSelection(start, end, fSelectionStartCoumn, fSelectionEndColumn);
+				doSetSelection(start, end, fSelectionStartCoumn, fSelectionEndColumn);
 			}
-			// have lines inside the selection changed?
-			if (fSelectionSnapshot != null && fSelectionSnapshot.getFirstChangedLine() <= fSeletionEndLine &&
-					fSelectionSnapshot.getLastChangedLine() >= fSelectionStartLine) {
+			// check if the content of the selection has changed. If the content has
+			// changed, clear the selection
+			if (fCurrentSelection.length()>0 && fSelectionSnapshot != null 
+					&& fSelectionSnapshot.getFirstChangedLine() <= fSeletionEndLine 
+					&& fSelectionSnapshot.getLastChangedLine() >= fSelectionStartLine) {
 				// has the selected text changed?
-				String newSelection = getSelectedText();
-				if (!oldSelection.equals(newSelection))
+				if (!fCurrentSelection.equals(extractSelectedText())) {
 					setSelection(-1, -1, -1, -1);
+				}
 			}
 			// update the observed window...
 			if (fSelectionSnapshot != null)
 				// todo make -1 to work!
-				fSelectionSnapshot.setInterestWindow(0, fSeletionEndLine+1);
+				fSelectionSnapshot.setInterestWindow(0, fSelectionSnapshot.getHeight());
 		}
 	}
 

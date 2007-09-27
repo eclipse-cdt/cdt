@@ -61,6 +61,10 @@ public interface ITextCanvasModel {
 	 * {@link Point#x} is the column and {@link Point#y} is the line. 
 	 */
 	Point getSelectionEnd();
+	
+	Point getSelectionAnchor();
+	
+	void setSelectionAnchor(Point anchor);
 	/**
 	 * @param startLine
 	 * @param endLine

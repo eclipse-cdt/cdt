@@ -84,6 +84,13 @@ public class TextCanvas extends GridCanvas {
 			public void mouseDown(MouseEvent e) {
 				if(e.button==1) { // left button
 					fDraggingStart=screenPointToCell(e.x, e.y);
+					if((e.stateMask&SWT.SHIFT)!=0) {
+						Point anchor=fCellCanvasModel.getSelectionAnchor();
+						if(anchor!=null)
+							fDraggingStart=anchor;
+					} else {
+						fCellCanvasModel.setSelectionAnchor(fDraggingStart);
+					}
 					fDraggingEnd=null;
 				}
 			}
@@ -204,7 +211,7 @@ public class TextCanvas extends GridCanvas {
 	}
 	public void selectAll() {
 		fCellCanvasModel.setSelection(0, fCellCanvasModel.getTerminalText().getHeight(), 0, fCellCanvasModel.getTerminalText().getWidth());
-		
+		fCellCanvasModel.setSelectionAnchor(new Point(0,0));
 	}
 	public boolean isEmpty() {
 		return false;

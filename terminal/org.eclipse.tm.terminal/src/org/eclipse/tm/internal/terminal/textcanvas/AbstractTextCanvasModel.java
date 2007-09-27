@@ -228,9 +228,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	}
 	
 	public String getSelectedText() {
-		if(fSelectionStartLine<0 || fSelectionSnapshot==null)
-			return ""; //$NON-NLS-1$
-		if(fSelectionStartLine<0 || fSelectionSnapshot==null)
+		if(fSelectionStartLine<0 || fSelectionStartCoumn<0|| fSelectionSnapshot==null)
 			return ""; //$NON-NLS-1$
 		StringBuffer buffer=new StringBuffer();
 		for (int line = fSelectionStartLine; line <= fSeletionEndLine; line++) {

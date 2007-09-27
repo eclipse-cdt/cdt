@@ -33,13 +33,16 @@
 <li><b>Apache Commons.Net and ORO</b> are now distributed as verbatim compies
   from the Orbit project, so they will not be changed any more.</li>
 -->
-<li>Several EFS related bugs have been fixed, and the EFS provider works reliably now.</li>
-<li>Some deadlocks have been discovered and fixed.</li>
-<li>Initial startup and initialization, as well as reading saved profiles, have been made more reliable.</li>
-<li>FTP passive mode has been fixed.</li>
+<li>Several EFS related bugs have been fixed, particularly for FTP, and the EFS provider works reliably now [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=192610">192610</a> and others].</li>
+<li>Terminal performance has been radically improved [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=165216">165216</a>]</li>
+<li>Some deadlocks have been discovered and fixed [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=199552">199552</a> and others].</li>
+<li>Initial startup and initialization, as well as reading saved profiles, have been made more reliable [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=202416">202416</a>].</li>
+<li>FTP passive mode has been fixed [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196632">196632</a>].</li>
+<li>Several encoding issues have been fixed [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=203500">203500</a> and others].</li>
+<li>Several archive handler related issues have been fixed for dstore [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198114">198114</a> and others].</li>
 </ul></li>
 <li>Use 
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-06-28&chfieldto=2007-08-16&chfield=resolution&cmdtype=doit">
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-06-28&chfieldto=2007-09-28&chfield=resolution&cmdtype=doit">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=2.0.1&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last milestone,
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-2.0.0.1-200707061039/index.php">
@@ -144,9 +147,9 @@ Use
 The following critical or major bugs are currently known.
 We'll strive to fix these as soon as possible.
 <ul>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196662">bug 196662</a> - maj - [refresh] Refresh performs queries in the Dispatch thread</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198143">bug 198143</a> - maj - [dstore][performance] Refresh a big directory takes very long time, and freezes workbench</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=203501">bug 203501</a> - maj - NPE in PFMetadataLocation when saving RSEDOM</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

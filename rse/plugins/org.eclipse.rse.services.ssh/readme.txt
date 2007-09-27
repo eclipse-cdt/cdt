@@ -9,10 +9,7 @@ TODO in the code). But it is functional for setting up an ssh shell
 connection.
 
 __Requirements:__
-The ssh service plugin has been tested with RSE M2 candidate
-(CVS HEAD as of May 09, 2006) and Eclipse 3.2 RC3.
-The Eclipse Platform Team / CVS feature is needed for the 
-com.jcraft.jsh plugin and the org.eclipse.team.cvs.ui plugin.
+The ssh service plugin requires Eclipse 3.3 or later.
 
 __Installation:__
 You need an Eclipse PDE Workspace with RSE.

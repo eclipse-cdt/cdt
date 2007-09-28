@@ -257,9 +257,12 @@ else
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
-        site.xml > site.xml.new
+    sed -e '/<!-- BEGIN_2_0_2 -->/,/<!-- END_2_0_2 -->/d' \
+        site.xml > site.xml.new1
+    sed -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0 -->/d' \
+        site.xml.new1 > site.xml.new
     mv -f site.xml.new site.xml
+    rm site.xml.new1
 fi
 FEATURES=`grep 'features/[^ ]*\.qualifier\.jar' site.xml | sed -e 's,^[^"]*"features/\([^0-9]*[0-9][0-9.]*\).*$,\1,g'`
 for feature in $FEATURES ; do

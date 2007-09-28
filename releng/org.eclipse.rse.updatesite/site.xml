@@ -72,43 +72,43 @@
    </category-def>
 <!-- END_2_0_patches -->
 <!-- BEGIN_2_0_1 -->
-   <feature url="features/org.eclipse.rse.core_2.0.1.qualifier.jar" id="org.eclipse.rse.core" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.core_2.0.1.v20070926-7P-7BEB7sQRxSFkT.jar" id="org.eclipse.rse.core" version="2.0.1.v20070926-7P-7BEB7sQRxSFkT">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.dstore_2.0.1.qualifier.jar" id="org.eclipse.rse.dstore" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.dstore_2.0.1.v20070926-7F-4DUUEF6FALu.jar" id="org.eclipse.rse.dstore" version="2.0.1.v20070926-7F-4DUUEF6FALu">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ftp_2.0.1.qualifier.jar" id="org.eclipse.rse.ftp" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.ftp_2.0.1.v20070926-7737__kE77Y7dDK4I7B.jar" id="org.eclipse.rse.ftp" version="2.0.1.v20070926-7737__kE77Y7dDK4I7B">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.local_2.0.1.qualifier.jar" id="org.eclipse.rse.local" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.local_2.0.1.v20070705-7_-2AgI99h9l9l.jar" id="org.eclipse.rse.local" version="2.0.1.v20070705-7_-2AgI99h9l9l">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse_2.0.1.qualifier.jar" id="org.eclipse.rse" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse_2.0.1.v20070926-7D-58mJIkP9WAviqV7HBvSLC.jar" id="org.eclipse.rse" version="2.0.1.v20070926-7D-58mJIkP9WAviqV7HBvSLC">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.sdk_2.0.1.qualifier.jar" id="org.eclipse.rse.sdk" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.sdk_2.0.1.v20070926-7J-77E7ZoHOP4inkX-oUe-z-wI6x.jar" id="org.eclipse.rse.sdk" version="2.0.1.v20070926-7J-77E7ZoHOP4inkX-oUe-z-wI6x">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.ssh_2.0.1.qualifier.jar" id="org.eclipse.rse.ssh" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.ssh_2.0.1.v20070926-78-2_kE77Y7cAW.jar" id="org.eclipse.rse.ssh" version="2.0.1.v20070926-78-2_kE77Y7cAW">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.telnet_2.0.1.qualifier.jar" id="org.eclipse.rse.telnet" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.telnet_2.0.1.v20070704-637AAgI99h9mBW4I7B.jar" id="org.eclipse.rse.telnet" version="2.0.1.v20070704-637AAgI99h9mBW4I7B">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.examples_2.0.0.qualifier.jar" id="org.eclipse.rse.examples" version="2.0.0.qualifier">
+   <feature url="features/org.eclipse.rse.examples_2.0.0.v20070609-6--9oA55P5M7Q.jar" id="org.eclipse.rse.examples" version="2.0.0.v20070609-6--9oA55P5M7Q">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.remotecdt_2.0.1.qualifier.jar" id="org.eclipse.rse.remotecdt" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.remotecdt_2.0.1.v20070926-4-18s733G3K5H.jar" id="org.eclipse.rse.remotecdt" version="2.0.1.v20070926-4-18s733G3K5H">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.tm.discovery_2.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="2.0.0.qualifier">
+   <feature url="features/org.eclipse.tm.discovery_2.0.0.v20070611-7J--E8McIJNJCPr.jar" id="org.eclipse.tm.discovery" version="2.0.0.v20070611-7J--E8McIJNJCPr">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.sdk_1.0.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.1.qualifier">
+   <feature url="features/org.eclipse.tm.terminal.sdk_1.0.1.v20070926-7_-77AvNHwNY0SWJ6NvlhNDDmDtI.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.1.v20070926-7_-77AvNHwNY0SWJ6NvlhNDDmDtI">
       <category name="TM and RSE 2.0.1"/>
    </feature>
-   <feature url="features/org.eclipse.rse.tests_2.0.1.qualifier.jar" id="org.eclipse.rse.tests" version="2.0.1.qualifier">
+   <feature url="features/org.eclipse.rse.tests_2.0.1.v20070926-6-19oA55P5SAG.jar" id="org.eclipse.rse.tests" version="2.0.1.v20070926-6-19oA55P5SAG">
       <category name="TM and RSE 2.0.1"/>
    </feature>
    <category-def name="TM and RSE 2.0.1" label="TM and RSE 2.0.1">
@@ -117,4 +117,50 @@
       </description>
    </category-def>
 <!-- END_2_0_1 -->
+<!-- BEGIN_3_0 -->
+   <feature url="features/org.eclipse.rse.core_2.0.1.qualifier.jar" id="org.eclipse.rse.core" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.dstore_2.0.1.qualifier.jar" id="org.eclipse.rse.dstore" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.ftp_2.0.1.qualifier.jar" id="org.eclipse.rse.ftp" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.local_2.0.1.qualifier.jar" id="org.eclipse.rse.local" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse_2.0.1.qualifier.jar" id="org.eclipse.rse" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.sdk_2.0.1.qualifier.jar" id="org.eclipse.rse.sdk" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.ssh_2.0.1.qualifier.jar" id="org.eclipse.rse.ssh" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.telnet_2.0.1.qualifier.jar" id="org.eclipse.rse.telnet" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.examples_2.0.0.qualifier.jar" id="org.eclipse.rse.examples" version="2.0.0.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.remotecdt_2.0.1.qualifier.jar" id="org.eclipse.rse.remotecdt" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.discovery_2.0.0.qualifier.jar" id="org.eclipse.tm.discovery" version="2.0.0.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.sdk_1.0.1.qualifier.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.tests_2.0.1.qualifier.jar" id="org.eclipse.rse.tests" version="2.0.1.qualifier">
+      <category name="TM and RSE 3.0"/>
+   </feature>
+   <category-def name="TM and RSE 3.0" label="TM and RSE 3.0">
+      <description>
+         Features and add-ons of the 3.0 release of Target Management / RSE.
+      </description>
+   </category-def>
+<!-- END_3_0 -->
 </site>

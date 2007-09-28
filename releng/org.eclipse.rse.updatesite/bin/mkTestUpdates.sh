@@ -63,7 +63,7 @@ if [ `basename $SITE` = testUpdates ]; then
     mv -f index.html.new index.html
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/testUpdates,g' \
         -e 's,Project 2.0 Update,Project Test Update,g' \
-    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_patches -->/d' \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project Test Update,g' \
@@ -184,7 +184,7 @@ elif [ `basename $SITE` = signedUpdates ]; then
     mv -f index.html.new index.html
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/signedUpdates,g' \
         -e 's,Project 2.0 Update,Project Signed Test Update,g' \
-    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_patches -->/d' \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_1 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project Signed Test Update,g' \

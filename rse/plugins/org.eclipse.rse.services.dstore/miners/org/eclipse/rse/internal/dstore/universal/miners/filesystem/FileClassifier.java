@@ -313,7 +313,7 @@ public class FileClassifier extends Thread
                     classifiedProperties.append(type);
                     classifiedProperties.append(')');
                     _subject.setAttribute(DE.A_SOURCE, classifiedProperties.toString());
-                    _dataStore.refresh(_subject);
+                   
                 }
                 catch (Exception e)
                 {
@@ -321,6 +321,7 @@ public class FileClassifier extends Thread
             }
         }
         _dataStore.disconnectObject(_subject);
+        _dataStore.refresh(_subject);
     }
 
     /**

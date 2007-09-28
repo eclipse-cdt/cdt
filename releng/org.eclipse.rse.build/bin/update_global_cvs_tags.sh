@@ -46,6 +46,7 @@ for topmod in $TOPMODULES ; do
   #cvs update -l -r R1_0 .
   #cvs tag -b R1_0_maintenance readme.txt
   #cvs tag -d v20060630 readme.txt
-  cvs tag R2_0
+  cvs update -l -A .
+  cvs tag R2_0_1
   cd $curdir
 done

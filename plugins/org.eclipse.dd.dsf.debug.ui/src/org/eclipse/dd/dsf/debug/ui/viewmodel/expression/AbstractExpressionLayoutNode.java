@@ -274,7 +274,7 @@ public abstract class AbstractExpressionLayoutNode<V extends IDMData> extends Ab
                     childNode.getDeltaFlagsForExpression(expressionRemainder, event) != IModelDelta.NO_CHANGE)
                 {
                     childNode.buildDeltaForExpression(
-                        expression, elementIdx, expressionRemainder, event, parentDelta, path, rm);
+                        expression, elementIdx, expressionRemainder, event, parentDelta, path, countingRm);
                     childRmCount++;
                     // The child node will call update.done();
                 }

@@ -18,46 +18,74 @@ import org.eclipse.dd.dsf.DsfPlugin;
 /**
  * Utility class to collect multiple request monitor results of commands
  * that are initiated simultaneously.  The usage is as follows:
- * <pre>
- *     final MultiRequestMonitor multiRequestMon = new MultiRequestMonitor(fExecutor, null) { 
+ * <code><pre>
+ *     final CountingRequestMonitor countingRm = new CountingRequestMonitor(fExecutor, null) { 
  *         public void handleCompleted() {
  *             System.out.println("All complete, errors=" + !getStatus().isOK());
  *         }
  *     };
  *     
- *     for (int i = 0; i < 10; i++) {
- *         service.call(i, multiRequestMon.addRequestMonitor(
- *             new RequestMonitor(fExecutor, null) {
- *                 public void handleCompleted() {
- *                     System.out.println(Integer.toString(i) + " complete");
- *                     multiRequestMon.requestMonitorDone(this);
- *                }
- *             }));
+ *     int count = 0;
+ *     for (int i : elements) {
+ *         service.call(i, countingRm);
+ *         count++;
  *     }
- * </pre>
+ *     
+ *     countingRm.setDoneCount(count);
+ * </pre></code>
  */
 public class CountingRequestMonitor extends RequestMonitor {
+    /**
+     * Counter tracking the remaining number of times that the done() method
+     * needs to be called before this request monitor is actually done.
+     */
     private int fDoneCounter;
+    
+    /**
+     * Flag indicating whether the initial count has been set on this monitor.
+     */
+    private boolean fInitialCountSet = false;
 
     public CountingRequestMonitor(Executor executor, RequestMonitor parentRequestMonitor) {
         super(executor, parentRequestMonitor);
         setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
     }
 
-    public void setCount(int count) {
-        fDoneCounter = count;
+    /**
+     * Sets the number of times that this request monitor needs to be called 
+     * before this monitor is truly considered done.  This method must be called
+     * exactly once in the life cycle of each counting request monitor.
+     * @param count Number of times that done() has to be called to mark the request
+     * monitor as complete.  If count is '0', then the counting request monitor is 
+     * marked as done immediately.
+     */
+    public synchronized void setDoneCount(int count) {
+        assert !fInitialCountSet;
+        fInitialCountSet = true;
+        fDoneCounter += count;
+        if (fDoneCounter <= 0) {
+            assert fDoneCounter == 0; // Mismatch in the count.
+            super.done();
+        }
     }
 
+    /**
+     * Called to indicate that one of the calls using this monitor is finished.
+     * Only when <code>done</done> is called the number of times corresponding to the 
+     * count, the request monitor will be considered complete.  This method can be 
+     * called before {@link #setDoneCount(int)}.
+     */
     @Override
     public synchronized void done() {
         fDoneCounter--;
-        if (fDoneCounter <= 0) {
+        if (fInitialCountSet && fDoneCounter <= 0) {
+            assert fDoneCounter == 0; // Mismatch in the count.
             super.done();
         }
     }
     
     @Override
     public String toString() {
-        return "Multi-RequestMonitor: " + getStatus().toString(); //$NON-NLS-1$
+        return "CountingRequestMonitor: " + getStatus().toString(); //$NON-NLS-1$
     }
 }

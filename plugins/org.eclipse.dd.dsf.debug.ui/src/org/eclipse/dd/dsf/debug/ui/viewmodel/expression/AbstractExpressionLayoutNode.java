@@ -281,11 +281,7 @@ public abstract class AbstractExpressionLayoutNode<V extends IDMData> extends Ab
             }
         }
         
-        if (childRmCount > 0) {
-            countingRm.setCount(childRmCount);
-        } else {            
-            countingRm.done();
-        }
+        countingRm.setDoneCount(childRmCount);
     }
 
     

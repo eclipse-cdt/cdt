@@ -179,12 +179,8 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
             }
         }
         
-        // If no expressions were parsed, we're finished.
-        if (expressionRmCount > 0) {
-            multiRm.setCount(expressionRmCount);
-        } else {            
-            multiRm.done();
-        }
+        // Set the count to the counting RM.
+        multiRm.setDoneCount(expressionRmCount);
     }
 
     public void update(ILabelUpdate[] updates) {
@@ -323,11 +319,7 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
             buildDeltaForExpressionCallCount++;
         }
         
-        if (buildDeltaForExpressionCallCount != 0) {
-            multiRm.setCount(buildDeltaForExpressionCallCount);
-        } else {
-            requestMonitor.done();
-        }
+        multiRm.setDoneCount(buildDeltaForExpressionCallCount);
     }
         
     

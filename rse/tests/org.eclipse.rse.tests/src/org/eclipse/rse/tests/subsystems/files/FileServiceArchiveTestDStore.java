@@ -24,8 +24,11 @@ import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.model.SystemWorkspaceResourceSet;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
+import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
+import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.files.IFileService;
@@ -95,8 +98,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 	
 	
 	
-	public void setUp() throws Exception {
-		super.setUp();
+	protected void setupFileSubSystem() {
 		
 		//We need to delay if it is first case run after a workspace startup
 		SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_LINUX_ID;
@@ -105,6 +107,13 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		USER_ID = "xuanchen";
 		PASSWORD = "xxxxxx";
 		
+		/*
+		SYSTEM_ADDRESS = "dmcknigh3";
+		SYSTEM_NAME = "dmcknigh3_ds";
+		USER_ID = "tester";
+		PASSWORD = "xxxxxx";
+		*/
+
 		//Ensure that the SSL acknowledge dialog does not show up. 
 		//We need to setDefault first in order to set the value of a preference.  
 		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
@@ -158,26 +167,12 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 			{
 				IRemoteServerLauncher sl = (IRemoteServerLauncher)properties;
 				sl.setServerLaunchType(ServerLaunchType.get(ServerLaunchType.RUNNING));
-				fss.getSubSystemConfiguration().updateSubSystem(fss, false, "xuanchen", true, 4033);
+				fss.getSubSystemConfiguration().updateSubSystem(fss, false, "tester", true, 4033);
 			}
 			*/
+			//end here
 
 			connectionService.connect(mon);
-			 
-			//Create a temparory directory in My Home
-			try
-			{
-				IRemoteFile homeDirectory = fss.getRemoteFileObject(".", mon);
-				String baseFolderName = "rsetest";
-				String homeFolderName = homeDirectory.getAbsolutePath();
-				String testFolderName = FileServiceHelper.getRandomLocation(fss, homeFolderName, baseFolderName, mon);
-				tempDir = createFileOrFolder(homeFolderName, testFolderName, true);
-				tempDirPath = tempDir.getAbsolutePath();
-			}
-			catch (Exception e)
-			{
-				fail("Problem encountered: " + e.getStackTrace().toString());
-			}
 			 
 		} catch(Exception e) {
 			assertTrue("Exception creating temp dir " + e.getStackTrace().toString(), false); //$NON-NLS-1$

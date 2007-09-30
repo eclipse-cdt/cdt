@@ -18,7 +18,10 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.IConnectorService;
+import org.eclipse.rse.core.subsystems.IRemoteServerLauncher;
+import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -62,8 +65,7 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 		return suite;
 	}
 	
-	public void setUp() throws Exception {
-		super.setUp();
+	protected void setupFileSubSystem() {
 		
 		//We need to delay if it is first case run after a workspace startup
 		SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_WINDOWS_ID;
@@ -129,21 +131,6 @@ public class FileServiceArchiveTestDStoreWindows extends FileServiceArchiveTest 
 			//End here.
 
 			connectionService.connect(mon);
-			 
-			//Create a temparory directory in My Home
-			try
-			{
-				IRemoteFile homeDirectory = fss.getRemoteFileObject(".", mon);
-				String baseFolderName = "rsetest";
-				String homeFolderName = homeDirectory.getAbsolutePath();
-				String testFolderName = FileServiceHelper.getRandomLocation(fss, homeFolderName, baseFolderName, mon);
-				tempDir = createFileOrFolder(homeFolderName, testFolderName, true);
-				tempDirPath = tempDir.getAbsolutePath();
-			}
-			catch (Exception e)
-			{
-				fail("Problem encountered: " + e.getStackTrace().toString());
-			}
 			 
 		} catch(Exception e) {
 			assertTrue("Exception creating temp dir " + e.getStackTrace().toString(), false); //$NON-NLS-1$

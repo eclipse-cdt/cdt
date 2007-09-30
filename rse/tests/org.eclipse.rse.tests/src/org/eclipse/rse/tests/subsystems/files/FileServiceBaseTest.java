@@ -57,26 +57,21 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	
 	public void setUp() throws Exception {
 		super.setUp();
-
-		IHost localHost = getLocalSystemConnection();
-		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
-		ISubSystem[] ss = sr.getServiceSubSystems(localHost, IFileService.class);
-		for (int i=0; i<ss.length; i++) {
-			if (ss[i] instanceof IFileServiceSubSystem) {
-				fss = (IFileServiceSubSystem)ss[i];
-				fs = fss.getFileService();
-			}
+		setupFileSubSystem();
+		//Create a temparory directory in My Home
+		try
+		{
+			IRemoteFile homeDirectory = fss.getRemoteFileObject(".", mon);
+			String baseFolderName = "rsetest";
+			String homeFolderName = homeDirectory.getAbsolutePath();
+			String testFolderName = FileServiceHelper.getRandomLocation(fss, homeFolderName, baseFolderName, mon);
+			tempDir = createFileOrFolder(homeFolderName, testFolderName, true);
+			tempDirPath = tempDir.getAbsolutePath();
 		}
-		localFss = fss;  //Used for creating test source data.
-		assertNotNull(localFss);
-		
-		//Create a temporary directory in My Home
-		IRemoteFile homeDirectory = fss.getRemoteFileObject(".", mon);
-		String baseFolderName = "rsetest";
-		String homeFolderName = homeDirectory.getAbsolutePath();
-		String testFolderName = FileServiceHelper.getRandomLocation(fss, homeFolderName, baseFolderName, mon);
-		tempDir = createFileOrFolder(homeFolderName, testFolderName, true);
-		tempDirPath = tempDir.getAbsolutePath();
+		catch (Exception e)
+		{
+			fail("Problem encountered: " + e.getStackTrace().toString());
+		}
 	}
 	
 	public void tearDown() throws Exception {
@@ -388,6 +383,24 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 			default :
 				return "these are my contents";
 		}
+	}
+	
+	/**
+	 * Setup the file subsystem used for this testcase
+	 */
+	protected void setupFileSubSystem() 
+	{
+		IHost localHost = getLocalSystemConnection();
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
+		ISubSystem[] ss = sr.getServiceSubSystems(localHost, IFileService.class);
+		for (int i=0; i<ss.length; i++) {
+			if (ss[i] instanceof IFileServiceSubSystem) {
+				fss = (IFileServiceSubSystem)ss[i];
+				fs = fss.getFileService();
+			}
+		}
+		localFss = fss;  //Used for creating test source data.
+		assertNotNull(localFss);
 	}
 
 }

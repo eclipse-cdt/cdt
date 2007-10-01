@@ -181,7 +181,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 *      long)
 	 */
 	public IMemoryBlock getMemoryBlock(final long startAddress,	final long length) throws DebugException {
-		// The expression to display in the rendering tab
+		// The expression to display in the rendering tab (in hex by convention)
 		// Put here for the sake of completeness (not used with IMemoryBlockExtension)
 		String expression = "0x" + Long.toHexString(startAddress); //$NON-NLS-1$
 		return new DsfMemoryBlock(this, fModelId, expression, BigInteger.valueOf(startAddress), length);
@@ -240,6 +240,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			    dmc = (IDMContext<?>)((IAdaptable)context).getAdapter(IDMContext.class);
 			}
 
+			// TODO: throw an exception
 			if (dmc == null) {
                 return null;
             }
@@ -249,6 +250,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			// Resolve the expression
 			blockAddress = resolveMemoryAddress(fContext, expression);
 			if (blockAddress == null)
+				// TODO: throw an exception
 				return null;
 		}
 
@@ -277,13 +279,13 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		// Use a Query to "synchronize" the inherently asynchronous downstream calls
 		Query<BigInteger> query = new Query<BigInteger>() {
 			@Override
-			protected void execute(final DataRequestMonitor<BigInteger> rm) {
+			protected void execute(final DataRequestMonitor<BigInteger> drm) {
 				// Lookup for the ExpressionService
 				final IExpressions expressionService = (IExpressions) fExpressionServiceTracker.getService();
 				if (expressionService != null) {
 					// Create the expression
 					final IExpressionDMContext expressionDMC = expressionService.createExpression(idmContext, expression);
-					expressionService.getModelData(expressionDMC, new DataRequestMonitor<IExpressionDMData>(getExecutor(), rm) {
+					expressionService.getModelData(expressionDMC, new DataRequestMonitor<IExpressionDMData>(getExecutor(), drm) {
 						@Override
 						protected void handleOK() {
 							// Evaluate the expression - request HEX since it works in every case 
@@ -298,9 +300,9 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			            				FormattedValueDMData data = getData();
 			            				if (data.isValid()) {
 			            					String value = data.getFormattedValue().substring(2);	// Strip the "0x"
-			            					rm.setData(new BigInteger(value, 16));
+			            					drm.setData(new BigInteger(value, 16));
 			            				}
-			            				rm.done();
+			            				drm.done();
 			            			}
 			                	}
 			                );
@@ -315,7 +317,9 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			// The happy case
 			return query.get();
 		} catch (InterruptedException e) {
+			// TODO: throw an exception
 		} catch (ExecutionException e) {
+			// TODO: throw an exception
 		}
 
 		// The error case

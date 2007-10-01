@@ -7,13 +7,13 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson Communication - extended the API for IMemoryBlockExtension
- *     Ericsson Communication - added support for 64 bit processors
+ *     Ericsson AB - extended the API for IMemoryBlockExtension
+ *     Ericsson AB - added support for 64 bit processors
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import java.math.BigInteger;
-
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.service.IDsfService;
@@ -25,35 +25,99 @@ import org.eclipse.debug.core.model.MemoryByte;
  * IDMService interface. 
  */
 public interface IMemory extends IDsfService {
-    
-    public class MemoryChangedEvent {
-        BigInteger fAddress;
 
-        public MemoryChangedEvent(BigInteger address) {
+	/**
+	 * Event generated every time a byte is modified.
+	 * 
+	 * A client wishing to receive such events has to register as a service
+	 * event listener and implement the corresponding dispatchEvent method.
+	 * 
+	 * E.g.:
+	 *
+	 *   MyMemoryBlock(MIRunControl fRunControl)
+	 *   {
+	 *       ...
+	 *       fRunControl.getSession().addServiceEventListener(MyMemoryBlock.this, null);
+	 *       ...
+	 *   }
+	 *     
+	 *     @DsfServiceEventHandler
+	 *     public void eventDispatched(MemoryChangedEvent e) {
+	 *        IAddress address = e.getAddress();
+	 *        // do whatever...
+	 *     }
+	 */
+    public class MemoryChangedEvent {
+        IAddress fAddress;
+
+        public MemoryChangedEvent(IAddress address) {
             fAddress = address;
         }
 
-        public BigInteger getAddress() {
+        public IAddress getAddress() {
             return fAddress;
         }
     }
 
-    
-    /** Reads memory at the given location */
-    public void getMemory(IDMContext<?> ctx, BigInteger addr, 
-    	int word_size, MemoryByte[] buf, int offs, int size, int mode, RequestMonitor rm);
-
-    /**  Writes the given value to the given memory location. */
-    public void setMemory(IDMContext<?> ctx, BigInteger addr, 
-        int word_size, byte[] buf, int offs, int size, int mode, RequestMonitor rm);
+    /**
+     * Reads a memory block from the target.
+     * 
+     * An asynchronous memory read request at [address] + [offset] for
+     * [count] memory items, each of size [word_size] bytes, will be
+     * issued to the target. The result will be stored in [drm] upon
+     * completion of the call.
+     * 
+     * The [drm] result buffer will be of size [word_size] * [count]. The
+     * successfully read bytes will have their MemoryByte.READABLE flag
+     * set while the bytes in error (unreachable/bad memory) will have their
+     * flag byte set to 0. The bytes will respect the target "endianness".
+     * 
+     * @param context	the context of the target memory block
+     * @param address	the memory block address (on the target)
+     * @param offset	the offset from the start address
+     * @param word_size	the size, in bytes, of an addressable item
+     * @param count		the number of data elements to read
+     * @param drm		the asynchronous data request monitor
+     */
+    public void getMemory(IDMContext<?> context, IAddress address, long offset,
+    		int word_size, int count, DataRequestMonitor<MemoryByte[]> drm);
 
     /**
-     * Fill target memory with given pattern.
-     * 'size' is number of bytes to fill.
-     * Parameter 0 of sequent 'done' is assigned with Throwable if
-     * there was an error.
+     * Writes a memory block on the target.
+     * 
+     * An asynchronous memory write request at [address] + [offset] for
+     * [count] * [word_size] bytes will be issued to the target.
+     * 
+     * The [buffer] must hold at least [count] * [word_size] bytes.
+     * 
+     * A MemoryChangedEvent will be generated for the range of addresses.
+     * 
+     * @param context	the context of the target memory block
+     * @param address	the memory block address (on the target)
+     * @param offset	the offset from the start address
+     * @param word_size	the size, in bytes, of an addressable item
+     * @param count		the number of data elements to write
+     * @param buffer	the source buffer
+     * @param rm		the asynchronous data request monitor
      */
-    public void fillMemory(IDMContext<?> ctx, BigInteger addr,
-        int word_size, byte[] value, int size, int mode, RequestMonitor rm);
+    public void setMemory(IDMContext<?> context, IAddress address, long offset,
+    		int word_size, int count, byte[] buffer, RequestMonitor rm);
+
+    /**
+     * Writes [pattern] at memory [address] + [offset], [count] times.
+     * 
+     * A MemoryChangedEvent will be generated for the range of addresses.
+     * 
+     * @param context	the context of the target memory block
+     * @param address	the memory block address (on the target)
+     * @param offset	the offset from the start address
+     * @param word_size	the size, in bytes, of an addressable item
+     * @param count		the number of data elements to write
+     * @param pattern	the offset in the result buffer
+     * @param buffer	the source buffer
+     * @param rm		the asynchronous data request monitor
+     */
+    public void fillMemory(IDMContext<?> context, IAddress address, long offset,
+    		int word_size, int count, byte[] pattern, RequestMonitor rm);
 
 }

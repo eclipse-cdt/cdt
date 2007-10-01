@@ -19,6 +19,7 @@
  * Javier Montalvo Orus (Symbian) - [197758] Unix symbolic links are not classified as file vs. folder   
  * Javier Montalvo Orus (Symbian) - [198272] FTP should return classification for symbolic links so they show a link overlay
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
+ * Javier Montalvo Orus (Symbian) - [198692] FTP should mark files starting with "." as hidden
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -153,7 +154,8 @@ public class FTPHostFile implements IHostFile
 	}
 
 	public boolean isHidden() {
-		return false;
+		String name = getName();
+		return name.charAt(0) == '.';
 	}
 
 	public boolean isRoot() {

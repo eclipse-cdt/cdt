@@ -87,4 +87,13 @@ public interface IStack extends IDMService {
      * Retrieves variables local to the stack frame.
      */
     void getLocals(IDMContext<?> frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+    
+    /**
+     * Retrieves the stack depth of the specified stack frame.
+     */
+    void getStackDepth(DataRequestMonitor<Integer> rm);
+    
+    void getStackDepth(int maxDepth, DataRequestMonitor<Integer> rm);
+
+        
 }

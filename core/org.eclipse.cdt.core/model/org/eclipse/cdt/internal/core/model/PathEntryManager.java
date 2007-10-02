@@ -1200,7 +1200,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	public void setPathEntryStore(IProject project, IPathEntryStore newStore) {
 		IPathEntryStore oldStore = null;
-		synchronized (this) {
+		synchronized (storeMap) {
 			oldStore = (IPathEntryStore)storeMap.remove(project);
 			if (newStore != null) {
 				storeMap.put(project, newStore);
@@ -1213,18 +1213,20 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	}
 
-	public synchronized IPathEntryStore getPathEntryStore(IProject project, boolean create) throws CoreException {
-		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
-		if (store == null) {
-			if(create == true){
-				store = createPathEntryStore(project);
-				storeMap.put(project, store);
-				store.addPathEntryStoreListener(this);
+	public IPathEntryStore getPathEntryStore(IProject project, boolean create) throws CoreException {
+		synchronized (storeMap){
+			IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
+			if (store == null) {
+				if(create == true){
+					store = createPathEntryStore(project);
+					storeMap.put(project, store);
+					store.addPathEntryStoreListener(this);
+				}
+			} else if (store instanceof AbstractCExtensionProxy){
+				((AbstractCExtensionProxy)store).updateProject(project);
 			}
-		} else if (store instanceof AbstractCExtensionProxy){
-			((AbstractCExtensionProxy)store).updateProject(project);
+			return store;
 		}
-		return store;
 	}
 
 	public IPathEntryStore createPathEntryStore(IProject project) throws CoreException {

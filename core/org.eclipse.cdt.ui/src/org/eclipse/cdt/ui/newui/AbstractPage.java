@@ -154,7 +154,7 @@ implements
 	protected ArrayList itabs = new ArrayList();
 	protected ICPropertyTab currentTab;
 
-	private boolean isNewOpening = true;
+	private static boolean isNewOpening = true;
 	
 	protected class InternalTab {
 		Composite comp;

@@ -2807,13 +2807,13 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 	
 	public void addCProjectDescriptionListener(ICProjectDescriptionListener listener, int eventTypes){
-		synchronized(this){
+		synchronized(fListeners){
 			fListeners.add(new ListenerDescriptor(listener, eventTypes));
 		}
 	}
 
 	public void removeCProjectDescriptionListener(ICProjectDescriptionListener listener){
-		synchronized(this){
+		synchronized(fListeners){
 			int size = fListeners.size();
 			ListenerDescriptor des;
 			for(int i = 0; i < size; i++){
@@ -2827,7 +2827,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 	
 	private ListenerDescriptor[] getListeners(){
-		synchronized(this){
+		synchronized(fListeners){
 			return (ListenerDescriptor[])fListeners.toArray(new ListenerDescriptor[fListeners.size()]);
 		}
 	}

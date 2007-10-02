@@ -1206,19 +1206,6 @@
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
       <factory
-            adaptableType="org.eclipse.cdt.debug.core.model.IModuleRetrieval"
-            class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
-         </adapter>
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
-         </adapter>
-         <adapter
-               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
-         </adapter>
-      </factory>
-      <factory
             adaptableType="org.eclipse.cdt.debug.core.model.ICModule"
             class="org.eclipse.cdt.debug.internal.ui.elements.adapters.CDebugElementAdapterFactory">
          <adapter

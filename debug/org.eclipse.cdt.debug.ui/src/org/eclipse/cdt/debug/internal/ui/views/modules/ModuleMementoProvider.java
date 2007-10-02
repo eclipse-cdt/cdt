@@ -12,9 +12,13 @@ package org.eclipse.cdt.debug.internal.ui.views.modules;
 
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.ui.IMemento;
@@ -34,9 +38,15 @@ public class ModuleMementoProvider extends ElementMementoProvider {
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementMementoProvider#encodeElement(java.lang.Object, org.eclipse.ui.IMemento, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
 	protected boolean encodeElement( Object element, IMemento memento, IPresentationContext context ) throws CoreException {
-		if ( element instanceof IModuleRetrieval ) {
-			// attempt to maintain expansion for target ????
-			memento.putString( ELEMENT_NAME, CDIDebugModel.getPluginIdentifier() );
+		if ( element instanceof ICDebugTarget || element instanceof ICThread || element instanceof ICStackFrame ) {
+			IModuleRetrieval mr = (IModuleRetrieval)((IAdaptable)element).getAdapter( IModuleRetrieval.class );
+			if ( mr != null ) {
+				memento.putString( ELEMENT_NAME, mr.toString() );
+			}
+			else {
+				// shouldn't happen
+				memento.putString( ELEMENT_NAME, CDIDebugModel.getPluginIdentifier() );
+			}
 		}
 		else if ( element instanceof ICModule ) {
 			memento.putString( ELEMENT_NAME, ((ICModule)element).getName() );
@@ -57,8 +67,9 @@ public class ModuleMementoProvider extends ElementMementoProvider {
 		String mementoName = memento.getString( ELEMENT_NAME );
 		if ( mementoName != null ) {
 			String elementName = null;
-			if ( element instanceof IModuleRetrieval ) {
-				elementName = CDIDebugModel.getPluginIdentifier();
+			if ( element instanceof ICDebugTarget || element instanceof ICThread || element instanceof ICStackFrame ) {
+				IModuleRetrieval mr = (IModuleRetrieval)((IAdaptable)element).getAdapter( IModuleRetrieval.class );
+				elementName = ( mr != null ) ? mr.toString() : CDIDebugModel.getPluginIdentifier();
 			}
 			else if ( element instanceof ICModule ) {
 				elementName = ((ICModule)element).getName();

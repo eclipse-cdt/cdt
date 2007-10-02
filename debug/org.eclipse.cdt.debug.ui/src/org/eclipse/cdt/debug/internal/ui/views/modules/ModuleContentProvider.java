@@ -14,9 +14,12 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -44,9 +47,15 @@ public class ModuleContentProvider extends ElementContentProvider {
 		return ICDebugUIConstants.ID_MODULES_VIEW.equals( id );
 	}
 	
-	protected Object[] getAllChildren( Object parent, IPresentationContext context ) throws CoreException {
+	protected Object[] getAllChildren( Object parent, IPresentationContext context ) throws CoreException {			
 		if ( parent instanceof IModuleRetrieval ) {
 			return ((IModuleRetrieval)parent).getModules();
+		}
+		else if ( parent instanceof ICThread || parent instanceof ICStackFrame ) {
+			IModuleRetrieval mr = (IModuleRetrieval)((IAdaptable)parent).getAdapter( IModuleRetrieval.class );
+			if ( mr != null ) {
+				return mr.getModules();
+			}
 		}
 		else if ( parent instanceof ICModule ) {
 			IBinary binary = (IBinary)((ICModule)parent).getAdapter( IBinary.class );

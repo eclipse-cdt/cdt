@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -24,8 +26,14 @@ public class ModuleProxyFactory implements IModelProxyFactory {
 	 */
 	public IModelProxy createModelProxy( Object element, IPresentationContext context ) {
 		if ( ICDebugUIConstants.ID_MODULES_VIEW.equals( context.getId() ) ) {
-			if ( element instanceof IModuleRetrieval ) {
-				return new ModulesViewModelProxy( (IModuleRetrieval)element );
+			IModuleRetrieval mr = null;
+			if ( element instanceof IAdaptable ) {
+				ICDebugTarget target = (ICDebugTarget)((IAdaptable)element).getAdapter( ICDebugTarget.class );
+				if ( target != null )
+					mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
+			}
+			if ( mr != null ) {
+				return new ModulesViewModelProxy( mr );
 			}
 		}
 		return null;

@@ -20,9 +20,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
-import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.ToggleDetailPaneAction;
@@ -30,7 +28,6 @@ import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -285,31 +282,25 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	}
 
 	protected void setViewerInput( Object context ) {
-		IModuleRetrieval mr = null;
-		if ( context instanceof IAdaptable ) {
-			ICDebugTarget target = (ICDebugTarget)((IAdaptable)context).getAdapter( ICDebugTarget.class );
-			if ( target != null )
-				mr = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
-		}
 
 		if ( context == null ) {
 			clearDetails();
 		}
 		Object current = getViewer().getInput();
-		if ( current == null && mr == null ) {
+		if ( current == null && context == null ) {
 			return;
 		}
-		if ( current != null && current.equals( mr ) ) {
+		if ( current != null && current.equals( context ) ) {
 			return;
 		}
 
 		showViewer();
-		getViewer().setInput( mr );
+		getViewer().setInput( context );
 	}
 
 	protected TreeModelViewer createTreeViewer( Composite parent ) {
 		// add tree viewer
-		final TreeModelViewer modulesViewer = new TreeModelViewer( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION, getPresentationContext() );
+		final TreeModelViewer modulesViewer = new ModulesViewTreeViewer( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION, getPresentationContext() );
 		modulesViewer.getControl().addFocusListener( new FocusAdapter() {
 
 			/* (non-Javadoc)

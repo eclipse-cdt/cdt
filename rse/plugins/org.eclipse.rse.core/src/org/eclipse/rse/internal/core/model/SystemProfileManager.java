@@ -14,6 +14,8 @@
  * David Dykstal (IBM) - created and used RSEPreferencesManager
  *                     - moved SystemPreferencesManager to a new plugin
  * Kevin Doyle (IBM) - [197199] Renaming a Profile doesn't cause a save
+ * Yu-Fen Kuo (MontaVista) - [189271] [team] New Profile's are always active
+ *                         - [189219] [team] Inactive Profiles become active after workbench restart
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -88,9 +90,9 @@ public class SystemProfileManager implements ISystemProfileManager {
 			deleteSystemProfile(existingProfile, false); // replace the existing one with a new profile
 		}
 		ISystemProfile newProfile = internalCreateSystemProfile(name);
+                newProfile.setActive(makeActive);
 		if (makeActive) {
 			RSEPreferencesManager.addActiveProfile(name);
-			((SystemProfile) newProfile).setActive(makeActive);
 		}
 		newProfile.commit();
 		return newProfile;
@@ -103,8 +105,10 @@ public class SystemProfileManager implements ISystemProfileManager {
 		boolean wasActive = isSystemProfileActive(profile.getName());
 		if (wasActive && !makeActive)
 			RSEPreferencesManager.deleteActiveProfile(profile.getName());
-		else if (makeActive && !wasActive) RSEPreferencesManager.addActiveProfile(profile.getName());
-		((SystemProfile) profile).setActive(makeActive);
+		else if (makeActive && !wasActive) 
+		        RSEPreferencesManager.addActiveProfile(profile.getName());
+		profile.setActive(makeActive);
+		profile.commit();
 	}
 
 	/* (non-Javadoc)

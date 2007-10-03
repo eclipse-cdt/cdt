@@ -14,6 +14,8 @@
 <plugin>
    <extension
          point="org.eclipse.tm.terminal.terminalConnector">
-      <connector name="%serialConnection" class="org.eclipse.tm.internal.terminal.serial.SerialConnector"/>
+      <connector name="%serialConnection" 
+      id="org.eclipse.tm.internal.terminal.serial.SerialConnector"
+      class="org.eclipse.tm.internal.terminal.serial.SerialConnector"/>
    </extension>
 </plugin>

@@ -23,7 +23,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
+import org.eclipse.cdt.debug.internal.ui.actions.ConfigureColumnsAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ToggleDetailPaneAction;
+import org.eclipse.cdt.debug.internal.ui.actions.ToggleShowColumnsAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -184,6 +186,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	private int[] fLastSashWeights;
 	private boolean fToggledDetailOnce;
 	private ToggleDetailPaneAction[] fToggleDetailPaneActions;
+    protected ConfigureColumnsAction fConfigureColumnsAction;
 	private String fCurrentDetailPaneOrientation = ICDebugPreferenceConstants.MODULES_DETAIL_PANE_HIDDEN;
 	protected static final String SASH_WEIGHTS = CDebugUIPlugin.getUniqueIdentifier() + ".modulesView.SASH_WEIGHTS"; //$NON-NLS-1$
 	
@@ -209,7 +212,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		createDetailsViewer();
 		getSashForm().setMaximizedControl( viewer.getControl() );
 
-		createOrientationActions();
+		createOrientationActions( viewer );
 		IPreferenceStore prefStore = CDebugUIPlugin.getDefault().getPreferenceStore();
 		String orientation = prefStore.getString( getDetailPanePreferenceKey() );
 		for( int i = 0; i < fToggleDetailPaneActions.length; i++ ) {
@@ -595,9 +598,9 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		fLastSashWeights = weights;
 	}
 
-	private void createOrientationActions() {
+	private void createOrientationActions( TreeModelViewer viewer ) {
 		IActionBars actionBars = getViewSite().getActionBars();
-		IMenuManager viewMenu = actionBars.getMenuManager();
+		final IMenuManager viewMenu = actionBars.getMenuManager();
 		fToggleDetailPaneActions = new ToggleDetailPaneAction[3];
 		fToggleDetailPaneActions[0] = new ToggleDetailPaneAction( this, ICDebugPreferenceConstants.MODULES_DETAIL_PANE_UNDERNEATH, null );
 		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction( this, ICDebugPreferenceConstants.MODULES_DETAIL_PANE_RIGHT, null );
@@ -607,6 +610,31 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		viewMenu.add( fToggleDetailPaneActions[1] );
 		viewMenu.add( fToggleDetailPaneActions[2] );
 		viewMenu.add( new Separator() );		
+
+		fConfigureColumnsAction = new ConfigureColumnsAction( viewer );
+        setAction( "ToggleColumns", new ToggleShowColumnsAction( viewer ) ); //$NON-NLS-1$
+
+        viewMenu.addMenuListener( new IMenuListener() {
+            public void menuAboutToShow( IMenuManager manager ) {
+                IAction action = getAction( "ToggleColumns" ); //$NON-NLS-1$
+                ((IUpdate)action).update();
+                if ( action.isEnabled() ) {
+                    if  ( viewMenu.find( action.getId() ) == null )
+                        viewMenu.add( action );
+                }
+                else {
+                    viewMenu.remove( action.getId() );
+                }
+                fConfigureColumnsAction.update();
+                if ( fConfigureColumnsAction.isEnabled() ) {
+                    if ( viewMenu.find( fConfigureColumnsAction.getId() ) == null )
+                        viewMenu.add( fConfigureColumnsAction );
+                }
+                else {
+                    viewMenu.remove( fConfigureColumnsAction.getId() );
+                }
+            }
+        } );
 	}
 
 	protected String getToggleActionLabel() {

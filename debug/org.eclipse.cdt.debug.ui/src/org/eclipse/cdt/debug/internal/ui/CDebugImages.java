@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -103,6 +104,7 @@ public class CDebugImages {
 	public static final String IMG_OBJS_EXTERNAL_SOURCE_FILE = NAME_PREFIX + "ext_file_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_PATH_MAPPING = NAME_PREFIX + "mapping_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_PATH_MAP_ENTRY = NAME_PREFIX + "mapentry_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_COMMON_TAB = NAME_PREFIX + "common_tab.gif"; //$NON-NLS-1$
 
 	public static final String IMG_LCL_TYPE_NAMES = NAME_PREFIX + "tnames_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_CHANGE_REGISTER_VALUE = NAME_PREFIX + "change_reg_value_co.gif";	//$NON-NLS-1$
@@ -182,7 +184,8 @@ public class CDebugImages {
 	public static final ImageDescriptor DESC_OBJS_WORKSPACE_SOURCE_FILE = createManaged( T_OBJ, IMG_OBJS_WORKSPACE_SOURCE_FILE );
 	public static final ImageDescriptor DESC_OBJS_EXTERNAL_SOURCE_FILE = createManaged( T_OBJ, IMG_OBJS_EXTERNAL_SOURCE_FILE );
 	public static final ImageDescriptor DESC_OBJS_PATH_MAPPING = createManaged( T_OBJ, IMG_OBJS_PATH_MAPPING );
-	public static final ImageDescriptor DESC_OBJS_PATH_MAP_ENTRY = createManaged( T_OBJ, IMG_OBJS_PATH_MAP_ENTRY );
+    public static final ImageDescriptor DESC_OBJS_PATH_MAP_ENTRY = createManaged( T_OBJ, IMG_OBJS_PATH_MAP_ENTRY );
+    public static final ImageDescriptor DESC_OBJS_COMMON_TAB = createManaged( T_OBJ, IMG_OBJS_COMMON_TAB );
 	public static final ImageDescriptor DESC_WIZBAN_ADD_SOURCE = createManaged( T_WIZBAN, IMG_WIZBAN_ADD_SOURCE );
 	public static final ImageDescriptor DESC_WIZBAN_PATH_MAPPING = createManaged( T_WIZBAN, IMG_WIZBAN_PATH_MAPPING );
 	public static final ImageDescriptor DESC_WIZBAN_PATH_MAP_ENTRY = createManaged( T_WIZBAN, IMG_WIZBAN_PATH_MAP_ENTRY );
@@ -248,9 +251,9 @@ public class CDebugImages {
 
 	//---- Helper methods to access icons on the file system --------------------------------------
 
-	private static void setImageDescriptors( IAction action, String type, String relPath )
+	private static void setImageDescriptors( IAction action, String type, String path )
 	{
-		relPath = relPath.substring( NAME_PREFIX_LENGTH );
+		String relPath = path.substring( NAME_PREFIX_LENGTH );
 		try
 		{
 			ImageDescriptor id = ImageDescriptor.createFromURL( makeIconFileURL( "d" + type, relPath ) ); //$NON-NLS-1$

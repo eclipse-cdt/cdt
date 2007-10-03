@@ -48,6 +48,8 @@ public interface ICDebugHelpContextIds {
 	public static final String ENABLE_DISABLE_BREAKPOINT_ACTION = PREFIX + "enable_disable_breakpoint_action_context"; //$NON-NLS-1$
 	public static final String BREAKPOINT_PROPERTIES_ACTION = PREFIX + "breakpoint_properties_action_context"; //$NON-NLS-1$
 	public static final String SHOW_DETAIL_PANE_ACTION = PREFIX + "show_detail_pane_action_context"; //$NON-NLS-1$
+    public static final String CONFIGURE_COLUMNS_ACTION = PREFIX + "configure_columns_context"; //$NON-NLS-1$;
+    public static final String SHOW_COLUMNS_ACTION = PREFIX + "show_columns_context"; //$NON-NLS-1$;
 
 	// Views & Editors
 	public static final String MEMORY_VIEW = PREFIX + "memory_view_context"; //$NON-NLS-1$
@@ -64,12 +66,13 @@ public interface ICDebugHelpContextIds {
 	public static final String C_DEBUG_PREFERENCE_PAGE = PREFIX + "c_debug_preference_page_context"; //$NON-NLS-1$
 	public static final String DEBUGGER_TYPES_PAGE = PREFIX + "debugger_typpes_preference_page_context"; //$NON-NLS-1$
 
-	// dialogs
+	// Dialogs
 	public static final String SOURCE_PATH_MAPPING_DIALOG = PREFIX + "source_path_mapping_dialog_context"; //$NON-NLS-1$
 	public static final String SOURCE_PATH_MAP_ENTRY_DIALOG = PREFIX + "source_path_map_entry_dialog_context"; //$NON-NLS-1$
 	public static final String ADD_SOURCE_CONTAINER_DIALOG = PREFIX + "add_source_container_dialog"; //$NON-NLS-1$
 	public static final String ADD_DIRECTORY_CONTAINER_DIALOG = PREFIX + "add_directory_container_dialog"; //$NON-NLS-1$
 	public static final String REGISTER_GROUP = PREFIX + "register_group_dialog"; //$NON-NLS-1$
+    public static final String CONFIGURE_COLUMNS_DIALOG = PREFIX + "configure_columns_dialog_context"; //$NON-NLS-1$;
 
 	// Wizards
 	public static final String IMPORT_EXECUTABLE_PAGE_ONE = PREFIX + "import_executable_page_one"; //$NON-NLS-1$

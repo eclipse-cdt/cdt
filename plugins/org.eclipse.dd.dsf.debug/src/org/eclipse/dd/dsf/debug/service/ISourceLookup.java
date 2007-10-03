@@ -12,8 +12,9 @@ package org.eclipse.dd.dsf.debug.service;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.datamodel.IDMData;
+import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.service.IDsfService;
-import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 
 /**
  * Service for mapping debugger paths to host paths.  This service is needed
@@ -22,30 +23,18 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
  * interfaces could be sufficient.
  */
 public interface ISourceLookup extends IDsfService {
-    
-    public interface ISourceLookupResult {
-        Object getSourceObject();
-        ISourceContainer getMatchingContainer();
-    }
-    
-    public interface IDebuggerPathLookupResult {
-        String getDebuggerPath();
-        ISourceContainer getMatchingContainer();
-    }
-    
-    /** 
-     * Initializes the given context with the given list of source lookup 
-     * containers.
-     */ 
-    void initializeSourceContainers(IDMContext<?> ctx, ISourceContainer[] containers);
+
+    public interface ISourceLookupDMContext extends IDMContext<IDMData> {}
+        
+    public interface ISourceLookupChangedDMEvent extends IDMEvent<ISourceLookupDMContext> {}
     
     /**
      * Retrieves the host source object for given debugger path string.
      */
-    void getSource(IDMContext<?> ctx, String debuggerPath, boolean searchDuplicates, DataRequestMonitor<ISourceLookupResult[]> rm);
+    void getSource(IDMContext<?> ctx, String debuggerPath, DataRequestMonitor<Object> rm);
     
     /**
-     * Retrieves the debugger path string(s) for given host source object.
+     * Retrieves the debugger path string for given host source object.
      */
-    void getDebuggerPath(IDMContext<?> ctx, Object source, boolean searchDuplicates, DataRequestMonitor<IDebuggerPathLookupResult[]> rm);
+    void getDebuggerPath(IDMContext<?> ctx, Object source, DataRequestMonitor<String> rm);
 }

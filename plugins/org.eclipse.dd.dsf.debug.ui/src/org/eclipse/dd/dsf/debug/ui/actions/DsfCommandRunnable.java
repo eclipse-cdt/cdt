@@ -60,7 +60,10 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
     }
     
     public final void run() {
-        if (fRequest.isCanceled()) return;
+        if (fRequest.isCanceled()) {
+            fRequest.done();
+            return;
+        }
         if (getContext() == null) {
             fRequest.setStatus(makeError("Selected object does not support run control.", null));             //$NON-NLS-1$
         } else if (getRunControl() == null) {

@@ -220,7 +220,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
 
     protected void updateHasElementsInSessionThread(IHasChildrenUpdate[] updates) {
         for (final IHasChildrenUpdate update : updates) {
-            if (!checkUpdate(update)) return;
+            if (!checkUpdate(update)) continue;
             
             updateElementsInSessionThread(
                 new ElementsUpdate( 
@@ -318,7 +318,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             final IDMContext<V> dmc = findDmcInPath(update.getElementPath(), fDMCClassType);
-            if (!checkDmc(dmc, update) || !checkService(null, dmc.getServiceFilter(), update)) return;
+            if (!checkDmc(dmc, update) || !checkService(null, dmc.getServiceFilter(), update)) continue;
             
             VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
     			.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),

@@ -170,8 +170,12 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                             traceBuilder.append(dsfExecutable.fCreatedBy.fSequenceNumber);
                         }
                         if (dsfExecutable.fCreatedAt != null) {
-                            traceBuilder.append(" at "); //$NON-NLS-1$
+                            traceBuilder.append("\n                      at "); //$NON-NLS-1$
                             traceBuilder.append(dsfExecutable.fCreatedAt.fStackTraceElements[0].toString());
+                            for (int i = 1; i < dsfExecutable.fCreatedAt.fStackTraceElements.length && i < 3; i++) {
+                                traceBuilder.append("\n                         "); //$NON-NLS-1$
+                                traceBuilder.append(dsfExecutable.fCreatedAt.fStackTraceElements[i].toString());
+                            }
                         }   
                     }
                 }
@@ -181,6 +185,12 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 if (fSubmittedBy != null) {
                     traceBuilder.append(" by #"); //$NON-NLS-1$
                     traceBuilder.append(fSubmittedBy.fSequenceNumber);
+                }
+                traceBuilder.append("\n                      at "); //$NON-NLS-1$
+                traceBuilder.append(fSubmittedAt.fStackTraceElements[0].toString());
+                for (int i = 1; i < fSubmittedAt.fStackTraceElements.length && i < 3; i++) {
+                    traceBuilder.append("\n                         "); //$NON-NLS-1$
+                    traceBuilder.append(fSubmittedAt.fStackTraceElements[i].toString());
                 }
                 traceBuilder.append(" at "); //$NON-NLS-1$
                 traceBuilder.append(fSubmittedAt.fStackTraceElements[0].toString());

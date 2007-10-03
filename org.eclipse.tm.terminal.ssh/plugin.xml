@@ -14,7 +14,9 @@
 <plugin>
    <extension
          point="org.eclipse.tm.terminal.terminalConnector">
-      <connector name="%sshConnection" class="org.eclipse.tm.internal.terminal.ssh.SshConnector"/>
+      <connector name="%sshConnection"
+      id="org.eclipse.tm.internal.terminal.ssh.SshConnector"
+      class="org.eclipse.tm.internal.terminal.ssh.SshConnector"/>
    </extension>
 
 </plugin>

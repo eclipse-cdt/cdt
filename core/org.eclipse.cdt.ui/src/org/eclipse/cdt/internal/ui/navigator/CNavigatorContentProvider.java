@@ -228,7 +228,6 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 */
 	public Object[] getElements(Object parent) {
 		if (parent instanceof IWorkspaceRoot) {
-//			return super.getElements(CoreModel.create((IWorkspaceRoot)parent));
 			return ((IWorkspaceRoot)parent).getProjects();
 		} else if (parent instanceof IProject) {
 			return super.getChildren(CoreModel.getDefault().create((IProject)parent));
@@ -242,7 +241,6 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	public Object[] getChildren(Object element) {
 		Object children[];
 		if (element instanceof IWorkspaceRoot) {
-//			children =  super.getChildren(CoreModel.create((IWorkspaceRoot)element));
 			return ((IWorkspaceRoot)element).getProjects();
 		} else if (element instanceof IProject) {
 			return super.getChildren(CoreModel.getDefault().create((IProject)element));
@@ -323,8 +321,28 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	 * @see org.eclipse.ui.navigator.IPipelinedTreeContentProvider#interceptAdd(org.eclipse.ui.navigator.PipelinedShapeModification)
 	 */
 	public PipelinedShapeModification interceptAdd(PipelinedShapeModification addModification) {
-		if(addModification.getParent() instanceof ICProject && fRealInput instanceof IWorkspaceRoot) {
-			addModification.setParent(((ICProject)addModification.getParent()).getProject());
+		Object parent = addModification.getParent();
+		if (parent instanceof ICProject) {
+			if (fRealInput instanceof IWorkspaceRoot) {
+				addModification.setParent(((ICProject)parent).getProject());
+			}
+		} else if (parent instanceof IProject || parent instanceof IFolder) {
+			// ignore adds to C projects (we are issuing a refresh)
+			IProject project= ((IResource) parent).getProject();
+			if (CoreModel.hasCNature(project)) {
+				addModification.getChildren().clear();
+				return addModification;
+			}
+		} else if (parent instanceof IWorkspaceRoot) {
+			// ignore adds of C projects (we are issuing a refresh)
+			for (Iterator iterator = addModification.getChildren().iterator(); iterator.hasNext();) {
+				Object child= iterator.next();
+				if (child instanceof IProject) {
+					if (CoreModel.hasCNature((IProject)child)) {
+						iterator.remove();
+					}
+				}
+			}
 		}
 		convertToCElements(addModification);
 		return addModification;
@@ -402,9 +420,6 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 						convertedChildren.add(newChild);
 					}
 				}
-//			} else if (child instanceof ICProject) {
-//				iter.remove();
-//				convertedChildren.add(((ICProject)child).getProject());
 			}
 		}
 		if (!convertedChildren.isEmpty()) {
@@ -419,20 +434,27 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	}
 	protected void postRefresh(final Object element) {
 		if (element instanceof ICModel) {
-			super.postRefresh(fRealInput);
+			// don't refresh workspace root
+//			super.postRefresh(fRealInput);
 		} else if (element instanceof ICProject  && fRealInput instanceof IWorkspaceRoot) {
 			super.postRefresh(((ICProject)element).getProject());
-		} else {
+		} else if (element instanceof ICElement) {
 			super.postRefresh(element);
 		}
 	}
 
 	protected void postAdd(final Object parent, final Object element) {
 		if (parent instanceof ICModel) {
-			super.postAdd(fRealInput, element);
+			if (element instanceof ICElement) {
+				super.postAdd(fRealInput, element);
+			} else if (element instanceof IProject) {
+				if (CoreModel.hasCNature((IProject)element)) {
+					super.postAdd(fRealInput, element);
+				}
+			}
 		} else if (parent instanceof ICProject && fRealInput instanceof IWorkspaceRoot) {
 			super.postAdd(((ICProject)parent).getProject(), element);
-		} else {
+		} else if (parent instanceof ICElement) {
 			super.postAdd(parent, element);
 		}
 	}

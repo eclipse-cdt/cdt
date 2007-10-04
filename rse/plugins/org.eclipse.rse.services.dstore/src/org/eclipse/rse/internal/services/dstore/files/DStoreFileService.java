@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [196035] Wrapper SystemMessageExceptions for createFile and createFolder with RemoteFileSecurityException
  * Kevin Doyle 		(IBM)		 - [191548] Deleting Read-Only directory removes it from view and displays no error
  * Xuan Chen        (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
+ * Xuan Chen        (IBM)        - [190824] Incorrect result for DStore#getSeparator() function when parent is "/"  
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -789,7 +790,22 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	 */
 	protected String getSeparator(String parentPath)
 	{
-		if (parentPath == null || parentPath.length() < 2) return "/"; //$NON-NLS-1$
+		if (parentPath == null || parentPath.length() < 1) return "/"; //$NON-NLS-1$
+		if (parentPath.length() == 1) 
+		{
+			//deal with the case where parentPath has only one character here 
+			//since the code below assumes parentPath has at least two characters.
+			if (parentPath.charAt(0) == '/')
+			{
+				return "";  //$NON-NLS-1$
+			}
+			else
+			{
+				//If only one character, but not '/', just return "/" as default.  But this should not happen.  
+				return "/"; //$NON-NLS-1$
+			}
+		}
+
 		if (parentPath.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 			return ""; //$NON-NLS-1$
 		if (parentPath.endsWith(ArchiveHandlerManager.VIRTUAL_CANONICAL_SEPARATOR))

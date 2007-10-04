@@ -462,7 +462,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             controls[i].setFont(font);
 
         packColumns();
-        redrawPanes();
+        layout(true);
     }
 
     public void handleDebugEvents(DebugEvent[] events)

@@ -241,7 +241,7 @@ public class DataPane extends AbstractPane
 
         int cellHeight = getCellHeight();
         int cellWidth = getCellWidth();
-
+        
         int columns = fRendering.getColumnCount();
 
         try

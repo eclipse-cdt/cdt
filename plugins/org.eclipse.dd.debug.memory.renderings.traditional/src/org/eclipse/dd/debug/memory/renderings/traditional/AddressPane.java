@@ -80,14 +80,14 @@ public class AddressPane extends AbstractPane
     }
 
     protected int getCellWidth()
-    {
-        GC gc = new GC(this);
-        gc.setFont(fRendering.getFont());
-        int width = gc.getAdvanceWidth('0');
+    {     
+    	GC gc = new GC(this);
+        StringBuffer buf = new StringBuffer();
+        for(int i = 0; i < getCellCharacterCount(); i++)
+        	buf.append("0");
+        int width = gc.textExtent(buf.toString()).x;
         gc.dispose();
-
-        return getCellCharacterCount() * width
-            + (fRendering.getCellPadding() * 2);
+        return width;
     }
 
     private int getColumnCount()

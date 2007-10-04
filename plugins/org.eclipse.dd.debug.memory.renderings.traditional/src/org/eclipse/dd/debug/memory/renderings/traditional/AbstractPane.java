@@ -26,6 +26,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -639,6 +640,14 @@ public abstract class AbstractPane extends Canvas
 
     abstract protected int getCellCharacterCount();
 
+    public void setFont(Font font)
+    {
+    	super.setFont(font);
+    	fCharacterWidth = -1;
+    	fCellHeight = -1;
+    	fTextHeight = -1;
+    }
+    
     private int fCellHeight = -1; // called often, cache
 
     protected int getCellHeight()
@@ -659,7 +668,7 @@ public abstract class AbstractPane extends Canvas
         if(fCharacterWidth == -1)
         {
             GC gc = new GC(this);
-            gc.setFont(fRendering.getFont());
+            gc.setFont(fRendering.getFont()); 
             fCharacterWidth = gc.getAdvanceWidth('F');
             gc.dispose();
         }

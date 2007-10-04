@@ -112,7 +112,7 @@ public class TextCanvas extends GridCanvas {
 	}
 
 	void setSelection(Point p) {
-		if (!p.equals(fDraggingEnd)) {
+		if (fDraggingStart !=null && !p.equals(fDraggingEnd)) {
 			fDraggingEnd = p;
 			if (compare(p, fDraggingStart) < 0) {
 				fCellCanvasModel.setSelection(p.y, fDraggingStart.y, p.x, fDraggingStart.x);

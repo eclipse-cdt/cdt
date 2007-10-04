@@ -44,6 +44,7 @@ import org.eclipse.jface.text.source.projection.IProjectionPosition;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -93,8 +94,11 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	private final class SelectionListener implements ISelectionChangedListener {
 		public void selectionChanged(SelectionChangedEvent event) {
-			ITextSelection selection= (ITextSelection)event.getSelection();
-			fCursorPosition= selection.getOffset();
+			ISelection s= event.getSelection();
+			if (s instanceof ITextSelection) {
+				ITextSelection selection= (ITextSelection)event.getSelection();
+				fCursorPosition= selection.getOffset();
+			}
 		}
 	}
 

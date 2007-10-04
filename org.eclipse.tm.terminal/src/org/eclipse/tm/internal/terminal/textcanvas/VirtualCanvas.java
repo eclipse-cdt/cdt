@@ -57,7 +57,6 @@ public abstract class VirtualCanvas extends Canvas {
 		getVerticalBar().addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				scrollY((ScrollBar)e.widget);
-				postScrollEventHandling(e);
 
 			}
 
@@ -65,7 +64,6 @@ public abstract class VirtualCanvas extends Canvas {
 		getHorizontalBar().addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				scrollX((ScrollBar)e.widget);
-				postScrollEventHandling(e);
 
 			}
 		});
@@ -78,24 +76,7 @@ public abstract class VirtualCanvas extends Canvas {
 			}
 			
 		});
-	}
-	/** HACK: run an event loop if the scrollbar is dragged...*/
-	private void postScrollEventHandling(Event e) {
-		if(true&&e.detail==SWT.DRAG) {
-			// TODO check if this is always ok???
-			// used to process runnables while scrolling
-			// This fixes the update problems when scrolling!
-			// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=47582#5
-			// TODO investigate:
-			// The alternative is to call redraw on the new visible area
-			// 	  redraw(expose.x, expose.y, expose.width, expose.height, true);
-
-			while (!getDisplay().isDisposed() && getDisplay().readAndDispatch()) {	
-				// do nothing here...
-			}
-		}
-	}
-	
+	}	
 	protected void scrollX(ScrollBar hBar) {
 		int hSelection = hBar.getSelection ();
 		int destX = -hSelection - fVirtualBounds.x;

@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.speedtest;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
@@ -33,7 +36,7 @@ public class SpeedTestConnection extends Thread {
 		fControl.setState(TerminalState.CONNECTED);
 
 		try {
-			readDataForever(fInputStream);
+			readDataForever(fInputStream,fControl.getRemoteToTerminalOutputStream());
 		} catch (IOException e) {
 			connectFailed(e.getMessage(),e.getMessage());
 		}
@@ -51,43 +54,58 @@ public class SpeedTestConnection extends Thread {
 	 * @param in
 	 * @throws IOException
 	 */
-	private void readDataForever(InputStream in) throws IOException {
+	private void readDataForever(InputStream in, OutputStream os) throws IOException {
 		long N=0;
 		long T=0;
 		long tDisplay=0;
 		int NCalls=0;
+		int bufferSize=fSettings.getBufferSize();
+		int throttle=fSettings.getThrottle();
 		// read the data
-		byte bytes[]=new byte[fSettings.getBufferSize()];
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		// read until the thread gets interrupted....
 		String info="";
-		while(!isInterrupted()) {
+		int n=0;
+		byte[] crnl="\r\n".getBytes("UTF-8");
+		long t0=System.currentTimeMillis();
+		String line=null;
+		do {
+			line=reader.readLine();
+
 			// read some bytes
-			int n;
-			if((n=in.read(bytes))==-1) {
+			if(line==null) {
 				fControl.displayTextInTerminal("\033[2J\033c"+info);
-//				long rate=(1000*N)/T;
-//				setTitle(rate+" baud DONE");
-//				try {
-//					Thread.sleep(10000);
-//				} catch (InterruptedException e) {
-//					// no need to catch it
-//				}
-				return;
+			} else {
+				os.write(line.getBytes("UTF-8"));
+				os.write(crnl);
+				n+=line.length();
 			}
-			// we assume we get ASCII UTF8 bytes
-			long t0=System.currentTimeMillis();
-			fControl.getRemoteToTerminalOutputStream().write(bytes,0,n);
-			long t=System.currentTimeMillis();
-			T+=t-t0;
-			N+=n;
-			NCalls++;
-			if(t-tDisplay>1000 && T>0) {
-				long rate=(1000*N)/T;
-				info=rate+" byte/s = "+rate*8+" baud "+"bytes/call="+N/NCalls;
-				info=rate+" byte/s with buffer size "+fSettings.getBufferSize();
-				setTitle(info);
-				tDisplay=System.currentTimeMillis();
+			if(throttle>0)
+				sleep(throttle);
+			// process at least this number of characters to update the UI
+			if(line==null || n>bufferSize) {
+				// we assume we get ASCII UTF8 bytes
+				long t=System.currentTimeMillis();
+				T+=t-t0;
+				N+=n;
+				NCalls++;
+				if(t-tDisplay>1000 && T>0) {
+					long rate=(1000*N)/T;
+					info=rate+" byte/s = "+rate*8+" baud "+"bytes/call="+N/NCalls;
+					info=rate+" byte/s with buffer size "+fSettings.getBufferSize();
+					setTitle(info);
+					tDisplay=System.currentTimeMillis();
+				}
+				n=0;
+				t0=System.currentTimeMillis();
 			}
+		} while(line!=null);
+	}
+	private void sleep(int ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 	private void setTitle(final String title) {

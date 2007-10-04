@@ -22,6 +22,7 @@ public class SpeedTestSettingsPage implements ISettingsPage {
 	final SpeedTestSettings fSettings;
 	Text fInputFile;
 	Text fBufferSize;
+	private Text fThrottle;
 	SpeedTestSettingsPage(SpeedTestSettings settings) {
 		fSettings=settings;
 	}
@@ -33,6 +34,7 @@ public class SpeedTestSettingsPage implements ISettingsPage {
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fInputFile=createTextField(composite, "Input File:");//$NON-NLS-1$
 		fBufferSize=createTextField(composite, "Buffer Size:");//$NON-NLS-1$
+		fThrottle=createTextField(composite, "Throttle:");//$NON-NLS-1$
 		loadSettings();
 	}
 	private Text createTextField(Composite composite, String label) {
@@ -45,6 +47,7 @@ public class SpeedTestSettingsPage implements ISettingsPage {
 	public void loadSettings() {
 		setText(fInputFile, fSettings.getInputFile());
 		setText(fBufferSize, fSettings.getBufferSizeString());
+		setText(fThrottle, fSettings.getThrottleString());
 	}
 	private void setText(Text text, String value) {
 		if(value==null)
@@ -55,6 +58,7 @@ public class SpeedTestSettingsPage implements ISettingsPage {
 	public void saveSettings() {
 		fSettings.setInputFile(fInputFile.getText());
 		fSettings.setBufferSizeString(fBufferSize.getText());
+		fSettings.setThrottleString(fThrottle.getText());
 	}
 
 	public boolean validateSettings() {

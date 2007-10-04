@@ -490,6 +490,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                    {
 	                        public void run()
 	                        {
+	                            archiveDeltas();
 	                            refresh();
 	                        }
 	                    });
@@ -504,16 +505,16 @@ public class Rendering extends Composite implements IDebugEventSetListener
 	                        }
 	                    });
                 	}
-                	else if(kind == DebugEvent.RESUME)
-                	{
-	                    Display.getDefault().asyncExec(new Runnable()
-	                    {
-	                        public void run()
-	                        {
-	                            archiveDeltas();
-	                        }
-	                    });
-                	}
+//                	else if(kind == DebugEvent.RESUME)
+//                	{
+//	                    Display.getDefault().asyncExec(new Runnable()
+//	                    {
+//	                        public void run()
+//	                        {
+//	                            //archiveDeltas();
+//	                        }
+//	                    });
+//                	}
                 }
             }
         }

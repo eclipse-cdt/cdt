@@ -19,7 +19,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
 
 public class TerminalViewControlFactory {
 	public static ITerminalViewControl makeControl(ITerminalListener target, Composite wndParent, ITerminalConnectorInfo[] connectors) {
-		if(TerminalPlugin.isOptionEnabled("org.eclipse.tm.terminal/debug/use_old_implementation")) //$NON-NLS-1$
+		if(System.getProperty("org.eclipse.tm.terminal.OldImplementation")!=null || TerminalPlugin.isOptionEnabled("org.eclipse.tm.terminal/debug/use_old_implementation")) //$NON-NLS-1$ //$NON-NLS-2$
 			return new TerminalControl(target, wndParent, connectors);
 		else
 			return new VT100TerminalControl(target, wndParent, connectors);

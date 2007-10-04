@@ -23,6 +23,7 @@
  * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Kevin Doyle (IBM) - [191548]  Deleting Read-Only directory removes it from view and displays no error
+ * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -600,8 +601,14 @@ public class UniversalFileSystemMiner extends Miner {
 			UniversalServerUtilities.logError(CLASSNAME, "Invalid query type to handleSearch", null); //$NON-NLS-1$
 			return statusDone(status);
 		}
-
-		if (fileobj.exists()) {
+		//If the subject is a virtual folder, we could not just use check file.exists() to determine if we need
+		//to continue process this request or not.
+		boolean continueSearch = true;
+		if (!queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR) && !fileobj.exists())
+		{
+			continueSearch = false;
+		}
+		if (continueSearch) {
 			DataElement arg1 = getCommandArgument(theElement, 1);
 			DataElement arg2 = getCommandArgument(theElement, 2);
 			DataElement arg3 = getCommandArgument(theElement, 3);
@@ -631,7 +638,7 @@ public class UniversalFileSystemMiner extends Miner {
 			searchThread.start();
 
 			updateCancellableThreads(status.getParent(), searchThread);
-			return status;
+			//return status;
 		}
 
 		return statusDone(status);

@@ -30,6 +30,7 @@
  * Kevin Doyle  (IBM)            - [198576] Renaming a folder directly under a Filter doesn't update children
  * David McKnight   (IBM)        - [199568] Removing synchronized from internalGetChildren
  * Kevin Doyle (IBM) 			 - [197855] Can't Delete/Rename/Move a Read-Only File
+ * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1535,15 +1536,25 @@ public class SystemViewRemoteFileAdapter
 		{
 			FileServiceSubSystem ss = (FileServiceSubSystem)subsys;
 			
-			SystemSearchString searchString = new SystemSearchString("*", false, false, "*", false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
-			
 			for (int i = 0; i < initialResources.size(); i++)
 			{
 				IRemoteFile remoteFile = (IRemoteFile)initialResources.get(i);
 				
 				// get all files within directory
 				if (remoteFile.isDirectory())
-				{							
+				{		
+					SystemSearchString searchString = null;
+					if (ArchiveHandlerManager.isVirtual(remoteFile.getAbsolutePath()))
+					{
+						//If this file to create flatset with is a virtual directory, we want to make sure the includeArchives flag
+						//for the searchString is set to true.  This way, we could search inside the archive file
+						searchString = new SystemSearchString("*", false, false, "*", false, true, true); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					else
+					{
+						searchString = new SystemSearchString("*", false, false, "*", false, false, true); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					
 					// create the configuration for this folder
 					IHostSearchResultConfiguration config = ss.createSearchConfiguration(searchSet, remoteFile, searchString);
 					

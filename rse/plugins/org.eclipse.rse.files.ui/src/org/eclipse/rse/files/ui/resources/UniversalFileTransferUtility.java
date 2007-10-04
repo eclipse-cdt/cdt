@@ -26,6 +26,7 @@
  * Xuan Chen (IBM)        - [201790] [dnd] Copy and Paste across connections to a Drive doesn't work
  * Xuan Chen (IBM)        - [202668] [Supertransfer] Subfolders not copied when doing first copy from dstore to Local
  * Xuan Chen (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
+ * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1013,11 +1014,18 @@ public class UniversalFileTransferUtility
 			return null;
 		}
 		boolean isTargetArchive = targetFolder.isArchive();
+		boolean isTargetVirtual = ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath());
 		if (isTargetArchive && !targetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return null;
 		StringBuffer newPathBuf = new StringBuffer(targetFolder.getAbsolutePath());
 		if (isTargetArchive)
 		{
 			newPathBuf.append(ArchiveHandlerManager.VIRTUAL_SEPARATOR);
+		}
+		else if (isTargetVirtual)
+		{
+		    //if the target is a virtual folder, we need to append ArchiveHandlerManager.VIRTUAL_FOLDER_SEPARATOR
+		    //instead of the file separator of the file subsystem.
+			newPathBuf.append(ArchiveHandlerManager.VIRTUAL_FOLDER_SEPARATOR);  
 		}
 		else
 		{
@@ -1162,7 +1170,7 @@ public class UniversalFileTransferUtility
 					if (existingFiles != null)
 					{
 					IRemoteFile newTargetFolder = (IRemoteFile)existingFiles.get(newPath);
-					if (!newTargetFolder.exists())
+					if (null != newTargetFolder && !newTargetFolder.exists())
 					{
 						newTargetFolder = targetFS.createFolder(newTargetFolder, monitor);
 					}

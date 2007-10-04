@@ -28,6 +28,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.files.ui.resources.UniversalFileTransferUtility;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.IFileServiceSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
@@ -128,6 +129,10 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 	}
 	
 	public void createSourceZipFiles() throws Exception
+	{
+		createSourceZipFiles(fss);
+	}
+	public IRemoteFile createSourceZipFiles(IFileServiceSubSystem inputFss) throws Exception
 	{
 		/* build scenario */
 		String tempPath = getWorkspace().getRoot().getLocation().append("temp").toString();
@@ -318,36 +323,59 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		content = getRandomString();
 		createFile(epdcdump01_hex12ab, content);
 		
+		IRemoteFile targetDir = null;
+		if (inputFss != fss)
+		{
+			//Create the tempDir inside the inputFss 
+			try
+			{
+				IRemoteFile homeDirectory = inputFss.getRemoteFileObject(".", mon);
+				String baseFolderName = "rsetest";
+				String homeFolderName = homeDirectory.getAbsolutePath();
+				String testFolderName = FileServiceHelper.getRandomLocation(localFss, homeFolderName, baseFolderName, mon);
+				targetDir = createFileOrFolder(localFss, homeFolderName, testFolderName, true);
+			}
+			catch (Exception e)
+			{
+				fail("Problem encountered: " + e.getStackTrace().toString());
+			}
+		}
+		else
+		{
+			targetDir = tempDir;
+		}
 		//now, copy folderToCopy into the folder in the remote system
 		IRemoteFile sourceFolderToCopy1 = localFss.getRemoteFileObject(tempPath + '\\' + folderToCopyName1, mon);
 		ISystemDragDropAdapter srcAdapter1 = (ISystemDragDropAdapter) ((IAdaptable) sourceFolderToCopy1).getAdapter(ISystemDragDropAdapter.class);
 		SystemRemoteResourceSet fromSet = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet.addResource(sourceFolderToCopy1);
 		ISystemResourceSet tempObjects1 = srcAdapter1.doDrag(fromSet, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
+		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects1, targetDir, mon, true);
 		
 		IRemoteFile sourceFolderToCopy2 = localFss.getRemoteFileObject(tempPath + '\\' + folderToCopyName2, mon);
 		ISystemDragDropAdapter srcAdapter2 = (ISystemDragDropAdapter) ((IAdaptable) sourceFolderToCopy2).getAdapter(ISystemDragDropAdapter.class);
 		SystemRemoteResourceSet fromSet2 = new SystemRemoteResourceSet(localFss, srcAdapter2);
 		fromSet2.addResource(sourceFolderToCopy2);
 		ISystemResourceSet tempObjects2 = srcAdapter2.doDrag(fromSet2, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects2, tempDir, mon, true);
+		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects2, targetDir, mon, true);
 		
-		IRemoteFile zipSource1 = createFileOrFolder(tempDir.getAbsolutePath(), zipSourceFileName1, false);
+		IRemoteFile zipSource1 = createFileOrFolder(inputFss, targetDir.getAbsolutePath(), zipSourceFileName1, false);
 		assertNotNull(zipSource1);
-		IRemoteFile zipSourceFolder = (IRemoteFile)getChildFromFolder(tempDir, folderToCopyName1);
-		fss.copy(zipSourceFolder, zipSource1, folderToCopyName1, mon);
+		IRemoteFile zipSourceFolder = (IRemoteFile)getChildFromFolder(inputFss, targetDir, folderToCopyName1);
+		inputFss.copy(zipSourceFolder, zipSource1, folderToCopyName1, mon);
 		
-		IRemoteFile zipSource2 = createFileOrFolder(tempDir.getAbsolutePath(), zipSourceFileName2, false);
+		IRemoteFile zipSource2 = createFileOrFolder(inputFss, targetDir.getAbsolutePath(), zipSourceFileName2, false);
 		assertNotNull(zipSource2);
-		IRemoteFile zipSourceFolder2 = (IRemoteFile)getChildFromFolder(tempDir, folderToCopyName2);
-		fss.copy(zipSourceFolder2, zipSource2, folderToCopyName2, mon);
+		IRemoteFile zipSourceFolder2 = (IRemoteFile)getChildFromFolder(inputFss, targetDir, folderToCopyName2);
+		inputFss.copy(zipSourceFolder2, zipSource2, folderToCopyName2, mon);
 		
 		//Then, we need to retrieve children of the tempDir to cache their information.
-		fss.resolveFilterString(tempDir, null, mon);
+		inputFss.resolveFilterString(targetDir, null, mon);
 		
 		//Then, delete the temp folder in the junit workspace.
 		temp.delete(EFS.NONE, mon);
+		
+		return targetDir;
 	}
 	
 	protected void createSuperTransferFolder(IFileStore temp) throws Exception 
@@ -2260,45 +2288,6 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 
 
 	
-	public void testSuperTransferLocalToRemote() throws Exception {
-		String tempPath = getWorkspace().getRoot().getLocation().append("temp").toString();
-		IFileStore temp = createDir(tempPath, true);
-		
-		createSuperTransferFolder(temp);
-		
-		//Set the superTransfer preference on
-		IPreferenceStore store = RSEUIPlugin.getDefault().getPreferenceStore();
-		boolean preference_DOSUPERTRANSFER = store.getBoolean(ISystemFilePreferencesConstants.DOSUPERTRANSFER);
-		store.setValue(ISystemFilePreferencesConstants.DOSUPERTRANSFER, true);
-		
-		//now, copy folderToCopy into the folder in the remote system
-		IRemoteFile sourceFolderToCopy1 = localFss.getRemoteFileObject(tempPath + '\\' + folderToCopyName3, mon);
-		ISystemDragDropAdapter srcAdapter1 = (ISystemDragDropAdapter) ((IAdaptable) sourceFolderToCopy1).getAdapter(ISystemDragDropAdapter.class);
-		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(localFss, srcAdapter1);
-		fromSet3.addResource(sourceFolderToCopy1);
-		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, tempDir, mon, true);
-		
-		//Then, we need to retrieve children of the tempDir to cache their information.
-		Object[] children = fss.resolveFilterString(tempDir, null, mon);
-		//Make sure there is no temp archive file left 
-		assertTrue(children.length == 1);
-		
-		Object theCopiedFolder = getChildFromFolder(tempDir, folderToCopyName3);
-		assertNotNull(theCopiedFolder);
-		
-		//Also make sure the copied child has the right contents.
-		String[] childrenToCheck = {"aaaaaaaa", "aaaab", "epdcdump01.hex12a", "RSE-SDK-2.0RC1.zip"};
-		
-		int[] typesToCheck = {TYPE_FOLDER, TYPE_FOLDER, TYPE_FILE, TYPE_FILE};
-		checkFolderContents((IRemoteFile)theCopiedFolder, childrenToCheck, typesToCheck);
-		
-		//Then, set the preference back to its original value
-		store.setValue(ISystemFilePreferencesConstants.DOSUPERTRANSFER, preference_DOSUPERTRANSFER);
-		
-		//Then, delete the temp folder in the junit workspace.
-		temp.delete(EFS.NONE, mon);
-	}
 	
 	public void testOpenFileFromTarArchive() throws Exception {
 		if (!RSETestsPlugin.isTestCaseEnabled("FileServiceTest.testCreateFile")) return; //$NON-NLS-1$
@@ -2356,5 +2345,8 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		sameContent = compareContent(getContents(fileContentString1), localFile.openInputStream(EFS.NONE, null));
 		assertTrue(sameContent);
 	}
+	
+
+
 
 }

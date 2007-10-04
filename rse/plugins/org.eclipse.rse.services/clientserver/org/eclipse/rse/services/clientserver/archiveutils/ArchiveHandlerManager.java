@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
+ * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -36,6 +37,7 @@ public class ArchiveHandlerManager
 	//	The string that separates the virtual part of an absolute path from the real part
 	public static final String VIRTUAL_SEPARATOR = "#virtual#/"; //$NON-NLS-1$
 	public static final String VIRTUAL_CANONICAL_SEPARATOR = "#virtual#"; //$NON-NLS-1$
+	public static final String VIRTUAL_FOLDER_SEPARATOR = "/"; //$NON-NLS-1$
 	
 	//	the singleton instance
 	protected static ArchiveHandlerManager _instance = new ArchiveHandlerManager(); 

@@ -44,22 +44,17 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
 
 public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPreferencePageContainer {
-		/*
-		 * String constants
-		 */
-		private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 10, 20 };
-		
 		/*
 		 * Dialog widgets
 		 */
@@ -98,29 +93,32 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			sashForm.setLayout(layout);
 			createSelectionArea(sashForm);
 			createEditArea(sashForm);
-			sashForm.setWeights(DEFAULT_SASH_WEIGHTS);
-			sashForm.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					if (event.detail == SWT.DRAG) return;
-					int shift = event.x - sashForm.getBounds().x;
-					GridData data = (GridData) containerSC.getLayoutData();
-					if ((data.widthHint + shift) < 20) return;
-					Point computedSize = usercomp.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					Point currentSize = usercomp.getShell().getSize();
-					boolean customSize = !computedSize.equals(currentSize);
-					data.widthHint = data.widthHint;
-					sashForm.layout(true);
-					computedSize = usercomp.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					if (customSize)
-						computedSize.x = Math.max(computedSize.x, currentSize.x);
-					computedSize.y = Math.max(computedSize.y, currentSize.y);
-					if (computedSize.equals(currentSize)) {
-						return;
-					}
-				}
-			});
+			
+			usercomp.addControlListener(new ControlAdapter() {
+				public void controlResized(ControlEvent e) {
+					specificResize();
+				}});
+			
 			propertyObject = page.getElement();
 			setValues();
+		}
+		
+		private void specificResize() {
+			Point p1 = optionList.getTree().computeSize(-1, -1);
+			Point p2 = optionList.getTree().getSize();
+			Point p3 = usercomp.getSize();
+			p1.x += calcExtra();
+			if (p1.x < p2.x || (p2.x * 2 < p3.x)) {
+				optionList.getTree().setSize(p1.x , p2.y);
+				sashForm.setWeights(new int[] {p1.x, (p3.x - p1.x)});
+			} 
+		}
+		
+		private int calcExtra() {
+			int x = optionList.getTree().getBorderWidth() * 2;
+			ScrollBar sb = optionList.getTree().getVerticalBar();
+			if (sb != null) x += sb.getSize().x;
+			return x;
 		}
 		
 		protected void createSelectionArea (Composite parent) {
@@ -128,8 +126,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			optionList.addSelectionChangedListener(new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
 					handleOptionSelection();
-				}
-			});
+				}});
 			optionList.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 			optionList.setLabelProvider(new ToolListLabelProvider());
 			optionList.addFilter(new ViewerFilter() {
@@ -328,6 +325,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 					optionList.setSelection(new StructuredSelection(selectedElement), true);
 				}
 			}
+			specificResize();
 		}
 							
 		private ToolListElement matchSelectionElement(ToolListElement currentElement, ToolListElement[] elements) {

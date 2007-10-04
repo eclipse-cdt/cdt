@@ -39,11 +39,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
 
 class TerminalSettingsDlg extends Dialog {
 	private Combo fCtlConnTypeCombo;
+	private Text fTerminalTitleText;
 	private final ITerminalConnectorInfo[] fConnectors;
 	private final ISettingsPage[] fPages;
 	/**
@@ -54,6 +56,7 @@ class TerminalSettingsDlg extends Dialog {
 	private int fSelectedConnector;
 	private PageBook fPageBook;
 	private IDialogSettings fDialogSettings;
+	private String fTerminalTitle;
 
 	public TerminalSettingsDlg(Shell shell, ITerminalConnectorInfo[] connectors, ITerminalConnectorInfo connector) {
 		super(shell);
@@ -139,6 +142,7 @@ class TerminalSettingsDlg extends Dialog {
 		if(fSelectedConnector>=0) {
 			getPage(fSelectedConnector).saveSettings();
 		}
+		fTerminalTitle=fTerminalTitleText.getText();
 		super.okPressed();
 	}
 	protected void cancelPressed() {
@@ -184,8 +188,28 @@ class TerminalSettingsDlg extends Dialog {
 		return getPage(fSelectedConnector).validateSettings();
 	}
 	private void setupPanel(Composite wndParent) {
+		setupSettingsTypePanel(wndParent);
 		setupConnTypePanel(wndParent);
 		setupSettingsGroup(wndParent);
+	}
+	private void setupSettingsTypePanel(Composite wndParent) {
+		Group wndGroup;
+		GridLayout gridLayout;
+
+		wndGroup = new Group(wndParent, SWT.NONE);
+		gridLayout = new GridLayout(2, false);
+		wndGroup.setLayout(gridLayout);
+		wndGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		wndGroup.setText(ViewMessages.VIEW_SETTINGS);
+		
+		
+		Label label=new Label(wndGroup,SWT.NONE);
+		label.setText(ViewMessages.VIEW_TITLE);
+		label.setLayoutData(new GridData(GridData.BEGINNING));
+		
+		fTerminalTitleText = new Text(wndGroup, SWT.BORDER);
+		fTerminalTitleText.setText(fTerminalTitle);
+		fTerminalTitleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 	private void setupConnTypePanel(Composite wndParent) {
 		Group wndGroup;
@@ -205,6 +229,7 @@ class TerminalSettingsDlg extends Dialog {
 		gridData.widthHint = 200;
 		fCtlConnTypeCombo.setLayoutData(gridData);
 	}
+	
 	private void setupSettingsGroup(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(ViewMessages.SETTINGS + ":"); //$NON-NLS-1$
@@ -253,5 +278,12 @@ class TerminalSettingsDlg extends Dialog {
 			fDialogSettings = ds.addNewSection(getClass().getName()); 
 		}
 		return fDialogSettings;
+	}
+	public void setTerminalTitle(String partName) {
+		fTerminalTitle=partName;
+		
+	}
+	public String getTerminalTitle() {
+		return fTerminalTitle;
 	}
 }

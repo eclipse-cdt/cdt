@@ -16,6 +16,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 public class SpeedTestSettings {
 	String fInputFile="";
 	String fBufferSize="";
+	String fThrottle;
 	String getInputFile() {
 		return fInputFile;
 	}
@@ -38,8 +39,24 @@ public class SpeedTestSettings {
 	public void load(ISettingsStore store) {
 		fInputFile=store.get("inputFile");
 		fBufferSize=store.get("bufferSize");
+		fThrottle=store.get("throttle");
 	}
 	public void save(ISettingsStore store) {
 		store.put("inputFile", fInputFile);
+		store.put("bufferSize", fBufferSize);
+		store.put("throttle", fInputFile);
+	}
+	public String getThrottleString() {
+		return fThrottle;
+	}
+	public int getThrottle() {
+		try {
+			return Integer.parseInt(fThrottle);
+		} catch(RuntimeException e) {
+			return 1024;
+		}
+	}
+	public void setThrottleString(String throttle) {
+		fThrottle = throttle;
 	}
 }

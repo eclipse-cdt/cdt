@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.tm.terminal.test
+Bundle-SymbolicName: org.eclipse.tm.terminal.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -10,3 +10,4 @@ Require-Bundle: org.junit,
  org.eclipse.swt,
  org.eclipse.jface
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Export-Package: org.eclipse.tm.internal.terminal.speedtest

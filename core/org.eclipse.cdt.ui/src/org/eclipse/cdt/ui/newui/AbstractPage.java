@@ -43,6 +43,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -1012,7 +1013,12 @@ implements
 	
 	public void resize() {
 		Shell sh = parentComposite.getShell();
-		sh.setSize(sh.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+		Point p0 = sh.getLocation();
+		Point p1 = sh.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Rectangle r = sh.getDisplay().getClientArea();
+		p1.x = Math.min(p1.x, (r.width - p0.x));
+		p1.y = Math.min(p1.y, (r.height - p0.y));
+		sh.setSize(p1);
 	}
 	
 }

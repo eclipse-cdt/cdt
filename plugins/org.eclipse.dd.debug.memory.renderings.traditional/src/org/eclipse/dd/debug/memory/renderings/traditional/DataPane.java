@@ -93,11 +93,14 @@ public class DataPane extends AbstractPane
                 bytesToSet[i] = new TraditionalMemoryByte(byteData[i]);
                 bytesToSet[i].setBigEndian(bytes[i].isBigEndian());
 
-                if(bytes[i].getValue() != byteData[i])
+				// for embedded, the user wants feedback that the change will be sent to the target,
+				// even if does not change the value. eventually, maybe we need another color to 
+				// indicate change.
+                //if(bytes[i].getValue() != byteData[i])
                 {
                     bytesToSet[i].setEdited(true);
                 }
-                else
+                //else
                 {
                 	if(bytes[i] instanceof TraditionalMemoryByte)
                 		bytesToSet[i].setEdited(((TraditionalMemoryByte) bytes[i]).isEdited());

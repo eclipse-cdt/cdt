@@ -92,9 +92,11 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	}
 	
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
-		IPath filename = new Path(getFileName(editor));
-		if (filename != null && match instanceof PDOMSearchMatch)
-			return filename.equals(IndexLocationFactory.getAbsolutePath(((PDOMSearchMatch)match).getLocation()));
+		final String fileName = getFileName(editor);
+		if (fileName != null && match instanceof PDOMSearchMatch) {
+			final IPath filePath= new Path(fileName);
+			return filePath.equals(IndexLocationFactory.getAbsolutePath(((PDOMSearchMatch)match).getLocation()));
+		}
 		return false;
 	}
 	

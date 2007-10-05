@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Martin Oberhuber (Wind River) - [199573] Fix potential threading issues in SystemTempFileListener
+ * David McKnight   (IBM)        - [205297] Editor upload should not be on main thread
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -136,7 +137,7 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 
 					if (_changedResources.size() > 0 && !_isSynching)
 					{					
-						refreshRemoteResourcesOnUIThread();
+						synchRemoteResourcesOnThread();
 					}
 				}
 				else
@@ -173,9 +174,14 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 			}
 			monitor.done();
 			return Status.OK_STATUS;
-		}
+		}	
 	}
 	
+	/***
+	 * @deprecated don't use this class, it's only here because to remove it would be
+	 * an API change, and we can't do that until 3.0.  Instead of using this, 
+	 * SynchResourcesJob should be used.
+	 */
 	public class RefreshResourcesUIJob extends WorkbenchJob
 	{
 		public RefreshResourcesUIJob()
@@ -207,6 +213,42 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		}
 	}
 	
+	/**
+	 * Used for doing the upload from a job
+	 * @author dmcknigh
+	 *
+	 */
+	private class SynchResourcesJob extends Job
+	{
+		public SynchResourcesJob()
+		{
+			super(FileResources.RSEOperation_message);
+		}
+		
+		public IStatus run(IProgressMonitor monitor)
+		{
+			_isSynching = true;
+			try {
+				IFile[] filesToSync;
+				synchronized(_changedResources) {
+					filesToSync = (IFile[])_changedResources.toArray(new IFile[_changedResources.size()]);
+					_changedResources.clear();
+				}
+				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_SYNCHRONIZE_PROGRESS);
+				monitor.beginTask(msg.getLevelOneText(), IProgressMonitor.UNKNOWN);
+				setName(msg.getLevelOneText());
+				for (int i = 0; i < filesToSync.length; i++)
+				{
+					synchronizeTempWithRemote(filesToSync[i], monitor);
+				}
+			} finally {
+				_isSynching = false;
+				monitor.done();
+			}
+			return Status.OK_STATUS;
+		}
+	}
+	
 	private void refreshRemoteResourcesOnMainThread(List resources)
 	{
 		RefreshResourcesJob job = new RefreshResourcesJob(resources);
@@ -214,9 +256,9 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 		job.schedule();
 	}
 	
-	private void refreshRemoteResourcesOnUIThread()
+	private void synchRemoteResourcesOnThread()
 	{
-		RefreshResourcesUIJob job = new RefreshResourcesUIJob();
+		SynchResourcesJob job = new SynchResourcesJob();
 		job.setPriority(Job.INTERACTIVE);
 		job.schedule();
 	}

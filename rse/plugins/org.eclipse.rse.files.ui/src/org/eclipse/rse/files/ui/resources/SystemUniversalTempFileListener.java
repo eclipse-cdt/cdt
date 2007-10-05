@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [205297] Editor upload should not be on main thread
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -297,7 +298,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 			{
 				// conflict            	
 				// determine which file has a newer timestamp
-				boolean remoteNewer = remoteModifiedStamp > storedModifiedStamp;
+				final boolean remoteNewer = remoteModifiedStamp > storedModifiedStamp;
 
 				// case 1: the remote file has changed since our last download
 				//			it's new timestamp is newer than our stored timestamp (file got
@@ -312,11 +313,25 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 				//			2) Overwrite remote
 				//			3) Save as...
 				//			4) Cancel
-				Shell shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
+				
+				final SystemEditableRemoteFile remoteEdit = editable;
+				final IFile tFile = tempFile;
+				final IRemoteFile rFile = remoteFile;
+				
+				// upload is run in a job, so the conflict action/dialog needs to run in UI thread
+				Display.getDefault().asyncExec(new Runnable()
+				{
+					public void run()
+					{
+						Shell shell = RSEUIPlugin.getTheSystemRegistryUI().getShell();
 
-				SystemUploadConflictAction conflictAction = new SystemUploadConflictAction(shell, tempFile, remoteFile, remoteNewer);
-				conflictAction.run();
-				editable.updateDirtyIndicator();
+						SystemUploadConflictAction conflictAction = new SystemUploadConflictAction(shell, tFile, rFile, remoteNewer);
+						conflictAction.run();
+						remoteEdit.updateDirtyIndicator();
+					}
+				});
+				
+				
 				
 				
 			}

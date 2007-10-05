@@ -54,7 +54,7 @@
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="id" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
                   Uniquely identify this connector

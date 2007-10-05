@@ -42,6 +42,7 @@
  * Martin Oberhuber (Wind River) - [198650] Fix assertion when restoring workbench state
  * Martin Oberhuber (Wind River) - [183176] Fix "widget is disposed" during Platform shutdown
  * David McKnight (IBM)          - [204684] CheckExistsJob used for determining if a remote object exists after a query of it's children
+ * David McKnight (IBM)          - [205592] CheckExistsJob should use the context model object to get adapter
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -5766,7 +5767,8 @@ public class SystemView extends SafeTreeViewer
 			
 			public IStatus run(IProgressMonitor monitor)
 			{				
-				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)_remoteObject.getAdapter(ISystemViewElementAdapter.class);
+				// need to use the model object to get the adapter (since it could be a filter)
+				ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)_context.getModelObject().getAdapter(ISystemViewElementAdapter.class);
 				if (adapter != null)
 				{
 					final Object[] children =  adapter.getChildren(_context, monitor);

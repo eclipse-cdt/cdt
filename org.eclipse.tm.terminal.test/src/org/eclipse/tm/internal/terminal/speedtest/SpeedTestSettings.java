@@ -44,7 +44,7 @@ public class SpeedTestSettings {
 	public void save(ISettingsStore store) {
 		store.put("inputFile", fInputFile);
 		store.put("bufferSize", fBufferSize);
-		store.put("throttle", fInputFile);
+		store.put("throttle", fThrottle);
 	}
 	public String getThrottleString() {
 		return fThrottle;
@@ -53,7 +53,7 @@ public class SpeedTestSettings {
 		try {
 			return Integer.parseInt(fThrottle);
 		} catch(RuntimeException e) {
-			return 1024;
+			return 0;
 		}
 	}
 	public void setThrottleString(String throttle) {

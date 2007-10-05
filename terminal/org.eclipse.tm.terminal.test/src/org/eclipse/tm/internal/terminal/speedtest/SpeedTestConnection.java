@@ -80,10 +80,10 @@ public class SpeedTestConnection extends Thread {
 				os.write(crnl);
 				n+=line.length();
 			}
-			if(throttle>0)
-				sleep(throttle);
 			// process at least this number of characters to update the UI
 			if(line==null || n>bufferSize) {
+				if(throttle>0)
+					sleep(throttle);
 				// we assume we get ASCII UTF8 bytes
 				long t=System.currentTimeMillis();
 				T+=t-t0;

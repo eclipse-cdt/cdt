@@ -17,14 +17,17 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IMemory.MemoryChangedEvent;
+import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -235,7 +238,8 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportsChangeManagement()
 	 */
 	public boolean supportsChangeManagement() {
-		// Let the UI handle block content modification
+		// TODO: UI is a bit lazy. Implement change management ourselves.
+		// return true;
 		return false;
 	}
 
@@ -354,20 +358,20 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     	final Addr64 address = new Addr64(bigAddress);
     	final int word_size = 1;
     	
-        // Use a Query to "synchronize" the inherently asynchronous downstream calls  
+        // Use a Query to synchronize the downstream calls  
         Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
-			protected void execute(final DataRequestMonitor<MemoryByte[]> rm) {
+			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
 			    IMemory memoryService = (IMemory) fRetrieval.getServiceTracker().getService();
 			    if (memoryService != null) {
 			        // Go for it
 			        memoryService.getMemory( 
 			            fRetrieval.getContext(), address, 0, word_size, (int) length,
-			            new DataRequestMonitor<MemoryByte[]>(fRetrieval.getExecutor(), rm) {
+			            new DataRequestMonitor<MemoryByte[]>(fRetrieval.getExecutor(), drm) {
 			                @Override
 			                protected void handleOK() {
-			                    rm.setData(getData());
-			                    rm.done();
+			                    drm.setData(getData());
+			                    drm.done();
 			                }
 			            });
 			        }
@@ -378,7 +382,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
         try {
             return query.get();
         } catch (InterruptedException e) {
+        	System.out.println("Interrupted Exception"); //$NON-NLS-1$
         } catch (ExecutionException e) {
+        	System.out.println("Execution Exception"); //$NON-NLS-1$
         }
 
         return null;
@@ -386,11 +392,33 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
     @DsfServiceEventHandler
     public void eventDispatched(MemoryChangedEvent e) {
-        handleMemoryChange(e.getAddress().getValue());
+
+    	// Find the container of the event
+		IContainerDMContext eventContext = DMContexts.getAncestorOfType(e.getContext(), IContainerDMContext.class); 
+    	if (eventContext == null) {
+    		return;
+    	}
+
+    	// Find the container of the block
+		IContainerDMContext blockContext = DMContexts.getAncestorOfType(fRetrieval.getContext(), IContainerDMContext.class); 
+    	if (blockContext == null) {
+    		// Should not happen: throw an exception
+    		return;
+    	}
+
+    	// Check if we are in the same address space 
+    	if (eventContext != blockContext) {
+    		return;
+    	}
+
+    	IAddress[] addresses = e.getAddresses();
+    	for (int i = 0; i < addresses.length; i++)
+    		handleMemoryChange(addresses[i].getValue());
     }
     
     @DsfServiceEventHandler 
     public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+    	// TODO: Check if we are in the right context
         handleMemoryChange(BigInteger.ZERO);
     }
     
@@ -428,6 +456,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @param length
 	 */
 	public void handleMemoryChange(BigInteger address) {
+		
 		// Check if the change affects this particular block (0 is universal)
 		BigInteger fEndAddress = fBaseAddress.add(BigInteger.valueOf(fLength));
 		if (address.equals(BigInteger.ZERO) ||

@@ -43,19 +43,26 @@ public interface IMemory extends IDsfService {
 	 *     
 	 *     @DsfServiceEventHandler
 	 *     public void eventDispatched(MemoryChangedEvent e) {
-	 *        IAddress address = e.getAddress();
+	 *        IDMContext<?> context = e.getContext();
+	 *        IAddress[] addresses = e.getAddresses();
 	 *        // do whatever...
 	 *     }
 	 */
     public class MemoryChangedEvent {
-        IAddress fAddress;
-
-        public MemoryChangedEvent(IAddress address) {
-            fAddress = address;
+        IAddress[] fAddresses;
+        IDMContext<?> fContext;
+        
+        public MemoryChangedEvent(IDMContext<?> context, IAddress[] addresses) {
+        	fContext = context;
+        	fAddresses = addresses;
         }
 
-        public IAddress getAddress() {
-            return fAddress;
+        public IDMContext<?> getContext() {
+            return fContext;
+        }
+
+        public IAddress[] getAddresses() {
+            return fAddresses;
         }
     }
 

@@ -24,8 +24,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 
 /**
  * A cell oriented Canvas. Maintains a list of "cells".
@@ -39,6 +37,9 @@ public class TextCanvas extends GridCanvas {
 	private boolean fScrollLock;
 	private Point fDraggingStart;
 	private Point fDraggingEnd;
+	private ResizeListener fResizeListener;
+	private int fMinColumns=20;
+	private int fMinLines=4;
 	/**
 	 * Create a new CellCanvas with the given SWT style bits.
 	 * (SWT.H_SCROLL and SWT.V_SCROLL are automatically added).
@@ -58,17 +59,13 @@ public class TextCanvas extends GridCanvas {
 				repaintRange(col,line,width,height);
 			}
 			public void dimensionsChanged(int cols, int rows) {
+				setVirtualExtend(cols+getCellWidth(), rows+getCellHeight());
 				calculateGrid();
 			}
 			public void terminalDataChanged() {
 				if(isDisposed())
 					return;
 				scrollToEnd();
-			}
-		});
-		addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event e) {
-				calculateGrid();
 			}
 		});
 		addFocusListener(new FocusListener(){
@@ -109,6 +106,8 @@ public class TextCanvas extends GridCanvas {
 				}
 			}
 		});
+		serVerticalBarVisible(true);
+		setHorizontalBarVisible(false);
 	}
 
 	void setSelection(Point p) {
@@ -146,6 +145,55 @@ public class TextCanvas extends GridCanvas {
 	public ILinelRenderer getCellRenderer() {
 		return fCellRenderer;
 	}
+	
+	public int getMinColumns() {
+		return fMinColumns;
+	}
+
+	public void setMinColumns(int minColumns) {
+		fMinColumns = minColumns;
+	}
+
+	public int getMinLines() {
+		return fMinLines;
+	}
+
+	public void setMinLines(int minLines) {
+		fMinLines = minLines;
+	}
+
+	protected void onResize() {
+//		if(!isShowHScrollBar()) {
+			if(fResizeListener!=null) {
+				Rectangle bonds=getClientArea();
+				int lines=bonds.height/getCellHeight();
+				int columns=bonds.width/getCellWidth();
+				if(columns<fMinColumns) {
+					if(!isHorizontalBarVisble()) {
+						setHorizontalBarVisible(true);
+						bonds=getClientArea();
+						lines=bonds.height/getCellHeight();
+					}
+					columns=fMinColumns;
+				} else if(columns>=fMinColumns && isHorizontalBarVisble()) {
+					setHorizontalBarVisible(false);
+					bonds=getClientArea();
+					lines=bonds.height/getCellHeight();
+					columns=bonds.width/getCellWidth();
+
+				}
+				if(lines<fMinLines)
+					lines=fMinLines;
+//				if(lines>0 && columns>0 && (lines!=getRows()||columns!=getCols())) {
+				if(lines>0 && columns>0) {
+					fResizeListener.sizeChanged(lines, columns);
+				}
+			}
+//		}
+		super.onResize();
+		calculateGrid();
+	}
+
 	private void calculateGrid() {
 		setVirtualExtend(getCols()*getCellWidth(),getRows()*getCellHeight());
 		// scroll to end
@@ -154,7 +202,6 @@ public class TextCanvas extends GridCanvas {
 		scrollY(getVerticalBar());
 		scrollX(getHorizontalBar());
 
-		updateViewRectangle();
 		getParent().layout();
 		redraw();
 	}
@@ -163,7 +210,7 @@ public class TextCanvas extends GridCanvas {
 			int y=-(getRows()*getCellHeight()-getClientArea().height);
 			Rectangle v=getViewRectangle();
 			if(v.y!=y) {
-				setVirtualOrigin(0,y);
+				setVirtualOrigin(v.x,y);
 			}
 		}
 	}
@@ -216,5 +263,24 @@ public class TextCanvas extends GridCanvas {
 	public boolean isEmpty() {
 		return false;
 	}
+	/**
+	 * Gets notified when the visible size of the terminal changes.
+	 * This should update the model!
+	 *
+	 */
+	public interface ResizeListener {
+		void sizeChanged(int lines, int columns);
+	}
+	/**
+	 * @param listener this listener gets notified, when the size of
+	 * the widget changed. It should change the dimensions of the underlying
+	 * terminaldata
+	 */
+	public void addResizeHandler(ResizeListener listener) {
+		if(fResizeListener!=null)
+			throw new IllegalArgumentException("There can be at most one listener at the moment!"); //$NON-NLS-1$
+		fResizeListener=listener;
+	}
+	
 }
 

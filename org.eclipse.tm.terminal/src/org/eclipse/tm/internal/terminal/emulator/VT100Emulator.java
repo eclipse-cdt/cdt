@@ -148,15 +148,12 @@ public class VT100Emulator implements ControlListener {
 		else
 			text=new VT100EmulatorBackend(data);
 			
-		text.setDimensions(24, 80);
+//		text.setDimensions(24, 80);
 		Style  style=Style.getStyle("BLACK", "WHITE"); //$NON-NLS-1$ //$NON-NLS-2$
 		text.setDefaultStyle(style);
 		text.setStyle(style);
 	}
 	public void setDimensions(int lines,int cols) {
-		// TODO allow to set the dimension in the UI and or prefs
-		lines=Math.max(3, lines);
-		cols=Math.max(10, cols);
 		text.setDimensions(lines, cols);
 		ITerminalConnector telnetConnection = getConnector();
 		if (telnetConnection != null) {

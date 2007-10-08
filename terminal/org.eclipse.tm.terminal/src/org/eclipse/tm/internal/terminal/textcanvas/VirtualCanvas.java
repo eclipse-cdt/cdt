@@ -38,7 +38,7 @@ public abstract class VirtualCanvas extends Canvas {
 	 * prevent infinite loop in {@link #updateScrollbars()}
 	 */
 	private boolean fInUpdateScrollbars;
-
+	
 	public VirtualCanvas(Composite parent, int style) {
 		super(parent, style|SWT.NO_BACKGROUND|SWT.NO_REDRAW_RESIZE);
 		fPaintGC= new GC(this);
@@ -51,7 +51,7 @@ public abstract class VirtualCanvas extends Canvas {
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event event) {
 				fClientArea=getClientArea();
-				updateViewRectangle();
+				onResize();
 			}
 		});
 		getVerticalBar().addListener(SWT.Selection, new Listener() {
@@ -77,6 +77,9 @@ public abstract class VirtualCanvas extends Canvas {
 			
 		});
 	}	
+	protected void onResize() {
+		updateViewRectangle();
+	}
 	protected void scrollX(ScrollBar hBar) {
 		int hSelection = hBar.getSelection ();
 		int destX = -hSelection - fVirtualBounds.x;
@@ -209,7 +212,7 @@ public abstract class VirtualCanvas extends Canvas {
 	}
 	
 	/**
-	 * Sets the extend of the virtual dieplay ares
+	 * Sets the extend of the virtual display ares
 	 * @param width
 	 * @param height
 	 */
@@ -255,7 +258,7 @@ public abstract class VirtualCanvas extends Canvas {
 	}
 	/** called when the viewed part is changing */
 	private Rectangle fViewRectangle=new Rectangle(0,0,0,0);
-	void updateViewRectangle() {
+	protected void updateViewRectangle() {
 		if(
 				fViewRectangle.x==-fVirtualBounds.x 
 				&& fViewRectangle.y==-fVirtualBounds.y
@@ -303,32 +306,36 @@ public abstract class VirtualCanvas extends Canvas {
 	private void doUpdateScrollbar() {
 		Point size= getSize();
 		Rectangle clientArea= getClientArea();
-	
 		ScrollBar horizontal= getHorizontalBar();
-		if (fVirtualBounds.width <= clientArea.width) {
-			// TODO IMPORTANT in ScrollBar.setVisible comment out the line
-			// that checks 'isvisible' and returns (at the beginning)
-			horizontal.setVisible(false);
-			horizontal.setSelection(0);
-		} else {
+		if(horizontal.isVisible()) {
 			horizontal.setPageIncrement(clientArea.width - horizontal.getIncrement());
 			int max= fVirtualBounds.width + (size.x - clientArea.width);
 			horizontal.setMaximum(max);
 			horizontal.setThumb(size.x > max ? max : size.x);
-			horizontal.setVisible(true);
 		}
-	
 		ScrollBar vertical= getVerticalBar();
-		if (fVirtualBounds.height <= clientArea.height) {
-			vertical.setVisible(false);
-			vertical.setSelection(0);
-		} else {
+		if(vertical.isVisible()) {
 			vertical.setPageIncrement(clientArea.height - vertical.getIncrement());
 			int max= fVirtualBounds.height + (size.y - clientArea.height);
 			vertical.setMaximum(max);
 			vertical.setThumb(size.y > max ? max : size.y);
-			vertical.setVisible(true);
 		}
+	}
+	protected boolean isVertialBarVisible() {
+		return getVerticalBar().isVisible();
+	}
+	protected void serVerticalBarVisible(boolean showVScrollBar) {
+		ScrollBar vertical= getVerticalBar();
+		vertical.setVisible(showVScrollBar);
+		vertical.setSelection(0);
+	}
+	protected boolean isHorizontalBarVisble() {
+		return getHorizontalBar().isVisible();
+	}
+	protected void setHorizontalBarVisible(boolean showHScrollBar) {
+		ScrollBar horizontal= getHorizontalBar();
+		horizontal.setVisible(showHScrollBar);
+		horizontal.setSelection(0);
 	}
 }
 

@@ -39,6 +39,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	 * do not update while update is running
 	 */
 	boolean fInUpdate;
+	private int fCols;
 
 	public AbstractTextCanvasModel(ITerminalTextDataSnapshot snapshot) {
 		fSnapshot=snapshot;
@@ -72,6 +73,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		}
 		
 	}
+	
 	public ITerminalTextDataReadOnly getTerminalText() {
 		return fSnapshot;
 	}
@@ -88,9 +90,10 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 				// TODO why does hasDimensionsChanged not work??????
 				//			if(fSnapshot.hasDimensionsChanged())
 				//				fireDimensionsChanged();
-				if(fLines!=fSnapshot.getHeight()) {
+				if(fLines!=fSnapshot.getHeight() || fCols!=fSnapshot.getWidth()) {
 					fireDimensionsChanged(fSnapshot.getWidth(),fSnapshot.getHeight());
 					fLines=fSnapshot.getHeight();
+					fCols=fSnapshot.getWidth();
 				}
 				int y=fSnapshot.getFirstChangedLine();
 				// has any line changed?

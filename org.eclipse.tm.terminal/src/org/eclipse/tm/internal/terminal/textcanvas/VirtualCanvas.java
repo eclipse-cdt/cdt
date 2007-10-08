@@ -11,6 +11,8 @@
 package org.eclipse.tm.internal.terminal.textcanvas;
 
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -23,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 
 /**
  * A <code>Canvas</code> showing a virtual object.
@@ -38,6 +41,7 @@ public abstract class VirtualCanvas extends Canvas {
 	 * prevent infinite loop in {@link #updateScrollbars()}
 	 */
 	private boolean fInUpdateScrollbars;
+	private static boolean fInUpdateScrollbarsLogged;
 	
 	public VirtualCanvas(Composite parent, int style) {
 		super(parent, style|SWT.NO_BACKGROUND|SWT.NO_REDRAW_RESIZE);
@@ -300,6 +304,13 @@ public abstract class VirtualCanvas extends Canvas {
 				doUpdateScrollbar();
 			} finally {
 				fInUpdateScrollbars=false;
+			}
+		} else {
+			if(!fInUpdateScrollbarsLogged) {
+				fInUpdateScrollbarsLogged=true;
+				TerminalPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, 
+						TerminalPlugin.PLUGIN_ID, IStatus.OK, "Unexpected Recursion in terminal", //$NON-NLS-1$
+						new RuntimeException()));
 			}
 		}
 	}

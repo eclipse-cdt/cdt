@@ -163,11 +163,13 @@ public class TextCanvas extends GridCanvas {
 	}
 
 	protected void onResize() {
-//		if(!isShowHScrollBar()) {
-			if(fResizeListener!=null) {
-				Rectangle bonds=getClientArea();
-				int lines=bonds.height/getCellHeight();
-				int columns=bonds.width/getCellWidth();
+		if(fResizeListener!=null) {
+			Rectangle bonds=getClientArea();
+			int lines=bonds.height/getCellHeight();
+			int columns=bonds.width/getCellWidth();
+			// when the view is minimised, its size is set to 0
+			// we don't sent this to the terminal!
+			if(lines>0 && columns>0) {
 				if(columns<fMinColumns) {
 					if(!isHorizontalBarVisble()) {
 						setHorizontalBarVisible(true);
@@ -184,12 +186,9 @@ public class TextCanvas extends GridCanvas {
 				}
 				if(lines<fMinLines)
 					lines=fMinLines;
-//				if(lines>0 && columns>0 && (lines!=getRows()||columns!=getCols())) {
-				if(lines>0 && columns>0) {
-					fResizeListener.sizeChanged(lines, columns);
-				}
+				fResizeListener.sizeChanged(lines, columns);
 			}
-//		}
+		}
 		super.onResize();
 		calculateGrid();
 	}

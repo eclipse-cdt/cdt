@@ -78,14 +78,34 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			if(lines==fLines && cols==fColumns)
 				return; // nothing to do
 			// cursor line from the bottom
-			int cl=fLines-getCursorLine();
+			int cl=lines-(fLines-getCursorLine());
 			int cc=getCursorColumn();
-			
+			int newLines=Math.max(lines,fTerminal.getHeight());
+			// if the terminal has no history, then resize by
+			// setting the size to the new size
+			if(fTerminal.getHeight()==fLines) {
+				if(lines<fLines) {
+					cl+=fLines-lines;
+					newLines=lines;
+					// shrink by cutting empty lines at the bottom
+//					int firstNoneEmptyLine;
+//					for (firstNoneEmptyLine = fTerminal.getHeight(); firstNoneEmptyLine <= 0; firstNoneEmptyLine--) {
+//						LineSegment[] segments = fTerminal.getLineSegments(firstNoneEmptyLine, 0, fTerminal.getWidth());
+//						if(segments.length>1)
+//							break;
+//						// is the line empty?
+//						if(segments[0].getText().replaceAll("[\000 ]+", "").length()==0)
+//							break;
+//					}
+				} else {
+					cl+=fLines-lines;
+				}
+			}
 			fLines=lines;
 			fColumns=cols;
 			// make the terminal at least as high as we need lines
-			fTerminal.setDimensions(Math.max(fLines,fTerminal.getHeight()), fColumns);			
-			setCursor(fLines-cl, cc);
+			fTerminal.setDimensions(newLines, fColumns);
+			setCursor(cl, cc);
 		}
 	}
 	

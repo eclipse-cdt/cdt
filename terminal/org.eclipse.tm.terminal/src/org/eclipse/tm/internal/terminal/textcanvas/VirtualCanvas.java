@@ -318,14 +318,18 @@ public abstract class VirtualCanvas extends Canvas {
 		Point size= getSize();
 		Rectangle clientArea= getClientArea();
 		ScrollBar horizontal= getHorizontalBar();
-		if(horizontal.isVisible()) {
+		// even if setVisible was called on the scrollbar, isVisible
+		// returns false if its parent is not visible. 
+		if(!isVisible() || horizontal.isVisible()) {
 			horizontal.setPageIncrement(clientArea.width - horizontal.getIncrement());
 			int max= fVirtualBounds.width + (size.x - clientArea.width);
 			horizontal.setMaximum(max);
 			horizontal.setThumb(size.x > max ? max : size.x);
 		}
 		ScrollBar vertical= getVerticalBar();
-		if(vertical.isVisible()) {
+		// even if setVisible was called on the scrollbar, isVisible
+		// returns false if its parent is not visible. 
+		if(!isVisible() || vertical.isVisible()) {
 			vertical.setPageIncrement(clientArea.height - vertical.getIncrement());
 			int max= fVirtualBounds.height + (size.y - clientArea.height);
 			vertical.setMaximum(max);

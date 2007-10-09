@@ -1158,8 +1158,8 @@ public class VT100EmulatorBackendTest extends TestCase {
 		IVT100EmulatorBackend vt100=makeBakend(term);
 		term.setMaxHeight(6);
 		vt100.setDimensions(3, 4);
-		// the cursor is now at the end....
-		assertEquals(2,vt100.getCursorLine());
+		// the cursor still at the beginning....
+		assertEquals(0,vt100.getCursorLine());
 		assertEquals(0,vt100.getCursorColumn());
 		vt100.setCursor(0, 2);
 		vt100.setCursorLine(1);
@@ -1174,13 +1174,29 @@ public class VT100EmulatorBackendTest extends TestCase {
 		assertEquals(2,vt100.getCursorLine());
 		assertEquals(3,vt100.getCursorColumn());
 	}
+	public void testSetCursorAndSetDimensions() {
+		ITerminalTextData term=makeITerminalTextData();
+		IVT100EmulatorBackend vt100=makeBakend(term);
+		term.setMaxHeight(10);
+		vt100.setDimensions(3, 4);
+		// the cursor still at the beginning....
+		assertEquals(0,vt100.getCursorLine());
+		assertEquals(0,vt100.getCursorColumn());
+		vt100.setDimensions(6, 4);
+		assertEquals(0,vt100.getCursorLine());
+		assertEquals(0,vt100.getCursorColumn());
+		vt100.setCursor(2, 3);
+		vt100.setDimensions(8, 4);
+		assertEquals(2,vt100.getCursorLine());
+		assertEquals(3,vt100.getCursorColumn());
+	}
 
 	public void testSetCursorColumn() {
 		ITerminalTextData term=makeITerminalTextData();
 		IVT100EmulatorBackend vt100=makeBakend(term);
 		term.setMaxHeight(6);
 		vt100.setDimensions(3, 4);
-		assertEquals(2,vt100.getCursorLine());
+		assertEquals(0,vt100.getCursorLine());
 		assertEquals(0,vt100.getCursorColumn());
 		vt100.setCursor(1, 0);
 		vt100.setCursorColumn(2);
@@ -1201,7 +1217,7 @@ public class VT100EmulatorBackendTest extends TestCase {
 		IVT100EmulatorBackend vt100=makeBakend(term);
 		term.setMaxHeight(6);
 		vt100.setDimensions(3, 4);
-		assertEquals(2,vt100.getCursorLine());
+		assertEquals(0,vt100.getCursorLine());
 		assertEquals(0,vt100.getCursorColumn());
 		vt100.setCursor(0, 0);
 		assertEquals(0,vt100.getCursorLine());

@@ -82,8 +82,7 @@ public class TerminalTextUITest {
 		// TODO how to get the initial size correctly!
 		snapshot.updateSnapshot(false);
 		fgModel=new PollingTextCanvasModel(snapshot);
-		fgTextCanvas=new TextCanvas(shell,fgModel, SWT.NONE);
-		fgTextCanvas.setCellRenderer(new TextLineRenderer(fgTextCanvas,fgModel));
+		fgTextCanvas=new TextCanvas(shell,fgModel, SWT.NONE,new TextLineRenderer(fgTextCanvas,fgModel));
 		fgTextCanvas.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 

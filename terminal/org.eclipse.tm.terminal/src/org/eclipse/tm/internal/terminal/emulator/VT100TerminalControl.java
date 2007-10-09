@@ -486,8 +486,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		// TODO how to get the initial size correctly!
 		snapshot.updateSnapshot(false);
 		ITextCanvasModel canvasModel=new PollingTextCanvasModel(snapshot);
-		fCtlText=new TextCanvas(fWndParent,canvasModel,SWT.NONE);
-		fCtlText.setCellRenderer(new TextLineRenderer(fCtlText,canvasModel));
+		fCtlText=new TextCanvas(fWndParent,canvasModel,SWT.NONE,new TextLineRenderer(fCtlText,canvasModel));
+
 
 		fCtlText.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

@@ -20,6 +20,14 @@ import org.eclipse.tm.terminal.model.StyleColor;
 abstract public class AbstractITerminalTextDataTest extends TestCase {
 	abstract protected ITerminalTextData makeITerminalTextData();
 
+	protected void setUp() throws Exception {
+		try {
+			assert false;
+			throw new Error("make sure you run this code with assertions enabled (vmargs: -ea)");
+		} catch(AssertionError e) {
+		}
+		super.setUp();
+	}
 	protected String toSimple(ITerminalTextData term) {
 		return TerminalTextTestHelper.toSimple(term);
 	}

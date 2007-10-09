@@ -203,7 +203,26 @@ public class CConfigBasedDescriptor implements ICDescriptor {
 	}
 
 	public ICExtensionReference[] get(String extensionPoint) {
-		ICConfigExtensionReference cfgRefs[] = fCfgDes.get(extensionPoint);
+		ICConfigExtensionReference[] rs = fCfgDes.get(extensionPoint);
+		ArrayList refs = new ArrayList();
+		refs.addAll(Arrays.asList(rs));
+		
+		ICConfigurationDescription[] cfgs = 
+			fCfgDes.getProjectDescription().getConfigurations();
+		
+		for (int i=0; i<cfgs.length; i++) {
+			if (!fCfgDes.equals(cfgs[i])) {
+				rs = cfgs[i].get(extensionPoint); 
+				for (int j=0; j<rs.length; j++) {
+					if (!refs.contains(rs[j]))
+						refs.add(rs[j]);
+				}
+			}
+		}
+		ICConfigExtensionReference cfgRefs[] = 
+			(ICConfigExtensionReference[])refs.toArray(
+					new ICConfigExtensionReference[refs.size()]);
+
 		if(cfgRefs.length == 0){
 			return new ICExtensionReference[0];
 		}

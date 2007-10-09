@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -70,8 +71,6 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	protected Table table;
 	protected CheckboxTableViewer tv;
 	protected Composite parserGroup;
-	
-	private ICTargetPlatformSetting tps;
 	
 	protected class BinaryParserConfiguration {
 		IExtension fExtension;
@@ -168,8 +167,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
     }
 
 	public void updateData(ICResourceDescription cfgd) {
-		tps = cfgd.getConfiguration().getTargetPlatformSetting(); 
-		String[] ids = tps.getBinaryParserIds();
+		String[] ids = CoreModelUtil.getBinaryParserIds(page.getCfgsEditable());
 		Object[] data = new Object[configMap.size()];
 		HashMap clone = new HashMap(configMap);
 		// add checked elements
@@ -295,7 +293,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	}
 	
 	protected void performDefaults() { 
-		tps.setBinaryParserIds(null);
+		CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), null);
 		informPages(false); 
 		updateData(getResDesc());
 	}	
@@ -303,7 +301,6 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	private void informPages(boolean apply) {	
 		IProgressMonitor mon = new NullProgressMonitor();
 		Iterator it = fParserPageMap.values().iterator();
-		
 		
 		while (it.hasNext()) {
 			try {
@@ -358,7 +355,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 				ids[i] = ((BinaryParserConfiguration)objs[i]).getID();
 			}
 		}
-		if (tps != null) tps.setBinaryParserIds(ids);
+		CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), ids);
 	}
 	// This page can be displayed for project only
 	public boolean canBeVisible() {

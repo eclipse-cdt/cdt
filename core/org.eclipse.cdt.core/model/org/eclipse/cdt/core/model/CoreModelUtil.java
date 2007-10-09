@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -717,5 +718,38 @@ public class CoreModelUtil {
     	}
     	
 		return (ICConfigurationDescription[]) result.toArray(new ICConfigurationDescription[result.size()]);
+	}
+    
+    /**
+     * Returns binary parser IDs for configurations
+     * @param cfgs - array of configurations where we need search
+     * @return - array of binary parser ids (Strings)
+     */
+	public static String[] getBinaryParserIds(ICConfigurationDescription[] cfgs) {
+		if (cfgs ==  null || cfgs.length == 0) 
+			return null;
+		ArrayList pids = new ArrayList();
+		for (int i=0; i<cfgs.length; i++) {
+			ICTargetPlatformSetting tps = cfgs[i].getTargetPlatformSetting();
+			String[] ids = tps.getBinaryParserIds();
+			for (int j = 0; j < ids.length; j++) {
+				if (!pids.contains(ids[j]))
+					pids.add(ids[j]);
+			}				
+		}
+		return (String[])pids.toArray(new String[pids.size()]);
+	}
+
+	/**
+	 * Sets binary parser ID list to given configurations
+	 * @param cfgs - array of configurations where we need search
+	 * @param pids - array of binary parser ids (Strings)
+	 */
+	public static void setBinaryParserIds(ICConfigurationDescription[] cfgs, String[] pids) {
+		if (cfgs ==  null || cfgs.length == 0)
+			return;
+		for (int i=0; i<cfgs.length; i++) {
+			cfgs[i].getTargetPlatformSetting().setBinaryParserIds(pids);
+		}
 	}
 }

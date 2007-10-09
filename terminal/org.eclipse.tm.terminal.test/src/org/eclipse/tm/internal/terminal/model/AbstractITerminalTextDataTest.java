@@ -23,8 +23,9 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 	protected void setUp() throws Exception {
 		try {
 			assert false;
-			throw new Error("make sure you run this code with assertions enabled (vmargs: -ea)");
+			throw new Error("No Assertions! Run this code with assertions enabled! (vmargs: -ea)");
 		} catch(AssertionError e) {
+			// OK, assertions are enabled!
 		}
 		super.setUp();
 	}
@@ -259,7 +260,7 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 		assertEqualsTerm(s, toMultiLineText(term));
 		try {
 			term.setDimensions(-3, 4);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 			// OK
 		}
@@ -371,32 +372,32 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 		assertEquals('E', term.getChar(2,4));
 		try {
 			term.getChar(0,-1);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 		}
 		try {
 			term.getChar(-1,-1);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 		}
 		try {
 			term.getChar(-1,0);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 		}
 		try {
 			term.getChar(0,5);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 		}
 		try {
 			term.getChar(3,5);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 		}
 		try {
 			term.getChar(3,0);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 		}
 	}
@@ -481,7 +482,7 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 		try {
 			// check if we cannot exceed the range
 			term.setChars(4, 1, new char[]{'1','2','3','4','5'}, null);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 	
 	}
@@ -527,24 +528,24 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 		fill(term, s);
 		try {
 			term.setChars(1, 0, chars, 7, 10, null);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 		fill(term, s);
 		try {
 			term.setChars(1, -1, chars, 0, 2, null);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 		try {
 			term.setChars(-1, 1, chars, 0, 2, null);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 		try {
 			term.setChars(1, 10, chars, 0, 2, null);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 		try {
 			term.setChars(10, 1, chars, 0, 2, null);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 //		assertEquals(s, toSimpleText(term));
 	}
@@ -617,22 +618,22 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 		try {
 			fillSimple(termCopy, sCopy);
 			termCopy.copyRange(term,1,1,5);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 		try {
 			fillSimple(termCopy, sCopy);
 			termCopy.copyRange(term,0,0,6);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 		try {
 			fillSimple(termCopy, sCopy);
 			termCopy.copyRange(term,7,0,1);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 		try {
 			fillSimple(termCopy, sCopy);
 			termCopy.copyRange(term,0,7,1);
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {}
 	}
 	public void testCopyLine() {
@@ -789,12 +790,12 @@ abstract public class AbstractITerminalTextDataTest extends TestCase {
 	public void testScrollFail() {
 		try {
 			scrollTest(5,2,-1,"012345","012345");
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 		}
 		try {
 			scrollTest(0,7,1,"012345","      ");
-			fail(); // make sure you run this code with assertions enabled (vmargs: -ea)
+			fail();
 		} catch (RuntimeException e) {
 		}
 	}

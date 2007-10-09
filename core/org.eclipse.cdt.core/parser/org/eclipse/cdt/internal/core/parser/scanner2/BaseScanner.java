@@ -4059,7 +4059,7 @@ abstract class BaseScanner implements IScanner {
     private static final MacroExpansionToken EXPANSION_TOKEN = new MacroExpansionToken();
 
     static {
-        CharArrayIntMap words = new CharArrayIntMap(IToken.tLAST, -1);
+        CharArrayIntMap words = new CharArrayIntMap(40, -1);
 
         // Common keywords
         words.put(Keywords.cAUTO, IToken.t_auto);

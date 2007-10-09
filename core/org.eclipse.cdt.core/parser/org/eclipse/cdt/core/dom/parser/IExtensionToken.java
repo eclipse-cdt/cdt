@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.IToken;
  */
 public interface IExtensionToken {
 
-	int t__otherDeclSpecModifierFirst= IToken.tLAST + 100;
-	int t__otherDeclSpecModifierLast= IToken.tLAST + 110;
+	int t__otherDeclSpecModifierFirst= IToken.FIRST_RESERVED_IExtensionToken;
+	int t__otherDeclSpecModifierLast= IToken.FIRST_RESERVED_IExtensionToken + 10;
 
 }

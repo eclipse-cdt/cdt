@@ -18,11 +18,11 @@ package org.eclipse.cdt.core.parser;
  */
 public interface IGCCToken extends IToken {
 	
-	public static final int t_typeof = tLAST + 1;
-	public static final int t___alignof__ = tLAST + 2;
-	public static final int tMAX = tLAST + 3;
-	public static final int tMIN = tLAST + 4;
-	public static final int t__attribute__ = tLAST + 5;
-	public static final int t__declspec = tLAST + 6;
+	public static final int t_typeof = FIRST_RESERVED_IGCCToken;
+	public static final int t___alignof__ = FIRST_RESERVED_IGCCToken + 1;
+	public static final int tMAX = FIRST_RESERVED_IGCCToken + 2;
+	public static final int tMIN = FIRST_RESERVED_IGCCToken + 3;
+	public static final int t__attribute__ = FIRST_RESERVED_IGCCToken + 4;
+	public static final int t__declspec = FIRST_RESERVED_IGCCToken + 5;
 	
 }

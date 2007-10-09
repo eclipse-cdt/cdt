@@ -19,8 +19,6 @@ public class Keywords {
 	public static final String CAST = "cast"; //$NON-NLS-1$
 	public static final String ALIGNOF = "alignof"; //$NON-NLS-1$
 	public static final String TYPEOF = "typeof"; //$NON-NLS-1$
-	public static final String cpMIN = "<?"; //$NON-NLS-1$
-	public static final String cpMAX = ">?"; //$NON-NLS-1$
 	
 	public static final String _BOOL = "_Bool"; //$NON-NLS-1$
 	public static final String _COMPLEX = "_Complex"; //$NON-NLS-1$
@@ -231,8 +229,13 @@ public class Keywords {
 	public static final char[] cpDOT = 	".".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpDIVASSIGN =	"/=".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpDIV = 	"/".toCharArray(); //$NON-NLS-1$
+	public static final char[] cpBACKSLASH = "\\".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpPOUND = "#".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpPOUNDPOUND = "##".toCharArray(); //$NON-NLS-1$
+	
+	// gcc extensions
+	public static final char[] cpMIN = "<?".toCharArray(); //$NON-NLS-1$
+	public static final char[] cpMAX = ">?".toCharArray(); //$NON-NLS-1$
 	
 	// preprocessor keywords
 	public static final char[] cIFDEF = "ifdef".toCharArray(); //$NON-NLS-1$

@@ -30,8 +30,8 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
  */
 public interface IScanner extends IMacroCollector {
 	
-	public static final int tPOUNDPOUND = -6;
-	public static final int tPOUND      = -7;
+	/** @deprecated */ public static final int tPOUNDPOUND = IToken.tPOUNDPOUND;
+	/** @deprecated */ public static final int tPOUND      = IToken.tPOUND;
 
     public void setOffsetBoundary( int offset );
 	public void setContentAssistMode( int offset );

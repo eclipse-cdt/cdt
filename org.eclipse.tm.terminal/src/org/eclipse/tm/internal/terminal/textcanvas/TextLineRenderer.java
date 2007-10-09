@@ -24,14 +24,12 @@ import org.eclipse.tm.terminal.model.Style;
  *
  */
 public class TextLineRenderer implements ILinelRenderer {
-	TextCanvas fCanvas;
 	private final ITextCanvasModel fModel;
 	StyleMap fStyleMap=new StyleMap();
 	Color fBackgroundColor;
 	public TextLineRenderer(TextCanvas c, ITextCanvasModel model) {
-		fCanvas=c;
 		fModel=model;
-		fBackgroundColor=c.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		fBackgroundColor=Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 	/* (non-Javadoc)
 	 * @see com.imagicus.thumbs.view.ICellRenderer#getCellWidth()

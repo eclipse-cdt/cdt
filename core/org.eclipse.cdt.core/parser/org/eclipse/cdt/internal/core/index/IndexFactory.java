@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.index;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -100,19 +99,15 @@ public class IndexFactory {
 	}
 
 	public IWritableIndex getWritableIndex(ICProject project) throws CoreException {		
-		Collection selectedProjects= Collections.singleton(project);
 		Map readOnlyFrag= new LinkedHashMap();
-		Map fragments= new LinkedHashMap();
-		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
-			ICProject cproject = (ICProject) iter.next();
-			IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(cproject);
-			if (pdom != null) {
-				safeAddFragment(fragments, pdom);
-				safeAddProvidedFragments(cproject, readOnlyFrag);
-			}
+		IWritableIndexFragment pdom= (IWritableIndexFragment) fPDOMManager.getPDOM(project);
+		if (pdom == null) {
+			throw new CoreException(CCorePlugin.createStatus(
+					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0, new Object[]{project.getElementName()})));
 		}
-		
-		selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap(), new Integer(1));		
+		safeAddProvidedFragments(project, readOnlyFrag);
+
+		Collection selectedProjects= getProjects(new ICProject[] {project}, true, false, new HashMap(), new Integer(1));		
 		selectedProjects.remove(project);
 		
 		for (Iterator iter = selectedProjects.iterator(); iter.hasNext(); ) {
@@ -120,15 +115,8 @@ public class IndexFactory {
 			safeAddFragment(readOnlyFrag, fPDOMManager.getPDOM(cproject));
 		}
 				
-		if (fragments.isEmpty()) {
-			throw new CoreException(CCorePlugin.createStatus(
-					MessageFormat.format(Messages.IndexFactory_errorNoSuchPDOM0, new Object[]{project.getElementName()})));
-		}
-		
-		Collection pdoms= fragments.values();
 		Collection roPdoms= readOnlyFrag.values();
-		return new WritableCIndex((IWritableIndexFragment[]) pdoms.toArray(new IWritableIndexFragment[pdoms.size()]),
-				(IIndexFragment[]) roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
+		return new WritableCIndex(pdom, (IIndexFragment[]) roPdoms.toArray(new IIndexFragment[roPdoms.size()]) );
 	}
 	
 	private Collection getProjects(ICProject[] projects, boolean addDependencies, boolean addDependent, HashMap map, Integer markWith) {

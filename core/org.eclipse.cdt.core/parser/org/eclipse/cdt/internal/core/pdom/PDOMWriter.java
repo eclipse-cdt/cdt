@@ -438,7 +438,7 @@ abstract public class PDOMWriter {
 
 	private IIndexFragmentFile addToIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap, int configHash, Set contextIncludes) throws CoreException {
 		Set clearedContexts= Collections.EMPTY_SET;
-		IIndexFragmentFile file= (IIndexFragmentFile) index.getFile(location);
+		IIndexFragmentFile file= index.getWritableFile(location);
 		if (file != null) {
 			clearedContexts= new HashSet();
 			index.clearFile(file, clearedContexts);

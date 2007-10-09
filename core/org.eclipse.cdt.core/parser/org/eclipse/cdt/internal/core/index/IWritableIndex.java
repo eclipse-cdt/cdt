@@ -41,6 +41,11 @@ public interface IWritableIndex extends IIndex {
 	boolean isWritableFile(IIndexFragmentFile file);
 
 	/**
+	 * Returns a writable file for the given location, or null.
+	 */
+	IIndexFragmentFile getWritableFile(IIndexFileLocation location) throws CoreException;
+
+	/**
 	 * Clears the given file in the index.
 	 * @param file a file to clear.
 	 * @param a collection that receives IndexFileLocation objects for files that
@@ -102,7 +107,7 @@ public interface IWritableIndex extends IIndex {
 	 * Returns the primary writable fragment, or <code>null</code> if there is 
 	 * no writable fragment.
 	 */
-	IWritableIndexFragment getPrimaryWritableFragment();
+	IWritableIndexFragment getWritableFragment();
 
 	/**
 	 * Flushes all caches to the disk. 

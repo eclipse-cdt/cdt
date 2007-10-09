@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.index;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -128,13 +129,18 @@ public class CIndex implements IIndex {
 				}
 			}
 		}
-		// bug 192352, files can reside in multipe fragments, remove duplicates
+		// bug 192352, files can reside in multiple fragments, remove duplicates
 		if (fragCount > 1) {
-			HashSet keys= new HashSet();
+			HashMap fileMap= new HashMap();
 			for (Iterator iterator = result.iterator(); iterator.hasNext();) {
 				final IIndexFragmentName name = (IIndexFragmentName) iterator.next();
-				final String key= name.getFile().getLocation().getURI().toString() + name.getNodeOffset();
-				if (!keys.add(key)) {
+				final IIndexFile file= name.getFile();
+				final String fileKey= name.getFile().getLocation().getURI().toString();
+				final IIndexFile otherFile= (IIndexFile) fileMap.get(fileKey);
+				if (otherFile == null) {
+					fileMap.put(fileKey, file);
+				}
+				else if (!otherFile.equals(file)) { // same file in another fragment
 					iterator.remove();
 				}
 			}

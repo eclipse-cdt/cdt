@@ -82,7 +82,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		index.acquireWriteLock(0);
 		try {
 			index.clear();
-			IWritableIndexFragment wf= index.getPrimaryWritableFragment();
+			IWritableIndexFragment wf= index.getWritableFragment();
 			if (wf instanceof WritablePDOM) {
 				PDOMManager.writeProjectPDOMProperties((WritablePDOM) wf, project.getProject());
 			}

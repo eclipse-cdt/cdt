@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
-import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.WritableCIndex;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.runtime.CoreException;
@@ -60,7 +59,7 @@ public class StandaloneFullIndexer extends StandaloneIndexer{
 			IScannerInfo scanner, ILanguageMapper mapper, IParserLogService log, ICodeReaderFactory codeReaderFactory) throws CoreException {
 		WritablePDOM pdom = new WritablePDOM(writableIndexFile, converter, linkageFactoryMappings);
 		fIndex = new WritableCIndex(
-				new IWritableIndexFragment[] { pdom },
+				pdom,
 				new IIndexFragment[0]);		
 		fIndexAllFiles = false;
 		fScanner = scanner;

@@ -21,39 +21,35 @@ import org.eclipse.core.runtime.CoreException;
 
 public class WritableCIndex extends CIndex implements IWritableIndex {
 
-	final private IWritableIndexFragment[] fWritableFragments;
+	final private IWritableIndexFragment fWritableFragment;
 	private boolean fIsWriteLocked= false;
 
-	public WritableCIndex(IWritableIndexFragment[] writable, IIndexFragment[] readonly) {
+	public WritableCIndex(IWritableIndexFragment writable, IIndexFragment[] readonly) {
 		super (concat(writable, readonly));
-		fWritableFragments= writable;
+		fWritableFragment= writable;
 	}
 
-	private static IIndexFragment[] concat(IIndexFragment[] writable, IIndexFragment[] readonly) {
-		IIndexFragment[] result= new IIndexFragment[writable.length + readonly.length];
-		System.arraycopy(writable, 0, result, 0, writable.length);
-		System.arraycopy(readonly, 0, result, writable.length, readonly.length);
+	private static IIndexFragment[] concat(IIndexFragment writable, IIndexFragment[] readonly) {
+		IIndexFragment[] result= new IIndexFragment[1 + readonly.length];
+		result[0]= writable;
+		System.arraycopy(readonly, 0, result, 1, readonly.length);
 		return result;
 	}
 
-	public IIndexFragmentFile addFile(IIndexFileLocation fileLocation) throws CoreException {
-		IWritableIndexFragment frag= selectFragment(fileLocation);
-		return frag.addFile(fileLocation);
+	public IWritableIndexFragment getWritableFragment() {
+		return fWritableFragment;
 	}
-
-	private IWritableIndexFragment selectFragment(IIndexFileLocation fileLocation) {
-		// todo handling of multiple writable indices
-		assert fWritableFragments.length == 1;
-		return fWritableFragments[0];
+	
+	public IIndexFragmentFile getWritableFile(IIndexFileLocation location) throws CoreException {
+		return fWritableFragment.getFile(location);
+	}
+	
+	public IIndexFragmentFile addFile(IIndexFileLocation fileLocation) throws CoreException {
+		return fWritableFragment.addFile(fileLocation);
 	}
 
 	private boolean isWritableFragment(IIndexFragment frag) {
-		for (int i = 0; i < fWritableFragments.length; i++) {
-			if (fWritableFragments[i] == frag) {
-				return true;
-			}
-		}
-		return false;
+		return frag == fWritableFragment;
 	}
 
 	public void setFileContent(IIndexFragmentFile file, 
@@ -76,10 +72,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	}
 
 	public void clear() throws CoreException {
-		for (int i = 0; i < fWritableFragments.length; i++) {
-			IWritableIndexFragment frag = fWritableFragments[i];
-			frag.clear();
-		}
+		fWritableFragment.clear();
 	}
 
 	public boolean isWritableFile(IIndexFragmentFile file) {
@@ -111,22 +104,8 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		assert !fIsWriteLocked: "Multiple write locks is not allowed"; //$NON-NLS-1$
 		assert giveupReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
 		
+		fWritableFragment.acquireWriteLock(giveupReadlockCount);
 		fIsWriteLocked= true;
-		int i= 0;
-		try {
-			for (i = 0; i < fWritableFragments.length; i++) {
-				fWritableFragments[i].acquireWriteLock(giveupReadlockCount);
-			}
-		}
-		finally {
-			if (i < fWritableFragments.length) {
-				// rollback
-				fIsWriteLocked= false;
-				while (--i >= 0) {
-					fWritableFragments[i].releaseWriteLock(giveupReadlockCount, false);
-				}
-			}
-		}
 	}
 
 	public synchronized void releaseWriteLock(int establishReadlockCount) {
@@ -138,22 +117,12 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		assert establishReadlockCount == getReadLockCount(): "Unexpected read lock is not allowed"; //$NON-NLS-1$
 
 		fIsWriteLocked= false;
-		for (int i = 0; i < fWritableFragments.length; i++) {
-			fWritableFragments[i].releaseWriteLock(establishReadlockCount, flush);
-		}
+		fWritableFragment.releaseWriteLock(establishReadlockCount, flush);
 	}
 	
-	public IWritableIndexFragment getPrimaryWritableFragment() {
-		return fWritableFragments.length > 0 ? fWritableFragments[0] : null;
-	}
 
 	public void flush() throws CoreException {
 		assert !fIsWriteLocked;
-		int i= 0;
-		for (i = 0; i < fWritableFragments.length; i++) {
-			fWritableFragments[i].flush();
-		}
+		fWritableFragment.flush();
 	}
-	
-	
 }

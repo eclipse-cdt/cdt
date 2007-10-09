@@ -87,6 +87,7 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 	private ICodeReaderFactory fFallBackFactory;
 	private CallbackHandler fCallbackHandler;
 	private final ICProject cproject;
+	private final String fProjectPathPrefix;
 	
 	public IndexBasedCodeReaderFactory(ICProject cproject, IIndex index) {
 		this(cproject, index, new HashMap/*<String,IIndexFileLocation>*/());
@@ -112,6 +113,7 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 		this.fileInfoCache = new HashMap/*<IIndexFileLocation,FileInfo>*/();
 		this.iflCache = iflCache;
 		this.fFallBackFactory= fallbackFactory;
+		this.fProjectPathPrefix= cproject == null ? null : '/' + cproject.getElementName() + '/';
 	}
 
 	final protected Map getIFLCache() {
@@ -230,7 +232,21 @@ public class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory
 		IndexFileInfo info= (IndexFileInfo) fileInfoCache.get(location);
 		if (info == null) {
 			info= new IndexFileInfo();			
-			info.fFile= file == null ? index.getFile(location) : file;
+			if (file != null) {
+				info.fFile= file;
+			}
+			else {
+				// bug 205555, in case a file of the project is also part of a read-only pdom,
+				// we prefer the writable pdom.
+				final String path= location.getFullPath();
+				if (path != null && fProjectPathPrefix != null && 
+						path.startsWith(fProjectPathPrefix) && index instanceof IWritableIndex) {
+					info.fFile= ((IWritableIndex) index).getWritableFile(location);
+				}
+				else {
+					info.fFile= index.getFile(location);
+				}
+			}
 			fileInfoCache.put(location, info);
 		}
 		return info;

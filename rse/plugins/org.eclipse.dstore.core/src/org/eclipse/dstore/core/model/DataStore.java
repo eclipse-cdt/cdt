@@ -4209,7 +4209,7 @@ public final class DataStore
 	{
 		referenceTag = tag;
 	}
-	/*
+	
 	public int printTree(String indent, DataElement root)
 	{
 		return printTree(indent, 0, root);
@@ -4239,5 +4239,5 @@ public final class DataStore
 		}
 		return total;
 	}
-*/
+
 }

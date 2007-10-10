@@ -27,6 +27,7 @@
  * Xuan Chen (IBM)        - [202668] [Supertransfer] Subfolders not copied when doing first copy from dstore to Local
  * Xuan Chen (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
+ * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -39,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -74,11 +76,11 @@ import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
 import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.services.files.RemoteFolderNotEmptyException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
-import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
@@ -1304,32 +1306,57 @@ public class UniversalFileTransferUtility
 
 			try
 			{
-				String srcFileLocation = srcFileOrFolder.getLocation().toOSString();
-
-				String srcCharSet = null;
 				
+				String srcCharSet = null;
+			
 				boolean isText = SystemFileTransferModeRegistry.getInstance().isText(newPath);
 				if (isText)
 				{
 					try
 					{
 						srcCharSet = ((IFile)srcFileOrFolder).getCharset(false);
-					    if (srcCharSet == null || srcCharSet.length() == 0)
-					    {
-					        srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
-					    }
+						if (srcCharSet == null || srcCharSet.length() == 0)
+						{
+							srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
+						}
 					}
 					catch (CoreException e)
 					{
-					    srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
+						srcCharSet = SystemEncodingUtil.ENCODING_UTF_8;
 					}
 				}
-				
+				IPath location = srcFileOrFolder.getLocation();
+				IRemoteFile copiedFile = null;
+				if (location == null) // remote EFS file?
+				{
+					if (srcFileOrFolder instanceof IFile)
+					{
+						// copy using input stream
+						try
+						{
+							InputStream inStream = ((IFile)srcFileOrFolder).getContents();
 
+							if (targetFS instanceof FileServiceSubSystem)
+							{
+								IFileService fileService = ((FileServiceSubSystem)targetFS).getFileService();
+								fileService.upload(inStream, targetFolder.getAbsolutePath(), name, !isText, targetFS.getRemoteEncoding(), monitor);
+							}
+						}
+						catch (Exception e)
+						{							
+						}
+						
+					}
+				}
+				else
+				{
+					// just copy using local location
+					String srcFileLocation = location.toOSString();								
+					targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(), monitor);									
+				}
 				
-				targetFS.upload(srcFileLocation, srcCharSet, newPath, targetFS.getRemoteEncoding(), monitor);				
-				IRemoteFile copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
-			
+				copiedFile = targetFS.getRemoteFileObject(targetFolder, name, monitor);
+				
 				// should check preference first
 				
 				if (RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS))
@@ -1391,7 +1418,16 @@ public class UniversalFileTransferUtility
 
 	
 				if (!directory.isSynchronized(IResource.DEPTH_ONE))
-					directory.refreshLocal(IResource.DEPTH_ONE, monitor);
+				{
+					try
+					{
+						directory.refreshLocal(IResource.DEPTH_ONE, monitor);
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
 		
 				
 				boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().isLocal();

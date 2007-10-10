@@ -19,6 +19,7 @@
  * Kevin Doyle (IBM) - [189423] Scratchpad not completely updated after Delete.
  * Kevin Doyle (IBM) - [193151] Scratchpad not updated on Move
  * Kevin Doyle (IBM) - [189421] Scratchpad not updated after Rename
+ * David McKnight   (IBM)        - [197860] drag and drop consistency - no text transfer
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -102,7 +103,6 @@ import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -283,15 +283,28 @@ public class SystemScratchpadView
 
 
 
+    /**
+     * Initialize drag and drop support for this view.
+     * 
+     */  
+    protected void initDragAndDrop() 
+    {
+        int ops = DND.DROP_COPY | DND.DROP_MOVE;
+        Transfer[] dragtransfers = new Transfer[]   
+            { PluginTransfer.getInstance(), 
+        		EditorInputTransfer.getInstance()
+            };  
+   
+        Transfer[] droptransfers = new Transfer[]   
+            { PluginTransfer.getInstance(), 
+        		FileTransfer.getInstance(),
+                EditorInputTransfer.getInstance()
+             };  
+        
+        addDragSupport(ops | DND.DROP_DEFAULT, dragtransfers, new SystemViewDataDragAdapter(this));
+        addDropSupport(ops | DND.DROP_DEFAULT, droptransfers, new SystemViewDataDropAdapter(this));
+    }
 
-	protected void initDragAndDrop()
-	{
-		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] { PluginTransfer.getInstance(), TextTransfer.getInstance(), EditorInputTransfer.getInstance(), FileTransfer.getInstance()};
-
-		addDragSupport(ops, transfers, new SystemViewDataDragAdapter(this));
-		addDropSupport(ops | DND.DROP_DEFAULT, transfers, new SystemViewDataDropAdapter(this));
-	}
 
 	/**
 	 * Used to asynchronously update the view whenever properties change.

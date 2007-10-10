@@ -43,6 +43,7 @@
  * Martin Oberhuber (Wind River) - [183176] Fix "widget is disposed" during Platform shutdown
  * David McKnight (IBM)          - [204684] CheckExistsJob used for determining if a remote object exists after a query of it's children
  * David McKnight (IBM)          - [205592] CheckExistsJob should use the context model object to get adapter
+ * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -187,6 +188,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.PluginTransfer;
+import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.progress.PendingUpdateAdapter;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
@@ -5576,7 +5578,8 @@ public class SystemView extends SafeTreeViewer
         Transfer[] droptransfers = new Transfer[]   
             { PluginTransfer.getInstance(), 
         		FileTransfer.getInstance(),
-                EditorInputTransfer.getInstance()
+                EditorInputTransfer.getInstance(),
+                ResourceTransfer.getInstance()
              };  
         
         addDragSupport(ops | DND.DROP_DEFAULT, dragtransfers, new SystemViewDataDragAdapter(this));

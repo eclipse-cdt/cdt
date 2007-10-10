@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * David McKnight   (IBM)        - [202822] need to enable spiriting on the server side
  * David McKnight   (IBM)        - [199565] taking out synchronize for internalConnect
+ * David McKnight  (IBM)         - [205986] attempt SSL before non-SSL for daemon connect
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -625,15 +626,16 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 				daemonPort = Integer.parseInt(daemonPortStr);
 			}*/
 			
-			// DKM - changed to use protected member so that others can override
-			//launchStatus = clientConnection.launchServer(info.getUserid(), info.getPassword(), daemonPort);
-			boolean usedSSL = false;
+			// 205986]  FIRST TRY SSL, THEN NON-SECURE!
+			boolean usedSSL = true;
+			setSSLProperties(true);
+			
 			launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
 			if (!launchStatus.isConnected() && !clientConnection.isKnownStatus(launchStatus.getMessage()))
 			{
-				if (setSSLProperties(true))
+				if (setSSLProperties(false))
 				{
-					usedSSL = true;
+					usedSSL = false;
 					launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
 				}
 			}

@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)  - [205986] daemon handshake needs a timeout
  *******************************************************************************/
 
 package org.eclipse.dstore.core.client;
@@ -739,6 +739,7 @@ public class ClientConnection
 						SSLSocket lSocket = (SSLSocket) factory.createSocket(_host, daemonPort);
 						_launchSocket = lSocket;
 
+						lSocket.setSoTimeout(10000);
 						lSocket.startHandshake();
 
 						SSLSession session = lSocket.getSession();

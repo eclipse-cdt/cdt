@@ -20,7 +20,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -55,6 +57,17 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
  */
 public class BasicCEditorTest extends BaseUITestCase {
 
+	final static class TestDocListener implements IDocumentListener {
+		public boolean fDocChanged;
+
+		public void documentAboutToBeChanged(DocumentEvent event) {
+		}
+
+		public void documentChanged(DocumentEvent event) {
+			fDocChanged= true;
+		}
+	}
+
 	private static CEditor fEditor;
 	private static SourceViewer fSourceViewer;
 	private ICProject fCProject;
@@ -62,6 +75,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 	private StyledText fTextWidget;
 	private Accessor fAccessor;
 	private IDocument fDocument;
+	private TestDocListener fDocListener= new TestDocListener();
 
 	public static Test suite() {
 		return new TestSuite(BasicCEditorTest.class); 
@@ -165,10 +179,10 @@ public class BasicCEditorTest extends BaseUITestCase {
 	//	if (x < other.x) {
 	//		return -1;
 	//	}
-	//  else if (x > other.x) {
+	//	else if (x > other.x) {
 	//		return 1;
 	//	}
-	//  else {
+	//	else {
 	//		return 0;
 	//	}
 	//}
@@ -188,18 +202,18 @@ public class BasicCEditorTest extends BaseUITestCase {
 			String line= lines[i].trim();
 			if (line.startsWith("}")) {
 				setCaret(fDocument.get().indexOf(line, getCaret())+line.length());
-				Thread.sleep(500);
+				Thread.sleep(100);
 			} else {
 				if (i > 0) type('\n');
 				type(line);
-				Thread.sleep(200);
+				Thread.sleep(50);
 			}
 		}
 		String newContent= fDocument.get();
 		String[] newLines= newContent.split("\\r\\n|\\r|\\n");
 		for (int i = 0; i < lines.length; i++) {
-			String line= lines[i].trim();
-			assertEquals(line, newLines[i].trim());
+			String line= lines[i];
+			assertEquals(line, newLines[i]);
 		}
 		// save
 		fEditor.doSave(new NullProgressMonitor());
@@ -330,6 +344,8 @@ public class BasicCEditorTest extends BaseUITestCase {
 	 * @param stateMask the state mask
 	 */
 	private void type(char character, int keyCode, int stateMask) {
+		fDocument.addDocumentListener(fDocListener);
+		fDocListener.fDocChanged= false;
 		Event event= new Event();
 		event.character= character;
 		event.keyCode= keyCode;
@@ -338,9 +354,10 @@ public class BasicCEditorTest extends BaseUITestCase {
 		
 		new DisplayHelper() {
 			protected boolean condition() {
-				return false;
+				return fDocListener.fDocChanged;
 			}
 		}.waitForCondition(EditorTestHelper.getActiveDisplay(), 50);
+		fDocument.removeDocumentListener(fDocListener);
 	}
 
 	private int getCaret() {

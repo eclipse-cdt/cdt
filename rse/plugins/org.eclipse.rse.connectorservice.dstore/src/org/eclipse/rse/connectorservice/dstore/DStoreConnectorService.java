@@ -633,6 +633,29 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			launchStatus = launchServer(clientConnection, info, daemonPort, monitor);
 			if (!launchStatus.isConnected() && !clientConnection.isKnownStatus(launchStatus.getMessage()))
 			{
+				Throwable conE = launchStatus.getException();
+				if (conE instanceof SSLHandshakeException)
+				{
+					List certs = launchStatus.getUntrustedCertificates();
+					if (certs != null && certs.size() > 0)
+					{	
+						ISystemKeystoreProvider provider = SystemKeystoreProviderManager.getInstance().getDefaultProvider();
+						if (provider != null)
+						{
+							if (provider.importCertificates(certs, getHostName()))
+							{
+								connect(monitor);
+								return;
+							}
+							else
+							{
+								throw new InterruptedException();
+							}
+						}
+					}
+					
+				}
+				
 				if (setSSLProperties(false))
 				{
 					usedSSL = false;

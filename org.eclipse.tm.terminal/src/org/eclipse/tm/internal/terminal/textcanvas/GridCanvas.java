@@ -45,6 +45,20 @@ abstract public class GridCanvas extends VirtualCanvas {
 
 	}
 
+	public void setBounds(int x, int y, int width, int height) {
+		// adjust the height so that there are no characters cut
+		// Maybe it would be better to use a custom Layout...
+		int shiftH=0;
+		if(getCellHeight()!=0)
+			shiftH=height % getCellHeight();
+		super.setBounds(x, y+shiftH, width, height-shiftH);
+	}
+
+	public void setBounds(Rectangle rect) {
+		// just to be sure our set bounds is called!
+		setBounds(rect.x,rect.y,rect.width,rect.height);
+	}
+
 	/** template method paint.
 	 * iterates over all cells in the clipping rectangle and paints them.
 	 */
@@ -159,11 +173,11 @@ abstract public class GridCanvas extends VirtualCanvas {
 		int cellY=virtualYToCell(y);
 		// End coordinates
 		int xE=virtualXToCell(x+fCellWidth+width-1);
-		if(xE>getCols())
-			xE=getCols();
+//		if(xE>getCols())
+//			xE=getCols();
 		int yE=virtualYToCell(y+fCellHeight+height-1);
-		if(yE>getRows())
-			yE=getRows();
+//		if(yE>getRows())
+//			yE=getRows();
 		visibleCellRectangleChanged(cellX,cellY,xE-cellX,yE-cellY);
 	}
 	

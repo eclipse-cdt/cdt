@@ -168,7 +168,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 		}
 	}
 	public void setVisibleRectangle(int startLine, int startCol, int height, int width) {
-		fSnapshot.setInterestWindow(Math.max(0,startLine), Math.max(1,Math.min(fSnapshot.getHeight(),height)));
+		fSnapshot.setInterestWindow(Math.max(0,startLine), Math.max(1,height));
 		update();
 	}
 	protected void showCursor(boolean show) {

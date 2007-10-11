@@ -73,9 +73,7 @@ public class SpeedTestConnection extends Thread {
 			line=reader.readLine();
 
 			// read some bytes
-			if(line==null) {
-				fControl.displayTextInTerminal("\033[2J\033c"+info);
-			} else {
+			if(line!=null) {
 				os.write(line.getBytes("UTF-8"));
 				os.write(crnl);
 				n+=line.length();

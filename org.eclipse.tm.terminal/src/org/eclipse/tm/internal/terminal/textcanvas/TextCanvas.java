@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
@@ -37,6 +37,7 @@ public class TextCanvas extends GridCanvas {
 	private boolean fScrollLock;
 	private Point fDraggingStart;
 	private Point fDraggingEnd;
+	private boolean fHasSelection;
 	private ResizeListener fResizeListener;
 	private int fMinColumns=20;
 	private int fMinLines=4;
@@ -56,7 +57,7 @@ public class TextCanvas extends GridCanvas {
 				setCellHeight(fCellRenderer.getCellHeight());
 
 				calculateGrid();
-				
+
 			}
 			public void rangeChanged(int col, int line, int width, int height) {
 				repaintRange(col,line,width,height);
@@ -84,6 +85,7 @@ public class TextCanvas extends GridCanvas {
 			public void mouseDown(MouseEvent e) {
 				if(e.button==1) { // left button
 					fDraggingStart=screenPointToCell(e.x, e.y);
+					fHasSelection=false;
 					if((e.stateMask&SWT.SHIFT)!=0) {
 						Point anchor=fCellCanvasModel.getSelectionAnchor();
 						if(anchor!=null)
@@ -94,9 +96,13 @@ public class TextCanvas extends GridCanvas {
 					fDraggingEnd=null;
 				}
 			}
-			public void mouseUp(MouseEvent e) {				
+			public void mouseUp(MouseEvent e) {
 				if(e.button==1) { // left button
-					setSelection(screenPointToCell(e.x, e.y));
+					updateHasSelection(e);
+					if(fHasSelection)
+						setSelection(screenPointToCell(e.x, e.y));
+					else
+						fCellCanvasModel.setSelection(-1,-1,-1,-1);
 					fDraggingStart=null;
 				}
 			}
@@ -105,12 +111,27 @@ public class TextCanvas extends GridCanvas {
 
 			public void mouseMove(MouseEvent e) {
 				if (fDraggingStart != null) {
+					updateHasSelection(e);
 					setSelection(screenPointToCell(e.x, e.y));
 				}
 			}
 		});
 		serVerticalBarVisible(true);
 		setHorizontalBarVisible(false);
+	}
+
+	/**
+	 * The user has to drag the mouse to at least one character to make a selection.
+	 * Once this is done, even a one char selection is OK.
+	 *
+	 * @param e
+	 */
+	private void updateHasSelection(MouseEvent e) {
+		if(fDraggingStart!=null) {
+			Point p=screenPointToCell(e.x, e.y);
+			if(fDraggingStart.x!=p.x||fDraggingStart.y!=p.y)
+				fHasSelection=true;
+		}
 	}
 
 	void setSelection(Point p) {
@@ -143,7 +164,7 @@ public class TextCanvas extends GridCanvas {
 	public ILinelRenderer getCellRenderer() {
 		return fCellRenderer;
 	}
-	
+
 	public int getMinColumns() {
 		return fMinColumns;
 	}
@@ -212,15 +233,15 @@ public class TextCanvas extends GridCanvas {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @return true if the cursor should be shown on output....
 	 */
 	public boolean isScrollLock() {
 		return fScrollLock;
 	}
 	/**
-	 * If set then if the size changes  
-	 * @param scrollLock 
+	 * If set then if the size changes
+	 * @param scrollLock
 	 */
 	public void setScrollLock(boolean scrollLock) {
 		fScrollLock=scrollLock;
@@ -232,7 +253,7 @@ public class TextCanvas extends GridCanvas {
 	}
 	protected void drawLine(GC gc, int line, int x, int y, int colFirst, int colLast) {
 		fCellRenderer.drawLine(fCellCanvasModel, gc,line,x,y,colFirst, colLast);
-		
+
 	}
 	protected void visibleCellRectangleChanged(int x, int y, int width, int height) {
 		fCellCanvasModel.setVisibleRectangle(y,x,height,width);
@@ -278,6 +299,6 @@ public class TextCanvas extends GridCanvas {
 			throw new IllegalArgumentException("There can be at most one listener at the moment!"); //$NON-NLS-1$
 		fResizeListener=listener;
 	}
-	
+
 }
 

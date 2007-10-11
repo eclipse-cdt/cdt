@@ -881,7 +881,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fCommandInputField=inputField;
 		if(fCommandInputField!=null)
 			fCommandInputField.createControl(fWndParent, this);
-		fWndParent.layout(true);
+		if(fWndParent.isVisible())
+			fWndParent.layout(true);
 	}
 
 	public int getBufferLineLimit() {

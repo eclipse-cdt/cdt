@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.filters;
 
 
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+
 
 /**
- * Filters closed projects
+ * Filters (open) non-C projects.
  */
 public class NonCProjectsFilter extends ViewerFilter {
 
@@ -29,7 +32,14 @@ public class NonCProjectsFilter extends ViewerFilter {
 		if (element instanceof ICProject) {
 			return true;
 		} else if (element instanceof IProject) {
-			return !((IProject)element).isOpen();
+			IProject project = (IProject)element;
+			if (!project.isOpen()) {
+				return true;
+			}
+			if (CoreModel.hasCNature(project)) {
+				return true;
+			}
+			return false;
 		}
 		return true;
 	}

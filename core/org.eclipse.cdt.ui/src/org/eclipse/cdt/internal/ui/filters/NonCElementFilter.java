@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.filters;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -21,7 +23,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 
 /**
- * Filters out all non-Java elements.
+ * Filters out all non-C elements.
  */
 public class NonCElementFilter  extends ViewerFilter {
 	
@@ -34,13 +36,19 @@ public class NonCElementFilter  extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof ICElement)
 			return true;
-		
-		if (element instanceof IResource) {
-			IProject project= ((IResource)element).getProject(); 
+
+		if (element instanceof IProject) {
+			IProject project = (IProject)element;
+			if (!project.isOpen() || CoreModel.hasCNature(project)) {
+				return true;
+			}
+			return false;
+		} else if (element instanceof IResource) {
+			IProject project= ((IResource)element).getProject();
 			return project == null || !project.isOpen();
 		}
 
-		// Exclude all IStorage elements which are neither Java elements nor resources
+		// Exclude all IStorage elements which are neither C elements nor resources
 		if (element instanceof IStorage)
 			return false;
 			

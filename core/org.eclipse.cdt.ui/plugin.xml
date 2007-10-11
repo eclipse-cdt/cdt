@@ -2016,6 +2016,8 @@
           <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />
+				<instanceof value="org.eclipse.core.resources.IFile" />
+				<instanceof value="org.eclipse.core.resources.IFolder" />
 				<and>
 				   <instanceof value="org.eclipse.core.resources.IProject" />
 	               <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
@@ -2030,6 +2032,8 @@
           <enablement>
 			<or>
 				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+				<instanceof value="org.eclipse.core.resources.IFile" />
+				<instanceof value="org.eclipse.core.resources.IFolder" />
 				<and>
 				   <instanceof value="org.eclipse.core.resources.IProject" />
 	               <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>

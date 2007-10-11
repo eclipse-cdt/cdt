@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.actions;
@@ -27,6 +27,9 @@ public class ActionMessages extends NLS {
     public static String  TOGGLE_COMMAND_INPUT_FIELD;
     public static String  DISCONNECT;
     public static String  SETTINGS_ELLIPSE;
+    public static String  SCROLL_LOCK_0;
+    public static String  SCROLL_LOCK_1;
+
     public static String  COPY;
     public static String  CUT;
     public static String  PASTE;

@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
@@ -88,6 +88,8 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	protected TerminalAction fActionTerminalConnect;
 
+//	private TerminalAction fActionTerminalScrollLock;
+
 	protected TerminalAction fActionTerminalDisconnect;
 
 	protected TerminalAction fActionTerminalSettings;
@@ -103,13 +105,13 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	protected TerminalAction fActionEditSelectAll;
 
 	protected TerminalAction fActionToggleCommandInputField;
-	
+
 	protected TerminalMenuHandlerEdit fMenuHandlerEdit;
 
 	protected TerminalPropertyChangeHandler fPropertyChangeHandler;
 
 	protected boolean fMenuAboutToShow;
-	
+
 	private SettingsStore fStore;
 
 	private CommandInputFieldWithHistory fCommandInputField;
@@ -125,12 +127,11 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			}
 		}
 	};
-
 	public TerminalView() {
 		Logger
 				.log("==============================================================="); //$NON-NLS-1$
 	}
-	
+
 	String findUniqueTitle(String title) {
 		IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
 		String id=	getViewSite().getId();
@@ -166,7 +167,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		if(!limitOutput)
 			bufferLineLimit=-1;
 		fCtlTerminal.setBufferLineLimit(bufferLineLimit);
-		
+
 	}
 	// TerminalTarget interface
 	public void setState(final TerminalState state) {
@@ -321,7 +322,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		setTitleToolTip(getPartName()+": "+strTitle); //$NON-NLS-1$
 	}
 	/**
-	 * @return the setting summary. If there is no connection, or the connection 
+	 * @return the setting summary. If there is no connection, or the connection
 	 * has not been initialized, use the last stored state.
 	 */
 	private String getSettingsSummary() {
@@ -344,9 +345,9 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			return ViewMessages.STATE_CONNECTED;
 		} else if(state==TerminalState.CONNECTING) {
 			return ViewMessages.STATE_CONNECTING;
-		} else if(state==TerminalState.OPENED) {			
+		} else if(state==TerminalState.OPENED) {
 			return ViewMessages.STATE_OPENED;
-		} else if(state==TerminalState.CLOSED) {			
+		} else if(state==TerminalState.CLOSED) {
 			return ViewMessages.STATE_CLOSED;
 		} else {
 			throw new IllegalStateException(state.toString());
@@ -472,13 +473,13 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		setCommandInputField("true".equals(fStore.get(STORE_HAS_COMMAND_INPUT_FIELD))); //$NON-NLS-1$
 		updatePreferences();
 		TerminalViewPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPreferenceListener);
-		
+
 		// restore the title of this view
 		String title=fStore.get(STORE_TITLE);
 		if(title!=null && title.length()>0)
 			setPartName(title);
 	}
-	
+
 	private void saveSettings(ITerminalConnectorInfo connector) {
 		ITerminalConnectorInfo[] connectors=fCtlTerminal.getConnectors();
 		for (int i = 0; i < connectors.length; i++) {
@@ -488,7 +489,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			fStore.put(STORE_CONNECTION_TYPE,connector.getId());
 		}
 	}
-	
+
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		fStore=new SettingsStore(memento);
@@ -509,6 +510,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 
 	protected void setupActions() {
 		fActionTerminalNewTerminal = new TerminalActionNewTerminal(this);
+//		fActionTerminalScrollLock = new TerminalActionScrollLock(this);
 		fActionTerminalConnect = new TerminalActionConnect(this);
 		fActionTerminalDisconnect = new TerminalActionDisconnect(this);
 		fActionTerminalSettings = new TerminalActionSettings(this);
@@ -552,6 +554,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 
 		toolBarMgr.add(fActionTerminalNewTerminal);
+//		toolBarMgr.add(fActionTerminalScrollLock);
 		toolBarMgr.add(fActionTerminalConnect);
 		toolBarMgr.add(fActionTerminalDisconnect);
 		toolBarMgr.add(fActionTerminalSettings);
@@ -581,7 +584,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		menuMgr.add(new Separator());
 		menuMgr.add(fActionEditClearAll);
 		menuMgr.add(fActionEditSelectAll);
+		menuMgr.add(new Separator());
 		menuMgr.add(fActionToggleCommandInputField);
+//		menuMgr.add(fActionTerminalScrollLock);
+
 
 		// Other plug-ins can contribute there actions here
 		menuMgr.add(new Separator("Additions")); //$NON-NLS-1$
@@ -743,5 +749,13 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			fCommandInputField.setHistory(fStore.get(STORE_COMMAND_INPUT_FIELD_HISTORY));
 		}
 		fCtlTerminal.setCommandInputField(fCommandInputField);
+	}
+
+	public boolean isScrollLock() {
+		return fCtlTerminal.isScrollLock();
+	}
+
+	public void setScrollLock(boolean on) {
+		fCtlTerminal.setScrollLock(on);
 	}
 }

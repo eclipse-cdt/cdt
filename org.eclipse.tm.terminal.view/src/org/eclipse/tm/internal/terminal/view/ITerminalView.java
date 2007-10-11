@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Michael Scharf (Wind River) - initial API and implementation 
+ * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -28,4 +28,6 @@ public interface ITerminalView {
 	public void onEditSelectAll();
 	public boolean hasCommandInputField();
 	public void setCommandInputField(boolean on);
+	public boolean isScrollLock();
+	public void setScrollLock(boolean b);
 }

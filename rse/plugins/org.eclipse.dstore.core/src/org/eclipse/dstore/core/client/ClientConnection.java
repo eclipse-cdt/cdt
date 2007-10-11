@@ -873,19 +873,22 @@ public class ClientConnection
 				}
 				else if (serverVersionStr[VERSION_INDEX_PROTOCOL].equals(clientVersionStr[VERSION_INDEX_PROTOCOL]))
 				{
-					
-					
-					if (_dataStore.getServerVersion()== _clientVersion)
+					if (_clientVersion == 0)
+					{
+						_clientVersion =  Integer.parseInt(clientVersionStr[VERSION_INDEX_VERSION]);		
+					}
+					int serverVersion = _dataStore.getServerVersion();
+					if (serverVersion== _clientVersion)
 					{
 						// major versions match so should be compatible
 						return HANDSHAKE_CORRECT;
 					}
 					else
 					{
-						if (_dataStore.getServerVersion()> _clientVersion)
+						if (serverVersion > _clientVersion)
 						{
 							// newer server
-							if (_dataStore.getServerVersion() - 1 == _clientVersion)
+							if (serverVersion - 1 == _clientVersion)
 							{
 								return HANDSHAKE_SERVER_RECENT_NEWER;
 							}
@@ -897,8 +900,14 @@ public class ClientConnection
 						else
 						{
 							// newer client
-							if (_dataStore.getServerVersion() + 1 == _clientVersion)
+							if (serverVersion + 1 == _clientVersion)
 							{
+								return HANDSHAKE_SERVER_RECENT_OLDER;
+							}
+							else if (serverVersion + 2 == _clientVersion)
+							{
+								// TODO we shouldn't be allowing this but
+								// wanting to see if old (non-open RSE server still works with open RSE)
 								return HANDSHAKE_SERVER_RECENT_OLDER;
 							}
 							else

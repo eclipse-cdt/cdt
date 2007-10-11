@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.model;
@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.tm.terminal.model.ITerminalTextData;
+import org.eclipse.tm.terminal.model.ITerminalTextDataReadOnly;
 import org.eclipse.tm.terminal.model.ITerminalTextDataSnapshot;
 import org.eclipse.tm.terminal.model.LineSegment;
 import org.eclipse.tm.terminal.model.Style;
@@ -31,6 +32,40 @@ public class TerminalTextData implements ITerminalTextData {
 	public TerminalTextDataSnapshot[] fSnapshots=new TerminalTextDataSnapshot[0];
 	private int fCursorColumn;
 	private int fCursorLine;
+	/**
+	 * Debug helper method -- use as "New Detail Formatter.." in the
+	 * debugger variables view:
+	 *   <pre>TerminalTextData.toMultiLineText(this,0,200))</pre>
+	 * @param term the terminal
+	 * @param start start line to show
+	 * @param len number of lines to show -- negative numbers means show all
+	 * @return a string representation of the content
+	 */
+	static public String toMultiLineText(ITerminalTextDataReadOnly term, int start, int len) {
+		if(len<0)
+			len=term.getHeight();
+		StringBuffer buff=new StringBuffer();
+		int width=term.getWidth();
+		int n=Math.min(len,term.getHeight()-start);
+		for (int line = start; line < n; line++) {
+			if(line>0)
+				buff.append("\n"); //$NON-NLS-1$
+			for (int column = 0; column < width; column++) {
+				buff.append(term.getChar(line, column));
+			}
+		}
+		return buff.toString().replaceAll("\000+", "");  //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+	/**
+	 * Show the first 100 lines
+	 * see {@link #toMultiLineText(ITerminalTextDataReadOnly, int, int)}
+	 * @param term
+	 * @return a string representaron of the terminal
+	 */
+	static public String toMultiLineText(ITerminalTextDataReadOnly term) {
+		return toMultiLineText(term, 0, 100);
+	}
 
 	public TerminalTextData() {
 		this(new TerminalTextDataFastScroll());
@@ -118,7 +153,7 @@ public class TerminalTextData implements ITerminalTextData {
 			fSnapshots[i].markLinesChanged(line, n);
 		}
 	}
-	
+
 	/**
 	 * Notify snapshot that a region was scrolled
 	 * @param startLine
@@ -163,7 +198,7 @@ public class TerminalTextData implements ITerminalTextData {
 		// was is an append or a scroll?
 		int newHeight=getHeight();
 		if(newHeight>oldHeight) {
-			//the line was appended 
+			//the line was appended
 			sendLinesChangedToSnapshot(oldHeight, 1);
 			int width=getWidth();
 			sendDimensionsChanged(oldHeight, width, newHeight, width);
@@ -172,7 +207,7 @@ public class TerminalTextData implements ITerminalTextData {
 			// the line was scrolled
 			sendScrolledToSnapshots(0, oldHeight, -1);
 		}
-			
+
 	}
 
 	public void copy(ITerminalTextData source) {

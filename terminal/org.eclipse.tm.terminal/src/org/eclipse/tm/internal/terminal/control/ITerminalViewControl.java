@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
@@ -50,7 +50,7 @@ public interface ITerminalViewControl {
 	 * @param string write string to terminal
 	 */
 	public boolean pasteString(String string);
-	
+
     boolean isConnected();
 
     /**
@@ -61,7 +61,7 @@ public interface ITerminalViewControl {
      * @return null or the current input field
      */
     ICommandInputField getCommandInputField();
-    
+
 	/**
 	 * @return the maximum number of lines to display
 	 * in the terminal view. -1 means unlimited.
@@ -70,7 +70,9 @@ public interface ITerminalViewControl {
 
 	/**
 	 * @param bufferLineLimit the maximum number of lines to show
-	 * in the terminal view. -1 means unlimited. 
+	 * in the terminal view. -1 means unlimited.
 	 */
 	public void setBufferLineLimit(int bufferLineLimit);
+	boolean isScrollLock();
+	void setScrollLock(boolean on);
 }

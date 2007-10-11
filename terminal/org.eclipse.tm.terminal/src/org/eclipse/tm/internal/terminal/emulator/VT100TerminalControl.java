@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
@@ -87,13 +87,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
      * text processing on data received from the remote host and controls how text is
      * displayed using the view's StyledText widget.
      */
-    private VT100Emulator			  fTerminalText;
+    private final VT100Emulator			  fTerminalText;
     private Display                   fDisplay;
     private TextCanvas                fCtlText;
     private Composite                 fWndParent;
     private Clipboard                 fClipboard;
     private KeyListener               fKeyHandler;
-    private ITerminalListener         fTerminalListener;
+    private final ITerminalListener         fTerminalListener;
     private String                    fMsg = ""; //$NON-NLS-1$
     private FocusListener             fFocusListener;
     private ITerminalConnectorInfo		  fConnectorInfo;
@@ -104,7 +104,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	private volatile TerminalState fState;
 
-	private ITerminalTextData fTerminalModel;
+	private final ITerminalTextData fTerminalModel;
 
 	volatile private Job fJob;
 
@@ -115,7 +115,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		fTerminalModel.setMaxHeight(1000);
 		fInputStream=new PipedInputStream(8*1024);
 		fTerminalText=new VT100Emulator(fTerminalModel,this,fInputStream);
-		
+
 		setupTerminal(wndParent);
 	}
 
@@ -143,7 +143,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 //				for (int i = 0; i < strText.length(); i++) {
 //					sendChar(strText.charAt(i), false);
 //				}
-//				
+//
 //			}
 //		}.start();
 	}
@@ -292,7 +292,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	// TODO
 	private void waitForConnect() {
 		Logger.log("entered."); //$NON-NLS-1$
-		// TODO 
+		// TODO
 		// Eliminate this code
 		while (getState()==TerminalState.CONNECTING) {
 			if (fDisplay.readAndDispatch())
@@ -303,7 +303,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		if (!getMsg().equals("")) //$NON-NLS-1$
 		{
 			showErrorMessage(getMsg());
-	
+
 			disconnectTerminal();
 			return;
 		}
@@ -333,7 +333,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 						try {
 							// TODO: should block when no text is available!
 							fTerminalText.processText();
-							
+
 						} catch (Exception e) {
 							disconnectTerminal();
 							status=new Status(IStatus.ERROR,TerminalPlugin.PLUGIN_ID,e.getLocalizedMessage(),e);
@@ -479,9 +479,9 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		GridLayout layout=new GridLayout();
 		layout.marginWidth=0;
 		layout.marginHeight=0;
-		
+
 		fWndParent.setLayout(layout);
-		
+
 		ITerminalTextDataSnapshot snapshot=fTerminalModel.makeSnapshot();
 		// TODO how to get the initial size correctly!
 		snapshot.updateSnapshot(false);
@@ -543,10 +543,10 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		} catch (IOException e) {
 			// should never happen!
 			e.printStackTrace();
-		} 
-		
+		}
+
 	}
-	
+
 	public OutputStream getRemoteToTerminalOutputStream() {
 		return fInputStream.getOutputStream();
 	}
@@ -869,7 +869,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	public void setConnector(ITerminalConnectorInfo connector) {
 		fConnectorInfo=connector;
-		
+
 	}
 	public ICommandInputField getCommandInputField() {
 		return fCommandInputField;
@@ -897,5 +897,13 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 				fTerminalModel.setDimensions(bufferLineLimit, fTerminalModel.getWidth());
 			fTerminalModel.setMaxHeight(bufferLineLimit);
 		}
+	}
+
+	public boolean isScrollLock() {
+		return fCtlText.isScrollLock();
+	}
+
+	public void setScrollLock(boolean on) {
+		fCtlText.setScrollLock(on);
 	}
 }

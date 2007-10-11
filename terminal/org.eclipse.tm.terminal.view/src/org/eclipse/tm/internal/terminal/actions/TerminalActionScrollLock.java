@@ -16,27 +16,26 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.actions;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.tm.internal.terminal.view.ITerminalView;
 import org.eclipse.tm.internal.terminal.view.ImageConsts;
 
-public class TerminalActionClearAll extends TerminalAction
+public class TerminalActionScrollLock extends TerminalAction
 {
-    public TerminalActionClearAll(ITerminalView target)
+    public TerminalActionScrollLock(ITerminalView target)
     {
         super(target,
-              TerminalActionClearAll.class.getName());
+              TerminalActionScrollLock.class.getName(),IAction.AS_RADIO_BUTTON);
 
-        setupAction(ActionMessages.CLEARALL,
-                    ActionMessages.CLEARALL,
-                    ImageConsts.IMAGE_CLCL_CLEAR_ALL,
-                    ImageConsts.IMAGE_ELCL_CLEAR_ALL,
-                    ImageConsts.IMAGE_DLCL_CLEAR_ALL,
-                    false);
+        setupAction(ActionMessages.SCROLL_LOCK_0,
+                    ActionMessages.SCROLL_LOCK_1,
+                    ImageConsts.IMAGE_CLCL_SCROLL_LOCK,
+                    ImageConsts.IMAGE_ELCL_SCROLL_LOCK,
+                    ImageConsts.IMAGE_DLCL_SCROLL_LOCK,
+                    true);
     }
-
 	public void run() {
-		fTarget.onEditClearAll();
+		fTarget.setScrollLock(!fTarget.isScrollLock());
+		setChecked(fTarget.isScrollLock());
 	}
 }
-
-

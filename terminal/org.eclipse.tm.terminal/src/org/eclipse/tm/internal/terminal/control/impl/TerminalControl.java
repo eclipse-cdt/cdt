@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.impl;
@@ -85,7 +85,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
     private Clipboard                 fClipboard;
     private TerminalModifyListener    fModifyListener;
     private KeyListener               fKeyHandler;
-    private ITerminalListener         fTerminalListener;
+    private final ITerminalListener         fTerminalListener;
     private String                    fMsg = ""; //$NON-NLS-1$
     private VerifyKeyListener         fVerifyKeyListener;
     private FocusListener             fFocusListener;
@@ -128,7 +128,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 //				for (int i = 0; i < strText.length(); i++) {
 //					sendChar(strText.charAt(i), false);
 //				}
-//				
+//
 //			}
 //		}.start();
 	}
@@ -277,7 +277,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	// TODO
 	private void waitForConnect() {
 		Logger.log("entered."); //$NON-NLS-1$
-		// TODO 
+		// TODO
 		// Eliminate this code
 		while (getState()==TerminalState.CONNECTING) {
 			if (fDisplay.readAndDispatch())
@@ -288,11 +288,11 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		if (!getMsg().equals("")) //$NON-NLS-1$
 		{
 			showErrorMessage(getMsg());
-	
+
 			disconnectTerminal();
 			return;
 		}
-	
+
 		getCtlText().setFocus();
 	}
 
@@ -424,12 +424,12 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		GridLayout layout=new GridLayout();
 		layout.marginWidth=0;
 		layout.marginHeight=0;
-		
+
 		fWndParent.setLayout(layout);
 		setCtlText(new StyledText(fWndParent, SWT.V_SCROLL));
 		fCtlText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		//fCtlText.setWordWrap(false);
-		
+
 		fDisplay = getCtlText().getDisplay();
 		fClipboard = new Clipboard(fDisplay);
 //		fViewer.setDocument(new TerminalDocument());
@@ -479,10 +479,10 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 		} catch (IOException e) {
 			// should never happen!
 			e.printStackTrace();
-		} 
-		
+		}
+
 	}
-	
+
 	public OutputStream getRemoteToTerminalOutputStream() {
 		return getTerminalText().getOutputStream();
 	}
@@ -835,7 +835,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 
 	public void setConnector(ITerminalConnectorInfo connector) {
 		fConnectorInfo=connector;
-		
+
 	}
 	public ICommandInputField getCommandInputField() {
 		return fCommandInputField;
@@ -859,7 +859,14 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	public void setBufferLineLimit(int bufferLineLimit) {
 		getTerminalText().setLimitOutput(bufferLineLimit!=-1);
 		getTerminalText().setBufferLineLimit(bufferLineLimit);
-		
+
+	}
+
+	public boolean isScrollLock() {
+		return false;
+	}
+
+	public void setScrollLock(boolean on) {
 	}
 
 }

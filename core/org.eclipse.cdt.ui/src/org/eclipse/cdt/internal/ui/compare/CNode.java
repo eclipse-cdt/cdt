@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.compare;
 
@@ -18,20 +19,20 @@ import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Image;
+
 /**
  * 
  */
-
 class CNode extends DocumentRangeNode implements ITypedElement {
 
-	public CNode(CNode parent, int type, String id, IDocument doc, int start, int length) {
-		super(type, id, doc, start, length);
+	public CNode(DocumentRangeNode parent, int type, String id, IDocument doc, int start, int length) {
+		super(parent, type, id, doc, start, length);
 		if (parent != null) {
 			parent.addChild(this);
 		}
 	}
 
-	public CNode(CNode parent, int type, String id, int start, int length) {
+	public CNode(DocumentRangeNode parent, int type, String id, int start, int length) {
 		this(parent, type, id, parent.getDocument(), start, length);
 	}
 

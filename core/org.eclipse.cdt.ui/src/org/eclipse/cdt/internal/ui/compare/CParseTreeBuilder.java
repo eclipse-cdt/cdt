@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.compare;
 
@@ -36,7 +37,7 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * 
+ * @deprecated As of CDT 5.0. This class is not used anymore. Kept for reference only.
  */
 public class CParseTreeBuilder extends SourceElementRequestorAdapter {
 
@@ -295,7 +296,7 @@ public class CParseTreeBuilder extends SourceElementRequestorAdapter {
 	}
 
 	/**
-	 * Adds a new JavaNode with the given type and name to the current container.
+	 * Adds a new CNode with the given type and name to the current container.
 	 */
 	private void push(int type, String name, int declarationStart) {
 		fStack.push(new CNode(getCurrentContainer(), type, name, declarationStart, 0));
@@ -307,12 +308,8 @@ public class CParseTreeBuilder extends SourceElementRequestorAdapter {
 	 */
 	private void pop(int declarationEnd) {
 		CNode current = getCurrentContainer();
-		if (current.getTypeCode() == ICElement.C_UNIT) {
-			current.setAppendPosition(declarationEnd + 1);
-		} else {
-			current.setAppendPosition(declarationEnd);
-		}
-		current.setLength(declarationEnd - current.getRange().getOffset() + 1);
+		current.setAppendPosition(declarationEnd);
+		current.setLength(declarationEnd - current.getRange().getOffset());
 		fStack.pop();
 	}
 }

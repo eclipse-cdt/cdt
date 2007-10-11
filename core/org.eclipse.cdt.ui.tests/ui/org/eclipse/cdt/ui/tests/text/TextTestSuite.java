@@ -57,5 +57,8 @@ public class TextTestSuite extends TestSuite {
 
 		// word detection
 		addTest(CWordFinderTest.suite());
+		
+		// compare tests
+		addTest(CStructureCreatorTest.suite());
     }
 }

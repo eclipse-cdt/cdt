@@ -73,7 +73,6 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -515,18 +514,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			elements= new CElement[1];
 			final CElement element= createSimpleDeclaration(parent, declSpecifier, null, isTemplate);
 			elements[0]= element;
-		} else if (declarators.length == 1 && isCompositeType) {
-			elements= new CElement[declarators.length];
-			final IASTDeclarator declarator= declarators[0];
-			CElement element= createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
-			if (element instanceof IParent) {
-				parent= (Parent)element;
-				if (!isTemplate) {
-					setBodyPosition((SourceManipulation)element, declSpecifier.getParent());
-				}
-			}
-			elements[0]= element;
-			createSimpleDeclaration(parent, declSpecifier, null, isTemplate);
 		} else {
 			if (isCompositeType) {
 				createSimpleDeclaration(parent, declSpecifier, null, isTemplate);
@@ -535,7 +522,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			for (int i= 0; i < declarators.length; i++) {
 				final IASTDeclarator declarator= declarators[i];
 				final CElement element= createSimpleDeclaration(parent, declSpecifier, declarator, isTemplate);
-				if (!isTemplate && element instanceof SourceManipulation) {
+				if (!isTemplate && element instanceof SourceManipulation && declarators.length > 1) {
 					setBodyPosition((SourceManipulation)element, declarator);
 				}
 				elements[i]= element;
@@ -800,17 +787,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		} else {
 			final IASTFileLocation classLocation= getMinFileLocation(compositeTypeSpecifier.getNodeLocations());
 			if (classLocation != null) {
-				if (compositeTypeSpecifier.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
-					// fix positions for typedef struct (heuristically)
-					final int delta= Keywords.TYPEDEF.length() + 1;
-					element.setIdPos(classLocation.getNodeOffset() + delta, type.length());
-					if(!isTemplate){
-						final SourceManipulationInfo info= element.getSourceManipulationInfo();
-						info.setPos(info.getStartPos() + delta, info.getLength() - delta);
-					}
-				} else {
-					element.setIdPos(classLocation.getNodeOffset(), type.length());
-				}
+				element.setIdPos(classLocation.getNodeOffset(), type.length());
 			}
 		}
 		// add members
@@ -1146,7 +1123,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		// hook up the offsets
 		setIdentifierPosition(info, name);
 		if (!isTemplate) {
-			setBodyPosition(info, declarator);
+			setBodyPosition(info, declarator.getParent());
 		}
 		return element;
 	}

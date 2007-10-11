@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,37 +17,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ISharedDocumentAdapter;
 import org.eclipse.compare.IStreamContentAccessor;
-import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.ResourceNode;
+import org.eclipse.compare.contentmergeviewer.IDocumentRange;
+import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-import org.eclipse.compare.structuremergeviewer.IStructureCreator;
+import org.eclipse.compare.structuremergeviewer.StructureCreator;
+import org.eclipse.compare.structuremergeviewer.StructureRootNode;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.Document;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.Position;
 
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
-import org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant;
+import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
+
 /**
- * 
+ * A structure creator for C/C++ translation units.
  */
-public class CStructureCreator implements IStructureCreator {
+public class CStructureCreator extends StructureCreator {
 
 	private static final String NAME = "CStructureCreator.name"; //$NON-NLS-1$
 
@@ -58,78 +64,18 @@ public class CStructureCreator implements IStructureCreator {
 		return CUIPlugin.getResourceString(NAME);
 	}
 
-	public IStructureComparator getStructure(Object input) {
-
-		IDocument doc= CompareUI.getDocument(input);
-		if (doc == null) {
-			if (input instanceof IStreamContentAccessor) {
-				String s = null;
-				try {
-					s = readString((IStreamContentAccessor) input);
-				} catch (CoreException ex) {
-				}
-				if (s != null) {
-					doc = new Document(s);
-					new CDocumentSetupParticipant().setup(doc);
-				}
-			}
-		}
-		if (doc == null) {
-			return null;
-		}
-		CNode root = new CNode(null, ICElement.C_UNIT, "root", doc, 0, 0); //$NON-NLS-1$
-
-		ISourceElementRequestor builder = new CParseTreeBuilder(root, doc);
-		try {
-			//Using the CPP parser (was implicit before, now its explicit).  If there 
-			//are bugs while parsing C files, we might want to create a separate Structure
-			//compare for c files, but we'll never be completely right about .h files
-			IScanner scanner =
-				ParserFactory.createScanner(new CodeReader(doc.get().toCharArray()), new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder, new NullLogService(), null); 
-			IParser parser = ParserFactory.createParser(scanner, builder, ParserMode.QUICK_PARSE, ParserLanguage.CPP, ParserUtil.getParserLogService() );
-			parser.parse();
-		} catch (Exception e) {
-			// What to do when error ?
-			// The CParseTreeBuilder will throw CParseTreeBuilder.ParseError
-			// for acceptProblem.
-			
-			//TODO : New : ParserFactoryError gets thrown by ParserFactory primitives
-		}
-
-		return root;
-	}
-
-	public boolean canSave() {
-		return true;
-	}
-
-	public IStructureComparator locate(Object path, Object source) {
-		return null;
-	}
-
-	public boolean canRewriteTree() {
-		return false;
-	}
-
-	public void rewriteTree(Differencer differencer, IDiffContainer root) {
-	}
-
-	/**
-	 * @see IStructureCreator#save
-	 */
-	public void save(IStructureComparator structure, Object input) {
-		if (input instanceof IEditableContent && structure instanceof CNode) {
-			IDocument doc = ((CNode) structure).getDocument();
-			IEditableContent bca = (IEditableContent) input;
-			String c = doc.get();
-			bca.setContent(c.getBytes());
-		}
-	}
-
-	/**
+	/*
 	 * @see IStructureCreator#getContents
 	 */
 	public String getContents(Object node, boolean ignoreWhitespace) {
+		if (node instanceof IDocumentRange) {
+			IDocumentRange documentRange= (IDocumentRange)node;
+			final Position range = documentRange.getRange();
+			try {
+				return documentRange.getDocument().get(range.getOffset(), range.getLength());
+			} catch (BadLocationException exc) {
+			}
+		}
 		if (node instanceof IStreamContentAccessor) {
 			IStreamContentAccessor sca = (IStreamContentAccessor) node;
 			try {
@@ -140,6 +86,80 @@ public class CStructureCreator implements IStructureCreator {
 		return null;
 	}
 
+	/*
+	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#createStructureComparator(java.lang.Object, org.eclipse.jface.text.IDocument, org.eclipse.compare.ISharedDocumentAdapter, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IStructureComparator createStructureComparator(Object element,
+			IDocument document, ISharedDocumentAdapter sharedDocumentAdapter,
+			IProgressMonitor monitor) throws CoreException {
+
+		DocumentRangeNode root= new StructureRootNode(document, element, this, sharedDocumentAdapter);
+
+		// don't follow inclusions
+		ICodeReaderFactory codeReaderFactory= NullCodeReaderFactory.getInstance();
+		
+		// empty scanner info
+		IScannerInfo scanInfo= new ScannerInfo();
+		
+		CodeReader reader= new CodeReader(document.get().toCharArray());
+		
+		// determine the language
+		ILanguage language= determineLanguage(element);
+		
+		try {
+			IASTTranslationUnit ast;
+			ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, null, ParserUtil.getParserLogService());
+			CStructureCreatorVisitor structureCreator= new CStructureCreatorVisitor(root);
+			// build structure
+			ast.accept(structureCreator);
+		} catch (CoreException exc) {
+			CUIPlugin.getDefault().log(exc);
+		}
+
+		return root;
+	}
+
+	/**
+	 * Try to determine the <code>ILanguage</code> for the given input element.
+	 * 
+	 * @param element
+	 * @return a language instance
+	 */
+	private ILanguage determineLanguage(Object element) {
+		ILanguage language= null;
+		if (element instanceof ResourceNode) {
+			IResource resource= ((ResourceNode)element).getResource();
+			if (resource.getType() == IResource.FILE) {
+				ITranslationUnit tUnit= (ITranslationUnit)CoreModel.getDefault().create(resource);
+				if (tUnit != null) {
+					try {
+						language= tUnit.getLanguage();
+					} catch (CoreException exc) {
+						// silently ignored
+					}
+				}
+			}
+		}
+		if (language == null) {
+			language= GPPLanguage.getDefault();
+		}
+		return language;
+	}
+
+	/*
+	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#getDocumentPartitioning()
+	 */
+	protected String getDocumentPartitioning() {
+		return ICPartitions.C_PARTITIONING;
+	}
+	
+	/*
+	 * @see org.eclipse.compare.structuremergeviewer.StructureCreator#getDocumentPartitioner()
+	 */
+	protected IDocumentPartitioner getDocumentPartitioner() {
+		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner();
+	}
+	
 	private static String readString(IStreamContentAccessor sa) throws CoreException {
 		InputStream is= sa.getContents();
 		if (is != null) {

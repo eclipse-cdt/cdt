@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems) - bug 205108
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal; 
 
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
@@ -184,11 +186,14 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 			}
 			wc = config.getWorkingCopy();
 			wc.setAttribute( ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, pid );
-			wc.doSave().launch( ILaunchManager.DEBUG_MODE, new SubProgressMonitor( monitor, 9 ) );
-			// We need to reset the process id because the working copy will be saved 
-			// when the target is terminated
-			wc.setAttribute( ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, (String)null );
-			wc.doSave();
+			try {
+				wc.doSave().launch( ILaunchManager.DEBUG_MODE, new SubProgressMonitor( monitor, 9 ) );
+			} finally {
+				// We need to reset the process id because the working copy will be saved 
+				// when the target is terminated
+				wc.setAttribute( ICDTLaunchConfigurationConstants.ATTR_ATTACH_PROCESS_ID, (String)null );
+				wc.doSave();
+			}
 			cancel( "", -1 ); //$NON-NLS-1$
 		}
 		IPath exePath = verifyProgramPath( config );
@@ -305,7 +310,8 @@ public class LocalCDILaunchDelegate extends AbstractCLaunchDelegate {
 
 	private ICDISession launchDebugSession( ILaunchConfiguration config, ILaunch launch, ICDIDebugger2 debugger, IProgressMonitor monitor ) throws CoreException {
 		IPath path = verifyProgramPath( config );
-		return debugger.createSession( launch, path.toFile(), monitor );
+		File exeFile = path != null ? path.toFile() : null;
+		return debugger.createSession( launch, exeFile, monitor );
 	}
 
 	/* (non-Javadoc)

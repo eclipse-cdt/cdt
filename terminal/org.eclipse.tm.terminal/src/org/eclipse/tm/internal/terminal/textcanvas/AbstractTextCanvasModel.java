@@ -264,7 +264,7 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 	 * @return the currently selected text
 	 */
 	private String extractSelectedText() {
-		if(fSelectionStartLine<0 || fSelectionStartCoumn<0|| fSelectionSnapshot==null)
+		if(fSelectionStartLine<0 || fSelectionStartCoumn<0 || fSelectionEndColumn<0 || fSelectionSnapshot==null)
 			return ""; //$NON-NLS-1$
 		StringBuffer buffer=new StringBuffer();
 		for (int line = fSelectionStartLine; line <= fSeletionEndLine; line++) {

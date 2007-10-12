@@ -9,6 +9,8 @@
  *     Wind River Systems - initial API and implementation
  *     Ericsson Communication - upgrade IF to IMemoryBlockExtension
  *     Ericsson Communication - added support for 64 bit processors
+ *     Ericsson Communication - added support for changed bytes
+ *     Ericsson Communication - better management of exceptions
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.model;
 
@@ -19,11 +21,14 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.Addr64;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
+import org.eclipse.dd.dsf.debug.DsfDebugPlugin;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IMemory.MemoryChangedEvent;
@@ -52,10 +57,13 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     private final String fModelId;
     private final String fExpression;
     protected BigInteger fBaseAddress;
-    protected long fLength;
+    protected int fLength;
+    private MemoryByte[] fBlock;
     
     private ArrayList<Object> fConnections = new ArrayList<Object>();
-    private boolean isEnabled;
+
+    @SuppressWarnings("unused")
+	private boolean isEnabled;
 
     /**
      * Constructor.
@@ -74,8 +82,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
         fModelId     = modelId;
         fExpression  = expression;
         fBaseAddress = address;
-        fLength      = length;
-        
+        fLength      = (int) length;
+        fBlock       = null;
+
         try {
             fRetrieval.getExecutor().execute(new Runnable() {
                 public void run() {
@@ -160,7 +169,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
      * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
      */
     public boolean supportsValueModification() {
-    	// return fDebugTarget.supportsValueModification(this);
+    	// TODO: return fDebugTarget.supportsValueModification(this);
     	return true;
     }
 
@@ -217,7 +226,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressSize()
 	 */
 	public int getAddressSize() throws DebugException {
-//		// TODO:
+//		TODO:
 //		try {
 //			return fDebugTarget.getAddressSize();
 //		} catch (CoreException e) {
@@ -238,9 +247,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportsChangeManagement()
 	 */
 	public boolean supportsChangeManagement() {
-		// TODO: UI is a bit lazy. Implement change management ourselves.
-		// return true;
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -261,9 +268,65 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromAddress(java.math.BigInteger, long)
 	 */
 	public MemoryByte[] getBytesFromAddress(BigInteger address, long units) throws DebugException {
-		fLength = units;
+
 		MemoryByte[] block = fetchMemoryBlock(address, units);
-		return block;
+		int newLength = (block != null) ? block.length : 0;
+
+		// Flag the changed bytes
+		if (fBlock != null && newLength > 0) {
+			int offset = fBaseAddress.compareTo(address);
+			switch (offset)	{
+				case -1:
+				{
+					offset = -offset;
+					int length = Math.min(fLength - offset, newLength); 
+					for (int i = 0; i < length; i += 4) {
+						boolean changed = false;
+						for (int j = i; j < (i + 4) && j < length; j++) {
+							block[j].setFlags(fBlock[offset + j].getFlags());
+							if (block[j].getValue() != fBlock[offset + j].getValue())
+								changed = true;
+						}
+						if (changed)
+							for (int j = i; j < (i + 4) && j < length; j++) {
+								block[j].setHistoryKnown(true);
+								block[j].setChanged(true);
+							}
+					}
+					break;
+				}
+
+				case 0:
+				case 1:
+				{
+					int length = Math.min(newLength - offset, fLength); 
+					for (int i = 0; i < length; i += 4) {
+						boolean changed = false;
+						for (int j = i; j < (i + 4) && j < length; j++) {
+							block[offset + j].setFlags(fBlock[j].getFlags());
+							if (block[offset + j].getValue() != fBlock[j].getValue())
+								changed = true;
+						}
+						if (changed)
+							for (int j = i; j < (i + 4) && j < length; j++) {
+								block[offset + j].setHistoryKnown(true);
+								block[offset + j].setChanged(true);
+							}
+					}
+					break;
+				}
+
+				default:
+					break;
+			}
+		}
+
+		// Update the internal state
+		fBlock = block;
+		fBaseAddress = address;
+		fLength = newLength;
+
+		return fBlock;
 	}
 
 	/* (non-Javadoc)
@@ -319,7 +382,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     		    }
     		});
 		} catch (RejectedExecutionException e) {
-		    // Session is shut down.
+		    // Session is down.
 		}
 	}
 
@@ -338,9 +401,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		return 1;
 	}
 
-    // ////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     // Helper functions
-    // ////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     /*
 	 * The real thing. Since the original call is synchronous (from a platform
@@ -379,50 +442,21 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			    }
             };
         fRetrieval.getExecutor().execute(query);
-        try {
+
+		try {
             return query.get();
         } catch (InterruptedException e) {
-        	System.out.println("Interrupted Exception"); //$NON-NLS-1$
+    		throw new DebugException(new Status(IStatus.ERROR,
+    				DsfDebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+    				"Error reading memory block (InterruptedException)", e)); //$NON-NLS-1$
         } catch (ExecutionException e) {
-        	System.out.println("Execution Exception"); //$NON-NLS-1$
+    		throw new DebugException(new Status(IStatus.ERROR,
+    				DsfDebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+    				"Error reading memory block (ExecutionException)", e)); //$NON-NLS-1$
         }
-
-        return null;
     }
 
-    @DsfServiceEventHandler
-    public void eventDispatched(MemoryChangedEvent e) {
-
-    	// Find the container of the event
-		IContainerDMContext eventContext = DMContexts.getAncestorOfType(e.getContext(), IContainerDMContext.class); 
-    	if (eventContext == null) {
-    		return;
-    	}
-
-    	// Find the container of the block
-		IContainerDMContext blockContext = DMContexts.getAncestorOfType(fRetrieval.getContext(), IContainerDMContext.class); 
-    	if (blockContext == null) {
-    		// Should not happen: throw an exception
-    		return;
-    	}
-
-    	// Check if we are in the same address space 
-    	if (eventContext != blockContext) {
-    		return;
-    	}
-
-    	IAddress[] addresses = e.getAddresses();
-    	for (int i = 0; i < addresses.length; i++)
-    		handleMemoryChange(addresses[i].getValue());
-    }
-    
-    @DsfServiceEventHandler 
-    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
-    	// TODO: Check if we are in the right context
-        handleMemoryChange(BigInteger.ZERO);
-    }
-    
-    /* Writes an array of bytes to memory.
+	/* Writes an array of bytes to memory.
      * 
      * @param offset
      * @param bytes
@@ -440,17 +474,52 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	    		public void run() {
 	    	        memoryService.setMemory(
 	    	  	          fRetrieval.getContext(), address, offset, word_size, bytes.length, bytes,
-	    	  	          new RequestMonitor(fRetrieval.getExecutor(), null) {
-	    	  	              @Override
-	    	  	              protected void handleOK() {
-	    	  	            	  // handleMemoryChange(fBaseAddress);
-	    	  	              }
-	    	  	          });
+	    	  	          new RequestMonitor(fRetrieval.getExecutor(), null));
 	    		}
 	    	});
 	    }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Event Handlers
+    ///////////////////////////////////////////////////////////////////////////
+
+    @DsfServiceEventHandler 
+    public void eventDispatched(IRunControl.ISuspendedDMEvent e) {
+
+    	// Clear the "Changed" flags after each run/resume/step
+		for (int i = 0; i < fLength; i++)
+			fBlock[i].setChanged(false);
+    	
+    	// Generate the MemoryChangedEvents
+        handleMemoryChange(BigInteger.ZERO);
+    }
+    
+    @DsfServiceEventHandler
+    public void eventDispatched(MemoryChangedEvent e) {
+
+    	// Find the container of the event
+		IContainerDMContext eventContext = DMContexts.getAncestorOfType(e.getContext(), IContainerDMContext.class); 
+    	if (eventContext == null) {
+    		return;
+    	}
+
+    	// Find the container of the block
+		IContainerDMContext blockContext = DMContexts.getAncestorOfType(fRetrieval.getContext(), IContainerDMContext.class); 
+    	if (blockContext == null) {
+    		return;
+    	}
+
+    	// Check if we are in the same address space 
+    	if (eventContext != blockContext) {
+    		return;
+    	}
+
+    	IAddress[] addresses = e.getAddresses();
+    	for (int i = 0; i < addresses.length; i++)
+    		handleMemoryChange(addresses[i].getValue());
+    }
+    
     /**
 	 * @param address
 	 * @param length

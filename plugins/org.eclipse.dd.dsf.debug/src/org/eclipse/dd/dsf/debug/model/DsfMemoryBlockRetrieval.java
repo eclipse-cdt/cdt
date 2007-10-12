@@ -240,18 +240,18 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			    dmc = (IDMContext<?>)((IAdaptable)context).getAdapter(IDMContext.class);
 			}
 
-			// TODO: throw an exception
 			if (dmc == null) {
-                return null;
-            }
-		    // Update the DMC
+				return null;
+			}
+
+			// Update the DMC
 			fContext = dmc;
 
 			// Resolve the expression
 			blockAddress = resolveMemoryAddress(fContext, expression);
-			if (blockAddress == null)
-				// TODO: throw an exception
+			if (blockAddress == null) {
 				return null;
+			}
 		}
 
 		/*
@@ -317,13 +317,15 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			// The happy case
 			return query.get();
 		} catch (InterruptedException e) {
-			// TODO: throw an exception
-		} catch (ExecutionException e) {
-			// TODO: throw an exception
-		}
+			throw new DebugException(new Status(IStatus.ERROR,
+					DsfDebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+					"Error evaluating memory address (InterruptedException).", e)); //$NON-NLS-1$
 
-		// The error case
-		return null;
+		} catch (ExecutionException e) {
+			throw new DebugException(new Status(IStatus.ERROR,
+					DsfDebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+					"Error evaluating memory address (ExecutionException).", e)); //$NON-NLS-1$
+		}
 	}
 
 }

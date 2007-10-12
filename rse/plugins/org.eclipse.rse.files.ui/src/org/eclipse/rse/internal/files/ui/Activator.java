@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [180519][api] declaratively register adapter factories
+ * David McKnight   (IBM)        - [205820] create the temp files project (if not there) when files.ui is loaded
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -54,6 +55,11 @@ public class Activator extends AbstractUIPlugin
 	public void start(BundleContext context) throws Exception {
 		super.start(context);		
 
+		
+		// create the temp files project if it doesn't exist
+		// fix for bug 205820
+		SystemRemoteEditManager.getInstance().getRemoteEditProject();
+		
 	    // refresh the remote edit project at plugin startup, to ensure
 	    // it's never closed
 		SystemRemoteEditManager.getInstance().refreshRemoteEditProject();

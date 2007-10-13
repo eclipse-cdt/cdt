@@ -20,12 +20,6 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -43,8 +37,6 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
     public static final boolean DEFAULT_INVERT_COLORS            = false;
 
 
-    protected TerminalBooleanFieldEditor fEditorLimitOutput;
-
     protected BooleanFieldEditor fInvertColors;
 
 	protected IntegerFieldEditor fEditorBufferSize;
@@ -55,33 +47,8 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 	public TerminalPreferencePage() {
 		super(GRID);
 	}
-	public void onLimitOutputSelected() {
-		Button ctlButton;
-		Text ctlText;
-		Label ctlLabel;
-		boolean bEnabled;
-
-
-		ctlButton = fEditorLimitOutput.getChangeControl(getFieldEditorParent());
-		ctlText = fEditorBufferSize.getTextControl(getFieldEditorParent());
-		ctlLabel = fEditorBufferSize.getLabelControl(getFieldEditorParent());
-		bEnabled = ctlButton.getSelection();
-
-		ctlText.setEnabled(bEnabled);
-		ctlLabel.setEnabled(bEnabled);
-	}
 	protected void createFieldEditors() {
 		setupPage();
-	}
-	protected void initialize() {
-		super.initialize();
-
-		onLimitOutputSelected();
-	}
-	protected void performDefaults() {
-		super.performDefaults();
-
-		onLimitOutputSelected();
 	}
 	public void init(IWorkbench workbench) {
 		// do nothing
@@ -89,7 +56,6 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 	protected void setupPage() {
 		setupData();
 		setupEditors();
-		setupListeners();
 	}
 	protected void setupData() {
 		TerminalViewPlugin plugin;
@@ -102,9 +68,6 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 	protected void setupEditors() {
 		fInvertColors = new BooleanFieldEditor(
 				PREF_INVERT_COLORS, ViewMessages.INVERT_COLORS,
-				getFieldEditorParent());
-		fEditorLimitOutput = new TerminalBooleanFieldEditor(
-				PREF_LIMITOUTPUT, ViewMessages.LIMITOUTPUT,
 				getFieldEditorParent());
 		fEditorBufferSize = new IntegerFieldEditor(PREF_BUFFERLINES,
 				ViewMessages.BUFFERLINES, getFieldEditorParent());
@@ -120,44 +83,8 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 		fEditorNetworkTimeout.setValidRange(0, Integer.MAX_VALUE);
 
 		addField(fInvertColors);
-		addField(fEditorLimitOutput);
 		addField(fEditorBufferSize);
 		addField(fEditorSerialTimeout);
 		addField(fEditorNetworkTimeout);
-	}
-	protected void setupListeners() {
-		TerminalSelectionHandler selectionHandler;
-		Button ctlButton;
-
-		selectionHandler = new TerminalSelectionHandler();
-		ctlButton = fEditorLimitOutput.getChangeControl(getFieldEditorParent());
-		ctlButton.addSelectionListener(selectionHandler);
-	}
-	public class TerminalBooleanFieldEditor extends BooleanFieldEditor {
-		public TerminalBooleanFieldEditor(String strName, String strLabel,
-				Composite ctlParent) {
-			super(strName, strLabel, ctlParent);
-		}
-		public Button getChangeControl(Composite parent) {
-			return super.getChangeControl(parent);
-		}
-	}
-	protected class TerminalSelectionHandler extends SelectionAdapter {
-		protected TerminalSelectionHandler() {
-			super();
-		}
-		public void widgetSelected(SelectionEvent event) {
-			Object source;
-			Button ctlButton;
-
-			source = event.getSource();
-			ctlButton = fEditorLimitOutput
-					.getChangeControl(getFieldEditorParent());
-
-			if (source == ctlButton) {
-				onLimitOutputSelected();
-			}
-		}
-
 	}
 }

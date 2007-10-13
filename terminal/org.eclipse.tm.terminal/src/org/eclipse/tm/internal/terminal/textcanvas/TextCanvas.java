@@ -52,13 +52,6 @@ public class TextCanvas extends GridCanvas {
 		setCellHeight(fCellRenderer.getCellHeight());
 		fCellCanvasModel=model;
 		fCellCanvasModel.addCellCanvasModelListener(new ITextCanvasModelListener(){
-			public void cellSizeChanged() {
-				setCellWidth(fCellRenderer.getCellWidth());
-				setCellHeight(fCellRenderer.getCellHeight());
-
-				calculateGrid();
-
-			}
 			public void rangeChanged(int col, int line, int width, int height) {
 				repaintRange(col,line,width,height);
 			}
@@ -298,6 +291,13 @@ public class TextCanvas extends GridCanvas {
 		if(fResizeListener!=null)
 			throw new IllegalArgumentException("There can be at most one listener at the moment!"); //$NON-NLS-1$
 		fResizeListener=listener;
+	}
+
+	public void onFontChange() {
+		fCellRenderer.onFontChange();
+		setCellWidth(fCellRenderer.getCellWidth());
+		setCellHeight(fCellRenderer.getCellHeight());
+		calculateGrid();
 	}
 
 }

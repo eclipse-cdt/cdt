@@ -33,7 +33,7 @@ public class StyleMap {
 	private static final String BLUE = "blue"; //$NON-NLS-1$
 	private static final String GREEN = "green"; //$NON-NLS-1$
 	private static final String RED = "red"; //$NON-NLS-1$
-	
+
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
 	// TODO propagate the name of the fonf in the FontRegistry
 	String fFontName="terminal.views.view.font.definition"; //$NON-NLS-1$
@@ -44,14 +44,15 @@ public class StyleMap {
 	private boolean fInvertColors;
 	StyleMap() {
 		addColor(WHITE, 255,255,255);
-		addColor(BLACK, 0,0,0); 
-		addColor(RED, 255,128,128); 
-		addColor(GREEN, 128,255,128); 
-		addColor(BLUE, 128,128,255); 
-		addColor(YELLOW, 255,255,0); 
-		addColor(CYAN, 0,255,255); 
-		addColor(MAGENTA, 255,255,0); 
-		addColor(GRAY, 128,128,128); 
+		addColor(BLACK, 0,0,0);
+		addColor(RED, 255,128,128);
+		addColor(GREEN, 128,255,128);
+		addColor(BLUE, 128,128,255);
+		addColor(YELLOW, 255,255,0);
+		addColor(CYAN, 0,255,255);
+		addColor(MAGENTA, 255,255,0);
+		addColor(GRAY, 128,128,128);
+		fDefaultStyle=Style.getStyle(StyleColor.getStyleColor(BLACK),StyleColor.getStyleColor(WHITE));
 		updateFont();
 	}
 	private void addColor(String name, int r, int g, int b) {
@@ -90,8 +91,8 @@ public class StyleMap {
 		if(invert==fInvertColors)
 			return;
 		fInvertColors=invert;
-		swapColors(WHITE,BLACK); 
-		fDefaultStyle=Style.getStyle(StyleColor.getStyleColor(BLACK),StyleColor.getStyleColor(WHITE)); 
+		swapColors(WHITE,BLACK);
+		fDefaultStyle=Style.getStyle(StyleColor.getStyleColor(BLACK),StyleColor.getStyleColor(WHITE));
 	}
 	void swapColors(String n1, String n2) {
 		swapColors2(n1, n2);
@@ -103,7 +104,7 @@ public class StyleMap {
 		Color c2=getColor(StyleColor.getStyleColor(n2));
 		fColorMap.put(StyleColor.getStyleColor(n1), c2);
 		fColorMap.put(StyleColor.getStyleColor(n2), c1);
-		
+
 	}
 //	static Font getBoldFont(Font font) {
 //		FontData fontDatas[] = font.getFontData();

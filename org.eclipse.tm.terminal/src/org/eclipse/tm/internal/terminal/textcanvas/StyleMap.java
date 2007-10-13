@@ -35,7 +35,7 @@ public class StyleMap {
 	private static final String RED = "red"; //$NON-NLS-1$
 
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
-	// TODO propagate the name of the fonf in the FontRegistry
+	// TODO propagate the name of the font in the FontRegistry
 	String fFontName="terminal.views.view.font.definition"; //$NON-NLS-1$
 	Map fColorMap=new HashMap();
 	Map fFontMap=new HashMap();

@@ -869,4 +869,7 @@ public class TerminalControl implements ITerminalControlForText, ITerminalContro
 	public void setScrollLock(boolean on) {
 	}
 
+	public void setInvertedColors(boolean invert) {
+	}
+
 }

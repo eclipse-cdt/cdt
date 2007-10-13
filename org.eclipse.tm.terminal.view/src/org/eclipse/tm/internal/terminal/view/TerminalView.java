@@ -125,6 +125,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 					|| event.getProperty().equals(TerminalPreferencePage.PREF_BUFFERLINES)) {
 				updatePreferences();
 			}
+			if(event.getProperty().equals(TerminalPreferencePage.PREF_INVERT_COLORS)) {
+				Preferences preferences = TerminalViewPlugin.getDefault().getPluginPreferences();
+				fCtlTerminal.setInvertedColors(preferences.getBoolean(TerminalPreferencePage.PREF_INVERT_COLORS));
+			}
 		}
 	};
 	public TerminalView() {
@@ -167,7 +171,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		if(!limitOutput)
 			bufferLineLimit=-1;
 		fCtlTerminal.setBufferLineLimit(bufferLineLimit);
-
 	}
 	// TerminalTarget interface
 	public void setState(final TerminalState state) {

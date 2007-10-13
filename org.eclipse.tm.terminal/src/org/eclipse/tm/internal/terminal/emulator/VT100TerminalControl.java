@@ -906,4 +906,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	public void setScrollLock(boolean on) {
 		fCtlText.setScrollLock(on);
 	}
+
+	public void setInvertedColors(boolean invert) {
+		fCtlText.setInvertedColors(invert);
+	}
 }

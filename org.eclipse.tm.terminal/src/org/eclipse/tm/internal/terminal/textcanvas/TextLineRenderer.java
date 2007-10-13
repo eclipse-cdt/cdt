@@ -139,4 +139,8 @@ public class TextLineRenderer implements ILinelRenderer {
 	public void onFontChange() {
 		fStyleMap.updateFont();
 	}
+	public void setInvertedColors(boolean invert) {
+		fStyleMap.setInvertedColors(invert);
+
+	}
 }

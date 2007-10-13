@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
@@ -35,13 +35,17 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
     public static final String  PREF_BUFFERLINES                = "TerminalPrefBufferLines"; //$NON-NLS-1$
     public static final String  PREF_TIMEOUT_SERIAL            = "TerminalPrefTimeoutSerial"; //$NON-NLS-1$
     public static final String  PREF_TIMEOUT_NETWORK           = "TerminalPrefTimeoutNetwork"; //$NON-NLS-1$
+    public static final String  PREF_INVERT_COLORS          = "TerminalPrefInvertColors"; //$NON-NLS-1$
     public static final boolean DEFAULT_LIMITOUTPUT            = true;
     public static final int     DEFAULT_BUFFERLINES            = 1000;
     public static final int     DEFAULT_TIMEOUT_SERIAL         = 5;
     public static final int     DEFAULT_TIMEOUT_NETWORK        = 5;
+    public static final boolean DEFAULT_INVERT_COLORS            = false;
 
-    
+
     protected TerminalBooleanFieldEditor fEditorLimitOutput;
+
+    protected BooleanFieldEditor fInvertColors;
 
 	protected IntegerFieldEditor fEditorBufferSize;
 
@@ -56,6 +60,7 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 		Text ctlText;
 		Label ctlLabel;
 		boolean bEnabled;
+
 
 		ctlButton = fEditorLimitOutput.getChangeControl(getFieldEditorParent());
 		ctlText = fEditorBufferSize.getTextControl(getFieldEditorParent());
@@ -95,6 +100,9 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 		setPreferenceStore(preferenceStore);
 	}
 	protected void setupEditors() {
+		fInvertColors = new BooleanFieldEditor(
+				PREF_INVERT_COLORS, ViewMessages.INVERT_COLORS,
+				getFieldEditorParent());
 		fEditorLimitOutput = new TerminalBooleanFieldEditor(
 				PREF_LIMITOUTPUT, ViewMessages.LIMITOUTPUT,
 				getFieldEditorParent());
@@ -111,6 +119,7 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage implements
 		fEditorSerialTimeout.setValidRange(0, Integer.MAX_VALUE);
 		fEditorNetworkTimeout.setValidRange(0, Integer.MAX_VALUE);
 
+		addField(fInvertColors);
 		addField(fEditorLimitOutput);
 		addField(fEditorBufferSize);
 		addField(fEditorSerialTimeout);

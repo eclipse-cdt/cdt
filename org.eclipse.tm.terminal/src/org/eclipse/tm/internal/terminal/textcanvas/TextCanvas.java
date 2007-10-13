@@ -300,5 +300,10 @@ public class TextCanvas extends GridCanvas {
 		calculateGrid();
 	}
 
+	public void setInvertedColors(boolean invert) {
+		fCellRenderer.setInvertedColors(invert);
+		redraw();
+	}
+
 }
 

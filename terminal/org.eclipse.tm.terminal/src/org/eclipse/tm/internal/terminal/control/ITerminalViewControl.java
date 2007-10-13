@@ -24,6 +24,7 @@ import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 public interface ITerminalViewControl {
     boolean isEmpty();
 	void setFont(Font font);
+	void setInvertedColors(boolean invert);
 	Font getFont();
 	Control getControl();
     boolean isDisposed();

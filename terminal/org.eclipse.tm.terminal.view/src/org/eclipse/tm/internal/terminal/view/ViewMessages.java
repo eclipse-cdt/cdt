@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
@@ -30,8 +30,9 @@ public class ViewMessages extends NLS {
     public static String CONNECTIONTYPE;
 	public static String VIEW_TITLE;
 	public static String VIEW_SETTINGS;
-	
+
     public static String LIMITOUTPUT;
+    public static String INVERT_COLORS;
     public static String BUFFERLINES;
     public static String SERIALTIMEOUT;
     public static String NETWORKTIMEOUT;
@@ -40,7 +41,7 @@ public class ViewMessages extends NLS {
 	public static String STATE_CONNECTING;
 	public static String STATE_OPENED;
 	public static String STATE_CLOSED;
-	
+
 	public static String CANNOT_INITIALIZE;
 	public static String CONNECTOR_NOT_AVAILABLE;
 

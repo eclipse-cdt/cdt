@@ -29,6 +29,7 @@ public class StyleMap {
 	Map fFontMap=new HashMap();
 	private Point fCharSize;
 	private final Style fDefaultStyle;
+	private boolean fInvertColors;
 	StyleMap() {
 		Display display=Display.getCurrent();
 		fColorMap.put(StyleColor.getStyleColor("white"), new Color(display,255,255,255)); //$NON-NLS-1$
@@ -57,7 +58,7 @@ public class StyleMap {
 	}
 	public Color getForegrondColor(Style style) {
 		style = defaultIfNull(style);
-		if(style.isReverse())
+		if(isReverse(style))
 			return getColor(style.getBackground());
 		else
 			return getColor(style.getForground());
@@ -69,10 +70,21 @@ public class StyleMap {
 	}
 	public Color getBackgroundColor(Style style) {
 		style = defaultIfNull(style);
-		if(style.isReverse())
+		if(isReverse(style))
 			return getColor(style.getForground());
 		else
 			return getColor(style.getBackground());
+	}
+	private boolean isReverse(Style style) {
+		if(fInvertColors)
+			return !style.isReverse();
+		else
+			return style.isReverse();
+
+	}
+	public void setInvertedColors(boolean invert) {
+		fInvertColors=invert;
+
 	}
 //	static Font getBoldFont(Font font) {
 //		FontData fontDatas[] = font.getFontData();

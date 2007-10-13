@@ -163,10 +163,10 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	 */
 	private void updatePreferences() {
 		Preferences preferences = TerminalViewPlugin.getDefault().getPluginPreferences();
-		boolean limitOutput = preferences.getBoolean(TerminalPreferencePage.PREF_LIMITOUTPUT);
+//		boolean limitOutput = preferences.getBoolean(TerminalPreferencePage.PREF_LIMITOUTPUT);
+//		if(!limitOutput)
+//			bufferLineLimit=-1;
 		int bufferLineLimit = preferences.getInt(TerminalPreferencePage.PREF_BUFFERLINES);
-		if(!limitOutput)
-			bufferLineLimit=-1;
 		fCtlTerminal.setBufferLineLimit(bufferLineLimit);
 		fCtlTerminal.setInvertedColors(preferences.getBoolean(TerminalPreferencePage.PREF_INVERT_COLORS));
 	}

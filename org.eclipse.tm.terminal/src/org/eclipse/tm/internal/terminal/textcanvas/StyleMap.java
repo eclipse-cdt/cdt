@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
@@ -23,11 +23,12 @@ import org.eclipse.tm.terminal.model.Style;
 import org.eclipse.tm.terminal.model.StyleColor;
 
 public class StyleMap {
-	String fFontName=JFaceResources.TEXT_FONT;
+	// TODO propagate the name of the fonf in the FontRegistry
+	String fFontName="terminal.views.view.font.definition"; //$NON-NLS-1$
 	Map fColorMap=new HashMap();
 	Map fFontMap=new HashMap();
 	private Point fCharSize;
-	private Style fDefaultStyle;
+	private final Style fDefaultStyle;
 	StyleMap() {
 		Display display=Display.getCurrent();
 		fColorMap.put(StyleColor.getStyleColor("white"), new Color(display,255,255,255)); //$NON-NLS-1$
@@ -49,11 +50,7 @@ public class StyleMap {
 		fColorMap.put(StyleColor.getStyleColor("MAGENTA"), new Color(display,255,255,0)); //$NON-NLS-1$
 		fColorMap.put(StyleColor.getStyleColor("GRAY"), new Color(display,128,128,128)); //$NON-NLS-1$
 		fDefaultStyle=Style.getStyle(StyleColor.getStyleColor("black"),StyleColor.getStyleColor("white")); //$NON-NLS-1$ //$NON-NLS-2$
-		GC gc = new GC (display);
-		gc.setFont(getFont());
-		fCharSize = gc.textExtent ("W"); //$NON-NLS-1$
-		gc.dispose ();
-
+		updateFont();
 	}
 	public Color getColor(StyleColor colorName) {
 		return (Color) fColorMap.get(colorName);
@@ -89,19 +86,26 @@ public class StyleMap {
 			return  JFaceResources.getFontRegistry().getBold(fFontName);
 		} else if(style.isUnderline()) {
 			return  JFaceResources.getFontRegistry().getItalic(fFontName);
-			
+
 		}
 		return  JFaceResources.getFontRegistry().get(fFontName);
 	}
-	
+
 	public Font getFont() {
 		return  JFaceResources.getFontRegistry().get(fFontName);
-		
+
 	}
 	public int getFontWidth() {
 		return fCharSize.x;
 	}
 	public int getFontHeight() {
 		return fCharSize.y;
+	}
+	public void updateFont() {
+		Display display=Display.getCurrent();
+		GC gc = new GC (display);
+		gc.setFont(getFont());
+		fCharSize = gc.textExtent ("W"); //$NON-NLS-1$
+		gc.dispose ();
 	}
 }

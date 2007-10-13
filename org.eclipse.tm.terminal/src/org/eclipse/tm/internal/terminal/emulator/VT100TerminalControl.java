@@ -458,7 +458,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		}
 
 		// Tell the TerminalControl singleton that the font has changed.
-
+		fCtlText.onFontChange();
 		getTerminalText().fontChanged();
 	}
 	public Font getFont() {

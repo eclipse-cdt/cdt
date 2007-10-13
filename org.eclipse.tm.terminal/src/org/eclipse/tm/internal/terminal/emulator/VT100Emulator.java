@@ -11,7 +11,7 @@
  * Helmut Haigermoser and Ted Williams.
  *
  * Contributors:
- * Michael Scharf (Wind River) - split into core, view and connector plugins 
+ * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
@@ -43,7 +43,7 @@ import org.eclipse.tm.terminal.model.Style;
  * use of screen-oriented applications, such as vi, Emacs, and any GNU
  * readline-enabled application (Bash, bc, ncftp, etc.).
  * <p>
- * 
+ *
  * @author Fran Litterio <francis.litterio@windriver.com>
  * @author Chris Thew <chris.thew@windriver.com>
  */
@@ -70,7 +70,7 @@ public class VT100Emulator implements ControlListener {
 	/**
 	 * This field holds the current state of the Finite TerminalState Automaton (FSA)
 	 * that recognizes ANSI escape sequences.
-	 * 
+	 *
 	 * @see #processNewText()
 	 */
 	private int ansiState = ANSISTATE_INITIAL;
@@ -79,7 +79,7 @@ public class VT100Emulator implements ControlListener {
 	 * This field holds a reference to the {@link TerminalControl} object that
 	 * instantiates this class.
 	 */
-	private ITerminalControlForText terminal;
+	private final ITerminalControlForText terminal;
 
 	/**
 	 * This field holds a reference to the StyledText widget that is used to
@@ -104,13 +104,13 @@ public class VT100Emulator implements ControlListener {
 	 * parsing the escape sequence "\e[20;10H", this array holds the strings
 	 * "20" and "10".
 	 */
-	private StringBuffer[] ansiParameters = new StringBuffer[16];
+	private final StringBuffer[] ansiParameters = new StringBuffer[16];
 
 	/**
 	 * This field holds the OS-specific command found in an escape sequence of
 	 * the form "\e]...\u0007".
 	 */
-	private StringBuffer ansiOsCommand = new StringBuffer(128);
+	private final StringBuffer ansiOsCommand = new StringBuffer(128);
 
 	/**
 	 * This field holds the index of the next unused element of the array stored
@@ -119,7 +119,7 @@ public class VT100Emulator implements ControlListener {
 	private int nextAnsiParameter = 0;
 
 	final Reader fReader;
-	
+
 	boolean fCrAfterNewLine;
 	/**
 	 * The constructor.
@@ -147,7 +147,7 @@ public class VT100Emulator implements ControlListener {
 			text=new VT100BackendTraceDecorator(new VT100EmulatorBackend(data),System.out);
 		else
 			text=new VT100EmulatorBackend(data);
-			
+
 //		text.setDimensions(24, 80);
 		Style  style=Style.getStyle("BLACK", "WHITE"); //$NON-NLS-1$ //$NON-NLS-2$
 		text.setDefaultStyle(style);
@@ -181,7 +181,7 @@ public class VT100Emulator implements ControlListener {
 
 	/**
 	 * This method is required by interface ControlListener. It allows us to
-	 * know when the StyledText widget is resized. 
+	 * know when the StyledText widget is resized.
 	 */
 	public void controlResized(ControlEvent event) {
 		Logger.log("entered"); //$NON-NLS-1$
@@ -189,7 +189,7 @@ public class VT100Emulator implements ControlListener {
 	}
 
 	/**
-	 * This method erases all text from the Terminal view. 
+	 * This method erases all text from the Terminal view.
 	 */
 	public void clearTerminal() {
 		Logger.log("entered"); //$NON-NLS-1$
@@ -209,14 +209,14 @@ public class VT100Emulator implements ControlListener {
 	}
 //	/**
 //	 * This method executes in the Display thread to process data received from
-//	 * the remote host by class {@link org.eclipse.tm.internal.terminal.telnet.TelnetConnection} and 
-//	 * other implementors of {@link ITerminalConnector}, like the 
+//	 * the remote host by class {@link org.eclipse.tm.internal.terminal.telnet.TelnetConnection} and
+//	 * other implementors of {@link ITerminalConnector}, like the
 //	 * SerialPortHandler.
 //	 * <p>
 //	 * These connectors write text to the terminal's buffer through
-//	 * {@link TerminalControl#writeToTerminal(String)} and then have 
-//	 * this run method executed in the display thread. This method 
-//	 * must not execute at the same time as methods 
+//	 * {@link TerminalControl#writeToTerminal(String)} and then have
+//	 * this run method executed in the display thread. This method
+//	 * must not execute at the same time as methods
 //	 * {@link #setNewText(StringBuffer)} and {@link #clearTerminal()}.
 //	 * <p>
 //	 * IMPORTANT: This method must be called in strict alternation with method
@@ -256,7 +256,7 @@ public class VT100Emulator implements ControlListener {
 	/**
 	 * This method scans the newly received text, processing ANSI control
 	 * characters and escape sequences and displaying normal text.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void processNewText() throws IOException {
 		Logger.log("entered"); //$NON-NLS-1$
@@ -342,7 +342,7 @@ public class VT100Emulator implements ControlListener {
 					ansiState = ANSISTATE_INITIAL;
 					moveCursor(savedCursorLine, savedCursorColumn);
 					break;
-					
+
 				case 'c':
 					// Reset the terminal
 					ansiState = ANSISTATE_INITIAL;
@@ -863,7 +863,7 @@ public class VT100Emulator implements ControlListener {
 	/**
 	 * This method returns one of the numeric ANSI parameters received in the
 	 * most recent escape sequence.
-	 * 
+	 *
 	 * @return The <i>parameterIndex</i>th numeric ANSI parameter or -1 if the
 	 *         index is out of range.
 	 */
@@ -913,7 +913,7 @@ public class VT100Emulator implements ControlListener {
 	 * append each non-control character individually to the StyledText widget.
 	 * A non-control character is any character that passes the condition in the
 	 * below while loop.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void processNonControlCharacters(char character) throws IOException {
 		StringBuffer buffer=new StringBuffer();
@@ -942,7 +942,7 @@ public class VT100Emulator implements ControlListener {
 	 * view, wrapping text at the right edge of the screen and overwriting text
 	 * when the cursor is not at the very end of the screen's text.
 	 * <p>
-	 * 
+	 *
 	 * There are never any ANSI control characters or escape sequences in the
 	 * text being displayed by this method (this includes newlines, carriage
 	 * returns, and tabs).
@@ -987,7 +987,7 @@ public class VT100Emulator implements ControlListener {
 	 * first column of the next line, as if a carriage return (CR) and a NL were
 	 * written.
 	 * <p>
-	 * 
+	 *
 	 * UNIX terminals typically display a NL character as a CR followed by a NL
 	 * because the terminal device typically has the ONLCR attribute bit set
 	 * (see the termios(4) man page for details), which causes the terminal
@@ -1018,7 +1018,7 @@ public class VT100Emulator implements ControlListener {
 	 * the edges of the view window (i.e., the view window does not become
 	 * larger to accommodate its contents becoming larger).
 	 * <p>
-	 * 
+	 *
 	 * This method must be called immediately before each time text is written
 	 * to the terminal so that we can properly line wrap text. Because it is
 	 * called so frequently, it must be fast when there is no resizing to be
@@ -1055,7 +1055,7 @@ public class VT100Emulator implements ControlListener {
 	 * This method returns the relative line number of the line containing the
 	 * cursor. The returned line number is relative to the topmost visible line,
 	 * which has relative line number 0.
-	 * 
+	 *
 	 * @return The relative line number of the line containing the cursor.
 	 */
 	private int relativeCursorLine() {
@@ -1127,7 +1127,7 @@ public class VT100Emulator implements ControlListener {
 	 */
 	private int fNextChar=-1;
 	private char getNextChar() throws IOException {
-		int c=-1; 
+		int c=-1;
 		if(fNextChar!=-1) {
 			c= fNextChar;
 			fNextChar=-1;
@@ -1154,7 +1154,7 @@ public class VT100Emulator implements ControlListener {
 	 */
 	void pushBackChar(char c) {
 		//assert fNextChar!=-1: "Already a character waiting:"+fNextChar; //$NON-NLS-1$
-		fNextChar=c;			
+		fNextChar=c;
 	}
 	private int getCursorColumn() {
 		return text.getCursorColumn();

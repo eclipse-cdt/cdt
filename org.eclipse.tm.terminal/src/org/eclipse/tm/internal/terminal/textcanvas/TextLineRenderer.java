@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2007 Wind River Systems, Inc. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at 
- * http://www.eclipse.org/legal/epl-v10.html 
- * 
- * Contributors: 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
  * Michael Scharf (Wind River) - initial API and implementation
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.textcanvas;
@@ -82,13 +82,13 @@ public class TextLineRenderer implements ILinelRenderer {
 			}
 		}
 	}
-	
+
 	private void fillBackground(GC gc, int x, int y, int width, int height) {
 		Color bg=gc.getBackground();
 		gc.setBackground(getBackgroundColor());
 		gc.fillRectangle (x,y,width,height);
 		gc.setBackground(bg);
-		
+
 	}
 
 	private Color getBackgroundColor() {
@@ -98,7 +98,7 @@ public class TextLineRenderer implements ILinelRenderer {
 		if(!model.isCursorOn())
 			return;
 		int cursorLine=model.getCursorLine();
-			
+
 		if(row==cursorLine) {
 			int cursorColumn=model.getCursorColumn();
 			if(cursorColumn<getTerminalText().getWidth()) {
@@ -135,5 +135,8 @@ public class TextLineRenderer implements ILinelRenderer {
 	}
 	ITerminalTextDataReadOnly getTerminalText() {
 		return fModel.getTerminalText();
+	}
+	public void onFontChange() {
+		fStyleMap.updateFont();
 	}
 }

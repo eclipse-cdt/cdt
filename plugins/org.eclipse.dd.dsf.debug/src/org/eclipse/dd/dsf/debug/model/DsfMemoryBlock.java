@@ -274,11 +274,10 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
 		// Flag the changed bytes
 		if (fBlock != null && newLength > 0) {
-			int offset = fBaseAddress.compareTo(address);
-			switch (offset)	{
+			switch (fBaseAddress.compareTo(address))	{
 				case -1:
 				{
-					offset = -offset;
+					int offset = address.subtract(fBaseAddress).intValue();
 					int length = Math.min(fLength - offset, newLength); 
 					for (int i = 0; i < length; i += 4) {
 						boolean changed = false;
@@ -299,6 +298,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 				case 0:
 				case 1:
 				{
+					int offset = fBaseAddress.subtract(address).intValue();
 					int length = Math.min(newLength - offset, fLength); 
 					for (int i = 0; i < length; i += 4) {
 						boolean changed = false;

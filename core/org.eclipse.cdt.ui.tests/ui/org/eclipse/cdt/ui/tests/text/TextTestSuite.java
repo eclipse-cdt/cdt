@@ -25,6 +25,7 @@ public class TextTestSuite extends TestSuite {
         // partitioning tests
 		addTest(PartitionTokenScannerTest.suite());
 		addTest(CPartitionerTest.suite());
+		addTest(AsmPartitionerTest.suite());
 
         // smart edit tests
 		addTest(CAutoIndentTest.suite());

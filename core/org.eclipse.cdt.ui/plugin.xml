@@ -509,11 +509,11 @@
       </participant>
    </extension>
    <extension
-         id="org.eclipse.cdt.ui.CDocumentSetupParticipant"
-         name="%cDocumentSetupParticipant"
+         id="org.eclipse.cdt.ui.AsmDocumentSetupParticipant"
+         name="%asmDocumentSetupParticipant"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
+            class="org.eclipse.cdt.internal.ui.editor.asm.AsmDocumentSetupParticipant"
             contentTypeId="org.eclipse.cdt.core.asmSource">
       </participant>
    </extension>

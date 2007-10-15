@@ -117,6 +117,28 @@
       </description>
    </category-def>
 <!-- END_2_0_1 -->
+<!-- BEGIN_2_0_1_patches -->
+   <feature url="features/org.eclipse.rse.core_2.0.2.v20071009a-7P-7DEB7sQRxTz0gaB.jar" id="org.eclipse.rse.core" version="2.0.2.v20071009a-7P-7DEB7sQRxTz0gaB">
+      <category name="TM and RSE 2.0.1 patches (M20071015-1045)"/>
+   </feature>
+   <feature url="features/org.eclipse.rse_2.0.2.v20071009a-7D-68mJIkR9WAviqV8z0U73ZC.jar" id="org.eclipse.rse" version="2.0.2.v20071009a-7D-68mJIkR9WAviqV8z0U73ZC">
+      <category name="TM and RSE 2.0.1 patches (M20071015-1045)"/>
+   </feature>
+   <feature url="features/org.eclipse.rse.sdk_2.0.2.v20071009a-7J-79E7ZoHPP5Zlo8tVvVwyz-O3A.jar" id="org.eclipse.rse.sdk" version="2.0.2.v20071009a-7J-79E7ZoHPP5Zlo8tVvVwyz-O3A">
+      <category name="TM and RSE 2.0.1 patches (M20071015-1045)"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal_1.0.2.v20071014-1-17w31182125.jar" id="org.eclipse.tm.terminal" version="1.0.2.v20071014-1-17w31182125">
+      <category name="TM and RSE 2.0.1 patches (M20071015-1045)"/>
+   </feature>
+   <feature url="features/org.eclipse.tm.terminal.sdk_1.0.2.v20071014-7_-79AvNIwNYtSSJz-MtlhNDDmEk.jar" id="org.eclipse.tm.terminal.sdk" version="1.0.2.v20071014-7_-79AvNIwNYtSSJz-MtlhNDDmEk">
+      <category name="TM and RSE 2.0.1 patches (M20071015-1045)"/>
+   </feature>
+   <category-def name="TM and RSE 2.0.1 patches (M20071015-1045)" label="TM and RSE 2.0.1 patches (M20071015-1045)">
+      <description>
+         Patches for features and add-ons of the 2.0.1 release of Target Management / RSE.
+      </description>
+   </category-def>
+<!-- END_2_0_1_patches -->
 <!-- BEGIN_3_0 -->
    <feature url="features/org.eclipse.rse.core_2.0.1.qualifier.jar" id="org.eclipse.rse.core" version="2.0.1.qualifier">
       <category name="TM and RSE 3.0"/>

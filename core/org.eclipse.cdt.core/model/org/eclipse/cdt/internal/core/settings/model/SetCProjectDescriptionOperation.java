@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICDescriptionDelta;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.internal.core.model.CModelOperation;
@@ -64,11 +65,14 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 				throw new CModelException(ExceptionFactory.createCoreException(SettingsModelMessages.getString("CProjectDescriptionManager.17") + project.getName())); //$NON-NLS-1$
 	
 			fNewDescriptionCache = new CProjectDescription(fSetDescription, true, el, creating);
+			
+			boolean envStates[] = getEnvStates(fNewDescriptionCache);
 			try {
 				mngr.setDescriptionApplying(project, fNewDescriptionCache);
 				modified |= fNewDescriptionCache.applyDatas(context);
 			} finally {
 				mngr.clearDescriptionApplying(project);
+				setEnvStates(fNewDescriptionCache, envStates);
 			}
 		} else {
 			modified = fOldDescriptionCache != null;
@@ -148,6 +152,40 @@ public class SetCProjectDescriptionOperation extends CModelOperation {
 	
 	public boolean isReadOnly() {
 		return false;
+	}
+
+	private boolean[] getEnvStates(CProjectDescription pd) {
+		ICConfigurationDescription[] cfs = pd.getConfigurations();
+		boolean[] result = new boolean[cfs.length];
+		for (int i=0; i<cfs.length; i++) {
+			if (cfs[i] instanceof IInternalCCfgInfo) {
+				try {
+					CConfigurationSpecSettings ss = ((IInternalCCfgInfo)cfs[i]).getSpecSettings();
+					if (ss != null && ss.getEnvironment() != null)
+						result[i] = ss.getEnvironment().isDirty();
+				} catch (CoreException e) {};
+			}
+		}
+		return result;
+	}
+
+	private void setEnvStates(CProjectDescription pd, boolean[] data) {
+		ICConfigurationDescription[] cfs = pd.getConfigurations();
+		if (cfs == null || data == null)
+			return;
+		for (int i=0; i<cfs.length; i++) {
+			if (data.length <= i) 
+				break; // unprobable;
+			if (!data[i])
+				continue; // write only TRUE values
+			if (cfs[i] instanceof IInternalCCfgInfo) {
+				try {
+					CConfigurationSpecSettings ss = ((IInternalCCfgInfo)cfs[i]).getSpecSettings();
+					if (ss != null && ss.getEnvironment() != null)
+						ss.getEnvironment().setDirty(true);
+				} catch (CoreException e) {};
+			}
+		}
 	}
 
 }

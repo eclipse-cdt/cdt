@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.dom.upc;
 
 import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
+import org.eclipse.cdt.core.dom.c99.IC99TokenCollector;
 import org.eclipse.cdt.core.dom.c99.IKeywordMap;
 import org.eclipse.cdt.core.dom.c99.ILexerFactory;
 import org.eclipse.cdt.core.dom.c99.IPPTokenComparator;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.core.dom.parser.upc.UPCKeywordMap;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCLexerFactory;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCPPTokenComparator;
 import org.eclipse.cdt.internal.core.dom.parser.upc.UPCParser;
+import org.eclipse.cdt.internal.core.dom.parser.upc.UPCTokenCollector;
 
 
 /**
@@ -75,5 +77,9 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 
 	protected IPPTokenComparator getTokenComparator() {
 		return new UPCPPTokenComparator();
+	}
+	
+	protected IC99TokenCollector getTokenCollector() {
+		return new UPCTokenCollector();
 	}
 }

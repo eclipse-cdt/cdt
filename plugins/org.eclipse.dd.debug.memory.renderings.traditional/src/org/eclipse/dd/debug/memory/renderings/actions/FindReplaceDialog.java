@@ -740,7 +740,7 @@ public class FindReplaceDialog extends SelectionDialog
 						{
 							try
 							{
-								fMemoryBlock.setValue(currentPosition, replaceData);
+								fMemoryBlock.setValue(currentPosition.subtract(fMemoryBlock.getBigBaseAddress()), replaceData);
 							}
 							catch(DebugException de)
 							{

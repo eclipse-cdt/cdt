@@ -163,7 +163,16 @@ abstract public class AbstractTextCanvasModel implements ITextCanvasModel {
 			if(t-fCursorTime>500) {
 				fShowCursor=!fShowCursor;
 				fCursorTime=t;
-				fireCellRangeChanged(fCursorColumn, fCursorLine, 1, 1);
+				// on some windows machines, there is some left
+				// over when updating the cursor .
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=206363
+				int col=fCursorColumn;
+				int width=1;
+				if(col>0) {
+					col--;
+					width++;
+				}
+				fireCellRangeChanged(col, fCursorLine, width, 1);
 			}
 		}
 	}

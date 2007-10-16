@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
+import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -231,9 +232,14 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
     @Override
     protected void buildDeltaForDMEvent(final IDMEvent<?> e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         if (e instanceof IContainerSuspendedDMEvent) {
-            buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, ((IContainerSuspendedDMEvent)e).getTriggeringContext(), parent, nodeOffset, rm);
+            IExecutionDMContext threadDmc = null;
+            if (parent.getElement() instanceof AbstractDMVMLayoutNode.DMVMContext) {
+                threadDmc = DMContexts.getAncestorOfType( ((DMVMContext)parent.getElement()).getDMC(), IExecutionDMContext.class);
+            }
+            buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, threadDmc, ((IContainerSuspendedDMEvent)e).getTriggeringContext(), parent, nodeOffset, rm);
         } else if (e instanceof ISuspendedDMEvent) {
-            buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, ((ISuspendedDMEvent)e).getDMContext(), parent, nodeOffset, rm);
+            IExecutionDMContext execDmc = ((ISuspendedDMEvent)e).getDMContext();
+            buildDeltaForSuspendedEvent((ISuspendedDMEvent)e, execDmc, execDmc, parent, nodeOffset, rm);
         } else if (e instanceof IResumedDMEvent) {
             buildDeltaForResumedEvent((IResumedDMEvent)e, parent, nodeOffset, rm);
         } else if (e instanceof IStepQueueManager.ISteppingTimedOutEvent) {
@@ -244,7 +250,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
         }
     }
     
-    private void buildDeltaForSuspendedEvent(final ISuspendedDMEvent e, final IExecutionDMContext execCtx, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
+    private void buildDeltaForSuspendedEvent(final ISuspendedDMEvent e, final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
         IStack stackService = getServicesTracker().getService(IStack.class);
         if (stackService == null || runControlService == null) {
@@ -256,33 +262,40 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
         // Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
         // which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
         // refresh the whole stack trace with every step would slow down stepping too much.
-       if (!runControlService.isStepping(execCtx)) {
+        if (!runControlService.isStepping(triggeringCtx)) {
             parent.addFlags(IModelDelta.CONTENT);
         }
         
-        // Always expand the thread node to show the stack frames.
-        parent.addFlags(IModelDelta.EXPAND);
-
-        // Retrieve the list of stack frames, and mark the top frame to be selected.  
-        getElementsTopStackFrameOnly(
-            new ElementsUpdate(
-                new DataRequestMonitor<List<Object>>(getSession().getExecutor(), null) { 
-                    @Override
-                    public void handleCompleted() {
-                        if (getStatus().isOK() && getData().size() != 0) {
-                            parent.addNode( getData().get(0), IModelDelta.SELECT | IModelDelta.STATE);
-                            // If second frame is available repaint it, so that a "..." appears.  This gives a better
-                            // impression that the frames are not up-to date.
-                            if (getData().size() >= 2) {
-                                parent.addNode( getData().get(1), IModelDelta.STATE);
-                            }
-                        }                        
-                        // Even in case of errors, call super-class to complete building of the delta.
-                        StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
-                    }
-                },
-                parent)
-            );
+        // Check if we are building a delta for the thread that triggered the event.
+        // Only then expand the stack frames and select the top one.
+        if (executionCtx.equals(triggeringCtx)) {
+            // Always expand the thread node to show the stack frames.
+            parent.addFlags(IModelDelta.EXPAND);
+    
+            // Retrieve the list of stack frames, and mark the top frame to be selected.  
+            getElementsTopStackFrameOnly(
+                new ElementsUpdate(
+                    new DataRequestMonitor<List<Object>>(getSession().getExecutor(), null) { 
+                        @Override
+                        public void handleCompleted() {
+                            if (getStatus().isOK() && getData().size() != 0) {
+                                parent.addNode( getData().get(0), IModelDelta.SELECT | IModelDelta.STATE);
+                                // If second frame is available repaint it, so that a "..." appears.  This gives a better
+                                // impression that the frames are not up-to date.
+                                if (getData().size() >= 2) {
+                                    parent.addNode( getData().get(1), IModelDelta.STATE);
+                                }
+                            }                        
+                            // Even in case of errors, call super-class to complete building of the delta.
+                            StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
+                        }
+                    },
+                    parent)
+                );
+        } else {
+            // Don't forget to call the super class to complete building the delta (and call child nodes.)
+            StackFramesLayoutNode.super.buildDeltaForDMEvent(e, parent, nodeOffset, rm);
+        }
     }
     
     private void buildDeltaForResumedEvent(final IResumedDMEvent e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {

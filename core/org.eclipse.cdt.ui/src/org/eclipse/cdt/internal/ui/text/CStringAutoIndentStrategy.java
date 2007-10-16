@@ -22,6 +22,7 @@ import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.ITextEditorExtension3;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -160,6 +161,9 @@ public class CStringAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy
 		IWorkbenchPage page= CUIPlugin.getActivePage();
 		if (page != null)  {
 			IEditorPart part= page.getActiveEditor();
+			if (part instanceof MultiPageEditorPart) {
+				part= (IEditorPart)part.getAdapter(ITextEditorExtension3.class);
+			}
 			if (part instanceof ITextEditorExtension3) {
 				ITextEditorExtension3 extension= (ITextEditorExtension3) part;
 				return extension.getInsertMode() == ITextEditorExtension3.SMART_INSERT;

@@ -72,9 +72,11 @@ public class ChangeBuildConfigActionBase {
 			String sActiveConfig = null;
 			// Store names and detect active configuration
 			for (int i=0; i<cfgDescs.length; i++) {
-				configNames.add(cfgDescs[i].getName());
+				String s = cfgDescs[i].getName();
+				if (!configNames.contains(s)) 
+					configNames.add(s);
 				if (cfgDescs[i].isActive())	
-					sActiveConfig = cfgDescs[i].getName();
+					sActiveConfig = s;
 			}
 
 			// Check whether all projects have the same active configuration

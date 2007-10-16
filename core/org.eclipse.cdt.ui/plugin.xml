@@ -1833,12 +1833,8 @@
        <completionProposalComputer
              categoryId="org.eclipse.cdt.ui.parserProposalCategory"
              class="org.eclipse.cdt.internal.ui.text.contentassist.DOMCompletionProposalComputer">
-          <partition
-                type="__dftl_partition_content_type">
-          </partition>
-          <partition
-                type="__c_preprocessor">
-          </partition>
+          <partition type="__dftl_partition_content_type"/>
+          <partition type="__c_preprocessor"/>
        </completionProposalComputer>
     </extension>
      
@@ -1859,12 +1855,8 @@
        <completionProposalComputer
              categoryId="org.eclipse.cdt.ui.parserProposalCategory"
              class="org.eclipse.cdt.internal.ui.text.contentassist.KeywordCompletionProposalComputer">
-          <partition
-                type="__dftl_partition_content_type">
-          </partition>
-          <partition
-                type="__c_preprocessor">
-          </partition>
+          <partition type="__dftl_partition_content_type"/>
+          <partition type="__c_preprocessor"/>
        </completionProposalComputer>
     </extension>
     <extension
@@ -1873,9 +1865,7 @@
        <completionProposalComputer
              categoryId="org.eclipse.cdt.ui.parserProposalCategory"
              class="org.eclipse.cdt.internal.ui.text.contentassist.HelpCompletionProposalComputer">
-          <partition
-                type="__dftl_partition_content_type">
-          </partition>
+          <partition type="__dftl_partition_content_type"/>
        </completionProposalComputer>
     </extension>
     <!-- template proposals -->
@@ -1887,6 +1877,7 @@
             categoryId="org.eclipse.cdt.ui.templateProposalCategory">
             <partition type="__dftl_partition_content_type"/>
             <partition type="__c_multiline_comment"/>
+            <partition type="__c_singleline_comment"/>
         </completionProposalComputer>
     </extension>
     <!-- hippie word completions -->   

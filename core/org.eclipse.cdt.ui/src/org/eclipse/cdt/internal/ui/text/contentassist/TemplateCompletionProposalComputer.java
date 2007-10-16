@@ -75,7 +75,7 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 		TemplateEngine engine= null;
 		try {
 			String partition= TextUtilities.getContentType(viewer.getDocument(), ICPartitions.C_PARTITIONING, offset, true);
-			if (partition.equals(ICPartitions.C_MULTI_LINE_COMMENT)) {
+			if (partition.equals(ICPartitions.C_MULTI_LINE_COMMENT) || partition.equals(ICPartitions.C_SINGLE_LINE_COMMENT)) {
 				engine= fCommentTemplateEngine;
 			} else {
 				if (isValidContext(context)) {

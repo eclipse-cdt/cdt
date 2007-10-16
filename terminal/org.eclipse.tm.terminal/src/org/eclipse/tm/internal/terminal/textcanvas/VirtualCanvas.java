@@ -14,8 +14,6 @@ package org.eclipse.tm.internal.terminal.textcanvas;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -34,9 +32,8 @@ import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
  */
 public abstract class VirtualCanvas extends Canvas {
 
-	private Rectangle fVirtualBounds = new Rectangle(0,0,0,0);
+	private final Rectangle fVirtualBounds = new Rectangle(0,0,0,0);
 	private Rectangle fClientArea;
-	private GC fPaintGC=null;
 	/**
 	 * prevent infinite loop in {@link #updateScrollbars()}
 	 */
@@ -45,7 +42,6 @@ public abstract class VirtualCanvas extends Canvas {
 	
 	public VirtualCanvas(Composite parent, int style) {
 		super(parent, style|SWT.NO_BACKGROUND|SWT.NO_REDRAW_RESIZE);
-		fPaintGC= new GC(this);
 		fClientArea=getClientArea();
 		addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event event) {
@@ -71,16 +67,7 @@ public abstract class VirtualCanvas extends Canvas {
 
 			}
 		});
-		addDisposeListener(new DisposeListener(){
-			public void widgetDisposed(DisposeEvent e) {
-				if(fPaintGC!=null){
-					fPaintGC.dispose();
-					fPaintGC=null;
-				}
-			}
-			
-		});
-	}	
+	}
 	protected void onResize() {
 		updateViewRectangle();
 	}
@@ -149,10 +136,15 @@ public abstract class VirtualCanvas extends Canvas {
 	}
 
 	protected void repaint(Rectangle r) {
-		if (fPaintGC!=null) {
-			if(inClipping(r,fClientArea)) {
-				fPaintGC.setClipping(r);
-				paint(fPaintGC);
+		if(isDisposed())
+			return;
+		if(inClipping(r,fClientArea)) {
+			GC gc=new GC(this);
+			try {
+				gc.setClipping(r);
+				paint(gc);
+			} finally {
+				gc.dispose();
 			}
 		}
 	}
@@ -261,7 +253,7 @@ public abstract class VirtualCanvas extends Canvas {
 		return y-fVirtualBounds.y;
 	}
 	/** called when the viewed part is changing */
-	private Rectangle fViewRectangle=new Rectangle(0,0,0,0);
+	private final Rectangle fViewRectangle=new Rectangle(0,0,0,0);
 	protected void updateViewRectangle() {
 		if(
 				fViewRectangle.x==-fVirtualBounds.x 

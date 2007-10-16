@@ -10,6 +10,7 @@
  *     QNX Software Systems - adapted for use in CDT
  *     Andrew Ferguson (Symbian)
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.browser.typeinfo;
 
@@ -52,6 +53,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	private static final Image ENUM_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_ENUMERATION);
 	private static final Image FUNCTION_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_FUNCTION);
 	private static final Image VARIABLE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_VARIABLE);
+	private static final Image MACRO_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_MACRO);
 	private static final Image UNKNOWN_TYPE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_UNKNOWN_TYPE);
 
 	private int fFlags;
@@ -214,6 +216,9 @@ public class TypeInfoLabelProvider extends LabelProvider {
 
 		case ICElement.C_VARIABLE:
 			return VARIABLE_ICON;
+		
+		case ICElement.C_MACRO:
+			return MACRO_ICON;
 
 		default:
 			return UNKNOWN_TYPE_ICON;

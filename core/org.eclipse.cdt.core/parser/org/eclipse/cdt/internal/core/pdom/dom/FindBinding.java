@@ -65,7 +65,30 @@ public class FindBinding {
 			return cmp;
 		}
 	}
-	
+
+	public static class MacroBTreeComparator implements IBTreeComparator {
+		final private PDOM fPDom;
+		
+		public MacroBTreeComparator(PDOM pdom) {
+			fPDom= pdom;
+		}
+		public int compare(int record1, int record2) throws CoreException {
+			int cmp= compare(PDOMMacro.getNameInDB(fPDom, record1), PDOMMacro.getNameInDB(fPDom, record2));	// compare names
+			if (cmp==0) {								// any order will do.
+				if (record1 < record2) {
+					return -1;
+				}
+				else if (record1 > record2) {			
+					return 1;
+				}
+			}
+			return cmp;
+		}
+		private int compare(IString nameInDB, IString nameInDB2) throws CoreException {
+			return nameInDB.compareCompatibleWithIgnoreCase(nameInDB2);
+		}
+	}
+
 	public static PDOMBinding findBinding(BTree btree, final PDOM pdom, final char[]name, final int[] constants) throws CoreException {
 		final PDOMBinding[] result = new PDOMBinding[1];
 		btree.accept(new IBTreeVisitor() {

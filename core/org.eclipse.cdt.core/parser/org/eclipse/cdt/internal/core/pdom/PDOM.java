@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -51,11 +52,14 @@ import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.ApplyVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
+import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.MacroCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -71,17 +75,16 @@ import org.eclipse.core.runtime.Status;
  * @author Doug Schaefer
  */
 public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
-	protected Database db;
-
 	/**
 	 * Identifier for PDOM format
 	 * @see IIndexFragment#PROPERTY_FRAGMENT_FORMAT_ID
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 37;
+	public static final int CURRENT_VERSION = 38;
 	public static final int MIN_SUPPORTED_VERSION= 36;
 	public static final int MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX= 37;	// to be removed in 4.1
+	public static final int MIN_VERSION_TO_WRITE_MACROS_INDEX= 38;	// to be removed in 4.1
 	
 	/* 
 	 * PDOM internal format history
@@ -126,24 +129,33 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 *  35 - add scanner configuration hash-code (62366)
 	 * #36#- changed chunk size back to 4K (184892) - <<CDT 4.0>>
 	 * #37#- added index for nested bindings (189811), compatible with version 36 - <<CDT 4.0.1>>
+	 * #38#- added btree for macros (193056), compatible with version 36 and 37 - <<CDT 4.0.2>>
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
 	public static final int PROPERTIES = Database.DATA_AREA + 8;
 	public static final int HAS_NESTED_BINDING_BTREES= Database.DATA_AREA + 12; 
-	public static final int END= Database.DATA_AREA + 13;
+	public static final int HAS_MACRO_BTREES= Database.DATA_AREA + 13; 
+	// 2-bytes of freedom
+	public static final int MACRO_BTREE= Database.DATA_AREA + 16; 
+	public static final int END= Database.DATA_AREA + 20;
 	static {
 		assert END <= Database.CHUNK_SIZE;
 	}
 	
 	// Local caches
+	protected Database db;
 	private BTree fileIndex;
+	private BTree fMacroIndex= null;
 	private Map fLinkageIDCache = new HashMap();
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
 	private Map fPDOMLinkageFactoryCache;
 	private boolean fHasBTreeForNestedBindings;
+	private boolean fHasBTreeForMacros;
+	private HashMap fResultCache= new HashMap();
+
 	
 	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
@@ -168,18 +180,28 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		
 		db = new Database(fPath, cache, CURRENT_VERSION, isPermanentlyReadOnly());
 		fileIndex= null;	// holds on to the database, so clear it.
-
+		fMacroIndex= null;  // same here 
+		
 		db.setLocked(lockDB);
 		int version= db.getVersion();
 		if (version >= MIN_SUPPORTED_VERSION) {
 			readLinkages();
 			fHasBTreeForNestedBindings= db.getByte(HAS_NESTED_BINDING_BTREES) == 1;
+			fHasBTreeForMacros= db.getByte(HAS_MACRO_BTREES) == 1;
 			
 			// new PDOM with version ready to write nested bindings index
-			if (version >= MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
-				if (!fHasBTreeForNestedBindings && !isPermanentlyReadOnly()) {
-					fHasBTreeForNestedBindings= true;
-					db.putByte(HAS_NESTED_BINDING_BTREES, (byte) 1);
+			if (!isPermanentlyReadOnly()) {
+				if (version >= MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
+					if (!fHasBTreeForNestedBindings) {
+						fHasBTreeForNestedBindings= true;
+						db.putByte(HAS_NESTED_BINDING_BTREES, (byte) 1);
+					}
+				}
+				if (version >= MIN_VERSION_TO_WRITE_MACROS_INDEX) {
+					if (!fHasBTreeForMacros) {
+						fHasBTreeForMacros= true;
+						db.putByte(HAS_MACRO_BTREES, (byte) 1);
+					}
 				}
 			}
 		}
@@ -281,7 +303,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		// Clear out the database, everything is set to zero.
 		db.clear(CURRENT_VERSION);
 		db.putByte(HAS_NESTED_BINDING_BTREES, (byte) 1);
+		db.putByte(HAS_MACRO_BTREES, (byte) 1);
 		fHasBTreeForNestedBindings= true;
+		fHasBTreeForMacros= true;
 		clearCaches();
 	}
 	
@@ -550,7 +574,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private long lastWriteAccess= 0;
 	private long lastReadAccess= 0;
 
-	private HashMap fResultCache= new HashMap();
 
 	public void acquireReadLock() throws InterruptedException {
 		synchronized (mutex) {
@@ -772,6 +795,37 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
+	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (!fHasBTreeForMacros) {
+			return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
+		}
+		ArrayList result= new ArrayList();
+		MacroCollector visitor = new MacroCollector(this, prefix, isPrefix, isCaseSensitive);
+		visitor.setMonitor(monitor);
+		try {
+			getMacroIndex().accept(visitor);
+			result.addAll(visitor.getMacroList());
+		}
+		catch (OperationCanceledException e) {
+		}
+		return (IIndexMacro[]) result.toArray(new IIndexMacro[result.size()]);
+	}
+
+	private BTree getMacroIndex() {
+		if (fMacroIndex == null) {
+			fMacroIndex= new BTree(db, MACRO_BTREE, new FindBinding.MacroBTreeComparator(this));
+		}
+		return fMacroIndex;
+	}
+	
+	public void afterAddMacro(PDOMMacro macro) throws CoreException {
+		getMacroIndex().insert(macro.getRecord());
+	}
+
+	public void beforeRemoveMacro(PDOMMacro macro) throws CoreException {
+		getMacroIndex().delete(macro.getRecord());
+	}
+
 	public String getProperty(String propertyName) throws CoreException {
 		if(IIndexFragment.PROPERTY_FRAGMENT_FORMAT_ID.equals(propertyName)) {
 			return FRAGMENT_PROPERTY_VALUE_FORMAT_ID;
@@ -789,6 +843,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 
 	private void clearCaches() {
 		fileIndex= null;
+		fMacroIndex= null;
 		fLinkageIDCache.clear();
 		clearResultCache();
 	}

@@ -92,7 +92,7 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	}
 	
 	public void delete() throws CoreException {
-		getNameInDB().delete();
+		getNameInDB(pdom, record).delete();
 		getExpansionInDB().delete();
 		PDOMMacroParameter param = getFirstParameter();
 		if (param != null)
@@ -100,7 +100,7 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		pdom.getDB().free(record);
 	}
 	
-	public IString getNameInDB() throws CoreException {
+	public static IString getNameInDB(PDOM pdom, int record) throws CoreException {
 		Database db = pdom.getDB();
 		int rec = db.getInt(record + NAME);
 		return db.getString(rec);
@@ -140,6 +140,15 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		public IASTFileLocation getFileLocation() {
 			return PDOMMacro.this;
 		}
+		public IIndexFile getFile() throws CoreException {
+			return PDOMMacro.this.getFile();
+		}
+		public int getNodeOffset() {
+			return PDOMMacro.this.getNodeOffset();
+		}
+		public int getNodeLength() {
+			return PDOMMacro.this.getNodeLength();
+		}
 	}
 	
 	private class FunctionStylePDOMMacro extends FunctionStyleMacro implements IIndexMacro {
@@ -151,6 +160,15 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		}
 		public IASTFileLocation getFileLocation() {
 			return PDOMMacro.this;
+		}
+		public IIndexFile getFile() throws CoreException {
+			return PDOMMacro.this.getFile();
+		}
+		public int getNodeOffset() {
+			return PDOMMacro.this.getNodeOffset();
+		}
+		public int getNodeLength() {
+			return PDOMMacro.this.getNodeLength();
 		}
 	}
 	
@@ -169,7 +187,7 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	}
 	
 	private void rebuildMacro() throws CoreException {
-		char[] name = getNameInDB().getChars();
+		char[] name = getNameInDB(pdom, record).getChars();
 		PDOMMacroParameter param = getFirstParameter();
 		if (param != null) {
 			List paramList = new ArrayList();
@@ -205,12 +223,11 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 
 	public char[] getName() {
 		try {
-			rebuildMacro();
+			return getNameInDB(pdom, record).getChars();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return new char[] { ' ' };
 		}
-		return macro.getName();
 	}
 	
 	public IIndexFile getFile() throws CoreException {

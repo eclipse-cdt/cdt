@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui.browser.typeinfo;
 
@@ -32,6 +33,7 @@ public final class TypeInfoMessages extends NLS {
 	public static String TypeSelectionDialog_filterUnions;
 	public static String TypeSelectionDialog_filterFunctions;
 	public static String TypeSelectionDialog_filterVariables;
+	public static String TypeSelectionDialog_filterMacros;
 	public static String TypeSelectionDialog_filterLowLevelTypes;
 	public static String TypeInfoLabelProvider_default_filename;
 	public static String TypeInfoLabelProvider_globalScope;

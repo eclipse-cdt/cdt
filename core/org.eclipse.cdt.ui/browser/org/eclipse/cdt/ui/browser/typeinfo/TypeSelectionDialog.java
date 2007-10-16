@@ -20,14 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.browser.IndexTypeInfo;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -45,6 +37,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
+
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.browser.IndexTypeInfo;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
+
+import org.eclipse.cdt.internal.ui.util.StringMatcher;
 
 
 /**
@@ -208,6 +210,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static final String SETTINGS_SHOW_UNIONS = "show_unions"; //$NON-NLS-1$
 	private static final String SETTINGS_SHOW_FUNCTIONS = "show_functions"; //$NON-NLS-1$
 	private static final String SETTINGS_SHOW_VARIABLES = "show_variables"; //$NON-NLS-1$
+	private static final String SETTINGS_SHOW_MACROS = "show_macros"; //$NON-NLS-1$
 	private static final String SETTINGS_SHOW_LOWLEVEL = "show_lowlevel"; //$NON-NLS-1$
 
 	private static final TypeInfoLabelProvider fElementRenderer = new TypeInfoLabelProvider(
@@ -221,7 +224,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	private static final int[] ALL_TYPES = { ICElement.C_NAMESPACE, ICElement.C_CLASS,
 			ICElement.C_STRUCT, ICElement.C_TYPEDEF, ICElement.C_ENUMERATION,
-			ICElement.C_UNION, ICElement.C_FUNCTION, ICElement.C_VARIABLE };
+			ICElement.C_UNION, ICElement.C_FUNCTION, ICElement.C_VARIABLE, ICElement.C_MACRO };
 
 	// the filter matcher contains state information, must not be static
 	private final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
@@ -378,6 +381,9 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 			case ICElement.C_VARIABLE:
 				name = TypeInfoMessages.TypeSelectionDialog_filterVariables; 
 			break;
+			case ICElement.C_MACRO:
+				name = TypeInfoMessages.TypeSelectionDialog_filterMacros; 
+			break;
 			default:
 				return;
 		}
@@ -507,6 +513,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		section.put(SETTINGS_SHOW_UNIONS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_UNION)));
 		section.put(SETTINGS_SHOW_FUNCTIONS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_FUNCTION)));
 		section.put(SETTINGS_SHOW_VARIABLES, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_VARIABLE)));
+		section.put(SETTINGS_SHOW_MACROS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_MACRO)));
 		section.put(SETTINGS_SHOW_LOWLEVEL, fFilterMatcher.getShowLowLevelTypes());
 	}
 
@@ -522,6 +529,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		section.put(SETTINGS_SHOW_UNIONS, true);
 		section.put(SETTINGS_SHOW_FUNCTIONS, true);
 		section.put(SETTINGS_SHOW_VARIABLES, true);
+		section.put(SETTINGS_SHOW_MACROS, true);
 		section.put(SETTINGS_SHOW_LOWLEVEL, false);
 	}
 
@@ -579,6 +587,11 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		}
 		if (section.getBoolean(SETTINGS_SHOW_VARIABLES)) {
 			Integer typeObject = new Integer(ICElement.C_VARIABLE);
+			if (fKnownTypes.contains(typeObject))
+				fFilterMatcher.getVisibleTypes().add(typeObject);
+		}
+		if (section.getBoolean(SETTINGS_SHOW_MACROS)) {
+			Integer typeObject = new Integer(ICElement.C_MACRO);
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}

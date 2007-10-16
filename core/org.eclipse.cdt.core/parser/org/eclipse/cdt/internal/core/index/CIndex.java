@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -486,7 +487,56 @@ public class CIndex implements IIndex {
 			return flatten(result);
 		}
 	}
+
+	public IIndexMacro[] findMacros(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findMacros(name, false, true, filter, monitor);
+	}
 	
+	public IIndexMacro[] findMacrosForPrefix(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		return findMacros(name, true, false, filter, monitor);
+	}
+
+	private IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (SPECIALCASE_SINGLES && fFragments.length==1) {
+			try {
+				return fFragments[0].findMacros(name, isPrefix, caseSensitive, filter, monitor);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
+			}
+		} else {
+			if (monitor == null) {
+				monitor= new NullProgressMonitor();
+			}
+			List result = new ArrayList();
+			HashSet handledIFLs= new HashSet();
+			monitor.beginTask(Messages.CIndex_FindBindingsTask_label, fFragments.length);
+			for (int i = 0; i < fPrimaryFragmentCount; i++) {
+				HashSet allowedFiles= new HashSet();
+				try {
+					IIndexMacro[] macros= fFragments[i].findMacros(name, isPrefix, caseSensitive, filter, new SubProgressMonitor(monitor, 1));
+					for (int k = 0; k < macros.length; k++) {
+						IIndexMacro indexMacro = macros[k];
+						IIndexFile file= indexMacro.getFile();
+						if (!allowedFiles.contains(file)) {
+							if (handledIFLs.add(file.getLocation())) {
+								allowedFiles.add(file);
+							}
+							else {
+								continue;
+							}
+						}
+						result.add(indexMacro);
+					}
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				}
+			}
+			monitor.done();
+			return (IIndexMacro[]) result.toArray(new IIndexMacro[result.size()]);
+		}
+	}
+
 	public long getCacheHits() {
 		long result= 0;
 		for (int i = 0; i < fFragments.length; i++) {

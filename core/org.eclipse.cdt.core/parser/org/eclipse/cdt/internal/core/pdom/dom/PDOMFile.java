@@ -203,6 +203,7 @@ public class PDOMFile implements IIndexFragmentFile {
 				lastMacro.setNextMacro(pdomMacro);
 			}
 			lastMacro= pdomMacro;
+			pdom.afterAddMacro(pdomMacro);
 		}
 	}
 
@@ -259,6 +260,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		// Delete all the macros in this file
 		PDOMMacro macro = getFirstMacro();
 		while (macro != null) {
+			pdom.beforeRemoveMacro(macro);
 			PDOMMacro nextMacro = macro.getNextMacro();
 			macro.delete();
 			macro = nextMacro;

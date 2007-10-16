@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.browser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -27,9 +28,12 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.browser.IndexTypeReference;
@@ -50,6 +54,17 @@ import org.eclipse.core.runtime.Path;
  *
  */
 public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
+	private static int hashCode(String[] array) {
+		int prime = 31;
+		if (array == null)
+			return 0;
+		int result = 1;
+		for (int index = 0; index < array.length; index++) {
+			result = prime * result + (array[index] == null ? 0 : array[index].hashCode());
+		}
+		return result;
+	}
+
 	private final String[] fqn;
 	private final int elementType;
 	private final IIndex index;
@@ -58,7 +73,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	private ITypeReference reference; // lazily constructed
 	
 	/**
-	 * Creates a typeinfo suitable for the binding.
+	 * Creates a type info suitable for the binding.
 	 * @param index a non-null index in which to locate references
 	 * @param binding
 	 * @since 4.0.1
@@ -91,6 +106,17 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		}
 
 		return new IndexTypeInfo(fqn, elementType, index);
+	}
+
+	/**
+	 * Creates a type info object suitable for a macro.
+	 * @param index a non-null index in which to locate references
+	 * @param binding
+	 * @since 4.0.1
+	 */
+	public static IndexTypeInfo create(IIndex index, IIndexMacro macro) {
+		final char[] name= macro.getName();
+		return new IndexTypeInfo(new String[] {new String(name)}, ICElement.C_MACRO, index);
 	}
 
 	private IndexTypeInfo(String[] fqn, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
@@ -190,6 +216,9 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 
 	public ITypeReference getResolvedReference() {
 		if(reference==null) {
+			if (elementType == ICElement.C_MACRO) {
+				return createMacroReference();
+			}
 			try {
 				index.acquireReadLock();
 
@@ -235,6 +264,29 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return reference;
 	}
 
+	private ITypeReference createMacroReference() {
+		try {
+			index.acquireReadLock();
+
+			IIndexMacro[] macros = index.findMacros(fqn[0].toCharArray(), IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			if(macros.length>0) {
+				for (int i = 0; i < macros.length; i++) {
+					reference= createReference(macros[i]);
+					if (reference != null) {
+						break;
+					}
+				}
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);				
+		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
+		} finally {
+			index.releaseReadLock();
+		}
+		return reference;
+	}
+
 	private IndexTypeReference createReference(IIndexBinding binding, IIndexName indexName) throws CoreException {
 		IIndexFileLocation ifl = indexName.getFile().getLocation();
 		String fullPath = ifl.getFullPath();
@@ -256,7 +308,32 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return null;
 	}
 
+	private IndexTypeReference createReference(IIndexMacro macro) throws CoreException {
+		IIndexFileLocation ifl = macro.getFile().getLocation();
+		String fullPath = ifl.getFullPath();
+		if (fullPath != null) {
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
+			if(file!=null) {
+				return new IndexTypeReference( 
+						macro, file, file.getProject(), macro.getNodeOffset(), macro.getNodeLength()
+				);
+			}
+		} else {
+			IPath path = URIUtil.toPath(ifl.getURI());
+			if(path!=null) {
+				return new IndexTypeReference(
+						macro, path, null, macro.getNodeOffset(), macro.getNodeLength()
+				);
+			}
+		}
+		return null;
+	}
+
 	public ITypeReference[] getReferences() {
+		if (elementType == ICElement.C_MACRO) {
+			return getMacroReferences();
+		}
+		
 		List references= new ArrayList();
 		try {
 			index.acquireReadLock();
@@ -279,16 +356,51 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 					return sameType;
 				}
 			}, new NullProgressMonitor());
+			// in case a file is represented multiple times in the index then we take references from
+			// one of those, only.
+			HashMap iflMap= new HashMap();
 			for (int i = 0; i < ibs.length; i++) {
 				IIndexBinding binding = ibs[i];
 				IIndexName[] names;
 				names= index.findNames(binding, IIndex.FIND_DEFINITIONS);
 				if (names.length == 0) {
-					names= index.findNames(ibs[0], IIndex.FIND_DECLARATIONS);
+					names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
 				}
 				for (int j = 0; j < names.length; j++) {
 					IIndexName indexName = names[j];
-					IndexTypeReference ref= createReference(binding, indexName);
+					if (checkFile(iflMap, indexName.getFile())) {
+						IndexTypeReference ref= createReference(binding, indexName);
+						if (ref != null) {
+							references.add(ref);
+						}
+					}
+				}
+			}
+		} catch(CoreException ce) {
+			CCorePlugin.log(ce);				
+		} catch (InterruptedException ie) {
+			CCorePlugin.log(ie);
+		} finally {
+			index.releaseReadLock();
+		}
+		return (IndexTypeReference[]) references.toArray(new IndexTypeReference[references.size()]);
+	}
+
+
+	private ITypeReference[] getMacroReferences() {
+		List references= new ArrayList();
+		try {
+			index.acquireReadLock();
+
+			char[] cfn= fqn[0].toCharArray();
+			IIndexMacro[] ibs = index.findMacros(cfn, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
+			// in case a file is represented multiple times in the index then we take references from
+			// one of those, only.
+			HashMap iflMap= new HashMap();
+			for (int i = 0; i < ibs.length; i++) {
+				IIndexMacro macro= ibs[i];
+				if (checkFile(iflMap, macro.getFile())) {
+					IndexTypeReference ref= createReference(macro);
 					if (ref != null) {
 						references.add(ref);
 					}
@@ -304,6 +416,18 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return (IndexTypeReference[]) references.toArray(new IndexTypeReference[references.size()]);
 	}
 
+	/**
+	 * Makes sure that per file only refs from one IIndexFile object are taken.
+	 */
+	private boolean checkFile(HashMap iflMap, IIndexFile file) throws CoreException {
+		IIndexFileLocation ifl= file.getLocation();
+		IIndexFile otherFile= (IIndexFile) iflMap.get(ifl);
+		if (otherFile == null) {
+			iflMap.put(ifl, file);
+			return true;
+		}
+		return otherFile.equals(file);
+	}
 
 	public ITypeInfo getRootNamespace(boolean includeGlobalNamespace) {
 		throw new PDOMNotImplementedError();
@@ -383,4 +507,32 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return returnType;
 	}
 
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + elementType;
+		result = prime * result + IndexTypeInfo.hashCode(fqn);
+		result = prime * result + IndexTypeInfo.hashCode(params);
+		return result;
+	}
+
+	/**
+	 * Type info objects are equal if they compute the same references.
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IndexTypeInfo other = (IndexTypeInfo) obj;
+		if (elementType != other.elementType)
+			return false;
+		if (!Arrays.equals(fqn, other.fqn))
+			return false;
+		if (!Arrays.equals(params, other.params))
+			return false;
+		return true;
+	}
 }

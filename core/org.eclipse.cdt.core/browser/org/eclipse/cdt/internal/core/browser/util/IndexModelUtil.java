@@ -10,6 +10,7 @@
  * 		IBM Corporation
  *      Andrew Ferguson (Symbian)
  *      Anton Leherbauer (Wind River Systems)
+ *      Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.browser.util;
 
@@ -100,12 +101,16 @@ public class IndexModelUtil {
 		if (binding instanceof ICompositeType) {
 			ICompositeType classType = (ICompositeType) binding;
 			try {
-				if(classType.getKey() == ICPPClassType.k_class) {
+				switch(classType.getKey()) {
+				case ICPPClassType.k_class:
 					elementType = ICElement.C_CLASS;
-				} else if(classType.getKey() == ICPPClassType.k_struct) {
+					break;
+				case ICompositeType.k_struct:
 					elementType = ICElement.C_STRUCT;
-				} else if(classType.getKey() == ICPPClassType.k_union) {
+					break;
+				case ICompositeType.k_union:
 					elementType = ICElement.C_UNION;
+					break;
 				}
 			} catch(DOMException de) {
 				CCorePlugin.log(de);

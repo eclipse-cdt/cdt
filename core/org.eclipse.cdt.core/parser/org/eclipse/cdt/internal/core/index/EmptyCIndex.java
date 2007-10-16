@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
@@ -111,5 +112,13 @@ final public class EmptyCIndex implements IIndex {
 	public IIndexBinding[] findBindings(char[] names, IndexFilter filter,
 			IProgressMonitor monitor)  {
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	public IIndexMacro[] findMacros(char[] name, IndexFilter filter, IProgressMonitor monitor) {
+		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
+	}
+
+	public IIndexMacro[] findMacrosForPrefix(char[] prefix, IndexFilter filter, IProgressMonitor monitor) {
+		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}
 }

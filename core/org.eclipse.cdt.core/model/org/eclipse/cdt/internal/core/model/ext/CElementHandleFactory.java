@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
@@ -55,7 +56,16 @@ public class CElementHandleFactory {
 			return null;
 		}
 	}
-	
+
+	public static ICElementHandle create(ITranslationUnit tu, IIndexMacro macro, 
+			IRegion region, long timestamp) throws CoreException {
+		CElementHandle element= new MacroHandle(tu, macro);
+		if (element != null && region != null) {
+			element.setRangeOfID(region, timestamp);
+		}
+		return element;
+	}
+
 	
 	public static ICElementHandle internalCreate(ITranslationUnit tu, IBinding binding, boolean definition,
 			IRegion region, long timestamp) throws CoreException, DOMException {		

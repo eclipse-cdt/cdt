@@ -1,0 +1,53 @@
+/*******************************************************************************
+ * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.internal.ui.text;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.rules.FastPartitioner;
+import org.eclipse.jface.text.rules.IPartitionTokenScanner;
+
+import org.eclipse.cdt.ui.text.ICPartitions;
+
+/**
+ * A slightly adapted FastPartitioner.
+ */
+public class FastCPartitioner extends FastPartitioner {
+
+	/**
+	 * Creates a new partitioner for the given content types.
+	 * 
+	 * @param scanner
+	 * @param legalContentTypes
+	 */
+	public FastCPartitioner(IPartitionTokenScanner scanner, String[] legalContentTypes) {
+		super(scanner, legalContentTypes);
+	}
+
+	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
+		if (preferOpenPartitions && offset == fDocument.getLength() && offset > 0) {
+			ITypedRegion region = super.getPartition(offset - 1, false);
+			try {
+				if (ICPartitions.C_MULTI_LINE_COMMENT.equals(region.getType())) {
+					if (!fDocument.get(offset - 2, 2).equals("*/")) { //$NON-NLS-1$
+						return region;
+					}
+				} else if (ICPartitions.C_SINGLE_LINE_COMMENT.equals(region .getType())) {
+					if (fDocument.getChar(offset - 1) != '\n') {
+						return region;
+					}
+				}
+			} catch (BadLocationException exc) {
+			}
+		}
+		return super.getPartition(offset, preferOpenPartitions);
+	}
+}

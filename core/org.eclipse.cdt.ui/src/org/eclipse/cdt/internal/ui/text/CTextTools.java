@@ -17,7 +17,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -203,7 +202,7 @@ public class CTextTools {
 			ICPartitions.C_PREPROCESSOR
 		};
 		
-		return new FastPartitioner(getPartitionScanner(), types);
+		return new FastCPartitioner(getPartitionScanner(), types);
 	}
 	
 	/**

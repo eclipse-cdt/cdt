@@ -91,8 +91,8 @@ public class CStructureCreatorTest extends BaseUITestCase {
 		assertEquals(ICElement.C_VARIABLE, child.getTypeCode());
 		child= (DocumentRangeNode)children[8];
 		assertEquals(ICElement.C_USING, child.getTypeCode());
-		DocumentRangeNode linkageSpec= (DocumentRangeNode)children[9];
-		assertEquals(ICElement.C_STORAGE_EXTERN, linkageSpec.getTypeCode());
+		child= (DocumentRangeNode)children[9];
+		assertEquals(ICElement.C_FUNCTION, child.getTypeCode());
 
 		// namespace children
 		children= namespace.getChildren();
@@ -190,12 +190,6 @@ public class CStructureCreatorTest extends BaseUITestCase {
 		assertEquals(ICElement.C_METHOD, child.getTypeCode());
 		child= (DocumentRangeNode)children[2];
 		assertEquals(ICElement.C_METHOD_DECLARATION, child.getTypeCode());
-		
-		// extern "C" children
-		children= linkageSpec.getChildren();
-		assertEquals(1, children.length);
-		child= (DocumentRangeNode)children[0];
-		assertEquals(ICElement.C_FUNCTION, child.getTypeCode());
 	}
 
 	public void testStructureCreatorNodeSizes() throws Exception {
@@ -243,14 +237,14 @@ public class CStructureCreatorTest extends BaseUITestCase {
 		// merge in extern "C" children to match cmodel hierarchy
 		for (int i = 0; i < nodeChildren.length; i++) {
 			DocumentRangeNode childNode= (DocumentRangeNode)nodeChildren[i];
-			if (childNode.getTypeCode() == ICElement.C_STORAGE_EXTERN) {
-				Object[] linkageSpecChildren= childNode.getChildren();
-				Object[] newArray= new Object[nodeChildren.length - 1 + linkageSpecChildren.length];
-				System.arraycopy(nodeChildren, 0, newArray, 0, i);
-				System.arraycopy(linkageSpecChildren, 0, newArray, i, linkageSpecChildren.length);
-				System.arraycopy(nodeChildren, i+1, newArray, i + linkageSpecChildren.length, nodeChildren.length - i - 1);
-				nodeChildren= newArray;
-			}
+//			if (childNode.getTypeCode() == ICElement.C_STORAGE_EXTERN) {
+//				Object[] linkageSpecChildren= childNode.getChildren();
+//				Object[] newArray= new Object[nodeChildren.length - 1 + linkageSpecChildren.length];
+//				System.arraycopy(nodeChildren, 0, newArray, 0, i);
+//				System.arraycopy(linkageSpecChildren, 0, newArray, i, linkageSpecChildren.length);
+//				System.arraycopy(nodeChildren, i+1, newArray, i + linkageSpecChildren.length, nodeChildren.length - i - 1);
+//				nodeChildren= newArray;
+//			}
 		}
 		ICElement[] cElementChildren;
 		if (cElement instanceof IParent) {

@@ -270,8 +270,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 			push(ICElement.C_USING, ASTStringUtil.getQualifiedName(usingDirective.getQualifiedName()), startOffset);
 			pop(endOffset);
 		} else if (node instanceof ICPPASTLinkageSpecification) {
-			ICPPASTLinkageSpecification linkageSpec= (ICPPASTLinkageSpecification)node;
-			push(ICElement.C_STORAGE_EXTERN, "extern \"" + linkageSpec.getLiteral() + '"', startOffset); //$NON-NLS-1$
+			// declarations get flattened
 		} else if (node instanceof ICPPASTTemplateDeclaration) {
 			// handled at child declaration level
 		} else if (node instanceof ICPPASTTemplateSpecialization) {
@@ -394,8 +393,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 		} else if (node instanceof ICPPASTUsingDirective) {
 			// handled in visit
 		} else if (node instanceof ICPPASTLinkageSpecification) {
-			assert getCurrentContainer().getTypeCode() == ICElement.C_STORAGE_EXTERN;
-			pop(endOffset);
+			// declarations get flattened
 		} else if (node instanceof ICPPASTTemplateDeclaration) {
 			// handled at child declaration level
 		} else if (node instanceof ICPPASTTemplateSpecialization) {

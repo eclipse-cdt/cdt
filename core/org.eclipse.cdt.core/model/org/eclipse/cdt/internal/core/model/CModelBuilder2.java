@@ -564,9 +564,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				return createEnumeration(parent, (IASTEnumerationSpecifier)declSpecifier);
 			}
 		} else if (declSpecifier instanceof IASTNamedTypeSpecifier) {
-			return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			if (declarator != null) {
+				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			}
 		} else if (declSpecifier instanceof IASTSimpleDeclSpecifier) {
-			return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			if (declarator != null) {
+				return createTypedefOrFunctionOrVariable(parent, declSpecifier, declarator, isTemplate);
+			}
 		} else {
 			assert false : "TODO: " + declSpecifier.getClass().getName(); //$NON-NLS-1$
 		}
@@ -575,13 +579,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 
 	private CElement createTypedefOrFunctionOrVariable(Parent parent, IASTDeclSpecifier declSpecifier,
 			IASTDeclarator declarator, boolean isTemplate) throws CModelException {
+		assert declarator != null;
 		if (declSpecifier.getStorageClass() == IASTDeclSpecifier.sc_typedef) {
 			return createTypeDef(parent, declSpecifier, declarator);
 		}
-		if (declarator != null) {
-			if (declarator instanceof IASTFunctionDeclarator && !hasNestedPointerOperators(declarator)) {
-				return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator)declarator, isTemplate);
-			}
+		if (declarator instanceof IASTFunctionDeclarator && !hasNestedPointerOperators(declarator)) {
+			return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator)declarator, isTemplate);
 		}
 		return createVariable(parent, declSpecifier, declarator, isTemplate);
 	}
@@ -865,9 +868,6 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	}
 
 	private VariableDeclaration createVariable(Parent parent, IASTDeclSpecifier specifier, IASTDeclarator declarator, boolean isTemplate) throws CModelException {
-		if (declarator == null) {
-			return null;
-		}
 		IASTDeclarator nestedDeclarator= declarator;
 		while (nestedDeclarator.getNestedDeclarator() != null) {
 			nestedDeclarator= nestedDeclarator.getNestedDeclarator();

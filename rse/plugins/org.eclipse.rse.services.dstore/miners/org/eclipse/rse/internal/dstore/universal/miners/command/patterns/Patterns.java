@@ -253,10 +253,17 @@ public class Patterns
 				String objType = curLine.substring(0, firstSpace);
 				String matchOrder = curLine.substring(firstSpace + 1, patternWord).trim();
 				String patternString = curLine.substring(firstEquals + 1, curLine.length());
-				Pattern thePattern = Pattern.compile(patternString.trim());
-
-				if (curCommand != null)
-					curCommand.addOutputPattern(new OutputPattern(objType, matchOrder, thePattern));
+				try
+				{
+					Pattern thePattern = Pattern.compile(patternString.trim());
+					
+					if (curCommand != null)
+						curCommand.addOutputPattern(new OutputPattern(objType, matchOrder, thePattern));
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -300,7 +307,14 @@ public class Patterns
 				}
 				else
 				{
-					matchedOutput = curCommand.matchLine(theLine);											
+					try
+					{
+						matchedOutput = curCommand.matchLine(theLine);											
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}	
 

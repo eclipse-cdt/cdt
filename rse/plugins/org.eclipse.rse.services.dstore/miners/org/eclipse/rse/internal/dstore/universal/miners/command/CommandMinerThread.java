@@ -245,7 +245,7 @@ public class CommandMinerThread extends MinerThread
 								args[3] = _invocation;
 								args[4] = "--login"; //$NON-NLS-1$
 								didLogin = true;
-						    }
+						    }						    
 						    else if (isBash)
 						    {
 						    	args = new String[5];
@@ -255,7 +255,7 @@ public class CommandMinerThread extends MinerThread
 								args[3] = _invocation;
 								args[4] = "-l";								 //$NON-NLS-1$
 								didLogin = true;
-						    }						    
+						    }						    						    
 						    else if (isSHonZ)
 						    {
 						    	args = new String[5];
@@ -1094,7 +1094,7 @@ public class CommandMinerThread extends MinerThread
 						DataElement object = null;
 						if (parsedMsg.type.equals("prompt"))
 						{
-							if (fileName.contains("~"))
+							if (fileName.indexOf("~") != -1)
 							{
 								String userHome = System.getProperty("user.home");
 								fileName = fileName.replace("~", userHome);

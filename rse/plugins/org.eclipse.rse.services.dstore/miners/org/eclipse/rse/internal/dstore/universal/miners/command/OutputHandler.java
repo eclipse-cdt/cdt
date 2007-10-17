@@ -220,7 +220,9 @@ public class OutputHandler extends Handler {
 						}
 
 						String lastLine = output[index - 1];
-						if (!_endOfStream && (!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r"))) //$NON-NLS-1$ //$NON-NLS-2$
+
+						if (!_endOfStream && 
+								(!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r"))) //$NON-NLS-1$ //$NON-NLS-2$
 						{
 							// our last line may be cut off		
 							byte[] lastBytes = new byte[MAX_OFFSET];
@@ -250,10 +252,13 @@ public class OutputHandler extends Handler {
 									else
 									{
 										lastBytes[lastIndex] = (byte)c;
-																	
+																
+										
 										// check for end of line
-										String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);
-										if (suffix.contains("\r") || suffix.contains("\n"))  //$NON-NLS-1$ //$NON-NLS-2$
+										String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);		
+										int rBreak = suffix.indexOf("\r");
+										int nBreak = suffix.indexOf("\n");
+										if (nBreak != -1 || rBreak != -1) 
 										{
 											// we've hit the end of line;
 											output[index - 1] = lastLine + suffix.substring(0, suffix.length() - 1);

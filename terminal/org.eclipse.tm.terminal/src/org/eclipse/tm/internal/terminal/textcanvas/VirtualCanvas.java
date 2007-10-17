@@ -153,7 +153,7 @@ public abstract class VirtualCanvas extends Canvas {
 	 * @param gc
 	 */
 	abstract protected void paint(GC gc);
-	protected Color getBackgroundColor() {
+	protected Color getTerminalBackgroundColor() {
 //		return getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		return getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
@@ -164,7 +164,7 @@ public abstract class VirtualCanvas extends Canvas {
 		int marginHeight = (clipping.y+clipping.height) - height;
 		if(marginWidth>0||marginHeight>0){
 			Color bg=getBackground();
-			gc.setBackground(getBackgroundColor());
+			gc.setBackground(getTerminalBackgroundColor());
 			if (marginWidth > 0) {
 				gc.fillRectangle (width, clipping.y, marginWidth, clipping.height);
 			}

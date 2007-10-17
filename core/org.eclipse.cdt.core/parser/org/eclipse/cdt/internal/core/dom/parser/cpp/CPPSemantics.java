@@ -2880,7 +2880,23 @@ public class CPPSemantics {
 		return cost;
 	}
 
-	public static IType getUltimateType( IType type, boolean stopAtPointerToMember ){
+	/**
+	 * Unravels a type by following purely typedefs
+	 * @param type
+	 * @return
+	 */
+	private static IType getUltimateTypeViaTypedefs(IType type) {
+		try {
+			while(type instanceof ITypedef) {
+				type= ((ITypedef)type).getType();
+			}
+		} catch(DOMException e) {
+			type= e.getProblem();
+		}
+		return type;
+	}
+	
+	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
 	    try {
 	        while( true ){
 				if( type instanceof ITypedef )
@@ -3140,11 +3156,10 @@ public class CPPSemantics {
 		
 		cost.rank = (cost.promotion > 0 ) ? Cost.PROMOTION_RANK : Cost.NO_MATCH_RANK;
 	}
+	
 	static private void conversion( Cost cost ) throws DOMException{
 		IType src = cost.source;
 		IType trg = cost.target;
-		
-		int temp = -1;
 		
 		cost.conversion = 0;
 		cost.detail = 0;
@@ -3202,10 +3217,10 @@ public class CPPSemantics {
 			//4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
 			//to an rvalue of type "pointer to cv B", where B is a base class of D.
 			else if( s instanceof ICPPClassType && tPrev instanceof IPointerType && t instanceof ICPPClassType ){
-				temp = hasBaseClass( (ICPPClassType)s, (ICPPClassType) t, false );
-				cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
-				cost.conversion = ( temp > -1 ) ? temp : 0;
-				cost.detail = 1;
+				int depth= calculateInheritanceDepth( (ICPPClassType)s, (ICPPClassType) t );
+				cost.rank= ( depth > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
+				cost.conversion= ( depth > -1 ) ? depth : 0;
+				cost.detail= 1;
 				return;
 			}
 		} 
@@ -3227,10 +3242,10 @@ public class CPPSemantics {
 		    IType st = spm.getType();
 		    IType tt = tpm.getType();
 		    if( st != null && tt != null && st.isSameType( tt ) ){
-		        temp = hasBaseClass( tpm.getMemberOfClass(), spm.getMemberOfClass(), false );
-		        cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
-				cost.conversion = ( temp > -1 ) ? temp : 0;
-				cost.detail = 1;
+		        int depth= calculateInheritanceDepth( tpm.getMemberOfClass(), spm.getMemberOfClass() );
+		        cost.rank= ( depth > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
+				cost.conversion= ( depth > -1 ) ? depth : 0;
+				cost.detail= 1;
 		    }
 		}
 	}
@@ -3240,14 +3255,14 @@ public class CPPSemantics {
 		IType t = getUltimateType( cost.target, true );
 		
 		if( cost.targetHadReference && s instanceof ICPPClassType && t instanceof ICPPClassType ){
-			int temp = hasBaseClass( (ICPPClassType) s, (ICPPClassType) t, false );
-			
-			if( temp > -1 ){
-				cost.rank = Cost.DERIVED_TO_BASE_CONVERSION;
-				cost.conversion = temp;
+			int depth= calculateInheritanceDepth( (ICPPClassType) s, (ICPPClassType) t );
+			if(depth > -1){
+				cost.rank= Cost.DERIVED_TO_BASE_CONVERSION;
+				cost.conversion= depth;
 			}	
 		}
 	}
+	
 	static private void relaxTemplateParameters( Cost cost ){
 		IType s = getUltimateType( cost.source, false );
 		IType t = getUltimateType( cost.target, false );
@@ -3258,58 +3273,44 @@ public class CPPSemantics {
 			cost.rank = Cost.FUZZY_TEMPLATE_PARAMETERS;
 		}
 	}
-
-	static private int hasBaseClass( IBinding symbol, IBinding base, boolean needVisibility ) throws DOMException {
-		if( symbol == base ){
+	
+	/**
+	 * Calculates the number of edges in the inheritance path of <code>clazz</code> to
+	 * <code>ancestorToFind</code>, returning -1 if no inheritance relationship is found.
+	 * @param clazz the class to search upwards from
+	 * @param ancestorToFind the class to find in the inheritance graph
+	 * @return the number of edges in the inheritance graph, or -1 if the specifide classes have
+	 * no inheritance relation
+	 * @throws DOMException
+	 */
+	private static int calculateInheritanceDepth(ICPPClassType clazz, ICPPClassType ancestorToFind) throws DOMException {
+		if(clazz == ancestorToFind || clazz.isSameType(ancestorToFind))
 			return 0;
+
+		ICPPBase [] bases = clazz.getBases();
+		for(int i=0; i<bases.length; i++) {
+			IBinding base = bases[i].getBaseClass();
+			if(base instanceof IType) {
+				IType tbase= (IType) base;
+				if( tbase.isSameType(ancestorToFind) || 
+						(ancestorToFind instanceof ICPPSpecialization &&  /*allow some flexibility with templates*/ 
+								((IType)((ICPPSpecialization)ancestorToFind).getSpecializedBinding()).isSameType(tbase) ) ) 
+				{
+					return 1;
+				}
+				
+				tbase= getUltimateTypeViaTypedefs(tbase);
+				if(tbase instanceof ICPPClassType) {
+					int n= calculateInheritanceDepth((ICPPClassType) tbase, ancestorToFind );
+					if(n>0)
+						return n+1;
+				}
+			}
 		}
-		ICPPClassType clsSymbol = null;
-		ICPPClassType clsBase = null;
-		IType temp = null;
-		while( symbol instanceof ITypedef ){
-		    temp = ((ITypedef)symbol).getType();
-		    if( temp instanceof IBinding )
-		        symbol = (IBinding) temp;
-		    else return -1;
-		}
-		if( symbol instanceof ICPPClassType )
-		    clsSymbol = (ICPPClassType) symbol;
-		else return -1;
 		
-		while( base instanceof ITypedef ){
-		    temp = ((ITypedef)base).getType();
-		    if( temp instanceof IBinding )
-		        base= (IBinding) temp;
-		    else return -1;
-		}
-		if( base instanceof ICPPClassType )
-		    clsBase = (ICPPClassType) base;
-		else return -1;
-		
-		
-		IBinding parent = null;
-		ICPPBase [] bases = clsSymbol.getBases();
-		
-		for( int i = 0; i < bases.length; i ++ ){
-			ICPPBase wrapper = bases[i];	
-			parent = bases[i].getBaseClass();
-			boolean isVisible = ( wrapper.getVisibility() == ICPPBase.v_public);
-			
-			if( parent instanceof IType && 
-				 ( ((IType)parent).isSameType( clsBase ) || 
-				   ( clsBase instanceof ICPPSpecialization &&  //allow some flexibility with templates 
-				     ((IType)((ICPPSpecialization)clsBase).getSpecializedBinding()).isSameType( (IType) parent ) ) ) )
-			{
-				if( needVisibility && !isVisible )
-					return -1;
-				return 1;
-			} 
-			int n = hasBaseClass( parent, clsBase, needVisibility );
-			if( n > 0 )
-				return n + 1;
-		}
 		return -1;
 	}
+
 	
 	public static ICPPFunction findOperator( IASTExpression exp, ICPPClassType cls ){
 		IScope scope = null;

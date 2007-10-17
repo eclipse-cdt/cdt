@@ -143,7 +143,11 @@ command: ls\s.*
 	 file          file              pattern=([\p{L}_\d!@$\-\+,.()\s]+)
 
 command: .*
+	 prompt        file              pattern=[\w,\d,\-,\+]+@[\w,\d,\-,\+]+:([\w,.,/,,(,),\\,\-,\+,\d,:,\s,\~]*)>.*
 	 prompt        file              pattern=([\p{L}_\d!@$\-\+,./()\\,:,\s]*)>.*
+	 prompt 	   file              pattern=[\w,\d,\-,\+]+:([\w,.,/,(,),\\,\-,\+,\d,:,\s,~]*)>.*
+	 prompt        file              pattern=([\w,.,/,(,),\\,\-,\+,\d,:,\s,~]*)>.*
+
 
 command: find .*
 	 file          file              pattern=([\p{L}_\d!@$\-\+,./()\\]+)

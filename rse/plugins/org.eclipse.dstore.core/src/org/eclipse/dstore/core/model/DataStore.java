@@ -1226,7 +1226,10 @@ public final class DataStore
 			parent.addNestedData(newObject, false);
 		}
 
-		_hashMap.put(id, newObject);
+		synchronized (_hashMap)
+		{
+			_hashMap.put(id, newObject);
+		}
 
 		if (_autoRefresh)
 			refresh(parent);
@@ -1326,7 +1329,10 @@ public final class DataStore
 		    _relDescriptorMap.put(attributes[DE.A_NAME], newObject);
 		}
 
-		_hashMap.put(attributes[DE.A_ID], newObject);
+		synchronized (_hashMap)
+		{
+			_hashMap.put(attributes[DE.A_ID], newObject);
+		}
 		return newObject;
 	}
 
@@ -2467,6 +2473,10 @@ public final class DataStore
 		flush(_hostRoot);
 		flush(_minerRoot);
 		flush(_tempRoot);
+		flush(_descriptorRoot);
+		flush(_dummy);
+		flush(_root);
+
 	}
 
 	/**
@@ -3768,8 +3778,15 @@ public final class DataStore
 			}
 
 			String id = toDelete.getAttribute(DE.A_ID);
-			_hashMap.remove(id);
+			synchronized (_hashMap)
+			{
+				_hashMap.remove(id);
+			}
 			
+			if (!isConnected())
+			{
+				from.removeNestedData(toDelete);
+			}			
 		}
 	}
 
@@ -3945,7 +3962,9 @@ public final class DataStore
 	{
 		// dy: the call to flush deletes all the elements in the tree
 		// which causes havoc for iSeries caching when switching between offline / online
-		//flush();
+		if (isVirtual())
+			flush();
+
 
 		if (_tracingOn)
 		{

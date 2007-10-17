@@ -237,20 +237,28 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 		DataStore ds = status.getDataStore();
 
 		int ssize = status.getNestedSize();
-		if (status.get(ssize - 1).isSpirit() || !ds.isDoSpirit()) 
+		if (ssize > 0)
 		{
-			// objects can be deleted directly at this point since there will be no more updates from the server
-			ds.deleteObjects(status);
-			ds.refresh(status);
+			if (!ds.isConnected())
+			{
+				status.removeNestedData();
+			}		
+			else if (status.get(ssize - 1).isSpirit() || !ds.isDoSpirit()) 
+			{
+				// objects can be deleted directly at this point since there will be no more updates from the server
+				ds.deleteObjects(status);
+				ds.refresh(status);
+			}
+			else
+			{
+				// cleanup later
+				// objects need to be deleted later since the server will still be sending spirited update
+				// if we don't defer this, then the deleted elements would get recreated when the spirits are updated
+				CleanUpSpirited cleanUp = new CleanUpSpirited(status, getId());					
+				cleanUp.start();
+			}
 		}
-		else
-		{
-			// cleanup later
-			// objects need to be deleted later since the server will still be sending spirited update
-			// if we don't defer this, then the deleted elements would get recreated when the spirits are updated
-			CleanUpSpirited cleanUp = new CleanUpSpirited(status, getId());					
-			cleanUp.start();
-		}
+		
 
 	
 		

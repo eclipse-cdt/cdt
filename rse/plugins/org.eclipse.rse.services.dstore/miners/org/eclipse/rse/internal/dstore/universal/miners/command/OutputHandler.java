@@ -29,372 +29,262 @@ import org.eclipse.dstore.core.model.Handler;
  * The OutputHandler class is used to listen to a particular output or error stream, 
  * interpret that information and create DataElements for it for use on the client.
  */
-public class OutputHandler extends Handler
-{
+/**
+ * The OutputHandler class is used to listen to a particular output or error
+ * stream, interpret that information and create DataElements for it for use on
+ * the client.
+ */
+public class OutputHandler extends Handler {
+
 
 	private DataInputStream _reader;
 	private boolean _isStdError;
+
 	private boolean _isTerminal;
 
 	private CommandMinerThread _commandThread;
+
 	private boolean _isShell;
-//	private static int MAX_OFFSET = 10000;
+
+
+	private static int MAX_OFFSET = 10000;
+
 	private boolean _endOfStream = false;
-	
-	
+
 	private List _encodings;
 
-
-	public OutputHandler(DataInputStream reader, String qualifier, boolean isTerminal, boolean isStdError, boolean isShell, CommandMinerThread commandThread)
-	{
+	public OutputHandler(DataInputStream reader, String qualifier,
+			boolean isTerminal, boolean isStdError, boolean isShell,
+			CommandMinerThread commandThread) {
 		_reader = reader;
 		_isStdError = isStdError;
 		_isTerminal = isTerminal;
 		_commandThread = commandThread;
 		_isShell = isShell;
+
 		_encodings = new ArrayList();
 		String system = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-		
-		if (system.startsWith("z")) //$NON-NLS-1$
-		{
+
+		if (system.startsWith("z")) { //$NON-NLS-1$
 			_encodings.add("IBM-1047"); //$NON-NLS-1$
 			/*
-		    _encodings.add("Cp1047");
-		    _encodings.add("Cp037");
-		    _encodings.add("UTF8");
-		    */
+			 * _encodings.add("Cp1047"); _encodings.add("Cp037");
+			 * _encodings.add("UTF8");
+			 */
+		} else {
+			String specialEncoding = System
+					.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
+			if (specialEncoding != null) {
+				_encodings.add(specialEncoding);
+			}
+			_encodings.add(System.getProperty("file.encoding")); //$NON-NLS-1$
 		}
-		else
-		{
-		String specialEncoding = System.getProperty("dstore.stdin.encoding"); //$NON-NLS-1$
-		if (specialEncoding != null)
-		{
-		    _encodings.add(specialEncoding);		    
-		}
-		_encodings.add(System.getProperty("file.encoding")); //$NON-NLS-1$
-		}
-	
+
 	}
 
-	public void newCommand()
-	{
-	}
 
-	public void handle()
-	{
-	    String[] lines = readLines();
-		if (lines != null)
-		{
-		
-		    /*
-			if (lines.length == 0)
-			{
-				_reader.
-			}
-				
-				// don't do anything unless we require output	
-				if (_newCommand && !_isTerminal)
-				{
-					doPrompt();
-				}
-			}
-			else
-			*/
-		    for (int i = 0; i < lines.length; i++)
-			{
-		        String line = lines[i];
+
+	public void handle() {
+		String[] lines = readLines();
+		if (lines != null) {
+
+			/*
+			 * if (lines.length == 0) { _reader. }
+			 *  // don't do anything unless we require output if (_newCommand &&
+			 * !_isTerminal) { doPrompt(); } } else
+			 */
+			for (int i = 0; i < lines.length; i++) {
+				String line = lines[i];
 				_commandThread.interpretLine(line, _isStdError);
 			}
+
 			if (!_isTerminal)
-				doPrompt();		
-			
+				doPrompt();
+
 			_commandThread.refreshStatus();
-		}
-		else
-		{
+		} else {
 			finish();
 		}
 	}
 
-	private void doPrompt()
-	{
-		try
-		{
-			if ((_reader.available() == 0) && !_isStdError && _isShell)
-			{
-				if (!_isTerminal)
-				{
-					try
-					{
+	private void doPrompt() {
+		try {
+			if ((_reader.available() == 0) && !_isStdError && _isShell) {
+				if (!_isTerminal) {
+					try {
 						Thread.sleep(500);
-						if (_reader.available() == 0)
-						{
-							// create fake prompt 					 
-							_commandThread.createPrompt(_commandThread.getCWD() + '>', _commandThread.getCWD());
+						if (_reader.available() == 0) {
+							// create fake prompt
+							_commandThread.createPrompt(
+									_commandThread.getCWD() + '>',
+									_commandThread.getCWD());
 						}
-					}
-					catch (Exception e)
-					{
+					} catch (Exception e) {
 					}
 				}
 			}
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public synchronized void waitForInput()
-	{
+
+
+	private int checkAvailable() {
 		try
 		{
-			Thread.sleep(100);
+			int available = _reader.available();
+
+			// if there's none, wait a bit and return true to continue
+			if (available <= 0) {
+				sleep(100);
+				available = _reader.available();
+			}
+			return available;
 		}
 		catch (Exception e)
-		{
-			
+		{			
 		}
+		return 0;
 	}
-	
-	
-	private String[] readLines()
-	{
-		if (_endOfStream)
-		{
+
+	private String[] readLines() {
+		if (_endOfStream) {
 			return null;
 		}
-	    String[] output = null;
-	  
-	  try 
-	  {
-	   
-	   // find out how many bytes are available to be read
-	   int available = _reader.available();
-	   int lookahead = 0;
-	   
-	   // if there's none, wait a bit and return true to continue
-	   if (available <= 0) 
-	   {
-	    sleep(100);
-		available = _reader.available();
+		String[] output = null;
 
-			if (available == 0)
-			{
+		try {
+
+			// find out how many bytes are available to be read
+			int available = checkAvailable();
+
+			int lookahead = 0;
+
+			// redetermine available if none available now
+			if (available == 0) {
 				lookahead = _reader.read();
-				if (lookahead == -1)
-				{
+				if (lookahead == -1) {
 					return null;
-				}
-				else
-				{
+				} else {
 					available = _reader.available() + 1;
 				}
 			}
-	   }
-	   
-	   byte[] readBytes = new byte[available];
 
-	   // read the available bytes
-	   int numRead = 0;
-	   if (lookahead > 0)
-	   {
-		   readBytes[0] = (byte)lookahead;
-		   numRead = _reader.read(readBytes, 1, available - 1) + 1;
-	   }
-	   else
-	   {
-		   numRead = _reader.read(readBytes, 0, available);
-	   }
-	   
-	   // if we've reached end of stream, quit
-	   if (numRead == -1) 
-	   {
-	    return null;
-	   }
-	 
+			byte[] readBytes = new byte[available];
 
-	   if (readBytes[numRead - 1]== -1)
-	   {
-		   _endOfStream = true;
-	   }
-	   
-	   // use various encodings as a precaution
-	   // note that the first encoding will be the encoding that we were given
-	   int encodingIndex = 0;
-	   
-	   while (encodingIndex < _encodings.size())
-	   {
-	    String encoding = (String)(_encodings.get(encodingIndex));
-	    
-	    // get the output using the encoding
-	    try
-	    {
-	    String fullOutput = new String(readBytes, 0, numRead, encoding);
-	    
-	    // if output is not null, we assume the encoding was correct and process the output
- 
-	     // tokenize the output so that we can get each line of output
-	     // the delimiters are therefore set to "\n\r"
-	     StringTokenizer tokenizer = new StringTokenizer(fullOutput, "\n\r"); //$NON-NLS-1$
-	     int numTokens = tokenizer.countTokens();
-	     output = new String[numTokens];
-	     int index = 0;
-	     while (tokenizer.hasMoreTokens()) 
-	     {	     
-	      output[index] = tokenizer.nextToken();
-	      index++;
-	     }
-		 
-		 
-	     return output;
-	    }
-	    catch (Exception e)
-	    {	        
-	    }
-	   }
-	  }
-	  catch (Exception e)
-	  {
-	      
-	  }
-	  return output;
-	}
-/*
-	private String readLine()
-	{
-
-		
-		int ch;
-		boolean done = false;
-		int byteArrayOffset = 0;
-		while (!done && !isFinished() && (byteArrayOffset < MAX_OFFSET))
-		{
-			try
-			{
-				//synchronized (_reader)
-				{
-					
-					if (byteArrayOffset > 0 && (_reader.available() == 0))
-					{
-						try
-						{
-							Thread.sleep(_waitIncrement);
-						}
-						catch (InterruptedException e)
-						{
-						}
-						if (_reader.available() == 0)
-						{
-							_isWaiting = true;
-							done = true;
-							//System.out.println("return nothiong");
-							//return "";
-						}
-						
-					}
-				
-					ch = _reader.read();
-					
-					_isWaiting = false;
-					switch (ch)
-					{
-						case -1 :
-						case 65535 :
-							if (byteArrayOffset == 0) //End of Reader 
-							{
-							    return null;
-							}
-							done = true;
-							break;
-
-						case 10 : // new line
-						case 13 : // carriage return
-							done = true; //Newline
-							break;
-
-						case 27:
-							break;
-							
-						case 9 :
-						    
-
-						    // DKM - test - can we preserve tabs?
-						    _byteArray[byteArrayOffset++] = (byte)ch;
-						    
-							//theLine.append("     "); //Tab
-							break;
-							
-						default :
-							char tch = (char) ch;
-							if (!Character.isISOControl(tch))
-							{
-								//System.out.println("char="+tch);
-								_byteArray[byteArrayOffset++] = (byte)ch;
-							}
-							else
-							{
-								//System.out.println("ignoring:"+ch);
-								// ignore next char too
-								if (_reader.available() > 0)
-									_reader.read();
-							}
-							break;
-					}
-					
-					
-					//Check to see if the BufferedReader is still ready which means there are more characters 
-					//in the Buffer...If not, then we assume it is waiting for input.
-					if (_reader.available() == 0)
-					{
-						//wait to make sure 					
-						try
-						{
-							Thread.sleep(_waitIncrement);
-						}
-						catch (InterruptedException e)
-						{
-						}
-						if (_reader.available() == 0)
-						{
-							_isWaiting = true;
-							done = true;
-						}
-					}
-				}
+			// read the available bytes
+			int numRead = 0;
+			if (lookahead > 0) {
+				readBytes[0] = (byte) lookahead;
+				numRead = _reader.read(readBytes, 1, available - 1) + 1;
+			} else {
+				numRead = _reader.read(readBytes, 0, available);
 			}
-			catch (IOException e)
-			{
+
+			// if we've reached end of stream, quit
+			if (numRead == -1) {
 				return null;
 			}
-		}
-		
-		String lineObject = null;
-		if (byteArrayOffset > 0)
-		{
-			
-				int encodingIndex = 0;
-				//printEncodedLines(_byteArray, 0, byteArrayOffset);
-			
+
+			if (readBytes[numRead - 1] == -1) {
+				_endOfStream = true;
+			}
+
+			// use various encodings as a precaution
+			// note that the first encoding will be the encoding that we were
+			// given
+			int encodingIndex = 0;
+
+			while (encodingIndex < _encodings.size()) {
+				String encoding = (String) (_encodings.get(encodingIndex));
+
+				// get the output using the encoding
+				try {
+					String fullOutput = new String(readBytes, 0, numRead,
+							encoding);
+
+					// if output is not null, we assume the encoding was correct
+					// and process the output
+					if (fullOutput != null /* && fullOutput.length() == numRead */) {
+						// tokenize the output so that we can get each line of
+						// output
+						// the delimiters are therefore set to "\n\r"
+						StringTokenizer tokenizer = new StringTokenizer(
+								fullOutput, "\n\r"); //$NON-NLS-1$
+						int numTokens = tokenizer.countTokens();
+						output = new String[numTokens];
+						int index = 0;
+						while (tokenizer.hasMoreTokens()) {
+							output[index] = tokenizer.nextToken();
+							index++;
+						}
+
+						String lastLine = output[index - 1];
+						if (!_endOfStream && (!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r"))) //$NON-NLS-1$ //$NON-NLS-2$
+						{
+							// our last line may be cut off		
+							byte[] lastBytes = new byte[MAX_OFFSET];
+							
+							int lastIndex = 0;
+									
+							available = _reader.available();
+							if (available > 0)
+							{
+								while (!_endOfStream && lastIndex < MAX_OFFSET)
+								{
+									available = _reader.available();
+									if (available == 0)
+									{
+										String suffix = new String(lastBytes, 0, lastIndex, encoding);
+										output[index - 1] = lastLine + suffix.substring(0, suffix.length() - 2);
+										return output;
+									}
+									int c = _reader.read();
+									if (c == -1)
+									{
+										_endOfStream = true;
+										String suffix = new String(lastBytes, 0, lastIndex, encoding);
+										output[index - 1] = lastLine + suffix.substring(0, suffix.length() - 2);
+										return output;
+									}
+									else
+									{
+										lastBytes[lastIndex] = (byte)c;
+																	
+										// check for end of line
+										String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);
+										if (suffix.contains("\r") || suffix.contains("\n"))  //$NON-NLS-1$ //$NON-NLS-2$
+										{
+											// we've hit the end of line;
+											output[index - 1] = lastLine + suffix.substring(0, suffix.length() - 1);
+											return output;
+										}
+									
+										lastIndex++;
+									}
 								
-				while (lineObject == null && encodingIndex < _encodings.size())
-				{
-					lineObject = getEncodedLine(_byteArray, 0, byteArrayOffset, (String) _encodings.get(encodingIndex));
-					encodingIndex++;
+								}
+							}
+							
+						}
+						
+						return output;
+					}
+				} catch (Exception e) {
 				}
-				
-				if (lineObject == null)
-				{
-				    lineObject = new String(_byteArray, 0, byteArrayOffset);
-				}
-		}
-		else
-		{
-			lineObject ="";
-		}
+			}
+		} catch (Exception e) {
 
-
-		return lineObject;
+		}
+		return output;
 	}
-	*/
+
+
+	public synchronized void waitForInput() {
+		try {
+			Thread.sleep(100);
+		} catch (Exception e) {
+
+		}
+	}
 }

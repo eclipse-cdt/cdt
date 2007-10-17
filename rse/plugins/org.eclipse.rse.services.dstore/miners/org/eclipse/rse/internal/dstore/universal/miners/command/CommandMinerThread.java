@@ -99,8 +99,10 @@ public class CommandMinerThread extends MinerThread
 		_patterns = thePatterns;
 		_patterns.refresh(_invocation);
 		
+	
+		boolean isZ = theOS.toLowerCase().startsWith("z");//$NON-NLS-1$
 		
-		if (theOS.toLowerCase().startsWith("z")) //$NON-NLS-1$
+		if (isZ)
 		{
 		  System.setProperty("dstore.stdin.encoding","Cp037"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -113,11 +115,12 @@ public class CommandMinerThread extends MinerThread
 		
 		try
 		{
+			String userHome = System.getProperty("user.home");//$NON-NLS-1$
 
 			_cwdStr = theElement.getSource();
 			if (_cwdStr == null || _cwdStr.length() == 0)
 			{
-				_cwdStr = System.getProperty("user.home"); //$NON-NLS-1$
+				_cwdStr = userHome;
 			}
 
 			File theDirectory = new File(_cwdStr);
@@ -129,9 +132,12 @@ public class CommandMinerThread extends MinerThread
 			}
 			catch (Exception e)
 			{
-				_cwdStr = System.getProperty("user.home"); //$NON-NLS-1$
+				_cwdStr = userHome; 
 			}
 			_status.setAttribute(DE.A_SOURCE, _cwdStr);
+
+			
+			boolean didLogin = false;
 
 			String theShell = null;
 			if (!_isWindows)
@@ -151,15 +157,30 @@ public class CommandMinerThread extends MinerThread
 				String property = "SHELL="; //$NON-NLS-1$
 				
 				String[] env = getEnvironment(_subject);
+				boolean isBash = false;
+				boolean isBashonZ = false;
+				boolean isSHonZ = false;
+				
 				for (int i = 0; i < env.length; i++)
 				{
 					String var = env[i];
 					if (var.startsWith(property))
 					{
 						theShell = var.substring(property.length(), var.length());
-						if (theShell.endsWith("bash")) //$NON-NLS-1$
+						if (theShell.endsWith("bash"))//$NON-NLS-1$
 						{
-							theShell = "sh"; //$NON-NLS-1$
+							if (isZ)
+							{
+								isBashonZ = true;
+							}
+							else
+							{
+								isBash = true;
+							}
+						}
+						else if (theShell.endsWith("sh") && isZ)//$NON-NLS-1$
+						{
+							isSHonZ = true;
 						}
 					}
 				}
@@ -171,13 +192,33 @@ public class CommandMinerThread extends MinerThread
 					{
 						_invocation = "sh"; //$NON-NLS-1$
 						_isShell = true;
+						if (isZ)
+							isSHonZ = true;
 					}
 					if (_isTTY)
 					{
-						String args[] = new String[2];				
-						args[0] = PSEUDO_TERMINAL;
-						args[1] = _invocation;
-						_theProcess = Runtime.getRuntime().exec(args, env, theDirectory);
+						if (isSHonZ)
+						{
+							String args[] = new String[3];				
+							args[0] = PSEUDO_TERMINAL;
+							args[1] = _invocation;
+							args[2] = "-L"; //$NON-NLS-1$
+							
+							try {
+								_theProcess = Runtime.getRuntime().exec(args, env, theDirectory);
+							}
+							catch (Exception e) {
+								_theProcess = Runtime.getRuntime().exec(_invocation, env, theDirectory);
+							}
+							didLogin = true;
+						}
+						else
+						{
+							String args[] = new String[2];				
+							args[0] = PSEUDO_TERMINAL;
+							args[1] = _invocation;
+							_theProcess = Runtime.getRuntime().exec(args, env, theDirectory);
+						}
 					}
 					else
 					{
@@ -192,10 +233,40 @@ public class CommandMinerThread extends MinerThread
 				
 						_isShell = true;
 					
-			
 						if (_isTTY)
 						{
 						    String args[] = null;
+						    if (isBashonZ)
+						    {
+						    	args = new String[5];
+								args[0] = PSEUDO_TERMINAL;
+								args[1] = "-w"; //$NON-NLS-1$
+								args[2] = "256"; //$NON-NLS-1$
+								args[3] = _invocation;
+								args[4] = "--login"; //$NON-NLS-1$
+								didLogin = true;
+						    }
+						    else if (isBash)
+						    {
+						    	args = new String[5];
+								args[0] = PSEUDO_TERMINAL;
+								args[1] = "-w"; //$NON-NLS-1$
+								args[2] = "256"; //$NON-NLS-1$
+								args[3] = _invocation;
+								args[4] = "-l";								 //$NON-NLS-1$
+								didLogin = true;
+						    }						    
+						    else if (isSHonZ)
+						    {
+						    	args = new String[5];
+								args[0] = PSEUDO_TERMINAL;
+								args[1] = "-w"; //$NON-NLS-1$
+								args[2] = "256"; //$NON-NLS-1$
+								args[3] = _invocation;
+								args[4] = "-L"; //$NON-NLS-1$
+								didLogin = true;
+						    }
+						    else
 						    {
 						        args = new String[4];
 								args[0] = PSEUDO_TERMINAL;
@@ -204,12 +275,35 @@ public class CommandMinerThread extends MinerThread
 								args[3] = _invocation;
 						    }
 						    
-							
-							_theProcess = Runtime.getRuntime().exec(args, env, theDirectory);
+							try {
+								_theProcess = Runtime.getRuntime().exec(args, env, theDirectory);
+							}
+							catch (Exception e) {
+								_theProcess = Runtime.getRuntime().exec(_invocation, env, theDirectory);
+							}		
+					
 						}
 						else
 						{
-							_theProcess = Runtime.getRuntime().exec(_invocation, env, theDirectory);
+							if (isBashonZ)
+							{
+								_theProcess = Runtime.getRuntime().exec(_invocation + " --login", env, theDirectory); //$NON-NLS-1$
+								didLogin = true;
+							}
+							else if (isBash)
+							{
+								_theProcess = Runtime.getRuntime().exec(_invocation + " -l", env, theDirectory);								 //$NON-NLS-1$
+								didLogin = true;
+							}
+							else if (isSHonZ)
+							{
+								_theProcess = Runtime.getRuntime().exec(_invocation + " -L", env, theDirectory); //$NON-NLS-1$
+								didLogin = true;
+							}
+							else
+							{
+								_theProcess = Runtime.getRuntime().exec(_invocation, env, theDirectory);
+							}
 						}
 					}
 					else
@@ -317,6 +411,51 @@ public class CommandMinerThread extends MinerThread
 				_stdOutput = new BufferedWriter(new OutputStreamWriter(output));
 			}
 			
+			createObject("command", _invocation); //$NON-NLS-1$
+			createObject("stdout", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						
+			status.setAttribute(DE.A_NAME, "progress"); //$NON-NLS-1$
+			_dataStore.update(status);
+			_dataStore.disconnectObjects(status);
+			
+			_stdOutputHandler = new OutputHandler(_stdInput, null, _isWindows || _isTTY, false, _isShell, this);
+			_stdOutputHandler.setWaitTime(100);
+			_stdOutputHandler.start();
+				
+			_stdErrorHandler = new OutputHandler(_stdError, null, _isWindows || _isTTY, true, _isShell, this);
+			_stdErrorHandler.setWaitTime(100);
+			_stdErrorHandler.start();
+			
+			if (didLogin && !userHome.equals(_cwdStr))
+			{
+				// need to CD to the correct directory
+				final String cdCmd = "cd " + _cwdStr; //$NON-NLS-1$
+				Thread cdThread = new Thread(
+						new Runnable()
+						{
+							public void run()
+							{				
+								// wait a second so the profile can complete startup
+								try
+								{
+									sleep(1000);
+								}
+								catch (Exception e)
+								{
+									
+								}
+								sendInput(cdCmd);
+							}
+						});
+				cdThread.start();
+
+			}			
+			else if (_isShell && !_isWindows && !_isTTY)
+			{				
+				createPrompt(_cwdStr +">", _cwdStr); //$NON-NLS-1$
+				refreshStatus();
+			}
+
 		}
 		catch (IOException e) 
 		{
@@ -327,29 +466,6 @@ public class CommandMinerThread extends MinerThread
 			return;
 		} 
 
-		createObject("command", _invocation); //$NON-NLS-1$
-		createObject("stdout", ""); //$NON-NLS-1$ //$NON-NLS-2$
-
-	
-		
-		if (_isShell && !_isWindows && !_isTTY)
-		{
-			createPrompt(_cwdStr +">", _cwdStr); //$NON-NLS-1$
-			//createObject("prompt", _cwdStr + ">");
-		}
-
-		status.setAttribute(DE.A_NAME, "progress"); //$NON-NLS-1$
-		_dataStore.update(status);
-		_dataStore.disconnectObjects(status);
-		_stdOutputHandler = new OutputHandler(_stdInput, null, _isWindows || _isTTY, false, _isShell, this);
-		_stdOutputHandler.setWaitTime(10);
-		_stdOutputHandler.start();
-		_stdErrorHandler = new OutputHandler(_stdError, null, _isWindows || _isTTY, true, _isShell, this);
-		_stdErrorHandler.setWaitTime(10);
-		_stdErrorHandler.start();
-    	
-		getCurrentProccesses();
-		queryCWD();
 	}
 	
 	
@@ -417,20 +533,7 @@ public class CommandMinerThread extends MinerThread
 		
 	}
 
-	private void getCurrentProccesses()
-	{
-		if (!_isWindows)
-		{
-	/*
-			if (_processTracker == null)
-			{
-				_processTracker = new ProcessTracker();
-				_processTracker.start();
-			}
-			_processTracker.doUpdate();
-	*/
-		}
-	}
+
 
 	public void sendBreak()
 	{
@@ -535,8 +638,6 @@ public class CommandMinerThread extends MinerThread
 						}
 					}
 				}
-
-				_stdOutputHandler.newCommand();
 			}
 			catch (IOException e)
 			{
@@ -862,7 +963,7 @@ public class CommandMinerThread extends MinerThread
 					else
 					{
 						exitcode = _theProcess.exitValue();
-						createObject("prompt", "> Shell Completed (exit code = " + exitcode + ")");
+						createObject("prompt", "> Shell Completed (exit code = " + exitcode + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 				}
 				catch (IllegalThreadStateException e)
@@ -879,7 +980,7 @@ public class CommandMinerThread extends MinerThread
 			_stdInput.close();
 			_stdError.close();
 			
-			_status.setAttribute(DE.A_NAME, "done");
+			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 			_dataStore.refresh(_status);
 		
 		// disconnecting all
@@ -888,7 +989,7 @@ public class CommandMinerThread extends MinerThread
 		
 
 		// clean up the associated environment
-		List projectEnvReference = _subject.getAssociated("inhabits");
+		List projectEnvReference = _subject.getAssociated("inhabits"); //$NON-NLS-1$
 
 		if (projectEnvReference != null)
 		{
@@ -905,88 +1006,131 @@ public class CommandMinerThread extends MinerThread
 		}				
 	}
 	
+	
 	public void interpretLine(String line, boolean stdError)
 	{
-		// for prompting
-		if (line.startsWith("<PWD")) //$NON-NLS-1$
+		int maxLine = 100;
+		int num = line.length();
+		String[] lines = new String[num/maxLine+1];
+		if(lines.length>1)
 		{
-			// special processing
-			String statement = line.substring(1);
-			String pair[] = statement.split("="); //$NON-NLS-1$
-//			String key = pair[0];
-			String value = pair[1];
-			_status.setAttribute(DE.A_SOURCE, value);
-		
-			return;
-		}
-		if (line.indexOf("echo '<'PWD=$PWD") > 0) //$NON-NLS-1$
-		{
-			// ignore this line
-			return;
-		}
-		
-		ParsedOutput parsedMsg = null;
-		
-		try
-		{
-			parsedMsg = _patterns.matchLine(removeWhitespace(line));
-		}
-		catch (Throwable e) 
-		{
-			e.printStackTrace();
-		}
-
-		if (parsedMsg == null)
-		{
-	
-			if (stdError)
+			int beg=0;
+			int end=maxLine;
+			for(int i=0;i<lines.length;i++)
 			{
+				//try/catch put in for testing purposes
+				//try
+				//{
+					if(end>line.length())
+					{
+						lines[i]=line.substring(beg);
+					}
+					else
+					{
+						lines[i]=line.substring(beg,end);
+					}
+					beg=end;
+					end=end+maxLine;
+				//}
+				//catch(Exception e)
+				//{
+				//	createObject(_descriptors._stdout, "<<EXCEPTION>> line:= " + num + " beg : " + beg + " end = " + end);
+				//	return;
+				//}
+			}		
+		}
+		else
+		{
+			lines[0]=line;
+		}
+		
+		for(int i=0;i<lines.length;i++)
+		{	
+			line=lines[i];
 			
-				createObject(_descriptors._stderr, line);
+			// for prompting
+			if (line.startsWith("<PWD")) //$NON-NLS-1$
+			{
+				// special processing
+				String statement = line.substring(1);
+				String pair[] = statement.split("="); //$NON-NLS-1$
+				String value = pair[1];
+				_status.setAttribute(DE.A_SOURCE, value);
+			
+				return;
+			}
+			if (line.indexOf("echo '<'PWD=$PWD") > 0) //$NON-NLS-1$
+			{
+				// ignore this line
 			}
 			else
 			{
-				createObject(_descriptors._stdout, line);
-			}
-		}
-		else
-		{		    		    		    		    
-		    try
-			{	    			    
-				String fileName = parsedMsg.file;  
-//				DataElement object = null;
-				if (parsedMsg.type.equals("prompt")) //$NON-NLS-1$
+				ParsedOutput parsedMsg = null;
+			
+				try
 				{
-					File promptFile = new File(fileName);
-					if (promptFile.exists())
+					parsedMsg = _patterns.matchLine(removeWhitespace(line));
+	 			}
+				catch (Throwable e) 
+				{
+					e.printStackTrace();
+				}
+				if (parsedMsg == null)
+				{
+					if (stdError)
 					{
-						createPrompt(line, fileName);
+						createObject(_descriptors._stderr, line);
 					}
 					else
 					{
 						createObject(_descriptors._stdout, line);
 					}
 				}
-				else if (parsedMsg.type.equals("file")) //$NON-NLS-1$
-				{
-//					object = createObject(parsedMsg.type, line, fileName, null);				    
-					createObject(parsedMsg.type, line, fileName, null);				    
-				}
 				else
-				{
-//					object = createObject(parsedMsg.type, line, fileName, new Integer(parsedMsg.line));
-					createObject(parsedMsg.type, line, fileName, new Integer(parsedMsg.line));
+				{		    		    		    		    
+					try
+					{	    			    
+						String fileName = parsedMsg.file;  
+						DataElement object = null;
+						if (parsedMsg.type.equals("prompt"))
+						{
+							if (fileName.contains("~"))
+							{
+								String userHome = System.getProperty("user.home");
+								fileName = fileName.replace("~", userHome);
+							}
+							
+							File promptFile = new File(fileName);
+							if (promptFile.exists())
+							{
+								createPrompt(line, fileName);
+							}
+							else
+							{
+								createObject(_descriptors._stdout, line);
+							}
+						}
+						else if (parsedMsg.type.equals("file"))
+						{
+							object = createObject(parsedMsg.type, line, fileName, null);				    
+						}
+						else
+						{
+							object = createObject(parsedMsg.type, line, fileName, new Integer(parsedMsg.line));
+						}
+					}
+					catch (NumberFormatException e)
+					{
+						e.printStackTrace();
+					}
 				}
-
-			}
-			catch (NumberFormatException e)
-			{
-				e.printStackTrace();
 			}
 		}
 		
+		// moving this to do refresh after serious of lines interpretted
+		//refreshStatus();
 	}
-
+	
 	public void refreshStatus() 
 	{
 		_dataStore.refresh(_status);

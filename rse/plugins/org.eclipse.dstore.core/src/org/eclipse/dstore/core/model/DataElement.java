@@ -460,6 +460,8 @@ public final class DataElement implements IDataElement
 	 */
 	public String getAttribute(int attributeIndex)
 	{
+		if (_attributes == null)
+			return "";
 		return _attributes[attributeIndex];
 	}
 

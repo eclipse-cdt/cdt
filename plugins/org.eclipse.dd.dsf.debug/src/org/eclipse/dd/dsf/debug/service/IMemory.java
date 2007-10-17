@@ -27,10 +27,10 @@ import org.eclipse.debug.core.model.MemoryByte;
 public interface IMemory extends IDsfService {
 
 	/**
-	 * Event generated every time a byte is modified.
+	 * Event generated every time a range of bytes is modified.
 	 * 
 	 * A client wishing to receive such events has to register as a service
-	 * event listener and implement the corresponding dispatchEvent method.
+	 * event listener and implement the corresponding eventDispatched method.
 	 * 
 	 * E.g.:
 	 *
@@ -119,9 +119,8 @@ public interface IMemory extends IDsfService {
      * @param address	the memory block address (on the target)
      * @param offset	the offset from the start address
      * @param word_size	the size, in bytes, of an addressable item
-     * @param count		the number of data elements to write
-     * @param pattern	the offset in the result buffer
-     * @param buffer	the source buffer
+     * @param count		the number of times [pattern] will be written
+     * @param pattern	the source buffer
      * @param rm		the asynchronous data request monitor
      */
     public void fillMemory(IDMContext<?> context, IAddress address, long offset,

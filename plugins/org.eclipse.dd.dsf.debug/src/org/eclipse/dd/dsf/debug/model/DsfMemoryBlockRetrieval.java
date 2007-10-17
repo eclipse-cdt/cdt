@@ -36,6 +36,8 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
@@ -137,28 +139,45 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	    return fSession;
 	}
 	
-	/**
-	 * 
-	 * @return
-	 */
 	public DsfExecutor getExecutor() {
 		return fExecutor;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public IDMContext<?> getContext() {
 		return fContext;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public ServiceTracker getServiceTracker() {
 		return fMemoryServiceTracker;
+	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	// Launch/Target specific information
+	// To be completed
+	// ////////////////////////////////////////////////////////////////////////
+
+	public ILaunch getLaunch() {
+		return null;
+	}
+
+	public IDebugTarget getDebugTarget() {
+		return null;
+	}
+
+	public int getAddressSize() {
+		return 4;
+	}
+
+	public int getAddressableSize() {
+		return 1;
+	}
+
+	public boolean supportsValueModification() {
+		return true;
+	}
+
+	public boolean supportBaseAddressModification() {
+		return false;
 	}
 
 	// ////////////////////////////////////////////////////////////////////////
@@ -276,7 +295,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 
 	private BigInteger resolveMemoryAddress(final IDMContext<?> idmContext, final String expression) throws DebugException {
 
-		// Use a Query to "synchronize" the inherently asynchronous downstream calls
+		// Use a Query to "synchronise" the downstream calls
 		Query<BigInteger> query = new Query<BigInteger>() {
 			@Override
 			protected void execute(final DataRequestMonitor<BigInteger> drm) {

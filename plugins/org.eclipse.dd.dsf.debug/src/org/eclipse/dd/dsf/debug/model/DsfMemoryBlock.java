@@ -56,8 +56,10 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     private final DsfMemoryBlockRetrieval fRetrieval;
     private final String fModelId;
     private final String fExpression;
-    protected BigInteger fBaseAddress;
-    protected int fLength;
+    private final BigInteger fBaseAddress;
+
+    private BigInteger fBlockAddress;
+    private int fLength;
     private MemoryByte[] fBlock;
     
     private ArrayList<Object> fConnections = new ArrayList<Object>();
@@ -76,14 +78,17 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
      */
     DsfMemoryBlock(DsfMemoryBlockRetrieval retrieval, String modelId, String expression, BigInteger address, long length) {
 
-    	fLaunch      = null;		// TODO: fRetrieval.getLaunch();
-    	fDebugTarget = null;		// TODO: fRetrieval.getDebugTarget();
+    	fLaunch      = retrieval.getLaunch();
+    	fDebugTarget = retrieval.getDebugTarget();
         fRetrieval   = retrieval;
         fModelId     = modelId;
         fExpression  = expression;
         fBaseAddress = address;
-        fLength      = (int) length;
-        fBlock       = null;
+
+        // Current block information
+        fBlockAddress = address;
+        fLength       = (int) length;
+        fBlock        = null;
 
         try {
             fRetrieval.getExecutor().execute(new Runnable() {
@@ -169,8 +174,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
      * @see org.eclipse.debug.core.model.IMemoryBlock#supportsValueModification()
      */
     public boolean supportsValueModification() {
-    	// TODO: return fDebugTarget.supportsValueModification(this);
-    	return true;
+    	return fRetrieval.supportsValueModification();
     }
 
     /* (non-Javadoc)
@@ -226,21 +230,14 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressSize()
 	 */
 	public int getAddressSize() throws DebugException {
-//		TODO:
-//		try {
-//			return fDebugTarget.getAddressSize();
-//		} catch (CoreException e) {
-//			throw new DebugException(e.getStatus());
-//		}
-		return 4;
+		return fRetrieval.getAddressSize();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#supportBaseAddressModification()
 	 */
 	public boolean supportBaseAddressModification() throws DebugException {
-		// TODO: return fDebugTarget.supportBaseAddressModification(this);
-		return false;
+		return fRetrieval.supportBaseAddressModification();
 	}
 
 	/* (non-Javadoc)
@@ -254,14 +251,14 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#setBaseAddress(java.math.BigInteger)
 	 */
 	public void setBaseAddress(BigInteger address) throws DebugException {
-		fBaseAddress = address;
+		fBlockAddress = address;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getBytesFromOffset(java.math.BigInteger, long)
 	 */
 	public MemoryByte[] getBytesFromOffset(BigInteger offset, long units) throws DebugException {
-		return getBytesFromAddress(fBaseAddress.add(offset), units);
+		return getBytesFromAddress(fBlockAddress.add(offset), units);
 	}
 
 	/* (non-Javadoc)
@@ -274,10 +271,10 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
 		// Flag the changed bytes
 		if (fBlock != null && newLength > 0) {
-			switch (fBaseAddress.compareTo(address))	{
+			switch (fBlockAddress.compareTo(address))	{
 				case -1:
 				{
-					int offset = address.subtract(fBaseAddress).intValue();
+					int offset = address.subtract(fBlockAddress).intValue();
 					int length = Math.min(fLength - offset, newLength); 
 					for (int i = 0; i < length; i += 4) {
 						boolean changed = false;
@@ -298,7 +295,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 				case 0:
 				case 1:
 				{
-					int offset = fBaseAddress.subtract(address).intValue();
+					int offset = fBlockAddress.subtract(address).intValue();
 					int length = Math.min(newLength - offset, fLength); 
 					for (int i = 0; i < length; i += 4) {
 						boolean changed = false;
@@ -323,7 +320,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
 		// Update the internal state
 		fBlock = block;
-		fBaseAddress = address;
+		fBlockAddress = address;
 		fLength = newLength;
 
 		return fBlock;
@@ -397,8 +394,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * @see org.eclipse.debug.core.model.IMemoryBlockExtension#getAddressableSize()
 	 */
 	public int getAddressableSize() throws DebugException {
-		// TODO: return fDebugTarget.getAddressableSize();
-		return 1;
+		return fRetrieval.getAddressableSize();
 	}
 
     ///////////////////////////////////////////////////////////////////////////
@@ -421,7 +417,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     	final Addr64 address = new Addr64(bigAddress);
     	final int word_size = 1;
     	
-        // Use a Query to synchronize the downstream calls  
+        // Use a Query to synchronise the downstream calls  
         Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
@@ -437,10 +433,10 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			                    drm.done();
 			                }
 			            });
-			        }
-				
 			    }
-            };
+				
+			}
+        };
         fRetrieval.getExecutor().execute(query);
 
 		try {
@@ -468,16 +464,33 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     	final Addr64 address = new Addr64(fBaseAddress);
     	final int word_size = 1;
 
-    	final IMemory memoryService = (IMemory) fRetrieval.getServiceTracker().getService();
-	    if (memoryService != null) {
-	    	memoryService.getExecutor().execute(new Runnable() {
-	    		public void run() {
+        // Use a Query to synchronise the downstream calls  
+        Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
+			@Override
+			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
+			    IMemory memoryService = (IMemory) fRetrieval.getServiceTracker().getService();
+			    if (memoryService != null) {
+			        // Go for it
 	    	        memoryService.setMemory(
-	    	  	          fRetrieval.getContext(), address, offset, word_size, bytes.length, bytes,
-	    	  	          new RequestMonitor(fRetrieval.getExecutor(), null));
-	    		}
-	    	});
-	    }
+		    	  	      fRetrieval.getContext(), address, offset, word_size, bytes.length, bytes,
+		    	  	      new RequestMonitor(fRetrieval.getExecutor(), null));
+			    }
+				
+			}
+        };
+        fRetrieval.getExecutor().execute(query);
+
+		try {
+            query.get();
+        } catch (InterruptedException e) {
+    		throw new DebugException(new Status(IStatus.ERROR,
+    				DsfDebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+    				"Error writing memory block (InterruptedException)", e)); //$NON-NLS-1$
+        } catch (ExecutionException e) {
+    		throw new DebugException(new Status(IStatus.ERROR,
+    				DsfDebugPlugin.PLUGIN_ID, DebugException.INTERNAL_ERROR,
+    				"Error writing memory block (ExecutionException)", e)); //$NON-NLS-1$
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -527,9 +540,9 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	public void handleMemoryChange(BigInteger address) {
 		
 		// Check if the change affects this particular block (0 is universal)
-		BigInteger fEndAddress = fBaseAddress.add(BigInteger.valueOf(fLength));
+		BigInteger fEndAddress = fBlockAddress.add(BigInteger.valueOf(fLength));
 		if (address.equals(BigInteger.ZERO) ||
-		   ((fBaseAddress.compareTo(address) != 1) && (fEndAddress.compareTo(address) == 1)))
+		   ((fBlockAddress.compareTo(address) != 1) && (fEndAddress.compareTo(address) == 1)))
 		{
 			// Notify the event listeners
 			DebugEvent debugEvent = new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.CONTENT);

@@ -138,15 +138,8 @@ public abstract class VirtualCanvas extends Canvas {
 	protected void repaint(Rectangle r) {
 		if(isDisposed())
 			return;
-		if(inClipping(r,fClientArea)) {
-			GC gc=new GC(this);
-			try {
-				gc.setClipping(r);
-				paint(gc);
-			} finally {
-				gc.dispose();
-			}
-		}
+		redraw(r.x, r.y, r.width, r.height, true);
+		update();
 	}
 
 	/**

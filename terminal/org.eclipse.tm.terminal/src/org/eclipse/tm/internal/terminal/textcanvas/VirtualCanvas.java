@@ -138,8 +138,10 @@ public abstract class VirtualCanvas extends Canvas {
 	protected void repaint(Rectangle r) {
 		if(isDisposed())
 			return;
-		redraw(r.x, r.y, r.width, r.height, true);
-		update();
+		if(inClipping(r,fClientArea)) {
+			redraw(r.x, r.y, r.width, r.height, true);
+			update();
+		}
 	}
 
 	/**

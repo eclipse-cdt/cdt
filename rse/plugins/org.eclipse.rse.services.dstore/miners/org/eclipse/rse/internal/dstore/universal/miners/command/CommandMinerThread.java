@@ -1094,11 +1094,14 @@ public class CommandMinerThread extends MinerThread
 						DataElement object = null;
 						if (parsedMsg.type.equals("prompt"))
 						{
-							if (fileName.indexOf("~") != -1)
+							int tildaIndex = fileName.indexOf("~");
+							if (tildaIndex == 0)
 							{
 								String userHome = System.getProperty("user.home");
-								fileName = fileName.replace("~", userHome);
+								
+								fileName = userHome + fileName.substring(1);
 							}
+							
 							
 							File promptFile = new File(fileName);
 							if (promptFile.exists())

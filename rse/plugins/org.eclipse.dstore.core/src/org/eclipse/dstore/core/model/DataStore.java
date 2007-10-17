@@ -3962,8 +3962,8 @@ public final class DataStore
 	{
 		// dy: the call to flush deletes all the elements in the tree
 		// which causes havoc for iSeries caching when switching between offline / online
-		if (isVirtual())
-			flush();
+		//if (isVirtual())
+		//	flush();
 
 
 		if (_tracingOn)

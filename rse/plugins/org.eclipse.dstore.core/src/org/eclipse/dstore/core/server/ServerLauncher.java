@@ -293,11 +293,14 @@ public class ServerLauncher extends Thread {
 						_errReader = new BufferedReader(new InputStreamReader(_serverProcess.getErrorStream()));
 						BufferedWriter inWriter  = new BufferedWriter(new OutputStreamWriter(_serverProcess.getOutputStream()));
 						// write password
-						inWriter.write(password);
-						inWriter.newLine();
-						inWriter.flush();
+						if (password != null)
+						{
+							inWriter.write(password);
+							inWriter.newLine();
+							inWriter.flush();
 						
-						launchStatus = _outReader.readLine();
+							launchStatus = _outReader.readLine();
+						}
 					}
 					else
 					{

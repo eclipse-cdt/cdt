@@ -80,9 +80,10 @@ public class GeneratePDOM implements ISafeRunnable {
 						exportedPDOM.setProperty((String) entry.getKey(), (String) entry.getValue());
 					}
 				}
-				// fake version of pdom, such that it works with CDT 4.0.0, also.
-				if (PDOM.CURRENT_VERSION == PDOM.MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
-					exportedPDOM.getDB().setVersion(PDOM.CURRENT_VERSION-1);
+				// fake version of pdom, such that it works with CDT 4.0.0 and CDT 4.0.1, also.
+				// can be removed in CDT 5.0
+				if (PDOM.CURRENT_VERSION == PDOM.MIN_VERSION_TO_WRITE_MACROS_INDEX) {
+					exportedPDOM.getDB().setVersion(PDOM.CURRENT_VERSION-2);
 				}
 				exportedPDOM.close();
 			}

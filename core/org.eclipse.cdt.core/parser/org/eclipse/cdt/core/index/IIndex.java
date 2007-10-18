@@ -59,7 +59,7 @@ public interface IIndex {
 	 */
 	final int FIND_DEFINITIONS  = 0x2;
 	/** 
-	 * Constant to search for all declarations including definitons.
+	 * Constant to search for all declarations including definitions.
 	 */
 	final int FIND_REFERENCES   = 0x4;
 	/** 
@@ -67,7 +67,7 @@ public interface IIndex {
 	 */
 	final int FIND_DECLARATIONS_DEFINITIONS = FIND_DECLARATIONS | FIND_DEFINITIONS;
 	/** 
-	 * Constant to search for all occurrences of a binding. This includes declarations, definitons and references.
+	 * Constant to search for all occurrences of a binding. This includes declarations, definitions and references.
 	 */
 	final int FIND_ALL_OCCURENCES = FIND_DECLARATIONS | FIND_DEFINITIONS | FIND_REFERENCES;
 
@@ -186,6 +186,30 @@ public interface IIndex {
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException;
 	
 	/**
+	 * Searches for all macros with a given name.
+	 *
+	 * @param name a name, that has to be matched by the macros.
+	 * @param filter a filter that allows for skipping parts of the index 
+	 * @param monitor a monitor to report progress, may be <code>null</code>.
+	 * @return an array of macros matching the name.
+	 * @throws CoreException
+	 * @since 4.0.2
+	 */
+	public IIndexMacro[] findMacros(char[] name, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Searches for all macros with names that start with the given prefix.
+	 * 
+	 * @param prefix the prefix with which all returned macros must start
+	 * @param filter a filter that allows for skipping parts of the index
+	 * @param monitor a monitor for progress reporting and cancellation, may be <code>null</code>
+	 * @return an array of bindings with the prefix
+	 * @throws CoreException
+	 * @since 4.0.2
+	 */
+	public IIndexMacro[] findMacrosForPrefix(char[] prefix, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+
+	/**
 	 * Searches for the binding of a name. The name may be originated by
 	 * an AST or by a search in an index. May return <code>null</code>.
 	 * @param name a name to find the binding for
@@ -243,7 +267,7 @@ public interface IIndex {
 	 * <pre>
 	 * findBindings(new char[][]{name}, filter, monitor);
 	 * </pre> 
-	 * @param names an array of names, which has to be matched by the qualified name of the bindings.
+	 * @param name a name, which has to be matched by the qualified name of the bindings.
 	 * @param filter a filter that allows for skipping parts of the index 
 	 * @param monitor a monitor to report progress, may be <code>null</code>.
 	 * @return an array of bindings matching the pattern

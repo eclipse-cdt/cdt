@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Andrew Ferguson (Symbian) - initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -16,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
@@ -61,6 +63,10 @@ public class EmptyIndexFragment implements IIndexFragment {
 			boolean filescope, IndexFilter filter, IProgressMonitor monitor)
 			throws CoreException {
 		return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+	}
+
+	public IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) {
+		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}
 
 	public IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file)

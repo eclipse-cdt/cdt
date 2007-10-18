@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -176,6 +177,12 @@ public interface IIndexFragment {
 	 */
 	IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 	
+	/**
+	 * Returns all macros with the given prefix or name, accepted by the given filter
+	 * @param monitor to report progress, may be <code>null</code>
+	 */
+	IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+
 	/**
 	 * Returns the linkages that are contained in this fragment
 	 * @return

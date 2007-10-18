@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents a macro stored in the index.
@@ -30,11 +31,28 @@ import org.eclipse.cdt.core.parser.IMacro;
  */
 public interface IIndexMacro extends IMacro {
 	
+	IIndexMacro[] EMPTY_INDEX_MACRO_ARRAY = new IIndexMacro[0];
+
 	/**
 	 * If available, return the file location for this macro definition
 	 * otherwise return null
 	 * @return
 	 */
 	IASTFileLocation getFileLocation();
+	
+	/**
+	 * Returns the file this macro belongs to.
+	 * @throws CoreException 
+	 */
+	IIndexFile getFile() throws CoreException;
+	
+	/**
+	 * Returns the character offset of the location of the name.
+	 */
+	public int getNodeOffset();
 
+	/**
+	 * Returns the length of the name.
+	 */
+	public int getNodeLength();
 }

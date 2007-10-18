@@ -12,9 +12,8 @@
 
 package org.eclipse.cdt.internal.ui.browser.opentype;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,10 +39,13 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.IndexTypeInfo;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 
 import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
@@ -232,24 +234,40 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		if (monitor.isCanceled()) {
 			return null;
 		}
-		List types = new ArrayList();
+		HashSet types = new HashSet();
 		if(prefix.length > 0 || fAllowEmptyPrefix) {
+			final IndexFilter filter= new IndexFilter() {
+				public boolean acceptBinding(IBinding binding) throws CoreException {
+					if (isVisibleType(IndexModelUtil.getElementType(binding))) {
+						if (IndexFilter.ALL_DECLARED.acceptBinding(binding)) {
+							// until we have correctly modeled file-local variables and functions, don't show them. 
+							return !((IIndexBinding) binding).isFileLocal();
+						}
+					}
+					return false;
+				}
+			};
 			try {
 				IIndex index = CCorePlugin.getIndexManager().getIndex(CoreModel.getDefault().getCModel().getCProjects());
 				try {
 					index.acquireReadLock();
-					IIndexBinding[] bindings= index.findBindingsForPrefix(prefix, false, IndexFilter.ALL_DECLARED, monitor);
+					IIndexBinding[] bindings= index.findBindingsForPrefix(prefix, false, filter, monitor);
 					for(int i=0; i<bindings.length; i++) {
 						if (i % 0x1000 == 0 && monitor.isCanceled()) {
 							return null;
 						}
-						IIndexBinding binding = bindings[i];
-						// until we have correctly modeled file-local variables and functions, don't show them. 
-						if (!binding.isFileLocal()) {
-							final int elementType = IndexModelUtil.getElementType(binding);
-							if (isVisibleType(elementType)) {
-								types.add(IndexTypeInfo.create(index, binding));
+						final IndexTypeInfo typeinfo = IndexTypeInfo.create(index, bindings[i]);
+						types.add(typeinfo);
+					}
+					
+					if (isVisibleType(ICElement.C_MACRO)) {
+						IIndexMacro[] macros= index.findMacrosForPrefix(prefix, IndexFilter.ALL_DECLARED, monitor);
+						for(int i=0; i<macros.length; i++) {
+							if (i % 0x1000 == 0 && monitor.isCanceled()) {
+								return null;
 							}
+							final IndexTypeInfo typeinfo = IndexTypeInfo.create(index, macros[i]);
+							types.add(typeinfo);
 						}
 					}
 				} finally {

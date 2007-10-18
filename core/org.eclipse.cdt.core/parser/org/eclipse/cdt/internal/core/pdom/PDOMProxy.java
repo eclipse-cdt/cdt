@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -45,6 +46,13 @@ public class PDOMProxy implements IPDOM {
 		else {
 			fReadLockCount++;
 		}
+	}
+
+	public IIndexMacro[] findMacros(char[] name, boolean isPrefix, boolean caseSensitive,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.findMacros(name, isPrefix, caseSensitive, filter, monitor);
+		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}
 
 	public synchronized IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {

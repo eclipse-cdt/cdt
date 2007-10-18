@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.browser;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.TypeReference;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
@@ -43,7 +44,17 @@ public class IndexTypeReference extends TypeReference {
 		super(resource, project, offset, length);
 		fCElement= createCElement(binding);
 	}
+
+	public IndexTypeReference(IIndexMacro macro, IPath path, IProject project, int offset, int length) {
+		super(path, project, offset, length);
+		fCElement= createCElement(macro);
+	}
 	
+	public IndexTypeReference(IIndexMacro macro, IResource resource, IProject project, int offset, int length) {
+		super(resource, project, offset, length);
+		fCElement= createCElement(macro);
+	}
+
 	/**
 	 * Compute the C element handle for the given binding.
 	 * @param binding
@@ -55,6 +66,23 @@ public class IndexTypeReference extends TypeReference {
 			IRegion region= new Region(getOffset(), getLength());
 			try {
 				return CElementHandleFactory.create(tu, binding, true, region, timestamp);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Compute the C element handle for the given macro.
+	 */
+	private ICElement createCElement(IIndexMacro macro) {
+		ITranslationUnit tu= getTranslationUnit();
+		if (tu != null) {
+			long timestamp= tu.getResource() != null ? tu.getResource().getLocalTimeStamp() : 0;
+			IRegion region= new Region(getOffset(), getLength());
+			try {
+				return CElementHandleFactory.create(tu, macro, region, timestamp);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			}

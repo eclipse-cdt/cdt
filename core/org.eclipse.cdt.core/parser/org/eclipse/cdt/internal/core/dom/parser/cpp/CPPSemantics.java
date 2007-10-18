@@ -491,12 +491,19 @@ public class CPPSemantics {
 		}
 	}
 
-	static protected class Cost
-	{
-		public Cost( IType s, IType t ){
-			source = s;
-			target = t;
-		}
+	static protected class Cost {
+		//Some constants to help clarify things
+		public static final int AMBIGUOUS_USERDEFINED_CONVERSION = 1;
+		
+		public static final int NO_MATCH_RANK = -1;
+		public static final int IDENTITY_RANK = 0;
+		public static final int LVALUE_OR_QUALIFICATION_RANK = 0;
+		public static final int PROMOTION_RANK = 1;
+		public static final int CONVERSION_RANK = 2;
+		public static final int DERIVED_TO_BASE_CONVERSION = 3;
+		public static final int USERDEFINED_CONVERSION_RANK = 4;
+		public static final int ELLIPSIS_CONVERSION = 5;
+		public static final int FUZZY_TEMPLATE_PARAMETERS = 6;
 		
 		public IType source;
 		public IType target;
@@ -511,18 +518,10 @@ public class CPPSemantics {
 		public int rank = -1;
 		public int detail;
 		
-		//Some constants to help clarify things
-		public static final int AMBIGUOUS_USERDEFINED_CONVERSION = 1;
-		
-		public static final int NO_MATCH_RANK = -1;
-		public static final int IDENTITY_RANK = 0;
-		public static final int LVALUE_OR_QUALIFICATION_RANK = 0;
-		public static final int PROMOTION_RANK = 1;
-		public static final int CONVERSION_RANK = 2;
-		public static final int DERIVED_TO_BASE_CONVERSION = 3;
-		public static final int USERDEFINED_CONVERSION_RANK = 4;
-		public static final int ELLIPSIS_CONVERSION = 5;
-		public static final int FUZZY_TEMPLATE_PARAMETERS = 6;
+		public Cost( IType s, IType t ){
+			source = s;
+			target = t;
+		}
 
 		public int compare( Cost cost ) throws DOMException{
 			int result = 0;
@@ -2896,25 +2895,33 @@ public class CPPSemantics {
 		return type;
 	}
 	
-	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
+	private static IType getUltimateType(IType type, IType[] lastPointerType, boolean stopAtPointerToMember) {
 	    try {
 	        while( true ){
 				if( type instanceof ITypedef )
-				    type = ((ITypedef)type).getType();
+					type= ((ITypedef)type).getType();
 	            else if( type instanceof IQualifierType )
-					type = ((IQualifierType)type).getType();
+	            	type= ((IQualifierType)type).getType();
 	            else if( stopAtPointerToMember && type instanceof ICPPPointerToMemberType )
 	                return type;
-				else if( type instanceof IPointerType )
-					type = ((IPointerType) type).getType();
-				else if( type instanceof ICPPReferenceType )
-					type = ((ICPPReferenceType)type).getType();
+				else if( type instanceof IPointerType ) {
+					if(lastPointerType!=null) {
+						lastPointerType[0]= type;
+					}
+					type= ((IPointerType) type).getType();
+				} else if( type instanceof ICPPReferenceType )
+					type= ((ICPPReferenceType)type).getType();
 				else 
 					return type;
+				
 			}
         } catch ( DOMException e ) {
             return e.getProblem();
         }
+	}
+	
+	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
+	   return getUltimateType(type, null, stopAtPointerToMember);
 	}
 	
 	/**
@@ -3002,30 +3009,14 @@ public class CPPSemantics {
 		boolean canConvert = true;
 		int requiredConversion = Cost.IDENTITY_RANK;  
 
-		IPointerType op1, op2;
 		IType s = cost.source, t = cost.target;
 		boolean constInEveryCV2k = true;
 		while( true ){
-			 op1 = null;
-			 op2 = null;
-			 while( true ){
-			 	if( s instanceof ITypedef )	
-			 		s = ((ITypedef)s).getType();
-			 	else {
-			 		if( s instanceof IPointerType )		
-			 			op1 = (IPointerType) s;	
-			 		break;
-			 	}
-			 }
-			 while( true ){
-			 	if( t instanceof ITypedef )	
-			 		t = ((ITypedef)t).getType();
-			 	else {
-			 		if( t instanceof IPointerType )		
-			 			op2 = (IPointerType) t;	
-			 		break;
-			 	}
-			 }
+			 s= getUltimateTypeViaTypedefs(s);
+			 t= getUltimateTypeViaTypedefs(t);
+			 IPointerType op1= s instanceof IPointerType ? (IPointerType) s : null;
+			 IPointerType op2= t instanceof IPointerType ? (IPointerType) t : null;
+			 
 			 if( op1 == null && op2 == null )
 			 	break;
 			 else if( op1 == null ^ op2 == null) {
@@ -3164,20 +3155,11 @@ public class CPPSemantics {
 		cost.conversion = 0;
 		cost.detail = 0;
 
-		IType s = getUltimateType( src, true );
-		IType t = getUltimateType( trg, true );
-			
-		IType sPrev = src;
-		while( sPrev instanceof ITypeContainer ){
-			IType next = ((ITypeContainer)sPrev).getType();
-			while( next instanceof IQualifierType || next instanceof ITypedef ){
-				next = ((ITypeContainer)next).getType();
-			}
-			if( next == s )
-				break;
-			sPrev = next;
-		}
-
+		IType[] sHolder= new IType[1], tHolder= new IType[1];
+		IType s = getUltimateType( src, sHolder, true );
+		IType t = getUltimateType( trg, tHolder, true );
+		IType sPrev= sHolder[0], tPrev= tHolder[0];
+		
 		if( src instanceof IBasicType && trg instanceof IPointerType ){
 			//4.10-1 an integral constant expression of integer type that evaluates to 0 can be converted to a pointer type
 			IASTExpression exp = ((IBasicType)src).getValue();
@@ -3195,17 +3177,6 @@ public class CPPSemantics {
 				}
 			}
 		} else if( sPrev instanceof IPointerType ){
-			IType tPrev = trg;
-			while( tPrev instanceof ITypeContainer ){
-				IType next = ((ITypeContainer)tPrev).getType();
-				while( next instanceof IQualifierType || next instanceof ITypedef ){
-					next = ((ITypeContainer)next).getType();
-				}
-				if( next == t )
-					break;
-				tPrev = next;
-			}
-			
 			//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 			//converted to an rvalue of type "pointer to cv void"
 			if( tPrev instanceof IPointerType && t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void ){

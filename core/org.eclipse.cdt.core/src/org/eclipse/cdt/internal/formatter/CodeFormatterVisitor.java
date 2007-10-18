@@ -1058,6 +1058,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 
 		// storage class and other modifiers
 		scribe.printModifiers();
+		final int headerIndent= scribe.numberOfIndentations;
 
 		switch (node.getKey()) {
 		case IASTCompositeTypeSpecifier.k_struct:
@@ -1087,6 +1088,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		// member declarations
 		formatLeftCurlyBrace(line, preferences.brace_position_for_type_declaration);
 		formatOpeningBrace(preferences.brace_position_for_type_declaration, preferences.insert_space_before_opening_brace_in_type_declaration);
+		final int braceIndent= scribe.numberOfIndentations;
+		if (braceIndent > headerIndent) {
+			scribe.unIndent();
+		}
 		if (preferences.indent_access_specifier_compare_to_type_header) {
 			scribe.indent();
 		}
@@ -1117,6 +1122,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		if (preferences.indent_access_specifier_compare_to_type_header) {
 			scribe.unIndent();
+		}
+		if (scribe.numberOfIndentations < braceIndent) {
+			scribe.indent();
 		}
 		formatClosingBrace(preferences.brace_position_for_type_declaration);
 		return PROCESS_SKIP;
@@ -1899,6 +1907,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(IASTSwitchStatement node) {
+		final int headerIndent= scribe.numberOfIndentations;
 		scribe.printNextToken(Token.t_switch);
 		scribe.printNextToken(Token.tLPAREN, preferences.insert_space_before_opening_paren_in_switch);
 
@@ -1914,7 +1923,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		String switch_brace = preferences.brace_position_for_switch;
 		formatOpeningBrace(switch_brace, preferences.insert_space_before_opening_brace_in_switch);
 		scribe.startNewLine();
-
+		final int braceIndent= scribe.numberOfIndentations;
+		if (braceIndent > headerIndent) {
+			scribe.unIndent();
+		}
 		if (preferences.indent_switchstatements_compare_to_switch) {
 			scribe.indent();
 		}
@@ -2028,6 +2040,9 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		if (preferences.indent_switchstatements_compare_to_switch) {
 			scribe.unIndent();
+		}
+		if (scribe.numberOfIndentations < braceIndent) {
+			scribe.indent();
 		}
 		scribe.startNewLine();
 		

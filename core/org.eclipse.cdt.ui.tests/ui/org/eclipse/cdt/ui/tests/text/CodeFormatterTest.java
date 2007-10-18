@@ -223,4 +223,55 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//class A {
+	//public:
+	//A();
+	//};
+	
+	//class A
+	//    {
+	//public:
+	//    A();
+	//    };
+	public void testWhiteSmithsAccessSpecifierIndentation1_Bug204575() throws Exception {
+		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.FALSE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
+		assertFormatterResult();
+	}
+
+	//class A {
+	//public:
+	//A();
+	//};
+	
+	//class A
+	//    {
+	//    public:
+	//    A();
+	//    };
+	public void testWhiteSmithsAccessSpecifierIndentation2_Bug204575() throws Exception {
+		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
+
+	//class A {
+	//public:
+	//A();
+	//};
+	
+	//class A
+	//    {
+	//    public:
+	//	A();
+	//    };
+	public void testWhiteSmithsAccessSpecifierIndentation3_Bug204575() throws Exception {
+		fOptions= DefaultCodeFormatterOptions.getWhitesmithsSettings().getMap();
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER, DefaultCodeFormatterConstants.TRUE);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_INDENT_BODY_DECLARATIONS_COMPARE_TO_ACCESS_SPECIFIER, DefaultCodeFormatterConstants.TRUE);
+		assertFormatterResult();
+	}
+
 }

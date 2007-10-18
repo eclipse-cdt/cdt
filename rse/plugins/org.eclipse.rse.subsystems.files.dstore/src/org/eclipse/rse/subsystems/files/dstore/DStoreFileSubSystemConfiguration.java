@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Kushal Munir (IBM) - [189352] Set whether file service is Unix-style system or not
+ * David McKnight   (IBM)        - [206755] upload and download buffer should be in kbytes, not bytes
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.dstore;
@@ -24,6 +25,7 @@ import org.eclipse.rse.connectorservice.dstore.DStoreConnectorServiceManager;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.files.DStoreFileService;
 import org.eclipse.rse.internal.services.dstore.search.DStoreSearchService;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
@@ -138,8 +140,8 @@ public class DStoreFileSubSystemConfiguration extends FileServiceSubSystemConfig
 		service.setIsUnixStyle(isUnixStyle());
 
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
-		int downloadBufferSize = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE);
-		int uploadBufferSize = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE);
+		int downloadBufferSize = store.getInt(ISystemFilePreferencesConstants.DOWNLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
+		int uploadBufferSize = store.getInt(ISystemFilePreferencesConstants.UPLOAD_BUFFER_SIZE) *  IUniversalDataStoreConstants.KB_IN_BYTES;
 		if (downloadBufferSize > 0)
 		{
 			service.setBufferDownloadSize(downloadBufferSize);

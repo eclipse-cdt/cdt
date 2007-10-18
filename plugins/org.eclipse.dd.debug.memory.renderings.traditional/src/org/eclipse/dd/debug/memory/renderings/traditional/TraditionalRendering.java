@@ -53,6 +53,7 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
@@ -1107,10 +1108,17 @@ class CopyAction extends Action
     // blocks on a Job.
 
     private Rendering fRendering;
+    private int fType = DND.CLIPBOARD;
 
     public CopyAction(Rendering rendering)
     {
+    	this(rendering, DND.CLIPBOARD);
+    }
+    
+    public CopyAction(Rendering rendering, int clipboardType)
+    {
         super();
+        fType = clipboardType;
         fRendering = rendering;
         setText(DebugUIMessages.CopyViewToClipboardAction_title);
         setToolTipText(DebugUIMessages.CopyViewToClipboardAction_tooltip);
@@ -1288,7 +1296,7 @@ class CopyAction extends Action
             {
                 TextTransfer plainTextTransfer = TextTransfer.getInstance();
                 clip.setContents(new Object[] { buffer.toString() },
-                    new Transfer[] { plainTextTransfer });
+                    new Transfer[] { plainTextTransfer }, fType);
             }
         }
         finally

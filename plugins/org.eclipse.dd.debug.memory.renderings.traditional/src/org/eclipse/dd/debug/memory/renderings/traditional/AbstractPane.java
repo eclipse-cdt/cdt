@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -542,6 +543,8 @@ public abstract class AbstractPane extends Canvas
                     fRendering.getBytesPerColumn() / fRendering.getAddressableSize())), address);
 
                 fSelectionStarted = true;
+                
+                new CopyAction(fRendering, DND.SELECTION_CLIPBOARD).run();
             }
         }
         catch(DebugException e)
@@ -602,6 +605,8 @@ public abstract class AbstractPane extends Canvas
             }
 
             updateCaret();
+            
+            new CopyAction(fRendering, DND.SELECTION_CLIPBOARD).run();
         }
         catch(DebugException e)
         {

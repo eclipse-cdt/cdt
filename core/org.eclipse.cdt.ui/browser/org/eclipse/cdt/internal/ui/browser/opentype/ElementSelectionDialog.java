@@ -28,12 +28,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.ITypeInfo;
@@ -142,10 +144,17 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			return rule == this;
 		}};
 
-	private char[] fCurrentPrefix= {};
+	/**
+	 * The last used prefix to query the index. <code>null</code> means the
+	 * query result should be empty.
+	 */
+	private char[] fCurrentPrefix= null;
 	private Job fUpdateJob;
-	private boolean fAllowEmptyPrefix;
+	private boolean fAllowEmptyPrefix= true;
+	private boolean fAllowEmptyString= true;
 	private ProgressMonitorPart fProgressMonitorPart;
+
+	private String fHelpContextId;
 
 	/**
 	 * Constructs an instance of <code>OpenTypeDialog</code>.
@@ -153,6 +162,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	 */
 	public ElementSelectionDialog(Shell parent) {
 		super(parent);
+		setMatchEmptyString(false);
 		fUpdateJob= new UpdateElementsJob(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_name);
 		fUpdateJob.setRule(SINGLE_INSTANCE_RULE);
 	}
@@ -174,13 +184,27 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		return super.close();
 	}
 
+	/**
+	 * Configure the help context id for this dialog.
+	 * 
+	 * @param helpContextId
+	 */
+	public void setHelpContextId(String helpContextId) {
+		fHelpContextId= helpContextId;
+		setHelpAvailable(fHelpContextId != null);
+	}
+
 	/*
 	 * @see org.eclipse.ui.dialogs.AbstractElementListSelectionDialog#setMatchEmptyString(boolean)
 	 */
 	public void setMatchEmptyString(boolean matchEmptyString) {
 		super.setMatchEmptyString(matchEmptyString);
-		setAllowEmptyPrefix(matchEmptyString);
+		fAllowEmptyString= matchEmptyString;
+		if (matchEmptyString) {
+			setAllowEmptyPrefix(true);
+		}
 	}
+
 	/**
 	 * Set whether an empty prefix should be allowed for queries.
 	 * 
@@ -198,6 +222,14 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		return false;
 	}
 	
+	/*
+	 * @see org.eclipse.ui.dialogs.TwoPaneElementSelector#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	public Control createDialogArea(Composite parent) {
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, fHelpContextId);
+		return super.createDialogArea(parent);
+	}
+
 	/*
 	 * @see org.eclipse.ui.dialogs.TwoPaneElementSelector#createLowerList(org.eclipse.swt.widgets.Composite)
 	 */
@@ -235,7 +267,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			return null;
 		}
 		HashSet types = new HashSet();
-		if(prefix.length > 0 || fAllowEmptyPrefix) {
+		if(prefix != null) {
 			final IndexFilter filter= new IndexFilter() {
 				public boolean acceptBinding(IBinding binding) throws CoreException {
 					if (isVisibleType(IndexModelUtil.getElementType(binding))) {
@@ -310,7 +342,14 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 
 	protected void scheduleUpdate(String filterText) {
 		char[] newPrefix= toPrefix(filterText);
-		if (fUpdateJob.getState() == Job.RUNNING || !isEquivalentPrefix(fCurrentPrefix, newPrefix)) {
+		boolean equivalentPrefix= isEquivalentPrefix(fCurrentPrefix, newPrefix);
+		boolean emptyQuery= newPrefix.length == 0 && !fAllowEmptyPrefix || filterText.length() == 0 && !fAllowEmptyString;
+		boolean needQuery= !equivalentPrefix;
+		if (emptyQuery) {
+			newPrefix= null;
+			needQuery= needQuery || fCurrentPrefix != null;
+		}
+		if(needQuery) {
 			fUpdateJob.cancel();
 			fCurrentPrefix= newPrefix;
 			fUpdateJob.schedule(200);
@@ -322,17 +361,23 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 		if (qualifiedName.segmentCount() > 1) {
 			userFilter= qualifiedName.lastSegment();
 		}
-		userFilter= userFilter.trim().replaceAll("^(\\*)*", "");  //$NON-NLS-1$//$NON-NLS-2$
-		int asterix= userFilter.indexOf("*"); //$NON-NLS-1$
-		return (asterix==-1 ? userFilter : userFilter.substring(0, asterix)).toCharArray();		
+		if (userFilter.endsWith("<")) { //$NON-NLS-1$
+			userFilter= userFilter.substring(0, userFilter.length() - 1);
+		}
+		int asterisk= userFilter.indexOf("*"); //$NON-NLS-1$
+		int questionMark= userFilter.indexOf("?"); //$NON-NLS-1$
+		int prefixEnd = asterisk < 0 ? questionMark
+				: (questionMark < 0 ? asterisk : Math.min(asterisk, questionMark));
+		return (prefixEnd==-1 ? userFilter : userFilter.substring(0, prefixEnd)).toCharArray();		
 	}
 	
 	private boolean isEquivalentPrefix(char[] currentPrefix, char[] newPrefix) {
-		if (currentPrefix.length == 0 || currentPrefix.length > newPrefix.length) {
+		if (currentPrefix == null || currentPrefix.length > newPrefix.length) {
 			return false;
 		} else if (newPrefix.length == currentPrefix.length) {
 			return Arrays.equals(currentPrefix, newPrefix);
 		}
 		return new String(currentPrefix).equals(new String(newPrefix, 0, currentPrefix.length));
 	}
+
 }

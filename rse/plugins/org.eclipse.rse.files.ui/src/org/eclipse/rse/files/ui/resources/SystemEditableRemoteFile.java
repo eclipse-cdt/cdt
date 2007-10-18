@@ -964,7 +964,18 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		if (activePage == null)
 		{
 			IWorkbenchWindow activeWindow = wb.getActiveWorkbenchWindow();
-			activePage = activeWindow.getActivePage();
+			if (activeWindow == null)
+			{
+				activePage = activeWindow.getActivePage();
+			}
+			else
+			{
+				IWorkbenchWindow[] windows  = wb.getWorkbenchWindows();
+				if (windows != null && windows.length > 0)
+				{
+					activePage = windows[0].getActivePage();
+				}
+			}
 		}
 
 		IEditorReference[] activeReferences = activePage.getEditorReferences();

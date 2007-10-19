@@ -138,6 +138,16 @@ public interface IExpressions extends IDMService, IFormattedValues {
     interface IExpressionChangedDMEvent extends IDMEvent<IExpressionDMContext> {}
 
     /**
+     * Retrieves the expression DM data object for the given expression context(<tt>dmc</tt>).
+     * 
+     * @param dmc
+     *            The ExpressionDMC for the expression to be evaluated.
+     * @param rm
+     *            The data request monitor that will contain the requested data
+     */
+    void getExpressionData(IExpressionDMContext dmc, DataRequestMonitor<IExpressionDMData> rm);
+    
+    /**
      * Returns the data model context object for the specified expression in the context
      * specified by <b>ctx</b>.
      * 

@@ -57,6 +57,20 @@ public interface IStack extends IDMService {
     }
 
     /**
+     * Retrieves stack frame data for given context.
+     * @param frameDmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */    
+    public void getFrameData(final IFrameDMContext frameDmc, DataRequestMonitor<IFrameDMData> rm);
+
+    /**
+     * Retrieves stack frame variable data for given context.
+     * @param variableDmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */    
+    public void getVariableData(IVariableDMContext variableDmc, DataRequestMonitor<IVariableDMData> rm);
+    
+    /**
      * Returns whether the stack frames can be retrieved for given thread.
      */
     boolean isStackAvailable(IDMContext execContext);

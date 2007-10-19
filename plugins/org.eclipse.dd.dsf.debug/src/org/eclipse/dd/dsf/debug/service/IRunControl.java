@@ -87,6 +87,13 @@ public interface IRunControl extends IDMService
     }
 
     /**
+     * Retrieves execution data for given context.
+     * @param dmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */
+    public void getExecutionData(IExecutionDMContext dmc, DataRequestMonitor<IExecutionDMData> rm);
+    
+    /**
      * Returns execution contexts belonging to the given container context.
      */
     public void getExecutionContexts(IContainerDMContext c, DataRequestMonitor<IExecutionDMContext[]> rm);

@@ -54,6 +54,14 @@ public interface IFormattedValues extends IDMService {
     public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId);
     
     /**
+     * Retrieves the DM data associated with given formatted value context.
+     * @param dmc Context to retrieve the value for.
+     * @param rm Completion monitor returns the formatted value.
+     */
+    public void getFormattedExpressionValue(FormattedValueDMContext dmc, DataRequestMonitor<FormattedValueDMData> rm); 
+
+    
+    /**
      * DMC that represents a value with specific format.  The format ID can be
      * persisted and used for comparison. 
      */

@@ -104,6 +104,21 @@ public interface IRegisters extends IFormattedValues {
         String getLongName();
     }
     
+    /**
+     * Retrieves register group data for given context.
+     * @param regGroupDmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */
+    void getRegisterGroupData(IRegisterGroupDMContext regGroupDmc, DataRequestMonitor<IRegisterGroupDMData> rm);
+
+    /**
+     * Retrieves register data for given context.
+     * @param regGroupDmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */
+    void getRegisterData(IRegisterDMContext regDmc , DataRequestMonitor<IRegisterDMData> rm);
+
+    
     /** 
      * Retrieves the list of register groups.
      * @param ctx Context for the returned data.

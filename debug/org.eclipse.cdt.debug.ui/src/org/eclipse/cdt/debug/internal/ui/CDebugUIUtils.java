@@ -129,7 +129,6 @@ public class CDebugUIUtils {
 					}
 					else if ( valueString.length() > 0 ) {
 							label.append( valueString );
-						}
 					}
 				}
 			}

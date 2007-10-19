@@ -22,14 +22,6 @@ import org.eclipse.dd.dsf.service.IDsfService;
  */
 public interface IDMService extends IDsfService {
     /**
-     * Returns the context representing the service in the data model.  It is 
-     * usually used in events to indicate that lists of contexts in this 
-     * service are changed. 
-     */
-    IDMContext getServiceContext();
-
-    /**
-    /**
      * Retrieves model data object for given context.  This method makes it
      * un-necessary for every model service to declare a separate method 
      * for retrieving model data of specific type.

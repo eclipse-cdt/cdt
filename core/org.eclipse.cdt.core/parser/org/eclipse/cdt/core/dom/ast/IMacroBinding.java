@@ -10,6 +10,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+/**
+ * Models bindings for macro names.
+ *
+ * <p> This interface is not intended to be implemented by clients. </p>
+ */
 public interface IMacroBinding extends IBinding {
 
+	/**
+	 * Returns the expansion of this macro definition.
+	 * @since 5.0
+	 */
+	char[] getExpansion();
+	
+	/**
+	 * Returns <code>true</code> if this is a function-style macro. 
+	 * @since 5.0
+	 */
+	boolean isFunctionStyle();
 }

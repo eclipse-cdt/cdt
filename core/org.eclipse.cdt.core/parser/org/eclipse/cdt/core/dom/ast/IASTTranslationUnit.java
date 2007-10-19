@@ -132,30 +132,33 @@ public interface IASTTranslationUnit extends IASTNode {
 	public IASTNode selectNodeForLocation(String path, int offset, int length);
 
 	/**
-	 * Get the macro definitions encountered in parsing this translation unit. 
-	 * 
-	 * @return <code>IASTPreprocessorMacroDefinition[]</code>
+	 * Get the macro definitions encountered in parsing this translation unit. The result will not contain
+	 * definitions for built-in macros.
+	 * <p>
+	 * In case the information for a header-file is pulled in from the index,
+	 * macro definitions contained therein are not returned.
 	 */
 	public IASTPreprocessorMacroDefinition[] getMacroDefinitions();
 
 	/**
-	 * Get builtin macro definitions used when parsing this translation unit.
+	 * Get built-in macro definitions used when parsing this translation unit.
 	 * This includes macros obtained from the index. 
-	 * 
-	 * @return <code>IASTPreprocessorMacroDefinition[]</code>
 	 */
 	public IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions();
 
 	/**
-	 * Get the #include directives encountered in parsing this translation unit.
-	 * @return <code>IASTPreprocessorIncludeStatement[]</code>
+	 * Get the include directives encountered in parsing this translation unit. This will also contain directives
+	 * used for handling the gcc-options -imacros and -include.
+	 * <p>
+	 * In case the information for a header-file is pulled in from the index,
+	 * include directives contained therein are not returned.
 	 */
 	public IASTPreprocessorIncludeStatement[] getIncludeDirectives();
 
 	/**
-	 * Get all preprocessor statements.
-	 * 
-	 * @return <code>IASTPreprocessorStatement[]</code>
+	 * Get all preprocessor statements. 
+	 * In case the information for a header-file is pulled in from the index,
+	 * preprocessing statements contained therein are not returned.
 	 */
 	public IASTPreprocessorStatement[] getAllPreprocessorStatements();
 
@@ -205,7 +208,10 @@ public interface IASTTranslationUnit extends IASTNode {
     }
     
     /**
-     * @return
+     * Return the dependency tree for the translation unit. 
+	 * <p>
+	 * In case the information for a header-file is pulled in from the index,
+	 * dependencies contained therein are not part of the dependency tree.
      */
     public IDependencyTree getDependencyTree();
 

@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [205297] Editor upload should not be on main thread
+ * David McKnight   (IBM)        - [195285] mount path mapper changes
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -137,7 +138,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 			else
 			{
 				// for mounting...
-				if (fs.getHost().getSystemType().isLocal())
+				//if (fs.getHost().getSystemType().isLocal())
 				{
 					boolean isMounted = properties.getRemoteFileMounted();
 					if (isMounted)

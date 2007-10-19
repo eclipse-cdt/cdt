@@ -28,6 +28,7 @@
  * Xuan Chen (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
+ * David McKnight   (IBM)        - [195285] mount path mapper changes
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -297,7 +298,7 @@ public class UniversalFileTransferUtility
 		}
 	}
 	
-	protected static void setIFileProperties(IFile tempFile, File remoteFile, String hostname)
+	protected static void setIFileProperties(IFile tempFile, File remoteFile, String hostname, String userId)
 	{
 		// set it's properties for use later
 		SystemIFileProperties properties = new SystemIFileProperties(tempFile);
@@ -322,8 +323,8 @@ public class UniversalFileTransferUtility
 		properties.setRemoteFileMounted(isMounted);
 		if (isMounted)
 		{
-			String actualRemoteHost = getActualHostFor(hostname, remotePath);
-			String actualRemotePath = getWorkspaceRemotePath(hostname, remotePath);
+			String actualRemoteHost = getActualHostFor(hostname, remotePath);						
+			String actualRemotePath = getWorkspaceRemotePath(hostname, remotePath, null); // no subsystem
 			properties.setResolvedMountedRemoteFileHost(actualRemoteHost);
 			properties.setResolvedMountedRemoteFilePath(actualRemotePath);
 		}
@@ -554,7 +555,7 @@ public class UniversalFileTransferUtility
 			{
 				try
 				{
-					setIFileProperties(tempFile, srcFileOrFolder, "LOCALHOST");		 //$NON-NLS-1$
+					setIFileProperties(tempFile, srcFileOrFolder, "LOCALHOST", System.getProperty("user.name"));		 //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				catch (Exception e)
 				{
@@ -1860,7 +1861,7 @@ public class UniversalFileTransferUtility
 		
 		if (srcFileOrFolder.getSystemConnection().getSystemType().isLocal())
 		{
-			absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath());
+			absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath(), srcFileOrFolder.getParentRemoteFileSubSystem());
 		}
 		
 		IPath remote = new Path(absolutePath);
@@ -1932,7 +1933,8 @@ public class UniversalFileTransferUtility
 		String actualHost = "LOCALHOST";	 //$NON-NLS-1$
 		path = path.append(separator + actualHost + separator);
 
-		String absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath());
+		// this is only for local, so no remote name required
+		String absolutePath = editMgr.getWorkspacePathFor(actualHost, srcFileOrFolder.getAbsolutePath(), null); // no subsystem
 
 		int colonIndex = absolutePath.indexOf(IPath.DEVICE_SEPARATOR);
 
@@ -2097,17 +2099,17 @@ public class UniversalFileTransferUtility
 		return false;	
 	}
 	
-	protected static String getWorkspaceRemotePath(ISubSystem subsystem, String remotePath) {
+	protected static String getWorkspaceRemotePath(IRemoteFileSubSystem subsystem, String remotePath) {
 		
-		if (subsystem != null && subsystem.getHost().getSystemType().isLocal()) {
-			return SystemRemoteEditManager.getInstance().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
+		if (subsystem != null) {
+			return SystemRemoteEditManager.getInstance().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath, subsystem);
 		}
 		
 		return remotePath;
 	}
 	
-	protected static String getWorkspaceRemotePath(String hostname, String remotePath) {
-		return SystemRemoteEditManager.getInstance().getWorkspacePathFor(hostname, remotePath);
+	protected static String getWorkspaceRemotePath(String hostname, String remotePath, IRemoteFileSubSystem subsystem) {		
+		return SystemRemoteEditManager.getInstance().getWorkspacePathFor(hostname, remotePath, subsystem);
 	}
 
 	protected static RenameStatus checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath)

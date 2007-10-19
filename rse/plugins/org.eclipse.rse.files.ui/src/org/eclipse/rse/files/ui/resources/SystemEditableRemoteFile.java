@@ -912,9 +912,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 	 */
 	public String getWorkspaceRemotePath(String remotePath)
 	{
-		if (subsystem != null && subsystem.getHost().getSystemType().isLocal())
+		if (subsystem != null)
 		{
-			return SystemRemoteEditManager.getInstance().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath);
+			return SystemRemoteEditManager.getInstance().getWorkspacePathFor(subsystem.getHost().getHostName(), remotePath, subsystem);
 		}
 		return remotePath;
 	}

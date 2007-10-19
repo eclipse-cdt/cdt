@@ -13,11 +13,13 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) - [195285] mount path mapper changes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
 
 import org.eclipse.rse.files.ui.resources.ISystemMountPathMapper;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 public class DefaultMountPathMapper implements ISystemMountPathMapper
 {
@@ -32,7 +34,7 @@ public class DefaultMountPathMapper implements ISystemMountPathMapper
 		return hostname;
 	}
 	
-	public String getWorkspaceMappingFor(String hostname, String remotePath)
+	public String getWorkspaceMappingFor(String hostname, String remotePath, IRemoteFileSubSystem subSystem)
 	{
 		return remotePath;
 	}

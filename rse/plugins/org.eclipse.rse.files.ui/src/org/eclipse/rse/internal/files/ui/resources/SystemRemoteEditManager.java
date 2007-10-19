@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM) - [195285] mount path mapper changes
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.resources;
@@ -41,6 +42,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.files.ui.resources.ISystemMountPathMapper;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
@@ -113,6 +115,7 @@ public class SystemRemoteEditManager
 	 * Return the path to use on the system (i.e. Windows) for saving from the workspace to remote
 	 * @param hostname the remote host
 	 * @param remotePath the file path on the remote host
+
 	 * @return the system path
 	 */
 	public String getMountPathFor(String hostname, String remotePath)
@@ -128,18 +131,20 @@ public class SystemRemoteEditManager
 		}
 	}
 	
+	
 	/**
 	 * Return the path to use relative to the hostname in the RemoteSystemsTempFiles project for saving a local replica
 	 * @param hostname the originating remote host
 	 * @param remotePath the file path on the system (i.e. Windows) 
+	 * @param subSystem the remote subsystem.  The subsystem may be null if none is available. 
 	 * @return the relative replica path
 	 */
-	public String getWorkspacePathFor(String hostname, String remotePath)
+	public String getWorkspacePathFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
 		ISystemMountPathMapper mapper = getMountPathMapperFor(hostname, remotePath);
 		if (mapper != null)
 		{
-			return mapper.getWorkspaceMappingFor(hostname, remotePath);
+			return mapper.getWorkspaceMappingFor(hostname, remotePath, subsystem);
 		}
 		else
 		{

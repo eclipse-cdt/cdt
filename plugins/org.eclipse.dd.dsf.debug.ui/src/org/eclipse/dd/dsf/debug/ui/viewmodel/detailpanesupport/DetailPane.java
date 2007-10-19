@@ -402,7 +402,7 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
                                     /*
                                      *  Format has been validated. Get the formatted value.
                                      */
-                                    final FormattedValueDMContext valueDmc = finalService.getFormattedValue(finalDmc, str);
+                                    final FormattedValueDMContext valueDmc = finalService.getFormattedValueContext(finalDmc, str);
                                     finalService.getModelData(
                                         valueDmc,
                                         new DataRequestMonitor<FormattedValueDMData>(finalService.getSession().getExecutor(), null) {
@@ -443,7 +443,7 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
                          */
                         finalService.getExecutor().submit(new Runnable() {
                             public void run() {
-                                finalService.getAvailableFormattedValues(finalDmc, getAvailableFormatsDone);
+                                finalService.getAvailableFormats(finalDmc, getAvailableFormatsDone);
                             }
                         }
                     );

@@ -309,7 +309,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 						protected void handleOK() {
 							// Evaluate the expression - request HEX since it works in every case 
 							String formatId = IFormattedValues.HEX_FORMAT;
-							FormattedValueDMContext valueDmc = expressionService.getFormattedValue(expressionDMC, formatId);
+							FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC, formatId);
 			                expressionService.getModelData(
 			                	valueDmc, 
 			                    new DataRequestMonitor<FormattedValueDMData>(getExecutor(), null) {

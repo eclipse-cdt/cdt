@@ -187,7 +187,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
         final IPresentationContext context  = update.getPresentationContext();
         final String preferencePageFormatId = fFormattedPrefStore.getCurrentNumericFormat(context) ;
             
-        regService.getAvailableFormattedValues(
+        regService.getAvailableFormats(
             dmc,
             new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
                 @Override
@@ -235,7 +235,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                     /*
                      *  Format has been validated. Get the formatted value.
                      */
-                    final FormattedValueDMContext valueDmc = regService.getFormattedValue(dmc, finalFormatId);
+                    final FormattedValueDMContext valueDmc = regService.getFormattedValueContext(dmc, finalFormatId);
                     
                     VMCacheManager.getVMCacheManager().getCache( context ).getModelData(regService,
 	                   	valueDmc,

@@ -323,7 +323,7 @@ public class SyncVariableDataAccess {
             /*
              * Write the bit field using a string/format style.
              */
-            service.getAvailableFormattedValues(
+            service.getAvailableFormats(
                 fDmc,
                 new DataRequestMonitor<String[]>(session.getExecutor(), rm) {
                     @Override
@@ -423,7 +423,7 @@ public class SyncVariableDataAccess {
              * Convert to the proper formatting DMC then go get the formatted value.
              */
             
-            FormattedValueDMContext formDmc = service.getFormattedValue(fDmc, fFormatId);
+            FormattedValueDMContext formDmc = service.getFormattedValueContext(fDmc, fFormatId);
             
             service.getModelData(formDmc, new DataRequestMonitor<FormattedValueDMData>(session.getExecutor(), rm) {
                 @Override

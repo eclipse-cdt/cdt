@@ -23,9 +23,9 @@ public interface IFormattedValues extends IDMService {
     public interface IFormattedDataDMContext<V extends IDMData> extends IDMContext<V> {}
 
     /**
-     * These strings represent the standard known formats  for any bit stream
+     * These strings represent the standard known formats for any bit stream
      * which needs to be formatted. These ID's as well as others which may be
-     * specifically available from the backend  are what is returned from the
+     * specifically available from the backend are what is returned from the
      * getID() method.
      */
     public final static String HEX_FORMAT     = "HEX.Format"     ; //$NON-NLS-1$
@@ -35,26 +35,23 @@ public interface IFormattedValues extends IDMService {
     public final static String DECIMAL_FORMAT = "DECIMAL.Format" ; //$NON-NLS-1$
     
     /**
-     * Retrieves the available formats that the given data is available in.  
+     * Retrieves the  formats that the given data is available in.  
      * This method is asynchronous because the service may need to retrieve     
-     * information from the back end in order to determine what formats are 
+     * information from the backend in order to determine what formats are 
      * available for the given data context.
      * 
-     * @param dmc Context for which to retrieve available formatted values.
+     * @param dmc Context for which to retrieve available formats.
      * @param rm Completion monitor returns an array of support formatIds.  
      */
-    public void getAvailableFormattedValues(IFormattedDataDMContext<?> dmc, DataRequestMonitor<String[]> rm);
+    public void getAvailableFormats(IFormattedDataDMContext<?> dmc, DataRequestMonitor<String[]> rm);
         
     /**
-     * Retrieves the available formats that the given data is available in.  
-     * This method is asynchronous because the service may need to retrieve     
-     * information from the back end in order to determine what formats are 
-     * available for the given data context.
+     * Creates a FormattedValueDMContext representing the given formatId.  
      * 
-     * @param dmc Context for which to retrieve a IValueDMContext.
-     * @param formatId Defines format to be supplied from the returned context.
+     * @param dmc Parent context for the context that is being created
+     * @param formatId Defines format to be used for the returned context.
      */
-    public FormattedValueDMContext getFormattedValue(IFormattedDataDMContext<?> dmc, String formatId);
+    public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext<?> dmc, String formatId);
     
     /**
      * DMC that represents a value with specific format.  The format ID can be

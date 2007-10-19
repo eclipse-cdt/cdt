@@ -188,7 +188,7 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
         final IPresentationContext context  = update.getPresentationContext();
         final String preferencePageFormatId = fFormattedPrefStore.getCurrentNumericFormat(context) ;
         
-        regService.getAvailableFormattedValues(
+        regService.getAvailableFormats(
             dmc,
             new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
                 @Override
@@ -236,7 +236,7 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
                     /*
                      *  Format has been validated. Get the formatted value.
                      */
-                    FormattedValueDMContext valueDmc = regService.getFormattedValue(dmc, finalFormatId);
+                    FormattedValueDMContext valueDmc = regService.getFormattedValueContext(dmc, finalFormatId);
                     
                     VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
         				.getModelData(regService,

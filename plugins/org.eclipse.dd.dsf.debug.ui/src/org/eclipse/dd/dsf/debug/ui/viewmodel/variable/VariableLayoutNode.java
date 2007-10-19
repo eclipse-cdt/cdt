@@ -327,7 +327,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
         final IPresentationContext context  = update.getPresentationContext();
         final String preferencePageFormatId = fFormattedPrefStore.getCurrentNumericFormat(context) ;
         
-        expressionService.getAvailableFormattedValues(
+        expressionService.getAvailableFormats(
             dmc,
             new DataRequestMonitor<String[]>(getSession().getExecutor(), null) {
                 @Override
@@ -373,7 +373,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
                     /*
                      *  Format has been validated. Get the formatted value.
                      */
-                    final FormattedValueDMContext valueDmc = expressionService.getFormattedValue(dmc, finalFormatId);
+                    final FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(dmc, finalFormatId);
                     
                     VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
         				.getModelData(expressionService,

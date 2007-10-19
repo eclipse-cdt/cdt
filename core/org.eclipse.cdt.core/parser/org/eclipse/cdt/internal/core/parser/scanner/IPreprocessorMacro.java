@@ -10,12 +10,12 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-class DigraphToken extends Token {
-	public DigraphToken(int kind, int offset, int endOffset) {
-		super(kind, offset, endOffset);
-	}
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 
-	public char[] getTokenImage() {
-		return TokenUtil.getDigraphImage(getType());
-	}
+/** 
+ * Interface for the location map when using the macros from the preprocessor.
+ * @since 5.0
+ */
+public interface IPreprocessorMacro extends ILocationCtx, IMacroBinding {
+
 }

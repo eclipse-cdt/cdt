@@ -124,7 +124,6 @@ public class TokenUtil {
         case IGCCToken.tMAX:		return Keywords.cpMAX;
         
         default:
-        	assert false: type;
             return IMAGE_EMPTY; 
         }
 	}

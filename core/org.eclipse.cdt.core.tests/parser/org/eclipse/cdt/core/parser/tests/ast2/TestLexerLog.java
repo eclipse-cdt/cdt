@@ -18,13 +18,18 @@ public class TestLexerLog implements ILexerLog {
 
 	private ArrayList fComments= new ArrayList();
 	private ArrayList fProblems= new ArrayList();
+	private String fInput;
 	
-	public void handleComment(boolean isBlockComment, char[] source, int offset, int endOffset) {
-		fComments.add(new String(source, offset, endOffset-offset));
+	public void setInput(String input) {
+		fInput= input;
 	}
 
-	public void handleProblem(int problemID, char[] source, int offset, int endOffset) {
-		fProblems.add(createString(problemID, new String(source, offset, endOffset-offset)));
+	public void handleComment(boolean isBlockComment, int offset, int endOffset) {
+		fComments.add(fInput.substring(offset, endOffset));
+	}
+
+	public void handleProblem(int problemID, char[] arg, int offset, int endOffset) {
+		fProblems.add(createString(problemID, new String(arg)));
 	}
 
 	public String createString(int problemID, String image) {

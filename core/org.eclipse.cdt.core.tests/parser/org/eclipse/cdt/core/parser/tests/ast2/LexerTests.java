@@ -44,6 +44,7 @@ public class LexerTests extends BaseTestCase {
 	private void init(String input) throws Exception {
 		fLog.clear();
 		fLexer= new Lexer(input.toCharArray(), new LexerOptions(), fLog);
+		fLog.setInput(input);
 		fLexer.nextToken();
 		fLastEndOffset= 0;
 	}
@@ -68,7 +69,7 @@ public class LexerTests extends BaseTestCase {
 		assertEquals(fLastEndOffset, t.getOffset());
 		fLastEndOffset= t.getEndOffset();
 		if (image != null) {
-			assertEquals(image, new String(t.getTokenImage()));
+			assertEquals(image, new String(t.getCharImage()));
 		}
 		fLexer.nextToken();
 	}
@@ -445,7 +446,7 @@ public class LexerTests extends BaseTestCase {
 				init(instertLineSplices(input, splices)); 
 				for (int i = 0; i < tokens.length; i++) {
 					Token token= fLexer.currentToken();
-					buf.append(token.getTokenImage());
+					buf.append(token.getCharImage());
 					token(tokens[i]);
 				}
 				eof();

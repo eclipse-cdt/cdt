@@ -10,12 +10,12 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-class SimpleToken extends Token {
-	public SimpleToken(int kind, int offset, int endOffset) {
-		super(kind, offset, endOffset);
-	}
+/**
+ * Information needed for computing image-locations. An image location exists for a name and describes where the name
+ * came from. This can be: source code, macro-expansion, parameter to macro-expansion or synthetic.
+ * 
+ * @since 5.0
+ */
+class ImageLocationInfo {
 
-	public char[] getTokenImage() {
-		return TokenUtil.getImage(getType());
-	}
 }

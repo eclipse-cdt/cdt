@@ -12,14 +12,17 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.parser.IToken;
 
-
+/**
+ * Represents tokens found by the lexer. The preprocessor reuses the tokens and passes
+ * them on to the parsers.
+ * @since 5.0
+ */
 public abstract class Token implements IToken {
 	private int fKind;
-
-	int fOffset;
-	int fEndOffset;
+	private int fOffset;
+	private int fEndOffset;
 	
-	private IToken fNextGrammarToken;
+	private IToken fNextToken;
 
 	Token(int kind, int offset, int endOffset) {
 		fKind= kind;
@@ -43,46 +46,31 @@ public abstract class Token implements IToken {
 		return fEndOffset-fOffset;
 	}
 
-
 	public IToken getNext() {
-		return fNextGrammarToken;
+		return fNextToken;
 	}
-	
-	public abstract char[] getTokenImage();
 
 	
-	// for the preprocessor to classify preprocessor tokens
 	public void setType(int kind) {
-		// mstodo make non-public
 		fKind= kind;
 	}
-	
-	// for the preprocessor to chain the tokens
+
 	public void setNext(IToken t) {
-		// mstodo make non-public
-		fNextGrammarToken= t;
+		fNextToken= t;
 	}
 
+	public abstract char[] getCharImage();
 
-	
-	
+		
 	public boolean isOperator() {
-		// mstodo
 		return TokenUtil.isOperator(fKind);
 	}
 
-	public char[] getCharImage() {
-		// mstodo
-		throw new UnsupportedOperationException();
-	}
-
 	public String getImage() {
-		// mstodo 
-		throw new UnsupportedOperationException();
+		return new String(getCharImage());
 	}
 
 
-	
 	public char[] getFilename() {
 		// mstodo
 		throw new UnsupportedOperationException();
@@ -107,5 +95,59 @@ public abstract class Token implements IToken {
 		// mstodo
 		throw new UnsupportedOperationException();
 	}
-
 }
+
+class SimpleToken extends Token {
+	public SimpleToken(int kind, int offset, int endOffset) {
+		super(kind, offset, endOffset);
+	}
+
+	public char[] getCharImage() {
+		return TokenUtil.getImage(getType());
+	}
+}
+
+class DigraphToken extends Token {
+	public DigraphToken(int kind, int offset, int endOffset) {
+		super(kind, offset, endOffset);
+	}
+
+	public char[] getCharImage() {
+		return TokenUtil.getDigraphImage(getType());
+	}
+}
+
+class ImageToken extends Token {
+	private char[] fImage;
+
+	public ImageToken(int kind, int offset, int endOffset, char[] image) {
+		super(kind, offset, endOffset);
+		fImage= image;
+	}
+
+	public char[] getCharImage() {
+		return fImage; 
+	}
+}
+
+class SourceImageToken extends Token {
+
+	private char[] fSource;
+	private char[] fImage;
+
+	public SourceImageToken(int kind, int offset, int endOffset, char[] source) {
+		super(kind, offset, endOffset);
+		fSource= source;
+	}
+
+	public char[] getCharImage() {
+		if (fImage == null) {
+			final int length= getLength();
+			fImage= new char[length];
+			System.arraycopy(fSource, getOffset(), fImage, 0, length);
+		}
+		return fImage; 
+	}
+}
+
+

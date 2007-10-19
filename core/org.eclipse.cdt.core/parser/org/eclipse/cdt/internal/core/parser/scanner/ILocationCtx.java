@@ -8,17 +8,14 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
+
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-class CompletionTokenException extends Exception {
+/**
+ * Interface for modeling contexts that can deal with offsets. These are:
+ * synthetic contexts used for pre-included files, file-contexts, macro-expansions.
+ * @since 5.0
+ */
+public interface ILocationCtx {
 
-	private Token fToken;
-
-	public CompletionTokenException(Token token) {
-		fToken= token;
-	}
-	
-	public Token getToken() {
-		return fToken;
-	}
 }

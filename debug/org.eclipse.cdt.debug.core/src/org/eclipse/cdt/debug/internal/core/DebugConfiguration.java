@@ -160,7 +160,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 					exts.add(ext);
 				}
 			}
-			exts.add("*.*"); //$NON-NLS-1$
+			exts.add("*"); //$NON-NLS-1$
 			fCoreExt = (String[])exts.toArray(new String[exts.size()]);
 		}
 		return fCoreExt;

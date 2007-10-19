@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap._FunctionMacroDefinition;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class MacroBinding extends PlatformObject implements IMacroBinding {
@@ -52,5 +53,13 @@ public class MacroBinding extends PlatformObject implements IMacroBinding {
     
 	public ILinkage getLinkage() {
 		return Linkage.NO_LINKAGE;
+	}
+
+	public char[] getExpansion() {
+		return definition.getExpansion();
+	}
+
+	public boolean isFunctionStyle() {
+		return definition instanceof _FunctionMacroDefinition;
 	}
 }

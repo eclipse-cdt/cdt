@@ -74,11 +74,18 @@ public class CharArrayIntMap extends CharTable {
 		return undefined;
 	}
 
-	/**
-	 * @param image
-	 * @return
-	 */
 	public int get(char[] image) {
 		return get( image, 0, image.length );
+	}
+
+	/**
+	 * Puts all mappings of map into this map. The keys are not cloned.
+	 * @since 5.0
+	 */
+	public void putAll(CharArrayIntMap map) {
+		resize(size() + map.size());
+		for(int i=0; i<map.currEntry; i++) {
+			put(map.keyTable[i], map.valueTable[i]);
+		}
 	}
 }

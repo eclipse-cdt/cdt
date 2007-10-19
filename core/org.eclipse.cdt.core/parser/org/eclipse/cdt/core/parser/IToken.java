@@ -41,6 +41,8 @@ public interface IToken {
 	
 	
 	// Token types
+	int FIRST_RESERVED_PREPROCESSOR= -200;
+	int LAST_RESERVED_PREPROCESSOR= -101;
 	int FIRST_RESERVED_SCANNER= -100;
 	int LAST_RESERVED_SCANNER= -1;
 	

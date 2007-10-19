@@ -52,6 +52,9 @@ public interface IScanner extends IMacroCollector {
 	public IToken nextToken() throws EndOfFileException;
 			
 	public int  getCount();
+	/**
+	 * Returns <code>true</code>, whenever we are processing the outermost file of the translation unit.
+	 */
 	public boolean isOnTopContext();
 	public CharArrayObjectMap getRealDefinitions();
 	public void cancel();

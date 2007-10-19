@@ -305,4 +305,17 @@ public class CharArrayUtils {
             buff[ i + j ] = charImage[j];
         }
     }
+    
+    /**
+     * Find an array of chars in an array of arrays of chars.
+     * @return offset where the array was found or <code>-1</code>
+     */
+    public static int indexOf(final char[] searchFor, final char[][] searchIn) {
+		for (int i=0; i < searchIn.length; i++) {
+			if (equals(searchIn[i], searchFor)) {
+				return i;
+			}
+		}
+		return -1;
+    }
 }

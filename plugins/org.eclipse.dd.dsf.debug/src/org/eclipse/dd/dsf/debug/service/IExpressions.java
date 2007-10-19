@@ -32,7 +32,7 @@ public interface IExpressions extends IDMService, IFormattedValues {
      * Expression context. Since some expressions have children, expression contexts can have an
      * arbitrary number of parents of type IExpressionDMContext.
      */
-    public interface IExpressionDMContext extends IFormattedDataDMContext<IExpressionDMData> {
+    public interface IExpressionDMContext extends IFormattedDataDMContext {
         /**
          * Returns a fully qualified expression string represented by this context.  This 
          * expression string is the same as the string that is sent to the debug engine to be
@@ -149,7 +149,7 @@ public interface IExpressions extends IDMService, IFormattedValues {
      * @return  An expression data model context object that must be passed to getModelData() to obtain the
      *          value of the expression.
      */
-    IExpressionDMContext createExpression(IDMContext<?> ctx, String expression);
+    IExpressionDMContext createExpression(IDMContext ctx, String expression);
 
     /**
      * Retrieves the sub-expressions of the given expression.  Sub-expressions are fields of a struct, union,
@@ -208,5 +208,5 @@ public interface IExpressions extends IDMService, IFormattedValues {
      * 
      * @param rm: Request completion monitor.
      */
-    void writeExpression(IDMContext<?> expressionContext, String exressionValue, String formatId, RequestMonitor rm);
+    void writeExpression(IDMContext expressionContext, String exressionValue, String formatId, RequestMonitor rm);
 }

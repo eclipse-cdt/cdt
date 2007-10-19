@@ -33,7 +33,7 @@ public interface IRunControl extends IDMService
      * performed.  A lot of higher-level services reference this context to build
      * functionality on top of it, e.g. stack, expression evaluation, registers, etc.
      */
-    public interface IExecutionDMContext extends IDMContext<IExecutionDMData> {}
+    public interface IExecutionDMContext extends IDMContext {}
     
     /**
      * Context representing a process, kernel, or some other logical container 
@@ -95,15 +95,15 @@ public interface IRunControl extends IDMService
      * Run control commands.  They all require the IExecutionContext object on 
      * which they perform the operations.  
      */
-    boolean canResume(IDMContext<?> context);
-    boolean canSuspend(IDMContext<?> context);
-    boolean isSuspended(IDMContext<?> context);
-    void resume(IDMContext<?> context, RequestMonitor requestMonitor);
-    void suspend(IDMContext<?> context, RequestMonitor requestMonitor);
+    boolean canResume(IDMContext context);
+    boolean canSuspend(IDMContext context);
+    boolean isSuspended(IDMContext context);
+    void resume(IDMContext context, RequestMonitor requestMonitor);
+    void suspend(IDMContext context, RequestMonitor requestMonitor);
     public enum StepType { STEP_OVER, STEP_INTO, STEP_RETURN };
-    boolean isStepping(IDMContext<?> context);
-    boolean canStep(IDMContext<?> context);
-    void step(IDMContext<?> context, StepType stepType, RequestMonitor requestMonitor);
-    boolean canInstructionStep(IDMContext<?> context);
-    void instructionStep(IDMContext<?> context, StepType stepType, RequestMonitor requestMonitor);
+    boolean isStepping(IDMContext context);
+    boolean canStep(IDMContext context);
+    void step(IDMContext context, StepType stepType, RequestMonitor requestMonitor);
+    boolean canInstructionStep(IDMContext context);
+    void instructionStep(IDMContext context, StepType stepType, RequestMonitor requestMonitor);
 }

@@ -66,7 +66,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	private final String fModelId;
 	private final DsfSession fSession;
 	private final DsfExecutor fExecutor;
-	private       IDMContext<?> fContext;
+	private       IDMContext fContext;
 	private final ServiceTracker fMemoryServiceTracker;
 	private final ServiceTracker fExpressionServiceTracker;
 
@@ -77,7 +77,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 * @param dmc
 	 * @throws DebugException
 	 */
-	public DsfMemoryBlockRetrieval(String modelId, IDMContext<?> dmc) throws DebugException {
+	public DsfMemoryBlockRetrieval(String modelId, IDMContext dmc) throws DebugException {
 
 		fModelId = modelId;
 		fContext = dmc;
@@ -143,7 +143,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		return fExecutor;
 	}
 
-	public IDMContext<?> getContext() {
+	public IDMContext getContext() {
 		return fContext;
 	}
 
@@ -254,9 +254,9 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 			// In case of failure, simply return 'null'
 
 			// Drill for the actual DMC
-		    IDMContext<?> dmc = null;
+		    IDMContext dmc = null;
 			if (context instanceof IAdaptable) {
-			    dmc = (IDMContext<?>)((IAdaptable)context).getAdapter(IDMContext.class);
+			    dmc = (IDMContext)((IAdaptable)context).getAdapter(IDMContext.class);
 			}
 
 			if (dmc == null) {
@@ -293,7 +293,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	// Helper functions
 	// ////////////////////////////////////////////////////////////////////////
 
-	private BigInteger resolveMemoryAddress(final IDMContext<?> idmContext, final String expression) throws DebugException {
+	private BigInteger resolveMemoryAddress(final IDMContext idmContext, final String expression) throws DebugException {
 
 		// Use a Query to "synchronise" the downstream calls
 		Query<BigInteger> query = new Query<BigInteger>() {
@@ -312,15 +312,13 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 							FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC, formatId);
 			                expressionService.getModelData(
 			                	valueDmc, 
-			                    new DataRequestMonitor<FormattedValueDMData>(getExecutor(), null) {
+			                    new DataRequestMonitor<FormattedValueDMData>(getExecutor(), drm) {
 			            			@Override
 			            			protected void handleOK() {
 			            				// Store the result
 			            				FormattedValueDMData data = getData();
-			            				if (data.isValid()) {
-			            					String value = data.getFormattedValue().substring(2);	// Strip the "0x"
-			            					drm.setData(new BigInteger(value, 16));
-			            				}
+		            					String value = data.getFormattedValue().substring(2);	// Strip the "0x"
+		            					drm.setData(new BigInteger(value, 16));
 			            				drm.done();
 			            			}
 			                	}

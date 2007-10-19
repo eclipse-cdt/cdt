@@ -17,7 +17,7 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
  * required DM-Context reference.
  */
 @Immutable
-abstract public class AbstractDMEvent<V extends IDMContext<?>> implements IDMEvent<V> {
+abstract public class AbstractDMEvent<V extends IDMContext> implements IDMEvent<V> {
 
     private final V fModelContext;
     public AbstractDMEvent(V context) {

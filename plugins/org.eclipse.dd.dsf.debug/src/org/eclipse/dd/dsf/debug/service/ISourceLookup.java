@@ -12,7 +12,6 @@ package org.eclipse.dd.dsf.debug.service;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.service.IDsfService;
 
@@ -24,17 +23,17 @@ import org.eclipse.dd.dsf.service.IDsfService;
  */
 public interface ISourceLookup extends IDsfService {
 
-    public interface ISourceLookupDMContext extends IDMContext<IDMData> {}
+    public interface ISourceLookupDMContext extends IDMContext {}
         
     public interface ISourceLookupChangedDMEvent extends IDMEvent<ISourceLookupDMContext> {}
     
     /**
      * Retrieves the host source object for given debugger path string.
      */
-    void getSource(IDMContext<?> ctx, String debuggerPath, DataRequestMonitor<Object> rm);
+    void getSource(IDMContext ctx, String debuggerPath, DataRequestMonitor<Object> rm);
     
     /**
      * Retrieves the debugger path string for given host source object.
      */
-    void getDebuggerPath(IDMContext<?> ctx, Object source, DataRequestMonitor<String> rm);
+    void getDebuggerPath(IDMContext ctx, Object source, DataRequestMonitor<String> rm);
 }

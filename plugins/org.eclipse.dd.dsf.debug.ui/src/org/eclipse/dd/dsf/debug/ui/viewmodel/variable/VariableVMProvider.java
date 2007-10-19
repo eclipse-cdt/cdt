@@ -28,7 +28,7 @@ public class VariableVMProvider extends AbstractDebugDMVMProviderWithCache imple
         /*
          *  Create the variable data access routines.
          */
-        SyncVariableDataAccess varAccess = new SyncVariableDataAccess() ;
+        SyncVariableDataAccess varAccess = new SyncVariableDataAccess(session) ;
 
         /*
          *  Create the top level node to deal with the root selection.

@@ -45,7 +45,7 @@ public class RegisterLayoutValueCellModifier extends WatchExpressionCellModifier
      */
     protected IRegisterDMContext getRegisterDMC(Object element) {
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             return DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
         }
         return null;

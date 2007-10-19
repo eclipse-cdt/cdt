@@ -321,7 +321,7 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
                  */
                 if ( element instanceof DMVMContext) {
                     IFormattedValues service = null;
-                    IFormattedDataDMContext<?> dmc = null ;
+                    IFormattedDataDMContext dmc = null ;
                     
                     /*
                      *  We are specifically looking to support the following Data Model Contexts
@@ -384,7 +384,7 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
                      *  typically be a burden. We should probably consider perhaps doing a
                      *  preference where they can select what formats they want to show.
                      */
-                    final IFormattedDataDMContext<?> finalDmc = dmc;
+                    final IFormattedDataDMContext finalDmc = dmc;
                     final IFormattedValues finalService = service;
 
                     final DataRequestMonitor<String[]> getAvailableFormatsDone = 

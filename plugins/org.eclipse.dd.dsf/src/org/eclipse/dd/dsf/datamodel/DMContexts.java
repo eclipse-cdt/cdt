@@ -59,16 +59,16 @@ public class DMContexts {
      * @return true if a match is found.
      */
     @ThreadSafe
-    public static boolean isAncestorOf(IDMContext<?> dmc, IDMContext<?> potentialAncestor) {
+    public static boolean isAncestorOf(IDMContext dmc, IDMContext potentialAncestor) {
         // Check the direct parents for a match.
-        for (IDMContext<?> parentDmc : dmc.getParents()) {
+        for (IDMContext parentDmc : dmc.getParents()) {
             if (potentialAncestor.equals(parentDmc)) {
                 return true;
             }
         }
 
         // Recursively check the parents' parents for a match.
-        for (IDMContext<?> parentDmc : dmc.getParents()) {
+        for (IDMContext parentDmc : dmc.getParents()) {
             if (isAncestorOf(parentDmc, potentialAncestor)) {
                 return true;
             }
@@ -83,15 +83,15 @@ public class DMContexts {
      * into a list.
      */
     @ThreadSafe
-    public static List<IDMContext<?>> toList(IDMContext<?> dmc) {
+    public static List<IDMContext> toList(IDMContext dmc) {
         /*
          * This method is implemented recursively, which is not necessarily
          * the most efficient way to do this.
          */
-        List<IDMContext<?>> list = new ArrayList<IDMContext<?>>();
+        List<IDMContext> list = new ArrayList<IDMContext>();
         list.add(dmc);
 
-        for (IDMContext<?> parentDmc : dmc.getParents()) {
+        for (IDMContext parentDmc : dmc.getParents()) {
             list.addAll(toList(parentDmc));
         }
         return list;

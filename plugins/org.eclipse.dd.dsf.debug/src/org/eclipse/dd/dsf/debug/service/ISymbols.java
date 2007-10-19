@@ -23,7 +23,7 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
  * @see IModules
  */
 public interface ISymbols extends IDMService {
-    public interface ISymbolObjectDMContext extends IDMContext<ISymbolObjectDMData> {}
+    public interface ISymbolObjectDMContext extends IDMContext {}
     
     /**
      * Data about a debug symbol.  

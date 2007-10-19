@@ -35,7 +35,7 @@ public class RegisterVMProvider extends AbstractDebugDMVMProviderWithCache
         /*
          *  Create the register data access routines.
          */
-        SyncRegisterDataAccess regAccess = new SyncRegisterDataAccess() ;
+        SyncRegisterDataAccess regAccess = new SyncRegisterDataAccess(session) ;
         
         /*
          *  Create the top level node to deal with the root selection.

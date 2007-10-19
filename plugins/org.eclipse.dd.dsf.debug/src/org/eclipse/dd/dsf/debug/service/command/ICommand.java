@@ -39,7 +39,7 @@ public interface ICommand<V extends ICommandResult> {
      * Returns the context that this command is to be evaluated in.  May be null
      * if the command does not need to be evaluated in a specific context.
      */
-    public IDMContext<?> getContext();
+    public IDMContext getContext();
 }
 
     

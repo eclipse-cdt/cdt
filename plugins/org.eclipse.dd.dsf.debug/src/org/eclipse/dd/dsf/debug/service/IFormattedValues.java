@@ -20,7 +20,7 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
 public interface IFormattedValues extends IDMService {
     
     /** Marker interface for a DMC that has a formatted value. */
-    public interface IFormattedDataDMContext<V extends IDMData> extends IDMContext<V> {}
+    public interface IFormattedDataDMContext extends IDMContext {}
 
     /**
      * These strings represent the standard known formats for any bit stream
@@ -43,7 +43,7 @@ public interface IFormattedValues extends IDMService {
      * @param dmc Context for which to retrieve available formats.
      * @param rm Completion monitor returns an array of support formatIds.  
      */
-    public void getAvailableFormats(IFormattedDataDMContext<?> dmc, DataRequestMonitor<String[]> rm);
+    public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm);
         
     /**
      * Creates a FormattedValueDMContext representing the given formatId.  
@@ -51,24 +51,24 @@ public interface IFormattedValues extends IDMService {
      * @param dmc Parent context for the context that is being created
      * @param formatId Defines format to be used for the returned context.
      */
-    public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext<?> dmc, String formatId);
+    public FormattedValueDMContext getFormattedValueContext(IFormattedDataDMContext dmc, String formatId);
     
     /**
      * DMC that represents a value with specific format.  The format ID can be
      * persisted and used for comparison. 
      */
 
-    public static class FormattedValueDMContext extends AbstractDMContext<FormattedValueDMData> 
+    public static class FormattedValueDMContext extends AbstractDMContext 
     {
         private final String fFormatID;
         
-        public FormattedValueDMContext(IDMService service, IDMContext<?> parent, String formatId) {
+        public FormattedValueDMContext(IDMService service, IDMContext parent, String formatId) {
             super(service, new IDMContext[] { parent });
             fFormatID = formatId;
         }
 
-        public FormattedValueDMContext(String sessionId, String filter, IDMContext<?> parent, String formatId) {
-            super(sessionId, filter, new IDMContext[] { parent });
+        public FormattedValueDMContext(String sessionId, IDMContext parent, String formatId) {
+            super(sessionId, new IDMContext[] { parent });
             fFormatID = formatId;
         }
         
@@ -103,10 +103,5 @@ public interface IFormattedValues extends IDMService {
         public String getFormattedValue() {
             return fValue;
         }
-        
-        public boolean isValid() {
-            return true;
-        }
-        
     }
 }

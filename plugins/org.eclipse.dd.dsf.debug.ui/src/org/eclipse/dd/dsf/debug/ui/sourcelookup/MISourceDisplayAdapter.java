@@ -89,13 +89,13 @@ public class MISourceDisplayAdapter implements ISourceDisplay
 	 */
 	class LookupJob extends Job {
 		
-		private IDMContext<?> fDmc;
+		private IDMContext fDmc;
 		private IWorkbenchPage fPage;
 
 		/**
 		 * Constructs a new source lookup job.
 		 */
-		public LookupJob(IDMContext<?> dmc, IWorkbenchPage page) {
+		public LookupJob(IDMContext dmc, IWorkbenchPage page) {
 			super("DSF Source Lookup");  //$NON-NLS-1$
 			setPriority(Job.INTERACTIVE);
 			setSystem(true);
@@ -103,7 +103,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
 			fPage = page;
 		}
 
-        IDMContext<?> getDmc() { return fDmc; }
+        IDMContext getDmc() { return fDmc; }
         
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -164,7 +164,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
 		private SourceLookupResult fResult;
 		private IWorkbenchPage fPage;
         
-        IDMContext<?> getDmc() { return fResult.getDmc(); }
+        IDMContext getDmc() { return fResult.getDmc(); }
         
 		/**
 		 * Constructs a new source display job
@@ -257,7 +257,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
         /**
          * Positions the text editor for the given stack frame
          */
-        private void positionEditor(ITextEditor editor, final IDMContext<?> dmc) {
+        private void positionEditor(ITextEditor editor, final IDMContext dmc) {
             if (!(dmc instanceof IFrameDMContext)) return;
             final IFrameDMContext frameDmc = (IFrameDMContext)dmc;
             
@@ -387,7 +387,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
     private DsfSession fSession;
     private DsfExecutor fExecutor;
     private DsfServicesTracker fServicesTracker;
-    private IDMContext<?> fPrevModelContext;
+    private IDMContext fPrevModelContext;
     private SourceLookupResult fPrevResult;
     private ISourceLookupDirector fSourceLookup;
     private DsfMISourceLookupParticipant fSourceLookupParticipant;
@@ -430,7 +430,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
         if (!(context instanceof DMVMContext)) return;
         // Correct cast: (AbstractDMVMLayoutNode<?>.DMVMContext) breaks the javac compiler
         @SuppressWarnings("unchecked")
-        final IDMContext<?> dmc = ((DMVMContext)context).getDMC();
+        final IDMContext dmc = ((DMVMContext)context).getDMC();
 
         // Quick test.  DMC is checked again in source lookup participant, but 
         // it's much quicker to test here. 
@@ -455,7 +455,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
         }
     }
     
-    private void startLookupJob(final IDMContext<?> dmc, final IWorkbenchPage page) {
+    private void startLookupJob(final IDMContext dmc, final IWorkbenchPage page) {
         // If there is a previous lookup job running, cancel it.
         if (fRunningLookupJob != null) {
             fRunningLookupJob.cancel();

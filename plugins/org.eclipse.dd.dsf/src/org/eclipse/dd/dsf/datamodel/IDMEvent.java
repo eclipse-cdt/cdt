@@ -16,6 +16,6 @@ package org.eclipse.dd.dsf.datamodel;
  * this base class only identifies the DM Context that is affected.
  * @param <V> Data Model context type that is affected by this event.
  */
-public interface IDMEvent <V extends IDMContext<?>> {
+public interface IDMEvent <V extends IDMContext> {
     V getDMContext();
 }

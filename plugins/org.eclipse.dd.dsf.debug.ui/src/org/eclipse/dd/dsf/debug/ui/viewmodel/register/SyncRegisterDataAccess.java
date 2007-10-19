@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
+import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
@@ -38,45 +39,59 @@ import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
-@ThreadSafeAndProhibitedFromDsfExecutor("")
+@ThreadSafeAndProhibitedFromDsfExecutor("fSession#getExecutor")
 public class SyncRegisterDataAccess {
+
+    /**
+     * The session that this data access operates in.
+     */
+    private final DsfSession fSession;
 
     /**
      * Need to use the OSGi service tracker here (instead of DsfServiceTracker),
      * because we're accessing it in non-dispatch thread. DsfServiceTracker is
      * not thread-safe.
      */
+    @ThreadSafe
     private ServiceTracker fServiceTracker;
 
-    private synchronized IRegisters getService(String filter) {
+    public SyncRegisterDataAccess(DsfSession session) {
+        fSession = session;
+    }
+    
+    @ThreadSafe
+    private synchronized IRegisters getService() {
 
         if (fServiceTracker == null) {
             try {
-                fServiceTracker = new ServiceTracker(DsfDebugUIPlugin
-                        .getBundleContext(), DsfDebugUIPlugin.getBundleContext()
-                        .createFilter(filter), null);
+                fServiceTracker = new ServiceTracker(
+                    DsfDebugUIPlugin.getBundleContext(), 
+                    DsfDebugUIPlugin.getBundleContext().createFilter(getServiceFilter()), null);
                 fServiceTracker.open();
             } catch (InvalidSyntaxException e) {
-                assert false : "Invalid filter in DMC: " + filter; //$NON-NLS-1$
                 return null;
-            }
-        } else {
-            /*
-             * All of the DMCs that this cell modifier is invoked for should
-             * originate from the same service. This assertion checks this
-             * assumption by comparing the service reference in the tracker to
-             * the filter string in the DMC.
-             */
-            try {
-                assert DsfDebugUIPlugin.getBundleContext().createFilter(filter)
-                        .match(fServiceTracker.getServiceReference());
-            } catch (InvalidSyntaxException e) {
             }
         }
         return (IRegisters) fServiceTracker.getService();
     }
     
-    public void dispose() {
+    private String getServiceFilter() {
+        StringBuffer filter = new StringBuffer();
+        filter.append("(&"); //$NON-NLS-1$
+        filter.append("(OBJECTCLASS="); //$NON-NLS-1$
+        filter.append(IRegisters.class.getName());
+        filter.append(')');
+        filter.append('(');
+        filter.append(IDsfService.PROP_SESSION_ID);
+        filter.append('=');
+        filter.append(fSession.getId());
+        filter.append(')');
+        filter.append(')');
+        return filter.toString();
+    }
+    
+    @ThreadSafe
+    public synchronized void dispose() {
         if ( fServiceTracker != null ) {
             fServiceTracker.close();
         }
@@ -105,7 +120,7 @@ public class SyncRegisterDataAccess {
                 return;
             }
 
-            IRegisters service = getService(fDmc.getServiceFilter());
+            IRegisters service = getService();
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
                 rm.done();
@@ -140,7 +155,7 @@ public class SyncRegisterDataAccess {
 
     public IBitFieldDMContext getBitFieldDMC(Object element) {
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             return DMContexts.getAncestorOfType(dmc, IBitFieldDMContext.class);
         }
         return null;
@@ -207,7 +222,7 @@ public class SyncRegisterDataAccess {
             /*
              * Guard against a disposed service
              */
-            IRegisters service = getService(fDmc.getServiceFilter());
+            IRegisters service = getService();
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
@@ -315,7 +330,7 @@ public class SyncRegisterDataAccess {
             /*
              * Guard against a disposed service
              */
-            IRegisters service = getService(fDmc.getServiceFilter());
+            IRegisters service = getService();
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
@@ -396,7 +411,7 @@ public class SyncRegisterDataAccess {
 
     public IRegisterGroupDMContext getRegisterGroupDMC(Object element) {
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             return DMContexts.getAncestorOfType(dmc, IRegisterGroupDMContext.class);
         }
         return null;
@@ -404,15 +419,15 @@ public class SyncRegisterDataAccess {
 
     public IRegisterDMContext getRegisterDMC(Object element) {
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             return DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
         }
         return null;
     }
 
-    public IFormattedDataDMContext<?> getFormattedDMC(Object element) {
+    public IFormattedDataDMContext getFormattedDMC(Object element) {
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
             return DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
@@ -442,7 +457,7 @@ public class SyncRegisterDataAccess {
                 return;
             }
 
-            IRegisters service = getService(fDmc.getServiceFilter());
+            IRegisters service = getService();
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
                 rm.done();
@@ -531,7 +546,7 @@ public class SyncRegisterDataAccess {
                 return;
             }
 
-            IRegisters service = getService(fDmc.getServiceFilter());
+            IRegisters service = getService();
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service not available", null)); //$NON-NLS-1$
                 rm.done();
@@ -625,7 +640,7 @@ public class SyncRegisterDataAccess {
             /*
              * Guard against a disposed service
              */
-            IRegisters service = getService(fDmc.getServiceFilter());
+            IRegisters service = getService();
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
@@ -712,9 +727,9 @@ public class SyncRegisterDataAccess {
 
     public class GetSupportFormatsValueQuery extends Query<Object> {
 
-        IFormattedDataDMContext<?> fDmc;
+        IFormattedDataDMContext fDmc;
 
-        public GetSupportFormatsValueQuery(IFormattedDataDMContext<?> dmc) {
+        public GetSupportFormatsValueQuery(IFormattedDataDMContext dmc) {
             super();
             fDmc = dmc;
         }
@@ -734,7 +749,7 @@ public class SyncRegisterDataAccess {
             /*
              * Guard against a disposed service
              */
-            IRegisters service = getService(fDmc.getServiceFilter());
+            IRegisters service = getService();
             if (service == null) {
                 rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
@@ -779,9 +794,9 @@ public class SyncRegisterDataAccess {
          * Get the DMC and the session. If element is not an register DMC, or
          * session is stale, then bail out.
          */
-        IFormattedDataDMContext<?> dmc = null;
+        IFormattedDataDMContext dmc = null;
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
             dmc = DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
@@ -815,10 +830,10 @@ public class SyncRegisterDataAccess {
     
     public class GetFormattedValueValueQuery extends Query<Object> {
 
-        private IFormattedDataDMContext<?> fDmc;
+        private IFormattedDataDMContext fDmc;
         private String fFormatId;
 
-        public GetFormattedValueValueQuery(IFormattedDataDMContext<?> dmc, String formatId) {
+        public GetFormattedValueValueQuery(IFormattedDataDMContext dmc, String formatId) {
             super();
             fDmc = dmc;
             fFormatId = formatId;
@@ -839,7 +854,7 @@ public class SyncRegisterDataAccess {
             /*
              * Guard against a disposed service
              */
-            IRegisters service = getService(fDmc.getServiceFilter());
+            IRegisters service = getService();
             if (service == null) {
                 rm .setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Service unavailable", null)); //$NON-NLS-1$
                 rm.done();
@@ -883,9 +898,9 @@ public class SyncRegisterDataAccess {
          * Get the DMC and the session. If element is not an register DMC, or
          * session is stale, then bail out.
          */
-        IFormattedDataDMContext<?> dmc = null;
+        IFormattedDataDMContext dmc = null;
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
             dmc = DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
@@ -923,9 +938,9 @@ public class SyncRegisterDataAccess {
          * Get the DMC and the session. If element is not an register DMC, or
          * session is stale, then bail out.
          */
-        IFormattedDataDMContext<?> dmc = null;
+        IFormattedDataDMContext dmc = null;
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             IBitFieldDMContext  bitfielddmc = DMContexts.getAncestorOfType(vmcdmc, IBitFieldDMContext.class);
             dmc = DMContexts.getAncestorOfType(bitfielddmc, IFormattedDataDMContext.class);
         }

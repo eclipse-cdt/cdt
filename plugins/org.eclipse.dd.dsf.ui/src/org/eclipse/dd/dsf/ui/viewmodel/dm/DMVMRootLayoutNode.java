@@ -61,14 +61,14 @@ public class DMVMRootLayoutNode extends VMRootLayoutNode
      */
     @Override
     public int getDeltaFlags(Object event) {
-        IDMContext<?> inputDmc = getSelectedDMC();
+        IDMContext inputDmc = getSelectedDMC();
         if (event instanceof IDMEvent && inputDmc != null) {
             boolean potentialMatchFound = false;
             boolean matchFound = false;
             
-            IDMContext<?> eventDmc = ((IDMEvent<?>)event).getDMContext();
-            for (IDMContext<?> eventDmcAncestor : DMContexts.toList(eventDmc)) {
-                IDMContext<?> inputDmcAncestor = DMContexts.getAncestorOfType(inputDmc, eventDmcAncestor.getClass()); 
+            IDMContext eventDmc = ((IDMEvent<?>)event).getDMContext();
+            for (IDMContext eventDmcAncestor : DMContexts.toList(eventDmc)) {
+                IDMContext inputDmcAncestor = DMContexts.getAncestorOfType(inputDmc, eventDmcAncestor.getClass()); 
                 if (inputDmcAncestor != null) {
                     potentialMatchFound = true;
                     if (inputDmcAncestor.equals(eventDmcAncestor)) {
@@ -84,7 +84,7 @@ public class DMVMRootLayoutNode extends VMRootLayoutNode
         return super.getDeltaFlags(event);
     }
 
-    private IDMContext<?> getSelectedDMC() {
+    private IDMContext getSelectedDMC() {
         Object rootObject = getVMProvider().getRootElement();
         if (rootObject instanceof DMVMContext) 
         {

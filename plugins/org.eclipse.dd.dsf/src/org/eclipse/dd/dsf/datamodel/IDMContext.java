@@ -44,7 +44,7 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
  * @see IDMData 
  */
 @Immutable
-public interface IDMContext<V extends IDMData> extends IAdaptable 
+public interface IDMContext extends IAdaptable 
 {
     /** 
      * Each model context object needs to track the session from which it 
@@ -56,22 +56,11 @@ public interface IDMContext<V extends IDMData> extends IAdaptable
     public String getSessionId();
     
     /**
-     * Returns the service filter object which can be used to uniquely identify
-     * a service.  For most services, it's sufficient to know the service class
-     * and the session-id to find the service, but some services may have 
-     * multiple instances running in the same session.  For those services, this
-     * filter string can be used to find the correct service instance.
-     * @see org.osgi.framework.BundleContext#getServiceReferences
-     * @return
-     */
-    public String getServiceFilter();
-    
-    /**
      * Returns the parent context of this context.  ModelContext objects can be 
      * chained this way to allow methods that require context from multiple 
      * services to retrieve this context from a single handle that comes from
      * the client.
      * @return parent context of this context.
      */
-    public IDMContext<?>[] getParents();
+    public IDMContext[] getParents();
 }

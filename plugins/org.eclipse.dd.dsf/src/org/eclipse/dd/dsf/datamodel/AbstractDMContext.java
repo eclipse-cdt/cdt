@@ -29,26 +29,24 @@ import org.eclipse.dd.dsf.service.DsfSession;
  * @param <V> Data Model data type that this context is for.
  */
 @Immutable
-abstract public class AbstractDMContext<V extends IDMData> extends PlatformObject 
-    implements IDMContext<V>     
+abstract public class AbstractDMContext extends PlatformObject 
+    implements IDMContext     
 {
     private final String fSessionId;
-    private final String fServiceFilter;
-    private final IDMContext<?>[] fParents;
+    private final IDMContext[] fParents;
 
     /** 
      * Main constructor provides all data needed to implement the IModelContext
      * interface.
      */
-    public AbstractDMContext(String sessionId, String filter, IDMContext<?>[] parents) {
+    public AbstractDMContext(String sessionId, IDMContext[] parents) {
         fSessionId = sessionId;
-        fServiceFilter = filter;
         fParents = parents;
     }
 
     /** Convenience constructor */
-    public AbstractDMContext(IDMService service, IDMContext<?>[] parents) {
-        this(service.getSession().getId(), service.getServiceFilter(), parents);
+    public AbstractDMContext(IDMService service, IDMContext[] parents) {
+        this(service.getSession().getId(), parents);
     }
 
     /** 
@@ -60,13 +58,12 @@ abstract public class AbstractDMContext<V extends IDMData> extends PlatformObjec
     protected boolean baseEquals(Object other) {
         if (other == null) return false;
         if ( !(other.getClass().equals(getClass()))) return false;
-        IDMContext<?> otherCtx = (IDMContext<?>)other;
+        IDMContext otherCtx = (IDMContext)other;
         return getSessionId().equals(otherCtx.getSessionId()) &&
-               getServiceFilter().equals(otherCtx.getServiceFilter()) &&
                areParentsEqual(otherCtx.getParents());
     }
 
-    private boolean areParentsEqual(IDMContext<?>[] otherParents) {
+    private boolean areParentsEqual(IDMContext[] otherParents) {
         if ( !(fParents.length == otherParents.length) ) return false;
         for (int i = 0; i < fParents.length; i++) {
             if (!fParents[i].equals(otherParents[i])) {
@@ -81,20 +78,19 @@ abstract public class AbstractDMContext<V extends IDMData> extends PlatformObjec
         for (Object parent : getParents()) {
             parentsHash += parent.hashCode();
         }
-        return getSessionId().hashCode() + getServiceFilter().hashCode() + parentsHash;
+        return getSessionId().hashCode() + parentsHash;
     }
     
     protected String baseToString() {
         StringBuffer retVal = new StringBuffer(); 
-        for (IDMContext<?> parent : fParents) {
+        for (IDMContext parent : fParents) {
             retVal.append(parent);
         }
         return retVal.toString(); 
     }
     
     public String getSessionId() { return fSessionId; }
-    public String getServiceFilter() { return fServiceFilter; }
-    public IDMContext<?>[] getParents() { return fParents; }
+    public IDMContext[] getParents() { return fParents; }
         
     /**
      * Overrides the standard platform getAdapter to provide session-specific 

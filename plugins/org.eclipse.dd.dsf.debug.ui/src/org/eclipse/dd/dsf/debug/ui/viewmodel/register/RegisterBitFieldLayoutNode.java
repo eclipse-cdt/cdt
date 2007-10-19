@@ -18,7 +18,6 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -64,13 +63,13 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")
-public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBitFieldDMData> implements IElementEditor {
+public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode implements IElementEditor {
 
     protected class BitFieldVMC extends DMVMContext
         implements IVariable, IFormattedValueVMContext
     {
         private IExpression fExpression;
-        public BitFieldVMC(IDMContext<?> dmc) {
+        public BitFieldVMC(IDMContext dmc) {
             super(dmc);
         }
         
@@ -285,7 +284,7 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
             final IBitFieldDMContext dmc = findDmcInPath(update.getElementPath(), IRegisters.IBitFieldDMContext.class);
             
             VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
-				.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
+				.getModelData(getServicesTracker().getService(IRegisters.class),
                 dmc, 
                 new DataRequestMonitor<IBitFieldDMData>(getSession().getExecutor(), null) { 
                     @Override
@@ -296,7 +295,7 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
                          * service changed during the request, but the view model
                          * has not been updated yet.
                          */ 
-                        if (!getStatus().isOK() || !getData().isValid()) {
+                        if (!getStatus().isOK()) {
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfService.NOT_SUPPORTED;
@@ -392,7 +391,7 @@ public class RegisterBitFieldLayoutNode extends AbstractExpressionLayoutNode<IBi
     }
     
     @Override
-    protected IVMContext createVMContext(IDMContext<IBitFieldDMData> dmc) {
+    protected IVMContext createVMContext(IDMContext dmc) {
         return new BitFieldVMC(dmc);
     }
     

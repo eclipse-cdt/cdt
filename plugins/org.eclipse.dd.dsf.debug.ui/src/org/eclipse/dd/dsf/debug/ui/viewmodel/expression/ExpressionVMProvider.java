@@ -60,8 +60,8 @@ public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache imp
         /*
          *  Allocate the synchronous data providers.
          */
-        SyncRegisterDataAccess syncRegDataAccess = new SyncRegisterDataAccess();
-        SyncVariableDataAccess syncvarDataAccess = new SyncVariableDataAccess() ;
+        SyncRegisterDataAccess syncRegDataAccess = new SyncRegisterDataAccess(getSession());
+        SyncVariableDataAccess syncvarDataAccess = new SyncVariableDataAccess(getSession()) ;
         
         /*
          *  Create the top level node which provides the anchor starting point.

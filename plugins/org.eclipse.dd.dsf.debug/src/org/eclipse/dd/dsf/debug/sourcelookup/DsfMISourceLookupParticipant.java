@@ -176,13 +176,13 @@ public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant#getSourceName(java.lang.Object)
 	 */
 	public String getSourceName(Object object) throws CoreException {
-		if ( !(object instanceof IDMContext<?>) || 
-             !((IDMContext<?>)object).getSessionId().equals(fSessionId) ) 
+		if ( !(object instanceof IDMContext) || 
+             !((IDMContext)object).getSessionId().equals(fSessionId) ) 
         {
             throw new CoreException(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, -1, "Invalid object", null)); //$NON-NLS-1$
         }
         
-        final IDMContext<?> dmc = (IDMContext<?>)object;
+        final IDMContext dmc = (IDMContext)object;
         Query<String> query = new Query<String>() { 
             @Override
             protected void execute(final DataRequestMonitor<String> rm) {
@@ -202,7 +202,7 @@ public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
 	}
 
     @ConfinedToDsfExecutor("fExecutor")
-    private void getSourceNameOnDispatchThread(IDMContext<?> dmc, final DataRequestMonitor<String> rm) {
+    private void getSourceNameOnDispatchThread(IDMContext dmc, final DataRequestMonitor<String> rm) {
         if (!(dmc instanceof IStack.IFrameDMContext)) {
             rm.setStatus(new Status(IStatus.ERROR, DsfDebugPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "No source for this object", null)); //$NON-NLS-1$
             rm.done();

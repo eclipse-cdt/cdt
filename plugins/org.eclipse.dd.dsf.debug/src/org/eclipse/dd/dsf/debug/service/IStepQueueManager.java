@@ -46,21 +46,21 @@ public interface IStepQueueManager extends IDsfService {
      * Returns the number of step commands that are queued for given execution
      * context.
      */
-    int getPendingStepCount(IDMContext<?> ctx);
+    int getPendingStepCount(IDMContext ctx);
 
     /**
      * Checks whether a step command can be queued up for given context.
      */
-    boolean canEnqueueStep(IDMContext<?> execCtx);
+    boolean canEnqueueStep(IDMContext execCtx);
 
-    boolean canEnqueueInstructionStep(IDMContext<?> ctx);
+    boolean canEnqueueInstructionStep(IDMContext ctx);
 
     /**
      * Adds a step command to the execution queue for given context.
      * @param execCtx Execution context that should perform the step. 
      * @param stepType Type of step to execute.
      */
-    void enqueueStep(IDMContext<?> ctx, IRunControl.StepType stepType);
+    void enqueueStep(IDMContext ctx, IRunControl.StepType stepType);
     
     /**
      * Adds an instruction step command to the execution queue for given 
@@ -68,7 +68,7 @@ public interface IStepQueueManager extends IDsfService {
      * @param execCtx Execution context that should perform the step. 
      * @param stepType Type of step to execute.
      */
-    void enqueueInstructionStep(IDMContext<?> ctx, IRunControl.StepType stepType);
+    void enqueueInstructionStep(IDMContext ctx, IRunControl.StepType stepType);
 
-    boolean isSteppingTimedOut(IDMContext<?> context);
+    boolean isSteppingTimedOut(IDMContext context);
 }

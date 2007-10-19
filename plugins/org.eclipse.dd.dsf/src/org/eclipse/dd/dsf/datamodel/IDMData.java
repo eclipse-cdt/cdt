@@ -10,23 +10,13 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.datamodel;
 
-import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
+import org.eclipse.dd.dsf.concurrent.Immutable;
 
 /**
- * Data object containing information regarding a model context.  Unlike the 
- * DM Context object, this object does have to be accessed on the dispatch thread, 
- * unless other-wise noted.  And it does not need to be immutable or free of 
- * references to the service.  In fact, to avoid unnecessary duplication of data
- * it is most practical for the DM Data object to simply retrieve data directly
- * from the service internals (caches, queues, etc).
+ * Marker interface for data corresponding to IDMContext, retrieved from a 
+ * service.  These data objects are meant to be processed by clients on 
+ * different threads, therefore they should be immutable.
  */
-@ConfinedToDsfExecutor("")
+@Immutable
 public interface IDMData {
-    
-    /** 
-     * Returns true if the data represented by this object is still valid.  
-     * Data may become invalid if, for example the cache object backing this
-     * data was cleared. 
-     */
-    public boolean isValid();
 }

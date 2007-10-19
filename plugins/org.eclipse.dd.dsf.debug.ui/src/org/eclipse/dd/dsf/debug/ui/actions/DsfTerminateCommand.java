@@ -52,7 +52,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
         // Javac doesn't like the cast to "(AbstractDMVMLayoutNode<?>.DMVMContext)" need to use the 
         // construct below and suppress warnings.
         @SuppressWarnings("unchecked") 
-        AbstractDMVMLayoutNode<?>.DMVMContext vmc = (AbstractDMVMLayoutNode.DMVMContext)request.getElements()[0];
+        AbstractDMVMLayoutNode.DMVMContext vmc = (AbstractDMVMLayoutNode.DMVMContext)request.getElements()[0];
         final IExecutionDMContext dmc = DMContexts.getAncestorOfType(vmc.getDMC(), IExecutionDMContext.class);
         if (dmc == null) {
             request.setEnabled(false);

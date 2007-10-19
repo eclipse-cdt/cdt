@@ -44,9 +44,9 @@ public abstract class VMCache
 	
 	protected HashMap<Object, Boolean> fHasChildren = new HashMap<Object, Boolean>();
 	
-	protected HashMap<IDMContext<?>, IDMData> fData = new HashMap<IDMContext<?>, IDMData>();
+	protected HashMap<IDMContext, IDMData> fData = new HashMap<IDMContext, IDMData>();
 	
-	protected HashMap<IDMContext<?>, IDMData> fDataArchive = fData;
+	protected HashMap<IDMContext, IDMData> fDataArchive = fData;
 	
 	public HashMap<?,?>[] getCacheData()
 	{
@@ -69,8 +69,8 @@ public abstract class VMCache
 			fHasChildren = (HashMap<Object, Boolean>)oldCacheData[0];
 			fChildrenCounts = (HashMap<Object, Integer>)oldCacheData[1];
 			fChildren = (HashMap<Object, HashMap<Integer,Object>>)oldCacheData[2];
-			fData = (HashMap<IDMContext<?>, IDMData>)oldCacheData[3];
-			fDataArchive = (HashMap<IDMContext<?>, IDMData>)oldCacheData[4];
+			fData = (HashMap<IDMContext, IDMData>)oldCacheData[3];
+			fDataArchive = (HashMap<IDMContext, IDMData>)oldCacheData[4];
 		}
 	}
 	
@@ -78,7 +78,7 @@ public abstract class VMCache
 	{
 		if(archive)
 			fDataArchive = fData;
-		fData = new HashMap<IDMContext<?>, IDMData>();
+		fData = new HashMap<IDMContext, IDMData>();
 		fChildrenCounts.clear();
 		fChildren.clear();
 		fHasChildren.clear();

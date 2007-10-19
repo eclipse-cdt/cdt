@@ -24,7 +24,7 @@ class SourceLookupResult  {
     /** 
      * Element that source was resolved for.
      */
-    private IDMContext<?> fDmc;
+    private IDMContext fDmc;
     /**
      * Corresponding source element, or <code>null</code>
      * if unknown.
@@ -45,7 +45,7 @@ class SourceLookupResult  {
      * Creates a source lookup result on the given artifact, source element, 
      * editor id, and editor input.
      */
-    public SourceLookupResult(IDMContext<?> dmc, Object sourceElement, String editorId, IEditorInput editorInput) {
+    public SourceLookupResult(IDMContext dmc, Object sourceElement, String editorId, IEditorInput editorInput) {
         fDmc = dmc;
         setSourceElement(sourceElement);
         setEditorId(editorId);
@@ -55,7 +55,7 @@ class SourceLookupResult  {
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.sourcelookup.ISourceLookupResult#getArtifact()
      */
-    public IDMContext<?> getDmc() {
+    public IDMContext getDmc() {
         return fDmc;
     }
     
@@ -121,7 +121,7 @@ class SourceLookupResult  {
 	 * 
 	 * @param artifact new artifact state
 	 */
-	public void updateArtifact(IDMContext<?> dmc) {
+	public void updateArtifact(IDMContext dmc) {
 		if (fDmc.equals(dmc)) {
 			fDmc = dmc;
 		}

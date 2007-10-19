@@ -41,7 +41,7 @@ public class RegisterBitFieldLayoutCellModifier extends WatchExpressionCellModif
      */
     private IBitFieldDMContext getBitFieldDMC(Object element) {
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext<?> dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
             return DMContexts.getAncestorOfType(dmc, IBitFieldDMContext.class);
         }
         return null;

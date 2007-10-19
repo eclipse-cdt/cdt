@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMService;
@@ -30,7 +30,7 @@ public interface IOS extends IDMService {
      * Context object for the whole OS, for debuggers that support 
      * debugging multiple targets/cores simultaneously.
      */
-    public interface IOSDMContext extends IDMContext<IOSDMData> {}
+    public interface IOSDMContext extends IDMContext {}
 
     /**
      * Data object describing OS info
@@ -44,7 +44,7 @@ public interface IOS extends IDMService {
     /**
      * Context for a OS object type, such as process, kernel task, semaphore, etc.
      */
-    public interface IObjectTypeDMContext extends IDMContext<IObjectTypeDMData> {}
+    public interface IObjectTypeDMContext extends IDMContext {}
     
     /**
      * Description data for a OS object type.
@@ -59,7 +59,7 @@ public interface IOS extends IDMService {
     /**
      * OS object context.
      */
-    public interface IObjectDMContext extends IDMContext<IObjectDMData> {}
+    public interface IObjectDMContext extends IDMContext {}
 
     /**
      * Description data for an OS object.
@@ -69,7 +69,7 @@ public interface IOS extends IDMService {
         String getID();
         boolean canAttachDebugger();
         boolean isDebuggerAttached(); 
-        IDMContext<?> getDebuggingContext();
+        IDMContext getDebuggingContext();
     }
     
     /**

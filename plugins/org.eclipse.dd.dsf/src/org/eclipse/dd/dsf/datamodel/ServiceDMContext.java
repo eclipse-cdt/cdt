@@ -16,11 +16,11 @@ package org.eclipse.dd.dsf.datamodel;
  * {@link IDMService#getServiceContext()} methods.  The service DM Context
  * should be the parent of all contexts originating from the given service.
  */
-public class ServiceDMContext<V extends IDMService> extends AbstractDMContext<V> {
+public class ServiceDMContext extends AbstractDMContext {
     String fServiceDMID;
     
     public ServiceDMContext(IDMService service, String serviceDMID) {
-        super(service, new IDMContext<?>[0]);
+        super(service, new IDMContext[0]);
         fServiceDMID = serviceDMID; 
     }
     
@@ -29,7 +29,7 @@ public class ServiceDMContext<V extends IDMService> extends AbstractDMContext<V>
 
     @Override
     public boolean equals(Object obj) { 
-        return obj instanceof ServiceDMContext<?> && fServiceDMID.equals(((ServiceDMContext<?>)obj).fServiceDMID); 
+        return obj instanceof ServiceDMContext && fServiceDMID.equals(((ServiceDMContext)obj).fServiceDMID); 
     }
     
     @Override

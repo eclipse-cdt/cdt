@@ -28,7 +28,7 @@ public interface IBreakpoints extends IDMService {
    
     public enum BreakpointStatus { INSTALLED, FAILED_TO_INSTALL, FILTERED_OUT }
     
-    public interface IBreakpointDMContext extends IDMContext<IBreakpointDMData> {}
+    public interface IBreakpointDMContext extends IDMContext {}
     
     public interface IBreakpointDMData extends IDMData {
         IBreakpoint getPlatformBreakpoint();
@@ -43,7 +43,7 @@ public interface IBreakpoints extends IDMService {
     
     public interface IBreakpointHitEvent extends IBreakpointDMEvent {}
     
-    public void getAllBreakpoints(IDMContext<?> execDmc, DataRequestMonitor<IBreakpointDMContext[]> rm);
-    public void getBreakpoints(IDMContext<?> execDmc, IBreakpoint platformBp, DataRequestMonitor<IBreakpointDMContext[]> rm);
+    public void getAllBreakpoints(IDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm);
+    public void getBreakpoints(IDMContext ctx, IBreakpoint platformBp, DataRequestMonitor<IBreakpointDMContext[]> rm);
 }
 

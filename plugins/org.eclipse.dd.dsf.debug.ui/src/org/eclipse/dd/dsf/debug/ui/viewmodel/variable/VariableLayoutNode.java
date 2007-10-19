@@ -19,7 +19,6 @@ import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -63,7 +62,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings({"restriction", "nls"})
-public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpressionDMData> implements IElementEditor {
+public class VariableLayoutNode extends AbstractExpressionLayoutNode implements IElementEditor {
     
     /** 
      * List of child nodes containing only a reference to this.  This is what enables the view model
@@ -126,7 +125,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
         
         private IExpression fExpression;
         
-        public VariableExpressionVMC(IDMContext<?> dmc) {
+        public VariableExpressionVMC(IDMContext dmc) {
             super(dmc);
         }
 
@@ -208,7 +207,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
     }
 
     @Override
-    protected IVMContext createVMContext(IDMContext<IExpressionDMData> dmc) {
+    protected IVMContext createVMContext(IDMContext dmc) {
         return new VariableExpressionVMC(dmc);
     }
     
@@ -225,7 +224,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
             final IExpressionDMContext dmc = findDmcInPath(update.getElementPath(), IExpressions.IExpressionDMContext.class);
             
             VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
-				.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
+				.getModelData(getServicesTracker().getService(IExpressions.class, null),
 				dmc, 
                 new DataRequestMonitor<IExpressionDMData>(getSession().getExecutor(), null) { 
                     @Override
@@ -234,7 +233,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode<IExpression
                         // fail if the state of the  service changed during the request, but the view model
                         // has not been updated yet.
                         
-                        if (!getStatus().isOK() || !getData().isValid()) {
+                        if (!getStatus().isOK()) {
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfService.NOT_SUPPORTED;

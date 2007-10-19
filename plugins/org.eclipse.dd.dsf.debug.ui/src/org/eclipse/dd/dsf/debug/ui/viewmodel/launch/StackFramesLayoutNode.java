@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
-import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStack;
@@ -28,10 +27,12 @@ import org.eclipse.dd.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.dd.dsf.debug.service.IStack.IFrameDMData;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -41,7 +42,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 @SuppressWarnings("restriction")
-public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameDMData> {
+public class StackFramesLayoutNode extends AbstractDMVMLayoutNode {
     
     public IVMContext[] fCachedOldFrameVMCs;
     
@@ -143,8 +144,49 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode<IStack.IFrameD
     }
     
     @Override
-    protected void fillColumnLabel(IDMContext<IFrameDMData> dmContext, IFrameDMData dmData, String columnId, int idx,
-                                   ILabelUpdate update) 
+    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
+        for (final ILabelUpdate update : updates) {
+            final IFrameDMContext dmc = findDmcInPath(update.getElementPath(), IFrameDMContext.class);
+            if (!checkDmc(dmc, update) || !checkService(IStack.class, null, update)) continue;
+            
+            VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+                .getModelData(getServicesTracker().getService(IStack.class, null),
+                dmc, 
+                new DataRequestMonitor<IFrameDMData>(getSession().getExecutor(), null) { 
+                    @Override
+                    protected void handleCompleted() {
+                        /*
+                         * Check that the request was evaluated and data is still
+                         * valid.  The request could fail if the state of the 
+                         * service changed during the request, but the view model
+                         * has not been updated yet.
+                         */ 
+                        if (!getStatus().isOK()) {
+                            assert getStatus().isOK() || 
+                                   getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
+                                   getStatus().getCode() != IDsfService.NOT_SUPPORTED;
+                            handleFailedUpdate(update);
+                            return;
+                        }
+                        
+                        /*
+                         * If columns are configured, call the protected methods to 
+                         * fill in column values.  
+                         */
+                        String[] localColumns = update.getPresentationContext().getColumns();
+                        if (localColumns == null) localColumns = new String[] { null };
+                        
+                        for (int i = 0; i < localColumns.length; i++) {
+                            fillColumnLabel(dmc, getData(), localColumns[i], i, update);
+                        }
+                        update.done();
+                    }
+                },
+                getExecutor());
+        }
+    }
+
+    protected void fillColumnLabel(IFrameDMContext dmContext, IFrameDMData dmData, String columnId, int idx, ILabelUpdate update) 
     {
         if (idx != 0) return;
         

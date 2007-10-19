@@ -27,7 +27,7 @@ public interface IStack extends IDMService {
      * frame data, this context is used by other services that require a stack
      * frame for evaluation.  
      */
-    public interface IFrameDMContext extends IDMContext<IFrameDMData> {}
+    public interface IFrameDMContext extends IDMContext {}
 
     /**
      * Stack frame information. 
@@ -46,7 +46,7 @@ public interface IStack extends IDMService {
      * expression information.  For displaying complete information, 
      * Expressions service should be used.
      */
-    public interface IVariableDMContext extends IDMContext<IVariableDMData> {}
+    public interface IVariableDMContext extends IDMContext {}
 
     /** 
      * Stack frame variable information.
@@ -59,13 +59,13 @@ public interface IStack extends IDMService {
     /**
      * Returns whether the stack frames can be retrieved for given thread.
      */
-    boolean isStackAvailable(IDMContext<?> execContext);
+    boolean isStackAvailable(IDMContext execContext);
     
     /**
      * Retrieves list of stack frames for the given execution context.  Request
      * will fail if the stack frame data is not available.
      */
-    void getFrames(IDMContext<?> execContext, DataRequestMonitor<IFrameDMContext[]> rm);
+    void getFrames(IDMContext execContext, DataRequestMonitor<IFrameDMContext[]> rm);
     
     /**
      * Retrieves the top stack frame for the given execution context.  
@@ -76,17 +76,17 @@ public interface IStack extends IDMService {
      * @param execContext
      * @param rm
      */
-    void getTopFrame(IDMContext<?> execContext, DataRequestMonitor<IFrameDMContext> rm);
+    void getTopFrame(IDMContext execContext, DataRequestMonitor<IFrameDMContext> rm);
     
     /**
      * Retrieves variables which were arguments to the stack frame's function.
      */
-    void getArguments(IDMContext<?> frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+    void getArguments(IDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
     
     /**
      * Retrieves variables local to the stack frame.
      */
-    void getLocals(IDMContext<?> frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+    void getLocals(IDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
     
     /**
      * Retrieves the stack depth of the specified stack frame.

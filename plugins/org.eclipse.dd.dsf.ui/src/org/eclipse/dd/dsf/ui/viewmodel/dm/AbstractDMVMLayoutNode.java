@@ -22,9 +22,7 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
@@ -34,21 +32,16 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
-import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 
 
 /**
@@ -58,7 +51,7 @@ import org.eclipse.swt.graphics.RGB;
  * are of the same class type.   
  */
 @SuppressWarnings("restriction")
-abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends AbstractVMLayoutNode 
+abstract public class AbstractDMVMLayoutNode extends AbstractVMLayoutNode 
     implements IElementLabelProvider
 {
 
@@ -67,14 +60,14 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      */
     @Immutable
     public class DMVMContext extends AbstractVMContext {
-        private final IDMContext<?> fDmc;
+        private final IDMContext fDmc;
         
-        public DMVMContext(IDMContext<?> dmc) {
+        public DMVMContext(IDMContext dmc) {
             super(getVMProvider().getVMAdapter(), AbstractDMVMLayoutNode.this);
             fDmc = dmc;
         }
         
-        public IDMContext<?> getDMC() { return fDmc; }
+        public IDMContext getDMC() { return fDmc; }
         
         /**
          * The IAdaptable implementation.  If the adapter is the DM context, 
@@ -122,7 +115,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      * this type is erased at runtime, so a concrete class typs of the DMC
      * is needed for instanceof chacks.  
      */
-    private Class<? extends IDMContext<V>> fDMCClassType;
+    private Class<? extends IDMContext> fDMCClassType;
 
     /** 
      * Constructor initializes instance data, except for the child nodes.  
@@ -131,7 +124,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      * @param dmcClassType
      * @see #setChildNodes(IVMLayoutNode[])
      */
-    public AbstractDMVMLayoutNode(AbstractVMProvider provider, DsfSession session, Class<? extends IDMContext<V>> dmcClassType) {
+    public AbstractDMVMLayoutNode(AbstractVMProvider provider, DsfSession session, Class<? extends IDMContext> dmcClassType) {
         super(provider);
         fSession = session;
         fServicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(), session.getId());
@@ -161,7 +154,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         Object element = update.getElement(); 
         if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
             // If update element is a DMC, check if session is still alive.
-            IDMContext<?> dmc = ((DMVMContext)element).getDMC();
+            IDMContext dmc = ((DMVMContext)element).getDMC();
             if (dmc.getSessionId() != getSession().getId() || !DsfSession.isSessionActive(dmc.getSessionId())) {
                 handleFailedUpdate(update);
                 return false;
@@ -177,7 +170,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      * @param update Update to handle in case the DMC is null.
      * @return true if the DMC is NOT null, indicating that it's OK to proceed.  
      */
-    protected boolean checkDmc(IDMContext<?> dmc, IViewerUpdate update) {
+    protected boolean checkDmc(IDMContext dmc, IViewerUpdate update) {
         if (dmc == null) {
             update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, 
                                         "No valid context found.", null)); //$NON-NLS-1$
@@ -306,77 +299,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         }
     }
     
-    /**
-     * The default implementation of the retrieve label method.  It acquires 
-     * the service, using parameters in the DMC, then it fetches the model 
-     * data from the service, and then it calls the protected method 
-     * fillColumnLabel() for each column.  The deriving classes should override
-     * this method if a different method of computing the label is needed.
-     * 
-     * @see #fillColumnLabel(IDMData, String, int, String[], ImageDescriptor[], FontData[], RGB[], RGB[])
-     */
-    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
-        for (final ILabelUpdate update : updates) {
-            final IDMContext<V> dmc = findDmcInPath(update.getElementPath(), fDMCClassType);
-            if (!checkDmc(dmc, update) || !checkService(null, dmc.getServiceFilter(), update)) continue;
-            
-            VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
-    			.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
-    			dmc, 
-                new DataRequestMonitor<V>(getSession().getExecutor(), null) { 
-                    @Override
-                    protected void handleCompleted() {
-                        /*
-                         * Check that the request was evaluated and data is still
-                         * valid.  The request could fail if the state of the 
-                         * service changed during the request, but the view model
-                         * has not been updated yet.
-                         */ 
-                        if (!getStatus().isOK() || !getData().isValid()) {
-                            assert getStatus().isOK() || 
-                                   getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
-                                   getStatus().getCode() != IDsfService.NOT_SUPPORTED;
-                            handleFailedUpdate(update);
-                            return;
-                        }
-                        
-                        /*
-                         * If columns are configured, call the protected methods to 
-                         * fill in column values.  
-                         */
-                        String[] localColumns = update.getPresentationContext().getColumns();
-                        if (localColumns == null) localColumns = new String[] { null };
-                        
-                        for (int i = 0; i < localColumns.length; i++) {
-                            fillColumnLabel(dmc, getData(), localColumns[i], i, update);
-                        }
-                        update.done();
-                    }
-                },
-                getExecutor());
-        }
-    }
-
-    /**
-     * Fills in label information for given column.  This method is intended to 
-     * be overriden by deriving classes, to supply label information specific
-     * to the node. <br>  
-     * The implementation should fill in the correct value in each array at the 
-     * given index.
-     * @param dmContext Data Model Context object for which the label is generated.
-     * @param dmData Data Model Data object retrieved from the model service.
-     * for the DM Context supplied to the retrieveLabel() call.
-     * @param columnId Name of the column to fill in, null if no columns specified.
-     * @param idx Index to fill in in the label arrays.
-     * @param update Update object to fill information to
-     * 
-     * @see IElementLabelProvider
-     * @see IColumnPresentationFactory
-     */
-    protected void fillColumnLabel(@SuppressWarnings("unused") IDMContext<V> dmContext, @SuppressWarnings("unused") V dmData,
-                                   @SuppressWarnings("unused") String columnId, int idx, ILabelUpdate update) {
-        update.setLabel("", idx); //$NON-NLS-1$
-    }
+    abstract protected void updateLabelInSessionThread(ILabelUpdate[] updates);
 
     @Override
     public int getDeltaFlags(Object e) {
@@ -417,7 +340,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      * will only create a delta node for this one element.  
      */
     protected void buildDeltaForDMEvent(final IDMEvent<?> event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
-        IDMContext<V> dmc = DMContexts.getAncestorOfType(event.getDMContext(), fDMCClassType);
+        IDMContext dmc = DMContexts.getAncestorOfType(event.getDMContext(), fDMCClassType);
         
         if (dmc != null) {
             // Create the VM context based on the DM context from the DM event.
@@ -493,7 +416,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
      * @param dmcs Array of DMC objects to build return array on.
      * @return Array of IVMContext objects.
      */
-    protected IVMContext[] dmcs2vmcs(IDMContext<V>[] dmcs) {
+    protected IVMContext[] dmcs2vmcs(IDMContext[] dmcs) {
         IVMContext[] vmContexts = new IVMContext[dmcs.length];
         for (int i = 0; i < dmcs.length; i++) {
             vmContexts[i] = new DMVMContext(dmcs[i]);
@@ -501,7 +424,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         return vmContexts;
     }
     
-    protected void fillUpdateWithVMCs(IChildrenUpdate update, IDMContext<V>[] dmcs) {
+    protected void fillUpdateWithVMCs(IChildrenUpdate update, IDMContext[] dmcs) {
         int startIdx = update.getOffset() != -1 ? update.getOffset() : 0;
         int endIdx = update.getLength() != -1 ? startIdx + update.getLength() : dmcs.length;
         // Ted: added bounds limitation of dmcs.length
@@ -511,7 +434,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         }
     }
     
-    protected IVMContext createVMContext(IDMContext<V> dmc) {
+    protected IVMContext createVMContext(IDMContext dmc) {
         return new DMVMContext(dmc);
     }
 
@@ -528,7 +451,7 @@ abstract public class AbstractDMVMLayoutNode<V extends IDMData> extends Abstract
         T retVal = null;
         for (int i = path.getSegmentCount() - 1; i >= 0; i--) {
             if (path.getSegment(i) instanceof AbstractDMVMLayoutNode.DMVMContext) {
-                IDMContext<?> dmc = ((DMVMContext)path.getSegment(i)).getDMC();
+                IDMContext dmc = ((DMVMContext)path.getSegment(i)).getDMC();
                 if ( dmc.getSessionId().equals(getSession().getId()) ) {
                     retVal = DMContexts.getAncestorOfType(dmc, dmcType);
                     if (retVal != null) break;

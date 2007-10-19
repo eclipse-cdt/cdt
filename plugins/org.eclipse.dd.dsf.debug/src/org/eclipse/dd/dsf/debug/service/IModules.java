@@ -30,12 +30,12 @@ public interface IModules extends IDMService {
      * types of debugging, like kernel or no-OS debugging, it's useful to 
      * separate the concept of a symbol context from a process.
      */
-    public interface ISymbolDMContext extends IDMContext<ISymbolDMData>{}
+    public interface ISymbolDMContext extends IDMContext {}
     
     /**
      * Module context represents a single module that is loaded.
      */
-    public interface IModuleDMContext extends IDMContext<IModuleDMData> {}
+    public interface IModuleDMContext extends IDMContext {}
     
     /**
      * Event indicating a change in the symbol information for given context.
@@ -101,7 +101,7 @@ public interface IModules extends IDMService {
     }
     
     /** Module information. */
-    public interface IModuleDMData extends IDMData {
+    public interface IModuleDMData {
         String getName();
         String getFile();
         long getTimeStamp();
@@ -134,16 +134,16 @@ public interface IModules extends IDMService {
     /** 
      * Retreives the list of modules loaded in given symbol context. 
      */ 
-    void getModules(IDMContext<?> symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
+    void getModules(IDMContext symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
 
     /**
      * Calculates the line numbers corresponding to the given address. 
      */
-    void calcLineInfo(IDMContext<?> symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm);
+    void calcLineInfo(IDMContext symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm);
     
     /**
      * Calculates the addresses corresponding to the given source file location.
      */
-    void calcAddressInfo(IDMContext<?> symCtx, String file, int line, int col, DataRequestMonitor<AddressRange[]> rm);
+    void calcAddressInfo(IDMContext symCtx, String file, int line, int col, DataRequestMonitor<AddressRange[]> rm);
 
 }

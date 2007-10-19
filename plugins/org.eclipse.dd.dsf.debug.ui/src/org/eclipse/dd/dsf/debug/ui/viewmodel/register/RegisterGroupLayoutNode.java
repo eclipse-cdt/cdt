@@ -56,14 +56,14 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")
-public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegisterGroupDMData>
+public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode
     implements IElementEditor
 {
 
     protected class RegisterGroupVMC extends DMVMContext implements IVariable
     {
         private IExpression fExpression;
-        public RegisterGroupVMC(IDMContext<?> dmc) {
+        public RegisterGroupVMC(IDMContext dmc) {
             super(dmc);
         }
         
@@ -173,13 +173,55 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode<IRegis
     }
     
     @Override
-    protected IVMContext createVMContext(IDMContext<IRegisterGroupDMData> dmc) {
+    protected IVMContext createVMContext(IDMContext dmc) {
         return new RegisterGroupVMC(dmc);
     }
 
     
     @Override
-    protected void fillColumnLabel(IDMContext<IRegisterGroupDMData> dmContext, IRegisterGroupDMData dmData,
+    protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
+        for (final ILabelUpdate update : updates) {
+            final IRegisterGroupDMContext dmc = findDmcInPath(update.getElementPath(), IRegisterGroupDMContext.class);
+            if (!checkDmc(dmc, update) || !checkService(IRegisters.class, null, update)) continue;
+            
+            VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
+                .getModelData(getServicesTracker().getService(IRegisters.class, null),
+                dmc, 
+                new DataRequestMonitor<IRegisterGroupDMData>(getSession().getExecutor(), null) { 
+                    @Override
+                    protected void handleCompleted() {
+                        /*
+                         * Check that the request was evaluated and data is still
+                         * valid.  The request could fail if the state of the 
+                         * service changed during the request, but the view model
+                         * has not been updated yet.
+                         */ 
+                        if (!getStatus().isOK()) {
+                            assert getStatus().isOK() || 
+                                   getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
+                                   getStatus().getCode() != IDsfService.NOT_SUPPORTED;
+                            handleFailedUpdate(update);
+                            return;
+                        }
+                        
+                        /*
+                         * If columns are configured, call the protected methods to 
+                         * fill in column values.  
+                         */
+                        String[] localColumns = update.getPresentationContext().getColumns();
+                        if (localColumns == null) localColumns = new String[] { null };
+                        
+                        for (int i = 0; i < localColumns.length; i++) {
+                            fillColumnLabel(dmc, getData(), localColumns[i], i, update);
+                        }
+                        update.done();
+                    }
+                },
+                getExecutor());
+        }
+    }
+
+    protected void fillColumnLabel(IRegisterGroupDMContext dmContext, IRegisterGroupDMData dmData,
                                    String columnId, int idx, ILabelUpdate update) 
     {
         if (IDebugVMConstants.COLUMN_ID__NAME.equals(columnId)) {

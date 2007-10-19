@@ -50,14 +50,14 @@ public interface IMemory extends IDsfService {
 	 */
     public class MemoryChangedEvent {
         IAddress[] fAddresses;
-        IDMContext<?> fContext;
+        IDMContext fContext;
         
-        public MemoryChangedEvent(IDMContext<?> context, IAddress[] addresses) {
+        public MemoryChangedEvent(IDMContext context, IAddress[] addresses) {
         	fContext = context;
         	fAddresses = addresses;
         }
 
-        public IDMContext<?> getContext() {
+        public IDMContext getContext() {
             return fContext;
         }
 
@@ -86,7 +86,7 @@ public interface IMemory extends IDsfService {
      * @param count		the number of data elements to read
      * @param drm		the asynchronous data request monitor
      */
-    public void getMemory(IDMContext<?> context, IAddress address, long offset,
+    public void getMemory(IDMContext context, IAddress address, long offset,
     		int word_size, int count, DataRequestMonitor<MemoryByte[]> drm);
 
     /**
@@ -107,7 +107,7 @@ public interface IMemory extends IDsfService {
      * @param buffer	the source buffer
      * @param rm		the asynchronous data request monitor
      */
-    public void setMemory(IDMContext<?> context, IAddress address, long offset,
+    public void setMemory(IDMContext context, IAddress address, long offset,
     		int word_size, int count, byte[] buffer, RequestMonitor rm);
 
     /**
@@ -123,7 +123,7 @@ public interface IMemory extends IDsfService {
      * @param pattern	the source buffer
      * @param rm		the asynchronous data request monitor
      */
-    public void fillMemory(IDMContext<?> context, IAddress address, long offset,
+    public void fillMemory(IDMContext context, IAddress address, long offset,
     		int word_size, int count, byte[] pattern, RequestMonitor rm);
 
 }

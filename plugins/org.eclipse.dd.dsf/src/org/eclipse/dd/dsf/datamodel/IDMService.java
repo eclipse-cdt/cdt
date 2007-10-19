@@ -20,13 +20,13 @@ import org.eclipse.dd.dsf.service.IDsfService;
  * and has a method which allows clients to retrieve the DM Context that 
  * represents the service data. 
  */
-public interface IDMService extends IDsfService, IDMData {
+public interface IDMService extends IDsfService {
     /**
      * Returns the context representing the service in the data model.  It is 
      * usually used in events to indicate that lists of contexts in this 
      * service are changed. 
      */
-    IDMContext<?> getServiceContext();
+    IDMContext getServiceContext();
 
     /**
     /**
@@ -38,5 +38,5 @@ public interface IDMService extends IDsfService, IDMData {
      * @param dmc Data Model Context for the data model data object to be retrieved.
      * @param rm Request completion monitor to be filled in with the Data Model Data.
      */
-    <V extends IDMData> void getModelData(IDMContext<V> dmc, DataRequestMonitor<V> rm);
+    void getModelData(IDMContext dmc, DataRequestMonitor<?> rm);
 }

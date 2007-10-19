@@ -26,8 +26,8 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
  */
 public interface INativeProcesses extends IDMService {
     
-    public interface IThreadDMContext extends IDMContext<IThreadDMData> {}
-    public interface IProcessDMContext extends IDMContext<IProcessDMData> {}
+    public interface IThreadDMContext extends IDMContext {}
+    public interface IProcessDMContext extends IDMContext {}
 
     /**
      * Interface for thread and process object data.  
@@ -36,7 +36,7 @@ public interface INativeProcesses extends IDMService {
         String getName();
         String getId();
         boolean isDebuggerAttached();
-        IDMContext<?> getDebugContext();
+        IDMContext getDebugContext();
     }
 
     /**
@@ -46,7 +46,7 @@ public interface INativeProcesses extends IDMService {
         String getName();
         String getId();
         boolean isDebuggerAttached();
-        IDMContext<?> getDebugContext();
+        IDMContext getDebugContext();
     }
 
     /**
@@ -55,11 +55,11 @@ public interface INativeProcesses extends IDMService {
     public interface IProcessChangedDMEvent extends IDMEvent<IProcessDMContext> {}
 
 
-    public interface IProcessStartedEvent extends IDMEvent<IDMContext<INativeProcesses>> {
+    public interface IProcessStartedEvent extends IDMEvent<IDMContext> {
         IProcessDMContext getProcess();
     } 
 
-    public interface IProcessExitedEvent extends IDMEvent<IDMContext<INativeProcesses>> {
+    public interface IProcessExitedEvent extends IDMEvent<IDMContext> {
         IProcessDMContext getProcess();
     } 
     
@@ -69,13 +69,13 @@ public interface INativeProcesses extends IDMService {
      * @param execCtx
      * @return
      */
-    public IThreadDMContext getThreadForDebugContext(IDMContext<?> execCtx);
+    public IThreadDMContext getThreadForDebugContext(IDMContext execCtx);
 
     /**
      * Returns a process context corresponding to the given context. <code>null</code> if no 
      * corresponding process exists.    
      */
-    public IProcessDMContext getProcessForDebugContext(IDMContext<?> execCtx);
+    public IProcessDMContext getProcessForDebugContext(IDMContext execCtx);
     
     /**
      * Retrieves the current list of processes running on target.
@@ -114,13 +114,13 @@ public interface INativeProcesses extends IDMService {
      * @param thread Thread or process to terminate.
      * @param rm Return token.
      */
-    void canTerminate(IDMContext<?> ctx, DataRequestMonitor<Boolean> rm);
+    void canTerminate(IDMContext ctx, DataRequestMonitor<Boolean> rm);
 
     /**
      * Terminates the selected process or thread.
      * @param thread Thread or process to terminate.
      * @param rm Request completion monitor, indicates success or failure.
      */
-    void terminate(IDMContext<?> ctx, RequestMonitor requestMonitor);
+    void terminate(IDMContext ctx, RequestMonitor requestMonitor);
 
 }

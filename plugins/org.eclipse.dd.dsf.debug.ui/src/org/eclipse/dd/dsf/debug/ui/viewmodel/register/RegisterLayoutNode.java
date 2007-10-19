@@ -18,7 +18,6 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.datamodel.IDMService;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
@@ -63,14 +62,14 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 
 @SuppressWarnings("restriction")
-public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDMData> 
+public class RegisterLayoutNode extends AbstractExpressionLayoutNode 
                                 implements IElementEditor
 {
     protected class RegisterVMC extends DMVMContext
     implements IVariable, IFormattedValueVMContext
     {
         private IExpression fExpression;
-        public RegisterVMC(IDMContext<?> dmc) {
+        public RegisterVMC(IDMContext dmc) {
             super(dmc);
         }
 
@@ -282,10 +281,10 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     protected void updateLabelInSessionThread(ILabelUpdate[] updates) {
         for (final ILabelUpdate update : updates) {
             final IRegisterDMContext dmc = findDmcInPath(update.getElementPath(), IRegisters.IRegisterDMContext.class);
-            if (!checkDmc(dmc, update) || !checkService(null, dmc.getServiceFilter(), update)) continue;
+            if (!checkDmc(dmc, update) || !checkService(IRegisters.class, null, update)) continue;
             
             VMCacheManager.getVMCacheManager().getCache(update.getPresentationContext())
-	        		.getModelData((IDMService)getServicesTracker().getService(null, dmc.getServiceFilter()),
+	        		.getModelData(getServicesTracker().getService(IRegisters.class),
 	        		dmc,             
             		new DataRequestMonitor<IRegisterDMData>(getSession().getExecutor(), null) { 
                     @Override
@@ -296,7 +295,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
                          * service changed during the request, but the view model
                          * has not been updated yet.
                          */ 
-                        if (!getStatus().isOK() || !getData().isValid()) {
+                        if (!getStatus().isOK()) {
                             assert getStatus().isOK() || 
                                    getStatus().getCode() != IDsfService.INTERNAL_ERROR || 
                                    getStatus().getCode() != IDsfService.NOT_SUPPORTED;
@@ -394,7 +393,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode<IRegisterDM
     }
     
     @Override
-    protected IVMContext createVMContext(IDMContext<IRegisterDMData> dmc) {
+    protected IVMContext createVMContext(IDMContext dmc) {
         return new RegisterVMC(dmc);
     }
     

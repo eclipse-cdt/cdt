@@ -25,7 +25,7 @@ public interface IRegisters extends IFormattedValues {
     public interface IGroupsChangedDMEvent extends IDMEvent<IRunControl.IExecutionDMContext> {}
 
     /** Register group context */
-    public interface IRegisterGroupDMContext extends IFormattedDataDMContext<IRegisterGroupDMData> {
+    public interface IRegisterGroupDMContext extends IFormattedDataDMContext {
         public String getName();
     }
     
@@ -45,7 +45,7 @@ public interface IRegisters extends IFormattedValues {
     }
 
     /** Register context */
-    public interface IRegisterDMContext extends IFormattedDataDMContext<IRegisterDMData> {
+    public interface IRegisterDMContext extends IFormattedDataDMContext {
         public String getName();
     }
     
@@ -66,7 +66,7 @@ public interface IRegisters extends IFormattedValues {
     }
 
     /** Bit field context */
-    public interface IBitFieldDMContext extends IFormattedDataDMContext<IBitFieldDMData> {
+    public interface IBitFieldDMContext extends IFormattedDataDMContext {
         public String getName();
     }
 
@@ -109,28 +109,28 @@ public interface IRegisters extends IFormattedValues {
      * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getRegisterGroups(IDMContext<?> ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
+    void getRegisterGroups(IDMContext ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
     
     /** 
      * Retrieves list of sub-groups of given register group. 
      * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getRegisterSubGroups(IDMContext<?> ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
+    void getRegisterSubGroups(IDMContext ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
     
     /** 
      * Retrieves registers in given register group.
      * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getRegisters(IDMContext<?> ctx, DataRequestMonitor<IRegisterDMContext[]> rm);
+    void getRegisters(IDMContext ctx, DataRequestMonitor<IRegisterDMContext[]> rm);
     
     /** 
      * Retrieves bit fields for given register
      * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getBitFields(IDMContext<?> ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
+    void getBitFields(IDMContext ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
     
     /** 
      * Writes a register value for a given register to the target
@@ -139,7 +139,7 @@ public interface IRegisters extends IFormattedValues {
      * @param formatId Format of the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeRegister(IDMContext<?> regCtx, String regValue, String formatId, RequestMonitor rm);
+    void writeRegister(IDMContext regCtx, String regValue, String formatId, RequestMonitor rm);
     
     /** 
      * Writes a bit field value for a given bit field to the target
@@ -148,7 +148,7 @@ public interface IRegisters extends IFormattedValues {
      * @param formatId Format of the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeBitField(IDMContext<?> bitFieldCtx, String bitFieldValue, String formatId, RequestMonitor rm);
+    void writeBitField(IDMContext bitFieldCtx, String bitFieldValue, String formatId, RequestMonitor rm);
     
     /** 
      * Writes a bit field value for a given bit field to the target
@@ -156,5 +156,5 @@ public interface IRegisters extends IFormattedValues {
      * @param mnemonic Mnemonic which represents the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeBitField(IDMContext<?> bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm);
+    void writeBitField(IDMContext bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm);
 }

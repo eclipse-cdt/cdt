@@ -22,7 +22,7 @@ import org.eclipse.dd.dsf.datamodel.IDMService;
  */
 public interface ITargets extends IDMService {
 
-    public interface ITargetDMContext extends IDMContext<ITargetDMData> {}
+    public interface ITargetDMContext extends IDMContext {}
     
     public interface ITargetDMData extends IDMData {
         String getName();
@@ -31,7 +31,7 @@ public interface ITargets extends IDMService {
     
     public interface ITargetStateChanged extends IDMEvent<ITargetDMContext> {}
     
-    public interface ICoreDMContext extends IDMContext<ICoreDMData> {}
+    public interface ICoreDMContext extends IDMContext {}
 
     public interface ICoreDMData extends IDMData {
         String getName();

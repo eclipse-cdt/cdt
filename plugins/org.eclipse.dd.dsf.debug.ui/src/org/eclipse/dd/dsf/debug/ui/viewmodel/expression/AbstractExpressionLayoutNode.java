@@ -21,7 +21,6 @@ import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
@@ -39,11 +38,11 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractExpressionLayoutNode<V extends IDMData> extends AbstractDMVMLayoutNode<V> 
+public abstract class AbstractExpressionLayoutNode extends AbstractDMVMLayoutNode 
     implements IExpressionLayoutNode
 {
     
-    public AbstractExpressionLayoutNode(AbstractVMProvider provider, DsfSession session, Class<? extends IDMContext<V>> dmcClassType) {
+    public AbstractExpressionLayoutNode(AbstractVMProvider provider, DsfSession session, Class<? extends IDMContext> dmcClassType) {
         super(provider, session, dmcClassType);
     }
 

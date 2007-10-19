@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [205297] Editor upload should not be on main thread
  * David McKnight   (IBM)        - [195285] mount path mapper changes
+ * Kevin Doyle	    (IBM) 		 - [197976] Synch up Read-Only attribute when performing save based on local copy
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
@@ -176,6 +178,13 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					// get modification stamp and dirty state         
 					long storedModifiedStamp = properties.getRemoteFileTimeStamp();
 
+					// If remote file is read-only make it writable as the local
+					// copy has changed to be writable
+					if (remoteFile.exists() && !remoteFile.canWrite() && !tempFile.isReadOnly()) {
+						remoteFile.getParentRemoteFileSubSystem().setReadOnly(
+								remoteFile, false, new NullProgressMonitor());
+					}				
+					
 					// get associated editable
 					SystemEditableRemoteFile editable = getEditedFile(remoteFile);
 					if (editable != null && storedModifiedStamp == 0)

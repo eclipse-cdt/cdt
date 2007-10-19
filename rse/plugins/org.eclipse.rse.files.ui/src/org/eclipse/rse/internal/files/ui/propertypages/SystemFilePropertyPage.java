@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [160776] format file size according to client system conventions and locale
  * David McKnight (IBM) - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
+ * Kevin Doyle (IBM) - [197976] Changing a file to read-only when it is open doesn't update local copy
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -30,6 +31,7 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.SystemFileResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -42,6 +44,7 @@ import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
+import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -491,6 +494,13 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
            // get the new can write attribute
            boolean updatedValue = remoteFile.canWrite();
 
+           // check if the file is open in an editor
+           SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile);
+           if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN) {
+        	   // Need to keep local copy and remote copies up to date
+        	   editable.setReadOnly(readOnlySelected);
+           }
+                     
            // if the values haven't changed, then we need to     
            // refresh  
            ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 

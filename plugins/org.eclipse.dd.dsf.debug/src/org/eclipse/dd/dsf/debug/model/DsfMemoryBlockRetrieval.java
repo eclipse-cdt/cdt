@@ -304,13 +304,13 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 				if (expressionService != null) {
 					// Create the expression
 					final IExpressionDMContext expressionDMC = expressionService.createExpression(idmContext, expression);
-					expressionService.getModelData(expressionDMC, new DataRequestMonitor<IExpressionDMData>(getExecutor(), drm) {
+					expressionService.getExpressionData(expressionDMC, new DataRequestMonitor<IExpressionDMData>(getExecutor(), drm) {
 						@Override
 						protected void handleOK() {
 							// Evaluate the expression - request HEX since it works in every case 
 							String formatId = IFormattedValues.HEX_FORMAT;
 							FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC, formatId);
-			                expressionService.getModelData(
+			                expressionService.getFormattedExpressionValue(
 			                	valueDmc, 
 			                    new DataRequestMonitor<FormattedValueDMData>(getExecutor(), drm) {
 			            			@Override

@@ -282,7 +282,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
                         doneException(new CoreException(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, -1, "Stack data not available", null))); //$NON-NLS-1$
                         return;
                     }
-                	stackService.getModelData(
+                	stackService.getFrameData(
                         frameDmc, 
                         new DataRequestMonitor<IFrameDMData>(fExecutor, rm) { 
                             @Override

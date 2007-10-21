@@ -19,6 +19,10 @@ import org.eclipse.dd.dsf.service.IDsfService;
  * For completeness this service interface derives from <code>IDMData</data> 
  * and has a method which allows clients to retrieve the DM Context that 
  * represents the service data. 
+ * 
+ * @deprecated Without getModelData method this service has no function.
+ * There's also no need for it as a marker interface so we may as well
+ * get rid of it.
  */
 public interface IDMService extends IDsfService {
     /**
@@ -30,8 +34,7 @@ public interface IDMService extends IDsfService {
      * @param dmc Data Model Context for the data model data object to be retrieved.
      * @param rm Request completion monitor to be filled in with the Data Model Data.
      * 
-     * @deprecated
-     * This method is not deprecated as there is no compile-time linking
+     * @deprecated This method is not deprecated as there is no compile-time linking
      * between IDMContext and IDMData objects (see bug 205132)
      */
     @Deprecated

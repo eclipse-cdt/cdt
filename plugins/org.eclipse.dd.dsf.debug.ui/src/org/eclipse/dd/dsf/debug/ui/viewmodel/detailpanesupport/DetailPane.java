@@ -403,7 +403,7 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
                                      *  Format has been validated. Get the formatted value.
                                      */
                                     final FormattedValueDMContext valueDmc = finalService.getFormattedValueContext(finalDmc, str);
-                                    finalService.getModelData(
+                                    finalService.getFormattedExpressionValue(
                                         valueDmc,
                                         new DataRequestMonitor<FormattedValueDMData>(finalService.getSession().getExecutor(), null) {
                                             @Override

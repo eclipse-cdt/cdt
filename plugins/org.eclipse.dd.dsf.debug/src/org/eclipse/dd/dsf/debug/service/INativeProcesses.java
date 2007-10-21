@@ -63,6 +63,11 @@ public interface INativeProcesses extends IDMService {
         IProcessDMContext getProcess();
     } 
     
+    public void getThreadData(IThreadDMContext dmc, DataRequestMonitor<IThreadDMData> rm);
+
+    public void getProcessData(IProcessDMContext dmc, DataRequestMonitor<IProcessDMData> rm);
+
+    
     /**
      * Returns a thread for the corresponding context.  <code>null</code> if no corresponding
      * thread exists.

@@ -106,18 +106,24 @@ public interface IRegisters extends IFormattedValues {
     
     /**
      * Retrieves register group data for given context.
-     * @param regGroupDmc Context to retrieve data for.
+     * @param dmc Context to retrieve data for.
      * @param rm Request completion monitor.
      */
-    void getRegisterGroupData(IRegisterGroupDMContext regGroupDmc, DataRequestMonitor<IRegisterGroupDMData> rm);
+    void getRegisterGroupData(IRegisterGroupDMContext dmc, DataRequestMonitor<IRegisterGroupDMData> rm);
 
     /**
      * Retrieves register data for given context.
-     * @param regGroupDmc Context to retrieve data for.
+     * @param dmc Context to retrieve data for.
      * @param rm Request completion monitor.
      */
-    void getRegisterData(IRegisterDMContext regDmc , DataRequestMonitor<IRegisterDMData> rm);
+    void getRegisterData(IRegisterDMContext dmc , DataRequestMonitor<IRegisterDMData> rm);
 
+    /**
+     * Retrieves bit field data for given context.
+     * @param dmc Context to retrieve data for.
+     * @param rm Request completion monitor.
+     */
+    void getBitFieldData(IBitFieldDMContext dmc , DataRequestMonitor<IBitFieldDMData> rm);
     
     /** 
      * Retrieves the list of register groups.

@@ -127,7 +127,7 @@ public class SyncRegisterDataAccess {
                 return;
             }
 
-            service.getModelData(fDmc, new DataRequestMonitor<IBitFieldDMData>(session.getExecutor(), rm) {
+            service.getBitFieldData(fDmc, new DataRequestMonitor<IBitFieldDMData>(session.getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
                     /*
@@ -464,7 +464,7 @@ public class SyncRegisterDataAccess {
                 return;
             }
 
-            service.getModelData(fDmc, new DataRequestMonitor<IRegisterGroupDMData>( session.getExecutor(), rm) {
+            service.getRegisterGroupData(fDmc, new DataRequestMonitor<IRegisterGroupDMData>( session.getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
                     /*
@@ -553,7 +553,7 @@ public class SyncRegisterDataAccess {
                 return;
             }
 
-            service.getModelData(fDmc, new DataRequestMonitor<IRegisterDMData>( session.getExecutor(), rm) {
+            service.getRegisterData(fDmc, new DataRequestMonitor<IRegisterDMData>( session.getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
                     /*
@@ -867,7 +867,7 @@ public class SyncRegisterDataAccess {
             
             FormattedValueDMContext formDmc = service.getFormattedValueContext(fDmc, fFormatId);
             
-            service.getModelData(formDmc, new DataRequestMonitor<FormattedValueDMData>( session.getExecutor(), rm) {
+            service.getFormattedExpressionValue(formDmc, new DataRequestMonitor<FormattedValueDMData>( session.getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
                     /*

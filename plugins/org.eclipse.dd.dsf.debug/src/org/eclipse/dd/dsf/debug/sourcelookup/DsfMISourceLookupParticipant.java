@@ -217,7 +217,7 @@ public class DsfMISourceLookupParticipant implements ISourceLookupParticipant {
             return;
         }
         
-        stackService.getModelData(
+        stackService.getFrameData(
             frameDmc, 
             new DataRequestMonitor<IFrameDMData>(fExecutor, rm) { @Override
             public void handleOK() {

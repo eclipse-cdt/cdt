@@ -124,7 +124,7 @@ public class SyncVariableDataAccess {
                 return;
             }
 
-            service.getModelData(fDmc, new DataRequestMonitor<IExpressionDMData>(session.getExecutor(), rm) {
+            service.getExpressionData(fDmc, new DataRequestMonitor<IExpressionDMData>(session.getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
                     /*
@@ -441,7 +441,7 @@ public class SyncVariableDataAccess {
             
             FormattedValueDMContext formDmc = service.getFormattedValueContext(fDmc, fFormatId);
             
-            service.getModelData(formDmc, new DataRequestMonitor<FormattedValueDMData>(session.getExecutor(), rm) {
+            service.getFormattedExpressionValue(formDmc, new DataRequestMonitor<FormattedValueDMData>(session.getExecutor(), rm) {
                 @Override
                 protected void handleCompleted() {
                     /*

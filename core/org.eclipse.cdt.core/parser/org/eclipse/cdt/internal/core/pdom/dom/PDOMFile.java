@@ -423,7 +423,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 	
 	public boolean hasNames() throws CoreException {
-		return getFirstName()!=null;
+		return getFirstName()!=null || getFirstMacro() != null || getFirstInclude() != null;
 	}
 
 	public void convertIncludersToUnresolved() throws CoreException {

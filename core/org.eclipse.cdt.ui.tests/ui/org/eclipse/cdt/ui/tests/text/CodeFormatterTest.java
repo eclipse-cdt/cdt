@@ -274,4 +274,15 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//template<typename T> class B {};
+	//template<typename T1,typename T2=B<T1> > class A {};
+
+	//template<typename T> class B {
+	//};
+	//template<typename T1, typename T2=B<T1> > class A {
+	//};
+	public void testNestedTemplateParameters_Bug206801() throws Exception {
+		assertFormatterResult();
+	}
+
 }

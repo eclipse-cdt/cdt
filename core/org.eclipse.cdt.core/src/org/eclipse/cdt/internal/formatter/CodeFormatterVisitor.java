@@ -71,6 +71,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
@@ -105,10 +106,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
@@ -293,7 +296,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 				continue;
 			}
 			try {
-				declaration.accept(this);
+				visit(declaration);
 				scribe.startNewLine();
 			} catch (RuntimeException e) {
 				// report, but continue
@@ -320,8 +323,11 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	public int visit(IASTDeclaration node) {
 		int indentLevel= scribe.indentationLevel;
 		try {
-    		if (node.getNodeLocations()[0] instanceof IASTMacroExpansion) {
-    			skipNode(node);
+			IASTNodeLocation[] locations= node.getNodeLocations();
+			if (locations.length == 0) {
+				throw new AbortFormatting("Empty location array in " + node.getClass().getName()); //$NON-NLS-1$
+			} else if (locations[0] instanceof IASTMacroExpansion) {
+				skipNode(node);
     		} else
     		if (node instanceof IASTFunctionDefinition) {
     			return visit((IASTFunctionDefinition)node);
@@ -622,7 +628,17 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 	 */
 	public int visit(IASTTypeId typeId) {
-		formatNode(typeId);
+		if (typeId instanceof IASTProblemHolder) {
+			throw new ASTProblemException(((IASTProblemHolder)typeId).getProblem());
+		}
+		IASTDeclSpecifier declSpec= typeId.getDeclSpecifier();
+		if (declSpec != null) {
+			declSpec.accept(this);
+		}
+		IASTDeclarator declarator= typeId.getAbstractDeclarator();
+		if (declarator != null) {
+			declarator.accept(this);
+		}
 		return PROCESS_SKIP;
 	}
 
@@ -721,11 +737,78 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	/*
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
 	 */
-	public int visit(ICPPASTTemplateParameter parameter) {
-		formatNode(parameter);
+	public int visit(ICPPASTTemplateParameter node) {
+		try {
+			IASTNodeLocation[] locations= node.getNodeLocations();
+    		if (locations.length == 0) {
+    			return PROCESS_SKIP;
+    		} else if (locations[0] instanceof IASTMacroExpansion) {
+    			skipNode(node);
+    		} else
+    		if (node instanceof ICPPASTSimpleTypeTemplateParameter) {
+    			visit((ICPPASTSimpleTypeTemplateParameter)node);
+    		} else if (node instanceof ICPPASTTemplatedTypeTemplateParameter) {
+    			visit((ICPPASTTemplatedTypeTemplateParameter)node);
+    		} else {
+    			visit((IASTParameterDeclaration)node);
+    		}
+		} catch (ASTProblemException e) {
+			skipNode(node);
+		}
 		return PROCESS_SKIP;
 	}
 
+	public int visit(ICPPASTSimpleTypeTemplateParameter node) {
+		switch (node.getParameterType()) {
+		case ICPPASTSimpleTypeTemplateParameter.st_class:
+			scribe.printNextToken(Token.t_class);
+			scribe.space();
+			break;
+		case ICPPASTSimpleTypeTemplateParameter.st_typename:
+			scribe.printNextToken(Token.t_typename);
+			scribe.space();
+			break;
+		default:
+			assert false : "Unknown template paramter type"; //$NON-NLS-1$
+			formatNode(node);
+			return PROCESS_SKIP;
+		}
+		node.getName().accept(this);
+		IASTTypeId defaultType= node.getDefaultType();
+		if (defaultType != null) {
+			scribe.printNextToken(Token.tASSIGN, scribe.printComment());
+			defaultType.accept(this);
+		}
+		return PROCESS_SKIP;
+	}
+	
+	public int visit(ICPPASTTemplatedTypeTemplateParameter node) {
+		scribe.printNextToken(Token.t_template, scribe.printComment());
+		scribe.printNextToken(Token.tLT, scribe.printComment());
+		if (scribe.printComment()) {
+			scribe.space();
+		}
+		final ICPPASTTemplateParameter[] templateParameters= node.getTemplateParameters();
+		if (templateParameters.length > 0) {
+			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
+			formatList(Arrays.asList(templateParameters), align, false, false);
+		}
+		scribe.printNextToken(Token.tGT, scribe.printComment());
+		if (scribe.printComment()) {
+			scribe.space();
+		}
+		IASTName name= node.getName();
+		if (name != null) {
+			name.accept(this);
+		}
+		IASTExpression defaultValue= node.getDefaultValue();
+		if (defaultValue != null) {
+			scribe.printNextToken(Token.tASSIGN, scribe.printComment());
+			defaultValue.accept(this);
+		}
+		return PROCESS_SKIP;
+	}
+	
 	private int visit(ICPPASTConstructorInitializer node) {
 		scribe.printNextToken(Token.tLPAREN, false);
 		final IASTExpression value= node.getExpression();
@@ -979,15 +1062,20 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	}
 
 	private int visit(ICPPASTTemplateDeclaration node) {
-		scribe.printNextToken(Token.t_template, false);
-		scribe.printNextToken(Token.tLT, false);
+		scribe.printNextToken(Token.t_template, scribe.printComment());
+		scribe.printNextToken(Token.tLT, scribe.printComment());
+		if (scribe.printComment()) {
+			scribe.space();
+		}
 		final ICPPASTTemplateParameter[] templateParameters= node.getTemplateParameters();
 		if (templateParameters.length > 0) {
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
 			formatList(Arrays.asList(templateParameters), align, false, false);
 		}
-		scribe.printNextToken(Token.tGT, false);
-		scribe.space();
+		scribe.printNextToken(Token.tGT, scribe.printComment());
+		if (scribe.printComment()) {
+			scribe.space();
+		}
 		node.getDeclaration().accept(this);
 		return PROCESS_SKIP;
 	}
@@ -1851,13 +1939,16 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private int visit(ICPPASTTemplateId node) {
 		IASTName name= node.getTemplateName();
 		name.accept(this);
-		scribe.printNextToken(Token.tLT, false);
+		scribe.printNextToken(Token.tLT, scribe.printComment());
+		if (scribe.printComment()) {
+			scribe.space();
+		}
 		final IASTNode[] templateArguments= node.getTemplateArguments();
 		if (templateArguments.length > 0) {
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
 			formatList(Arrays.asList(templateArguments), align, false, false);
 		}
-		scribe.printNextToken(Token.tGT, false);
+		scribe.printNextToken(Token.tGT, scribe.printComment());
 		return PROCESS_SKIP;
 	}
 

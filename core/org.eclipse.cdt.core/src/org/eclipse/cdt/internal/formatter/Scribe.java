@@ -632,8 +632,10 @@ public class Scribe {
 		try {
 			scanner.resetTo(Math.max(startOffset, scanner.getCurrentPosition()), startOffset + length - 1);
 			int parenLevel= 0;
+			boolean lastTokenWasGT= false;
 			while (true) {
 				boolean hasWhitespace= printComment();
+				boolean isGT= false;
 				currentToken= scanner.nextToken();
 				if (currentToken == null) {
 					if (hasWhitespace) {
@@ -681,6 +683,12 @@ public class Scribe {
 					}
 					print(currentToken.getLength(), hasWhitespace);
 					break;
+				case Token.tGT:
+					if (lastTokenWasGT) {
+						print(currentToken.getLength(), true);
+					}
+					isGT= true;
+					break;
 				case Token.tSEMI:
 					print(currentToken.getLength(), formatter.preferences.insert_space_before_semicolon);
 					break;
@@ -708,6 +716,7 @@ public class Scribe {
 					}
 				}
 				hasWhitespace= false;
+				lastTokenWasGT= isGT;
 			}
 		} finally {
 			scannerEndPosition= savedScannerEndPos;

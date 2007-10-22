@@ -36,12 +36,6 @@ import org.eclipse.dd.dsf.concurrent.Immutable;
  * This may prevent the service from being garbage collected, possibly keeping 
  * a lot of resources tied up.  
  * 
- * @param <V> For each context object there is a corresponding data object 
- * which will contain information about that context.  This template argument 
- * allows the clients to avoid casting the data class when retrieving data 
- * for a context object.
- * 
- * @see IDMData 
  */
 @Immutable
 public interface IDMContext extends IAdaptable 

@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - extracted from TerminalControl 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [206892] Dont connect if already connecting
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -41,6 +42,7 @@ public class SerialConnector implements ITerminalConnector {
     private CommPortIdentifier fSerialPortIdentifier;
 	private SerialPortHandler fTerminalSerialPortHandler;
 	private SerialSettings fSettings;
+	private SerialConnectWorker fConnectWorker;
 	public SerialConnector() {
 	}
 	public SerialConnector(SerialSettings settings) {
@@ -56,9 +58,13 @@ public class SerialConnector implements ITerminalConnector {
 	}
 	public void connect(ITerminalControl control) {
 		Logger.log("entered."); //$NON-NLS-1$
+		if (fConnectWorker!=null && fConnectWorker.isAlive()) {
+			//already connecting
+			return;
+		}
+		fConnectWorker = new SerialConnectWorker(this, control);
 		fControl=control;
-		SerialConnectWorker worker = new SerialConnectWorker(this, control);
-		worker.start();
+		fConnectWorker.start();
 	}
 	public void disconnect() {
 		Logger.log("entered."); //$NON-NLS-1$

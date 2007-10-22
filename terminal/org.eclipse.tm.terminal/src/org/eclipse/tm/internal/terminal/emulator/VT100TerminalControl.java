@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [206892] State handling: Only allow connect when CLOSED
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -287,7 +288,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 		if(getTerminalConnector()!=null) {
 			getTerminalConnector().disconnect();
 		}
-	}
+		}
 
 	// TODO
 	private void waitForConnect() {
@@ -655,7 +656,8 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 			char character = event.character;
 
-			if (!isConnected()) {
+			//if (!isConnected()) {
+			if (fState!=TerminalState.CLOSED) {
 				// Pressing ENTER while not connected causes us to connect.
 				if (character == '\r') {
 					connectTerminal();

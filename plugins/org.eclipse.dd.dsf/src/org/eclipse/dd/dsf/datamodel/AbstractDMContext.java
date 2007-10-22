@@ -13,6 +13,7 @@ package org.eclipse.dd.dsf.datamodel;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.service.DsfSession;
+import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
  * Base implementation of the IDMContext interface.  There are two pieces of 
@@ -45,7 +46,7 @@ abstract public class AbstractDMContext extends PlatformObject
     }
 
     /** Convenience constructor */
-    public AbstractDMContext(IDMService service, IDMContext[] parents) {
+    public AbstractDMContext(IDsfService service, IDMContext[] parents) {
         this(service.getSession().getId(), parents);
     }
 

@@ -15,14 +15,13 @@ import java.math.BigInteger;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.datamodel.IDMService;
+import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
  * Debugger service representing module handling logic of a debugger.  
  */
-public interface IModules extends IDMService {
+public interface IModules extends IDsfService {
     
     /**
      * Symbol context represents the space into which module symbols are loaded.
@@ -56,59 +55,14 @@ public interface IModules extends IDMService {
         IModuleDMContext getUnloadedModuleContext();
     }
 
-    /**
-     * Object representing a unuqie location in a symbol context, based on
-     * a module, section, and address offset within the seciton.
-     */
-    public final class ModuleSectionOffset {
-        private final IModuleDMContext fModule;
-        private final Section fSection;
-        private final BigInteger fOffset;
-
-        public IModuleDMContext getModule() { return fModule; }
-        public Section getSection() { return fSection; }
-        public BigInteger getOffset() { return fOffset; }
-        
-        public ModuleSectionOffset(IModuleDMContext module, Section section, BigInteger offset) {
-            this.fModule = module;
-            this.fSection = section;
-            this.fOffset = offset;
-        }
-
-        @Override
-        public int hashCode() {
-            return fModule.hashCode() + fSection.hashCode() + fOffset.intValue();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof ModuleSectionOffset)) return false;
-            ModuleSectionOffset mso = (ModuleSectionOffset)o;
-            return fModule.equals(mso.fModule) && fSection.equals(mso.fSection) && fOffset.equals(mso.fOffset);
-        }
-    }
-    
-    /**
-     * Symbol context data includes a mapping between run-time addresses and 
-     * module-section-offset coordinates.
-     */
-    public interface ISymbolDMData extends IDMData {
-        /** Convert link-time address 'addr' to run-time address */
-        public long convertToRT(ModuleSectionOffset mso);
-
-        /** Convert run-time address 'addr' to link-time address */
-        public ModuleSectionOffset convertFromRT(IAddress addr);
-    }
-    
     /** Module information. */
     public interface IModuleDMData {
         String getName();
         String getFile();
         long getTimeStamp();
-        Section[] getSections();
     }
     
-    /** Section information */
+    /** i information */
     public interface Section {
         String getName();
         IAddress getStartAddress();
@@ -130,7 +84,9 @@ public interface IModules extends IDMService {
         IAddress getStartAddress();
         IAddress getEndAddress();
     }
-    
+
+    void getModuleData(IModuleDMContext dmc, DataRequestMonitor<IModuleDMData> rm);
+
     /** 
      * Retreives the list of modules loaded in given symbol context. 
      */ 

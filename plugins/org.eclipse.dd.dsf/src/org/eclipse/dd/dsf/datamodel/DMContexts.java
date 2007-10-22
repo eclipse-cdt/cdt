@@ -23,6 +23,11 @@ import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 public class DMContexts {
 
     /**
+     * Convenience constant.
+     */
+    public static final IDMContext[] EMPTY_CONTEXTS_ARRAY = new IDMContext[0];
+    
+    /**
      * Finds a data model context of given type among ancestors of the 
      * specified context.
      * @param ctx DMC to search.

@@ -676,7 +676,7 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			char character = event.character;
 
 			//if (!isConnected()) {
-			if (fState!=TerminalState.CLOSED) {
+			if (fState==TerminalState.CLOSED) {
 				// Pressing ENTER while not connected causes us to connect.
 				if (character == '\r') {
 					connectTerminal();

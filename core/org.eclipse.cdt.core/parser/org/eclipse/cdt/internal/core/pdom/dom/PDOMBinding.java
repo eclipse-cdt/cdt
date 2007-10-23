@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -196,8 +198,44 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 
 	abstract protected int getRecordSize(); // superclass's implementation is no longer valid
 	
+	/* For debug purposes only
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
-		return getName() + " " + getNodeType();  //$NON-NLS-1$
+		try {
+			return getName() + " " + getConstantNameForValue(getLinkageImpl(), getNodeType());  //$NON-NLS-1$
+		} catch(CoreException ce) {
+			return getName() + " " + getNodeType();  //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * For debug purposes only.
+	 * @param linkage
+	 * @param value
+	 * @return
+	 */
+	protected static String getConstantNameForValue(PDOMLinkage linkage, int value) {
+		Class c= linkage.getClass();
+		Field[] fields= c.getFields();
+		for(int i=0; i<fields.length; i++) {
+			try {
+				fields[i].setAccessible(true);
+				if((fields[i].getModifiers() & Modifier.STATIC) != 0) {
+					if(int.class.equals(fields[i].getType())) {
+						int fvalue= fields[i].getInt(null);
+						if(fvalue == value)
+							return fields[i].getName();
+					}
+				}
+			} catch(IllegalAccessException iae) {
+				continue;
+			} catch(IllegalArgumentException iae) {
+				continue;
+			}
+		}
+		return Integer.toString(value);
 	}
 	
 	/**

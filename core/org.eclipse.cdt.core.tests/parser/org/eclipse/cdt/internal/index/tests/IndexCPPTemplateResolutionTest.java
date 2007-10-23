@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
@@ -57,6 +58,72 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 
 	public IndexCPPTemplateResolutionTest() {
 		setStrategy(new ReferencedProject(true));
+	}
+	
+	// template<typename T>
+	// class X {
+	//    public: static void foo() {}
+	// };
+	
+	// class A{};
+	// void bar() {
+	//   X<A>::foo();
+	// }
+	public void testUnindexedMethodInstance() {
+		IBinding b0= getBindingFromASTName("foo()", 3);
+		assertInstance(b0, ICPPMethod.class);
+	}
+	
+	// template<typename T>
+	// class X {};
+	
+	// class A{};
+	// void bar() {
+	//   X<A> xa= new X<A>();
+	// }
+	public void testUnindexedConstructorInstance() {
+		IBinding b0= getBindingFromASTName("X<A>()", 4);
+		assertInstance(b0, ICPPConstructor.class);
+	}
+	
+	//	class Str1 {
+	//	public:
+	//	   Str1(const char* s) {
+	//	      s_ = s;
+	//     }
+	//
+	//	   const char* s_;
+	//	};
+	//
+	//	template<typename T>
+	//	class StrT {
+	//	public:
+	//	   StrT(const T* s) {
+	//	      s_ = s;
+	//     }
+	//
+	//     const T* s_;
+	//	};
+	//
+	//	typedef StrT<char> Str2;
+	//
+	//	class C1 {
+	//	public:
+	//	  void m1(const Str1& s) {}
+	//	  void m2(const Str2& s) {}
+	//	  void m3();
+	//	};
+
+	//  void C1::m3() {
+	//	   m1("aaa");  // OK
+	//	   m2("aaa");  // problem
+	//  }
+	public void _testUnindexedConstructorInstanceImplicitReference() throws Exception {
+		IBinding b0= getBindingFromASTName("m1(\"aaa\")", 2);
+    	IBinding b1= getBindingFromASTName("m2(\"aaa\")", 2);
+    	
+    	assertEquals(1, getIndex().findNames(b0, IIndex.FIND_REFERENCES).length);
+    	assertEquals(1, getIndex().findNames(b1, IIndex.FIND_REFERENCES).length);
 	}
 	
 	// // Bryan W.'s example from bugzilla#167098
@@ -81,15 +148,32 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//            // foo<int,int> -> CPPMethodInstance
 	//    }
     public void testCPPConstructorTemplateSpecialization() throws Exception {
-    	IBinding b0= getBindingFromASTName("D<int>(", 1);
-    	IBinding b1= getBindingFromASTName("D<int>(", 6);
+    	IBinding b0= getBindingFromASTName("D<int> *var", 1);
+    	IBinding b1= getBindingFromASTName("D<int> *var", 6);
     	
-    	assertInstance(b0, ICPPClassTemplate.class); // *D*<int>(5, 6)
-    	assertInstance(b0, ICPPClassType.class); // *D*<int>(5, 6)
-    	assertInstance(b1, ICPPTemplateInstance.class); // *D<int>*(5, 6)
-    	assertInstance(b1, ICPPConstructor.class); // *D<int>*(5, 6)
+    	assertInstance(b0, ICPPClassTemplate.class); 
+    	assertInstance(b0, ICPPClassType.class); 
+    	assertInstance(b1, ICPPTemplateInstance.class);
+    	assertInstance(b1, ICPPClassType.class); 
     	
-    	IBinding tidSpc= ((ICPPTemplateInstance)b1).getSpecializedBinding();
+    	// ICPPClassType _ct= (ICPPClassType) b1;
+    	// ICPPConstructor[] _ctcs= _ct.getConstructors();
+    	// assertEquals(3, _ctcs.length); // two implicit plus the constructor template
+    	
+    	IBinding b2= getBindingFromASTName("D<int>(", 1);
+    	IBinding b3= getBindingFromASTName("D<int>(", 6);
+    	
+    	assertInstance(b2, ICPPClassTemplate.class); // *D*<int>(5, 6)
+    	assertInstance(b2, ICPPClassType.class); // *D*<int>(5, 6)
+    	assertInstance(b3, ICPPTemplateInstance.class); // *D<int>*(5, 6)
+    	assertInstance(b3, ICPPConstructor.class); // *D<int>*(5, 6)
+    	
+    	// 
+    	// ICPPClassType ct= (ICPPClassType) b2;
+    	// ICPPConstructor[] ctcs= ct.getConstructors();
+    	// assertEquals(3, ctcs.length); // two implicit plus the constructor template
+    	
+    	IBinding tidSpc= ((ICPPTemplateInstance)b3).getSpecializedBinding();
     	assertInstance(tidSpc, ICPPConstructor.class);
     	assertInstance(tidSpc, ICPPSpecialization.class);
     	assertInstance(tidSpc, ICPPFunctionTemplate.class);

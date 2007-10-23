@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction.CPPFunctionDelegate;
 
@@ -101,6 +102,11 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		IBinding f = getSpecializedBinding();
 		if( f instanceof ICPPInternalFunction)
 			return ((ICPPInternalFunction)f).isStatic( resolveAll );
+		if( f instanceof IIndexBinding && f instanceof ICPPFunction ) {
+			try {
+				return ((ICPPFunction) f).isStatic();
+			} catch(DOMException de) { /* cannot occur as we query the index */}
+		}
 		return CPPFunction.hasStorageClass( this, IASTDeclSpecifier.sc_static );
 	}
 

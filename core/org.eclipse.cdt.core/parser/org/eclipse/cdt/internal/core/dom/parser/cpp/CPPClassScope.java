@@ -382,8 +382,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 }
 
 /**
- * Helps analyzis of the class declaration for user declared members relevent
+ * Helps analysis of the class declaration for user declared members relevant
  * to deciding which implicit bindings to declare.
+ * 
+ * @see chapter 12 of the ISO specification
  */ 
 class ImplicitsAnalysis {
 	private boolean hasUserDeclaredConstructor;
@@ -404,7 +406,7 @@ class ImplicitsAnalysis {
 			IASTParameterDeclaration [] ps = dcltor.getParameters();
         	if( ps.length >= 1 ){
         		if(paramHasTypeReferenceToTheAssociatedClassType(ps[0])) {
-            		// and all remaining arguments have initializers
+            		// and all remaining arguments have initialisers
         			for(int j=1; j<ps.length; j++) {
             			if( ps[j].getDeclarator().getInitializer() == null ) {
             				continue outer;

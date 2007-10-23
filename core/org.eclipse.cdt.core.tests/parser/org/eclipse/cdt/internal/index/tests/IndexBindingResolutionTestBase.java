@@ -275,6 +275,7 @@ public abstract class IndexBindingResolutionTestBase extends BaseTestCase {
 			assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
 			
 			if(DEBUG) {
+				System.out.println("Project PDOM: "+getName());
 				((PDOM)CCoreInternals.getPDOMManager().getPDOM(cproject)).accept(new PDOMPrettyPrinter());
 			}
 

@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - extracted from TerminalControl 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Martin Oberhuber (Wind River) - [207158] improve error message when port not available
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -96,9 +97,12 @@ public class SerialConnectWorker extends Thread {
 	
 	public void run() {
 		String portName=null;
+		//Ownership identifier: 
+		//TODO [206884] This is part of API and should be changed for the next release
+		final String strID = getClass().getPackage().getName();
+		//final String strID = "org.eclipse.tm.terminal.serial"; //$NON-NLS-1$
 		try {
 			fControl.setState(TerminalState.OPENED);
-			String strID = getClass().getPackage().getName();
 			ISerialSettings s=fConn.getSerialSettings();
 			portName=s.getSerialPort();
 			try {
@@ -122,7 +126,11 @@ public class SerialConnectWorker extends Thread {
 			fControl.setState(TerminalState.CONNECTED);
 		} catch (PortInUseException portInUseException) {
 			fControl.setState(TerminalState.CLOSED);
-			fControl.displayTextInTerminal("Connection Error!\n" + portInUseException.getMessage()); //$NON-NLS-1$
+			String theOwner = portInUseException.currentOwner;
+			if (strID.equals(theOwner)) {
+				theOwner = "another Terminal View";
+			}
+			fControl.displayTextInTerminal("Connection Error!\r\n" +portName+" is already in use by "+ theOwner);
 		} catch (NoSuchPortException e) {
 			fControl.setState(TerminalState.CLOSED);
 			String msg=e.getMessage();

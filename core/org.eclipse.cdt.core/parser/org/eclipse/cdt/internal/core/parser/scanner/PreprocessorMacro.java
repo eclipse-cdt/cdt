@@ -47,6 +47,10 @@ abstract class PreprocessorMacro implements IPreprocessorMacro {
 		return false;
 	}
 	
+	public char[][] getParameterList() {
+		return null;
+	}
+
 	public Object getAdapter(Class clazz) {
 		return null;
 	}
@@ -121,7 +125,7 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 		fHasVarArgs= hasVarArgs;
 	}
 	
-	public char[][] getParamList() {
+	public char[][] getParameterList() {
 		return fParamList;
 	}
 

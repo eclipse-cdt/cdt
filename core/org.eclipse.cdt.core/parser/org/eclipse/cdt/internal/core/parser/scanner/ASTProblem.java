@@ -17,24 +17,24 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 
 /**
  * Models the problems found by the preprocessor or lexer.
  */
-class ASTProblem extends ASTNode implements IASTProblem {
+class ASTProblem extends ASTPreprocessorNode implements IASTProblem {
 	
     private final int id;
     private final char[] arg;
 
     private String message = null;
 
-    public ASTProblem(int id, char[] arg, int startNumber, int endNumber) {
+    public ASTProblem(IASTTranslationUnit tu, int id, char[] arg, int startNumber, int endNumber) {
+    	super(tu, IASTTranslationUnit.SCANNER_PROBLEM, startNumber, endNumber);
         this.id = id;
         this.arg = arg;
-        setOffsetAndLength(startNumber, endNumber-startNumber);
     }
 
     public int getID() {

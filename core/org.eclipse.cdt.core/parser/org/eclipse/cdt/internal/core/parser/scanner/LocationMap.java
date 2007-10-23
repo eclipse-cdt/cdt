@@ -15,6 +15,7 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 
 /**
@@ -54,20 +56,20 @@ public class LocationMap implements ILocationResolver {
 
     
 	public void registerPredefinedMacro(IMacroBinding macro) {
-		registerPredefinedMacro(macro, getCurrentFilename(), 0, 0);
+		registerPredefinedMacro(macro, null, -1, -1, -1);
 	}
 
-	public void registerMacroFromIndex(IMacroBinding macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
-		registerPredefinedMacro(macro, filename, getSequenceNumberForOffset(nameOffset), getSequenceNumberForOffset(nameEndOffset));
+	public void registerMacroFromIndex(IPreprocessorMacro macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
+		registerPredefinedMacro(macro, filename, nameOffset, nameEndOffset, expansionOffset);
 	}
 	
-	private void registerPredefinedMacro(IMacroBinding macro, String filename, int nameNumber, int nameEndNumber) {
+	private void registerPredefinedMacro(IMacroBinding macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
 		ASTMacro astmacro;
 		if (macro.isFunctionStyle()) {
-			astmacro= new ASTFunctionMacro(fTranslationUnit, macro, filename, nameNumber, nameEndNumber);
+			astmacro= new ASTFunctionMacro(fTranslationUnit, macro, filename, nameOffset, nameEndOffset, expansionOffset);
 		}
 		else {
-			astmacro= new ASTMacro(fTranslationUnit, macro, filename, nameNumber, nameEndNumber);
+			astmacro= new ASTMacro(fTranslationUnit, macro, filename, nameOffset, nameEndOffset, expansionOffset);
 		}
 		fBuiltinMacros.add(astmacro);
 	}
@@ -91,9 +93,9 @@ public class LocationMap implements ILocationResolver {
 	 * @param isMacroFile whether the context is used for running the preprocessor, only.
 	 */
 	public ILocationCtx pushPreInclusion(char[] buffer, int offset, boolean isMacroFile) {
-		assert fCurrentContext != null;
+		assert fCurrentContext instanceof ContainerLocationCtx;
 		int sequenceNumber= getSequenceNumberForOffset(offset);
-		fCurrentContext= new ContainerLocationCtx(fCurrentContext, buffer, offset, offset, sequenceNumber);
+		fCurrentContext= new ContainerLocationCtx((ContainerLocationCtx) fCurrentContext, buffer, offset, offset, sequenceNumber);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
@@ -110,7 +112,7 @@ public class LocationMap implements ILocationResolver {
 	 */
 	public ILocationCtx pushInclusion(int startOffset,	int nameOffset, int nameEndOffset, int endOffset, 
 			char[] buffer, String filename, char[] name, boolean userInclude) {
-		assert fCurrentContext != null;
+		assert fCurrentContext instanceof ContainerLocationCtx;
 		int startNumber= getSequenceNumberForOffset(startOffset);	
 		int nameNumber= getSequenceNumberForOffset(nameOffset);		
 		int nameEndNumber= getSequenceNumberForOffset(nameEndOffset);
@@ -118,7 +120,7 @@ public class LocationMap implements ILocationResolver {
 		final ASTInclusionStatement inclusionStatement= 
 			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true);
 		fDirectives.add(inclusionStatement);
-		fCurrentContext= new FileLocationCtx(fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement);
+		fCurrentContext= new FileLocationCtx((ContainerLocationCtx) fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
@@ -145,6 +147,8 @@ public class LocationMap implements ILocationResolver {
 	 */
 	public ILocationCtx pushMacroExpansion(int startOffset, int nameOffset, int nameEndOffset, int endOffset, int contextLength,
 			IPreprocessorMacro macro, IASTName[] implicitMacroReferences, ImageLocationInfo[] imageLocations) {
+		assert fCurrentContext instanceof ContainerLocationCtx;
+		
 		int startNumber= getSequenceNumberForOffset(startOffset);	
 		int nameNumber= getSequenceNumberForOffset(nameOffset);		
 		int nameEndNumber= getSequenceNumberForOffset(nameEndOffset);
@@ -160,7 +164,7 @@ public class LocationMap implements ILocationResolver {
 				nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
 		addExpansion(macro, expansion);
 		
-		fCurrentContext= new MacroExpansionCtx(fCurrentContext, startOffset, endOffset, endNumber, contextLength, imageLocations, expansion);
+		fCurrentContext= new MacroExpansionCtx((ContainerLocationCtx) fCurrentContext, startOffset, endOffset, endNumber, contextLength, imageLocations, expansion);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
@@ -218,7 +222,7 @@ public class LocationMap implements ILocationResolver {
 	public void encounterProblem(int id, char[] arg, int offset, int endOffset) {
     	offset= getSequenceNumberForOffset(offset);
     	endOffset= getSequenceNumberForOffset(endOffset);
-    	ASTProblem problem = new ASTProblem(id, arg, offset, endOffset);
+    	ASTProblem problem = new ASTProblem(fTranslationUnit, id, arg, offset, endOffset);
 		fProblems.add(problem);
 	}
 
@@ -298,12 +302,12 @@ public class LocationMap implements ILocationResolver {
 		fDirectives.add(astMacro);
 	}
 
-	public void encounterPoundUndef(PreprocessorMacro definition, int startOffset, int nameOffset, int nameEndOffset, int endOffset, char[] name) {
+	public void encounterPoundUndef(IMacroBinding definition, int startOffset, int nameOffset, int nameEndOffset, int endOffset, char[] name) {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		nameOffset= getSequenceNumberForOffset(nameOffset);		
 		nameEndOffset= getSequenceNumberForOffset(nameEndOffset);
 		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTUndef(fTranslationUnit, name, startOffset, nameOffset, nameEndOffset, endOffset));
+		fDirectives.add(new ASTUndef(fTranslationUnit, name, startOffset, nameOffset, nameEndOffset, endOffset, definition));
 	}
 
 	public void setRootNode(IASTTranslationUnit root) {
@@ -340,12 +344,12 @@ public class LocationMap implements ILocationResolver {
 	}
 
 	public String getContainingFilename(int sequenceNumber) {
-		LocationCtx ctx= fRootContext.findContextForSequenceNumberRange(sequenceNumber, 1);
+		LocationCtx ctx= fRootContext.ctxForNumberRange(sequenceNumber, 1);
 		return new String(ctx.getFilename());
 	}
 
 	public IASTFileLocation getMappedFileLocation(int sequenceNumber, int length) {
-		return fRootContext.getFileLocationForSequenceNumberRange(sequenceNumber, length);
+		return fRootContext.fileLocationForNumberRange(sequenceNumber, length);
 	}
 
     public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
@@ -369,6 +373,10 @@ public class LocationMap implements ILocationResolver {
 		}
     	return (IASTPreprocessorIncludeStatement[]) result.toArray(new IASTPreprocessorIncludeStatement[result.size()]);
     }
+
+	public IASTComment[] getComments() {
+    	return (IASTComment[]) fComments.toArray(new IASTComment[fComments.size()]);
+	}
 
     public IASTPreprocessorStatement[] getAllPreprocessorStatements() {
     	return (IASTPreprocessorStatement[]) fDirectives.toArray(new IASTPreprocessorStatement[fDirectives.size()]);
@@ -417,16 +425,31 @@ public class LocationMap implements ILocationResolver {
 	public void cleanup() {
 		throw new UnsupportedOperationException();
 	}
-	public IASTFileLocation flattenLocations(IASTNodeLocation[] nodeLocations) {
-		throw new UnsupportedOperationException();
+	// mstodo get rid of IASTNodeLocation
+	public IASTFileLocation flattenLocations(IASTNodeLocation[] locations) {
+		if (locations.length != 1 || !(locations[0] instanceof IASTFileLocation)) {
+			throw new IllegalArgumentException();
+		}
+		return (IASTFileLocation) locations[0];
 	}
+	// mstodo get rid of IASTNodeLocation
 	public IASTNodeLocation[] getLocations(int offset, int length) {
-		throw new UnsupportedOperationException();
+		return new IASTNodeLocation[] {getMappedFileLocation(offset, length)};
 	}
 	public ASTPreprocessorSelectionResult getPreprocessorNode(String path, int offset, int length) {
 		throw new UnsupportedOperationException();
 	}
+	// mstodo get rid of IASTNodeLocation
 	public char[] getUnpreprocessedSignature(IASTNodeLocation[] locations) {
-		throw new UnsupportedOperationException();
+		switch(locations.length) {
+		case 0: return CharArrayUtils.EMPTY;
+		case 1: break;
+		default: throw new IllegalArgumentException();
+		}
+		if (!(locations[0] instanceof ASTFileLocation)) {
+			throw new IllegalArgumentException();
+		}
+		ASTFileLocation floc= (ASTFileLocation) locations[0];
+		return floc.getSource();
 	}
 }

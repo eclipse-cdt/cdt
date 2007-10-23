@@ -62,4 +62,11 @@ public class MacroBinding extends PlatformObject implements IMacroBinding {
 	public boolean isFunctionStyle() {
 		return definition instanceof _FunctionMacroDefinition;
 	}
+
+	public char[][] getParameterList() {
+		if (isFunctionStyle()) {
+			return ((_FunctionMacroDefinition) definition).getParms();
+		}
+		return null;
+	}
 }

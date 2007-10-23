@@ -28,4 +28,9 @@ public interface IMacroBinding extends IBinding {
 	 * @since 5.0
 	 */
 	boolean isFunctionStyle();
+	
+	/**
+	 * Returns the parameter names or <code>null</code> if this is not a function style macro.
+	 */
+	char[][] getParameterList();
 }

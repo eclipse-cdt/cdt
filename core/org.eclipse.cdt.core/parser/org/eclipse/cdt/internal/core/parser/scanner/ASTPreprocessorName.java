@@ -64,12 +64,29 @@ class ASTPreprocessorName extends ASTPreprocessorNode implements IASTName {
 	public void setBinding(IBinding binding) {assert false;}
 }
 
-class ASTBuiltinName extends ASTPreprocessorName {
-	final private String fFilename;
-
-	public ASTBuiltinName(IASTNode parent, ASTNodeProperty property, String filename, int startNumber, int endNumber, char[] name, IBinding binding) {
+class ASTPreprocessorDefinition extends ASTPreprocessorName {
+	public ASTPreprocessorDefinition(IASTNode parent, ASTNodeProperty property, int startNumber,
+			int endNumber, char[] name, IBinding binding) {
 		super(parent, property, startNumber, endNumber, name, binding);
-		fFilename= filename;
+	}
+
+	public boolean isDefinition() {
+		return true;
+	}
+}
+
+
+class ASTBuiltinName extends ASTPreprocessorDefinition {
+	private final ASTFileLocationForBuiltins fFileLocation;
+
+	public ASTBuiltinName(IASTNode parent, ASTNodeProperty property, String filename, int nameOffset, int nameEndOffset, char[] name, IBinding binding) {
+		super(parent, property, -1, -1, name, binding);
+		if (filename != null) {
+			fFileLocation= new ASTFileLocationForBuiltins(filename, nameOffset, nameEndOffset-nameOffset);
+		}
+		else {
+			fFileLocation= null;
+		}
 	}
 
 	public boolean contains(IASTNode node) {
@@ -77,17 +94,24 @@ class ASTBuiltinName extends ASTPreprocessorName {
 	}
 
 	public String getContainingFilename() {
-		return fFilename;
+		if (fFileLocation == null) {
+			throw new UnsupportedOperationException();
+		}
+		return fFileLocation.getFileName();
 	}
 
 	public IASTFileLocation getFileLocation() {
-		// mstodo Auto-generated method stub
-		return null;
+		if (fFileLocation == null) {
+			throw new UnsupportedOperationException();
+		}
+		return fFileLocation;
 	}
 
 	public IASTNodeLocation[] getNodeLocations() {
-		// mstodo Auto-generated method stub
-		return null;
+		if (fFileLocation == null) {
+			throw new UnsupportedOperationException();
+		}
+		return new IASTNodeLocation[]{fFileLocation};
 	}
 
 	public int getOffset() {
@@ -95,6 +119,9 @@ class ASTBuiltinName extends ASTPreprocessorName {
 	}
 
 	public String getRawSignature() {
+		if (fFileLocation == null) {
+			throw new UnsupportedOperationException();
+		}
 		return toString();
 	}
 }

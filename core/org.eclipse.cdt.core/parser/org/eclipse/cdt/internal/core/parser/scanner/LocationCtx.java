@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -21,16 +22,19 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
  * @since 5.0
  */
 abstract class LocationCtx implements ILocationCtx {
-	final LocationCtx fParent;
+	final ContainerLocationCtx fParent;
 	final int fSequenceNumber;
 	final int fParentOffset;
 	final int fParentEndOffset;
 
-	public LocationCtx(LocationCtx parent, int parentOffset, int parentEndOffset, int sequenceNumber) {
+	public LocationCtx(ContainerLocationCtx parent, int parentOffset, int parentEndOffset, int sequenceNumber) {
 		fParent= parent;
 		fParentOffset= parentOffset;
 		fParentEndOffset= parentEndOffset;
 		fSequenceNumber= sequenceNumber;
+		if (parent != null) {
+			parent.addChild(this);
+		}
 	}
 	
 	public String getFilename() {
@@ -73,7 +77,7 @@ abstract class LocationCtx implements ILocationCtx {
 	 * Returns the minimal context containing the specified range, assuming that it is contained in
 	 * this context.
 	 */
-	public LocationCtx findContextForSequenceNumberRange(int sequenceNumber, int length) {
+	public LocationCtx ctxForNumberRange(int sequenceNumber, int length) {
 		return this;
 	}
 
@@ -81,15 +85,15 @@ abstract class LocationCtx implements ILocationCtx {
 	 * Returns the minimal file location containing the specified sequence number range, assuming 
 	 * that it is contained in this context.
 	 */
-	public IASTFileLocation getFileLocationForSequenceNumberRange(int sequenceNumber, int length) {
-		return fParent.getFileLocationForOffsetRange(fParentOffset, fParentEndOffset-fParentOffset);
+	public IASTFileLocation fileLocationForNumberRange(int sequenceNumber, int length) {
+		return fParent.fileLocationForOffsetRange(fParentOffset, fParentEndOffset-fParentOffset);
 	}
 
 	/**
 	 * Returns the file location containing the specified offset range in this context.
 	 */
-	public IASTFileLocation getFileLocationForOffsetRange(int parentOffset, int length) {
-		return fParent.getFileLocationForOffsetRange(fParentOffset, fParentEndOffset-fParentOffset);
+	public IASTFileLocation fileLocationForOffsetRange(int parentOffset, int length) {
+		return fParent.fileLocationForOffsetRange(fParentOffset, fParentEndOffset-fParentOffset);
 	}
 
 	/**
@@ -110,12 +114,28 @@ class ContainerLocationCtx extends LocationCtx {
 	private int fChildSequenceLength;
 	private ArrayList fChildren;
 	private char[] fSource;
+	private int[] fLineOffsets;
 	
-	public ContainerLocationCtx(LocationCtx parent, char[] source, int parentOffset, int parentEndOffset, int sequenceNumber) {
+	public ContainerLocationCtx(ContainerLocationCtx parent, char[] source, int parentOffset, int parentEndOffset, int sequenceNumber) {
 		super(parent, parentOffset, parentEndOffset, sequenceNumber);
 		fSource= source;
 	}
 	
+	public void addChild(LocationCtx locationCtx) {
+		if (fChildren == null) {
+			fChildren= new ArrayList();
+		}
+		fChildren.add(locationCtx);
+	}
+
+	public char[] getSource(int offset, int length) {
+		offset= Math.max(0, Math.min(offset, fSource.length));
+		length= Math.max(0, Math.min(length, fSource.length-offset));
+		char[] result= new char[length];
+		System.arraycopy(fSource, offset, result, 0, length);
+		return result;
+	}
+
 	public final int getSequenceLength() {
 		return fSource.length + fChildSequenceLength;
 	}
@@ -139,23 +159,25 @@ class ContainerLocationCtx extends LocationCtx {
 		fChildSequenceLength+= childLength;
 	}
 
-	public final LocationCtx findContextForSequenceNumberRange(int sequenceNumber, int length) {
+	public final LocationCtx ctxForNumberRange(int sequenceNumber, int length) {
+		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber);
-		if (child != null && child.fSequenceNumber+child.getSequenceLength() >= sequenceNumber+length) {
-			return child;
+		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
+			return child.ctxForNumberRange(sequenceNumber, length);
 		}
 		return this;
 	}
 	
-	public IASTFileLocation getFileLocationForSequenceNumberRange(int sequenceNumber, int length) {
+	public IASTFileLocation fileLocationForNumberRange(int sequenceNumber, int length) {
 		// try to delegate to a child.
-		int useLength= length > 0 ? length-1 : 0;
-		final LocationCtx child1= findChildLessOrEqualThan(sequenceNumber);
-		final LocationCtx child2= findChildLessOrEqualThan(sequenceNumber+useLength);
-		if (child1 == child2 && child1 != null) {
-			return child1.getFileLocationForOffsetRange(sequenceNumber, length);
+		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
+		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber);
+		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
+			if (testEnd == sequenceNumber || findChildLessOrEqualThan(testEnd) == child) {
+				return child.fileLocationForNumberRange(sequenceNumber, length);
+			}
 		}
-		return super.getFileLocationForSequenceNumberRange(sequenceNumber, length);
+		return super.fileLocationForNumberRange(sequenceNumber, length);
 	}
 
 	final LocationCtx findChildLessOrEqualThan(final int sequenceNumber) {
@@ -163,16 +185,6 @@ class ContainerLocationCtx extends LocationCtx {
 			return null;
 		}
 		int upper= fChildren.size();
-		if (upper < 10) {
-			for (int i=upper-1; i>=0; i--) {
-				LocationCtx child= (LocationCtx) fChildren.get(i);
-				if (child.fSequenceNumber <= sequenceNumber) {
-					return child;
-				}
-			}
-			return null;
-		}
-		
 		int lower= 0;
 		while (upper > lower) {
 			int middle= (upper+lower)/2;
@@ -201,13 +213,41 @@ class ContainerLocationCtx extends LocationCtx {
 			}
 		}
 	}
+	
+
+	public int getLineNumber(int offset) {
+		if (fLineOffsets == null) {
+			fLineOffsets= computeLineOffsets();
+		}
+		int idx= Arrays.binarySearch(fLineOffsets, offset);
+		if (idx < 0) {
+			return -idx;
+		}
+		return idx+1;
+	}
+
+	private int[] computeLineOffsets() {
+		ArrayList offsets= new ArrayList();
+		for (int i = 0; i < fSource.length; i++) {
+			if (fSource[i] == '\n') {
+				offsets.add(new Integer(i));
+			}
+		}
+		int[] result= new int[offsets.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i]= ((Integer) offsets.get(i)).intValue();
+			
+		}
+		return result;
+	}
+
 }
 
 class FileLocationCtx extends ContainerLocationCtx {
 	private final String fFilename;
 	private final ASTInclusionStatement fASTInclude;
 
-	public FileLocationCtx(LocationCtx parent, String filename, char[] source, int parentOffset, int parentEndOffset, int sequenceNumber, ASTInclusionStatement inclusionStatement) {
+	public FileLocationCtx(ContainerLocationCtx parent, String filename, char[] source, int parentOffset, int parentEndOffset, int sequenceNumber, ASTInclusionStatement inclusionStatement) {
 		super(parent, source, parentOffset, parentEndOffset, sequenceNumber);
 		fFilename= new String(filename);
 		fASTInclude= inclusionStatement;
@@ -224,13 +264,15 @@ class FileLocationCtx extends ContainerLocationCtx {
 		return fFilename;
 	}
 
-	public IASTFileLocation getFileLocationForSequenceNumberRange(int sequenceNumber, int length) {
+	public IASTFileLocation fileLocationForNumberRange(int sequenceNumber, int length) {
 		// try to delegate to a child.
+		final int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
 		final int sequenceEnd= sequenceNumber+length;
 		final LocationCtx child1= findChildLessOrEqualThan(sequenceNumber);
-		final LocationCtx child2= sequenceEnd == sequenceNumber ? child1 : findChildLessOrEqualThan(sequenceEnd-1);
-		if (child1 == child2 && child1 != null) {
-			return child1.getFileLocationForOffsetRange(sequenceNumber, length);
+		final LocationCtx child2= testEnd == sequenceNumber ? child1 : findChildLessOrEqualThan(testEnd);
+
+		if (child1 == child2 && child1 != null && child1.fSequenceNumber + child1.getSequenceLength() > testEnd) {
+			return child1.fileLocationForNumberRange(sequenceNumber, length);
 		}
 		
 		// handle here
@@ -261,12 +303,11 @@ class FileLocationCtx extends ContainerLocationCtx {
 				endOffset= child2.fParentEndOffset;
 			}
 		}
-		return new ASTFileLocation(fFilename, startOffset, endOffset-startOffset);
+		return new ASTFileLocation(this, startOffset, endOffset-startOffset);
 	}
-
-	public int getLineNumber(int offset) {
-		// mstodo Auto-generated method stub
-		return super.getLineNumber(offset);
+	
+	public IASTFileLocation fileLocationForOffsetRange(int offset, int length) {
+		return new ASTFileLocation(this, offset, length);
 	}
 
 	public ASTInclusionStatement getInclusionStatement() {
@@ -278,7 +319,7 @@ class FileLocationCtx extends ContainerLocationCtx {
 class MacroExpansionCtx extends LocationCtx {
 	private final int fLength;
 
-	public MacroExpansionCtx(LocationCtx parent, int parentOffset, int parentEndOffset,
+	public MacroExpansionCtx(ContainerLocationCtx parent, int parentOffset, int parentEndOffset,
 			int sequenceNumber, int length, ImageLocationInfo[] imageLocations,	ASTPreprocessorName expansion) {
 		super(parent, parentOffset, parentEndOffset, sequenceNumber);
 		fLength= length;

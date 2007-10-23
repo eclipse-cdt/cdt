@@ -17,5 +17,4 @@ package org.eclipse.cdt.internal.core.parser.scanner;
  * @since 5.0
  */
 public interface ILocationCtx {
-
 }

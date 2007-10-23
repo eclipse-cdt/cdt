@@ -8,13 +8,14 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core.parser.tests.ast2;
+package org.eclipse.cdt.core.parser.tests.scanner;
 
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.tests.ast2.TestLexerLog;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
 import org.eclipse.cdt.internal.core.parser.scanner.Token;

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
@@ -53,6 +54,49 @@ abstract class ASTPreprocessorNode extends ASTNode {
 		final IASTTranslationUnit tu= getTranslationUnit();
 		IASTNodeLocation[] loc=tu.getLocationInfo(offset, length);
 		return tu.getUnpreprocessedSignature(loc);
+	}
+
+	public IASTNodeLocation[] getNodeLocations() {
+		if (getLength() == 0) {
+			return getTranslationUnit().getLocationInfo(getOffset(), 0);
+		}
+		return super.getNodeLocations();
+	}
+
+	public String getContainingFilename() {
+		if (super.getOffset() == -1) {
+			throw new UnsupportedOperationException();
+		}
+		return super.getContainingFilename();
+	}
+
+	public IASTFileLocation getFileLocation() {
+		if (super.getOffset() == -1) {
+			throw new UnsupportedOperationException();
+		}
+		return super.getFileLocation();
+	}
+
+	public int getLength() {
+		if (super.getOffset() == -1) {
+			throw new UnsupportedOperationException();
+		}
+		return super.getLength();
+	}
+
+	public int getOffset() {
+		final int offset = super.getOffset();
+		if (offset == -1) {
+			throw new UnsupportedOperationException();
+		}
+		return offset;
+	}
+
+	public String getRawSignature() {
+		if (super.getOffset() == -1) {
+			throw new UnsupportedOperationException();
+		}
+		return super.getRawSignature();
 	}
 }
 
@@ -203,7 +247,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 }
 
 class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorMacroDefinition {
-	private final IASTName fName;
+	private final ASTPreprocessorName fName;
 	
 	/**
 	 * Regular constructor.
@@ -211,15 +255,16 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorMacroDefin
 	public ASTMacro(IASTTranslationUnit parent, IMacroBinding macro, 
 			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fName= new ASTPreprocessorName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
+		fName= new ASTPreprocessorDefinition(this, IASTPreprocessorMacroDefinition.MACRO_NAME, nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
 	}
 
 	/**
 	 * Constructor for built-in macros
+	 * @param expansionOffset 
 	 */
-	public ASTMacro(IASTTranslationUnit parent, IMacroBinding macro, String filename, int nameNumber, int nameEndNumber) {
-		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, 0, 0);
-		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, filename, nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
+	public ASTMacro(IASTTranslationUnit parent, IMacroBinding macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
+		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, -1, -1);
+		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, filename, nameOffset, nameEndOffset, macro.getNameCharArray(), macro);
 	}
 
 	protected IMacroBinding getMacro() {
@@ -242,10 +287,11 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorMacroDefin
 	public void setName(IASTName name) {assert false;}
 }
 
-class ASTMacroParameter extends ASTNode implements IASTFunctionStyleMacroParameter  {
+class ASTMacroParameter extends ASTPreprocessorNode implements IASTFunctionStyleMacroParameter  {
 	private final String fParameter;
 	
-	public ASTMacroParameter(char[] param) {
+	public ASTMacroParameter(IASTPreprocessorFunctionStyleMacroDefinition parent, char[] param, int offset, int endOffset) {
+		super(parent, IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER, offset, endOffset);
 		fParameter= new String(param);
 	}
 
@@ -269,16 +315,16 @@ class ASTFunctionMacro extends ASTMacro implements IASTPreprocessorFunctionStyle
 	 * Constructor for builtins
 	 */
 	public ASTFunctionMacro(IASTTranslationUnit parent, IMacroBinding macro, 
-			String filename, int nameNumber, int nameEndNumber) {
-		super(parent, macro, filename, nameNumber, nameEndNumber);
+			String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
+		super(parent, macro, filename, nameOffset, nameEndOffset, expansionOffset);
 	}
 
-    public IASTFunctionStyleMacroParameter[] getParameters() {
-    	FunctionStyleMacro macro= (FunctionStyleMacro) getMacro();
-    	char[][] paramList= macro.getParamList();
+	public IASTFunctionStyleMacroParameter[] getParameters() {
+    	IMacroBinding macro= getMacro();
+    	char[][] paramList= macro.getParameterList();
     	IASTFunctionStyleMacroParameter[] result= new IASTFunctionStyleMacroParameter[paramList.length];
     	for (int i = 0; i < result.length; i++) {
-			result[i]= new ASTMacroParameter(paramList[i]);
+			result[i]= new ASTMacroParameter(this, paramList[i], -1, -1);
 		}
         return result;
     }
@@ -289,9 +335,9 @@ class ASTFunctionMacro extends ASTMacro implements IASTPreprocessorFunctionStyle
 
 class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefStatement {
 	private final IASTName fName;
-	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, int endNumber) {
+	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, int endNumber, IBinding binding) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
-		fName= new ASTPreprocessorName(this, IASTPreprocessorUndefStatement.MACRO_NAME, nameNumber, nameEndNumber, name, null);
+		fName= new ASTPreprocessorName(this, IASTPreprocessorUndefStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
 	}
 
 	public IASTName getMacroName() {
@@ -336,18 +382,59 @@ class DependencyTree extends ASTInclusionNode implements IDependencyTree {
 }
 
 class ASTFileLocation implements IASTFileLocation {
-	private String fFilename;
+	private FileLocationCtx fLocationCtx;
 	private int fOffset;
 	private int fLength;
 
-	public ASTFileLocation(String filename, int startOffset, int length) {
-		fFilename= filename;
+	public ASTFileLocation(FileLocationCtx fileLocationCtx, int startOffset, int length) {
+		fLocationCtx= fileLocationCtx;
 		fOffset= startOffset;
 		fLength= length;
 	}
 
 	public String getFileName() {
-		return fFilename;
+		return fLocationCtx.getFilename();
+	}
+
+	public IASTFileLocation asFileLocation() {
+		return this;
+	}
+
+	public int getNodeLength() {
+		return fLength;
+	}
+
+	public int getNodeOffset() {
+		return fOffset;
+	}
+
+	public int getEndingLineNumber() {
+		int end= fLength > 0 ? fOffset+fLength-1 : fOffset;
+		return fLocationCtx.getLineNumber(end);
+	}
+
+	public int getStartingLineNumber() {
+		return fLocationCtx.getLineNumber(fOffset);
+	}
+
+	public char[] getSource() {
+		return fLocationCtx.getSource(fOffset, fLength);
+	}
+}
+
+class ASTFileLocationForBuiltins implements IASTFileLocation {
+	private String fFile;
+	private int fOffset;
+	private int fLength;
+
+	public ASTFileLocationForBuiltins(String file, int startOffset, int length) {
+		fFile= file;
+		fOffset= startOffset;
+		fLength= length;
+	}
+
+	public String getFileName() {
+		return fFile;
 	}
 
 	public IASTFileLocation asFileLocation() {

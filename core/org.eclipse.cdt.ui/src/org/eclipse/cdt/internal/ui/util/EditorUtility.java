@@ -48,6 +48,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -57,6 +58,7 @@ import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -133,8 +135,21 @@ public class EditorUtility {
 	 * Selects a C Element in an editor
 	 */     
 	public static void revealInEditor(IEditorPart part, ICElement element) {
-		if (element != null && part instanceof CEditor) {
+		if (element == null) {
+			return;
+		}
+		if (part instanceof CEditor) {
 			((CEditor) part).setSelection(element);
+		} else if (part instanceof ITextEditor) {
+			if (element instanceof ISourceReference && !(element instanceof ITranslationUnit)) {
+				ISourceReference reference= (ISourceReference) element;
+				try {
+					ISourceRange range= reference.getSourceRange();
+					((ITextEditor)part).selectAndReveal(range.getIdStartPos(), range.getIdLength());
+				} catch (CModelException exc) {
+					CUIPlugin.getDefault().log(exc.getStatus());
+				}
+			}
 		}
 	}
 

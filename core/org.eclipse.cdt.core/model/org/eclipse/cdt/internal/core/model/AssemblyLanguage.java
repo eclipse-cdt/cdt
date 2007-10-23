@@ -36,7 +36,16 @@ public class AssemblyLanguage extends AbstractLanguage {
 	 * @see org.eclipse.cdt.core.model.ILanguage#createModelBuilder(org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
 	public IContributedModelBuilder createModelBuilder(ITranslationUnit tu) {
-		return null;
+		IContributedModelBuilder modelBuilder= null;
+		IContributedModelBuilder.Factory modelBuilderFactory= (IContributedModelBuilder.Factory)getAdapter(IContributedModelBuilder.Factory.class);
+		if (modelBuilderFactory != null) {
+			modelBuilder= modelBuilderFactory.create(tu);
+		}
+		if (modelBuilder == null) {
+			// use default
+			modelBuilder= new AsmModelBuilder(tu);
+		}
+		return modelBuilder;
 	}
 
 	/*

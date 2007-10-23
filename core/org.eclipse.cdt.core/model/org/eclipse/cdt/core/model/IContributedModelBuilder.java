@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
+
 
 /**
  * Interface supported by model builders for contributed languages.
@@ -25,6 +27,22 @@ package org.eclipse.cdt.core.model;
  * @author Jeff Overbey
  */
 public interface IContributedModelBuilder {
+	
+	/**
+	 * A factory to create a model builder for a translation unit.
+	 * 
+	 * @since 5.0
+	 */
+	public interface Factory {
+		/**
+		 * Create a model builder for the given translation unit.
+		 * 
+		 * @param tu  the translation unit
+		 * @return the model builder or <code>null</code> if no model builder could be created
+		 */
+		IContributedModelBuilder create(ITranslationUnit tu);
+	}
+
 	/**
 	 * Callback used when a <code>TranslationUnit</code> needs to be parsed.
 	 * 

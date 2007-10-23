@@ -51,6 +51,7 @@ public class AllCoreTests {
 		//which includes the CConfigurationDescriptionReferenceTests
 		suite.addTest(AllCProjectDescriptionTests.suite());
 		suite.addTest(ASTCacheTests.suite());
+		suite.addTest(AsmModelBuilderTest.suite());
         return suite;
 
     }

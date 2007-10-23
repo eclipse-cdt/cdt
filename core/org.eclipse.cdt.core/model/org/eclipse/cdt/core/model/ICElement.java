@@ -227,6 +227,13 @@ public interface ICElement extends IAdaptable {
 	static final int C_UNKNOWN_DECLARATION = 93;
 
 	/**
+	 * Assembly label.
+	 * 
+	 * @since 5.0
+	 */
+	static final int ASM_LABEL= 94;
+
+	/**
 	 * Modifier indicating a class constructor
 	 * @deprecated use {@link IMethodDeclaration#isConstructor()}
 	 */
@@ -243,9 +250,10 @@ public interface ICElement extends IAdaptable {
 	 * @deprecated use {@link IDeclaration#isStatic()}
 	 */
 	static final int C_STORAGE_STATIC = 0x400;
-		
+	
 	/**
 	 * Modifier indicating an extern storage attribute
+	 * @deprecated not used anymore
 	 */
 	static final int C_STORAGE_EXTERN = 0x800;
 

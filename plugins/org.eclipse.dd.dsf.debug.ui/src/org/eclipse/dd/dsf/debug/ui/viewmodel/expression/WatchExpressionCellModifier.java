@@ -13,6 +13,9 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.ExpressionManagerLayoutNode.NewExpressionVMC;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.jface.viewers.ICellModifier;
 
@@ -32,7 +35,8 @@ public class WatchExpressionCellModifier implements ICellModifier {
     }
 
     public boolean canModify(Object element, String property) {
-        return IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property) && getWatchExpression(element) != null; 
+        return IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property) && 
+               (getWatchExpression(element) != null  || element instanceof NewExpressionVMC); 
     }
 
     public Object getValue(Object element, String property) {
@@ -49,11 +53,16 @@ public class WatchExpressionCellModifier implements ICellModifier {
     
     public void modify(Object element, String property, Object value) {
         if (!IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(property)) return;
+        if (!(value instanceof String)) return;
 
         IWatchExpression expression = getWatchExpression(element);
-        if (expression != null && value instanceof String) {
+        if (expression != null) {
             expression.setExpressionText((String)value);
-        }        
+        } else if (element instanceof NewExpressionVMC && ((String)value).trim().length() != 0) {
+            IExpressionManager expressionManager = DebugPlugin.getDefault().getExpressionManager(); 
+            IWatchExpression watchExpression = expressionManager.newWatchExpression((String)value); 
+            expressionManager.addExpression(watchExpression);            
+        }
     }
 
     private IWatchExpression getWatchExpression(Object element) {

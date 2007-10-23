@@ -26,6 +26,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -36,6 +37,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -94,7 +96,33 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
             return fExpression.hashCode();
         }
     }
-    
+
+    /**
+     * VMC for a new expression object to be added.  When user clicks on this node to 
+     * edit it, he will create a new expression.
+     */
+    public class NewExpressionVMC extends AbstractVMContext {
+        public NewExpressionVMC() {
+            super(getVMProvider().getVMAdapter(), ExpressionManagerLayoutNode.this);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked") 
+        public Object getAdapter(Class adapter) {
+            return super.getAdapter(adapter);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof NewExpressionVMC;
+        }
+        
+        @Override
+        public int hashCode() {
+            return getClass().hashCode();
+        }
+    }
+
     /** Array of expression nodes which parse the user expressions and handle model events */ 
     private IExpressionLayoutNode[] fExpressionNodes = new IExpressionLayoutNode[0];
     
@@ -120,7 +148,9 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
     }
     
     public void updateElementCount(IChildrenCountUpdate update) {
-        update.setChildCount(fManager.getExpressions().length);
+        // We assume that the getExpressions() will just read local state data,
+        // so we don't bother using a job to perform this operation.
+        update.setChildCount(fManager.getExpressions().length + 1);
         update.done();
     }
     
@@ -140,45 +170,45 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
         };
         
         int expressionRmCount = 0;
-        for (int i = update.getOffset(); i < update.getOffset() + update.getLength() && i < expressions.length; i++) {
+        for (int i = update.getOffset(); i < update.getOffset() + update.getLength() && i < expressions.length + 1; i++) {
             
-            // Check the array boundaries as the expression manager could change asynchronously.  
-            // The expression manager change should lead to a refresh in the view. 
-            if (i > expressions.length) {
-                continue;
-            }
-            
-            final String expressionText = expressions[i].getExpressionText();
-            final int expressionIdx = i;
-            final IExpression expression = expressions[i];
-            IExpressionLayoutNode expressionNode = findNodeForExpression(expressionText);
-            if (expressionNode == null) {
-                update.setChild(new InvalidExpressionVMC(expression), i);
+            //  The last element is the "new expression"
+            if (i == expressions.length) {
+                update.setChild(new NewExpressionVMC(), i);
             } else {
-                expressionRmCount++;
-                // getElementForExpression() accepts a IElementsUpdate as an argument.
-                // Construct an instance of VMElementsUpdate which will call a 
-                // the request monitor when it is finished.  The request monitor
-                // will in turn set the element in the update argument in this method. 
-                VMElementsUpdate expressionElementUpdate = new VMElementsUpdate(
-                    update, 0, 1,
-                    new DataRequestMonitor<List<Object>>(getExecutor(), multiRm) {
-                        @Override
-                        protected void handleOK() {
-                            update.setChild(getData().get(0), expressionIdx);
-                            multiRm.done();
-                        } 
-                        
-                        @Override
-                        protected void handleError() {
-                            update.setChild(new InvalidExpressionVMC(expression), expressionIdx);
-                            multiRm.done();
-                        }
-                    });
-                expressionNode.getElementForExpression(expressionElementUpdate, expressionText, expression);
+                final String expressionText = expressions[i].getExpressionText();
+                final int expressionIdx = i;
+                final IExpression expression = expressions[i];
+                IExpressionLayoutNode expressionNode = findNodeForExpression(expressionText);
+                if (expressionNode == null) {
+                    update.setChild(new InvalidExpressionVMC(expression), i);
+                } else {
+                    expressionRmCount++;
+                    // getElementForExpression() accepts a IElementsUpdate as an argument.
+                    // Construct an instance of VMElementsUpdate which will call a 
+                    // the request monitor when it is finished.  The request monitor
+                    // will in turn set the element in the update argument in this method. 
+                    VMElementsUpdate expressionElementUpdate = new VMElementsUpdate(
+                        update, 0, 1,
+                        new DataRequestMonitor<List<Object>>(getExecutor(), multiRm) {
+                            @Override
+                            protected void handleOK() {
+                                update.setChild(getData().get(0), expressionIdx);
+                                multiRm.done();
+                            } 
+                            
+                            @Override
+                            protected void handleError() {
+                                update.setChild(new InvalidExpressionVMC(expression), expressionIdx);
+                                multiRm.done();
+                            }
+                        });
+                    expressionNode.getElementForExpression(expressionElementUpdate, expressionText, expression);
+                }
             }
         }
         
+        // If no expressions were parsed, we're finished.
         // Set the count to the counting RM.
         multiRm.setDoneCount(expressionRmCount);
     }
@@ -190,6 +220,8 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
         for (ILabelUpdate update : updates) {
             if (update.getElement() instanceof InvalidExpressionVMC) {
                 updateInvalidExpressionVMCLabel(update, (InvalidExpressionVMC) update.getElement());
+            } else if (update.getElement() instanceof NewExpressionVMC) {
+                updateNewExpressionVMCLabel(update, (NewExpressionVMC) update.getElement());
             } else {
                 update.done();
             }
@@ -215,12 +247,35 @@ public class ExpressionManagerLayoutNode extends AbstractVMLayoutNode
             } else {
                 update.setLabel("", i); //$NON-NLS-1$
             }
+            update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], i);            
         }
         
         
         update.done();
     }
-    
+
+
+    /**
+     * Updates the label for the NewExpressionVMC.
+     */
+    private void updateNewExpressionVMCLabel(ILabelUpdate update, NewExpressionVMC vmc) {
+        String[] columnIds = update.getColumnIds() != null ? 
+            update.getColumnIds() : new String[] { IDebugVMConstants.COLUMN_ID__NAME };
+            
+        for (int i = 0; i < columnIds.length; i++) {
+            if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnIds[i])) {
+                update.setLabel(MessagesForExpressionVM.ExpressionManagerLayoutNode__newExpression_label, i);
+                update.setFontData(JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0], i);            
+            } else {
+                update.setLabel("", i); //$NON-NLS-1$
+            }
+        }
+        
+        
+        update.done();
+    }
+
+
     /**
      * Convenience call that iterates through all the configured expression
      * layout nodes and finds the first one that can parse the given expression.

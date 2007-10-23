@@ -14,6 +14,8 @@ public class MessagesForExpressionVM extends NLS {
     public static String ExpressionManagerLayoutNode__invalidExpression_nameColumn_label;
     public static String ExpressionManagerLayoutNode__invalidExpression_valueColumn_label;
 
+    public static String ExpressionManagerLayoutNode__newExpression_label;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, MessagesForExpressionVM.class);

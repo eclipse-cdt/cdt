@@ -16,6 +16,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
  * 
  * @since 5.0
  */
-class ImageLocationInfo {
+public class ImageLocationInfo {
 
 }

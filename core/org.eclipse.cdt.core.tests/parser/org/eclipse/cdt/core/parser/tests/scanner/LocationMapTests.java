@@ -38,21 +38,30 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationCtx;
-import org.eclipse.cdt.internal.core.parser.scanner.IPreprocessorMacro;
+import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 
 public class LocationMapTests extends BaseTestCase {
 	private static final String FN = "filename";
 	private static final int ROLE_DEFINITION = IASTNameOwner.r_definition;
 	private static final int ROLE_UNCLEAR = IASTNameOwner.r_unclear;
+	private static final int ROLE_REFERENCE = IASTNameOwner.r_reference;
 	private static final ASTNodeProperty PROP_PST = IASTTranslationUnit.PREPROCESSOR_STATEMENT;
 	final static char[] DIGITS= "0123456789abcdef".toCharArray();
+	final static char[] LONGDIGITS= new char[1024];
+	static {
+		for (int i = 0; i < LONGDIGITS.length; i++) {
+			LONGDIGITS[i]= (char) i;
+		}
+	}
 	private LocationMap fLocationMap;
 	private CPPASTTranslationUnit fTu;
 
@@ -227,7 +236,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkASTNode(st, fTu, PROP_PST, filename, offset, length, line, line, directive);
 	}
 
-	private void checkMacroDefinition(IASTPreprocessorMacroDefinition macro, IBinding binding, String image, String name, 
+	private void checkMacroDefinition(IASTPreprocessorMacroDefinition macro, IMacroBinding binding, String image, String name, 
 			String nameImage, String expansion, String[] parameters, 
 			String filename, int offset, int length, int line, int nameOffset, int nameLength) {
 		assertEquals(expansion, macro.getExpansion());
@@ -242,6 +251,12 @@ public class LocationMapTests extends BaseTestCase {
 				assertEquals(parameters[i], mp.getParameter());
 				checkASTNode(mp, fd, IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER, filename, -1, 0, -1, 0, null);
 			}
+		}
+		int expectCount= offset >= 0 ? 1 : 0;
+		IASTName[] decls= fLocationMap.getDeclarations(binding);
+		assertEquals(expectCount, decls.length);
+		if (expectCount > 0) {
+			assertSame(macro.getName(), decls[0]);
 		}
 	}
 
@@ -394,9 +409,9 @@ public class LocationMapTests extends BaseTestCase {
 	}
 
 	public void testIndexDefine() {
-		IPreprocessorMacro macro1= new TestMacro("n1", "exp1", null);
+		IMacroBinding macro1= new TestMacro("n1", "exp1", null);
 		final String[] params = new String[]{"p1", "p2"};
-		IPreprocessorMacro macro2= new TestMacro("n2", "exp2", params);
+		IMacroBinding macro2= new TestMacro("n2", "exp2", params);
 		init(DIGITS);
 		fLocationMap.registerMacroFromIndex(macro1, "fidx1", 0, 0, 0);
 		fLocationMap.registerMacroFromIndex(macro2, "fidx2", 1, 4, 8);
@@ -407,7 +422,7 @@ public class LocationMapTests extends BaseTestCase {
 	}
 
 	public void testUndefine() {
-		IPreprocessorMacro macro1= new TestMacro("n1", "exp1", null);
+		IMacroBinding macro1= new TestMacro("n1", "exp1", null);
 
 		init(DIGITS);
 		fLocationMap.encounterPoundUndef(null, 0, 0, 0, 0, "n1".toCharArray());
@@ -418,6 +433,36 @@ public class LocationMapTests extends BaseTestCase {
 		checkMacroUndef(prep[1], macro1, new String(DIGITS), "n2", "3456", FN, 0, 16, 1, 3, 4);
 	}
 
+	public void testMacroExpansion() {
+		ImageLocationInfo ili= new ImageLocationInfo();
+		IMacroBinding macro1= new TestMacro("n1", "exp1", null);
+		IMacroBinding macro2= new TestMacro("n2", "exp2", null);
+		IMacroBinding macro3= new TestMacro("n3", "exp3", null);
+		init(LONGDIGITS);
+		assertEquals(1, fLocationMap.getCurrentLineNumber('\n'));
+		assertEquals(2, fLocationMap.getCurrentLineNumber('\n'+1));
+		fLocationMap.registerPredefinedMacro(macro1);
+		fLocationMap.registerMacroFromIndex(macro2, "ifile", 2, 12, 32);
+		fLocationMap.encounterPoundDefine(3, 13, 33, 63, 103, macro3);
+		IASTName name1= fLocationMap.encounterImplicitMacroExpansion(macro1, ili);
+		IASTName name2= fLocationMap.encounterImplicitMacroExpansion(macro2, ili);
+		fLocationMap.pushMacroExpansion(110, 115, 125, 30, macro3, new IASTName[]{name1, name2}, new ImageLocationInfo[0]);
+		fLocationMap.encounteredComment(12, 23, false);
+		checkComment(fLocationMap.getComments()[0], new String(LONGDIGITS, 110, 15), false, FN, 110, 15, 2, 2);
+		
+		IASTName[] refs= fLocationMap.getReferences(macro1);
+		assertEquals(1, refs.length);
+		checkName(refs[0], macro1, "n1", fTu, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
+
+		refs= fLocationMap.getReferences(macro2);
+		assertEquals(1, refs.length);
+		checkName(refs[0], macro2, "n2", fTu, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
+	
+		refs= fLocationMap.getReferences(macro3);
+		assertEquals(1, refs.length);
+		checkName(refs[0], macro3, "n3", fTu, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 5, 2, 2, new String(LONGDIGITS, 110, 5));
+	}
+	
 	public void testContexts() {
 		init(DIGITS);
 		assertEquals(FN, fLocationMap.getTranslationUnitPath());
@@ -485,5 +530,28 @@ public class LocationMapTests extends BaseTestCase {
 		checkLocation(fLocationMap.getMappedFileLocation(36, 0), "pre2", 0, 0, 1, 1);
 		checkLocation(fLocationMap.getMappedFileLocation(45, 0), "pre2", 9, 0, 1, 1);
 		checkLocation(fLocationMap.getMappedFileLocation(46, 0), FN, 0, 0, 1, 1);
+		
+		checkLocation(fLocationMap.getMappedFileLocation(0, 7), FN, 0, 0, 1, 1);
+		checkLocation(fLocationMap.getMappedFileLocation(6, 10), "pre1", 0, 9, 1, 1);
+		checkLocation(fLocationMap.getMappedFileLocation(6, 20), "pre1", 0, 10, 1, 1);
+		checkLocation(fLocationMap.getMappedFileLocation(15, 11), "pre1", 6, 4, 1, 1);
+		checkLocation(fLocationMap.getMappedFileLocation(25, 2), FN, 0, 0, 1, 1);
+		checkLocation(fLocationMap.getMappedFileLocation(26, 5), FN, 0, 0, 1, 1);
+		checkLocation(fLocationMap.getMappedFileLocation(30, 7), FN, 0, 0, 1, 1);
+		checkLocation(fLocationMap.getMappedFileLocation(36, 11), FN, 0, 0, 1, 1);
+		checkLocation(fLocationMap.getMappedFileLocation(46, 5), FN, 0, 1, 1, 1);
+		
+		IDependencyTree tree= fLocationMap.getDependencyTree();
+		assertEquals(FN, tree.getTranslationUnitPath());
+		IASTInclusionNode[] inclusions= tree.getInclusions();
+		assertEquals(2, inclusions.length);
+		checkInclude(inclusions[0].getIncludeDirective(), "", "", "pre1", "pre1", false, true, FN, 0, 0, 1, 0, 0);
+		checkInclude(inclusions[1].getIncludeDirective(), "", "", "pre2", "pre2", false, true, FN, 0, 0, 1, 0, 0);
+		assertEquals(0, inclusions[1].getNestedInclusions().length);
+		
+		inclusions= inclusions[0].getNestedInclusions();
+		assertEquals(1, inclusions.length);
+		checkInclude(inclusions[0].getIncludeDirective(), "b4b", "4", "pre11", "pre11", false, true, "pre1", 6, 3, 1, 7, 1);
+		assertEquals(0, inclusions[0].getNestedInclusions().length);
 	}
 }

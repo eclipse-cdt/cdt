@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 
 /**
@@ -127,16 +128,8 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 }
 
 class ASTMacroReferenceName extends ASTPreprocessorName {
-	public ASTMacroReferenceName(IASTNode parent, IPreprocessorMacro macro, ImageLocationInfo imgLocationInfo) {
-		super(parent, IASTTranslationUnit.EXPANSION_NAME, 0, 0, macro.getNameCharArray(), macro);
-	}
-
-	public String getContainingFilename() {
-		return getTranslationUnit().getContainingFilename();
-	}
-
-	public String getRawSignature() {
-		return toString();
+	public ASTMacroReferenceName(IASTNode parent, int offset, int endOffset, IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
+		super(parent, IASTTranslationUnit.EXPANSION_NAME, offset, endOffset, macro.getNameCharArray(), macro);
 	}
 
 	public boolean isReference() {

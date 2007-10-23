@@ -203,13 +203,15 @@ class ContainerLocationCtx extends LocationCtx {
 	}
 
 	public void getInclusions(ArrayList result) {
-		for (Iterator iterator = fChildren.iterator(); iterator.hasNext();) {
-			LocationCtx ctx= (LocationCtx) iterator.next();
-			if (ctx.getInclusionStatement() != null) {
-				result.add(new ASTInclusionNode(ctx));
-			}
-			else {
-				ctx.getInclusions(result);
+		if (fChildren != null) {
+			for (Iterator iterator = fChildren.iterator(); iterator.hasNext();) {
+				LocationCtx ctx= (LocationCtx) iterator.next();
+				if (ctx.getInclusionStatement() != null) {
+					result.add(new ASTInclusionNode(ctx));
+				}
+				else {
+					ctx.getInclusions(result);
+				}
 			}
 		}
 	}

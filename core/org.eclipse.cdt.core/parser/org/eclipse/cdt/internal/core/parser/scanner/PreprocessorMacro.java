@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -20,7 +21,7 @@ import org.eclipse.cdt.internal.core.dom.Linkage;
  * Models macros used by the preprocessor
  * @since 5.0
  */
-abstract class PreprocessorMacro implements IPreprocessorMacro {
+abstract class PreprocessorMacro implements IMacroBinding {
 	final private char[] fName;
 
 	public PreprocessorMacro(char[] name) {

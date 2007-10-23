@@ -59,7 +59,7 @@ public class LocationMap implements ILocationResolver {
 		registerPredefinedMacro(macro, null, -1, -1, -1);
 	}
 
-	public void registerMacroFromIndex(IPreprocessorMacro macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
+	public void registerMacroFromIndex(IMacroBinding macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
 		registerPredefinedMacro(macro, filename, nameOffset, nameEndOffset, expansionOffset);
 	}
 	
@@ -131,13 +131,12 @@ public class LocationMap implements ILocationResolver {
 	 * @param macro the macro that has been expanded
 	 * @param imageLocationInfo the image-location for the name of the macro.
 	 */
-	public IASTName encounterImplicitMacroExpansion(IPreprocessorMacro macro, ImageLocationInfo imageLocationInfo) {
-		return new ASTMacroReferenceName(fTranslationUnit, macro, imageLocationInfo);
+	public IASTName encounterImplicitMacroExpansion(IMacroBinding macro, ImageLocationInfo imageLocationInfo) {
+		return new ASTMacroReferenceName(fTranslationUnit, 0, 0, macro, imageLocationInfo);
 	}
 	
 	/**
 	 * Creates a new context for the result of a (recursive) macro-expansion.
-	 * @param startOffset offset within the current context where macro-expansion starts.
 	 * @param nameOffset offset within the current context where the name for the macro-expansion starts.
 	 * @param nameEndOffset offset within the current context where the name for the macro-expansion ends.
 	 * @param endOffset offset within the current context where the entire macro-expansion ends.
@@ -145,31 +144,30 @@ public class LocationMap implements ILocationResolver {
 	 * @param implicitMacroReferences an array of implicit macro-expansions.
 	 * @param imageLocations an array of image-locations for the new context.
 	 */
-	public ILocationCtx pushMacroExpansion(int startOffset, int nameOffset, int nameEndOffset, int endOffset, int contextLength,
-			IPreprocessorMacro macro, IASTName[] implicitMacroReferences, ImageLocationInfo[] imageLocations) {
+	public ILocationCtx pushMacroExpansion(int nameOffset, int nameEndOffset, int endOffset, int contextLength,
+			IMacroBinding macro, IASTName[] implicitMacroReferences, ImageLocationInfo[] imageLocations) {
 		assert fCurrentContext instanceof ContainerLocationCtx;
 		
-		int startNumber= getSequenceNumberForOffset(startOffset);	
 		int nameNumber= getSequenceNumberForOffset(nameOffset);		
 		int nameEndNumber= getSequenceNumberForOffset(nameEndOffset);
 		int endNumber= getSequenceNumberForOffset(endOffset);
+		final int length= endNumber-nameNumber;
 		
 		for (int i = 0; i < implicitMacroReferences.length; i++) {
 			ASTMacroReferenceName name = (ASTMacroReferenceName) implicitMacroReferences[i];
-			name.setOffsetAndLength(startNumber, endNumber);
-			addExpansion((IPreprocessorMacro) name.getBinding(), name);
+			name.setOffsetAndLength(nameNumber, length);
+			addExpansion((IMacroBinding) name.getBinding(), name);
 		}
 		
-		ASTPreprocessorName expansion= new ASTPreprocessorName(fTranslationUnit, IASTTranslationUnit.EXPANSION_NAME,
-				nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
+		ASTMacroReferenceName expansion= new ASTMacroReferenceName(fTranslationUnit, nameNumber, nameEndNumber, macro, null);
 		addExpansion(macro, expansion);
 		
-		fCurrentContext= new MacroExpansionCtx((ContainerLocationCtx) fCurrentContext, startOffset, endOffset, endNumber, contextLength, imageLocations, expansion);
+		fCurrentContext= new MacroExpansionCtx((ContainerLocationCtx) fCurrentContext, nameOffset, endOffset, endNumber, contextLength, imageLocations, expansion);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
 	
-	private void addExpansion(IPreprocessorMacro macro, ASTPreprocessorName name) {
+	private void addExpansion(IMacroBinding macro, ASTPreprocessorName name) {
 		List list= (List) fMacroExpansions.get(macro);
 		if (list == null) {
 			list= new ArrayList();

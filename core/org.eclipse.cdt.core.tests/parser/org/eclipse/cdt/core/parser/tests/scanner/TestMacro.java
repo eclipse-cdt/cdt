@@ -12,11 +12,11 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.internal.core.parser.scanner.IPreprocessorMacro;
 import org.eclipse.core.runtime.CoreException;
 
-final class TestMacro implements IPreprocessorMacro {
+final class TestMacro implements IMacroBinding {
 	private String fName;
 	private String fExpansion;
 	private String[] fParams;

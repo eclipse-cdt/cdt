@@ -39,11 +39,56 @@ import org.eclipse.dstore.core.model.IDataStoreConstants;
  */
 public class ServerCommandHandler extends CommandHandler
 {
+	public class ServerIdleThread extends Thread
+	{
+		private long _timeout;
+		private boolean _serverTimedOut = false;
+		
+		public ServerIdleThread(long timeout)
+		{
+			_timeout = timeout;			
+		}
+		
+		public void run()
+		{	
+			while (!_serverTimedOut)
+			{
+				waitForTimeout();
+			}
+			if (_serverTimedOut)
+			{
+				
+				_dataStore.getCommandHandler().finish();
+				_dataStore.getUpdateHandler().finish();
+				_dataStore.finish();
+				System.out.println(ServerReturnCodes.RC_FINISHED);
+				System.exit(0);
+			}
+		}
+		
+		protected synchronized void waitForTimeout()
+		{
+			try
+			{
+				wait(_timeout);
+			}
+			catch (InterruptedException e)
+			{
+				// whenver a new command comes through we interrupt this
+				// if we do timeout then it's time to shutdown the server
+				return;
+			}
+			System.out.println("server timed out!");
+			_serverTimedOut = true;
+		}
+		
+	}
 
 
 	private ArrayList _loaders;
 	private MinerLoader _minerLoader;
-
+	private ServerIdleThread _serverIdleThread;
+	
 	/**
 	 * Constructor
 	 * 
@@ -494,5 +539,27 @@ public class ServerCommandHandler extends CommandHandler
 	}
 	
 
+	/**
+	 * Overridden so that ServerIdleThread knows when new commands are received
+	 */
+	public void addCommand(DataElement command, boolean immediate)
+	{
+		super.addCommand(command, immediate);
+		
+		int serverIdleShutdownTimeout = _dataStore.getServerIdleShutdownTimeout();
+		if (serverIdleShutdownTimeout > 0)
+		{
+			if (_serverIdleThread != null)
+			{
+				// new command so restart timeout
+				_serverIdleThread.interrupt();
+			}
+			else
+			{
+				_serverIdleThread = new ServerIdleThread(serverIdleShutdownTimeout);
+				_serverIdleThread.start();
+			}
+		}		
+	}
 	
 }

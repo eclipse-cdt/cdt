@@ -111,6 +111,8 @@ public final class DataStore
 	private boolean _logTimes;
 	private int _timeout;
 
+	private int _serverIdleShutdownTimeout = 0;
+	
 	private HashMap _hashMap;
 	private HashMap _objDescriptorMap;
 	private HashMap _cmdDescriptorMap;
@@ -466,6 +468,14 @@ public final class DataStore
 		return _timeout;
 	}
 	
+	/**
+	 * Gets the time the server may remain idle before shutting down
+	 * @return the idle time before shutdown
+	 */
+	public int getServerIdleShutdownTimeout()
+	{
+		return _serverIdleShutdownTimeout;
+	}
 
 	/**
 	 * Sets an attribute of the <code>DataStore</code>  
@@ -3475,6 +3485,20 @@ public final class DataStore
 
 		_dataStoreSchema = new DataStoreSchema(this);
 
+		if (!isVirtual())
+		{
+			// get the time the server can remain idle before automatically shutting down
+			// if the idle is 0 or not set then it is considered indefinite.
+			// The server is considered idle for the period of which no commands are
+			// received in server command handler
+			String serverIdleShutdownTimeout = System.getProperty("DSTORE_IDLE_SHUTDOWN_TIMEOUT");
+			if (serverIdleShutdownTimeout != null)
+			{
+				_serverIdleShutdownTimeout = Integer.parseInt(serverIdleShutdownTimeout);
+			}
+		}
+		
+		
 		String tracingProperty = System.getProperty("DSTORE_TRACING_ON"); //$NON-NLS-1$
 		if (tracingProperty != null && tracingProperty.equals("true")) //$NON-NLS-1$
 		{

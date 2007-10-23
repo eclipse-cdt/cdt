@@ -664,15 +664,9 @@ public final class CIndenter {
 		if (CCorePlugin.SPACE.equals(fPrefs.prefTabChar)) {
 			tabs= 0;
 			spaces= missing;
-		} else if (CCorePlugin.TAB.equals(fPrefs.prefTabChar)) {
-			tabs= tabSize > 0 ? missing / tabSize : 0;
-			spaces= tabSize > 0 ? missing % tabSize : missing;
-		} else if (DefaultCodeFormatterConstants.MIXED.equals(fPrefs.prefTabChar)) {
-			tabs= tabSize > 0 ? missing / tabSize : 0;
-			spaces= tabSize > 0 ? missing % tabSize : missing;
 		} else {
-			Assert.isTrue(false);
-			return null;
+			tabs= tabSize > 0 ? missing / tabSize : 0;
+			spaces= tabSize > 0 ? missing % tabSize : missing;
 		}
 		for (int i= 0; i < tabs; i++)
 			buffer.append('\t');
@@ -1408,6 +1402,7 @@ public final class CIndenter {
 				return false;
 
 			default:
+				 // programming error
 				Assert.isTrue(false);
 				return false;
 		}
@@ -1538,6 +1533,7 @@ public final class CIndenter {
 				return pos; // restore
 
 			default:
+				 // programming error
 				Assert.isTrue(false);
 				return -1; // dummy
 		}

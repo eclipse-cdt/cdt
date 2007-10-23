@@ -63,6 +63,52 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		setStrategy(new SinglePDOMTestStrategy(true));
 	}
 	
+	//	class testdef{
+	//
+	//	public:
+	//		void testagain();
+	//
+	//	};
+	//
+	//	typedef void TAny;
+	//
+	//	inline void testCall(TAny* aExpected){}
+	//
+	//  testdef*  global_cBase;
+	//  testdef*& global_cBaseRef = global_cBase;
+	
+	//	#include "typedefHeader.h"
+	//
+	//
+	//	int main(void)
+	//		{
+	//			testdef*  local_cBase;
+	//          testdef*& local_cBaseRef = local_cBase;
+	//		
+	//			testCall( /*1*/ (void *) local_cBase);
+	//          testCall( /*2*/ local_cBase);
+	//
+	//			testCall( /*3*/ (void *) local_cBaseRef);
+	//          testCall( /*4*/ local_cBaseRef);
+	//
+	//			testCall( /*5*/ (void *) global_cBase);
+	//          testCall( /*6*/ global_cBase);
+	//
+	//			testCall( /*7*/ (void *)global_cBaseRef);
+	//          testCall( /*8*/ global_cBaseRef);
+	//		}
+	public void testBug206187() throws Exception {
+		IBinding b1= getBindingFromASTName("testCall( /*1*/", 8);
+		IBinding b2= getBindingFromASTName("testCall( /*2*/", 8);
+		IBinding b3= getBindingFromASTName("testCall( /*3*/", 8);
+		IBinding b4= getBindingFromASTName("testCall( /*4*/", 8);
+		IBinding b5= getBindingFromASTName("testCall( /*5*/", 8);
+		IBinding b6= getBindingFromASTName("testCall( /*6*/", 8);
+		IBinding b7= getBindingFromASTName("testCall( /*7*/", 8);
+		IBinding b8= getBindingFromASTName("testCall( /*8*/", 8);
+	}
+	
+	
 	// template<typename T1>
     // class A {};
     // 

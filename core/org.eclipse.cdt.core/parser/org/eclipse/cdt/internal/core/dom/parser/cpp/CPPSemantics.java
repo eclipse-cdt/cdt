@@ -491,12 +491,19 @@ public class CPPSemantics {
 		}
 	}
 
-	static protected class Cost
-	{
-		public Cost( IType s, IType t ){
-			source = s;
-			target = t;
-		}
+	static protected class Cost {
+		//Some constants to help clarify things
+		public static final int AMBIGUOUS_USERDEFINED_CONVERSION = 1;
+		
+		public static final int NO_MATCH_RANK = -1;
+		public static final int IDENTITY_RANK = 0;
+		public static final int LVALUE_OR_QUALIFICATION_RANK = 0;
+		public static final int PROMOTION_RANK = 1;
+		public static final int CONVERSION_RANK = 2;
+		public static final int DERIVED_TO_BASE_CONVERSION = 3;
+		public static final int USERDEFINED_CONVERSION_RANK = 4;
+		public static final int ELLIPSIS_CONVERSION = 5;
+		public static final int FUZZY_TEMPLATE_PARAMETERS = 6;
 		
 		public IType source;
 		public IType target;
@@ -511,18 +518,10 @@ public class CPPSemantics {
 		public int rank = -1;
 		public int detail;
 		
-		//Some constants to help clarify things
-		public static final int AMBIGUOUS_USERDEFINED_CONVERSION = 1;
-		
-		public static final int NO_MATCH_RANK = -1;
-		public static final int IDENTITY_RANK = 0;
-		public static final int LVALUE_OR_QUALIFICATION_RANK = 0;
-		public static final int PROMOTION_RANK = 1;
-		public static final int CONVERSION_RANK = 2;
-		public static final int DERIVED_TO_BASE_CONVERSION = 3;
-		public static final int USERDEFINED_CONVERSION_RANK = 4;
-		public static final int ELLIPSIS_CONVERSION = 5;
-		public static final int FUZZY_TEMPLATE_PARAMETERS = 6;
+		public Cost( IType s, IType t ){
+			source = s;
+			target = t;
+		}
 
 		public int compare( Cost cost ) throws DOMException{
 			int result = 0;
@@ -2880,25 +2879,49 @@ public class CPPSemantics {
 		return cost;
 	}
 
-	public static IType getUltimateType( IType type, boolean stopAtPointerToMember ){
+	/**
+	 * Unravels a type by following purely typedefs
+	 * @param type
+	 * @return
+	 */
+	private static IType getUltimateTypeViaTypedefs(IType type) {
+		try {
+			while(type instanceof ITypedef) {
+				type= ((ITypedef)type).getType();
+			}
+		} catch(DOMException e) {
+			type= e.getProblem();
+		}
+		return type;
+	}
+	
+	private static IType getUltimateType(IType type, IType[] lastPointerType, boolean stopAtPointerToMember) {
 	    try {
 	        while( true ){
 				if( type instanceof ITypedef )
-				    type = ((ITypedef)type).getType();
+					type= ((ITypedef)type).getType();
 	            else if( type instanceof IQualifierType )
-					type = ((IQualifierType)type).getType();
+	            	type= ((IQualifierType)type).getType();
 	            else if( stopAtPointerToMember && type instanceof ICPPPointerToMemberType )
 	                return type;
-				else if( type instanceof IPointerType )
-					type = ((IPointerType) type).getType();
-				else if( type instanceof ICPPReferenceType )
-					type = ((ICPPReferenceType)type).getType();
+				else if( type instanceof IPointerType ) {
+					if(lastPointerType!=null) {
+						lastPointerType[0]= type;
+					}
+					type= ((IPointerType) type).getType();
+				} else if( type instanceof ICPPReferenceType )
+					type= ((ICPPReferenceType)type).getType();
 				else 
 					return type;
+				
 			}
         } catch ( DOMException e ) {
             return e.getProblem();
         }
+	}
+	
+	public static IType getUltimateType(IType type, boolean stopAtPointerToMember) {
+	   return getUltimateType(type, null, stopAtPointerToMember);
 	}
 	
 	/**
@@ -2986,30 +3009,14 @@ public class CPPSemantics {
 		boolean canConvert = true;
 		int requiredConversion = Cost.IDENTITY_RANK;  
 
-		IPointerType op1, op2;
 		IType s = cost.source, t = cost.target;
 		boolean constInEveryCV2k = true;
 		while( true ){
-			 op1 = null;
-			 op2 = null;
-			 while( true ){
-			 	if( s instanceof ITypedef )	
-			 		s = ((ITypedef)s).getType();
-			 	else {
-			 		if( s instanceof IPointerType )		
-			 			op1 = (IPointerType) s;	
-			 		break;
-			 	}
-			 }
-			 while( true ){
-			 	if( t instanceof ITypedef )	
-			 		t = ((ITypedef)t).getType();
-			 	else {
-			 		if( t instanceof IPointerType )		
-			 			op2 = (IPointerType) t;	
-			 		break;
-			 	}
-			 }
+			 s= getUltimateTypeViaTypedefs(s);
+			 t= getUltimateTypeViaTypedefs(t);
+			 IPointerType op1= s instanceof IPointerType ? (IPointerType) s : null;
+			 IPointerType op2= t instanceof IPointerType ? (IPointerType) t : null;
+			 
 			 if( op1 == null && op2 == null )
 			 	break;
 			 else if( op1 == null ^ op2 == null) {
@@ -3140,29 +3147,19 @@ public class CPPSemantics {
 		
 		cost.rank = (cost.promotion > 0 ) ? Cost.PROMOTION_RANK : Cost.NO_MATCH_RANK;
 	}
+	
 	static private void conversion( Cost cost ) throws DOMException{
 		IType src = cost.source;
 		IType trg = cost.target;
 		
-		int temp = -1;
-		
 		cost.conversion = 0;
 		cost.detail = 0;
 
-		IType s = getUltimateType( src, true );
-		IType t = getUltimateType( trg, true );
-			
-		IType sPrev = src;
-		while( sPrev instanceof ITypeContainer ){
-			IType next = ((ITypeContainer)sPrev).getType();
-			while( next instanceof IQualifierType || next instanceof ITypedef ){
-				next = ((ITypeContainer)next).getType();
-			}
-			if( next == s )
-				break;
-			sPrev = next;
-		}
-
+		IType[] sHolder= new IType[1], tHolder= new IType[1];
+		IType s = getUltimateType( src, sHolder, true );
+		IType t = getUltimateType( trg, tHolder, true );
+		IType sPrev= sHolder[0], tPrev= tHolder[0];
+		
 		if( src instanceof IBasicType && trg instanceof IPointerType ){
 			//4.10-1 an integral constant expression of integer type that evaluates to 0 can be converted to a pointer type
 			IASTExpression exp = ((IBasicType)src).getValue();
@@ -3180,17 +3177,6 @@ public class CPPSemantics {
 				}
 			}
 		} else if( sPrev instanceof IPointerType ){
-			IType tPrev = trg;
-			while( tPrev instanceof ITypeContainer ){
-				IType next = ((ITypeContainer)tPrev).getType();
-				while( next instanceof IQualifierType || next instanceof ITypedef ){
-					next = ((ITypeContainer)next).getType();
-				}
-				if( next == t )
-					break;
-				tPrev = next;
-			}
-			
 			//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 			//converted to an rvalue of type "pointer to cv void"
 			if( tPrev instanceof IPointerType && t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_void ){
@@ -3202,10 +3188,10 @@ public class CPPSemantics {
 			//4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
 			//to an rvalue of type "pointer to cv B", where B is a base class of D.
 			else if( s instanceof ICPPClassType && tPrev instanceof IPointerType && t instanceof ICPPClassType ){
-				temp = hasBaseClass( (ICPPClassType)s, (ICPPClassType) t, false );
-				cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
-				cost.conversion = ( temp > -1 ) ? temp : 0;
-				cost.detail = 1;
+				int depth= calculateInheritanceDepth( (ICPPClassType)s, (ICPPClassType) t );
+				cost.rank= ( depth > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
+				cost.conversion= ( depth > -1 ) ? depth : 0;
+				cost.detail= 1;
 				return;
 			}
 		} 
@@ -3227,10 +3213,10 @@ public class CPPSemantics {
 		    IType st = spm.getType();
 		    IType tt = tpm.getType();
 		    if( st != null && tt != null && st.isSameType( tt ) ){
-		        temp = hasBaseClass( tpm.getMemberOfClass(), spm.getMemberOfClass(), false );
-		        cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
-				cost.conversion = ( temp > -1 ) ? temp : 0;
-				cost.detail = 1;
+		        int depth= calculateInheritanceDepth( tpm.getMemberOfClass(), spm.getMemberOfClass() );
+		        cost.rank= ( depth > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
+				cost.conversion= ( depth > -1 ) ? depth : 0;
+				cost.detail= 1;
 		    }
 		}
 	}
@@ -3240,14 +3226,14 @@ public class CPPSemantics {
 		IType t = getUltimateType( cost.target, true );
 		
 		if( cost.targetHadReference && s instanceof ICPPClassType && t instanceof ICPPClassType ){
-			int temp = hasBaseClass( (ICPPClassType) s, (ICPPClassType) t, false );
-			
-			if( temp > -1 ){
-				cost.rank = Cost.DERIVED_TO_BASE_CONVERSION;
-				cost.conversion = temp;
+			int depth= calculateInheritanceDepth( (ICPPClassType) s, (ICPPClassType) t );
+			if(depth > -1){
+				cost.rank= Cost.DERIVED_TO_BASE_CONVERSION;
+				cost.conversion= depth;
 			}	
 		}
 	}
+	
 	static private void relaxTemplateParameters( Cost cost ){
 		IType s = getUltimateType( cost.source, false );
 		IType t = getUltimateType( cost.target, false );
@@ -3258,58 +3244,44 @@ public class CPPSemantics {
 			cost.rank = Cost.FUZZY_TEMPLATE_PARAMETERS;
 		}
 	}
-
-	static private int hasBaseClass( IBinding symbol, IBinding base, boolean needVisibility ) throws DOMException {
-		if( symbol == base ){
+	
+	/**
+	 * Calculates the number of edges in the inheritance path of <code>clazz</code> to
+	 * <code>ancestorToFind</code>, returning -1 if no inheritance relationship is found.
+	 * @param clazz the class to search upwards from
+	 * @param ancestorToFind the class to find in the inheritance graph
+	 * @return the number of edges in the inheritance graph, or -1 if the specifide classes have
+	 * no inheritance relation
+	 * @throws DOMException
+	 */
+	private static int calculateInheritanceDepth(ICPPClassType clazz, ICPPClassType ancestorToFind) throws DOMException {
+		if(clazz == ancestorToFind || clazz.isSameType(ancestorToFind))
 			return 0;
+
+		ICPPBase [] bases = clazz.getBases();
+		for(int i=0; i<bases.length; i++) {
+			IBinding base = bases[i].getBaseClass();
+			if(base instanceof IType) {
+				IType tbase= (IType) base;
+				if( tbase.isSameType(ancestorToFind) || 
+						(ancestorToFind instanceof ICPPSpecialization &&  /*allow some flexibility with templates*/ 
+								((IType)((ICPPSpecialization)ancestorToFind).getSpecializedBinding()).isSameType(tbase) ) ) 
+				{
+					return 1;
+				}
+				
+				tbase= getUltimateTypeViaTypedefs(tbase);
+				if(tbase instanceof ICPPClassType) {
+					int n= calculateInheritanceDepth((ICPPClassType) tbase, ancestorToFind );
+					if(n>0)
+						return n+1;
+				}
+			}
 		}
-		ICPPClassType clsSymbol = null;
-		ICPPClassType clsBase = null;
-		IType temp = null;
-		while( symbol instanceof ITypedef ){
-		    temp = ((ITypedef)symbol).getType();
-		    if( temp instanceof IBinding )
-		        symbol = (IBinding) temp;
-		    else return -1;
-		}
-		if( symbol instanceof ICPPClassType )
-		    clsSymbol = (ICPPClassType) symbol;
-		else return -1;
 		
-		while( base instanceof ITypedef ){
-		    temp = ((ITypedef)base).getType();
-		    if( temp instanceof IBinding )
-		        base= (IBinding) temp;
-		    else return -1;
-		}
-		if( base instanceof ICPPClassType )
-		    clsBase = (ICPPClassType) base;
-		else return -1;
-		
-		
-		IBinding parent = null;
-		ICPPBase [] bases = clsSymbol.getBases();
-		
-		for( int i = 0; i < bases.length; i ++ ){
-			ICPPBase wrapper = bases[i];	
-			parent = bases[i].getBaseClass();
-			boolean isVisible = ( wrapper.getVisibility() == ICPPBase.v_public);
-			
-			if( parent instanceof IType && 
-				 ( ((IType)parent).isSameType( clsBase ) || 
-				   ( clsBase instanceof ICPPSpecialization &&  //allow some flexibility with templates 
-				     ((IType)((ICPPSpecialization)clsBase).getSpecializedBinding()).isSameType( (IType) parent ) ) ) )
-			{
-				if( needVisibility && !isVisible )
-					return -1;
-				return 1;
-			} 
-			int n = hasBaseClass( parent, clsBase, needVisibility );
-			if( n > 0 )
-				return n + 1;
-		}
 		return -1;
 	}
+
 	
 	public static ICPPFunction findOperator( IASTExpression exp, ICPPClassType cls ){
 		IScope scope = null;

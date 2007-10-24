@@ -81,6 +81,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_VAR_DECLARATION= NAME_PREFIX + "var_declaration_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDE= NAME_PREFIX + "include_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_MACRO= NAME_PREFIX + "define_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_LABEL= NAME_PREFIX + "label_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT= NAME_PREFIX + "c_file_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT_HEADER= NAME_PREFIX + "h_file_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT_ASM= NAME_PREFIX + "s_file_obj.gif"; //$NON-NLS-1$
@@ -161,6 +162,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_VAR_DECLARARION= createManaged(T_OBJ, IMG_OBJS_VAR_DECLARATION);
 	public static final ImageDescriptor DESC_OBJS_INCLUDE= createManaged(T_OBJ, IMG_OBJS_INCLUDE);
 	public static final ImageDescriptor DESC_OBJS_MACRO= createManaged(T_OBJ, IMG_OBJS_MACRO);
+	public static final ImageDescriptor DESC_OBJS_LABEL= createManaged(T_OBJ, IMG_OBJS_LABEL);
 	public static final ImageDescriptor DESC_OBJS_TUNIT= createManaged(T_OBJ, IMG_OBJS_TUNIT);
 	public static final ImageDescriptor DESC_OBJS_TUNIT_HEADER= createManaged(T_OBJ, IMG_OBJS_TUNIT_HEADER);
 	public static final ImageDescriptor DESC_OBJS_TUNIT_ASM= createManaged(T_OBJ, IMG_OBJS_TUNIT_ASM);

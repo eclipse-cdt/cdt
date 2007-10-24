@@ -12,15 +12,20 @@
 package org.eclipse.cdt.internal.ui.editor.asm;
 
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.text.PartitionDamager;
@@ -29,13 +34,24 @@ import org.eclipse.cdt.internal.ui.text.PartitionDamager;
 public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	private AsmTextTools fAsmTextTools;
+	private ITextEditor fTextEditor;
 	
 	/**
 	 * Constructor for AsmSourceViewerConfiguration
 	 */
 	public AsmSourceViewerConfiguration(AsmTextTools tools, IPreferenceStore store) {
 		super(store);
+		fTextEditor= null;
 		fAsmTextTools = tools;
+	}
+
+	/**
+	 * Constructor for AsmSourceViewerConfiguration
+	 */
+	public AsmSourceViewerConfiguration(ITextEditor editor, IPreferenceStore store) {
+		super(store);
+		fTextEditor= editor;
+		fAsmTextTools= CUIPlugin.getDefault().getAsmTextTools();
 	}
 
 	/**
@@ -130,7 +146,19 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 				ICPartitions.C_PREPROCESSOR};
 	}
 
-
+	/*
+	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		if (fTextEditor != null) {
+			MonoReconciler reconciler= new MonoReconciler(new AsmReconcilingStrategy(fTextEditor), false);
+			reconciler.setIsIncrementalReconciler(false);
+			reconciler.setProgressMonitor(new NullProgressMonitor());
+			reconciler.setDelay(500);
+			return reconciler;
+		}
+		return super.getReconciler(sourceViewer);
+	}
 }
 
 

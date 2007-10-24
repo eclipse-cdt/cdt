@@ -131,7 +131,7 @@
             class="org.eclipse.cdt.internal.ui.filters.NonCElementFilter"
             id="org.eclipse.cdt.internal.ui.CView.NonCElementFilter">
       </filter>
-<!-- Outline Page -->
+<!-- C/C++ Outline Page -->
       <filter
             targetId="org.eclipse.cdt.ui.COutlinePage"
             name="%HideUsingDirective.label"
@@ -147,6 +147,15 @@
             description="%HideMacroDirective.description"
             class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
             id="org.eclipse.cdt.ui.COutlinePage.MacroDirectiveFilter">
+      </filter>
+<!-- Asm Outline Page -->
+      <filter
+            targetId="org.eclipse.cdt.ui.AsmOutlinePage"
+            name="%HideMacroDirective.label"
+            enabled="false"
+            description="%HideMacroDirective.description"
+            class="org.eclipse.cdt.internal.ui.filters.MacroDirectiveFilter"
+            id="org.eclipse.cdt.ui.AsmOutlinePage.MacroDirectiveFilter">
       </filter>
    </extension>
       <extension

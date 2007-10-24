@@ -225,7 +225,10 @@ public class CElementImageProvider {
 
 			case ICElement.C_USING:
 				return CPluginImages.DESC_OBJS_USING;
-		}
+
+			case ICElement.ASM_LABEL:
+				return CPluginImages.DESC_OBJS_LABEL;
+}
 		return null;
 	}
 

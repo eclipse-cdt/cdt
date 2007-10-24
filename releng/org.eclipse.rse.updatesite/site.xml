@@ -130,7 +130,7 @@
    <feature url="features/org.eclipse.tm.terminal_1.0.2.v20071023-1-17w31182134.jar" id="org.eclipse.tm.terminal" version="1.0.2.v20071023-1-17w31182134">
       <category name="TM and RSE 2.0.1 patches (M20071023-1300)"/>
    </feature>
-   <feature url="features/org.eclipse.tm.terminal.serial_1.0.2.v20071023-1-17w31182134.jar" id="org.eclipse.tm.terminal.view" version="1.0.2.v20071023-1-17w31182134">
+   <feature url="features/org.eclipse.tm.terminal.serial_1.0.2.v20071023-1-17w31182134.jar" id="org.eclipse.tm.terminal.serial" version="1.0.2.v20071023-1-17w31182134">
       <category name="TM and RSE 2.0.1 patches (M20071023-1300)"/>
    </feature>
    <feature url="features/org.eclipse.tm.terminal.view_1.0.2.v20071023-1-17w31182134.jar" id="org.eclipse.tm.terminal.view" version="1.0.2.v20071023-1-17w31182134">

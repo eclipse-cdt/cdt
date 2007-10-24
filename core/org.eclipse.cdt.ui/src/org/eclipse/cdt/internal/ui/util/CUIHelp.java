@@ -117,7 +117,8 @@ public class CUIHelp {
 				ITextSelection selection = (ITextSelection)editor.getSite().getSelectionProvider().getSelection();
 				IDocument document = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 				IRegion region = CWordFinder.findWord(document, selection.getOffset());
-				expression = document.get(region.getOffset(), region.getLength());
+				if (region != null)
+					expression = document.get(region.getOffset(), region.getLength());
 			}
 			catch(Exception e){
 			}

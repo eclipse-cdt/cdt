@@ -612,17 +612,17 @@ public abstract class SystemTempFileListener implements IResourceChangeListener
 				uploadPath = remotePath.toString();
 			}
 
-			// attemp the remote file synchronization      
+			// attempt the remote file synchronization      
 			if (doesHandle(fs))
 			{
 				// see if we're connected
 				try
 				{
 					// check that the remote file system is connected
-					// if not, attemp to connect to it
+					// if not, attempt to connect to it
 					if (!fs.isConnected())
 					{
-						fs.connect();
+						fs.connect(false, null);
 					}
 				}
 				catch (Exception e)

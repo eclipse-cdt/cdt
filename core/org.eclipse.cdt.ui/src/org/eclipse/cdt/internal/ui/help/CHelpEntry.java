@@ -36,6 +36,9 @@ public class CHelpEntry {
 		}
 		fss = (CFunctionSummary[])obs1.toArray(new CFunctionSummary[obs1.size()]);
 		hts = (CHelpTopic[])obs2.toArray(new CHelpTopic[obs2.size()]);
+		
+		if (fss.length == 0 && hts.length == 0)
+			isValid = false; // nothing to display
 	}
 
 	/**

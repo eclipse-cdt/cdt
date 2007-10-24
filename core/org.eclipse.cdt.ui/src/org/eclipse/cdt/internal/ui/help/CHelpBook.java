@@ -20,6 +20,10 @@ public class CHelpBook implements ICHelpBook {
 	private static final String ATTR_TITLE = "title"; //$NON-NLS-1$
 	private static final String ATTR_BTYPE = "type";  //$NON-NLS-1$
 	private static final String NODE_ENTRY = "entry"; //$NON-NLS-1$
+	private static final String TYPE_C   = "HELP_TYPE_C"; //$NON-NLS-1$
+	private static final String TYPE_CPP = "HELP_TYPE_CPP"; //$NON-NLS-1$
+	private static final String TYPE_ASM = "HELP_TYPE_ASM"; //$NON-NLS-1$
+	private static final int DEFAULT_VAL  = ICHelpBook.HELP_TYPE_C;
 
 	private int type;
 	private String title;
@@ -31,9 +35,22 @@ public class CHelpBook implements ICHelpBook {
 		if (e.hasAttribute(ATTR_TITLE))
 			title = e.getAttribute(ATTR_TITLE).trim();
 		if (e.hasAttribute(ATTR_BTYPE)) {
+			String s = e.getAttribute(ATTR_BTYPE);
 			try {
-				type = Integer.parseInt(e.getAttribute(ATTR_TITLE));
-			} catch (NumberFormatException ee) {}
+				type = Integer.parseInt(s);
+				if (type < DEFAULT_VAL ||
+					type > ICHelpBook.HELP_TYPE_ASM)
+					type = DEFAULT_VAL;
+			} catch (NumberFormatException ee) {
+				if (TYPE_C.equalsIgnoreCase(s))
+					type = ICHelpBook.HELP_TYPE_C;
+				else if (TYPE_CPP.equalsIgnoreCase(s))
+					type = ICHelpBook.HELP_TYPE_CPP;
+				else if (TYPE_ASM.equalsIgnoreCase(s))
+					type = ICHelpBook.HELP_TYPE_ASM;
+				else
+					type = DEFAULT_VAL;
+			}
 		}
 		NodeList list = e.getChildNodes();
 		for(int i = 0; i < list.getLength(); i++){
@@ -68,7 +85,6 @@ public class CHelpBook implements ICHelpBook {
 			IFunctionSummary[] fs = he.getFunctionSummary();
 			if (fs != null && fs.length > 0)
 				return fs[0]; 
-			// TODO: function summary selection
 		}
 		return null;
 	}

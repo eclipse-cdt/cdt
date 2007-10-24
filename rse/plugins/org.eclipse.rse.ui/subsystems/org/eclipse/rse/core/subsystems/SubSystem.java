@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * Xuan Chen        (IBM)        - [187342] Open in New Window expand failed error when not connected
+ * David McKnight   (IBM)        - [186363] remove deprecated calls in checkIsConnected
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -484,21 +485,12 @@ public abstract class SubSystem extends RSEModelObject
 				Display display = Display.getCurrent();
 				if (display != null)
 				{
-					// deduce active shell from display
-					Shell shell = display.getActiveShell();
-					if (shell != null && !shell.isDisposed())
-					{
-						connect();
-					}
-					else
-					{
-						connect();
-					}
+					connect(false, null);
 				}
 				else
 				{
 					// Not on UI-thread
-					connect();
+					connect(new NullProgressMonitor(), false);
 				}				
             }
             catch (Exception e)

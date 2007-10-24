@@ -60,6 +60,47 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		setStrategy(new ReferencedProject(true));
 	}
 	
+    //	class Str1 {
+	//	public:
+	//	   Str1(const char* s) {
+	//	      s_ = s;
+	//     }
+	//
+	//	   const char* s_;
+	//	};
+	//
+	//	template<typename T>
+	//	class StrT {
+	//	public:
+	//	   StrT(const T* s) {
+	//	      s_ = s;
+	//     }
+	//
+	//     const T* s_;
+	//	};
+	//
+	//  template<typename T>
+	//	class C1 {
+	//	public:
+	//	  void m1(const Str1& s) {}
+	//	  void m2(const StrT<T> s) {}
+	//	};
+
+	//  void main() {
+	//     C1<char> c1;
+	//	   c1.m1("aaa");  // OK
+	//	   c1.m2("aaa");  // problem
+	//  }
+	public void _testUnindexedConstructorInstanceImplicitReferenceToDeferred() throws Exception {
+		IBinding b0= getBindingFromASTName("C1<char> c1", 8);
+		IBinding b1= getBindingFromASTName("m1(\"aaa\")", 2);
+    	IBinding b2= getBindingFromASTName("m2(\"aaa\")", 2);
+    	
+    	assertEquals(1, getIndex().findNames(b1, IIndex.FIND_REFERENCES).length);
+    	assertEquals(1, getIndex().findNames(b2, IIndex.FIND_REFERENCES).length);
+	}
+	
+	
 	// template<typename T>
 	// class X {
 	//    public: static void foo() {}
@@ -84,6 +125,35 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	public void testUnindexedConstructorInstance() {
 		IBinding b0= getBindingFromASTName("X<A>()", 4);
 		assertInstance(b0, ICPPConstructor.class);
+	}
+
+	//	template<typename T>
+	//	class StrT {
+	//	public:
+	//	   StrT(const T* s) {
+	//	      s_ = s;
+	//     }
+	//
+	//     const T* s_;
+	//	};
+	//
+	//  template<typename T>
+	//	class C1 {
+	//	public:
+	//	  void m2(T t) {}
+	//	};
+	
+	//  class A {};
+	//  void foo() {
+	//     C1< StrT<A> > c1a;
+	//     c1a.m2(*new StrT<A>(new A()));
+	//  }
+	public void testUnindexedConstructorInstanceImplicitReference3() throws Exception {
+		IBinding b0= getBindingFromASTName("C1< StrT<A> >", 2);
+		IBinding b1= getBindingFromASTName("StrT<A> > c1a", 7);
+		IBinding b2= getBindingFromASTName("StrT<A>(", 7);
+		IBinding b3= getBindingFromASTName("c1a;", 3);
+		IBinding b4= getBindingFromASTName("m2(*", 2);
 	}
 	
 	//	class Str1 {

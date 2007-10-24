@@ -60,13 +60,13 @@ public class ASTTypeUtil {
 	private static final int DEAULT_ITYPE_SIZE = 2;
 
 	/**
-	 * Returns a String represnetation of the parameter type of an IFunctionType.
+	 * Returns a String representation of the parameter type of an IFunctionType.
 	 * 
 	 * This function calls ASTTypeUtil#getParameterTypeStringArray(IFunctionType) and wraps the
 	 * results in "()" with a comma separated list.
 	 * 
 	 * @param type
-	 * @return the represnetation of the parameter type of an IFunctionType
+	 * @return the representation of the parameter type of an IFunctionType
 	 */
 	public static String getParameterTypeString(IFunctionType type) {
 		StringBuffer result = new StringBuffer();
@@ -80,6 +80,23 @@ public class ASTTypeUtil {
 			}
 		}
 		result.append(Keywords.cpRPAREN);
+		return result.toString();
+	}
+	
+	/**
+	 * Returns a String representation of the type array as a
+	 * comma-separated list.
+	 * @param types
+	 * @return representation of the type array as a comma-separated list 
+	 */
+	public static String getTypeListString(IType[] types) {
+		StringBuffer result = new StringBuffer();
+		for(int i=0; i<types.length; i++) {
+			if (types[i] != null) {
+				result.append(getTypeString(types[i]));
+				if (i<types.length-1) result.append(COMMA_SPACE);
+			}
+		}
 		return result.toString();
 	}
 
@@ -274,21 +291,21 @@ public class ASTTypeUtil {
 	}
 
 	/**
-	 * Returns the type represntation of the IType as a String.  This function uses the IType interfaces to build the 
+	 * Returns the type representation of the IType as a String.  This function uses the IType interfaces to build the 
 	 * String representation of the IType. Resolves typedefs.
 	 * @param type
-	 * @return the type represntation of the IType
+	 * @return the type representation of the IType
 	 */
 	public static String getType(IType type) {
 		return getType(type, true);
 	}
 		
 	/**
-	 * Returns the type represntation of the IType as a String.  This function uses the IType interfaces to build the 
+	 * Returns the type representation of the IType as a String.  This function uses the IType interfaces to build the 
 	 * String representation of the IType.
 	 * @param type
 	 * @param resolveTypedefs whether or not typedefs shall be resolved to their real types
-	 * @return the type represntation of the IType
+	 * @return the type representation of the IType
 	 */
 	public static String getType(IType type, boolean resolveTypedefs) {
 		StringBuffer result = new StringBuffer();

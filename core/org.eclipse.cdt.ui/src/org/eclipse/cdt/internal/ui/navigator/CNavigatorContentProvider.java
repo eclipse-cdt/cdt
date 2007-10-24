@@ -440,6 +440,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			super.postRefresh(((ICProject)element).getProject());
 		} else if (element instanceof ICElement) {
 			super.postRefresh(element);
+		} else if (element instanceof IResource) {
+			IProject project= ((IResource)element).getProject();
+			if (CoreModel.hasCNature(project)) {
+				super.postRefresh(element);
+			}
 		}
 	}
 
@@ -456,6 +461,11 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			super.postAdd(((ICProject)parent).getProject(), element);
 		} else if (parent instanceof ICElement) {
 			super.postAdd(parent, element);
+		} else if (element instanceof IResource) {
+			IProject project= ((IResource)element).getProject();
+			if (CoreModel.hasCNature(project)) {
+				super.postAdd(parent, element);
+			}
 		}
 	}
 

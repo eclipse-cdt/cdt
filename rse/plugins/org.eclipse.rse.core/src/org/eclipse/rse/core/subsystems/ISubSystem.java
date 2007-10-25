@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
+ * David McKnight   (IBM)        - [207095] Implicit connect needs to run in the same job as caller
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -134,7 +135,7 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 * will throw a SystemMessageException you can easily display to the user by using a method
 	 * in it.
 	 */
-	public void checkIsConnected() throws SystemMessageException;
+	public void checkIsConnected(IProgressMonitor monitor) throws SystemMessageException;
 
 	// ---------------------------------------------------
 	// Methods for business partners to add their own 

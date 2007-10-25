@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Javier Montalvo Orus (Symbian) - [199773] Default file transfer mode is ignored for some file types
  * David McKnight   (IBM)        - [207095] Implicit connect on getRemoteFileObject
+ * David McKnight   (IBM)        - [207100] fire event after upload and download
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -30,7 +31,11 @@ import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.events.SystemRemoteChangeEvent;
 import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
@@ -135,7 +140,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	public IRemoteFile getRemoteFileObject(IRemoteFile parent, String folderOrFileName, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		// for bug 207095, implicit connect if the connection is not connected
-		checkIsConnected();
+		checkIsConnected(monitor);
 
 		String fullPath = parent.getAbsolutePath() + getSeparator() + folderOrFileName;
 		IRemoteFile file = getCachedRemoteFile(fullPath);
@@ -170,7 +175,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		
 		// for bug 207095, implicit connect if the connection is not connected
-		checkIsConnected();
+		checkIsConnected(monitor);
 		
 		if (fofName.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 		{
@@ -470,6 +475,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		{
 			localFile.delete();
 		}
+		else
+		{
+			// notify that the file was downloaded
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DOWNLOADED, file, file.getParentRemoteFile(), this));
+
+		}
 	}
 	
 	protected boolean isBinary(String localEncoding, String hostEncoding, String remotePath)
@@ -508,6 +520,10 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 				remoteFileName = avp.getName();
 			}
 			getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, srcEncoding, rmtEncoding, monitor);
+			
+			// notify that the file was uploaded
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, remotePath, remoteParentPath, this));
 		}
 	}
 	
@@ -528,6 +544,10 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			throw new SystemMessageException(msg);
 		}
 		getFileService().upload(new File(source), remoteParentPath, remoteFileName, isBinary, encoding, hostEncoding, monitor);
+		
+		// notify that the file was uploaded
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, destination, destination.getParentRemoteFile(), this));
 	}
 
 	/*

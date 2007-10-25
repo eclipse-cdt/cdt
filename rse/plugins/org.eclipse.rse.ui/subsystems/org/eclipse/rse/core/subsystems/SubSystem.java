@@ -476,22 +476,29 @@ public abstract class SubSystem extends RSEModelObject
      * will throw a SystemMessageException you can easily display to the user by using a method
      * in it.
      */
-    public void checkIsConnected() throws SystemMessageException
+    public void checkIsConnected(IProgressMonitor monitor) throws SystemMessageException
     {
         if (!isConnected())
         {
 			try
 			{
-				Display display = Display.getCurrent();
-				if (display != null)
+				if (monitor != null)
 				{
-					connect(false, null);
+					connect(monitor, false);
 				}
 				else
 				{
-					// Not on UI-thread
-					connect(new NullProgressMonitor(), false);
-				}				
+					Display display = Display.getCurrent();
+					if (display != null)
+					{
+						connect(false, null);
+					}
+					else
+					{
+						// Not on UI-thread
+						connect(new NullProgressMonitor(), false);
+					}
+				}
             }
             catch (Exception e)
             {

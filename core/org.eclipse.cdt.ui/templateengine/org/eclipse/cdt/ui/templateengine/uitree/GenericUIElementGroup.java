@@ -17,28 +17,29 @@ import java.util.Map;
 
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
-
 /**
- * 
  * The GenericUIElementGroup extends UIElement, implements the default behaviour
  * expected from UIElementGroup. This gives behaviour expected for PAGES-ONLY
  * type. Any other type of UIElement groups can override the definitions given
  * to methods in this class.
  * 
+ * @since 4.0
  */
-
 public class GenericUIElementGroup extends UIElement {
-
 	/**
-	 * Type of UIElement group. The possible values are PAGES_ONLY, PAGES_TAB,
-	 * PAGES_TREE, PAGES_TREE_TREE, PAGES_TAB_TREE.
+	 * @deprecated use {@value UIGroupTypeEnum#PAGES_ONLY}
 	 */
-	public static String PAGES_ONLY = "PAGES-ONLY"; //$NON-NLS-1$
-	public static String PAGES_TAB = "PAGES-TAB"; //$NON-NLS-1$
+	public static String PAGES_ONLY = UIGroupTypeEnum.PAGES_ONLY.getId();
+	/**
+	 * @deprecated use {@value UIGroupTypeEnum#PAGES_ONLY}
+	 */
+	public static String PAGES_TAB = UIGroupTypeEnum.PAGES_TAB.getId();
+	/**
+	 * @deprecated
+	 */
 	public static String LOGTYPE = "UIElement"; //$NON-NLS-1$
 
 	UIGroupTypeEnum type = null;
-
 
 	/**
 	 * child list for this UIElement
@@ -56,8 +57,9 @@ public class GenericUIElementGroup extends UIElement {
 		this.childList = new ArrayList/*<UIElement>*/();
 	}
 
-	/**
-	 * @see UIElement
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#setValues(java.util.Map)
 	 */
 	public void setValues(Map/*<String, String>*/ valueMap) {
 		int childCount = getChildCount();
@@ -67,11 +69,11 @@ public class GenericUIElementGroup extends UIElement {
 		}
 	}
 
-	/**
-	 * @see UIElement
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#getValues()
 	 */
 	public Map/*<String, String>*/ getValues() {
-
 		HashMap/*<String, String>*/ valueMap = new HashMap/*<String, String>*/();
 		int childCount = getChildCount();
 
@@ -82,14 +84,15 @@ public class GenericUIElementGroup extends UIElement {
 		return valueMap;
 	}
 
-	/**
-	 * @see UIElement
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#createWidgets(org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite)
 	 */
 	public void createWidgets(UIComposite uiComposite) {
 		int childCount = getChildCount();
 
 		// call createWidgets on all the contained
-		// UI wigets.
+		// UI widgets.
 		if (uiComposite != null) {
 			for (int i = 0; i < childCount; i++) {
 				getChild(i).createWidgets(uiComposite);
@@ -131,7 +134,6 @@ public class GenericUIElementGroup extends UIElement {
 	 * @param aUIElement
 	 */
 	public void addToChildList(UIElement aUIElement) {
-
 		childList.add(aUIElement);
 	}
 
@@ -143,7 +145,6 @@ public class GenericUIElementGroup extends UIElement {
 	 * @return the child count of UIElement
 	 */
 	public int getChildCount() {
-
 		return childList.size();
 	}
 
@@ -152,23 +153,24 @@ public class GenericUIElementGroup extends UIElement {
 	 * during UIPage construction.
 	 */
 	public UIGroupTypeEnum getType() {
-
 		return type;
 	}
 
-	// @see UIElement
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.templateengine.uitree.UIElement#isValid()
+	 */
 	public boolean isValid() {
-
 		boolean retVal = true;
 
 		int childCount = getChildCount();
-		for (int i = 0; i < childCount; i++)
+		for (int i = 0; i < childCount; i++) {
 			if (!getChild(i).isValid()) {
 				retVal = false;
 				break;
 			}
+		}
 
 		return retVal;
 	}
-
 }

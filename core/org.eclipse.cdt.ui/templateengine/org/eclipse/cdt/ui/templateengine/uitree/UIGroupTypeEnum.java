@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree;
 
-
 /**
  * This class defines various types of UIElement groups.
  */
-
 public class UIGroupTypeEnum {
-	public static final UIGroupTypeEnum PAGES_ONLY = new UIGroupTypeEnum("PAGES_ONLY"); //$NON-NLS-1$
-	public static final UIGroupTypeEnum PAGES_TAB = new UIGroupTypeEnum("PAGES_TAB"); //$NON-NLS-1$
+	public static final UIGroupTypeEnum PAGES_ONLY = new UIGroupTypeEnum("PAGES-ONLY"); //$NON-NLS-1$
+	public static final UIGroupTypeEnum PAGES_TAB = new UIGroupTypeEnum("PAGES-TAB"); //$NON-NLS-1$
 	
 	private String id;
 	
@@ -34,6 +32,10 @@ public class UIGroupTypeEnum {
 	
 	public int hashCode() {
 		return id.hashCode();
+	}
+	
+	public String getId() {
+		return id;
 	}
 	
 	public String toString() {

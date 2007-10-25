@@ -65,7 +65,7 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 	/**
 	 * Given an XML Element, representing a PropertyElement. A UIElement for the
 	 * same is returned. The Type attribute is verified, based on Type
-	 * approprioate UIWidget is instantiated. This calss the getUIWidget private
+	 * appropriate UIWidget is instantiated. This class the getUIWidget private
 	 * method.
 	 * 
 	 * @param element
@@ -172,11 +172,11 @@ public class UIElementTreeBuilderHelper implements IUIElementTreeBuilderHelper {
 
 		// PAGES(Groups).
 
-		if (type.equalsIgnoreCase(GenericUIElementGroup.PAGES_ONLY)) {
+		if (type.equalsIgnoreCase(UIGroupTypeEnum.PAGES_ONLY.getId())) {
 			widgetElement = new SimpleUIElementGroup(uiAttributes);
 		}
 
-		if (type.equalsIgnoreCase(GenericUIElementGroup.PAGES_TAB)) {
+		if (type.equalsIgnoreCase(UIGroupTypeEnum.PAGES_TAB.getId())) {
 			// Note: This is not implemented now as we haven't found a use case
 			// for generating UI pages as TABS in a single page. 
 		}

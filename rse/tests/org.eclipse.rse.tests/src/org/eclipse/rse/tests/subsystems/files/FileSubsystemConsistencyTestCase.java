@@ -39,7 +39,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	
 	private String SYSTEM_ADDRESS = "SLES8RM";
 	private String USER_ID = "dmcknigh";
-	private String PASSWORD = "xxxxxx";
+	private String PASSWORD = null;//"xxxxxx";
 	
 	/*
 	private SYSTEM_ADDRESS = "dmcknigh3";

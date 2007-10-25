@@ -218,5 +218,5 @@ public interface IExpressions extends IDMService, IFormattedValues {
      * 
      * @param rm: Request completion monitor.
      */
-    void writeExpression(IDMContext expressionContext, String exressionValue, String formatId, RequestMonitor rm);
+    void writeExpression(IDMContext expressionContext, String expressionValue, String formatId, RequestMonitor rm);
 }

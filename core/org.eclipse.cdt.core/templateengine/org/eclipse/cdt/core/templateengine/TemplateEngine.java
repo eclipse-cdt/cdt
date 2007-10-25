@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -55,7 +56,7 @@ public class TemplateEngine {
 	private Map/*<String, List<TemplateInfo>>*/ templateInfoMap;
 
 	/**
-	 * TemplateEngine constructor, create and initialize SharedDefaults.
+	 * TemplateEngine constructor, create and initialise SharedDefaults.
 	 */
 	private TemplateEngine() {
 		templateInfoMap = new LinkedHashMap/*<String, List<TemplateInfo>>*/();
@@ -73,7 +74,7 @@ public class TemplateEngine {
 			try {
 				tcores.add(TemplateCore.getTemplate(info));
 			} catch (TemplateInitializationException e) {
-				CCorePlugin.log(e);
+				CCorePlugin.log(CCorePlugin.createStatus(e.getMessage(), e));
 			}
 		}
 		return (TemplateCore[]) tcores.toArray(new TemplateCore[tcores.size()]);
@@ -211,7 +212,7 @@ public class TemplateEngine {
 		String projectType = null;
 		String filterPattern = null;
 		boolean isCategory = false;
-		String extraPagesProvider = null;
+		Object /*IPagesAfterTemplateSelectionProvider*/ extraPagesProvider = null;
 
 		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(TEMPLATES_EXTENSION_ID).getExtensions();
 		for(int i=0; i<extensions.length; i++) {
@@ -225,8 +226,15 @@ public class TemplateEngine {
 				projectType = config.getAttribute(TemplateEngineHelper.PROJECT_TYPE);
 				filterPattern = config.getAttribute(TemplateEngineHelper.FILTER_PATTERN);
 				isCategory = Boolean.valueOf(config.getAttribute(TemplateEngineHelper.IS_CATEGORY)).booleanValue();
-				extraPagesProvider = config.getAttribute(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
-				
+				String providerAttribute = config.getAttribute(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
+				if (providerAttribute != null) {
+					try {
+						extraPagesProvider = config.createExecutableExtension(TemplateEngineHelper.EXTRA_PAGES_PROVIDER);
+					} catch (CoreException e) {
+						CCorePlugin.log(CCorePlugin.createStatus("Unable to create extra pages for "+providerAttribute,e)); //$NON-NLS-1$
+					}				
+				}
+
 				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
 				Set toolChainIdSet = new LinkedHashSet();
 				for (int k=0; k < toolChainConfigs.length; k++) {

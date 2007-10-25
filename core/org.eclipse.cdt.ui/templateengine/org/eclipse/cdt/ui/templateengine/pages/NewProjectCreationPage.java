@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -24,15 +25,17 @@ import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
  * The first page in a NewProjectWizard. This is the wizard page that
  * asks the user for the name and location of the new project.
  */
-public class NewProjectCreationPage extends WizardNewProjectCreationPage implements IWizardDataPage {
-	private Map data = new HashMap(2);
-	
+public class NewProjectCreationPage extends WizardNewProjectCreationPage implements IWizardDataPage {	
 	private static final String ERROR_SUFFIX = Messages.getString("NewProjectCreationPage.0"); //$NON-NLS-1$
 	private static final String ERROR_SUFFIX_TOO_LONG = Messages.getString("NewProjectCreationPage.1"); //$NON-NLS-1$
 	private static final Status OK_STATUS = new Status(IStatus.OK, CUIPlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
 
+	private Map data;
+	private IWizardPage next;
+	
 	public NewProjectCreationPage(String name) {
 		super(name);
+		data= new HashMap();
 		this.setDescription(Messages.getString("NewProjectCreationPage.3"));	 //$NON-NLS-1$
 	}
 
@@ -106,4 +109,22 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 		return OK_STATUS;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.templateengine.IWizardDataPage#setNextPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
+	public void setNextPage(IWizardPage next) {
+		this.next= next;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
+	 */
+	public IWizardPage getNextPage() {
+		if(next != null) {
+			return next;
+		}
+		return super.getNextPage();
+	}
 }

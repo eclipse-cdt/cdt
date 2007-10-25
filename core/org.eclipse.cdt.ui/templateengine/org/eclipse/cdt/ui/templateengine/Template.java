@@ -12,7 +12,6 @@ package org.eclipse.cdt.ui.templateengine;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +19,12 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.w3c.dom.Element;
 
@@ -111,43 +113,43 @@ public class Template extends TemplateCore {
 				page.setWizard(wizard);
 				prevPage = page;
 			}
-			
-			try {
-				IWizardDataPage[] extraPages = getExtraCreatedPages((IWorkbenchWizard)wizard);
-				for (int i=0; i < extraPages.length; i++) {
-					IWizardDataPage page = extraPages[i];
-					pages.add(page);
-					page.setPreviousPage(prevPage);
-					//TODO: set the next page for page
-					//page.setNextPage(extraPages[i+1]);
-					page.setWizard(wizard);
-					prevPage = page;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 
-			followingPage.setPreviousPage(prevPage);
-		} else {
-			followingPage.setPreviousPage(predatingPage);	
+			predatingPage= prevPage;
 		}
 		
-//		pages.add(followingPage);
+		try {
+			IWizardPage prevPage = predatingPage;
+			IWizardDataPage[] extraPages = getExtraCreatedPages((IWorkbenchWizard)wizard, PlatformUI.getWorkbench(), null);
+			for (int i=0; i < extraPages.length; i++) {
+				IWizardDataPage page = extraPages[i];
+				pages.add(page);
+				page.setPreviousPage(prevPage);
+				
+				if(prevPage instanceof IWizardDataPage) {
+					((IWizardDataPage)prevPage).setNextPage(page);					
+				}
+
+				page.setWizard(wizard);
+				prevPage = page;
+			}
+			
+			if(prevPage instanceof IWizardDataPage) {
+				((IWizardDataPage)prevPage).setNextPage(followingPage);					
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		followingPage.setPreviousPage(predatingPage);	
 		
 		return (IWizardPage[]) pages.toArray(new IWizardPage[pages.size()]);
 	}
 	
-	IWizardDataPage[] getExtraCreatedPages(IWorkbenchWizard wizard) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	IWizardDataPage[] getExtraCreatedPages(IWorkbenchWizard wizard, IWorkbench workbench, IStructuredSelection selection) {
 		TemplateInfo templateInfo = getTemplateInfo();
-		String pagesProvider = templateInfo.getExtraPagesProvider();
-		if (pagesProvider != null) {
-			IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) Class.forName(pagesProvider).newInstance();
-			if (extraPagesProvider != null) {
-				List/*<IWizardDataPage>*/ pageList = new ArrayList/*<IWizardDataPage>*/();
-				IWizardDataPage[] extraPages = extraPagesProvider.getCreatedPages(wizard);
-				pageList.addAll(Arrays.asList(extraPages));
-				return (IWizardDataPage[]) pageList.toArray(new IWizardDataPage[pageList.size()]);
-			}
+		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo.getExtraPagesProvider();
+		if (extraPagesProvider != null) {
+			return extraPagesProvider.createAdditionalPages(wizard, null, null);
 		}
 		return new IWizardDataPage[0];		
 	}
@@ -203,5 +205,4 @@ public class Template extends TemplateCore {
 		}
 		return result[0];
 	}
-	
 }

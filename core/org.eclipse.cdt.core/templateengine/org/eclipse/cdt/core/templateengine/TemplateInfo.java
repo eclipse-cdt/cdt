@@ -13,8 +13,6 @@ package org.eclipse.cdt.core.templateengine;
 import java.util.List;
 import java.util.Set;
 
-
-
 /**
  * TemplateInfo class contains the template information like wizard ID, pattern, path and project type.
  */
@@ -24,59 +22,69 @@ public class TemplateInfo {
 	private String templatePath;
 	private String pluginId;
 	private Set toolChainIdSet;
-	private String pagesProvider;
+	private Object pagesProvider; /* IPagesAfterTemplateSelectionProvider */
 	private boolean isCategory;
 	private String icon;
 	private String templateId;
 	private List configs;
 	
+	/**
+	 * 
+	 * @param templateId
+	 * @param projectTypeId
+	 * @param filterPattern
+	 * @param templatePath
+	 * @param pluginId
+	 * @param toolChainIdSet
+	 * @param extraPagesProvider an IPagesAfterTemplateSelectionProvider or null
+	 * @param isCategory
+	 */
 	public TemplateInfo(String templateId, String projectTypeId, String filterPattern, String templatePath, 
 			String pluginId, Set toolChainIdSet, 
-			String pagesProvider, boolean isCategory) {
+			Object extraPagesProvider, boolean isCategory) {
 		this.templateId = templateId;
 		this.filterPattern = filterPattern;
 		this.templatePath = templatePath;
 		this.pluginId = pluginId;
 		this.projectTypeId = projectTypeId;
 		this.toolChainIdSet = toolChainIdSet;
-		this.pagesProvider = pagesProvider;
+		this.pagesProvider = extraPagesProvider;
 		this.isCategory = isCategory;
 		this.configs = null;
 	}
 
 	/**
-	 * Returns the Plugin ID
-	 * @return   String contains the plugin id.
+	 * @return the plug-in id
 	 */
 	public String getPluginId() {
 		return pluginId;
 	}
 
 	/**
-	 * Returns the Template ID
-	 * @return   String contains the template id.
+	 * @return the template id.
 	 */
 	public String getTemplateId() {
 		return templateId;
 	}
 
 	/**
-	 * Returns the Template path as String.
-	 * @return   String containing the path.
+	 * @return the template path
 	 */
 	public String getTemplatePath() {
 		return templatePath;
 	}
 
 	/**
-	 * Returns the Filter Pattern.
-	 * @return   String containing the Filter Pattern.
+	 * @return the filter Pattern.
 	 */
 	public String getFilterPattern() {
 		return filterPattern;
 	}
 	
-	public String getExtraPagesProvider() {
+	/**
+	 * @return an IPagesAfterTemplateSelectionProvider or null
+	 */
+	public Object getExtraPagesProvider() {
 		return pagesProvider;
 	}
 	
@@ -107,7 +115,7 @@ public class TemplateInfo {
 	}
 	
 	/**
-	 * @return the isCategory
+	 * @return whether this template is a category
 	 */
 	public boolean isCategory() {
 		return isCategory;
@@ -135,11 +143,11 @@ public class TemplateInfo {
 		return false;
 	}
 
-	/**
-	 * Return the hashcode of the object.
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return projectTypeId.hashCode() | templatePath.hashCode() | pluginId.hashCode();
 	}
-
 }

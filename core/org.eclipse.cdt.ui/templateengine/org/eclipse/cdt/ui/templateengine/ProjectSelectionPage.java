@@ -24,6 +24,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -66,6 +67,7 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 
 	private IWorkspaceRoot workspaceRoot;
 	private ICProject currentCProject;
+	private IWizardPage next;
 	
 	public ProjectSelectionPage() {
 		super(PAGE_NAME);
@@ -326,5 +328,24 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 			return (ICProject) dialog.getFirstResult();
 		}			
 		return null;		
-	}	
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.templateengine.IWizardDataPage#setNextPage(org.eclipse.jface.wizard.IWizardPage)
+	 */
+	public void setNextPage(IWizardPage next) {
+		this.next= next;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
+	 */
+	public IWizardPage getNextPage() {
+		if(next != null) {
+			return next;
+		}
+		return super.getNextPage();
+	}
 }

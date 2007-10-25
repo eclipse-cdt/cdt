@@ -85,30 +85,24 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	IWizardDataPage[] getPagesAfterTemplateSelectionWithExtraPages(Template template) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		IWizardDataPage[] pages = getPagesAfterTemplateSelection();
 		TemplateInfo templateInfo = template.getTemplateInfo();
-		String pagesProvider = templateInfo.getExtraPagesProvider();
-		if (pagesProvider != null) {
-			IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) Class.forName(pagesProvider).newInstance();
-			if (extraPagesProvider != null) {
-				List/*<IWizardDataPage>*/ pageList = new ArrayList/*<IWizardDataPage>*/(Arrays.asList(pages));
-				IWizardDataPage[] extraPages = extraPagesProvider.createAdditionalPages(this, workbench, selection);
-				pageList.addAll(Arrays.asList(extraPages));
-				pages = (IWizardDataPage[]) pageList.toArray(new IWizardDataPage[pageList.size()]);
-			}
+		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo.getExtraPagesProvider();
+		if (extraPagesProvider != null) {
+			List/*<IWizardDataPage>*/ pageList = new ArrayList/*<IWizardDataPage>*/(Arrays.asList(pages));
+			IWizardDataPage[] extraPages = extraPagesProvider.createAdditionalPages(this, workbench, selection);
+			pageList.addAll(Arrays.asList(extraPages));
+			pages = (IWizardDataPage[]) pageList.toArray(new IWizardDataPage[pageList.size()]);
 		}
 		return pages;		
 	}
 	
 	IWizardDataPage[] getExtraCreatedPages(Template template) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		TemplateInfo templateInfo = template.getTemplateInfo();
-		String pagesProvider = templateInfo.getExtraPagesProvider();
-		if (pagesProvider != null) {
-			IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) Class.forName(pagesProvider).newInstance();
-			if (extraPagesProvider != null) {
-				List/*<IWizardDataPage>*/ pageList = new ArrayList/*<IWizardDataPage>*/();
-				IWizardDataPage[] extraPages = extraPagesProvider.getCreatedPages(this);
-				pageList.addAll(Arrays.asList(extraPages));
-				return (IWizardDataPage[]) pageList.toArray(new IWizardDataPage[pageList.size()]);
-			}
+		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo.getExtraPagesProvider();
+		if (extraPagesProvider != null) {
+			List/*<IWizardDataPage>*/ pageList = new ArrayList/*<IWizardDataPage>*/();
+			IWizardDataPage[] extraPages = extraPagesProvider.getCreatedPages(this);
+			pageList.addAll(Arrays.asList(extraPages));
+			return (IWizardDataPage[]) pageList.toArray(new IWizardDataPage[pageList.size()]);
 		}
 		return new IWizardDataPage[0];		
 	}

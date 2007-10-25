@@ -43,6 +43,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.managedbuilder.ui.properties.Messages;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
 import org.eclipse.cdt.ui.templateengine.Template;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUI;
 import org.eclipse.cdt.ui.templateengine.TemplateEngineUIUtil;
@@ -179,6 +180,8 @@ public class MBSWizardHandler extends CWizardHandler {
 					IWizardPage page = templatePages[i];
 					if (page instanceof UIWizardPage)
 						valueStore.putAll(((UIWizardPage)page).getPageData());
+					if (page instanceof IWizardDataPage)
+						valueStore.putAll(((IWizardDataPage)page).getPageData());
 				}
 				if (map != null) {
 					valueStore.putAll(map);

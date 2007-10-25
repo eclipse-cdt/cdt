@@ -106,5 +106,14 @@
             id="org.eclipse.cdt.ui.tests.TestProposalFilter"
             name="Testing Completion Filter"/>
    </extension>
+   <extension
+         point="org.eclipse.cdt.core.templates">
+      <template
+            id="org.eclipse.cdt.ui.tests.extraPagesProvider"
+            location="resources/projectTemplates/testExtraPages/template.xml"
+            pagesAfterTemplateSelectionProvider="org.eclipse.cdt.ui.tests.templateengine.TestExtraPagesProvider"
+            projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+      </template>
+   </extension>
 
 </plugin>

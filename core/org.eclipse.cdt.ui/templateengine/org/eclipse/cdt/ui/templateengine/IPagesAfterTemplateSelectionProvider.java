@@ -15,16 +15,20 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
 
+/**
+ * Interface for extensions that provide additional custom pages as part of
+ * project configuration.
+ * @since 4.0
+ */
 public interface IPagesAfterTemplateSelectionProvider {
-	
     /**
      * Creates pages that will be appended to the pages returned from
      * TemplatesChoiceWizard.getPagesAfterTemplateSelection()
-     * Parameters are those used to initialize the wizard.
+     * Parameters are those used to initialise the wizard.
      * </p>
      * @param wizard the wizard requesting the pages
      * @param workbench the current workbench
-     * @param selection the current object selection
+     * @param selection the current object selection, or null if no context is available
      * 
      * @since 4.0
      */

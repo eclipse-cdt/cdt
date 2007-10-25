@@ -77,6 +77,8 @@ public class TemplateCore {
 			String msg= MessageFormat.format(TemplateEngineMessages.getString("TemplateCore.InitFailed"), new Object[]{templateInfo.getTemplatePath()}); //$NON-NLS-1$
 			throw new TemplateInitializationException(msg);
 		}
+		if(descriptorURL==null)
+			throw new TemplateInitializationException("Unable to load project template. Location URL is null for "+templateInfo.getTemplateId());
 		templateDescriptor = new TemplateDescriptor(descriptorURL, templateInfo.getPluginId());
 		valueStore = new ValueStore/*<String, String>*/(this);
 		valueStore.putAll(templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement()));

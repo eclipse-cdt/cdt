@@ -35,6 +35,7 @@
  * David McKnight   (IBM)        - [165674] Sort subsystem configurations to be in deterministic order
  * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by priority then Id
  * Martin Oberhuber (Wind River) - [194898] Avoid NPE when doing EVENT_REFRESH_REMOTE on a subsys without filters
+ * David McKnight   (IBM)        - [207100] adding ISystemRegistry.isRegisteredSystemRemoteChangeListener
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -2685,6 +2686,15 @@ public class SystemRegistry implements ISystemRegistry
 		remoteListManager.removeSystemRemoteChangeListener(l);
 		remoteListCount--;
 	}
+	
+	/**
+	 * Query if the ISystemRemoteChangeListener is already listening for SystemRemoteChange events
+	 */
+	public boolean isRegisteredSystemRemoteChangeListener(ISystemRemoteChangeListener l)
+	{
+		return remoteListManager.isRegisteredSystemRemoteChangeListener(l);
+	}
+	
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.
 	 * You would not normally call this as the methods in this class call it when appropriate.

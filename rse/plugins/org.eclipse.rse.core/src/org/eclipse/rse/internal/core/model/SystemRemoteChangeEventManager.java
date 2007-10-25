@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David McKnight   (IBM)        - [207100] adding SystemRemoteChangeEventManager.isRegisteredSystemRemoteChangeListener
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -32,6 +33,14 @@ public class SystemRemoteChangeEventManager
      */
     public SystemRemoteChangeEventManager()
     {
+    }
+    
+    /**
+     * Query if the ISystemRemoteChangeListener is already listening for SystemRemoteChange events
+     */
+    public boolean isRegisteredSystemRemoteChangeListener(ISystemRemoteChangeListener l)
+    {
+    	return listeners.contains(l);
     }
 
     /**

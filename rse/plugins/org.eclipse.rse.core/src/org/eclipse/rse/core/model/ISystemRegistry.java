@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [189123] Prepare ISystemRegistry for move into non-UI
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David McKnight   (IBM)        - [207100] adding ISystemRegistry.isRegisteredSystemRemoteChangeListener
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -728,6 +729,12 @@ public interface ISystemRegistry extends ISchedulingRule, IAdaptable, ISystemVie
 	 * De-Register your interest in being told when a remote resource is changed.
 	 */
 	public void removeSystemRemoteChangeListener(ISystemRemoteChangeListener l);
+
+
+	/**
+	 * Query if the ISystemRemoteChangeListener is already listening for SystemRemoteChange events
+	 */
+	public boolean isRegisteredSystemRemoteChangeListener(ISystemRemoteChangeListener l);
 
 	/**
 	 * Notify all listeners of a change to a remote resource such as a file.

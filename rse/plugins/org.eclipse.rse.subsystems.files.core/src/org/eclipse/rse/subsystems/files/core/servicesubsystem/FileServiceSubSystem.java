@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Javier Montalvo Orus (Symbian) - [199773] Default file transfer mode is ignored for some file types
+ * David McKnight   (IBM)        - [207095] Implicit connect on getRemoteFileObject
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -127,11 +128,15 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * an unqualified file or folder name and its parent folder object. 
 	 * @param parent Folder containing the folder or file
 	 * @param folderOrFileName Un-qualified folder or file name
+	 * @param monitor the progress monitor
 	 * @return an IRemoteFile object for the file.
 	 * @see IRemoteFile
 	 */
 	public IRemoteFile getRemoteFileObject(IRemoteFile parent, String folderOrFileName, IProgressMonitor monitor) throws SystemMessageException 
 	{
+		// for bug 207095, implicit connect if the connection is not connected
+		checkIsConnected();
+
 		String fullPath = parent.getAbsolutePath() + getSeparator() + folderOrFileName;
 		IRemoteFile file = getCachedRemoteFile(fullPath);
 		if (file != null && !file.isStale()) 
@@ -147,11 +152,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * Constructs and returns an IRemoteFile object given a fully-qualified 
 	 * file or folder name.
 	 * @param folderOrFileName Fully qualified folder or file name
+	 * @param monitor the progress monitor
 	 * @return The constructed IRemoteFile
 	 * @see IRemoteFile
 	 */
 	public IRemoteFile getRemoteFileObject(String folderOrFileName, IProgressMonitor monitor) throws SystemMessageException 
 	{
+
 		String fofName = folderOrFileName;
 		if (folderOrFileName.length() > 1)
 		{
@@ -162,12 +169,14 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			return file;
 		}
 		
+		// for bug 207095, implicit connect if the connection is not connected
+		checkIsConnected();
+		
 		if (fofName.endsWith(ArchiveHandlerManager.VIRTUAL_SEPARATOR))
 		{
 			fofName = fofName.substring(0, fofName.length() - ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
-		}
-	
-
+		}	
+		
 		int j = fofName.indexOf(ArchiveHandlerManager.VIRTUAL_SEPARATOR);
 		if (j == -1)
 		{
@@ -184,7 +193,14 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			} 
 			
 			if (fofName.equals(".")) { //$NON-NLS-1$
-				return getUserHome();
+				IRemoteFile userHome =  getUserHome();
+				if (userHome == null){
+					
+					// with 207095, it's possible that we could be trying to get user home when not connected	
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_UNEXPECTED);
+					throw new SystemMessageException(msg);
+				}
+				return userHome;
 			}
 
 			String sep = PathUtility.getSeparator(folderOrFileName);
@@ -262,16 +278,21 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			return root;
 		}
 		IHostFile userHome = getFileService().getUserHome();
+		// with 207095, it's possible that user is not connected, and that userHome is null
+		if (userHome == null) {
+			return null;
+		}
+		
 		IRemoteFile parent = null;
 		if (!userHome.getParentPath().equals(".")) //$NON-NLS-1$
 		{
-		try
-		{
-			//parent = getRemoteFileObject(userHome.getParentPath());
-		}
-		catch (Exception e)
-		{			
-		}
+			try
+			{
+				//parent = getRemoteFileObject(userHome.getParentPath());
+			}
+			catch (Exception e)
+			{			
+			}
 		}
 		root = getHostFileToRemoteFileAdapter().convertToRemoteFile(this, getDefaultContext(), parent, userHome);
 		cacheRemoteFile(root, "."); //$NON-NLS-1$

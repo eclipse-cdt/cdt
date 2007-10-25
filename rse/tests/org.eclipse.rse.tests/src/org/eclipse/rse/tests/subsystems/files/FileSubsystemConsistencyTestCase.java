@@ -6,8 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * Uwe Stieber (Wind River) - initial API and implementation.
- * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight    (IBM) [207095] test case to compare same op between subsystemd
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 

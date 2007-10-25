@@ -49,7 +49,7 @@ public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 		// suite.addTestSuite(FTPFileSubsystemTestCase.class);
 		
 		
-		//wasuite.addTestSuite(FileSubsystemConsistencyTestCase.class);
+		//suite.addTestSuite(FileSubsystemConsistencyTestCase.class);
 		
 		return suite;
 	}

@@ -19,7 +19,8 @@
  * David McKnight   (IBM)        - [196035] Wrapper SystemMessageExceptions for createFile and createFolder with RemoteFileSecurityException
  * Kevin Doyle 		(IBM)		 - [191548] Deleting Read-Only directory removes it from view and displays no error
  * Xuan Chen        (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
- * Xuan Chen        (IBM)        - [190824] Incorrect result for DStore#getSeparator() function when parent is "/"  
+ * Xuan Chen        (IBM)        - [190824] Incorrect result for DStore#getSeparator() function when parent is "/" 
+ * David McKnight   (IBM)        - [207095] check for null datastore 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -105,6 +106,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		super.uninitService(monitor);
 		_fileElementMap.clear();
 		_dstoreFileMap.clear();
+		_uploadLogElement = null;
 	}
 	
 	public String getName()
@@ -149,7 +151,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 	protected String getDataStoreRoot()
 	{
-		return getDataStore().getAttribute(DataStoreAttributes.A_LOCAL_PATH);
+		DataStore ds = getDataStore();
+		if (ds != null)
+			return ds.getAttribute(DataStoreAttributes.A_LOCAL_PATH);
+		return null;
 	}
 	
 
@@ -172,28 +177,46 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	protected void setDataStoreRoot(String root)
 	{
-		getDataStore().setAttribute(DataStoreAttributes.A_LOCAL_PATH, root);
+		DataStore ds = getDataStore();
+		if (ds != null)
+			ds.setAttribute(DataStoreAttributes.A_LOCAL_PATH, root);
 	}
 	
 	protected DataElement findUploadLog()
 	{
 	    DataElement minerInfo = getMinerElement();
-		if (_uploadLogElement ==  null || _uploadLogElement.getDataStore() != getDataStore())
+	    DataStore ds = getDataStore();
+		if (_uploadLogElement ==  null || _uploadLogElement.getDataStore() != ds)
 		{
-		    _uploadLogElement = getDataStore().find(minerInfo, DE.A_NAME, "universal.uploadlog", 2); //$NON-NLS-1$
+			if (ds != null)
+			{
+				_uploadLogElement = ds.find(minerInfo, DE.A_NAME, "universal.uploadlog", 2); //$NON-NLS-1$
+			}
+			else
+			{
+				return null;
+			}
 		}
 		return _uploadLogElement;
 	}
 	
 	protected DataElement getAttributes(String fileNameFilter, boolean showHidden)
 	{
-		DataElement attributes = getDataStore().createTransientObject(_filterAttributes);
-		String version = IServiceConstants.VERSION_1;
-		StringBuffer buffer = new StringBuffer();
-		String filter = ((fileNameFilter == null) ? "*" : fileNameFilter); //$NON-NLS-1$
-		buffer.append(version).append(IServiceConstants.TOKEN_SEPARATOR).append(filter).append(IServiceConstants.TOKEN_SEPARATOR).append(showHidden);
-		attributes.setAttribute(DE.A_SOURCE, buffer.toString());
-		return attributes;
+		DataStore ds = getDataStore();
+		if (ds != null)
+		{
+			DataElement attributes = ds.createTransientObject(_filterAttributes);
+			String version = IServiceConstants.VERSION_1;
+			StringBuffer buffer = new StringBuffer();
+			String filter = ((fileNameFilter == null) ? "*" : fileNameFilter); //$NON-NLS-1$
+			buffer.append(version).append(IServiceConstants.TOKEN_SEPARATOR).append(filter).append(IServiceConstants.TOKEN_SEPARATOR).append(showHidden);
+			attributes.setAttribute(DE.A_SOURCE, buffer.toString());
+			return attributes;
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	
@@ -776,10 +799,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			buf.append(name);
 			de = getElementFor(buf.toString());
 		}
-		dsQueryCommand(de, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
-		//getFile call should also need to convert this DataElement into a HostFile using
-		//convertToHostFile() call.  This way, this DataElement will be put into _fileMap.
-		return convertToHostFile(de);
+		
+		// with 207095, it's possible to get here unconnected such that there is no element	
+		if (de != null) {
+			dsQueryCommand(de, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+			//getFile call should also need to convert this DataElement into a HostFile using
+			//convertToHostFile() call.  This way, this DataElement will be put into _fileMap.
+			return convertToHostFile(de);
+		}
+		else {
+			return null;
+		}
 	}
 
 	/**
@@ -1284,6 +1314,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			waitForInitialize(null);
 		}
 	
+		DataStore ds = getDataStore();
+		
+		// with 207095, it's possible to get here when disconnected and no dstore	
+		if (ds == null){
+			return null;
+		}
 		
 		String normalizedPath = PathUtility.normalizeUnknown(path);
 		DataElement element = (DataElement)_fileElementMap.get(normalizedPath);
@@ -1295,7 +1331,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (element == null || element.isDeleted())
 		{
 			DataElement universaltemp = getMinerElement();
-			element = getDataStore().createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, normalizedPath, normalizedPath, "", false); //$NON-NLS-1$
+			element = ds.createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, normalizedPath, normalizedPath, "", false); //$NON-NLS-1$
 		}
 		return element;
 	}
@@ -1314,8 +1350,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	protected IHostFile[] fetch(String remoteParent, String fileFilter, String queryType, IProgressMonitor monitor)
 	{
 		DataStore ds = getDataStore();
-	
-	
+		if (ds == null)
+		{
+			return new IHostFile[0];
+		}
+		
 		// create filter descriptor
 		DataElement deObj = getElementFor(remoteParent);
 		if (deObj == null)
@@ -1343,15 +1382,16 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String remotePath = parent + getSeparator(parent) + name;
 		DataElement de = getElementFor(remotePath);
 		DataStore ds = de.getDataStore();
-
-		
-		DataElement setCmd = getCommandDescriptor(de, IUniversalDataStoreConstants.C_SET_LASTMODIFIED);
-		if (setCmd != null)
+		if (ds != null)
 		{
-			// first modify the source attribute to temporarily be the date field
-			de.setAttribute(DE.A_SOURCE, timestamp + "");			 //$NON-NLS-1$
-			ds.command(setCmd, de, true);
-			return true;
+			DataElement setCmd = getCommandDescriptor(de, IUniversalDataStoreConstants.C_SET_LASTMODIFIED);
+			if (setCmd != null)
+			{
+				// first modify the source attribute to temporarily be the date field
+				de.setAttribute(DE.A_SOURCE, timestamp + "");			 //$NON-NLS-1$
+				ds.command(setCmd, de, true);
+				return true;
+			}
 		}
 		
 		return false;
@@ -1363,23 +1403,24 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String remotePath = parent + getSeparator(parent) + name;
 		DataElement de = getElementFor(remotePath);
 		DataStore ds = de.getDataStore();
-
-		
-		DataElement setCmd = getCommandDescriptor(de, IUniversalDataStoreConstants.C_SET_READONLY);
-		if (setCmd != null)
+		if (ds != null)
 		{
-			String flag = readOnly ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
-			de.setAttribute(DE.A_SOURCE, flag);
-			DataElement status = ds.command(setCmd, de, true);
-			try
+			DataElement setCmd = getCommandDescriptor(de, IUniversalDataStoreConstants.C_SET_READONLY);
+			if (setCmd != null)
 			{
-				getStatusMonitor(ds).waitForUpdate(status);
-			}
-			catch (Exception e)
-			{
+				String flag = readOnly ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
+				de.setAttribute(DE.A_SOURCE, flag);
+				DataElement status = ds.command(setCmd, de, true);
+				try
+				{
+					getStatusMonitor(ds).waitForUpdate(status);
+				}
+				catch (Exception e)
+				{
 				
+				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
@@ -1394,20 +1435,22 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (remoteEncoding == null) {
 			
 			DataStore ds = getDataStore();
+			if (ds != null)
+			{
+				DataElement encodingElement = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_TEMP_DESCRIPTOR, ""); //$NON-NLS-1$
+				
+				DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(),IUniversalDataStoreConstants.C_SYSTEM_ENCODING);
 
-			DataElement encodingElement = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_TEMP_DESCRIPTOR, ""); //$NON-NLS-1$
+				DataElement status = ds.command(queryCmd, encodingElement, true);
 
-			DataElement queryCmd = ds.localDescriptorQuery(encodingElement.getDescriptor(),IUniversalDataStoreConstants.C_SYSTEM_ENCODING);
-
-			DataElement status = ds.command(queryCmd, encodingElement, true);
-
-			try {
-				getStatusMonitor(ds).waitForUpdate(status);
-			}
-			catch (Exception e) {
-			}
+				try {
+					getStatusMonitor(ds).waitForUpdate(status);
+				}
+				catch (Exception e) {
+				}
 			
-			remoteEncoding = encodingElement.getValue();
+				remoteEncoding = encodingElement.getValue();
+			}
 		}
 
 		return remoteEncoding;

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout  
+ * David McKnight   (IBM)        - [207095] check for null datastore
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore;
@@ -72,17 +73,26 @@ public abstract class AbstractDStoreService implements IDStoreService
 	
 	protected DataElement getMinerElement(String id)
 	{	    
-	    return getDataStore().findMinerInformation(id);	        
+		DataStore ds = getDataStore();
+		if (ds != null)
+		{
+			return ds.findMinerInformation(id);	        
+		}
+		else
+		{
+			return null;
+		}
 	}
 	 
 	protected DataElement[] dsQueryCommand(DataElement subject, ArrayList args, String command, IProgressMonitor monitor)
 	{
 		// query roots
 		DataElement queryCmd = getCommandDescriptor(subject, command);
+		DataStore ds = getDataStore();
 	
-		if (queryCmd != null)
+		if (queryCmd != null && ds != null)
 		{
-			DataElement status = getDataStore().command(queryCmd, args, subject, true);
+			DataElement status = ds.command(queryCmd, args, subject, true);
 			try
 			{
 				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
@@ -118,10 +128,11 @@ public abstract class AbstractDStoreService implements IDStoreService
 	{
 		// query roots
 		DataElement queryCmd = getCommandDescriptor(subject, command);
+		DataStore ds = getDataStore();
 	
-		if (queryCmd != null)
+		if (queryCmd != null && ds != null)
 		{
-			DataElement status = getDataStore().command(queryCmd, args, subject, true);
+			DataElement status = ds.command(queryCmd, args, subject, true);
 			try
 			{
 				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
@@ -147,10 +158,9 @@ public abstract class AbstractDStoreService implements IDStoreService
 	{
 		// query roots
 		DataElement queryCmd = getCommandDescriptor(subject, command);
-	
-		if (queryCmd != null)
+		DataStore ds = getDataStore();
+		if (queryCmd != null && ds != null)
 		{
-			DataStore ds = getDataStore();
 			DataElement status = ds.command(queryCmd, subject, true);
 			try
 			{
@@ -181,11 +191,11 @@ public abstract class AbstractDStoreService implements IDStoreService
 	protected DataElement dsStatusCommand(DataElement subject, String command, IProgressMonitor monitor)
 	{
 		// query roots
-		DataElement queryCmd = getCommandDescriptor(subject, command);
-	
-		if (queryCmd != null)
-		{
-			DataStore ds = getDataStore();
+		DataElement queryCmd = getCommandDescriptor(subject, command);	
+		DataStore ds = getDataStore();
+		
+		if (queryCmd != null && ds != null)
+		{			
 			DataElement status = ds.command(queryCmd, subject, true);
 			try
 			{
@@ -214,20 +224,29 @@ public abstract class AbstractDStoreService implements IDStoreService
 		DataElement cmd = (DataElement)_cmdDescriptorMap.get(command);
 		if (cmd == null || ds != cmd.getDataStore())
 		{
-			cmd = getDataStore().localDescriptorQuery(subject.getDescriptor(), command);
-			_cmdDescriptorMap.put(command, cmd);
+			if (ds != null)
+			{
+				cmd = ds.localDescriptorQuery(subject.getDescriptor(), command);
+				_cmdDescriptorMap.put(command, cmd);
+			}
 		}
 		return cmd;
 	}
 	
 	public int getServerVersion()
 	{
-		return getDataStore().getServerVersion();
+		DataStore ds = getDataStore();
+		if (ds != null)
+			return ds.getServerVersion();
+		return 0;
 	}
 	
 	public int getServerMinor()
 	{
-		return getDataStore().getServerMinor();
+		DataStore ds = getDataStore();
+		if (ds != null)
+			return ds.getServerMinor();
+		return 0;
 	}
 	
 	protected void checkHostJVM()
@@ -261,8 +280,12 @@ public abstract class AbstractDStoreService implements IDStoreService
 	{
 		if (_initializeStatus != null)
 		{
-			DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
-			return smon.determineStatusDone(_initializeStatus);
+			DataStore ds = getDataStore();
+			if (ds != null)
+			{
+				DStoreStatusMonitor smon = getStatusMonitor(ds);
+				return smon.determineStatusDone(_initializeStatus);
+			}
 		}
 		return false;
 	}
@@ -271,24 +294,28 @@ public abstract class AbstractDStoreService implements IDStoreService
 	{
 		if (_initializeStatus != null)
 		{
-			DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
-			try
+			DataStore ds = getDataStore();
+			if (ds != null)
 			{
-				smon.waitForUpdate(_initializeStatus, monitor, 100);
-			}
-			catch (InterruptedException e)
-			{
-				// cancel monitor if it's still not canceled
-				if (monitor != null && !monitor.isCanceled())
+				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
+				try
 				{
-					monitor.setCanceled(true);
+					smon.waitForUpdate(_initializeStatus, monitor, 100);
 				}
+				catch (InterruptedException e)
+				{
+					// cancel monitor if it's still not canceled
+					if (monitor != null && !monitor.isCanceled())
+					{
+						monitor.setCanceled(true);
+					}
 				
-				//InterruptedException is used to report user cancellation, so no need to log
-				//This should be reviewed (use OperationCanceledException) with bug #190750
-			}
+					//InterruptedException is used to report user cancellation, so no need to log
+					//This should be reviewed (use OperationCanceledException) with bug #190750
+				}
 			
-			getMinerElement();
+				getMinerElement();
+			}
 		}
 	}
 	

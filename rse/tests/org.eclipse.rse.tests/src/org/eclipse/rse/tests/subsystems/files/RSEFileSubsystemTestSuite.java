@@ -48,6 +48,9 @@ public class RSEFileSubsystemTestSuite extends DelegatingTestSuiteHolder {
 		// the ftp server to use possibly changed to whatever host will do.
 		// suite.addTestSuite(FTPFileSubsystemTestCase.class);
 		
+		
+		//wasuite.addTestSuite(FileSubsystemConsistencyTestCase.class);
+		
 		return suite;
 	}
 	

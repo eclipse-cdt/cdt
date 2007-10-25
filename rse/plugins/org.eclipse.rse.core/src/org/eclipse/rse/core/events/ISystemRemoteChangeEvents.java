@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
+ * David McKnight   (IBM)        - [207100] Events for after a resource is downloaded and uploaded
  ********************************************************************************/
 
 package org.eclipse.rse.core.events;
@@ -92,4 +93,30 @@ public interface ISystemRemoteChangeEvents
 	public static final int SYSTEM_REMOTE_RESOURCE_RENAMED = 8;
 	
 
+	/**
+	 * Event Type: a remote resource was uploaded
+	 * 
+	 * The event stores the following event parameters:
+	 * <ul> 
+	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 *  <li>resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurrences of that parent.
+	 *  <li>subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
+	 * </ul>
+	 */
+	public static final int SYSTEM_REMOTE_RESOURCE_UPLOADED = 20;
+	
+	/**
+	 * Event Type: a remote resource was downloaded
+	 * 
+	 * The event stores the following event parameters:
+	 * <ul> 
+	 *  <li>resource - the remote resource object, or absolute name of the resource as would be given by calling getAbsoluteName on its remote adapter
+	 *  <li>resourceParent - the remote resource's parent object, or absolute name, if that is known. If it is non-null, this will aid in refreshing occurrences of that parent.
+	 *  <li>subsystem - the subsystem which contains this remote resource. This allows the search for impacts to be 
+	 *   limited to subsystems of the same parent factory, and to connections with the same hostname as the subsystem's connection.
+	 * </ul>
+	 */
+	public static final int SYSTEM_REMOTE_RESOURCE_DOWNLOADED = 24;
+	
 }

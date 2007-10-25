@@ -44,7 +44,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	/*
 	private SYSTEM_ADDRESS = "dmcknigh3";
 	private USER_ID = "tester";
-	private PASSWORD = "xxxxxx";
+	private PASSWORD = null;"xxxxxx";
 	*/
 		
 	

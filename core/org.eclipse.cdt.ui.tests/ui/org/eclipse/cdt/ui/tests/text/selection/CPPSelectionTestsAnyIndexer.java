@@ -132,6 +132,40 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         assertEquals(9, ((ASTNode)node).getLength());
     }
     
+    //	template <class T>
+	//	inline void testTemplate(T& aRef);
+	//
+	//	class Temp {
+	//	};
+
+	//	#include <stdio.h>
+	//	#include <stdlib.h>
+	//	#include "test.h"
+	//	int main(void) {
+	//	        puts("Hello World!!!");
+	//
+	//	        Temp testFile;
+	//	        testTemplate(testFile);
+	//
+	//	        return EXIT_SUCCESS;
+	//	}
+	public void testBug207320() throws Exception {
+		StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("test.h", hcode); 
+        IFile file = importFile("test.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        
+        int hoffset= hcode.indexOf("testTemplate"); 
+        int soffset = scode.indexOf("testTemplate"); 
+        IASTNode def = testF3(file, soffset+2);
+        assertTrue(def instanceof IASTName);
+        assertEquals(((IASTName)def).toString(), "testTemplate"); //$NON-NLS-1$
+        assertEquals(((ASTNode)def).getOffset(), hoffset);
+        assertEquals(((ASTNode)def).getLength(), 12);
+	}
+    
     // // the header
     // extern int MyInt;       // MyInt is in another file
     // extern const int MyConst;   // MyConst is in another file
@@ -227,14 +261,13 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
     
     // #include "testBasicTemplateInstance.h"
     // N::AAA<int> a;
-	public void _testBasicTemplateInstance() throws Exception{
+	public void testBasicTemplateInstance_207320() throws Exception{
         StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();
         IFile hfile = importFile("testBasicTemplateInstance.h", hcode); 
         IFile file = importFile("testBasicTemplateInstance.cpp", scode); 
         TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
-        
         
         int hoffset= hcode.indexOf("AAA"); 
         int soffset = scode.indexOf("AAA<int>"); //$NON-NLS-1$

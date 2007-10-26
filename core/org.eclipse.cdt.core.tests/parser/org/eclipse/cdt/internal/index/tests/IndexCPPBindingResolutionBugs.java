@@ -27,10 +27,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -62,6 +64,30 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	public IndexCPPBindingResolutionBugs() {
 		setStrategy(new SinglePDOMTestStrategy(true));
 	}
+	
+	//	template <class T>
+	//	inline void testTemplate(T& aRef);
+	//
+	//	class Temp {
+	//	};
+
+	//	#include <stdio.h>
+	//	#include <stdlib.h>
+	//	#include "test.h"
+	//	int main(void) {
+	//	        puts("Hello World!!!");
+	//
+	//	        Temp testFile;
+	//	        testTemplate(testFile);
+	//
+	//	        return EXIT_SUCCESS;
+	//	}
+	public void testBug207320() {
+		IBinding b0= getBindingFromASTName("testTemplate(", 12);
+		assertInstance(b0, ICPPFunction.class);
+		assertInstance(b0, ICPPTemplateInstance.class);
+	}
+
 	
 	//	class testdef{
 	//

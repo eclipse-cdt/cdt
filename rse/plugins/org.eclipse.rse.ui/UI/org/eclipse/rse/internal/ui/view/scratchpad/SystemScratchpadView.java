@@ -20,6 +20,7 @@
  * Kevin Doyle (IBM) - [193151] Scratchpad not updated on Move
  * Kevin Doyle (IBM) - [189421] Scratchpad not updated after Rename
  * David McKnight   (IBM)        - [197860] drag and drop consistency - no text transfer
+ * Kevin Doyle (IBM) - [197841] "Terminate and Remove" should remove the shell from Scratchpad
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -389,21 +390,22 @@ public class SystemScratchpadView
 					}
 				}
 				break;
-	    	  case ISystemResourceChangeEvents.EVENT_DELETE:   	    	  
-   	    	  case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
-   	    	  	{
-   	    	      if (child instanceof ISystemFilterReference)
-   	    	      {   	    	          
-   	    	          Widget w = findItem(child);
-   	    	          if (w != null)
-   	    	          {
-   	    	              remove(child);
-   	    	           SystemRegistryUI.getInstance().getSystemScratchPad().removeChild(child);
-   	    	          }	
-	   	    	  }
-   	    	  	}
-   	    	      break;   	 
-		
+			case ISystemResourceChangeEvents.EVENT_DELETE:   	    	  
+	    	case ISystemResourceChangeEvents.EVENT_COMMAND_SHELL_REMOVED:
+	    	  {
+	    		  deleteObject(child);
+	    	  }
+	    	    break;
+	    	case ISystemResourceChangeEvents.EVENT_DELETE_MANY:
+	    	  {
+	    		  Object[] multiSrc = event.getMultiSource();
+	    		  if (multiSrc != null) {
+		    		  for (int i = 0; i < multiSrc.length; i++) {
+		    			  deleteObject(multiSrc[i]);
+		    		  }
+	    		  }
+	    	  }
+ 	    	    break;    	 
 			default :
 				break;
 
@@ -449,7 +451,6 @@ public class SystemScratchpadView
 		String remoteResourceName = getRemoteResourceAbsoluteName(remoteResource);
 		if (remoteResourceName == null)
 			return;
-		SystemScratchpadViewProvider provider = (SystemScratchpadViewProvider) getContentProvider();
 
 		switch (eventType)
 		{
@@ -500,12 +501,12 @@ public class SystemScratchpadView
 					{
 						for (int i = 0; i < remoteResourceNames.size(); i++)
 						{
-							deleteRemoteObject(remoteResourceNames.get(i));
+							deleteObject(remoteResourceNames.get(i));
 						}
 					} 
 					else
 					{
-						deleteRemoteObject(remoteResource);
+						deleteObject(remoteResource);
 					}
 	        
 			    /*
@@ -1589,7 +1590,7 @@ public class SystemScratchpadView
 	/**
 	 * Delete all occurrences of a given remote object
 	 */
-	protected void deleteRemoteObject(Object deleteObject) 
+	protected void deleteObject(Object deleteObject) 
 	{
 		// If deleteObject is a string find it's tree item and get it's data as thats what's
 		// stored inside the SystemScratchpad
@@ -1618,7 +1619,7 @@ public class SystemScratchpadView
 		}
 		
 	}
-	
+
 	/**
 	 * Rename a remote object. 
 	 */

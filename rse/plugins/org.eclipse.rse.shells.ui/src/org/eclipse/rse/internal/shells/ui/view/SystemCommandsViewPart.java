@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * Martin Oberhuber (Wind River) - [186640] Add IRSESystemType.testProperty() 
  * David McKnight   (IBM)        - [165680] "Show in Remote Shell View" does not work
+ * Kevin Doyle 		(IBM)		 - [198534] Shell Menu Enablement Issue's
  ********************************************************************************/
 
 package org.eclipse.rse.internal.shells.ui.view;
@@ -394,7 +395,23 @@ public class SystemCommandsViewPart
 				
 				_printTableAction.checkEnabledState();
 		    }
+		} else if (_folder != null && _folder.getInput() == null) { 
+			// The shell contains no input, update all action states			
+			_folder.updateActionStates();
+			_printTableAction.setTableView("", null); //$NON-NLS-1$
+			_printTableAction.checkEnabledState();
+			_clearAction.checkEnabledState();
+		
+			// Since no shell is open go through all the shell actions and disable them
+			for (int i =0; i < _shellActions.size(); i++) {
+			    Object action = _shellActions.get(i);
+			    if (action instanceof SystemBaseShellAction) {
+			        SystemBaseShellAction shellAction = (SystemBaseShellAction)action;
+			    	shellAction.setEnabled(false);
+			    }
+			}
 		}
+		
 
 
 	}
@@ -420,21 +437,13 @@ public class SystemCommandsViewPart
 
 	public void fillLocalToolBar()
 	{
-		boolean firstCall = false;
 		if (_folder != null )
 		{
-			firstCall = (_shellActions == null || _shellActions.size() == 0);
-
-			if (firstCall) {															
-				updateShellActions();
-			}
-		
-			updateActionStates();
-	
 			IActionBars actionBars = getViewSite().getActionBars();
 	
-			if (firstCall)
+			if (_shellActions == null || _shellActions.size() == 0)
 			{				
+				updateShellActions();
 				_clearAction = new ClearAction();
 				_printTableAction = new SystemTablePrintAction(getTitle(), null);
 				IMenuManager menuManager = actionBars.getMenuManager();
@@ -443,6 +452,8 @@ public class SystemCommandsViewPart
 			}
 			IToolBarManager toolBarManager = actionBars.getToolBarManager();
 			addToolBarItems(toolBarManager);
+			
+			updateActionStates();
 		}
 	}
 

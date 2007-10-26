@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David McKnight   (IBM)        - [196664] prevent unnecessary query on the parent
+ * Rupen Mardirossian (IBM)  	 - [204307] listFolders now deals with a null parameter for fileNameFilter preventing NPE
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -878,18 +879,19 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	/**
 	 * Return a full list of remote folders in the given parent folder on the remote system.
 	 * @param parent The parent folder to list folders in
-	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
+	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded, or null to return all folders.
 	 */
 	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
 	{
+		fileNameFilter = (fileNameFilter == null) ? "*" : fileNameFilter; //$NON-NLS-1$
 		RemoteFileFilterString filterString = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration());
 		filterString.setPath(parent.getAbsolutePath());
-		filterString.setFile((fileNameFilter == null) ? "*" : fileNameFilter); //$NON-NLS-1$
+		filterString.setFile(fileNameFilter); 
 		filterString.setShowFiles(false);
 		filterString.setShowSubDirs(true);
 		RemoteFileContext context = new RemoteFileContext(this, parent, filterString);
 		//return listFolders(parent, fileNameFilter, context);		
-		return listFolders(parent, null, context, monitor);
+		return listFolders(parent, fileNameFilter, context, monitor);
 	}
 
 	

@@ -63,6 +63,7 @@
  * Martin Oberhuber (Wind River) - [203490] Fix NPE in FTPService.getUserHome()
  * Martin Oberhuber (Wind River) - [203500] Support encodings for FTP paths
  * Javier Montalvo Orus (Symbian) - [196351] Delete a folder should do recursive Delete
+ * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1276,23 +1277,8 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
 			try {
-				File tempFile = null;
 				
-				try {
-					tempFile = File.createTempFile(srcName, String.valueOf(srcParent.hashCode()));
-					tempFile.deleteOnExit();
-				} catch (IOException e) {
-					throw new RemoteFileIOException(e);
-				} 
-		    	
-				//Use binary raw transfer since the file will be uploaded again
-				
-		    	success = internalDownload(srcParent, srcName, tempFile, true, null, progressMonitor);
-		    	
-		    	if(success)
-		    	{
-		    		success = internalUpload(tempFile,tgtParent,tgtName,true,null,null,progressMonitor); 
-		    	}
+				success = internalCopy(getFTPClient(), srcParent, srcName, tgtParent, tgtName, remoteHostFile.isDirectory(), progressMonitor);
 			}
 			catch(IOException e)
 			{
@@ -1306,6 +1292,53 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
     return success;
     }
 	
+    private boolean internalCopy(FTPClient ftpClient, String srcParent, String srcName, String tgtParent, String tgtName, boolean isDirectory, MyProgressMonitor monitor) throws SystemMessageException, IOException
+    {
+    	boolean success = false;
+    	
+    	if(isDirectory)
+		{
+    		
+    		//create folder
+    		success = ftpClient.makeDirectory(tgtParent+getSeparator()+tgtName);
+			
+    		//copy contents
+    		String newSrcParentPath = srcParent+getSeparator()+srcName;
+    		String newTgtParentPath = tgtParent+getSeparator()+tgtName;
+			
+			ftpClient.changeWorkingDirectory(newSrcParentPath);
+			FTPFile[] fileNames = ftpClient.listFiles();
+			
+			for (int i = 0; i < fileNames.length; i++) {
+				success = internalCopy(ftpClient,newSrcParentPath,fileNames[i].getName(), newTgtParentPath, fileNames[i].getName(), fileNames[i].isDirectory(),monitor);
+			}
+			
+		}
+		else
+		{
+			File tempFile = null;
+			
+			try {
+				tempFile = File.createTempFile(srcName, String.valueOf(srcParent.hashCode()));
+				tempFile.deleteOnExit();
+			} catch (IOException e) {
+				throw new RemoteFileIOException(e);
+			} 
+	    	
+			//Use binary raw transfer since the file will be uploaded again
+			
+	    	success = internalDownload(srcParent, srcName, tempFile, true, null, monitor);
+	    	
+	    	if(success)
+	    	{
+	    		success = internalUpload(tempFile,tgtParent,tgtName,true,null,null,monitor); 
+	    	}
+		}
+    	
+    	return success;
+    	
+    }
+    
 	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		boolean hasSucceeded = false;

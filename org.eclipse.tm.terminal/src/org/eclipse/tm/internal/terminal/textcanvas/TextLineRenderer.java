@@ -116,8 +116,23 @@ public class TextLineRenderer implements ILinelRenderer {
 	}
 	private void drawText(GC gc, int x, int y, int colFirst, int col, String text) {
 		int offset=(col-colFirst)*getCellWidth();
-		text=text.replace('\000', ' ');
-		gc.drawString(text,x+offset,y,false);
+		if(fStyleMap.isFontProportional()) {
+			// draw the background
+			// TODO why does this not work???????
+//			gc.fillRectangle(x,y,fStyleMap.getFontWidth()*text.length(),fStyleMap.getFontHeight());
+			for (int i = 0; i < text.length(); i++) {
+				char c=text.charAt(i);
+				int xx=x+offset+i*fStyleMap.getFontWidth();
+				// TODO why do I have to draw the background character by character??????
+				gc.fillRectangle(xx,y,fStyleMap.getFontWidth(),fStyleMap.getFontHeight());
+				if(c!=' ' && c!='\000') {
+					gc.drawString(String.valueOf(c),fStyleMap.getCharOffset(c)+xx,y,true);
+				}
+			}
+		} else {
+			text=text.replace('\000', ' ');
+			gc.drawString(text,x+offset,y,false);
+		}
 	}
 	private void setupGC(GC gc, Style style) {
 		Color c=fStyleMap.getForegrondColor(style);

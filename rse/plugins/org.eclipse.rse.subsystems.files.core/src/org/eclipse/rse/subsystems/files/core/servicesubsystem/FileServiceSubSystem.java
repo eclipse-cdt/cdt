@@ -818,18 +818,18 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	}
 
 	/**
-	 * Defers to the file service.
+	 * Defers to the file service.  The method is basically another way to do download.
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getInputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public InputStream getInputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		return getFileService().getInputStream(remoteParent, remoteFile, isBinary, monitor);
+		return new FileSubSystemInputStream(getFileService().getInputStream(remoteParent, remoteFile, isBinary, monitor), remoteParent, remoteFile, this);
 	}
 
 	/**
-	 * Defers to the file service.
+	 * Defers to the file service.  The method is basically another way to do upload.
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileSubSystem#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		return getFileService().getOutputStream(remoteParent, remoteFile, isBinary, monitor);
+		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, isBinary, monitor), remoteParent, remoteFile, this);	
 	}
 }

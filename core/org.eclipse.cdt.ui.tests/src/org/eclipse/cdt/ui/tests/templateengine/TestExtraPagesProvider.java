@@ -63,7 +63,6 @@ public class TestExtraPagesProvider implements IPagesAfterTemplateSelectionProvi
 			return Collections.singletonMap(dataKey, dataValue);
 		}
 
-		@Override
 		public void createControl(Composite parent) {
 			Label l= new Label(parent, SWT.NONE);
 			l.setText(labelText);

@@ -31,6 +31,7 @@
  * David McKnight   (IBM)        - [199568] Removing synchronized from internalGetChildren
  * Kevin Doyle (IBM) 			 - [197855] Can't Delete/Rename/Move a Read-Only File
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
+ * Kevin Doyle 		(IBM)		 - [204810] Saving file in Eclipse does not update remote file
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2850,6 +2851,7 @@ public class SystemViewRemoteFileAdapter
 						{
 							editable.setLocalResourceProperties();
 						}
+						editable.addAsListener();
 						editable.openEditor();
 					}
 					else

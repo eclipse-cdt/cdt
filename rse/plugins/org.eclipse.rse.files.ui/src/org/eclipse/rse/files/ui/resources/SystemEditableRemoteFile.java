@@ -971,7 +971,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		if (activePage == null)
 		{
 			IWorkbenchWindow activeWindow = wb.getActiveWorkbenchWindow();
-			if (activeWindow == null)
+			if (activeWindow != null)
 			{
 				activePage = activeWindow.getActivePage();
 			}

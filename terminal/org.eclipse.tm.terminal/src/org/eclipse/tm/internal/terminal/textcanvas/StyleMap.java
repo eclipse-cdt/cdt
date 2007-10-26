@@ -33,7 +33,7 @@ public class StyleMap {
 	private static final String BLUE = "blue"; //$NON-NLS-1$
 	private static final String GREEN = "green"; //$NON-NLS-1$
 	private static final String RED = "red"; //$NON-NLS-1$
-
+	
 	private static final String PREFIX = "org.eclipse.tm.internal."; //$NON-NLS-1$
 	// TODO propagate the name of the font in the FontRegistry
 	String fFontName="terminal.views.view.font.definition"; //$NON-NLS-1$
@@ -42,6 +42,8 @@ public class StyleMap {
 	private Point fCharSize;
 	private Style fDefaultStyle;
 	private boolean fInvertColors;
+	private boolean fProportional;
+	private final int[] fOffsets=new int[256];
 	StyleMap() {
 		addColor(WHITE, 255,255,255);
 		addColor(BLACK, 0,0,0);
@@ -138,6 +140,44 @@ public class StyleMap {
 		GC gc = new GC (display);
 		gc.setFont(getFont());
 		fCharSize = gc.textExtent ("W"); //$NON-NLS-1$
+		fProportional=false;
+		
+		for (char c = ' '; c <= '~'; c++) {
+			// consider only the first 128 chars for deciding if a font
+			// is proportional
+			if(measureChar(gc, c))
+				fProportional=true;
+		}
+		// TODO should we also consider the upper 128 chars??
+//		for (char c = ' '+128; c <= '~'+128; c++) {
+//			measureChar(gc, c);
+//		}
+		for (int i = 0; i < fOffsets.length; i++) {
+			fOffsets[i]=(fCharSize.x-fOffsets[i])/2;
+		}
 		gc.dispose ();
+	}
+	private boolean measureChar(GC gc, char c) {
+		boolean proportional=false;
+		Point ext=gc.textExtent(String.valueOf(c));
+		if(ext.x>0 && ext.y>0 && (fCharSize.x!=ext.x || fCharSize.y!=ext.y)) {
+			proportional=true;
+			fCharSize.x=Math.max(fCharSize.x, ext.x);
+			fCharSize.y=Math.max(fCharSize.y, ext.y);
+		}
+		fOffsets[c]=ext.x;
+		return proportional;
+	}
+	public boolean isFontProportional() {
+		return fProportional;
+	}
+	/**
+	 * @param c
+	 * @return the offset in x direction to center this character
+	 */
+	public int getCharOffset(char c) {
+		if(c>=fOffsets.length)
+			return 0;
+		return fOffsets[c];
 	}
 }

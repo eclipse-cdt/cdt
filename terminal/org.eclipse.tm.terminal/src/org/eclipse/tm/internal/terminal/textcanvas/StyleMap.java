@@ -145,25 +145,27 @@ public class StyleMap {
 		for (char c = ' '; c <= '~'; c++) {
 			// consider only the first 128 chars for deciding if a font
 			// is proportional
-			if(measureChar(gc, c))
+			if(measureChar(gc, c, true))
 				fProportional=true;
 		}
 		// TODO should we also consider the upper 128 chars??
-//		for (char c = ' '+128; c <= '~'+128; c++) {
-//			measureChar(gc, c);
-//		}
+		for (char c = ' '+128; c <= '~'+128; c++) {
+			measureChar(gc, c,false);
+		}
 		for (int i = 0; i < fOffsets.length; i++) {
 			fOffsets[i]=(fCharSize.x-fOffsets[i])/2;
 		}
 		gc.dispose ();
 	}
-	private boolean measureChar(GC gc, char c) {
+	private boolean measureChar(GC gc, char c, boolean updateMax) {
 		boolean proportional=false;
 		Point ext=gc.textExtent(String.valueOf(c));
 		if(ext.x>0 && ext.y>0 && (fCharSize.x!=ext.x || fCharSize.y!=ext.y)) {
 			proportional=true;
-			fCharSize.x=Math.max(fCharSize.x, ext.x);
-			fCharSize.y=Math.max(fCharSize.y, ext.y);
+			if(updateMax) {
+				fCharSize.x=Math.max(fCharSize.x, ext.x);
+				fCharSize.y=Math.max(fCharSize.y, ext.y);
+			}
 		}
 		fOffsets[c]=ext.x;
 		return proportional;

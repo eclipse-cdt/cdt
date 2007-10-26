@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen (IBM)     - [200872] [Archives] Size Property displays size of Archive not of file inside Archive
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.local.model;
@@ -88,6 +89,11 @@ public class LocalVirtualFile extends LocalFile implements IVirtualRemoteFile
 		_node.getChild().renameTo(string);
 	}
 
+	public long getLength()
+	{
+		return _node.getChild().getSize();
+	}
+	
 	public void setVirtualFullPath(String string) 
 	{
 		if (string.equals("")) //$NON-NLS-1$

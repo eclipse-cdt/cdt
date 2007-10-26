@@ -39,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -130,8 +131,14 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				if (binding != null && !(binding instanceof IProblemBinding)) {
 					IName[] declNames = findNames(fIndex, ast, isDefinition, binding);
 					if (declNames.length == 0) {
-						// bug 86829, handle implicit methods.
-						if (binding instanceof ICPPMethod) {
+						if(binding instanceof ICPPTemplateInstance) {
+							// bug 207320, handle template instances
+							IBinding definition= ((ICPPTemplateInstance)binding).getTemplateDefinition();
+							if(definition != null && !(definition instanceof IProblemBinding)) {
+								declNames = findNames(fIndex, ast, true, definition);
+							}
+						} else if (binding instanceof ICPPMethod) {
+							// bug 86829, handle implicit methods.
 							ICPPMethod method= (ICPPMethod) binding;
 							if (method.isImplicit()) {
 								try {

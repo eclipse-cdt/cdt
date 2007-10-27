@@ -7,10 +7,15 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+ * Ken Ryall (Nokia) - 207675
+*******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.preferences;
 
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.SortedMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -64,6 +69,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private Combo fExpressionFormatCombo;
 
 	private Combo fRegisterFormatCombo;
+
+	private Combo fCharsetCombo;
 
 	// Maximum number of disassembly instructions to display
 	private IntegerFieldEditor fMaxNumberOfInstructionsText;
@@ -164,6 +171,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
+		fCharsetCombo.setText( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_CHARSET ) );
 		fShowBinarySourceFilesButton.setSelection( CCorePlugin.getDefault().getPluginPreferences().getBoolean( CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES ) );
 	}
 
@@ -211,6 +219,19 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fVariableFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.8" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
 		fExpressionFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.9" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
 		fRegisterFormatCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.10" ), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		String[] charsetNames = getCharsetNames();
+		fCharsetCombo = createComboBox( formatComposite, PreferenceMessages.getString( "CDebugPreferencePage.16" ), charsetNames, charsetNames[0] ); //$NON-NLS-1$
+	}
+
+	private String[] getCharsetNames() {
+		ArrayList names = new ArrayList();
+		SortedMap setmap = Charset.availableCharsets();
+		
+		for (Iterator iterator = setmap.keySet().iterator(); iterator.hasNext();) {
+			String entry = (String) iterator.next();
+			names.add(entry);
+		}
+		return (String[]) names.toArray(new String[names.size()]);
 	}
 
 	private void createBinarySettings( Composite parent ) {
@@ -344,6 +365,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, getFormatId( fVariableFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId( fExpressionFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, getFormatId( fRegisterFormatCombo.getSelectionIndex() ) );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_CHARSET, fCharsetCombo.getItem( fCharsetCombo.getSelectionIndex()) );
 		getDisassemblySourceColor().store();
 		CCorePlugin.getDefault().getPluginPreferences().setValue( CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, fShowBinarySourceFilesButton.getSelection() );
 	}
@@ -366,6 +388,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
+		fCharsetCombo.setText(  CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultString( ICDebugConstants.PREF_CHARSET )  );
 	}
 
 	private static int getFormatId( int index ) {

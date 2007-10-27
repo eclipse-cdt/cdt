@@ -9,17 +9,22 @@
  *     QNX Software Systems - Initial API and implementation
  *     Mark Mitchell, CodeSourcery - Bug 136896: View variables in binary format
  *     Warren Paul (Nokia) - 150860, 150864, 150862, 150863
- *******************************************************************************/
+ *     Ken Ryall (Nokia) - 207675
+*******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormattable;
@@ -500,7 +505,22 @@ public class CValue extends AbstractCValue {
 			int size = ((CVariable)getParentVariable()).sizeof();
 			if ( size == 2 ) {
 				CVariableFormat format = getParentVariable().getFormat(); 
-				if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
+				if ( CVariableFormat.NATURAL.equals( format ) ) {					
+					ByteBuffer buffer = ByteBuffer.allocate(4);
+					buffer.putInt(value.intValue());
+					buffer.position(2);					
+					String stringValue;
+					try {
+						stringValue = new String(CDebugUtils.getCharsetDecoder().decode(buffer).array());
+					} catch (CharacterCodingException e) {
+						stringValue = e.toString();
+					}
+					StringBuffer sb = new StringBuffer("'");
+					sb.append(stringValue);
+					sb.append('\'');
+					return sb.toString();
+				}
+				else if ( CVariableFormat.DECIMAL.equals( format ) ) {
 					return (isUnsigned()) ? Integer.toString( value.intValue() ) : Short.toString( value.shortValue() );
 				}
 				else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {
@@ -518,7 +538,22 @@ public class CValue extends AbstractCValue {
 			}
 			if ( size == 4 ) {
 				CVariableFormat format = getParentVariable().getFormat(); 
-				if ( CVariableFormat.NATURAL.equals( format ) || CVariableFormat.DECIMAL.equals( format ) ) {
+				if ( CVariableFormat.NATURAL.equals( format ) ) {					
+					ByteBuffer buffer = ByteBuffer.allocate(8);
+					buffer.putLong(value.longValue());
+					buffer.position(4);					
+					String stringValue;
+					try {
+						stringValue = new String(CDebugUtils.getCharsetDecoder().decode(buffer).array());
+					} catch (CharacterCodingException e) {
+						stringValue = e.toString();
+					}
+					StringBuffer sb = new StringBuffer("'");
+					sb.append(stringValue);
+					sb.append('\'');
+					return sb.toString();
+				}
+				else if ( CVariableFormat.DECIMAL.equals( format ) ) {
 					return (isUnsigned()) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
 				}
 				else if ( CVariableFormat.HEXADECIMAL.equals( format ) ) {

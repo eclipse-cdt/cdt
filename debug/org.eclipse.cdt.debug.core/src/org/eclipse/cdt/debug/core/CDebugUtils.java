@@ -12,6 +12,8 @@ package org.eclipse.cdt.debug.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -415,4 +417,17 @@ public class CDebugUtils {
 	private static boolean isEmpty( String string ) {
 		return ( string == null || string.trim().length() == 0 );
 	}
+	
+	private static CharsetDecoder fDecoder;
+
+	public static CharsetDecoder getCharsetDecoder() {
+		String charsetName = CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_CHARSET );
+		if (fDecoder == null || !fDecoder.charset().name().equals(charsetName))
+		{
+			Charset charset = Charset.forName(charsetName);
+			fDecoder = charset.newDecoder();
+		}
+		return fDecoder;
+	}
+
 }

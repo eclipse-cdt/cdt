@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+ * Ken Ryall (Nokia) - 207675
+*******************************************************************************/
 package org.eclipse.cdt.debug.internal.core; 
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -35,6 +36,7 @@ public class CDebugCorePreferenceInitializer extends AbstractPreferenceInitializ
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_CHARSET, ICDebugConstants.DEF_CHARSET );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_INSTRUCTION_STEP_MODE_ON, false );
 	}
 }

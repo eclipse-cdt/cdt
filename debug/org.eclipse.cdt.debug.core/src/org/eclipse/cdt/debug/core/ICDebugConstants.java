@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Ken Ryall (Nokia) - 207675
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -33,6 +34,12 @@ public interface ICDebugConstants {
 	 * view
 	 */
 	public static final String PREF_DEFAULT_REGISTER_FORMAT = PLUGIN_ID + "cDebug.default_register_format"; //$NON-NLS-1$
+	
+	/**
+	 * The identifier of the character set to use with unicode types
+	 * view
+	 */
+	public static final String PREF_CHARSET = PLUGIN_ID + "cDebug.character_set"; //$NON-NLS-1$
 
 	/**
 	 * The identifier of the default expression format to use in the expressions
@@ -90,4 +97,9 @@ public interface ICDebugConstants {
 	 * Temporary. See bugs 79872 and 80323.
 	 */
 	public static final String PREF_INSTRUCTION_STEP_MODE_ON = PLUGIN_ID + "cDebug.Disassembly.instructionStepOn"; //$NON-NLS-1$
+
+	/**
+	 * The default character set to use with unicode strings.
+	 */
+	public static final String DEF_CHARSET = "UTF-16";
 }

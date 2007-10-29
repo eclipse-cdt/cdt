@@ -5,6 +5,7 @@
 	</target>
 	
 	<target name="build" depends="zips,sign,test"/>
+	<target name="testbuild" depends="zips,sign,test,copy"/>
 	<target name="nightly" depends="tag,zips,sign,test,copy"/>
 	
 	<target name="cdtbuild" depends="tag,zips,test,upload"/>

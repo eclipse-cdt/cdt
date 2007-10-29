@@ -1542,7 +1542,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
     protected void redrawPanes()
     {
-    	if(this.isVisible())
+    	if(!isDisposed() && this.isVisible())
     	{
 	        if(fAddressPane.isPaneVisible())
 	        {

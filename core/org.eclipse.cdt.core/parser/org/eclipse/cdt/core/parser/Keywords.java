@@ -8,6 +8,7 @@
  * Contributors:
  * IBM Rational Software - Initial API and implementation
  * Anton Leherbauer (Wind River Systems)
+ * Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -233,7 +234,6 @@ public class Keywords {
 	public static final char[] cpDIV = 	"/".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpPOUND = "#".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpPOUNDPOUND = "##".toCharArray(); //$NON-NLS-1$
-	public static final char[] cpBACKSLASH = "\\".toCharArray(); //$NON-NLS-1$
 	
 	// gcc extensions
 	public static final char[] cpMIN = "<?".toCharArray(); //$NON-NLS-1$
@@ -366,7 +366,6 @@ public class Keywords {
 	
 	public static void addKeywordsPreprocessor(CharArrayIntMap ppKeywords) {
         // Preprocessor keywords
-        ppKeywords = new CharArrayIntMap(16, IPreprocessorDirective.ppInvalid);
         ppKeywords.put(Keywords.cIF, IPreprocessorDirective.ppIf); 
         ppKeywords.put(Keywords.cIFDEF, IPreprocessorDirective.ppIfdef); 
         ppKeywords.put(Keywords.cIFNDEF, IPreprocessorDirective.ppIfndef); 

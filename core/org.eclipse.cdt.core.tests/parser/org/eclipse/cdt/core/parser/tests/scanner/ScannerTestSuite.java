@@ -6,24 +6,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    IBM - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
- *    Emanuel Graf (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-/**
- * @author jcamelon
- */
 public class ScannerTestSuite extends TestSuite {
 
 	public static Test suite() { 
 		TestSuite suite= new ScannerTestSuite();
 		suite.addTest(LexerTests.suite());
 		suite.addTest(LocationMapTests.suite());
+		suite.addTest(PortedScannerTest.suite());
 		return suite;
 	}	
 }

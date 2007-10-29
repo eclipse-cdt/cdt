@@ -377,7 +377,7 @@ class DependencyTree extends ASTInclusionNode implements IDependencyTree {
 	}
 
 	public String getTranslationUnitPath() {
-		return fLocationCtx.getFilename();
+		return fLocationCtx.getFilePath();
 	}
 }
 
@@ -393,7 +393,7 @@ class ASTFileLocation implements IASTFileLocation {
 	}
 
 	public String getFileName() {
-		return fLocationCtx.getFilename();
+		return fLocationCtx.getFilePath();
 	}
 
 	public IASTFileLocation asFileLocation() {

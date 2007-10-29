@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -15,10 +16,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -37,7 +40,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.InvalidMacroDefinitionException;
@@ -51,6 +53,11 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ScannerUtility;
  */
 public class CPreprocessor implements ILexerLog, IScanner {
 	public static final int tDEFINED= IToken.FIRST_RESERVED_PREPROCESSOR;
+	public static final int tEXPANDED_IDENTIFIER= IToken.FIRST_RESERVED_PREPROCESSOR+1;
+	public static final int tSCOPE_MARKER= IToken.FIRST_RESERVED_PREPROCESSOR+2;
+	public static final int tMACRO_PARAMETER= IToken.FIRST_RESERVED_PREPROCESSOR+3;
+
+    
 
 	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
 	private static final int ORIGIN_INACTIVE_CODE = OffsetLimitReachedException.ORIGIN_INACTIVE_CODE;
@@ -59,7 +66,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
     private static final char[] EMPTY_CHAR_ARRAY = new char[0];
     private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
     private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-    private static final EndOfFileException EOF = new EndOfFileException();
 
 
     // standard built-ins
@@ -76,7 +82,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	private interface IIncludeFileTester {
     	Object checkFile(String path, String fileName);
     }
-    
+
     final private IIncludeFileTester createCodeReaderTester= new IIncludeFileTester() { 
     	public Object checkFile(String path, String fileName) {
     		return createReader(path, fileName);
@@ -144,7 +150,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 
     final private DynamicStyleMacro __LINE__ = new DynamicStyleMacro("__LINE__".toCharArray()) { //$NON-NLS-1$
         public Token execute() {
-            int lineNumber= fLocationMap.getCurrentLineNumber(fCurrentContext.currentPPToken().getOffset());
+            int lineNumber= fLocationMap.getCurrentLineNumber(fCurrentContext.currentLexerToken().getOffset());
             return new ImageToken(IToken.tINTEGER, 0, 0, Long.toString(lineNumber).toCharArray());
         }
     };
@@ -152,26 +158,27 @@ public class CPreprocessor implements ILexerLog, IScanner {
     final private IParserLogService fLog;
     final private ICodeReaderFactory fCodeReaderFactory;
     private final ExpressionEvaluator fExpressionEvaluator;
-	private final MacroDefinitionParser fMacroDefinitionParser= new MacroDefinitionParser();
+	private final MacroDefinitionParser fMacroDefinitionParser;
+	private final MacroExpander fMacroExpander;
 
     // configuration
     final private ParserLanguage fLanguage;
     final private LexerOptions fLexOptions= new LexerOptions();
-    final private boolean fCheckNumbers;
+    private boolean fCheckNumbers;
     final private char[] fAdditionalNumericLiteralSuffixes;
     final private CharArrayIntMap fKeywords;
     final private CharArrayIntMap fPPKeywords;
     final private String[] fIncludePaths;
     final private String[] fQuoteIncludePaths;
 
-    private int fContentAssistLimit;
+    private int fContentAssistLimit= -1;
 
     // state information
     private final CharArrayObjectMap fMacroDictionary = new CharArrayObjectMap(512);
     private final LocationMap fLocationMap = new LocationMap();
 
     /** Set of already included files */
-    private final CharArraySet includedFiles= new CharArraySet(32);
+    private final HashSet fAllIncludedFiles= new HashSet();
     private int fTokenCount;
 
 	private final Lexer fRootLexer;
@@ -182,8 +189,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 
     private Token fPrefetchedToken;
     private Token fLastToken;
-
-
+	private boolean fExpandingMacro;
 
     public CPreprocessor(CodeReader reader, IScannerInfo info, ParserLanguage language, IParserLogService log,
             IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory) {
@@ -201,14 +207,17 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	fQuoteIncludePaths= getQuoteIncludePath(info);
     	
         fExpressionEvaluator= new ExpressionEvaluator();
+        fMacroDefinitionParser= new MacroDefinitionParser();
+        fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fMacroDefinitionParser, fLexOptions);
         fCodeReaderFactory= readerFactory;
 
         setupMacroDictionary(configuration, info);		
                 
-        ILocationCtx ctx= fLocationMap.pushTranslationUnit(new String(reader.filename), reader.buffer);	
+        final String filePath= new String(reader.filename);
+        fAllIncludedFiles.add(filePath);
+        ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, reader.buffer);	
         fRootLexer= new Lexer(reader.buffer, (LexerOptions) fLexOptions.clone(), this);
         fRootContext= fCurrentContext= new ScannerContextFile(ctx, null, fRootLexer);
-
         if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
         	
@@ -222,8 +231,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	}
 
 
-    // mstodo keywords should be provided directly by the language
+    // mstodo scanner integration, keywords should be provided directly by the language
 	private void configureKeywords(ParserLanguage language,	IScannerExtensionConfiguration configuration) {
+		Keywords.addKeywordsPreprocessor(fPPKeywords);
 		if (language == ParserLanguage.C) {
         	Keywords.addKeywordsC(fKeywords);
         }
@@ -241,7 +251,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	}
 
     protected String getCurrentFilename() {
-		return fLocationMap.getCurrentFilename();
+		return fLocationMap.getCurrentFilePath();
 	}
 
 	private char[] nonNull(char[] array) {
@@ -339,24 +349,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	return buffer;
 	}
     
-//    private boolean isCircularInclusion(InclusionData data) {
-//    	// mstodo
-//        for (int i = 0; i < bufferStackPos; ++i) {
-//            if (bufferData[i] instanceof CodeReader
-//                    && CharArrayUtils.equals(
-//                            ((CodeReader) bufferData[i]).filename,
-//                            data.reader.filename)) {
-//                return true;
-//            } else if (bufferData[i] instanceof InclusionData
-//                    && CharArrayUtils
-//                            .equals(
-//                                    ((InclusionData) bufferData[i]).reader.filename,
-//                                    data.reader.filename)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 
 
 
@@ -428,6 +420,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	Token t1= fPrefetchedToken;
     	if (t1 == null) {
     		t1= fetchTokenFromPreprocessor();
+    		final int offset= fLocationMap.getSequenceNumberForOffset(t1.getOffset());
+    		final int endOffset= fLocationMap.getSequenceNumberForOffset(t1.getEndOffset());
+    		t1.setOffset(offset, endOffset);
     	}
     	else {
     		fPrefetchedToken= null;
@@ -437,7 +432,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	switch(tt1) {
     	case Lexer.tEND_OF_INPUT:
     		if (fContentAssistLimit < 0) {
-    			throw EOF;
+    			throw new EndOfFileException();
     		}
 			t1= new SimpleToken(IToken.tEOC, fContentAssistLimit, fContentAssistLimit);
     		break;
@@ -491,12 +486,24 @@ public class CPreprocessor implements ILexerLog, IScanner {
     private void appendStringContent(StringBuffer buf, Token t1) {
     	final char[] image= t1.getCharImage();
     	final int start= image[0]=='"' ? 1 : 2;
-    	buf.append(image, start, image.length-start);
+    	buf.append(image, start, image.length-start-1);
 	}
+
+    /**
+     * Checks if the current token is a left parenthesis, newlines will be ignored.
+     * No preprocessing is performed.
+     */
+    boolean findLParenthesisInContext() throws OffsetLimitReachedException {
+    	Token t= fCurrentContext.currentLexerToken();
+    	while(t.getType() == Lexer.tNEWLINE) {
+    		t= fCurrentContext.nextPPToken();
+    	}
+    	return t.getType() == IToken.tLPAREN;
+    }
 
 	Token fetchTokenFromPreprocessor() throws OffsetLimitReachedException {
         ++fTokenCount;
-        Token ppToken= fCurrentContext.currentPPToken();
+        Token ppToken= fCurrentContext.currentLexerToken();
         while(true) {
 			switch(ppToken.getType()) {
         	case Lexer.tBEFORE_INPUT:
@@ -511,22 +518,28 @@ public class CPreprocessor implements ILexerLog, IScanner {
             	}
         		fCurrentContext= fCurrentContext.getParent();
         		if (fCurrentContext == null) {
+        			fCurrentContext= fRootContext;
         			return ppToken;
         		}
             	
-        		ppToken= fCurrentContext.currentPPToken();
+        		ppToken= fCurrentContext.currentLexerToken();
         		continue;
 
             case IToken.tPOUND:
             	final Lexer lexer= fCurrentContext.getLexerForPPDirective();
             	if (lexer != null) {
             		executeDirective(lexer, ppToken.getOffset());
+            		ppToken= fCurrentContext.currentLexerToken();
             		continue;
             	}
             	break;
         	
         	case IToken.tIDENTIFIER:
-        		if (fCurrentContext.expandsMacros() && expandMacro(ppToken, true)) {
+    			final boolean tryExpansion = !fExpandingMacro && fCurrentContext.expandsMacros();
+
+        		fCurrentContext.nextPPToken(); // consume the identifier
+        		if (tryExpansion && expandMacro(ppToken)) {
+        			ppToken= fCurrentContext.currentLexerToken();
         			continue;
         		}
 
@@ -535,7 +548,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
             	if (tokenType != fKeywords.undefined) {
             		ppToken.setType(tokenType);
             	}
-            	break;
+            	return ppToken;
         		
         	case IToken.tINTEGER:
         		if (fCheckNumbers) {
@@ -549,7 +562,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
         		}
         		break;
         	}
-        	fCurrentContext.nextPPToken();
+			fCurrentContext.nextPPToken();
         	return ppToken;
         }
     }
@@ -734,7 +747,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
         StringBuffer buffer = new StringBuffer("Scanner @ file:");  //$NON-NLS-1$
         buffer.append(fCurrentContext.toString());
         buffer.append(" line: ");  //$NON-NLS-1$
-        buffer.append(fLocationMap.getCurrentLineNumber(fCurrentContext.currentPPToken().getOffset()));
+        buffer.append(fLocationMap.getCurrentLineNumber(fCurrentContext.currentLexerToken().getOffset()));
         return buffer.toString();
     }
 	
@@ -804,13 +817,26 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	// we have an identifier
     	final char[] name = ident.getCharImage();
     	final int type = fPPKeywords.get(name);
+    	int endOffset;
     	switch (type) {
     	case IPreprocessorDirective.ppImport:
     	case IPreprocessorDirective.ppInclude:
-    		executeInclude(lexer, startOffset, false, true);
+    		if (fExpandingMacro) {
+        		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    			endOffset= lexer.currentToken().getEndOffset();
+        		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, name, startOffset, endOffset);
+    		}
+    		else {
+    			executeInclude(lexer, startOffset, false, true);
+    		}
     		break;
     	case IPreprocessorDirective.ppInclude_next:
-    		executeInclude(lexer, startOffset, true, true);
+    		if (fExpandingMacro) {
+        		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		}
+    		else {
+    			executeInclude(lexer, startOffset, true, true);
+    		}
     		break;
     	case IPreprocessorDirective.ppDefine:
     		executeDefine(lexer, startOffset);
@@ -829,7 +855,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		break;
     	case IPreprocessorDirective.ppElse: 
     		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    		int endOffset= lexer.currentToken().getEndOffset();
+    		endOffset= lexer.currentToken().getEndOffset();
     		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_ELSE)) {
     			fLocationMap.encounterPoundElse(startOffset, endOffset, false);
     			skipOverConditionalCode(lexer, false);
@@ -893,8 +919,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
 		char[] headerName= null;
 		boolean userInclude= true;
 
-		lexer.setInsideIncludeDirective();
+		lexer.setInsideIncludeDirective(true);
 		final Token header= lexer.nextToken();
+		lexer.setInsideIncludeDirective(false);
 		final int nameOffset= header.getOffset();
 		int nameEndOffset= header.getEndOffset();
 		int endOffset;
@@ -921,30 +948,30 @@ public class CPreprocessor implements ILexerLog, IScanner {
 			throw new OffsetLimitReachedException(ORIGIN_PREPROCESSOR_DIRECTIVE, header);
 			
 		case IToken.tIDENTIFIER: 
-			Token tokens= new SimpleToken(0,0,0);
-			nameEndOffset= getPreprocessedTokensOfLine(lexer, tokens);
+			TokenList tl= new TokenList();
+			nameEndOffset= getPreprocessedTokensOfLine(lexer, tl);
 			endOffset= lexer.currentToken().getEndOffset();
-			tokens= (Token) tokens.getNext();
-			if (tokens != null) {
-				switch(tokens.getType()) {
+			Token t= tl.first();
+			if (t != null) {
+				switch(t.getType()) {
 				case IToken.tSTRING:
-					image= tokens.getCharImage();
+					image= t.getCharImage();
 					headerName= new char[image.length-2];
 					System.arraycopy(image, 1, headerName, 0, headerName.length);
 					break;
 				case IToken.tLT:
 					boolean complete= false;
 					StringBuffer buf= new StringBuffer();
-					tokens= (Token) tokens.getNext();
-					while (tokens != null) {
-						if (tokens.getType() == IToken.tGT) {
+					t= (Token) t.getNext();
+					while (t != null) {
+						if (t.getType() == IToken.tGT) {
 							complete= true;
 							break;
 						}
-						buf.append(tokens.getImage());
-						tokens= (Token) tokens.getNext();
+						buf.append(t.getImage());
+						t= (Token) t.getNext();
 					}
-					if (!complete) {
+					if (!complete && fContentAssistLimit >= 0 && fCurrentContext == fRootContext) {
 						throw new OffsetLimitReachedException(ORIGIN_PREPROCESSOR_DIRECTIVE, null);
 					}
 					headerName= new char[buf.length()];
@@ -965,22 +992,29 @@ public class CPreprocessor implements ILexerLog, IScanner {
 			return;
 		}
 
-		CodeReader reader= null;
+		String path= null;
+		boolean reported= false;
 		if (active) {
 			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
-			reader= findInclusion(new String(headerName), userInclude, include_next, currentDir);
+			final CodeReader reader= findInclusion(new String(headerName), userInclude, include_next, currentDir);
 			if (reader != null) {
-				ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffset, nameEndOffset, endOffset, reader.buffer, new String(reader.filename), headerName, userInclude);
-				ScannerContextFile fctx= new ScannerContextFile(ctx, fCurrentContext, new Lexer(reader.buffer, fLexOptions, this));
-				fCurrentContext= fctx;
+				path= new String(reader.filename);
+				if (!isCircularInclusion(path)) {
+					reported= true;
+					fAllIncludedFiles.add(path);
+					ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffset, nameEndOffset, endOffset, reader.buffer, path, headerName, userInclude);
+					ScannerContextFile fctx= new ScannerContextFile(ctx, fCurrentContext, new Lexer(reader.buffer, fLexOptions, this));
+					fCurrentContext= fctx;
+				}
 			}
 			else {
 				handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, headerName, poundOffset, endOffset);
 			}
 		}
 		else {
+			// test if the include is inactive just because it was included before (bug 167100)
 			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
-			String path= (String) findInclusion(new String(headerName), userInclude, include_next, currentDir, createPathTester);
+			path= (String) findInclusion(new String(headerName), userInclude, include_next, currentDir, createPathTester);
 			if (path != null) {
 				if (fCodeReaderFactory instanceof IIndexBasedCodeReaderFactory) {
 					// fast indexer
@@ -990,23 +1024,37 @@ public class CPreprocessor implements ILexerLog, IScanner {
 				}
 				else {
 					// full indexer
-					if (!includedFiles.containsKey(path.toCharArray())) {
+					if (!fAllIncludedFiles.contains(path)) {
 						path= null;
 					}
 				}
 			}
+		}
+		if (!reported) {
 			fLocationMap.encounterPoundInclude(poundOffset, nameOffset, nameEndOffset, endOffset, headerName, path, !userInclude, active); 
 		}
 	}
+	
+	private boolean isCircularInclusion(String filename) {
+		ILocationCtx checkContext= fCurrentContext.getLocationCtx();
+		while (checkContext != null) {
+			if (filename.equals(checkContext.getFilePath())) {
+				return true;
+			}
+			checkContext= checkContext.getParent();
+		}
+		return false;
+	}
+
 
     private void executeDefine(final Lexer lexer, int startOffset) throws OffsetLimitReachedException {
 		try {
 			ObjectStyleMacro macrodef = fMacroDefinitionParser.parseMacroDefinition(lexer, this);
 			fMacroDictionary.put(macrodef.getNameCharArray(), macrodef);
 			final Token name= fMacroDefinitionParser.getNameToken();
+			final int endOffset= lexer.currentToken().getEndOffset();
 			fLocationMap.encounterPoundDefine(startOffset, name.getOffset(), name.getEndOffset(), 
-					fMacroDefinitionParser.getExpansionOffset(), fMacroDefinitionParser.getExpansionEndOffset(),
-					macrodef);
+					fMacroDefinitionParser.getExpansionOffset(), endOffset, macrodef);
 		} catch (InvalidMacroDefinitionException e) {
 			int end= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 			handleProblem(IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, e.fName, startOffset, end);
@@ -1062,13 +1110,15 @@ public class CPreprocessor implements ILexerLog, IScanner {
 
     private void executeIf(Lexer lexer, int startOffset) throws OffsetLimitReachedException {
     	boolean isActive= false;
-    	Token condition= new SimpleToken(0,0,0);
+    	TokenList condition= new TokenList();
     	final int condOffset= lexer.nextToken().getOffset();
     	final int condEndOffset= getPreprocessedTokensOfLine(lexer, condition);
     	final int endOffset= lexer.currentToken().getEndOffset();
     	
-    	condition= (Token) condition.getNext();
-		if (condition != null) {
+    	if (condition.first() == null) {
+    		handleProblem(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null, startOffset, endOffset);
+    	}
+    	else {
     		try {
 				isActive= fExpressionEvaluator.evaluate(condition, fMacroDictionary);
 			} catch (EvalException e) {
@@ -1089,15 +1139,16 @@ public class CPreprocessor implements ILexerLog, IScanner {
      * Macro expansion is reported to the location map.
      * Returns the end-offset of the last token used from the input.
      */
-    private int getPreprocessedTokensOfLine(Lexer lexer, Token resultHolder) throws OffsetLimitReachedException {
+    private int getPreprocessedTokensOfLine(Lexer lexer, TokenList result) throws OffsetLimitReachedException {
 		final ScannerContext sctx= fCurrentContext;
 		final ScannerContextPPDirective ppdCtx= new ScannerContextPPDirective(lexer, true);
 		fCurrentContext= ppdCtx;
+		boolean cn= fCheckNumbers;
+		fCheckNumbers= false;
 		try {
 			Token t= fetchTokenFromPreprocessor();
 			while (t.getType() != Lexer.tEND_OF_INPUT) {
-				resultHolder.setNext(t);
-				resultHolder= t;
+				result.append(t);
 				t= fetchTokenFromPreprocessor();
 			}
 			// make sure an exception is thrown if we are running content assist at the end of the line
@@ -1106,6 +1157,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 		}
 		finally {
 			fCurrentContext= sctx;
+			fCheckNumbers= cn;
 		}
     }
     
@@ -1181,10 +1233,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
         	    	boolean isActive= false;
         	    	int condOffset= lexer.nextToken().getOffset();
         			if (nesting == 0 && takeElseBranch) {
-            	    	Token condition= new SimpleToken(0,0,0);
+            	    	TokenList condition= new TokenList();
         				condEndOffset= getPreprocessedTokensOfLine(lexer, condition);
-        				condition= (Token) condition.getNext();
-        				if (condition != null) {
+        				if (condition.first() != null) {
         					try {
         						isActive= fExpressionEvaluator.evaluate(condition, fMacroDictionary);
         					} catch (EvalException e) {
@@ -1231,7 +1282,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     }
     
 	/**
-	 * The method assumes that the identifier is not yet consumed.
+	 * The method assumes that the identifier is consumed.
 	 * <p>
 	 * Checks whether the identifier causes a macro expansion. May advance the current lexer
 	 * to check for the opening bracket succeeding the identifier.
@@ -1242,27 +1293,31 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	 * @return
 	 * @throws OffsetLimitReachedException 
 	 */
-	private boolean expandMacro(final Token identifier, boolean multiline) throws OffsetLimitReachedException {
+	private boolean expandMacro(final Token identifier) throws OffsetLimitReachedException {
 		final char[] name= identifier.getCharImage();
         PreprocessorMacro macro= (PreprocessorMacro) fMacroDictionary.get(name);
         if (macro == null) {
         	return false;
         }
         
-        Token bracket= null;
         if (macro instanceof FunctionStyleMacro) {
-        	bracket= fCurrentContext.nextPPToken();
-        	if (multiline) {
-        		while(bracket.getType() == Lexer.tNEWLINE) {
-        			bracket= fCurrentContext.nextPPToken();
-        		}
-        	}
-        	if (bracket.getType() != IToken.tLPAREN) {
+        	if (!findLParenthesisInContext()) {
         		return false;
         	}
         }
-        
-        // mstodo really expand the macro
+        fExpandingMacro= true;
+        final boolean contentAssist = fContentAssistLimit>=0 && fCurrentContext == fRootContext;
+        TokenList replacement= new TokenList();
+		final int endOffset= fMacroExpander.expand(macro, identifier, contentAssist, replacement);
+    	fExpandingMacro= false;
+    	
+    	final ImageLocationInfo[] ili= fMacroExpander.createImageLocations(replacement);
+    	final IASTName[] expansions= fMacroExpander.createImplicitExpansions();
+    	final int length= fMacroExpander.adjustOffsets(replacement);
+    	ILocationCtx ctx= fLocationMap.pushMacroExpansion(
+    			identifier.getOffset(), identifier.getEndOffset(), endOffset, length, macro, expansions, ili);
+        fCurrentContext= new ScannerContextMacroExpansion(ctx, fCurrentContext, replacement);
+
         return true;
 	}
 
@@ -1274,6 +1329,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	}
 
 	// stuff to be removed
+    public void addDefinition(IMacro macro) {
+    	addMacroDefinition(macro.getSignature(), macro.getExpansion());
+    }
 	public IMacro addDefinition(char[] key, char[] value) {
     	throw new UnsupportedOperationException();
 	}
@@ -1283,9 +1341,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	public char[] getMainFilename() {
     	throw new UnsupportedOperationException();
 	}
-    public void addDefinition(IMacro macro) {
-    	throw new UnsupportedOperationException();
-    }
 	public IMacro addDefinition(char[] name, char[][] params, char[] expansion) {
     	throw new UnsupportedOperationException();
     }
@@ -1299,717 +1354,4 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	throw new UnsupportedOperationException();
 	}
 
-//    private int skipOverMacroArg() {
-//        char[] buffer = bufferStack[bufferStackPos];
-//        int limit = bufferLimit[bufferStackPos];
-//        int argEnd = bufferPos[bufferStackPos]--;
-//        int nesting = 0;
-//        while (++bufferPos[bufferStackPos] < limit) {
-//            switch (buffer[bufferPos[bufferStackPos]]) {
-//            case '(':
-//                ++nesting;
-//                break;
-//            case ')':
-//                if (nesting == 0) {
-//                    --bufferPos[bufferStackPos];
-//                    return argEnd;
-//                }
-//                --nesting;
-//                break;
-//            case ',':
-//                if (nesting == 0) {
-//                    --bufferPos[bufferStackPos];
-//                    return argEnd;
-//                }
-//                break;
-//            // fix for 95119
-//            case '\'':
-//                boolean escapedChar = false;
-//                loop: while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
-//                    switch (buffer[bufferPos[bufferStackPos]]) {
-//                    case '\\':
-//                        escapedChar = !escapedChar;
-//                        continue;
-//                    case '\'':
-//                        if (escapedChar) {
-//                            escapedChar = false;
-//                            continue;
-//                        }
-//                        break loop;
-//                    default:
-//                       escapedChar = false;
-//                    }
-//                }
-//                break;
-//            case '"':
-//                boolean escaped = false;
-//                loop: while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
-//                    switch (buffer[bufferPos[bufferStackPos]]) {
-//                    case '\\':
-//                        escaped = !escaped;
-//                        continue;
-//                    case '"':
-//                        if (escaped) {
-//                            escaped = false;
-//                            continue;
-//                        }
-//                        break loop;
-//                    default:
-//                        escaped = false;
-//                    }
-//                }
-//                break;
-//            }
-//            argEnd = bufferPos[bufferStackPos];
-//            skipOverWhiteSpace();
-//        }
-//        --bufferPos[bufferStackPos];
-//        // correct argEnd when reaching limit, (bug 179383)
-//        if (argEnd==limit) {
-//        	argEnd--;
-//        }
-//        return argEnd;
-//    }
-//
-//
-//    private char[] expandFunctionStyleMacro(FunctionStyleMacro macro) {
-//        char[] buffer = bufferStack[bufferStackPos];
-//        int limit = bufferLimit[bufferStackPos];
-//        int start = bufferPos[bufferStackPos] - macro.name.length + 1;
-//        skipOverWhiteSpace();
-//        while (bufferPos[bufferStackPos] < limit
-//                && buffer[bufferPos[bufferStackPos]] == '\\'
-//                && bufferPos[bufferStackPos] + 1 < buffer.length
-//                && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
-//            bufferPos[bufferStackPos] += 2;
-//            skipOverWhiteSpace();
-//        }
-//
-//        if (++bufferPos[bufferStackPos] >= limit) {
-//            //allow a macro boundary cross here, but only if the caller was
-//            // prepared to accept a bufferStackPos change
-//            if (pushContext) {
-//                int idx = -1;
-//                int stackpPos = bufferStackPos;
-//                while (bufferData[stackpPos] != null
-////                        && bufferData[stackpPos] instanceof MacroData
-//                        ) {
-//                    stackpPos--;
-//                    if (stackpPos < 0)
-//                        return EMPTY_CHAR_ARRAY;
-//                    idx = indexOfNextNonWhiteSpace(bufferStack[stackpPos],
-//                            bufferPos[stackpPos], bufferLimit[stackpPos]);
-//                    if (idx >= bufferLimit[stackpPos])
-//                        continue;
-//                    if (idx > 0 && bufferStack[stackpPos][idx] == '(')
-//                        break;
-//                    bufferPos[bufferStackPos]--;
-//                    return null;
-//                }
-//                if (idx == -1) {
-//                    bufferPos[bufferStackPos]--;
-//                    return null;
-//                }
-//
-////                MacroData data;
-//                IMacro popMacro= macro;
-//                do {
-////                	data= (MacroData) bufferData[bufferStackPos];
-//                    popContextForFunctionMacroName(popMacro);
-//                	popMacro= data.macro;
-//                } while (bufferStackPos > stackpPos);
-//
-//                bufferPos[bufferStackPos] = idx;
-//                buffer = bufferStack[bufferStackPos];
-//                limit = bufferLimit[bufferStackPos];
-//                start = data.startOffset;
-//            } else {
-//                bufferPos[bufferStackPos]--;
-//                return null;
-//            }
-//        }
-//
-//        // fix for 107150: the scanner stops at the \n or \r after skipOverWhiteSpace() take that into consideration
-//        while (bufferPos[bufferStackPos] + 1 < limit && (buffer[bufferPos[bufferStackPos]] == '\n' || buffer[bufferPos[bufferStackPos]] == '\r')) {
-//        	bufferPos[bufferStackPos]++; // skip \n or \r
-//        	skipOverWhiteSpace(); // skip any other spaces after the \n
-//        	
-//        	if (bufferPos[bufferStackPos] + 1 < limit && buffer[bufferPos[bufferStackPos]] != '(' && buffer[bufferPos[bufferStackPos] + 1] == '(')
-//        		bufferPos[bufferStackPos]++; // advance to ( if necessary
-//        }
-//
-//        if (buffer[bufferPos[bufferStackPos]] != '(') {
-//            bufferPos[bufferStackPos]--;
-//            return null;
-//        }
-//
-//        char[][] arglist = macro.arglist;
-//        int currarg = 0;
-//        CharArrayObjectMap argmap = new CharArrayObjectMap(arglist.length);
-//
-//        while (bufferPos[bufferStackPos] < limit) {
-//            skipOverWhiteSpace();
-//
-//            if (bufferPos[bufferStackPos] + 1 >= limit)
-//            	break;
-//            
-//            if (buffer[++bufferPos[bufferStackPos]] == ')') {
-//                if (currarg > 0 && argmap.size() <= currarg) {
-//                    argmap.put(arglist[currarg], EMPTY_CHAR_ARRAY);
-//                }
-//                break;	// end of macro
-//            }
-//            if (buffer[bufferPos[bufferStackPos]] == ',') {
-//                if (argmap.size() <= currarg) {
-//                    argmap.put(arglist[currarg], EMPTY_CHAR_ARRAY);
-//                }
-//            	currarg++;
-//                continue;
-//            }
-//
-//            if ((currarg >= arglist.length || arglist[currarg] == null)
-//                    && !macro.hasVarArgs() && !macro.hasGCCVarArgs()) {
-//                // too many args and no variable argument
-//                handleProblem(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR,
-//                        bufferPos[bufferStackPos], macro.name);
-//                break;
-//            }
-//
-//            int argstart = bufferPos[bufferStackPos];
-//
-//            int argend = -1;
-//            if ((macro.hasGCCVarArgs() || macro.hasVarArgs()) && currarg == macro.getVarArgsPosition()) {
-//                // there are varargs and the other parameters have been accounted
-//                // for, the rest will replace __VA_ARGS__ or name where
-//                // "name..." is the parameter
-//                for (;;) {
-//                	argend= skipOverMacroArg();
-//                    skipOverWhiteSpace();
-//                    // to continue we need at least a comma and another char.
-//                    if (bufferPos[bufferStackPos]+2 >= limit) { 
-//                    	break;
-//                    }
-//                    if (buffer[++bufferPos[bufferStackPos]] == ')') {
-//                    	bufferPos[bufferStackPos]--;
-//                    	break;
-//                    }
-//                    // it's a comma
-//                    bufferPos[bufferStackPos]++;
-//                } 
-//            } else {
-//                argend = skipOverMacroArg();
-//            }
-//            
-//            char[] arg = EMPTY_CHAR_ARRAY;
-//            int arglen = argend - argstart + 1;
-//            if (arglen > 0) {
-//                arg = new char[arglen];
-//                System.arraycopy(buffer, argstart, arg, 0, arglen);
-//            }
-//
-//            argmap.put(arglist[currarg], arg);
-//        }
-//
-//        int numRequiredArgs = arglist.length;
-//        for (int i = 0; i < arglist.length; i++) {
-//            if (arglist[i] == null) {
-//            	numRequiredArgs = i;
-//                break;
-//            }
-//        }
-//
-//        /* Don't require a match for the vararg placeholder */
-//        /* Workaround for bugzilla 94365 */
-//        if (macro.hasGCCVarArgs()|| macro.hasVarArgs())
-//        	numRequiredArgs--;
-// 
-//        if (argmap.size() < numRequiredArgs) {
-//            handleProblem(IProblem.PREPROCESSOR_MACRO_USAGE_ERROR,
-//                    bufferPos[bufferStackPos], macro.name);
-//        }
-//
-//        char[] result = null;
-//        if (macro instanceof DynamicFunctionStyleMacro) {
-//            result = ((DynamicFunctionStyleMacro) macro).execute(argmap);
-//        } else {
-//            CharArrayObjectMap replacedArgs = new CharArrayObjectMap(argmap
-//                    .size());
-//            int size = expandFunctionStyleMacro(macro.getExpansion(), argmap,
-//                    replacedArgs, null);
-//            result = new char[size];
-//            expandFunctionStyleMacro(macro.getExpansion(), argmap, replacedArgs,
-//                    result);
-//        }
-//        if (pushContext)
-//        {
-////            pushContext(result, new FunctionMacroData(start, bufferPos[bufferStackPos] + 1,
-////        		macro, argmap));
-//        }
-//        return result;
-//    }
-//
-//	private char[] replaceArgumentMacros(char[] arg) {
-//        int limit = arg.length;
-//        int start = -1, end = -1;
-//        Object expObject = null;
-//        for (int pos = 0; pos < limit; pos++) {
-//            char c = arg[pos];
-//            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
-//                    || Character.isLetter(c)
-//                    || (support$Initializers && c == '$')) {
-//                start = pos;
-//                while (++pos < limit) {
-//                    c = arg[pos];
-//                    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-//                            || c == '_' || (c >= '0' && c <= '9')
-//                            || (support$Initializers && c == '$')
-//                            || Character.isUnicodeIdentifierPart(c)) {
-//                        continue;
-//                    }
-//                    break;
-//                }
-//                end = pos - 1;
-//            }
-//            else if (c == '"') {
-//            	boolean escaped= false;
-//                while (++pos < limit) {
-//                    c = arg[pos];
-//                    if (!escaped && c == '"') {
-//                    	break;
-//                    }
-//                    if (c == '\\') {
-//                    	escaped= !escaped;
-//                    }
-//                    else {
-//                    	escaped= false;
-//                    }
-//                }
-//            }
-//            else if (c == '\'') {
-//            	boolean escaped= false;
-//                while (++pos < limit) {
-//                    c = arg[pos];
-//                    if (!escaped && c == '\'') {
-//                    	break;
-//                    }
-//                    if (c == '\\') {
-//                    	escaped= !escaped;
-//                    }
-//                    else {
-//                    	escaped= false;
-//                    }
-//                }
-//            }
-//
-//            if (start != -1 && end >= start) {
-//                //Check for macro expansion
-//                expObject = fMacroDictionary.get(arg, start, (end - start + 1));
-//                if (expObject == null || !shouldExpandMacro((IMacro) expObject)) {
-//                    expObject = null;
-//                    start = -1;
-//                    continue;
-//                }
-//                //else, break and expand macro
-//                break;
-//            }
-//        }
-//
-//        if (expObject == null)
-//        {
-//            return arg;
-//        }
-//        
-//
-//        char[] expansion = null;
-//        if (expObject instanceof FunctionStyleMacro) {
-//            FunctionStyleMacro expMacro = (FunctionStyleMacro) expObject;
-//            pushContext((start == 0) ? arg : CharArrayUtils.extract(arg, start,
-//                    arg.length - start));
-//            bufferPos[bufferStackPos] += end - start + 1;
-//            expansion = handleFunctionStyleMacro(expMacro, false);
-//            end = bufferPos[bufferStackPos] + start;
-//            popContext();
-//        } else if (expObject instanceof ObjectStyleMacro) {
-//            ObjectStyleMacro expMacro = (ObjectStyleMacro) expObject;
-//            expansion = expMacro.getExpansion();
-//        } else if (expObject instanceof char[]) {
-//            expansion = (char[]) expObject;
-//        } else if (expObject instanceof DynamicStyleMacro) {
-//            DynamicStyleMacro expMacro = (DynamicStyleMacro) expObject;
-//            expansion = expMacro.execute();
-//        }
-//
-//        if (expansion != null) {
-//            int newlength = start + expansion.length + (limit - end - 1);
-//            char[] result = new char[newlength];
-//            System.arraycopy(arg, 0, result, 0, start);
-//            System.arraycopy(expansion, 0, result, start, expansion.length);
-//            if (arg.length > end + 1)
-//                System.arraycopy(arg, end + 1, result,
-//                        start + expansion.length, limit - end - 1);
-//
-//            
-//            beforeReplaceAllMacros();
-//            //we need to put the macro on the context stack in order to detect
-//            // recursive macros
-////            pushContext(EMPTY_CHAR_ARRAY,
-////                    new MacroData(start, start
-////                            + ((IMacro) expObject).getName().length,
-////                            (IMacro) expObject)
-////            );
-//            arg = replaceArgumentMacros(result); //rescan for more macros
-//            popContext();
-//            afterReplaceAllMacros();
-//        }
-//        
-//        return arg;
-//    }
-//
-//	
-//    private int expandFunctionStyleMacro(char[] expansion,
-//            CharArrayObjectMap argmap, CharArrayObjectMap replacedArgs,
-//            char[] result) {
-//
-//        // The current position in the expansion string that we are looking at
-//        int pos = -1;
-//        // The last position in the expansion string that was copied over
-//        int lastcopy = -1;
-//        // The current write offset in the result string - also tells us the
-//        // length of the result string
-//        int outpos = 0;
-//        // The first character in the current block of white space - there are
-//        // times when we don't
-//        // want to copy over the whitespace
-//        int wsstart = -1;
-//        //whether or not we are on the second half of the ## operator
-//        boolean prevConcat = false;
-//        //for handling ##
-//        char[] prevArg = null;
-//        int prevArgStart = -1;
-//        int prevArgLength = -1;
-//        int prevArgTarget = 0;
-//
-//        int limit = expansion.length;
-//
-//        while (++pos < limit) {
-//            char c = expansion[pos];
-//
-//            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
-//                    || (c >= '0' && c < '9')
-//                    || Character.isUnicodeIdentifierPart(c)) {
-//
-//                wsstart = -1;
-//                int idstart = pos;
-//                while (++pos < limit) {
-//                    c = expansion[pos];
-//                    if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-//                            || (c >= '0' && c <= '9') || c == '_' || Character
-//                            .isUnicodeIdentifierPart(c))) {
-//                        break;
-//                    }
-//                }
-//                --pos;
-//
-//                char[] repObject = (char[]) argmap.get(expansion, idstart, pos
-//                        - idstart + 1);
-//
-//                int next = indexOfNextNonWhiteSpace(expansion, pos, limit);
-//                boolean nextIsPoundPound = (next + 1 < limit
-//                        && expansion[next] == '#' && expansion[next + 1] == '#');
-//
-//                if (prevConcat && prevArgStart > -1 && prevArgLength > 0) {
-//                    int l1 = prevArg != null ? prevArg.length : prevArgLength;
-//                    int l2 = repObject != null ? repObject.length : pos
-//                            - idstart + 1;
-//                    char[] newRep = new char[l1 + l2];
-//                    if (prevArg != null)
-//                        System.arraycopy(prevArg, 0, newRep, 0, l1);
-//                    else
-//                        System
-//                                .arraycopy(expansion, prevArgStart, newRep, 0,
-//                                        l1);
-//
-//                    if (repObject != null)
-//                        System.arraycopy(repObject, 0, newRep, l1, l2);
-//                    else
-//                        System.arraycopy(expansion, idstart, newRep, l1, l2);
-//                    idstart = prevArgStart;
-//                    repObject = newRep;
-//                }
-//                if (repObject != null) {
-//                    // copy what we haven't so far
-//                    if (++lastcopy < idstart) {
-//                        int n = idstart - lastcopy;
-//                        if (result != null) {
-//                        	// the outpos may be set back when prevConcat is true, so make sure we
-//                        	// stay in bounds.
-//                            if (prevConcat && outpos+n > result.length) {
-//                            	n= result.length- outpos;
-//                            }
-//                            System.arraycopy(expansion, lastcopy, result,
-//                                    outpos, n);
-//                        }
-//                        outpos += n;
-//                    }
-//
-//                    if (prevConcat)
-//                        outpos = prevArgTarget;
-//
-//                    if (!nextIsPoundPound) {
-//                        //16.3.1 completely macro replace the arguments before
-//                        // substituting them in
-//                        char[] rep = (char[]) ((replacedArgs != null) ? replacedArgs
-//                                .get(repObject)
-//                                : null);
-//                        
-//                        if (rep != null)
-//                            repObject = rep;
-//                        else {
-//                            rep = replaceArgumentMacros(repObject);
-//                            if (replacedArgs != null)
-//                                replacedArgs.put(repObject, rep);
-//                            repObject = rep;
-//                        }
-//                      
-//                        if (result != null )
-//                            System.arraycopy(repObject, 0, result, outpos, repObject.length);
-//                    }
-//                    outpos += repObject.length;
-//
-//                    lastcopy = pos;
-//                }
-//
-//                prevArg = repObject;
-//                prevArgStart = idstart;
-//                prevArgLength = pos - idstart + 1;
-//                prevArgTarget = repObject != null ? outpos - repObject.length
-//                        : outpos + idstart - lastcopy - 1;
-//                prevConcat = false;
-//            } else if (c == '"') {
-//
-//                // skip over strings
-//                wsstart = -1;
-//                boolean escaped = false;
-//                while (++pos < limit) {
-//                    c = expansion[pos];
-//                    if (c == '"') {
-//                        if (!escaped)
-//                            break;
-//                    } else if (c == '\\') {
-//                        escaped = !escaped;
-//                    }
-//                    escaped = false;
-//                }
-//                prevConcat = false;
-//            } else if (c == '\'') {
-//
-//                // skip over character literals
-//                wsstart = -1;
-//                boolean escaped = false;
-//                while (++pos < limit) {
-//                    c = expansion[pos];
-//                    if (c == '\'') {
-//                        if (!escaped)
-//                            break;
-//                    } else if (c == '\\') {
-//                        escaped = !escaped;
-//                    }
-//                    escaped = false;
-//                }
-//                prevConcat = false;
-//            } else if (c == ' ' || c == '\t') {
-//                // obvious whitespace
-//                if (wsstart < 0)
-//                    wsstart = pos;
-//            } else if (c == '/' && pos + 1 < limit) {
-//
-//                // less than obvious, comments are whitespace
-//                c = expansion[pos+1];
-//                if (c == '/') {
-//                    // copy up to here or before the last whitespace
-//                	++pos;
-//                    ++lastcopy;
-//                    int n = wsstart < 0 ? pos - 1 - lastcopy : wsstart
-//                            - lastcopy;
-//                    if (result != null)
-//                        System
-//                                .arraycopy(expansion, lastcopy, result, outpos,
-//                                        n);
-//                    outpos += n;
-//
-//                    // skip the rest
-//                    lastcopy = expansion.length - 1;
-//                } else if (c == '*') {
-//                	++pos;
-//                    if (wsstart < 1)
-//                        wsstart = pos - 1;
-//                    while (++pos < limit) {
-//                        if (expansion[pos] == '*' && pos + 1 < limit
-//                                && expansion[pos + 1] == '/') {
-//                            ++pos;
-//                            break;
-//                        }
-//                    }
-//                } else
-//                    wsstart = -1;
-//
-//            } else if (c == '\\' && pos + 1 < limit
-//                    && expansion[pos + 1] == 'n') {
-//                // skip over this
-//                ++pos;
-//
-//            } else if (c == '#') {
-//
-//                if (pos + 1 < limit && expansion[pos + 1] == '#') {
-//                    prevConcat = true;
-//                    ++pos;
-//                    // skip whitespace
-//                    if (wsstart < 0)
-//                        wsstart = pos - 1;
-//                    while (++pos < limit) {
-//                        switch (expansion[pos]) {
-//                        case ' ':
-//                        case '\t':
-//                            continue;
-//
-//                        case '/':
-//                            if (pos + 1 < limit) {
-//                                c = expansion[pos + 1];
-//                                if (c == '/')
-//                                    // skip over everything
-//                                    pos = expansion.length;
-//                                else if (c == '*') {
-//                                    ++pos;
-//                                    while (++pos < limit) {
-//                                        if (expansion[pos] == '*'
-//                                                && pos + 1 < limit
-//                                                && expansion[pos + 1] == '/') {
-//                                            ++pos;
-//                                            break;
-//                                        }
-//                                    }
-//                                    continue;
-//                                }
-//                            }
-//                        }
-//                        break;
-//                    }
-//                    --pos;
-//                } else {
-//                    prevConcat = false;
-//                    // stringify
-//
-//                    // copy what we haven't so far
-//                    if (++lastcopy < pos) {
-//                        int n = pos - lastcopy;
-//                        if (result != null)
-//                            System.arraycopy(expansion, lastcopy, result,
-//                                    outpos, n);
-//                        outpos += n;
-//                    }
-//
-//                    // skip whitespace
-//                    while (++pos < limit) {
-//                        switch (expansion[pos]) {
-//                        case ' ':
-//                        case '\t':
-//                            continue;
-//                        case '/':
-//                            if (pos + 1 < limit) {
-//                                c = expansion[pos + 1];
-//                                if (c == '/')
-//                                    // skip over everything
-//                                    pos = expansion.length;
-//                                else if (c == '*') {
-//                                    ++pos;
-//                                    while (++pos < limit) {
-//                                        if (expansion[pos] == '*'
-//                                                && pos + 1 < limit
-//                                                && expansion[pos + 1] == '/') {
-//                                            ++pos;
-//                                            break;
-//                                        }
-//                                    }
-//                                    continue;
-//                                }
-//                            }
-//                        //TODO handle comments
-//                        }
-//                        break;
-//                    }
-//
-//                    // grab the identifier
-//                    c = expansion[pos];
-//                    int idstart = pos;
-//                    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'X')
-//                            || c == '_' || Character.isUnicodeIdentifierPart(c)) {
-//                        while (++pos < limit) {
-//                            c = expansion[pos];
-//                            if (!((c >= 'a' && c <= 'z')
-//                                    || (c >= 'A' && c <= 'X')
-//                                    || (c >= '0' && c <= '9') || c == '_' || Character
-//                                    .isUnicodeIdentifierPart(c)))
-//                                break;
-//                        }
-//                    } // else TODO something
-//                    --pos;
-//                    int idlen = pos - idstart + 1;
-//                    char[] argvalue = (char[]) argmap.get(expansion, idstart,
-//                            idlen);
-//                    if (argvalue != null) {
-//                        //16.3.2-2 ... a \ character is inserted before each "
-//                        // and \
-//                        // character
-//                        //of a character literal or string literal
-//
-//                        //technically, we are also supposed to replace each
-//                        // occurence
-//                        // of whitespace
-//                        //(including comments) in the argument with a single
-//                        // space.
-//                        // But, at this time
-//                        //we don't really care what the contents of the string
-//                        // are,
-//                        // just that we get the string
-//                        //so we won't bother doing that
-//                        if (result != null) {
-//                            result[outpos++] = '"';
-//                            for (int i = 0; i < argvalue.length; i++) {
-//                                if (argvalue[i] == '"' || argvalue[i] == '\\')
-//                                    result[outpos++] = '\\';
-//                                if (argvalue[i] == '\r' || argvalue[i] == '\n')
-//                                    result[outpos++] = ' ';
-//                                else
-//                                    result[outpos++] = argvalue[i];
-//                            }
-//                            result[outpos++] = '"';
-//                        } else {
-//                            for (int i = 0; i < argvalue.length; i++) {
-//                                if (argvalue[i] == '"' || argvalue[i] == '\\')
-//                                    ++outpos;
-//                                ++outpos;
-//                            }
-//                            outpos += 2;
-//                        }
-//                    }
-//                    lastcopy = pos;
-//                    wsstart = -1;
-//                }
-//            } else {
-//                prevConcat = false;
-//                // not sure what it is but it sure ain't whitespace
-//                wsstart = -1;
-//            }
-//
-//        }
-//
-//        if (wsstart < 0 && ++lastcopy < expansion.length) {
-//            int n = expansion.length - lastcopy;
-//            if (result != null)
-//                System.arraycopy(expansion, lastcopy, result, outpos, n);
-//            outpos += n;
-//        }
-//
-//        return outpos;
-//    }
 }

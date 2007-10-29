@@ -36,13 +36,14 @@ public final class ScannerContextPPDirective extends ScannerContext {
 	public ScannerContextPPDirective(Lexer lexer, boolean convertDefinedToken) {
 		super(null, null);
 		fLexer= lexer;
+		fConvertDefinedToken= convertDefinedToken;
+
 		final Token currentToken = lexer.currentToken();
 		fLastEndOffset= currentToken.getOffset();
 		fToken= convertToken(currentToken);
-		fConvertDefinedToken= convertDefinedToken;
 	}
 
-	public Token currentPPToken() {
+	public Token currentLexerToken() {
 		return fToken;
 	}
 
@@ -69,10 +70,10 @@ public final class ScannerContextPPDirective extends ScannerContext {
 	private Token convertToken(Token t) {
 		switch (t.getType()) {
 		case Lexer.tNEWLINE:
-			t= new SimpleToken(Lexer.tEND_OF_INPUT, fToken.getEndOffset(), fToken.getEndOffset());
+			t= new SimpleToken(Lexer.tEND_OF_INPUT, t.getEndOffset(), t.getEndOffset());
 			break;
 		case IToken.tIDENTIFIER:
-			if (fConvertDefinedToken && CharArrayUtils.equals(Keywords.cDEFINED, fToken.getCharImage())) {
+			if (fConvertDefinedToken && CharArrayUtils.equals(Keywords.cDEFINED, t.getCharImage())) {
 				t.setType(CPreprocessor.tDEFINED);
 				fPreventMacroExpansion= STATE_DEFINED;	
 			}
@@ -107,10 +108,6 @@ public final class ScannerContextPPDirective extends ScannerContext {
 	
 	public boolean expandsMacros() {
 		return fPreventMacroExpansion == 0;
-	}
-
-	public void setInsideIncludeDirective() {
-		fLexer.setInsideIncludeDirective();
 	}
 
 	public int getLastEndOffset() {

@@ -14,8 +14,10 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 /**
  * Models macros used by the preprocessor
@@ -51,10 +53,33 @@ abstract class PreprocessorMacro implements IMacroBinding {
 	public char[][] getParameterList() {
 		return null;
 	}
+	
+	public char[][] getParameterPlaceholderList() {
+		return null;
+	}
 
 	public Object getAdapter(Class clazz) {
 		return null;
 	}
+
+	public String toString() {
+		char[][] p= getParameterList();
+		if (p == null) {
+			return getName();
+		}
+		StringBuffer buf= new StringBuffer();
+		buf.append(getNameCharArray());
+		buf.append('(');
+		for (int i = 0; i < p.length; i++) {
+			if (i>0) {
+				buf.append(',');
+			}
+			buf.append(p[i]);
+		}
+		buf.append(')');
+		return buf.toString();
+	}
+	public abstract TokenList getTokens(MacroDefinitionParser parser, LexerOptions lexOptions);
 }
 
 abstract class DynamicStyleMacro extends PreprocessorMacro {
@@ -63,29 +88,36 @@ abstract class DynamicStyleMacro extends PreprocessorMacro {
 		super(name);
 	}
 	public char[] getExpansion() {
+		return getExpansionImage();
+	}
+	public char[] getExpansionImage() {
 		return execute().getCharImage();
 	}
 	public abstract Token execute();
+
+	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions) {
+		TokenList result= new TokenList();
+		result.append(execute());
+		return result;
+	}
 }
 
 class ObjectStyleMacro extends PreprocessorMacro {
-	private static final Token NOT_INITIALIZED = new SimpleToken(0,0,0);
-	
 	private final char[] fExpansion;
 	final int fExpansionOffset;
 	final int fEndOffset;
-//	private Token fExpansionTokens;
+	private TokenList fExpansionTokens;
 	
 	public ObjectStyleMacro(char[] name, char[] expansion) {
-		this(name, 0, expansion.length, NOT_INITIALIZED, expansion);
+		this(name, 0, expansion.length, null, expansion);
 	}
 
-	public ObjectStyleMacro(char[] name, int expansionOffset, int endOffset, Token expansion, char[] source) {
+	public ObjectStyleMacro(char[] name, int expansionOffset, int endOffset, TokenList expansion, char[] source) {
 		super(name);
 		fExpansionOffset= expansionOffset;
 		fEndOffset= endOffset;
 		fExpansion= source;
-//		fExpansionTokens= expansion;
+		fExpansionTokens= expansion;
 	}
 
 	public int findParameter(char[] tokenImage) {
@@ -93,13 +125,46 @@ class ObjectStyleMacro extends PreprocessorMacro {
 	}
 
 	public char[] getExpansion() {
+		TokenList tl= getTokens(new MacroDefinitionParser(), new LexerOptions());
+		StringBuffer buf= new StringBuffer();
+		Token t= tl.first();
+		if (t == null) {
+			return CharArrayUtils.EMPTY;
+		}
+		int endOffset= t.getOffset();
+		for (; t != null; t= (Token) t.getNext()) {
+			if (endOffset < t.getOffset()) {
+				buf.append(' ');
+			}
+			buf.append(t.getCharImage());
+			endOffset= t.getEndOffset();
+		}
+		final int length= buf.length(); 
+		final char[] expansion= new char[length];
+		buf.getChars(0, length, expansion, 0);
+		return expansion;
+	}
+
+	public char[] getExpansionImage() {
 		final int length = fEndOffset - fExpansionOffset;
 		if (length == fExpansion.length) {
 			return fExpansion;
 		}
 		char[] result= new char[length];
-		System.arraycopy(fExpansion, fEndOffset, result, 0, length);
+		System.arraycopy(fExpansion, fExpansionOffset, result, 0, length);
 		return result;
+	}
+	
+	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions) {
+		if (fExpansionTokens == null) {
+			fExpansionTokens= new TokenList();
+			Lexer lex= new Lexer(fExpansion, fExpansionOffset, fEndOffset, lexOptions, ILexerLog.NULL);
+			try {
+				mdp.parseExpansion(lex, ILexerLog.NULL, getNameCharArray(), getParameterPlaceholderList(), fExpansionTokens);
+			} catch (OffsetLimitReachedException e) {
+			}
+		}
+		return fExpansionTokens;
 	}
 }
 
@@ -120,13 +185,35 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	}
 
 	public FunctionStyleMacro(char[] name, char[][] paramList, int hasVarArgs, int expansionFileOffset, int endFileOffset, 
-			Token expansion, char[] source) {
+			TokenList expansion, char[] source) {
 		super(name, expansionFileOffset, endFileOffset, expansion, source);
 		fParamList = paramList;
 		fHasVarArgs= hasVarArgs;
 	}
 	
 	public char[][] getParameterList() {
+		final int length = fParamList.length;
+		if (fHasVarArgs == NO_VAARGS || length==0) {
+			return fParamList;
+		}
+		char[][] result= new char[length][];
+		System.arraycopy(fParamList, 0, result, 0, length-1);
+		if (fHasVarArgs == VAARGS) {
+			result[length-1] = Keywords.cVA_ARGS;
+		}
+		else {
+			final char[] param= fParamList[length-1];
+			final int plen= param.length;
+			final int elen = Keywords.cpELLIPSIS.length;
+			final char[] rp= new char[plen+elen];
+			System.arraycopy(param, 0, rp, 0, plen);
+			System.arraycopy(Keywords.cpELLIPSIS, 0, rp, plen, elen);
+			result[length-1]= rp;
+		}
+		return result;
+	}
+
+	public char[][] getParameterPlaceholderList() {
 		return fParamList;
 	}
 

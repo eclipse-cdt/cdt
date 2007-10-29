@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
@@ -23,7 +22,7 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
  * Returns preprocessor tokens.
  * <p>
  * In addition to the preprocessor tokens the following tokens may also be returned:
- * {@link #tEND_OF_INPUT}, {@link IToken#tCOMPLETION}.
+ * {@link #tBEFORE_INPUT}, {@link #tEND_OF_INPUT}, {@link IToken#tCOMPLETION}.
  * <p>
  * Number literals are split up into {@link IToken#tINTEGER} and {@link IToken#tFLOATINGPT}. 
  * No checks are done on the number literals.
@@ -67,6 +66,7 @@ final public class Lexer {
 	
 	// the input to the lexer
 	private final char[] fInput;
+	private int fStart;
 	private int fLimit;
 
 	// after phase 3 (newline, trigraph, line-splice)
@@ -75,7 +75,7 @@ final public class Lexer {
 	private int fCharPhase3;
 	
 	private boolean fInsideIncludeDirective= false;
-	private Token fToken= new SimpleToken(tBEFORE_INPUT, 0, 0);
+	private Token fToken;
 	
 	// for the few cases where we have to lookahead more than one character
 	private int fMarkOffset;
@@ -85,18 +85,16 @@ final public class Lexer {
 	
 	
 	public Lexer(char[] input, LexerOptions options, ILexerLog log) {
-		fInput= input;
-		fLimit= input.length;
-		fOptions= options;
-		fLog= log;
-		nextCharPhase3();
+		this(input, 0, input.length, options, log);
 	}
 
-	public Lexer(char[] input, int limit, LexerOptions options, ILexerLog log) {
+	public Lexer(char[] input, int start, int end, LexerOptions options, ILexerLog log) {
 		fInput= input;
-		fLimit= limit;
+		fStart= fOffset= fEndOffset= start;
+		fLimit= end;
 		fOptions= options;
 		fLog= log;
+		fToken= new SimpleToken(tBEFORE_INPUT, start, start);
 		nextCharPhase3();
 	}
 	
@@ -107,7 +105,7 @@ final public class Lexer {
 		fOptions.fSupportContentAssist= true;
 		fLimit= Math.min(fLimit, fInput.length);
 		// re-initialize 
-		fOffset= fEndOffset= 0;
+		fOffset= fEndOffset= fStart;
 		nextCharPhase3();
 	}
 
@@ -115,8 +113,8 @@ final public class Lexer {
 	 * Call this before consuming the name-token in the include directive. It causes the header-file 
 	 * tokens to be created. 
 	 */
-	public void setInsideIncludeDirective() {
-		fInsideIncludeDirective= true;
+	public void setInsideIncludeDirective(boolean val) {
+		fInsideIncludeDirective= val;
 	}
 	
 	/** 
@@ -131,7 +129,8 @@ final public class Lexer {
 	 * @throws OffsetLimitReachedException when completion is requested in a literal or a header-name.
 	 */
 	public Token nextToken() throws OffsetLimitReachedException {
-		fFirstTokenAfterNewline= fToken.getType() == tNEWLINE;
+		final int t= fToken.getType();
+		fFirstTokenAfterNewline= t == tNEWLINE || t == tBEFORE_INPUT;
 		return fToken= fetchToken();
 	}
 
@@ -169,6 +168,33 @@ final public class Lexer {
 		}
 	}
 
+	/**
+	 * Advances to the next newline.
+	 * @return the list of tokens found on this line.
+	 * @param origin parameter for the {@link OffsetLimitReachedException} when it has to be thrown.
+	 */
+	public final void getTokensOfLine(int origin, TokenList result) throws OffsetLimitReachedException {
+		Token t= fToken;
+		while(true) {
+			switch(t.getType()) {
+			case IToken.tCOMPLETION:
+				fToken= t;
+				throw new OffsetLimitReachedException(origin, t);
+			case Lexer.tEND_OF_INPUT:
+				fToken= t;
+				if (fOptions.fSupportContentAssist) {
+					throw new OffsetLimitReachedException(origin, null);
+				}
+				return;
+			case Lexer.tNEWLINE:
+				fToken= t;
+				return;
+			}
+			result.append(t);
+			t= fetchToken();
+		}
+	}
+
 	/** 
 	 * Advances to the next pound token that starts a preprocessor directive. 
 	 * @return pound token of the directive or end-of-input.
@@ -196,7 +222,6 @@ final public class Lexer {
 					break;
 				}
 			}
-			t= fetchToken();
 		} 
 		fToken= t;
 		return t;
@@ -264,7 +289,7 @@ final public class Lexer {
 					nextCharPhase3();
 					return identifier(start, 2);
 				}
-				return newToken(IToken.tBACKSLASH, start);
+				return newToken(IToken.tOTHER_CHARACTER, start, 1);
 
 			case '0': case '1': case '2': case '3': case '4':
 			case '5': case '6': case '7': case '8': case '9':
@@ -511,9 +536,8 @@ final public class Lexer {
 				}
 				break;
 			}
-			
-			handleProblem(IASTProblem.SCANNER_BAD_CHARACTER, new char[] {(char) c}, start);
-			// loop is continued, character is treated as white-space.
+			// handles for instance @
+			return newToken(IToken.tOTHER_CHARACTER, start, 1);
 		}
     }
 

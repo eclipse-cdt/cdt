@@ -65,6 +65,7 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
     
     /**
      * @see IASTTranslationUnit#getContainingFilename()
+     * mstodo- scanner removal should be renamed
      */
 	public String getContainingFilename(int offset);
 	

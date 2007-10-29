@@ -17,6 +17,10 @@ import org.eclipse.cdt.core.parser.IProblem;
  * @since 5.0
  */
 public interface ILexerLog {
+	ILexerLog NULL = new ILexerLog() {
+		public void handleComment(boolean isBlockComment, int offset, int endOffset) {}
+		public void handleProblem(int problemID, char[] info, int offset, int endOffset) {}
+	};
 
 	/**
 	 * A problem has been detected

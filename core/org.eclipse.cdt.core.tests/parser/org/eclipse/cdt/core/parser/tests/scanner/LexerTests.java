@@ -200,25 +200,25 @@ public class LexerTests extends BaseTestCase {
 
 	public void testLineSplicingHeaderName() throws Exception {
 		init("p\"a\\\nb\""); 
-		fLexer.setInsideIncludeDirective();
+		fLexer.setInsideIncludeDirective(true);
 		id("p");
 		token(Lexer.tQUOTE_HEADER_NAME, "\"ab\""); 
 		eof();
 
 		init("p\"a\\\r\nb\"");
-		fLexer.setInsideIncludeDirective();
+		fLexer.setInsideIncludeDirective(true);
 		id("p");
 		token(Lexer.tQUOTE_HEADER_NAME, "\"ab\""); 
 		eof();
 
 		init("p<a\\\nb>"); 
-		fLexer.setInsideIncludeDirective();
+		fLexer.setInsideIncludeDirective(true);
 		id("p");
 		token(Lexer.tSYSTEM_HEADER_NAME, "<ab>"); 
 		eof();
 
 		init("p<a\\\r\nb>");
-		fLexer.setInsideIncludeDirective();
+		fLexer.setInsideIncludeDirective(true);
 		id("p");
 		token(Lexer.tSYSTEM_HEADER_NAME, "<ab>"); 
 		eof();
@@ -280,13 +280,13 @@ public class LexerTests extends BaseTestCase {
 	
 	public void testHeaderName() throws Exception {
 		init("p\"'/*//\\\"");
-		fLexer.setInsideIncludeDirective();
+		fLexer.setInsideIncludeDirective(true);
 		id("p");
 		token(Lexer.tQUOTE_HEADER_NAME, "\"'/*//\\\"");
 		eof();
 
 		init("p<'\"/*//>");
-		fLexer.setInsideIncludeDirective();
+		fLexer.setInsideIncludeDirective(true);
 		id("p");
 		token(Lexer.tSYSTEM_HEADER_NAME, "<'\"/*//>");
 		eof();
@@ -316,8 +316,7 @@ public class LexerTests extends BaseTestCase {
 		init(ident, false, true); 
 		final int idxDollar = ident.indexOf('$');
 		id(ident.substring(0, idxDollar));
-		problem(IProblem.SCANNER_BAD_CHARACTER, "$");
-		ws();
+		token(IToken.tOTHER_CHARACTER, "$");
 		id(ident.substring(idxDollar+1));
 	}
 	
@@ -437,7 +436,7 @@ public class LexerTests extends BaseTestCase {
 				IToken.tBITORASSIGN, IToken.tSHIFTL, IToken.tSHIFTR, IToken.tSHIFTLASSIGN, 
 				IToken.tSHIFTRASSIGN, IToken.tEQUAL, IToken.tNOTEQUAL, IToken.tLTEQUAL, IToken.tGTEQUAL,
 				IToken.tAND, IToken.tOR, IToken.tINCR, IToken.tDECR, IToken.tCOMMA, IToken.tARROWSTAR,
-				IToken.tARROW, IGCCToken.tMIN, IGCCToken.tMAX, IToken.tBACKSLASH,
+				IToken.tARROW, IGCCToken.tMIN, IGCCToken.tMAX, IToken.tOTHER_CHARACTER,
 			};
 		
 		for (int splices=0; splices<9; splices++) {

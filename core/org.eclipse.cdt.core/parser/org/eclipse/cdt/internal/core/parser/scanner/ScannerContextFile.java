@@ -33,7 +33,7 @@ public class ScannerContextFile extends ScannerContext {
 		fLexer= lexer;
 	}
 
-	public Token currentPPToken() {
+	public Token currentLexerToken() {
 		return fLexer.currentToken();
 	}
 

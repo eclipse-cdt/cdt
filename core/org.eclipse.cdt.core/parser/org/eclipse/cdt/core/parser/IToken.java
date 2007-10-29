@@ -21,24 +21,44 @@ public interface IToken {
 	public int getType();
 	public String getImage();
 	public char [] getCharImage();
-	public char [] getFilename();
 	public int getOffset();
 	public int getLength();
 	public int getEndOffset();
-	// NOTE:if the token spans lines due to escaped newlines then 
-	// the line number returned is the last one 
-	public int getLineNumber();
 	public IToken getNext();
+	
 	
 	public void setNext(IToken t);
 	public void setType(int i);	
 
-	// queries
-	public boolean looksLikeExpression();
-	public boolean isPointer();
 	public boolean isOperator();
-	public boolean canBeAPrefix();
+
+	/** 
+	 * @deprecated semantics is unclear, depends on the parser.
+	 * will be removed in 5.0
+	 */
+	public boolean isPointer();
 	
+	/** 
+	 * @deprecated semantics is unclear, depends on the parser.
+	 * will be removed in 5.0
+	 */
+	public boolean canBeAPrefix();
+
+	/** 
+	 * @deprecated semantics is unclear, depends on the parser.
+	 * will be removed in 5.0
+	 */
+	public boolean looksLikeExpression();
+
+	/** 
+	 * @deprecated will be removed in 5.0
+	 */
+	public int getLineNumber();
+	
+	/** 
+	 * @deprecated will be removed in 5.0
+	 */
+	public char [] getFilename();
 	
 	// Token types
 	int FIRST_RESERVED_PREPROCESSOR= -200;
@@ -84,6 +104,7 @@ public interface IToken {
 	static public final int tNOT = 36;
 	static public final int tEQUAL = 37;
 	static public final int tASSIGN = 38;
+	static public final int tUNKNOWN_CHAR= 39;
 	static public final int tSHIFTL = 40;
 	static public final int tLTEQUAL = 41;
 	static public final int tLT = 42;
@@ -97,7 +118,7 @@ public interface IToken {
 	static public final int tDOT = 50;
 	static public final int tDIVASSIGN = 51;
 	static public final int tDIV = 52;
-	static public final int tBACKSLASH= 53;
+	static public final int tOTHER_CHARACTER= 53;
 	
 	/** @deprecated use {@link #tAND} */
 	static public final int t_and = 54;

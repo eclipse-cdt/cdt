@@ -69,4 +69,12 @@ public class MacroBinding extends PlatformObject implements IMacroBinding {
 		}
 		return null;
 	}
+
+	public char[] getExpansionImage() {
+		throw new UnsupportedOperationException();
+	}
+
+	public char[][] getParameterPlaceholderList() {
+		throw new UnsupportedOperationException();
+	}
 }

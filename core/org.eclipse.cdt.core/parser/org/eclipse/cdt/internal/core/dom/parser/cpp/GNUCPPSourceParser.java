@@ -365,7 +365,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 last = consume();
             }
 
-            if (LT(1) == IToken.tCOMPL)
+            if (LT(1) == IToken.tBITCOMPLEMENT)
                 consume();
 
             switch (LT(1)) {
@@ -393,7 +393,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 if (LT(1) == IToken.t_template)
                     consume();
 
-                if (LT(1) == IToken.tCOMPL)
+                if (LT(1) == IToken.tBITCOMPLEMENT)
                     consume();
 
                 switch (LT(1)) {
@@ -1373,7 +1373,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return unaryOperatorCastExpression(IASTUnaryExpression.op_minus);// IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION);
         case IToken.tNOT:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_not);// IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION);
-        case IToken.tCOMPL:
+        case IToken.tBITCOMPLEMENT:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);// IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION);
         case IToken.tINCR:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixIncr);// IASTExpression.Kind.UNARY_INCREMENT);
@@ -1864,7 +1864,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.tCOLONCOLON:
         case IToken.t_operator:
         case IToken.tCOMPLETION:
-        case IToken.tCOMPL: {
+        case IToken.tBITCOMPLEMENT: {
             IASTName name = idExpression();
             IASTIdExpression idExpression = createIdExpression();
             ((ASTNode) idExpression).setOffsetAndLength(((ASTNode) name)
@@ -3987,7 +3987,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                         break overallLoop;
 
                     
-                    if (!LA(2).looksLikeExpression()&& !forNewTypeId) {
+                    if (!looksLikeExpression(LA(2))&& !forNewTypeId) {
                         // parameterDeclarationClause
                         isFunction = true;
                         // TODO need to create a temporary scope object here
@@ -4224,7 +4224,31 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
     }
 
-    /**
+    private boolean looksLikeExpression(IToken t) {
+		switch (t.getType()) {
+			case IToken.tINTEGER:
+			case IToken.t_false:
+			case IToken.t_true:
+			case IToken.tSTRING:
+			case IToken.tLSTRING:
+			case IToken.tFLOATINGPT:
+			case IToken.tCHAR:
+			case IToken.tAMPER:
+			case IToken.tDOT:
+			case IToken.tLPAREN:
+			case IToken.tMINUS:
+			case IToken.tSTAR: 
+			case IToken.tPLUS: 
+			case IToken.tNOT:
+			case IToken.tBITCOMPLEMENT:
+				return true;
+			default:
+				break;
+		}	
+		return false;
+	}
+
+	/**
      * @return
      */
     protected IASTProblemTypeId createTypeIDProblem() {

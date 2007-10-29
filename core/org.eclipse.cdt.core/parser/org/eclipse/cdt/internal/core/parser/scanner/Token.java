@@ -17,11 +17,10 @@ import org.eclipse.cdt.core.parser.IToken;
  * them on to the parsers.
  * @since 5.0
  */
-public abstract class Token implements IToken {
+public abstract class Token implements IToken, Cloneable {
 	private int fKind;
 	private int fOffset;
 	private int fEndOffset;
-	
 	private IToken fNextToken;
 
 	Token(int kind, int offset, int endOffset) {
@@ -59,9 +58,18 @@ public abstract class Token implements IToken {
 		fNextToken= t;
 	}
 
+	public void setOffset(int offset, int endOffset) {
+		fOffset= offset;
+		fEndOffset= endOffset;
+	}
+
 	public abstract char[] getCharImage();
 
-		
+
+	public String toString() {
+		return getImage();
+	}
+	
 	public boolean isOperator() {
 		return TokenUtil.isOperator(fKind);
 	}
@@ -70,29 +78,36 @@ public abstract class Token implements IToken {
 		return new String(getCharImage());
 	}
 
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
 
 	public char[] getFilename() {
-		// mstodo
+		// mstodo- parser removal
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean looksLikeExpression() {
-		// mstodo
+		// mstodo- parser removal
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean canBeAPrefix() {
-		// mstodo
+		// mstodo- parser removal
 		throw new UnsupportedOperationException();
 	}
 	
 	public int getLineNumber() {
-		// mstodo
+		// mstodo- parser removal
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean isPointer() {
-		// mstodo
+		// mstodo- parser removal
 		throw new UnsupportedOperationException();
 	}
 }
@@ -104,6 +119,23 @@ class SimpleToken extends Token {
 
 	public char[] getCharImage() {
 		return TokenUtil.getImage(getType());
+	}
+}
+
+class PlaceHolderToken extends ImageToken {
+	private final int fIndex;
+
+	public PlaceHolderToken(int type, int idx, int offset, int endOffset, char[] name) {
+		super(type, offset, endOffset, name);
+		fIndex= idx;
+	}
+
+	public int getIndex() {
+		return fIndex;
+	}
+	
+	public String toString() {
+		return "[" + fIndex + "]";  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 
@@ -147,6 +179,11 @@ class SourceImageToken extends Token {
 			System.arraycopy(fSource, getOffset(), fImage, 0, length);
 		}
 		return fImage; 
+	}
+
+	public void setOffset(int offset, int endOffset) {
+		getCharImage();
+		super.setOffset(offset, endOffset);
 	}
 }
 

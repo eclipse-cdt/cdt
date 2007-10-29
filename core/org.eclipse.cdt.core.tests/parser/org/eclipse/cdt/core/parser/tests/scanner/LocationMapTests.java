@@ -466,38 +466,38 @@ public class LocationMapTests extends BaseTestCase {
 	public void testContexts() {
 		init(DIGITS);
 		assertEquals(FN, fLocationMap.getTranslationUnitPath());
-		assertEquals(FN, fLocationMap.getCurrentFilename());
+		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		// number: [30,36)[46,50)
 		ILocationCtx pre1= fLocationMap.pushPreInclusion("0102030405".toCharArray(), 0, false);
-		assertEquals(FN, fLocationMap.getCurrentFilename());
+		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		// number: [0,6)[26,30)
 		ILocationCtx pre2= fLocationMap.pushPreInclusion("a1a2a3a4a5".toCharArray(), 0, true);
-		assertEquals(FN, fLocationMap.getCurrentFilename());
+		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(0,2,true);
 		// number: [6,15)[25,26)
 		ILocationCtx i1= fLocationMap.pushInclusion(0, 2, 4, 6, "b1b2b3b4b5".toCharArray(), "pre1", "pre1".toCharArray(), false);
-		assertEquals("pre1", fLocationMap.getCurrentFilename());
+		assertEquals("pre1", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(2,4,true);
 		// number: [15,25)
 		ILocationCtx i2= fLocationMap.pushInclusion(6, 7, 8, 9, "c1c2c3c4c5".toCharArray(), "pre11", "pre11".toCharArray(), false);
-		assertEquals("pre11", fLocationMap.getCurrentFilename());
+		assertEquals("pre11", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(2,6,true);
 		fLocationMap.popContext(i2);
 		// add a comment before the include
 		fLocationMap.encounteredComment(4,6,false);
 
-		assertEquals("pre1", fLocationMap.getCurrentFilename());
+		assertEquals("pre1", fLocationMap.getCurrentFilePath());
 		fLocationMap.popContext(i1);
-		assertEquals(FN, fLocationMap.getCurrentFilename());
+		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		fLocationMap.popContext(pre2);
-		assertEquals(FN, fLocationMap.getCurrentFilename());
+		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		// number [36, 46)
 		ILocationCtx i3= fLocationMap.pushInclusion(0, 2, 4, 6, "d1d2d3d4d5".toCharArray(), "pre2", "pre2".toCharArray(), false);
-		assertEquals("pre2", fLocationMap.getCurrentFilename());
+		assertEquals("pre2", fLocationMap.getCurrentFilePath());
 		fLocationMap.encounteredComment(0,2,true);
 		fLocationMap.popContext(i3);
 		fLocationMap.popContext(pre1);
-		assertEquals(FN, fLocationMap.getCurrentFilename());
+		assertEquals(FN, fLocationMap.getCurrentFilePath());
 		
 		
 		IASTComment[] comments= fLocationMap.getComments();

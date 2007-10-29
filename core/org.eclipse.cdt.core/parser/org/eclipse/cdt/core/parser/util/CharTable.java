@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.parser.util;
@@ -29,7 +30,7 @@ public class CharTable extends HashTable {
 	protected void resize(int size) {
 		char[][] oldKeyTable = keyTable;
 		keyTable = new char[size][];
-		System.arraycopy(oldKeyTable, 0, keyTable, 0, oldKeyTable.length);
+		System.arraycopy(oldKeyTable, 0, keyTable, 0, Math.min(size, oldKeyTable.length));
 		super.resize(size);
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
@@ -27,7 +28,7 @@ public class CharArrayIntMap extends CharTable {
 	protected void resize(int size) {
 		int[] oldValueTable = valueTable;
 		valueTable = new int[size];
-		System.arraycopy(oldValueTable, 0, valueTable, 0, oldValueTable.length);
+		System.arraycopy(oldValueTable, 0, valueTable, 0, Math.min(size, oldValueTable.length));
 		super.resize(size);
 	}
 	

@@ -53,14 +53,6 @@ class MacroDefinitionParser {
 		return fExpansionOffset;
 	}
 
-	/**
-	 * In case the expansion was successfully parsed, the end offset is returned.
-	 * Otherwise the return value is undefined.
-	 */
-	public int getExpansionEndOffset() {
-		return fExpansionEndOffset;
-	}
-
 	/** 
 	 * Parses an entire macro definition. Name must be the next token of the lexer.
 	 */
@@ -70,7 +62,8 @@ class MacroDefinitionParser {
     	final char[] source= lexer.getInput();
     	final char[] nameChars= name.getCharImage();
     	final char[][] paramList= parseParamList(lexer, name);
-    	final Token replacement= parseExpansion(lexer, log, nameChars, paramList, fHasVarArgs);
+    	final TokenList replacement= new TokenList();
+    	parseExpansion(lexer, log, nameChars, paramList, replacement);
     	if (paramList == null) {
     		return new ObjectStyleMacro(nameChars, fExpansionOffset, fExpansionEndOffset, replacement, source);
     	}
@@ -177,7 +170,13 @@ class MacroDefinitionParser {
 				paramList.add(Keywords.cVA_ARGS);
 				next= lex.nextToken();
 				break;
-
+				
+			case IToken.tRPAREN:
+				if (next == null) {
+					next= param;
+					break;
+				}
+				// no break;
 			default:
 				throw new InvalidMacroDefinitionException(name.getCharImage());
 			}
@@ -191,16 +190,14 @@ class MacroDefinitionParser {
 		return (char[][]) paramList.toArray(new char[paramList.size()][]);
 	}
 
-	private Token parseExpansion(final Lexer lexer, final ILexerLog log, final char[] name, final char[][] paramList, final int hasVarArgs) 
-			throws OffsetLimitReachedException {
-		final boolean allowVarArgsArray= hasVarArgs==FunctionStyleMacro.VAARGS;
+	public void parseExpansion(final Lexer lexer, final ILexerLog log, final char[] name, final char[][] paramList,
+			TokenList result) throws OffsetLimitReachedException {
 		boolean needParam= false;
+		boolean isFirst= true;
 		Token needAnotherToken= null;
 
 		Token candidate= lexer.currentToken();
-		fExpansionOffset= candidate.getOffset();		
-		Token last= new SimpleToken(Lexer.tNEWLINE, fExpansionOffset, fExpansionOffset);	
-		final Token resultHolder= last;
+		fExpansionOffset= fExpansionEndOffset= candidate.getOffset();		
 
 		loop: while(true) {
 			switch(candidate.getType()) {
@@ -210,20 +207,31 @@ class MacroDefinitionParser {
 			case Lexer.tNEWLINE:
 				break loop;
 			case IToken.tIDENTIFIER:
-				if (!allowVarArgsArray && CharArrayUtils.equals(Keywords.cVA_ARGS, candidate.getCharImage())) {
-					log.handleProblem(IProblem.PREPROCESSOR_INVALID_VA_ARGS, null, fExpansionOffset, candidate.getEndOffset());
+				if (paramList != null) {
+					// convert the parameters to special tokens
+					final char[] image = candidate.getCharImage();
+					int idx= CharArrayUtils.indexOf(image, paramList);
+					if (idx >= 0) {
+						candidate= new PlaceHolderToken(CPreprocessor.tMACRO_PARAMETER, idx, candidate.getOffset(), candidate.getEndOffset(), paramList[idx]);
+						needParam= false;
+					}
+					else {
+						if (needParam) {
+							log.handleProblem(IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, name, fExpansionOffset, candidate.getEndOffset());
+						}
+						else if (CharArrayUtils.equals(Keywords.cVA_ARGS, image)) {
+							log.handleProblem(IProblem.PREPROCESSOR_INVALID_VA_ARGS, null, fExpansionOffset, candidate.getEndOffset());
+						}
+						needParam= false;
+					}
 				}
-				if (needParam && CharArrayUtils.indexOf(candidate.getCharImage(), paramList) == -1) {
-					log.handleProblem(IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, name, fExpansionOffset, candidate.getEndOffset());
-				}
-				needParam= false;
 				needAnotherToken= null;
 				break;
 			case IToken.tPOUND:
 				needParam= paramList != null;
 				break;
 			case IToken.tPOUNDPOUND:
-				if (needParam || resultHolder == last) {
+				if (needParam || isFirst) {
 					log.handleProblem(IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, name, fExpansionOffset, candidate.getEndOffset());
 				}
 				needAnotherToken= candidate;
@@ -237,13 +245,13 @@ class MacroDefinitionParser {
 				needAnotherToken= null;
 				break;
 			}
-			last.setNext(candidate); last=candidate;
+			isFirst= false;
+			fExpansionEndOffset= candidate.getEndOffset();
+			result.append(candidate);
 			candidate= lexer.nextToken();
 		}
 		if (needAnotherToken != null) {
 			log.handleProblem(IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, name, needAnotherToken.getOffset(), needAnotherToken.getEndOffset());
 		}
-		fExpansionEndOffset= last.getEndOffset();
-		return (Token) resultHolder.getNext();
 	}
 }

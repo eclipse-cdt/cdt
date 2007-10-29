@@ -18,4 +18,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
  */
 public class ImageLocationInfo {
 
+	public static final ImageLocationInfo[] NO_LOCATION_INFOS= {};
+
 }

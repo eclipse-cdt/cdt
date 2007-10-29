@@ -66,8 +66,11 @@ final class TestMacro implements IMacroBinding {
 		return result;
 	}
 
-	public String getFilename() {
-		// mstodo Auto-generated method stub
-		return null;
+	public char[] getExpansionImage() {
+		return getExpansion();
+	}
+
+	public char[][] getParameterPlaceholderList() {
+		return getParameterList();
 	}
 }

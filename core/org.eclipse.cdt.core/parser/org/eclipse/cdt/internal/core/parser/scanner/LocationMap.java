@@ -183,12 +183,11 @@ public class LocationMap implements ILocationResolver {
 	public void popContext(ILocationCtx locationCtx) {
 		assert fCurrentContext == locationCtx;
 		final LocationCtx child= fCurrentContext;
-		final LocationCtx parent= fCurrentContext.getParent();
+		final LocationCtx parent= (LocationCtx) fCurrentContext.getParent();
 		if (parent != null) {
-			fCurrentContext= child.getParent();
+			fCurrentContext= parent;
 			fLastChildInsertionOffset= child.fParentEndOffset;
 			parent.addChildSequenceLength(child.getSequenceLength());
-			fCurrentContext= parent;
 		}
 	}
 
@@ -328,8 +327,8 @@ public class LocationMap implements ILocationResolver {
 	 * Returns the filename of the current context. If the context is a macro-expansion the filename of
 	 * the enclosing file is returned.
 	 */
-	public String getCurrentFilename() {
-		return fCurrentContext.getFilename();
+	public String getCurrentFilePath() {
+		return fCurrentContext.getFilePath();
 	}
 
 	/**
@@ -337,13 +336,13 @@ public class LocationMap implements ILocationResolver {
 	 * <p>
 	 * You must insert all child contexts before the given offset before conversion.
 	 */
-	private int getSequenceNumberForOffset(int offset) {
+	int getSequenceNumberForOffset(int offset) {
 		return fCurrentContext.getSequenceNumberForOffset(offset, offset < fLastChildInsertionOffset);
 	}
 
 	public String getContainingFilename(int sequenceNumber) {
 		LocationCtx ctx= fRootContext.ctxForNumberRange(sequenceNumber, 1);
-		return new String(ctx.getFilename());
+		return new String(ctx.getFilePath());
 	}
 
 	public IASTFileLocation getMappedFileLocation(int sequenceNumber, int length) {
@@ -423,21 +422,21 @@ public class LocationMap implements ILocationResolver {
 	public void cleanup() {
 		throw new UnsupportedOperationException();
 	}
-	// mstodo get rid of IASTNodeLocation
+	// mstodo- locations
 	public IASTFileLocation flattenLocations(IASTNodeLocation[] locations) {
 		if (locations.length != 1 || !(locations[0] instanceof IASTFileLocation)) {
 			throw new IllegalArgumentException();
 		}
 		return (IASTFileLocation) locations[0];
 	}
-	// mstodo get rid of IASTNodeLocation
+	// mstodo- locations
 	public IASTNodeLocation[] getLocations(int offset, int length) {
 		return new IASTNodeLocation[] {getMappedFileLocation(offset, length)};
 	}
 	public ASTPreprocessorSelectionResult getPreprocessorNode(String path, int offset, int length) {
 		throw new UnsupportedOperationException();
 	}
-	// mstodo get rid of IASTNodeLocation
+	// mstodo- locations
 	public char[] getUnpreprocessedSignature(IASTNodeLocation[] locations) {
 		switch(locations.length) {
 		case 0: return CharArrayUtils.EMPTY;

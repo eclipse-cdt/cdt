@@ -37,11 +37,11 @@ abstract class LocationCtx implements ILocationCtx {
 		}
 	}
 	
-	public String getFilename() {
-		return fParent.getFilename();
+	public String getFilePath() {
+		return fParent.getFilePath();
 	}
 	
-	final public LocationCtx getParent() {
+	final public ILocationCtx getParent() {
 		return fParent;
 	}
 	/**
@@ -262,7 +262,7 @@ class FileLocationCtx extends ContainerLocationCtx {
 		}
 	}
 
-	public final String getFilename() {
+	public final String getFilePath() {
 		return fFilename;
 	}
 
@@ -331,5 +331,5 @@ class MacroExpansionCtx extends LocationCtx {
 		return fLength;
 	}
 	
-	// mstodo once image locations are supported we need to handle those in here
+	// mstodo- image locations
 }

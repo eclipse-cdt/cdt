@@ -74,6 +74,15 @@ abstract class ScannerContext {
 	public abstract boolean changeBranch(Integer state);
 
 
-	public abstract Token currentPPToken();
+	/** 
+	 * Returns the current token from this context. When called before calling {@link #nextPPToken()} 
+	 * a token of type {@link Lexer#tBEFORE_INPUT} will be returned.
+	 * @since 5.0
+	 */
+	public abstract Token currentLexerToken();
+	
+	/** 
+	 * Returns the next token from this context. 
+	 */
 	public abstract Token nextPPToken() throws OffsetLimitReachedException;
 }

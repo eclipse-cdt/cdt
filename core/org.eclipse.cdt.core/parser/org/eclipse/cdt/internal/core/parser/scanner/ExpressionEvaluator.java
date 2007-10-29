@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * Used to evaluate expressions in preprocessor directives.
- * @since 5.0
  */
 class ExpressionEvaluator {
     static class EvalException extends Exception {
@@ -28,6 +27,7 @@ class ExpressionEvaluator {
 
 		public EvalException(int problemID, char[] problemArg) {
         	fProblemID= problemID;
+        	fProblemArg= problemArg;
         }
 		
 		public int getProblemID() {
@@ -42,8 +42,8 @@ class ExpressionEvaluator {
 	private Token fTokens;
 	private CharArrayObjectMap fDictionary;
 
-	public boolean evaluate(Token condition, CharArrayObjectMap dictionary) throws EvalException {
-		fTokens= condition;
+	public boolean evaluate(TokenList condition, CharArrayObjectMap dictionary) throws EvalException {
+		fTokens= condition.first();
 		fDictionary= dictionary;
 		return expression() != 0;
 	}
@@ -136,7 +136,7 @@ class ExpressionEvaluator {
     private long relationalExpression() throws EvalException {
         long r1 = shiftExpression();
         for (int t = LA(); t == IToken.tLT || t == IToken.tLTEQUAL || t == IToken.tGT
-                || t == IToken.tGTEQUAL; t = LA()) {
+                || t == IToken.tGTEQUAL || t == IToken.tASSIGN; t = LA()) {
             consume();
             long r2 = shiftExpression();
             switch (t) {
@@ -152,6 +152,8 @@ class ExpressionEvaluator {
             case IToken.tGTEQUAL:
                 r1 = (r1 >= r2) ? 1 : 0;
                 break;
+            case IToken.tASSIGN:
+            	throw new EvalException(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED, null);
             }
         }
         return r1;
@@ -235,7 +237,8 @@ class ExpressionEvaluator {
             }
             throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null); 
         case IToken.tIDENTIFIER:
-        	return 1;
+        	consume();
+        	return 0;
         default:
             throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null); 
         }
@@ -350,13 +353,25 @@ class ExpressionEvaluator {
 	}
 
 	private long getNumber(char[] tokenImage, int from, int to, int base, int problemID) throws EvalException {
+		if (from == to) {
+			throw new EvalException(problemID, tokenImage);
+		}
 		long result= 0;
-		for (int i = from; i < to; i++) {
+		int i= from;
+		for (; i < to; i++) {
 			int digit= getDigit(tokenImage[i]);
 			if (digit >= base) {
-				throw new EvalException(problemID, tokenImage);
+				break;
 			}
 			result= result*base + digit;
+		}
+		for (; i < to; i++) {
+			switch(tokenImage[i]) {
+			case 'u' : case 'l': case 'U': case 'L':
+				break;
+			default:
+				throw new EvalException(problemID, tokenImage);
+			}
 		}
 		return result;
 	}

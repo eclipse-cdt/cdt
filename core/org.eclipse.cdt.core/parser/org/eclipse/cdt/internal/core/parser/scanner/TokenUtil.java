@@ -118,7 +118,6 @@ public class TokenUtil {
         case IToken.tDOT:          	return Keywords.cpDOT;
         case IToken.tDIVASSIGN:    	return Keywords.cpDIVASSIGN;
         case IToken.tDIV:          	return Keywords.cpDIV;
-        case IToken.tBACKSLASH:		return Keywords.cpBACKSLASH;
         
         case IGCCToken.tMIN:		return Keywords.cpMIN;
         case IGCCToken.tMAX:		return Keywords.cpMAX;

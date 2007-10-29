@@ -16,12 +16,6 @@ package org.eclipse.cdt.core.dom.ast;
  * <p> This interface is not intended to be implemented by clients. </p>
  */
 public interface IMacroBinding extends IBinding {
-
-	/**
-	 * Returns the expansion of this macro definition.
-	 * @since 5.0
-	 */
-	char[] getExpansion();
 	
 	/**
 	 * Returns <code>true</code> if this is a function-style macro. 
@@ -33,4 +27,25 @@ public interface IMacroBinding extends IBinding {
 	 * Returns the parameter names or <code>null</code> if this is not a function style macro.
 	 */
 	char[][] getParameterList();
+	
+	/**
+	 * Returns the expansion of this macro definition.
+	 * @since 5.0
+	 */
+	char[] getExpansion();
+	
+	/**
+	 * Returns the parameter list where the name of the last parameter is changed if this is a variadic macro,
+	 * or <code>null</code> if this is not a function style macro.
+	 * The parameter '...' will be changed to '__VA_ARGS__'
+	 * Parameters like 'a...' will be changed to 'a'.
+	 * @since 5.0
+	 */
+	char[][] getParameterPlaceholderList();
+
+	/**
+	 * Returns the image of the expansion (also containing comments). 
+	 * @since 5.0
+	 */
+	char[] getExpansionImage();
 }

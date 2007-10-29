@@ -136,5 +136,5 @@ class ASTMacroReferenceName extends ASTPreprocessorName {
 		return true;
 	}
 	
-	// mstodo once names support image-locations, return correct ones here.
+	// mstodo- image-locations.
 }

@@ -69,6 +69,9 @@ import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
 public class CDataUtil {
+	private static final String EMPTY = "";  //$NON-NLS-1$
+	private static final String DELIM = " "; //$NON-NLS-1$
+	
 	private static Random randomNumber;
 	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
@@ -135,15 +138,14 @@ public class CDataUtil {
 		if(entries.length == 0)
 			return entries;
 		
-		ICSettingEntry[] resolved = new ICSettingEntry[entries.length];
+		ArrayList out = new ArrayList(entries.length);
 		ICdtVariableManager mngr = CCorePlugin.getDefault().getCdtVariableManager();
 
 		for(int i = 0; i < entries.length; i++){
 			ICSettingEntry entry = entries[i];
-			resolved[i] = createResolvedEntry(entry, cfgDes, mngr);
+			out.addAll(Arrays.asList(createResolvedEntry(entry, cfgDes, mngr)));
 		}
-		
-		return resolved;
+		return (ICSettingEntry[])out.toArray(new ICSettingEntry[out.size()]);
 	}
 
 	public static ICLanguageSettingEntry[] resolveEntries(ICLanguageSettingEntry entries[], ICConfigurationDescription cfgDes){
@@ -176,60 +178,71 @@ public class CDataUtil {
 		return resolvedLangEntries;
 	}
 
-	private static ICSettingEntry createResolvedEntry(ICSettingEntry entry, ICConfigurationDescription cfg, ICdtVariableManager mngr){
+	private static ICSettingEntry[] createResolvedEntry(ICSettingEntry entry, ICConfigurationDescription cfg, ICdtVariableManager mngr){
 		if(entry.isResolved())
-			return entry;
+			return new ICSettingEntry[] { entry };
 		
 		String name = entry.getName();
+		
+		String[] names = new String[] { name }; // default value
 		try {
-			name = mngr.resolveValue(name, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
+			if ((entry.getKind() != ICSettingEntry.MACRO) &&
+					mngr.isStringListValue(name, cfg)) {
+				names = mngr.resolveStringListValue(name, EMPTY, DELIM, cfg); 
+			} else {
+				names[0] = mngr.resolveValue(name, EMPTY, DELIM, cfg);
+			}
 		} catch (CdtVariableException e) {
 			CCorePlugin.log(e);
 		}
+
+		ICSettingEntry[] result = new ICSettingEntry[names.length];
 		
-		String value = null;
-		IPath[] exclusionFilters = null;
-		IPath srcPath = null, srcRootPath = null, srcPrefixMapping = null;
-		
-		switch (entry.getKind()) {
-		case ICSettingEntry.MACRO:
-			value = entry.getValue();
-			try {
-				value = mngr.resolveValue(value, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
-			} catch (CdtVariableException e) {
-				CCorePlugin.log(e);
-			}
-			break;
-		case ICSettingEntry.LIBRARY_FILE:
-			ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
-			srcPath = libFile.getSourceAttachmentPath();
-			srcRootPath = libFile.getSourceAttachmentRootPath();
-			srcPrefixMapping = libFile.getSourceAttachmentPrefixMapping();
-			if(srcPath != null)
-				srcPath = resolvePath(mngr, cfg, srcPath);
-			if(srcRootPath != null)
-				srcRootPath = resolvePath(mngr, cfg, srcRootPath);
-			if(srcPrefixMapping != null)
-				srcPrefixMapping = resolvePath(mngr, cfg, srcPrefixMapping);
-			break;
-		case ICSettingEntry.SOURCE_PATH:
-		case ICSettingEntry.OUTPUT_PATH:
-			exclusionFilters = ((ICExclusionPatternPathEntry)entry).getExclusionPatterns();
-			for(int i = 0; i < exclusionFilters.length; i++){
-				String exclString = exclusionFilters[i].toString();
+		for (int k=0; k<names.length; k++) {
+			String value = null;
+			IPath[] exclusionFilters = null;
+			IPath srcPath = null, srcRootPath = null, srcPrefixMapping = null;
+
+			switch (entry.getKind()) {
+			case ICSettingEntry.MACRO:
+				value = entry.getValue();
 				try {
-					exclString = mngr.resolveValue(exclString, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
+					value = mngr.resolveValue(value, EMPTY, DELIM, cfg);
 				} catch (CdtVariableException e) {
 					CCorePlugin.log(e);
 				}
-				exclusionFilters[i] = new Path(exclString);
+				break;
+			case ICSettingEntry.LIBRARY_FILE:
+				ICLibraryFileEntry libFile = (ICLibraryFileEntry)entry;
+				srcPath = libFile.getSourceAttachmentPath();
+				srcRootPath = libFile.getSourceAttachmentRootPath();
+				srcPrefixMapping = libFile.getSourceAttachmentPrefixMapping();
+				if(srcPath != null)
+					srcPath = resolvePath(mngr, cfg, srcPath);
+				if(srcRootPath != null)
+					srcRootPath = resolvePath(mngr, cfg, srcRootPath);
+				if(srcPrefixMapping != null)
+					srcPrefixMapping = resolvePath(mngr, cfg, srcPrefixMapping);
+				break;
+			case ICSettingEntry.SOURCE_PATH:
+			case ICSettingEntry.OUTPUT_PATH:
+				exclusionFilters = ((ICExclusionPatternPathEntry)entry).getExclusionPatterns();
+				for(int i = 0; i < exclusionFilters.length; i++){
+					String exclString = exclusionFilters[i].toString();
+					try {
+						exclString = mngr.resolveValue(exclString, EMPTY, DELIM, cfg);
+					} catch (CdtVariableException e) {
+						CCorePlugin.log(e);
+					}
+					exclusionFilters[i] = new Path(exclString);
+				}
+				break;
+			default:
+				break;
 			}
-			break;
-//		default:
-//			throw new IllegalArgumentException();
+			result[k] = createEntry(entry.getKind(), names[k], value, exclusionFilters, entry.getFlags() | ICSettingEntry.RESOLVED, srcPath, srcRootPath, srcPrefixMapping);
 		}
-		
-		return createEntry(entry.getKind(), name, value, exclusionFilters, entry.getFlags() | ICSettingEntry.RESOLVED, srcPath, srcRootPath, srcPrefixMapping);
+		return result;
 	}
 	
 	private static IPath resolvePath(ICdtVariableManager mngr, ICConfigurationDescription cfg, IPath path){
@@ -238,7 +251,7 @@ public class CDataUtil {
 		
 		try {
 			String unresolved = path.toString();
-			String resolved = mngr.resolveValue(unresolved, "", " ", cfg);  //$NON-NLS-1$  //$NON-NLS-2$
+			String resolved = mngr.resolveValue(unresolved, EMPTY, DELIM, cfg);
 			if(resolved != null && !resolved.equals(unresolved))
 				path = new Path(resolved);
 		} catch (CdtVariableException e) {

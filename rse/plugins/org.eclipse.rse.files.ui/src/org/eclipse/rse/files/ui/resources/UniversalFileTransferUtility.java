@@ -29,6 +29,7 @@
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
  * David McKnight   (IBM)        - [195285] mount path mapper changes
+ * Kevin Doyle (IBM)	  - [203014] Copy/Paste Across Connections doesn't display Overwrite dialog when folder already exists
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1151,6 +1152,28 @@ public class UniversalFileTransferUtility
 			
 			else if (srcFileOrFolder instanceof IContainer)
 			{
+				String oldPath = newPathBuf.toString() + name;
+				if (checkForCollisions)
+				{
+					RenameStatus status = checkForCollision(existingFiles, targetFolder, name, oldPath);
+					int severity = status.getSeverity();
+					
+					if (severity == IStatus.OK) {
+						name = status.getMessage();
+					}
+					else if (severity == IStatus.CANCEL) {
+						
+						int code = status.getCode();
+						
+						if (code == IStatus.CANCEL) {
+							continue;
+						}
+						else if (code == RenameStatus.CANCEL_ALL) {
+							break;
+						}
+					}
+				}
+				
 				IContainer directory = (IContainer) srcFileOrFolder;
 				if (!directory.exists())
 				{
@@ -1173,11 +1196,14 @@ public class UniversalFileTransferUtility
 					if (existingFiles != null)
 					{
 					IRemoteFile newTargetFolder = (IRemoteFile)existingFiles.get(newPath);
-					if (null != newTargetFolder && !newTargetFolder.exists())
+					// newTargetFolder will be null if user chose to do a rename
+					if (newTargetFolder == null) {
+						newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
+					}
+					if (newTargetFolder != null && !newTargetFolder.exists())
 					{
 						newTargetFolder = targetFS.createFolder(newTargetFolder, monitor);
 					}
-
 					 
 					boolean isTargetLocal = newTargetFolder.getParentRemoteFileSubSystem().getHost().getSystemType().isLocal();
 					boolean destInArchive = (newTargetFolder instanceof IVirtualRemoteFile) || newTargetFolder.isArchive();
@@ -1193,7 +1219,7 @@ public class UniversalFileTransferUtility
 						directory.refreshLocal(IResource.DEPTH_ONE, monitor);
 						IResource[] children = directory.members();
 						SystemWorkspaceResourceSet childSet = new SystemWorkspaceResourceSet(children);			
-						SystemRemoteResourceSet childResults = copyWorkspaceResourcesToRemote(childSet, newTargetFolder, monitor, checkForCollisions);																	
+						SystemRemoteResourceSet childResults = copyWorkspaceResourcesToRemote(childSet, newTargetFolder, monitor, false);																	
 						if (childResults == null)
 						{
 							return null;

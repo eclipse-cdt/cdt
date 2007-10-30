@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - extracted from TerminalControl 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [207158] improve error message when port not available
+ * Martin Oberhuber (Wind River) - [208029] COM port not released after quick disconnect/reconnect
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -26,6 +27,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 
 public class SerialConnectWorker extends Thread {
@@ -41,7 +43,6 @@ public class SerialConnectWorker extends Thread {
 		super();
 		fControl = control;
 		fConn = conn;
-		fControl.setState(TerminalState.CONNECTING);
 	}
 	
 	/**
@@ -91,7 +92,7 @@ public class SerialConnectWorker extends Thread {
 			// nothing to do -- should never happen...
 			return;
 		}
-		// Reinitialise the ports because we have changed the list of known ports
+		// Reinitialize the ports because we have changed the list of known ports
 		CommPortIdentifier.getPortIdentifiers();
 	}
 	
@@ -101,6 +102,7 @@ public class SerialConnectWorker extends Thread {
 		//TODO [206884] This is part of API and should be changed for the next release
 		final String strID = getClass().getPackage().getName();
 		//final String strID = "org.eclipse.tm.terminal.serial"; //$NON-NLS-1$
+		SerialPort serialPort = null;
 		try {
 			fControl.setState(TerminalState.OPENED);
 			ISerialSettings s=fConn.getSerialSettings();
@@ -116,7 +118,7 @@ public class SerialConnectWorker extends Thread {
 			fConn.setSerialPortIdentifier(CommPortIdentifier.getPortIdentifier(portName));
 			int timeoutInMs = s.getTimeout() * 1000;
 
-			SerialPort serialPort=(SerialPort) fConn.getSerialPortIdentifier().open(strID,timeoutInMs);
+			serialPort=(SerialPort) fConn.getSerialPortIdentifier().open(strID,timeoutInMs);
 			serialPort.setSerialPortParams(s.getBaudRate(), s.getDataBits(), s.getStopBits(), s.getParity());
 			serialPort.setFlowControlMode(s.getFlowControl());
 			serialPort.addEventListener(fConn.getSerialPortHandler());
@@ -139,7 +141,22 @@ public class SerialConnectWorker extends Thread {
 			fControl.displayTextInTerminal("No such port: \"" + msg+"\"\r\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 		} catch (Exception exception) {
+			Logger.logException(exception);
+			if (serialPort!=null) {
+				//Event listener is removed as part of close(), 
+				//but exceptions need to be caught to ensure that close() really succeeds
+				try {
+					serialPort.removeEventListener();
+					Thread.sleep(50); //allow a little time for RXTX Native to catch up - makes stuff more stable
+				} catch(Exception e) {
+					Logger.logException(e);
+				}
+				serialPort.close();
+				fConn.getSerialPortIdentifier().removePortOwnershipListener(fConn.getSerialPortHandler());
+			}
 			fControl.setState(TerminalState.CLOSED);
+		} finally {
+			fConn.doneConnect();
 		}
 	}
 }

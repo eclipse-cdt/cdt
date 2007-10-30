@@ -122,16 +122,17 @@ public class SpeedTest2 extends TestCase {
 			return mingwScannerInfo(false);
 	}
 	
-	protected IScannerInfo msvcScannerInfo(boolean quick) {
+	private IScannerInfo msvcScannerInfo(boolean quick) {
 		if( quick )
 			return new ScannerInfo();
 		Map definitions = new Hashtable();
 		//definitions.put( "__GNUC__", "3" );  //$NON-NLS-1$ //$NON-NLS-2$
 
 		String [] includePaths = new String[] {
-			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include"
-//			"C:\\Program Files\\Microsoft Platform SDK\\Include",
-//			"C:\\Program Files\\Microsoft Visual C++ Toolkit 2003\\include"
+			"C:\\Program Files\\Microsoft SDK\\Include",
+			"C:\\Program Files\\Microsoft Visual C++ Toolkit 2003\\include"
+			
+			// "C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include"
 		};
 		return new ScannerInfo( definitions, includePaths );
 	}

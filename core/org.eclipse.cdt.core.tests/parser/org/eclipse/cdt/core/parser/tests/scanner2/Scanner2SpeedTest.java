@@ -16,6 +16,7 @@
  */
 package org.eclipse.cdt.core.parser.tests.scanner2;
 
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 
@@ -43,10 +44,10 @@ public class Scanner2SpeedTest extends SpeedTest2 {
 	public static void main(String[] args) {
 		try {
 			PrintStream stream = null;
-//			if (args.length > 0)
-//				stream = new PrintStream(new FileOutputStream("c:/tmp/dom.txt"));
+			if (args.length > 0)
+				stream = new PrintStream(new FileOutputStream(args[0]));
 
-			new Scanner2SpeedTest().runTest(stream, 30);
+			new Scanner2SpeedTest().runTest(stream, 1);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -68,7 +69,7 @@ public class Scanner2SpeedTest extends SpeedTest2 {
 			"#include <iostream>\n";
 		
 		CodeReader reader = new CodeReader(code.toCharArray());
-		IScannerInfo info = msvcScannerInfo(false);
+		IScannerInfo info = getScannerInfo(false);
 		long totalTime = 0;
 		for (int i = 0; i < n; ++i) {
 			long time = testScan(reader, false, info, ParserLanguage.CPP);

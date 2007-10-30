@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [206892] State handling: Only allow connect when CLOSED
  * Martin Oberhuber (Wind River) - [206883] Serial Terminal leaks Jobs
  * Martin Oberhuber (Wind River) - [208145] Terminal prints garbage after quick disconnect/reconnect
+ * Martin Oberhuber (Wind River) - [207785] NPE when trying to send char while no longer connected
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -419,27 +420,31 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	protected void sendChar(char chKey, boolean altKeyPressed) {
 		try {
 			int byteToSend = chKey;
-
-			if (altKeyPressed) {
-				// When the ALT key is pressed at the same time that a character is
-				// typed, translate it into an ESCAPE followed by the character.  The
-				// alternative in this case is to set the high bit of the character
-				// being transmitted, but that will cause input such as ALT-f to be
-				// seen as the ISO Latin-1 character '�', which can be confusing to
-				// European users running Emacs, for whom Alt-f should move forward a
-				// word instead of inserting the '�' character.
-				//
-				// TODO: Make the ESCAPE-vs-highbit behavior user configurable.
-
-				Logger.log("sending ESC + '" + byteToSend + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-				getOutputStream().write('\u001b');
-				getOutputStream().write(byteToSend);
+			OutputStream os = getOutputStream();
+			if (os==null) {
+				// Bug 207785: NPE when trying to send char while no longer connected
+				Logger.log("NOT sending '" + byteToSend + "' because no longer connected"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				Logger.log("sending '" + byteToSend + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-				getOutputStream().write(byteToSend);
-			}
+				if (altKeyPressed) {
+					// When the ALT key is pressed at the same time that a character is
+					// typed, translate it into an ESCAPE followed by the character.  The
+					// alternative in this case is to set the high bit of the character
+					// being transmitted, but that will cause input such as ALT-f to be
+					// seen as the ISO Latin-1 character '�', which can be confusing to
+					// European users running Emacs, for whom Alt-f should move forward a
+					// word instead of inserting the '�' character.
+					//
+					// TODO: Make the ESCAPE-vs-highbit behavior user configurable.
 
-			getOutputStream().flush();
+					Logger.log("sending ESC + '" + byteToSend + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+					getOutputStream().write('\u001b');
+					getOutputStream().write(byteToSend);
+				} else {
+					Logger.log("sending '" + byteToSend + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+					getOutputStream().write(byteToSend);
+				}
+				getOutputStream().flush();
+			}
 		} catch (SocketException socketException) {
 			Logger.logException(socketException);
 

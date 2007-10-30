@@ -1060,6 +1060,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
 	private boolean internalDelete(FTPClient ftpClient, String parentPath, String fileName, boolean isFile, IProgressMonitor monitor) throws RemoteFileIOException, IOException 
 	{
+		if(monitor.isCanceled())
+		{
+			throw new RemoteFileCancelledException();
+		}
 
 		clearCache(parentPath);
 		boolean hasSucceeded = FTPReply.isPositiveCompletion(ftpClient.cwd(parentPath));
@@ -1089,6 +1093,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 				FTPFile[] fileNames = ftpClient.listFiles();
 				
 				for (int i = 0; i < fileNames.length; i++) {
+					if(fileNames[i].getName().equals(".") || fileNames[i].getName().equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+						continue;
+					}
 					hasSucceeded = internalDelete(ftpClient,newParentPath,fileNames[i].getName(),fileNames[i].isFile(),monitor);
 					if(!hasSucceeded)
 					{
@@ -1294,6 +1301,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	
     private boolean internalCopy(FTPClient ftpClient, String srcParent, String srcName, String tgtParent, String tgtName, boolean isDirectory, MyProgressMonitor monitor) throws SystemMessageException, IOException
     {
+    	if(monitor.fMonitor.isCanceled())
+		{
+			throw new RemoteFileCancelledException();
+		}
+    	
     	boolean success = false;
     	
     	if(isDirectory)
@@ -1310,6 +1322,9 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			FTPFile[] fileNames = ftpClient.listFiles();
 			
 			for (int i = 0; i < fileNames.length; i++) {
+				if(fileNames[i].getName().equals(".") || fileNames[i].getName().equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+					continue;
+				}
 				success = internalCopy(ftpClient,newSrcParentPath,fileNames[i].getName(), newTgtParentPath, fileNames[i].getName(), fileNames[i].isDirectory(),monitor);
 			}
 			

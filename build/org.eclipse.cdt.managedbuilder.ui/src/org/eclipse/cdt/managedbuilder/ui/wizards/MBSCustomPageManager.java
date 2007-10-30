@@ -345,7 +345,7 @@ public final class MBSCustomPageManager
 		Map pagePropertiesMap = (Map) pageIDtoPagePropertiesMap.get(PAGE_ID);
 
 		Object projectType = pagePropertiesMap.get(PROJECT_TYPE);
-		List toolchainList = (List) pagePropertiesMap.get(TOOLCHAIN);
+		Set toolchainList = (Set) pagePropertiesMap.get(TOOLCHAIN);
 		Object nature = pagePropertiesMap.get(NATURE);
 
 		//		 does the page follow nature and project type constraints?

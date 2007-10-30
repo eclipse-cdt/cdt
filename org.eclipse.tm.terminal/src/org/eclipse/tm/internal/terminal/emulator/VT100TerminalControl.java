@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [206892] State handling: Only allow connect when CLOSED
  * Martin Oberhuber (Wind River) - [206883] Serial Terminal leaks Jobs
+ * Martin Oberhuber (Wind River) - [208145] Terminal prints garbage after quick disconnect/reconnect
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -337,31 +338,38 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 			fJob=new Job("Terminal data reader") { //$NON-NLS-1$
 				protected IStatus run(IProgressMonitor monitor) {
 					IStatus status=Status.OK_STATUS;
-					while(true) {
-						while(fInputStream.available()==0 && !monitor.isCanceled()) {
+					try {
+						while(true) {
+							while(fInputStream.available()==0 && !monitor.isCanceled()) {
+								try {
+									fInputStream.waitForAvailable(500);
+								} catch (InterruptedException e) {
+									Thread.currentThread().interrupt();
+								}
+							}
+							if(monitor.isCanceled()) {
+								//Do not disconnect terminal here because another reader job may already be running
+								status=Status.CANCEL_STATUS;
+								break;
+							}
 							try {
-								fInputStream.waitForAvailable(500);
-							} catch (InterruptedException e) {
-								Thread.currentThread().interrupt();
+								// TODO: should block when no text is available!
+								fTerminalText.processText();
+							} catch (Exception e) {
+								disconnectTerminal();
+								status=new Status(IStatus.ERROR,TerminalPlugin.PLUGIN_ID,e.getLocalizedMessage(),e);
+								break;
 							}
 						}
-						if(monitor.isCanceled()) {
-							disconnectTerminal();
-							status=Status.CANCEL_STATUS;
-							break;
-						}
-						try {
-							// TODO: should block when no text is available!
-							fTerminalText.processText();
-
-						} catch (Exception e) {
-							disconnectTerminal();
-							status=new Status(IStatus.ERROR,TerminalPlugin.PLUGIN_ID,e.getLocalizedMessage(),e);
-							break;
+					} finally {
+						// clean the job: start a new one when the connection gets restarted
+						// Bug 208145: make sure we do not clean an other job that's already started (since it would become a Zombie) 
+						synchronized (VT100TerminalControl.this) {
+							if (fJob==this) {
+								fJob=null;
+							}
 						}
 					}
-					// clean the job: start a new one when the connection getst restarted
-					fJob=null;
 					return status;
 				}
 

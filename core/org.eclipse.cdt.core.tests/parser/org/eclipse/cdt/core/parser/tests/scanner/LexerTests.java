@@ -44,7 +44,7 @@ public class LexerTests extends BaseTestCase {
 
 	private void init(String input) throws Exception {
 		fLog.clear();
-		fLexer= new Lexer(input.toCharArray(), new LexerOptions(), fLog);
+		fLexer= new Lexer(input.toCharArray(), new LexerOptions(), fLog, null);
 		fLog.setInput(input);
 		fLexer.nextToken();
 		fLastEndOffset= 0;
@@ -55,7 +55,7 @@ public class LexerTests extends BaseTestCase {
 		final LexerOptions lexerOptions = new LexerOptions();
 		lexerOptions.fSupportDollarInitializers= dollar;
 		lexerOptions.fSupportMinAndMax= minmax;
-		fLexer= new Lexer(input.toCharArray(), lexerOptions, fLog);
+		fLexer= new Lexer(input.toCharArray(), lexerOptions, fLog, null);
 		fLexer.nextToken();
 		fLastEndOffset= 0;
 	}

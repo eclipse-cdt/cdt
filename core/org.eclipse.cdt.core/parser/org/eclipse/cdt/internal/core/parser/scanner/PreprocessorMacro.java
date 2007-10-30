@@ -62,6 +62,10 @@ abstract class PreprocessorMacro implements IMacroBinding {
 		return null;
 	}
 
+	public int hasVarArgs() {
+		return FunctionStyleMacro.NO_VAARGS;
+	}
+
 	public String toString() {
 		char[][] p= getParameterList();
 		if (p == null) {
@@ -118,10 +122,16 @@ class ObjectStyleMacro extends PreprocessorMacro {
 		fEndOffset= endOffset;
 		fExpansion= source;
 		fExpansionTokens= expansion;
+		if (expansion != null) {
+			setSource(expansion.first());
+		}
 	}
 
-	public int findParameter(char[] tokenImage) {
-		return -1;
+	private void setSource(Token t) {
+		while (t != null) {
+			t.fSource= this;
+			t= (Token) t.getNext();
+		}
 	}
 
 	public char[] getExpansion() {
@@ -158,7 +168,7 @@ class ObjectStyleMacro extends PreprocessorMacro {
 	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions) {
 		if (fExpansionTokens == null) {
 			fExpansionTokens= new TokenList();
-			Lexer lex= new Lexer(fExpansion, fExpansionOffset, fEndOffset, lexOptions, ILexerLog.NULL);
+			Lexer lex= new Lexer(fExpansion, fExpansionOffset, fEndOffset, lexOptions, ILexerLog.NULL, this);
 			try {
 				mdp.parseExpansion(lex, ILexerLog.NULL, getNameCharArray(), getParameterPlaceholderList(), fExpansionTokens);
 			} catch (OffsetLimitReachedException e) {
@@ -259,16 +269,7 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	public int hasVarArgs() {
 		return fHasVarArgs;
 	}
-	
-	public int findParameter(final char[] identifier) {
-		for (int i=0; i < fParamList.length; i++) {
-			if (CharArrayUtils.equals(fParamList[i], identifier)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
+		
 	public boolean isFunctionStyle() {
 		return true;
 	}

@@ -272,7 +272,7 @@ class ExpressionEvaluator {
     private void consume() {
     	fTokens= (Token) fTokens.getNext();
     	if (fTokens == null) {
-    		fTokens= new SimpleToken(Lexer.tEND_OF_INPUT, 0, 0);
+    		fTokens= new SimpleToken(Lexer.tEND_OF_INPUT, null, 0, 0);
     	}
     }
     

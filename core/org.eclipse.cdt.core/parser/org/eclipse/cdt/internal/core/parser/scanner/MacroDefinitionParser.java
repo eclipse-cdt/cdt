@@ -212,7 +212,7 @@ class MacroDefinitionParser {
 					final char[] image = candidate.getCharImage();
 					int idx= CharArrayUtils.indexOf(image, paramList);
 					if (idx >= 0) {
-						candidate= new PlaceHolderToken(CPreprocessor.tMACRO_PARAMETER, idx, candidate.getOffset(), candidate.getEndOffset(), paramList[idx]);
+						candidate= new PlaceHolderToken(CPreprocessor.tMACRO_PARAMETER, idx, lexer.getSource(), candidate.getOffset(), candidate.getEndOffset(), paramList[idx]);
 						needParam= false;
 					}
 					else {

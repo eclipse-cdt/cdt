@@ -22,11 +22,13 @@ public abstract class Token implements IToken, Cloneable {
 	private int fOffset;
 	private int fEndOffset;
 	private IToken fNextToken;
+	Object fSource;
 
-	Token(int kind, int offset, int endOffset) {
+	Token(int kind, Object source, int offset, int endOffset) {
 		fKind= kind;
 		fOffset= offset;
 		fEndOffset= endOffset;
+		fSource= source;
 	}
 
 	public int getType() {
@@ -65,6 +67,9 @@ public abstract class Token implements IToken, Cloneable {
 
 	public abstract char[] getCharImage();
 
+	public boolean hasGap(Token t) {
+		return fSource == t.fSource && fEndOffset != t.getOffset();
+	}
 
 	public String toString() {
 		return getImage();
@@ -113,8 +118,8 @@ public abstract class Token implements IToken, Cloneable {
 }
 
 class SimpleToken extends Token {
-	public SimpleToken(int kind, int offset, int endOffset) {
-		super(kind, offset, endOffset);
+	public SimpleToken(int kind, Object source, int offset, int endOffset) {
+		super(kind, source, offset, endOffset);
 	}
 
 	public char[] getCharImage() {
@@ -125,8 +130,8 @@ class SimpleToken extends Token {
 class PlaceHolderToken extends ImageToken {
 	private final int fIndex;
 
-	public PlaceHolderToken(int type, int idx, int offset, int endOffset, char[] name) {
-		super(type, offset, endOffset, name);
+	public PlaceHolderToken(int type, int idx, Object source, int offset, int endOffset, char[] name) {
+		super(type, source, offset, endOffset, name);
 		fIndex= idx;
 	}
 
@@ -140,8 +145,8 @@ class PlaceHolderToken extends ImageToken {
 }
 
 class DigraphToken extends Token {
-	public DigraphToken(int kind, int offset, int endOffset) {
-		super(kind, offset, endOffset);
+	public DigraphToken(int kind, Object source, int offset, int endOffset) {
+		super(kind, source, offset, endOffset);
 	}
 
 	public char[] getCharImage() {
@@ -152,8 +157,8 @@ class DigraphToken extends Token {
 class ImageToken extends Token {
 	private char[] fImage;
 
-	public ImageToken(int kind, int offset, int endOffset, char[] image) {
-		super(kind, offset, endOffset);
+	public ImageToken(int kind, Object source, int offset, int endOffset, char[] image) {
+		super(kind, source, offset, endOffset);
 		fImage= image;
 	}
 
@@ -163,20 +168,19 @@ class ImageToken extends Token {
 }
 
 class SourceImageToken extends Token {
-
-	private char[] fSource;
+	private char[] fSourceImage;
 	private char[] fImage;
 
-	public SourceImageToken(int kind, int offset, int endOffset, char[] source) {
-		super(kind, offset, endOffset);
-		fSource= source;
+	public SourceImageToken(int kind, Object source, int offset, int endOffset, char[] sourceImage) {
+		super(kind, source, offset, endOffset);
+		fSourceImage= sourceImage;
 	}
 
 	public char[] getCharImage() {
 		if (fImage == null) {
 			final int length= getLength();
 			fImage= new char[length];
-			System.arraycopy(fSource, getOffset(), fImage, 0, length);
+			System.arraycopy(fSourceImage, getOffset(), fImage, 0, length);
 		}
 		return fImage; 
 	}

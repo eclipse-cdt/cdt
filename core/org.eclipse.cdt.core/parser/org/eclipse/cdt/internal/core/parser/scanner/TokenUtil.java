@@ -13,10 +13,11 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 
 public class TokenUtil {
-	private static final char[] IMAGE_EMPTY = new char[0]; 
+	private static final char[] SPACE = {' '};
 	private static final char[] IMAGE_POUND_POUND = "##".toCharArray(); //$NON-NLS-1$
 	private static final char[] IMAGE_POUND = "#".toCharArray(); //$NON-NLS-1$
 	
@@ -122,8 +123,10 @@ public class TokenUtil {
         case IGCCToken.tMIN:		return Keywords.cpMIN;
         case IGCCToken.tMAX:		return Keywords.cpMAX;
         
+        case CPreprocessor.tSPACE:  return SPACE; 
+        
         default:
-            return IMAGE_EMPTY; 
+            return CharArrayUtils.EMPTY; 
         }
 	}
 	
@@ -138,7 +141,7 @@ public class TokenUtil {
         
         default:
         	assert false: type;
-            return IMAGE_EMPTY; 
+            return CharArrayUtils.EMPTY; 
         }
 	}
 }

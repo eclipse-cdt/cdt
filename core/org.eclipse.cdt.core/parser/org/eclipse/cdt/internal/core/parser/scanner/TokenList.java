@@ -52,7 +52,9 @@ class TokenList {
 	final public TokenList cloneTokens() {
 		TokenList result= new TokenList();
 		for (Token t= fFirst; t != null; t= (Token) t.getNext()) {
-			result.append((Token) t.clone());
+			if (t.getType() != CPreprocessor.tSCOPE_MARKER) {
+				result.append((Token) t.clone());
+			}
 		}
 		return result;
 	}
@@ -61,7 +63,7 @@ class TokenList {
 		return fFirst;
 	}
 
-	public void removeBehind(Token l) {
+	final void removeBehind(Token l) {
 		if (l == null) {
 			Token t= fFirst;
 			if (t != null) {
@@ -80,6 +82,16 @@ class TokenList {
 					fLast= l;
 				}
 			}
+		}
+	}
+
+	void cutAfter(Token l) {
+		if (l == null) {
+			fFirst= fLast= null;
+		}
+		else {
+			l.setNext(null);
+			fLast= l;
 		}
 	}
 }

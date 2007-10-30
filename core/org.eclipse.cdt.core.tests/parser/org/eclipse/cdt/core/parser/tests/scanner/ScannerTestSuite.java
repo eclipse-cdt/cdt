@@ -19,7 +19,8 @@ public class ScannerTestSuite extends TestSuite {
 		TestSuite suite= new ScannerTestSuite();
 		suite.addTest(LexerTests.suite());
 		suite.addTest(LocationMapTests.suite());
-		suite.addTest(PortedScannerTest.suite());
+		suite.addTest(PortedScannerTests.suite());
+		suite.addTest(PreprocessorTests.suite());
 		return suite;
 	}	
 }

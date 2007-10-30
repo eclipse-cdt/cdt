@@ -70,7 +70,7 @@ public final class ScannerContextPPDirective extends ScannerContext {
 	private Token convertToken(Token t) {
 		switch (t.getType()) {
 		case Lexer.tNEWLINE:
-			t= new SimpleToken(Lexer.tEND_OF_INPUT, t.getEndOffset(), t.getEndOffset());
+			t= new SimpleToken(Lexer.tEND_OF_INPUT, null, t.getEndOffset(), t.getEndOffset());
 			break;
 		case IToken.tIDENTIFIER:
 			if (fConvertDefinedToken && CharArrayUtils.equals(Keywords.cDEFINED, t.getCharImage())) {

@@ -55,7 +55,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	public static final int tDEFINED= IToken.FIRST_RESERVED_PREPROCESSOR;
 	public static final int tEXPANDED_IDENTIFIER= IToken.FIRST_RESERVED_PREPROCESSOR+1;
 	public static final int tSCOPE_MARKER= IToken.FIRST_RESERVED_PREPROCESSOR+2;
-	public static final int tMACRO_PARAMETER= IToken.FIRST_RESERVED_PREPROCESSOR+3;
+	public static final int tSPACE= IToken.FIRST_RESERVED_PREPROCESSOR+3;
+	public static final int tMACRO_PARAMETER= IToken.FIRST_RESERVED_PREPROCESSOR+4;
+	public static final int tEMPTY_TOKEN = IToken.FIRST_RESERVED_PREPROCESSOR+5;
 
     
 
@@ -105,7 +107,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
             StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
             buffer.append(getCurrentFilename());
             buffer.append('\"');
-            return new ImageToken(IToken.tSTRING, 0, 0, buffer.toString().toCharArray());
+            return new ImageToken(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
         }
     };
     final private DynamicStyleMacro __DATE__= new DynamicStyleMacro("__DATE__".toCharArray()) { //$NON-NLS-1$
@@ -124,7 +126,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
             buffer.append(" "); //$NON-NLS-1$
             buffer.append(cal.get(Calendar.YEAR));
             buffer.append("\""); //$NON-NLS-1$
-            return new ImageToken(IToken.tSTRING, 0, 0, buffer.toString().toCharArray());
+            return new ImageToken(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
         }
     };
 
@@ -144,14 +146,14 @@ public class CPreprocessor implements ILexerLog, IScanner {
             buffer.append(":"); //$NON-NLS-1$
             append(buffer, cal.get(Calendar.SECOND));
             buffer.append("\""); //$NON-NLS-1$
-            return new ImageToken(IToken.tSTRING, 0, 0, buffer.toString().toCharArray());
+            return new ImageToken(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
         }
     };
 
     final private DynamicStyleMacro __LINE__ = new DynamicStyleMacro("__LINE__".toCharArray()) { //$NON-NLS-1$
         public Token execute() {
             int lineNumber= fLocationMap.getCurrentLineNumber(fCurrentContext.currentLexerToken().getOffset());
-            return new ImageToken(IToken.tINTEGER, 0, 0, Long.toString(lineNumber).toCharArray());
+            return new ImageToken(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
         }
     };
 
@@ -216,7 +218,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
         final String filePath= new String(reader.filename);
         fAllIncludedFiles.add(filePath);
         ILocationCtx ctx= fLocationMap.pushTranslationUnit(filePath, reader.buffer);	
-        fRootLexer= new Lexer(reader.buffer, (LexerOptions) fLexOptions.clone(), this);
+        fRootLexer= new Lexer(reader.buffer, (LexerOptions) fLexOptions.clone(), this, this);
         fRootContext= fCurrentContext= new ScannerContextFile(ctx, null, fRootLexer);
         if (info instanceof IExtendedScannerInfo) {
         	final IExtendedScannerInfo einfo= (IExtendedScannerInfo) info;
@@ -319,13 +321,13 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	if (preIncludedFiles != null && preIncludedFiles.length > 0) {
     		final char[] buffer= createSyntheticFile(preIncludedFiles);
     		ILocationCtx ctx= fLocationMap.pushPreInclusion(buffer, 0, false);
-    		fCurrentContext= new ScannerContextFile(ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this));
+    		fCurrentContext= new ScannerContextFile(ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this, this));
     	}
     	
     	if (macroFiles != null && macroFiles.length > 0) {
     		final char[] buffer= createSyntheticFile(macroFiles);
     		ILocationCtx ctx= fLocationMap.pushPreInclusion(buffer, 0, true);
-    		fCurrentContext= new ScannerContextMacroFile(this, ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this));
+    		fCurrentContext= new ScannerContextMacroFile(this, ctx, fCurrentContext, new Lexer(buffer, fLexOptions, this, this));
     	}
     }
 
@@ -363,7 +365,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 //	}
 
     public PreprocessorMacro addMacroDefinition(char[] key, char[] value) {
-     	final Lexer lex= new Lexer(key, fLexOptions, LEXERLOG_NULL);
+     	final Lexer lex= new Lexer(key, fLexOptions, LEXERLOG_NULL, null);
     	try {
     		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(lex, LEXERLOG_NULL, value);
     		fLocationMap.registerPredefinedMacro(result);
@@ -381,7 +383,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     }
 
     public Map getDefinitions() {
-        CharArrayObjectMap objMap = getRealDefinitions();
+        final CharArrayObjectMap objMap= fMacroDictionary;
         int size = objMap.size();
         Map hashMap = new HashMap(size);
         for (int i = 0; i < size; i++) {
@@ -389,10 +391,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
         }
 
         return hashMap;
-    }
-
-    public CharArrayObjectMap getRealDefinitions() {
-        return fMacroDictionary;
     }
 
     public String[] getIncludePaths() {
@@ -434,7 +432,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		if (fContentAssistLimit < 0) {
     			throw new EndOfFileException();
     		}
-			t1= new SimpleToken(IToken.tEOC, fContentAssistLimit, fContentAssistLimit);
+			t1= new SimpleToken(IToken.tEOC, null, fContentAssistLimit, fContentAssistLimit);
     		break;
     	case IToken.tSTRING:
     	case IToken.tLSTRING:
@@ -472,7 +470,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     			image[++off]= '"';
     			buf.getChars(0, buf.length(), image, ++off);
     			image[image.length-1]= '"';
-    			t1= new ImageToken((isWide ? IToken.tLSTRING : IToken.tSTRING), t1.getOffset(), endOffset, image);
+    			t1= new ImageToken((isWide ? IToken.tLSTRING : IToken.tSTRING), null, t1.getOffset(), endOffset, image);
     		}
     	}
 
@@ -1003,7 +1001,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 					reported= true;
 					fAllIncludedFiles.add(path);
 					ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffset, nameEndOffset, endOffset, reader.buffer, path, headerName, userInclude);
-					ScannerContextFile fctx= new ScannerContextFile(ctx, fCurrentContext, new Lexer(reader.buffer, fLexOptions, this));
+					ScannerContextFile fctx= new ScannerContextFile(ctx, fCurrentContext, new Lexer(reader.buffer, fLexOptions, this, this));
 					fCurrentContext= fctx;
 				}
 			}
@@ -1329,6 +1327,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	}
 
 	// stuff to be removed
+    public CharArrayObjectMap getRealDefinitions() {
+    	throw new UnsupportedOperationException();
+    }
     public void addDefinition(IMacro macro) {
     	addMacroDefinition(macro.getSignature(), macro.getExpansion());
     }

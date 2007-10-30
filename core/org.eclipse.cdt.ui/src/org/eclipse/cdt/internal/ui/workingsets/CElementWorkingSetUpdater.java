@@ -86,8 +86,12 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 			return fElements.indexOf(element);
 		}
 		public void set(int index, Object element) {
-			fElements.set(index, element);
-			fChanged= true;
+			if (element == null) {
+				remove(index);
+			} else {
+				fElements.set(index, element);
+				fChanged= true;
+			}
 		}
 		public void remove(int index) {
 			if (fElements.remove(index) != null) {
@@ -283,6 +287,9 @@ public class CElementWorkingSetUpdater implements IWorkingSetUpdater, IElementCh
 					IProject project= resource.getProject();
 					remove= (project != null ? project.isOpen() : true) && !resource.exists();
 				}
+			} else if (element == null) {
+				// should not happen anyway, but who knows?
+				remove= true;
 			}
 			if (remove) {
 				iter.remove();

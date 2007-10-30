@@ -210,30 +210,66 @@ final public class Lexer {
 	 * @throws OffsetLimitReachedException when completion is requested in a literal or an header-name.
 	 */
 	public Token nextDirective() throws OffsetLimitReachedException {
-		Token t= fToken;
+		final Token t= fToken;
 		boolean haveNL= t==null || t.getType() == tNEWLINE;
-		loop: while(true) {
-			t= fetchToken();
-			if (haveNL) {
-				switch(t.getType()) {
-				case tEND_OF_INPUT:
-				case IToken.tPOUND:
-					break loop;
+		while(true) {
+			final boolean hadNL= haveNL;
+			haveNL= false;
+			final int start= fOffset;
+			final int c= fCharPhase3;
+			final int d= nextCharPhase3();
+			switch(c) {
+			case END_OF_INPUT:
+				fToken= newToken(Lexer.tEND_OF_INPUT, start);
+				return fToken;
+			case '\n':
+				haveNL= true;
+				fInsideIncludeDirective= false;
+				continue;
+			case ' ':
+			case '\t':
+			case 0xb:  // vertical tab
+			case '\f': 
+			case '\r':
+				haveNL= hadNL;
+				continue;
+				
+			case '"':
+				stringLiteral(start, false);
+				continue;
+
+			case '\'':
+				charLiteral(start, false);
+				continue;
+
+			case '/':
+				switch (d) {
+				case '/':
+					nextCharPhase3();
+					lineComment(start);
+					continue; 
+				case '*':
+					nextCharPhase3();
+					blockComment(start);
+					continue;
 				}
-				haveNL= false;
-			}
-			else {
-				switch(t.getType()) {
-				case tEND_OF_INPUT:
-					break loop;
-				case tNEWLINE:
-					haveNL= true;
-					break;
+				continue;
+
+			case '#':
+				if (d == '#') {
+					nextCharPhase3();
+					continue;
 				}
+				if (hadNL) {
+					fToken= newToken(IToken.tPOUND, start);
+					return fToken;
+				}
+				continue;
+
+			default:
+				continue;
 			}
-		} 
-		fToken= t;
-		return t;
+		}
 	}
 	
 	/**

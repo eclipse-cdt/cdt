@@ -7,139 +7,120 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-package org.eclipse.cdt.core.parser.tests.scanner2;
+package org.eclipse.cdt.core.parser.tests.scanner;
 
-import java.util.Collections;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
+import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryError;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 
-// A test that just calculates the speed of the parser
-// Eventually, we'll peg a max time and fail the test if it exceeds it
-public class SpeedTest2 extends TestCase {
+public class PreprocessorSpeedTest  {
+	
+	private PrintStream stream;
 
 	public static void main(String[] args) {
 		try {
-			new SpeedTest2().runTest(1);
+			PrintStream stream = null;
+			if (args.length > 0)
+				stream = new PrintStream(new FileOutputStream(args[0]));
+
+			new PreprocessorSpeedTest().runTest(stream, 30);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 	}
 
 	public void test() throws Exception {
-		runTest(20);
+		runTest(10);
+	}
+
+	public void runTest(PrintStream stream, int n) throws Exception {
+		this.stream = stream;
+		runTest(n);
 	}
 	
 	private void runTest(int n) throws Exception {
-		String code =
+		String code = 
 			"#include <windows.h>\n" +
 			"#include <stdio.h>\n" +
 			"#include <iostream>\n";
 		
 		CodeReader reader = new CodeReader(code.toCharArray());
-		IScannerInfo info = getScannerInfo(false);
+		IScannerInfo info = msvcScannerInfo();
 		long totalTime = 0;
 		for (int i = 0; i < n; ++i) {
-			long time = testParse(reader, false, info, ParserLanguage.CPP);
-			if (i > 4)
+			long time = testScan(reader, false, info, ParserLanguage.CPP);
+			if (i > 0)
 				totalTime += time;
 		}
 		
-		if (n > 5) {
-			System.out.println("Average Time: " + (totalTime / (n - 5)) + " millisecs");
+		if (n > 1) {
+			System.out.println("Average Time: " + (totalTime / (n - 1)) + " millisecs");
 		}
 	}
 
-	/**
-	 * @param path
-	 * @param quick TODO
-	 */
-	protected long testParse(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
-		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
-		IScanner scanner = createScanner(reader, info, mode, lang, CALLBACK, null, Collections.EMPTY_LIST ); 
-		IParser parser = ParserFactory.createParser( scanner, CALLBACK, mode, lang, null);
+	protected long testScan(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
+		ICodeReaderFactory readerFactory= FileCodeReaderFactory.getInstance();
+		IScannerExtensionConfiguration scannerConfig;
+	    if (lang == ParserLanguage.C) {
+	    	scannerConfig= new GCCScannerExtensionConfiguration();
+	    }
+	    else {
+	    	scannerConfig= new GPPScannerExtensionConfiguration();
+	    }
+		ParserMode mode = ParserMode.COMPLETE_PARSE;
+		CPreprocessor cpp= new CPreprocessor(reader, info, lang, new NullLogService(), scannerConfig, readerFactory);
+		cpp.getLocationMap().setRootNode(new CPPASTTranslationUnit());
 		long startTime = System.currentTimeMillis();
-		long totalTime;
-		parser.parse();
-		totalTime = System.currentTimeMillis() - startTime;
-		System.out.println( "Resulting parse took " + totalTime + " millisecs " +
-				scanner.getCount() + " tokens");
+		int count = 0;
+		try {
+			while (true) {
+					IToken t = cpp.nextToken();
+					
+					if (stream != null)
+						stream.println(t.getImage());
+					
+					if (t == null)
+						break;
+					++count;
+				
+			}
+		} catch (EndOfFileException e2) {
+		}
+		long totalTime = System.currentTimeMillis() - startTime;
+		System.out.println( "Resulting scan took " + totalTime + " millisecs " +
+				count + " tokens");
 		return totalTime;
 	}
-
-    public static DOMScanner createScanner( CodeReader code, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError
-    {
-    	if( config == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_CONFIG );
-    	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
-    	IParserLogService logService = ( log == null ) ? ParserFactory.createDefaultLogService() : log;
-		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
-		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		IScannerExtensionConfiguration configuration  = null;
-		if( language == ParserLanguage.C )
-		    configuration = new GCCScannerExtensionConfiguration();
-		else
-		    configuration = new GPPScannerExtensionConfiguration();
-		return new DOMScanner( code, config, ourMode, language, logService, configuration, FileCodeReaderFactory.getInstance() );
-    }
-
-	private static final ISourceElementRequestor CALLBACK = new NullSourceElementRequestor();
-
-	protected IScannerInfo getScannerInfo(boolean quick) {
-		if (quick)
-			return new ScannerInfo();
-		
-		String config = System.getProperty("speedTest.config"); 
-
-		if (config == null)
-			return mingwScannerInfo(false);
-
-		if (config.equals("msvc"))
-			return msvcScannerInfo(false);
-		else if (config.equals("ydl"))
-			return ydlScannerInfo(false);
-		else
-			return mingwScannerInfo(false);
-	}
 	
-	protected IScannerInfo msvcScannerInfo(boolean quick) {
-		if( quick )
-			return new ScannerInfo();
+	protected IScannerInfo msvcScannerInfo() {
 		Map definitions = new Hashtable();
-		//definitions.put( "__GNUC__", "3" );  //$NON-NLS-1$ //$NON-NLS-2$
-
 		String [] includePaths = new String[] {
 			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include"
-//			"C:\\Program Files\\Microsoft Platform SDK\\Include",
-//			"C:\\Program Files\\Microsoft Visual C++ Toolkit 2003\\include"
 		};
 		return new ScannerInfo( definitions, includePaths );
 	}
-
-	private IScannerInfo mingwScannerInfo(boolean quick) {
+	
+	protected IScannerInfo mingwScannerInfo() {
 		// TODO It would be easier and more flexible if we used discovery for this
-		if( quick )
-			return new ScannerInfo();
 		Map definitions = new Hashtable();
 		definitions.put("__GNUC__", "3");
 		definitions.put("__GNUC_MINOR__", "2");
@@ -182,10 +163,8 @@ public class SpeedTest2 extends TestCase {
 		return new ScannerInfo( definitions, includePaths );
 	}
 
-	private IScannerInfo ydlScannerInfo(boolean quick) {
+	protected IScannerInfo ydlScannerInfo() {
 		// TODO It would be easier and more flexible if we used discovery for this
-		if( quick )
-			return new ScannerInfo();
 		Map definitions = new Hashtable();
 		definitions.put("__GNUC__", "3");
 		definitions.put("__GNUC_MINOR__", "3");

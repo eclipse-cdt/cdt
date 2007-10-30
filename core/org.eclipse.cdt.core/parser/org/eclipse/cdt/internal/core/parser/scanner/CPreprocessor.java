@@ -197,7 +197,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
             IScannerExtensionConfiguration configuration, ICodeReaderFactory readerFactory) {
         fLanguage= language;
         fLog = log;
-        fCheckNumbers= true; // mstodo room for optimization.
+        fCheckNumbers= true; 
         fAdditionalNumericLiteralSuffixes= nonNull(configuration.supportAdditionalNumericLiteralSuffixes());
         fLexOptions.fSupportDollarInitializers= configuration.support$InIdentifiers();
         fLexOptions.fSupportMinAndMax = configuration.supportMinAndMaxOperators();

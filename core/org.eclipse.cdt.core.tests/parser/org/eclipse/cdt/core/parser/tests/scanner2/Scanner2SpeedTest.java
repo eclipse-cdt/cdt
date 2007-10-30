@@ -16,7 +16,6 @@
  */
 package org.eclipse.cdt.core.parser.tests.scanner2;
 
-import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 
@@ -28,7 +27,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
+import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 
 /**
  * @author Doug Schaefer
@@ -44,10 +43,10 @@ public class Scanner2SpeedTest extends SpeedTest2 {
 	public static void main(String[] args) {
 		try {
 			PrintStream stream = null;
-			if (args.length > 0)
-				stream = new PrintStream(new FileOutputStream(args[0]));
+//			if (args.length > 0)
+//				stream = new PrintStream(new FileOutputStream("c:/tmp/dom.txt"));
 
-			new Scanner2SpeedTest().runTest(stream, 1);
+			new Scanner2SpeedTest().runTest(stream, 30);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -69,7 +68,7 @@ public class Scanner2SpeedTest extends SpeedTest2 {
 			"#include <iostream>\n";
 		
 		CodeReader reader = new CodeReader(code.toCharArray());
-		IScannerInfo info = getScannerInfo(false);
+		IScannerInfo info = msvcScannerInfo(false);
 		long totalTime = 0;
 		for (int i = 0; i < n; ++i) {
 			long time = testScan(reader, false, info, ParserLanguage.CPP);
@@ -88,7 +87,7 @@ public class Scanner2SpeedTest extends SpeedTest2 {
 	 */
 	protected long testScan(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
-		Scanner2 scanner = createScanner(reader, info, mode, lang, CALLBACK, null, Collections.EMPTY_LIST ); 
+		DOMScanner scanner = createScanner(reader, info, mode, lang, CALLBACK, null, Collections.EMPTY_LIST ); 
 		long startTime = System.currentTimeMillis();
 		int count = 0;
 		try {

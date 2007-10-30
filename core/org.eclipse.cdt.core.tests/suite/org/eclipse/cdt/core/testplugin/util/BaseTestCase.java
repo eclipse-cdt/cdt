@@ -8,10 +8,12 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    IBM Corporation
  *******************************************************************************/ 
 
 package org.eclipse.cdt.core.testplugin.util;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -208,6 +210,25 @@ public class BaseTestCase extends TestCase {
     public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
     	fExpectedLoggedNonOK= count;
     }
+    
+    public void deleteTestDataDir () {
+    	deleteDir(new File(System.getProperty("java.io.tmpdir") + File.separator + "__testData").getCanonicalFile());
+    }
+    
+    /**
+     * Recursively delete a directory
+     * @param dir
+     */
+    public void deleteDir(File dir) {
+		if (dir.isDirectory()) {
+			File[] children = dir.listFiles();
+			for (int i = 0; i < children.length; i ++) {
+				deleteDir(children[i]);
+			}
+		}
+		
+		dir.delete();
+	}
     
     /**
      * Some test steps need synchronizing against a CModel event. This class

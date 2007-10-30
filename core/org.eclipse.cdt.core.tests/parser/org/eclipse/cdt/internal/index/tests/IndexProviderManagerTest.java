@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -96,6 +97,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 	protected void tearDown() throws Exception {
 		IndexProviderManager ipm= ((PDOMManager)CCorePlugin.getIndexManager()).getIndexProviderManager();
 		ipm.reset(); ipm.startup();
+		deleteTestDataDir();
 	}
 	
 	public void testProvider_SimpleLifeCycle_200958() throws Exception {

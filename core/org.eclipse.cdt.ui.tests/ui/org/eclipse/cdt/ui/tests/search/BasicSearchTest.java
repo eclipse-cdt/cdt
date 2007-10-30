@@ -8,6 +8,7 @@
  * Contributors:
  *    Andrew Ferguson (Symbian) - Initial implementation
  *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
@@ -76,6 +77,7 @@ public class BasicSearchTest extends BaseUITestCase {
 		if(fCProject != null) {
 			fCProject.getProject().delete(true, NPM);
 		}
+		deleteTestDataDir();
 		super.tearDown();
 	}
 

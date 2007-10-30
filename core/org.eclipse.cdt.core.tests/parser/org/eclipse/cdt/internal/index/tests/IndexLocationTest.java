@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Andrew Ferguson (Symbian) - Initial implementation
+ * IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -69,6 +70,7 @@ public class IndexLocationTest extends BaseTestCase {
 				ptd.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 			}			
 		}
+		deleteTestDataDir();
 		super.tearDown();
 	}
 

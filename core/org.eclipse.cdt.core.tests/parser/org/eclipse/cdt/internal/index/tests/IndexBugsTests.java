@@ -8,6 +8,7 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *    Andrew Ferguson (Symbian)
+ *    IBM Corporation
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.index.tests;
@@ -88,6 +89,7 @@ public class IndexBugsTests extends BaseTestCase {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
+		deleteTestDataDir();
 		super.tearDown();
 	}
 	

@@ -1154,7 +1154,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			IRegion aligned = alignRegion(branch, ctx, branch.fInclusive);
 			if (aligned != null) {
 				Position alignedPos= new Position(aligned.getOffset(), aligned.getLength());
-				ctx.addProjectionRange(new CProjectionAnnotation(!branch.taken() && ctx.collapseInactiveCode(), computeKey(branch, ctx), false), alignedPos);
+				final boolean collapse= !branch.taken() && ctx.collapseInactiveCode() && !alignedPos.includes(fCursorPosition);
+				ctx.addProjectionRange(new CProjectionAnnotation(collapse, computeKey(branch, ctx), false), alignedPos);
 			}
 		}
 	}

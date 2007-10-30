@@ -13,7 +13,8 @@
  * Contributors:
  * Michael Scharf (Wind River) - extracted from TerminalControl 
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
- * Martin Oberhuber (Wind River) - [206892] Dont connect if already connecting
+ * Martin Oberhuber (Wind River) - [206892] Don't connect if already connecting
+ * Martin Oberhuber (Wind River) - [208029] COM port not released after quick disconnect/reconnect
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.serial;
 
@@ -42,7 +43,9 @@ public class SerialConnector implements ITerminalConnector {
     private CommPortIdentifier fSerialPortIdentifier;
 	private SerialPortHandler fTerminalSerialPortHandler;
 	private SerialSettings fSettings;
-	private SerialConnectWorker fConnectWorker;
+	private SerialConnectWorker fConnectWorker = null;
+	private volatile boolean fDisconnectGoingOn = false;
+	
 	public SerialConnector() {
 	}
 	public SerialConnector(SerialSettings settings) {
@@ -58,16 +61,37 @@ public class SerialConnector implements ITerminalConnector {
 	}
 	public void connect(ITerminalControl control) {
 		Logger.log("entered."); //$NON-NLS-1$
-		if (fConnectWorker!=null && fConnectWorker.isAlive()) {
-			//already connecting
-			return;
+		synchronized(this) {
+			if (fConnectWorker!=null || fDisconnectGoingOn) {
+				//avoid multiple background connect/disconnect threads at the same time		
+				return;
+			}
+			fConnectWorker = new SerialConnectWorker(this, control);
 		}
-		fConnectWorker = new SerialConnectWorker(this, control);
 		fControl=control;
+		fControl.setState(TerminalState.CONNECTING);
 		fConnectWorker.start();
+	}
+	/**
+	 * Indicate that the connectWorker is finished. 
+	 */
+	void doneConnect() {
+		synchronized(this) {
+			fConnectWorker = null;
+		}
 	}
 	public void disconnect() {
 		Logger.log("entered."); //$NON-NLS-1$
+		synchronized(this) {
+			//avoid multiple background connect/disconnect threads at the same time		
+			if (fConnectWorker!=null) {
+				fConnectWorker.interrupt();
+				return;
+			} else if (fDisconnectGoingOn) {
+				return;
+			}
+			fDisconnectGoingOn = true;
+		}
 	
 		// Fix for SPR 112422.  When output is being received from the serial port, the
 		// below call to removePortOwnershipListener() attempts to lock the serial port
@@ -85,37 +109,53 @@ public class SerialConnector implements ITerminalConnector {
 		new Thread("Terminal View Serial Port Disconnect Worker") //$NON-NLS-1$
 		{
 			public void run() {
-	
-				if (getSerialPortIdentifier() != null) {
-					getSerialPortIdentifier()
-							.removePortOwnershipListener(getSerialPortHandler());
-				}
-	
-				if (getSerialPort() != null) {
-					getSerialPort().removeEventListener();
-					Logger.log("Calling close() on serial port ..."); //$NON-NLS-1$
-					getSerialPort().close();
-				}
-	
-				if (getInputStream() != null) {
-					try {
-						getInputStream().close();
-					} catch (Exception exception) {
-						Logger.logException(exception);
+				try {
+					if (getSerialPortIdentifier() != null) {
+						try {
+							getSerialPortIdentifier()
+								.removePortOwnershipListener(getSerialPortHandler());
+						} catch(Exception e) {
+							Logger.logException(e);
+						}
 					}
-				}
-	
-				if (getOutputStream() != null) {
-					try {
-						getOutputStream().close();
-					} catch (Exception exception) {
-						Logger.logException(exception);
+		
+					if (getSerialPort() != null) {
+						//Event listener is removed as part of close(), 
+						//but exceptions need to be caught to ensure that close() really succeeds
+						try {
+							getSerialPort().removeEventListener();
+							Thread.sleep(50); //allow a little time for RXTX Native to catch up - makes stuff more stable
+						} catch(Exception e) {
+							Logger.logException(e);
+						}
+						Logger.log("Calling close() on serial port ..."); //$NON-NLS-1$
+						getSerialPort().close();
 					}
+			
+					if (getInputStream() != null) {
+						try {
+							getInputStream().close();
+						} catch (Exception exception) {
+							Logger.logException(exception);
+						}
+					}
+			
+					if (getOutputStream() != null) {
+						try {
+							getOutputStream().close();
+						} catch (Exception exception) {
+							Logger.logException(exception);
+						}
+					}
+			
+					setSerialPortIdentifier(null);
+					cleanSerialPort();
+					setSerialPortHandler(null);
+				} catch(Exception e) {
+					Logger.logException(e);
+				} finally {
+					fDisconnectGoingOn = false;
 				}
-	
-				setSerialPortIdentifier(null);
-				cleanSerialPort();
-				setSerialPortHandler(null);
 			}
 
 		}.start();
@@ -165,6 +205,7 @@ public class SerialConnector implements ITerminalConnector {
 		return fSerialPortIdentifier;
 	}
 	protected void setSerialPortIdentifier(CommPortIdentifier serialPortIdentifier) {
+		//System.out.println("setSerialPortId: "+Thread.currentThread().getName()+ " - "+serialPortIdentifier + " - "+System.currentTimeMillis());
 		fSerialPortIdentifier = serialPortIdentifier;
 	}
 	void setSerialPortHandler(SerialPortHandler serialPortHandler) {
@@ -175,6 +216,7 @@ public class SerialConnector implements ITerminalConnector {
 	}
 	public ISerialSettings getSerialSettings() {
 		return fSettings;
+		
 	}
 	public ISettingsPage makeSettingsPage() {
 		return new SerialSettingsPage(fSettings);

@@ -64,7 +64,7 @@ public class PreprocessorSpeedTest  {
 			"#include <iostream>\n";
 		
 		CodeReader reader = new CodeReader(code.toCharArray());
-		IScannerInfo info = msvcScannerInfo();
+		IScannerInfo info = getScannerInfo();
 		long totalTime = 0;
 		for (int i = 0; i < n; ++i) {
 			long time = testScan(reader, false, info, ParserLanguage.CPP);
@@ -111,7 +111,34 @@ public class PreprocessorSpeedTest  {
 		return totalTime;
 	}
 	
-	protected IScannerInfo msvcScannerInfo() {
+	protected IScannerInfo getScannerInfo() {
+		String config = System.getProperty("speedTest.config"); 
+
+		if (config == null)
+			return mingwScannerInfo();
+
+		if (config.equals("msvc"))
+			return msvcScannerInfo();
+		else if (config.equals("msvc98"))
+			return msvc98ScannerInfo();
+		else if (config.equals("ydl"))
+			return ydlScannerInfo();
+		else
+			return mingwScannerInfo();
+	}
+
+	private IScannerInfo msvcScannerInfo() {
+		Map definitions = new Hashtable();
+		//definitions.put( "__GNUC__", "3" );  //$NON-NLS-1$ //$NON-NLS-2$
+
+		String [] includePaths = new String[] {
+			"C:\\Program Files\\Microsoft SDK\\Include",
+			"C:\\Program Files\\Microsoft Visual C++ Toolkit 2003\\include"
+		};
+		return new ScannerInfo( definitions, includePaths );
+	}
+
+	protected IScannerInfo msvc98ScannerInfo() {
 		Map definitions = new Hashtable();
 		String [] includePaths = new String[] {
 			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include"

@@ -116,6 +116,8 @@ public class SpeedTest2 extends TestCase {
 
 		if (config.equals("msvc"))
 			return msvcScannerInfo(false);
+		else if (config.equals("msvc98"))
+			return msvc98ScannerInfo(false);
 		else if (config.equals("ydl"))
 			return ydlScannerInfo(false);
 		else
@@ -133,6 +135,17 @@ public class SpeedTest2 extends TestCase {
 			"C:\\Program Files\\Microsoft Visual C++ Toolkit 2003\\include"
 			
 			// "C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include"
+		};
+		return new ScannerInfo( definitions, includePaths );
+	}
+
+	private IScannerInfo msvc98ScannerInfo(boolean quick) {
+		if( quick )
+			return new ScannerInfo();
+		Map definitions = new Hashtable();
+
+		String [] includePaths = new String[] {
+			"C:\\Program Files\\Microsoft Visual Studio\\VC98\\Include"
 		};
 		return new ScannerInfo( definitions, includePaths );
 	}

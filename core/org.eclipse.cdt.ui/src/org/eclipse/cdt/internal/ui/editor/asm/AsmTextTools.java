@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,9 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import org.eclipse.cdt.core.model.AssemblyLanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
+
 
 import org.eclipse.cdt.internal.ui.text.CCommentScanner;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
@@ -80,8 +82,8 @@ public class AsmTextTools {
 		}
         
 		fColorManager= new CColorManager();
-		fCodeScanner= new AsmCodeScanner(fColorManager, store);
-		fPreprocessorScanner= new AsmPreprocessorScanner(fColorManager, store);
+		fCodeScanner= new AsmCodeScanner(fColorManager, store, AssemblyLanguage.getDefault());
+		fPreprocessorScanner= new AsmPreprocessorScanner(fColorManager, store, AssemblyLanguage.getDefault());
 
         fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
         fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,29 +8,25 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.internal.ui.editor.asm;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 
-import org.eclipse.cdt.core.parser.KeywordSetKey;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.model.IAsmLanguage;
 
 import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
 import org.eclipse.cdt.internal.ui.text.CHeaderRule;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.PreprocessorRule;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
 import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 
@@ -42,23 +38,27 @@ import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 public class AsmPreprocessorScanner extends AbstractCScanner {
 
     /** Properties for tokens. */
-	private static String[] fgTokenProperties= {
+	private static final String[] fgTokenProperties= {
 		ICColorConstants.C_SINGLE_LINE_COMMENT,
-		ICColorConstants.C_MULTI_LINE_COMMENT,
 		ICColorConstants.PP_DIRECTIVE,
 		ICColorConstants.C_STRING,
         ICColorConstants.PP_HEADER,
 		ICColorConstants.PP_DEFAULT,
 	};
 
+	private IAsmLanguage fAsmLanguage;
+
 	/**
 	 * Create a preprocessor directive scanner.
 	 * 
 	 * @param colorManager
 	 * @param store
+	 * @param asmLanguage
 	 */
-	public AsmPreprocessorScanner(CColorManager colorManager, IPreferenceStore store) {
+	public AsmPreprocessorScanner(IColorManager colorManager, IPreferenceStore store, IAsmLanguage asmLanguage) {
 		super(colorManager, store);
+		Assert.isNotNull(asmLanguage);
+		fAsmLanguage= asmLanguage;
 		initialize();
 	}
 
@@ -76,11 +76,10 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
 		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
 		
 		token= getToken(ICColorConstants.PP_DIRECTIVE);
-		PreprocessorRule preprocessorRule = new PreprocessorRule(new CWordDetector(), defaultToken, getToken(ICColorConstants.C_SINGLE_LINE_COMMENT));
-		Iterator iter;
-		iter = ParserFactory.getKeywordSet( KeywordSetKey.PP_DIRECTIVE, ParserLanguage.C ).iterator();
-		while( iter.hasNext() ) {
-			String ppKeyword= (String) iter.next();
+		PreprocessorRule preprocessorRule= new PreprocessorRule(new CWordDetector(), defaultToken, getToken(ICColorConstants.C_SINGLE_LINE_COMMENT));
+		String[] ppKeywords= fAsmLanguage.getPreprocessorKeywords();
+		for (int i= 0; i < ppKeywords.length; i++) {
+			String ppKeyword= ppKeywords[i];
 			if (ppKeyword.length() > 1) {
 				preprocessorRule.addWord(ppKeyword, token);
 			}
@@ -94,14 +93,12 @@ public class AsmPreprocessorScanner extends AbstractCScanner {
         rules.add(headerRule);
 
         token = getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
-        IRule lineCommentRule = new EndOfLineRule("//", token, '\\', true); //$NON-NLS-1$
-        rules.add(lineCommentRule);
-        lineCommentRule = new EndOfLineRule("#", token); //$NON-NLS-1$
+        IRule lineCommentRule= new EndOfLineRule("#", token); //$NON-NLS-1$
         rules.add(lineCommentRule);
 
-        token = getToken(ICColorConstants.C_MULTI_LINE_COMMENT);
-        IRule blockCommentRule = new MultiLineRule("/*", "*/", token, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
-        rules.add(blockCommentRule);
+//        token = getToken(ICColorConstants.C_MULTI_LINE_COMMENT);
+//        IRule blockCommentRule = new MultiLineRule("/*", "*/", token, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+//        rules.add(blockCommentRule);
         
         setDefaultReturnToken(defaultToken);
 		return rules;

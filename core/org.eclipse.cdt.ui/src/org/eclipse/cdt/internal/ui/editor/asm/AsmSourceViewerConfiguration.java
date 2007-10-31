@@ -12,7 +12,11 @@
 package org.eclipse.cdt.internal.ui.editor.asm;
 
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -22,36 +26,106 @@ import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.AssemblyLanguage;
+import org.eclipse.cdt.core.model.IAsmLanguage;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ILanguageUI;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
+import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
+import org.eclipse.cdt.internal.ui.text.CCommentScanner;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.internal.ui.text.PartitionDamager;
+import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 
 
 public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
-	private AsmTextTools fAsmTextTools;
 	private ITextEditor fTextEditor;
+	/**
+	 * The code scanner.
+	 */
+	private AbstractCScanner fCodeScanner;
+	/**
+	 * The C multi-line comment scanner.
+	 */
+	private AbstractCScanner fMultilineCommentScanner;
+	/**
+	 * The C single-line comment scanner.
+	 */
+	private AbstractCScanner fSinglelineCommentScanner;
+	/**
+	 * The C string scanner.
+	 */
+	private AbstractCScanner fStringScanner;
+	/**
+	 * The preprocessor scanner.
+	 */
+	private AbstractCScanner fPreprocessorScanner;
+	/**
+	 * The color manager.
+	 */
+	private IColorManager fColorManager;
+	/**
+	 * The document partitioning.
+	 */
+	private String fDocumentPartitioning;
 	
 	/**
-	 * Constructor for AsmSourceViewerConfiguration
+	 * Creates a new assembly source viewer configuration for viewers in the given editor
+	 * using the given preference store, the color manager and the specified document partitioning.
+	 *
+	 * @param colorManager the color manager
+	 * @param preferenceStore the preference store, can be read-only
+	 * @param editor the editor in which the configured viewer(s) will reside, or <code>null</code> if none
+	 * @param partitioning the document partitioning for this configuration, or <code>null</code> for the default partitioning
 	 */
-	public AsmSourceViewerConfiguration(AsmTextTools tools, IPreferenceStore store) {
-		super(store);
-		fTextEditor= null;
-		fAsmTextTools = tools;
+	public AsmSourceViewerConfiguration(IColorManager colorManager, IPreferenceStore preferenceStore, ITextEditor editor, String partitioning) {
+		super(preferenceStore);
+		fColorManager= colorManager;
+		fTextEditor= editor;
+		fDocumentPartitioning= partitioning;
+		initializeScanners();
 	}
 
 	/**
-	 * Constructor for AsmSourceViewerConfiguration
+	 * Constructor for AsmSourceViewerConfiguration.
+	 * @deprecated
+	 */
+	public AsmSourceViewerConfiguration(AsmTextTools tools, IPreferenceStore store) {
+		this(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING);
+	}
+
+	/**
+	 * Constructor for AsmSourceViewerConfiguration.
+	 * @deprecated
 	 */
 	public AsmSourceViewerConfiguration(ITextEditor editor, IPreferenceStore store) {
-		super(store);
-		fTextEditor= editor;
-		fAsmTextTools= CUIPlugin.getDefault().getAsmTextTools();
+		this(CUIPlugin.getDefault().getAsmTextTools().getColorManager(), store, editor, ICPartitions.C_PARTITIONING);
+	}
+
+	/**
+	 * Initializes the scanners.
+	 */
+	private void initializeScanners() {
+		fMultilineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
+		fStringScanner= new SingleTokenCScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_STRING);
 	}
 
 	/**
@@ -60,7 +134,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @return the ASM multiline comment scanner
 	 */
 	protected RuleBasedScanner getMultilineCommentScanner() {
-		return fAsmTextTools.getMultilineCommentScanner();
+		return fMultilineCommentScanner;
 	}
 	
 	/**
@@ -69,7 +143,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @return the ASM singleline comment scanner
 	 */
 	protected RuleBasedScanner getSinglelineCommentScanner() {
-		return fAsmTextTools.getSinglelineCommentScanner();
+		return fSinglelineCommentScanner;
 	}
 	
 	/**
@@ -78,24 +152,63 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @return the ASM string scanner
 	 */
 	protected RuleBasedScanner getStringScanner() {
-		return fAsmTextTools.getStringScanner();
+		return fStringScanner;
 	}
 
 	/**
-	 * Returns the ASM preprocessor scanner for this configuration.
+	 * Returns the assembly preprocessor scanner for this configuration.
+	 * @param language
 	 *
-	 * @return the ASM preprocessor scanner
+	 * @return the assembly preprocessor scanner
 	 */
-	protected RuleBasedScanner getPreprocessorScanner() {
-		return fAsmTextTools.getPreprocessorScanner();
+	protected RuleBasedScanner getPreprocessorScanner(ILanguage language) {
+		if (fPreprocessorScanner != null) {
+			return fPreprocessorScanner;
+		}
+		AbstractCScanner scanner= null;
+		if (language instanceof IAsmLanguage) {
+			scanner= new AsmPreprocessorScanner(getColorManager(), fPreferenceStore, (IAsmLanguage)language);
+		}
+		if (scanner == null) {
+			scanner= new AsmPreprocessorScanner(getColorManager(), fPreferenceStore, AssemblyLanguage.getDefault());
+		}
+		fPreprocessorScanner= scanner;
+		return fPreprocessorScanner;
+	}
+
+	/**
+	 * @param language
+	 * @return the assembly code scanner for the given language
+	 */
+	protected RuleBasedScanner getCodeScanner(ILanguage language) {
+		if (fCodeScanner != null) {
+			return fCodeScanner;
+		}
+		RuleBasedScanner scanner= null;
+		if (language instanceof IAsmLanguage) {
+			IAsmLanguage asmLang= (IAsmLanguage)language;
+			scanner = new AsmCodeScanner(getColorManager(), fPreferenceStore, asmLang);
+		} else if (language != null) {
+			ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
+			if (languageUI != null)
+				scanner = languageUI.getCodeScanner();
+		}
+		if (scanner == null) {
+			scanner = new AsmCodeScanner(getColorManager(), fPreferenceStore, AssemblyLanguage.getDefault());
+		}
+		if (scanner instanceof AbstractCScanner) {
+			fCodeScanner= (AbstractCScanner)scanner;
+		}
+		return scanner;
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
-		// the ASM editor also uses the CDocumentPartitioner
-		return ICPartitions.C_PARTITIONING;
+		if (fDocumentPartitioning != null)
+			return fDocumentPartitioning;
+		return super.getConfiguredDocumentPartitioning(sourceViewer);
 	}
 
 	/*
@@ -105,7 +218,8 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 
 		PresentationReconciler reconciler= new PresentationReconciler();
 
-		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(fAsmTextTools.getCodeScanner());
+		ILanguage language= getLanguage();
+		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(getCodeScanner(language));
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
@@ -125,7 +239,7 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		reconciler.setDamager(dr, ICPartitions.C_CHARACTER);
 		reconciler.setRepairer(dr, ICPartitions.C_CHARACTER);
 
-		dr= new DefaultDamagerRepairer(getPreprocessorScanner());		
+		dr= new DefaultDamagerRepairer(getPreprocessorScanner(language));		
 		reconciler.setDamager(new PartitionDamager(), ICPartitions.C_PREPROCESSOR);
 		reconciler.setRepairer(dr, ICPartitions.C_PREPROCESSOR);
 
@@ -159,6 +273,106 @@ public class AsmSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		}
 		return super.getReconciler(sourceViewer);
 	}
+
+	/**
+	 * Determines whether the preference change encoded by the given event
+	 * changes the behavior of one of its contained components.
+	 *
+	 * @param event the event to be investigated
+	 * @return <code>true</code> if event causes a behavioral change
+	 */
+	public boolean affectsTextPresentation(PropertyChangeEvent event) {
+		if (fMultilineCommentScanner.affectsBehavior(event)
+				|| fSinglelineCommentScanner.affectsBehavior(event)
+				|| fStringScanner.affectsBehavior(event)) {
+				return true;
+			}
+		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event)) {
+			return true;
+		}
+		if (fPreprocessorScanner != null && fPreprocessorScanner.affectsBehavior(event)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Adapts the behavior of the contained components to the change
+	 * encoded in the given event.
+	 * <p>
+	 * Clients are not allowed to call this method if the old setup with
+	 * text tools is in use.
+	 * </p>
+	 *
+	 * @param event the event to which to adapt
+	 * @see CSourceViewerConfiguration#CSourceViewerConfiguration(IColorManager, IPreferenceStore, ITextEditor, String)
+	 */
+	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
+		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event))
+			fCodeScanner.adaptToPreferenceChange(event);
+		if (fMultilineCommentScanner.affectsBehavior(event))
+			fMultilineCommentScanner.adaptToPreferenceChange(event);
+		if (fSinglelineCommentScanner.affectsBehavior(event))
+			fSinglelineCommentScanner.adaptToPreferenceChange(event);
+		if (fStringScanner.affectsBehavior(event))
+			fStringScanner.adaptToPreferenceChange(event);
+		if (fPreprocessorScanner != null && fPreprocessorScanner.affectsBehavior(event))
+			fPreprocessorScanner.adaptToPreferenceChange(event);
+	}
+
+	/**
+	 * Returns the color manager for this configuration.
+	 *
+	 * @return the color manager
+	 */
+	protected IColorManager getColorManager() {
+		return fColorManager;
+	}
+
+	protected ILanguage getLanguage() {
+		if (fTextEditor == null) {
+			return AssemblyLanguage.getDefault();
+		}
+		ICElement element = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fTextEditor.getEditorInput());
+		if (element instanceof ITranslationUnit) {
+			try {
+				return ((ITranslationUnit)element).getLanguage();
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		} else {
+			// compute the language from the plain editor input
+			IContentType contentType = null;
+			IEditorInput input = fTextEditor.getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				contentType = CCorePlugin.getContentType(file.getProject(), file.getName());
+			} else if (input instanceof IPathEditorInput) {
+				IPath path = ((IPathEditorInput)input).getPath();
+				contentType = CCorePlugin.getContentType(path.lastSegment());
+			} else {
+				ILocationProvider locationProvider = (ILocationProvider)input.getAdapter(ILocationProvider.class);
+				if (locationProvider != null) {
+					IPath path = locationProvider.getPath(input);
+					contentType = CCorePlugin.getContentType(path.lastSegment());
+				}
+			}
+			if (contentType != null) {
+				return LanguageManager.getInstance().getLanguage(contentType);
+			}
+		}
+		// fallback
+		return AssemblyLanguage.getDefault();
+	}
+
+	/**
+	 * Reset cached language dependent scanners.
+	 */
+	public void resetScanners() {
+		fCodeScanner= null;
+		fPreprocessorScanner= null;
+	}
+
 }
 
 

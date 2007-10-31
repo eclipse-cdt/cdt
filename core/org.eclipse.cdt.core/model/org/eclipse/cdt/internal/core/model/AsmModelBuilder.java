@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.core.model.AssemblyLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -70,7 +71,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	 * 
 	 * @param lineSeparatorChar
 	 */
-	public void setLineSeparatorChar(char lineSeparatorChar) {
+	public void setLineSeparatorCharacter(char lineSeparatorChar) {
 		fLineSeparatorChar= lineSeparatorChar;
 	}
 

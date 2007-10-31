@@ -462,6 +462,72 @@ public class PreferenceConstants {
 	public final static String EDITOR_C_DEFAULT_ITALIC= ICColorConstants.C_DEFAULT + EDITOR_ITALIC_SUFFIX;
 
 	/**
+	 * A named preference that holds the color used to render assembly labels.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 5.0
+	 */
+	public final static String EDITOR_ASM_LABEL_COLOR= ICColorConstants.ASM_LABEL;
+
+	/**
+	 * A named preference that controls whether assembly labels are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String EDITOR_ASM_LABEL_BOLD= ICColorConstants.ASM_LABEL + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether assembly labels are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String EDITOR_ASM_LABEL_ITALIC= ICColorConstants.ASM_LABEL + EDITOR_ITALIC_SUFFIX;
+
+	/**
+	 * A named preference that holds the color used to render assembly directives.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 5.0
+	 */
+	public final static String EDITOR_ASM_DIRECTIVE_COLOR= ICColorConstants.ASM_DIRECTIVE;
+
+	/**
+	 * A named preference that controls whether assembly directives are rendered in bold.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String EDITOR_ASM_DIRECTIVE_BOLD= ICColorConstants.ASM_DIRECTIVE + EDITOR_BOLD_SUFFIX;
+
+	/**
+	 * A named preference that controls whether assembly directives are rendered in italic.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String EDITOR_ASM_DIRECTIVE_ITALIC= ICColorConstants.ASM_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
+
+	/**
 	 * The symbolic font name for the C/C++ editor text font 
 	 * (value <code>"org.eclipse.cdt.ui.editors.textfont"</code>).
 	 * 
@@ -986,6 +1052,14 @@ public class PreferenceConstants {
         PreferenceConverter.setDefault(store, EDITOR_PP_DEFAULT_COLOR, new RGB(0, 0, 0));
         store.setDefault(EDITOR_PP_DEFAULT_BOLD, false);
         store.setDefault(EDITOR_PP_DEFAULT_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_ASM_LABEL_COLOR, new RGB(127, 0, 85));
+		store.setDefault(EDITOR_ASM_LABEL_BOLD, true);
+		store.setDefault(EDITOR_ASM_LABEL_ITALIC, false);
+
+        PreferenceConverter.setDefault(store, EDITOR_ASM_DIRECTIVE_COLOR, new RGB(127, 0, 85));
+		store.setDefault(EDITOR_ASM_DIRECTIVE_BOLD, true);
+		store.setDefault(EDITOR_ASM_DIRECTIVE_ITALIC, false);
 
 		// folding
 		store.setDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);

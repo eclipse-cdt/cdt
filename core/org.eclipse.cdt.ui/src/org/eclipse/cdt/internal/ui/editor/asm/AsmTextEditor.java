@@ -27,6 +27,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.editor.AbstractCModelOutlinePage;
@@ -85,20 +87,34 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	public AsmTextEditor() {
 		super();
 	}
+	
 	/**
 	 * Initializes this editor.
 	 */
 	protected void initializeEditor() {
 		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		setSourceViewerConfiguration(new AsmSourceViewerConfiguration(this, store));
-		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 		// FIXME: Should this editor have a different preference store ?
 		// For now we are sharing with the CEditor and any changes in the
 		// setting of the CEditor will be reflected in this editor.
 		setPreferenceStore(store);
+		AsmTextTools tools= CUIPlugin.getDefault().getAsmTextTools();
+		setSourceViewerConfiguration(new AsmSourceViewerConfiguration(tools.getColorManager(), store, this, ICPartitions.C_PARTITIONING));
+		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 		setEditorContextMenuId("#ASMEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#ASMEditorRulerContext"); //$NON-NLS-1$
-		//setOutlinerContextMenuId("#ASMEditorOutlinerContext"); //$NON-NLS-1$
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#collectContextMenuPreferencePages()
+	 */
+	protected String[] collectContextMenuPreferencePages() {
+		// Add Assembly Editor relevant pages
+		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
+		String[] prefPageIds = new String[parentPrefPageIds.length + 1];
+		int nIds = 0;
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeColoringPreferencePage"; //$NON-NLS-1$
+		System.arraycopy(parentPrefPageIds, 0, prefPageIds, nIds, parentPrefPageIds.length);
+		return prefPageIds;
 	}
 
 	/*
@@ -143,11 +159,22 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	 * Pulled in from 2.0
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		boolean affects= false;
-		AsmTextTools textTools= CUIPlugin.getDefault().getAsmTextTools();
-		affects= textTools.affectsBehavior(event);
-									
-		return affects || super.affectsTextPresentation(event);
+		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+		if (configuration instanceof AsmSourceViewerConfiguration) {
+			return ((AsmSourceViewerConfiguration)configuration).affectsTextPresentation(event);
+		}
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.ui.editors.text.TextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		SourceViewerConfiguration configuration = getSourceViewerConfiguration();
+		if (configuration instanceof AsmSourceViewerConfiguration) {
+			((AsmSourceViewerConfiguration)configuration).handlePropertyChangeEvent(event);
+		}
+		super.handlePreferenceStoreChanged(event);
 	}
 
 	/*

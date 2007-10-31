@@ -65,6 +65,8 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorColoringConfigurationBlock_operators;
 	public static String CEditorColoringConfigurationBlock_braces;
 	public static String CEditorColoringConfigurationBlock_numbers;
+	public static String CEditorColoringConfigurationBlock_asmLabels;
+	public static String CEditorColoringConfigurationBlock_asmDirectives;
 	public static String CEditorColoringConfigurationBlock_others;
 	public static String CEditorColoringConfigurationBlock_ppDirectives;
 	public static String CEditorColoringConfigurationBlock_ppOthers;
@@ -73,6 +75,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorColoringConfigurationBlock_coloring_category_code;
 	public static String CEditorColoringConfigurationBlock_coloring_category_comments;
 	public static String CEditorColoringConfigurationBlock_coloring_category_preprocessor;
+	public static String CEditorColoringConfigurationBlock_coloring_category_assembly;
 	public static String CEditorColoringConfigurationBlock_coloring_element;
 	public static String CEditorColoringConfigurationBlock_link;
 	public static String CEditorColoringConfigurationBlock_enable_semantic_highlighting;

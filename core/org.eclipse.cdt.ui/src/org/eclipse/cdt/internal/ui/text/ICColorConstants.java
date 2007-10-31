@@ -36,13 +36,18 @@ public interface ICColorConstants {
     String C_NUMBER= "c_numbers"; //$NON-NLS-1$
     /** The color key for everthing in C code for which no other color is specified. */
 	String C_DEFAULT= "c_default"; //$NON-NLS-1$
- 
+
 	/** The color key for preprocessor directives. */
 	String PP_DIRECTIVE= "pp_directive"; //$NON-NLS-1$
 	/** The color key for preprocessor text not colored otherwise. */
 	String PP_DEFAULT= "pp_default"; //$NON-NLS-1$
     /** The color key for preprocessor include files. */
     String PP_HEADER= "pp_header"; //$NON-NLS-1$
+
+	/** The color key for keywords in assembly code. */
+	String ASM_DIRECTIVE= "asm_directive"; //$NON-NLS-1$
+    /** The color key for assembly labels. */
+    String ASM_LABEL= "asm_label"; //$NON-NLS-1$
 
     /**
      * The color key for task tags in C comments

@@ -120,13 +120,15 @@ public class PreprocessorRule extends WordRule {
 
 		if (hashSignDetected) {
 
-			do {
-				c = scanner.read();
-			} while (c == ' ' || c == '\t');
-
 			fBuffer.setLength(0);
-			
-			if (c != '#') {
+			c = scanner.read();
+			if (c == '#') {
+				// ## operator
+				fBuffer.append((char) c);
+			} else {
+				while (c == ' ' || c == '\t') {
+					c = scanner.read();
+				}
 				if (fDetector.isWordStart((char) c)) {
 					do {
 						fBuffer.append((char) c);

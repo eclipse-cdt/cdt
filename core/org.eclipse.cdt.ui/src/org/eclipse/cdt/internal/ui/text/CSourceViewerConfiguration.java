@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import java.util.Vector;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -95,7 +94,6 @@ import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	
-    private CTextTools fTextTools;
 	private ITextEditor fTextEditor;
 	/**
 	 * The document partitioning.
@@ -129,12 +127,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * Creates a new C source viewer configuration for viewers in the given editor
 	 * using the given preference store, the color manager and the specified document partitioning.
-	 * <p>
-	 * Creates a C source viewer configuration in the new setup without text tools. Clients are
-	 * allowed to call {@link CSourceViewerConfiguration#handlePropertyChangeEvent(PropertyChangeEvent)}
-	 * and disallowed to call {@link CSourceViewerConfiguration#getPreferenceStore()} on the resulting
-	 * C source viewer configuration.
-	 * </p>
 	 *
 	 * @param colorManager the color manager
 	 * @param preferenceStore the preference store, can be read-only
@@ -185,22 +177,14 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		if (fPreprocessorScanner != null) {
 			return fPreprocessorScanner;
 		}
-		if (isNewSetup()) {
-			AbstractCScanner scanner= null;
-			if (language instanceof ICLanguageKeywords) {
-				scanner= new CPreprocessorScanner(getColorManager(), fPreferenceStore, (ICLanguageKeywords)language);
-			}
-			if (scanner == null) {
-				scanner= new CPreprocessorScanner(getColorManager(), fPreferenceStore, GPPLanguage.getDefault());
-			}
-			fPreprocessorScanner= scanner;
-		} else {
-			if (language instanceof ICLanguageKeywords) {
-				return fTextTools.getCPreprocessorScanner();
-			} else {
-				return fTextTools.getCppPreprocessorScanner();
-			}
+		AbstractCScanner scanner= null;
+		if (language instanceof ICLanguageKeywords) {
+			scanner= new CPreprocessorScanner(getColorManager(), fPreferenceStore, (ICLanguageKeywords)language);
 		}
+		if (scanner == null) {
+			scanner= new CPreprocessorScanner(getColorManager(), fPreferenceStore, GPPLanguage.getDefault());
+		}
+		fPreprocessorScanner= scanner;
 		return fPreprocessorScanner;
 	}	
 	
@@ -266,7 +250,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * Initializes the scanners.
 	 */
 	private void initializeScanners() {
-		Assert.isTrue(isNewSetup());
 		fMultilineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new CCommentScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
 		fStringScanner= new SingleTokenCScanner(getColorManager(), fPreferenceStore, ICColorConstants.C_STRING);
@@ -319,30 +302,22 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		if (fCodeScanner != null) {
 			return fCodeScanner;
 		}
-		if (isNewSetup()) {
-			RuleBasedScanner scanner= null;
-			if (language instanceof ICLanguageKeywords) {
-				ICLanguageKeywords cLang= (ICLanguageKeywords)language;
-				scanner = new CCodeScanner(getColorManager(), fPreferenceStore, cLang);
-			} else if (language != null) {
-				ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
-				if (languageUI != null)
-					scanner = languageUI.getCodeScanner();
-			}
-			if (scanner == null) {
-				scanner = new CCodeScanner(getColorManager(), fPreferenceStore, GPPLanguage.getDefault());
-			}
-			if (scanner instanceof AbstractCScanner) {
-				fCodeScanner= (AbstractCScanner)scanner;
-			}
-			return scanner;
-		} else {
-			if (language instanceof ICLanguageKeywords) {
-				return fTextTools.getCCodeScanner();
-			} else {
-				return fTextTools.getCppCodeScanner();
-			}
+		RuleBasedScanner scanner= null;
+		if (language instanceof ICLanguageKeywords) {
+			ICLanguageKeywords cLang= (ICLanguageKeywords)language;
+			scanner = new CCodeScanner(getColorManager(), fPreferenceStore, cLang);
+		} else if (language != null) {
+			ILanguageUI languageUI = (ILanguageUI)language.getAdapter(ILanguageUI.class);
+			if (languageUI != null)
+				scanner = languageUI.getCodeScanner();
 		}
+		if (scanner == null) {
+			scanner = new CCodeScanner(getColorManager(), fPreferenceStore, GPPLanguage.getDefault());
+		}
+		if (scanner instanceof AbstractCScanner) {
+			fCodeScanner= (AbstractCScanner)scanner;
+		}
+		return scanner;
 	}
 
 	/*
@@ -452,44 +427,64 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getIndentPrefixes(ISourceViewer, String)
 	 */
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
-
-		Vector vector= new Vector();
-
-		// prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
-
 		ICProject project= getProject();
 		final int tabWidth= CodeFormatterUtil.getTabWidth(project);
 		final int indentWidth= CodeFormatterUtil.getIndentWidth(project);
-		int spaceEquivalents= Math.min(tabWidth, indentWidth);
-		boolean useSpaces;
+		boolean allowTabs= tabWidth <= indentWidth;
+		
+		String indentMode;
 		if (project == null)
-			useSpaces= CCorePlugin.SPACE.equals(CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR)) || tabWidth > indentWidth;
+			indentMode= CCorePlugin.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR);
 		else
-			useSpaces= CCorePlugin.SPACE.equals(project.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true)) || tabWidth > indentWidth;
+			indentMode= project.getOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, true);
 
-		for (int i= 0; i <= spaceEquivalents; i++) {
-		    StringBuffer prefix= new StringBuffer();
+		boolean useSpaces= CCorePlugin.SPACE.equals(indentMode) || DefaultCodeFormatterConstants.MIXED.equals(indentMode);
+		
+		// assert allowTabs || useSpaces;
+		
+		if (!allowTabs)
+			return new String[] { getStringWithSpaces(indentWidth), "" }; //$NON-NLS-1$
+		else if  (!useSpaces)
+			return getIndentPrefixesForTab(tabWidth);
+		else
+			return getIndentPrefixesForSpaces(tabWidth);
+	}
 
-			if (useSpaces) {
-			    for (int j= 0; j + i < spaceEquivalents; j++)
-			    	prefix.append(' ');
-
-				if (i != 0)
-		    		prefix.append('\t');
-			} else {
-			    for (int j= 0; j < i; j++)
-			    	prefix.append(' ');
-
-				if (i != spaceEquivalents)
-		    		prefix.append('\t');
-			}
-
-			vector.add(prefix.toString());
+	/**
+	 * Computes and returns the indent prefixes for space indentation
+	 * and the given <code>tabWidth</code>.
+	 * 
+	 * @param tabWidth the display tab width
+	 * @return the indent prefixes
+	 * @see #getIndentPrefixes(ISourceViewer, String)
+	 */
+	private String[] getIndentPrefixesForSpaces(int tabWidth) {
+		String[] indentPrefixes= new String[tabWidth + 2];
+		indentPrefixes[0]= getStringWithSpaces(tabWidth);
+		
+		for (int i= 0; i < tabWidth; i++) {
+			String spaces= getStringWithSpaces(i);
+			if (i < tabWidth)
+				indentPrefixes[i+1]= spaces + '\t';
+			else
+				indentPrefixes[i+1]= new String(spaces);
 		}
+		
+		indentPrefixes[tabWidth + 1]= ""; //$NON-NLS-1$
 
-		vector.add(""); //$NON-NLS-1$
+		return indentPrefixes;
+	}
 
-		return (String[]) vector.toArray(new String[vector.size()]);
+	/**
+	 * Creates and returns a String with <code>count</code> spaces.
+	 * 
+	 * @param count	the space count
+	 * @return the string with the spaces
+	 */
+	private static String getStringWithSpaces(int count) {
+		char[] spaceChars= new char[count];
+		Arrays.fill(spaceChars, ' ');
+		return new String(spaceChars);
 	}
 
 	private ICProject getProject() {
@@ -622,29 +617,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		return false;
 	}
 
-	/**
-	 * Adapts the behavior of the contained components to the change
-	 * encoded in the given event.
-	 * 
-	 * @param event the event to whch to adapt
-	 */
-	public void adaptToPreferenceChange(PropertyChangeEvent event) {
-		Assert.isTrue(!isNewSetup());
-		fTextTools.adaptToPreferenceChange(event);
-	}
-
-	protected IPreferenceStore getPreferenceStore() {
-		Assert.isTrue(!isNewSetup());
-		return fPreferenceStore;
-	}
-	
-	/**
-	 * @return <code>true</code> iff the new setup without text tools is in use.
-	 */
-	private boolean isNewSetup() {
-		return fTextTools == null;
-	}
-
 	/*
 	 * @see SourceViewerConfiguration#getHoverControlCreator(ISourceViewer)
 	 * @since 2.0
@@ -694,7 +666,6 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * @see CSourceViewerConfiguration#CSourceViewerConfiguration(IColorManager, IPreferenceStore, ITextEditor, String)
 	 */
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
-		Assert.isTrue(isNewSetup());
 		if (fCodeScanner != null && fCodeScanner.affectsBehavior(event))
 			fCodeScanner.adaptToPreferenceChange(event);
 		if (fMultilineCommentScanner.affectsBehavior(event))

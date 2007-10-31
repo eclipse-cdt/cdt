@@ -18,6 +18,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.editor.asm.AsmSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
@@ -48,8 +49,8 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 	protected SourceViewerConfiguration getSourceViewerConfiguration() {
 		if (fSourceViewerConfiguration == null) {
 			AsmTextTools tools= CUIPlugin.getDefault().getAsmTextTools();
-			IPreferenceStore store = getPreferenceStore();
-			fSourceViewerConfiguration = new AsmSourceViewerConfiguration(tools, store);
+			IPreferenceStore store= getPreferenceStore();
+			fSourceViewerConfiguration= new AsmSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING);
 		}
 		return fSourceViewerConfiguration;
 	}
@@ -67,11 +68,9 @@ public class AsmMergeViewer extends AbstractMergeViewer {
 	protected void handlePropertyChange(PropertyChangeEvent event) {
 		super.handlePropertyChange(event);
 
-		if (fSourceViewerConfiguration != null) {
-			AsmTextTools tools= CUIPlugin.getDefault().getAsmTextTools();
-			if (tools.affectsBehavior(event)) {
-				invalidateTextPresentation();
-			}
+		if (fSourceViewerConfiguration != null && fSourceViewerConfiguration.affectsTextPresentation(event)) {
+			fSourceViewerConfiguration.handlePropertyChangeEvent(event);
+			invalidateTextPresentation();
 		}
 	}
 }

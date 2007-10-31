@@ -229,7 +229,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return new String[] {fCodeCategory, fCommentsCategory, fPreprocessorCategory};
+			return new String[] {fCodeCategory, fAssemblyCategory, fCommentsCategory, fPreprocessorCategory};
 		}
 	
 		/*
@@ -248,7 +248,9 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			if (parentElement instanceof String) {
 				String entry= (String) parentElement;
 				if (fCodeCategory.equals(entry))
-					return fListModel.subList(6, fListModel.size()).toArray();
+					return fListModel.subList(8, fListModel.size()).toArray();
+				if (fAssemblyCategory.equals(entry))
+					return fListModel.subList(6, 8).toArray();
 				if (fCommentsCategory.equals(entry))
 					return fListModel.subList(0, 3).toArray();
 				if (fPreprocessorCategory.equals(entry))
@@ -261,8 +263,10 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			if (element instanceof String)
 				return null;
 			int index= fListModel.indexOf(element);
-			if (index >= 6)
+			if (index >= 8)
 				return fCodeCategory;
+			if (index >= 6)
+				return fAssemblyCategory;
 			if (index >= 3)
 				return fPreprocessorCategory;
 			return fCommentsCategory;
@@ -300,6 +304,8 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppDirectives, PreferenceConstants.EDITOR_PP_DIRECTIVE_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppOthers, PreferenceConstants.EDITOR_PP_DEFAULT_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_ppHeaders, PreferenceConstants.EDITOR_PP_HEADER_COLOR }, 
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmLabels, PreferenceConstants.EDITOR_ASM_LABEL_COLOR }, 
+			{ PreferencesMessages.CEditorColoringConfigurationBlock_asmDirectives, PreferenceConstants.EDITOR_ASM_DIRECTIVE_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_keywords, PreferenceConstants.EDITOR_C_KEYWORD_COLOR }, 
 //			{ PreferencesMessages.CEditorColoringConfigurationBlock_returnKeyword, PreferenceConstants.EDITOR_C_KEYWORD_RETURN_COLOR }, 
 			{ PreferencesMessages.CEditorColoringConfigurationBlock_builtInTypes, PreferenceConstants.EDITOR_C_BUILTIN_TYPE_COLOR }, 
@@ -313,6 +319,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	private final String fCodeCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_code; 
 	private final String fCommentsCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_comments; 
 	private final String fPreprocessorCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_preprocessor; 
+	private final String fAssemblyCategory= PreferencesMessages.CEditorColoringConfigurationBlock_coloring_category_assembly; 
 	
 	private ColorSelector fSyntaxForegroundColorEditor;
 	private Label fColorEditorLabel;
@@ -587,13 +594,12 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 				// don't sort the top level categories
 				if (fCodeCategory.equals(element))
 					return 0;
+				if (fAssemblyCategory.equals(element))
+					return 1;
 				if (fCommentsCategory.equals(element))
 					return 2;
 				if (fPreprocessorCategory.equals(element))
 					return 3;
-				// to sort semantic settings after partition based ones:
-//				if (element instanceof SemanticHighlightingColorListItem)
-//					return 1;
 				return 0;
 			}
 		});
@@ -759,7 +765,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 			public void widgetSelected(SelectionEvent e) {
 				HighlightingColorListItem item= getHighlightingColorListItem();
 				if (item instanceof SemanticHighlightingColorListItem) {
-					fListViewer.refresh();
+					fListViewer.refresh(true);
 					handleSyntaxColorListSelection();
 					uninstallSemanticHighlighting();
 					installSemanticHighlighting();

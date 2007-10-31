@@ -14,6 +14,7 @@
 package org.eclipse.cdt.core.testplugin.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -211,7 +212,7 @@ public class BaseTestCase extends TestCase {
     	fExpectedLoggedNonOK= count;
     }
     
-    public void deleteTestDataDir () {
+    public void deleteTestDataDir () throws IOException {
     	deleteDir(new File(System.getProperty("java.io.tmpdir") + File.separator + "__testData").getCanonicalFile());
     }
     

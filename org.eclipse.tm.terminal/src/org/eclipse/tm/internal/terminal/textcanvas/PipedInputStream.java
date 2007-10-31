@@ -9,6 +9,7 @@
  * Michael Scharf (Wind River) - initial API and implementation
  * Douglas Lea (Addison Wesley) - [cq:1552] BoundedBufferWithStateTracking adapted to BoundedByteBuffer 
  * Martin Oberhuber (Wind River) - the waitForAvailable method
+ * Martin Oberhuber (Wind River) - [208166] Avoid unnecessary arraycopy in BoundedByteBuffer
  *******************************************************************************/
 
 package org.eclipse.tm.internal.terminal.textcanvas;
@@ -100,7 +101,7 @@ public class PipedInputStream extends InputStream {
 				wait();
 			int n = Math.min(len, fBuffer.length - fPutPos);
 			System.arraycopy(b, off, fBuffer, fPutPos, n);
-			if (fPutPos + len > n)
+			if (fPutPos + len > fBuffer.length)
 				System.arraycopy(b, off + n, fBuffer, 0, len - n);
 			fPutPos = (fPutPos + len) % fBuffer.length; // cyclically increment
 			boolean wasEmpty = fUsedSlots == 0;

@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -777,6 +778,8 @@ public class UniversalPreferencePage
 		super.performOk();
 		if (modeMappings != null)
 		{
+			IFileEditorMapping[] originalMappingArray = editorRegistry.getFileEditorMappings();
+			
 			// first save the transfer mode registry
 			Object[] array1 = modeMappings.toArray();
 			SystemFileTransferModeMapping[] mappingArray1 = new SystemFileTransferModeMapping[array1.length];
@@ -798,6 +801,7 @@ public class UniversalPreferencePage
 			
 			((EditorRegistry)editorRegistry).setFileEditorMappings(mappingArray2);
 			((EditorRegistry)editorRegistry).saveAssociations();
+			
 			
 			// editorRegistry.removePropertyListener(this);
 			int defaultFileTransferMode = ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY;

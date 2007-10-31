@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Martin Oberhuber (Wind River) - [204710] Update Javadoc to mention that getUserHome() may return null
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -105,45 +106,54 @@ public interface IFileService extends IService
 	 */
 	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor) throws SystemMessageException;
 	
+	
 	/**
 	 * @param remoteParent - the name of the parent directory on the remote file 
 	 * system from which to retrieve the child list.
 	 * @param fileFilter - a string that can be used to filter the children.  Only
 	 * those files matching the filter make it into the list.  The interface 
 	 * does not dictate where the filtering occurs.
+	 * @param fileType - indicates whether to query files, folders, both or some other type
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return the list of host files. 
 	 * @throws SystemMessageException if an error occurs. 
 	 * Typically this would be one of those in the RemoteFileException family.
+	 * 
 	 */
-	public IHostFile[] getFilesAndFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException;
+	public IHostFile[] list(String remoteParent, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
   
+	
+
+	
+	
 	/**
-	 * @param remoteParent - the name of the parent directory on the remote file 
-	 * system from which to retrieve the child list.
-	 * @param fileFilter - a string that can be used to filter the children.  Only
-	 * those files matching the filter make it into the list.  The interface 
-	 * does not dictate where the filtering occurs.
+	 * @param remoteParents - the list of remote parents
+	 * @param names - the list of file names
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return the list of host files. 
+	 * @return the host files given the parent paths and file names.  This is basically a batch version of getFile().
+	 *     Must not return <code>null</code>, non-existing files should be
+	 *     reported with an IHostFile object where {@link IHostFile#exists()}
+	 *     returns <code>false</code>.
 	 * @throws SystemMessageException if an error occurs. 
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */
-	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException;
-  
+	public IHostFile[] getFileMulti(String remoteParents[], String names[], IProgressMonitor monitor) throws SystemMessageException;
+	
 	/**
-	 * @param remoteParent - the name of the parent directory on the remote file 
-	 * system from which to retrieve the child list.
-	 * @param fileFilter - a string that can be used to filter the children.  Only
-	 * those files matching the filter make it into the list.  The interface 
+	 * @param remoteParents - the names of the parent directories on the remote file 
+	 * system from which to retrieve the collective child list.
+	 * @param fileFilters - a set of strings that can be used to filter the children.  Only
+	 * those files matching the filter corresponding to it's remoteParent make it into the list.  The interface 
 	 * does not dictate where the filtering occurs.
+	 * @param fileType - indicates whether to query files, folders, both or some other type
 	 * @param monitor the monitor for this potentially long running operation
-	 * @return the list of host files. 
+	 * @return the collective list of host files that reside in each of the remoteParents with it's corresponding filter. 
 	 * @throws SystemMessageException if an error occurs. 
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */
-	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException;
+	public IHostFile[] listMulti(String[] remoteParents, String[] fileFilters, int fileType, IProgressMonitor monitor) throws SystemMessageException;
   
+
 	/**
 	 * @param monitor the monitor for this potentially long running operation
 	 * Return the list of roots for this system
@@ -336,4 +346,51 @@ public interface IFileService extends IService
 	 * @since 2.0
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
+	
+	/**
+	 * @param remoteParent - the name of the parent directory on the remote file 
+	 * system from which to retrieve the child list.
+	 * @param fileFilter - a string that can be used to filter the children.  Only
+	 * those files matching the filter make it into the list.  The interface 
+	 * does not dictate where the filtering occurs.
+	 * @param monitor the monitor for this potentially long running operation
+	 * @return the list of host files. 
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
+	 * 
+	 * @deprecated use list
+	 */
+	public IHostFile[] getFilesAndFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException;
+  
+	/**
+	 * @param remoteParent - the name of the parent directory on the remote file 
+	 * system from which to retrieve the child list.
+	 * @param fileFilter - a string that can be used to filter the children.  Only
+	 * those files matching the filter make it into the list.  The interface 
+	 * does not dictate where the filtering occurs.
+	 * @param monitor the monitor for this potentially long running operation
+	 * @return the list of host files. 
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
+	 * 
+	 * @deprecated use list
+	 */
+	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException;
+  
+	/**
+	 * @param remoteParent - the name of the parent directory on the remote file 
+	 * system from which to retrieve the child list.
+	 * @param fileFilter - a string that can be used to filter the children.  Only
+	 * those files matching the filter make it into the list.  The interface 
+	 * does not dictate where the filtering occurs.
+	 * @param monitor the monitor for this potentially long running operation
+	 * @return the list of host files. 
+	 * @throws SystemMessageException if an error occurs. 
+	 * Typically this would be one of those in the RemoteFileException family.
+	 * 
+	 * @deprecated use list
+	 */
+	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException;
+  
+	
 }

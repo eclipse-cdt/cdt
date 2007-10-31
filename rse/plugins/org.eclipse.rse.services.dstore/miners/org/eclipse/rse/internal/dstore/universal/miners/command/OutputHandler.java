@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -210,7 +210,7 @@ public class OutputHandler extends Handler {
 						// output
 						// the delimiters are therefore set to "\n\r"
 						StringTokenizer tokenizer = new StringTokenizer(
-								fullOutput, "\n\r"); //$NON-NLS-1$
+								fullOutput, "\n\r");
 						int numTokens = tokenizer.countTokens();
 						output = new String[numTokens];
 						int index = 0;
@@ -220,9 +220,7 @@ public class OutputHandler extends Handler {
 						}
 
 						String lastLine = output[index - 1];
-
-						if (!_endOfStream && 
-								(!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r"))) //$NON-NLS-1$ //$NON-NLS-2$
+						if (!_endOfStream && (!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r")))
 						{
 							// our last line may be cut off		
 							byte[] lastBytes = new byte[MAX_OFFSET];
@@ -252,10 +250,9 @@ public class OutputHandler extends Handler {
 									else
 									{
 										lastBytes[lastIndex] = (byte)c;
-																
-										
+																	
 										// check for end of line
-										String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);		
+										String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);
 										int rBreak = suffix.indexOf("\r");
 										int nBreak = suffix.indexOf("\n");
 										if (nBreak != -1 || rBreak != -1) 
@@ -276,15 +273,15 @@ public class OutputHandler extends Handler {
 						return output;
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		return output;
 	}
-
-
+	
 	public synchronized void waitForInput() {
 		try {
 			Thread.sleep(100);

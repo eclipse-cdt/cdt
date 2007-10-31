@@ -32,6 +32,7 @@
  * Kevin Doyle (IBM) 			 - [197855] Can't Delete/Rename/Move a Read-Only File
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Kevin Doyle 		(IBM)		 - [204810] Saving file in Eclipse does not update remote file
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2243,7 +2244,7 @@ public class SystemViewRemoteFileAdapter
 								IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
 								targetFS.createFolder(newTargetFolder, monitor);
 
-								IRemoteFile[] children = localFS.listFoldersAndFiles(srcFileOrFolder, monitor);
+								IRemoteFile[] children = localFS.list(srcFileOrFolder, monitor);
 								if (children != null)
 								{
 									for (int i = 0; i < children.length; i++)

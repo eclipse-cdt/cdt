@@ -30,6 +30,7 @@
  * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
  * David McKnight   (IBM)        - [195285] mount path mapper changes
  * Kevin Doyle (IBM)	  - [203014] Copy/Paste Across Connections doesn't display Overwrite dialog when folder already exists
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -404,7 +405,7 @@ public class UniversalFileTransferUtility
 						tempFolder = getTempFileFor(srcFileOrFolder);
 						try
 						{
-							IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder,monitor);
+							IRemoteFile[] children = srcFS.list(srcFileOrFolder,monitor);
 							
 							
 							SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
@@ -873,7 +874,7 @@ public class UniversalFileTransferUtility
 				IRemoteFile[] children = null;
 				try
 				{
-					children = srcFS.listFoldersAndFiles(srcFileOrFolder, monitor);
+					children = srcFS.list(srcFileOrFolder, monitor);
 				}
 				catch (SystemMessageException e)
 				{
@@ -1054,7 +1055,9 @@ public class UniversalFileTransferUtility
 		SystemRemoteResourceSet existingFiles = null;
 		try
 		{
-			existingFiles = targetFS.getRemoteFileObjects(newFilePathList, monitor);
+			String[] folderAndFilePaths = (String[])newFilePathList.toArray(new String[newFilePathList.size()]);
+			IRemoteFile[] results = targetFS.getRemoteFileObjects(folderAndFilePaths, monitor);
+			existingFiles = new SystemRemoteResourceSet(targetFS, results);
 		}
 		catch (Exception e)
 		{
@@ -1251,7 +1254,8 @@ public class UniversalFileTransferUtility
 		
 		try
 		{
-			resultSet = targetFS.getRemoteFileObjects(newFilePathList, monitor);
+			IRemoteFile[] results = targetFS.getRemoteFileObjects((String[])newFilePathList.toArray(new String[newFilePathList.size()]), monitor);
+			resultSet = new SystemRemoteResourceSet(targetFS, results);
 		}
 		catch (Exception e)
 		{
@@ -1760,7 +1764,7 @@ public class UniversalFileTransferUtility
 						if (!shouldExtract)
 						{
 						    // check for empty dir
-						    IRemoteFile[] children = localSS.listFiles(currentSource, monitor);
+						    IRemoteFile[] children = localSS.list(currentSource, monitor);
 						    
 						    if (children == null || children.length == 0)
 						    {

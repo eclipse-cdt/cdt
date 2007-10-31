@@ -64,6 +64,7 @@
  * Martin Oberhuber (Wind River) - [203500] Support encodings for FTP paths
  * Javier Montalvo Orus (Symbian) - [196351] Delete a folder should do recursive Delete
  * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -105,6 +106,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -710,7 +712,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 							if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
 								//Never return the default directory names
 								continue;
-							} else if (f.isDirectory() && fileType!=FILE_TYPE_FOLDERS) {
+							} else if (f.isDirectory() && fileType!=IFileServiceConstants.FILE_TYPE_FOLDERS) {
 								//get ALL directory names (unless looking for folders only)
 								results.add(f);
 							} else if (filematcher.matches(name)) { 

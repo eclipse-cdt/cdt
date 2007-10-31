@@ -23,6 +23,7 @@
  * Martin Oberhuber (Wind River) - [197025][197167] Improved wait for model complete
  * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
  * Martin Oberhuber (Wind River) - [199552] fix deadlock with dstore-backed efs access
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -357,7 +358,7 @@ public class RSEFileStoreImpl extends FileStore
 					children = fileServiceSubSystem.getHostFileToRemoteFileAdapter().convertToRemoteFiles(fileServiceSubSystem, context, remoteFile, results);
 				}
 				else {
-					children = subSys.listFoldersAndFiles(remoteFile, "*", monitor); //$NON-NLS-1$
+					children = subSys.list(remoteFile, monitor); 
 				}
 				
 				names = new String[children.length];
@@ -432,7 +433,7 @@ public class RSEFileStoreImpl extends FileStore
 					children = fileServiceSubSystem.getHostFileToRemoteFileAdapter().convertToRemoteFiles(fileServiceSubSystem, context, remoteFile, results);
 				}
 				else {
-					children = subSys.listFoldersAndFiles(remoteFile, "*", monitor); //$NON-NLS-1$
+					children = subSys.list(remoteFile, monitor); 
 				}
 				
 				infos = new FileInfo[children.length];

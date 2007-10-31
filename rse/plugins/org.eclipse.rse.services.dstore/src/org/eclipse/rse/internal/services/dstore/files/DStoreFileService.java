@@ -21,6 +21,7 @@
  * Xuan Chen        (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
  * Xuan Chen        (IBM)        - [190824] Incorrect result for DStore#getSeparator() function when parent is "/" 
  * David McKnight   (IBM)        - [207095] check for null datastore 
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -64,6 +65,7 @@ import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -811,6 +813,18 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			return null;
 		}
 	}
+	
+	public IHostFile[] getFileMulti(String remoteParents[], String names[], IProgressMonitor monitor) 
+		throws SystemMessageException
+	{
+		// TODO optimize dstore version of this to do mass queries then wait for last status
+		List results = new ArrayList();
+		for (int i = 0; i < remoteParents.length; i++)
+		{
+			results.add(getFile(remoteParents[i], names[i], monitor));
+		}
+		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
+	}
 
 	/**
 	 * Returns what the next part of the path should be, given the current
@@ -1291,21 +1305,49 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 	
 
-	
-	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
+	public IHostFile[] list(String remoteParent, String fileFilter, int fileType, IProgressMonitor monitor)
 	{
-		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS, monitor);
+		String queryString = null;
+		switch (fileType)
+		{
+		case IFileServiceConstants.FILE_TYPE_FILES:
+			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_FILES;
+			break;
+			
+		case IFileServiceConstants.FILE_TYPE_FOLDERS:
+			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS;
+			break;
+			
+		case IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS:
+		default:				
+			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_ALL;
+			break;
+		}
+		
+		return fetch(remoteParent, fileFilter, queryString, monitor);
+	}
+
+	
+	public IHostFile[] listMulti(String[] remoteParents,
+			String[] fileFilters, int fileType, IProgressMonitor monitor)
+			throws SystemMessageException 
+	{
+		// TODO - optimize dstore implementation to do mass queries then wait for last result
+		
+		
+		List files = new ArrayList();
+		for (int i = 0; i < remoteParents.length; i++)
+		{
+			IHostFile[] result = list(remoteParents[i], fileFilters[i], fileType, monitor);
+			for (int j = 0; j < result.length; j++)
+			{
+				files.add(result[j]);
+			}
+		}
+		
+		return (IHostFile[])files.toArray(new IHostFile[files.size()]);
 	}
 	
-	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor)
-	{
-		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FILES, monitor);
-	}
-	
-	public IHostFile[] getFilesAndFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
-	{
-		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_ALL, monitor);
-	}
 	
 	protected DataElement getElementFor(String path)
 	{
@@ -1502,5 +1544,31 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	 */
 	public void setIsUnixStyle(boolean isUnixStyle) {
 		this.unixStyle = isUnixStyle;
+	}
+	
+
+	
+	/**
+	 * Deprecated
+	 */
+	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
+	{
+		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS, monitor);
+	}
+	
+	/**
+	 * Deprecated
+	 */
+	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor)
+	{
+		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FILES, monitor);
+	}
+	
+	/**
+	 * Deprecated
+	 */
+	public IHostFile[] getFilesAndFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
+	{
+		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_ALL, monitor);
 	}
 }

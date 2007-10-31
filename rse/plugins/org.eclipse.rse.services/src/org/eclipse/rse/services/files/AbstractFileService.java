@@ -12,12 +12,15 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -28,35 +31,49 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 public abstract class AbstractFileService implements IFileService
 {
 
-	public static final int FILE_TYPE_FILES_AND_FOLDERS = 0;
-	public static final int FILE_TYPE_FILES = 1;
-	public static final int FILE_TYPE_FOLDERS = 2;
- 
-	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
-	{
-		return internalFetch(remoteParent, fileFilter, FILE_TYPE_FILES, monitor);
-	}
-
-	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
-	{
-		return internalFetch(remoteParent, fileFilter, FILE_TYPE_FOLDERS, monitor);
-	}
-	
-	public IHostFile[] getFilesAndFolders(String parentPath, String fileFilter, IProgressMonitor monitor) throws SystemMessageException
-	{
-		return internalFetch(parentPath, fileFilter, FILE_TYPE_FILES_AND_FOLDERS, monitor);
-	}
-	
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 	
+	public IHostFile[] getFileMulti(String remoteParents[], String names[], IProgressMonitor monitor) 
+								throws SystemMessageException
+	{
+		List results = new ArrayList();
+		for (int i = 0; i < remoteParents.length; i++)
+		{
+			results.add(getFile(remoteParents[i], names[i], monitor));
+		}
+		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
+	}
+
+	public IHostFile[] list(String remoteParent, String fileFilter, 
+			int fileType, IProgressMonitor monitor) throws SystemMessageException
+	{
+		return internalFetch(remoteParent, fileFilter, fileType, monitor);
+	}
 	
+	public IHostFile[] listMulti(String[] remoteParents,
+			String[] fileFilters, int fileType, IProgressMonitor monitor)
+			throws SystemMessageException {
+
+		List files = new ArrayList();
+		for (int i = 0; i < remoteParents.length; i++)
+		{
+			IHostFile[] result = list(remoteParents[i], fileFilters[i], fileType, monitor);
+			for (int j = 0; j < result.length; j++)
+			{
+				files.add(result[j]);
+			}
+		}
+		
+		return (IHostFile[])files.toArray(new IHostFile[files.size()]);
+	}
+
 	protected boolean isRightType(int fileType, IHostFile node)
 	{
 		switch (fileType)
 		{
-		case FILE_TYPE_FILES_AND_FOLDERS:
+		case IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS:
 			return true;
-		case FILE_TYPE_FILES:
+		case IFileServiceConstants.FILE_TYPE_FILES:
 			if (node.isFile())
 			{
 				return true;			
@@ -65,7 +82,7 @@ public abstract class AbstractFileService implements IFileService
 			{
 				return false;
 			}				
-		case FILE_TYPE_FOLDERS:
+		case IFileServiceConstants.FILE_TYPE_FOLDERS:
 			if (node.isDirectory())
 			{
 				return true;
@@ -76,7 +93,7 @@ public abstract class AbstractFileService implements IFileService
 			}
 			default:
 				return true;
-		}
+		} 
 	}
 	
 	/**
@@ -120,5 +137,29 @@ public abstract class AbstractFileService implements IFileService
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
+	}
+	
+	/**
+	 * @deprecated
+	 */
+	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
+	{
+		return internalFetch(remoteParent, fileFilter, IFileServiceConstants.FILE_TYPE_FILES, monitor);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
+	{
+		return internalFetch(remoteParent, fileFilter, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);
+	}
+	
+	/**
+	 * @deprecated
+	 */
+	public IHostFile[] getFilesAndFolders(String parentPath, String fileFilter, IProgressMonitor monitor) throws SystemMessageException
+	{
+		return internalFetch(parentPath, fileFilter, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
 	}
 }

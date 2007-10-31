@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [199394] Allow real files/folders containing String #virtual#
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Kevin Doyle (IBM) - [199871] LocalFileService needs to implement getMessage()
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -58,6 +59,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -167,7 +169,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (entry.isFile()) {
 					result = _matcher.matches(name);
 				} else if (entry.isDirectory()) {
-					if (type == FILE_TYPE_FILES_AND_FOLDERS || type == FILE_TYPE_FOLDERS) {
+					if (type == IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS || type == IFileServiceConstants.FILE_TYPE_FOLDERS) {
 						result = true;
 					}
 				}
@@ -706,16 +708,16 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				File file = files[i];
 				if (file.isDirectory())
 				{
-					if (type == FILE_TYPE_FILES_AND_FOLDERS || 
-					    type == FILE_TYPE_FOLDERS)
+					if (type == IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS || 
+					    type == IFileServiceConstants.FILE_TYPE_FOLDERS)
 					{
 						results.add(new LocalHostFile(file));
 					}
 				}
 				else if (file.isFile())
 				{
-					if (type == FILE_TYPE_FILES_AND_FOLDERS || 
-						type == FILE_TYPE_FILES)
+					if (type == IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS || 
+						type == IFileServiceConstants.FILE_TYPE_FILES)
 					{
 						results.add(new LocalHostFile(file));
 					}

@@ -10,6 +10,7 @@
  * Uwe Stieber (Wind River) - refactoring and cleanup.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Xuan Chen (IBM)               - [198859] Update the API doc for getRemoteSystemConnection.
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -106,7 +107,8 @@ public class RSEBaseConnectionTestCase extends RSECoreTestCase {
 		properties.setProperty(IRSEConnectionProperties.ATTR_ADDRESS, systemAddress); //$NON-NLS-1$
 		properties.setProperty(IRSEConnectionProperties.ATTR_NAME, systemName); //$NON-NLS-1$
 		properties.setProperty(IRSEConnectionProperties.ATTR_USERID, userID); //$NON-NLS-1$
-		properties.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, password); //$NON-NLS-1$
+		if (password != null)
+			properties.setProperty(IRSEConnectionProperties.ATTR_PASSWORD, password); //$NON-NLS-1$
 		
 		IRSEConnectionProperties remoteSystemConnectionProperties;
 		remoteSystemConnectionProperties = getConnectionManager().loadConnectionProperties(properties, false);

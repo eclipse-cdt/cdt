@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * Kevin Doyle (IBM) - [190010] Added cancel() method that will call the search service to cancel
  * David McKnight   (IBM)        - [190010] performance improvement to use caching for dstore search
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -102,7 +103,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 							if (parentRemoteFile != null && !parentRemoteFile.hasContents(RemoteChildrenContentsType.getInstance()))
 							{
 								// query all files to save time (so we can retrieve cached files
-								IRemoteFile[] children = _fileSubSystem.listFoldersAndFiles(parentRemoteFile, monitor);
+								IRemoteFile[] children = _fileSubSystem.list(parentRemoteFile, monitor);
 								for (int c = 0; c < children.length; c++)
 								{
 									if (!children[c].isFile())

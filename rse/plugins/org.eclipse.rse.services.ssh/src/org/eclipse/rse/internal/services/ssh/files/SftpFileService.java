@@ -15,6 +15,7 @@
  * Benjamin Muskalla (b.muskalla@gmx.net) - [174690][ssh] cannot delete symbolic links on remote systems
  * Martin Oberhuber (Wind River) - [203490] Fix NPE in SftpService.getUserHome()
  * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -61,6 +62,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -439,7 +441,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			    			//don't show the trivial names
 			    			continue;
 			    		}
-			    		if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=FILE_TYPE_FOLDERS)) {
+			    		if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileServiceConstants.FILE_TYPE_FOLDERS)) {
 							//get ALL directory names (unless looking for folders only)
 			    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
 			    			if (isRightType(fileType, node)) {

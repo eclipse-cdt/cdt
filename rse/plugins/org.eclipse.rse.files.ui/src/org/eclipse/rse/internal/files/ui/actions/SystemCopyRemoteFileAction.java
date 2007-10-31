@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [196588] Move Dialog doesn't show Archives
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -267,7 +268,7 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
    				
    				IRemoteFile newTargetFolder = targetFS.getRemoteFileObject(newPath, monitor);
    				targetFS.createFolder(newTargetFolder, monitor);
-   				IRemoteFile[] children = srcFS.listFoldersAndFiles(srcFileOrFolder, monitor);
+   				IRemoteFile[] children = srcFS.list(srcFileOrFolder, monitor);
    				if (children != null)
    				{
 	   				for (int i = 0; i < children.length; i++)

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
 package org.eclipse.rse.internal.importexport.files;
 
@@ -195,7 +196,7 @@ public class UniFilePlus extends File {
 	public IRemoteFile[] listIRemoteFiles() {
 		IRemoteFile[] result = null;
 		try {
-			result = remoteFile.getParentRemoteFileSubSystem().listFoldersAndFiles(remoteFile, getNullMonitor());
+			result = remoteFile.getParentRemoteFileSubSystem().list(remoteFile, getNullMonitor());
 		} catch (SystemMessageException e) {
 			SystemBasePlugin.logError("unexpected exception", e); //$NON-NLS-1$
 		}
@@ -205,7 +206,7 @@ public class UniFilePlus extends File {
 	public String[] list() {
 		IRemoteFile[] files = null;
 		try {
-			files = remoteFile.getParentRemoteFileSubSystem().listFoldersAndFiles(remoteFile, getNullMonitor());
+			files = remoteFile.getParentRemoteFileSubSystem().list(remoteFile, getNullMonitor());
 		} catch (SystemMessageException e) {
 			SystemBasePlugin.logError("unexpected exception", e); //$NON-NLS-1$
 		}
@@ -221,7 +222,7 @@ public class UniFilePlus extends File {
 	public String[] list(FilenameFilter filter) {
 		IRemoteFile[] files = null;
 		try {
-			files = remoteFile.getParentRemoteFileSubSystem().listFoldersAndFiles(remoteFile, getNullMonitor());
+			files = remoteFile.getParentRemoteFileSubSystem().list(remoteFile, getNullMonitor());
 		} catch (SystemMessageException e) {
 			SystemBasePlugin.logError("unexpected exception", e); //$NON-NLS-1$
 		}
@@ -243,7 +244,7 @@ public class UniFilePlus extends File {
 	public File[] listFiles(FileFilter filter) {
 		IRemoteFile[] files = null;
 		try {
-			files = remoteFile.getParentRemoteFileSubSystem().listFoldersAndFiles(remoteFile, getNullMonitor());
+			files = remoteFile.getParentRemoteFileSubSystem().list(remoteFile, getNullMonitor());
 		} catch (SystemMessageException e) {
 			SystemBasePlugin.logError("unexpected exception", e); //$NON-NLS-1$
 		}
@@ -265,7 +266,7 @@ public class UniFilePlus extends File {
 	public File[] listFiles(FilenameFilter filter) {
 		IRemoteFile[] files = null;
 		try {
-			files = remoteFile.getParentRemoteFileSubSystem().listFoldersAndFiles(remoteFile, getNullMonitor());
+			files = remoteFile.getParentRemoteFileSubSystem().list(remoteFile, getNullMonitor());
 		} catch (SystemMessageException e) {
 			SystemBasePlugin.logError("unexpected exception", e); //$NON-NLS-1$
 		}

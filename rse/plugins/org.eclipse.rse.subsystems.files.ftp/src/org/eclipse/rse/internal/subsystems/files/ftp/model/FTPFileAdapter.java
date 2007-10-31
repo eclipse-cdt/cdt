@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ftp.model;
@@ -43,7 +43,8 @@ public class FTPFileAdapter implements IHostFileToRemoteFileAdapter
 		}
 		return (IRemoteFile[])results.toArray(new IRemoteFile[results.size()]);
 	}
-
+	
+	
 	public IRemoteFile convertToRemoteFile(FileServiceSubSystem ss, IRemoteFileContext context, IRemoteFile parent, String name, boolean isDirectory, boolean isRoot) 
 	{
 		return null;

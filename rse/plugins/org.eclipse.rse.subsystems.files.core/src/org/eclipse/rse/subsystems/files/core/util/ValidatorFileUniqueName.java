@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.util;
@@ -82,7 +82,7 @@ public class ValidatorFileUniqueName
 		                );  
 		try
 		{
-		IRemoteFile[] contents = parentFolder.getParentRemoteFileSubSystem().listFoldersAndFiles(parentFolder, null);
+		IRemoteFile[] contents = parentFolder.getParentRemoteFileSubSystem().list(parentFolder, null);
 		if (contents!=null)
 		{
 		  String[] names = new String[contents.length];

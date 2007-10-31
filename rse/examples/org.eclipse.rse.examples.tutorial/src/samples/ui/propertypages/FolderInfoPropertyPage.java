@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
  * Kevin Doyle 		(IBM)		 - [150492] FolderInfoPropertyPage doesn't work reliably
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
 
 package samples.ui.propertypages;
@@ -200,7 +201,7 @@ public class FolderInfoPropertyPage
 		{
 			try
 			{
-			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().listFoldersAndFiles( currFolder, null);
+			IRemoteFile[] folders = currFolder.getParentRemoteFileSubSystem().list( currFolder, null);
 			if ((folders != null) && (folders.length>0))
 			{
 				for (int idx=0; !stopped && (idx<folders.length); idx++)

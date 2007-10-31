@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
+ * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -22,10 +23,8 @@ package org.eclipse.rse.subsystems.files.core.subsystems;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileException;
@@ -106,51 +105,51 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * This version is called directly by users.
 	 */
 	public IRemoteFile[] listRoots(IProgressMonitor monitor) throws InterruptedException, SystemMessageException;
+	
+	
 	/**
-	 * Return a list of all remote folders in the given parent folder on the remote system
-	 * @param parent The parent folder to list folders in
+	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
+	 * @param parents The parent folders to list folders and files in
+	 * @param fileType - indicates whether to query files, folders, both or some other type
 	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;
+	public IRemoteFile[] listMulti(IRemoteFile[] parents, int fileType, IProgressMonitor monitor) throws SystemMessageException;		
+	
+	/**
+	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
+	 * by the given file name filter. It can be null for no subsetting.
+	 * @param parents The parent folders to list folders and files in
+	 * @param fileNameFilters The name patterns to subset the file list by, or null to return all files.
+	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param monitor the progress monitor
+	 */
+	public IRemoteFile[] listMulti(IRemoteFile[] parents, String[] fileNameFilters, int fileType,  IProgressMonitor monitor) throws SystemMessageException;
 
-	/**
-	 * Return a full list of remote folders in the given parent folder on the remote system.
-	 * @param parent The parent folder to list folders in
-	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
-	 * @param monitor the progress monitor
-	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException;
-	
-	/**
-	 * Return a list of all remote files in the given parent folder on the remote system
-	 * @param parent The parent folder to list files in
-	 * @param monitor the progress monitor
-	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;
-		
-	/**
-	 * Return a list of remote files in the given folder, which match the given name pattern.
-	 * @param parent The parent folder to list files in
-	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
-	 * @param monitor the progress monitor
-	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException;
-	
+
 	/**
 	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
 	 * @param parent The parent folder to list folders and files in
 	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;		
+	public IRemoteFile[] list(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;
+	
+	/**
+	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
+	 * @param parent The parent folder to list folders and files in
+	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param monitor the progress monitor
+	 */
+	public IRemoteFile[] list(IRemoteFile parent, int fileType, IProgressMonitor monitor) throws SystemMessageException;		
 	
 	/**
 	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
 	 * by the given file name filter. It can be null for no subsetting.
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
+	 * @param fileType - indicates whether to query files, folders, both or some other type
 	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException;
+	public IRemoteFile[] list(IRemoteFile parent, String fileNameFilter, int fileType,  IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Return a list of remote folders and files in the given folder. 
@@ -161,31 +160,14 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
 	 * @param context The holder of state information
+	 * - indicates whether to query files, folders, both or some other type
+	 * @param fileType - indicates whether to query files, folders, both or some other type
 	 * @param monitor the progress monitor
-	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException;
 
-	/**
-	 * Return a subsetted list of remote folders in the given parent folder on the remote system.
-	 * This version is called by RemoteFileSubSystemImpl's resolveFilterString(s)
-	 * <b>note</b>This method should be abstract but MOF doesn't allow abstract impl classes at this point
-	 * @param parent The parent folder to list folders in
-	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
-	 * @param context The holder of state information
-	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException;
+	public IRemoteFile[] list(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 
-	/**
-	 * Return a list of remote files in the given folder, which match the given name pattern.
-	 * This version is called by RemoteFileSubSystemImpl's resolveFilterString(s)
-	 * <b>note</b>This method should be abstract but MOF doesn't allow abstract impl classes at this point
-	 * @param parent The parent folder to list files in
-	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
-	 * @param context The holder of state information
-	 * @param monitor the progress monitor
-	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException;
+	
 
 	/**
 	 * Given a search configuration, searches for its results.
@@ -243,7 +225,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * 
 	 * @return the set of resources
 	 */
-	public SystemRemoteResourceSet getRemoteFileObjects(List folderOrFileNames, IProgressMonitor monitor) throws SystemMessageException;
+	public IRemoteFile[] getRemoteFileObjects(String[] folderOrFileNames, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
 	 * Given a fully qualified file or folder name, return an IRemoteFile
@@ -570,4 +552,105 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @since 2.0
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
+	
+	/**
+	 * Return a list of all remote folders in the given parent folder on the remote system
+	 * @param parent The parent folder to list folders in
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFolders(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;
+
+	/**
+	 * Return a full list of remote folders in the given parent folder on the remote system.
+	 * @param parent The parent folder to list folders in
+	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException;
+	
+	/**
+	 * Return a list of all remote files in the given parent folder on the remote system
+	 * @param parent The parent folder to list files in
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFiles(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;
+		
+	/**
+	 * Return a list of remote files in the given folder, which match the given name pattern.
+	 * @param parent The parent folder to list files in
+	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException;
+	
+
+	/**
+	 * Return a subsetted list of remote folders in the given parent folder on the remote system.
+	 * This version is called by RemoteFileSubSystemImpl's resolveFilterString(s)
+	 * <b>note</b>This method should be abstract but MOF doesn't allow abstract impl classes at this point
+	 * @param parent The parent folder to list folders in
+	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded
+	 * @param context The holder of state information
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException;
+
+	/**
+	 * Return a list of remote files in the given folder, which match the given name pattern.
+	 * This version is called by RemoteFileSubSystemImpl's resolveFilterString(s)
+	 * <b>note</b>This method should be abstract but MOF doesn't allow abstract impl classes at this point
+	 * @param parent The parent folder to list files in
+	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
+	 * @param context The holder of state information
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException;
+
+	/**
+	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
+	 * @param parent The parent folder to list folders and files in
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;		
+	
+	/**
+	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
+	 * by the given file name filter. It can be null for no subsetting.
+	 * @param parent The parent folder to list folders and files in
+	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException;
+
+	/**
+	 * Return a list of remote folders and files in the given folder. 
+	 * <p>
+	 * The files part of the list is subsetted by the given file name filter. 
+	 * It can be null for no subsetting.
+	 * This version is called by RemoteFileSubSystemImpl's resolveFilterString(s).
+	 * @param parent The parent folder to list folders and files in
+	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
+	 * @param context The holder of state information
+	 * @param monitor the progress monitor
+	 * 
+	 * @deprecated use list
+	 */
+	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, IProgressMonitor monitor) throws SystemMessageException;
+
 }

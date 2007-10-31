@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.rse.connectorservice.dstore
-Bundle-Version: 2.0.1.qualifier
+Bundle-Version: 3.0.0.qualifier
 Bundle-Activator: org.eclipse.rse.internal.connectorservice.dstore.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -11,8 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.rse.services.dstore;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.dstore.core;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.dstore.extra;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.rse.ui;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.rse.core;bundle-version="[2.0.0,3.0.0)"
+ org.eclipse.rse.ui;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.rse.core;bundle-version="[3.0.0,4.0.0)"
 Eclipse-LazyStart: true
 Export-Package: 
  org.eclipse.rse.connectorservice.dstore,

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.remotecdt"
       label="%featureName"
-      version="2.0.1.qualifier"
+      version="3.0.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.remotecdt"
       image="eclipse_update_120.jpg">
@@ -20,8 +20,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/2.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/2.0"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
    </url>
 
    <requires>
@@ -37,10 +37,10 @@
       <import plugin="org.eclipse.cdt.debug.ui"/>
       <import plugin="org.eclipse.cdt.launch"/>
       <import plugin="org.eclipse.rse.services" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.shells.core" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.files.ui" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.shells.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.files.ui" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
    </requires>
 
    <plugin

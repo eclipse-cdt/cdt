@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.rse.ftp"
       label="%featureName"
-      version="2.0.1.qualifier"
+      version="3.0.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.rse.services.files.ftp">
 
@@ -19,8 +19,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/2.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/2.0"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
    </url>
 
    <requires>
@@ -31,9 +31,8 @@
       <import plugin="org.apache.oro" version="2.0.8" match="equivalent"/>
       <import plugin="org.apache.commons.net" version="1.4.1" match="compatible"/>
       <import plugin="org.eclipse.rse.services" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.services.files.ftp" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.subsystems.files.core" version="2.0.0" match="compatible"/>
-      <import plugin="org.eclipse.rse.ui" version="2.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.subsystems.files.core" version="3.0.0" match="compatible"/>
+      <import plugin="org.eclipse.rse.ui" version="3.0.0" match="compatible"/>
    </requires>
 
    <plugin

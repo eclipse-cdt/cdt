@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.tm.terminal.sdk"
       label="%featureName"
-      version="1.0.1.qualifier"
+      version="2.0.0.qualifier"
       provider-name="%providerName"
       image="eclipse_update_120.jpg">
 
@@ -19,8 +19,8 @@
    </license>
 
    <url>
-      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/2.0"/>
-      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/2.0"/>
+      <update label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
+      <discovery label="%tmUpdateSiteName" url="http://download.eclipse.org/dsdp/tm/updates/3.0"/>
    </url>
 
    <includes

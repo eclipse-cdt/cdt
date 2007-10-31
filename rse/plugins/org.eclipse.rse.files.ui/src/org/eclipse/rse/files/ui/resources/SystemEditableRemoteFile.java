@@ -448,7 +448,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			IFile file = getLocalResource();
 			setReadOnly(file, false);
 			SystemIFileProperties properties = new SystemIFileProperties(file);
-			properties.setReadOnly(true);
+			properties.setReadOnly(false);
 		}
 	}
 

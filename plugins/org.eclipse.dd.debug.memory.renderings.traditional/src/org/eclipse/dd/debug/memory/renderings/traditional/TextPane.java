@@ -35,7 +35,7 @@ public class TextPane extends AbstractPane
     protected String getCellText(MemoryByte bytes[])
     {
         return fRendering.formatText(bytes, fRendering
-            .isLittleEndian(), fRendering.getTextMode());
+            .isTargetLittleEndian(), fRendering.getTextMode());
     }
 
     protected void editCell(BigInteger address, int subCellPosition,
@@ -219,7 +219,7 @@ public class TextPane extends AbstractPane
 
         final int columns = fRendering.getColumnCount();
 
-        final boolean isLittleEndian = fRendering.isLittleEndian();
+        final boolean isLittleEndian = fRendering.isTargetLittleEndian();
         
         gc.setForeground(fRendering.getTraditionalRendering().getColorBackground());
         gc.fillRectangle(columns * cellWidth, 0, this.getBounds().width, this

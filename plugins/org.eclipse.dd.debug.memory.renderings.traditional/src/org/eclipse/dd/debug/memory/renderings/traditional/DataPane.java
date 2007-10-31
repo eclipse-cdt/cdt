@@ -30,7 +30,7 @@ public class DataPane extends AbstractPane
     protected String getCellText(MemoryByte bytes[])
     {
         return fRendering.getRadixText(bytes, fRendering.getRadix(), fRendering
-            .isLittleEndian());
+            .isTargetLittleEndian());
     }
 
     protected void editCell(BigInteger address, int subCellPosition,
@@ -75,7 +75,7 @@ public class DataPane extends AbstractPane
             if(isSigned)
                 byteData[byteLen - 1] |= 128;
 
-            if(fRendering.isLittleEndian() != bytes[0].isBigEndian())
+            if(fRendering.isTargetLittleEndian() != bytes[0].isBigEndian())
             {
                 byte[] byteDataSwapped = new byte[byteData.length];
                 for(int i = 0; i < byteData.length; i++)

@@ -722,10 +722,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             public void run()
             {
                 TraditionalRendering.this.fRendering
-                    .setLittleEndian(false);
+	                    .setDisplayLittleEndian(false);
             }
         };
-        displayEndianBigAction.setChecked(!this.fRendering.isLittleEndian());
+        displayEndianBigAction.setChecked(!this.fRendering.isTargetLittleEndian());
 
         displayEndianLittleAction = new Action(
             TraditionalRenderingMessages
@@ -735,10 +735,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
             public void run()
             {
                 TraditionalRendering.this.fRendering
-                    .setLittleEndian(true);
+                    .setDisplayLittleEndian(true);
             }
         };
-        displayEndianLittleAction.setChecked(this.fRendering.isLittleEndian());
+        displayEndianLittleAction.setChecked(this.fRendering.isTargetLittleEndian());
 
         // radix
 
@@ -1008,12 +1008,16 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		});
 	}
     
-    protected void bytesAreLittleEndian(boolean areLE)
+    protected void setTargetMemoryLittleEndian(boolean littleEndian)
     {
     	// once we actually read memory we can determine the
     	// endianess and need to set these actions accordingly.
-        displayEndianBigAction.setChecked(!areLE);
-        displayEndianLittleAction.setChecked(areLE);    	
+        displayEndianBigAction.setChecked(!littleEndian);
+        displayEndianLittleAction.setChecked(littleEndian);  
+        
+        // when target endian changes, force display endian to track.
+        // user can then change display endian if desired.
+        fRendering.setDisplayLittleEndian(littleEndian);
     }
     
     public void dispose()
@@ -1157,7 +1161,7 @@ class CopyAction extends Action
 
             final int radix = fRendering.getRadix();
             final int bytesPerColumn = fRendering.getBytesPerColumn();
-            final boolean isLittleEndian = fRendering.isLittleEndian();
+            final boolean isLittleEndian = fRendering.isTargetLittleEndian();
             final int bytesPerCharacter = fRendering.getBytesPerCharacter();
 
             final int addressWidth = fRendering.getAddressString(start)

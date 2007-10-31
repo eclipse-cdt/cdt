@@ -103,9 +103,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
     
     private int fColumnsSetting = COLUMNS_AUTO_SIZE_TO_FIT;
 
-    private boolean fLittleEndian = false;
+    private boolean fIsTargetLittleEndian = false;
     
-    private boolean fCheckedLittleEndian = false;
+    private boolean fIsDisplayLittleEndian = false;
 
     // constants used to identify radix
     protected final static int RADIX_HEX = 1;
@@ -765,18 +765,10 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 for(int i = 0; i < readBytes.length; i++)
                 	cachedBytes[i] = new MemoryByte(readBytes[i].getValue(), readBytes[i].getFlags());
 
-                // we need to set the default endianess.  before it was set to BE
-                // by default which wasn't very useful for LE targets.  now we will
-                // query the first byte to get the endianess.  if not known then we'll
-                // leave it as BE.  note that we only do this when reading the first
-                // bit of memory for this rendering.  what happens when scrolling
-                // through  memory and it changes endianess?  for now we just leave
-                // it in the original endianess.
-            	if (!fCheckedLittleEndian && cachedBytes.length > 0) {
+				// derive the target endian from the read MemoryBytes.
+            	if (cachedBytes.length > 0) {
                 	if (cachedBytes[0].isEndianessKnown()) {
-                		fLittleEndian = !cachedBytes[0].isBigEndian();
-                    	fCheckedLittleEndian = true;
-                    	fParent.bytesAreLittleEndian(fLittleEndian);
+                		setTargetLittleEndian(!cachedBytes[0].isBigEndian());
                 	}
             	}
                 
@@ -1515,21 +1507,43 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return 1;
     }
 
-    protected boolean isLittleEndian()
+    protected boolean isTargetLittleEndian()
     {
-        return fLittleEndian;
+        return fIsTargetLittleEndian;
     }
 
-    protected void setLittleEndian(boolean enable)
+    protected void setTargetLittleEndian(boolean littleEndian)
     {
-        if(fLittleEndian == enable)
+        if(fIsTargetLittleEndian == littleEndian)
             return;
 
-        fLittleEndian = enable;
-        fireSettingsChanged();
-        layoutPanes();
+        fParent.setTargetMemoryLittleEndian(littleEndian);
+        fIsTargetLittleEndian = littleEndian;
+        Display.getDefault().asyncExec(new Runnable() {
+        	public void run()
+        	{
+		        fireSettingsChanged();
+		        layoutPanes();
+        	}
+        });
     }
 
+    public boolean isDisplayLittleEndian()
+    {
+    	return fIsDisplayLittleEndian;
+    }
+    
+    public void setDisplayLittleEndian(boolean littleEndian)
+    {
+    	if(fIsDisplayLittleEndian = littleEndian)
+    		return;
+    	
+    	fIsDisplayLittleEndian = littleEndian;
+    	
+    	fireSettingsChanged();
+        layoutPanes();
+    }
+    
     protected void setBytesPerColumn(int byteCount)
     {
         if(fBytesPerColumn != byteCount)
@@ -1627,8 +1641,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             // and we want to view in LE then we need to swap.  if the bytes
             // are LE and we want to view BE then we need to swap.
             boolean needsSwap = false;
-            boolean bytesAreLittleEndian = !bytes[0].isBigEndian();
-            if ((isLittleEndian && !bytesAreLittleEndian) || (!isLittleEndian && bytesAreLittleEndian))
+            if ((isDisplayLittleEndian() && !isTargetLittleEndian()) || (!isDisplayLittleEndian() && isTargetLittleEndian()))
             	needsSwap = true;
 
             switch(radix)

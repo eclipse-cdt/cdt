@@ -212,15 +212,23 @@ public class BaseTestCase extends TestCase {
     	fExpectedLoggedNonOK= count;
     }
     
-    public void deleteTestDataDir () throws IOException {
-    	deleteDir(new File(System.getProperty("java.io.tmpdir") + File.separator + "__testData").getCanonicalFile());
+    /**
+     * Delete the __testData folder
+     */
+    protected void deleteTestDataDir() {
+    	try {
+			deleteDir(new File(System.getProperty("java.io.tmpdir") + File.separator + "__testData").getCanonicalFile());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     /**
      * Recursively delete a directory
      * @param dir
      */
-    public void deleteDir(File dir) {
+    protected void deleteDir(File dir) {
 		if (dir.isDirectory()) {
 			File[] children = dir.listFiles();
 			for (int i = 0; i < children.length; i ++) {

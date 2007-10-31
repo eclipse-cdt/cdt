@@ -142,7 +142,7 @@ public class LexerTests extends BaseTestCase {
 		token(IToken.tBITOR);
 		token(IToken.tLBRACE);
 		token(IToken.tRBRACE);
-		token(IToken.tCOMPL);
+		token(IToken.tBITCOMPLEMENT);
 		eof();
 		
 		init("a??/\nb");

@@ -43,7 +43,6 @@ final public class Lexer {
 	public static final int tSYSTEM_HEADER_NAME   = IToken.FIRST_RESERVED_SCANNER + 4;
 	
 	private static final int END_OF_INPUT = -1;
-	private static final int LINE_SPLICE_SEQUENCE = -2;
 	private static final int ORIGIN_LEXER = OffsetLimitReachedException.ORIGIN_LEXER;
 	
 	public final static class LexerOptions implements Cloneable {
@@ -210,6 +209,7 @@ final public class Lexer {
 	 * @throws OffsetLimitReachedException when completion is requested in a literal or an header-name.
 	 */
 	public Token nextDirective() throws OffsetLimitReachedException {
+		fInsideIncludeDirective= false;
 		final Token t= fToken;
 		boolean haveNL= t==null || t.getType() == tNEWLINE;
 		while(true) {
@@ -217,14 +217,38 @@ final public class Lexer {
 			haveNL= false;
 			final int start= fOffset;
 			final int c= fCharPhase3;
-			final int d= nextCharPhase3();
+			
+			// optimization avoids calling nextCharPhase3
+			int d;
+			final int pos= fEndOffset;
+			if (pos+1 >= fLimit) {
+				d= nextCharPhase3();
+			}
+			else {
+				d= fInput[pos];
+				switch(d) {
+				case '\\': 
+					d= nextCharPhase3();
+					break;
+				case '?':
+					if (fInput[pos+1] == '?') {
+						d= nextCharPhase3();
+						break;
+					}
+					// no break;
+				default:
+					fOffset= pos;
+					fCharPhase3= d;
+					fEndOffset= pos+1;
+				}
+			}
+
 			switch(c) {
 			case END_OF_INPUT:
 				fToken= newToken(Lexer.tEND_OF_INPUT, start);
 				return fToken;
 			case '\n':
 				haveNL= true;
-				fInsideIncludeDirective= false;
 				continue;
 			case ' ':
 			case '\t':
@@ -261,6 +285,7 @@ final public class Lexer {
 					continue;
 				}
 				if (hadNL) {
+					fFirstTokenAfterNewline= true;
 					fToken= newToken(IToken.tPOUND, start);
 					return fToken;
 				}
@@ -637,25 +662,21 @@ final public class Lexer {
 	}
 
 	private void blockComment(final int start) {
-		int c= nextCharPhase3();
-		while(true) {
-			switch (c) {
-			case END_OF_INPUT:
-				fLog.handleComment(true, start, fOffset);
-				return;
-			case '*':
-				c= nextCharPhase3();
-				if (c == '/') {
+		// we can ignore line-splices, trigraphs and windows newlines when searching for the '*'
+		int pos= fEndOffset;
+		while(pos < fLimit) {
+			if (fInput[pos++] == '*') {
+				fEndOffset= pos;
+				if (nextCharPhase3() == '/') {
 					nextCharPhase3();
 					fLog.handleComment(true, start, fOffset);
 					return;
 				}
-				break;
-			default:
-				c= nextCharPhase3();
-				break;
 			}
 		}
+		fCharPhase3= END_OF_INPUT;
+		fOffset= fEndOffset= pos;
+		fLog.handleComment(true, start, pos);
 	}
 
 	private void lineComment(final int start) {
@@ -907,75 +928,72 @@ final public class Lexer {
 	
 	/**
 	 * Perform phase 1-3: Replace \r\n with \n, handle trigraphs, detect line-splicing.
-	 * Changes fOffset, fEndOffset and fCharPhase3.
+	 * Changes fOffset, fEndOffset and fCharPhase3, stateless otherwise.
 	 */
 	private int nextCharPhase3() {
-		int offset;
-		int c; 
+		int pos= fEndOffset;
 		do {
-			offset= fEndOffset;
-			c= fetchCharPhase3(offset); // changes fEndOffset
-		}
-		while(c == LINE_SPLICE_SEQUENCE);
-
-		fOffset= offset;
-		fCharPhase3= c;
-		return c;
-	}
-	
-	/**
-	 * Perform phase 1-3: Replace \r\n with \n, handle trigraphs, detect line-splicing.
-	 * Changes <code>fEndOffset</code>, but is stateless otherwise.
-	 */
-	private int fetchCharPhase3(int pos) {
-		if (pos >= fLimit) {
-			fEndOffset= fLimit;
-			return END_OF_INPUT;
-		}
-		final char c= fInput[pos++];
-		switch(c) {
+			if (pos+1 >= fLimit) {
+				if (pos >= fLimit) {
+					fOffset= fLimit;
+					fEndOffset= fLimit;
+					fCharPhase3= END_OF_INPUT;
+					return END_OF_INPUT;
+				}
+				fOffset= pos;
+				fEndOffset= pos+1;
+				fCharPhase3= fInput[pos];
+				return fCharPhase3;
+			}
+			
+			final char c= fInput[pos];
+			fOffset= pos;
+			fEndOffset= ++pos;
+			fCharPhase3= c;
+			switch(c) {
 			// windows line-ending
 			case '\r':
-			if (pos < fLimit && fInput[pos] == '\n') {	
-				fEndOffset= pos+1;
-				return '\n';
-			}
-			fEndOffset= pos;
-			return c;
+				if (fInput[pos] == '\n') {	
+					fEndOffset= pos+1;
+					fCharPhase3= '\n';
+					return '\n';
+				}
+				return c;
 
-		// trigraph sequences
-		case '?':
-			if (pos+1 >= fLimit || fInput[pos] != '?') {
+				// trigraph sequences
+			case '?':
+				if (fInput[pos] != '?' || pos+1 >= fLimit) {
+					return c;
+				}
+				final char trigraph= checkTrigraph(fInput[pos+1]);
+				if (trigraph == 0) {
+					return c;
+				}
+				if (trigraph != '\\') {
+					fEndOffset= pos+2;
+					fCharPhase3= trigraph;
+					return trigraph;
+				}
+				pos+= 2;
+				// no break, handle backslash
+
+			case '\\':
+				final int lsPos= findEndOfLineSpliceSequence(pos);
+				if (lsPos > pos) {
+					pos= lsPos;
+					continue;
+				}
 				fEndOffset= pos;
+				fCharPhase3= '\\';
+				return '\\';	// don't return c, it may be a '?'
+
+			default:
 				return c;
 			}
-			final char trigraph= checkTrigraph(fInput[pos+1]);
-			if (trigraph == 0) {
-				fEndOffset= pos;
-				return c;
-			}
-			if (trigraph != '\\') {
-				fEndOffset= pos+2;
-				return trigraph;
-			}
-			pos+= 2;
-			// no break, handle backslash
-		
-		case '\\':
-			final int lsPos= findEndOfLineSpliceSequence(pos);
-			if (lsPos > pos) {
-				fEndOffset= lsPos;
-				return LINE_SPLICE_SEQUENCE;
-			}
-			fEndOffset= pos;
-			return '\\';	// don't return c, it may be a '?'
-			
-		default:
-			fEndOffset= pos;
-			return c;
 		}
+		while(true);
 	}
-
+	
 	/**
 	 * Maps a trigraph to the character it encodes.
 	 * @param c trigraph without leading question marks.
@@ -1059,12 +1077,8 @@ final public class Lexer {
 		final char[] result= new char[imageLength];
 		markPhase3();
 		fEndOffset= offset;
-		int idx= 0;
-		while (idx<imageLength) {
-			int c= fetchCharPhase3(fEndOffset);
-			if (c != LINE_SPLICE_SEQUENCE) {
-				result[idx++]= (char) c;
-			}
+		for (int idx=0; idx<imageLength; idx++) {
+			result[idx]= (char) nextCharPhase3();
 		}
 		restorePhase3();
 		return result;

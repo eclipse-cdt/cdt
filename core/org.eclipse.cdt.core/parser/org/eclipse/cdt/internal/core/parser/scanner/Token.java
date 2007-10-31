@@ -31,32 +31,32 @@ public abstract class Token implements IToken, Cloneable {
 		fSource= source;
 	}
 
-	public int getType() {
+	final public int getType() {
 		return fKind;
 	}
 
-	public int getOffset() {
+	final public int getOffset() {
 		return fOffset;
 	}
 
-	public int getEndOffset() {
+	final public int getEndOffset() {
 		return fEndOffset;
 	}
 
-	public int getLength() {
+	final public int getLength() {
 		return fEndOffset-fOffset;
 	}
 
-	public IToken getNext() {
+	final public IToken getNext() {
 		return fNextToken;
 	}
 
 	
-	public void setType(int kind) {
+	final public void setType(int kind) {
 		fKind= kind;
 	}
 
-	public void setNext(IToken t) {
+	final public void setNext(IToken t) {
 		fNextToken= t;
 	}
 
@@ -67,7 +67,7 @@ public abstract class Token implements IToken, Cloneable {
 
 	public abstract char[] getCharImage();
 
-	public boolean hasGap(Token t) {
+	final public boolean hasGap(Token t) {
 		return fSource == t.fSource && fEndOffset != t.getOffset();
 	}
 
@@ -75,7 +75,7 @@ public abstract class Token implements IToken, Cloneable {
 		return getImage();
 	}
 	
-	public boolean isOperator() {
+	final public boolean isOperator() {
 		return TokenUtil.isOperator(fKind);
 	}
 
@@ -83,7 +83,7 @@ public abstract class Token implements IToken, Cloneable {
 		return new String(getCharImage());
 	}
 
-	public Object clone() {
+	final public Object clone() {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {

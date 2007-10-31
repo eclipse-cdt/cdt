@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Kevin Doyle 		(IBM)		 - [150492] FolderInfoPropertyPage doesn't work reliably
  *******************************************************************************/
 
 package samples.ui.propertypages;
@@ -181,15 +182,14 @@ public class FolderInfoPropertyPage
 		
 		public void run()
 		{
-			if (stopped)
+			if (stopped) {
 			  return;
-			walkFolder(inputFolder);						
-			updateGUI();
-			if (!stopped)
-			{
-				stopped = true;
-				updateGUI();
 			}
+			walkFolder(inputFolder);						
+			if (!stopped) {
+				stopped = true;
+			}
+			updateGUI();
 		}
 		
 		/**
@@ -239,18 +239,15 @@ public class FolderInfoPropertyPage
 		{
 			if (stopButton.isDisposed())
 			  return; 
-			if (!stopped)
-			{
-				sizeLabel.setText(Integer.toString(totalSize));		
-				filesLabel.setText(Integer.toString(totalFiles));
-				foldersLabel.setText(Integer.toString(totalFolders));
-			}
-			else if (stopped)
+			if (stopped)
 			{				
 				setValid(true); // re-enable OK button								
 				stopButton.setEnabled(false); // disable Stop button				
 				clearMessage(); // clear "Processing..." message
-			}			  
+			}
+			sizeLabel.setText(Integer.toString(totalSize));		
+			filesLabel.setText(Integer.toString(totalFiles));
+			foldersLabel.setText(Integer.toString(totalFolders));
 		}
 	}	
 

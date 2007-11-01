@@ -84,6 +84,19 @@ public abstract class AbstractDStoreService implements IDStoreService
 		}
 	}
 	 
+	protected DataElement[] dsQueryCommand(DataElement subject, String command, IProgressMonitor monitor)
+	{
+		return dsQueryCommand(subject, null, command, monitor);
+	}
+
+	/**
+	 * query 
+	 * @param subject
+	 * @param args
+	 * @param command
+	 * @param monitor
+	 * @return
+	 */
 	protected DataElement[] dsQueryCommand(DataElement subject, ArrayList args, String command, IProgressMonitor monitor)
 	{
 		// query roots
@@ -92,7 +105,16 @@ public abstract class AbstractDStoreService implements IDStoreService
 	
 		if (queryCmd != null && ds != null)
 		{
-			DataElement status = ds.command(queryCmd, args, subject, true);
+			DataElement status = null;
+			
+			if (args != null)
+			{
+				status = ds.command(queryCmd, args, subject, true);
+			}
+			else
+			{
+				status = ds.command(queryCmd, subject, true);
+			}
 			try
 			{
 				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
@@ -124,6 +146,88 @@ public abstract class AbstractDStoreService implements IDStoreService
 		return new DataElement[0];
 	}
 	
+	protected List dsQueryCommandMulti(DataElement[] subjects, String command, IProgressMonitor monitor)
+	{
+		return dsQueryCommandMulti(subjects, null, command, monitor);
+	}
+	
+	/**
+	 * Query multiple subjects in one shot
+	 * @param subjects the subjects to query
+	 * @param command the query command
+	 * @param args args for the command - may be null
+	 * @param monitor the progress monitor
+	 * @return a list of DataElement[]s containing the results of each query
+	 */
+	protected List dsQueryCommandMulti(DataElement[] subjects, ArrayList[] argses, String command, IProgressMonitor monitor)
+	{
+		List statuses = new ArrayList();
+		DataStore ds = getDataStore();	
+		DStoreStatusMonitor smon = getStatusMonitor(ds);
+		
+	
+		for (int i = 0; i < subjects.length && !monitor.isCanceled(); i++)
+		{
+			DataElement subject = subjects[i];
+			
+			DataElement queryCmd = getCommandDescriptor(subject, command);
+			if (queryCmd != null && ds != null)
+			{
+				DataElement status = null;
+				if (argses != null)
+				{
+					status = ds.command(queryCmd, argses[i], subject, true);
+				}
+				else
+				{
+					status = ds.command(queryCmd, subject, true);
+				}
+				statuses.add(status);				
+			}
+		}
+
+		List consolidatedResults = new ArrayList();
+		
+		// wait for each command to complete
+		for (int i = 0; i < statuses.size() && !monitor.isCanceled(); i++)
+		{
+		    DataElement status = (DataElement)statuses.get(i);
+		    DataElement deObj = subjects[i];
+		    
+		    try
+		    {
+		    	smon.waitForUpdate(status, monitor);		 		    
+		    	
+			    if (!monitor.isCanceled() && smon.determineStatusDone(status))
+			    {
+			    	List nested = deObj.getNestedData();
+			    	if (nested != null)
+			    	{
+			    		consolidatedResults.add(nested.toArray(new DataElement[nested.size()]));
+			    	}			    	
+			    }
+			}
+		    catch (InterruptedException e)
+		    {				
+		    	// cancel monitor if it's still not canceled
+		    	if (monitor != null && !monitor.isCanceled())
+		    	{
+		    		monitor.setCanceled(true);
+		    	}
+			
+			//InterruptedException is used to report user cancellation, so no need to log
+			//This should be reviewed (use OperationCanceledException) with bug #190750
+		    }	
+		}
+		
+		return consolidatedResults;
+	}
+	
+	
+	
+
+	
+	
 	protected DataElement dsStatusCommand(DataElement subject, ArrayList args, String command, IProgressMonitor monitor)
 	{
 		// query roots
@@ -154,39 +258,6 @@ public abstract class AbstractDStoreService implements IDStoreService
 		return null;
 	}
 	
-	protected DataElement[] dsQueryCommand(DataElement subject, String command, IProgressMonitor monitor)
-	{
-		// query roots
-		DataElement queryCmd = getCommandDescriptor(subject, command);
-		DataStore ds = getDataStore();
-		if (queryCmd != null && ds != null)
-		{
-			DataElement status = ds.command(queryCmd, subject, true);
-			try
-			{
-				getStatusMonitor(ds).waitForUpdate(status, monitor);
-				checkHostJVM();
-				// get results
-				List nested = subject.getNestedData();
-				if (nested != null)
-				{
-					return (DataElement[])nested.toArray(new DataElement[subject.getNestedSize()]);
-				}
-			}
-			catch (InterruptedException e)
-			{				
-				// cancel monitor if it's still not canceled
-				if (monitor != null && !monitor.isCanceled())
-				{
-					monitor.setCanceled(true);
-				}
-				
-				//InterruptedException is used to report user cancellation, so no need to log
-				//This should be reviewed (use OperationCanceledException) with bug #190750
-			}			
-		}
-		return new DataElement[0];
-	}
 	
 	protected DataElement dsStatusCommand(DataElement subject, String command, IProgressMonitor monitor)
 	{

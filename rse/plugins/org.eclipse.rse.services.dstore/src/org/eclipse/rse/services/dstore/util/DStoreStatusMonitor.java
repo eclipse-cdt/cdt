@@ -290,13 +290,15 @@ public class DStoreStatusMonitor implements IDomainListener
 
 				
 	  // Prevent infinite looping by introducing a threshold for wait 
-      int WaitThreshold = 600; //default. sleep(100ms) for 600 times  		
+      int WaitThreshold = 200; //default. sleep(100ms) for 60 times  		
       if ( wait > 0 )
         WaitThreshold = wait*10; // 1 second means 10 sleep(100ms)
       else if ( wait == -1 ) // force a diagnostic
 	  		 WaitThreshold = -1;
          
-
+	  int nudges = 0; // nudges used for waking up server with slow connections
+	      // nudge up to 12 times before giving up
+	  
 		if (display != null) 
 		{
 			// Current thread is UI thread
@@ -370,8 +372,13 @@ public class DStoreStatusMonitor implements IDomainListener
 
                    if (WaitThreshold == 0)
 				    {
+                     	wakeupServer(status);
+                        
 				        // no diagnostic factory but there is a timeout
-				        return status;  // returning the undone status object
+                    	if (nudges >= 12)
+                    		return status;  // returning the undone status object
+                    	
+                    	nudges++;
 				    }
                     else if (_networkDown)
                     {
@@ -386,6 +393,19 @@ public class DStoreStatusMonitor implements IDomainListener
 		return status;
 	}
 
+	private void wakeupServer(DataElement status)
+	{
+		if (status != null)
+		{
+			// token command to wake up update handler
+			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH");
+			DataElement subject = (DataElement)status.getParent().get(0);
+			if (cmdDescriptor != null)
+			{
+				_dataStore.command(cmdDescriptor, subject);
+			}
+		}
+	}
 
 	/**
 	 * Causes the current thread to wait until this class request has been

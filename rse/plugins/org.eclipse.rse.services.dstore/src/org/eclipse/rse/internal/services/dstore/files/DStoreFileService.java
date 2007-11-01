@@ -784,7 +784,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return true;
 	}
 
-	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor)
+	private DataElement getSubjectFor(String remoteParent, String name)
 	{
 		DataElement de = null;
 		if (name.equals(".") && name.equals(remoteParent)) //$NON-NLS-1$
@@ -801,10 +801,27 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			buf.append(name);
 			de = getElementFor(buf.toString());
 		}
+		return de;
+	}
+	
+	private DataElement[] getSubjectsFor(String[] remoteParents, String[] names)
+	{
+		List subjects = new ArrayList();
+		for (int i = 0; i < remoteParents.length; i++)
+		{
+			DataElement de = getSubjectFor(remoteParents[i], names[i]);
+			subjects.add(de);
+		}
+		return (DataElement[])subjects.toArray(new DataElement[subjects.size()]);
+	}
+	
+	public IHostFile getFile(String remoteParent, String name, IProgressMonitor monitor)
+	{
+		DataElement de = getSubjectFor(remoteParent, name);
 		
 		// with 207095, it's possible to get here unconnected such that there is no element	
 		if (de != null) {
-			dsQueryCommand(de, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+			dsQueryCommand(de, null,  IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
 			//getFile call should also need to convert this DataElement into a HostFile using
 			//convertToHostFile() call.  This way, this DataElement will be put into _fileMap.
 			return convertToHostFile(de);
@@ -814,16 +831,17 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 	}
 	
+	/**
+	 * Mass query of individual files
+	 */
 	public IHostFile[] getFileMulti(String remoteParents[], String names[], IProgressMonitor monitor) 
 		throws SystemMessageException
 	{
-		// TODO optimize dstore version of this to do mass queries then wait for last status
-		List results = new ArrayList();
-		for (int i = 0; i < remoteParents.length; i++)
-		{
-			results.add(getFile(remoteParents[i], names[i], monitor));
-		}
-		return (IHostFile[])results.toArray(new IHostFile[results.size()]);
+		DataElement[] subjects = getSubjectsFor(remoteParents, names);
+		
+		dsQueryCommandMulti(subjects, null, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+
+		return convertToHostFiles(subjects, "*");		 //$NON-NLS-1$
 	}
 
 	/**
@@ -1303,9 +1321,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return convertToHostFiles(results, "*"); //$NON-NLS-1$
 	}
 	
-	
-
-	public IHostFile[] list(String remoteParent, String fileFilter, int fileType, IProgressMonitor monitor)
+	private String getQueryString(int fileType)
 	{
 		String queryString = null;
 		switch (fileType)
@@ -1323,7 +1339,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_ALL;
 			break;
 		}
-		
+		return queryString;
+	}
+
+	public IHostFile[] list(String remoteParent, String fileFilter, int fileType, IProgressMonitor monitor)
+	{
+		String queryString = getQueryString(fileType);		
 		return fetch(remoteParent, fileFilter, queryString, monitor);
 	}
 
@@ -1332,20 +1353,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			String[] fileFilters, int fileType, IProgressMonitor monitor)
 			throws SystemMessageException 
 	{
-		// TODO - optimize dstore implementation to do mass queries then wait for last result
-		
-		
-		List files = new ArrayList();
-		for (int i = 0; i < remoteParents.length; i++)
-		{
-			IHostFile[] result = list(remoteParents[i], fileFilters[i], fileType, monitor);
-			for (int j = 0; j < result.length; j++)
-			{
-				files.add(result[j]);
-			}
-		}
-		
-		return (IHostFile[])files.toArray(new IHostFile[files.size()]);
+		String queryString = getQueryString(fileType);
+
+		return fetchMulti(remoteParents, fileFilters, queryString, monitor);
 	}
 	
 	
@@ -1411,6 +1421,57 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		
 		DataElement[] results = dsQueryCommand(deObj, args, queryType, monitor);		
 		return convertToHostFiles(results, fileFilter);
+	}
+	
+	/**
+	 * Fetch multiple results (for different parents an filters
+	 * 
+	 * @param remoteParents the parents to query
+	 * @param fileFilters the filters for each parent to query
+	 * @param queryType the type of query (files, folders, both, etc)
+	 * @param monitor the progress monitor
+	 * @return the results
+	 */
+	protected IHostFile[] fetchMulti(String[] remoteParents, String[] fileFilters, String queryType, IProgressMonitor monitor)
+	{
+		DataStore ds = getDataStore();
+		if (ds == null)
+		{
+			return new IHostFile[0];
+		}
+		
+		ArrayList[] argses = new ArrayList[remoteParents.length];
+		DataElement subjects[] = new DataElement[remoteParents.length];
+		
+		for (int i = 0; i < remoteParents.length; i++)
+		{
+			// create filter descriptor
+			DataElement deObj = getElementFor(remoteParents[i]);
+			if (deObj == null)
+			{
+				DataElement universaltemp = getMinerElement();
+				deObj = ds.createObject(universaltemp, IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR, remoteParents[i], remoteParents[i], "", false); //$NON-NLS-1$
+			}
+			subjects[i] = deObj;
+			
+			DataElement attributes = getAttributes(fileFilters[i], true);
+			ArrayList args = new ArrayList(1);
+			args.add(attributes);
+			argses[i] = args;
+		}
+			
+		List consolidatedResults = dsQueryCommandMulti(subjects, argses, queryType, monitor);		
+		List convertedResults = new ArrayList();
+		for (int r = 0; r < consolidatedResults.size(); r++)
+		{
+			IHostFile[] results = convertToHostFiles((DataElement[])consolidatedResults.get(r), fileFilters[r]);
+			for (int c = 0; c < results.length; c++)
+			{
+				convertedResults.add(results[c]);
+			}
+		}
+		
+		return (IHostFile[])convertedResults.toArray(new IHostFile[consolidatedResults.size()]);
 	}
 
 	public boolean isCaseSensitive()

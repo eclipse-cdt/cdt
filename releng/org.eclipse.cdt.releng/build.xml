@@ -12,7 +12,7 @@
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
 		<tstamp/>
-		<property name="branchVersion" value="4.0.1"/>
+		<property name="branchVersion" value="5.0.0"/>
 		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
 		<property name="forceContextQualifier" value="${timestamp}"/>
 		<property name="buildingOSGi" value="true"/>
@@ -28,7 +28,7 @@
 		<property name="masterFile" value="cdt-master-${branchVersion}-${buildId}.zip"/>
 		<property name="eclipseTest" value="org.eclipse.test_3.2.0"/>
 		<property name="messagefile" value="message.in"/>
-		<property name="mailto" value="dschaefer@qnx.com"/>
+		<property name="mailto" value="vivkong@ca.ibm.com"/>
 		<property name="eclipseRoot" value=":pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse"/>
 		<property name="baseos" value="${osgi.os}"/>
 		<property name="basews" value="${osgi.ws}"/>

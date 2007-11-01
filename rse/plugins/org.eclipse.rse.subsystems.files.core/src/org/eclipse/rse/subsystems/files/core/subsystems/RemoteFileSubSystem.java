@@ -442,6 +442,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		    return null;
 		}
 		
+		// TODO - change this to use listMulti to be more efficient
 		for (int idx=0; idx<filterStrings.length; idx++)
 		{		     	
 			if (monitor != null)
@@ -580,18 +581,11 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		}
 	}
 
-	/**
-	 * Actually resolve an absolute filter string. This is called by the
-	 *  run(IProgressMonitor monitor) method, which in turn is called by resolveFilterString.
-	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(String,IProgressMonitor)
-	 */
-	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
+	
+	private String fixFilterString(IRemoteFileSubSystemConfiguration rfssf, String filterString)
 	{
-		boolean debugMode = false;
-		IRemoteFileSubSystemConfiguration rfssf = getParentRemoteFileSubSystemConfiguration();
 		boolean windows = !rfssf.isUnixStyle();
-		if (debugMode)
-			SystemBasePlugin.logInfo("INTERNALRESOLVEFILTERSTRING: INPUT FILTERSTRING: " + filterString); //$NON-NLS-1$
+
 		if (filterString.startsWith("/") && windows) // request to list root files? //$NON-NLS-1$
 		{ // convert to request to list drives on Windows
 			int len = filterString.length();
@@ -599,13 +593,24 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 				filterString = "*"; // hmm, should never happen //$NON-NLS-1$
 			else
 				filterString = filterString.substring(1);
-			if (debugMode)
-				SystemBasePlugin.logInfo("...FINAL FILTERSTRING: " + filterString); //$NON-NLS-1$
 		}
+		
+		return filterString;
+	}
+	
+	/**
+	 * Actually resolve an absolute filter string. This is called by the
+	 *  run(IProgressMonitor monitor) method, which in turn is called by resolveFilterString.
+	 * @see org.eclipse.rse.core.subsystems.SubSystem#internalResolveFilterString(String,IProgressMonitor)
+	 */
+	protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws java.lang.reflect.InvocationTargetException, java.lang.InterruptedException
+	{
+		IRemoteFileSubSystemConfiguration rfssf = getParentRemoteFileSubSystemConfiguration();
+		filterString = fixFilterString(rfssf, filterString);
+		
 		RemoteFileFilterString fs = new RemoteFileFilterString(rfssf, filterString);
 		currFilterString = fs;
-		if (debugMode)
-			SystemBasePlugin.logInfo("...LISTROOTS = " + fs.listRoots()); //$NON-NLS-1$
+
 		if (fs.listRoots())
 			return listRoots(new RemoteFileContext(this, null, fs), monitor);
 		else
@@ -613,24 +618,16 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			boolean showDirs = fs.getShowSubDirs();
 			boolean showFiles = fs.getShowFiles();
 			String path = fs.getPath();
+			boolean windows = !rfssf.isUnixStyle();
+			
 			if (windows && (path != null) && !path.endsWith(rfssf.getSeparator()))
 				path = path + rfssf.getSeparatorChar();
-			String filter = fs.getFileOrTypes();
-			if (debugMode)
-				SystemBasePlugin.logInfo("...path='" + path + "', filter='" + filter + "', showDirs=" + showDirs + ", showFiles=" + showFiles); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			
+		
+			String filter = fs.getFileOrTypes();			
 			IRemoteFile parent = null;
 			try
 			{
 				parent = getRemoteFileObject(path, monitor);
-				
-				/* DKM - now filters should get invalidated via SystemRegistry event firing so this should not be needed
-				 * 
-				// DKM: this may be a filter refresh - to be safe I'm marking it stale
-				if (parent != null)
-					parent.markStale(true);
-					*/
-				
 			}
 			catch (SystemMessageException e)
 			{
@@ -646,65 +643,65 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			Object[] children = null;
 			try
 			{
-			// if parent exists, get its children according to the filter
-			if (parent != null && parentExists)
-			{
-				boolean hasFileContents = !parent.isStale() && parent.hasContents(RemoteFileChildrenContentsType.getInstance(), filter);
-				boolean hasFolderContents = !parent.isStale() && parent.hasContents(RemoteFolderChildrenContentsType.getInstance(), filter);
-				boolean hasFileAndFolderContents = !parent.isStale() && parent.hasContents(RemoteChildrenContentsType.getInstance(), filter);
-				if (showDirs && showFiles)
+				// if parent exists, get its children according to the filter
+				if (parent != null && parentExists)
 				{
-					
- 					if (hasFileAndFolderContents)						
-					{
+					boolean hasFileContents = !parent.isStale() && parent.hasContents(RemoteFileChildrenContentsType.getInstance(), filter);
+					boolean hasFolderContents = !parent.isStale() && parent.hasContents(RemoteFolderChildrenContentsType.getInstance(), filter);
+					boolean hasFileAndFolderContents = !parent.isStale() && parent.hasContents(RemoteChildrenContentsType.getInstance(), filter);
+					if (showDirs && showFiles)
+					{						
+	 					if (hasFileAndFolderContents)						
+						{
+	 						// has everything
+						}
+						else if (hasFileContents)
+						{
+							// already have the files, now add the folders
+							list(parent, filter, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);						
+						}
+						else if (hasFolderContents)
+						{
+							// already have the folders, now add the files
+							list(parent, filter, IFileServiceConstants.FILE_TYPE_FILES, monitor);				
+						}
+						else
+						{
+							// don't have anything - query both
+							list(parent, filter, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
+						}
+						children = parent.getContents(RemoteChildrenContentsType.getInstance(), filter);
 					}
-					else if (hasFileContents)
+					else if (showDirs)
 					{
-						// already have the files, now add the folders
-						list(parent, filter, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);						
-					}
-					else if (hasFolderContents)
-					{
-						// already have the folders, now add the files
-						list(parent, filter, IFileServiceConstants.FILE_TYPE_FILES, monitor);				
+						if (hasFolderContents)
+						{
+							children = parent.getContents(RemoteFolderChildrenContentsType.getInstance(), filter);
+						}
+						else
+						{
+							children = listFolders(parent, filter, monitor);
+						}
 					}
 					else
 					{
-						// don't have anything - query both
-						list(parent, filter, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
-					}
-					children = parent.getContents(RemoteChildrenContentsType.getInstance(), filter);
-				}
-				else if (showDirs)
-				{
-					if (hasFolderContents)
-					{
-						children = parent.getContents(RemoteFolderChildrenContentsType.getInstance(), filter);
-					}
-					else
-					{
-						children = listFolders(parent, filter, monitor);
+						if (hasFileContents)
+						{
+							children = parent.getContents(RemoteFileChildrenContentsType.getInstance(), filter);
+						}
+						else
+						{
+							children = listFiles(parent, filter, monitor);
+						}
 					}
 				}
-				else
-				{
-					if (hasFileContents)
-					{
-						children = parent.getContents(RemoteFileChildrenContentsType.getInstance(), filter);
-					}
-					else
-					{
-						children = listFiles(parent, filter, monitor);
-					}
+				// otherwise return message saying parent could not be found
+				else if (parent != null && !parentExists) {
+					children = new SystemMessageObject[1];
+					SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
+					msg.makeSubstitution(parent.getAbsolutePath());
+					children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, null);
 				}
-			}
-			// otherwise return message saying parent could not be found
-			else if (parent != null && !parentExists) {
-				children = new SystemMessageObject[1];
-				SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_FOLDER_NOTFOUND);
-				msg.makeSubstitution(parent.getAbsolutePath());
-				children[0] = new SystemMessageObject(msg, ISystemMessageObject.MSGTYPE_ERROR, null);
-			}
 			}
 			catch (SystemMessageException e)
 			{
@@ -1465,7 +1462,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	public IRemoteFile[] listFolders(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException
 	{
-		return list(parent, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
+		return list(parent, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);
 	}
 
 	/**

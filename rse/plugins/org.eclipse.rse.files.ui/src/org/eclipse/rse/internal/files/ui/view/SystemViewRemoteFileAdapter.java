@@ -33,6 +33,7 @@
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Kevin Doyle 		(IBM)		 - [204810] Saving file in Eclipse does not update remote file
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * Kevin Doyle      (IBM)		 - [186125] Changing encoding of a file is not reflected when it was opened before
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -274,10 +275,8 @@ public class SystemViewRemoteFileAdapter
 		boolean isArchive = false;
 
 		boolean canRead = true;
-		boolean canWrite = true;
 		boolean supportsSearch = true;
 		boolean supportsArchiveManagement = false;
-
 
 		// perf improvement... phil	
 		Object firstSelection = selection.getFirstElement();
@@ -288,7 +287,6 @@ public class SystemViewRemoteFileAdapter
 			elementType = firstFile.isDirectory() || firstFile.isRoot() ? 1 : 0;
 			isArchive = firstFile.isArchive();
 			canRead = firstFile.canRead();
-			canWrite = firstFile.canWrite();
 			
 			supportsSearch = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsSearch();
 			supportsArchiveManagement = firstFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement();
@@ -2511,7 +2509,6 @@ public class SystemViewRemoteFileAdapter
 		boolean ok = true;
 		IRemoteFile file = (IRemoteFile) element;
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
-		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		try
 		{
 			
@@ -2844,15 +2841,14 @@ public class SystemViewRemoteFileAdapter
 			{
 				try
 				{
-					boolean openedInSamePerspective = (editable.checkOpenInEditor() == ISystemEditableRemoteObject.OPEN_IN_SAME_PERSPECTIVE);
+					boolean isOpen = editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN;
 					boolean isFileCached = isFileCached(editable, remoteFile);
 					if (isFileCached)
 					{
-						if (openedInSamePerspective)
-						{
+						if (!isOpen) {
 							editable.setLocalResourceProperties();
+							editable.addAsListener();
 						}
-						editable.addAsListener();
 						editable.openEditor();
 					}
 					else

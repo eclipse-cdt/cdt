@@ -18,6 +18,7 @@
  * David Dykstal (IBM) - [160776] format file size according to client system conventions and locale
  * David McKnight (IBM) - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
  * Kevin Doyle (IBM) - [197976] Changing a file to read-only when it is open doesn't update local copy
+ * Kevin Doyle (IBM) - [186125] Changing encoding of a file is not reflected when it was opened before
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -26,6 +27,8 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -84,6 +87,7 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	protected String errorMessage;	
     protected boolean initDone = false;
     protected boolean wasReadOnly = false;
+    protected String prevEncoding;
     
     private boolean encodingFieldAdded = false;
     private String defaultEncoding = null;
@@ -457,7 +461,8 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	    	otherEncodingCombo.setItems(encodingStrings);
 
 	    	String encoding = file.getEncoding();
-
+	    	prevEncoding = encoding;
+	    	
 	    	// if the encoding is the same as the default encoding, then we want to choose the default encoding option
 	    	if (encoding.equalsIgnoreCase(defaultEncoding)) {
 	    		updateEncodingGroupState(true);
@@ -477,14 +482,14 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	{
 		boolean ok = super.performOk();
 		boolean readOnlySelected = cbReadonlyPrompt != null ? cbReadonlyPrompt.getSelection() : false;
+		IRemoteFile remoteFile = getRemoteFile();
+		
 		if (ok && (cbReadonlyPrompt!=null) && 
 				((readOnlySelected && !wasReadOnly) || 
 				 (!readOnlySelected && wasReadOnly)))
 		{
    		  try
     	  {
-   		   IRemoteFile remoteFile = getRemoteFile();
-
            // get old can write attribute
            boolean oldCanWrite = remoteFile.canWrite();
 
@@ -535,8 +540,18 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		}
 		
 	    // set the encoding
-		if (encodingFieldAdded) {
-			RemoteFileEncodingManager.getInstance().setEncoding(getRemoteFile().getParentRemoteFileSubSystem().getHost().getHostName(), getRemoteFile().getAbsolutePath(), getSelectedEncoding());
+		String selectedEncoding = getSelectedEncoding();
+		if (ok && encodingFieldAdded && prevEncoding != null && !prevEncoding.equals(selectedEncoding)) {
+			RemoteFileEncodingManager.getInstance().setEncoding(getRemoteFile().getParentRemoteFileSubSystem().getHost().getHostName(), getRemoteFile().getAbsolutePath(), selectedEncoding);
+			
+			SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile);
+			if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN) {
+				IFile file = editable.getLocalResource();
+				try {
+					file.setCharset(selectedEncoding, null);
+				} catch (CoreException e) {
+				}
+			}
 		}
 		
 		return ok;

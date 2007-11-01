@@ -21,6 +21,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.tests.RSETestsPlugin;
@@ -35,8 +36,9 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	
 	private List _subSystems;
 	private List _connections;
+	private List _samplePaths;
 	
-	private String SYSTEM_ADDRESS = "SLES8RM";
+	private String SYSTEM_ADDRESS = "dmcknigh3";//"SLES8RM";
 	private String USER_ID = "dmcknigh";
 	private String PASSWORD = null;//"xxxxxx";
 	
@@ -79,19 +81,35 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 		super.tearDown();
 	}
 	
-	protected void setupConnections() {
-		_connections = new ArrayList();
-		_subSystems = new ArrayList();
-		
-		
-		// setup dstore connection
-		addSystem(getDStoreHost());
-		
-		// setup ssh connection
-		addSystem(getSSHHost());
 
-		// setup ftp connection
-		addSystem(getFTPHost());						
+	
+	protected void setupConnections() {
+		if (_connections == null)
+		{
+			_connections = new ArrayList();
+			_subSystems = new ArrayList();
+			
+			// setup dstore connection
+			addSystem(getDStoreHost());	
+			
+			// setup ssh connection
+			addSystem(getSSHHost());
+			
+			// setup ftp connection
+			addSystem(getFTPHost());	
+			
+	
+			
+			
+			_samplePaths = new ArrayList();
+			_samplePaths.add("/usr");	
+			_samplePaths.add("/usr/lib");		
+			_samplePaths.add("/usr/bin");
+			_samplePaths.add("/bin");
+			_samplePaths.add("/etc");
+			_samplePaths.add("/home");
+			_samplePaths.add("/sbin");
+		}
 	}
 	
 	private void addSystem(IHost host) {
@@ -197,6 +215,171 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 		}
 	}
 	
+	/**
+	 * Test the single file query
+	 */
+	public void testSingleFileQuery() {
+		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testSingleFileQuery")) return; //$NON-NLS-1$
+		setupConnections();
+		
+		
+		String[] testPaths = (String[])_samplePaths.toArray(new String[_samplePaths.size()]);
+
+		for (int i = 0; i < _subSystems.size(); i++) {
+			IRemoteFileSubSystem ss = (IRemoteFileSubSystem)_subSystems.get(i);
+			
+			// ensure that the system is connected
+			if (!ss.isConnected()) {
+				try {
+					ss.connect(new NullProgressMonitor(), false);
+				}
+				catch (Exception e) {
+					// connect failed
+				}				
+			}
+			
+			String systemType = ss.getHost().getSystemType().getLabel();
+			
+			Exception exception = null;
+			String cause = null;
+			IRemoteFile[] remoteFiles = new IRemoteFile[testPaths.length];
+			
+			long t1 = System.currentTimeMillis();
+			for (int f = 0; f < testPaths.length; f++)
+			{
+				try 
+				{
+					remoteFiles[f] = ss.getRemoteFileObject(testPaths[f], new NullProgressMonitor());
+				}
+				catch (Exception e){
+					exception = e;
+					cause = e.getLocalizedMessage();
+				}
+			}
+			
+			long t2 = System.currentTimeMillis();
+			
+			System.out.println(systemType + ": get files time = "+ (t2 - t1) + " milliseconds");			
+
+			// query folders
+			IRemoteFile[] results = null;
+			List consolidatedResults = new ArrayList();
+			long t3 = System.currentTimeMillis();
+			for (int q = 0; q < remoteFiles.length; q++)
+			{
+				try
+				{
+					IRemoteFile[] children = ss.list(remoteFiles[q], IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
+					for (int c = 0; c < children.length; c++)
+					{
+						consolidatedResults.add(children[c]);
+					}
+				}
+				catch (Exception e){
+					exception = e;
+					cause = e.getLocalizedMessage();
+				}
+			}
+			results = (IRemoteFile[])consolidatedResults.toArray(new IRemoteFile[consolidatedResults.size()]);
+			long t4 = System.currentTimeMillis();
+			
+			System.out.println(systemType + ": query time = "+ (t4 - t3) + " milliseconds");
+
+			assertNull(systemType + ":Exception getting remote files! Possible cause: " + cause, exception); //$NON-NLS-1$
+			assertTrue(ss.isConnected());
+
+			System.out.println(systemType + ": results size="+results.length);
+			/*
+			for (int r = 0; r < remoteFiles.length; r++)
+			{
+				IRemoteFile rfile = remoteFiles[r];
+				boolean exists = rfile.exists();
+				if (!exists){
+					System.out.println(rfile.getAbsolutePath() + " doesn't exist!");
+				}
+				assertTrue(exists);
+			}
+			*/
+			
+		}
+	}
+
+	/**
+	 * Test the multi file query
+	 */
+	public void testMultiFileQuery() {
+		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testMultiFileQuery")) return; //$NON-NLS-1$
+		setupConnections();
+		
+
+		
+		String[] testPaths = (String[])_samplePaths.toArray(new String[_samplePaths.size()]);
+
+		for (int i = 0; i < _subSystems.size(); i++) {
+			IRemoteFileSubSystem ss = (IRemoteFileSubSystem)_subSystems.get(i);
+			
+			// ensure that the system is connected
+			if (!ss.isConnected()) {
+				try {
+					ss.connect(new NullProgressMonitor(), false);
+				}
+				catch (Exception e) {
+					// connect failed
+				}				
+			}
+			
+			String systemType = ss.getHost().getSystemType().getLabel();
+			
+			Exception exception = null;
+			String cause = null;
+			IRemoteFile[] remoteFiles = null;
+			
+			// get folders to query
+			long t1 = System.currentTimeMillis();
+			try 
+			{
+				remoteFiles = ss.getRemoteFileObjects(testPaths, new NullProgressMonitor());
+			}
+			catch (Exception e){
+				exception = e;
+				e.printStackTrace();
+				cause = e.getLocalizedMessage();
+			}
+			
+			long t2 = System.currentTimeMillis();
+			
+			System.out.println(systemType + ": get files time = "+ (t2 - t1) + " milliseconds");
+
+			// query folders
+			IRemoteFile[] results = null;
+			long t3 = System.currentTimeMillis();
+			try
+			{
+				results = ss.listMulti(remoteFiles, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
+			}
+			catch (Exception e){
+				exception = e;
+				e.printStackTrace();
+				cause = e.getLocalizedMessage();
+			}
+			long t4 = System.currentTimeMillis();
+			
+			System.out.println(systemType + ": query time = "+ (t4 - t3) + " milliseconds");
+			
+			assertNull(systemType + ":Exception getting remote files! Possible cause: " + cause, exception); //$NON-NLS-1$
+			assertTrue(ss.isConnected());
+
+			System.out.println(systemType + ":results size="+results.length);
+			/*
+			for (int r = 0; r < results.length; r++)
+			{
+				IRemoteFile rfile = remoteFiles[r];
+				assertTrue(rfile.exists());
+			}
+			*/
+			
+		}
+	}
 	
 }
 

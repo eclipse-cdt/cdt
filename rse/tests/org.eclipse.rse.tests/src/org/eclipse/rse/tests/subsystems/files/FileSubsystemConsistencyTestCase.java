@@ -195,7 +195,9 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 				}				
 			}
 			
-			String systemType = ss.getHost().getSystemType().getLabel();
+
+			
+			String systemType = ss.getConfigurationId();
 			
 			Exception exception = null;
 			String cause = null;
@@ -238,7 +240,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 				}				
 			}
 			
-			String systemType = ss.getHost().getSystemType().getLabel();
+			String systemType = ss.getConfigurationId();
 			
 			Exception exception = null;
 			String cause = null;
@@ -328,7 +330,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 				}				
 			}
 			
-			String systemType = ss.getHost().getSystemType().getLabel();
+			String systemType = ss.getConfigurationId();
 			
 			Exception exception = null;
 			String cause = null;

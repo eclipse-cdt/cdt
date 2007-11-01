@@ -8,8 +8,12 @@
  * Contributors:
  *    QNX Software Systems - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestSuite;
 
@@ -277,9 +281,14 @@ public class CPathEntryTest extends BaseTestCase {
 		assertEquals(sourceEntryName, entries[0].getName());
 		IPath[] actualExclusionPatterns = entries[0].getExclusionPatterns();
 		assertEquals(exclusionPatterns.length, actualExclusionPatterns.length);
-		for (int i = 0; i < actualExclusionPatterns.length; i++) {
-			IPath path = actualExclusionPatterns[i];
-			assertEquals(exclusionPatterns[i], actualExclusionPatterns[i]);
+		assertEquals(toSet(exclusionPatterns), toSet(actualExclusionPatterns));
+	}
+	
+	private Set toSet(Object[] array) {
+		HashSet set = new HashSet();
+		for (int i = 0; i < array.length; i++) {
+			set.add(array[i]);
 		}
+		return set;
 	}
 }

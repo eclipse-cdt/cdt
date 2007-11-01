@@ -331,6 +331,9 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	public IRemoteFile[] getRemoteFileObjects(String[] folderOrFileNames,
 			IProgressMonitor monitor) throws SystemMessageException 
 	{
+		// for bug 207095, implicit connect if the connection is not connected
+		checkIsConnected(monitor);
+		
 		String[] parentPaths = new String[folderOrFileNames.length];
 		String[] names = new String[folderOrFileNames.length];
 		String sep = null;		

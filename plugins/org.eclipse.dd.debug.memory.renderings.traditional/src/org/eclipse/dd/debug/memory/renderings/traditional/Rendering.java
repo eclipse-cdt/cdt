@@ -761,7 +761,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 final MemoryByte readBytes[] = memoryBlock
                 	.getBytesFromAddress(startAddress, units);
                 
-                final MemoryByte cachedBytes[] = new MemoryByte[readBytes.length];
+                MemoryByte cachedBytes[] = new MemoryByte[readBytes.length];
                 for(int i = 0; i < readBytes.length; i++)
                 	cachedBytes[i] = new MemoryByte(readBytes[i].getValue(), readBytes[i].getFlags());
 
@@ -771,7 +771,27 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 		setTargetLittleEndian(!cachedBytes[0].isBigEndian());
                 	}
             	}
+            	
+            	// reorder bytes within unit to be a sequential byte stream if the endian is already little
+            	if(isTargetLittleEndian())
+            	{
+            		// there isn't an order when the unit size is one, so skip for performance
+            		if(addressableSize.compareTo(BigInteger.ONE) != 0)
+            		{
+            			int unitSize = addressableSize.intValue();
+            			MemoryByte cachedBytesAsByteSequence[] = new MemoryByte[cachedBytes.length];
+            			for(int unit = 0; unit < units; unit++)
+            			{
+            				for(int unitbyte = 0; unitbyte < unitSize; unitbyte++)
+            				{
+            					cachedBytesAsByteSequence[unit * unitSize + unitbyte] = cachedBytes[unit * unitSize + unitSize - unitbyte];
+            				}
+            			}
+            			cachedBytes = cachedBytesAsByteSequence;
+            		}
+            	}
                 
+            	final MemoryByte[] cachedBytesFinal = cachedBytes;
                 Display.getDefault().asyncExec(new Runnable()
                 {
                     public void run()
@@ -798,8 +818,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
                                 for(int i = overlapLength.intValue(); i >= 0; i--)
                                 {
-                                	cachedBytes[offsetIntoNew + i]
-                                        .setChanged(cachedBytes[offsetIntoNew
+                                	cachedBytesFinal[offsetIntoNew + i]
+                                        .setChanged(cachedBytesFinal[offsetIntoNew
                                             + i].getValue() != fHistoryCache.bytes[offsetIntoOld
                                             + i].getValue());
                                 }
@@ -809,7 +829,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         fCache = new MemoryUnit();
                         fCache.start = startAddress;
                         fCache.end = endAddress;
-                        fCache.bytes = cachedBytes;
+                        fCache.bytes = cachedBytesFinal;
 
                         Rendering.this.redrawPanes();
                     }
@@ -1637,11 +1657,11 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         if(readable)
         {
-            // see if we need to swap the data or not.  if the bytes are BE
-            // and we want to view in LE then we need to swap.  if the bytes
-            // are LE and we want to view BE then we need to swap.
+        	// bytes from the cache are stored as a sequential byte sequence regardless of target endian.
+        	// the endian attribute tells us the recommended endian for display. the user may change this
+        	// from the default. if the endian is little, we must swap the byte order.
             boolean needsSwap = false;
-            if ((isDisplayLittleEndian() && !isTargetLittleEndian()) || (!isDisplayLittleEndian() && isTargetLittleEndian()))
+            if(isDisplayLittleEndian())
             	needsSwap = true;
 
             switch(radix)

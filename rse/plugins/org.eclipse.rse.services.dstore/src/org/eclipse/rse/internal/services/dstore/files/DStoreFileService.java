@@ -924,7 +924,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		for (int i = 0; i < elements.length; i++)
 		{
 			DataElement element = elements[i];
-			if (!element.isDeleted())
+			if (element != null && !element.isDeleted())
 			{				
 				String type = element.getType();
 				// filter files

@@ -81,10 +81,20 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 38;
+	public static final int CURRENT_VERSION = 39;
 	public static final int MIN_SUPPORTED_VERSION= 36;
-	public static final int MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX= 37;	// to be removed in 4.1
-	public static final int MIN_VERSION_TO_WRITE_MACROS_INDEX= 38;	// to be removed in 4.1
+	public static final int MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX= 37;	// to be removed in 5.0
+	public static final int MIN_VERSION_TO_WRITE_MACROS_INDEX= 38;	// to be removed in 5.0
+	
+	/**
+	 * The earliest PDOM version that the CURRENT_VERSION can be read as. For example,
+	 * versions 37,38 and 39 may be safely read by code from the version of CDT (4.0.0)
+	 * released at PDOM version 36.
+	 * <p>
+	 * Ideally this would always be CURRENT_VERSION on the basis that CURRENT_VERSION is
+	 * not incrementing.
+	 */
+	public static final int EARLIEST_FORWARD_COMPATIBLE_VERSION= 36; 
 	
 	/* 
 	 * PDOM internal format history
@@ -110,18 +120,18 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 *  16 - have PDOMCPPField store type information, and PDOMCPPNamespaceAlias store what it is aliasing
 	 *  17 - use single linked list for names in file, adds a link to enclosing definition name.
 	 *  18 - distinction between c-unions and c-structs.
-	 *  19 - alter representation of paths in the pdom (162172)
+	 *  19 - alter representation of paths in the PDOM (162172)
 	 *  20 - add pointer to member types, array types, return types for functions
-	 *  21 - change representation of paths in the pdom (167549)
+	 *  21 - change representation of paths in the PDOM (167549)
 	 *  22 - fix inheritance relations (167396)
 	 *  23 - types on c-variables, return types on c-functions
 	 *  24 - file local scopes (161216)
 	 *  25 - change ordering of bindings (175275)
 	 *  26 - add properties storage
 	 *  27 - templates: classes, functions, limited nesting support, only template type parameters
-	 *  28 - templates: class instance/specialization base classes
-	 *  29 - includes: fixed modeling of unresolved includes (180159)
-	 *  30 - templates: method/constructor templates, typedef specializations
+	 *  28 - templates: class instance/specialisation base classes
+	 *  29 - includes: fixed modelling of unresolved includes (180159)
+	 *  30 - templates: method/constructor templates, typedef specialisations
 	 *  31 - macros: added file locations
 	 *  32 - support stand-alone function types (181936)
 	 *  33 - templates: constructor instances
@@ -129,7 +139,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 *  35 - add scanner configuration hash-code (62366)
 	 * #36#- changed chunk size back to 4K (184892) - <<CDT 4.0>>
 	 * #37#- added index for nested bindings (189811), compatible with version 36 - <<CDT 4.0.1>>
-	 * #38#- added btree for macros (193056), compatible with version 36 and 37 - <<CDT 4.0.2>>
+	 *  38 - added b-tree for macros (193056), compatible with version 36 and 37
+	 * #39#- added flag for function-style macros (208558), compatible with version 36,37,38 - <<CDT 4.0.2>>
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

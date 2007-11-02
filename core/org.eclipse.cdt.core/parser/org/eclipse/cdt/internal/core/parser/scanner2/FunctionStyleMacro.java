@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial implementation
  *     Markus Schorn (Wind River Systems)
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
@@ -34,7 +35,7 @@ public class FunctionStyleMacro extends ObjectStyleMacro {
 		this.arglist = arglist;
 
 		// determine if there's an argument with "..."
-		if (arglist != null && arglist[0]!= null && arglist.length > 0) {
+		if (arglist != null && arglist.length > 0 && arglist[0]!= null) {
 			int last = -1;
 			
 			// if the last element in the list is null then binary search for the last non-null element

@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -43,6 +44,10 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	private final int record;
 	private IMacro macro;
 
+	private static final byte MACROSTYLE_UNKNOWN = 0; // for reading versions of PDOM <39
+	private static final byte MACROSTYLE_OBJECT  = 1;
+	private static final byte MACROSTYLE_FUNCTION= 2;
+	
 	private static final int NAME = 0;
 	private static final int FILE = 4;
 	private static final int NAME_OFFSET = 8;
@@ -50,8 +55,9 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	private static final int FIRST_PARAMETER = 14;
 	private static final int EXPANSION = 18;
 	private static final int NEXT_MACRO = 22;
+	private static final int MACRO_STYLE = 26; // byte
 	
-	private static final int RECORD_SIZE = 26;
+	private static final int RECORD_SIZE = 27;
 	
 	public PDOMMacro(PDOM pdom, int record) {
 		this.pdom = pdom;
@@ -72,8 +78,10 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		db.putInt(record + EXPANSION, db.newString(macro.getExpansion()).getRecord());
 		setNextMacro(0);
 		
+		byte macroStyle= MACROSTYLE_OBJECT;
 		PDOMMacroParameter last = null;
 		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
+			macroStyle= MACROSTYLE_FUNCTION;
 			IASTPreprocessorFunctionStyleMacroDefinition func = (IASTPreprocessorFunctionStyleMacroDefinition)macro;
 			IASTFunctionStyleMacroParameter[] params = func.getParameters();
 			for (int i = params.length - 1; i >= 0; --i) {
@@ -85,6 +93,7 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 			}
 		}
 		db.putInt(record + FIRST_PARAMETER, last != null ? last.getRecord() : 0);
+		db.putByte(record + MACRO_STYLE, macroStyle);
 	}
 	
 	public int getRecord() {
@@ -106,7 +115,7 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		return db.getString(rec);
 	}
 	
-	public IString getExpansionInDB() throws CoreException {
+	private IString getExpansionInDB() throws CoreException {
 		Database db = pdom.getDB();
 		int rec = db.getInt(record + EXPANSION);
 		return db.getString(rec);
@@ -121,11 +130,11 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		setNextMacro(macro != null ? macro.getRecord() : 0);
 	}
 
-	public void setNextMacro(int rec) throws CoreException {
+	private void setNextMacro(int rec) throws CoreException {
 		pdom.getDB().putInt(record + NEXT_MACRO, rec);
 	}
 	
-	public PDOMMacroParameter getFirstParameter() throws CoreException {
+	private PDOMMacroParameter getFirstParameter() throws CoreException {
 		int rec = pdom.getDB().getInt(record + FIRST_PARAMETER);
 		return rec != 0 ? new PDOMMacroParameter(pdom, rec) : null;
 	}
@@ -188,8 +197,19 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	
 	private void rebuildMacro() throws CoreException {
 		char[] name = getNameInDB(pdom, record).getChars();
-		PDOMMacroParameter param = getFirstParameter();
-		if (param != null) {
+		PDOMMacroParameter param= getFirstParameter();
+		
+		byte style= pdom.getDB().getByte(record + MACRO_STYLE);
+		if(style == MACROSTYLE_UNKNOWN) {
+			/* PDOM formats < 39 do not store MACRO_STYLE (208558) */
+			style= param != null ? MACROSTYLE_FUNCTION : MACROSTYLE_OBJECT;
+		}
+				
+		switch(style) {
+		case MACROSTYLE_OBJECT:
+			macro= new ObjectStylePDOMMacro(name);
+			break;
+		case MACROSTYLE_FUNCTION:
 			List paramList = new ArrayList();
 			while (param != null) {
 				paramList.add(param.getName().getChars());
@@ -197,8 +217,10 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 			}
 			char[][] params = (char[][])paramList.toArray(new char[paramList.size()][]);
 			macro= new FunctionStylePDOMMacro(name, params);
-		} else
-			macro= new ObjectStylePDOMMacro(name);
+			break;
+		default:
+				throw new PDOMNotImplementedError();
+		}
 	}
 
 	public char[] getSignature() {

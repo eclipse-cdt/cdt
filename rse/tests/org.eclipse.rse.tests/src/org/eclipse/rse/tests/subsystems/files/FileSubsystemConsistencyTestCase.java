@@ -6,13 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html 
  * 
  * Contributors: 
- * David McKnight    (IBM) [207095] test case to compare same op between subsystemd
+ * David McKnight   (IBM)        - [207095] test case to compare same op between subsystems
+ * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.core.IRSESystemType;
@@ -41,6 +44,8 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 	private String SYSTEM_ADDRESS = "dmcknigh3";//"SLES8RM";
 	private String USER_ID = "dmcknigh";
 	private String PASSWORD = null;//"xxxxxx";
+	
+	private String LOCALTEMPDIR = "C:\\temp";
 	
 	/*
 	private SYSTEM_ADDRESS = "dmcknigh3";
@@ -90,16 +95,14 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			_subSystems = new ArrayList();
 			
 			// setup dstore connection
-			addSystem(getDStoreHost());	
+			addSystem(getDStoreHost());				
 			
 			// setup ssh connection
 			addSystem(getSSHHost());
 			
 			// setup ftp connection
-			addSystem(getFTPHost());	
-			
-	
-			
+			addSystem(getFTPHost());		
+		
 			
 			_samplePaths = new ArrayList();
 			_samplePaths.add("/usr");	
@@ -109,6 +112,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			_samplePaths.add("/etc");
 			_samplePaths.add("/home");
 			_samplePaths.add("/sbin");
+
 		}
 	}
 	
@@ -130,7 +134,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 		IHost sshHost = null;
 
 		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_SSH_ONLY_ID;
-		String SYSTEM_NAME = "sles8rm_ssh";
+		String SYSTEM_NAME = SYSTEM_ADDRESS + "_ssh";
 
 		sshHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
 		assertNotNull(sshHost);
@@ -142,7 +146,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 		IHost ftpHost = null;
 
 		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_FTP_ONLY_ID;
-		String SYSTEM_NAME = "sles8rm_ftp";
+		String SYSTEM_NAME = SYSTEM_ADDRESS + "_ftp";
 
 		ftpHost = getRemoteSystemConnection(SYSTEM_TYPE_ID, SYSTEM_ADDRESS, SYSTEM_NAME, USER_ID, PASSWORD);
 		assertNotNull(ftpHost);
@@ -154,7 +158,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 		IHost dstoreHost = null;
 
 		String SYSTEM_TYPE_ID = IRSESystemType.SYSTEMTYPE_LINUX_ID;
-		String SYSTEM_NAME = "sles8rm_dstore";
+		String SYSTEM_NAME = SYSTEM_ADDRESS + "_dstore";
 
 		//Ensure that the SSL acknowledge dialog does not show up. 
 		//We need to setDefault first in order to set the value of a preference.  
@@ -216,10 +220,6 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			assertNotNull(systemType + ":Unexpected return value for getRemoteFile().  Remote file is null!", remoteFile);						
 		}
 	}
-	
-	/**
-	 * Test the single file query
-	 */
 	public void testSingleFileQuery() {
 		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testSingleFileQuery")) return; //$NON-NLS-1$
 		setupConnections();
@@ -304,8 +304,8 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			*/
 			
 		}
-	}
-
+	}	
+	
 	/**
 	 * Test the multi file query
 	 */
@@ -371,15 +371,154 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			assertNull(systemType + ":Exception getting remote files! Possible cause: " + cause, exception); //$NON-NLS-1$
 			assertTrue(ss.isConnected());
 
-			System.out.println(systemType + ":results size="+results.length);
-			/*
-			for (int r = 0; r < results.length; r++)
-			{
-				IRemoteFile rfile = remoteFiles[r];
-				assertTrue(rfile.exists());
-			}
-			*/
+			System.out.println(systemType + ":results size="+results.length);			
+		}
+	}
+	
+	/**
+	 * Test the single file download
+	 */
+	public void testSingleFileDownload() {
+		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testSingleFileDownload")) return; //$NON-NLS-1$
+		setupConnections();
+		internalFileDownload(false);
+	}
+	
+	/**
+	 * Test the multi file download
+	 */
+	public void testMultiFileDownload() {
+		if (!RSETestsPlugin.isTestCaseEnabled("FileSubsystemConsistencyTestCase.testMultiFileDownload")) return; //$NON-NLS-1$
+		setupConnections();
+		internalFileDownload(true);
+	}
+	
+	protected void internalFileDownload(boolean multi)	
+	{
+		String remoteParentDir = "/usr/include";
+		File tempDir = new File(LOCALTEMPDIR);				
+		if (!tempDir.exists())
+		{
+			tempDir.mkdirs();
+		}
+		
+		for (int i = 0; i < _subSystems.size(); i++) {
+			IRemoteFileSubSystem ss = (IRemoteFileSubSystem)_subSystems.get(i);
 			
+			// ensure that the system is connected
+			if (!ss.isConnected()) {
+				try {
+					ss.connect(new NullProgressMonitor(), false);
+				}
+				catch (Exception e) {
+					// connect failed
+				}				
+			}
+			
+			String systemType = ss.getConfigurationId();
+			
+			File subTempDir = new File(tempDir, systemType + (multi ? "_multi" : "_single"));
+			if (subTempDir.exists())
+			{
+				// delete old contents
+				try
+				{
+					String[] children = subTempDir.list();
+					for (int c = 0; c < children.length; c++)
+					{
+						new File(children[c]).delete();
+					}
+				}
+				catch (Exception e)
+				{
+					
+				}
+			}
+			else
+			{
+				subTempDir.mkdirs();
+			}
+			
+			Exception exception = null;
+			String cause = null;
+			IRemoteFile[] remoteFiles = null;
+			
+			try
+			{
+				IProgressMonitor monitor = new NullProgressMonitor();
+				IRemoteFile includeDir = ss.getRemoteFileObject(remoteParentDir, monitor);
+									
+				// get all the files
+				IRemoteFile[] files = ss.list(includeDir, IFileServiceConstants.FILE_TYPE_FILES, monitor);
+
+				System.out.println(systemType + ": downloading "+files.length+ " files");
+				
+				
+				// determine local locations for each
+				String[] destinations = new String[files.length];
+				String[] encodings = new String[files.length];
+				long[] fileSizes = new long[files.length];
+				
+			
+				
+				for (int d = 0; d < files.length; d++)
+				{
+					IRemoteFile file = files[d];
+					destinations[d] = subTempDir.getAbsolutePath() + File.separatorChar + file.getName();
+					encodings[d] = file.getEncoding();
+					fileSizes[d] = file.getLength();
+				}
+				
+				long t1 = System.currentTimeMillis();
+				if (multi) // multi file download
+				{
+					System.out.println(systemType + ":Starting multi-file Download");
+				
+					// transfer the files
+					ss.downloadMulti(files, destinations, encodings, monitor);
+				}
+				else // single file download
+				{
+					System.out.println(systemType + ":Starting single file Download");
+					
+					for (int s = 0; s < files.length; s++)
+					{
+						// transfer the files
+						ss.download(files[s], destinations[s], encodings[s], monitor);
+					}
+				}
+				long t2 = System.currentTimeMillis();
+				System.out.println(systemType + ": download time = "+ (t2 - t1) + " milliseconds");
+				
+				
+				assertNull(systemType + ":Exception getting remote files! Possible cause: " + cause, exception); //$NON-NLS-1$
+				assertTrue(ss.isConnected());
+	
+				// examine results
+				for (int r = 0; r < destinations.length; r++)
+				{
+					// check results and compare their sizes
+					long expectedSize = fileSizes[r];
+					
+					File destination = new File(destinations[r]);
+					long actualSize = destination.length();
+								
+					boolean goodDownload = expectedSize == actualSize;
+					
+					if (!goodDownload)
+					{
+						System.out.println("bad download of "+ destination.getAbsolutePath());
+						System.out.println("expected size:"+expectedSize);
+						System.out.println("actual size:"+actualSize);
+					}
+					assertTrue(goodDownload);
+				}
+			}
+			catch (Exception e)
+			{				
+				e.printStackTrace();
+			}
+					
 		}
 	}
 	

@@ -18,7 +18,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/europa"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/tools/cdt/releases/ganymede"/>
    </url>
 
    <includes
@@ -27,7 +27,7 @@
 
    <requires>
       <import plugin="org.eclipse.help" version="3.2.0" match="compatible"/>
-      <import feature="org.eclipse.cdt" version="4.0.0" match="compatible"/>
+      <import feature="org.eclipse.cdt" version="5.0.0" match="compatible"/>
    </requires>
 
    <plugin

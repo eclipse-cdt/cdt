@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import java.util.regex.Pattern;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -35,9 +37,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
+import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexMacro;
+import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * For testing PDOM binding resolution
@@ -63,6 +69,56 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 	
 	public IndexCPPBindingResolutionBugs() {
 		setStrategy(new SinglePDOMTestStrategy(true));
+	}
+	
+	// #define OBJ void foo()
+	// #define FUNC() void bar()
+	// #define FUNC2(A) void baz()
+	
+	// #include "header.h"
+	//
+	// OBJ {}
+	// FUNC() {}
+	// FUNC2(1) {}
+	public void testBug208558() throws CoreException {
+		IIndex index= getIndex();
+		
+		IIndexMacro[] macrosA= index.findMacros("OBJ".toCharArray(), IndexFilter.ALL, NPM);
+		IIndexMacro[] macrosB= index.findMacros("FUNC".toCharArray(), IndexFilter.ALL, NPM);
+		IIndexMacro[] macrosC= index.findMacros("FUNC2".toCharArray(), IndexFilter.ALL, NPM);
+		
+		assertEquals(1, macrosA.length);
+		assertEquals(1, macrosB.length);
+		assertEquals(1, macrosC.length);
+		IIndexMacro obj= macrosA[0];
+		IIndexMacro func= macrosB[0];
+		IIndexMacro func2= macrosC[0];
+		
+		assertEquals("OBJ", new String(obj.getName()));
+		assertEquals("FUNC", new String(func.getName()));
+		assertEquals("FUNC2", new String(func2.getName()));
+		
+		assertEquals("void foo()", new String(obj.getExpansion()));
+		assertEquals("void bar()", new String(func.getExpansion()));
+		assertEquals("void baz()", new String(func2.getExpansion()));
+		
+		assertEquals("OBJ", new String(obj.getSignature()));
+		assertEquals("FUNC()", new String(func.getSignature()));
+		assertEquals("FUNC2(A)", new String(func2.getSignature()));
+		
+		IIndexBinding[] bindings= index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, NPM);
+		assertEquals(3, bindings.length);
+		
+		IIndexBinding foo= index.findBindings("foo".toCharArray(), IndexFilter.ALL, NPM)[0];
+		IIndexBinding bar= index.findBindings("bar".toCharArray(), IndexFilter.ALL, NPM)[0];
+		IIndexBinding baz= index.findBindings("baz".toCharArray(), IndexFilter.ALL, NPM)[0];
+		
+		assertEquals("foo", foo.getName());
+		assertEquals("bar", bar.getName());
+		assertEquals("baz", baz.getName());
+		assertInstance(foo, ICPPFunction.class);
+		assertInstance(bar, ICPPFunction.class);
+		assertInstance(baz, ICPPFunction.class);
 	}
 	
 	//	template <class T>

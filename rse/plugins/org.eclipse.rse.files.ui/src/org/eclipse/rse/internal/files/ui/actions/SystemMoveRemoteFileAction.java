@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [198007] Moving multiple folders allows moving to themselves
  * Kevin Doyle (IBM) - [160769] Move Resource dialog allows user to continue on invalid destination
+ * Kevin Doyle (IBM) - [199324] [nls] Move dialog SystemMessages should be added/updated
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -45,6 +46,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
        implements  IValidatorRemoteSelection
 {
 	private SystemMessage targetEqualsSrcMsg = null;
+	private SystemMessage targetEqualsParentSrcMsg = null;
 	private SystemMessage targetDescendsFromSrcMsg = null;
 	private SystemMessage invalidFilterMsg = null;
 	protected Vector movedFiles = new Vector();
@@ -139,9 +141,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 					
 			        if (selectedFolderPath.equals(selectedParentFile.getAbsolutePath()))
 			        {
-			        	if (targetEqualsSrcMsg == null)
-			              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
-			            return targetEqualsSrcMsg;
+			        	if (targetEqualsParentSrcMsg == null)
+			              targetEqualsParentSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SOURCE);
+			            return targetEqualsParentSrcMsg;
 			        }
 			        else if (selectedFolderPath.equals(selectedFile.getAbsolutePath()))
 			        {

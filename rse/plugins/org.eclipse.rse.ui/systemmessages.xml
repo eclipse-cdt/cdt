@@ -974,7 +974,7 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                     </Message>
                     <Message ID="1308" Indicator="E">
                         <LevelOne>Target folder cannot equal source folder</LevelOne>
-                        <LevelTwo>Attempting to move a file or folder to the same folder as it exists in is equivalent to a rename operation. Use the rename action for this</LevelTwo>
+                        <LevelTwo>It is impossible to move a folder to itself.</LevelTwo>
                     </Message>
                     <Message ID="1309" Indicator="E">
                         <LevelOne>Folder already exists</LevelOne>
@@ -995,6 +995,10 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                     <Message ID="1313" Indicator="E">
                     	<LevelOne>Selected filter is not a valid destination.</LevelOne>
                     	<LevelTwo>Some filters, such as the Root or Drives filter, do not designate locations on the remote file system and cannot have files moved into them.</LevelTwo>
+                    </Message>
+                    <Message ID="1314" Indicator="E">
+                        <LevelOne>Target folder cannot equal parent of source file/folder.</LevelOne>
+                        <LevelTwo>A file or folder cannot be moved into the directory in which it exists. If you wish to rename the file, use the rename action.</LevelTwo>
                     </Message>
 		            <Message ID="1315" Indicator="I">
                         <LevelOne>Deleting %1...</LevelOne>

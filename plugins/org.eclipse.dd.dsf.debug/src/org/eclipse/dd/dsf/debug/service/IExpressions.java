@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     Ericsson           - Update for GDB/MI
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
@@ -18,19 +19,17 @@ import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMData;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.datamodel.IDMService;
 
 /**
  * Expressions service provides access to the debugger's expression evaluator. This service has
- * dependencies on the Modules service, RunControl service, and Stack service, as all may be used to
- * provide context for an expression to be evaluated.
+ * dependencies on the Stack service, as it is be used to provide context for an 
+ * expression to be evaluated.
  */
 @SuppressWarnings("nls")
-public interface IExpressions extends IDMService, IFormattedValues {
+public interface IExpressions extends IFormattedValues {
     
     /**
-     * Expression context. Since some expressions have children, expression contexts can have an
-     * arbitrary number of parents of type IExpressionDMContext.
+     * Expression context.
      */
     public interface IExpressionDMContext extends IFormattedDataDMContext {
         /**
@@ -42,11 +41,18 @@ public interface IExpressions extends IDMService, IFormattedValues {
     }
     
     /**
+     * The address and size of an expression.
+     */
+    public interface IExpressionDMAddress {
+    	IAddress getAddress();
+    	int getSize();
+    }
+    
+    /**
      * This is the model data interface that corresponds to IExpressionDMContext.
      */
     interface IExpressionDMData extends IDMData {
-        // These static fields define the possible return values of method getTypeId().  QUESTION: Why can't
-        // these have type int?
+        // These static fields define the possible return values of method getTypeId().
         
         final static String TYPEID_UNKNOWN = "TYPEID_UNKNOWN";
         final static String TYPEID_INTEGER = "TYPEID_INTEGER";
@@ -101,22 +107,9 @@ public interface IExpressions extends IDMService, IFormattedValues {
         String getTypeId();
         
         /**
-         * @return The number of bits in the value of the expression.  For a bit field, this is the number
-         *         of bits in the field.  For other types, this is 8 times the number of bytes in the value.
-         */
-        int getBitCount();
-
-        /**
          * @return A string containing the value of the expression as returned by the debugger backend.
          */
         String getStringValue();
-        
-        /**
-         * @return An IAddress object representing the memory address of the value of the expression (if it
-         *         has one).  Non-lvalues do not have memory addresses (e.g., "x + 5").  When the expression
-         *         has no address, this method returns an IAddress object on which isZero() returns true.
-         */
-        IAddress getAddress();
         
         /**
          * @return A Map in which the keys are strings that are the names of enumerators in the enumeration
@@ -146,6 +139,18 @@ public interface IExpressions extends IDMService, IFormattedValues {
      *            The data request monitor that will contain the requested data
      */
     void getExpressionData(IExpressionDMContext dmc, DataRequestMonitor<IExpressionDMData> rm);
+
+    /**
+     * Retrieves the address and size of an expression given by the expression context(<tt>dmc</tt>).
+     * Non-lvalues do not have an addresses (e.g., "x + 5").  When the expression
+-    * has no address, the data request monitor will contain null.
+     * 
+     * @param dmc
+     *            The ExpressionDMC for the expression
+     * @param rm
+     *            The data request monitor that will contain the requested data
+     */
+    void getExpressionAddressData(IExpressionDMContext dmc, DataRequestMonitor<IExpressionDMAddress> rm);
     
     /**
      * Returns the data model context object for the specified expression in the context
@@ -218,5 +223,5 @@ public interface IExpressions extends IDMService, IFormattedValues {
      * 
      * @param rm: Request completion monitor.
      */
-    void writeExpression(IDMContext expressionContext, String expressionValue, String formatId, RequestMonitor rm);
+    void writeExpression(IExpressionDMContext expressionContext, String expressionValue, String formatId, RequestMonitor rm);
 }

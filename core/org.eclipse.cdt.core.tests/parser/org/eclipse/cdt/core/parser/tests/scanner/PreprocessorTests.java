@@ -345,6 +345,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+	
 	// #define OBJ __VA_ARGS__
 	// #define func(x) __VA_ARGS__
 	// OBJ;
@@ -398,4 +399,94 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+	
+    // #define ONE(a, ...) int x
+    // #define TWO(b, args...) int y
+    // ONE("string"); 
+    // TWO("string"); 
+    public void testSkippingVarags() throws Exception {
+		initializeScanner();
+		validateToken(IToken.t_int);
+		validateIdentifier("x");
+		validateToken(IToken.tSEMI);
+		
+		validateToken(IToken.t_int);
+		validateIdentifier("y");
+		validateToken(IToken.tSEMI);
+
+		validateEOF();
+		validateProblemCount(0);
+    }
+    
+    // #define eval(f,x) f(x)
+    // #define m(x) m[x]
+    // eval(m,y);
+    public void testReconsiderArgsForExpansion() throws Exception {
+		initializeScanner();
+		validateIdentifier("m");
+		validateToken(IToken.tLBRACKET);
+		validateIdentifier("y");
+		validateToken(IToken.tRBRACKET);
+		validateToken(IToken.tSEMI);
+
+		validateEOF();
+		validateProblemCount(0);
+    }
+    
+    //#define f\
+    //(x) ok
+    // f(x)
+    public void testLineSpliceInMacroDefinition() throws Exception {
+		initializeScanner();
+		validateIdentifier("ok");
+		validateEOF();
+		validateProblemCount(0);
+    }
+    
+    // #define f() fval
+    // #define nospace f()f()
+    // #define space f() f()
+    // #define str(x) #x
+    // #define xstr(x) str(x)
+    // #define tp1(x,y,z) [x ## y ## z]
+    // #define tp2(x,y,z) [ x ## y ## z ]
+    // #define tstr1(x,y) [#x#y]
+    // #define tstr2(x,y) [ #x #y ]
+    // xstr(nospace);
+    // xstr(space);
+    // xstr(tp1(a b, c d , e f));
+    // xstr(tp2(a b, c d , e f));
+    // xstr(tp1(a-b, c-d , e-f));
+    // xstr(tp2(a-b, c-d , e-f));
+    // xstr(tstr1(a b, c d));
+    // xstr(tstr2(a b, c d));
+    public void testSpaceInStringify() throws Exception {
+		initializeScanner();
+		validateString("fvalfval");
+		validateToken(IToken.tSEMI);
+		
+		validateString("fval fval");
+		validateToken(IToken.tSEMI);
+		
+		validateString("[a bc de f]");
+		validateToken(IToken.tSEMI);
+		
+		validateString("[ a bc de f ]");
+		validateToken(IToken.tSEMI);
+
+		validateString("[a-bc-de-f]");
+		validateToken(IToken.tSEMI);
+		
+		validateString("[ a-bc-de-f ]");
+		validateToken(IToken.tSEMI);
+
+		validateString("[\\\"a b\\\"\\\"c d\\\"]");
+		validateToken(IToken.tSEMI);
+
+		validateString("[ \\\"a b\\\" \\\"c d\\\" ]");
+		validateToken(IToken.tSEMI);
+
+		validateEOF();
+		validateProblemCount(0);
+    }
 }

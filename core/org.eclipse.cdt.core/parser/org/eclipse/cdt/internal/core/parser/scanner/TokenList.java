@@ -26,7 +26,7 @@ class TokenList {
 		}
 	}
 
-	final public void append(Token t) {
+	public final void append(Token t) {
 		if (fFirst == null) {
 			fFirst= fLast= t;
 		}
@@ -37,7 +37,30 @@ class TokenList {
 		t.setNext(null);
 	}
 	
-	final public void prepend(TokenList prepend) {
+	public final void appendAll(TokenList tl) {
+		final Token t= tl.first();
+		if (t != null) {
+			if (fFirst == null) {
+				fFirst= tl.fFirst;
+			}
+			else {
+				fLast.setNext(tl.fFirst);
+			}
+			fLast= tl.fLast;
+		}
+		tl.fFirst= tl.fLast= null;
+	}
+
+	public final void appendAllButLast(TokenList tl) {
+		Token t= tl.first();
+		if (t != null) {
+			for (Token n= (Token) t.getNext(); n != null; t=n, n= (Token) n.getNext()) {
+				append(t);
+			}
+		}
+	}
+
+	public final void prepend(TokenList prepend) {
 		final Token first= prepend.fFirst;
 		if (first != null) {
 			final Token last= prepend.fLast;
@@ -49,7 +72,7 @@ class TokenList {
 		}
 	}
 	
-	final public TokenList cloneTokens() {
+	public final TokenList cloneTokens() {
 		TokenList result= new TokenList();
 		for (Token t= fFirst; t != null; t= (Token) t.getNext()) {
 			if (t.getType() != CPreprocessor.tSCOPE_MARKER) {
@@ -59,8 +82,12 @@ class TokenList {
 		return result;
 	}
 
-	final public Token first() {
+	public final Token first() {
 		return fFirst;
+	}
+
+	public final Token last() {
+		return fLast;
 	}
 
 	final void removeBehind(Token l) {

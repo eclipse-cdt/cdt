@@ -277,7 +277,25 @@ public class LexerTests extends BaseTestCase {
 		id("a");
 		eof();
 	}
-	
+
+	public void testMinimalComment() throws Exception {
+		init("a/**/b/**/");
+		id("a");
+		comment("/**/");
+		id("b");
+		comment("/**/");
+		eof();
+		init("a//\nb//\r\nc");
+		id("a");
+		comment("//");
+		nl();
+		id("b");
+		comment("//");
+		nl();
+		id("c");
+		eof();
+	}
+
 	public void testHeaderName() throws Exception {
 		init("p\"'/*//\\\"");
 		fLexer.setInsideIncludeDirective(true);
@@ -316,7 +334,7 @@ public class LexerTests extends BaseTestCase {
 		init(ident, false, true); 
 		final int idxDollar = ident.indexOf('$');
 		id(ident.substring(0, idxDollar));
-		token(IToken.tOTHER_CHARACTER, "$");
+		token(Lexer.tOTHER_CHARACTER, "$");
 		id(ident.substring(idxDollar+1));
 	}
 	
@@ -430,13 +448,13 @@ public class LexerTests extends BaseTestCase {
 				IToken.tLBRACE, IToken.tRBRACE, IToken.tPOUNDPOUND, IToken.tPOUND, IToken.tSEMI, 
 				IToken.tCOLON, IToken.tELLIPSIS, IToken.tQUESTION, IToken.tDOT, IToken.tCOLONCOLON, IToken.tDOT,
 				IToken.tDOTSTAR, IToken.tPLUS, IToken.tMINUS, IToken.tSTAR, IToken.tDIV, IToken.tMOD,
-				IToken.tXOR, IToken.tAMPER, IToken.tBITOR, IToken.tCOMPL, IToken.tASSIGN, IToken.tNOT, 
+				IToken.tXOR, IToken.tAMPER, IToken.tBITOR, IToken.tBITCOMPLEMENT, IToken.tASSIGN, IToken.tNOT, 
 				IToken.tLT, IToken.tGT, IToken.tPLUSASSIGN, IToken.tMINUSASSIGN, IToken.tSTARASSIGN, 
 				IToken.tDIVASSIGN, IToken.tMODASSIGN, IToken.tXORASSIGN, IToken.tAMPERASSIGN, 
 				IToken.tBITORASSIGN, IToken.tSHIFTL, IToken.tSHIFTR, IToken.tSHIFTLASSIGN, 
 				IToken.tSHIFTRASSIGN, IToken.tEQUAL, IToken.tNOTEQUAL, IToken.tLTEQUAL, IToken.tGTEQUAL,
 				IToken.tAND, IToken.tOR, IToken.tINCR, IToken.tDECR, IToken.tCOMMA, IToken.tARROWSTAR,
-				IToken.tARROW, IGCCToken.tMIN, IGCCToken.tMAX, IToken.tOTHER_CHARACTER,
+				IToken.tARROW, IGCCToken.tMIN, IGCCToken.tMAX, Lexer.tOTHER_CHARACTER,
 			};
 		
 		for (int splices=0; splices<9; splices++) {
@@ -541,6 +559,50 @@ public class LexerTests extends BaseTestCase {
 		
 		init("|\\\r\n|");
 		token(IToken.tOR); 
+		eof();
+	}
+	
+	public void testNextDirective() throws Exception {
+		init("#if \n /*\n#*/ \"#\" '#' \\\n# ??/\n# \n## \n#\\\n# \n#??/\n# \n#ok \r\n#");
+		token(IToken.tPOUND);
+		id("if");
+		fLexer.consumeLine(0);
+		assertEquals(Lexer.tNEWLINE, fLexer.currentToken().getType());
+		fLexer.nextDirective();
+		comment("/*\n#*/");
+		token(IToken.tPOUND);
+		id("ok");
+		fLexer.nextDirective();
+		ws();
+		token(IToken.tPOUND);
+		eof();
+
+		init("#if \n??=??= \n#??= \n??=# \n??=\\\n??= \n#\\\n??= \n??=\\\n# \n??=ok \n??=");
+		token(IToken.tPOUND);
+		id("if");
+		fLexer.consumeLine(0);
+		assertEquals(Lexer.tNEWLINE, fLexer.currentToken().getType());
+		fLexer.nextDirective();
+		ws();
+		token(IToken.tPOUND);
+		id("ok");
+		fLexer.nextDirective();
+		ws();
+		token(IToken.tPOUND);
+		eof();
+
+		init("#if \n%:%: \n%:\\\n%: \n%:??/\n%: \n%:ok \n%:");
+		token(IToken.tPOUND);
+		id("if");
+		fLexer.consumeLine(0);
+		assertEquals(Lexer.tNEWLINE, fLexer.currentToken().getType());
+		fLexer.nextDirective();
+		ws();
+		token(IToken.tPOUND);
+		id("ok");
+		fLexer.nextDirective();
+		ws();
+		token(IToken.tPOUND);
 		eof();
 	}
 }

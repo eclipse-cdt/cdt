@@ -118,7 +118,7 @@ public class LocationMap implements ILocationResolver {
 		int nameEndNumber= getSequenceNumberForOffset(nameEndOffset);
 		int endNumber= getSequenceNumberForOffset(endOffset);
 		final ASTInclusionStatement inclusionStatement= 
-			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true);
+			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, name, filename, userInclude, true);
 		fDirectives.add(inclusionStatement);
 		fCurrentContext= new FileLocationCtx((ContainerLocationCtx) fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement);
 		fLastChildInsertionOffset= 0;
@@ -203,11 +203,11 @@ public class LocationMap implements ILocationResolver {
 	 */
 	public void encounterPoundInclude(int startOffset, int nameOffset, int nameEndOffset, int endOffset,
 			char[] name, String filename, boolean userInclude, boolean active) {
-		startOffset= getSequenceNumberForOffset(startOffset);	// there may be a macro expansion
-		nameOffset= getSequenceNumberForOffset(nameOffset);		// there may be a macro expansion
+		startOffset= getSequenceNumberForOffset(startOffset);	
+		nameOffset= getSequenceNumberForOffset(nameOffset);		
 		nameEndOffset= getSequenceNumberForOffset(nameEndOffset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset, nameEndOffset, endOffset, name, filename, userInclude, active));
+//		endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset, nameEndOffset, name, filename, userInclude, active));
 	}
 
 	public void encounteredComment(int offset, int endOffset, boolean isBlockComment) {
@@ -230,11 +230,11 @@ public class LocationMap implements ILocationResolver {
 	}
 
 	public void encounterPoundElif(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive) {
-		startOffset= getSequenceNumberForOffset(startOffset); 	// there may be a macro expansion
-		condOffset= getSequenceNumberForOffset(condOffset);		// there may be a macro expansion
+		startOffset= getSequenceNumberForOffset(startOffset); 	
+		condOffset= getSequenceNumberForOffset(condOffset);		
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTElif(fTranslationUnit, startOffset, condOffset, condEndOffset, endOffset, isActive));
+		// compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTElif(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive));
 	}
 
 	public void encounterPoundEndIf(int startOffset, int endOffset) {
@@ -247,40 +247,40 @@ public class LocationMap implements ILocationResolver {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		condOffset= getSequenceNumberForOffset(condOffset);
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTError(fTranslationUnit, startOffset, condOffset, condEndOffset, endOffset));
+		// compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTError(fTranslationUnit, startOffset, condOffset, condEndOffset));
 	}
 
 	public void encounterPoundPragma(int startOffset, int condOffset, int condEndOffset, int endOffset) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		condOffset= getSequenceNumberForOffset(condOffset);
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTPragma(fTranslationUnit, startOffset, condOffset, condEndOffset, endOffset));
+		// compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTPragma(fTranslationUnit, startOffset, condOffset, condEndOffset));
 	}
 
 	public void encounterPoundIfdef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		condOffset= getSequenceNumberForOffset(condOffset);
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTIfdef(fTranslationUnit, startOffset, condOffset, condEndOffset, endOffset, isActive));
+		// compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTIfdef(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive));
 	}
 
 	public void encounterPoundIfndef(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive) {
 		startOffset= getSequenceNumberForOffset(startOffset);
 		condOffset= getSequenceNumberForOffset(condOffset);
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTIfndef(fTranslationUnit, startOffset, condOffset, condEndOffset, endOffset, isActive));
+		// compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTIfndef(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive));
 	}
 
 	public void encounterPoundIf(int startOffset, int condOffset, int condEndOffset, int endOffset, boolean isActive) {
-		startOffset= getSequenceNumberForOffset(startOffset);	// there may be a macro expansion
-		condOffset= getSequenceNumberForOffset(condOffset);		// there may be a macro expansion
+		startOffset= getSequenceNumberForOffset(startOffset);	
+		condOffset= getSequenceNumberForOffset(condOffset);		
 		condEndOffset= getSequenceNumberForOffset(condEndOffset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTIf(fTranslationUnit, startOffset, condOffset, condEndOffset, endOffset, isActive));
+		// compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTIf(fTranslationUnit, startOffset, condOffset, condEndOffset, isActive));
 	}
 
 	public void encounterPoundDefine(int startOffset, int nameOffset, int nameEndOffset, int expansionOffset, int endOffset, IMacroBinding macrodef) {
@@ -303,8 +303,8 @@ public class LocationMap implements ILocationResolver {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		nameOffset= getSequenceNumberForOffset(nameOffset);		
 		nameEndOffset= getSequenceNumberForOffset(nameEndOffset);
-		endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTUndef(fTranslationUnit, name, startOffset, nameOffset, nameEndOffset, endOffset, definition));
+//		endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTUndef(fTranslationUnit, name, startOffset, nameOffset, nameEndOffset, definition));
 	}
 
 	public void setRootNode(IASTTranslationUnit root) {
@@ -414,14 +414,15 @@ public class LocationMap implements ILocationResolver {
 	public IDependencyTree getDependencyTree() {
         return new DependencyTree(fRootContext);
 	}
-    
+
+	public void cleanup() {
+	}
+
 	// stuff to remove from ILocationResolver
 	public IASTName[] getMacroExpansions() {
 		throw new UnsupportedOperationException();
 	}
-	public void cleanup() {
-		throw new UnsupportedOperationException();
-	}
+
 	// mstodo- locations
 	public IASTFileLocation flattenLocations(IASTNodeLocation[] locations) {
 		if (locations.length != 1 || !(locations[0] instanceof IASTFileLocation)) {

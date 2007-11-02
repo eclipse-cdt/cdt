@@ -51,13 +51,24 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ScannerUtility;
  * you should be using the {@link IScanner} interface.
  * @since 5.0
  */
+/**
+ * @since 5.0
+ *
+ */
+/**
+ * @since 5.0
+ *
+ */
 public class CPreprocessor implements ILexerLog, IScanner {
+	public static final String PROP_VALUE = "CPreprocessor"; //$NON-NLS-1$
+
 	public static final int tDEFINED= IToken.FIRST_RESERVED_PREPROCESSOR;
 	public static final int tEXPANDED_IDENTIFIER= IToken.FIRST_RESERVED_PREPROCESSOR+1;
 	public static final int tSCOPE_MARKER= IToken.FIRST_RESERVED_PREPROCESSOR+2;
 	public static final int tSPACE= IToken.FIRST_RESERVED_PREPROCESSOR+3;
-	public static final int tMACRO_PARAMETER= IToken.FIRST_RESERVED_PREPROCESSOR+4;
-	public static final int tEMPTY_TOKEN = IToken.FIRST_RESERVED_PREPROCESSOR+5;
+	public static final int tNOSPACE= IToken.FIRST_RESERVED_PREPROCESSOR+4;
+	public static final int tMACRO_PARAMETER= IToken.FIRST_RESERVED_PREPROCESSOR+5;
+	public static final int tEMPTY_TOKEN = IToken.FIRST_RESERVED_PREPROCESSOR+6;
 
     
 
@@ -418,9 +429,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	Token t1= fPrefetchedToken;
     	if (t1 == null) {
     		t1= fetchTokenFromPreprocessor();
-    		final int offset= fLocationMap.getSequenceNumberForOffset(t1.getOffset());
-    		final int endOffset= fLocationMap.getSequenceNumberForOffset(t1.getEndOffset());
-    		t1.setOffset(offset, endOffset);
+    		adjustOffsets(t1);
     	}
     	else {
     		fPrefetchedToken= null;
@@ -442,6 +451,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		int endOffset= 0;
     		loop: while(true) {
     			t2= fetchTokenFromPreprocessor();
+    			adjustOffsets(t2);
     			final int tt2= t2.getType();
     			switch(tt2) {
     			case IToken.tLSTRING:
@@ -481,6 +491,13 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	return t1;
     }
 
+	private void adjustOffsets(Token t1) {
+		final int offset= fLocationMap.getSequenceNumberForOffset(t1.getOffset());
+		final int endOffset= fLocationMap.getSequenceNumberForOffset(t1.getEndOffset());
+		t1.setOffset(offset, endOffset);
+		t1.setNext(null);
+	}
+
     private void appendStringContent(StringBuffer buf, Token t1) {
     	final char[] image= t1.getCharImage();
     	final int start= image[0]=='"' ? 1 : 2;
@@ -509,6 +526,15 @@ public class CPreprocessor implements ILexerLog, IScanner {
         		ppToken= fCurrentContext.nextPPToken();
         		continue;
 
+        	case Lexer.tOTHER_CHARACTER:
+        		if (!fExpandingMacro) {
+        			handleProblem(IProblem.SCANNER_BAD_CHARACTER, ppToken.getCharImage(), 
+        					ppToken.getOffset(), ppToken.getEndOffset());
+            		ppToken= fCurrentContext.nextPPToken();
+        			continue;
+        		}
+        		break;
+        		
         	case Lexer.tEND_OF_INPUT:
             	final ILocationCtx locationCtx = fCurrentContext.getLocationCtx();
             	if (locationCtx != null) {
@@ -549,7 +575,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
             	return ppToken;
         		
         	case IToken.tINTEGER:
-        		if (fCheckNumbers) {
+        		if (fCheckNumbers && !fExpandingMacro) {
         			checkNumber(ppToken, false);
         		}
         		break;
@@ -878,7 +904,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     		endOffset= lexer.currentToken().getEndOffset();
     		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_END)) {
-    			fLocationMap.encounterPoundEndIf(startOffset, endOffset);
+    			fLocationMap.encounterPoundEndIf(startOffset, condEndOffset);
     		} 
     		else {
     			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, endOffset);
@@ -889,11 +915,11 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		condOffset= lexer.nextToken().getOffset();
     		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     		endOffset= lexer.currentToken().getEndOffset();
-    		final char[] warning= lexer.getInputChars(condOffset, endOffset);
+    		final char[] warning= lexer.getInputChars(condOffset, condEndOffset);
     		final int id= type == IPreprocessorDirective.ppError 
     				? IProblem.PREPROCESSOR_POUND_ERROR 
     				: IProblem.PREPROCESSOR_POUND_WARNING;
-    		handleProblem(id, warning, startOffset, endOffset); 
+    		handleProblem(id, warning, condOffset, condEndOffset); 
     		fLocationMap.encounterPoundError(startOffset, condOffset, condEndOffset, endOffset);
     		break;
     	case IPreprocessorDirective.ppPragma: 
@@ -1050,12 +1076,12 @@ public class CPreprocessor implements ILexerLog, IScanner {
 			ObjectStyleMacro macrodef = fMacroDefinitionParser.parseMacroDefinition(lexer, this);
 			fMacroDictionary.put(macrodef.getNameCharArray(), macrodef);
 			final Token name= fMacroDefinitionParser.getNameToken();
-			final int endOffset= lexer.currentToken().getEndOffset();
+
 			fLocationMap.encounterPoundDefine(startOffset, name.getOffset(), name.getEndOffset(), 
-					fMacroDefinitionParser.getExpansionOffset(), endOffset, macrodef);
+					macrodef.getExpansionOffset(), macrodef.getExpansionEndOffset(), macrodef);
 		} catch (InvalidMacroDefinitionException e) {
-			int end= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-			handleProblem(IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, e.fName, startOffset, end);
+			lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+			handleProblem(IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, e.fName, e.fStartOffset, e.fEndOffset);
 		}
     }
 
@@ -1349,10 +1375,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	throw new UnsupportedOperationException();
 	}
 	public org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver getLocationResolver() {
-    	throw new UnsupportedOperationException();
+		return fLocationMap;
 	}
 	public void setOffsetBoundary(int offset) {
     	throw new UnsupportedOperationException();
 	}
-
 }

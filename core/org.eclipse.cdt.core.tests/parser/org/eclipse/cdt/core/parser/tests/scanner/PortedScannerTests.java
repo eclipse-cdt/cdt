@@ -1763,7 +1763,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		initializeScanner(writer.toString());
 		fullyTokenize();
 		IASTProblem[] problems= fLocationResolver.getScannerProblems();
-		assertEquals(16, problems.length);
+		assertEquals(17, problems.length);
 		int i= 0;
 		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT,          problems[i].getID() );  
 		assertEquals(IProblem.SCANNER_BAD_DECIMAL_FORMAT,        problems[++i].getID() );  
@@ -1775,6 +1775,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertEquals(IProblem.SCANNER_ILLEGAL_IDENTIFIER,        problems[++i].getID() );  
 		assertEquals(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION,problems[++i].getID() );  
 		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() );  
+		assertEquals(IProblem.SCANNER_BAD_CHARACTER,   			 problems[++i].getID() );  
 		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 
 		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 
 		assertEquals(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR,   problems[++i].getID() ); 

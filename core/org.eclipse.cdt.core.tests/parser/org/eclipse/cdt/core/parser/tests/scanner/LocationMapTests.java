@@ -299,7 +299,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkError(prep[0], "", "",FN,0,0,1);
-		checkError(prep[1], new String(DIGITS), "12", FN,0,16,1);
+		checkError(prep[1], "012", "12", FN,0,3,1);
 	}
 
 	public void testPragma() {
@@ -309,7 +309,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkPragma(prep[0], "", "", FN,0,0,1);
-		checkPragma(prep[1], new String(DIGITS), "12", FN,0,16,1);
+		checkPragma(prep[1], "012", "12", FN,0,3,1);
 	}
 
 	public void testIncludes() {
@@ -319,7 +319,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorIncludeStatement[] includes= fLocationMap.getIncludeDirectives();
 		assertEquals(2, includes.length);
 		checkInclude(includes[0], "", "", "n1", "", true, false, FN, 0, 0, 1, 0, 0);
-		checkInclude(includes[1], new String(DIGITS), "12", "n2", "f2", false, true, FN, 0, 16, 1, 1, 2);
+		checkInclude(includes[1], "012", "12", "n2", "f2", false, true, FN, 0, 3, 1, 1, 2);
 	}
 
 	public void testIf() {
@@ -329,7 +329,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkIf(prep[0], "", "", false, FN, 0, 0, 1);
-		checkIf(prep[1], new String(DIGITS), "12", true, FN, 0, 16, 1);
+		checkIf(prep[1], "012", "12", true, FN, 0, 3, 1);
 	}
 
 	public void testIfdef() {
@@ -339,7 +339,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkIfdef(prep[0], "", "", false, FN, 0, 0, 1);
-		checkIfdef(prep[1], new String(DIGITS), "12", true, FN, 0, 16, 1);
+		checkIfdef(prep[1], "012", "12", true, FN, 0, 3, 1);
 	}
 
 	public void testIfndef() {
@@ -349,7 +349,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkIfndef(prep[0], "", "", false, FN, 0, 0, 1);
-		checkIfndef(prep[1], new String(DIGITS), "12", true, FN, 0, 16, 1);
+		checkIfndef(prep[1], "012", "12", true, FN, 0, 3, 1);
 	}
 
 	public void testElif() {
@@ -359,7 +359,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkElif(prep[0], "", "", false, FN, 0, 0, 1);
-		checkElif(prep[1], new String(DIGITS), "12", true, FN, 0, 16, 1);
+		checkElif(prep[1], "012", "12", true, FN, 0, 3, 1);
 	}
 
 	public void testElse() {
@@ -430,7 +430,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorStatement[] prep= fLocationMap.getAllPreprocessorStatements();
 		assertEquals(2, prep.length);
 		checkMacroUndef(prep[0], null, "", "n1", "", FN, 0, 0, 1, 0, 0);
-		checkMacroUndef(prep[1], macro1, new String(DIGITS), "n2", "3456", FN, 0, 16, 1, 3, 4);
+		checkMacroUndef(prep[1], macro1, "0123456", "n2", "3456", FN, 0, 7, 1, 3, 4);
 	}
 
 	public void testMacroExpansion() {
@@ -551,7 +551,7 @@ public class LocationMapTests extends BaseTestCase {
 		
 		inclusions= inclusions[0].getNestedInclusions();
 		assertEquals(1, inclusions.length);
-		checkInclude(inclusions[0].getIncludeDirective(), "b4b", "4", "pre11", "pre11", false, true, "pre1", 6, 3, 1, 7, 1);
+		checkInclude(inclusions[0].getIncludeDirective(), "b4", "4", "pre11", "pre11", false, true, "pre1", 6, 2, 1, 7, 1);
 		assertEquals(0, inclusions[0].getNestedInclusions().length);
 	}
 }

@@ -25,8 +25,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 class MacroDefinitionParser {
 	static class InvalidMacroDefinitionException extends Exception {
 		public char[] fName;
-		public InvalidMacroDefinitionException(char[] name) {
+		public int fStartOffset;
+		public int fEndOffset;
+		public InvalidMacroDefinitionException(char[] name, int startOffset, int endOffset) {
 			fName= name;
+			fStartOffset= startOffset;
+			fEndOffset= endOffset;
 		}
 	}
 
@@ -43,14 +47,6 @@ class MacroDefinitionParser {
 	 */
 	public Token getNameToken() {
 		return fNameToken;
-	}
-
-	/**
-	 * In case the expansion was successfully parsed, the start offset is returned.
-	 * Otherwise the return value is undefined.
-	 */
-	public int getExpansionOffset() {
-		return fExpansionOffset;
 	}
 
 	/** 
@@ -81,7 +77,7 @@ class MacroDefinitionParser {
 		final char[][] paramList= parseParamList(lexer, name);
 		final Token replacementToken = lexer.currentToken();
 		if (replacementToken.getType() != Lexer.tEND_OF_INPUT) {
-			throw new InvalidMacroDefinitionException(nameChars);
+			throw new InvalidMacroDefinitionException(nameChars, replacementToken.getOffset(), replacementToken.getEndOffset());
 		}
 		
 		if (paramList == null) { 
@@ -136,7 +132,7 @@ class MacroDefinitionParser {
     		if (tt == IToken.tCOMPLETION) {
     			throw new OffsetLimitReachedException(ORIGIN_PREPROCESSOR_DIRECTIVE, name);
     		}
-    		throw new InvalidMacroDefinitionException(name.getCharImage());
+    		throw new InvalidMacroDefinitionException(name.getCharImage(), name.getOffset(), name.getEndOffset());
     	}
     	fNameToken= name;
 		return name;
@@ -178,12 +174,12 @@ class MacroDefinitionParser {
 				}
 				// no break;
 			default:
-				throw new InvalidMacroDefinitionException(name.getCharImage());
+				throw new InvalidMacroDefinitionException(name.getCharImage(), name.getOffset(), param.getEndOffset());
 			}
 		}
 		while (fHasVarArgs==0 && next.getType() == IToken.tCOMMA);
 		if (next.getType() != IToken.tRPAREN) {
-			throw new InvalidMacroDefinitionException(name.getCharImage());
+			throw new InvalidMacroDefinitionException(name.getCharImage(), name.getOffset(), next.getEndOffset());
 		}
 		next= lex.nextToken(); // consume the closing parenthesis
 

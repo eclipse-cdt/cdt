@@ -124,6 +124,7 @@ public class TokenUtil {
         case IGCCToken.tMAX:		return Keywords.cpMAX;
         
         case CPreprocessor.tSPACE:  return SPACE; 
+        case CPreprocessor.tNOSPACE: return CharArrayUtils.EMPTY;
         
         default:
             return CharArrayUtils.EMPTY; 

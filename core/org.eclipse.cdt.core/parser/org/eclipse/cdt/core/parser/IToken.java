@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -118,7 +119,6 @@ public interface IToken {
 	static public final int tDOT = 50;
 	static public final int tDIVASSIGN = 51;
 	static public final int tDIV = 52;
-	static public final int tOTHER_CHARACTER= 53;
 	
 	/** @deprecated use {@link #tAND} */
 	static public final int t_and = 54;

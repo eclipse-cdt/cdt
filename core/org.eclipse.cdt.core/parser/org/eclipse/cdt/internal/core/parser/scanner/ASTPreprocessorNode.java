@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorPragmaStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorUndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -125,12 +126,10 @@ class ASTComment extends ASTPreprocessorNode implements IASTComment {
 
 abstract class ASTDirectiveWithCondition extends ASTPreprocessorNode {
 	private final int fConditionOffset;
-	private final int fConditionLength;
     private final boolean fActive;
-	public ASTDirectiveWithCondition(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber, boolean active) {
+	public ASTDirectiveWithCondition(IASTTranslationUnit parent, int startNumber, int condNumber, int endNumber, boolean active) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fConditionOffset= condNumber;
-		fConditionLength= condEndNumber-condNumber;
 		fActive= active;
 	}
 
@@ -139,7 +138,7 @@ abstract class ASTDirectiveWithCondition extends ASTPreprocessorNode {
     }
         
     public String getConditionString() {
-    	return getSource(fConditionOffset, fConditionLength);
+    	return getSource(fConditionOffset, getOffset() + getLength() - fConditionOffset);
     }
     
     public char[] getCondition() {
@@ -154,8 +153,8 @@ class ASTEndif extends ASTPreprocessorNode implements IASTPreprocessorEndifState
 }
 
 class ASTElif extends ASTDirectiveWithCondition implements IASTPreprocessorElifStatement {
-	public ASTElif(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber, boolean active) {
-		super(parent, startNumber, condNumber, condEndNumber, endNumber, active);
+	public ASTElif(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean active) {
+		super(parent, startNumber, condNumber, condEndNumber, active);
     }
 }
 
@@ -171,26 +170,26 @@ class ASTElse extends ASTPreprocessorNode implements IASTPreprocessorElseStateme
 }
 
 class ASTIfndef extends ASTDirectiveWithCondition implements IASTPreprocessorIfndefStatement {
-	public ASTIfndef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber, boolean active) {
-		super(parent, startNumber, condNumber, condEndNumber, endNumber, active);
+	public ASTIfndef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean active) {
+		super(parent, startNumber, condNumber, condEndNumber, active);
 	}
 }
 
 class ASTIfdef extends ASTDirectiveWithCondition implements IASTPreprocessorIfdefStatement {
-	public ASTIfdef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber, boolean active) {
-		super(parent, startNumber, condNumber, condEndNumber, endNumber, active);
+	public ASTIfdef(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean active) {
+		super(parent, startNumber, condNumber, condEndNumber, active);
 	}
 }
 
 class ASTIf extends ASTDirectiveWithCondition implements IASTPreprocessorIfStatement {
-	public ASTIf(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber, boolean active) {
-		super(parent, startNumber, condNumber, condEndNumber, endNumber, active);
+	public ASTIf(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, boolean active) {
+		super(parent, startNumber, condNumber, condEndNumber, active);
 	}
 }
 
 class ASTError extends ASTDirectiveWithCondition implements IASTPreprocessorErrorStatement {
-	public ASTError(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber) {
-		super(parent, startNumber, condNumber, condEndNumber, endNumber, true);
+	public ASTError(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber) {
+		super(parent, startNumber, condNumber, condEndNumber, true);
 	}
 
 	public char[] getMessage() {
@@ -199,8 +198,8 @@ class ASTError extends ASTDirectiveWithCondition implements IASTPreprocessorErro
 }
 
 class ASTPragma extends ASTDirectiveWithCondition implements IASTPreprocessorPragmaStatement {
-	public ASTPragma(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber, int endNumber) {
-		super(parent, startNumber, condNumber, condEndNumber, endNumber, true);
+	public ASTPragma(IASTTranslationUnit parent, int startNumber, int condNumber, int condEndNumber) {
+		super(parent, startNumber, condNumber, condEndNumber, true);
 	}
 
 	public char[] getMessage() {
@@ -215,9 +214,9 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fIsResolved;
 	private final boolean fIsSystemInclude;
 
-	public ASTInclusionStatement(IASTTranslationUnit parent, int startNumber, int nameStartNumber, int nameEndNumber, int endNumber, 
+	public ASTInclusionStatement(IASTTranslationUnit parent, int startNumber, int nameStartNumber, int nameEndNumber, 
 			char[] headerName, String filePath, boolean userInclude, boolean active) {
-		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
+		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, nameEndNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME, nameStartNumber, nameEndNumber, headerName, null);
 		fPath= filePath == null ? "" : filePath; //$NON-NLS-1$
 		fIsActive= active;
@@ -246,7 +245,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 }
 
-class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorMacroDefinition {
+class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyleMacroDefinition {
 	private final ASTPreprocessorName fName;
 	
 	/**
@@ -335,8 +334,8 @@ class ASTFunctionMacro extends ASTMacro implements IASTPreprocessorFunctionStyle
 
 class ASTUndef extends ASTPreprocessorNode implements IASTPreprocessorUndefStatement {
 	private final IASTName fName;
-	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, int endNumber, IBinding binding) {
-		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
+	public ASTUndef(IASTTranslationUnit parent, char[] name, int startNumber, int nameNumber, int nameEndNumber, IBinding binding) {
+		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, nameEndNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorUndefStatement.MACRO_NAME, nameNumber, nameEndNumber, name, binding);
 	}
 

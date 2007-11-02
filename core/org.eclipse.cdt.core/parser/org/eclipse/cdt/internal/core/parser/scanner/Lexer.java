@@ -41,6 +41,7 @@ final public class Lexer {
 	public static final int tEND_OF_INPUT	= IToken.FIRST_RESERVED_SCANNER + 2;
 	public static final int tQUOTE_HEADER_NAME    = IToken.FIRST_RESERVED_SCANNER + 3;
 	public static final int tSYSTEM_HEADER_NAME   = IToken.FIRST_RESERVED_SCANNER + 4;
+	public static final int tOTHER_CHARACTER 	  = IToken.FIRST_RESERVED_SCANNER + 5;
 	
 	private static final int END_OF_INPUT = -1;
 	private static final int ORIGIN_LEXER = OffsetLimitReachedException.ORIGIN_LEXER;
@@ -176,33 +177,6 @@ final public class Lexer {
 		}
 	}
 
-	/**
-	 * Advances to the next newline.
-	 * @return the list of tokens found on this line.
-	 * @param origin parameter for the {@link OffsetLimitReachedException} when it has to be thrown.
-	 */
-	public final void getTokensOfLine(int origin, TokenList result) throws OffsetLimitReachedException {
-		Token t= fToken;
-		while(true) {
-			switch(t.getType()) {
-			case IToken.tCOMPLETION:
-				fToken= t;
-				throw new OffsetLimitReachedException(origin, t);
-			case Lexer.tEND_OF_INPUT:
-				fToken= t;
-				if (fOptions.fSupportContentAssist) {
-					throw new OffsetLimitReachedException(origin, null);
-				}
-				return;
-			case Lexer.tNEWLINE:
-				fToken= t;
-				return;
-			}
-			result.append(t);
-			t= fetchToken();
-		}
-	}
-
 	/** 
 	 * Advances to the next pound token that starts a preprocessor directive. 
 	 * @return pound token of the directive or end-of-input.
@@ -273,18 +247,34 @@ final public class Lexer {
 					lineComment(start);
 					continue; 
 				case '*':
-					nextCharPhase3();
 					blockComment(start);
 					continue;
 				}
 				continue;
+			
+			case '%':
+				if (hadNL) {
+					if (d == ':') {
+						// found at least '#'
+						final int e= nextCharPhase3();
+						if (e == '%') {
+							markPhase3();
+							if (nextCharPhase3() == ':') {
+								// found '##'
+								nextCharPhase3();
+								continue;
+							}
+							restorePhase3();
+						}
+						fFirstTokenAfterNewline= true;
+						fToken= newDigraphToken(IToken.tPOUND, start);
+						return fToken;
+					}
+				}
+				continue;
 
 			case '#':
-				if (d == '#') {
-					nextCharPhase3();
-					continue;
-				}
-				if (hadNL) {
+				if (hadNL && d != '#') {
 					fFirstTokenAfterNewline= true;
 					fToken= newToken(IToken.tPOUND, start);
 					return fToken;
@@ -359,7 +349,7 @@ final public class Lexer {
 					nextCharPhase3();
 					return identifier(start, 2);
 				}
-				return newToken(IToken.tOTHER_CHARACTER, start, 1);
+				return newToken(tOTHER_CHARACTER, start, 1);
 
 			case '0': case '1': case '2': case '3': case '4':
 			case '5': case '6': case '7': case '8': case '9':
@@ -470,7 +460,6 @@ final public class Lexer {
 					lineComment(start);
 					continue; 
 				case '*':
-					nextCharPhase3();
 					blockComment(start);
 					continue;
 				}
@@ -607,7 +596,7 @@ final public class Lexer {
 				break;
 			}
 			// handles for instance @
-			return newToken(IToken.tOTHER_CHARACTER, start, 1);
+			return newToken(tOTHER_CHARACTER, start, 1);
 		}
     }
 

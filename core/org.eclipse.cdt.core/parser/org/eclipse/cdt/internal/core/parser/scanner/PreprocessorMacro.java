@@ -127,6 +127,14 @@ class ObjectStyleMacro extends PreprocessorMacro {
 		}
 	}
 
+	public int getExpansionOffset() {
+		return fExpansionOffset;
+	}
+	
+	public int getExpansionEndOffset() {
+		return fEndOffset;
+	}
+	
 	private void setSource(Token t) {
 		while (t != null) {
 			t.fSource= this;

@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -83,4 +84,9 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
      * Returns the definition for a macro.
      */
     public IASTName[] getDeclarations(IMacroBinding binding);
+
+    /**
+     * Returns the comments encountered.
+     */
+	IASTComment[] getComments();
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Pawel Piech (Wind River) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=207094
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.modules; 
 
@@ -20,27 +21,33 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICModule;
+import org.eclipse.cdt.debug.core.model.IModuleRetrieval;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
-import org.eclipse.cdt.debug.internal.ui.actions.ConfigureColumnsAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ToggleDetailPaneAction;
-import org.eclipse.cdt.debug.internal.ui.actions.ToggleShowColumnsAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.actions.ConfigureColumnsAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputRequestor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ViewerInputService;
+import org.eclipse.debug.internal.ui.views.variables.ToggleShowColumnsAction;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -196,6 +203,24 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 
 	private HashMap fImageCache = new HashMap( 10 );
 
+    /**
+     * Viewer input service used to translate active debug context to viewer input.
+     */
+    private ViewerInputService fInputService;
+
+	/**
+     * Viewer input requester used to update the viewer once the viewer input has been
+     * resolved.
+     */
+    private IViewerInputRequestor fInputRequestor = new IViewerInputRequestor() {
+        public void viewerInputComplete(IViewerInputUpdate update) {
+            if (!update.isCanceled()) {
+                setViewerInput(update.getViewerInput());
+            }
+        }
+    };
+
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
@@ -208,6 +233,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		JFaceResources.getFontRegistry().addListener( this );
 
 		TreeModelViewer viewer = createTreeViewer( getSashForm() );
+		fInputService = new ViewerInputService(fInputRequestor, viewer.getPresentationContext());
 
 		createDetailsViewer();
 		getSashForm().setMaximizedControl( viewer.getControl() );
@@ -285,25 +311,32 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 	}
 
 	protected void setViewerInput( Object context ) {
+	    Object input = context;
+	    
+        if ( context instanceof IAdaptable ) {
+            ICDebugTarget target = (ICDebugTarget)((IAdaptable)context).getAdapter( ICDebugTarget.class );
+            if ( target != null )
+                input = (IModuleRetrieval)target.getAdapter( IModuleRetrieval.class );
+        }
 
-		if ( context == null ) {
+		if ( input == null ) {
 			clearDetails();
 		}
 		Object current = getViewer().getInput();
-		if ( current == null && context == null ) {
+		if ( current == null && input == null ) {
 			return;
 		}
-		if ( current != null && current.equals( context ) ) {
+		if ( current != null && current.equals( input ) ) {
 			return;
 		}
 
 		showViewer();
-		getViewer().setInput( context );
+		getViewer().setInput( input );
 	}
 
 	protected TreeModelViewer createTreeViewer( Composite parent ) {
 		// add tree viewer
-		final TreeModelViewer modulesViewer = new ModulesViewTreeViewer( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION, getPresentationContext() );
+		final TreeModelViewer modulesViewer = new TreeModelViewer( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION, getPresentationContext() );
 		modulesViewer.getControl().addFocusListener( new FocusAdapter() {
 
 			/* (non-Javadoc)
@@ -883,9 +916,9 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 			return;
 		}
 		if ( selection instanceof IStructuredSelection ) {
-			setViewerInput( ((IStructuredSelection)selection).getFirstElement() );
+            Object source = ((IStructuredSelection)selection).getFirstElement();
+            fInputService.resolveViewerInput(source);
 		}
-		showViewer();
 	}
 
 	/* (non-Javadoc)

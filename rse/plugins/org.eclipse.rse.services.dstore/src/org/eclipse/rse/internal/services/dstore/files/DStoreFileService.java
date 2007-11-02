@@ -22,6 +22,7 @@
  * Xuan Chen        (IBM)        - [190824] Incorrect result for DStore#getSeparator() function when parent is "/" 
  * David McKnight   (IBM)        - [207095] check for null datastore 
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -627,43 +628,22 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary,
 			String encoding, IProgressMonitor monitor) throws SystemMessageException
 	{
+		DataStore ds = getDataStore();
 		DataElement universaltemp = getMinerElement();
-
-		if (!localFile.exists())
-		{
-			File parentDir = localFile.getParentFile();
-			parentDir.mkdirs();
-		}
-
-		try
-		{
-			if (localFile.exists())
-				localFile.delete();
-			localFile.createNewFile();
-		}
-		catch (IOException e)
-		{
-//			UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error creating local file " + destination, e);
-//			throw new RemoteFileIOException(e);
-			return false;
-		}
-
-/*		int mode;
-
-		if (isBinary)
-		{
-			mode = IUniversalDataStoreConstants.BINARY_MODE;
-		}
-		else
-		{
-			mode = IUniversalDataStoreConstants.TEXT_MODE;
-		}*/
-
+		
 		// just download as binary since we do not have to convert to UTF-8 anyway
 		// the miner does a binary download anyway
 		int mode = IUniversalDataStoreConstants.BINARY_MODE;
 		
-		DataStore ds = getDataStore();
+		if (!makeSureLocalExists(localFile))
+		{
+			return false;
+		}
+
+
+
+		
+
 		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 		
 		DataElement de = getElementFor(remotePath);
@@ -701,20 +681,23 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		try
 		{
 			DownloadListener dlistener = new DownloadListener(status, localFile, remotePath, fileLength, monitor);
-			try
+			if (!dlistener.isDone())
 			{
-				dlistener.waitForUpdate();
-			}
-			catch (InterruptedException e)
-			{
-				// cancel monitor if it's still not canceled
-				if (monitor != null && !monitor.isCanceled())
+				try
 				{
-					monitor.setCanceled(true);
+					dlistener.waitForUpdate();
 				}
-				
-				//InterruptedException is used to report user cancellation, so no need to log
-				//This should be reviewed (use OperationCanceledException) with bug #190750
+				catch (InterruptedException e)
+				{
+					// cancel monitor if it's still not canceled
+					if (monitor != null && !monitor.isCanceled())
+					{
+						monitor.setCanceled(true);
+					}
+					
+					//InterruptedException is used to report user cancellation, so no need to log
+					//This should be reviewed (use OperationCanceledException) with bug #190750
+				}
 			}
 		}
 		catch (Exception e)
@@ -784,6 +767,255 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return true;
 	}
 
+	private boolean makeSureLocalExists(File localFile)
+	{
+		if (!localFile.exists())
+		{
+			File parentDir = localFile.getParentFile();
+			parentDir.mkdirs();
+		}
+
+		try
+		{
+			if (localFile.exists())
+				localFile.delete();
+			localFile.createNewFile();
+		}
+		catch (IOException e)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Default implementation - just iterate through each file
+	 */
+	public boolean downloadMulti(String[] remoteParents, String[] remoteFiles,
+			File[] localFiles, boolean[] isBinaries, String[] hostEncodings,
+			IProgressMonitor monitor) throws SystemMessageException 
+	{		
+		boolean result = true;
+		
+		
+		List downloadListeners = new ArrayList();
+		List remoteElements = new ArrayList();
+		
+		DataStore ds = getDataStore();
+		DataElement universaltemp = getMinerElement();
+		
+		// get the subjects
+		String[] paths = getPathsFor(remoteParents, remoteFiles);
+		DataElement[] des = getElementsFor(paths);
+		
+		DataElement queryCmd = null;
+		DataElement bufferSizeElement = null;
+		
+		// if any elements are unresolved, do a query on them
+		List unresolved = new ArrayList();
+		for (int d = 0; d < des.length; d++)
+		{
+			DataElement de = des[d];
+			if (de.getType().equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR))
+			{
+				unresolved.add(de);
+			}
+		}
+		// query the unresolved
+		if (!unresolved.isEmpty())
+		{
+			String[] parents = new String[unresolved.size()];
+			String[] names = new String[unresolved.size()];
+			for (int u = 0; u < unresolved.size(); u++)
+			{
+				DataElement de = (DataElement)unresolved.get(u);
+				parents[u] = de.getValue();
+				names[u] = de.getName();
+			}
+			
+			// I think the de should be reused since getElement should find it?
+			getFileMulti(parents, names, monitor);			
+		}
+			
+		
+		// kick off all downloads
+		int mode = IUniversalDataStoreConstants.BINARY_MODE;
+		
+		for (int i = 0; i < des.length && result == true; i++)
+		{
+			DataElement de = des[i];
+			String remotePath = paths[i];
+			
+			File localFile = localFiles[i];
+			String hostEncoding = hostEncodings[i];
+						
+			if (!makeSureLocalExists(localFile))
+			{
+				return false;
+			}
+			
+			long fileLength = DStoreHostFile.getFileLength(de.getSource());
+			if (monitor != null)
+			{
+				monitor.beginTask(remotePath, (int)fileLength);
+			}
+						
+			DataElement remoteElement = ds.createObject(universaltemp, de.getType(), remotePath, String.valueOf(mode));					
+			DataElement localElement = ds.createObject(universaltemp, de.getType(), localFile.getAbsolutePath(), hostEncoding);
+			
+			// only do this once
+			if (bufferSizeElement == null)
+				bufferSizeElement = ds.createObject(universaltemp, "buffer_size", "" + getBufferDownloadSize(), ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$	
+			
+			// only do this once
+			if (queryCmd == null)
+				queryCmd = getCommandDescriptor(de,IUniversalDataStoreConstants.C_DOWNLOAD_FILE);
+
+			
+			ArrayList argList = new ArrayList();
+			argList.add(remoteElement);
+			argList.add(localElement);
+			argList.add(bufferSizeElement);
+			
+			DataElement subject = ds.createObject(universaltemp, de.getType(), remotePath, String.valueOf(mode));
+			
+			DataElement status = ds.command(queryCmd, argList, subject);
+			if (status == null)
+			{
+				System.out.println("no download descriptor for "+remoteElement); //$NON-NLS-1$
+				return false;
+			}
+			
+			DownloadListener dlistener = new DownloadListener(status, localFile, remotePath, fileLength, monitor);
+			downloadListeners.add(dlistener);
+			remoteElements.add(remoteElement);
+		}
+			
+		// all downloads have been started
+		// now wait for each to complete
+		for (int j = 0; j < downloadListeners.size(); j++)
+		{
+			DownloadListener dlistener = (DownloadListener)downloadListeners.get(j);
+			try
+			{
+				if (!dlistener.isDone())
+				{
+					try
+					{
+						dlistener.waitForUpdate();
+					}
+					catch (InterruptedException e)
+					{
+						// cancel monitor if it's still not canceled
+						if (monitor != null && !monitor.isCanceled())
+						{
+							monitor.setCanceled(true);
+						}
+						
+						//InterruptedException is used to report user cancellation, so no need to log
+						//This should be reviewed (use OperationCanceledException) with bug #190750
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				return false;
+			}
+
+			// now wait till we have all the bytes local
+			File localFile = localFiles[j];
+			long localBytes = localFile.length();
+			long lastLocalBytes = 0;
+			long fileLength = dlistener.getTotalLength();
+			while (localBytes < fileLength && (monitor == null || !monitor.isCanceled()) && lastLocalBytes != localBytes)
+			{
+				try
+				{
+					lastLocalBytes= localBytes;
+					Thread.sleep(100);
+					localBytes = localFile.length();
+					
+				}
+				catch (Exception e)
+				{				
+				}
+			}
+			
+			DataElement remoteElement = (DataElement)remoteElements.get(j);
+			List resultList = remoteElement.getNestedData();
+			DataElement resultChild = null;
+
+			for (int i = 0; i < resultList.size(); i++)
+			{
+
+				resultChild = (DataElement) resultList.get(i);
+
+				if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
+				{
+					result = true;
+				}
+				else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
+				{
+					localFile.delete();
+					SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION); //$NON-NLS-1$
+					throw new SystemMessageException(msg);
+				}
+				else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION))
+				{
+					//SystemMessage msg = getMessage();
+					//throw new SystemMessageException(msg);
+					//UnsupportedEncodingException e = new UnsupportedEncodingException(resultChild.getName());
+					//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
+					//throw new RemoteFileIOException(e);
+					result = false;
+				}
+				
+				else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION))
+				{
+					localFile.delete();
+					SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION); //$NON-NLS-1$
+					throw new SystemMessageException(msg);
+					//IOException e = new IOException(resultChild.getName());
+					//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
+					//throw new RemoteFileIOException(e);
+				}
+				else
+				{
+					result = false;
+				}
+			}
+
+			if (monitor != null)
+			{
+				//monitor.done();
+			}			
+		}
+		return result;
+	}
+
+	/**
+	 * Default implementation - just iterate through each file
+	 */
+	public boolean uploadMulti(File[] localFiles, String[] remoteParents,
+			String[] remoteFiles, boolean[] isBinaries, String[] srcEncodings,
+			String[] hostEncodings, IProgressMonitor monitor)
+			throws SystemMessageException 
+	{
+		boolean result = true;
+		for (int i = 0; i < localFiles.length && result == true; i++)
+		{
+			File localFile = localFiles[i];
+			String remoteParent = remoteParents[i];
+			String remoteFile = remoteFiles[i];
+			
+			boolean isBinary = isBinaries[i];
+			String srcEncoding = srcEncodings[i];
+			String hostEncoding = hostEncodings[i];
+			result = upload(localFile, remoteParent, remoteFile, isBinary, srcEncoding, hostEncoding, monitor);
+		}
+		return result;
+	}
+	
 	private DataElement getSubjectFor(String remoteParent, String name)
 	{
 		DataElement de = null;
@@ -1358,6 +1590,34 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return fetchMulti(remoteParents, fileFilters, queryString, monitor);
 	}
 	
+	protected String[] getPathsFor(String[] remoteParents, String[] remoteFiles)
+	{
+		String[] results = new String[remoteParents.length];
+		String sep = null;
+		for (int i = 0; i < remoteParents.length; i++)
+		{
+			String remoteParent = remoteParents[i];
+			String remoteFile = remoteFiles[i];
+			if (sep == null)
+			{
+				sep = getSeparator(remoteParent);
+			}
+			
+			results[i] = remoteParent + sep + remoteFile;
+		}
+		return results;
+	}
+
+	
+	protected DataElement[] getElementsFor(String[] paths)
+	{
+		DataElement[] results = new DataElement[paths.length];
+		for (int i = 0; i < paths.length; i++)
+		{
+			results[i] = getElementFor(paths[i]);			
+		}
+		return results;
+	}
 	
 	protected DataElement getElementFor(String path)
 	{

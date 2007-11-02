@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [183824] Forward SystemMessageException from IRemoteFileSubsystem
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -454,6 +455,30 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 */
 	public void download(IRemoteFile source, String destination, String encoding, IProgressMonitor monitor) throws SystemMessageException;
 	
+	
+	/**
+	 * Get the remote files and save them locally.
+	 * 
+	 * The files are saved in the encodings specified, with two exceptions:
+	 * <ul>
+	 *   <li>If a remote file is binary, encoding does not apply.</li>
+	 *   <li>If a remote file is a XML file, then it will be 
+	 *       copied to local in the encoding specified in the XML
+	 *       declaration, or as determined from the XML specification.</li>
+	 * </ul>
+	 * @param sources remote files that represent the files to be obtained
+	 * @param destinations the absolute paths of the local files
+	 * @param encodings the encodings of the local files
+	 * @param monitor the progress monitor
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
+	 */
+	public void downloadMulti(IRemoteFile[] sources, String[] destinations, String[] encoding, IProgressMonitor monitor) throws SystemMessageException;
+	
+	
+	
+	
 	/**
 	 * Put the local copy of the remote file back to the remote location.
 	 * 
@@ -495,6 +520,48 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 *     {@link RemoteFileException} family.
 	 */
 	public void upload(String source, String srcEncoding, String remotePath, String rmtEncoding,  IProgressMonitor monitor) throws SystemMessageException;
+	
+	/**
+	 * Put the local copies of the remote files to the remote locations.
+	 * 
+	 * The files are assumed to be in the encodings specified, with
+	 * two exceptions:
+	 * <ul>
+	 *   <li>If a local files is binary, encoding does not apply.</li>
+	 *   <li>If a local files is an XML file, then it will be copied
+	 *        to remote in the encoding specified in the XML declaration,
+	 *        or as determined from the XML specification.</li>
+	 * </ul>
+	 * @param sources the absolute paths of the local copies
+	 * @param destinations remote files that represent the files on the server
+	 * @param encodings the encodings of the local copies
+	 * @param monitor the progress monitor
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
+	 */
+	public void uploadMulti(String[] sources, IRemoteFile[] destinations, String[] encodings, IProgressMonitor monitor) throws SystemMessageException;
+
+	/**
+	 * Put the local copies of the remote files to the remote locations.
+	 * 
+	 * The files are assumed to be in the encodings of the local operating system,
+	 * with two exceptions:
+	 * <ul>
+	 *   <li>If a local file is binary, encoding does not apply.</li>
+	 *   <li>If a local file is a XML file, then it will be copied
+	 *       to remote in the encoding specified in the XML declaration,
+	 *       or as determined from the XML specification.</li>
+	 * </ul>
+	 * @param sources the absolute paths of the local copies
+	 * @param srcEncodings the encodings of the local copies
+	 * @param remotePaths remote files that represents the files on the server
+	 * @param rmtEncodings the encodings of the remote files.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the
+	 *     {@link RemoteFileException} family.
+	 */
+	public void uploadMulti(String sources[], String[] srcEncodings, String[] remotePaths, String[] rmtEncodings,  IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
 	 * Returns a language utility factory associated with this subsystem.

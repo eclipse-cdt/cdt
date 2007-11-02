@@ -11,7 +11,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
+ * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
+ * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi 
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -78,12 +79,22 @@ public class DownloadListener implements IDomainListener
 		{
 			updateDownloadState();
 			setDone(true);
-		}
-	
+		}	
 	}
+	
+	public long getTotalLength()
+	{
+		return _totalLength;
+	}
+	
 	public boolean isCancelled()
 	{
 		return _isCancelled;
+	}
+	
+	public boolean isDone()
+	{
+		return _isDone;
 	}
 
 	public DataElement getStatus()

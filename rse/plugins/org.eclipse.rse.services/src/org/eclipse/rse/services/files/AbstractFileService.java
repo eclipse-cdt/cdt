@@ -13,10 +13,12 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -30,7 +32,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public abstract class AbstractFileService implements IFileService
 {
-
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 	
 	public IHostFile[] getFileMulti(String remoteParents[], String names[], IProgressMonitor monitor) 
@@ -114,6 +115,49 @@ public abstract class AbstractFileService implements IFileService
 		return ok;
 	}
 
+	/**
+	 * Default implementation - just iterate through each file
+	 */
+	public boolean downloadMulti(String[] remoteParents, String[] remoteFiles,
+			File[] localFiles, boolean[] isBinaries, String[] hostEncodings,
+			IProgressMonitor monitor) throws SystemMessageException 
+	{
+		boolean result = true;
+		for (int i = 0; i < remoteParents.length && result == true; i++)
+		{
+			String remoteParent = remoteParents[i];
+			String remoteFile = remoteFiles[i];
+			File localFile = localFiles[i];
+			boolean isBinary = isBinaries[i];
+			String hostEncoding = hostEncodings[i];
+			result = download(remoteParent, remoteFile, localFile, isBinary, hostEncoding, monitor);
+		}
+		return result;
+	}
+
+	/**
+	 * Default implementation - just iterate through each file
+	 */
+	public boolean uploadMulti(File[] localFiles, String[] remoteParents,
+			String[] remoteFiles, boolean[] isBinaries, String[] srcEncodings,
+			String[] hostEncodings, IProgressMonitor monitor)
+			throws SystemMessageException 
+	{
+		boolean result = true;
+		for (int i = 0; i < localFiles.length && result == true; i++)
+		{
+			File localFile = localFiles[i];
+			String remoteParent = remoteParents[i];
+			String remoteFile = remoteFiles[i];
+			
+			boolean isBinary = isBinaries[i];
+			String srcEncoding = srcEncodings[i];
+			String hostEncoding = hostEncodings[i];
+			result = upload(localFile, remoteParent, remoteFile, isBinary, srcEncoding, hostEncoding, monitor);
+		}
+		return result;
+	}
+	
 	/**
 	 * Returns the local platform encoding by default. Subclasses should override to return the actual remote encoding.
 	 * @see org.eclipse.rse.services.files.IFileService#getEncoding(org.eclipse.core.runtime.IProgressMonitor)

@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Martin Oberhuber (Wind River) - [204710] Update Javadoc to mention that getUserHome() may return null
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -77,10 +78,29 @@ public interface IFileService extends IService
 	 */
 	public boolean upload(File localFile, String remoteParent, String remoteFile, boolean isBinary, String srcEncoding, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
+
+	/**
+	 * Copy files to the remote file system.  The remote target is denoted by
+	 * strings representing the parents and strings representing the files.
+	 * @param localFiles - real files in the local file system.
+	 * @param remoteParents - strings designating the parent folders of the target for the files.
+	 * @param remoteFiles - strings designating the names of the files to be written on the remote system.
+	 * @param isBinary - indicates whether the files are text or binary
+	 * @param srcEncodings - the src encodings of the files (if text)
+	 * @param hostEncodings - the tgt encodings of the files (if text)
+	 * @param monitor the monitor for this potentially long running operation
+	 * @return true if the files were uploaded
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the
+	 *     {@link RemoteFileException} family.
+	 */
+	public boolean uploadMulti(File[] localFiles, String[] remoteParents, String[] remoteFiles, boolean[] isBinary, String[] srcEncodings, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
+
+	
 	/**
 	 * Copy a file from the remote file system to the local system.
 	 * @param remoteParent - a String designating the remote parent.
-	 * @param remoteFile - a String designating the remote file residing in the parent.
+	 * @param remoteFile - a String designating the remote file residing in the parents.
 	 * @param localFile - The file that is to be written.  If the file exists it is 
 	 * overwritten.
 	 * @param isBinary - indicates whether the file is text on binary
@@ -93,6 +113,24 @@ public interface IFileService extends IService
 	 */
 	public boolean download(String remoteParent, String remoteFile, File localFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException;
 
+	/**
+	 * Copy files from the remote file system to the local system.
+	 * @param remoteParents - string designating the remote parents.
+	 * @param remoteFiles - Strings designating the remote files residing in the parents.
+	 * @param localFiles - The files that are to be written.  If the files exists they are 
+	 * overwritten.
+	 * @param isBinary - indicates whether the files are text on binary
+	 * @param hostEncodings - the encodings on the host (if text)
+	 * @param monitor the monitor for this potentially long running operation
+	 * @return true if the files were copied from the remote system.
+	 * @throws SystemMessageException if an error occurs. 
+	 *     Typically this would be one of those in the 
+	 *     {@link RemoteFileException} family.
+	 */
+	public boolean downloadMulti(String[] remoteParents, String[] remoteFiles, File[] localFiles, boolean[] isBinary, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
+
+	
+	
 	/**
 	 * @param remoteParent
 	 * @param name

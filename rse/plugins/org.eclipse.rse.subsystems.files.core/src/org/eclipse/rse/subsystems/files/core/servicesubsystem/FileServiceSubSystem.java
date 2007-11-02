@@ -22,6 +22,7 @@
  * David McKnight   (IBM)        - [207095] Implicit connect on getRemoteFileObject
  * David McKnight   (IBM)        - [207100] fire event after upload and download
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -469,34 +470,6 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return results;
 	}
 	
-
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#download(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void download(IRemoteFile file, String localpath, String encoding, IProgressMonitor monitor) throws SystemMessageException 
-	{
-		//Fixing bug 158534. TODO remove when bug 162688 is fixed.
-		if (monitor==null) {
-			monitor = new NullProgressMonitor();
-		}
-		String parentPath = file.getParentPath();
-		File localFile = new File(localpath);
-		getFileService().download(parentPath, file.getName(), localFile, isBinary(file), file.getEncoding(), monitor);
-		if (monitor.isCanceled())
-		{
-			localFile.delete();
-		}
-		else
-		{
-			// notify that the file was downloaded
-			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-			sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DOWNLOADED, file, file.getParentRemoteFile(), this));
-
-		}
-	}
-	
 	protected boolean isBinary(String localEncoding, String hostEncoding, String remotePath)
 	{
 		return SystemFileTransferModeRegistry.getInstance().isBinary(remotePath) ||
@@ -562,7 +535,175 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
 		sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, destination, destination.getParentRemoteFile(), this));
 	}
+	
+	public void uploadMulti(String[] sources, String[] srcEncodings,
+			String[] remotePaths, String[] rmtEncodings,
+			IProgressMonitor monitor) throws SystemMessageException 
+	{
+		// create list of stuff
+		File[] sourceFiles = new File[sources.length];
+		boolean[] isBinaries = new boolean[sources.length];
+		String[] remoteParentPaths = new String[sources.length];
+		String[] remoteFileNames = new String[sources.length];
+		
+		// gather info
+		for (int i = 0; i < sources.length; i++)
+		{
+			sourceFiles[i] = new File(sources[i]);
+			String remotePath = remotePaths[i];
+			int slashIndex = remotePath.lastIndexOf(getSeparator());
+			if (slashIndex > -1) {
+				remoteParentPaths[i] = remotePath.substring(0, slashIndex);
+				remoteFileNames[i] = remotePath.substring(slashIndex + 1, remotePath.length());
+				isBinaries[i] = isBinary(srcEncodings[i], rmtEncodings[i], remotePath);
+				if (ArchiveHandlerManager.isVirtual(remotePath))
+				{
+					AbsoluteVirtualPath avp = new AbsoluteVirtualPath(remotePath);
+					remoteParentPaths[i] = avp.getPath();
+					remoteFileNames[i] = avp.getName();
+				}
+			}
+			else // unexpected
+			{		
+				// throw an exception here
+				//SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEF5003").makeSubstitution(remoteFileNames[i], getHostName()); //$NON-NLS-1$
+				//throw new SystemMessageException(msg);
+			}
+		}
+					
+		// upload
+		getFileService().uploadMulti(sourceFiles, remoteParentPaths, remoteFileNames, isBinaries, srcEncodings, rmtEncodings, monitor);
+		
+		// notification
+		// notify that the file was uploaded
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		for (int j = 0; j < remotePaths.length; j++)
+		{
+			String remotePath = remotePaths[j];
+			String remoteParentPath = remoteParentPaths[j];
+			sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, remotePath, remoteParentPath, this));
+		}
+	}
 
+	public void uploadMulti(String[] sources, IRemoteFile[] destinations,
+			String[] encodings, IProgressMonitor monitor)
+			throws SystemMessageException 
+{		
+		// create list of stuff
+		File[] sourceFiles = new File[sources.length];
+		boolean[] isBinaries = new boolean[sources.length];
+		String[] remoteParentPaths = new String[sources.length];
+		String[] remoteFileNames = new String[sources.length];
+		String[] hostEncodings = new String[sources.length];
+		
+		// gather info
+		for (int i = 0; i < sources.length; i++)
+		{
+			sourceFiles[i] = new File(sources[i]);
+			IRemoteFile destination = destinations[i];
+						
+			remoteParentPaths[i] = destination.getAbsolutePath();
+			remoteFileNames[i] = destination.getName();
+			
+			if (!destination.canWrite())
+			{
+				SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEF5003").makeSubstitution(remoteFileNames[i], getHostName()); //$NON-NLS-1$
+				throw new SystemMessageException(msg);
+			}
+			
+			hostEncodings[i] = destination.getEncoding();
+			isBinaries[i] = isBinary(encodings[i], hostEncodings[i], destination.getAbsolutePath());
+			
+		}
+		
+		// upload
+		getFileService().uploadMulti(sourceFiles, remoteParentPaths, remoteFileNames, isBinaries, encodings, hostEncodings, monitor);
+		
+		// notification
+		// notify that the file was uploaded
+		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		for (int j = 0; j < destinations.length; j++)
+		{
+			IRemoteFile destination = destinations[j];
+			sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, destination, destination.getParentRemoteFile(), this));
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#download(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, java.lang.String, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void download(IRemoteFile file, String localpath, String encoding, IProgressMonitor monitor) throws SystemMessageException 
+	{
+		//Fixing bug 158534. TODO remove when bug 162688 is fixed.
+		if (monitor==null) {
+			monitor = new NullProgressMonitor();
+		}
+		String parentPath = file.getParentPath();
+		File localFile = new File(localpath);
+		
+		// FIXME why are we using file.getEncoding() instead of the specified encoding?
+		getFileService().download(parentPath, file.getName(), localFile, isBinary(file), file.getEncoding(), monitor);
+		if (monitor.isCanceled())
+		{
+			localFile.delete();
+		}
+		else
+		{
+			// notify that the file was downloaded
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DOWNLOADED, file, file.getParentRemoteFile(), this));
+
+		}
+	}
+	
+	public void downloadMulti(IRemoteFile[] sources, String[] destinations,
+			String[] encodings, IProgressMonitor monitor)
+			throws SystemMessageException 
+	{
+		//Fixing bug 158534. TODO remove when bug 162688 is fixed.
+		if (monitor==null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		// get arrays of parent paths and local files
+		String[] parentPaths = new String[sources.length];
+		String[] names = new String[sources.length];
+		boolean[] isBinaries = new boolean[sources.length];
+		File[] localFiles = new File[sources.length];
+		
+		for (int i = 0; i < sources.length; i++)
+		{
+			IRemoteFile file = sources[i];
+			parentPaths[i] = file.getParentPath();
+			names[i] = file.getName();
+			isBinaries[i] = isBinary(file);
+			localFiles[i] = new File(destinations[i]);
+		}
+		
+		getFileService().downloadMulti(parentPaths, names, localFiles, isBinaries, encodings, monitor);
+		if (monitor.isCanceled())
+		{
+			for (int d = 0; d < localFiles.length; d++)
+			{
+				File f = localFiles[d];
+				f.delete();
+			}
+		}
+		else
+		{
+			// notify that the file was downloaded
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			
+			for (int r = 0; r < sources.length; r++)
+			{
+				IRemoteFile file = sources[r];
+				sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DOWNLOADED, file, file.getParentRemoteFile(), this));
+			}
+		}	
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem#copy(org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
@@ -985,4 +1126,5 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	{
 		return getFileService().getFilesAndFolders(parentPath, fileNameFilter, monitor);
 	}
+
 }

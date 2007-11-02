@@ -8,8 +8,12 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -91,15 +95,17 @@ public abstract class APathEntry extends PathEntry {
 				if (otherExcludes.length != excludeLength) {
 					return false;
 				}
+				
+				Set excludeSet = new HashSet();
+				Set otherSet = new HashSet();
 				for (int i = 0; i < excludeLength; i++) {
-					if (exclusionPatterns[i] != otherExcludes[i]) {
-						// compare toStrings instead of IPaths
-						// since IPath.equals is specified to ignore trailing separators
-						String myPattern = exclusionPatterns[i].toString();
-						if (!myPattern.equals(otherExcludes[i].toString())) {
-							return false;
-						}
-					}
+					// compare toStrings instead of IPaths
+					// since IPath.equals is specified to ignore trailing separators
+					excludeSet.add(exclusionPatterns[i].toString());
+					otherSet.add(otherExcludes[i].toString());
+				}
+				if (!excludeSet.equals(otherSet)) {
+					return false;
 				}
 			}
 			IPath otherBasePath = otherEntry.getBasePath();

@@ -14,6 +14,7 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 Contributors:
 Martin Oberhuber (Wind River) - Rename Remote Systems Explorer to Remote System Explorer for consistency
 Uwe Stieber (Wind River) - [175153][175316] Fix messages for new connection dlg
+Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
 -->
 <!DOCTYPE MessageFile SYSTEM "messageFile.dtd">
 
@@ -990,6 +991,10 @@ Uwe Stieber (Wind River) - [175153][175316] Fix messages for new connection dlg
 					<Message ID="1312" Indicator="E">
                         <LevelOne>Target folder cannot descend from source folder</LevelOne>
                         <LevelTwo>It is impossible to move a folder to one of its subfolders.</LevelTwo>
+                    </Message>
+                    <Message ID="1313" Indicator="E">
+                    	<LevelOne>Selected filter is not a valid destination.</LevelOne>
+                    	<LevelTwo>Some filters, such as the Root or Drives filter, do not designate locations on the remote file system and cannot have files moved into them.</LevelTwo>
                     </Message>
 		            <Message ID="1315" Indicator="I">
                         <LevelOne>Deleting %1...</LevelOne>

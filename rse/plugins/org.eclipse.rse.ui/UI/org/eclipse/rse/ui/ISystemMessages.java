@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *                                API to the user actions plugin
+ * Kevin Doyle (IBM) - [160769] Added FILEMSG_MOVE_FILTER_NOT_VALID
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -261,6 +262,7 @@ public interface ISystemMessages
     public static final String FILEMSG_MOVE_FILE_FAILED  = "RSEF1307"; //$NON-NLS-1$
     public static final String FILEMSG_MOVE_TARGET_EQUALS_SOURCE  = "RSEF1308"; //$NON-NLS-1$
 	public static final String FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE = "RSEF1312"; //$NON-NLS-1$
+	public static final String FILEMSG_MOVE_FILTER_NOT_VALID = "RSEF1313"; //$NON-NLS-1$
 	public static final String FILEMSG_DELETING = "RSEF1315"; //$NON-NLS-1$
 	
 	// -------------------------	

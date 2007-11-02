@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [198007] Moving multiple folders allows moving to themselves
+ * Kevin Doyle (IBM) - [160769] Move Resource dialog allows user to continue on invalid destination
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -23,6 +24,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -44,6 +46,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 {
 	private SystemMessage targetEqualsSrcMsg = null;
 	private SystemMessage targetDescendsFromSrcMsg = null;
+	private SystemMessage invalidFilterMsg = null;
 	protected Vector movedFiles = new Vector();
 
 	/**
@@ -121,34 +124,51 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		//if (selectedConnection != sourceConnection) {} // someday, but can't happen today.
 		IRemoteFile[] files = getSelectedFiles();
 		Object selectedObject = selectedObjects[0];
-		if (!(selectedObject instanceof IRemoteFile) || files == null)
+		if (!(selectedObject instanceof IRemoteFile || selectedObject instanceof ISystemFilterReference) || files == null) {
 		  return null;
-		IRemoteFile selectedFolder = (IRemoteFile)selectedObject;
-		String selectedFolderPath = selectedFolder.getAbsolutePath();
+		}
 		
-		for (int i = 0; i < files.length; i++) {
-			IRemoteFile selectedFile = files[i];
-			if (selectedFile != null && selectedFile.getParentRemoteFile() != null) {
-				IRemoteFile selectedParentFile = selectedFile.getParentRemoteFile();
-				
-		        if (selectedFolderPath.equals(selectedParentFile.getAbsolutePath()))
-		        {
-		        	if (targetEqualsSrcMsg == null)
-		              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
-		            return targetEqualsSrcMsg;
-		        }
-		        else if (selectedFolderPath.equals(selectedFile.getAbsolutePath()))
-		        {
-		        	if (targetEqualsSrcMsg == null)
-		              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
-		            return targetEqualsSrcMsg;
-		        }
-		        else if (selectedFolder.isDescendantOf(selectedFile))
-		        {
-		        	if (targetDescendsFromSrcMsg == null)
-		        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE);
-		        	return targetDescendsFromSrcMsg;
-		        }
+		if (selectedObject instanceof IRemoteFile) {
+			IRemoteFile selectedFolder = (IRemoteFile)selectedObject;
+			String selectedFolderPath = selectedFolder.getAbsolutePath();
+			
+			for (int i = 0; i < files.length; i++) {
+				IRemoteFile selectedFile = files[i];
+				if (selectedFile != null && selectedFile.getParentRemoteFile() != null) {
+					IRemoteFile selectedParentFile = selectedFile.getParentRemoteFile();
+					
+			        if (selectedFolderPath.equals(selectedParentFile.getAbsolutePath()))
+			        {
+			        	if (targetEqualsSrcMsg == null)
+			              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE);
+			            return targetEqualsSrcMsg;
+			        }
+			        else if (selectedFolderPath.equals(selectedFile.getAbsolutePath()))
+			        {
+			        	if (targetEqualsSrcMsg == null)
+			              targetEqualsSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_EQUALS_SOURCE); // todo: different msg
+			            return targetEqualsSrcMsg;
+			        }
+			        else if (selectedFolder.isDescendantOf(selectedFile))
+			        {
+			        	if (targetDescendsFromSrcMsg == null)
+			        	 targetDescendsFromSrcMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE);
+			        	return targetDescendsFromSrcMsg;
+			        }
+				}
+			}
+		} else if (selectedObject instanceof ISystemFilterReference) {
+			ISystemFilterReference filter = (ISystemFilterReference) selectedObject;
+			String[] filterStrings = filter.getReferencedFilter().getFilterStrings();
+			String firstFilterString = filterStrings[0];
+			// Check only first filter string as by convention we move files only
+			// to the first filter string.  * and /* are invalid as they represent
+			// Drives and Root Filters which we can't Move files to.
+			if (firstFilterString.equals("*") || firstFilterString.equals("/*")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (invalidFilterMsg == null) {
+					invalidFilterMsg = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_FILTER_NOT_VALID);
+				}
+				return invalidFilterMsg;
 			}
 		}
         return null;

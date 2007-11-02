@@ -181,13 +181,13 @@ public class FindReplaceDialog extends SelectionDialog
 		if(formatAsciiButton.getSelection())
 			return replaceText.getText().getBytes();
 		else if(formatHexButton.getSelection())
-			return new BigInteger(replaceText.getText().toUpperCase().startsWith("0X") ? replaceText.getText().substring(2) : replaceText.getText(), 16).toByteArray();
+			return removeZeroPrefixByte(new BigInteger(replaceText.getText().toUpperCase().startsWith("0X") ? replaceText.getText().substring(2) : replaceText.getText(), 16).toByteArray());
 		else if(formatOctalButton.getSelection())
-			return new BigInteger(replaceText.getText().startsWith("0") ? replaceText.getText().substring(1) : replaceText.getText(), 8).toByteArray();
+			return removeZeroPrefixByte(new BigInteger(replaceText.getText().startsWith("0") ? replaceText.getText().substring(1) : replaceText.getText(), 8).toByteArray());
 		else if(formatBinaryButton.getSelection())
-			return new BigInteger(replaceText.getText(), 2).toByteArray();
+			return removeZeroPrefixByte(new BigInteger(replaceText.getText(), 2).toByteArray());
 		else if(formatDecimalButton.getSelection())
-			return new BigInteger(replaceText.getText(), 10).toByteArray();
+			return removeZeroPrefixByte(new BigInteger(replaceText.getText(), 10).toByteArray());
 		else if(formatByteSequenceButton.getSelection())
 			return parseByteSequence(replaceText.getText());
 		
@@ -891,7 +891,7 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		public int getByteLength()
 		{
-			return fPhrase.toByteArray().length;
+			return removeZeroPrefixByte(fPhrase.toByteArray()).length;
 		}
 		
 		public String toString()
@@ -906,10 +906,20 @@ public class FindReplaceDialog extends SelectionDialog
 				targetBytes[i] = bytes[i].getValue();
 			
 			// TODO endian?
-			BigInteger targetBigInteger = new BigInteger(targetBytes);
+			BigInteger targetBigInteger = new BigInteger(targetBytes).and(BigInteger.valueOf(0xFF));
 			
 			return fPhrase.equals(targetBigInteger);
 		}
+	}
+	
+	private byte[] removeZeroPrefixByte(byte[] bytes)
+	{
+		if(bytes[0] != 0)
+			return bytes;
+		
+		byte[] processedBytes = new byte[bytes.length - 1];
+		System.arraycopy(bytes, 1, processedBytes, 0, processedBytes.length);
+		return processedBytes;
 	}
 	
 }

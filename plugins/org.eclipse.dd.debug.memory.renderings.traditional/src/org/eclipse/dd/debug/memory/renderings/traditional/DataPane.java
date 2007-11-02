@@ -75,7 +75,7 @@ public class DataPane extends AbstractPane
             if(isSigned)
                 byteData[byteLen - 1] |= 128;
 
-            if(fRendering.isTargetLittleEndian() != bytes[0].isBigEndian())
+            if(!fRendering.isDisplayLittleEndian())
             {
                 byte[] byteDataSwapped = new byte[byteData.length];
                 for(int i = 0; i < byteData.length; i++)

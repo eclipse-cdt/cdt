@@ -857,7 +857,7 @@ public class SystemViewRemoteFileAdapter
 				
 				int nbrOfArchiveProperties = 2;
 				int nbrOfVirtualProperties = 4;
-				int nbrOfProperties = 4;
+				int nbrOfProperties = 5;
 				if (isVirtual) nbrOfProperties += nbrOfVirtualProperties;
 				else if (isArchive) nbrOfProperties += nbrOfArchiveProperties; 
 	
@@ -891,6 +891,11 @@ public class SystemViewRemoteFileAdapter
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_CANONICAL_PATH, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL, SystemViewResources.RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP);
 	
+				// file extension
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+		
 	
 				if (isVirtual)
 				{
@@ -955,7 +960,7 @@ public class SystemViewRemoteFileAdapter
 		{	
 			int nbrOfArchiveProperties = 2;
 			int nbrOfVirtualProperties = 4;
-			int nbrOfProperties = 8;
+			int nbrOfProperties = 9;
 			int nbrOfBriefProperties = 2;
 			if (debug)
 				nbrOfProperties += 7;
@@ -1013,6 +1018,12 @@ public class SystemViewRemoteFileAdapter
 			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_HIDDEN, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_LABEL, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_TOOLTIP);
 			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_HIDDEN, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_LABEL, SystemViewResources.RESID_PROPERTY_FILE_HIDDEN_TOOLTIP);
 
+			// file extension
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
+	
+			
 			if (debug)
 			{
 				propertyDescriptorArray[++idx] = createSimplePropertyDescriptor("DEBUG_PARENTREMOTEFILE"); //$NON-NLS-1$
@@ -1222,6 +1233,15 @@ public class SystemViewRemoteFileAdapter
 		else if (name.equals(ISystemPropertyConstants.P_FILE_CANONICAL_PATH))
 		{
 			return file.getCanonicalPath();
+		}
+		else if (name.equals(ISystemPropertyConstants.P_FILE_EXTENSION))
+		{
+			if(!file.isDirectory()) {
+				String ext = file.getExtension();
+				return ext == null?"":ext;
+			}
+			else
+				return "";
 		}
 		else if (name.equals(ISystemPropertyConstants.P_FILE_CLASSIFICATION))
 		{

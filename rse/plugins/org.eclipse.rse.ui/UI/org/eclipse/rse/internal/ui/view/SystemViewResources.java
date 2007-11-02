@@ -168,6 +168,9 @@ public class SystemViewResources extends NLS {
 	public static String	RESID_PROPERTY_FILE_CANONICAL_PATH_LABEL;
 	public static String	RESID_PROPERTY_FILE_CANONICAL_PATH_TOOLTIP;
 
+	public static String	RESID_PROPERTY_FILE_EXTENSION_LABEL;
+	public static String	RESID_PROPERTY_FILE_EXTENSION_TOOLTIP;
+	
 	public static String	RESID_PROPERTY_FILE_CLASSIFICATION_LABEL;
 	public static String	RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP;
 

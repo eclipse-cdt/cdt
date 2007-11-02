@@ -235,17 +235,6 @@
          </run>
       </application>
    </extension>
-   <extension
-         id="GeneratePDOM"
-         name="GeneratePDOM"
-         point="org.eclipse.core.runtime.applications">
-      <application
-            visible="true">
-         <run
-               class="org.eclipse.cdt.internal.core.pdom.export.GeneratePDOMApplication">
-         </run>
-      </application>
-   </extension>
 <!-- =================================================================================== -->
 <!-- CDT file type mappings                                                              -->
 <!-- =================================================================================== -->

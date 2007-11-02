@@ -12,8 +12,8 @@
 
 package org.eclipse.cdt.managedbuilder.ui.tests;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -69,7 +69,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "Y"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -145,7 +145,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "Y"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -232,7 +232,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "Y"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -319,7 +319,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "C"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("C");
 		toolchainSet.add(toolchain);
@@ -407,7 +407,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "C"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("C_2.0.0");
 		toolchainSet.add(toolchain);
@@ -509,7 +509,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "D");
 
 		// set the toolchain to "Y"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -599,7 +599,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "E");
 
 		// set the toolchain to "Y"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("Y");
 		toolchainSet.add(toolchain);
@@ -687,7 +687,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "X");
 
 		// set the toolchain to "F"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("F");
 		toolchainSet.add(toolchain);
@@ -775,7 +775,7 @@ public class TestCustomPageManager extends TestCase
 		MBSCustomPageManager.addPageProperty(MBSCustomPageManager.PAGE_ID, MBSCustomPageManager.PROJECT_TYPE, "D");
 
 		// set the toolchain to "C"
-		Set toolchainSet = new LinkedHashSet();
+		List toolchainSet = new ArrayList();
 		TestToolchain toolchain = new TestToolchain();
 		toolchain.setID("C");
 		toolchainSet.add(toolchain);

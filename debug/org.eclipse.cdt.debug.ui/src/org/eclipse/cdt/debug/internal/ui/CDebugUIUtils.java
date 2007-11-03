@@ -20,23 +20,30 @@ import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IURIEditorInput;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Utility methods for C/C++ Debug UI.
@@ -215,4 +222,33 @@ public class CDebugUIUtils {
 		}
 		return baseText.toString();
 	}
+
+	/**
+	 * Helper function to open an error dialog.
+	 * @param title
+	 * @param message
+	 * @param e
+	 */
+	static public void openError (final String title, final String message, final Exception e)
+	{
+		UIJob uiJob = new UIJob("open error"){ //$NON-NLS-1$
+
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				// open error for the exception
+				String detail = ""; //$NON-NLS-1$
+				if (e != null)
+					detail = e.getMessage();
+
+				Shell shell = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+
+				MessageDialog.openError(
+						shell,
+						title,
+						message + "\n" + detail); //$NON-NLS-1$
+				return Status.OK_STATUS;
+			}};
+			uiJob.setSystem(true);
+			uiJob.schedule();
+	}
+
 }

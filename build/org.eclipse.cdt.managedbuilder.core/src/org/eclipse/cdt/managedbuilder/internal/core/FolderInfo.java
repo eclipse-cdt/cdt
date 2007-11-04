@@ -342,7 +342,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		}
 		
 		// Answer the filtered tools as an array
-		return (ITool[])tools.toArray(new ITool[tools.size()]);
+		return (Tool[])tools.toArray(new Tool[tools.size()]);
 	}
 
 	public ITool[] getFilteredTools() {
@@ -779,10 +779,14 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return set;
 		
 	}
-	
+
 	public boolean isToolChainCompatible(IToolChain tCh){
+		return isToolChainCompatible(toolChain, tCh);
+	}
+
+	public boolean isToolChainCompatible(ToolChain fromTc, IToolChain tCh){
 		boolean compatible = false;
-		if(tCh == toolChain)
+		if(tCh == fromTc)
 			return true;
 		
 		if(tCh == null){
@@ -792,20 +796,20 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		if(tCh == null)
 			return false;
 
-		IToolChain curReal = ManagedBuildManager.getRealToolChain(toolChain);
+		IToolChain curReal = ManagedBuildManager.getRealToolChain(fromTc);
 		IToolChain newReal = ManagedBuildManager.getRealToolChain(tCh);
 		
 		if(curReal == newReal)
 			return true;
 		
 		if(tCh != null){
-			if(getToolChainConverterInfo(tCh) != null)
+			if(getToolChainConverterInfo(fromTc, tCh) != null)
 				compatible = true;
 			
 			if(!compatible)
 				compatible = isPropertiesModificationCompatible(tCh);
 		} else {
-			compatible = this.toolChain != null && this.toolChain.isPreferenceToolChain();
+			compatible = fromTc != null && fromTc.isPreferenceToolChain();
 		}
 		return compatible;
 	}
@@ -836,7 +840,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 			if(extTc != null)
 				newSuperClass = extTc; 
 			ToolChain oldToolChain = toolChain;
-			ConverterInfo cInfo = getToolChainConverterInfo(newSuperClass);
+			ConverterInfo cInfo = getToolChainConverterInfo(toolChain, newSuperClass);
 			ITool oldTools[] = oldToolChain.getTools();
 			
 			if(cInfo != null){
@@ -982,8 +986,8 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		tch.updateParentFolderInfo(this);
 	}
 
-	private ConverterInfo getToolChainConverterInfo(IToolChain toTc){
-		IConfigurationElement el = getToolChainConverterElement(toTc);
+	private ConverterInfo getToolChainConverterInfo(ToolChain fromTc, IToolChain toTc){
+		IConfigurationElement el = getToolChainConverterElement(fromTc, toTc);
 		IToolChain foundToTc = toTc;
 		if(el == null){
 			IToolChain[] tcs = ManagedBuildManager.findIdenticalToolChains(toTc);
@@ -992,7 +996,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 				if(foundToTc == toTc)
 					continue;
 				
-				el = getToolChainConverterElement(foundToTc);
+				el = getToolChainConverterElement(fromTc, foundToTc);
 				if(el != null)
 					break;
 			}
@@ -1003,13 +1007,13 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		return null;
 	}
 	
-	private IConfigurationElement getToolChainConverterElement(IToolChain tCh){
+	private IConfigurationElement getToolChainConverterElement(ToolChain fromTc, IToolChain tCh){
 		if(tCh == null)
 			return null;
 		
-		ToolChain curTc = (ToolChain)getToolChain();
-		if(curTc != null){
-			return curTc.getConverterModificationElement(tCh);
+//		ToolChain curTc = (ToolChain)getToolChain();
+		if(fromTc != null){
+			return fromTc.getConverterModificationElement(tCh);
 		}
 		return null;
 	}

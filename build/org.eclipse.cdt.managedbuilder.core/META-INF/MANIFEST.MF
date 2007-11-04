@@ -24,6 +24,7 @@ Export-Package: org.eclipse.cdt.build.core.scannerconfig,
  org.eclipse.cdt.managedbuilder.pdomdepgen,
  org.eclipse.cdt.managedbuilder.projectconverter,
  org.eclipse.cdt.managedbuilder.scannerconfig,
+ org.eclipse.cdt.managedbuilder.tcmodification;x-friends:="org.eclipse.cdt.ui,org.eclipse.cdt.managedbuilder.ui,org.eclipse.cdt.managedbuilder.core.tests",
  org.eclipse.cdt.managedbuilder.templateengine,
  org.eclipse.cdt.managedbuilder.templateengine.processes,
  org.eclipse.cdt.newmake.core

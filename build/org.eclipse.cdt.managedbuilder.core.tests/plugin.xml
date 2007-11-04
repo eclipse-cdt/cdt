@@ -6545,6 +6545,7 @@
       <tool
                      id="lv.tests.tool.base"
                      isAbstract="false"
+                     isSystem="true"
                      name="lv.tests tool">
              <option
                   name="List Option in Top"
@@ -8806,7 +8807,379 @@
          </configuration>         
       </projectType>                              
      
+     <!-- tcModificationInfo tests -->
+           	<toolChain id="tcm.tc1" name="tcm.tc1" isSystem="true">
+           		<builder id="tcm.b1" name="tcm.b1">
+           		</builder>
+           		<tool id="tcm.t1" name="tcm.t1">
+            		  <supportedProperties>
+		            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+			            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+		    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+		            </property>
+		            </supportedProperties>
+           			<option id="tcm.o1"/>
+           			<inputType id="tcm.it.1" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.t2" name="tcm.t2">
+           			<option id="tcm.o2"/>
+           			<inputType id="tcm.it.2" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>
+
+           	<toolChain id="tcm.tc2" name="tcm.tc2" isSystem="true">
+           		<builder id="tcm.tc2.b1" name="tcm.tc2.b1">
+           		</builder>
+           		<tool id="tcm.tc2.t1" name="tcm.tc2.t1">
+		             <supportedProperties>
+		            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+			            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+		    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+		            </property>
+		            </supportedProperties>
+                   <option id="tcm.tc2.o1"/>
+                   <inputType id="tcm.it.3" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.tc2.t2" name="tcm.tc2.t2">
+           			<option id="tcm.tc2.o2"/>
+           			<inputType id="tcm.it.4" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>
+           	
+           	<toolChain id="tcm.tc3" name="tcm.tc3" isSystem="true">
+           		<builder id="tcm.tc3.b1" name="tcm.tc3.b1">
+           		</builder>
+           		<tool id="tcm.tc3.t1" name="tcm.tc3.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.tc3.o1"/>
+           			<inputType id="tcm.it.5" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.tc3.t2" name="tcm.tc3.t2">
+           			<option id="tcm.tc3.o2"/>
+           			<inputType id="tcm.it.6" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>
+
+           	<toolChain id="tcm.tc4" name="tcm.tc4" isSystem="true">
+           		<builder id="tcm.tc4.b1" name="tcm.tc4.b1">
+           		</builder>
+           		<tool id="tcm.tc4.t1" name="tcm.tc4.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.tc4.o1"/>
+           			<inputType id="tcm.it.7" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.tc4.t2" name="tcm.tc4.t2">
+           			<option id="tcm.tc4.o2"/>
+           			<inputType id="tcm.it.8" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>
+
+           	<toolChain id="tcm.tc5" name="tcm.tc5" isSystem="true">
+           		<builder id="tcm.tc5.b1" name="tcm.tc5.b1">
+           		</builder>
+           		<tool id="tcm.tc5.t1" name="tcm.tc5.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.tc5.o1"/>
+           			<inputType id="tcm.it.9" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.tc5.t2" name="tcm.tc5.t2">
+           			<option id="tcm.tc5.o2"/>
+           			<inputType id="tcm.it.10" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>
+
+     <projectType
+           id="tcm.pt" name="tcm.pt" 
+           isTest="true"
+           buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+           <configuration id="tcm.pt.cfg" name="test">
+           	<toolChain id="tcm.pt.cfg.tc" superClass="tcm.tc1">
+           		<builder id="tcm.pt.b1" superClass="tcm.b1" name="tcm.b1">
+           		</builder>
+           		<tool id="tcm.pt.cfg.t1" superClass="tcm.t1">
+           		</tool>
+           		<tool id="tcm.pt.cfg.t2" superClass="tcm.t2">
+           		</tool>
+           	</toolChain>
+           </configuration>
+     </projectType>
+     
+     <projectType
+           id="tcm.pt2" name="tcm.pt2" 
+           isTest="true"
+           buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+           <configuration id="tcm.pt2.cfg" name="test">
+           	<toolChain id="tcm.pt2.cfg.tc" superClass="tcm.tc1">
+           		<builder id="tcm.pt2.b1" superClass="tcm.b1" name="tcm.b1">
+           		</builder>
+           		<tool id="tcm.pt2.cfg.t1" superClass="tcm.t1">
+           		</tool>
+           		<tool id="tcm.pt2.cfg.t2" superClass="tcm.t2">
+           		</tool>
+           	</toolChain>
+           </configuration>
+     </projectType>
+
+<!-- 2.1 -->
+           	<toolChain id="tcm2.tc" name="tcm2.tc" isSystem="true">
+           		<builder id="tcm2.tc.b1" name="tcm2.tc.b1">
+           		</builder>
+           		<tool id="tcm2.tc.t1" name="tcm2.tc.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm2.tc.o1"/>
+           			<inputType id="tcm.it.11" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm2.tc.t2" name="tcm2.tc.t2">
+           			<option id="tcm2.tc.o2"/>
+           			<inputType id="tcm.it.12" sources="tcmfoo"/>
+           		</tool>
+           	</toolChain>
+
+          	<toolChain id="tcm2.tc2" name="tcm2.tc2" isSystem="true">
+           		<builder id="tcm2.tc2.b1" name="tcm2.tc2.b1">
+           		</builder>
+           		<tool id="tcm2.tc2.t1" name="tcm2.tc2.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm2.tc2.o1"/>
+           			<inputType id="tcm.it.13" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm2.tc2.t2" name="tcm2.tc2.t2">
+           			<option id="tcm2.tc2.o2"/>
+           			<inputType id="tcm.it.14" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>
+          	<toolChain id="tcm2.tc2.derive" superClass="tcm2.tc2" name="tcm2.tc2.derive" isSystem="true">
+          	</toolChain>
+          	<toolChain id="tcm2.tc.derive" superClass="tcm2.tc" name="tcm2.tc.derive" isSystem="true">
+          	</toolChain>
+
+           	<toolChain id="tcm.base.tc" name="tcm.base.tc" isSystem="true">
+           		<builder id="tcm.base.tc.b1" name="tcm.base.tc.b1">
+           		</builder>
+           		<tool id="tcm.base.tc.t1" name="tcm.base.tc.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.base.tc.o1"/>
+           			<inputType id="tcm.it.15" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.base.tc.t2" name="tcm.base.tc.t2">
+           			<option id="tcm.base.tc.o2"/>
+           			<inputType id="tcm.it.16" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>     
+           	
+           	<toolChain id="tcm.derive.tc1" superClass="tcm.base.tc" name="tcm.derive.tc1" isSystem="true">
+           		<builder id="tcm.derive.tc1.b1" superClass="tcm.base.tc.b1" name="tcm.derive.tc1.b1">
+           		</builder>
+           		<tool id="tcm.derive.tc1.t1" superClass="tcm.base.tc.t1" name="tcm.derive.tc1.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.derive.tc1.o1"/>
+           			<inputType id="tcm.it.17" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.derive.tc1.t2" superClass="tcm.base.tc.t2" name="tcm.derive.tc1.t2">
+           			<option id="tcm.derive.tc1.o2"/>
+           			<inputType id="tcm.it.18" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>     
+
+           	<toolChain id="tcm.derive.tc2" superClass="tcm.base.tc" name="tcm.derive.tc2" isSystem="true">
+           		<builder id="tcm.derive.tc2.b1" superClass="tcm.base.tc.b1" name="tcm.derive.tc2.b1">
+           		</builder>
+           		<tool id="tcm.derive.tc2.t1" superClass="tcm.base.tc.t1" name="tcm.derive.tc2.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.derive.tc2.o1"/>
+           			<inputType id="tcm.it.19" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.derive.tc2.t2" superClass="tcm.base.tc.t2" name="tcm.derive.tc2.t2">
+           			<option id="tcm.derive.tc2.o2"/>
+           			<inputType id="tcm.it.20" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>   
+           	
+           <projectType
+           id="tcm.pt.derive1" name="tcm.pt.derive1" 
+           isTest="true"
+           buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+           <configuration id="tcm.pt.derive1.cfg" name="test">
+           	<toolChain id="tcm.pt.derive.tc1" superClass="tcm.derive.tc1">
+           		<builder id="tcm.pt.derive.b1" superClass="tcm.derive.tc1.b1">
+           		</builder>
+           		<tool id="tcm.pt.derive.t1" superClass="tcm.derive.tc1.t1">
+           		</tool>
+           		<tool id="tcm.pt.derive.t2" superClass="tcm.derive.tc1.t2">
+           		</tool>
+           	</toolChain>
+           </configuration>
+     </projectType>
+           	
+<!-- 2.2 -->
+
+           	<toolChain id="tcm.base2.tc" name="tcm.base2.tc" isSystem="true">
+           		<builder id="tcm.base2.tc.b1" name="tcm.base2.tc.b1">
+           		</builder>
+           		<tool id="tcm.base2.tc.t1" name="tcm.base2.tc.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.base2.tc.o1"/>
+           			<inputType id="tcm.it.21" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.base2.tc.t2" name="tcm.base2.tc.t2">
+           			<option id="tcm.base2.tc.o2"/>
+           			<inputType id="tcm.it.22" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>     
+           	
+           	<toolChain id="tcm.derive2.tc1" superClass="tcm.base2.tc" name="tcm.derive2.tc1" isSystem="true">
+           		<builder id="tcm.derive2.tc1.b1" superClass="tcm.base2.tc.b1" name="tcm.derive2.tc1.b1">
+           		</builder>
+           		<tool id="tcm.derive2.tc1.t1" superClass="tcm.base2.tc.t1" name="tcm.derive2.tc1.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.derive2.tc1.o1"/>
+           			<inputType id="tcm.it.23" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.derive2.tc1.t2" superClass="tcm.base2.tc.t2" name="tcm.derive2.tc1.t2">
+           			<option id="tcm.derive2.tc1.o2"/>
+           			<inputType id="tcm.it.24" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>     
+
+           	<toolChain id="tcm.derive2.tc2" superClass="tcm.base2.tc" name="tcm.derive2.tc2" isSystem="true">
+           		<builder id="tcm.derive2.tc2.b1" superClass="tcm.base2.tc.b1" name="tcm.derive2.tc2.b1">
+           		</builder>
+           		<tool id="tcm.derive2.tc2.t1" superClass="tcm.base2.tc.t1" name="tcm.derive2.tc2.t1">
+            <supportedProperties>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+	            <value id="org.eclipse.cdt.build.core.buildArtefactType.exe"/>
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib"/>
+            </property>
+            </supportedProperties>           		
+           			<option id="tcm.derive2.tc2.o1"/>
+           			<inputType id="tcm.it.25" sources="tcmfoo"/>
+           		</tool>
+           		<tool id="tcm.derive2.tc2.t2" superClass="tcm.base2.tc.t2" name="tcm.derive2.tc2.t2">
+           			<option id="tcm.derive2.tc2.o2"/>
+           			<inputType id="tcm.it.26" sources="tcmbar"/>
+           		</tool>
+           	</toolChain>       
+           	    
    </extension>
-   
-   
+   <extension
+         id="test.tcModificationInfo.extension.id1"
+         name="Test ToolChain Modification Info Extension"
+         point="org.eclipse.cdt.managedbuilder.core.tcModificationInfo">
+
+         <conflictDefinition>
+             <matchObject
+                   objectIds="tcm.tc2"
+                   objectType="toolChain"/>
+             <matchObject
+                   objectIds="tcm.pt.cfg"
+                   objectType="configuration"/>
+         </conflictDefinition>
+
+         <conflictDefinition>
+             <matchObject
+                   objectIds="tcm.tc3"
+                   objectType="toolChain"/>
+             <matchObject
+                   objectIds="tcm.tc1"
+                   objectType="toolChain"/>
+         </conflictDefinition>
+
+         <conflictDefinition>
+             <matchObject
+                   objectIds="tcm.tc4.b1"
+                   objectType="builder"/>
+             <matchObject
+                   objectIds="tcm.tc1"
+                   objectType="toolChain"/>
+         </conflictDefinition>
+
+         <conflictDefinition>
+             <matchObject
+                   objectIds="tcm.tc5.t1"
+                   objectType="tool"/>
+             <matchObject
+                   objectIds="tcm.tc1"
+                   objectType="toolChain"/>
+         </conflictDefinition>
+
+         <conflictDefinition>
+             <matchObject
+                   objectIds="tcm.tc4.t1"
+                   objectType="tool"/>
+             <matchObject
+                   objectIds="tcm.tc3.t1"
+                   objectType="tool"/>
+         </conflictDefinition>
+   </extension>
+   <!-- 2 -->
+      <extension
+         id="test.tcModificationInfo.extension.id2"
+         name="Test ToolChain Modification Info Extension2"
+         point="org.eclipse.cdt.managedbuilder.core.tcModificationInfo">
+
+         <conflictDefinition>
+             <matchObject
+                   objectIds="tcm.base.tc"
+                   objectType="toolChain"
+                   searchScope="ALL_EXTENSION_SUPERCLASSES"/>                   
+             <matchObject
+                   objectIds="tcm.base2.tc;tcm2.tc"
+                   objectType="toolChain"
+                   searchScope="ALL_EXTENSION_SUPERCLASSES">
+                   <pattern
+                   	objectIds="tcm2.tc2"
+                   	searchScope="EXTENSION_OBJECT"/>
+             </matchObject>
+         </conflictDefinition>
+   </extension>
 </plugin>

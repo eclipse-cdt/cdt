@@ -11,7 +11,9 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.ui.newui.CDTListComparator;
 
 /**
@@ -19,7 +21,8 @@ import org.eclipse.cdt.ui.newui.CDTListComparator;
  */
 public class BuildListComparator extends CDTListComparator {
 	private static BuildListComparator comparator = null;
-
+	private static final String EMPTY = ""; //$NON-NLS-1$
+	
 	public static CDTListComparator getInstance() {
 		if (comparator == null)
 			comparator = new BuildListComparator();
@@ -32,9 +35,27 @@ public class BuildListComparator extends CDTListComparator {
 			ITool c1 = (ITool)a;
 			ITool c2 = (ITool)b;
 			String s1 = c1.getName();
-			if (s1 == null) s1 = "";  //$NON-NLS-1$
+			if (s1 == null) s1 = EMPTY;
 			String s2 = c2.getName();
-			if (s2 == null) s2 = "";  //$NON-NLS-1$ 
+			if (s2 == null) s2 = EMPTY; 
+			return s1.compareToIgnoreCase(s2);
+		}
+		if (a instanceof IToolChain) {
+			IToolChain c1 = (IToolChain)a;
+			IToolChain c2 = (IToolChain)b;
+			String s1 = c1.getUniqueRealName();
+			if (s1 == null) s1 = EMPTY;
+			String s2 = c2.getUniqueRealName();
+			if (s2 == null) s2 = EMPTY; 
+			return s1.compareToIgnoreCase(s2);
+		}
+		if (a instanceof IBuilder) {
+			IBuilder c1 = (IBuilder)a;
+			IBuilder c2 = (IBuilder)b;
+			String s1 = c1.getUniqueRealName();
+			if (s1 == null) s1 = EMPTY;
+			String s2 = c2.getUniqueRealName();
+			if (s2 == null) s2 = EMPTY; 
 			return s1.compareToIgnoreCase(s2);
 		}
 		if (a instanceof IBuildPropertyValue) {

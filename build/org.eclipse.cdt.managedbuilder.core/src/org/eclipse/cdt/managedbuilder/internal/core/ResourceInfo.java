@@ -11,8 +11,10 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.CResourceData;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -28,6 +30,8 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.OptionStringValue;
+import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolListModification;
+import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -518,7 +522,7 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 		return (ResourceInfo)getParent().getResourceInfo(path, false);
 	}
 
-	protected IFolderInfo getParentFolderInfo(){
+	public IFolderInfo getParentFolderInfo(){
 		ResourceInfo parentRc = getParentResourceInfo();
 		for(; parentRc != null && !parentRc.isFolderInfo(); parentRc = parentRc.getParentResourceInfo());
 
@@ -563,5 +567,19 @@ public abstract class ResourceInfo extends BuildObject implements IResourceInfo 
 	
 	void performPostModificationAdjustments(ToolListModificationInfo info){
 		propertiesChanged();
+	}
+	
+	public IResourceInfo[] getDirectChildResourceInfos(){
+		ResourceInfoContainer cr = getRcInfo();
+		return cr.getDirectChildResourceInfos();
+	}
+	
+	public IResourceInfo[] getChildResourceInfos(){
+		ResourceInfoContainer cr = getRcInfo();
+		return cr.getResourceInfos();
+	}
+	
+	public List getChildResourceInfoList(boolean includeCurrent){
+		return getRcInfo().getRcInfoList(ICSettingBase.SETTING_FILE | ICSettingBase.SETTING_FOLDER, includeCurrent);
 	}
 }

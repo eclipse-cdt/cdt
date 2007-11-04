@@ -69,13 +69,29 @@ public class ResourceInfoContainer {
 		
 		return (IResourceInfo[])list.toArray(datas);
 	}
-	
+
+	public IResourceInfo[] getDirectChildResourceInfos(){
+		PathSettingsContainer[] children = fRcDataContainer.getDirectChildren();
+		
+		IResourceInfo datas[] = new IResourceInfo[children.length];
+		
+		for(int i = 0; i < datas.length; i++){
+			datas[i] = (IResourceInfo)children[i].getValue();
+		}
+		
+		return datas;
+	}
+
 	public List getRcInfoList(final int kind){
+		return getRcInfoList(kind, fIncludeCurrent);
+	}		
+	
+	public List getRcInfoList(final int kind, final boolean includeCurrent){
 		final List list = new ArrayList(); 
 		fRcDataContainer.accept(new IPathSettingsContainerVisitor(){
 
 			public boolean visit(PathSettingsContainer container) {
-				if(fIncludeCurrent || container != fRcDataContainer){
+				if(includeCurrent || container != fRcDataContainer){
 					IResourceInfo data = (IResourceInfo)container.getValue();
 					if((data.getKind() & kind) == data.getKind())
 						list.add(data);

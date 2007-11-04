@@ -94,10 +94,12 @@ import org.eclipse.cdt.managedbuilder.internal.dataprovider.BuildConfigurationDa
 import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.envvar.EnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
+import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
+import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManager;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -418,6 +420,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return extensionToolChainMap;
 	}
 
+	public static IToolChain[] getExtensionToolChains() {
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+		}
+
+		if (extensionToolChainMap == null) {
+			extensionToolChainMap =  new TreeMap();
+		}
+		return (ToolChain[])extensionToolChainMap.values().toArray(new ToolChain[extensionToolChainMap.size()]);
+	}
+	
 	/* (non-Javadoc)
 	 * Safe accessor for the map of IDs to Tools
 	 * 
@@ -432,6 +446,17 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			extensionToolMap = new TreeMap();
 		}
 		return extensionToolMap;
+	}
+	
+	public static ITool[] getExtensionTools() {
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+		}
+		if (extensionToolMap == null) {
+			extensionToolMap = new TreeMap();
+		}
+		return (Tool[])extensionToolMap.values().toArray(new Tool[extensionToolMap.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -460,6 +485,17 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			extensionBuilderMap = new TreeMap();
 		}
 		return extensionBuilderMap;
+	}
+	
+	public static IBuilder[] getExtensionBuilders() {
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+		}
+		if (extensionBuilderMap == null) {
+			extensionBuilderMap = new TreeMap();
+		}
+		return (Builder[])extensionBuilderMap.values().toArray(new Builder[extensionBuilderMap.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -577,6 +613,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return (IConfiguration) getExtensionConfigurationMap().get(id);
 	}
 
+	public static IConfiguration[] getExtensionConfigurations() {
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return (IConfiguration[]) getExtensionConfigurationMap().values().toArray(new Configuration[getExtensionConfigurationMap().size()]);
+	}
+	
 	/**
 	 * Returns the resource configuration from the manifest with the ID specified in the argument
 	 *  or <code>null</code>.
@@ -2472,6 +2520,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		performAdjustments();
 		projectTypesLoading = false;
 		projectTypesLoaded = true;
+		
+		ToolChainModificationManager.getInstance().start();
 	}
 	
 	private static void performAdjustments(){
@@ -4267,7 +4317,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 	public static ITool[] getRealTools(){
 		HashMap map = getSortedTools();
-		ITool ts[] = new Tool[map.size()];
+		Tool ts[] = new Tool[map.size()];
 		int i = 0;
 		for(Iterator iter = map.values().iterator(); iter.hasNext();){
 			List list = (List)iter.next();
@@ -4313,6 +4363,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 
 	public static ITool getRealTool(ITool tool){
+		if(tool == null)
+			return null;
 		ITool extTool = tool;
 		ITool realTool = null;
 		for(;extTool != null && !extTool.isExtensionElement(); extTool= extTool.getSuperClass());
@@ -4332,7 +4384,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				}
 			}
 		} else {
-			//TODO:
+			realTool = getExtensionTool(Tool.DEFAULT_TOOL_ID);
 		}
 		return realTool;
 	}
@@ -4635,6 +4687,15 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			setLoaddedBuildInfo(toProject, info);
 		} catch (CoreException e) {
 		}
+	}
+	
+	/**
+	 * entry-point for the tool-chain modification validation functionality
+	 * 
+	 * @return {@link IToolChainModificationManager}
+	 */
+	public static IToolChainModificationManager getToolChainModificationManager(){
+		return ToolChainModificationManager.getInstance();
 	}
 
 }

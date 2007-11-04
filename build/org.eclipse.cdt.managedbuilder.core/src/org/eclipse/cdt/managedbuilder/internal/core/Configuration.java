@@ -87,7 +87,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.osgi.service.prefs.Preferences;
 
-public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener {
+public class Configuration extends BuildObject implements IConfiguration, IBuildPropertiesRestriction, IBuildPropertyChangeListener, IRealBuildObjectAssociation {
 	
 	private static final String EMPTY_STRING = "";	//$NON-NLS-1$
 	private static final IPath EMPTY_PATH_ARRAY[] = new IPath[0];
@@ -3000,4 +3000,31 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 		}
 	}
 
+	public IRealBuildObjectAssociation getExtensionObject() {
+		return isExtensionConfig ? this : (Configuration)getParent();
+	}
+
+	public IRealBuildObjectAssociation[] getIdenticBuildObjects() {
+		return new Configuration[]{(Configuration)getExtensionObject()};
+	}
+
+	public IRealBuildObjectAssociation getRealBuildObject() {
+		return getExtensionObject();
+	}
+
+	public IRealBuildObjectAssociation getSuperClassObject() {
+		return (IRealBuildObjectAssociation)getParent();
+	}
+
+	public int getType() {
+		return OBJECT_CONFIGURATION;
+	}
+
+	public boolean isRealBuildObject() {
+		return getRealBuildObject() == this;
+	}
+
+	public String getUniqueRealName() {
+		return getName();
+	}
 }

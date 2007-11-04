@@ -12,10 +12,13 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
@@ -24,24 +27,46 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.tcmodification.CompatibilityStatus;
+import org.eclipse.cdt.managedbuilder.tcmodification.IConfigurationModification;
+import org.eclipse.cdt.managedbuilder.tcmodification.IConflict;
+import org.eclipse.cdt.managedbuilder.tcmodification.IFileInfoModification;
+import org.eclipse.cdt.managedbuilder.tcmodification.IFolderInfoModification;
+import org.eclipse.cdt.managedbuilder.tcmodification.IModificationOperation;
+import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManager;
+import org.eclipse.cdt.managedbuilder.tcmodification.IToolModification;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	
+	public  static final IToolChainModificationManager tcmm = ManagedBuildManager.getToolChainModificationManager();
 	private static final String NO_TC = Messages.getString("StdProjectTypeHandler.0");  //$NON-NLS-1$
 	private static final IToolChain[] r_tcs = ManagedBuildManager.getRealToolChains();
 	private static final IBuilder[]    r_bs = ManagedBuildManager.getRealBuilders();
 	private static final ITool[]    r_tools = ManagedBuildManager.getRealTools();
+	private static final Color          red = Display.getDefault().getSystemColor(SWT.COLOR_RED);
+	private static final String SPACE = " "; //$NON-NLS-1$
+	
+	static final Image IMG_WARNING = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_WARNING);
+	static final Image IMG_ERROR   = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_ERROR);
+	static final Image IMG_INFO    = CPluginImages.get(CPluginImages.IMG_OBJS_REFACTORING_INFO);
+	static final Image IMG_ARROW   = CPluginImages.get(CPluginImages.IMG_PREFERRED);
 	
 	private Text text;
 	private Button b_dispCompatible;
@@ -50,6 +75,10 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private Combo  c_tool; 
 	private Button button_edit;
 	private Group tools_group;
+	
+	private Label st_builder;
+	private Label st_toolchain;
+	private Label st_tool;
 	
 	private IBuilder[] v_bs;
 	private IToolChain[] v_tcs;
@@ -75,6 +104,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}});
 		c_toolchain.setEnabled(!page.isForFile());
 		
+		st_toolchain = setupLabel(usercomp, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
+		st_toolchain.setForeground(red);
+
 		setupLabel(usercomp, Messages.getString("ToolChainEditTab.2"), 2, GridData.BEGINNING); //$NON-NLS-1$
 		c_builder = new Combo(usercomp, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -85,6 +117,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				modifyBuilder();
 			}});
 		c_builder.setEnabled(page.isForProject());
+
+		st_builder = setupLabel(usercomp, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
+		st_builder.setForeground(red);
 
 		// make table for tools list
 		if (page.isForFile()) {
@@ -97,6 +132,9 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				public void widgetSelected(SelectionEvent e) {
 					saveToolSelected();
 				}});
+			
+			st_tool = setupLabel(g, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
+			st_tool.setForeground(red);
 		} else { // Folder or Project
 			tools_group = setupGroup(usercomp, Messages.getString("ToolChainEditTab.3"), 2, GridData.FILL_BOTH); //$NON-NLS-1$
 
@@ -126,36 +164,68 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		ri = cfg.getResourceInfo(rcfg.getPath(), false);
 		updateData();
 	}
-	private void updateData() {	
-		v_tcs   = new IToolChain[r_tcs.length];
-		v_bs    = new IBuilder[r_bs.length];
-		v_tools = new ITool[r_tools.length];
 		
+	private void showErrorMessage() {
+		if (ri instanceof IFolderInfo) {
+			IFolderInfoModification foim = tcmm.getModification((IFolderInfo)ri);
+			if (foim.isToolChainCompatible()) {
+				st_toolchain.setText(EMPTY_STR);
+			} else {
+				String s = foim.getToolChainCompatibilityStatus().getMessage();
+				st_toolchain.setText(s);
+			}
+			st_builder.setText(EMPTY_STR);
+			if (foim instanceof IConfigurationModification) {
+				IConfigurationModification cm = (IConfigurationModification)foim;
+				if (!cm.isBuilderCompatible()) {
+					CompatibilityStatus cs = cm.getBuilderCompatibilityStatus();
+					if (cs != null) {
+						String s = cs.getMessage();
+						st_builder.setText(s);
+					}
+				}
+			}
+		} else { // FileInfo
+			IFileInfoModification fim = tcmm.getModification((IFileInfo)ri);
+			fim.getProjectToolModifications();
+		}
+	}
+	
+	private void fillToolChainCombo() {
 		IToolChain tc = null;
 		if (ri instanceof IFolderInfo)
 			tc = ManagedBuildManager.getRealToolChain(((IFolderInfo)ri).getToolChain());
-		int cnt = 0;
-		int pos = -1;
 		
 		c_toolchain.removeAll();
 		boolean isMng = cfg.getBuilder().isManagedBuildOn();
-		for (int i=0; i<r_tcs.length; i++) {
-			if (r_tcs[i].isSystemObject() && 
-			    !( 
-					  ((ToolChain)r_tcs[i]).isPreferenceToolChain() &&
+		ArrayList list = new ArrayList();
+		
+		IToolChain[] tcs = r_tcs;
+		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
+			IFolderInfoModification fim = tcmm.getModification((IFolderInfo)ri);
+			tcs = fim.getCompatibleToolChains();
+			IToolChain[] tcs1 = new IToolChain[tcs.length + 1];
+			System.arraycopy(tcs, 0, tcs1, 0, tcs.length);
+			tcs1[tcs.length] = tc; // add existing toolchain
+			tcs = tcs1;
+		}
+		for (int i=0; i<tcs.length; i++) {
+			if (tcs[i].isSystemObject() && 
+			    !( ((ToolChain)tcs[i]).isPreferenceToolChain() &&
 			           !isMng)
 			     ) // NO TOOLCHAIN 
 				continue;
-			
-			if (b_dispCompatible.getSelection() &&
-				(ri instanceof IFolderInfo) && 
-			  ! ((IFolderInfo)ri).isToolChainCompatible(r_tcs[i]))
-					continue;
-			c_toolchain.add(r_tcs[i].getUniqueRealName());
-			v_tcs[cnt] = r_tcs[i];
-			if (r_tcs[i].equals(tc)) pos = cnt;
-			cnt++;
+			list.add(tcs[i]);
 		}
+		Collections.sort(list, BuildListComparator.getInstance());
+			
+		int pos = -1;
+		v_tcs = (IToolChain[]) list.toArray(new IToolChain[list.size()]); 
+		for (int i=0; i<v_tcs.length; i++) {
+			c_toolchain.add(v_tcs[i].getUniqueRealName());
+			if (v_tcs[i].matches(tc)) pos = i;
+		}
+		
 		if (pos != -1) {
 			c_toolchain.select(pos);
 			c_builder.setEnabled(page.isForProject());
@@ -164,63 +234,89 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			c_toolchain.setText(EMPTY_STR); // unprobable case
 			c_builder.setEnabled(false);
 		}
+	}
 		
+	private void fillBuilderCombo() {
 		IBuilder b = ManagedBuildManager.getRealBuilder(cfg.getBuilder());
-		cnt = 0;
-		pos = -1;
+		int pos = -1;
 		c_builder.removeAll();
-		for (int i=0; i<r_bs.length; i++) {
-			if (r_bs[i].isSystemObject()) continue;
-			if (b_dispCompatible.getSelection() && 
-				! cfg.isBuilderCompatible(r_bs[i]))
-					continue; // not compatible builder
-			c_builder.add(r_bs[i].getUniqueRealName());
-			v_bs[cnt] = r_bs[i];
-			if (r_bs[i].equals(b)) pos = cnt;
-			cnt++;
+		ArrayList list = new ArrayList();
+		
+		IBuilder[] bs = r_bs;
+		
+		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
+			IFolderInfoModification fim = tcmm.getModification((IFolderInfo)ri);
+			if (fim instanceof IConfigurationModification) {
+				IBuilder[] bs1 = ((IConfigurationModification)fim).getCompatibleBuilders();
+				bs = new IBuilder[bs1.length + 1];
+				System.arraycopy(bs1, 0, bs, 0, bs1.length);
+				bs[bs1.length] = b;
+			}
+		}
+		for (int i=0; i<bs.length; i++) {
+			if (bs[i].isSystemObject()) 
+				continue;
+			list.add(bs[i]);
+		}
+		bs = null;
+		Collections.sort(list, BuildListComparator.getInstance());
+		v_bs = (IBuilder[])list.toArray(new IBuilder[list.size()]);
+		for (int i=0; i<v_bs.length; i++) {
+			c_builder.add(v_bs[i].getUniqueRealName());
+			if (v_bs[i].matches(b)) pos = i;
 		}
 		if (pos != -1)
 			c_builder.select(pos);
 		else
 			c_builder.setText(EMPTY_STR);
 		
-		cnt = 0;
-		for (int i=0; i<r_tools.length; i++) {
-			if (r_tools[i].isSystemObject()) continue;
-			if (r_tools[i].isAbstract()) continue;
-			v_tools[cnt++] = r_tools[i];
 		}
-		ITool[] tmp = new ITool[cnt];
-		System.arraycopy(v_tools, 0, tmp, 0, cnt);
-		Arrays.sort(tmp, BuildListComparator.getInstance());
-		v_tools = tmp;
 		
-		if (page.isForFile()) { // Edit tool in combo for File
-			c_tool.removeAll();
+	private ITool getToolForFile() {
 			ITool[] tools = ri.getTools();
-			ITool curr = null, real = null;
 			if (tools != null && tools.length > 0) {
 				for (int i=0; i<tools.length; i++) {
 					if (tools[i] != null && !tools[i].getCustomBuildStep()) {
-						curr = tools[i];
-						real = ManagedBuildManager.getRealTool(curr); 
-						break;
+					return tools[i];
+				}
 					}
 				}
+		return null;
 			}
-			pos = (curr == null) ? v_tools.length : -1;
 			
+	private void fillToolCombo(boolean add, ITool curr) {
+		c_tool.removeAll();
+		int pos = (curr == null) ? v_tools.length : -1;
 			for (int i=0; i<v_tools.length; i++) {
-				if (pos == -1 && real.matches(v_tools[i])) {
+			if (pos == -1 && curr.matches(v_tools[i])) {
 					pos = i;
-					c_tool.add(curr.getUniqueRealName()); // tool from v_tools may 
+				c_tool.add(curr.getUniqueRealName());  
 				} else {
 					c_tool.add(v_tools[i].getUniqueRealName());
 				}
 			}
+		// Add NO_TOOL
+		if (add) {
 			c_tool.add(Messages.getString("ToolChainEditTab.6")); //$NON-NLS-1$
+		}
 			c_tool.select(pos);
-		} else if (((ToolChain)tc).isPreferenceToolChain()){ // display tools list for Folder and Project
+	}
+	
+	private void fillToolsList() {
+		updateAllTools(); // modifies v_tools inside !!!
+		
+		ToolChain tc = null;
+		if (ri instanceof IFolderInfo)
+			tc = (ToolChain)ManagedBuildManager.getRealToolChain(((IFolderInfo)ri).getToolChain());
+		
+		if (page.isForFile()) { // Edit tool in combo for File
+			ITool curr = getToolForFile();
+			boolean canAddNO_TOOL = true;
+			if (ri instanceof IFileInfo && b_dispCompatible.getSelection())
+				canAddNO_TOOL = updateCompatibleTools(curr); // modifies v_tools inside !!!
+			fillToolCombo(canAddNO_TOOL, curr);
+			showToolStatus(curr);
+		} else if (tc != null && tc.isPreferenceToolChain()){ // display tools list for Folder and Project
 			tools_group.setVisible(false);
 		} else {
 			tools_group.setVisible(true);
@@ -230,6 +326,82 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				s = s + tools[i].getUniqueRealName() + "\n"; //$NON-NLS-1$
 			text.setText(s);
 		}
+	}
+	
+	private void updateAllTools() {
+		int cnt = 0;
+		v_tools = new ITool[r_tools.length];
+		for (int i=0; i<r_tools.length; i++) {
+			if (r_tools[i].isSystemObject()) continue;
+			if (r_tools[i].isAbstract()) continue;
+			v_tools[cnt++] = r_tools[i];
+		}
+		ITool[] tmp = new ITool[cnt];
+		System.arraycopy(v_tools, 0, tmp, 0, cnt);
+		Arrays.sort(tmp, BuildListComparator.getInstance());
+		v_tools = tmp;
+	}
+
+	private void showToolStatus(ITool tool) {
+		st_tool.setText(EMPTY_STR);
+		st_tool.setImage(null);
+		if (tool == null)
+			return;
+		IFileInfoModification fim = tcmm.getModification((IFileInfo)ri);
+		IToolModification tm = fim.getToolModification(tool);
+		if (tm != null && !tm.isCompatible()) {
+			CompatibilityStatus cs = tm.getCompatibilityStatus();
+			if (cs != null) {
+				st_tool.setText(cs.getMessage());
+				st_tool.setImage(getErrorIcon(cs));
+			}
+		}
+	}
+	
+	private boolean updateCompatibleTools(ITool real) {
+		boolean result = false;
+		ArrayList list = new ArrayList();
+		IFileInfoModification fim = tcmm.getModification((IFileInfo)ri);
+		
+		if (real != null) { // Current tool exists 
+			real = ManagedBuildManager.getRealTool(real);
+			list.add(real);
+			IToolModification tm = fim.getToolModification(real);
+			IModificationOperation[] mo = tm.getSupportedOperations();
+			for (int i=0; i<mo.length; i++) {
+				ITool t = mo[i].getReplacementTool();
+				if (t == null)
+					result = true;
+				else {
+					if (! t.isSystemObject() && ! t.isAbstract())
+						list.add(t);
+				}
+			}
+		} else { // Current tool is NO_TOOL
+			result = true;
+			IToolModification[] tm = fim.getSystemToolModifications();
+			for (int i=0; i<tm.length; i++) {
+				IModificationOperation[] mo = tm[i].getSupportedOperations();
+				for (int j=0; j<mo.length; j++) {
+					if (mo[j].getReplacementTool() == null) {
+						ITool t = tm[i].getTool(); 
+						if (! t.isSystemObject() && ! t.isAbstract())
+							list.add(t);
+						break;
+					}
+				}
+			}
+		}
+		Collections.sort(list, BuildListComparator.getInstance());
+		v_tools = (ITool[]) list.toArray(new ITool[list.size()]);
+		return result;
+	}
+	
+	private void updateData() {	
+		showErrorMessage();
+		fillToolChainCombo();
+		fillBuilderCombo();
+		fillToolsList();
 	}
 	
     public void checkPressed(SelectionEvent e) {
@@ -394,7 +566,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	}
 	
 	private void modifyTools() {
-		ToolSelectionDialog d = new ToolSelectionDialog(usercomp.getShell());
+		ToolSelectionDialog d = new ToolSelectionDialog(usercomp.getShell(), ri);
 		d.all = v_tools;
 		d.fi = (IFolderInfo)ri; 
 		int result = d.open();
@@ -424,10 +596,82 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		}
 	}
 	
+	public static Image getErrorIcon(IStatus st) {
+		if (st.isOK()) 
+			return null;
+		int sev = st.getSeverity();
+		if (sev == IStatus.ERROR)
+			return IMG_ERROR;
+		else if (sev == IStatus.WARNING)
+			return IMG_WARNING;
+		else
+			return IMG_INFO;
+	}
+	
 	private void modifyBuilder() {
 		int x = c_builder.getSelectionIndex();
 		IBuilder b = v_bs[x];
 		cfg.changeBuilder(b, ManagedBuildManager.calculateChildId(b.getId(), null), b.getUniqueRealName());
 		updateData();
+	}
+
+	/**
+	 * Forms a message containing 
+	 * @param cs
+	 * @return
+	 */
+	public static String getCompatibilityMessage(CompatibilityStatus cs) {
+		IConflict[] cons = cs.getConflicts();
+		StringBuffer result = new StringBuffer();
+		for (int i=0; i<cons.length; i++) {
+			IBuildObject bo = cons[i].getBuildObject();
+			String n = (bo == null) ? 
+					"NULL" : //$NON-NLS-1$
+				    (bo instanceof ITool) ?
+						((ITool)bo).getUniqueRealName() :
+						bo.getName();
+			String t = EMPTY_STR;
+			switch (cons[i].getConflictType()) {
+			case IConflict.INCOMPATIBLE:
+				t = Messages.getString("ToolChainEditTab.7"); //$NON-NLS-1$
+				break;
+			case IConflict.SOURCE_EXT_CONFLICT:
+				t = Messages.getString("ToolChainEditTab.8"); //$NON-NLS-1$
+				break;
+			}
+			
+			String o = EMPTY_STR;
+			switch (cons[i].getObjectType()) {
+			case IRealBuildObjectAssociation.OBJECT_TOOLCHAIN:
+				o = Messages.getString("ToolChainEditTab.9"); //$NON-NLS-1$
+				break;
+			case IRealBuildObjectAssociation.OBJECT_BUILDER:
+				o = Messages.getString("ToolChainEditTab.10"); //$NON-NLS-1$
+				break;
+			case IRealBuildObjectAssociation.OBJECT_CONFIGURATION:
+				o = Messages.getString("ToolChainEditTab.11"); //$NON-NLS-1$
+				break;
+			case IRealBuildObjectAssociation.OBJECT_FILE_INFO:
+				o = Messages.getString("ToolChainEditTab.12"); //$NON-NLS-1$
+				break;
+			case IRealBuildObjectAssociation.OBJECT_FOLDER_INFO:
+				o = Messages.getString("ToolChainEditTab.13"); //$NON-NLS-1$
+				break;
+			case IRealBuildObjectAssociation.OBJECT_TOOL:
+				o = Messages.getString("ToolChainEditTab.14"); //$NON-NLS-1$
+				break;
+			}
+			
+			result.append(Messages.getString("ToolChainEditTab.15") + //$NON-NLS-1$
+					(i+1) + Messages.getString("ToolChainEditTab.16") + //$NON-NLS-1$
+					SPACE + t + SPACE + o + SPACE + n + 
+					Messages.getString("ToolChainEditTab.17")); //$NON-NLS-1$
+		}
+		String s = result.toString();
+		if (s.trim().length() == 0)
+			s = cs.getMessage();
+		if (s == null)
+			s = EMPTY_STR;
+		return s;
 	}
 }

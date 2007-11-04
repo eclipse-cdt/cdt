@@ -88,7 +88,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
  * Note that this class implements IOptionCategory to represent the top
  * category.
  */
-public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatchKeyProvider {
+public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatchKeyProvider, IRealBuildObjectAssociation {
 
 	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
 	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
@@ -106,6 +106,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 
 	private static final boolean resolvedDefault = true;
 	
+	public static final String DEFAULT_TOOL_ID = "org.eclipse.cdt.build.core.default.tool"; //$NON-NLS-1$
+
 	//  Superclass
 	//  Note that superClass itself is defined in the base and that the methods
 	//  getSuperClass() and setSuperClassInternal(), defined in Tool must be used to 
@@ -1864,11 +1866,15 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getInputInputType()
 	 */
 	public IInputType getInputType(String inputExtension) {
+		return getInputType(inputExtension, getProject());
+	}
+
+	public IInputType getInputType(String inputExtension, IProject project) {
 		IInputType type = null;
 		IInputType[] types = getInputTypes();
 		if (types != null && types.length > 0) {
 			for (int i=0; i<types.length; i++) {
-				if (types[i].isSourceExtension(this, inputExtension)) {
+				if (((InputType)types[i]).isSourceExtension(this, inputExtension, project)) {
 					type = types[i];
 					break;
 				}
@@ -2733,10 +2739,15 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	 * @see org.eclipse.cdt.core.build.managed.ITool#buildsFileType(java.lang.String)
 	 */
 	public boolean buildsFileType(String extension) {
+		return buildsFileType(extension, getProject());
+	}
+	
+	public boolean buildsFileType(String extension, IProject project) {
+
 		if (extension == null)  { 
 			return false;
 		}
-		IInputType it = getInputType(extension); 
+		IInputType it = getInputType(extension, project); 
 		if (it != null) {
 			//  Decide whether we "build" this type of file
 			//
@@ -4173,5 +4184,29 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 			return isSystemObject() ? 1 : -1;
 		
 		return getSuperClassNum() - other.getSuperClassNum();
+	}
+
+	public IRealBuildObjectAssociation getExtensionObject() {
+		return (IRealBuildObjectAssociation)ManagedBuildManager.getExtensionTool(this);
+	}
+
+	public IRealBuildObjectAssociation[] getIdenticBuildObjects() {
+		return (IRealBuildObjectAssociation[])ManagedBuildManager.findIdenticalTools(this);
+	}
+
+	public IRealBuildObjectAssociation getRealBuildObject() {
+		return (IRealBuildObjectAssociation)ManagedBuildManager.getRealTool(this);
+	}
+
+	public IRealBuildObjectAssociation getSuperClassObject() {
+		return (IRealBuildObjectAssociation)getSuperClass();
+	}
+
+	public final int getType() {
+		return OBJECT_TOOL;
+	}
+
+	public boolean isRealBuildObject() {
+		return getRealBuildObject() == this;
 	}
 }

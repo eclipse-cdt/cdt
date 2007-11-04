@@ -6,6 +6,7 @@
    <extension-point id="buildDefinitions" name="Managed Build Definitions" schema="schema/buildDefinitions.exsd"/>
    <extension-point id="projectConverter" name="Managed Build Project Converter" schema="schema/Converter.exsd"/>
    <extension-point id="buildProperties" name="Build Properties" schema="schema/buildProperties.exsd"/>
+   <extension-point id="tcModificationInfo" name="ToolChain Modification Info" schema="schema/tcModificationInfo.exsd"/>
    
 
 <!-- =================================================================================== -->
@@ -445,6 +446,12 @@
       	id="org.eclipse.cdt.build.core.internal.builder"
       	name="%InternalBuilder.name">
       </builder>
+      
+      <tool
+        id="org.eclipse.cdt.build.core.default.tool"
+        isAbstract="true"
+        isSystem="true"/>
+        
       </extension>
       
    <extension

@@ -68,7 +68,7 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 
-public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider  {
+public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider, IRealBuildObjectAssociation  {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -2679,5 +2679,29 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider 
 			return isSystemObject() ? 1 : -1;
 		
 		return getSuperClassNum() - other.getSuperClassNum();
+	}
+
+	public IRealBuildObjectAssociation getExtensionObject() {
+		return (Builder)ManagedBuildManager.getExtensionBuilder(this);
+	}
+
+	public IRealBuildObjectAssociation[] getIdenticBuildObjects() {
+		return (IRealBuildObjectAssociation[])ManagedBuildManager.findIdenticalBuilders(this);
+	}
+
+	public IRealBuildObjectAssociation getRealBuildObject() {
+		return (Builder)ManagedBuildManager.getRealBuilder(this);
+	}
+
+	public IRealBuildObjectAssociation getSuperClassObject() {
+		return (Builder)getSuperClass();
+	}
+
+	public final int getType() {
+		return OBJECT_BUILDER;
+	}
+
+	public boolean isRealBuildObject() {
+		return ManagedBuildManager.getRealBuilder(this) == this;
 	}
 }

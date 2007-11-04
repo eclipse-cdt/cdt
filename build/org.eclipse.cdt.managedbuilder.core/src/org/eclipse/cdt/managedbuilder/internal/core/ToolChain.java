@@ -56,7 +56,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
-public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropertiesRestriction, IMatchKeyProvider {
+public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropertiesRestriction, IMatchKeyProvider, IRealBuildObjectAssociation {
 
 	private static final String EMPTY_STRING = new String();
 
@@ -984,8 +984,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return tools;
 	}
 
-	public ITool[] getAllTools(boolean includeCurrentUnused) {
-		ITool[] tools = null;
+	public Tool[] getAllTools(boolean includeCurrentUnused) {
+		Tool[] tools = null;
 		//  Merge our tools with our superclass' tools
 		if (getSuperClass() != null) {
 			tools = ((ToolChain)getSuperClass()).getAllTools(false);
@@ -1017,7 +1017,7 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
  				}
 				//  No Match?  Insert it (may be re-ordered)
 				if (j == tools.length) {
-					ITool[] newTools = new ITool[tools.length + 1];
+					Tool[] newTools = new Tool[tools.length + 1];
 					for (int k = 0; k < tools.length; k++) {
 						newTools[k] = tools[k];
 					}
@@ -1041,12 +1041,12 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 //				}
 //			}
 		} else {
-			tools = new ITool[getToolList().size()];
+			tools = new Tool[getToolList().size()];
 			Iterator iter = getToolList().listIterator();
 			int i = 0;
 			while (iter.hasNext()) {
 				Tool tool = (Tool)iter.next();
-				tools[i++] = (ITool)tool; 
+				tools[i++] = (Tool)tool; 
 			}
 		}
 		if(includeCurrentUnused)
@@ -1054,10 +1054,10 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		return filterUsedTools(tools, true);
 	}
 	
-	private ITool[] filterUsedTools(ITool tools[], boolean used){
+	private Tool[] filterUsedTools(Tool tools[], boolean used){
 		Set set = getUnusedChilrenSet();
 		if(set.size() == 0)
-			return used ? tools : new ITool[0];
+			return used ? tools : new Tool[0];
 		
 		List list = new ArrayList(tools.length);
 		for(int i = 0; i < tools.length; i++){
@@ -1065,11 +1065,11 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 				list.add(tools[i]);
 		}
 		
-		return (ITool[])list.toArray(new ITool[list.size()]);
+		return (Tool[])list.toArray(new Tool[list.size()]);
 	}
 	
-	public ITool[] getUnusedTools(){
-		ITool[] all = getAllTools(true);
+	public Tool[] getUnusedTools(){
+		Tool[] all = getAllTools(true);
 		return filterUsedTools(all, false);
 	}
 	
@@ -2771,5 +2771,29 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		StorableCdtVariables vars = userDefinedMacros;
 		userDefinedMacros = null;
 		return vars;
+	}
+
+	public IRealBuildObjectAssociation getExtensionObject() {
+		return (IRealBuildObjectAssociation)ManagedBuildManager.getExtensionToolChain(this);
+	}
+
+	public IRealBuildObjectAssociation[] getIdenticBuildObjects() {
+		return (IRealBuildObjectAssociation[])ManagedBuildManager.findIdenticalToolChains(this);
+	}
+
+	public IRealBuildObjectAssociation getRealBuildObject() {
+		return (IRealBuildObjectAssociation)ManagedBuildManager.getRealToolChain(this);
+	}
+
+	public IRealBuildObjectAssociation getSuperClassObject() {
+		return (IRealBuildObjectAssociation)getSuperClass();
+	}
+
+	public final int getType() {
+		return OBJECT_TOOLCHAIN;
+	}
+
+	public boolean isRealBuildObject() {
+		return getRealBuildObject() == this;
 	}
 }

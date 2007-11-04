@@ -1493,7 +1493,11 @@ public class InputType extends BuildObject implements IInputType {
 	 * @see org.eclipse.cdt.core.build.managed.IInputType#isSourceExtension()
 	 */
 	public boolean isSourceExtension(ITool tool, String ext) {
-		String[] exts = getSourceExtensions(tool);
+		return isSourceExtension(tool, ext, ((Tool)tool).getProject());
+	}
+
+	public boolean isSourceExtension(ITool tool, String ext, IProject project) {
+		String[] exts = getSourceExtensions(tool, project);
 		for (int i=0; i<exts.length; i++) {
 			if (ext.equals(exts[i])) return true;
 		}

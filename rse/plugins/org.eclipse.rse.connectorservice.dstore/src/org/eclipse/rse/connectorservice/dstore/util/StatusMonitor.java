@@ -224,21 +224,7 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
 		return false;
 	}
 	
-	/**
-	 * @see IDomainListener#getShell()
-	 */
-	public Shell getShell() 
-	{
-		// dy:  DomainNotifier (which calls this method) requires the shell not be disposed
-		//if (shell == null) {
-		if (_shell == null || _shell.isDisposed())
-		{
-			FindShell findShell = new FindShell();
-			Display.getDefault().syncExec(findShell);
-			_shell = findShell.shell;
-		}
-		return _shell;
-	}
+
 
 	/**
 	 * @see ICommunicationsListener#communicationsStateChange(CommunicationsEvent)
@@ -393,7 +379,7 @@ public class StatusMonitor implements IDomainListener, ICommunicationsListener
     /**
      * Start diagnostic 
      *
-     * @param diagnostic is the an implementation of ICommunicationsDiagnostic
+     * @param factory is the an implementation of ICommunicationsDiagnostic
      * @param quiet is the flag to indicate if user should be prompted
      *         - true for no prompt
      * @return ICommunciationsDiagnostic class instance

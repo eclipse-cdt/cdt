@@ -362,7 +362,7 @@ public class RexecDstoreServer implements IServerLauncher
 		this.propertyInfo = propertyInfo;
 		// set path...
 		this.cwd = ((IRemoteServerLauncher)propertyInfo).getServerPath();
-		char separatorChar = signonInfo.getSystemType().isWindows() ? '\\' : '/';			 //$NON-NLS-1$
+		char separatorChar = signonInfo.getSystemType().isWindows() ? '\\' : '/';			
 		if (cwd.length() > 0 && cwd.charAt(cwd.length() - 1) != separatorChar)
 			cwd += separatorChar;
 	    // set script...

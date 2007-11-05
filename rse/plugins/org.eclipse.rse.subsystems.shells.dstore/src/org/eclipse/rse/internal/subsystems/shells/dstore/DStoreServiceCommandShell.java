@@ -44,7 +44,6 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 	{
 		private DataElement _status;
 		private DataStore _ds;
-		private String _name;
 		private boolean _done = false;
 		
 		public CleanUpSpirited(DataElement status, String name)
@@ -52,7 +51,6 @@ public class DStoreServiceCommandShell extends ServiceCommandShell
 			_status = status;
 			_ds = status.getDataStore();
 			_ds.getDomainNotifier().addDomainListener(this);
-			_name = name;
 		}
 		
 		public void domainChanged(DomainEvent e) 

@@ -166,9 +166,6 @@ public class ConnectionStatusListener implements IDomainListener, IRunnableWithP
 		}
 	}
 
-	/**
-	 * @see IDomainListener#getShell()
-	 */
 	public Shell getShell()
 	{
 		return internalGetShell();

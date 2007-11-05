@@ -623,7 +623,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 			SystemSignonInformation info = getSignonInformation();
 			if (info == null)
 			{
-				System.out.println("password info = null!");
+				System.out.println("password info = null!"); //$NON-NLS-1$
 			}
 			
 			int daemonPort = 0;

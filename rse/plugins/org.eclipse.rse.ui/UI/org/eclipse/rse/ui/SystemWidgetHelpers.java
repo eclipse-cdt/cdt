@@ -757,27 +757,6 @@ public class SystemWidgetHelpers {
 		return createPushButton(group, label, listener, tooltip);
 	}
 
-	/**
-	 * Creates a readonly system type listbox with the given system types.
-	 * Does NOT create the leading prompt or anything except the listbox.
-	 * 
-	 * @param group composite to put the listbox into.
-	 * @param listener object to listen for events. Can be null.
-	 * @param systemTypes an array of system types to show in this Combo.
-	 *     Must not be <code>null</code>.
-	 *     Fill this with the result of {@link #getValidSystemTypes(String[])}
-	 *     with a null argument in order to get a combo box with all valid 
-	 *     system types.
-	 * @return listbox containing the given system types  
-	 */
-	public static List createSystemTypeListBox(Composite group, Listener listener, IRSESystemType[] systemTypes) {
-		List list = createListBox(group, listener, false, null, SystemResources.RESID_CONNECTION_SYSTEMTYPE_TIP);
-		list.setItems(getSystemTypeLabels(systemTypes));
-		if(list.getItemCount()>0){
-			list.select(0);	
-		}
-		return list;
-	}
 	
 	/**
 	 * Creates a new listbox instance and sets the default

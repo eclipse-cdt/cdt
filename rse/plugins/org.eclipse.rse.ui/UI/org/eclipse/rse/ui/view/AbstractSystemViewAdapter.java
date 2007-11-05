@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [189163] Update IActionFilter constants from subsystemFactory to subsystemConfiguration
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David McKnight   (IBM)        - [208803] add exists() method
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -471,6 +472,23 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 		return getType(element) + ": " + getName(element); //$NON-NLS-1$
 	}
 		
+	/**
+	 * Returns whether the specified element is represented as existing.  Note that
+	 * it's possible that the represented element will been seen to exist when on
+	 * a remote host it may not - that is because this call does not query the host.
+	 * By default, this method returns true - override this method to customize the
+	 * behavior
+	 * 
+	 * @param element the element to check
+	 * @return true if the element exists
+	 *
+	 */
+	public boolean exists(Object element)
+	{
+		return true;
+	}
+	
+	
 	/**
      * <i><b>Abstract</b>. Must be overridden by subclasses.</i><br>
 	 * Return the parent of this object. This is required by eclipse UI adapters, but

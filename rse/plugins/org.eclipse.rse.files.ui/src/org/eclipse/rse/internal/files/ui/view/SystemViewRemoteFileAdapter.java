@@ -34,6 +34,7 @@
  * Kevin Doyle 		(IBM)		 - [204810] Saving file in Eclipse does not update remote file
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Kevin Doyle      (IBM)		 - [186125] Changing encoding of a file is not reflected when it was opened before
+ * David McKnight   (IBM)        - [208803] add exists() method
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -519,6 +520,26 @@ public class SystemViewRemoteFileAdapter
 		return getType(element) + ": " + getAbsoluteName(element); //$NON-NLS-1$
 	}
 
+	/**
+	 * Returns whether the specified element is represented as existing.  Note that
+	 * it's possible that the represented element will been seen to exist when on
+	 * a remote host it may not - that is because this call does not query the host.
+	 * Returns whether the remote file representation exists.
+	 * 
+	 * @param element the element to check
+	 * @return true if the element exists
+	 *
+	 */
+	public boolean exists(Object element)
+	{
+		IRemoteFile file = (IRemoteFile) element;
+		if (file != null)
+		{
+			return file.exists();
+		}
+		return false;
+	}
+	
 	/**
 	 * Return the parent of this object
 	 */

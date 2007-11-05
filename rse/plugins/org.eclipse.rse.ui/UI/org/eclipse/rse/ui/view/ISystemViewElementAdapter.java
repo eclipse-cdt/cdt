@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David McKnight   (IBM)        - [208803] add exists() method
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -173,10 +174,24 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	 * Return the string to display in the status line when the given object is selected
 	 */
 	public String getStatusLineText(Object element);
+	
+	
+	/**
+	 * Returns whether the specified element is represented as existing.  Note that
+	 * it's possible that the represented element will been seen to exist when on
+	 * a remote host it may not - that is because this call does not query the host.
+	 * 
+	 * @param element the element to check
+	 * @return true if the element exists
+	 */
+	public boolean exists(Object element);
+	
 	/**
 	 * Return the parent of this object
 	 */
 	public Object getParent(Object element);
+	
+
 	
 	/**
 	 * Return the children of this model object.

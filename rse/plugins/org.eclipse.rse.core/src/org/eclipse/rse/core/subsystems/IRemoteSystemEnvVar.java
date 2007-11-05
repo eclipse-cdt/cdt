@@ -12,25 +12,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)  - [208813] removing deprecated APIs
  *******************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
 
-//
-
-/**
- * @lastgen interface RemoteSystemEnvVar  {}
- */
-
 public interface IRemoteSystemEnvVar {
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	String copyright = "(c) Copyright IBM Corporation 2002, 2004."; //$NON-NLS-1$
 
 	/**
 	 * @generated This field/method will be replaced during code generation 
@@ -57,20 +44,5 @@ public interface IRemoteSystemEnvVar {
 	 * @param value The new value of the Value attribute
 	 */
 	void setValue(String value);
-
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @return The value of the AdditionalAttributes attribute
-	 * Additional attributes that may need to be persisted per environment variable.
-	 * @deprecated
-	 */
-	String getAdditionalAttributes();
-
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @param value The new value of the AdditionalAttributes attribute
-	 * @deprecated
-	 */
-	void setAdditionalAttributes(String value);
 
 }

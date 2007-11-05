@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight  (IBM)  - [208813] removing deprecated APIs
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.shells.core.subsystems;
@@ -70,15 +71,6 @@ public interface IRemoteCmdSubSystem extends ISubSystem{
 	 */
 	public IRemoteCommandShell runShell(Object context, IProgressMonitor monitor) throws Exception;
 
-	/**
-	 * Send a command as input to a running command shell. 
-	 * @param input the command to invoke in the shell.
-	 * @param commandObject the shell or command to send the invocation to.
-     * 
-     * @deprecated use sendCommandToShell(IProgressMonitor, String input, Object commmandObject)
-	 */
-	public void sendCommandToShell(String input, Object commandObject) throws Exception;
-	
 	/**
 	 * Send a command as input to a running command shell.
 	 * @param input the command to invoke in the shell.

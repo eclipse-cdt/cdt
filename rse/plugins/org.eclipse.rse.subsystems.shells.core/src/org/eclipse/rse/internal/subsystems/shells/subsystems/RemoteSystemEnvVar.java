@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight  (IBM)  - [208813] removing deprecated APIs
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.shells.subsystems;
@@ -27,9 +27,6 @@ import org.eclipse.rse.core.subsystems.IRemoteSystemEnvVar;
 
 /**
  * Encapsulation of environment variable properties set uniquely per connection.
- */
-/**
- * @lastgen class RemoteSystemEnvVarImpl Impl implements RemoteSystemEnvVar {}
  */
 public class RemoteSystemEnvVar implements IRemoteSystemEnvVar
 {
@@ -70,14 +67,8 @@ public class RemoteSystemEnvVar implements IRemoteSystemEnvVar
 	 * @generated This field/method will be replaced during code generation.
 	 */
 	protected String value = VALUE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getAdditionalAttributes() <em>Additional Attributes</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getAdditionalAttributes()
-	 * @generated
-	 * @ordered
-	 */
+
+	
 	protected static final String ADDITIONAL_ATTRIBUTES_EDEFAULT = null;
 
 	/**
@@ -126,24 +117,6 @@ public class RemoteSystemEnvVar implements IRemoteSystemEnvVar
 		value = newValue;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * Additional attributes that may need to be persisted per environment variable.
-	 * @deprecated
-	 */
-	public String getAdditionalAttributes()
-	{
-		return additionalAttributes;
-	}
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 * @deprecated
-	 */
-	public void setAdditionalAttributes(String newAdditionalAttributes)
-	{
-		additionalAttributes = newAdditionalAttributes;
-	}
 
 	/**
 	 * @generated This field/method will be replaced during code generation.

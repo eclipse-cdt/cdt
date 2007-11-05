@@ -852,48 +852,7 @@ public abstract class RemoteCmdSubSystem extends SubSystem implements IRemoteCmd
 		return runCommand(command, context,  true, monitor);
 	}
 
-	/**
-	 * Send a command as input to a running command shell.
-	 * 
-	 * @param input the command to invoke in the shell.
-	 * @param commandObject the shell or command to send the invocation to.
-	 * 
-	 * @deprecated use {@link #sendCommandToShell(String, Object, IProgressMonitor)}
-	 */
-	public void sendCommandToShell(String input,  Object commandObject) throws Exception
-	{
-		boolean ok = true;
-		if (!isConnected())
-			ok = promptForPassword();
-		if (ok)
-		{
-			Display display = Display.getCurrent();
-			if (display != null)
-			{
-				internalSendCommandToShell(input, commandObject, new NullProgressMonitor());
-			}
-			else
-			{
-			try
-			{
-				SendCommandToShellJob job = new SendCommandToShellJob(input, commandObject);
-
-				scheduleJob(job, null);
-			}
-			catch (InterruptedException exc)
-			{
-				if (shell == null)
-					throw exc;
-				else
-					showOperationCancelledMessage(shell);
-			}
-			}
-		}
-		else
-			SystemBasePlugin.logDebugMessage(this.getClass().getName(),
-					"in SubSystemImpl.sendCommandToShell: isConnected() returning false!"); //$NON-NLS-1$
-
-	}
+	
 	
 	/**
 	 * Send a command as input to a running command shell.

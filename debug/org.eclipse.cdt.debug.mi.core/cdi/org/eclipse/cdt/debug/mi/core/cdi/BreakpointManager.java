@@ -350,7 +350,7 @@ public class BreakpointManager extends Manager {
 			if (breakpoint instanceof LocationBreakpoint) {
 				setLocationBreakpoint((LocationBreakpoint)breakpoint);
 			} else if (breakpoint instanceof Watchpoint) {
-				setWatchpoint((Watchpoint)breakpoint);
+				setWatchpoint((Watchpoint)breakpoint, false);
 			} else {
 				throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_a_CDT_breakpoint")); //$NON-NLS-1$
 			}
@@ -361,7 +361,7 @@ public class BreakpointManager extends Manager {
 				if (breakpoint instanceof LocationBreakpoint) {
 					setLocationBreakpoint((LocationBreakpoint)breakpoint);
 				} else if (breakpoint instanceof Watchpoint) {
-					setWatchpoint((Watchpoint)breakpoint);
+					setWatchpoint((Watchpoint)breakpoint, false);
 				}
 			}
 		}
@@ -675,32 +675,6 @@ public class BreakpointManager extends Manager {
 		}
 	}
 
-	public ICDIWatchpoint setWatchpoint(Target target, int type, int watchType, String expression,
-			ICDICondition condition, boolean enabled) throws CDIException {
-
-		// HACK: for the IDE,
-		try {
-			// Check if this an address watchpoint, and add a '*'
-			Integer.decode(expression);
-			expression = '*' + expression;
-		} catch (NumberFormatException e) {
-			//
-		}
-		Watchpoint bkpt = new Watchpoint(target, expression, type, watchType, condition, enabled);
-
-		setWatchpoint(bkpt);
-		List bList = getBreakpointsList(target);
-		bList.add(bkpt);
-
-		// Fire a created Event.
-		MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
-		if (miBreakpoints != null && miBreakpoints.length > 0) {
-			MISession miSession = target.getMISession();
-			miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
-		}
-		return bkpt;
-	}
-
 	public void setLocationBreakpoint (LocationBreakpoint bkpt) throws CDIException {
 		Target target = (Target)bkpt.getTarget();
 		MISession miSession = target.getMISession();
@@ -766,11 +740,15 @@ public class BreakpointManager extends Manager {
 		bkpt.setMIBreakpoints(allPoints);
 	}
 
-	public void setWatchpoint(Watchpoint watchpoint) throws CDIException {
+	public void setWatchpoint(Watchpoint bkpt) throws CDIException {
+		setWatchpoint(bkpt, true);
+	}
+
+	private void setWatchpoint(Watchpoint watchpoint, boolean isNew) throws CDIException {
 		Target target = (Target)watchpoint.getTarget();
 		boolean access = watchpoint.isReadType() && watchpoint.isWriteType();
 		boolean read = ! watchpoint.isWriteType() && watchpoint.isReadType();
-		String expression = watchpoint.getWatchExpression();
+		String expression = watchpoint.getDerivedExpression();
 
 		MISession miSession = target.getMISession();
 		CommandFactory factory = miSession.getCommandFactory();
@@ -824,6 +802,17 @@ public class BreakpointManager extends Manager {
 			resumeInferior(target, restart);
 		}
 		watchpoint.setMIBreakpoints(points);
+
+		if (isNew) {
+			List bList = getBreakpointsList(target);
+			bList.add(watchpoint);
+
+			// Fire a created Event.
+			MIBreakpoint[] miBreakpoints = watchpoint.getMIBreakpoints();
+			if (miBreakpoints != null && miBreakpoints.length > 0) {
+				miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
+			}
+		}
 	}
 
 	Breakpoint[] exceptionBps = new Breakpoint[2];

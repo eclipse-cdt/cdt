@@ -619,6 +619,15 @@
                   class="org.eclipse.cdt.debug.core.model.ICVariable">
             </selection>
          </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
+               enablesFor="1"
+               icon="icons/elcl16/watchpoint_co.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnVariableActionDelegate"
+               label="%AddWatchpoint.label"
+               menubarPath="additions"
+               tooltip="%AddWatchpoint.tooltip">
+         </action>
       </viewerContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.RegisterView"
@@ -773,6 +782,19 @@
                menubarPath="additions"
                tooltip="%EditRegisterGroupAction.tooltip"/>
       </objectContribution>
+      <viewerContribution
+            id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.popupMenu"
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate"
+               enablesFor="1"
+               icon="icons/elcl16/watchpoint_co.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate"
+               label="%AddWatchpoint.label"
+               menubarPath="additions"
+               tooltip="%AddWatchpoint.tooltip">
+         </action>
+      </viewerContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

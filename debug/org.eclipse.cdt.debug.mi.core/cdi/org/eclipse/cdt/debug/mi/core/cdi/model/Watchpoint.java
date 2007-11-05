@@ -10,35 +10,81 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.math.BigInteger;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
  */
-public class Watchpoint extends Breakpoint implements ICDIWatchpoint {
+public class Watchpoint extends Breakpoint implements ICDIWatchpoint2 {
 
 	int watchType;
-	String what;
+	String expression;
+	String memorySpace;
+	BigInteger range;
+	String derivedExpression;
 
-	public Watchpoint(Target target, String expression, int type, int wType, ICDICondition cond, boolean enabled) {
+	public Watchpoint(Target target, String expression, int type,
+			int watchType, ICDICondition condition, boolean enabled) {
+		this(target, expression, "", BigInteger.ZERO, type, watchType, condition, enabled);
+	}
+
+	public Watchpoint(Target target, String expression, String memorySpace,
+			BigInteger range, int type, int watchType, ICDICondition cond,
+			boolean enabled) {
 		super(target, type, cond, enabled);
-		watchType = wType;
-		what = expression;
+		this.watchType = watchType;
+		this.expression = expression;
+		this.memorySpace = memorySpace;
+		this.range = range;
+		
+		// If the range and/or memory space are specified, cast the expression, e.g.,
+		// (@data char[4])(*0x402000)
+		derivedExpression = "";
+		boolean doSpecifyMemorySpace = memorySpace.length() > 0;
+		boolean doSpecifyRange = range.compareTo(BigInteger.ZERO) > 0;
+		boolean doSpecify = doSpecifyMemorySpace || doSpecifyRange;
+		if ( doSpecify ) {
+			derivedExpression += "(";
+			if ( doSpecifyMemorySpace ) {
+				derivedExpression += "@" + memorySpace;
+				if ( doSpecifyRange ) {
+					derivedExpression += " ";
+				}
+			}
+			if ( doSpecifyRange ) {
+				derivedExpression += "char[" + range.toString() + "]";
+			}
+			derivedExpression += ")(";
+		}
+		
+		try {
+			// Check if this an address watchpoint, and add a '*'
+			Integer.decode(expression);
+			derivedExpression += '*';
+		} catch (NumberFormatException e) {
+		}
+		derivedExpression += expression;
+		if ( doSpecify ) {
+			derivedExpression += ")";
+		}
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint#getWatchExpression()
 	 */
 	public String getWatchExpression() throws CDIException {
-		if (what == null) {
+		if (expression == null) {
 			MIBreakpoint[] miPoints = getMIBreakpoints();
 			if (miPoints != null && miPoints.length > 0) {
 				return miPoints[0].getWhat();
 			}
 		}
-		return what;
+		return expression;
 	}
 
 	/**
@@ -63,4 +109,15 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint {
 //		return ((watchType & ICDIWatchpoint.WRITE) == ICDIWatchpoint.WRITE);
 	}
 
+	public String getMemorySpace() throws CDIException {
+		return memorySpace;
+	}
+
+	public BigInteger getRange() throws CDIException {
+		return range;
+	}
+
+	public String getDerivedExpression() {
+		return derivedExpression;
+	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -336,7 +337,8 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 			DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( watchpoint, true );
 		}
 		else {
-			AddWatchpointDialog dlg = new AddWatchpointDialog( part.getSite().getShell(), true, false, expression, false );
+			AddWatchpointDialog dlg = new AddWatchpointDialog( part.getSite().getShell(), AddWatchpointActionDelegate.getMemorySpaceManagement() );
+			dlg.setExpression( expression );
 			if ( dlg.open() != Window.OK )
 				return;
 			expression = dlg.getExpression();
@@ -365,7 +367,9 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 											lineNumber,
 											dlg.getWriteAccess(), 
 											dlg.getReadAccess(),
-											expression, 
+											expression,
+											dlg.getMemorySpace(),
+											dlg.getRange(),
 											true, 
 											0, 
 											"", //$NON-NLS-1$

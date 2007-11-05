@@ -92,6 +92,12 @@
             name="org.eclipse.cdt.debug.core.expression">
       </attribute>
       <attribute
+            name="org.eclipse.cdt.debug.core.memoryspace">
+      </attribute>
+      <attribute
+            name="org.eclipse.cdt.debug.core.range">
+      </attribute>
+      <attribute
             name="org.eclipse.cdt.debug.core.write">
       </attribute>
       <attribute

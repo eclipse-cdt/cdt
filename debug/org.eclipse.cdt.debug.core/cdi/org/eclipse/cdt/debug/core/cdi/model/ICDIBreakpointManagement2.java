@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     Nokia - Initial API and implementation
+ *     Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.core.cdi.model;
+
+import java.math.BigInteger;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
@@ -17,7 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIFunctionLocation;
 import org.eclipse.cdt.debug.core.cdi.ICDILineLocation;
 
-public interface ICDIBreakpointManagement2 {
+public interface ICDIBreakpointManagement2 extends ICDIBreakpointManagement {
 
 	/**
 	 * Set a line breakpoint.
@@ -73,6 +76,21 @@ public interface ICDIBreakpointManagement2 {
 	 * @throws CDIException
 	 */
 	ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
+		ICDICondition condition, boolean enabled) throws CDIException;
+
+	/**
+	 * Set a watchpoint.
+	 * 
+	 * @param type
+	 * @param watchType
+	 * @param expression
+	 * @param memorySpace set to "" for default memorySpace
+	 * @param range set to "" for default range
+	 * @param condition
+	 * @return
+	 * @throws CDIException
+	 */
+	ICDIWatchpoint setWatchpoint(int type, int watchType, String expression, String memorySpace, BigInteger range, 
 		ICDICondition condition, boolean enabled) throws CDIException;
 
 	/**

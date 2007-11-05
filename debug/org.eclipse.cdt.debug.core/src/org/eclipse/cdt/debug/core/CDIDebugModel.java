@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2006-7 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
@@ -24,6 +26,7 @@ import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
@@ -284,14 +287,7 @@ public class CDIDebugModel {
 	 */
 	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap attributes = new HashMap( 10 );
-		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
-		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
-		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
-		attributes.put( ICBreakpoint.CONDITION, condition );
-		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
-		attributes.put( ICWatchpoint.EXPRESSION, expression );
-		attributes.put( ICWatchpoint.READ, Boolean.valueOf( readAccess ) );
-		attributes.put( ICWatchpoint.WRITE, Boolean.valueOf( writeAccess ) );
+		setAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, "", BigInteger.ZERO, enabled, ignoreCount, condition, register );
 		return new CWatchpoint( resource, attributes, register );
 	}
 
@@ -314,6 +310,8 @@ public class CDIDebugModel {
 	 * @param writeAccess whether this is write watchpoint
 	 * @param readAccess whether this is read watchpoint
 	 * @param expression the expression on which the watchpoint is set
+	 * @param memorySpace the memory space in which the watchpoint is set
+	 * @param range the range of the watchpoint in addressable units
 	 * @param enabled whether to enable or disable this breakpoint
 	 * @param ignoreCount the number of times this breakpoint will be ignored
 	 * @param condition the breakpoint condition
@@ -326,20 +324,60 @@ public class CDIDebugModel {
 	 *             failure.</li>
 	 *             </ul>
 	 */
-	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, int charStart, int charEnd, int lineNumber, boolean writeAccess, boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, int charStart, int charEnd, int lineNumber, boolean writeAccess, boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap attributes = new HashMap( 10 );
-		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
+		setAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace, range, enabled, ignoreCount, condition, register );
 		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
 		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
+		return new CWatchpoint( resource, attributes, register );
+	}
+
+	/**
+	 * Creates and returns a watchpoint for the source defined by the given
+	 * source handle, at the given expression and over the given range. 
+	 * The marker associated with the watchpoint will be created on the 
+	 * specified resource.
+	 * 
+	 * @param sourceHandle the handle to the watchpoint source
+	 * @param resource the resource on which to create the associated watchpoint marker
+	 * @param writeAccess whether this is write watchpoint
+	 * @param readAccess whether this is read watchpoint
+	 * @param expression the expression on which the watchpoint is set
+	 * @param memorySpace the memory space in which the watchpoint is set
+	 * @param range the range of the watchpoint in addressable units
+	 * @param enabled whether to enable or disable this breakpoint
+	 * @param ignoreCount the number of times this breakpoint will be ignored
+	 * @param condition the breakpoint condition
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @return the watchpoint that was created
+	 * @throws CoreException if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure creating underlying marker. The exception's
+	 *             status contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
+	 */
+	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		HashMap attributes = new HashMap( 10 );
+		setAttributes( attributes, sourceHandle, resource, writeAccess, readAccess, expression, memorySpace, range, enabled, ignoreCount, condition, register );
+		return new CWatchpoint( resource, attributes, register );
+	}
+	
+	/**
+	 * Helper function for setting common attributes.
+	 */
+	private static void setAttributes( HashMap attributes, String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, String memorySpace, BigInteger range, boolean enabled, int ignoreCount, String condition, boolean register ) {
+		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
 		attributes.put( IBreakpoint.ENABLED, Boolean.valueOf( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
 		attributes.put( ICWatchpoint.EXPRESSION, expression );
+		attributes.put( ICWatchpoint2.MEMORYSPACE, memorySpace );
+		attributes.put( ICWatchpoint2.RANGE, range.toString() );
 		attributes.put( ICWatchpoint.READ, Boolean.valueOf( readAccess ) );
 		attributes.put( ICWatchpoint.WRITE, Boolean.valueOf( writeAccess ) );
-		return new CWatchpoint( resource, attributes, register );
 	}
 
 	/**

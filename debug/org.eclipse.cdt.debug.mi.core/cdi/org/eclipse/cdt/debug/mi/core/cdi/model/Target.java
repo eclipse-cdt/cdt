@@ -36,6 +36,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
@@ -95,7 +96,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
  */
-public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2, ICDIAddressToSource {
+public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2, ICDIAddressToSource, ICDIMemorySpaceManagement {
 
 	public class Lock {
 
@@ -145,6 +146,9 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	boolean suspended = true;
 	boolean deferBreakpoints = true;
 	Lock lock = new Lock();
+	
+	final static String CODE_MEMORY_SPACE = "code"; //$NON-NLS-1$
+	final static String DATA_MEMORY_SPACE = "data"; //$NON-NLS-1$
 
 	public Target(Session s, MISession mi) {
 		super(s);
@@ -913,6 +917,28 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2#setWatchpoint(int, int, java.lang.String, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
+	 */
+	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
+			ICDICondition condition, boolean enabled) throws CDIException {
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		Watchpoint bkpt = new Watchpoint(this, expression, type, watchType, condition, enabled);
+		bMgr.setWatchpoint(bkpt);
+		return bkpt;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2#setWatchpoint(int, int, java.lang.String, java.math.BigInteger, org.eclipse.cdt.debug.core.cdi.ICDICondition, boolean)
+	 */
+	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
+			String memorySpace, BigInteger range, ICDICondition condition, boolean enabled) throws CDIException {
+		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
+		Watchpoint bkpt = new Watchpoint(this, expression, memorySpace, range, type, watchType, condition, enabled);
+		bMgr.setWatchpoint(bkpt);
+		return bkpt;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement#setExceptionBreakpoint(java.lang.String, boolean, boolean)
 	 */
 	public ICDIExceptionpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch)
@@ -1229,11 +1255,6 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		return bMgr.setLineBreakpoint(this, type, location, condition, deferred, enabled);
 	}
 
-	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression, ICDICondition condition, boolean enabled) throws CDIException {
-		BreakpointManager bMgr = ((Session)getSession()).getBreakpointManager();
-		return bMgr.setWatchpoint(this, type, watchType, expression, condition, enabled);
-	}
-
 	public IMappedSourceLocation getSourceForAddress(IAddress address) throws CDIException {
 		// Ask gdb for info for this address, use the module list
 		// to determine the executable.
@@ -1255,5 +1276,18 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
+	}
+
+	public String addressToString(BigInteger address, String memorySpaceID) {
+		return null; // use CDT's built-in encoding/decoding <memspace>:<addr-hex>
+	}
+
+	public BigInteger stringToAddress(String str, StringBuffer memorySpaceID_out)
+			throws CDIException {
+		return null; // use CDT's built-in encoding/decoding <memspace>:<addr-hex>
+	}
+
+	public String[] getMemorySpaces() {
+		return new String[] { CODE_MEMORY_SPACE, DATA_MEMORY_SPACE };
 	}
 }

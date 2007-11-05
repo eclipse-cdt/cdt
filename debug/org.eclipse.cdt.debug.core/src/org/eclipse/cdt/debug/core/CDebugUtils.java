@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -30,6 +31,7 @@ import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CFloatingPointValue;
@@ -327,6 +329,11 @@ public class CDebugUtils {
 		StringBuffer label = new StringBuffer();
 		appendSourceName( watchpoint, label, qualified );
 		appendWatchExpression( watchpoint, label );
+		if ( watchpoint instanceof ICWatchpoint2 ) {
+			ICWatchpoint2 wp2 = (ICWatchpoint2)watchpoint;
+			appendWatchMemorySpace( wp2, label );
+			appendWatchRange( wp2, label );
+		}
 		appendIgnoreCount( watchpoint, label );
 		appendCondition( watchpoint, label );
 		return label.toString();
@@ -411,6 +418,22 @@ public class CDebugUtils {
 		if ( expression != null && expression.length() > 0 ) {
 			label.append( ' ' );
 			label.append( MessageFormat.format(  DebugCoreMessages.getString( "CDebugUtils.5" ), new String[] { expression } ) ); //$NON-NLS-1$
+		}
+	}
+
+	private static void appendWatchMemorySpace( ICWatchpoint2 watchpoint, StringBuffer label ) throws CoreException {
+		String memorySpace = watchpoint.getMemorySpace();
+		if ( memorySpace != null && memorySpace.length() > 0 ) {
+			label.append( ' ' );
+			label.append( MessageFormat.format(  DebugCoreMessages.getString( "CDebugUtils.6" ), new String[] { memorySpace } ) ); //$NON-NLS-1$
+		}
+	}
+
+	private static void appendWatchRange( ICWatchpoint2 watchpoint, StringBuffer label ) throws CoreException {
+		String range = watchpoint.getRange().toString();
+		if ( range.length() > 0 && !range.equals( "0" ) ) {
+			label.append( ' ' );
+			label.append( MessageFormat.format( DebugCoreMessages.getString( "CDebugUtils.7" ), new String[]{ range } ) ); //$NON-NLS-1$
 		}
 	}
 

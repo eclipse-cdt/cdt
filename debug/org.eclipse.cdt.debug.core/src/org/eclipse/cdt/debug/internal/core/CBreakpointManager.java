@@ -10,6 +10,7 @@
  * Matthias Spycher (matthias@coware.com) - patch for bug #112008
  * Ken Ryall (Nokia) - bugs 170027, 105196
  * Ling Wang (Nokia) - bug 176081
+ * Freescale Semiconductor - Address watchpoints, https://bugs.eclipse.org/bugs/show_bug.cgi?id=118299
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core; 
 
@@ -47,6 +48,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
@@ -57,6 +59,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
@@ -223,6 +226,14 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				if ( breakpoint instanceof ICWatchpoint && cdiBreakpoint instanceof ICDIWatchpoint ) {
 					try {
 						ICWatchpoint watchpoint = (ICWatchpoint)breakpoint;
+						if ( watchpoint instanceof ICWatchpoint2  && cdiBreakpoint instanceof ICDIWatchpoint2 ) {
+							ICWatchpoint2 wp2 = (ICWatchpoint2)breakpoint;
+							ICDIWatchpoint2 cdiwp2 = (ICDIWatchpoint2)cdiBreakpoint;
+							if ( !wp2.getMemorySpace().equals( cdiwp2.getMemorySpace() )
+									|| !wp2.getRange().equals( cdiwp2.getRange() ) ) {
+								return false;
+							}
+						}
 						ICDIWatchpoint cdiWatchpoint = (ICDIWatchpoint)cdiBreakpoint;
 						return ( watchpoint.getExpression().compareTo( cdiWatchpoint.getWatchExpression() ) == 0 && 
 								 watchpoint.isReadType() == cdiWatchpoint.isReadType() &&
@@ -725,10 +736,17 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					accessType |= (watchpoint.isReadType()) ? ICDIWatchpoint.READ : 0;
 					String expression = watchpoint.getExpression();
 					ICDICondition condition = createCondition( watchpoint );
-					if (bpManager2 != null)
-						b = bpManager2.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition, breakpoints[i].isEnabled() );
-					else
+					if ( bpManager2 != null ) {
+						if ( breakpoints[i] instanceof ICWatchpoint2 ) {
+							ICWatchpoint2 wp2 = (ICWatchpoint2)watchpoint;
+							b = bpManager2.setWatchpoint(ICDIBreakpoint.REGULAR, accessType, expression, wp2.getMemorySpace(), 
+									wp2.getRange(), condition, breakpoints[i].isEnabled() );
+						} else {
+							b = bpManager2.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition, breakpoints[i].isEnabled() );
+						}
+					} else {
 						b = cdiTarget.setWatchpoint( ICDIBreakpoint.REGULAR, accessType, expression, condition );
+					}
 				}
 				if ( b != null ) {
 					Object obj = getBreakpointMap().get( breakpoints[i] );
@@ -861,15 +879,30 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	private ICWatchpoint createWatchpoint( ICDIWatchpoint cdiWatchpoint ) throws CDIException, CoreException {
 		IPath execFile = getExecFilePath();
 		String sourceHandle = execFile.toOSString();
-		ICWatchpoint watchpoint = CDIDebugModel.createWatchpoint( sourceHandle, 
-																  getProject(), 
-																  cdiWatchpoint.isWriteType(), 
-																  cdiWatchpoint.isReadType(), 
-																  cdiWatchpoint.getWatchExpression(), 
-																  cdiWatchpoint.isEnabled(), 
-																  cdiWatchpoint.getCondition().getIgnoreCount(), 
-																  cdiWatchpoint.getCondition().getExpression(), 
-																  false );
+		ICWatchpoint watchpoint = null;
+		if ( cdiWatchpoint instanceof ICDIWatchpoint2 ){
+			watchpoint = CDIDebugModel.createWatchpoint( sourceHandle, 
+														 getProject(), 
+														 cdiWatchpoint.isWriteType(), 
+														 cdiWatchpoint.isReadType(), 
+														 cdiWatchpoint.getWatchExpression(), 
+														 ( (ICDIWatchpoint2)cdiWatchpoint ).getMemorySpace(),
+														 ( (ICDIWatchpoint2)cdiWatchpoint ).getRange(),
+														 cdiWatchpoint.isEnabled(), 
+														 cdiWatchpoint.getCondition().getIgnoreCount(), 
+														 cdiWatchpoint.getCondition().getExpression(), 
+														 false);
+		} else {
+			watchpoint = CDIDebugModel.createWatchpoint( sourceHandle, 
+														 getProject(), 
+														 cdiWatchpoint.isWriteType(), 
+														 cdiWatchpoint.isReadType(), 
+														 cdiWatchpoint.getWatchExpression(), 
+														 cdiWatchpoint.isEnabled(), 
+														 cdiWatchpoint.getCondition().getIgnoreCount(), 
+														 cdiWatchpoint.getCondition().getExpression(), 
+														 false );
+		}
 		return watchpoint;
 	}
 
@@ -1031,15 +1064,21 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		}
 		catch( CoreException e ) {
 		}
-		if ( module != null )
+		if ( module != null && getExecFilePath() != null )
 			return getExecFilePath().toOSString().equals( module );
+		
 		// supporting old breakpoints (> 3.0)
+		String sourceHandle = null;
 		try {
-			return getExecFilePath().toOSString().equals( breakpoint.getSourceHandle() );
+			sourceHandle = breakpoint.getSourceHandle();
 		}
 		catch( CoreException e ) {
 		}
-		return false;
+		if ( sourceHandle != null && getExecFilePath() != null )
+			return getExecFilePath().toOSString().equals( sourceHandle );
+		
+		return module != null && module.length() == 0 && 
+			   sourceHandle != null && sourceHandle.length() == 0;
 	}
 
 	public void skipBreakpoints( boolean enabled ) {
@@ -1092,6 +1131,8 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	}
 
 	private IPath getExecFilePath() {
+		if (getDebugTarget() == null || getDebugTarget().getExecFile() == null)
+			return null;
 		return getDebugTarget().getExecFile().getPath();
 	}
 

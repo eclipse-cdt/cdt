@@ -357,6 +357,19 @@
                id="org.eclipse.cdt.debug.ui.actions.popup.RunToLine">
          </action>
       </viewerContribution>
+ 
+      <objectContribution
+            objectClass="org.eclipse.cdt.debug.core.model.ICVariable"
+            id="org.eclipse.cdt.debug.ui.CVariableActions">
+         <action
+               label="View Memory"
+               helpContextId="view_memory_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ViewMemoryActionDelegate"
+               menubarPath="variableGroup"
+               enablesFor="+"
+               id="org.eclipse.cdt.debug.ui.actions.ViewMemoryAction">
+         </action>
+      </objectContribution>
      
  <objectContribution
             objectClass="org.eclipse.cdt.debug.core.model.ICVariable"

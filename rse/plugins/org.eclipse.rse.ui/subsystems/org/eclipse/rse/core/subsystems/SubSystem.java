@@ -25,6 +25,7 @@
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * Xuan Chen        (IBM)        - [187342] Open in New Window expand failed error when not connected
  * David McKnight   (IBM)        - [186363] remove deprecated calls in checkIsConnected
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -2201,24 +2202,7 @@ public abstract class SubSystem extends RSEModelObject
     public void uninitializeSubSystem(IProgressMonitor monitor) {
     }
 
-    /**
-	 * Attempt to connect to the remote system when a Shell is not available.
-	 * You do not need to override this, as it does the progress monitor and error message
-	 * displaying for you.
-	 * <p>
-	 * Override internalConnect if you want, but by default it calls getSystem().connect(IProgressMonitor).
-	 * 
-	 * @deprecated 
-	 */
-	public void connect() throws Exception {
-		if (!isConnected()) {
-			if (Display.getCurrent() == null) {
-				connect(new NullProgressMonitor(), false);
-			} else {
-				connect(false, null);
-			}
-		}
-	}
+
 
 	/*
 	 * Connect to a remote system with a monitor.

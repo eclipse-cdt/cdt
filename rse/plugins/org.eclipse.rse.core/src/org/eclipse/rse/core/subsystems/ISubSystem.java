@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * David McKnight   (IBM)        - [207095] Implicit connect needs to run in the same job as caller
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -358,16 +359,6 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 */
 	public boolean isOffline();
 
-	/**
-	 * Connect to the remote system.
-	 * Does not force a prompt for a password. Works from UI or non-UI thread.
-	 * 
-	 * @deprecated use {@link #connect(IProgressMonitor, boolean)} from background
-	 *    thread, or {@link #connect(boolean, IRSECallback) from UI thread.
-	 * @throws Exception an exception if there is a failure to connect.
-	 *    Typically, this will be a {@link SystemMessageException}.
-	 */
-	public void connect() throws Exception;
 	
 	/**
 	 * Synchronously connect to the remote system.

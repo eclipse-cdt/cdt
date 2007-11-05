@@ -9,6 +9,7 @@
  * David Dykstal (IBM) - initial contribution.
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  ********************************************************************************/
 package org.eclipse.rse.tests.core.connection;
 
@@ -118,7 +119,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		cause = null;
 		
 		try {
-			subsystem.connect();
+			subsystem.connect(false, null);
 		} catch(Exception e) {
 			exception = e;
 			cause = e.getLocalizedMessage();
@@ -164,7 +165,7 @@ public class RSEConnectionTestCase extends RSEBaseConnectionTestCase {
 		cause = null;
 
 		try {
-			subsystem.connect();
+			subsystem.connect(false, null);
 		} catch(Exception e) {
 			exception = e;
 			cause = e.getLocalizedMessage();

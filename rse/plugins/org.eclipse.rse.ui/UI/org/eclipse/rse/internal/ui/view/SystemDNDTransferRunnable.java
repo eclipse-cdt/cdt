@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * Rupen Mardirossian (IBM) - [187713] Check to see if target is null before attempting to retrieve targetAdapter in tranferRSEResources method (line 248)
  * Martin Oberhuber (Wind River) - [200682] Fix drag&drop for elements just adaptable to IResource, like CDT elements
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -573,7 +574,7 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 				{
 				    try
 				    {
-				        targetSubSystem.connect();
+				        targetSubSystem.connect(monitor, false);
 				    }
 				    catch (Exception e)
 				    {

@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [175680] Deprecate obsolete ISystemRegistry methods
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.widgets;
@@ -51,6 +52,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
@@ -611,7 +613,11 @@ public class SystemQualifiedRemoteFolderCombo extends Composite
     	{
     	   try 
     	   {
-    	     ss.connect(); // will throw exception if fails.
+			if (Display.getCurrent() == null) {
+				ss.connect(new NullProgressMonitor(), false);
+			} else {
+				ss.connect(false, null);
+			}
     	   } catch (InterruptedException exc)
     	   {
     	     msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CONNECT_CANCELLED);

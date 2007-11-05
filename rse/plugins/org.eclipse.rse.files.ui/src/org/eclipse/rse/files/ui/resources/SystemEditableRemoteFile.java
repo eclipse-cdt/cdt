@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [187130] New Folder/File, Move and Rename should be available for read-only folders
  * Kevin Doyle      (IBM) 		 - [197976] Changing a file to read-only when it is open doesn't update local copy
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -421,7 +422,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		{
 			try
 			{
-				subsystem.connect();
+				if (Display.getCurrent() == null) {
+					subsystem.connect(new NullProgressMonitor(), false);
+				} else {
+					subsystem.connect(false, null);
+				}
 			}
 			catch (Exception e)
 			{
@@ -691,7 +696,11 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 
 		if (!subsystem.isConnected())
 		{
-			subsystem.connect();
+			if (Display.getCurrent() == null) {
+				subsystem.connect(new NullProgressMonitor(), false);
+			} else {
+				subsystem.connect(false, null);
+			}
 		}
 
 		subsystem.upload(localPath, remoteFile, SystemEncodingUtil.ENCODING_UTF_8, null);

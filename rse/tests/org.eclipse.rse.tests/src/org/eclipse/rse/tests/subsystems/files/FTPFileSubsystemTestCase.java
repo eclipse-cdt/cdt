@@ -8,6 +8,7 @@
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -122,7 +123,7 @@ public class FTPFileSubsystemTestCase extends RSEBaseConnectionTestCase {
 		// we expect that the subsystem is not connected yet
 		assertFalse("ftp.files subsystem is unexpectedly connected!", subSystem.isConnected()); //$NON-NLS-1$
 		try {
-			subSystem.connect();
+			subSystem.connect(false, null);
 		} catch(Exception e) {
 			exception = e;
 			cause = e.getLocalizedMessage();

@@ -14,6 +14,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David McKnight (IBM)          - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -44,6 +45,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.ui.SystemBasePlugin;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * A remote file represents a named file on a remote file system. This class 
@@ -107,7 +109,13 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     	  try
     	  {
     	  	// deduce active shell from display
-    	    context.getParentRemoteFileSubSystem().connect();
+    	    IRemoteFileSubSystem ss = context.getParentRemoteFileSubSystem();
+    	    
+			if (Display.getCurrent() == null) {
+				ss.connect(new NullProgressMonitor(), false);
+			} else {
+				ss.connect(false, null);
+			}
     	  } catch (Exception exc) {}    	  
     }
 

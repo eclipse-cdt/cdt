@@ -17,7 +17,8 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes 
  * David McKnight   (IBM)        - [202822] need to enable spiriting on the server side
  * David McKnight   (IBM)        - [199565] taking out synchronize for internalConnect
- * David McKnight  (IBM)         - [205986] attempt SSL before non-SSL for daemon connect
+ * David McKnight   (IBM)        - [205986] attempt SSL before non-SSL for daemon connect
+ * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -33,6 +34,7 @@ import javax.net.ssl.SSLHandshakeException;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.dstore.core.client.ClientConnection;
 import org.eclipse.dstore.core.client.ConnectionStatus;
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
@@ -178,7 +180,15 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		{
 			try
 			{
-				getPrimarySubSystem().connect();
+				ISubSystem ss = getPrimarySubSystem();
+				if (ss != null)
+				{
+					if (Display.getCurrent() == null) {
+						ss.connect(new NullProgressMonitor(), false);
+					} else {
+						ss.connect(false, null);
+					}
+				}
 			}
 			catch (Exception e)
 			{

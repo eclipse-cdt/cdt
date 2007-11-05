@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi 
+ * David McKnight   (IBM)        - [197480] eliminating UI dependencies
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -31,7 +32,6 @@ import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.swt.widgets.Display;
 
 public class DownloadListener implements IDomainListener
 {
@@ -40,7 +40,6 @@ public class DownloadListener implements IDomainListener
 	private IProgressMonitor _monitor;
 	private DataStore _dataStore;
 	private File _localFile;
-	private Display _display;
 
 	private boolean _networkDown = false;
 	private boolean _isDone = false;
@@ -55,7 +54,6 @@ public class DownloadListener implements IDomainListener
 		_monitor = monitor;
 		_status = status;
 		_totalLength = totalLength;
-		_display = Display.getCurrent();
 
 		if (_status == null)
 		{
@@ -242,7 +240,6 @@ public class DownloadListener implements IDomainListener
 	 */
 	public DataElement waitForUpdate(int wait) throws InterruptedException
 	{
-		Display display = _display;
 
 		if (wait > 0)
 		{
@@ -251,45 +248,7 @@ public class DownloadListener implements IDomainListener
 		{
 		}
 
-		
-		
-		if (display != null)
-		{
-			
-			// Current thread is UI thread
-			while (!_isDone && !_isCancelled && !_networkDown)
-			{
-				while (display.readAndDispatch()) {
-					//Process everything on event queue
-				}
-
-				if ((_monitor != null) && (_monitor.isCanceled()))
-				{
-					// cancel remote request		
-					cancelDownload();								
-					_isCancelled = true;
-					setDone(true);
-				}
-				else if (_networkDown)
-				{
-					_isCancelled = true;
-					setDone(true);
-					throw new InterruptedException();
-				}
-
-				if (getStatus().getAttribute(DE.A_NAME).equals("done")) //$NON-NLS-1$
-				{
-					setDone(true);
-				}
-				else
-				{
-				    Thread.sleep(100);
-					updateDownloadState();
-				}
-			}
-
-		}
-		else
+						
 		{
 			// Current thread is not UI thread
 			while (!_isDone && !_isCancelled && !_networkDown)

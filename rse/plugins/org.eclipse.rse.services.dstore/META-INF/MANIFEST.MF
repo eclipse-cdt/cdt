@@ -8,8 +8,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.rse.services;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.dstore.core;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.dstore.extra;bundle-version="[2.0.0,3.0.0)",
- org.eclipse.ui
+ org.eclipse.dstore.extra;bundle-version="[2.0.0,3.0.0)"
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.rse.dstore.universal.miners,
  org.eclipse.rse.internal.dstore.universal.miners.command;x-internal:=true,

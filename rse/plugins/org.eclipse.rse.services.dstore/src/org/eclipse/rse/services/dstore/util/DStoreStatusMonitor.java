@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
  * David McKnight   (IBM)        - [190010] When status is "cancelled" the wait should complete
+ * David McKnight   (IBM)        - [197480] eliminating UI dependencies
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -28,8 +29,6 @@ import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.extra.DomainEvent;
 import org.eclipse.dstore.extra.IDomainListener;
 import org.eclipse.dstore.extra.IDomainNotifier;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 
 /*
@@ -49,8 +48,6 @@ import org.eclipse.swt.widgets.Shell;
 public class DStoreStatusMonitor implements IDomainListener
 {
 
-	protected Shell _shell;
-
 	protected boolean _networkDown = false;
 	
 	protected List _workingStatuses;
@@ -59,30 +56,7 @@ public class DStoreStatusMonitor implements IDomainListener
 	
 	protected DataStore _dataStore;
 
-	protected class FindShell implements Runnable 
-	{
-		private Shell shell;
-		
-		/**
-		 * @see Runnable#run()
-		 */
-		public void run() 
-		{
-			Display display = Display.getCurrent();
-			if (display != null)
-			{
-			try {
-				Shell[] shells = Display.getCurrent().getShells();
-				for (int loop = 0; loop < shells.length && shell == null; loop++) {
-					if (shells[loop].isEnabled()) {
-						shell = shells[loop];
-					}
-				}
-			} catch (Exception e) {
-			}
-			}
-		}
-	}
+	
 
 	/**
 	 * Construct a StatusChangeListener
@@ -233,18 +207,7 @@ public class DStoreStatusMonitor implements IDomainListener
 		return false;
 	}
 	
-	public Shell getShell() 
-	{
-		// dy:  DomainNotifier (which calls this method) requires the shell not be disposed
-		//if (shell == null) {
-		if (_shell == null || _shell.isDisposed())
-		{
-			FindShell findShell = new FindShell();
-			Display.getDefault().syncExec(findShell);
-			_shell = findShell.shell;
-		}
-		return _shell;
-	}
+
 
 
 
@@ -285,8 +248,6 @@ public class DStoreStatusMonitor implements IDomainListener
         }
         
         setWorking(status);
-     
-		Display display = Display.getCurrent();
 
 				
 	  // Prevent infinite looping by introducing a threshold for wait 
@@ -298,54 +259,7 @@ public class DStoreStatusMonitor implements IDomainListener
          
 	  int nudges = 0; // nudges used for waking up server with slow connections
 	      // nudge up to 12 times before giving up
-	  
-		if (display != null) 
-		{
-			// Current thread is UI thread
-			while (_workingStatuses.contains(status)) 
-			{
-				
-				while (display.readAndDispatch()) {
-					//Process everything on event queue
-				}
-				/*
-				if ((monitor != null) && (monitor.isCanceled())) 
-				{
-				    setCancelled(status);
-					throw new InterruptedException();
-				}
-				*/
-				
-				boolean statusDone = determineStatusDone(status);
-				
-				if (statusDone)
-				{
-					setDone(status);
-				}
-				else
-				{
-					waitForUpdate();
-				    //Thread.sleep(100);
-
-				    if (WaitThreshold > 0) // update timer count if
-                        // threshold not reached
-                        --WaitThreshold; // decrement the timer count
-                   
-				  if (WaitThreshold == 0)
-				    {
-				        // no diagnostic factory but there is a timeout
-				        return status;  // returning the undone status object
-				    }
-                    else if (_networkDown)
-                    {
-                        dispose();
-    					throw new InterruptedException();
-                    }
-                }
-			}
-			
-		} 
-		else 
+	 
 		{
 			// Current thread is not UI thread
 			while (_workingStatuses.contains(status))

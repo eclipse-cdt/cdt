@@ -18,6 +18,10 @@
 package org.eclipse.dstore.extra;
 
 
+/**
+ * For DataStore domain notification
+ *
+ */
 public interface IDomainNotifier
 {
 
@@ -26,4 +30,7 @@ public interface IDomainNotifier
   public void fireDomainChanged(DomainEvent event);
   public boolean hasDomainListener(IDomainListener listener);
   public void removeDomainListener(IDomainListener listener);
+  
+	public void enable(boolean on);
+	public boolean isEnabled();
 }

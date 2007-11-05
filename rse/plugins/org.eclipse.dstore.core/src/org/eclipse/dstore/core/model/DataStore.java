@@ -46,6 +46,7 @@ import org.eclipse.dstore.core.java.IClassByteStreamHandler;
 import org.eclipse.dstore.core.java.IRemoteClassInstance;
 import org.eclipse.dstore.core.java.RemoteClassLoader;
 import org.eclipse.dstore.core.util.StringCompare;
+import org.eclipse.dstore.extra.IDomainNotifier;
 import org.eclipse.dstore.internal.core.model.DefaultByteConverter;
 import org.eclipse.dstore.internal.core.util.DataElementRemover;
 import org.eclipse.dstore.internal.core.util.ExternalLoader;
@@ -763,7 +764,7 @@ public final class DataStore
 	 *
 	 * @return the domain notifier
 	 */
-	public DomainNotifier getDomainNotifier()
+	public IDomainNotifier getDomainNotifier()
 	{
 		return _domainNotifier;
 	}

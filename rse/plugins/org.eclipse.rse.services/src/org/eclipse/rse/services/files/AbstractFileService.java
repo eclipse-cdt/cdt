@@ -34,7 +34,7 @@ public abstract class AbstractFileService implements IFileService
 {
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 	
-	public IHostFile[] getFileMulti(String remoteParents[], String names[], IProgressMonitor monitor) 
+	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor) 
 								throws SystemMessageException
 	{
 		List results = new ArrayList();
@@ -51,7 +51,7 @@ public abstract class AbstractFileService implements IFileService
 		return internalFetch(remoteParent, fileFilter, fileType, monitor);
 	}
 	
-	public IHostFile[] listMulti(String[] remoteParents,
+	public IHostFile[] listMultiple(String[] remoteParents,
 			String[] fileFilters, int fileTypes[], IProgressMonitor monitor)
 			throws SystemMessageException {
 
@@ -68,6 +68,23 @@ public abstract class AbstractFileService implements IFileService
 		return (IHostFile[])files.toArray(new IHostFile[files.size()]);
 	}
 
+	public IHostFile[] listMultiple(String[] remoteParents,
+			String[] fileFilters, int fileType, IProgressMonitor monitor)
+			throws SystemMessageException {
+
+		List files = new ArrayList();
+		for (int i = 0; i < remoteParents.length; i++)
+		{
+			IHostFile[] result = list(remoteParents[i], fileFilters[i], fileType, monitor);
+			for (int j = 0; j < result.length; j++)
+			{
+				files.add(result[j]);
+			}
+		}
+		
+		return (IHostFile[])files.toArray(new IHostFile[files.size()]);
+	}
+	
 	protected boolean isRightType(int fileType, IHostFile node)
 	{
 		switch (fileType)

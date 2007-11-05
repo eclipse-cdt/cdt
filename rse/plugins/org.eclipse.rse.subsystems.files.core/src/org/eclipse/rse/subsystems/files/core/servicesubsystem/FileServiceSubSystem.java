@@ -361,7 +361,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 			
 		RemoteFileContext context = getDefaultContext();
-		IHostFile[] nodes = getFileService().getFileMulti(parentPaths, names, monitor);
+		IHostFile[] nodes = getFileService().getFileMultiple(parentPaths, names, monitor);
 		return getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, nodes); 		
 	}
 
@@ -374,7 +374,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * @param fileTypes - indicates whether to query files, folders, both or some other type
 	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listMulti(IRemoteFile[] parents, String[] fileNameFilters, int[] fileTypes,  IProgressMonitor monitor) throws SystemMessageException
+	public IRemoteFile[] listMultiple(IRemoteFile[] parents, String[] fileNameFilters, int[] fileTypes,  IProgressMonitor monitor) throws SystemMessageException
 	{
 		String[] parentPaths = new String[parents.length];
 		for (int i = 0; i < parents.length; i++)
@@ -382,7 +382,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			parentPaths[i] = parents[i].getAbsolutePath();
 		}
 		
-		IHostFile[] results = getFileService().listMulti(parentPaths, fileNameFilters, fileTypes, monitor);
+		IHostFile[] results = getFileService().listMultiple(parentPaths, fileNameFilters, fileTypes, monitor);
 		RemoteFileContext context = getDefaultContext();
 		
 		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
@@ -415,6 +415,55 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return farr;
 	}
 
+
+	/**
+	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
+	 * by the given file name filter. It can be null for no subsetting.
+	 * @param parents The parent folders to list folders and files in
+	 * @param fileNameFilters The name patterns to subset the file list by, or null to return all files.
+	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param monitor the progress monitor
+	 */
+	public IRemoteFile[] listMultiple(IRemoteFile[] parents, String[] fileNameFilters, int fileType,  IProgressMonitor monitor) throws SystemMessageException
+	{
+		String[] parentPaths = new String[parents.length];
+		for (int i = 0; i < parents.length; i++)
+		{
+			parentPaths[i] = parents[i].getAbsolutePath();
+		}
+		
+		IHostFile[] results = getFileService().listMultiple(parentPaths, fileNameFilters, fileType, monitor);
+		RemoteFileContext context = getDefaultContext();
+		
+		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
+		
+		// caching
+		for (int i = 0; i < parents.length; i++)
+		{
+			IRemoteFile parent = parents[i];
+			String parentPath = parentPaths[i];
+			String filter = fileNameFilters[i];
+			
+			List underParent = new ArrayList();
+			// what files are under this one?
+			for (int j = 0; j < farr.length; j++)
+			{
+				IRemoteFile child = farr[j];
+				String childParentPath = child.getParentPath();
+				
+				if (parentPath.equals(childParentPath))
+				{
+					underParent.add(child);
+				}
+			}
+			if (underParent.size() > 0)
+			{
+				parent.setContents(RemoteChildrenContentsType.getInstance(), filter, underParent.toArray());
+			}			
+		}
+
+		return farr;
+	}
 
 	
 	/**

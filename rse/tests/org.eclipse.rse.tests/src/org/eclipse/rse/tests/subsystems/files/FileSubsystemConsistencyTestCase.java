@@ -356,14 +356,8 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			IRemoteFile[] results = null;
 			long t3 = System.currentTimeMillis();
 			try
-			{
-				int[] types = new int[remoteFiles.length];
-				for (int t = 0; t < remoteFiles.length; t++)
-				{
-					types[t] = IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS;
-				}
-				
-				results = ss.listMulti(remoteFiles, types, new NullProgressMonitor());
+			{				
+				results = ss.listMultiple(remoteFiles, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
 			}
 			catch (Exception e){
 				exception = e;

@@ -16,17 +16,14 @@
  * Martin Oberhuber (Wind River) - [189123] Move renameSubSystemProfile() from UI to Core
  * Martin Oberhuber (Wind River) - [190231] Remove UI-only code from SubSystemConfiguration
  * Martin Oberhuber (Wind River) - [174789] [performance] Don't contribute Property Pages to Wizard automatically
+ * David McKnight   (IBM)        - [197129] Removing obsolete  ISystemConnectionWizardPropertyPage and SystemSubSystemsPropertiesWizardPage
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -221,66 +218,7 @@ public class SubSystemConfigurationAdapter implements ISubSystemConfigurationAda
 		    return new SystemSubSystemPropertyPageCoreForm(msgLine, caller);
 		}
 		
-		/**
-		 * Gets the list of property pages applicable for a subsystem associated with this subsystem configuration
-		 * @return the list of subsystem property pages
-		 * 
-		 * @deprecated this method will likely be removed in the future, because the 
-		 *     underlying mechanism of finding the registered property pages for a
-		 *     SubSystemConfiguration does not scale since it activates unrelated
-		 *     plug-ins. Existing Platform functionality for getting the list of
-		 *     property pages registered against a SubSystem should be used, once
-		 *     the SubSystem class is loaded -- but not by referencing the 
-		 *     SubSystemConfiguration. See also Eclipse Bugzilla bug 197129.  
-		 */
-		protected List getSubSystemPropertyPages(ISubSystemConfiguration config)
-		{
-			List propertyPages= new ArrayList();
-			// Get reference to the plug-in registry
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-
-			// Get configured property page extenders
-			IConfigurationElement[] propertyPageExtensions =
-				registry.getConfigurationElementsFor("org.eclipse.ui", "propertyPages"); //$NON-NLS-1$  //$NON-NLS-2$
-				
-			for (int i = 0; i < propertyPageExtensions.length; i++)
-			{
-				IConfigurationElement configurationElement = propertyPageExtensions[i];
-				
-				String objectClass = configurationElement.getAttribute("objectClass"); //$NON-NLS-1$
-				// The objectClass attribute is a) deprecated and b) optional. If null, do not
-				// try to instantiate a class from it as it will lead to a NPE. It is very bad
-				// style to let throw the exception and catch it with an empty catch block. If
-				// the debugger is configured to intercept NPE's, we end up always here.
-				if (objectClass == null) continue;
-					
-				String name = configurationElement.getAttribute("name"); //$NON-NLS-1$
-				Class objCls = null;
-				try
-				{
-				    ClassLoader loader = getClass().getClassLoader();
-					objCls = Class.forName(objectClass, false, loader);
-				}
-				catch (Exception e)
-				{
-				}
-				
-				
-				if (objCls != null && ISubSystem.class.isAssignableFrom(objCls) && config.isFactoryFor(objCls))			
-				{
-					try
-					{
-						PropertyPage page = (PropertyPage) configurationElement.createExecutableExtension("class"); //$NON-NLS-1$
-						page.setTitle(name);
-						propertyPages.add(page);
-					}
-					catch (Exception e)
-					{
-					}
-				}
-			}
-			return propertyPages;
-		}
+	
 
 		// FIXME - UDAs no longer coupled with config in core
 //		// ---------------------------------

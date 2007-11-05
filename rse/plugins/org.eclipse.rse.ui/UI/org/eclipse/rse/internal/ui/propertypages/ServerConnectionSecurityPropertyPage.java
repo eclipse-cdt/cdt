@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David McKnight   (IBM)        - [197129] Removing obsolete  ISystemConnectionWizardPropertyPage and SystemSubSystemsPropertiesWizardPage
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -26,13 +27,12 @@ import org.eclipse.rse.internal.ui.widgets.ServerConnectionSecurityForm;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
-import org.eclipse.rse.ui.propertypages.ISystemConnectionWizardPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 
-public class ServerConnectionSecurityPropertyPage extends SystemBasePropertyPage implements ISystemConnectionWizardPropertyPage
+public class ServerConnectionSecurityPropertyPage extends SystemBasePropertyPage 
 {
 
 

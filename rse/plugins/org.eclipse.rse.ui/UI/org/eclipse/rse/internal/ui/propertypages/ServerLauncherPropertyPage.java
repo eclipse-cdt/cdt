@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * David McKnight   (IBM)        - [197129] Removing obsolete  ISystemConnectionWizardPropertyPage and SystemSubSystemsPropertiesWizardPage
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.propertypages;
@@ -25,7 +26,6 @@ import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.ui.ISystemVerifyListener;
 import org.eclipse.rse.ui.propertypages.ISystemConnectionWizardErrorUpdater;
-import org.eclipse.rse.ui.propertypages.ISystemConnectionWizardPropertyPage;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.rse.ui.subsystems.ISubSystemConfigurationAdapter;
 import org.eclipse.rse.ui.widgets.IServerLauncherForm;
@@ -37,7 +37,8 @@ import org.eclipse.swt.widgets.Control;
  * Property page for editing persistant environment variables for an 
  * RSE connection.
  */
-public class ServerLauncherPropertyPage extends SystemBasePropertyPage implements ISystemConnectionWizardPropertyPage, ISystemConnectionWizardErrorUpdater
+public class ServerLauncherPropertyPage extends SystemBasePropertyPage 
+//implements ISystemConnectionWizardPropertyPage, ISystemConnectionWizardErrorUpdater
 {
 
 	private IServerLauncherForm _form;

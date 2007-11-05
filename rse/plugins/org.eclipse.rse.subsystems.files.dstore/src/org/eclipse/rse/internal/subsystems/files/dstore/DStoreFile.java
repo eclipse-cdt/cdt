@@ -80,7 +80,7 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  		if (hostParent == null)
 		    	  		{
 		    	  			DataStore ds = _dstoreHostFile.getDataElement().getDataStore();
-		    	  			DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, "");
+		    	  			DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, ""); //$NON-NLS-1$
 		    	  			element.setAttribute(DE.A_VALUE, pathOnly);
 
 		    	  			hostParent = new DStoreHostFile(element);
@@ -101,7 +101,7 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  			{
 		    	  				parentName = pathOnly.substring(nameSep + 1);
 		    	  				parentPath = pathOnly.substring(0, nameSep);
-		    	  				if (parentPath.endsWith(":"))
+		    	  				if (parentPath.endsWith(":")) //$NON-NLS-1$
 		    	  				{
 		    	  					parentPath = parentPath + sep;
 		    	  				}
@@ -109,7 +109,7 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  			else
 		    	  			{
 		    	  				parentName = pathOnly.substring(nameSep + 1);
-		    	  				parentPath = "" + sep;
+		    	  				parentPath = "" + sep; //$NON-NLS-1$
 		    	  			}
 		    	  		
 		    	  			DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, parentName);
@@ -135,7 +135,7 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  			{
 		    	  				parentName = pathOnly.substring(nameSep + 1);
 		    	  				parentPath = pathOnly.substring(0, nameSep);
-		    	  				if (parentPath.endsWith(":"))
+		    	  				if (parentPath.endsWith(":")) //$NON-NLS-1$
 		    	  				{
 		    	  					parentPath = parentPath + sep;
 		    	  				}
@@ -143,7 +143,7 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		    	  			else
 		    	  			{
 		    	  				parentName = pathOnly.substring(nameSep + 1);
-		    	  				parentPath = "" + sep;
+		    	  				parentPath = "" + sep; //$NON-NLS-1$
 		    	  			}
 		    	  		
 		    	  			DataElement element = ds.createObject(null, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR, parentName);

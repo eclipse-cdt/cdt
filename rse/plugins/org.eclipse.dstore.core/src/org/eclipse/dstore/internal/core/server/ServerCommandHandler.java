@@ -78,7 +78,7 @@ public class ServerCommandHandler extends CommandHandler
 				// if we do timeout then it's time to shutdown the server
 				return;
 			}
-			System.out.println("server timed out!");
+			System.out.println("server timed out!"); //$NON-NLS-1$
 			_serverTimedOut = true;
 		}
 		

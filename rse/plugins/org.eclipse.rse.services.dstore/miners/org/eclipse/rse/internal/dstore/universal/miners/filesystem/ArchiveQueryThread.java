@@ -37,21 +37,14 @@ import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 
 public class ArchiveQueryThread extends QueryThread {
 
-	private DataElement _attributes;
-	private boolean _caseSensitive;
 	private boolean _foldersOnly;
-	private boolean _showHidden;
-	private boolean _isWindows;
+
 
 	public ArchiveQueryThread(DataElement subject, DataElement attributes,
 			boolean caseSensitive, boolean foldersOnly, boolean showHidden,
 			boolean isWindows, DataElement status) {
 		super(subject, status);
-		_attributes = attributes;
 		_foldersOnly = foldersOnly;
-		_caseSensitive = caseSensitive;
-		_showHidden = showHidden;
-		_isWindows = isWindows;
 	}
 
 	public void run() {

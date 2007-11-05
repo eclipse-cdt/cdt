@@ -170,7 +170,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	    if (_minerElement == null || _minerElement.getDataStore() != getDataStore())
 	    {
 	        _minerElement = getDataStore()
-				.findMinerInformation(UniversalProcessMiner.MINER_ID); //$NON-NLS-1$
+				.findMinerInformation(UniversalProcessMiner.MINER_ID); 
 	    }
 	    return _minerElement;
 	}

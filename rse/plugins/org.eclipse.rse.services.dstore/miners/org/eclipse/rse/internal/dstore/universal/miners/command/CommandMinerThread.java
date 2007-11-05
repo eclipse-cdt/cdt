@@ -1091,13 +1091,12 @@ public class CommandMinerThread extends MinerThread
 					try
 					{	    			    
 						String fileName = parsedMsg.file;  
-						DataElement object = null;
-						if (parsedMsg.type.equals("prompt"))
+						if (parsedMsg.type.equals("prompt")) //$NON-NLS-1$
 						{
-							int tildaIndex = fileName.indexOf("~");
+							int tildaIndex = fileName.indexOf("~"); //$NON-NLS-1$
 							if (tildaIndex == 0)
 							{
-								String userHome = System.getProperty("user.home");
+								String userHome = System.getProperty("user.home"); //$NON-NLS-1$
 								
 								fileName = userHome + fileName.substring(1);
 							}
@@ -1113,13 +1112,13 @@ public class CommandMinerThread extends MinerThread
 								createObject(_descriptors._stdout, line);
 							}
 						}
-						else if (parsedMsg.type.equals("file"))
+						else if (parsedMsg.type.equals("file")) //$NON-NLS-1$
 						{
-							object = createObject(parsedMsg.type, line, fileName, null);				    
+							createObject(parsedMsg.type, line, fileName, null);				    
 						}
 						else
 						{
-							object = createObject(parsedMsg.type, line, fileName, new Integer(parsedMsg.line));
+							createObject(parsedMsg.type, line, fileName, new Integer(parsedMsg.line));
 						}
 					}
 					catch (NumberFormatException e)

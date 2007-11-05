@@ -191,10 +191,10 @@ public class CommandMiner extends Miner
 		{
 			String invocation = ">"; //$NON-NLS-1$
 			DataElement encodingArg = getCommandArgument(theElement, 1);
-			if (encodingArg.getType().equals("shell.encoding"))
+			if (encodingArg.getType().equals("shell.encoding")) //$NON-NLS-1$
 			{
 				// fix for 191599
-				 System.setProperty("dstore.stdin.encoding",encodingArg.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
+				 System.setProperty("dstore.stdin.encoding",encodingArg.getValue()); //$NON-NLS-1$
 			}
 			launchCommand(subject, invocation, status);
 		}
@@ -204,7 +204,7 @@ public class CommandMiner extends Miner
 //			DataElement de = (DataElement) subject.dereference().get(1);
 			subject.dereference().get(1);
 			sendInputToCommand(input.getName(), getCommandStatus(subject));
-			status.setAttribute(DE.A_NAME, "done");
+			status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 		}
 		else if (name.equals("C_CANCEL")) //$NON-NLS-1$
 		{

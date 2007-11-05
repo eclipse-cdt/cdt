@@ -210,7 +210,7 @@ public class OutputHandler extends Handler {
 						// output
 						// the delimiters are therefore set to "\n\r"
 						StringTokenizer tokenizer = new StringTokenizer(
-								fullOutput, "\n\r");
+								fullOutput, "\n\r"); //$NON-NLS-1$
 						int numTokens = tokenizer.countTokens();
 						output = new String[numTokens];
 						int index = 0;
@@ -220,7 +220,7 @@ public class OutputHandler extends Handler {
 						}
 
 						String lastLine = output[index - 1];
-						if (!_endOfStream && (!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r")))
+						if (!_endOfStream && (!fullOutput.endsWith("\n") && !fullOutput.endsWith("\r"))) //$NON-NLS-1$ //$NON-NLS-2$
 						{
 							// our last line may be cut off		
 							byte[] lastBytes = new byte[MAX_OFFSET];
@@ -253,8 +253,8 @@ public class OutputHandler extends Handler {
 																	
 										// check for end of line
 										String suffix = new String(lastBytes, 0, lastIndex + 1, encoding);
-										int rBreak = suffix.indexOf("\r");
-										int nBreak = suffix.indexOf("\n");
+										int rBreak = suffix.indexOf("\r"); //$NON-NLS-1$
+										int nBreak = suffix.indexOf("\n"); //$NON-NLS-1$
 										if (nBreak != -1 || rBreak != -1) 
 										{
 											// we've hit the end of line;

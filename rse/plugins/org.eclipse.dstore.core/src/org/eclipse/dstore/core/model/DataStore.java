@@ -2662,7 +2662,7 @@ public final class DataStore
 	 * Finds all the deleted elements
 	 *
 	 * @param root where to search from 
-	 * @param type the descriptor representing the type of the objects to search for 
+	 * @param depth the depth to search
 	 * @return a list of elements
 	 */
 	public List findDeleted(DataElement root, int depth)
@@ -3206,9 +3206,9 @@ public final class DataStore
 	/**
 	 * Saves a class instance 
 	 * 
-	 * @param className the fully qualified name of the class
 	 * @param buffer the contents of the class
 	 * @param size the size of the buffer
+	 * @param classbyteStreamHandlerId the id for the byte stream handler
 	 */
 	public void saveClassInstance(byte[] buffer, int size, String classbyteStreamHandlerId)
 	{
@@ -3491,7 +3491,7 @@ public final class DataStore
 			// if the idle is 0 or not set then it is considered indefinite.
 			// The server is considered idle for the period of which no commands are
 			// received in server command handler
-			String serverIdleShutdownTimeout = System.getProperty("DSTORE_IDLE_SHUTDOWN_TIMEOUT");
+			String serverIdleShutdownTimeout = System.getProperty("DSTORE_IDLE_SHUTDOWN_TIMEOUT"); //$NON-NLS-1$
 			if (serverIdleShutdownTimeout != null)
 			{
 				_serverIdleShutdownTimeout = Integer.parseInt(serverIdleShutdownTimeout);
@@ -4266,18 +4266,18 @@ public final class DataStore
 			total++;
 			boolean isSpirit = root.isSpirit();
 			boolean isDeleted = root.isDeleted();
-			String prefix = "DataElement";
+			String prefix = "DataElement"; //$NON-NLS-1$
 			if (isSpirit)
-				prefix += "<spirit>";
+				prefix += "<spirit>"; //$NON-NLS-1$
 			if (isDeleted)
-				prefix += "<deleted>";
+				prefix += "<deleted>"; //$NON-NLS-1$
 			
-			String msg = indent + prefix + "["+ total + "]("+root.getType()+", "+root.getName()+")";
+			String msg = indent + prefix + "["+ total + "]("+root.getType()+", "+root.getName()+")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			System.out.println(msg);
 			for (int i = 0; i < root.getNestedSize(); i++)
 			{
-				DataElement currentElement = (DataElement) root.get(i);				
-				total = printTree(indent + " ", total, currentElement);
+				DataElement currentElement = root.get(i);				
+				total = printTree(indent + " ", total, currentElement); //$NON-NLS-1$
 			}
 		}
 		return total;

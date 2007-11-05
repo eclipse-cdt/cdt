@@ -312,8 +312,8 @@ public class DStoreStatusMonitor implements IDomainListener
 		if (status != null)
 		{
 			// token command to wake up update handler
-			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH");
-			DataElement subject = (DataElement)status.getParent().get(0);
+			DataElement cmdDescriptor = _dataStore.findCommandDescriptor("C_REFRESH"); //$NON-NLS-1$
+			DataElement subject = status.getParent().get(0);
 			if (cmdDescriptor != null)
 			{
 				_dataStore.command(cmdDescriptor, subject);

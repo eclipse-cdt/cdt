@@ -88,7 +88,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 			for (int i = 0; i < results.size(); i++)
 			{
 				DataElement fileNode = (DataElement)results.get(i);
-				if (fileNode != null && !fileNode.getType().equals("error"))
+				if (fileNode != null && !fileNode.getType().equals("error")) //$NON-NLS-1$
 				{
 					IRemoteFile parentRemoteFile = null;
 					try
@@ -140,7 +140,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 				}
 			}
 			}
-			return (IRemoteFile[])_convertedResults.toArray(new IRemoteFile[_convertedResults.size()]);
+			return _convertedResults.toArray(new IRemoteFile[_convertedResults.size()]);
 		}
 		else
 		{
@@ -170,7 +170,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 			
 			_status.getDataStore().getDomainNotifier().removeDomainListener(this);
 		}
-		else if (_status.getValue().equals("cancelled"))
+		else if (_status.getValue().equals("cancelled")) //$NON-NLS-1$
 		{
 			setStatus(IHostSearchConstants.CANCELLED);
 			_status.getDataStore().getDomainNotifier().removeDomainListener(this);

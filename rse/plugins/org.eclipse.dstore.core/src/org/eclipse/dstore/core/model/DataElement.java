@@ -461,7 +461,7 @@ public final class DataElement implements IDataElement
 	public String getAttribute(int attributeIndex)
 	{
 		if (_attributes == null)
-			return "";
+			return ""; //$NON-NLS-1$
 		return _attributes[attributeIndex];
 	}
 

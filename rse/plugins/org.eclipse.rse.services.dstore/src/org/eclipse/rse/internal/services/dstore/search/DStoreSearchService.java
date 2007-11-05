@@ -86,11 +86,11 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 			{
 				getStatusMonitor(ds).waitForUpdate(status, monitor);
 				String statusStr = status.getName();
-				if (statusStr.equals("done"))
+				if (statusStr.equals("done")) //$NON-NLS-1$
 				{
 					config.setStatus(IHostSearchConstants.FINISHED);
 				}
-				else if (statusStr.equals("cancelled"))
+				else if (statusStr.equals("cancelled")) //$NON-NLS-1$
 				{
 					config.setStatus(IHostSearchConstants.CANCELLED);
 				}

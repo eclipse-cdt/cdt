@@ -1071,7 +1071,14 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	{
 		DataElement[] subjects = getSubjectsFor(remoteParents, names);
 		
-		dsQueryCommandMulti(subjects, null, IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT, monitor);
+		// construct default array of commands
+		String[] queryStrings = new String[remoteParents.length];
+		for (int i = 0; i < queryStrings.length; i++)
+		{
+			queryStrings[i] = IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT;
+		}
+		
+		dsQueryCommandMulti(subjects, null, queryStrings, monitor);
 
 		return convertToHostFiles(subjects, "*");		 //$NON-NLS-1$
 	}
@@ -1561,17 +1568,41 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		case IFileServiceConstants.FILE_TYPE_FILES:
 			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_FILES;
 			break;
-			
+		
 		case IFileServiceConstants.FILE_TYPE_FOLDERS:
 			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS;
-			break;
-			
+		break;
+		
 		case IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS:
 		default:				
 			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_ALL;
 			break;
 		}
 		return queryString;
+	}
+	
+	private String[] getQueryStrings(int[] fileTypes)
+	{
+		String[] queryStrings = new String[fileTypes.length];
+		for (int i = 0; i < fileTypes.length; i++)
+		{
+			switch (fileTypes[i])
+			{
+			case IFileServiceConstants.FILE_TYPE_FILES:
+				queryStrings[i] = IUniversalDataStoreConstants.C_QUERY_VIEW_FILES;
+				break;
+			
+			case IFileServiceConstants.FILE_TYPE_FOLDERS:
+				queryStrings[i] = IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS;
+			break;
+			
+			case IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS:
+			default:				
+				queryStrings[i] = IUniversalDataStoreConstants.C_QUERY_VIEW_ALL;
+				break;
+			}
+		}
+		return queryStrings;
 	}
 
 	public IHostFile[] list(String remoteParent, String fileFilter, int fileType, IProgressMonitor monitor)
@@ -1582,12 +1613,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	
 	public IHostFile[] listMulti(String[] remoteParents,
-			String[] fileFilters, int fileType, IProgressMonitor monitor)
+			String[] fileFilters, int[] fileTypes, IProgressMonitor monitor)
 			throws SystemMessageException 
 	{
-		String queryString = getQueryString(fileType);
+		String[] queryStrings = getQueryStrings(fileTypes);
 
-		return fetchMulti(remoteParents, fileFilters, queryString, monitor);
+		return fetchMulti(remoteParents, fileFilters, queryStrings, monitor);
 	}
 	
 	protected String[] getPathsFor(String[] remoteParents, String[] remoteFiles)
@@ -1688,11 +1719,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	 * 
 	 * @param remoteParents the parents to query
 	 * @param fileFilters the filters for each parent to query
-	 * @param queryType the type of query (files, folders, both, etc)
+	 * @param queryTypes the type of queries (for each parent) - files, folders, both, etc
 	 * @param monitor the progress monitor
 	 * @return the results
 	 */
-	protected IHostFile[] fetchMulti(String[] remoteParents, String[] fileFilters, String queryType, IProgressMonitor monitor)
+	protected IHostFile[] fetchMulti(String[] remoteParents, String[] fileFilters, String[] queryTypes, IProgressMonitor monitor)
 	{
 		DataStore ds = getDataStore();
 		if (ds == null)
@@ -1720,7 +1751,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			argses[i] = args;
 		}
 			
-		List consolidatedResults = dsQueryCommandMulti(subjects, argses, queryType, monitor);		
+		List consolidatedResults = dsQueryCommandMulti(subjects, argses, queryTypes, monitor);		
 		List convertedResults = new ArrayList();
 		for (int r = 0; r < consolidatedResults.size(); r++)
 		{

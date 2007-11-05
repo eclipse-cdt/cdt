@@ -371,10 +371,10 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	 * by the given file name filter. It can be null for no subsetting.
 	 * @param parents The parent folders to list folders and files in
 	 * @param fileNameFilters The name patterns to subset the file list by, or null to return all files.
-	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param fileTypes - indicates whether to query files, folders, both or some other type
 	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listMulti(IRemoteFile[] parents, String[] fileNameFilters, int fileType,  IProgressMonitor monitor) throws SystemMessageException
+	public IRemoteFile[] listMulti(IRemoteFile[] parents, String[] fileNameFilters, int[] fileTypes,  IProgressMonitor monitor) throws SystemMessageException
 	{
 		String[] parentPaths = new String[parents.length];
 		for (int i = 0; i < parents.length; i++)
@@ -382,7 +382,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			parentPaths[i] = parents[i].getAbsolutePath();
 		}
 		
-		IHostFile[] results = getFileService().listMulti(parentPaths, fileNameFilters, fileType, monitor);
+		IHostFile[] results = getFileService().listMulti(parentPaths, fileNameFilters, fileTypes, monitor);
 		RemoteFileContext context = getDefaultContext();
 		
 		IRemoteFile[] farr = getHostFileToRemoteFileAdapter().convertToRemoteFiles(this, context, null, results);
@@ -418,15 +418,15 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 
 	
 	/**
-	 * Return a list of remote folders and files in the given folder. 
+	 * Return a list of remote folders and/or files in the given folder. 
 	 * <p>
-	 * The files part of the list is subsetted by the given file name filter. 
-	 * It can be null for no subsetting.
+	 * The files part of the list is filtered by the given file name filter. 
+	 * It can be null for no filtering. 
 	 * This version is called by RemoteFileSubSystemImpl's resolveFilterString(s).
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
 	 * @param context The holder of state information
-	 * @param fileType the type of file to query
+	 * @param fileType indicates whether to filter files, folders, both or something else
 	 * @param monitor the progress monitor
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, String fileNameFilter, IRemoteFileContext context, int fileType, IProgressMonitor monitor) throws SystemMessageException

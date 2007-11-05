@@ -182,14 +182,17 @@ public interface IFileService extends IService
 	 * system from which to retrieve the collective child list.
 	 * @param fileFilters - a set of strings that can be used to filter the children.  Only
 	 * those files matching the filter corresponding to it's remoteParent make it into the list.  The interface 
-	 * does not dictate where the filtering occurs.
-	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * does not dictate where the filtering occurs.  For each remoteParent, there must be a corresponding
+	 * fileFilter.
+	 * @param fileTypes - indicates whether to query files, folders, both or some other type.  For
+	 * each remoteParent, there must be a corresponding fileType.
+	 * 				For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return the collective list of host files that reside in each of the remoteParents with it's corresponding filter. 
 	 * @throws SystemMessageException if an error occurs. 
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */
-	public IHostFile[] listMulti(String[] remoteParents, String[] fileFilters, int fileType, IProgressMonitor monitor) throws SystemMessageException;
+	public IHostFile[] listMulti(String[] remoteParents, String[] fileFilters, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException;
   
 
 	/**

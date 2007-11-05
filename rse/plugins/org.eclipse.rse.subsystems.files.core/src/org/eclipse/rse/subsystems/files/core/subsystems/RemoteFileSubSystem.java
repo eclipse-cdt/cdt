@@ -867,10 +867,10 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	/**
 	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
 	 * @param parents The parent folders to list folders and files in
-	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param fileTypes - indicates whether to query files, folders, both or some other type
 	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listMulti(IRemoteFile[] parents, int fileType, IProgressMonitor monitor) throws SystemMessageException
+	public IRemoteFile[] listMulti(IRemoteFile[] parents, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException
 	{
 		String[] fileNameFilters = new String[parents.length];
 		for (int i = 0; i < parents.length; i++)
@@ -878,7 +878,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			fileNameFilters[i] = "*"; // default filter //$NON-NLS-1$
 		}
 		
-		return listMulti(parents, fileNameFilters, fileType, monitor);
+		return listMulti(parents, fileNameFilters, fileTypes, monitor);
 	}
 	
 	/**

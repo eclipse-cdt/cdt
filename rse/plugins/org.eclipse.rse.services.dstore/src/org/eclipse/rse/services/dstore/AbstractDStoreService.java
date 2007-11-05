@@ -90,12 +90,12 @@ public abstract class AbstractDStoreService implements IDStoreService
 	}
 
 	/**
-	 * query 
-	 * @param subject
-	 * @param args
-	 * @param command
+	 * query the the remote system
+	 * @param subject the subject of the query
+	 * @param args the arguments for the query
+	 * @param command the query command
 	 * @param monitor
-	 * @return
+	 * @return the array of results
 	 */
 	protected DataElement[] dsQueryCommand(DataElement subject, ArrayList args, String command, IProgressMonitor monitor)
 	{
@@ -146,20 +146,20 @@ public abstract class AbstractDStoreService implements IDStoreService
 		return new DataElement[0];
 	}
 	
-	protected List dsQueryCommandMulti(DataElement[] subjects, String command, IProgressMonitor monitor)
+	protected List dsQueryCommandMulti(DataElement[] subjects, String[] commands, IProgressMonitor monitor)
 	{
-		return dsQueryCommandMulti(subjects, null, command, monitor);
+		return dsQueryCommandMulti(subjects, null, commands, monitor);
 	}
 	
 	/**
 	 * Query multiple subjects in one shot
 	 * @param subjects the subjects to query
-	 * @param command the query command
-	 * @param args args for the command - may be null
+	 * @param commands the query commands
+	 * @param argses arguments for the command - may be null
 	 * @param monitor the progress monitor
 	 * @return a list of DataElement[]s containing the results of each query
 	 */
-	protected List dsQueryCommandMulti(DataElement[] subjects, ArrayList[] argses, String command, IProgressMonitor monitor)
+	protected List dsQueryCommandMulti(DataElement[] subjects, ArrayList[] argses, String[] commands, IProgressMonitor monitor)
 	{
 		List statuses = new ArrayList();
 		DataStore ds = getDataStore();	
@@ -170,7 +170,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 		{
 			DataElement subject = subjects[i];
 			
-			DataElement queryCmd = getCommandDescriptor(subject, command);
+			DataElement queryCmd = getCommandDescriptor(subject, commands[i]);
 			if (queryCmd != null && ds != null)
 			{
 				DataElement status = null;

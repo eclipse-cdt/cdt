@@ -109,60 +109,71 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	
 	
 	/**
-	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
-	 * @param parents The parent folders to list folders and files in
-	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * Return a list of all remote folders and/or files in the given folders.  This list is not filtered.
+	 * 
+	 * @param parents The parent folders to list folders and/or files in
+	 * @param fileTypes - indicates whether to query files, folders, both or some other type.  There 
+	 *              should be exactly one fileType specified per parent.
+	 * 				For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listMulti(IRemoteFile[] parents, int fileType, IProgressMonitor monitor) throws SystemMessageException;		
+	public IRemoteFile[] listMulti(IRemoteFile[] parents, int[] fileTypes, IProgressMonitor monitor) throws SystemMessageException;		
 	
 	/**
-	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
-	 * by the given file name filter. It can be null for no subsetting.
+	 * Return a list of remote folders and/or files in the given folder. Only file names are filtered
+	 * by the given file name filters. It can be null for no sub-setting.
+	 * 
 	 * @param parents The parent folders to list folders and files in
-	 * @param fileNameFilters The name patterns to subset the file list by, or null to return all files.
-	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param fileNameFilters The name patterns to subset the file list by, or null to return all files.  
+	 *             There should be exactly one fileNameFilter per parent.
+	 * @param fileTypes - indicates whether to query files, folders, both or some other type.  There 
+	 *              should be exactly one fileType specified per parent.
+	 * 				For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
 	 */
-	public IRemoteFile[] listMulti(IRemoteFile[] parents, String[] fileNameFilters, int fileType,  IProgressMonitor monitor) throws SystemMessageException;
+	public IRemoteFile[] listMulti(IRemoteFile[] parents, String[] fileNameFilters, int[] fileTypes,  IProgressMonitor monitor) throws SystemMessageException;
 
 
 	/**
-	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
-	 * @param parent The parent folder to list folders and files in
+	 * Return a list of all remote folders and/or files in the given folder. The list is not filtered.
+	 * 
+	 * @param parent The parent folder to list folders and/or files in
 	 * @param monitor the progress monitor
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
-	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
+	 * Return a list of all remote folders and/or files in the given folder. The list is not filtered.
+	 * 
 	 * @param parent The parent folder to list folders and files in
-	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param fileType - indicates whether to query files, folders, both or some other type.  
+	 * 					For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, int fileType, IProgressMonitor monitor) throws SystemMessageException;		
 	
 	/**
-	 * Return a list of remote folders and files in the given folder. Only file names are subsettable
-	 * by the given file name filter. It can be null for no subsetting.
+	 * Return a list of remote folders and/or files in the given folder. Only file names are filtered
+	 * by the given file name filter. It can be null for no filtering.
+	 * 
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
-	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * @param fileType - indicates whether to query files, folders, both or some other type.
+	 * 					For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, String fileNameFilter, int fileType,  IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
-	 * Return a list of remote folders and files in the given folder. 
-	 * <p>
-	 * The files part of the list is subsetted by the given file name filter. 
-	 * It can be null for no subsetting.
-	 * This version is called by RemoteFileSubSystemImpl's resolveFilterString(s).
+	 * Return a list of remote folders and/or files in the given folder.  The files part of the list is filtered 
+	 * by the given file name filter.  It can be null for no filtering.
+	 * 
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
 	 * @param context The holder of state information
 	 * - indicates whether to query files, folders, both or some other type
 	 * @param fileType - indicates whether to query files, folders, both or some other type
+	 * 				For the default list of available file types see <code>IFileServiceContants</code>
 	 * @param monitor the progress monitor
 
 	 */

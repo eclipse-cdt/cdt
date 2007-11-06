@@ -190,7 +190,7 @@ public class UPCParserAction extends C99ParserAction {
 				IASTExpression expr = (IASTExpression)node;
 				stat.setExpression(expr);
 				expr.setParent(stat);
-				expr.setPropertyInParent(IASTExpressionStatement.EXPFRESSION);
+				expr.setPropertyInParent(IASTExpressionStatement.EXPRESSION);
 				
 				forStat.setInitializerStatement(stat);
 				stat.setParent(forStat);

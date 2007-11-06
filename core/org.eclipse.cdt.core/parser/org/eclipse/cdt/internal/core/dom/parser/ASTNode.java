@@ -82,9 +82,16 @@ public abstract class ASTNode implements IASTNode {
     public IASTNodeLocation[] getNodeLocations() {
         if (locations != null)
             return locations;
-        if (length == 0)
-            return EMPTY_LOCATION_ARRAY;
-        locations = getTranslationUnit().getLocationInfo(offset, length);
+        if (length == 0) {
+        	locations= EMPTY_LOCATION_ARRAY;
+        }
+		final IASTTranslationUnit tu= getTranslationUnit();
+		if (tu != null) {
+			org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver l= (org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver) tu.getAdapter(org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver.class);
+			if (l != null) {
+				locations= l.getLocations(offset, length);
+			}
+		}
         return locations;
     }
 

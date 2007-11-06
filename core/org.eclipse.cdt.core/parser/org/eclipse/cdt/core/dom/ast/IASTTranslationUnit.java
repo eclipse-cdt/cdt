@@ -120,20 +120,9 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	 * @param offset sequence number as stored in the ast nodes.
 	 * @param length
 	 * @return and array of locations.
+	 * @deprecated the offsets needed for this method are not accessible via public API.
 	 */
 	public IASTNodeLocation[] getLocationInfo(int offset, int length);
-
-	/**
-	 * Returns the smallest file location, that encloses the given global range. In case the range
-	 * spans over multiple files, the files are mapped to include statements until all of them are
-	 * found in the same file. So the resulting location contains the include directives that actually 
-	 * cause the range to be part of the AST.
-	 * @param offset sequence number as stored in the ASTNodes.
-	 * @param length 
-	 * @return a file location
-	 * @since 5.0
-	 */
-	public IASTFileLocation getMappedFileLocation(int offset, int length);
  
 	/**
 	 * Select the node in the treet that best fits the offset/length/file path. 
@@ -202,7 +191,6 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
      * 
      * @param nodeLocations <code>IASTNodeLocation</code>s to flatten
      * @return null if not possible, otherwise, a file location representing where the macros are. 
-     * @deprecated use {@link #getMappedFileLocation(int, int)}
      */
     public IASTFileLocation flattenLocationsToFile( IASTNodeLocation [] nodeLocations );
     

@@ -414,6 +414,11 @@ public class LocationMap implements ILocationResolver {
 		return -1;
 	}
 
+	// mstodo implement
+	public IASTFileLocation flattenLocations(IASTNodeLocation[] locations) {
+		throw new UnsupportedOperationException();
+	}
+
 
 	public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
     	ArrayList result= new ArrayList();
@@ -496,10 +501,6 @@ public class LocationMap implements ILocationResolver {
 	public char[] getUnpreprocessedSignature(IASTNodeLocation[] locations) {
 		throw new UnsupportedOperationException();
 	}	
-	// mstodo- scanner removal
-	public IASTFileLocation flattenLocations(IASTNodeLocation[] locations) {
-		throw new UnsupportedOperationException();
-	}
 	// mstodo- scanner removal
 	public IASTName[] getMacroExpansions() {
 		throw new UnsupportedOperationException();

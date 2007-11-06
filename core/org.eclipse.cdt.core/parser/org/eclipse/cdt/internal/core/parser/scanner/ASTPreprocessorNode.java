@@ -68,9 +68,6 @@ abstract class ASTPreprocessorNode extends ASTNode {
 	}
 
 	public IASTNodeLocation[] getNodeLocations() {
-		if (getLength() == 0) {
-			return getTranslationUnit().getLocationInfo(getOffset(), 0);
-		}
 		return super.getNodeLocations();
 	}
 

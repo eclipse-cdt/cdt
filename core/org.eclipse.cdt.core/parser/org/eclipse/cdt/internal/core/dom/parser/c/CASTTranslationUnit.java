@@ -558,14 +558,6 @@ public class CASTTranslationUnit extends CASTNode implements
         return true;
     }
 
-    public IASTFileLocation getMappedFileLocation(int offset, int length) {
-		if (resolver instanceof org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) {
-			org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver r2= (org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) resolver;
-			return r2.getMappedFileLocation(offset, length);
-		}
-		return flattenLocationsToFile(getLocationInfo(offset, length));
-	}
-
 	public IASTFileLocation flattenLocationsToFile(IASTNodeLocation[] nodeLocations) {
         if( resolver == null )
             return null;

@@ -23,6 +23,11 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  * @since 5.0
  */
 class MacroDefinitionParser {
+	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
+
+	/**
+	 * Exception for reporting problems while parsing a macro definition.
+	 */
 	static class InvalidMacroDefinitionException extends Exception {
 		public char[] fName;
 		public int fStartOffset;
@@ -34,7 +39,25 @@ class MacroDefinitionParser {
 		}
 	}
 
-	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
+	/**
+	 * Token used for macro parameters found in the replacement list.
+	 */
+	static class TokenParameterReference extends TokenWithImage {
+		private final int fIndex;
+	
+		public TokenParameterReference(int type, int idx, Object source, int offset, int endOffset, char[] name) {
+			super(type, source, offset, endOffset, name);
+			fIndex= idx;
+		}
+	
+		public int getIndex() {
+			return fIndex;
+		}
+		
+		public String toString() {
+			return "[" + fIndex + "]";  //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
 
 	private int fHasVarArgs;
 	private int fExpansionOffset;
@@ -208,7 +231,7 @@ class MacroDefinitionParser {
 					final char[] image = candidate.getCharImage();
 					int idx= CharArrayUtils.indexOf(image, paramList);
 					if (idx >= 0) {
-						candidate= new PlaceHolderToken(CPreprocessor.tMACRO_PARAMETER, idx, lexer.getSource(), candidate.getOffset(), candidate.getEndOffset(), paramList[idx]);
+						candidate= new TokenParameterReference(CPreprocessor.tMACRO_PARAMETER, idx, lexer.getSource(), candidate.getOffset(), candidate.getEndOffset(), paramList[idx]);
 						needParam= false;
 					}
 					else {
@@ -225,6 +248,7 @@ class MacroDefinitionParser {
 				break;
 			case IToken.tPOUND:
 				needParam= paramList != null;
+				needAnotherToken= null;
 				break;
 			case IToken.tPOUNDPOUND:
 				if (needParam || isFirst) {

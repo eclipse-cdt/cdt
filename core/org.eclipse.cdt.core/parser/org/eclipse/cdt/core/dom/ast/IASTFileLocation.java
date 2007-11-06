@@ -24,6 +24,16 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	 */
 	public String getFileName();
     
+	/**
+	 * Returns the offset within the file where this location starts.
+	 */
+	public int getNodeOffset();
+
+	/**
+	 * Returns the length of this location in terms of characters.
+	 */
+	public int getNodeLength();
+
     /**
      * Get the starting line number. Locations obtained via the index do not have line numbers
      * and return <code>0</code>.

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
+import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.TokenParameterReference;
 
 /**
  * Utility class to perform macro expansion.
@@ -220,10 +221,10 @@ public class MacroExpander {
 			final Object s2= t.fSource;
 			if (s1 == s2 && s1 != null) {
 				if (l.getEndOffset() == t.getOffset()) {
-					target.append(new SimpleToken(CPreprocessor.tNOSPACE, null, 0, 0));
+					target.append(new Token(CPreprocessor.tNOSPACE, null, 0, 0));
 				}
 				else {
-					target.append(new SimpleToken(CPreprocessor.tSPACE, null, 0, 0));				
+					target.append(new Token(CPreprocessor.tSPACE, null, 0, 0));				
 				}
 			}
 		}
@@ -350,7 +351,7 @@ public class MacroExpander {
 
 			switch(t.getType()) {
 			case CPreprocessor.tMACRO_PARAMETER:
-				int idx= ((PlaceHolderToken) t).getIndex();
+				int idx= ((TokenParameterReference) t).getIndex();
 				if (idx < args.length) { // be defensive
 					addSpacemarker(l, t, result); // start argument replacement
 					TokenList arg= clone(pasteNext ? args[idx] : expandedArgs[idx]);
@@ -373,7 +374,7 @@ public class MacroExpander {
 				StringBuffer buf= new StringBuffer();
 				buf.append('"');
 				if (n != null && n.getType() == CPreprocessor.tMACRO_PARAMETER) {
-					idx= ((PlaceHolderToken) n).getIndex();
+					idx= ((TokenParameterReference) n).getIndex();
 					if (idx < args.length) { // be defensive
 						stringify(args[idx], buf);
 					}
@@ -386,7 +387,7 @@ public class MacroExpander {
 				final char[] image= new char[length];
 				buf.getChars(0, length, image, 0);
 				
-				Token generated= new ImageToken(IToken.tSTRING, null, 0, 0, image);
+				Token generated= new TokenWithImage(IToken.tSTRING, null, 0, 0, image);
 				if (pasteNext) {				   // start token paste, same as start stringify
 					pasteArg1= generated;	
 				}
@@ -402,7 +403,7 @@ public class MacroExpander {
 					TokenList rest= null;
 					if (n != null) {
 						if (n.getType() == CPreprocessor.tMACRO_PARAMETER) {
-							idx= ((PlaceHolderToken) n).getIndex();
+							idx= ((TokenParameterReference) n).getIndex();
 							if (idx < args.length) { // be defensive
 								TokenList arg= clone(args[idx]);
 								pasteArg2= arg.first();
@@ -417,7 +418,7 @@ public class MacroExpander {
 										pasteArg1= pasteArg2= null;
 									}
 								}
-								if (pasteArg2 != null) {
+								if (pasteArg2 != null && arg.first() != arg.last()) {
 									rest= arg;
 									rest.removeFirst();
 								}

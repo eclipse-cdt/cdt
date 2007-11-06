@@ -96,7 +96,7 @@ final public class Lexer {
 		fOptions= options;
 		fLog= log;
 		fSource= source;
-		fToken= new SimpleToken(tBEFORE_INPUT, source, start, start);
+		fToken= new Token(tBEFORE_INPUT, source, start, start);
 		nextCharPhase3();
 	}
 	
@@ -601,20 +601,25 @@ final public class Lexer {
     }
 
 	private Token newToken(int kind, int offset) {
-    	return new SimpleToken(kind, fSource, offset, fOffset);
+    	return new Token(kind, fSource, offset, fOffset);
     }
 
 	private Token newDigraphToken(int kind, int offset) {
-    	return new DigraphToken(kind, fSource, offset, fOffset);
+    	return new TokenForDigraph(kind, fSource, offset, fOffset);
     }
 
-    private Token newToken(int kind, int offset, int imageLength) {
+    private Token newToken(final int kind, final int offset, final int imageLength) {
     	final int endOffset= fOffset;
-    	int sourceLen= endOffset-offset;
+    	final int sourceLen= endOffset-offset;
+    	char[] image;
     	if (sourceLen != imageLength) {
-    		return new ImageToken(kind, fSource, offset, endOffset, getCharImage(offset, endOffset, imageLength));
+    		image= getCharImage(offset, endOffset, imageLength);
     	}
-    	return new SourceImageToken(kind, fSource, offset, endOffset, fInput);
+    	else {
+			image= new char[imageLength];
+			System.arraycopy(fInput, offset, image, 0, imageLength);
+    	}
+    	return new TokenWithImage(kind, fSource, offset, endOffset, image);
     }
 
     private void handleProblem(int problemID, char[] arg, int offset) {

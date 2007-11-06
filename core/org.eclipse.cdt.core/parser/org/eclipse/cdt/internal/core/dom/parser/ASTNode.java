@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 /**
  * @author jcamelon
@@ -88,8 +89,19 @@ public abstract class ASTNode implements IASTNode {
     }
 
     public String getRawSignature() {
-        return getTranslationUnit().getUnpreprocessedSignature(
-                getNodeLocations());
+    	final IASTFileLocation floc= getFileLocation();
+        final IASTTranslationUnit ast = getTranslationUnit();
+        if (floc != null && ast != null) {
+        	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
+        	if (lr != null) {
+        		return new String(lr.getUnpreprocessedSignature(getFileLocation()));
+        	}
+        	else {
+        		// mstodo- support for old location map
+        		return ast.getUnpreprocessedSignature(getNodeLocations());
+        	}
+        }
+        return ""; //$NON-NLS-1$
     }
 
     public String getContainingFilename() {
@@ -100,8 +112,16 @@ public abstract class ASTNode implements IASTNode {
         if( fileLocation != null )
             return fileLocation;
         IASTTranslationUnit ast = getTranslationUnit();
-        if (ast != null)
-        	fileLocation = ast.flattenLocationsToFile( getNodeLocations() );
+        if (ast != null) {
+        	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
+        	if (lr != null) {
+        		fileLocation= lr.getMappedFileLocation(offset, length);
+        	}
+        	else {
+        		// support for old location map
+        		fileLocation= ast.flattenLocationsToFile(getNodeLocations());
+        	}
+        }
         return fileLocation;
     }
     

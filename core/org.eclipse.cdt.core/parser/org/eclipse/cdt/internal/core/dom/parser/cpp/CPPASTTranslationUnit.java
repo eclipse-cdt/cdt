@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -382,6 +382,24 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     
 
     public IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
+		if (resolver instanceof org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) {
+			org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver r2= (org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) resolver;
+	    	IASTNode result= null;
+	    	int start= r2.getSequenceNumberForFileOffset(path, realOffset);
+	    	if (start >= 0) {
+	    		int length= realLength < 1 ? 0 : 
+	    			r2.getSequenceNumberForFileOffset(path, realOffset+realLength-1) + 1 - start;
+	    		result= r2.findSurroundingPreprocessorNode(start, length);
+	    		if (result == null) {
+	    			CPPFindNodeForOffsetAction nodeFinder = new CPPFindNodeForOffsetAction(start, length);
+	    			accept(nodeFinder);
+	    			result = nodeFinder.getNode();
+	    		}
+	    	}    	
+	        return result;
+		}
+
+		// mstodo- support for old location resolver
     	IASTNode node = null;
 		ASTPreprocessorSelectionResult result = null;
 		int globalOffset = 0;
@@ -491,6 +509,14 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return true;
     }
     
+    public IASTFileLocation getMappedFileLocation(int offset, int length) {
+		if (resolver instanceof org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) {
+			org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver r2= (org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) resolver;
+			return r2.getMappedFileLocation(offset, length);
+		}
+		return flattenLocationsToFile(getLocationInfo(offset, length));
+	}
+
     public IASTFileLocation flattenLocationsToFile(IASTNodeLocation[] nodeLocations) {
         if( resolver == null )
             return null;
@@ -542,11 +568,22 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     }
 
 	public IASTComment[] getComments() {
+		if (resolver instanceof org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) {
+			org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver r2= (org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) resolver;
+			return r2.getComments();
+		}
+		// support for old location resolver
 		return comments;
 	}
 
 	public void setComments(IASTComment[] comments) {
 		this.comments = comments;
 	}
-    
+
+	public Object getAdapter(Class adapter) {
+		if (adapter.isAssignableFrom(resolver.getClass())) {
+			return resolver;
+		}
+		return null;
+	}
 }

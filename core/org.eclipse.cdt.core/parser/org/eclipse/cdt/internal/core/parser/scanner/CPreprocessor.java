@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.InvalidMacroDefinitionException;
@@ -50,14 +51,6 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ScannerUtility;
  * C-Preprocessor providing tokens for the parsers. The class should not be used directly, rather than that 
  * you should be using the {@link IScanner} interface.
  * @since 5.0
- */
-/**
- * @since 5.0
- *
- */
-/**
- * @since 5.0
- *
  */
 public class CPreprocessor implements ILexerLog, IScanner {
 	public static final String PROP_VALUE = "CPreprocessor"; //$NON-NLS-1$
@@ -118,7 +111,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
             StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
             buffer.append(getCurrentFilename());
             buffer.append('\"');
-            return new ImageToken(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
+            return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
         }
     };
     final private DynamicStyleMacro __DATE__= new DynamicStyleMacro("__DATE__".toCharArray()) { //$NON-NLS-1$
@@ -137,7 +130,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
             buffer.append(" "); //$NON-NLS-1$
             buffer.append(cal.get(Calendar.YEAR));
             buffer.append("\""); //$NON-NLS-1$
-            return new ImageToken(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
+            return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
         }
     };
 
@@ -157,14 +150,14 @@ public class CPreprocessor implements ILexerLog, IScanner {
             buffer.append(":"); //$NON-NLS-1$
             append(buffer, cal.get(Calendar.SECOND));
             buffer.append("\""); //$NON-NLS-1$
-            return new ImageToken(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
+            return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
         }
     };
 
     final private DynamicStyleMacro __LINE__ = new DynamicStyleMacro("__LINE__".toCharArray()) { //$NON-NLS-1$
         public Token execute() {
             int lineNumber= fLocationMap.getCurrentLineNumber(fCurrentContext.currentLexerToken().getOffset());
-            return new ImageToken(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
+            return new TokenWithImage(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
         }
     };
 
@@ -240,6 +233,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     }
     
 	public void setContentAssistMode(int offset) {
+		fContentAssistLimit= offset;
 		fRootLexer.setContentAssistMode(offset);
 	}
 
@@ -441,8 +435,17 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		if (fContentAssistLimit < 0) {
     			throw new EndOfFileException();
     		}
-			t1= new SimpleToken(IToken.tEOC, null, fContentAssistLimit, fContentAssistLimit);
+    		int useType= IToken.tCOMPLETION; 
+    		if (fLastToken != null) {
+    			final int lt= fLastToken.getType();
+    			if (lt == IToken.tCOMPLETION || lt == IToken.tEOC) {
+    				useType= IToken.tEOC;
+    			}
+    		}
+    		int sequenceNumber= fLocationMap.getSequenceNumberForOffset(fContentAssistLimit);
+    		t1= new Token(useType, null, sequenceNumber, sequenceNumber);
     		break;
+    		
     	case IToken.tSTRING:
     	case IToken.tLSTRING:
     		boolean isWide= tt1 == IToken.tLSTRING;
@@ -480,7 +483,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     			image[++off]= '"';
     			buf.getChars(0, buf.length(), image, ++off);
     			image[image.length-1]= '"';
-    			t1= new ImageToken((isWide ? IToken.tLSTRING : IToken.tSTRING), null, t1.getOffset(), endOffset, image);
+    			t1= new TokenWithImage((isWide ? IToken.tLSTRING : IToken.tSTRING), null, t1.getOffset(), endOffset, image);
     		}
     	}
 
@@ -653,7 +656,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
                 if (isHex && !hasExponent) {
                     continue;
                 }
-                if (isFloat && !isHex && !hasExponent && pos+1 >= image.length) {
+                if (isFloat && !isHex && !hasExponent && pos+1 <= image.length) {
                 	switch (image[pos+1]) {
                 	case '+': case '-':
                 	case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
@@ -841,14 +844,13 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	// we have an identifier
     	final char[] name = ident.getCharImage();
     	final int type = fPPKeywords.get(name);
-    	int endOffset;
+    	int condEndOffset;
     	switch (type) {
     	case IPreprocessorDirective.ppImport:
     	case IPreprocessorDirective.ppInclude:
     		if (fExpandingMacro) {
-        		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    			endOffset= lexer.currentToken().getEndOffset();
-        		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, name, startOffset, endOffset);
+    			condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+        		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, name, startOffset, condEndOffset);
     		}
     		else {
     			executeInclude(lexer, startOffset, false, true);
@@ -879,35 +881,33 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		break;
     	case IPreprocessorDirective.ppElse: 
     		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    		endOffset= lexer.currentToken().getEndOffset();
     		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_ELSE)) {
-    			fLocationMap.encounterPoundElse(startOffset, endOffset, false);
+    			fLocationMap.encounterPoundElse(startOffset, ident.getEndOffset(), false);
     			skipOverConditionalCode(lexer, false);
     		} 
     		else {
-    			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, endOffset);
+    			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, ident.getEndOffset());
     		}
     		break;
     	case IPreprocessorDirective.ppElif: 
     		int condOffset= lexer.nextToken().getOffset();
-    		int condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    		endOffset= lexer.currentToken().getEndOffset();
+    		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		int endOffset= lexer.currentToken().getEndOffset();
     		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_ELIF)) {
     			fLocationMap.encounterPoundElif(startOffset, condOffset, condEndOffset, endOffset, false);
     			skipOverConditionalCode(lexer, false);
     		} 
     		else {
-    			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, endOffset);
+    			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, condEndOffset);
     		}
     		break;
     	case IPreprocessorDirective.ppEndif:
-    		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-    		endOffset= lexer.currentToken().getEndOffset();
+    		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_END)) {
-    			fLocationMap.encounterPoundEndIf(startOffset, condEndOffset);
+    			fLocationMap.encounterPoundEndIf(startOffset, ident.getEndOffset());
     		} 
     		else {
-    			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, endOffset);
+    			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, startOffset, ident.getEndOffset());
     		}
     		break;
     	case IPreprocessorDirective.ppWarning: 
@@ -932,9 +932,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     		break;
     	default:
-    		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
+    		condEndOffset= lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 			endOffset= lexer.currentToken().getEndOffset();
-    		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, name, startOffset, endOffset);
+    		handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE, name, startOffset, condEndOffset);
     		break;
     	}
     }
@@ -962,8 +962,13 @@ public class CPreprocessor implements ILexerLog, IScanner {
 			
 		case Lexer.tQUOTE_HEADER_NAME:
 			image= header.getCharImage();
-			headerName= new char[image.length-2];
-			System.arraycopy(image, 1, headerName, 0, headerName.length);
+			if (image.length <= 2) {
+				headerName= CharArrayUtils.EMPTY;
+			}
+			else {
+				headerName= new char[image.length-2];
+				System.arraycopy(image, 1, headerName, 0, headerName.length);
+			}
 			lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
 			endOffset= lexer.currentToken().getEndOffset();
 			break;
@@ -1011,7 +1016,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 		if (headerName == null || headerName.length==0) {
 	    	if (active) {
 	            handleProblem(IProblem.PREPROCESSOR_INVALID_DIRECTIVE,
-	            		lexer.getInputChars(poundOffset, endOffset), poundOffset, endOffset);
+	            		lexer.getInputChars(poundOffset, endOffset), poundOffset, nameEndOffset);
 	    	}
 			return;
 		}
@@ -1032,7 +1037,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 				}
 			}
 			else {
-				handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, headerName, poundOffset, endOffset);
+				handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, headerName, poundOffset, nameEndOffset);
 			}
 		}
 		else {
@@ -1240,16 +1245,15 @@ public class CPreprocessor implements ILexerLog, IScanner {
         		break;
         	case IPreprocessorDirective.ppElse: 
         		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-        		endOffset= lexer.currentToken().getEndOffset();
         		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_ELSE)) {
         			boolean isActive= nesting == 0 && takeElseBranch;
-        			fLocationMap.encounterPoundElse(pound.getOffset(), endOffset, isActive);
+        			fLocationMap.encounterPoundElse(pound.getOffset(), ident.getEndOffset(), isActive);
         			if (isActive) {
         				return;
         			}
         		} 
         		else {
-        			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, pound.getOffset(), endOffset);
+        			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, pound.getOffset(), ident.getEndOffset());
         		}
         		break;
         	case IPreprocessorDirective.ppElif: 
@@ -1286,16 +1290,15 @@ public class CPreprocessor implements ILexerLog, IScanner {
         		break;
         	case IPreprocessorDirective.ppEndif:
         		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
-        		endOffset= lexer.currentToken().getEndOffset();
         		if (fCurrentContext.changeBranch(ScannerContext.BRANCH_END)) {
-        			fLocationMap.encounterPoundEndIf(pound.getOffset(), endOffset);
+        			fLocationMap.encounterPoundEndIf(pound.getOffset(), ident.getEndOffset());
             		if (nesting == 0) {
             			return;
             		}
             		--nesting;
         		} 
         		else {
-        			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, pound.getOffset(), endOffset);
+        			handleProblem(IProblem.PREPROCESSOR_UNBALANCE_CONDITION, name, pound.getOffset(), ident.getEndOffset());
         		}
         		break;
         	default:

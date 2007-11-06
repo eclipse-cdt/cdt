@@ -12,7 +12,10 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
@@ -60,33 +63,66 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
     IASTProblem[] getScannerProblems();
 
     /**
+     * Returns the comments encountered.
+     */
+	IASTComment[] getComments();
+
+	/**
      * @see IASTTranslationUnit#getFilePath()
      */
-    public String getTranslationUnitPath();
+    String getTranslationUnitPath();
     
     /**
      * @see IASTTranslationUnit#getContainingFilename()
      * mstodo- scanner removal should be renamed
      */
-	public String getContainingFilename(int offset);
+	String getContainingFilename(int sequenceNumber);
 	
     /**
      * @see IASTTranslationUnit#getDependencyTree()
      */
-    public IDependencyTree getDependencyTree();
+    IDependencyTree getDependencyTree();
 
     /**
      * Returns explicit and implicit references for a macro.
      */
-    public IASTName[] getReferences(IMacroBinding binding);
+    IASTName[] getReferences(IMacroBinding binding);
 
     /**
      * Returns the definition for a macro.
      */
-    public IASTName[] getDeclarations(IMacroBinding binding);
+    IASTName[] getDeclarations(IMacroBinding binding);
+
+	/**
+	 * Returns the smallest file location, that encloses the given global range. In case the range
+	 * spans over multiple files, the files are mapped to include statements until all of them are
+	 * found in the same file. So the resulting location contains the include directives that actually 
+	 * cause the range to be part of the AST.
+	 * @param offset sequence number as stored in the ASTNodes.
+	 * @param length 
+	 */
+	IASTFileLocation getMappedFileLocation(int offset, int length);
 
     /**
-     * Returns the comments encountered.
+     * @see IASTTranslationUnit#getLocationInfo(int, int).
      */
-	IASTComment[] getComments();
+	IASTNodeLocation[] getLocations(int sequenceNumber, int length);
+
+	/**
+	 * Returns the sequence-number for the given file-path and offset, or <code>-1</code> if this file
+	 * is not part of the translation-unit.
+	 * @param filePath a file path or <code>null</code> to specify the root of the translation unit.
+	 * @param fileOffset an offset into the source of the file.
+	 */
+	int getSequenceNumberForFileOffset(String filePath, int fileOffset);
+
+	/**
+	 * @see IASTTranslationUnit#getUnpreprocessedSignature(IASTFileLocation).
+	 */
+	char[] getUnpreprocessedSignature(IASTFileLocation loc);
+	
+	/**
+	 * Returns a preprocessor node surrounding the given range, or <code>null</code>.
+	 */
+	IASTNode findSurroundingPreprocessorNode(int sequenceNumber, int length);
 }

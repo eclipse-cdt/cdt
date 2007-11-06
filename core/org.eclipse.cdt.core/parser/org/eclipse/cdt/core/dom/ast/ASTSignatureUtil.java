@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Rational Software - initial implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom.ast;
@@ -724,9 +725,14 @@ public class ASTSignatureUtil {
 	
 	private static String getLiteralExpression( IASTLiteralExpression expression ){
 		StringBuffer result = new StringBuffer();
-		if (expression.getKind() == IASTLiteralExpression.lk_string_literal) result.append("\""); //$NON-NLS-1$
 		result.append(expression.toString());
-		if (expression.getKind() == IASTLiteralExpression.lk_string_literal) result.append("\""); //$NON-NLS-1$		
+		if (expression.getKind() == IASTLiteralExpression.lk_string_literal) {
+			// mstodo- support for old scanner
+			if (result.length() == 0 || result.charAt(0) != '"') {
+				result.insert(0, '"');
+				result.append('"');
+			}
+		}
 		return result.toString();
 	}
 	

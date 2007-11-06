@@ -1420,7 +1420,14 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             BacktrackException {
         IToken first = consume(); // t_asm
         consume(IToken.tLPAREN);
-        String assembly = consume(IToken.tSTRING).getImage();
+        char[] assemblyChars = consume(IToken.tSTRING).getCharImage();
+        String assembly;
+		if (assemblyChars.length > 2 && assemblyChars[0] == '"') {
+        	assembly= new String(assemblyChars, 1, assemblyChars.length-2);
+        }
+        else {
+        	assembly= new String(assemblyChars);
+        }
         consume(IToken.tRPAREN);
         int lastOffset = consume(IToken.tSEMI).getEndOffset();
 

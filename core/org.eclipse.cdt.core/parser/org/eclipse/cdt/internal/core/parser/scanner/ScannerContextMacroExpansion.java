@@ -13,7 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 
 public class ScannerContextMacroExpansion extends ScannerContext {
-	private static final Token END_TOKEN = new SimpleToken(Lexer.tEND_OF_INPUT, null, 0, 0);
+	private static final Token END_TOKEN = new Token(Lexer.tEND_OF_INPUT, null, 0, 0);
 
 	private Token fTokens;
 

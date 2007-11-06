@@ -19,24 +19,17 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTNodeLocation {
 
 	/**
-	 * This is the offset into the actual source location that this node starts
-	 * at.
-	 * 
-	 * @return
+	 * This is the offset within either the file or a macro-expansion.
 	 */
 	public int getNodeOffset();
 
 	/**
-	 * This is the length of the node contained in this location.
-	 * 
-	 * @return
+	 * This is the length of the node within the file or macro-expansion.
 	 */
 	public int getNodeLength();
 
     /**
      * Return a file location that best maps into this location.
-     * 
-     * @return
      */
     public IASTFileLocation asFileLocation();
 

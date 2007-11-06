@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.parser.IToken;
  * them on to the parsers.
  * @since 5.0
  */
-public abstract class Token implements IToken, Cloneable {
+public class Token implements IToken, Cloneable {
 	private int fKind;
 	private int fOffset;
 	private int fEndOffset;
@@ -65,10 +65,8 @@ public abstract class Token implements IToken, Cloneable {
 		fEndOffset= endOffset;
 	}
 
-	public abstract char[] getCharImage();
-
-	final public boolean hasGap(Token t) {
-		return fSource == t.fSource && fEndOffset != t.getOffset();
+	public char[] getCharImage() {
+		return TokenUtil.getImage(getType());
 	}
 
 	public String toString() {
@@ -90,7 +88,7 @@ public abstract class Token implements IToken, Cloneable {
 			return null;
 		}
 	}
-
+	
 	public char[] getFilename() {
 		// mstodo- parser removal
 		throw new UnsupportedOperationException();
@@ -116,79 +114,3 @@ public abstract class Token implements IToken, Cloneable {
 		throw new UnsupportedOperationException();
 	}
 }
-
-class SimpleToken extends Token {
-	public SimpleToken(int kind, Object source, int offset, int endOffset) {
-		super(kind, source, offset, endOffset);
-	}
-
-	public char[] getCharImage() {
-		return TokenUtil.getImage(getType());
-	}
-}
-
-class PlaceHolderToken extends ImageToken {
-	private final int fIndex;
-
-	public PlaceHolderToken(int type, int idx, Object source, int offset, int endOffset, char[] name) {
-		super(type, source, offset, endOffset, name);
-		fIndex= idx;
-	}
-
-	public int getIndex() {
-		return fIndex;
-	}
-	
-	public String toString() {
-		return "[" + fIndex + "]";  //$NON-NLS-1$ //$NON-NLS-2$
-	}
-}
-
-class DigraphToken extends Token {
-	public DigraphToken(int kind, Object source, int offset, int endOffset) {
-		super(kind, source, offset, endOffset);
-	}
-
-	public char[] getCharImage() {
-		return TokenUtil.getDigraphImage(getType());
-	}
-}
-
-class ImageToken extends Token {
-	private char[] fImage;
-
-	public ImageToken(int kind, Object source, int offset, int endOffset, char[] image) {
-		super(kind, source, offset, endOffset);
-		fImage= image;
-	}
-
-	public char[] getCharImage() {
-		return fImage; 
-	}
-}
-
-class SourceImageToken extends Token {
-	private char[] fSourceImage;
-	private char[] fImage;
-
-	public SourceImageToken(int kind, Object source, int offset, int endOffset, char[] sourceImage) {
-		super(kind, source, offset, endOffset);
-		fSourceImage= sourceImage;
-	}
-
-	public char[] getCharImage() {
-		if (fImage == null) {
-			final int length= getLength();
-			fImage= new char[length];
-			System.arraycopy(fSourceImage, getOffset(), fImage, 0, length);
-		}
-		return fImage; 
-	}
-
-	public void setOffset(int offset, int endOffset) {
-		getCharImage();
-		super.setOffset(offset, endOffset);
-	}
-}
-
-

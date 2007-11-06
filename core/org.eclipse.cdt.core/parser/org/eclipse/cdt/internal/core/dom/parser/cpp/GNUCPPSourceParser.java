@@ -2523,21 +2523,33 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         result.setValue(duple.toString());
         ITokenDuple[] segments = duple.getSegments();
         int startingValue = 0;
-        if (segments.length > 0 && segments[0] instanceof IToken
-                && ((IToken) segments[0]).getType() == IToken.tCOLONCOLON) {
-            ++startingValue;
-            result.setFullyQualified(true);
+        if (segments.length > 0) {
+        	final ITokenDuple firstSeg= segments[0];
+        	final IToken firstToken= firstSeg.getFirstToken();
+        	if (firstToken.getType() == IToken.tCOLONCOLON) {
+        		if (firstToken == firstSeg.getLastToken() && firstSeg.getTemplateIdArgLists() == null) {
+        			++startingValue;
+        			result.setFullyQualified(true);
+        		}
+        	}
         }
         for (int i = startingValue; i < segments.length; ++i) {
             IASTName subName = null;
             // take each name and add it to the result
-            if (segments[i] instanceof IToken) {
-                subName = createName((IToken) segments[i]);
-            } else if (segments[i].getTemplateIdArgLists() == null)
-                subName = createName(segments[i]);
-            else
+            final ITokenDuple seg= segments[i];
+            if (seg.getTemplateIdArgLists() == null) {
+            	final IToken firstToken= seg.getFirstToken();
+            	if (firstToken == seg.getLastToken()) {
+            		subName= createName(firstToken);
+            	}
+            	else {
+            		subName = createName(seg);
+            	}
+            }
+            else {
                 // templateID
                 subName = createTemplateID(segments[i]);
+            }
 
             if (i == segments.length - 1 && duple instanceof OperatorTokenDuple) { 
             	// make sure the last segment is an OperatorName/ConversionName

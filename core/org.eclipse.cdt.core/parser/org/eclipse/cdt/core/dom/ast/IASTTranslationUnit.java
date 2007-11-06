@@ -6,21 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * The translation unit represents a compilable unit of source.
  * 
  * @author Doug Schaefer
  */
-public interface IASTTranslationUnit extends IASTNode {
+public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 
 	/**
 	 * <code>OWNED_DECLARATION</code> represents the relationship between an <code>IASTTranslationUnit</code> and
@@ -115,12 +116,25 @@ public interface IASTTranslationUnit extends IASTNode {
 	public IASTName[] getReferences(IBinding binding);
 
 	/**
-	 * @param offset
+	 * Returns an array of locations. This is a sequence of file locations and macro-expansion locations.
+	 * @param offset sequence number as stored in the ast nodes.
 	 * @param length
-	 * @return
+	 * @return and array of locations.
 	 */
 	public IASTNodeLocation[] getLocationInfo(int offset, int length);
 
+	/**
+	 * Returns the smallest file location, that encloses the given global range. In case the range
+	 * spans over multiple files, the files are mapped to include statements until all of them are
+	 * found in the same file. So the resulting location contains the include directives that actually 
+	 * cause the range to be part of the AST.
+	 * @param offset sequence number as stored in the ASTNodes.
+	 * @param length 
+	 * @return a file location
+	 * @since 5.0
+	 */
+	public IASTFileLocation getMappedFileLocation(int offset, int length);
+ 
 	/**
 	 * Select the node in the treet that best fits the offset/length/file path. 
 	 * 
@@ -173,6 +187,7 @@ public interface IASTTranslationUnit extends IASTNode {
 	 * 
 	 * @param locations A range of node locations
 	 * @return A String signature.
+	 * @deprecated was never fully implemented.
 	 */
 	public String getUnpreprocessedSignature(IASTNodeLocation[] locations);
 
@@ -187,6 +202,7 @@ public interface IASTTranslationUnit extends IASTNode {
      * 
      * @param nodeLocations <code>IASTNodeLocation</code>s to flatten
      * @return null if not possible, otherwise, a file location representing where the macros are. 
+     * @deprecated use {@link #getMappedFileLocation(int, int)}
      */
     public IASTFileLocation flattenLocationsToFile( IASTNodeLocation [] nodeLocations );
     

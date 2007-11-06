@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -27,13 +28,25 @@ public interface IASTMacroExpansion extends IASTNodeLocation {
 	public IASTPreprocessorMacroDefinition getMacroDefinition();
 
 	/**
+	 * Returns an offset within the macro-expansion. The offset can be used to compare
+	 * nodes within the same macro-expansion. However, it does not serve as an offset
+	 * into a file.
+	 */
+	public int getNodeOffset();
+
+	/**
+	 * Returns the length of this location. The length can be used to compare this location
+	 * with others from within the same macro-expansion. However, the length does not neccessarily
+	 * relate to a length in terms of characters.
+	 */
+	public int getNodeLength();
+
+	/**
 	 * The source locations for for the macro expansion. These are the locations
-	 * where the expansion in question occured and was replaced.
+	 * where the expansion in question occurred and was replaced.
 	 * 
 	 * @return
+ 	 * @deprecated use {@link IASTNodeLocation#asFileLocation()}.
 	 */
 	public IASTNodeLocation[] getExpansionLocations();
-    
-    
-
 }

@@ -85,7 +85,7 @@ public class CharArrayIntMap extends CharTable {
 	 */
 	public void putAll(CharArrayIntMap map) {
 		resize(size() + map.size());
-		for(int i=0; i<map.currEntry; i++) {
+		for(int i=0; i<=map.currEntry; i++) {
 			put(map.keyTable[i], map.valueTable[i]);
 		}
 	}

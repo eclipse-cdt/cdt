@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 
 /*
@@ -188,7 +189,7 @@ public class CPPEnumeration extends PlatformObject implements IEnumeration, ICPP
     public boolean isSameType( IType type ) {
         if( type == this )
             return true;
-        if( type instanceof ITypedef || type instanceof IIndexType)
+        if( type instanceof ITypedef || type instanceof IIndexType || type instanceof ICPPDelegate)
             return type.isSameType( this );
         return false;
     }

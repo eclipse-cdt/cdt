@@ -8,6 +8,7 @@
  * Contributors:
  *    Andrew Ferguson (Symbian) - Initial implementation
  *    Markus Schorn (Wind River Systems)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
@@ -32,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
@@ -59,6 +61,45 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	public static void addTests(TestSuite suite) {		
 		suite.addTest(suite(SingleProject.class));
 		suite.addTest(suite(ProjectWithDepProj.class));
+	}
+	
+	//	namespace ns { class A; enum E {E1}; typedef int T; }
+	//
+	//	class B {
+	//    public:
+	//	  void m(ns::A* a);
+	//    void n(ns::E* a);
+	// 	  void o(ns::T* a);
+	//    void p(ns::E a);
+	//	};
+	
+	//	namespace ns {
+	//	  class A {};
+	//    typedef int T;
+	//	}
+	//
+	//	using ns::A;
+	//	using ns::E;
+	//	using ns::T;
+	//  using ns::E1;
+	// 
+	//	void B::m(A* a) {}
+	//	void B::n(E* a) {}
+	//	void B::o(T* a) {}
+    //  void B::p(E a) {}
+	//
+	//  void usage() {
+	//    B b;
+	//    b.p(E1);
+	//  }
+	public void testUsingTypeDirective_201177() {
+		IBinding b0= getBindingFromASTName("B::m", 4);
+		IBinding b1= getBindingFromASTName("B::n", 4);
+		IBinding b2= getBindingFromASTName("B::o", 4);
+		IBinding b3= getBindingFromASTName("p(E1)", 1);
+		assertInstance(b0, ICPPMethod.class);
+		assertInstance(b1, ICPPMethod.class);
+		assertInstance(b2, ICPPMethod.class);
 	}
 	
 	// namespace n { class A{}; class B{}; class C{}; }

@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -98,7 +99,7 @@ class PDOMCPPEnumeration extends PDOMCPPBinding
 	}
 	
 	public boolean isSameType(IType type) {
-		if (type instanceof ITypedef) {
+		if (type instanceof ITypedef || type instanceof ICPPDelegate) {
 			return type.isSameType(this);
 		}
 		

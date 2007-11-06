@@ -2,7 +2,8 @@
  * AsmTest.S
  */
 
-#include <include.h>
+#include <include1.h>
+#include "include2.h"
 
 	.globl globalLabel1
 	.global globalLabel2, globalLabel3
@@ -39,7 +40,7 @@ otherLabel2:
 	movb	$0x81, %ah  ; end-of-line comment
 	jmp	globalLabel3    # comment
 /* end */
-	
+
 globalLabel3:
 	movl    %esp, %eax
 	movl    %eax, storage
@@ -47,6 +48,7 @@ globalLabel3:
 otherLabel3:
 	movb	$0x81, %ah
 	jmp	globalLabel3
+	nop
 /* end */
 
 	.global alloca

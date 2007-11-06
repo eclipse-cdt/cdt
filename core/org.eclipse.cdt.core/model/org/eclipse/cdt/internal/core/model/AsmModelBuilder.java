@@ -12,14 +12,19 @@
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.model.AssemblyLanguage;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IContributedModelBuilder;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.internal.formatter.scanner.Scanner;
-import org.eclipse.cdt.internal.formatter.scanner.Token;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
+import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
+import org.eclipse.cdt.internal.core.parser.scanner.Token;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 /**
  * A simple model builder for assembly translation units.
@@ -31,31 +36,44 @@ import org.eclipse.cdt.internal.formatter.scanner.Token;
  */
 public class AsmModelBuilder implements IContributedModelBuilder {
 
+	private static final class AsmDirective {
+		private static final AsmDirective GLOBAL= new AsmDirective();
+		private static final AsmDirective DATA= new AsmDirective();
+	}
+
+	private static final class LexerLog implements ILexerLog {
+		public void handleComment(boolean isBlockComment, int offset, int endOffset) {
+		}
+		public void handleProblem(int problemID, char[] info, int offset, int endOffset) {
+		}
+	}
+
 	private static final class Counter {
 		int fCount;
 	}
 
-	private final static class Tokenizer extends Scanner {
-		public Tokenizer(char[] source) {
-			setSource(source);
-		}
-
-		public Token nextToken() {
-			Token t= super.nextToken();
-			while (t != null && (t.isWhiteSpace())) {
-				t= super.nextToken();
-			}
-			return t;
-		}
+	private static final Map fgDirectives;
+	
+	static {
+		fgDirectives= new HashMap();
+		fgDirectives.put("globl", AsmDirective.GLOBAL); //$NON-NLS-1$
+		fgDirectives.put("global", AsmDirective.GLOBAL); //$NON-NLS-1$
+		fgDirectives.put("ascii", AsmDirective.DATA); //$NON-NLS-1$
+		fgDirectives.put("asciz", AsmDirective.DATA); //$NON-NLS-1$
+		fgDirectives.put("byte", AsmDirective.DATA); //$NON-NLS-1$
+		fgDirectives.put("long", AsmDirective.DATA); //$NON-NLS-1$
+		fgDirectives.put("word", AsmDirective.DATA); //$NON-NLS-1$
 	}
-
+	
 	private TranslationUnit fTranslationUnit;
 	private char fLineSeparatorChar;
-	private HashMap fGlobals;
-	private HashMap fLabels;
+	private Map fGlobals;
+	private Map fLabels;
+	
 	private int fLastLabelEndOffset;
 	private AsmLabel fLastGlobalLabel;
 	private SourceManipulation fLastLabel;
+	private Lexer fLexer;
 
 	/**
 	 * Creates a model builder for the given assembly translation unit.
@@ -87,8 +105,10 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		buildModel(reader.buffer);
 		// not sure whether this is necessary or not
 		fTranslationUnit.setIsStructureKnown(true);
+		// cleanup
 		fGlobals= null;
 		fLabels= null;
+		fLexer= null;
 	}
 
 	/**
@@ -96,6 +116,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	 * 
 	 * @param source
 	 * @throws CModelException
+	 * @throws OffsetLimitReachedException 
 	 */
 	private void buildModel(final char[] source) throws CModelException {
 		fGlobals= new HashMap();
@@ -104,10 +125,8 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		fLastGlobalLabel= null;
 		fLastLabelEndOffset= 0;
 
-		// TLETODO use new Lexer?
-		Scanner scanner= new Scanner();
-		scanner.setSplitPreprocessor(true);
-		scanner.setSource(source);
+		final LexerOptions lexerOptions= new LexerOptions();
+		fLexer= new Lexer(source, lexerOptions, new LexerLog(), null);
 		
 		// if true the next token is the first on a (logical) line
 		boolean firstTokenOnLine= true;
@@ -116,56 +135,39 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		// inside instruction
 		boolean inInstruction= false;
 
-		Token token= scanner.nextToken();
+		IToken token= nextToken();
 		while (token != null) {
-			int type= adaptTokenType(token);
-			switch (type) {
-			case Token.tPREPROCESSOR_INCLUDE:
-				parseInclude(fTranslationUnit, token);
-				break;
-			case Token.tPREPROCESSOR_DEFINE:
-				parseDefine(fTranslationUnit, token);
-				break;
-			case Token.tFLOATINGPT:
-				if (token.getText().startsWith(".")) { //$NON-NLS-1$
-					// move scanner behind '.'
-					scanner.setCurrentPosition(scanner.getCurrentTokenStartPosition() + 1);
-					// fallthrough
-				} else {
-					break;
+			switch (token.getType()) {
+			case IToken.tPOUND:
+				if (fLexer.currentTokenIsFirstOnLine()) {
+					parsePPDirective(fTranslationUnit);
 				}
-			case Token.tDOT:
+				break;
+			case IToken.tDOT:
 				// assembly directive?
 				firstTokenOnLine= false;
 				if (expectInstruction) {
 					expectInstruction= false;
-					int pos= scanner.getCurrentPosition();
-					token= scanner.nextToken();
-					if (token != null && adaptTokenType(token) == Token.tIDENTIFIER) {
-						String text= token.getText();
+					token= nextToken();
+					if (token != null && token.getType() == IToken.tIDENTIFIER) {
+						String text= token.getImage();
 						if (isGlobalDirective(text)) {
-							firstTokenOnLine= parseGlobalDirective(token, scanner);
+							firstTokenOnLine= parseGlobalDirective(token);
 						} else if (isDataDirective(text)) {
 							inInstruction= true;
-							fLastLabelEndOffset= scanner.getCurrentTokenEndPosition();
 						}
-					} else {
-						scanner.setCurrentPosition(pos);
 					}
 				}
 				break;
-			case Token.tIDENTIFIER:
+			case IToken.tIDENTIFIER:
 				// identifier may be a label or part of an instruction
 				if (firstTokenOnLine) {
-					int pos= scanner.getCurrentPosition();
-					int ch= scanner.getNextChar();
-					if (ch == ':') {
-						parseLabel(fTranslationUnit, token);
-						fLastLabelEndOffset= scanner.getCurrentPosition();
+					// peek next char
+					char nextChar= source[token.getEndOffset()];
+					if (nextChar == ':') {
+						createLabel(fTranslationUnit, token);
 						expectInstruction= true;
 					} else {
-						fLastLabelEndOffset= scanner.getCurrentTokenEndPosition();
-						scanner.setCurrentPosition(pos);
 						expectInstruction= false;
 						inInstruction= true;
 					}
@@ -173,18 +175,13 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 				} else if (expectInstruction){
 					expectInstruction= false;
 					inInstruction= true;
-					fLastLabelEndOffset= scanner.getCurrentTokenEndPosition();
-				} else if (inInstruction) {
-					fLastLabelEndOffset= scanner.getCurrentTokenEndPosition();
 				}
 				break;
-			case Token.tPREPROCESSOR:
-			case Token.tWHITESPACE:
+			case Lexer.tNEWLINE:
 				if (!firstTokenOnLine) {
-					int nlIndex= token.getText().indexOf('\n');
-					firstTokenOnLine= nlIndex >= 0;
-					if (firstTokenOnLine && inInstruction) {
-						fLastLabelEndOffset= scanner.getCurrentTokenStartPosition() + nlIndex + 1;
+					firstTokenOnLine= true;
+					if (inInstruction) {
+						fLastLabelEndOffset= fLexer.currentToken().getEndOffset();
 					}
 				}
 				break;
@@ -192,7 +189,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 				expectInstruction= false;
 				firstTokenOnLine= false;
 				if (fLineSeparatorChar != 0) {
-					if (token.getLength() == 1 && token.getText().charAt(0) == fLineSeparatorChar) {
+					if (token.getLength() == 1 && token.getCharImage()[0] == fLineSeparatorChar) {
 						firstTokenOnLine= true;
 					}
 				}
@@ -201,10 +198,10 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 				expectInstruction= true;
 				inInstruction= false;
 			}
-			token= scanner.nextToken();
+			token= nextToken();
 		}
 		if (!firstTokenOnLine && inInstruction) {
-			fLastLabelEndOffset= scanner.getCurrentTokenEndPosition();
+			fLastLabelEndOffset= fLexer.currentToken().getEndOffset();
 		}
 		if (fLastLabel != null) {
 			fixupLastLabel();
@@ -214,45 +211,36 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		}
 	}
 	
-	/**
-	 * Adapt non-identifier tokens to identifier type if they look like valid asm words.
-	 * 
-	 * @param token
-	 * @return the adapted token type
-	 */
-	private int adaptTokenType(Token token) {
-		int type= token.getType();
-		if (type != Token.tIDENTIFIER) {
-			if (Character.isUnicodeIdentifierStart(token.getText().charAt(0))) {
-				type= Token.tIDENTIFIER;
+	protected IToken nextToken() {
+		Token token;
+		try {
+			token= fLexer.nextToken();
+			if (token.getType() == Lexer.tEND_OF_INPUT) {
+				token = null;
 			}
+		} catch (OffsetLimitReachedException exc) {
+			token= null;
 		}
-		return type;
+		return token;
 	}
 
-	private boolean isDataDirective(String directive) {
-		return "byte".equals(directive) || "long".equals(directive) || "word".equals(directive) || "ascii".equals(directive); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
-	}
-
-	private boolean parseGlobalDirective(Token token, Scanner scanner) {
+	private boolean parseGlobalDirective(IToken token) {
 		boolean eol= false;
 		do {
-			Token t= scanner.nextToken();
+			IToken t= nextToken();
 			if (t == null) {
 				break;
 			}
-			switch (adaptTokenType(t)) {
-			case Token.tIDENTIFIER:
-				registerGlobalLabel(t.getText());
+			switch (t.getType()) {
+			case IToken.tIDENTIFIER:
+				registerGlobalLabel(t.getImage());
 				break;
-			case Token.tWHITESPACE:
-				if (token.getText().indexOf('\n') >= 0) {
-					eol= true;
-				}
+			case Lexer.tNEWLINE:
+				eol= true;
 				break;
 			default:
 				if (fLineSeparatorChar != 0) {
-					if (token.getLength() == 1 && token.getText().charAt(0) == fLineSeparatorChar) {
+					if (token.getLength() == 1 && token.getCharImage()[0] == fLineSeparatorChar) {
 						eol= true;
 					}
 				}
@@ -261,11 +249,15 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		return eol;
 	}
 
-	private boolean isGlobalDirective(String name) {
-		return "globl".equals(name) || "global".equals(name); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final boolean isDataDirective(String directive) {
+		return fgDirectives.get(directive) == AsmDirective.DATA;
 	}
 
-	private void registerGlobalLabel(String labelName) {
+	private static final boolean isGlobalDirective(String directive) {
+		return fgDirectives.get(directive) == AsmDirective.GLOBAL;
+	}
+
+	protected void registerGlobalLabel(String labelName) {
 		Counter counter= (Counter) fGlobals.get(labelName);
 		if (counter == null) {
 			fGlobals.put(labelName, counter= new Counter());
@@ -281,7 +273,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		return counter.fCount;
 	}
 
-	private int registerLabel(String labelName) {
+	protected int registerLabel(String labelName) {
 		Counter counter= (Counter) fLabels.get(labelName);
 		if (counter == null) {
 			fLabels.put(labelName, counter= new Counter());
@@ -289,8 +281,8 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		return counter.fCount++;
 	}
 
-	private void parseLabel(CElement parent, Token token) throws CModelException {
-		String labelName=  token.getText();
+	protected void createLabel(CElement parent, IToken token) throws CModelException {
+		String labelName= token.getImage();
 		int index= getGlobalLabelIndex(labelName);
 		boolean global= index > 0;
 		if (!global) {
@@ -347,68 +339,93 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		}
 	}
 
-	private void parseDefine(CElement parent, Token token) throws CModelException {
-		final String tokenText= token.getText();
-		Scanner defineScanner= new Tokenizer(tokenText.toCharArray());
-		defineScanner.setCurrentPosition(tokenText.indexOf('#') + 1);
+	private void parsePPDirective(CElement parent) throws CModelException {
+		IToken token= nextToken();
+		if (token != null && token.getType() == IToken.tIDENTIFIER) {
+			final String image= token.getImage();
+			if (image.equals("define")) { //$NON-NLS-1$
+				try {
+					parsePPDefine(parent);
+				} catch (OffsetLimitReachedException exc) {
+				}
+				return;
+			} else if (image.equals("include")) { //$NON-NLS-1$
+				try {
+					parsePPInclude(parent);
+				} catch (OffsetLimitReachedException exc) {
+				}
+				return;
+			}
+		}
+		try {
+			skipToNewLine();
+		} catch (OffsetLimitReachedException exc) {
+		}
+	}
+
+	protected int skipToNewLine() throws OffsetLimitReachedException {
+		return fLexer.consumeLine(fLexer.currentToken().getEndOffset());
+	}
+
+	private void parsePPDefine(CElement parent) throws CModelException, OffsetLimitReachedException {
+		int startOffset= fLexer.currentToken().getOffset();
 		int nameStart= 0;
 		int nameEnd= 0;
 		String name= null;
-		Token t= defineScanner.nextToken();
-		if (adaptTokenType(t) == Token.tIDENTIFIER && t.getText().equals("define")) { //$NON-NLS-1$
-			t= defineScanner.nextToken();
-			if (adaptTokenType(t) == Token.tIDENTIFIER) {
-				nameStart= defineScanner.getCurrentTokenStartPosition();
-				nameEnd= defineScanner.getCurrentTokenEndPosition() + 1;
-				name= t.getText();
-			}
+		IToken t= nextToken();
+		if (t.getType() == IToken.tIDENTIFIER) {
+			nameStart= fLexer.currentToken().getOffset();
+			nameEnd= fLexer.currentToken().getEndOffset();
+			name= t.getImage();
 		}
 		if (name == null) {
 			return;
 		}
+		int endOffset= skipToNewLine();
 		Macro macro= new Macro(parent, name);
 		SourceManipulationInfo macroInfo= macro.getSourceManipulationInfo();
-		macroInfo.setIdPos(token.getOffset() + nameStart, nameEnd - nameStart);
-		macroInfo.setPos(token.getOffset(), token.getLength());
+		macroInfo.setIdPos(nameStart, nameEnd - nameStart);
+		macroInfo.setPos(startOffset, endOffset - startOffset);
 		parent.addChild(macro);
 	}
 
-	private void parseInclude(CElement parent, Token token) throws CModelException {
-		final String tokenText= token.getText();
-		Scanner includeScanner= new Tokenizer(tokenText.toCharArray());
-		includeScanner.setCurrentPosition(tokenText.indexOf('#') + 1);
+	private void parsePPInclude(CElement parent) throws CModelException, OffsetLimitReachedException {
+		int startOffset= fLexer.currentToken().getOffset();
 		int nameStart= 0;
-		int nameEnd= includeScanner.eofPosition + 1;
+		int nameEnd= 0;
 		String name= null;
 		boolean isStandard= false;
-		Token t= includeScanner.nextToken();
-		if (adaptTokenType(t) == Token.tIDENTIFIER) {
-			t= includeScanner.nextToken();
-			if (t.type == Token.tLT) {
-				nameStart= includeScanner.getCurrentTokenStartPosition();
-				do {
-					t= includeScanner.nextToken();
-				} while (t != null && t.type != Token.tGT);
-				nameEnd= includeScanner.getCurrentTokenEndPosition() + 1;
-				name= tokenText.substring(nameStart + 1, nameEnd - 1);
-			} else if (t.type == Token.tSTRING) {
-				nameStart= includeScanner.getCurrentTokenStartPosition();
-				nameEnd= includeScanner.getCurrentTokenEndPosition() + 1;
-				name= t.getText().substring(1, t.getLength() - 1);
-				isStandard= true;
-			} else if (adaptTokenType(t) == Token.tIDENTIFIER) {
-				nameStart= includeScanner.getCurrentTokenStartPosition();
-				nameEnd= includeScanner.getCurrentTokenEndPosition() + 1;
-				name= t.getText();
-			}
+		IToken t= nextToken();
+		switch (t.getType()) {
+		case IToken.tLT:
+			nameStart= fLexer.currentToken().getOffset();
+			do {
+				t= nextToken();
+			} while (t.getType() != IToken.tGT);
+			nameEnd= fLexer.currentToken().getEndOffset();
+			name= new String(fLexer.getInputChars(nameStart + 1, nameEnd - 1));
+			isStandard= true;
+			break;
+		case IToken.tSTRING:
+			nameStart= fLexer.currentToken().getOffset();
+			nameEnd= fLexer.currentToken().getEndOffset();
+			name= t.getImage().substring(1, t.getLength() - 1);
+			break;
+		case IToken.tIDENTIFIER:
+			nameStart= fLexer.currentToken().getOffset();
+			nameEnd= fLexer.currentToken().getEndOffset();
+			name= t.getImage();
+			break;
+		default:
 		}
 		if (name == null) {
 			return;
 		}
+		int endOffset= skipToNewLine();
 		Include include= new Include(parent, name, isStandard);
 		SourceManipulationInfo includeInfo= include.getSourceManipulationInfo();
-		includeInfo.setIdPos(token.getOffset() + nameStart, nameEnd - nameStart);
-		includeInfo.setPos(token.getOffset(), token.getLength());
+		includeInfo.setIdPos(nameStart, nameEnd - nameStart);
+		includeInfo.setPos(startOffset, endOffset - startOffset);
 		parent.addChild(include);
 	}
 

@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.IAsmLabel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -58,38 +59,44 @@ public class AsmModelBuilderTest extends BaseTestCase {
 	
 	public void testAsmModelElements() throws Exception {
 		ICElement[] children= fTU.getChildren();
-		assertEquals(7, children.length);
+		assertEquals(8, children.length);
 		
-		assertEquals(ICElement.C_INCLUDE, children[0].getElementType());
-		assertEquals("include.h", children[0].getElementName());
+		int idx= 0;
+		assertEquals(ICElement.C_INCLUDE, children[idx].getElementType());
+		assertTrue(((IInclude)children[idx]).isStandard());
+		assertEquals("include1.h", children[idx++].getElementName());
+		assertEquals(ICElement.C_INCLUDE, children[idx].getElementType());
+		assertFalse(((IInclude)children[idx]).isStandard());
+		assertEquals("include2.h", children[idx++].getElementName());
 		
-		assertEquals(ICElement.ASM_LABEL, children[1].getElementType());
-		assertEquals("nonGlobalLabel", children[1].getElementName());
-		assertFalse(((IAsmLabel)children[1]).isGlobal());
-		assertEquals(0, ((IParent)children[1]).getChildren().length);
 		
-		assertEquals(ICElement.ASM_LABEL, children[2].getElementType());
-		assertEquals("globalLabel1", children[2].getElementName());
-		assertTrue(((IAsmLabel)children[2]).isGlobal());
-		assertEquals(2, ((IParent)children[2]).getChildren().length);
+		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
+		assertEquals("nonGlobalLabel", children[idx].getElementName());
+		assertFalse(((IAsmLabel)children[idx]).isGlobal());
+		assertEquals(0, ((IParent)children[idx++]).getChildren().length);
 		
-		assertEquals(ICElement.C_MACRO, children[3].getElementType());
-		assertEquals("MACRO", children[3].getElementName());
+		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
+		assertEquals("globalLabel1", children[idx].getElementName());
+		assertTrue(((IAsmLabel)children[idx]).isGlobal());
+		assertEquals(2, ((IParent)children[idx++]).getChildren().length);
 		
-		assertEquals(ICElement.ASM_LABEL, children[4].getElementType());
-		assertEquals("globalLabel2", children[4].getElementName());
-		assertTrue(((IAsmLabel)children[4]).isGlobal());
-		assertEquals(1, ((IParent)children[4]).getChildren().length);
+		assertEquals(ICElement.C_MACRO, children[idx].getElementType());
+		assertEquals("MACRO", children[idx++].getElementName());
 		
-		assertEquals(ICElement.ASM_LABEL, children[5].getElementType());
-		assertEquals("globalLabel3", children[5].getElementName());
-		assertTrue(((IAsmLabel)children[5]).isGlobal());
-		assertEquals(1, ((IParent)children[5]).getChildren().length);
+		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
+		assertEquals("globalLabel2", children[idx].getElementName());
+		assertTrue(((IAsmLabel)children[idx]).isGlobal());
+		assertEquals(1, ((IParent)children[idx++]).getChildren().length);
 		
-		assertEquals(ICElement.ASM_LABEL, children[6].getElementType());
-		assertEquals("alloca", children[6].getElementName());
-		assertTrue(((IAsmLabel)children[6]).isGlobal());
-		assertEquals(0, ((IParent)children[6]).getChildren().length);
+		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
+		assertEquals("globalLabel3", children[idx].getElementName());
+		assertTrue(((IAsmLabel)children[idx]).isGlobal());
+		assertEquals(1, ((IParent)children[idx++]).getChildren().length);
+		
+		assertEquals(ICElement.ASM_LABEL, children[idx].getElementType());
+		assertEquals("alloca", children[idx].getElementName());
+		assertTrue(((IAsmLabel)children[idx]).isGlobal());
+		assertEquals(0, ((IParent)children[idx++]).getChildren().length);
 	}
 
 	public void testAsmLabelRanges() throws Exception {

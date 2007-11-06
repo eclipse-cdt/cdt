@@ -704,5 +704,14 @@
          <simple name="appName"/>
       </processType>
    </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem
+            scheme="ffs">
+         <run
+               class="org.eclipse.cdt.internal.core.ffs.FFSFileSystem">
+         </run>
+      </filesystem>
+   </extension>
 
 </plugin>

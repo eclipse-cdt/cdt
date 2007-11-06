@@ -2274,5 +2274,13 @@
             id="org.eclipse.cdt.ui.provider1">
       </provider>
    </extension>
+   <extension
+         point="org.eclipse.ui.ide.filesystemSupport">
+      <filesystemContributor
+            class="org.eclipse.cdt.internal.ui.ffs.FFSFileSystemContributor"
+            label="Flexible File System"
+            scheme="ffs">
+      </filesystemContributor>
+   </extension>
  
  </plugin>

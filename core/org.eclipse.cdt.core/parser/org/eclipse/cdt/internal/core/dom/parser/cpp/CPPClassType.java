@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Bryan Wilkinson (QNX)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 /*
  * Created on Nov 29, 2004
@@ -794,10 +795,10 @@ public class CPPClassType extends PlatformObject implements ICPPClassType, ICPPI
      * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
      */
     public boolean isSameType( IType type ) {
-        if( type == this )
+        if (type == this)
             return true;
-        if( type instanceof ITypedef || type instanceof IIndexType)
-            return type.isSameType( this );
+        if (type instanceof ITypedef || type instanceof IIndexType || type instanceof ICPPDelegate)
+            return type.isSameType(this);
         return false;
     }
 

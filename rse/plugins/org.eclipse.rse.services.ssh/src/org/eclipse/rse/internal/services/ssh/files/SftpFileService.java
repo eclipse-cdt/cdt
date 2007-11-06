@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [203490] Fix NPE in SftpService.getUserHome()
  * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * Martin Oberhuber (Wind River) - [208912] Cannot expand /C on a VxWorks SSH Server
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -374,6 +375,24 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return new RemoteFileIOException(e);
 	}
 	
+	/**
+	 * Concatenate a parent directory with a file name to form a new proper path name.
+	 * @param parentDir path name of the parent directory.
+	 * @param fileName file name to concatenate.
+	 * @return path name concatenated from parent directory and file name.
+	 * 
+	 */
+	protected String concat(String parentDir, String fileName) {
+		// See also {@link SftpHostFile#getAbsolutePath()}
+		StringBuffer path = new StringBuffer(parentDir);
+		if (!parentDir.endsWith("/")) //$NON-NLS-1$
+		{
+			path.append('/');
+		}
+		path.append(fileName);
+		return path.toString();
+	}
+	
 	public IHostFile getFile(String remoteParent, String fileName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		//getFile() must return a dummy even for non-existent files,
@@ -383,7 +402,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		SftpATTRS attrs = null;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				attrs = getChannel("SftpFileService.getFile: "+fileName).stat(recodeSafe(remoteParent+'/'+fileName)); //$NON-NLS-1$
+				String fullPath = concat(remoteParent, fileName);
+				attrs = getChannel("SftpFileService.getFile: "+fullPath).stat(recodeSafe(fullPath)); //$NON-NLS-1$
 				Activator.trace("SftpFileService.getFile <--"); //$NON-NLS-1$
 				node = makeHostFile(remoteParent, fileName, attrs);
 			} catch(Exception e) {
@@ -485,9 +505,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			//	} catch(Exception e) {}
 			//check if the link points to a directory
 			try {
-				getChannel("makeHostFile.chdir").cd(recode(parentPath+'/'+fileName)); //$NON-NLS-1$
+				getChannel("makeHostFile.chdir").cd(recode(concat(parentPath, fileName))); //$NON-NLS-1$
 				linkTarget=decode(getChannel("makeHostFile.chdir").pwd()); //$NON-NLS-1$
-				if (linkTarget!=null && !linkTarget.equals(parentPath+'/'+fileName)) {
+				if (linkTarget!=null && !linkTarget.equals(concat(parentPath, fileName))) {
 					attrsTarget = getChannel("SftpFileService.getFile").stat(recode(linkTarget)); //$NON-NLS-1$
 				} else {
 					linkTarget=null;
@@ -660,7 +680,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				//localFile.createNewFile();
 			}
 			//TODO Ascii/binary?
-			String remotePath = recode(remoteParent+'/'+remoteFile);
+			String remotePath = recode(concat(remoteParent, remoteFile));
 			int mode=ChannelSftp.OVERWRITE;
 			MyProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
 			getChannel("SftpFileService.download "+remoteFile); //check the session is healthy //$NON-NLS-1$
@@ -731,7 +751,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		IHostFile result = null;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				String fullPath = recodeSafe(remoteParent + '/' + fileName);
+				String fullPath = recodeSafe(concat(remoteParent, fileName));
 				OutputStream os = getChannel("SftpFileService.createFile").put(fullPath); //$NON-NLS-1$
 				//TODO workaround bug 153118: write a single space
 				//since jsch hangs when trying to close the stream without writing
@@ -757,7 +777,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		IHostFile result = null;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				String fullPath = recodeSafe(remoteParent + '/' + folderName);
+				String fullPath = recodeSafe(concat(remoteParent, folderName));
 				getChannel("SftpFileService.createFolder").mkdir(fullPath); //$NON-NLS-1$
 				SftpATTRS attrs = getChannel("SftpFileService.createFolder.stat").stat(fullPath); //$NON-NLS-1$
 				result = makeHostFile(remoteParent, folderName, attrs);
@@ -780,7 +800,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		Activator.trace("SftpFileService.delete.waitForLock"); //$NON-NLS-1$
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				String fullPath = recodeSafe(remoteParent + '/' + fileName);
+				String fullPath = recodeSafe(concat(remoteParent, fileName));
 				SftpATTRS attrs = null;
 				try {
 					attrs = getChannel("SftpFileService.delete").lstat(fullPath); //$NON-NLS-1$
@@ -831,8 +851,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		boolean ok=false;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				String fullPathOld = remoteParent + '/' + oldName;
-				String fullPathNew = remoteParent + '/' + newName;
+				String fullPathOld = concat(remoteParent, oldName);
+				String fullPathNew = concat(remoteParent, newName);
 				getChannel("SftpFileService.rename").rename(recode(fullPathOld), recodeSafe(fullPathNew)); //$NON-NLS-1$
 				ok=true;
 				Activator.trace("SftpFileService.rename ok"); //$NON-NLS-1$
@@ -922,8 +942,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		// TODO Interpret some error messages like "command not found" (use ren instead of mv on windows)
 		// TODO mimic by copy if the remote does not support copying between file systems?
 		Activator.trace("SftpFileService.move "+srcName); //$NON-NLS-1$
-		String fullPathOld = PathUtility.enQuoteUnix(recode(srcParent + '/' + srcName));
-		String fullPathNew = PathUtility.enQuoteUnix(recodeSafe(tgtParent + '/' + tgtName));
+		String fullPathOld = PathUtility.enQuoteUnix(recode(concat(srcParent, srcName)));
+		String fullPathNew = PathUtility.enQuoteUnix(recodeSafe(concat(tgtParent, tgtName)));
 		int rv = runCommand("mv "+fullPathOld+' '+fullPathNew, monitor); //$NON-NLS-1$
 		return (rv==0);
 	}
@@ -933,8 +953,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		// TODO check if newer versions of sftp support copy directly
 		// TODO Interpret some error messages like "command not found" (use (x)copy instead of cp on windows)
 		Activator.trace("SftpFileService.copy "+srcName); //$NON-NLS-1$
-		String fullPathOld = PathUtility.enQuoteUnix(recode(srcParent + '/' + srcName));
-		String fullPathNew = PathUtility.enQuoteUnix(recodeSafe(tgtParent + '/' + tgtName));
+		String fullPathOld = PathUtility.enQuoteUnix(recode(concat(srcParent, srcName)));
+		String fullPathNew = PathUtility.enQuoteUnix(recodeSafe(concat(tgtParent, tgtName)));
 		int rv = runCommand("cp -Rp "+fullPathOld+' '+fullPathNew, monitor); //$NON-NLS-1$
 		return (rv==0);
 	}
@@ -979,7 +999,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		boolean ok=false;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				String path = parent + '/' + name;
+				String path = concat(parent, name);
 				getChannel("SftpFileService.setLastModified").setMtime(recode(path), (int)(timestamp/1000)); //$NON-NLS-1$
 				ok=true;
 				Activator.trace("SftpFileService.setLastModified ok"); //$NON-NLS-1$
@@ -998,7 +1018,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		boolean ok=false;
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
 			try {
-				String path = parent + '/' + name;
+				String path = concat(parent, name);
 				SftpATTRS attr = getChannel("SftpFileService.setReadOnly").stat(recode(path)); //$NON-NLS-1$
 				int permOld = attr.getPermissions();
 				int permNew = permOld;
@@ -1037,7 +1057,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		InputStream stream = null;
 		
 		try {
-			String remotePath = recode(remoteParent + '/' + remoteFile);
+			String remotePath = recode(concat(remoteParent, remoteFile));
 			getChannel("SftpFileService.getInputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
 			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 		    channel.connect();

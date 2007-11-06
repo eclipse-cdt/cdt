@@ -6572,7 +6572,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("int i = cobj.c * 100; // value of cobj.c is unspecified\n"); //$NON-NLS-1$
 		buffer.append("cptr->c = 1;\n"); //$NON-NLS-1$
 		buffer.append("cout << cobj.c * 100 // value of cobj.c is unspecified\n"); //$NON-NLS-1$
-		buffer.append("<< '\n';\n"); //$NON-NLS-1$
+		buffer.append("<< '\\n';\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		parse(buffer.toString(), ParserLanguage.CPP, false, 0);
 	}
@@ -9734,7 +9734,7 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 		buffer.append("void printall()\n"); //$NON-NLS-1$
 		buffer.append("{\n"); //$NON-NLS-1$
 		buffer.append("for (int i = 0; i<cnt; i++)\n"); //$NON-NLS-1$
-		buffer.append("cout << p[i] << '\n';\n"); //$NON-NLS-1$
+		buffer.append("cout << p[i] << '\\n';\n"); //$NON-NLS-1$
 		buffer.append("}\n"); //$NON-NLS-1$
 		buffer.append("// ...\n"); //$NON-NLS-1$
 		buffer.append("};\n"); //$NON-NLS-1$
@@ -11645,9 +11645,9 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	
 	/**
 	 [--Start Example(CPP 16.2-8):
-	#if VERSION = = 1
+	#if VERSION == 1
 	#define INCFILE "vers1.h"
-	#elif VERSION = = 2
+	#elif VERSION == 2
 	#define INCFILE "vers2.h" // and so on
 	#else
 	#define INCFILE "versN.h"
@@ -11656,9 +11656,9 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	 */
 	public void test16_2s8() throws Exception {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("#if VERSION = = 1\n"); //$NON-NLS-1$
+		buffer.append("#if VERSION == 1\n"); //$NON-NLS-1$
 		buffer.append("#define INCFILE \"vers1.h\"\n"); //$NON-NLS-1$
-		buffer.append("#elif VERSION = = 2\n"); //$NON-NLS-1$
+		buffer.append("#elif VERSION == 2\n"); //$NON-NLS-1$
 		buffer.append("#define INCFILE \"vers2.h\" // and so on\n"); //$NON-NLS-1$
 		buffer.append("#else\n"); //$NON-NLS-1$
 		buffer.append("#define INCFILE \"versN.h\"\n"); //$NON-NLS-1$

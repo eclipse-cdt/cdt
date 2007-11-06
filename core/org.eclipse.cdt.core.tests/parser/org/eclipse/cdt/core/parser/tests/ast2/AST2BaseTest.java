@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -68,6 +69,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 
@@ -77,6 +79,7 @@ import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 public class AST2BaseTest extends BaseTestCase {
 	
     private static final IParserLogService NULL_LOG = new NullLogService();
+    protected boolean fUsesCPreprocessor= false;
 
     public AST2BaseTest() {
     	super();
@@ -106,6 +109,7 @@ public class AST2BaseTest extends BaseTestCase {
     protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems , boolean parseComments) throws ParserException {
         IScanner scanner = createScanner(new CodeReader(code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
         		new ScannerInfo(), parseComments);
+        fUsesCPreprocessor= scanner instanceof CPreprocessor;
         ISourceCodeParser parser2 = null;
         if( lang == ParserLanguage.CPP )
         {
@@ -151,14 +155,22 @@ public class AST2BaseTest extends BaseTestCase {
     }
 
 	public static IScanner createScanner(CodeReader codeReader, ParserLanguage lang, ParserMode mode,
-			ScannerInfo scannerInfo, boolean parseComments) {
+			IScannerInfo scannerInfo, boolean parseComments) {
 		IScannerExtensionConfiguration configuration = null;
         if( lang == ParserLanguage.C )
             configuration = new GCCScannerExtensionConfiguration();
         else
             configuration = new GPPScannerExtensionConfiguration();
-        IScanner scanner = new DOMScanner( codeReader, scannerInfo, mode, lang, NULL_LOG, configuration, FileCodeReaderFactory.getInstance() );
-        scanner.setScanComments(parseComments);
+        IScanner scanner;
+        if (CPreprocessor.PROP_VALUE.equals(System.getProperty("scanner"))) {
+        	scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
+        			FileCodeReaderFactory.getInstance());
+        }
+        else {
+        	scanner = new DOMScanner( codeReader, scannerInfo, mode, lang, NULL_LOG, configuration, 
+        			FileCodeReaderFactory.getInstance() );
+        	scanner.setScanComments(parseComments);
+        }
 		return scanner;
 	}
 

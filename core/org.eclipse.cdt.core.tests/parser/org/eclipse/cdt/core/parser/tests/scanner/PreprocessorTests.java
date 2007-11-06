@@ -452,6 +452,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
     // #define tp2(x,y,z) [ x ## y ## z ]
     // #define tstr1(x,y) [#x#y]
     // #define tstr2(x,y) [ #x #y ]
+    // #define spaceBeforeStr(x) a #x b
     // xstr(nospace);
     // xstr(space);
     // xstr(tp1(a b, c d , e f));
@@ -460,6 +461,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
     // xstr(tp2(a-b, c-d , e-f));
     // xstr(tstr1(a b, c d));
     // xstr(tstr2(a b, c d));
+    // xstr(spaceBeforeStr(c));
     public void testSpaceInStringify() throws Exception {
 		initializeScanner();
 		validateString("fvalfval");
@@ -486,7 +488,91 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateString("[ \\\"a b\\\" \\\"c d\\\" ]");
 		validateToken(IToken.tSEMI);
 
+		validateString("a \\\"c\\\" b");
+		validateToken(IToken.tSEMI);
+
 		validateEOF();
 		validateProblemCount(0);
+    }
+
+    // #define empty
+    // #define paste1(y) x##y z
+    // #define paste2(x) x##empty z
+    // paste1();
+    // paste1(empty);
+    // paste2();
+    // paste2(empty);
+    // paste2(a);
+    public void testTokenPasteWithEmptyParam() throws Exception {
+		initializeScanner();
+		validateIdentifier("x");
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+		
+		validateIdentifier("xempty");
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+		
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+		
+		validateIdentifier("emptyempty");
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+
+		validateIdentifier("aempty");
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+
+		validateEOF();
+		validateProblemCount(0);    	
+    }
+    
+    // #define empty
+    // #define paste1(y) x##y z
+    // #define paste2(x) x##empty z
+    // paste1();
+    // paste1(empty);
+    // paste2();
+    // paste2(empty);
+    // paste2(a);
+    public void testSpacesBeforeStringify() throws Exception {
+		initializeScanner();
+		validateIdentifier("x");
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+		
+		validateIdentifier("xempty");
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+		
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+		
+		validateIdentifier("emptyempty");
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+
+		validateIdentifier("aempty");
+		validateIdentifier("z");
+		validateToken(IToken.tSEMI);
+
+		validateEOF();
+		validateProblemCount(0);    	
+    }
+
+    // #define paste(x,y,z) x##y##z
+    // paste(a,b,c);
+    // paste(1,2,3);
+    public void testTokenPasteChain() throws Exception {
+    	initializeScanner();
+		validateIdentifier("abc");
+		validateToken(IToken.tSEMI);
+
+		validateInteger("123");
+		validateToken(IToken.tSEMI);
+
+		validateEOF();
+		validateProblemCount(0);    	    	
     }
 }

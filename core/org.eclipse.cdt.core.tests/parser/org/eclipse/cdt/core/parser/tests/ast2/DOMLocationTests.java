@@ -92,13 +92,13 @@ public class DOMLocationTests extends AST2BaseTest {
             assertEquals(nodeLocations.length, 1);
             assertTrue(nodeLocations[0] instanceof IASTFileLocation);
             IASTFileLocation fileLocation = ((IASTFileLocation) nodeLocations[0]);
-            assertEquals(fileLocation.getFileName(), _TEXT_); //$NON-NLS-1$
+            assertEquals(fileLocation.getFileName(), _TEXT_); 
             assertEquals(fileLocation.getNodeOffset(), 0);
             assertEquals(fileLocation.getNodeLength(), 6);
             IASTNodeLocation[] tuLocations = tu.getNodeLocations();
             assertEquals(tuLocations.length, nodeLocations.length);
             assertEquals(fileLocation.getFileName(),
-                    ((IASTFileLocation) tuLocations[0]).getFileName()); //$NON-NLS-1$
+                    ((IASTFileLocation) tuLocations[0]).getFileName()); 
             assertEquals(fileLocation.getNodeOffset(), tuLocations[0]
                     .getNodeOffset());
             assertEquals(fileLocation.getNodeLength(), tuLocations[0]
@@ -119,7 +119,7 @@ public class DOMLocationTests extends AST2BaseTest {
             assertEquals(nodeLocations.length, 1);
             assertTrue(nodeLocations[0] instanceof IASTFileLocation);
             IASTFileLocation fileLocation = ((IASTFileLocation) nodeLocations[0]);
-            assertEquals(fileLocation.getFileName(), _TEXT_); //$NON-NLS-1$
+            assertEquals(fileLocation.getFileName(), _TEXT_); 
             assertEquals(fileLocation.getNodeOffset(), 0);
             assertEquals(fileLocation.getNodeLength(), code.indexOf(";") + 1); //$NON-NLS-1$
             IASTDeclarator[] declarators = declaration.getDeclarators();
@@ -578,7 +578,7 @@ public class DOMLocationTests extends AST2BaseTest {
             assertEquals( 2, decls.length);
             assertEquals( 1, statements.length);
             assertEquals( 1, problems.length);
-            assertSoleLocation(problems[0], code, "z");
+            assertSoleLocation(problems[0], code, fUsesCPreprocessor ? "nix(y," : "z");
             assertSoleLocation( decls[1], code, "int x;"); 
         }
     }
@@ -593,13 +593,11 @@ public class DOMLocationTests extends AST2BaseTest {
                 : null) {
             IASTTranslationUnit tu = parse(code, p, false, false);
             IASTDeclaration[] decls= tu.getDeclarations();
-            IASTPreprocessorStatement [] statements = tu.getAllPreprocessorStatements();
             IASTProblem[] problems = tu.getPreprocessorProblems();
             assertEquals( 1, decls.length);
-            assertEquals( 1, statements.length);
             assertEquals( 2, problems.length);
             assertSoleLocation(problems[0], code, "#include \"\"");
-            assertSoleLocation(problems[1], code, "else");
+            assertSoleLocation(problems[1], code, fUsesCPreprocessor ? "#else" : "else");
             assertSoleLocation( decls[0], code, "int x;"); 
         }
     }
@@ -720,6 +718,6 @@ public class DOMLocationTests extends AST2BaseTest {
         assertEquals(IASTProblem.PREPROCESSOR_INVALID_DIRECTIVE, problems[2].getID());
         assertSoleLocation(problems[0], code, "#import \"include_once.h\"");
         assertSoleLocation(problems[1], code, "\"deprecated include\"");
-        assertSoleLocation(problems[2], code, "invalid");
+        assertSoleLocation(problems[2], code, fUsesCPreprocessor ? "#invalid" : "invalid");        	
     }
 }

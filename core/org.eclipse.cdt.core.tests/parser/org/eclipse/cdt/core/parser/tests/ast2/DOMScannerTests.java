@@ -23,11 +23,15 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -35,6 +39,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
+import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
@@ -62,14 +67,24 @@ public class DOMScannerTests extends BaseTestCase {
 		initializeScanner(input, ParserMode.COMPLETE_PARSE);
 	}
 
-	protected void initializeScanner(String input, ParserLanguage lang) throws IOException {
-		fScanner= (DOMScanner) AST2BaseTest.createScanner(new CodeReader(input.toCharArray()), lang, 
-				ParserMode.COMPLETE_PARSE, new ScannerInfo(), false);
+	protected void initializeScanner(String input, ParserLanguage lang) {
+		initializeScanner(input, ParserMode.COMPLETE_PARSE, lang);
 	}
 	
-	protected void initializeScanner(String input, ParserMode mode) throws IOException {
-		fScanner= (DOMScanner) AST2BaseTest.createScanner(new CodeReader(input.toCharArray()), ParserLanguage.CPP, 
-				mode, new ScannerInfo(), false);
+	protected void initializeScanner(String input, ParserMode mode) {
+		initializeScanner(input, mode, ParserLanguage.CPP); 
+	}
+	
+	protected void initializeScanner(String input, ParserMode mode, ParserLanguage lang) {
+		CodeReader codeReader=new CodeReader(input.toCharArray());
+		IScannerExtensionConfiguration configuration = null;
+		if( lang == ParserLanguage.C )
+			configuration = new GCCScannerExtensionConfiguration();
+		else
+			configuration = new GPPScannerExtensionConfiguration();
+		fScanner= new DOMScanner( codeReader, new ScannerInfo(), mode, lang, 
+				new NullLogService(), configuration, FileCodeReaderFactory.getInstance() );
+		fScanner.setScanComments(false);
 	}
 	
 	protected int fullyTokenize() throws Exception {

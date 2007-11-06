@@ -183,11 +183,13 @@ public class DOMPreprocessorInformationTest extends AST2BaseTest {
 		IASTNodeLocation[] nodeLocations = init.getNodeLocations();
 		assertEquals(1, nodeLocations.length);
 		
-		FunctionMacroExpansionLocation location = (FunctionMacroExpansionLocation) nodeLocations[0];
-		char[][] actualParameters = location.getActualParameters();
-		
-		assertEquals("foo", new String(actualParameters[0]));
-		assertEquals("bar", new String(actualParameters[1]));
+		if (!fUsesCPreprocessor) {
+			FunctionMacroExpansionLocation location = (FunctionMacroExpansionLocation) nodeLocations[0];
+			char[][] actualParameters = location.getActualParameters();
+
+			assertEquals("foo", new String(actualParameters[0]));
+			assertEquals("bar", new String(actualParameters[1]));
+		}
 	}
 	
 	// #ifdef xxx

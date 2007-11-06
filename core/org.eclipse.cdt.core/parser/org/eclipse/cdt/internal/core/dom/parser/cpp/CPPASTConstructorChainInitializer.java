@@ -24,43 +24,40 @@ public class CPPASTConstructorChainInitializer extends CPPASTNode implements
         ICPPASTConstructorChainInitializer, IASTAmbiguityParent {
 
     private IASTName name;
-
     private IASTExpression value;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer#getMemberInitializerId()
-     */
-    public IASTName getMemberInitializerId() {
+    
+    public CPPASTConstructorChainInitializer() {
+	}
+
+	public CPPASTConstructorChainInitializer(IASTName name, IASTExpression value) {
+		setMemberInitializerId(name);
+		setInitializerValue(value);
+	}
+
+	public IASTName getMemberInitializerId() {
         return name;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer#setMemberInitializerId(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setMemberInitializerId(IASTName name) {
         this.name = name;
+        if(name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(MEMBER_ID);
+		}
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer#getInitializerValue()
-     */
     public IASTExpression getInitializerValue() {
         return value;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer#setInitializerValue(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
+
     public void setInitializerValue(IASTExpression expression) {
         value = expression;
+        if(expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(INITIALIZER);
+		}
     }
 
     public boolean accept(ASTVisitor action) {
@@ -73,11 +70,6 @@ public class CPPASTConstructorChainInitializer extends CPPASTNode implements
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public int getRoleForName(IASTName n) {
         if (name == n)
             return r_reference;

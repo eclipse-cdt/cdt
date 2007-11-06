@@ -34,9 +34,7 @@ public class CASTName extends CASTNode implements IASTName {
 
     private IBinding binding = null;
 
-    /**
-     * @param name
-     */
+    
     public CASTName(char[] name) {
         this.name = name;
     }
@@ -73,11 +71,7 @@ public class CASTName extends CASTNode implements IASTName {
         this.binding = binding;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+
     public String toString() {
         if (name == EMPTY_CHAR_ARRAY)
             return EMPTY_STRING;
@@ -113,11 +107,7 @@ public class CASTName extends CASTNode implements IASTName {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
-     */
+
     public boolean isDeclaration() {
         IASTNode parent = getParent();
         if (parent instanceof IASTNameOwner) {
@@ -133,11 +123,7 @@ public class CASTName extends CASTNode implements IASTName {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
-     */
+
     public boolean isReference() {
         IASTNode parent = getParent();
         if (parent instanceof IASTNameOwner) {

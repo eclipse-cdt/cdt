@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -27,56 +26,14 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
  * @author jcamelon
  */
 public class CPPASTProblem extends CPPASTNode implements IASTProblem {
-    private IASTNode parent;
-
-    private ASTNodeProperty property;
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getParent()
-     */
-    public IASTNode getParent() {
-        return parent;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#setParent(org.eclipse.cdt.core.dom.ast.IASTNode)
-     */
-    public void setParent(IASTNode node) {
-        this.parent = node;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getPropertyInParent()
-     */
-    public ASTNodeProperty getPropertyInParent() {
-        return property;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#setPropertyInParent(org.eclipse.cdt.core.dom.ast.ASTNodeProperty)
-     */
-    public void setPropertyInParent(ASTNodeProperty property) {
-        this.property = property;
-    }
-
+   
     private final char[] arg;
-
     private final int id;
-
     private final boolean isError;
-
     private final boolean isWarning;
-
     private String message = null;
 
+    
     public CPPASTProblem(int id, char[] arg, boolean warn, boolean error) {
         this.id = id;
         this.arg = arg;
@@ -84,29 +41,15 @@ public class CPPASTProblem extends CPPASTNode implements IASTProblem {
         this.isError = error;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IASTProblem#getID()
-     */
+  
     public int getID() {
         return id;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IASTProblem#isError()
-     */
     public boolean isError() {
         return isError;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IASTProblem#isWarning()
-     */
     public boolean isWarning() {
         return isWarning;
     }
@@ -290,29 +233,15 @@ public class CPPASTProblem extends CPPASTNode implements IASTProblem {
         return message;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IASTProblem#checkCategory(int)
-     */
+
     public boolean checkCategory(int bitmask) {
         return ((id & bitmask) != 0);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IASTProblem#getArguments()
-     */
     public String getArguments() {
         return arg != null ? String.valueOf(arg) : ""; //$NON-NLS-1$
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getTranslationUnit()
-     */
     public IASTTranslationUnit getTranslationUnit() {
         if (this instanceof IASTTranslationUnit)
             return (IASTTranslationUnit) this;

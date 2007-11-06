@@ -26,32 +26,37 @@ public class CASTWhileStatement extends CASTNode implements IASTWhileStatement, 
     private IASTExpression condition;
     private IASTStatement body;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#getCondition()
-     */
-    public IASTExpression getCondition() {
+
+    public CASTWhileStatement() {
+	}
+
+	public CASTWhileStatement(IASTExpression condition, IASTStatement body) {
+		setCondition(condition);
+		setBody(body);
+	}
+
+	public IASTExpression getCondition() {
         return condition;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setCondition(IASTExpression condition) {
         this.condition = condition;
+        if (condition != null) {
+			condition.setParent(this);
+			condition.setPropertyInParent(CONDITIONEXPRESSION);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#getBody()
-     */
     public IASTStatement getBody() {
         return body;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#setBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void setBody(IASTStatement body) {
         this.body = body;
+        if (body != null) {
+			body.setParent(this);
+			body.setPropertyInParent(BODY);
+		}
     }
     
     public boolean accept( ASTVisitor action ){

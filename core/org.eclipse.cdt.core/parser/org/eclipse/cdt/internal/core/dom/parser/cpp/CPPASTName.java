@@ -50,25 +50,14 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
     private IBinding binding = null;
     private int fResolutionDepth= 0;
 
-    /**
-     * @param name
-     */
     public CPPASTName(char[] name) {
         this.name = name;
     }
 
-    /**
-     * 
-     */
     public CPPASTName() {
         name = EMPTY_CHAR_ARRAY;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
-     */
     public IBinding resolveBinding() {
         if (binding == null) {
         	if (++fResolutionDepth > MAX_RESOLUTION_DEPTH) {
@@ -124,11 +113,6 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
         return binding;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     public String toString() {
         if (name == EMPTY_CHAR_ARRAY)
             return EMPTY_STRING;
@@ -169,11 +153,6 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
-     */
     public boolean isDeclaration() {
         IASTNode parent = getParent();
         if (parent instanceof IASTNameOwner) {
@@ -189,11 +168,6 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
-     */
     public boolean isReference() {
         IASTNode parent = getParent();
         if (parent instanceof IASTNameOwner) {

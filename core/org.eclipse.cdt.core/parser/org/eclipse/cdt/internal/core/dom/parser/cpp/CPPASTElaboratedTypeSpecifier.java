@@ -29,32 +29,33 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
     private int kind;
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier#getKind()
-     */
-    public int getKind() {
+    
+    public CPPASTElaboratedTypeSpecifier() {
+	}
+
+	public CPPASTElaboratedTypeSpecifier(int kind, IASTName name) {
+		this.kind = kind;
+		setName(name);
+	}
+
+	public int getKind() {
         return kind;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier#setKind(int)
-     */
     public void setKind(int value) {
         this.kind = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(TYPE_NAME);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -76,9 +77,6 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( n != name ) return r_unclear;
 		

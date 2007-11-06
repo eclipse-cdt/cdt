@@ -28,7 +28,16 @@ public class CASTBinaryExpression extends CASTNode implements
     private IASTExpression operand1;
     private IASTExpression operand2;
 
-    public int getOperator() {
+    public CASTBinaryExpression() {
+	}
+
+	public CASTBinaryExpression(int op, IASTExpression operand1, IASTExpression operand2) {
+		this.op = op;
+		setOperand1(operand1);
+		setOperand2(operand2);
+	}
+
+	public int getOperator() {
         return op;
     }
 
@@ -40,16 +49,27 @@ public class CASTBinaryExpression extends CASTNode implements
         return operand2;
     }
 
+    /**
+     * @param op An op_X field from {@link IASTBinaryExpression}
+     */
     public void setOperator(int op) {
         this.op = op;
     }
 
     public void setOperand1(IASTExpression expression) {
-        operand1 = expression;   
+        operand1 = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND_ONE);
+		}
     }
 
     public void setOperand2(IASTExpression expression) {
         operand2 = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND_TWO);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

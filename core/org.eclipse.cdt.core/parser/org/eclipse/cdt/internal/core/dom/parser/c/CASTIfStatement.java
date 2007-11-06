@@ -27,46 +27,56 @@ public class CASTIfStatement extends CASTNode implements IASTIfStatement, IASTAm
     private IASTStatement thenClause;
     private IASTStatement elseClause;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#getCondition()
-     */
-    public IASTExpression getConditionExpression() {
+    
+    
+    public CASTIfStatement() {
+	}
+    
+	public CASTIfStatement(IASTExpression condition, IASTStatement thenClause) {
+		setConditionExpression(condition);
+		setThenClause(thenClause);
+	}
+
+
+	public CASTIfStatement(IASTExpression condition, IASTStatement thenClause, IASTStatement elseClause) {
+		this(condition, thenClause);
+		setElseClause(elseClause);
+	}
+
+	public IASTExpression getConditionExpression() {
         return condition;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setConditionExpression(IASTExpression condition) {
         this.condition = condition;
+        if (condition != null) {
+			condition.setParent(this);
+			condition.setPropertyInParent(CONDITION);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#getThenClause()
-     */
     public IASTStatement getThenClause() {
         return thenClause;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#setThenClause(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void setThenClause(IASTStatement thenClause) {
         this.thenClause = thenClause;
+        if (thenClause != null) {
+			thenClause.setParent(this);
+			thenClause.setPropertyInParent(THEN);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#getElseClause()
-     */
     public IASTStatement getElseClause() {
         return elseClause;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTIfStatement#setElseClause(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void setElseClause(IASTStatement elseClause) {
         this.elseClause = elseClause;
+        if (elseClause != null) {
+			elseClause.setParent(this);
+			elseClause.setPropertyInParent(ELSE);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

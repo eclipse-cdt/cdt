@@ -30,32 +30,31 @@ public class CPPASTUsingDeclaration extends CPPASTNode implements
     private boolean typeName;
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration#setIsTypename(boolean)
-     */
-    public void setIsTypename(boolean value) {
+    public CPPASTUsingDeclaration() {
+	}
+
+	public CPPASTUsingDeclaration(IASTName name) {
+		setName(name);	
+	}
+
+	public void setIsTypename(boolean value) {
         this.typeName = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration#isTypename()
-     */
     public boolean isTypename() {
         return typeName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(NAME);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -79,9 +78,6 @@ public class CPPASTUsingDeclaration extends CPPASTNode implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( n == name )
 			return r_reference;

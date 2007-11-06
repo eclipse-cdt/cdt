@@ -24,18 +24,24 @@ public class CPPASTInitializerExpression extends CPPASTNode implements
 
     private IASTExpression exp;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTInitializerExpression#getExpression()
-     */
-    public IASTExpression getExpression() {
+    
+    public CPPASTInitializerExpression() {
+	}
+
+	public CPPASTInitializerExpression(IASTExpression exp) {
+		setExpression(exp);
+	}
+
+	public IASTExpression getExpression() {
         return exp;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTInitializerExpression#setExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setExpression(IASTExpression expression) {
         this.exp = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(INITIALIZER_EXPRESSION);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -59,8 +65,7 @@ public class CPPASTInitializerExpression extends CPPASTNode implements
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        if( child == exp )
-        {
+        if( child == exp ) {
             other.setPropertyInParent( child.getPropertyInParent() );
             other.setParent( child.getParent() );
             exp  = (IASTExpression) other;

@@ -18,13 +18,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 /**
  * @author jcamelon
  */
-public class CPPASTTypeIdExpression extends CPPASTNode implements
-        ICPPASTTypeIdExpression {
+public class CPPASTTypeIdExpression extends CPPASTNode implements ICPPASTTypeIdExpression {
 
     private int op;
     private IASTTypeId typeId;
 
-    public int getOperator() {
+    public CPPASTTypeIdExpression() {
+	}
+
+	public CPPASTTypeIdExpression(int op, IASTTypeId typeId) {
+		this.op = op;
+		setTypeId(typeId);
+	}
+
+	public int getOperator() {
         return op;
     }
 
@@ -34,6 +41,10 @@ public class CPPASTTypeIdExpression extends CPPASTNode implements
 
     public void setTypeId(IASTTypeId typeId) {
        this.typeId = typeId;
+       if (typeId != null) {
+    	   typeId.setParent(this);
+    	   typeId.setPropertyInParent(TYPE_ID);
+       } 
     }
 
     public IASTTypeId getTypeId() {

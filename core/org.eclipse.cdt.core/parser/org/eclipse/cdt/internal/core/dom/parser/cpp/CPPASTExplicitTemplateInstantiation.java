@@ -24,18 +24,24 @@ public class CPPASTExplicitTemplateInstantiation extends CPPASTNode implements
 
     private IASTDeclaration declaration;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation#getDeclaration()
-     */
-    public IASTDeclaration getDeclaration() {
+    
+    public CPPASTExplicitTemplateInstantiation() {
+	}
+
+	public CPPASTExplicitTemplateInstantiation(IASTDeclaration declaration) {
+		setDeclaration(declaration);
+	}
+
+	public IASTDeclaration getDeclaration() {
         return declaration;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation#setDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
     public void setDeclaration(IASTDeclaration declaration) {
         this.declaration = declaration;
+        if (declaration != null) {
+			declaration.setParent(this);
+			declaration.setPropertyInParent(OWNED_DECLARATION);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

@@ -18,16 +18,28 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 /**
  * @author jcamelon
  */
-public class CPPASTCompoundStatementExpression extends CPPASTNode implements
-        IGNUASTCompoundStatementExpression {
+public class CPPASTCompoundStatementExpression extends CPPASTNode implements IGNUASTCompoundStatementExpression {
+	
     private IASTCompoundStatement statement;
 
-    public IASTCompoundStatement getCompoundStatement() {
+    
+    public CPPASTCompoundStatementExpression() {
+	}
+
+	public CPPASTCompoundStatementExpression(IASTCompoundStatement statement) {
+		setCompoundStatement(statement);
+	}
+
+	public IASTCompoundStatement getCompoundStatement() {
         return statement;
     }
 
     public void setCompoundStatement(IASTCompoundStatement statement) {
         this.statement = statement;
+        if (statement != null) {
+			statement.setParent(this);
+			statement.setPropertyInParent(STATEMENT);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

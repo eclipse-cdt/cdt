@@ -26,7 +26,16 @@ public class CPPASTUnaryExpression extends CPPASTNode implements
     private int operator;
     private IASTExpression operand;
 
-    public int getOperator() {
+    
+    public CPPASTUnaryExpression() {
+	}
+
+	public CPPASTUnaryExpression(int operator, IASTExpression operand) {
+		this.operator = operator;
+		setOperand(operand);
+	}
+
+	public int getOperator() {
         return operator;
     }
 
@@ -40,6 +49,10 @@ public class CPPASTUnaryExpression extends CPPASTNode implements
 
     public void setOperand(IASTExpression expression) {
         operand = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -64,8 +77,7 @@ public class CPPASTUnaryExpression extends CPPASTNode implements
     }
 
     public void replace(IASTNode child, IASTNode other) {
-        if( child == operand )
-        {
+        if( child == operand ) {
             other.setPropertyInParent( child.getPropertyInParent() );
             other.setParent( child.getParent() );
             operand  = (IASTExpression) other;

@@ -26,7 +26,15 @@ public class CPPASTSimpleTypeConstructorExpression extends CPPASTNode implements
     private int st;
     private IASTExpression init;
 
-    public int getSimpleType() {
+    public CPPASTSimpleTypeConstructorExpression() {
+	}
+
+	public CPPASTSimpleTypeConstructorExpression(int st, IASTExpression init) {
+		this.st = st;
+		setInitialValue(init);
+	}
+
+	public int getSimpleType() {
         return st;
     }
 
@@ -40,6 +48,10 @@ public class CPPASTSimpleTypeConstructorExpression extends CPPASTNode implements
 
     public void setInitialValue(IASTExpression expression) {
         init = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(INITIALIZER_VALUE);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

@@ -26,47 +26,48 @@ public class CPPASTSimpleTypeTemplateParameter extends CPPASTNode implements
     private IASTName name;
     private IASTTypeId typeId;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter#getParameterType()
-     */
-    public int getParameterType() {
+
+    public CPPASTSimpleTypeTemplateParameter() {
+	}
+
+	public CPPASTSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId) {
+		this.type = type;
+		setName(name);
+		setDefaultType(typeId);
+	}
+
+	public int getParameterType() {
         return type;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter#setParameterType(int)
-     */
     public void setParameterType(int value) {
         this.type = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(PARAMETER_NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter#getDefaultType()
-     */
     public IASTTypeId getDefaultType() {
         return typeId;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter#setDefaultType(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-     */
     public void setDefaultType(IASTTypeId typeId) {
         this.typeId = typeId;
+        if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(DEFAULT_TYPE);
+		}
     }
+    
     public boolean accept( ASTVisitor action ){
         if( action instanceof CPPASTVisitor &&
             ((CPPASTVisitor)action).shouldVisitTemplateParameters ){
@@ -90,10 +91,7 @@ public class CPPASTSimpleTypeTemplateParameter extends CPPASTNode implements
     		}
         return true;
     }
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
+
 	public int getRoleForName(IASTName n) {
 		if( n == name )
 			return r_declaration;

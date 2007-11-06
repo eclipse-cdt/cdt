@@ -26,6 +26,8 @@ public class CASTAmbiguousExpression extends CASTAmbiguity implements
     public void addExpression(IASTExpression e) {
     	if (e != null) {
     		expressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, expressions, ++expressionsPos, e );
+    		e.setParent(this);
+			e.setPropertyInParent(SUBEXPRESSION);
     	}
     }
 

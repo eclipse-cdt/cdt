@@ -27,7 +27,16 @@ public class CPPASTBinaryExpression extends CPPASTNode implements
     private IASTExpression operand1;
     private IASTExpression operand2;
 
-    public int getOperator() {
+    public CPPASTBinaryExpression() {
+	}
+
+	public CPPASTBinaryExpression(int op, IASTExpression operand1, IASTExpression operand2) {
+		this.op = op;
+		setOperand1(operand1);
+		setOperand2(operand2);
+	}
+
+	public int getOperator() {
         return op;
     }
 
@@ -45,10 +54,18 @@ public class CPPASTBinaryExpression extends CPPASTNode implements
 
     public void setOperand1(IASTExpression expression) {
         operand1 = expression;   
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND_ONE);
+		}
     }
 
     public void setOperand2(IASTExpression expression) {
         operand2 = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND_TWO);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

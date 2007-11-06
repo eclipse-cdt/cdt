@@ -105,24 +105,19 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     
     public void addDeclaration(IASTDeclaration d) {
         decls = (IASTDeclaration [])ArrayUtil.append( IASTDeclaration.class, decls, d );
+        if (d != null) {
+			d.setParent(this);
+			d.setPropertyInParent(OWNED_DECLARATION);
+		}
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations()
-     */
+
     public IASTDeclaration[] getDeclarations() {
         if (decls == null)
             return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, decls );
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getScope()
-     */
     public IScope getScope() {
         if (scope == null) {
             scope = new CPPNamespaceScope(this);
@@ -233,11 +228,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return names;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getReferences(org.eclipse.cdt.core.dom.ast.IBinding)
-     */
+
     public IASTName[] getReferences(IBinding b) {
         if( b instanceof IMacroBinding )
         {
@@ -248,12 +239,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return CPPVisitor.getReferences(this, b);
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int,
-     *      int)
-     */
+
     public IASTNodeLocation[] getLocationInfo(int offset, int length) {
         if (resolver == null)
             return EMPTY_PREPROCESSOR_LOCATION_ARRAY;
@@ -308,9 +294,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     		return PROCESS_CONTINUE;
     	}
     	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-    	 */
+ 
     	public int visit(IASTDeclaration declaration) {
     		// use declarations to determine if the search has gone past the offset (i.e. don't know the order the visitor visits the nodes)
 			// TODO take out fix below for bug 86993 check for: !(declaration instanceof ICPPASTLinkageSpecification)
@@ -320,9 +304,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     		return processNode(declaration);
     	}
     	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
-    	 */
+
     	public int visit(IASTDeclarator declarator) {
     		int ret = processNode(declarator);
     		
@@ -353,68 +335,42 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     		return ret;
     	}
     	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
-    	 */
+ 
     	public int processDesignator(ICASTDesignator designator) {
     		return processNode(designator);
     	}
-    	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
-    	 */
+
     	public int visit(IASTDeclSpecifier declSpec) {
     		return processNode(declSpec);
     	}
-    	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
-    	 */
+
     	public int visit(IASTEnumerator enumerator) {
     		return processNode((IASTNode)enumerator);
     	}
-    	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-    	 */
+
     	public int visit(IASTExpression expression) {
     		return processNode(expression);
     	}
-    	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
-    	 */
+ 
     	public int visit(IASTInitializer initializer) {
     		return processNode(initializer);
     	}
     	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processName(org.eclipse.cdt.core.dom.ast.IASTName)
-    	 */
     	public int visit(IASTName name) {
     		if ( name.toString() != null )
     			return processNode(name);
     		return PROCESS_CONTINUE;
     	}
     	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
-    	 */
     	public int visit(
     			IASTParameterDeclaration parameterDeclaration) {
     		return processNode(parameterDeclaration);
     	}
     	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
-    	 */
     	public int visit(IASTStatement statement) {
     		return processNode(statement);
     	}
     	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-    	 */
     	public int visit(IASTTypeId typeId) {
     		return processNode(typeId);
     	}
@@ -424,11 +380,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     	}
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
-     */
+
     public IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
     	IASTNode node = null;
 		ASTPreprocessorSelectionResult result = null;
@@ -455,44 +407,25 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return node;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
-     */
+
     public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
        if( resolver == null ) return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
        IASTPreprocessorMacroDefinition [] result = resolver.getMacroDefinitions();
        return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
-     */
     public IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions() {
        if( resolver == null ) return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
        IASTPreprocessorMacroDefinition [] result = resolver.getBuiltinMacroDefinitions();
        return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getIncludeDirectives()
-     */
     public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
        if( resolver == null ) return EMPTY_PREPROCESSOR_INCLUSION_ARRAY;
        IASTPreprocessorIncludeStatement [] result = resolver.getIncludeDirectives();
        return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getAllPreprocessorStatements()
-     */
     public IASTPreprocessorStatement[] getAllPreprocessorStatements() {
         if (resolver == null)
             return EMPTY_PREPROCESSOR_STATEMENT_ARRAY;
@@ -500,32 +433,17 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.internal.core.parser2.IRequiresLocationInformation#setLocationResolver(org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver)
-     */
     public void setLocationResolver(ILocationResolver resolver) {
         this.resolver = resolver;
         resolver.setRootNode( this );
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit#resolveBinding()
-     */
     public IBinding resolveBinding() {
         if (binding == null)
             binding = new CPPNamespace(this);
         return binding;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getPreprocesorProblems()
-     */
     public IASTProblem[] getPreprocessorProblems() {
         if (resolver == null)
             return EMPTY_PROBLEM_ARRAY;
@@ -538,19 +456,12 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getUnpreprocessedSignature(org.eclipse.cdt.core.dom.ast.IASTNodeLocation[])
-     */
     public String getUnpreprocessedSignature(IASTNodeLocation[] locations) {
        if( resolver == null ) return EMPTY_STRING;
        return new String( resolver.getUnpreprocessedSignature(locations) );
     }
     
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getFilePath()
-	 */
+
 	public String getFilePath() {
 		if (resolver == null)
 			return EMPTY_STRING;

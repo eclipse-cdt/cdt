@@ -24,12 +24,23 @@ public class CASTCompoundStatementExpression extends CASTNode implements
 
     private IASTCompoundStatement statement;
 
-    public IASTCompoundStatement getCompoundStatement() {
+    public CASTCompoundStatementExpression() {
+	}
+
+	public CASTCompoundStatementExpression(IASTCompoundStatement statement) {
+		setCompoundStatement(statement);
+	}
+
+	public IASTCompoundStatement getCompoundStatement() {
         return statement;
     }
 
     public void setCompoundStatement(IASTCompoundStatement statement) {
         this.statement = statement;
+        if (statement != null) {
+			statement.setParent(this);
+			statement.setPropertyInParent(STATEMENT);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

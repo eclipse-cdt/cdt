@@ -31,12 +31,31 @@ public class CASTFieldReference extends CASTNode implements IASTFieldReference, 
     private IASTName name;
     private boolean ptr;
 
-    public IASTExpression getFieldOwner() {
+    public CASTFieldReference() {
+	}
+
+    
+	public CASTFieldReference(IASTName name, IASTExpression owner) {
+		this(name, owner, false);
+	}
+
+
+	public CASTFieldReference(IASTName name, IASTExpression owner, boolean ptr) {
+		setFieldOwner(owner);
+		setFieldName(name);
+		this.ptr = ptr;
+	}
+
+	public IASTExpression getFieldOwner() {
         return owner;
     }
 
     public void setFieldOwner(IASTExpression expression) {
         this.owner = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(FIELD_OWNER);
+		}
     }
 
     public IASTName getFieldName() {
@@ -45,6 +64,10 @@ public class CASTFieldReference extends CASTNode implements IASTFieldReference, 
 
     public void setFieldName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(FIELD_NAME);
+		}
     }
 
     public boolean isPointerDereference() {

@@ -34,32 +34,34 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
     private boolean typename;
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier#isTypename()
-     */
-    public boolean isTypename() {
+    
+    public CPPASTNamedTypeSpecifier() {
+	}
+
+	public CPPASTNamedTypeSpecifier(boolean typename, IASTName name) {
+		this.typename = typename;
+		this.name = name;
+	}
+
+	public boolean isTypename() {
         return typename;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier#setIsTypename(boolean)
-     */
     public void setIsTypename(boolean value) {
         typename = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
+
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(NAME);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -82,9 +84,6 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
         return true;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( n == name )
 			return r_reference;

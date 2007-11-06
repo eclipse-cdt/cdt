@@ -27,8 +27,21 @@ public class CASTFunctionCallExpression extends CASTNode implements
     private IASTExpression functionName;
     private IASTExpression parameter;
 
-    public void setFunctionNameExpression(IASTExpression expression) {
+    
+    public CASTFunctionCallExpression() {
+	}
+
+	public CASTFunctionCallExpression(IASTExpression functionName, IASTExpression parameter) {
+		setFunctionNameExpression(functionName);
+		setParameterExpression(parameter);
+	}
+
+	public void setFunctionNameExpression(IASTExpression expression) {
         this.functionName = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(FUNCTION_NAME);
+		}
     }
 
     public IASTExpression getFunctionNameExpression() {
@@ -37,6 +50,10 @@ public class CASTFunctionCallExpression extends CASTNode implements
 
     public void setParameterExpression(IASTExpression expression) {
         this.parameter = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(PARAMETERS);
+		}
     }
 
     public IASTExpression getParameterExpression() {

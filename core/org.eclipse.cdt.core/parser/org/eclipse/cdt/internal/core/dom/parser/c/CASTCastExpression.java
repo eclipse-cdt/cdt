@@ -18,21 +18,27 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 /**
  * @author jcamelon
  */
-public class CASTCastExpression extends CASTUnaryExpression implements
-        IASTCastExpression {
+public class CASTCastExpression extends CASTUnaryExpression implements IASTCastExpression {
 
     private IASTTypeId typeId;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression#setTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-     */
-    public void setTypeId(IASTTypeId typeId) {
+
+    public CASTCastExpression() {
+	}
+
+	public CASTCastExpression(IASTTypeId typeId, IASTExpression operand) {
+		super(op_cast, operand);
+		setTypeId(typeId);
+	}
+
+	public void setTypeId(IASTTypeId typeId) {
         this.typeId = typeId;
+        if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TYPE_ID);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression#getTypeId()
-     */
     public IASTTypeId getTypeId() {
         return typeId;
     }

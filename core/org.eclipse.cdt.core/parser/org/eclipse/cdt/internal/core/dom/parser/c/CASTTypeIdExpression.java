@@ -25,7 +25,15 @@ public class CASTTypeIdExpression extends CASTNode implements
     private int op;
     private IASTTypeId typeId;
 
-    public int getOperator() {
+    public CASTTypeIdExpression() {
+	}
+
+	public CASTTypeIdExpression(int op, IASTTypeId typeId) {
+		this.op = op;
+		setTypeId(typeId);
+	}
+
+	public int getOperator() {
         return op;
     }
 
@@ -35,6 +43,10 @@ public class CASTTypeIdExpression extends CASTNode implements
 
     public void setTypeId(IASTTypeId typeId) {
        this.typeId = typeId;
+       if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TYPE_ID);
+		}
     }
 
     public IASTTypeId getTypeId() {
@@ -65,5 +77,4 @@ public class CASTTypeIdExpression extends CASTNode implements
     public IType getExpressionType() {
     	return CVisitor.getExpressionType(this);
     }
-    
 }

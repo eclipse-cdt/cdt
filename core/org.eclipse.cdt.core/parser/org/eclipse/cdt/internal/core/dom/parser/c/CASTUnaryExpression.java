@@ -27,7 +27,16 @@ public class CASTUnaryExpression extends CASTNode implements
     private int operator;
     private IASTExpression operand;
 
-    public int getOperator() {
+    
+    public CASTUnaryExpression() {
+	}
+
+	public CASTUnaryExpression(int operator, IASTExpression operand) {
+		this.operator = operator;
+		setOperand(operand);
+	}
+
+	public int getOperator() {
         return operator;
     }
 
@@ -41,6 +50,10 @@ public class CASTUnaryExpression extends CASTNode implements
 
     public void setOperand(IASTExpression expression) {
         operand = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

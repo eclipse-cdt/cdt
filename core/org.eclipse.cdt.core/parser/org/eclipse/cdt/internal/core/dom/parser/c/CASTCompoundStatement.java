@@ -22,33 +22,25 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public class CASTCompoundStatement extends CASTNode implements
-        IASTCompoundStatement, IASTAmbiguityParent {
-
-
+public class CASTCompoundStatement extends CASTNode implements IASTCompoundStatement, IASTAmbiguityParent {
     
     private IASTStatement [] statements = null;
     private IScope scope = null;
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#getStatements()
-     */
     public IASTStatement[] getStatements() {
         if( statements == null ) return IASTStatement.EMPTY_STATEMENT_ARRAY;
         return (IASTStatement[]) ArrayUtil.trim( IASTStatement.class, statements );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#addStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void addStatement(IASTStatement statement) {
         statements = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, statements, statement );
+        if(statement != null) {
+        	statement.setParent(this);
+        	statement.setPropertyInParent(NESTED_STATEMENT);
+        }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompoundStatement#resolveBinding()
-     */
     public IScope getScope() {
         if( scope == null )
             scope = new CScope( this );
@@ -90,5 +82,4 @@ public class CASTCompoundStatement extends CASTNode implements
             }
         }
     }
-
 }

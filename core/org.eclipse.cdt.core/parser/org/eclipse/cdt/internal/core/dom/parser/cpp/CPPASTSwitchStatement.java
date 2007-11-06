@@ -30,32 +30,42 @@ public class CPPASTSwitchStatement extends CPPASTNode implements
     private IASTStatement body;
     private IASTDeclaration decl;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#getController()
-     */
-    public IASTExpression getControllerExpression() {
+    
+    public CPPASTSwitchStatement() {
+	}
+
+	public CPPASTSwitchStatement(IASTDeclaration controller, IASTStatement body) {
+		setControllerDeclaration(controller);
+		setBody(body);
+	}
+    
+    public CPPASTSwitchStatement(IASTExpression controller, IASTStatement body) {
+		setControllerExpression(controller);
+		setBody(body);
+	}
+
+	public IASTExpression getControllerExpression() {
         return controller;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#setController(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setControllerExpression(IASTExpression controller) {
         this.controller = controller;
+        if (controller != null) {
+			controller.setParent(this);
+			controller.setPropertyInParent(CONTROLLER_EXP);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#getBody()
-     */
     public IASTStatement getBody() {
         return body;
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#setBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
+    
     public void setBody(IASTStatement body) {
         this.body = body;
+        if (body != null) {
+			body.setParent(this);
+			body.setPropertyInParent(BODY);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -108,6 +118,10 @@ public class CPPASTSwitchStatement extends CPPASTNode implements
 
     public void setControllerDeclaration(IASTDeclaration d) {
         decl = d;
+        if (d != null) {
+			d.setParent(this);
+			d.setPropertyInParent(CONTROLLER_DECLARATION);
+		}
     }
 
 	public IScope getScope() {

@@ -24,18 +24,24 @@ public class CASTCaseStatement extends CASTNode implements IASTCaseStatement, IA
 
     private IASTExpression expression;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCaseStatement#getExpression()
-     */
-    public IASTExpression getExpression() {
+
+    public CASTCaseStatement() {
+	}
+
+	public CASTCaseStatement(IASTExpression expression) {
+		setExpression(expression);
+	}
+
+	public IASTExpression getExpression() {
         return expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCaseStatement#setExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setExpression(IASTExpression expression) {
         this.expression = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(EXPRESSION);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

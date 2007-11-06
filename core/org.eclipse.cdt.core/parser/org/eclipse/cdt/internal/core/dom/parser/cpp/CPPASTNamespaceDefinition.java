@@ -30,41 +30,42 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
         ICPPASTNamespaceDefinition, IASTAmbiguityParent {
 
     private IASTName name;
+  
+    public CPPASTNamespaceDefinition() {
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#getName()
-     */
-    public IASTName getName() {
+	public CPPASTNamespaceDefinition(IASTName name) {
+		setName(name);
+	}
+
+	public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(NAMESPACE_NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#getDeclarations()
-     */
     public IASTDeclaration [] getDeclarations() {
         if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, declarations );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
     public void addDeclaration(IASTDeclaration declaration) {
         declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
+        if(declaration != null) {
+        	declaration.setParent(this);
+			declaration.setPropertyInParent(OWNED_DECLARATION);
+        }
     }
 
     private IASTDeclaration [] declarations = new IASTDeclaration[32];
-    /* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#getScope()
-	 */
-	public IScope getScope() {
+
+    public IScope getScope() {
 	    try {
             return ((ICPPNamespace) name.resolveBinding()).getNamespaceScope();
         } catch ( DOMException e ) {
@@ -99,9 +100,6 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( name == n ) return r_definition;
 		return r_unclear;

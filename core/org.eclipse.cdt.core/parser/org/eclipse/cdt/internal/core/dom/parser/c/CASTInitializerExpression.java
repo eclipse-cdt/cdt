@@ -25,18 +25,24 @@ public class CASTInitializerExpression extends CASTNode implements
 
     private IASTExpression expression;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTInitializerExpression#getExpression()
-     */
-    public IASTExpression getExpression() {
+ 
+    public CASTInitializerExpression() {
+	}
+
+	public CASTInitializerExpression(IASTExpression expression) {
+		setExpression(expression);
+	}
+
+	public IASTExpression getExpression() {
         return expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTInitializerExpression#setExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setExpression(IASTExpression expression) {
         this.expression = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(INITIALIZER_EXPRESSION);
+		}
     }
     
     public boolean accept( ASTVisitor action ){

@@ -23,32 +23,38 @@ public class CPPASTTypeId extends CPPASTNode implements IASTTypeId {
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator absDecl;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTypeId#getDeclSpecifier()
-     */
-    public IASTDeclSpecifier getDeclSpecifier() {
+    
+    public CPPASTTypeId() {
+	}
+
+	public CPPASTTypeId(IASTDeclSpecifier declSpec, IASTDeclarator absDecl) {
+		setDeclSpecifier(declSpec);
+		setAbstractDeclarator(absDecl);
+	}
+
+	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpec;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTypeId#setDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
-     */
     public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         this.declSpec = declSpec;
+        if (declSpec != null) {
+			declSpec.setParent(this);
+			declSpec.setPropertyInParent(DECL_SPECIFIER);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTypeId#getAbstractDeclarator()
-     */
     public IASTDeclarator getAbstractDeclarator() {
         return absDecl;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTypeId#setAbstractDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
-     */
+
     public void setAbstractDeclarator(IASTDeclarator abstractDeclarator) {
         this.absDecl = abstractDeclarator;
+        if (abstractDeclarator != null) {
+			abstractDeclarator.setParent(this);
+			abstractDeclarator.setPropertyInParent(ABSTRACT_DECLARATOR);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

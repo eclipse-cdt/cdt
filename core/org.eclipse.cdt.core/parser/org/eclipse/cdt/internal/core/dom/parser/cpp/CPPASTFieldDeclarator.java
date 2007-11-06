@@ -25,18 +25,24 @@ public class CPPASTFieldDeclarator extends CPPASTDeclarator implements
 
     private IASTExpression bitField;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator#getBitFieldSize()
-     */
-    public IASTExpression getBitFieldSize() {
+    
+    public CPPASTFieldDeclarator() {
+	}
+
+	public CPPASTFieldDeclarator(IASTExpression bitField) {
+		setBitFieldSize(bitField);
+	}
+
+	public IASTExpression getBitFieldSize() {
         return bitField;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator#setBitFieldSize(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setBitFieldSize(IASTExpression size) {
         this.bitField = size;
+        if (size != null) {
+			size.setParent(this);
+			size.setPropertyInParent(FIELD_SIZE);
+		}
     }
 
     protected boolean postAccept( ASTVisitor action ){

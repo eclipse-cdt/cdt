@@ -16,23 +16,28 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 /**
  * @author jcamelon
  */
-public class CPPASTProblemTypeId extends CPPASTTypeId implements
-        IASTProblemTypeId {
+public class CPPASTProblemTypeId extends CPPASTTypeId implements IASTProblemTypeId {
 
-    private IASTProblem problem;
+	private IASTProblem problem;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTProblemTypeId#getProblem()
-     */
-    public IASTProblem getProblem() {
+    
+    public CPPASTProblemTypeId() {
+	}
+
+	public CPPASTProblemTypeId(IASTProblem problem) {
+		setProblem(problem);
+	}
+
+	public IASTProblem getProblem() {
         return problem;
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTProblemTypeId#setProblem(org.eclipse.cdt.core.dom.ast.IASTProblem)
-     */
+    
     public void setProblem(IASTProblem p) {
         problem = p;
+        if (p != null) {
+			p.setParent(this);
+			p.setPropertyInParent(PROBLEM);
+		}
     }
 
 }

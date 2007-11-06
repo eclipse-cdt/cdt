@@ -24,19 +24,17 @@ public class CASTInitializerList extends CASTNode implements
         IASTInitializerList {
 
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclarators()
-     */
     public IASTInitializer[] getInitializers() {
         if( initializers == null ) return IASTInitializer.EMPTY_INITIALIZER_ARRAY;
         initializers = (IASTInitializer[]) ArrayUtil.removeNullsAfter( IASTInitializer.class, initializers, initializersPos );
         return initializers;
     }
     
-    public void addInitializer( IASTInitializer d )
-    {
+    public void addInitializer( IASTInitializer d ) {
     	if (d != null) {
-    		initializers = (IASTInitializer[]) ArrayUtil.append( IASTInitializer.class, initializers, ++initializersPos, d );	
+    		initializers = (IASTInitializer[]) ArrayUtil.append( IASTInitializer.class, initializers, ++initializersPos, d );
+    		d.setParent(this);
+			d.setPropertyInParent(NESTED_INITIALIZER);
     	}
     }
     

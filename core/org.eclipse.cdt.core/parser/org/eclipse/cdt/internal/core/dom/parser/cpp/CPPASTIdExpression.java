@@ -22,14 +22,27 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @author jcamelon
  */
 public class CPPASTIdExpression extends CPPASTNode implements IASTIdExpression, IASTCompletionContext {
-    private IASTName name;
 
-    public IASTName getName() {
+	private IASTName name;
+
+
+    public CPPASTIdExpression() {
+	}
+
+	public CPPASTIdExpression(IASTName name) {
+		setName(name);
+	}
+
+	public IASTName getName() {
         return name;
     }
 
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(ID_NAME);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

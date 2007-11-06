@@ -25,18 +25,24 @@ public class CASTReturnStatement extends CASTNode implements
 
     private IASTExpression retValue;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTReturnStatement#getReturnValue()
-     */
-    public IASTExpression getReturnValue() {
+    public CASTReturnStatement() {
+	}
+
+	public CASTReturnStatement(IASTExpression retValue) {
+		setReturnValue(retValue);
+	}
+
+	public IASTExpression getReturnValue() {
         return retValue;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTReturnStatement#setReturnValue(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
+
     public void setReturnValue(IASTExpression returnValue) {
         retValue = returnValue;
+        if (returnValue != null) {
+			returnValue.setParent(this);
+			returnValue.setPropertyInParent(RETURNVALUE);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -66,6 +72,4 @@ public class CASTReturnStatement extends CASTNode implements
             retValue  = (IASTExpression) other;
         }
     }
-    
-    
 }

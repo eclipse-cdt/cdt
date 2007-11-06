@@ -20,51 +20,49 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public class CPPASTCatchHandler extends CPPASTNode implements
-        ICPPASTCatchHandler, IASTAmbiguityParent {
+public class CPPASTCatchHandler extends CPPASTNode implements ICPPASTCatchHandler, IASTAmbiguityParent {
 
     private boolean isCatchAll;
     private IASTStatement body;
     private IASTDeclaration declaration;
+    
+    public CPPASTCatchHandler() {
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler#setIsCatchAll(boolean)
-     */
-    public void setIsCatchAll(boolean isEllipsis) {
+	public CPPASTCatchHandler(boolean isCatchAll, IASTStatement body, IASTDeclaration declaration) {
+		this.isCatchAll = isCatchAll;
+		setCatchBody(body);
+		setDeclaration(declaration);
+	}
+
+	public void setIsCatchAll(boolean isEllipsis) {
         isCatchAll = isEllipsis;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler#isCatchAll()
-     */
     public boolean isCatchAll() {
         return isCatchAll;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler#setCatchBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void setCatchBody(IASTStatement compoundStatement) {
         body = compoundStatement;
+        if (compoundStatement != null) {
+			compoundStatement.setParent(this);
+			compoundStatement.setPropertyInParent(CATCH_BODY);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler#getCatchBody()
-     */
     public IASTStatement getCatchBody() {
         return body;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler#setDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
     public void setDeclaration(IASTDeclaration decl) {
         declaration = decl;
+        if (decl != null) {
+			decl.setParent(this);
+			decl.setPropertyInParent(DECLARATION);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler#getDeclaration()
-     */
     public IASTDeclaration getDeclaration() {
         return declaration;
     }

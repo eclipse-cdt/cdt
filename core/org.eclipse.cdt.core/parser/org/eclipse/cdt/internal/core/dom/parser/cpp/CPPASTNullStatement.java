@@ -16,8 +16,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 /**
  * @author jcamelon
  */
-public class CPPASTNullStatement extends CPPASTNode implements
-        IASTNullStatement {
+public class CPPASTNullStatement extends CPPASTNode implements IASTNullStatement {
+	
     public boolean accept( ASTVisitor action ){
         if( action.shouldVisitStatements ){
 		    switch( action.visit( this ) ){

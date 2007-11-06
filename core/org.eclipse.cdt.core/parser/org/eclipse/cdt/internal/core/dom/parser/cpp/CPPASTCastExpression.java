@@ -18,22 +18,38 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 /**
  * @author jcamelon
  */
-public class CPPASTCastExpression extends CPPASTUnaryExpression implements
-        ICPPASTCastExpression {
-    private IASTTypeId typeId;
+public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPASTCastExpression {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression#setTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-     */
-    public void setTypeId(IASTTypeId typeId) {
+	private IASTTypeId typeId;
+    
+    public CPPASTCastExpression() {
+	}
+    
+    public CPPASTCastExpression(IASTTypeId typeId) {
+		setTypeId(typeId);
+	}
+
+	public void setTypeId(IASTTypeId typeId) {
         this.typeId = typeId;
+        if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TYPE_ID);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression#getTypeId()
-     */
     public IASTTypeId getTypeId() {
         return typeId;
+    }
+    
+    public void setOperand(IASTExpression expression) {
+        super.setOperand(expression);
+        // this needs to be overridden because CPPASTUnaryExpression sets
+        // propertyInParent to ICPPASTUnaryExpression.OPERAND, we want 
+        // ICPPASTCastExpression.OPERAND
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(ICPPASTCastExpression.OPERAND);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

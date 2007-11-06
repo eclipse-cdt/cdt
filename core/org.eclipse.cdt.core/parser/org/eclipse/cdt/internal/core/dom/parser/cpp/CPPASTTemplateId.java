@@ -26,39 +26,45 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, IASTAmbiguityParent {
-    private IASTName templateName;
+    
+	private IASTName templateName;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId#getTemplateName()
-     */
-    public IASTName getTemplateName() {
+	
+    public CPPASTTemplateId() {
+	}
+
+	public CPPASTTemplateId(IASTName templateName) {
+		setTemplateName(templateName);
+	}
+
+	public IASTName getTemplateName() {
         return templateName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId#setTemplateName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setTemplateName(IASTName name) {
         templateName = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(TEMPLATE_NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId#addTemplateArgument(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-     */
     public void addTemplateArgument(IASTTypeId typeId) {
         templateArguments = (IASTNode[]) ArrayUtil.append( IASTNode.class, templateArguments, typeId );
+        if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId#addTemplateArgument(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void addTemplateArgument(IASTExpression expression) {
         templateArguments = (IASTNode[]) ArrayUtil.append( IASTNode.class, templateArguments, expression );
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(TEMPLATE_ID_ARGUMENT);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId#getTemplateArguments()
-     */
     public IASTNode[] getTemplateArguments() {
         if( templateArguments == null ) return ICPPASTTemplateId.EMPTY_ARG_ARRAY;
         return (IASTNode[]) ArrayUtil.trim( IASTNode.class, templateArguments );
@@ -68,9 +74,6 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
     private IBinding binding = null;
 	private int fResolutionDepth= 0;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
-     */
     public IBinding resolveBinding() {
     	if (binding == null) {
     		// protect for infinite recursion
@@ -89,9 +92,7 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
 		return null;
 	}
 	
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
-     */
+
     public char[] toCharArray() {
         return templateName.toCharArray();
     }
@@ -123,39 +124,24 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId, I
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
-	 */
 	public boolean isDeclaration() {
 		return false; //for now this seems to be true
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
-	 */
 	public boolean isReference() {
 		return true; //for now this seems to be true
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
+
 	public int getRoleForName(IASTName n) {
 		if( n == templateName )
 			return r_reference;
 		return r_unclear;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getBinding()
-	 */
 	public IBinding getBinding() {
 		return binding;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#setBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
 	public void setBinding(IBinding binding) {
 		this.binding = binding;
 		fResolutionDepth= 0;

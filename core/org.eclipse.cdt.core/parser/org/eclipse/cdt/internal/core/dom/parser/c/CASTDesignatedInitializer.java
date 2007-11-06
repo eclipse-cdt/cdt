@@ -25,18 +25,23 @@ public class CASTDesignatedInitializer extends CASTNode implements
 
     private IASTInitializer rhs;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#addDesignator(org.eclipse.cdt.core.dom.ast.c.ICASTDesignator)
-     */
-    public void addDesignator(ICASTDesignator designator) {
+    
+    public CASTDesignatedInitializer() {
+	}
+
+	public CASTDesignatedInitializer(IASTInitializer rhs) {
+		setOperandInitializer(rhs);
+	}
+
+	public void addDesignator(ICASTDesignator designator) {
     	if (designator != null) {
+    		designator.setParent(this);
+    		designator.setPropertyInParent(DESIGNATOR);
     		designators = (ICASTDesignator[]) ArrayUtil.append( ICASTDesignator.class, designators, ++designatorsPos, designator );
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#getDesignators()
-     */
+    
     public ICASTDesignator[] getDesignators() {
         if( designators == null ) return ICASTDesignatedInitializer.EMPTY_DESIGNATOR_ARRAY;
         designators = (ICASTDesignator[]) ArrayUtil.removeNullsAfter( ICASTDesignator.class, designators, designatorsPos );
@@ -45,18 +50,19 @@ public class CASTDesignatedInitializer extends CASTNode implements
 
     private ICASTDesignator [] designators = null;
     int designatorsPos=-1;
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#getRHSInitializer()
-     */
+    
+    
     public IASTInitializer getOperandInitializer() {
         return rhs;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer#setRHSInitializer(org.eclipse.cdt.core.dom.ast.IASTInitializer)
-     */
+    
     public void setOperandInitializer(IASTInitializer rhs) {
         this.rhs = rhs;
+        if (rhs != null) {
+			rhs.setParent(this);
+			rhs.setPropertyInParent(OPERAND);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

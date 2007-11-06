@@ -91,6 +91,8 @@ public class CASTTranslationUnit extends CASTNode implements
     
 	public void addDeclaration(IASTDeclaration d) {
 		if (d != null) {
+			d.setParent(this);
+			d.setPropertyInParent(OWNED_DECLARATION);
 			decls = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, decls, ++declsPos, d );	
 		}
 	}

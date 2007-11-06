@@ -21,20 +21,27 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTExpressionStatement extends CPPASTNode implements
         IASTExpressionStatement, IASTAmbiguityParent {
+	
     private IASTExpression expression;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTExpressionStatement#getExpression()
-     */
-    public IASTExpression getExpression() {
+    
+    public CPPASTExpressionStatement() {
+	}
+
+	public CPPASTExpressionStatement(IASTExpression expression) {
+		setExpression(expression);
+	}
+
+	public IASTExpression getExpression() {
         return expression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTExpressionStatement#setExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setExpression(IASTExpression expression) {
         this.expression = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(EXPRESSION);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

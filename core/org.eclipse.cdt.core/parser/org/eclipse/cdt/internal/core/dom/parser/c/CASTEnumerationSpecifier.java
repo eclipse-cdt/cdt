@@ -25,18 +25,23 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
 
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier#addEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
-     */
-    public void addEnumerator(IASTEnumerator enumerator) {
+    
+    public CASTEnumerationSpecifier() {
+	}
+
+	public CASTEnumerationSpecifier(IASTName name) {
+		setName(name);
+	}
+
+	public void addEnumerator(IASTEnumerator enumerator) {
     	if (enumerator != null) {
+    		enumerator.setParent(this);
+			enumerator.setPropertyInParent(ENUMERATOR);
     		enumerators = (IASTEnumerator[]) ArrayUtil.append( IASTEnumerator.class, enumerators, ++enumeratorsPos, enumerator );
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier#getEnumerators()
-     */
+    
     public IASTEnumerator[] getEnumerators() {        
         if( enumerators == null ) return IASTEnumerator.EMPTY_ENUMERATOR_ARRAY;
         enumerators = (IASTEnumerator[]) ArrayUtil.removeNullsAfter( IASTEnumerator.class, enumerators, enumeratorsPos );
@@ -46,23 +51,19 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
     private IASTEnumerator [] enumerators = null;
     private int enumeratorsPos=-1;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
+ 
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(ENUMERATION_NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#getRawSignature()
-     */
     public String getRawSignature() {
        return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
     }
@@ -90,9 +91,6 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n ) {
 		if( this.name == n  )
 			return r_definition;

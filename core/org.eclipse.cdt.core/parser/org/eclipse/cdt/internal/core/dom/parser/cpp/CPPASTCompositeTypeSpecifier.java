@@ -29,73 +29,65 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     private IASTName n;
     private IScope scope;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#getRawSignature()
-     */
-    public String getRawSignature() {
+
+    public CPPASTCompositeTypeSpecifier() {
+	}
+
+	public CPPASTCompositeTypeSpecifier(int k, IASTName n) {
+		this.k = k;
+		setName(n);
+	}
+
+	public String getRawSignature() {
        return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier#getBaseSpecifiers()
-     */
     public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
         if( baseSpecs == null ) return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
         baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.removeNullsAfter( ICPPASTBaseSpecifier.class, baseSpecs, baseSpecsPos );
         return baseSpecs;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier#addBaseSpecifier(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier)
-     */
     public void addBaseSpecifier(ICPPASTBaseSpecifier baseSpec) {
     	if (baseSpec != null) {
+    		baseSpec.setParent(this);
+			baseSpec.setPropertyInParent(BASE_SPECIFIER);
     		baseSpecs = (ICPPASTBaseSpecifier[]) ArrayUtil.append( ICPPASTBaseSpecifier.class, baseSpecs, ++baseSpecsPos, baseSpec );
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getKey()
-     */
     public int getKey() {
         return k;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#setKey(int)
-     */
     public void setKey(int key) {
         k = key;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getName()
-     */
     public IASTName getName() {
         return n;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.n = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(TYPE_NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getMembers()
-     */
     public IASTDeclaration[] getMembers() {
         if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, declarations );
 
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#addMemberDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
     public void addMemberDeclaration(IASTDeclaration declaration) {
         declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
+        if(declaration != null) {
+        	declaration.setParent(this);
+        	declaration.setPropertyInParent(MEMBER_DECLARATION);
+        }
     }
 
 
@@ -103,9 +95,6 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     private ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] baseSpecs = null;
     private int baseSpecsPos=-1;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getScope()
-     */
     public IScope getScope() {
     	if( scope == null )
     		scope = new CPPClassScope( this );
@@ -144,9 +133,6 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
         return true;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName name) {
 		if( name == this.n )
 			return r_definition;

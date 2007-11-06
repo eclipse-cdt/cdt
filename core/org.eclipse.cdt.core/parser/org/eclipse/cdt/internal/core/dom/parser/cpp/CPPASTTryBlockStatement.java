@@ -22,21 +22,25 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public class CPPASTTryBlockStatement extends CPPASTNode implements
-        ICPPASTTryBlockStatement, IASTAmbiguityParent {
+public class CPPASTTryBlockStatement extends CPPASTNode implements ICPPASTTryBlockStatement, IASTAmbiguityParent {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator#addCatchHandler(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
-    public void addCatchHandler(ICPPASTCatchHandler statement) {
+
+    public CPPASTTryBlockStatement() {
+	}
+
+	public CPPASTTryBlockStatement(IASTStatement tryBody) {
+		setTryBody(tryBody);
+	}
+
+	public void addCatchHandler(ICPPASTCatchHandler statement) {
     	if (statement != null) {
-    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );	
+    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
+    		statement.setParent(this);
+			statement.setPropertyInParent(CATCH_HANDLER);
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator#getCatchHandlers()
-     */
+
     public ICPPASTCatchHandler[] getCatchHandlers() {
         if( catchHandlers == null ) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
         catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.removeNullsAfter( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );
@@ -47,16 +51,16 @@ public class CPPASTTryBlockStatement extends CPPASTNode implements
     private ICPPASTCatchHandler [] catchHandlers = null;
     private int catchHandlersPos=-1;
     private IASTStatement tryBody;
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement#setTryBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
+
     public void setTryBody(IASTStatement tryBlock) {
         tryBody = tryBlock;
+        if (tryBlock != null) {
+			tryBlock.setParent(this);
+			tryBlock.setPropertyInParent(BODY);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement#getTryBody()
-     */
+ 
     public IASTStatement getTryBody() {
         return tryBody;
     }

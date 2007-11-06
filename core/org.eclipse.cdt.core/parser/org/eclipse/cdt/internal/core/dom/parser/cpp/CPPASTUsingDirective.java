@@ -29,18 +29,24 @@ public class CPPASTUsingDirective extends CPPASTNode implements
 
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective#getQualifiedName()
-     */
-    public IASTName getQualifiedName() {
+    public CPPASTUsingDirective() {
+	}
+
+	public CPPASTUsingDirective(IASTName name) {
+		setQualifiedName(name);
+	}
+
+	public IASTName getQualifiedName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective#setQualifiedName(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName)
-     */
     public void setQualifiedName(IASTName qualifiedName) {
         this.name = qualifiedName;
+        if (qualifiedName != null) {
+			qualifiedName.setParent(this);
+			qualifiedName.setPropertyInParent(QUALIFIED_NAME);
+		}
+        
     }
 
     public boolean accept( ASTVisitor action ){
@@ -64,9 +70,7 @@ public class CPPASTUsingDirective extends CPPASTNode implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
+
 	public int getRoleForName(IASTName n) {
 		if( n == name )
 			return r_reference;

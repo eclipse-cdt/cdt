@@ -28,33 +28,33 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
     private int key;
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getKey()
-     */
+
+    public CASTCompositeTypeSpecifier() {
+	}
+
+	public CASTCompositeTypeSpecifier(int key, IASTName name) {
+		this.key = key;
+		setName(name);
+	}
+    
     public int getKey() {
         return key;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#setKey(int)
-     */
     public void setKey(int key) {
         this.key = key;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getName()
-     */
     public IASTName getName() {
         return name;
     }
     
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(TYPE_NAME);
+		}
     }
 
     
@@ -63,37 +63,28 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
     private IScope scope = null;
     
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getMembers()
-     */
     public IASTDeclaration [] getMembers() {
         if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         declarations = (IASTDeclaration[]) ArrayUtil.removeNullsAfter( IASTDeclaration.class, declarations, declarationsPos );
         return declarations;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#addMemberDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
+
     public void addMemberDeclaration(IASTDeclaration declaration) {
     	if (declaration != null) {
+    		declaration.setParent(this);
+    		declaration.setPropertyInParent(MEMBER_DECLARATION);
     		declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, ++declarationsPos, declaration );
     	}
     }
     
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier#getScope()
-     */
     public IScope getScope() {
         if( scope == null )
             scope = new CCompositeTypeScope( this );
         return scope;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#getRawSignature()
-     */
+
     public String getRawSignature() {
        return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
     }
@@ -122,12 +113,12 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
+
 	public int getRoleForName(IASTName n) {
 		if( n == this.name )
 			return r_definition;
 		return r_unclear;
 	}
+
+	
 }

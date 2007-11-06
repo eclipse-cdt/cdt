@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 
@@ -25,18 +26,26 @@ public class CASTFieldDeclarator extends CASTDeclarator implements
 
     private IASTExpression bitFieldSize;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator#getBitFieldSize()
-     */
-    public IASTExpression getBitFieldSize() {
+
+    public CASTFieldDeclarator() {
+	}
+
+	public CASTFieldDeclarator(IASTName name, IASTExpression bitFieldSize) {
+		super(name);
+		setBitFieldSize(bitFieldSize);
+	}
+
+	public IASTExpression getBitFieldSize() {
         return bitFieldSize;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator#setBitFieldSize(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
+
     public void setBitFieldSize(IASTExpression size) {
         bitFieldSize = size;
+        if (size != null) {
+			size.setParent(this);
+			size.setPropertyInParent(FIELD_SIZE);
+		}
     }
 
     protected boolean postAccept( ASTVisitor action ){

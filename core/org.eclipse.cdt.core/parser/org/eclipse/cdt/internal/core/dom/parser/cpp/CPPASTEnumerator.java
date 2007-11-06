@@ -21,33 +21,39 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  * @author jcamelon
  */
 public class CPPASTEnumerator extends CPPASTNode implements IASTEnumerator, IASTAmbiguityParent {
-    private IASTName name;
+
+	private IASTName name;
     private IASTExpression value;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public void setName(IASTName name) {
+    
+    public CPPASTEnumerator() {
+	}
+
+	public CPPASTEnumerator(IASTName name, IASTExpression value) {
+		setName(name);
+		setValue(value);
+	}
+
+	public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(ENUMERATOR_NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator#setValue(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setValue(IASTExpression expression) {
         this.value = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(ENUMERATOR_VALUE);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator#getValue()
-     */
     public IASTExpression getValue() {
         return value;
     }
@@ -73,9 +79,6 @@ public class CPPASTEnumerator extends CPPASTNode implements IASTEnumerator, IAST
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( name == n )
 			return r_definition;
@@ -83,8 +86,7 @@ public class CPPASTEnumerator extends CPPASTNode implements IASTEnumerator, IAST
 	}
 
     public void replace(IASTNode child, IASTNode other) {
-        if( child == value )
-        {
+        if( child == value ) {
             other.setPropertyInParent( child.getPropertyInParent() );
             other.setParent( child.getParent() );
             value  = (IASTExpression) other;

@@ -28,18 +28,24 @@ public class CPPASTTemplateSpecialization extends CPPASTNode implements
     private IASTDeclaration declaration;
     private ICPPTemplateScope templateScope;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization#getDeclaration()
-     */
-    public IASTDeclaration getDeclaration() {
+    
+    public CPPASTTemplateSpecialization() {
+	}
+
+	public CPPASTTemplateSpecialization(IASTDeclaration declaration) {
+		setDeclaration(declaration);
+	}
+
+	public IASTDeclaration getDeclaration() {
         return declaration;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization#setDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
     public void setDeclaration(IASTDeclaration declaration) {
         this.declaration = declaration;
+        if (declaration != null) {
+			declaration.setParent(this);
+			declaration.setPropertyInParent(ICPPASTTemplateSpecialization.OWNED_DECLARATION);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -63,35 +69,20 @@ public class CPPASTTemplateSpecialization extends CPPASTNode implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#isExported()
-	 */
 	public boolean isExported() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#setExported(boolean)
-	 */
 	public void setExported(boolean value) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#getTemplateParameters()
-	 */
 	public ICPPASTTemplateParameter[] getTemplateParameters() {
 		return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#addTemplateParamter(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
-	 */
 	public void addTemplateParamter(ICPPASTTemplateParameter parm) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#getScope()
-	 */
 	public ICPPTemplateScope getScope() {
 		if( templateScope == null )
 			templateScope = new CPPTemplateScope( this );
@@ -99,8 +90,7 @@ public class CPPASTTemplateSpecialization extends CPPASTNode implements
 	}
     
     public void replace(IASTNode child, IASTNode other) {
-        if( declaration == child )
-        {
+        if( declaration == child ) {
             other.setParent( child.getParent() );
             other.setPropertyInParent( child.getPropertyInParent() );
             declaration = (IASTDeclaration) other;

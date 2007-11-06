@@ -22,16 +22,31 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTConditionalExpression extends CPPASTNode implements
         IASTConditionalExpression, IASTAmbiguityParent {
+	
     private IASTExpression condition;
     private IASTExpression negative;
     private IASTExpression postive;
 
-    public IASTExpression getLogicalConditionExpression() {
+    
+    public CPPASTConditionalExpression() {
+	}
+
+	public CPPASTConditionalExpression(IASTExpression condition, IASTExpression postive, IASTExpression negative) {
+    	setLogicalConditionExpression(condition);
+    	setPositiveResultExpression(postive);
+    	setNegativeResultExpression(negative);
+	}
+
+	public IASTExpression getLogicalConditionExpression() {
         return condition;
     }
 
     public void setLogicalConditionExpression(IASTExpression expression) {
         condition = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(LOGICAL_CONDITION);
+		}
     }
 
     public IASTExpression getPositiveResultExpression() {
@@ -40,6 +55,10 @@ public class CPPASTConditionalExpression extends CPPASTNode implements
 
     public void setPositiveResultExpression(IASTExpression expression) {
         this.postive = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(POSITIVE_RESULT);
+		}
     }
 
     public IASTExpression getNegativeResultExpression() {
@@ -48,6 +67,10 @@ public class CPPASTConditionalExpression extends CPPASTNode implements
 
     public void setNegativeResultExpression(IASTExpression expression) {
         this.negative = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(NEGATIVE_RESULT);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

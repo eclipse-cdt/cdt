@@ -17,38 +17,34 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 /**
  * @author jcamelon
  */
-public class CPPASTNamespaceAlias extends CPPASTNode implements
-        ICPPASTNamespaceAlias {
+public class CPPASTNamespaceAlias extends CPPASTNode implements ICPPASTNamespaceAlias {
 
     private IASTName alias;
     private IASTName qualifiedName;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#getAlias()
-     */
+    
     public IASTName getAlias() {
         return alias;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#setAlias(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setAlias(IASTName name) {
         this.alias = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(ALIAS_NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#getQualifiedName()
-     */
     public IASTName getMappingName() {
         return qualifiedName;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias#setQualifiedName(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName)
-     */
     public void setMappingName(IASTName qualifiedName) {
         this.qualifiedName = qualifiedName;
+        if (qualifiedName != null) {
+			qualifiedName.setParent(this);
+			qualifiedName.setPropertyInParent(MAPPING_NAME);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -73,13 +69,9 @@ public class CPPASTNamespaceAlias extends CPPASTNode implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( alias == n ) return r_definition;
 		if( qualifiedName == n ) return r_reference;
 		return r_unclear;
 	}
-
 }

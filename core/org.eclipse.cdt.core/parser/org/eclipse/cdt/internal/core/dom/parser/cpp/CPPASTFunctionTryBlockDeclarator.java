@@ -21,18 +21,15 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
         implements ICPPASTFunctionTryBlockDeclarator {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator#addCatchHandler(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
+
     public void addCatchHandler(ICPPASTCatchHandler statement) {
     	if (statement != null) {
-    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );	
+    		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
+    		statement.setParent(this);
+			statement.setPropertyInParent(CATCH_HANDLER);
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator#getCatchHandlers()
-     */
     public ICPPASTCatchHandler [] getCatchHandlers() {
         if( catchHandlers == null ) return ICPPASTCatchHandler.EMPTY_CATCHHANDLER_ARRAY;
         catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.removeNullsAfter( ICPPASTCatchHandler.class, catchHandlers, catchHandlersPos );

@@ -23,18 +23,25 @@ public class CASTArrayModifier extends CASTNode implements IASTArrayModifier, IA
 
     private IASTExpression exp;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTArrayModifier#getConstantExpression()
-     */
+    
+    public CASTArrayModifier() {
+	}
+
+	public CASTArrayModifier(IASTExpression exp) {
+		setConstantExpression(exp);
+	}
+
+	
     public IASTExpression getConstantExpression() {
         return exp;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTArrayModifier#setConstantExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setConstantExpression(IASTExpression expression) {
         this.exp = expression;
+        if(expression != null) {
+        	expression.setParent(this);
+        	expression.setPropertyInParent(CONSTANT_EXPRESSION);
+        }
     }
 
     public boolean accept( ASTVisitor action ){      

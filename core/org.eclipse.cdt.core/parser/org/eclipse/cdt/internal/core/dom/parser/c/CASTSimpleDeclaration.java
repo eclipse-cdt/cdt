@@ -21,29 +21,30 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 /**
  * @author jcamelon
  */
-public class CASTSimpleDeclaration extends CASTNode implements
-        IASTSimpleDeclaration {
+public class CASTSimpleDeclaration extends CASTNode implements IASTSimpleDeclaration {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclSpecifier()
-     */
-    public IASTDeclSpecifier getDeclSpecifier() {
+
+    public CASTSimpleDeclaration() {
+	}
+
+	public CASTSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
+		setDeclSpecifier(declSpecifier);
+	}
+
+	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }
 
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclarators()
-     */
     public IASTDeclarator[] getDeclarators() {
         if( declarators == null ) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
         declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter( IASTDeclarator.class, declarators, declaratorsPos );
         return declarators;
     }
     
-    public void addDeclarator( IASTDeclarator d )
-    {
+    public void addDeclarator( IASTDeclarator d ) {
     	if (d != null) {
+    		d.setParent(this);
+			d.setPropertyInParent(DECLARATOR);
     		declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, ++declaratorsPos, d );    		
     	}
     }
@@ -53,11 +54,13 @@ public class CASTSimpleDeclaration extends CASTNode implements
     private int declaratorsPos=-1;
     private IASTDeclSpecifier declSpecifier;
 
-    /**
-     * @param declSpecifier The declSpecifier to set.
-     */
+
     public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
         this.declSpecifier = declSpecifier;
+        if (declSpecifier != null) {
+			declSpecifier.setParent(this);
+			declSpecifier.setPropertyInParent(DECL_SPECIFIER);
+		}
     }
     
     public boolean accept( ASTVisitor action ){
@@ -83,5 +86,4 @@ public class CASTSimpleDeclaration extends CASTNode implements
 		}
         return true;
     }
-
 }

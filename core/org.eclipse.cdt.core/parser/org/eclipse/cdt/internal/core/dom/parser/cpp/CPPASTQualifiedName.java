@@ -40,17 +40,10 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class CPPASTQualifiedName extends CPPASTNode implements
 		ICPPASTQualifiedName, IASTCompletionContext {
 
-	/**
-	 * @param duple
-	 */
+
 	public CPPASTQualifiedName() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
-	 */
 	public IBinding resolveBinding() {
 		// The full qualified name resolves to the same thing as the last name
 		removeNullNames();
@@ -70,31 +63,22 @@ public class CPPASTQualifiedName extends CPPASTNode implements
     	return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+
 	public String toString() {
 		if (signature == null)
 			return ""; //$NON-NLS-1$
 		return signature;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#addName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public void addName(IASTName name) {
 		if (name != null) {
 			names = (IASTName[]) ArrayUtil.append( IASTName.class, names, ++namesPos, name );
+			name.setParent(this);
+			name.setPropertyInParent(SEGMENT_NAME);
 		}
 	}
 
-	/**
-	 * @param decls2
-	 */
+
 	private void removeNullNames() {
         names = (IASTName[]) ArrayUtil.removeNullsAfter( IASTName.class, names, namesPos );
 	}
@@ -104,11 +88,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 	private boolean value;
 	private String signature;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#getNames()
-	 */
+
 	public IASTName[] getNames() {
 		if (names == null)
 			return IASTName.EMPTY_NAME_ARRAY;
@@ -123,11 +103,6 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return names[names.length - 1];
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
-	 */
 	public char[] toCharArray() {
 		if (names == null)
 			return "".toCharArray(); //$NON-NLS-1$
@@ -158,27 +133,15 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return nameArray;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#isFullyQualified()
-	 */
 	public boolean isFullyQualified() {
 		return value;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#setFullyQualified(boolean)
-	 */
 	public void setFullyQualified(boolean value) {
 		this.value = value;
 	}
 
-	/**
-	 * @param string
-	 */
+
 	public void setValue(String string) {
 		this.signature = string;
 
@@ -219,9 +182,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
-	 */
+
 	public boolean isDeclaration() {
 		IASTNode parent = getParent();
 		if (parent instanceof IASTNameOwner) {
@@ -232,9 +193,6 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
-	 */
 	public boolean isReference() {
 		IASTNode parent = getParent();
 		if (parent instanceof IASTNameOwner) {
@@ -245,9 +203,6 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		IASTName [] namez = getNames();
 		for( int i = 0; i < names.length; ++i )
@@ -263,25 +218,16 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return r_unclear;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getBinding()
-	 */
 	public IBinding getBinding() {
 		removeNullNames();
 		return names[names.length - 1].getBinding();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTName#setBinding(org.eclipse.cdt.core.dom.ast.IBinding)
-	 */
 	public void setBinding(IBinding binding) {
 		removeNullNames();
 		names[names.length - 1].setBinding( binding );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#isConversionOrOperator()
-	 */
 	public boolean isConversionOrOperator() {
 		IASTName[] nonNullNames = getNames(); // ensure no null names
 		

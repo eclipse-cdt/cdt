@@ -21,22 +21,31 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
  * @author dsteffle
  */
 public class CPPASTConversionName extends CPPASTName implements ICPPASTConversionName {
-	private IASTTypeId typeId=null;
+	
+	private IASTTypeId typeId = null;
 	
 	public CPPASTConversionName() {
-		super();
 	}
 	
 	public CPPASTConversionName(char[] name) {
 		super(name);
 	}
 	
+	public CPPASTConversionName(char[] name, IASTTypeId typeId) {
+		super(name);
+		setTypeId(typeId);
+	}
+
 	public IASTTypeId getTypeId() {
 		return typeId;
 	}
 
 	public void setTypeId(IASTTypeId typeId) {
 		this.typeId=typeId;
+		if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TYPE_ID);
+		}
 	}
 	
 	public boolean accept(ASTVisitor action) {

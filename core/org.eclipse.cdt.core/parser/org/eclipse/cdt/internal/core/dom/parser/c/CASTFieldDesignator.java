@@ -24,18 +24,24 @@ public class CASTFieldDesignator extends CASTNode implements
 
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator#getName()
-     */
-    public IASTName getName() {
+
+    public CASTFieldDesignator() {
+	}
+
+	public CASTFieldDesignator(IASTName name) {
+		setName(name);
+	}
+
+	public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(FIELD_NAME);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

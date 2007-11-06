@@ -23,23 +23,40 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 public class CASTTypeIdInitializerExpression extends CASTNode implements
         ICASTTypeIdInitializerExpression {
 
-    private IASTTypeId t;
-    private IASTInitializer i;
+    private IASTTypeId typeId;
+    private IASTInitializer initializer;
 
-    public IASTTypeId getTypeId() {
-        return t;
+    
+    public CASTTypeIdInitializerExpression() {
+	}
+
+	public CASTTypeIdInitializerExpression(IASTTypeId t, IASTInitializer i) {
+		setTypeId(t);
+		setInitializer(i);
+	}
+
+	public IASTTypeId getTypeId() {
+        return typeId;
     }
 
     public void setTypeId(IASTTypeId typeId) {
-        t = typeId;
+        this.typeId = typeId;
+        if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TYPE_ID);
+		}
     }
 
     public IASTInitializer getInitializer() {
-        return i;
+        return initializer;
     }
 
     public void setInitializer(IASTInitializer initializer) {
-        i = initializer;
+        this.initializer = initializer;
+        if (initializer != null) {
+			initializer.setParent(this);
+			initializer.setPropertyInParent(INITIALIZER);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -51,8 +68,8 @@ public class CASTTypeIdInitializerExpression extends CASTNode implements
 	        }
 		}
         
-        if( t != null ) if( !t.accept( action ) ) return false;
-        if( i != null ) if( !i.accept( action ) ) return false;
+        if( typeId != null ) if( !typeId.accept( action ) ) return false;
+        if( initializer != null ) if( !initializer.accept( action ) ) return false;
 
         if( action.shouldVisitExpressions ){
 		    switch( action.leave( this ) ){
@@ -67,5 +84,4 @@ public class CASTTypeIdInitializerExpression extends CASTNode implements
     public IType getExpressionType() {
     	return CVisitor.getExpressionType(this);
     }
-    
 }

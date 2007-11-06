@@ -24,33 +24,33 @@ public class CPPASTLinkageSpecification extends CPPASTNode implements
         ICPPASTLinkageSpecification, IASTAmbiguityParent {
 
     private String literal;
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification#getLiteral()
-     */
-    public String getLiteral() {
+
+    public CPPASTLinkageSpecification() {
+	}
+
+	public CPPASTLinkageSpecification(String literal) {
+		this.literal = literal;
+	}
+
+	public String getLiteral() {
         return literal;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification#setLiteral(java.lang.String)
-     */
     public void setLiteral(String value) {
         this.literal = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification#getDeclarations()
-     */
     public IASTDeclaration [] getDeclarations() {
         if( declarations == null ) return IASTDeclaration.EMPTY_DECLARATION_ARRAY;
         return (IASTDeclaration[]) ArrayUtil.trim( IASTDeclaration.class, declarations );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
     public void addDeclaration(IASTDeclaration declaration) {
     	declarations = (IASTDeclaration[]) ArrayUtil.append( IASTDeclaration.class, declarations, declaration );
+    	if(declaration != null) {
+    		declaration.setParent(this);
+			declaration.setPropertyInParent(OWNED_DECLARATION);
+    	}
     }
 
     private IASTDeclaration [] declarations = new IASTDeclaration[4];

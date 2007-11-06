@@ -28,12 +28,26 @@ public class CASTConditionalExpression extends CASTNode implements
     private IASTExpression negative;
     private IASTExpression positive;
 
-    public IASTExpression getLogicalConditionExpression() {
+    public CASTConditionalExpression() {
+	}
+
+	public CASTConditionalExpression(IASTExpression condition, 
+			IASTExpression positive, IASTExpression negative) {
+		setLogicalConditionExpression(condition);
+		setPositiveResultExpression(positive);
+		setNegativeResultExpression(negative);
+	}
+
+	public IASTExpression getLogicalConditionExpression() {
         return condition;
     }
 
     public void setLogicalConditionExpression(IASTExpression expression) {
         condition = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(LOGICAL_CONDITION);
+		}
     }
 
     public IASTExpression getPositiveResultExpression() {
@@ -42,6 +56,10 @@ public class CASTConditionalExpression extends CASTNode implements
 
     public void setPositiveResultExpression(IASTExpression expression) {
         this.positive = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(POSITIVE_RESULT);
+		}
     }
 
     public IASTExpression getNegativeResultExpression() {
@@ -50,6 +68,10 @@ public class CASTConditionalExpression extends CASTNode implements
 
     public void setNegativeResultExpression(IASTExpression expression) {
         this.negative = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(NEGATIVE_RESULT);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

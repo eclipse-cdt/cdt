@@ -11,21 +11,32 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 
 /**
  * @author jcamelon
  */
-abstract class CPPASTProblemOwner extends CPPASTNode {
+abstract class CPPASTProblemOwner extends CPPASTNode implements IASTProblemHolder {
 
     private IASTProblem problem;
 
-    public IASTProblem getProblem()
-    {
+    
+    public CPPASTProblemOwner() {
+	}
+
+	public CPPASTProblemOwner(IASTProblem problem) {
+		setProblem(problem);
+	}
+
+	public IASTProblem getProblem() {
         return problem;
     }
     
-    public void setProblem(IASTProblem p)
-    {
+    public void setProblem(IASTProblem p) {
         problem = p;
+        if (p != null) {
+			p.setParent(this);
+			p.setPropertyInParent(PROBLEM);
+		}
     }
 }

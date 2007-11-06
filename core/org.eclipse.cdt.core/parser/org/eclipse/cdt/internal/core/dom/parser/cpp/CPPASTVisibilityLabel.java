@@ -16,21 +16,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 /**
  * @author jcamelon
  */
-public class CPPASTVisibilityLabel extends CPPASTNode implements
-        ICPPASTVisiblityLabel {
+public class CPPASTVisibilityLabel extends CPPASTNode implements ICPPASTVisiblityLabel {
 
     private int visibility;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel#getVisibility()
-     */
+
     public int getVisibility() {
         return visibility;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel#setVisibility(int)
-     */
     public void setVisibility(int visibility) {
         this.visibility = visibility;
     }

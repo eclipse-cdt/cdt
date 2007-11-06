@@ -26,32 +26,36 @@ public class CASTArrayRangeDesignator extends CASTNode implements
 
     private IASTExpression floor, ceiling;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTArrayRangeDesignator#getRangeFloor()
-     */
-    public IASTExpression getRangeFloor() {
+    public CASTArrayRangeDesignator() {
+	}
+
+	public CASTArrayRangeDesignator(IASTExpression floor, IASTExpression ceiling) {
+		setRangeFloor(floor);
+		setRangeCeiling(ceiling);
+	}
+
+	public IASTExpression getRangeFloor() {
         return this.floor;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTArrayRangeDesignator#setRangeFloor(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setRangeFloor(IASTExpression expression) {
-        floor =expression;
+        floor = expression;
+        if(expression != null) {
+        	expression.setParent(this);
+        	expression.setPropertyInParent(SUBSCRIPT_FLOOR_EXPRESSION);
+        }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTArrayRangeDesignator#getRangeCeiling()
-     */
     public IASTExpression getRangeCeiling() {
         return ceiling;        
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTArrayRangeDesignator#setRangeCeiling(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setRangeCeiling(IASTExpression expression) {
         ceiling = expression;
+        if(expression != null) {
+        	expression.setParent(this);
+        	expression.setPropertyInParent(SUBSCRIPT_CEILING_EXPRESSION);
+        }
     }
 
     public boolean accept( ASTVisitor action ){

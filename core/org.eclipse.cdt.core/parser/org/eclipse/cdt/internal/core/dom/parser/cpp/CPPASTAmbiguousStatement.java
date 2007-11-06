@@ -24,6 +24,8 @@ public class CPPASTAmbiguousStatement extends CPPASTAmbiguity implements
     public void addStatement(IASTStatement s) {
     	if (s != null) {
     		stmts = (IASTStatement[]) ArrayUtil.append( IASTStatement.class, stmts, ++stmtsPos, s );
+    		s.setParent(this);
+			s.setPropertyInParent(STATEMENT);
     	}
     }
 

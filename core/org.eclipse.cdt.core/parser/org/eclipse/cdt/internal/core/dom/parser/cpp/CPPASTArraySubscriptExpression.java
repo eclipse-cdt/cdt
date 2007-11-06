@@ -20,18 +20,30 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public class CPPASTArraySubscriptExpression extends CPPASTNode implements
-        IASTArraySubscriptExpression, IASTAmbiguityParent {
+public class CPPASTArraySubscriptExpression extends CPPASTNode implements IASTArraySubscriptExpression, IASTAmbiguityParent {
 
     private IASTExpression subscriptExp;
     private IASTExpression arrayExpression;
 
-    public IASTExpression getArrayExpression() {
+    
+    public CPPASTArraySubscriptExpression() {
+	}
+
+	public CPPASTArraySubscriptExpression(IASTExpression arrayExpression, IASTExpression subscriptExp) {
+		setArrayExpression(arrayExpression);
+		setSubscriptExpression(subscriptExp);
+	}
+
+	public IASTExpression getArrayExpression() {
         return arrayExpression;
     }
 
     public void setArrayExpression(IASTExpression expression) {
         arrayExpression = expression;        
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(ARRAY);
+		}
     }
 
     public IASTExpression getSubscriptExpression() {
@@ -40,6 +52,10 @@ public class CPPASTArraySubscriptExpression extends CPPASTNode implements
 
     public void setSubscriptExpression(IASTExpression expression) {
         subscriptExp = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(SUBSCRIPT);
+		}
     }
     
     public boolean accept( ASTVisitor action ){

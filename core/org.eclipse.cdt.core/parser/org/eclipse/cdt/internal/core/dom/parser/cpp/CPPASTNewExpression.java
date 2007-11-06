@@ -31,7 +31,18 @@ public class CPPASTNewExpression extends CPPASTNode implements
     private IASTTypeId typeId;
     private boolean isNewTypeId;
 
-    public boolean isGlobal() {
+    
+    public CPPASTNewExpression() {
+	}
+
+	public CPPASTNewExpression(IASTExpression placement,
+			IASTExpression initializer, IASTTypeId typeId) {
+		setNewPlacement(placement);
+		setNewInitializer(initializer);
+		setTypeId(typeId);
+	}
+
+	public boolean isGlobal() {
         return global;
     }
 
@@ -45,6 +56,10 @@ public class CPPASTNewExpression extends CPPASTNode implements
 
     public void setNewPlacement(IASTExpression expression) {
         placement = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(NEW_PLACEMENT);
+		}
     }
 
     public IASTExpression getNewInitializer() {
@@ -53,6 +68,10 @@ public class CPPASTNewExpression extends CPPASTNode implements
 
     public void setNewInitializer(IASTExpression expression) {
         initializer = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(NEW_INITIALIZER);
+		}
     }
 
     public IASTTypeId getTypeId() {
@@ -61,6 +80,10 @@ public class CPPASTNewExpression extends CPPASTNode implements
 
     public void setTypeId(IASTTypeId typeId) {
         this.typeId = typeId;
+        if (typeId != null) {
+			typeId.setParent(this);
+			typeId.setPropertyInParent(TYPE_ID);
+		}
     }
 
     public boolean isNewTypeId() {
@@ -78,6 +101,10 @@ public class CPPASTNewExpression extends CPPASTNode implements
 
     public void addNewTypeIdArrayExpression(IASTExpression expression) {
         arrayExpressions = (IASTExpression[]) ArrayUtil.append( IASTExpression.class, arrayExpressions, expression );
+        if(expression != null) {
+        	expression.setParent(this);
+			expression.setPropertyInParent(NEW_TYPEID_ARRAY_EXPRESSION);
+        }
     }
     
     private IASTExpression [] arrayExpressions = null;

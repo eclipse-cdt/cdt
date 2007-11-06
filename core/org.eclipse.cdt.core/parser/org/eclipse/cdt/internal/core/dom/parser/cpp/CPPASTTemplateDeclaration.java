@@ -30,49 +30,45 @@ public class CPPASTTemplateDeclaration extends CPPASTNode implements
     private IASTDeclaration declaration;
     private ICPPTemplateScope templateScope;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#isExported()
-     */
-    public boolean isExported() {
+    
+    public CPPASTTemplateDeclaration() {
+	}
+
+	public CPPASTTemplateDeclaration(IASTDeclaration declaration) {
+		setDeclaration(declaration);
+	}
+
+	public boolean isExported() {
         return exported;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#setExported(boolean)
-     */
     public void setExported(boolean value) {
         exported = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#getDeclaration()
-     */
     public IASTDeclaration getDeclaration() {
         return declaration;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#setDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
     public void setDeclaration(IASTDeclaration declaration) {
         this.declaration = declaration;
+        if (declaration != null) {
+			declaration.setParent(this);
+			declaration.setPropertyInParent(OWNED_DECLARATION);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#getTemplateParameters()
-     */
     public ICPPASTTemplateParameter [] getTemplateParameters() {
         if( parameters == null ) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
         parameters = (ICPPASTTemplateParameter[]) ArrayUtil.removeNullsAfter( ICPPASTTemplateParameter.class, parameters, parametersPos );
         return parameters;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#addTemplateParamter(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter)
-     */
     public void addTemplateParamter(ICPPASTTemplateParameter parm) {
     	if (parm != null) {
     		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append( ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm );
+    		parm.setParent(this);
+			parm.setPropertyInParent(PARAMETER);
     	}
     }
 
@@ -104,9 +100,6 @@ public class CPPASTTemplateDeclaration extends CPPASTNode implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#getScope()
-	 */
 	public ICPPTemplateScope getScope() {
 		if( templateScope == null )
 			templateScope = new CPPTemplateScope( this );

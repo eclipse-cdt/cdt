@@ -18,13 +18,21 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 /**
  * @author jcamelon
  */
-public class CPPASTLiteralExpression extends CPPASTNode implements
-        ICPPASTLiteralExpression {
+public class CPPASTLiteralExpression extends CPPASTNode implements ICPPASTLiteralExpression {
 
     private int kind;
     private String value = "";  //$NON-NLS-1$
 
-    public int getKind() {
+    
+    public CPPASTLiteralExpression() {
+	}
+
+	public CPPASTLiteralExpression(int kind, String value) {
+		this.kind = kind;
+		this.value = value;
+	}
+
+	public int getKind() {
         return kind;
     }
 

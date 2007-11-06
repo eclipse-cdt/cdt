@@ -24,51 +24,59 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTWhileStatement extends CPPASTNode implements
         ICPPASTWhileStatement, IASTAmbiguityParent {
+	
     private IASTExpression condition;
     private IASTStatement body;
     private IASTDeclaration condition2;
     private IScope scope;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#getCondition()
-     */
-    public IASTExpression getCondition() {
+    public CPPASTWhileStatement() {
+	}
+
+	public CPPASTWhileStatement(IASTDeclaration condition, IASTStatement body) {
+    	setConditionDeclaration(condition);
+		setBody(body);
+	}
+    
+    public CPPASTWhileStatement(IASTExpression condition, IASTStatement body) {
+		setCondition(condition);
+		setBody(body);
+	}
+
+	public IASTExpression getCondition() {
         return condition;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setCondition(IASTExpression condition) {
         this.condition = condition;
+        if (condition != null) {
+			condition.setParent(this);
+			condition.setPropertyInParent(CONDITIONEXPRESSION);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#getBody()
-     */
     public IASTStatement getBody() {
         return body;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTWhileStatement#setBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void setBody(IASTStatement body) {
         this.body = body;
+        if (body != null) {
+			body.setParent(this);
+			body.setPropertyInParent(BODY);
+		}
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement#getInitDeclaration()
-	 */
 	public IASTDeclaration getConditionDeclaration() {
 		return condition2;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement#setInit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-	 */
 	public void setConditionDeclaration(IASTDeclaration declaration) {
 		condition2 = declaration;
+		if (declaration != null) {
+			declaration.setParent(this);
+			declaration.setPropertyInParent(CONDITIONDECLARATION);
+		}
 	}
 
 	public boolean accept( ASTVisitor action ){

@@ -26,18 +26,25 @@ public class CASTLabelStatement extends CASTNode implements IASTLabelStatement, 
     private IASTName name;
     private IASTStatement nestedStatement;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTLabelStatement#getName()
-     */
-    public IASTName getName() {
+    
+    public CASTLabelStatement() {
+	}
+
+	public CASTLabelStatement(IASTName name, IASTStatement nestedStatement) {
+		setName(name);
+		setNestedStatement(nestedStatement);
+	}
+
+	public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTLabelStatement#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(NAME);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -60,9 +67,7 @@ public class CASTLabelStatement extends CASTNode implements IASTLabelStatement, 
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
+
 	public int getRoleForName(IASTName n) {
 		if( n == name )	return r_declaration;
 		return r_unclear;
@@ -74,6 +79,10 @@ public class CASTLabelStatement extends CASTNode implements IASTLabelStatement, 
 
     public void setNestedStatement(IASTStatement s) {
         nestedStatement = s;
+        if (s != null) {
+			s.setParent(this);
+			s.setPropertyInParent(NESTED_STATEMENT);
+		}
     }
 
     public void replace(IASTNode child, IASTNode other) {

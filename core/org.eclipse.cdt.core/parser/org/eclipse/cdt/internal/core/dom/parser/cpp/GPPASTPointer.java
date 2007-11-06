@@ -19,16 +19,10 @@ public class GPPASTPointer extends CPPASTPointer implements IGPPASTPointer {
 
     private boolean isRestrict;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer#isRestrict()
-     */
     public boolean isRestrict() {
         return isRestrict;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer#setRestrict(boolean)
-     */
     public void setRestrict(boolean value) {
         isRestrict = value;
     }

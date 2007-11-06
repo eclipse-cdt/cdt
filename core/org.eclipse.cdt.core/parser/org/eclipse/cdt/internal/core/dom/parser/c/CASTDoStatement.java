@@ -26,32 +26,39 @@ public class CASTDoStatement extends CASTNode implements IASTDoStatement, IASTAm
     private IASTStatement body;
     private IASTExpression condition;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDoStatement#getBody()
-     */
-    public IASTStatement getBody() {
+
+    public CASTDoStatement() {
+	}
+
+	public CASTDoStatement(IASTStatement body, IASTExpression condition) {
+		setBody(body);
+		setCondition(condition);
+	}
+
+	public IASTStatement getBody() {
         return body;
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDoStatement#setBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
+ 
     public void setBody(IASTStatement body) {
         this.body = body;
+        if (body != null) {
+			body.setParent(this);
+			body.setPropertyInParent(BODY);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDoStatement#getCondition()
-     */
+
     public IASTExpression getCondition() {
         return condition;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDoStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
+
     public void setCondition(IASTExpression condition) {
         this.condition = condition;
+        if (condition != null) {
+			condition.setParent(this);
+			condition.setPropertyInParent(CONDITION);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

@@ -27,7 +27,16 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
         ICPPASTTemplatedTypeTemplateParameter, IASTAmbiguityParent {
 
-    public ICPPASTTemplateParameter[] getTemplateParameters() {
+	
+    public CPPASTTemplatedTypeTemplateParameter() {
+	}
+
+	public CPPASTTemplatedTypeTemplateParameter(IASTName name, IASTExpression defaultValue) {
+		setName(name);
+		setDefaultValue(defaultValue);
+	}
+
+	public ICPPASTTemplateParameter[] getTemplateParameters() {
         if( parameters == null ) return ICPPASTTemplateParameter.EMPTY_TEMPLATEPARAMETER_ARRAY;
         parameters = (ICPPASTTemplateParameter[]) ArrayUtil.removeNullsAfter( ICPPASTTemplateParameter.class, parameters, parametersPos );
         return parameters;
@@ -36,6 +45,8 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
     public void addTemplateParamter(ICPPASTTemplateParameter parm) {
     	if(parm != null) {
     		parameters = (ICPPASTTemplateParameter[]) ArrayUtil.append( ICPPASTTemplateParameter.class, parameters, ++parametersPos, parm );
+    		parm.setParent(this);
+			parm.setPropertyInParent(PARAMETER);
     	}
     }
 
@@ -44,32 +55,28 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
     private IASTName name;
     private IASTExpression defaultValue;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name =name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(PARAMETER_NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter#getDefaultValue()
-     */
     public IASTExpression getDefaultValue() {
         return defaultValue;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter#setDefaultValue(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setDefaultValue(IASTExpression expression) {
         this.defaultValue = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(DEFAULT_VALUE);
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -99,10 +106,7 @@ public class CPPASTTemplatedTypeTemplateParameter extends CPPASTNode implements
     		}
         return true;
     }
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
+
 	public int getRoleForName(IASTName n) {
 		if( n == name )
 			return r_declaration;

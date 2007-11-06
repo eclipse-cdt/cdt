@@ -27,32 +27,36 @@ public class CASTSwitchStatement extends CASTNode implements
     private IASTExpression controller;
     private IASTStatement body;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#getController()
-     */
-    public IASTExpression getControllerExpression() {
+    public CASTSwitchStatement() {
+	}
+
+	public CASTSwitchStatement(IASTExpression controller, IASTStatement body) {
+		setControllerExpression(controller);
+		setBody(body);
+	}
+
+	public IASTExpression getControllerExpression() {
         return controller;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#setController(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setControllerExpression(IASTExpression controller) {
         this.controller = controller;
+        if (controller != null) {
+			controller.setParent(this);
+			controller.setPropertyInParent(CONTROLLER_EXP);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#getBody()
-     */
     public IASTStatement getBody() {
         return body;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSwitchStatement#setBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void setBody(IASTStatement body) {
         this.body = body;
+        if (body != null) {
+			body.setParent(this);
+			body.setPropertyInParent(BODY);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

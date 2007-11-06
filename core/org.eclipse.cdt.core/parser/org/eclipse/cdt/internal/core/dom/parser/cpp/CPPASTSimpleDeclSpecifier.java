@@ -25,72 +25,42 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier
     private boolean isShort;
     private boolean isLong;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#getType()
-     */
     public int getType() {
         return type;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#setType(int)
-     */
     public void setType(int type) {
         this.type = type;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#isSigned()
-     */
     public boolean isSigned() {
         return isSigned;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#isUnsigned()
-     */
     public boolean isUnsigned() {
         return isUnsigned;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#isShort()
-     */
     public boolean isShort() {
         return isShort;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#isLong()
-     */
     public boolean isLong() {
         return isLong;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#setSigned(boolean)
-     */
     public void setSigned(boolean value) {
         isSigned = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#setUnsigned(boolean)
-     */
     public void setUnsigned(boolean value) {
         isUnsigned = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#setLong(boolean)
-     */
     public void setLong(boolean value) {
         isLong = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier#setShort(boolean)
-     */
     public void setShort(boolean value) {
         isShort = value;
     }

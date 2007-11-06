@@ -22,18 +22,23 @@ public class CASTGotoStatement extends CASTNode implements IASTGotoStatement {
 
     private IASTName name;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTGotoStatement#getName()
-     */
-    public IASTName getName() {
+    public CASTGotoStatement() {
+	}
+
+	public CASTGotoStatement(IASTName name) {
+		setName(name);
+	}
+
+	public IASTName getName() {
         return this.name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTGotoStatement#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
        this.name = name;
+       if (name != null) {
+    	   name.setParent(this);
+    	   name.setPropertyInParent(NAME);
+       }
     }
 
     public boolean accept( ASTVisitor action ){
@@ -56,9 +61,6 @@ public class CASTGotoStatement extends CASTNode implements IASTGotoStatement {
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( n == name ) return r_reference;
 		return r_unclear;

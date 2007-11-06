@@ -20,17 +20,19 @@ import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 public class CASTASMDeclaration extends CASTNode implements IASTASMDeclaration {
 
     char [] assembly = null;
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTASMDeclaration#getAssembly()
-     */
-    public String getAssembly() {
+
+    public CASTASMDeclaration() {
+	}
+
+	public CASTASMDeclaration(String assembly) {
+		setAssembly(assembly);
+	}
+
+	public String getAssembly() {
         if( assembly == null ) return ""; //$NON-NLS-1$
         return new String( assembly );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTASMDeclaration#setAssembly(java.lang.String)
-     */
     public void setAssembly(String assembly) {
         this.assembly = assembly.toCharArray();
     }

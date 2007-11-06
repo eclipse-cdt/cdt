@@ -20,31 +20,30 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 /**
  * @author jcamelon
  */
-public class CPPASTSimpleDeclaration extends CPPASTNode implements
-        IASTSimpleDeclaration {
+public class CPPASTSimpleDeclaration extends CPPASTNode implements IASTSimpleDeclaration {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclSpecifier()
-     */
-    public IASTDeclSpecifier getDeclSpecifier() {
+    public CPPASTSimpleDeclaration() {
+	}
+
+	public CPPASTSimpleDeclaration(IASTDeclSpecifier declSpecifier) {
+		setDeclSpecifier(declSpecifier);
+	}
+
+	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }
 
-
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclarators()
-     */
     public IASTDeclarator[] getDeclarators() {
         if( declarators == null ) return IASTDeclarator.EMPTY_DECLARATOR_ARRAY;
         declarators = (IASTDeclarator[]) ArrayUtil.removeNullsAfter( IASTDeclarator.class, declarators, declaratorsPos );
         return declarators;
     }
     
-    public void addDeclarator( IASTDeclarator d )
-    {
+    public void addDeclarator( IASTDeclarator d ) {
     	if (d != null) {
     		declarators = (IASTDeclarator[]) ArrayUtil.append( IASTDeclarator.class, declarators, ++declaratorsPos, d );
+    		d.setParent(this);
+			d.setPropertyInParent(DECLARATOR);
     	}
     }
     
@@ -57,6 +56,10 @@ public class CPPASTSimpleDeclaration extends CPPASTNode implements
      */
     public void setDeclSpecifier(IASTDeclSpecifier declSpecifier) {
         this.declSpecifier = declSpecifier;
+        if (declSpecifier != null) {
+			declSpecifier.setParent(this);
+			declSpecifier.setPropertyInParent(DECL_SPECIFIER);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

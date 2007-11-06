@@ -12,6 +12,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -19,8 +20,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 /**
  * @author jcamelon
  */
-public class CASTFunctionDeclarator extends CASTDeclarator implements
-        IASTStandardFunctionDeclarator {
+public class CASTFunctionDeclarator extends CASTDeclarator implements IASTStandardFunctionDeclarator {
 
     private IASTParameterDeclaration [] parameters = null;
     private int parametersPos=-1;
@@ -28,34 +28,31 @@ public class CASTFunctionDeclarator extends CASTDeclarator implements
     
 
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#getParameters()
-     */
-    public IASTParameterDeclaration[] getParameters() {
+    public CASTFunctionDeclarator() {
+	}
+
+	public CASTFunctionDeclarator(IASTName name) {
+		super(name);
+	}
+
+	public IASTParameterDeclaration[] getParameters() {
         if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
         parameters = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter( IASTParameterDeclaration.class, parameters, parametersPos );
         return parameters;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#addParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
-     */
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
     	if (parameter != null) {
+    		parameter.setParent(this);
+			parameter.setPropertyInParent(FUNCTION_PARAMETER);
     		parameters = (IASTParameterDeclaration[]) ArrayUtil.append( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
     	}        
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#takesVarArgs()
-     */
     public boolean takesVarArgs() {
         return varArgs;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#setVarArgs(boolean)
-     */
     public void setVarArgs(boolean value) {
         varArgs = value;
     }

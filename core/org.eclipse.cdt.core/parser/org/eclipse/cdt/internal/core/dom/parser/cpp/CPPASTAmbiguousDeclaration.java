@@ -15,8 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclaration;
 
-public class CPPASTAmbiguousDeclaration extends CPPASTAmbiguity implements
-        IASTAmbiguousDeclaration {
+public class CPPASTAmbiguousDeclaration extends CPPASTAmbiguity implements IASTAmbiguousDeclaration {
 
     protected IASTNode[] getNodes() {
         return getDeclarations();
@@ -28,6 +27,8 @@ public class CPPASTAmbiguousDeclaration extends CPPASTAmbiguity implements
     public void addDeclaration(IASTDeclaration d) {
     	if (d != null) {
     		decls = (IASTDeclaration[]) ArrayUtil.append(IASTDeclaration.class, decls, ++declsPos, d );
+    		d.setParent(this);
+			d.setPropertyInParent(SUBDECLARATION);
     	}
     }
 

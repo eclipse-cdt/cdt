@@ -19,27 +19,27 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 /**
  * @author jcamelon
  */
-public class CPPASTArrayModifier extends CPPASTNode implements
-        IASTArrayModifier, IASTAmbiguityParent {
+public class CPPASTArrayModifier extends CPPASTNode implements IASTArrayModifier, IASTAmbiguityParent {
 
     private IASTExpression exp;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTArrayModifier#getConstantExpression()
-     */
-    public IASTExpression getConstantExpression() {
+    public CPPASTArrayModifier() {
+	}
+
+	public CPPASTArrayModifier(IASTExpression exp) {
+		setConstantExpression(exp);
+	}
+
+	public IASTExpression getConstantExpression() {
         return exp;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.dom.ast.IASTArrayModifier#setConstantExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setConstantExpression(IASTExpression expression) {
         exp = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(CONSTANT_EXPRESSION);
+		}
     }
 
     public boolean accept(ASTVisitor action) {

@@ -24,7 +24,7 @@ public abstract class CASTBaseDeclSpecifier extends CASTNode implements ICASTDec
     protected boolean isRestrict;
     protected boolean isInline;
 
-    public boolean isRestrict() {
+	public boolean isRestrict() {
         return isRestrict;
     }
 
@@ -44,37 +44,22 @@ public abstract class CASTBaseDeclSpecifier extends CASTNode implements ICASTDec
         return isInline;
     }
     
-    /**
-     * @param storageClass The storageClass to set.
-     */
     public void setStorageClass(int storageClass) {
         this.storageClass = storageClass;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#setConst(boolean)
-     */
     public void setConst(boolean value) {
         this.isConst = value;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#setVolatile(boolean)
-     */
     public void setVolatile(boolean value) {
         this.isVolatile = value;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier#setRestrict(boolean)
-     */
     public void setRestrict(boolean value) {
         this.isRestrict = value;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#setInline(boolean)
-     */
     public void setInline(boolean value) {
         this.isInline = value;
     }

@@ -21,16 +21,10 @@ public class GPPASTExplicitTemplateInstantiation extends
 
     private int mod;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation#getModifier()
-     */
     public int getModifier() {
         return mod;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTExplicitTemplateInstantiation#setModifier(int)
-     */
     public void setModifier(int value) {
         this.mod = value;
     }

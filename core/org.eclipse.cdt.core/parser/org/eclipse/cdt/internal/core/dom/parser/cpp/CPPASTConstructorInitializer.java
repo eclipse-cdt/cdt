@@ -24,18 +24,24 @@ public class CPPASTConstructorInitializer extends CPPASTNode implements
 
     private IASTExpression exp;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer#getExpression()
-     */
-    public IASTExpression getExpression() {
+
+    public CPPASTConstructorInitializer() {
+	}
+
+	public CPPASTConstructorInitializer(IASTExpression exp) {
+		setExpression(exp);
+	}
+
+	public IASTExpression getExpression() {
         return exp;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer#setExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setExpression(IASTExpression expression) {
         this.exp = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(EXPRESSION);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

@@ -25,32 +25,37 @@ public class CASTParameterDeclaration extends CASTNode implements
     private IASTDeclSpecifier declSpec;
     private IASTDeclarator declarator;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration#getDeclSpecifier()
-     */
-    public IASTDeclSpecifier getDeclSpecifier() {
+    
+    public CASTParameterDeclaration() {
+	}
+
+	public CASTParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+		setDeclSpecifier(declSpec);
+		setDeclarator(declarator);
+	}
+
+	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpec;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration#getDeclarator()
-     */
     public IASTDeclarator getDeclarator() {
         return declarator;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration#setDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
-     */
     public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         this.declSpec = declSpec;
+        if (declSpec != null) {
+			declSpec.setParent(this);
+			declSpec.setPropertyInParent(DECL_SPECIFIER);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration#setDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
-     */
     public void setDeclarator(IASTDeclarator declarator) {
         this.declarator = declarator;
+        if (declarator != null) {
+			declarator.setParent(this);
+			declarator.setPropertyInParent(DECLARATOR);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

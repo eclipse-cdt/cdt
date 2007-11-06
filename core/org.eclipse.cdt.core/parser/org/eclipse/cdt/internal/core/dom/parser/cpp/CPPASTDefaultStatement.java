@@ -16,8 +16,8 @@ import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 /**
  * @author jcamelon
  */
-public class CPPASTDefaultStatement extends CPPASTNode implements
-        IASTDefaultStatement {
+public class CPPASTDefaultStatement extends CPPASTNode implements IASTDefaultStatement {
+	
     public boolean accept( ASTVisitor action ){
         if( action.shouldVisitStatements ){
 		    switch( action.visit( this ) ){

@@ -31,51 +31,53 @@ public class CASTFunctionDefinition extends CASTNode implements
     private IASTStatement bodyStatement;
     private ICFunctionScope scope;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#getDeclSpecifier()
-     */
-    public IASTDeclSpecifier getDeclSpecifier() {
+    
+    public CASTFunctionDefinition() {
+	}
+
+	public CASTFunctionDefinition(IASTDeclSpecifier declSpecifier,
+			IASTFunctionDeclarator declarator, IASTStatement bodyStatement) {
+    	setDeclSpecifier(declSpecifier);
+    	setDeclarator(declarator);
+    	setBody(bodyStatement);
+	}
+
+	public IASTDeclSpecifier getDeclSpecifier() {
         return declSpecifier;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#setDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
-     */
     public void setDeclSpecifier(IASTDeclSpecifier declSpec) {
         declSpecifier = declSpec;
+        if (declSpec != null) {
+			declSpec.setParent(this);
+			declSpec.setPropertyInParent(DECL_SPECIFIER);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#getDeclarator()
-     */
     public IASTFunctionDeclarator getDeclarator() {
         return declarator;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#setDeclarator(org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator)
-     */
     public void setDeclarator(IASTFunctionDeclarator declarator) {
         this.declarator = declarator;
+        if (declarator != null) {
+			declarator.setParent(this);
+			declarator.setPropertyInParent(DECLARATOR);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#getBody()
-     */
     public IASTStatement getBody() {
         return bodyStatement;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#setBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void setBody(IASTStatement statement) {
         bodyStatement = statement;
+        if (statement != null) {
+			statement.setParent(this);
+			statement.setPropertyInParent(FUNCTION_BODY);
+		}
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition#getScope()
-	 */
 	public IScope getScope() {
 		if( scope == null )
 			scope = new CFunctionScope( this );

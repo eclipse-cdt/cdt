@@ -15,18 +15,29 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
  */
-public class CASTArrayDeclarator extends CASTDeclarator implements
-        IASTArrayDeclarator {
+public class CASTArrayDeclarator extends CASTDeclarator implements IASTArrayDeclarator {
     
     private IASTArrayModifier [] arrayMods = null;
     private int arrayModsPos=-1;
 
-    public IASTArrayModifier[] getArrayModifiers() {
+    public CASTArrayDeclarator() {
+	}
+
+	public CASTArrayDeclarator(IASTName name, IASTInitializer initializer) {
+		super(name, initializer);
+	}
+
+	public CASTArrayDeclarator(IASTName name) {
+		super(name);
+	}
+
+	public IASTArrayModifier[] getArrayModifiers() {
         if( arrayMods == null ) return IASTArrayModifier.EMPTY_ARRAY;
         arrayMods = (IASTArrayModifier[]) ArrayUtil.removeNullsAfter( IASTArrayModifier.class, arrayMods, arrayModsPos );
         return arrayMods;
@@ -35,6 +46,8 @@ public class CASTArrayDeclarator extends CASTDeclarator implements
 
     public void addArrayModifier(IASTArrayModifier arrayModifier) {
     	if (arrayModifier != null) {
+    		arrayModifier.setParent(this);
+			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);
             arrayMods = (IASTArrayModifier[]) ArrayUtil.append( IASTArrayModifier.class, arrayMods, ++arrayModsPos, arrayModifier );    		
     	}
     }

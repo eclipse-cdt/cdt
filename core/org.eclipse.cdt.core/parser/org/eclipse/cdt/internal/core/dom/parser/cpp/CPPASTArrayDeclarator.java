@@ -34,6 +34,8 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements
     public void addArrayModifier(IASTArrayModifier arrayModifier) {
     	if (arrayModifier != null) {
     		arrayMods = (IASTArrayModifier[]) ArrayUtil.append( IASTArrayModifier.class, arrayMods, ++arrayModsPos, arrayModifier );
+    		arrayModifier.setParent(this);
+			arrayModifier.setPropertyInParent(ARRAY_MODIFIER);
     	}
     }
     

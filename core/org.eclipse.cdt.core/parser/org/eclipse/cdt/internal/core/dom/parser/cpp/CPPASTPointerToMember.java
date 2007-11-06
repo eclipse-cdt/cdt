@@ -22,16 +22,22 @@ public class CPPASTPointerToMember extends CPPASTPointer implements
 
     private IASTName n;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
-    public void setName(IASTName name) {
+    public CPPASTPointerToMember() {
+	}
+
+	public CPPASTPointerToMember(IASTName n) {
+		setName(n);
+	}
+
+	public void setName(IASTName name) {
         n = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(NAME);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember#getName()
-     */
+
     public IASTName getName() {
         return n;
     }
@@ -41,9 +47,7 @@ public class CPPASTPointerToMember extends CPPASTPointer implements
         return true;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
+
 	public int getRoleForName(IASTName name ) {
 		if( name  == this.n )
 			return r_reference;

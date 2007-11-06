@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -25,8 +26,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 /**
  * @author jcamelon
  */
-public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
-        ICPPASTFunctionDeclarator {
+public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPASTFunctionDeclarator {
     
     private IASTParameterDeclaration [] parameters = null;
     private int parametersPos=-1;
@@ -35,78 +35,58 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     private boolean pureVirtual;
     private boolean isVolatile;
     private boolean isConst;
-    
   
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#getParameters()
-     */
-    public IASTParameterDeclaration [] getParameters() {
+    public CPPASTFunctionDeclarator() {
+	}
+
+	public CPPASTFunctionDeclarator(IASTName name) {
+		super(name);
+	}
+
+	public IASTParameterDeclaration [] getParameters() {
         if( parameters == null ) return IASTParameterDeclaration.EMPTY_PARAMETERDECLARATION_ARRAY;
         parameters = (IASTParameterDeclaration[]) ArrayUtil.removeNullsAfter( IASTParameterDeclaration.class, parameters, parametersPos );
         return parameters;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#addParameterDeclaration(org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration)
-     */
     public void addParameterDeclaration(IASTParameterDeclaration parameter) {
     	if (parameter != null) {
+    		parameter.setParent(this);
+			parameter.setPropertyInParent(FUNCTION_PARAMETER);
     		parameters = (IASTParameterDeclaration []) ArrayUtil.append( IASTParameterDeclaration.class, parameters, ++parametersPos, parameter );
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#takesVarArgs()
-     */
     public boolean takesVarArgs() {
         return varArgs;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator#setVarArgs(boolean)
-     */
     public void setVarArgs(boolean value) {
         varArgs = value;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#isConst()
-     */
     public boolean isConst() {
         return isConst;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#setConst(boolean)
-     */
     public void setConst(boolean value) {
         this.isConst = value;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#isVolatile()
-     */
     public boolean isVolatile() {
         return isVolatile;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#setVolatile(boolean)
-     */
     public void setVolatile(boolean value) {
         this.isVolatile = value;
     }
 
     private IASTTypeId [] typeIds = null;
     private int typeIdsPos=-1;
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#getExceptionSpecification()
-     */
+
     public IASTTypeId[] getExceptionSpecification() {
         if( typeIds == null ) return IASTTypeId.EMPTY_TYPEID_ARRAY;
         typeIds = (IASTTypeId[]) ArrayUtil.removeNullsAfter( IASTTypeId.class, typeIds, typeIdsPos );
@@ -114,27 +94,20 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#addExceptionSpecificationTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
-     */
     public void addExceptionSpecificationTypeId(IASTTypeId typeId) {
     	if (typeId != null) {
     		typeIds = (IASTTypeId[]) ArrayUtil.append( IASTTypeId.class, typeIds, ++typeIdsPos, typeId );
+    		typeId.setParent(this);
+			typeId.setPropertyInParent(EXCEPTION_TYPEID);
     	}
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#isPureVirtual()
-     */
     public boolean isPureVirtual() {
         return pureVirtual;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#setPureVirtual(boolean)
-     */
     public void setPureVirtual(boolean isPureVirtual) {
         this.pureVirtual = isPureVirtual;
     }
@@ -143,9 +116,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     private ICPPASTConstructorChainInitializer [] constructorChain = null;
     private int constructorChainPos=-1;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#getConstructorChain()
-     */
+ 
     public ICPPASTConstructorChainInitializer[] getConstructorChain() {
         if( constructorChain == null ) return ICPPASTConstructorChainInitializer.EMPTY_CONSTRUCTORCHAININITIALIZER_ARRAY;
         constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.removeNullsAfter( ICPPASTConstructorChainInitializer.class, constructorChain, constructorChainPos );
@@ -153,12 +124,11 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements
     }
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator#addConstructorToChain(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer)
-     */
     public void addConstructorToChain(ICPPASTConstructorChainInitializer initializer) {
     	if (initializer != null) {
     		constructorChain = (ICPPASTConstructorChainInitializer[]) ArrayUtil.append(ICPPASTConstructorChainInitializer.class, constructorChain, ++constructorChainPos, initializer );
+    		initializer.setParent(this);
+			initializer.setPropertyInParent(CONSTRUCTOR_CHAIN_MEMBER);
     	}
     }
 

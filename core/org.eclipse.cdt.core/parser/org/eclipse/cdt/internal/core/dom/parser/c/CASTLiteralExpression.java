@@ -18,13 +18,22 @@ import org.eclipse.cdt.core.dom.ast.IType;
 /**
  * @author jcamelon
  */
-public class CASTLiteralExpression extends CASTNode implements
-        IASTLiteralExpression {
+public class CASTLiteralExpression extends CASTNode implements IASTLiteralExpression {
 
     private int kind;
     private String value = ""; //$NON-NLS-1$
 
-    public int getKind() {
+    
+    
+    public CASTLiteralExpression() {
+	}
+
+	public CASTLiteralExpression(int kind, String value) {
+		this.kind = kind;
+		this.value = value;
+	}
+
+	public int getKind() {
         return kind;
     }
 

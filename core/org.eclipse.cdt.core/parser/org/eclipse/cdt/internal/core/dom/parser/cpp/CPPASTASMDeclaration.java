@@ -16,20 +16,22 @@ import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 /**
  * @author jcamelon
  */
-public class CPPASTASMDeclaration extends CPPASTNode implements
-        IASTASMDeclaration {
+public class CPPASTASMDeclaration extends CPPASTNode implements IASTASMDeclaration {
     char [] assembly = null;
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTASMDeclaration#getAssembly()
-     */
-    public String getAssembly() {
-        if( assembly == null ) return ""; //$NON-NLS-1$
+
+    public CPPASTASMDeclaration() {
+	}
+
+	public CPPASTASMDeclaration(String assembly) {
+		setAssembly(assembly);
+	}
+
+	public String getAssembly() {
+        if( assembly == null ) 
+        	return ""; //$NON-NLS-1$
         return new String( assembly );
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTASMDeclaration#setAssembly(java.lang.String)
-     */
     public void setAssembly(String assembly) {
         this.assembly = assembly.toCharArray();
     }

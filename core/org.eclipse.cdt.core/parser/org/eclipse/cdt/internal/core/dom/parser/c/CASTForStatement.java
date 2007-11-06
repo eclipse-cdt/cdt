@@ -30,52 +30,64 @@ public class CASTForStatement extends CASTNode implements IASTForStatement, IAST
     private IASTStatement body, init;
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getCondition()
-     */
-    public IASTExpression getConditionExpression() {
+    public CASTForStatement() {
+	}
+
+	public CASTForStatement(IASTStatement init, IASTExpression condition,
+			IASTExpression iterationExpression, IASTStatement body) {
+    	setInitializerStatement(init);
+    	setConditionExpression(condition);
+    	setIterationExpression(iterationExpression);
+    	setBody(body);
+	}
+
+	public IASTExpression getConditionExpression() {
         return condition;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#setCondition(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setConditionExpression(IASTExpression condition) {
         this.condition = condition;
+        if (condition != null) {
+			condition.setParent(this);
+			condition.setPropertyInParent(CONDITION);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getIterationExpression()
-     */
     public IASTExpression getIterationExpression() {
         return iterationExpression;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#setIterationExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setIterationExpression(IASTExpression iterator) {
         this.iterationExpression = iterator;
+        if (iterator != null) {
+			iterator.setParent(this);
+			iterator.setPropertyInParent(ITERATION);
+		}
+    }
+    
+    public IASTStatement getInitializerStatement() {
+        return init;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getBody()
-     */
+    public void setInitializerStatement(IASTStatement statement) {
+        init = statement;
+        if (statement != null) {
+			statement.setParent(this);
+			statement.setPropertyInParent(INITIALIZER);
+		}
+    }
     public IASTStatement getBody() {
         return body;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#setBody(org.eclipse.cdt.core.dom.ast.IASTStatement)
-     */
     public void setBody(IASTStatement statement) {
         body = statement;
-
+        if (statement != null) {
+			statement.setParent(this);
+			statement.setPropertyInParent(BODY);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTForStatement#getScope()
-     */
     public IScope getScope() {
         if( scope == null )
             scope = new CScope( this );
@@ -133,14 +145,4 @@ public class CASTForStatement extends CASTNode implements IASTForStatement, IAST
         }
         
     }
-
-    public IASTStatement getInitializerStatement() {
-        return init;
-    }
-
-    public void setInitializerStatement(IASTStatement statement) {
-        init = statement;
-    }
-
-
 }

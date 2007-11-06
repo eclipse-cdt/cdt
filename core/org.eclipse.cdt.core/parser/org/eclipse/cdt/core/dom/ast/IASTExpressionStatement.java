@@ -21,8 +21,8 @@ public interface IASTExpressionStatement extends IASTStatement {
 	 * <code>EXPRESSION</code> is the relationship between an
 	 * <code>IASTExpressionStatement</code> and an <code>IASTExpression</code>.
 	 */
-	public static final ASTNodeProperty EXPFRESSION = new ASTNodeProperty(
-			"IASTExpressionStatement.IASTStatement - IASTExpression for IASTExpressionStatement"); //$NON-NLS-1$
+	public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty(
+			"IASTExpressionStatement.EXPRESSION - IASTExpression for IASTExpressionStatement"); //$NON-NLS-1$
 
 	/**
 	 * Get the expression in this statement.

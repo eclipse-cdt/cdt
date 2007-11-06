@@ -28,7 +28,16 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
     private IASTName name;
     private IASTExpression init;
 
-    public void setIsTemplate(boolean templateTokenConsumed) {
+    
+    public CPPASTTypenameExpression() {
+	}
+
+	public CPPASTTypenameExpression(IASTName name, IASTExpression init) {
+		setName(name);
+		setInitialValue(init);
+	}
+
+	public void setIsTemplate(boolean templateTokenConsumed) {
         isTemplate = templateTokenConsumed;
     }
 
@@ -38,6 +47,10 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
 
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(TYPENAME);
+		}
     }
 
     public IASTName getName() {
@@ -46,6 +59,10 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
 
     public void setInitialValue(IASTExpression expressionList) {
         init = expressionList;
+        if (expressionList != null) {
+			expressionList.setParent(this);
+			expressionList.setPropertyInParent(INITIAL_VALUE);
+		}
     }
 
     public IASTExpression getInitialValue() {

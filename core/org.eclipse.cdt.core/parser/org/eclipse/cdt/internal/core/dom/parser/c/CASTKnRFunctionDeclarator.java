@@ -28,30 +28,45 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 	IASTName[] parameterNames = IASTName.EMPTY_NAME_ARRAY;
 	IASTDeclaration[] parameterDeclarations = IASTDeclaration.EMPTY_DECLARATION_ARRAY;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator#setParameterNames(org.eclipse.cdt.core.dom.ast.IASTName[])
-	 */
-	public void setParameterNames(IASTName[] names) {
-		parameterNames = names;
+
+	public CASTKnRFunctionDeclarator() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator#getParameterNames()
-	 */
+	public CASTKnRFunctionDeclarator(IASTName[] parameterNames, IASTDeclaration[] parameterDeclarations) {
+		setParameterNames(parameterNames);
+		setParameterDeclarations(parameterDeclarations);
+	}
+
+
+	public void setParameterNames(IASTName[] names) {
+		parameterNames = names;
+		for(int i = 0; i < names.length; i++) {
+			IASTName name = names[i];
+			if (name != null) {
+				name.setParent(this);
+				name.setPropertyInParent(PARAMETER_NAME);
+			}
+		}
+	}
+
+
 	public IASTName[] getParameterNames() {
 		return parameterNames;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator#setParameterDeclarations(org.eclipse.cdt.core.dom.ast.IASTDeclaration[])
-	 */
+
 	public void setParameterDeclarations(IASTDeclaration[] decls) {
 		parameterDeclarations = decls;
+		for(int i = 0; i < parameterDeclarations.length; i++) {
+			IASTDeclaration decl = parameterDeclarations[i];
+			if (decl != null) {
+				decl.setParent(this);
+				decl.setPropertyInParent(FUNCTION_PARAMETER);
+			}
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator#getParameterDeclarations()
-	 */
+
 	public IASTDeclaration[] getParameterDeclarations() {
 		return parameterDeclarations;
 	}
@@ -70,9 +85,6 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
         return true;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator#getDeclaratorForParameterName()
-	 */
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name) {
 		boolean found=false;
 		for(int i=0; i<parameterNames.length; i++) {
@@ -93,9 +105,6 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CASTDeclarator#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName name) {
 		IASTName [] n = getParameterNames();
 		for( int i = 0; i < n.length; ++i )

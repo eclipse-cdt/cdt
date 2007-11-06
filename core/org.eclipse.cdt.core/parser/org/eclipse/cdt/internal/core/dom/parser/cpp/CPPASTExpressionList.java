@@ -31,6 +31,10 @@ public class CPPASTExpressionList extends CPPASTNode implements
 
     public void addExpression(IASTExpression expression) {
         expressions = (IASTExpression [])ArrayUtil.append( IASTExpression.class, expressions, expression );
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(NESTED_EXPRESSION);
+		}
     }
 
     private IASTExpression [] expressions = new IASTExpression[2];

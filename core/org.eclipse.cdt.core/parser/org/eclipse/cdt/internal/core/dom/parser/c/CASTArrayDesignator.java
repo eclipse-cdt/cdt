@@ -26,18 +26,25 @@ public class CASTArrayDesignator extends CASTNode implements
 
     private IASTExpression exp;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator#getSubscriptExpression()
-     */
+    
+    public CASTArrayDesignator() {
+	}
+
+	public CASTArrayDesignator(IASTExpression exp) {
+		setSubscriptExpression(exp);
+	}
+
+	
     public IASTExpression getSubscriptExpression() {
         return exp;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator#setSubscriptExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setSubscriptExpression(IASTExpression value) {
         exp = value;
+        if(value != null) {
+        	value.setParent(this);
+        	value.setPropertyInParent(SUBSCRIPT_EXPRESSION);
+        }
     }
 
     public boolean accept( ASTVisitor action ){

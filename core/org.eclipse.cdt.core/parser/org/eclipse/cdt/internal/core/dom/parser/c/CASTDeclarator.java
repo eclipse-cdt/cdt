@@ -39,65 +39,67 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
     private int pointerOpsPos=-1;
 
 
+    public CASTDeclarator() {
+	}
+
+    public CASTDeclarator(IASTName name) {
+		setName(name);
+	}
     
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#getPointerOperators()
-     */
-    public IASTPointerOperator[] getPointerOperators() {
+	public CASTDeclarator(IASTName name, IASTInitializer initializer) {
+		setInitializer(initializer);
+		setName(name);
+	}
+	
+	public IASTPointerOperator[] getPointerOperators() {
         if( pointerOps == null ) return IASTPointerOperator.EMPTY_ARRAY;
         pointerOps = (IASTPointerOperator[]) ArrayUtil.removeNullsAfter( IASTPointerOperator.class, pointerOps, pointerOpsPos );
         return pointerOps;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#getNestedDeclarator()
-     */
     public IASTDeclarator getNestedDeclarator() {
         return nestedDeclarator;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#getName()
-     */
     public IASTName getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#getInitializer()
-     */
     public IASTInitializer getInitializer() {
         return initializer;
     }
 
-    /**
-     * @param initializer
-     */
+    
     public void setInitializer(IASTInitializer initializer) {
         this.initializer = initializer;
+        if (initializer != null) {
+			initializer.setParent(this);
+			initializer.setPropertyInParent(INITIALIZER);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#addPointerOperator(org.eclipse.cdt.core.dom.ast.IASTPointerOperator)
-     */
     public void addPointerOperator(IASTPointerOperator operator) {
     	if (operator != null) {
+    		operator.setParent(this);
+    		operator.setPropertyInParent(POINTER_OPERATOR);
     		pointerOps = (IASTPointerOperator[]) ArrayUtil.append( IASTPointerOperator.class, pointerOps, ++pointerOpsPos, operator );
     	}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#setNestedDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
-     */
     public void setNestedDeclarator(IASTDeclarator nested) {
         this.nestedDeclarator = nested;
+        if (nested != null) {
+			nested.setParent(this);
+			nested.setPropertyInParent(NESTED_DECLARATOR);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarator#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(DECLARATOR_NAME);;
+		}
     }
 
     public boolean accept( ASTVisitor action ){
@@ -147,9 +149,6 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
         return true;
     }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n ) {
 		if( n  == this.name )
 		{

@@ -24,18 +24,24 @@ public class CPPASTDeclarationStatement extends CPPASTNode implements
 
     private IASTDeclaration declaration;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement#getDeclaration()
-     */
-    public IASTDeclaration getDeclaration() {
+    
+    public CPPASTDeclarationStatement() {
+	}
+
+	public CPPASTDeclarationStatement(IASTDeclaration declaration) {
+		setDeclaration(declaration);
+	}
+
+	public IASTDeclaration getDeclaration() {
         return declaration;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement#setDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
-     */
     public void setDeclaration(IASTDeclaration declaration) {
         this.declaration = declaration;
+        if (declaration != null) {
+			declaration.setParent(this);
+			declaration.setPropertyInParent(DECLARATION);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

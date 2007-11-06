@@ -25,12 +25,26 @@ public class CPPASTDeleteExpression extends CPPASTNode implements
     private boolean isGlobal;
     private boolean isVectored;
 
-    public IASTExpression getOperand() {
+    
+    
+    public CPPASTDeleteExpression() {
+	}
+
+	public CPPASTDeleteExpression(IASTExpression operand) {
+		setOperand(operand);
+	}
+	
+
+	public IASTExpression getOperand() {
         return operand;
     }
 
     public void setOperand(IASTExpression expression) {
         operand = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(OPERAND);
+		}
     }
 
     public void setIsGlobal(boolean global) {

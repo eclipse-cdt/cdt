@@ -22,11 +22,25 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
  */
 public class CPPASTFunctionCallExpression extends CPPASTNode implements
         IASTFunctionCallExpression, IASTAmbiguityParent {
+	
     private IASTExpression functionName;
     private IASTExpression parameter;
 
-    public void setFunctionNameExpression(IASTExpression expression) {
+    
+    public CPPASTFunctionCallExpression() {
+	}
+
+	public CPPASTFunctionCallExpression(IASTExpression functionName, IASTExpression parameter) {
+		setFunctionNameExpression(functionName);
+		setParameterExpression(parameter);
+	}
+
+	public void setFunctionNameExpression(IASTExpression expression) {
         this.functionName = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(FUNCTION_NAME);
+		}
     }
 
     public IASTExpression getFunctionNameExpression() {
@@ -35,6 +49,10 @@ public class CPPASTFunctionCallExpression extends CPPASTNode implements
 
     public void setParameterExpression(IASTExpression expression) {
         this.parameter = expression;
+        if (expression != null) {
+			expression.setParent(this);
+			expression.setPropertyInParent(PARAMETERS);
+		}
     }
 
     public IASTExpression getParameterExpression() {

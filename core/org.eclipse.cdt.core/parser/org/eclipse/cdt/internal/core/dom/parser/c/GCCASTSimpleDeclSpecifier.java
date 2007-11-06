@@ -23,28 +23,25 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
  * @author aniefer
  *
  */
-public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier
-		implements IGCCASTSimpleDeclSpecifier {
+public class GCCASTSimpleDeclSpecifier extends CASTSimpleDeclSpecifier implements IGCCASTSimpleDeclSpecifier {
 
 	private IASTExpression typeOfExpression;
-	
-	/**
-	 * 
-	 */
+
 	public GCCASTSimpleDeclSpecifier() {
-		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier#setTypeofExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-	 */
+	public GCCASTSimpleDeclSpecifier(IASTExpression typeofExpression) {
+		setTypeofExpression(typeofExpression);
+	}
+
 	public void setTypeofExpression(IASTExpression typeofExpression) {
 		this.typeOfExpression = typeofExpression;
+		if (typeofExpression != null) {
+			typeofExpression.setParent(this);
+			typeofExpression.setPropertyInParent(TYPEOF_EXPRESSION);
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier#getTypeofExpression()
-	 */
 	public IASTExpression getTypeofExpression() {
 		return typeOfExpression;
 	}

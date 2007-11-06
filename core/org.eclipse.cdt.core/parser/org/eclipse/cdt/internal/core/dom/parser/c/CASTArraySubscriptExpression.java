@@ -27,12 +27,24 @@ public class CASTArraySubscriptExpression extends CASTNode implements
     private IASTExpression array;
     private IASTExpression subscript;
 
-    public IASTExpression getArrayExpression() {
+    public CASTArraySubscriptExpression() {
+	}
+
+	public CASTArraySubscriptExpression(IASTExpression array, IASTExpression subscript) {
+		setArrayExpression(array);
+		setSubscriptExpression(subscript);
+	}
+
+	public IASTExpression getArrayExpression() {
         return array;
     }
 
     public void setArrayExpression(IASTExpression expression) {
         array = expression;
+        if(expression != null) {
+        	expression.setParent(this);
+        	expression.setPropertyInParent(ARRAY);
+        }
     }
 
     public IASTExpression getSubscriptExpression() {
@@ -41,6 +53,10 @@ public class CASTArraySubscriptExpression extends CASTNode implements
 
     public void setSubscriptExpression(IASTExpression expression) {
         this.subscript = expression;
+        if(expression != null) {
+        	expression.setParent(this);
+        	expression.setPropertyInParent(SUBSCRIPT);
+        }
     }
 
     public boolean accept( ASTVisitor action ){

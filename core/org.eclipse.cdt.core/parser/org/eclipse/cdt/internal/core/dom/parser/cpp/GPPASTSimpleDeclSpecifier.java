@@ -26,44 +26,39 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
     private boolean imaginary=false;
     private IASTExpression typeOfExpression;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier#isLongLong()
-     */
-    public boolean isLongLong() {
+    
+    
+    public GPPASTSimpleDeclSpecifier() {
+	}
+
+	public GPPASTSimpleDeclSpecifier(IASTExpression typeofExpression) {
+		setTypeofExpression(typeofExpression);
+	}
+
+	public boolean isLongLong() {
         return longLong;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier#setLongLong(boolean)
-     */
     public void setLongLong(boolean value) {
         longLong = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier#isRestrict()
-     */
     public boolean isRestrict() {
         return restrict;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier#setRestrict(boolean)
-     */
     public void setRestrict(boolean value) {
         restrict = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier#setTypeofExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
-     */
     public void setTypeofExpression(IASTExpression typeofExpression) {
         typeOfExpression = typeofExpression;
+        if (typeofExpression != null) {
+			typeofExpression.setParent(this);
+			typeofExpression.setPropertyInParent(TYPEOF_EXPRESSION);
+		}
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier#getTypeofExpression()
-     */
     public IASTExpression getTypeofExpression() {
         return typeOfExpression;
     }

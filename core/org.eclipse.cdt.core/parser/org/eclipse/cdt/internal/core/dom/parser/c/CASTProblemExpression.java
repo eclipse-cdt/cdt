@@ -12,16 +12,24 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author jcamelon
  */
-public class CASTProblemExpression extends CASTProblemOwner implements
-        IASTProblemExpression {
+public class CASTProblemExpression extends CASTProblemOwner implements IASTProblemExpression {
 
-    public boolean accept( ASTVisitor action ){
+    public CASTProblemExpression() {
+		super();
+	}
+
+	public CASTProblemExpression(IASTProblem problem) {
+		super(problem);
+	}
+
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitExpressions ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

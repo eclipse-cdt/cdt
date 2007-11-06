@@ -17,22 +17,28 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 /**
  * @author jcamelon
  */
-public class CPPASTGotoStatement extends CPPASTNode implements
-        IASTGotoStatement {
-    private IASTName name;
+public class CPPASTGotoStatement extends CPPASTNode implements IASTGotoStatement {
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTGotoStatement#getName()
-     */
-    public IASTName getName() {
+	private IASTName name;
+
+	
+    public CPPASTGotoStatement() {
+	}
+
+	public CPPASTGotoStatement(IASTName name) {
+		setName(name);
+	}
+
+	public IASTName getName() {
         return this.name;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTGotoStatement#setName(org.eclipse.cdt.core.dom.ast.IASTName)
-     */
     public void setName(IASTName name) {
        this.name = name;
+       if (name != null) {
+    	   name.setParent(this);
+    	   name.setPropertyInParent(NAME);
+       }
     }
 
     public boolean accept( ASTVisitor action ){
@@ -55,9 +61,6 @@ public class CPPASTGotoStatement extends CPPASTNode implements
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
-	 */
 	public int getRoleForName(IASTName n) {
 		if( name == n ) return r_reference;
 		return r_unclear;

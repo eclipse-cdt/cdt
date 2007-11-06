@@ -26,12 +26,24 @@ public class CASTIdExpression extends CASTNode implements IASTIdExpression, IAST
 
     private IASTName name;
 
-    public IASTName getName() {
+    
+    public CASTIdExpression() {
+	}
+
+	public CASTIdExpression(IASTName name) {
+		setName(name);
+	}
+
+	public IASTName getName() {
         return name;
     }
 
     public void setName(IASTName name) {
         this.name = name;
+        if (name != null) {
+			name.setParent(this);
+			name.setPropertyInParent(ID_NAME);
+		}
     }
 
     public boolean accept( ASTVisitor action ){

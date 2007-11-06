@@ -22,44 +22,36 @@ public class CASTPointer extends CASTNode implements ICASTPointer {
     private boolean isVolatile;
     private boolean isConst;
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTPointer#isRestrict()
-     */
-    public boolean isRestrict() {
+    
+    public CASTPointer() {
+	}
+
+	public CASTPointer(boolean isRestrict, boolean isVolatile, boolean isConst) {
+		this.isRestrict = isRestrict;
+		this.isVolatile = isVolatile;
+		this.isConst = isConst;
+	}
+
+	public boolean isRestrict() {
         return isRestrict;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.c.ICASTPointer#setRestrict(boolean)
-     */
     public void setRestrict(boolean value) {
         isRestrict = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTPointer#isConst()
-     */
     public boolean isConst() {
         return isConst;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTPointer#isVolatile()
-     */
     public boolean isVolatile() {
         return isVolatile;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTPointer#setConst(boolean)
-     */
     public void setConst(boolean value) {
         isConst = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTPointer#setVolatile(boolean)
-     */
     public void setVolatile(boolean value) {
         isVolatile = value;
     }

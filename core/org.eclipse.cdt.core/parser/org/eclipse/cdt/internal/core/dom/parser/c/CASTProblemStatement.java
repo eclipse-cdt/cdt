@@ -12,14 +12,23 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 
 /**
  * @author jcamelon
  */
-public class CASTProblemStatement extends CASTProblemOwner implements
-        IASTProblemStatement {
-    public boolean accept( ASTVisitor action ){
+public class CASTProblemStatement extends CASTProblemOwner implements IASTProblemStatement {
+	
+	
+    public CASTProblemStatement() {
+	}
+
+	public CASTProblemStatement(IASTProblem problem) {
+		super(problem);
+	}
+
+	public boolean accept( ASTVisitor action ){
         if( action.shouldVisitStatements ){
 		    switch( action.visit( this ) ){
 	            case ASTVisitor.PROCESS_ABORT : return false;

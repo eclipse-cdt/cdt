@@ -58,6 +58,7 @@ public interface IOption extends IBuildObject {
 	public static final String COMMAND = "command"; //$NON-NLS-1$
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
 	public static final String TOOL_TIP = "tip"; //$NON-NLS-1$
+	public static final String CONTEXT_ID = "contextId"; //$NON-NLS-1$
 	public static final String DEFAULT_VALUE = "defaultValue"; //$NON-NLS-1$
 	public static final String ENUM_VALUE = "enumeratedOptionValue"; //$NON-NLS-1$
 	public static final String IS_DEFAULT = "isDefault"; //$NON-NLS-1$
@@ -241,6 +242,21 @@ public interface IOption extends IBuildObject {
 	 */
 	public void setToolTip(String tooltip);
 
+	/**
+	 * Answers a <code>String</code> containing the contextId
+	 * associated with the option
+	 * @return String
+	 */
+	public String getContextId();
+
+ 	/**
+	 * Sets a <code>String</code> containing the contextId
+	 * associated with the option
+	 * 
+	 * @param String
+	 */
+	public void setContextId(String id);
+	
 	/**
 	 * Answers the user-defined preprocessor symbols. 
 	 * 

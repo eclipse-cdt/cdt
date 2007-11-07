@@ -61,6 +61,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private String command;
 	private String commandFalse;
 	private String tip;
+	private String contextId;
 	private List enumList;
 	private Map enumCommands;
 	private Map enumNames;
@@ -187,6 +188,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (option.tip != null) {
 			tip = new String(option.tip);
+		}
+		if (option.contextId != null) {
+			contextId = new String(option.contextId);
 		}
 		if (option.categoryId != null) {
 			categoryId = new String(option.categoryId);
@@ -322,6 +326,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Get the tooltip for the option
 		tip = element.getAttribute(TOOL_TIP);
 		
+		// Get the contextID for the option
+		contextId = element.getAttribute(CONTEXT_ID);
+			
 		// Options hold different types of values
 		String valueTypeStr = element.getAttribute(VALUE_TYPE);
 		if (valueTypeStr != null) {
@@ -440,6 +447,11 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		// Get the tooltip for the option
 		if (element.getAttribute(TOOL_TIP) != null) {
 			tip = element.getAttribute(TOOL_TIP);
+		}
+		
+		// Get the contextID for the option
+		if (element.getAttribute(CONTEXT_ID) != null) {
+			contextId = element.getAttribute(CONTEXT_ID);
 		}
 		
 		// Options hold different types of values
@@ -689,6 +701,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			element.setAttribute(TOOL_TIP, tip);
 		}
 		
+		if (contextId != null) {
+			element.setAttribute(CONTEXT_ID, contextId);
+		}
 		/*
 		 * Note:  We store value & value-type as a pair, so we know what type of value we are
 		 *        dealing with when we read it back in.
@@ -1105,6 +1120,19 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 		}
 		return tip;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getContextId()
+	 */
+	public String getContextId() {
+		if (contextId == null) {
+			if (superClass != null) {
+				return superClass.getContextId();
+			} else {
+				return EMPTY_STRING;
+			}
+		}
+		return contextId;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#getDefinedSymbols()
@@ -1589,7 +1617,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setToolTip(String)
 	 */
@@ -1597,6 +1625,20 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (tooltip == null && tip == null) return;
 		if (tooltip == null || tip == null || !tooltip.equals(tip)) {
 			tip = tooltip;
+			if(!isExtensionElement()){
+				isDirty = true;		
+				rebuildState = true;
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IOption#setContextId(String)
+	 */
+	public void setContextId(String id) {
+		if (id == null && contextId == null) return;
+		if (id == null || contextId == null || !id.equals(contextId)) {
+			contextId = id;
 			if(!isExtensionElement()){
 				isDirty = true;		
 				rebuildState = true;
@@ -1863,6 +1905,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			command == null &&
 			commandFalse == null &&
 			tip == null &&
+			contextId == null &&
 			enumList == null &&
 			enumCommands == null &&
 			enumNames == null &&

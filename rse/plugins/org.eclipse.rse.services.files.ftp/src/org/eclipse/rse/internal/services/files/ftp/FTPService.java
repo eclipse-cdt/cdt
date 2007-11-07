@@ -65,6 +65,7 @@
  * Javier Montalvo Orus (Symbian) - [196351] Delete a folder should do recursive Delete
  * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * Javier Montalvo Orus (Symbian) - [208912] Cannot expand /C on a VxWorks SSH Server
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1085,11 +1086,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		if(!hasSucceeded){
 			if(isFile)
 			{
-				throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+parentPath+getSeparator()+fileName+")")); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+concat(parentPath,fileName)+")")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else //folder recursively
 			{
-				String newParentPath = parentPath+getSeparator()+fileName;
+				String newParentPath = concat(parentPath,fileName);
 				
 				ftpClient.changeWorkingDirectory(newParentPath);
 				FTPFile[] fileNames = ftpClient.listFiles();
@@ -1101,7 +1102,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 					hasSucceeded = internalDelete(ftpClient,newParentPath,fileNames[i].getName(),fileNames[i].isFile(),monitor);
 					if(!hasSucceeded)
 					{
-						throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+newParentPath+getSeparator()+fileNames[i].getName()+")")); //$NON-NLS-1$ //$NON-NLS-2$
+						throw new RemoteFileIOException(new Exception(ftpClient.getReplyString()+" ("+concat(newParentPath,fileNames[i].getName())+")")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				
@@ -1179,10 +1180,10 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
 			try{
 				FTPClient ftpClient = getFTPClient(); 
-			
-				String source = srcParent.endsWith(String.valueOf(getSeparator())) ?  srcParent + srcName : srcParent + getSeparator() + srcName;
-				String target = tgtParent.endsWith(String.valueOf(getSeparator())) ?  tgtParent + tgtName : tgtParent + getSeparator() + tgtName;
-					
+				
+				String source = concat(srcParent,srcName);
+				String target = concat(tgtParent,tgtName);
+				
 				clearCache(srcParent);
 				clearCache(tgtParent);
 				success = ftpClient.rename(source, target);
@@ -1281,7 +1282,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		
     	IHostFile remoteHostFile = getFile(srcParent, srcName, monitor);
 		MyProgressMonitor progressMonitor = new MyProgressMonitor(monitor);
-		progressMonitor.init(0, srcParent+getSeparator()+srcName, tgtParent+getSeparator()+tgtName, remoteHostFile.getSize()*2);
+		progressMonitor.init(0, concat(srcParent,srcName), concat(tgtParent,tgtName), remoteHostFile.getSize()*2);
 		
 			
 		if(_commandMutex.waitForLock(monitor, Long.MAX_VALUE)) {
@@ -1314,11 +1315,11 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		{
     		
     		//create folder
-    		success = ftpClient.makeDirectory(tgtParent+getSeparator()+tgtName);
+    		success = ftpClient.makeDirectory(concat(tgtParent,tgtName));
 			
     		//copy contents
-    		String newSrcParentPath = srcParent+getSeparator()+srcName;
-    		String newTgtParentPath = tgtParent+getSeparator()+tgtName;
+    		String newSrcParentPath = concat(srcParent,srcName);
+    		String newTgtParentPath = concat(tgtParent,tgtName);
 			
 			ftpClient.changeWorkingDirectory(newSrcParentPath);
 			FTPFile[] fileNames = ftpClient.listFiles();
@@ -1675,6 +1676,23 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			_ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 			_isBinaryFileType = isBinaryFileType;
 		}
+	}
+	
+	/**
+	 * Concatenate a parent directory with a file name to form a new proper path name.
+	 * @param parentDir path name of the parent directory.
+	 * @param fileName file name to concatenate.
+	 * @return path name concatenated from parent directory and file name.
+	 * 
+	 */
+	protected String concat(String parentDir, String fileName) {
+		StringBuffer path = new StringBuffer(parentDir);
+		if (!parentDir.endsWith(String.valueOf(getSeparator()))) 
+		{
+			path.append(getSeparator());
+		}
+		path.append(fileName);
+		return path.toString();
 	}
 	
 }

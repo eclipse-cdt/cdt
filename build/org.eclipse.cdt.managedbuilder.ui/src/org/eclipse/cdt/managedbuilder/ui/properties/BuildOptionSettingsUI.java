@@ -28,6 +28,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionApplicability;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -38,6 +39,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 
 public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	private Map fieldsMap = new HashMap();
@@ -122,19 +124,20 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 
 							stringField.getTextControl(fieldEditorParent).setToolTipText(opt.getToolTip());
 							stringField.getLabelControl(fieldEditorParent).setToolTipText(opt.getToolTip());
-	
+							PlatformUI.getWorkbench().getHelpSystem().setHelp(stringField.getTextControl(fieldEditorParent), opt.getContextId());
 							fieldEditor = stringField;
 						} break;
 						
 						case IOption.BOOLEAN: {
 							class TooltipBooleanFieldEditor extends BooleanFieldEditor {
-								public TooltipBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent) {
+								public TooltipBooleanFieldEditor(String name, String labelText, String tooltip, Composite parent, String contextId) {
 									super(name, labelText, parent);
 									getChangeControl(parent).setToolTipText(tooltip);
+									if (!contextId.equals(AbstractPage.EMPTY_STR)) PlatformUI.getWorkbench().getHelpSystem().setHelp(getChangeControl(parent), contextId);
 								}
 							}
 							
-							fieldEditor = new TooltipBooleanFieldEditor(optId, opt.getName(), opt.getToolTip(), fieldEditorParent);
+							fieldEditor = new TooltipBooleanFieldEditor(optId, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getContextId());
 						} break;
 						
 						case IOption.ENUMERATED: {
@@ -156,7 +159,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							String[] enumValidNames = new String[enumValidList.size()];
 							enumValidList.copyInto(enumValidNames);
 	
-							fieldEditor = new BuildOptionComboFieldEditor(optId, opt.getName(), opt.getToolTip(), enumValidNames, sel, fieldEditorParent);
+							fieldEditor = new BuildOptionComboFieldEditor(optId, opt.getName(), opt.getToolTip(), opt.getContextId(), enumValidNames, sel, fieldEditorParent);
 						} break;
 						
 						case IOption.INCLUDE_PATH:
@@ -174,7 +177,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						case IOption.UNDEF_LIBRARY_PATHS:
 						case IOption.UNDEF_LIBRARY_FILES:
 						case IOption.UNDEF_MACRO_FILES:						{
-							fieldEditor = new FileListControlFieldEditor(optId, opt.getName(), opt.getToolTip(), fieldEditorParent, opt.getBrowseType());
+							fieldEditor = new FileListControlFieldEditor(optId, opt.getName(), opt.getToolTip(), opt.getContextId(), fieldEditorParent, opt.getBrowseType());
 						} break;
 						
 						default:

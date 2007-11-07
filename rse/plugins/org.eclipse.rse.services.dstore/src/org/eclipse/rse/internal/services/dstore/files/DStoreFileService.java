@@ -251,6 +251,19 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 			int available = bufInputStream.available();
 
+			
+			// line separator of local machine
+			String localLineSep = System.getProperty("line.separator"); //$NON-NLS-1$
+			
+			// line separator of remote machine
+			String targetLineSep = "\n"; //$NON-NLS-1$
+			
+			if (!unixStyle) {
+				targetLineSep = "\r\n"; //$NON-NLS-1$
+			}
+			
+			int localLineSepLength = localLineSep.length();
+			
 			long totalSent = 0;
 
 			// upload bytes while available
@@ -273,12 +286,36 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 				if (!isBinary && hostEncoding != null) 
 				{
 					String tempStr = new String(buffer, 0, bytesRead);
+					
+					// if the line end characters of the local and remote machines are different, we need to replace them 
+					if (!localLineSep.equals(targetLineSep)) {
 
-					// hack for zOS - \r causes problems for compilers
-//					if (osName != null && (osName.startsWith("z") || osName.equalsIgnoreCase("aix")))
-//					{
-//						tempStr = tempStr.replace('\r', ' ');
-//					}
+						int index = tempStr.indexOf(localLineSep);
+					
+						StringBuffer buf = new StringBuffer();
+					
+						boolean lineEndFound = false;
+						int lastIndex = 0;
+					
+						while (index != -1) {
+							buf = buf.append(tempStr.substring(lastIndex, index));
+							buf = buf.append(targetLineSep);
+						
+							if (!lineEndFound) {
+								lineEndFound = true;
+							}
+						
+							lastIndex = index+localLineSepLength;
+						
+							index = tempStr.indexOf(localLineSep, lastIndex);
+						}
+					
+						if (lineEndFound) {
+							buf = buf.append(tempStr.substring(lastIndex));
+							tempStr = buf.toString();
+						}
+					}
+
 
 					convBytes = tempStr.getBytes(hostEncoding);
 				

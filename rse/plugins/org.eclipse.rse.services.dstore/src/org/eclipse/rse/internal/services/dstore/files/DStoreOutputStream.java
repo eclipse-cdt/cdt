@@ -28,14 +28,29 @@ public class DStoreOutputStream extends OutputStream
 	private int _mode;
 	private boolean _firstWrite = true;
 	private String _byteStreamHandlerId;
+	private String _localLineSep;
+	private String _targetLineSep;
+	private int _localLineSepLength;
 	
-	public DStoreOutputStream(DataStore dataStore, String remotePath, String encoding, int mode)
+	public DStoreOutputStream(DataStore dataStore, String remotePath, String encoding, int mode, boolean unixStyle)
 	{		
 		_dataStore = dataStore;
 		_remotePath = remotePath;
 		_encoding = encoding;
 		_mode = mode;
 		_byteStreamHandlerId = UniversalByteStreamHandler.class.getName();
+
+		// line separator of local machine
+		_localLineSep = System.getProperty("line.separator"); //$NON-NLS-1$
+		
+		// line separator of remote machine
+		_targetLineSep = "\n"; //$NON-NLS-1$
+		
+		if (!unixStyle) {
+			_targetLineSep = "\r\n"; //$NON-NLS-1$
+		}
+		
+		_localLineSepLength = _localLineSep.length();
 	}
 	
 		
@@ -60,6 +75,9 @@ public class DStoreOutputStream extends OutputStream
 		if (_mode == IUniversalDataStoreConstants.TEXT_MODE)
 		{
 			String tempStr = new String(b, 0, length);
+			
+			tempStr = convertLineSeparators(tempStr);
+			
 			b = tempStr.getBytes(_encoding);
 		}
 		if (_firstWrite)
@@ -75,13 +93,47 @@ public class DStoreOutputStream extends OutputStream
 		}
 	}
 
+	private String convertLineSeparators(String tempStr)
+	{
+		// if the line end characters of the local and remote machines are different, we need to replace them 
+		if (!_localLineSep.equals(_targetLineSep)) {
 
+			int index = tempStr.indexOf(_localLineSep);
+		
+			StringBuffer buf = new StringBuffer();
+		
+			boolean lineEndFound = false;
+			int lastIndex = 0;
+		
+			while (index != -1) {
+				buf = buf.append(tempStr.substring(lastIndex, index));
+				buf = buf.append(_targetLineSep);
+			
+				if (!lineEndFound) {
+					lineEndFound = true;
+				}
+			
+				lastIndex = index+_localLineSepLength;
+			
+				index = tempStr.indexOf(_localLineSep, lastIndex);
+			}
+		
+			if (lineEndFound) {
+				buf = buf.append(tempStr.substring(lastIndex));
+				tempStr = buf.toString();
+			}
+		}
+		return tempStr;
+	}
 
 	public void write(byte[] b) throws IOException 
 	{
 		if (_mode == IUniversalDataStoreConstants.TEXT_MODE)
 		{
 			String tempStr = new String(b, 0, b.length);
+			
+			tempStr = convertLineSeparators(tempStr);
+			
 			b = tempStr.getBytes(_encoding);
 		}
 		if (_firstWrite)

@@ -1938,7 +1938,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		{
 			mode = IUniversalDataStoreConstants.TEXT_MODE;
 		}
-		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode);
+		
+		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode, unixStyle);
 		return outputStream;
 	}
 	

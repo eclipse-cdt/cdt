@@ -1404,6 +1404,12 @@ public class CVisitor {
 		char [] n = name.toCharArray();
 		if( declSpec instanceof ICASTElaboratedTypeSpecifier ){
 			tempName = ((ICASTElaboratedTypeSpecifier)declSpec).getName();
+			
+			// Don't include the query name in the results
+			if (tempName == name) {
+				return null;
+			}
+			
 			if( scope != null )
 			    ASTInternal.addName( scope,  tempName );
 			if( typesOnly ){

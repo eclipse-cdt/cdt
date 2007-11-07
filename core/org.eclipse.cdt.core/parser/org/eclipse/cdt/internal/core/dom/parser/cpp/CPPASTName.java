@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -21,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -91,12 +94,27 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
     }
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
-		if (getParent() instanceof IASTDeclarator) {
+		IASTNode parent = getParent();
+		if (parent instanceof ICPPASTElaboratedTypeSpecifier) {
+			ICPPASTElaboratedTypeSpecifier specifier = (ICPPASTElaboratedTypeSpecifier) parent;
+			int kind = specifier.getKind();
+			switch (kind) {
+			case ICPPASTElaboratedTypeSpecifier.k_struct:
+			case ICPPASTElaboratedTypeSpecifier.k_union:
+			case ICPPASTElaboratedTypeSpecifier.k_class:
+				break;
+			default:
+				return null;
+			}
+			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
+			return filterByElaboratedTypeSpecifier(kind, bindings);
+		}
+		else if (parent instanceof IASTDeclarator) {
 			IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
 			for (int i = 0; i < bindings.length; i++) {
 				if (bindings[i] instanceof ICPPNamespace || bindings[i] instanceof ICPPClassType) {
 				} else {
-					bindings[i]= null;
+					bindings[i] = null;
 				}
 			}
 			return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
@@ -104,7 +122,41 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
 		return null;
 	}
 
-    public void setBinding(IBinding binding) {
+    private IBinding[] filterByElaboratedTypeSpecifier(int kind, IBinding[] bindings) {
+		for (int i = 0; i < bindings.length; i++) {
+			if (bindings[i] instanceof ICPPNamespace) {
+			} else if (bindings[i] instanceof ICPPClassType) {
+				ICPPClassType type = (ICPPClassType) bindings[i];
+				try {
+					switch (type.getKey()) {
+					case ICPPClassType.k_struct:
+						if (kind != ICPPASTElaboratedTypeSpecifier.k_struct) {
+							bindings[i] = null;
+						}
+						break;
+					case ICPPClassType.k_union:
+						if (kind != ICPPASTElaboratedTypeSpecifier.k_union) {
+							bindings[i] = null;
+						}
+						break;
+					case ICPPClassType.k_class:
+						if (kind != ICPPASTElaboratedTypeSpecifier.k_class) {
+							bindings[i] = null;
+						}
+						break;
+					}
+				} catch (DOMException e) {
+					bindings[i] = null;
+					CCorePlugin.log(e);
+				}
+			} else {
+				bindings[i]= null;
+			}
+		}
+		return (IBinding[])ArrayUtil.removeNulls(IBinding.class, bindings);
+	}
+
+	public void setBinding(IBinding binding) {
         this.binding = binding;
         fResolutionDepth= 0;
     }

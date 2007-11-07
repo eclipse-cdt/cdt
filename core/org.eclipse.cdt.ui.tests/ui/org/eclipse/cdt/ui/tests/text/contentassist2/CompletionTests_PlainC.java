@@ -8,6 +8,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.ui.tests.text.contentassist2;
@@ -38,6 +39,10 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 
 	//{CompletionTest.h}
 	//int gGlobalInt;
+	//struct Struct1;
+	//struct Struct2;
+	//union Union1;
+	//union Union2;
 
 	//{DisturbWith.c}
 	// int gTemp;
@@ -151,6 +156,30 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected= {
 				"staticVar197990"
 		};
+		assertCompletionResults(expected);
+	}
+	
+	// struct Struct/*cursor*/
+	public void testElaboratedTypeSpecifierStruct_bug208710() throws Exception {
+		final String[] expected= { "Struct1", "Struct2" };
+		assertCompletionResults(expected);
+	}
+	
+	// struct Union/*cursor*/
+	public void testElaboratedTypeSpecifierNotStruct_bug208710() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(expected);
+	}
+	
+	// union Union/*cursor*/
+	public void testElaboratedTypeSpecifierUnion_bug208710() throws Exception {
+		final String[] expected= { "Union1", "Union2" };
+		assertCompletionResults(expected);
+	}
+	
+	// union Struct/*cursor*/
+	public void testElaboratedTypeSpecifierNotUnion_bug208710() throws Exception {
+		final String[] expected= new String[0];
 		assertCompletionResults(expected);
 	}
 }

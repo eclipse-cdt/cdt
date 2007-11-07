@@ -9,6 +9,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Bryan Wilkinson (QNX)
  *     Markus Schorn (Wind River Systems)
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
@@ -141,6 +142,10 @@ public class CompletionTests extends AbstractContentAssistTest {
 //	static unsigned char port;
 //protected:
 //};
+//struct Struct1;
+//struct Struct2;
+//union Union1;
+//union Union2;
 
 	public CompletionTests(String name) {
 		super(name, true);
@@ -829,5 +834,59 @@ public class CompletionTests extends AbstractContentAssistTest {
 		dfile.delete(true, NPM);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(8000, NPM));
 		assertCompletionResults(fCursorOffset, expected2, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// struct Struct/*cursor*/
+	public void testElaboratedTypeSpecifierStruct_bug208710() throws Exception {
+		final String[] expected= { "Struct1", "Struct2" };
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// struct Union/*cursor*/
+	public void testElaboratedTypeSpecifierNotStruct_bug208710() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// struct C/*cursor*/
+	public void testElaboratedTypeSpecifierNotStruct2_bug208710() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// union Union/*cursor*/
+	public void testElaboratedTypeSpecifierUnion_bug208710() throws Exception {
+		final String[] expected= { "Union1", "Union2" };
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// union Struct/*cursor*/
+	public void testElaboratedTypeSpecifierNotUnion_bug208710() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// union C/*cursor*/
+	public void testElaboratedTypeSpecifierNotUnion2_bug208710() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// class C/*cursor*/
+	public void testElaboratedTypeSpecifierClass_bug208710() throws Exception {
+		final String[] expected= { "C1", "C2", "C3" };
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// class Struct/*cursor*/
+	public void testElaboratedTypeSpecifierNotClass_bug208710() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
+	
+	// class Union/*cursor*/
+	public void testElaboratedTypeSpecifierNotClass2_bug208710() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
 }

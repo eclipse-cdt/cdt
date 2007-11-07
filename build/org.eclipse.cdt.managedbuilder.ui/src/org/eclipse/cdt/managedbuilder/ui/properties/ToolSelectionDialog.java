@@ -65,8 +65,7 @@ public class ToolSelectionDialog extends Dialog {
 	private Font boldFont  = JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
 	private Color red = Display.getDefault().getSystemColor(SWT.COLOR_RED);
 	private Color gray  = Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
-//	private Color white = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
-	private IToolListModification      tmod = null;
+	private IToolListModification tmod = null;
 	
 	public ToolSelectionDialog(Shell shell, IResourceInfo ri) { 
 		super (shell); 
@@ -98,7 +97,7 @@ public class ToolSelectionDialog extends Dialog {
 		removed = new ArrayList();
 		left = new ArrayList();
 		right = new ArrayList();
-
+		
 		Composite c1 = new Composite(composite, SWT.NONE);
 		c1.setLayoutData(new GridData(GridData.FILL_BOTH));
 		c1.setLayout(new GridLayout(1, false));
@@ -127,7 +126,7 @@ public class ToolSelectionDialog extends Dialog {
 		TableColumn col = new TableColumn(t1, SWT.NONE);
 		col.setText(Messages.getString("ToolSelectionDialog.1")); //$NON-NLS-1$
 		col.setWidth(COL_WIDTH);
-
+		
 		l1 = new CLabel(c1, SWT.BORDER);
 		l1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -153,7 +152,7 @@ public class ToolSelectionDialog extends Dialog {
 		gd.verticalSpan = 2;
 		gd.minimumHeight = 100;
 		txt2.setLayoutData(gd);
-
+		
 		b_add = new Button(c2, SWT.PUSH);
 		b_add.setText(Messages.getString("ToolSelectionDialog.12"));  //$NON-NLS-1$
 		b_add.addSelectionListener(new SelectionAdapter() {
@@ -164,10 +163,8 @@ public class ToolSelectionDialog extends Dialog {
 				ITool tool = (ITool)t1.getItem(x).getData();
 				left.remove(tool);
 				right.add(tool);
-				
 				tmod.changeProjectTools(null, tool);
-				
-				updateData(true);
+				updateData();
 			}});
 		b_add.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 
@@ -193,7 +190,7 @@ public class ToolSelectionDialog extends Dialog {
 				
 				tmod.changeProjectTools(tool, null);
 				
-				updateData(true);
+				updateData();
 			}});
 		b_del.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 		
@@ -226,11 +223,14 @@ public class ToolSelectionDialog extends Dialog {
 		for (int j = 0; j<all.length; j++) {
 			if (all[j] != null) left.add(all[j]); 
 		}		
-		updateData(false);
+		updateData();
 		
 		return composite;
     }
-
+	
+	/**
+	 * Reaction for <Replace> button press or double-click.
+	 */
 	private void handleReplace() {
 		if (! b_rep.isEnabled())
 			return;
@@ -247,30 +247,39 @@ public class ToolSelectionDialog extends Dialog {
 		
 		tmod.changeProjectTools(tool2, tool1);
 
-		updateData(true);
+		updateData();
 	}
 
-	private int removeArrows(Table t) {
+	/**
+	 * Removes "triangle" marks from all table's items.
+	 * @param t - affected table.
+	 */
+	private void removeArrows(Table t) {
 		for (int j=0; j<t.getItemCount(); j++) {
 			TableItem ti = t.getItem(j);
 			if (ToolChainEditTab.IMG_ARROW.equals(ti.getImage()))
 				ti.setImage((Image)null);
 		}
-		return t.getSelectionIndex();
 	}
 	
-	private boolean markReplace(int x, Table src, Table dst, Button b) {
+	/**
+	 * Adds "triangle" marks for items which can replace selected one.
+	 * 
+	 * @param src - table where selected element is located
+	 * @param dst - table where marks should be set
+	 * @param b   - button (add or del) to be enabled
+	 */
+	private void markReplace(Table src, Table dst, Button b) {
+		int x = src.getSelectionIndex(); 
 		if (x == -1)
-			return false;
+			return;
 		ITool tool = (ITool)src.getItem(x).getData();
 		IToolModification tm = tmod.getToolModification(tool);
 		if (tm == null)
-			return false;
+			return;
 		IModificationOperation[] mo = tm.getSupportedOperations();
 		if (mo == null || mo.length == 0)
-			return false;
-		boolean result = false;
-		int pos = dst.getSelectionIndex();
+			return;
 		for (int j=0; j<dst.getItemCount(); j++) {
 			TableItem ti = dst.getItem(j);
 			ITool tt = (ITool)ti.getData();
@@ -280,28 +289,68 @@ public class ToolSelectionDialog extends Dialog {
 					b.setEnabled(true); // enable Add or Del
 				else if (t.matches(tt)) {
 					ti.setImage(ToolChainEditTab.IMG_ARROW);
-					if (pos == j) result = true;
 					break; // exit from modif. loop
 				}
 			}
 		}
-		return result;
 	}
-	
+
+	/**
+	 * Called after user has selected item either in t1 or in t2.
+	 */
 	private void handleSelection() {
-		int x1 = removeArrows(t1);
-		int x2 = removeArrows(t2);
-		b_add.setEnabled(b_all.getSelection() && x1 > -1); 
-		b_rep.setEnabled(b_all.getSelection() && x1 > -1 && x2 > -1); 
-		b_del.setEnabled(b_all.getSelection() && x2 > -1); 
-		boolean b1 = markReplace(x1, t1, t2, b_add);
-		boolean b2 = markReplace(x2, t2, t1, b_del);
-		if (b1 && b2) b_rep.setEnabled(true); 
-		showErrorMessage(t1, false, x1);
-		showErrorMessage(t2, true, x2);
+		removeArrows(t1);
+		removeArrows(t2);
+		b_add.setEnabled(b_all.getSelection() && t1.getItemCount() > 0); 
+		b_rep.setEnabled(b_all.getSelection() && t1.getItemCount() > 0 && t2.getItemCount() > 0); 
+		b_del.setEnabled(b_all.getSelection() && t2.getItemCount() > 0);
+
+		if (t1.isFocusControl()) {
+			markReplace(t1, t2, b_add);
+			int j = adjustPosition(t2);
+			markReplace(t2, t1, b_del);
+			if (j != -1) 
+				b_rep.setEnabled(true);	
+		} else {
+			markReplace(t2, t1, b_del);
+			int j = adjustPosition(t1);
+			markReplace(t1, t2, b_add);
+			if (j != -1)
+				b_rep.setEnabled(true);	
+		}
+		showErrorMessage(t1, false);
+		showErrorMessage(t2, true);
 	}
 	
-	private void showErrorMessage(Table t, boolean isPrj, int x) {
+	/**
+	 * Changes position of inactive table
+	 * to enable replacement, if possible.
+	 * 
+	 * returns new position or -1 if there's no tools to replace.
+	 */
+	private int adjustPosition(Table t) {
+		int j = t.getSelectionIndex();
+		TableItem ti = t.getItem(j);
+		if (ToolChainEditTab.IMG_ARROW.equals(ti.getImage()))
+			return j;
+		for (j=0; j<t.getItemCount(); j++) {
+			ti = t.getItem(j);
+			if (ToolChainEditTab.IMG_ARROW.equals(ti.getImage())) {
+				t.select(j);
+				return j;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Displays appropriate error message for selected tool.
+	 * 
+	 * @param t - affected table
+	 * @param isPrj - whether 
+	 */
+	private void showErrorMessage(Table t, boolean isPrj) {
+		int x = t.getSelectionIndex();
 		if (isPrj)
 			txt2.setText(EMPTY_STR);
 		else {
@@ -339,7 +388,14 @@ public class ToolSelectionDialog extends Dialog {
 			l1.setImage(image);
 		}
 	}
-	
+
+	/**
+	 * Adds given tool to the table, sets appropriate font. 
+	 * 
+	 * @param tool  - tool to add
+	 * @param table - affected table
+	 * @param bold  - whether the tool should be marked by bold font.
+	 */
 	private void add(ITool tool, Table table, boolean bold) {
 		IToolModification tm = tmod.getToolModification(tool);
 		TableItem ti = new TableItem(table, 0);
@@ -351,7 +407,10 @@ public class ToolSelectionDialog extends Dialog {
 			ti.setForeground(table.equals(t2) ? red : gray);
 	}
 	
-	private void updateData(boolean check) {
+	/**
+	 * Refresh data in t1 and t2 tables
+	 */
+	private void updateData() {
 		removed.clear();
 		added.clear();
 		int t1_pos = t1.getSelectionIndex();

@@ -49,6 +49,14 @@
             file="contexts_CDT_DEBUGGER.xml"
             plugin="org.eclipse.cdt.debug.ui">
       </contexts>
+	  <contexts 
+	  		file="contexts_CDT_DEBUGGER.xml" 
+	  		plugin="org.eclipse.debug.ui"> 
+      </contexts>
+      <contexts
+      		file="contexts_CDT_DEBUGGER.xml" 
+      		plugin="org.eclipse.ui.console"> 
+      </contexts>
    </extension>
    <extension
          point="org.eclipse.help.contexts">

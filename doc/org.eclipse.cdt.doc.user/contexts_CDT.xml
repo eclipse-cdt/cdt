@@ -33,11 +33,6 @@
    <topic href="reference/cdt_u_editor_view.htm"
    	label="Editor view"/>
 </context>
-<context id ="console_view">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_console_view.htm"
-   	label="Console view"/>
-</context>
 <context id ="problems_view">
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_problems_view.htm"
@@ -52,41 +47,6 @@
    <description>Click below to see help.</description>
    <topic href="reference/cdt_u_search_view.htm"
    	label="Search view"/>
-</context>
-<context id ="registers_view">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_registersview.htm"
-   	label="Registers view"/>
-</context>
-<context id ="memory_view">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_memoryview.htm"
-   	label="Memory view"/>
-</context>
-<context id ="mem_view_pref">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_mem_view_pref.htm"
-   	label="Memory view preferences"/>
-</context>
-<context id ="modules_view">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_modules_view.htm"
-   	label="Modules view"/>
-</context>
-<context id ="signals_view">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_signals_view.htm"
-   	label="Signals view"/>
-</context>
-<context id ="dbg_view">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_dbg_view.htm"
-   	label="Debug view"/>
-</context>
-<context id ="dbg_pref">
-   <description>Click below to see help.</description>
-   <topic href="reference/cdt_u_dbg_pref.htm"
-   	label="Debug preferences"/>
 </context>
 <context id ="find_replace">
    <description>Click below to see help.</description>

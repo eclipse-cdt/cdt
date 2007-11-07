@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf;
 
@@ -27,9 +28,7 @@ import org.eclipse.cdt.utils.Addr64Factory;
 import org.eclipse.cdt.utils.ERandomAccessFile;
 import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
 
-// test checkin
 public class Elf {
-
 	public final static int ELF32_ADDR_SIZE = 4;
 	public final static int ELF32_OFF_SIZE = 4;
 	public final static int ELF64_ADDR_SIZE = 8;
@@ -343,13 +342,14 @@ public class Elf {
 		public String toString() {
 			try {
 				if (section_strtab == null) {
-					if (ehdr.e_shstrndx > sections.length || ehdr.e_shstrndx < 0)
+					final int shstrndx= ehdr.e_shstrndx & 0xffff; // unsigned short
+					if (shstrndx > sections.length || shstrndx < 0)
 						return EMPTY_STRING;
-					int size = (int)sections[ehdr.e_shstrndx].sh_size;
+					int size = (int)sections[shstrndx].sh_size;
 					if (size <= 0 || size > efile.length())
 						return EMPTY_STRING;
 					section_strtab = new byte[size];
-					efile.seek(sections[ehdr.e_shstrndx].sh_offset);
+					efile.seek(sections[shstrndx].sh_offset);
 					efile.read(section_strtab);
 				}
 				int str_size = 0;
@@ -527,8 +527,9 @@ public class Elf {
 			return new PHdr[0];
 		}
 		efile.seek(ehdr.e_phoff);
-		PHdr phdrs[] = new PHdr[ehdr.e_phnum];
-		for (int i = 0; i < ehdr.e_phnum; i++) {
+		final int length= ehdr.e_phnum & 0xffff; // interpret as unsigned short
+		PHdr phdrs[] = new PHdr[length];
+		for (int i = 0; i < length; i++) {
 			phdrs[i] = new PHdr();
 			switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
 				case ELFhdr.ELFCLASS32 : {
@@ -979,9 +980,10 @@ public class Elf {
 				sections = new Section[0];
 				return sections;
 			}
-			sections = new Section[ehdr.e_shnum];
-			for (int i = 0; i < ehdr.e_shnum; i++) {
-				efile.seek(ehdr.e_shoff + i * ehdr.e_shentsize);
+			final int length= ehdr.e_shnum & 0xffff; // unsigned short
+			sections = new Section[length];
+			for (int i = 0; i < length; i++) {
+				efile.seek(ehdr.e_shoff + i * (ehdr.e_shentsize & 0xffff));	// unsigned short
 				sections[i] = new Section();
 				sections[i].sh_name = efile.readIntE();
 				sections[i].sh_type = efile.readIntE();

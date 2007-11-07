@@ -81,11 +81,19 @@ public class TelnetHostShell extends AbstractHostShell implements IHostShell {
 		    	writeToShell(commandToRun);
 		    }
 		} catch(Exception e) {
-			//TODO Forward exception to RSE properly
+			//TODO [209043] Forward exception to RSE properly
 			e.printStackTrace();
 			if (fShellWriter!=null) {
 				fShellWriter.stopThread();
 				fShellWriter = null;
+			}
+			if (fStderrHandler!=null) {
+				fStderrHandler.interrupt();
+				fStderrHandler = null;
+			}
+			if (fStdoutHandler!=null) {
+				fStdoutHandler.interrupt();
+				fStdoutHandler = null;
 			}
 		}
 	}

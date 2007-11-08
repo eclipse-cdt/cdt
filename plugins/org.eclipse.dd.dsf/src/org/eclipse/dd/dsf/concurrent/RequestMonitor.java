@@ -156,20 +156,6 @@ public class RequestMonitor {
             handleRejectedExecutionException();
         }
     }
-    
-    /**
-     * Convenience method for setting the status using a status object of a 
-     * sub-command.
-     * @param pluginId plugin id of the invoked method 
-     * @param code status code
-     * @param message message to include
-     * @param subStatus status object to base the RequestMonitor status on
-     */
-    public void setMultiStatus(String pluginId, int code, String message, final IStatus subStatus) {
-        MultiStatus status = new MultiStatus(pluginId, code, message, null);
-        status.merge(subStatus);
-        fStatus = status;
-    }
 
     @Override
     public String toString() {
@@ -178,7 +164,7 @@ public class RequestMonitor {
     
     /**
      * Default handler for the completion of a request.  The implementation
-     * calls {@link #handleOK()} if the request succeded, and calls 
+     * calls {@link #handleOK()} if the request succeeded, and calls 
      * {@link #handleErrorOrCancel()} or cancel otherwise.
      * <br>
      * Note: Sub-classes may override this method.
@@ -235,7 +221,7 @@ public class RequestMonitor {
      */    
     protected void handleError() {
         if (fParentRequestMonitor != null) {
-            fParentRequestMonitor.setMultiStatus(DsfPlugin.PLUGIN_ID, getStatus().getCode(), "Failed: " + toString(), getStatus()); //$NON-NLS-1$
+            fParentRequestMonitor.setStatus(getStatus());
             fParentRequestMonitor.done();
         } else {
             MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in an error.", null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -253,23 +239,23 @@ public class RequestMonitor {
      */
     protected void handleCancel() {
         if (fParentRequestMonitor != null) {
-            fParentRequestMonitor.setMultiStatus(DsfPlugin.PLUGIN_ID, getStatus().getCode(), "Canceled: " + toString(), getStatus()); //$NON-NLS-1$
+            fParentRequestMonitor.setStatus(getStatus());
             fParentRequestMonitor.done();
         }
     }
     
     /**
      * Default handler for when the executor supplied in the constructor 
-     * rejects the runnable that is submitted invoke this requrest monitor.
+     * rejects the runnable that is submitted invoke this request monitor.
      * This usually happens only when the executor is shutting down.
      */
     protected void handleRejectedExecutionException() {
+        MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in a rejected execution exception.", null); //$NON-NLS-1$ //$NON-NLS-2$
+        logStatus.merge(getStatus());
         if (fParentRequestMonitor != null) {
-            fParentRequestMonitor.setMultiStatus(DsfPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Rejected execution exception when trying to complete the request monitor: " + toString(), getStatus()); //$NON-NLS-1$
+            fParentRequestMonitor.setStatus(logStatus);
             fParentRequestMonitor.done();
         } else {
-            MultiStatus logStatus = new MultiStatus(DsfPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, "Request for monitor: '" + toString() + "' resulted in a rejected execution exception.", null); //$NON-NLS-1$ //$NON-NLS-2$
-            logStatus.merge(getStatus());
             DsfPlugin.getDefault().getLog().log(logStatus);
         }
     }

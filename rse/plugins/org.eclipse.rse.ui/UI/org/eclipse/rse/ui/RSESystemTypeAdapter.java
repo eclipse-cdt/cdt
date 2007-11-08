@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [181939] avoid subsystem plugin activation just for enablement checking
+ * Uwe Stieber (Wind River)      - [199032] [api] Remove method acceptContextMenuActionContribution(...) from RSESystemTypeAdapter
  ********************************************************************************/
 package org.eclipse.rse.ui;
 
@@ -25,7 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuManager;
@@ -34,16 +34,8 @@ import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSESystemTypeConstants;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.RSEPreferencesManager;
-import org.eclipse.rse.core.model.Host;
-import org.eclipse.rse.core.model.IHost;
-import org.eclipse.rse.core.model.ISystemRegistry;
-import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystemConfigurationProxy;
-import org.eclipse.rse.internal.core.RSESystemType;
 import org.eclipse.rse.internal.ui.RSEAdapter;
-import org.eclipse.rse.internal.ui.actions.SystemClearAllPasswordsAction;
-import org.eclipse.rse.internal.ui.actions.SystemWorkOfflineAction;
-import org.eclipse.rse.internal.ui.view.SystemViewConnectionAdapter;
 import org.eclipse.rse.ui.wizards.registries.IRSEWizardDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.osgi.framework.Bundle;
@@ -286,47 +278,6 @@ public class RSESystemTypeAdapter extends RSEAdapter {
 	 */
 	public void addCustomMenuGroups(IMenuManager menu) {
 		// The static standard RSE system types have no custom menu groups.
-	}
-	
-	/**
-	 * Called to approve the contribution of the specified action class to the context menu of the
-	 * specified host. 
-	 * <p>
-	 * <b>Note:</b> System type providers should implement this method in a way that specific
-	 * 							actions might be denied, but all other action contributions, including unknown
-	 * 							action contributions, should be accepted.
-	 * 
-	 * @param host The host object. Must be not <code>null</code>.
-	 * @param actionClass The contributed action. Must be not <code>null</code>.
-	 * 
-	 * @return <code>True</code> if the contributed action is accepted for the specified context, <code>false</code> otherwise.
-	 * 
-	 * @deprecated Override {@link SystemViewConnectionAdapter#addActions(SystemMenuManager, org.eclipse.jface.viewers.IStructuredSelection, org.eclipse.swt.widgets.Shell, String)} instead.
-	 *             In order to do so, {@link RSESystemType#createNewHostInstance(org.eclipse.rse.core.model.ISystemProfile)} needs to return
-	 *             a subclass of {@link Host} where the {@link IAdaptable#getAdapter(Class)} method is overriden to return a extended
-	 *             {@link SystemViewConnectionAdapter} subclass.
-	 */
-	public boolean acceptContextMenuActionContribution(IHost host, Class actionClass) {
-		assert host != null && actionClass != null;
-		// The SystemWorkOfflineAction is accepted if isEnabledOffline is returning true
-		if (actionClass.equals(SystemWorkOfflineAction.class)) {
-			return isEnableOffline(host.getSystemType());
-		}
-		
-		// SystemClearAllPasswordsAction is accepted only if passwords are supported
-		// by any of the sub systems.
-		if (actionClass.equals(SystemClearAllPasswordsAction.class)) {
-			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-			IConnectorService[] connectorServices = registry.getConnectorServices(host);
-			boolean passwordsSupported = false;
-			for (int i = 0; i < connectorServices.length && passwordsSupported == false; i++) {
-				passwordsSupported |= connectorServices[i].supportsPassword();
-			}
-			return passwordsSupported;
-		}
-		
-		// Accept all the rest not special handled here.		
-		return true;
 	}
 	
 	/**

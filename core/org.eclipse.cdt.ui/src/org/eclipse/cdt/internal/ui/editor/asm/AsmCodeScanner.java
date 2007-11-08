@@ -95,6 +95,7 @@ public final class AsmCodeScanner extends AbstractCScanner {
 		WordRule wordRule= new WordRule(new AsmWordDetector('.'), other);
 		for (int i=0; i<keywords.length; i++)
 			wordRule.addWord(keywords[i], token);
+		rules.add(wordRule);
 
 		// TODO use extra color?
 		token= getToken(ICColorConstants.C_KEYWORD);

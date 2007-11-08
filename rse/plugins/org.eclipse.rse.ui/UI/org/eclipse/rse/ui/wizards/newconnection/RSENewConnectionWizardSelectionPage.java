@@ -8,6 +8,7 @@
  * Contributors: 
  * Uwe Stieber (Wind River) - initial API and implementation.
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
+ * Uwe Stieber      (Wind River) - [209193] RSE new connection wizard shows empty categories if typing something into the filter
  *******************************************************************************/
 
 package org.eclipse.rse.ui.wizards.newconnection;
@@ -181,7 +182,7 @@ public class RSENewConnectionWizardSelectionPage extends WizardPage {
 	 * 
 	 * @return The list of system types the page is restricted to or <code>null</code>.
 	 */
-	protected IRSESystemType[] getRestrictToSystemTypes() {
+	public IRSESystemType[] getRestrictToSystemTypes() {
 		return restrictedSystemTypes;
 	}
 

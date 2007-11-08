@@ -250,6 +250,29 @@ to test them before going live.' \
     sed -e 's,Project 2.0 Update,Project Interim Update,g' \
     	web/site.xsl > web/site.xsl.new
     mv -f web/site.xsl.new web/site.xsl
+elif [ `basename $SITE` = 3.0 ]; then
+    echo "Working on 3.0 milestone update site"
+    TYPE=milestone
+    echo "Expect that you copied your features and plugins yourself"
+    stamp=`date +'%Y%m%d-%H%M'`
+    rm index.html site.xml web/site.xsl
+    cvs -q update -dPR
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/3.0,g' \
+    	-e 's,Project 2.0 Update,Project 3.0 Milestone Update,g' \
+    	-e '\,</h1>,a\
+This site contains Target Management 3.0 Milestones (I-, and S- builds) which are \
+being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
+    	index.html > index.html.new
+    mv -f index.html.new index.html
+    ## dont keep 2.0.x features in site.xml
+    sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/3.0,g' \
+        -e 's,Project 2.0 Update,Project 3.0 Milestone Update,g' \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_1_patches -->/d' \
+        site.xml > site.xml.new
+    mv -f site.xml.new site.xml
+    sed -e 's,Project 2.0 Update,Project 3.0 Milestone Update,g' \
+    	web/site.xsl > web/site.xsl.new
+    mv -f web/site.xsl.new web/site.xsl
 else
     echo "Working on official update site"
     TYPE=official

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Executor;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
@@ -358,35 +357,13 @@ public abstract class VMCache
     	else
     	{
 	    	service.getModelData(dmc, 
-	    		new DataRequestMonitor<IDMData>(executor, null) {
+	    		new DataRequestMonitor<IDMData>(executor, rm) {
 		            @Override
-					protected void handleCompleted() {
-		            	if(getStatus().isOK())
-		            	{
-		            		if(isCacheWriteEnabled())
-			            		fData.put(dmc, getData());
-			            	rm.setData(getData());
-		            	}
+					protected void handleOK() {
+		            	if(isCacheWriteEnabled())
+		            		fData.put(dmc, getData());
+		            	rm.setData(getData());
 	    				rm.done();
-					}
-
-					@Override
-					public synchronized void setCanceled(boolean canceled) {
-						rm.setCanceled(canceled);
-						super.setCanceled(canceled);
-					}
-
-					@Override
-					public void setMultiStatus(String pluginId, int code,
-							String message, IStatus subStatus) {
-						rm.setMultiStatus(pluginId, code, message, subStatus);
-						super.setMultiStatus(pluginId, code, message, subStatus);
-					}
-
-					@Override
-					public synchronized void setStatus(IStatus status) {
-						rm.setStatus(status);
-						super.setStatus(status);
 					}
 		        }		
 	    	);

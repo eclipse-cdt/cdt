@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
 import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
 import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
@@ -33,7 +34,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
  * WizardPage.
  */
 
-public class UIWizardPage extends UIPage implements IWizardPage, PatternEventListener {
+public class UIWizardPage extends UIPage implements IWizardDataPage, PatternEventListener {
 
 	/**
 	 * This map will contain reference to the source widgets, which has generated the 

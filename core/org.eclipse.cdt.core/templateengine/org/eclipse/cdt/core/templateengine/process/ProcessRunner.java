@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.IStatus;
  */
 public abstract class ProcessRunner {
 	
-	private ProcessParameter[] params;
+	private ProcessParameter[] params = new ProcessParameter[0];
 	
 	void setProcessParameters(ProcessParameter[] params) {
-		this.params = params;
+		this.params = params == null ? new ProcessParameter[0] : params;
 	}
 	
 	/**

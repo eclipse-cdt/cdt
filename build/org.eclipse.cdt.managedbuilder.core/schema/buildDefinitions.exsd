@@ -338,7 +338,7 @@ Specifying this attribute is fully equivalent to specifying the &quot;org.eclips
       </annotation>
       <complexType>
          <sequence>
-            <element ref="tool" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="tool" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="targetPlatform" minOccurs="0" maxOccurs="1"/>
             <element ref="builder" minOccurs="0" maxOccurs="1"/>
             <element ref="optionCategory" minOccurs="0" maxOccurs="unbounded"/>

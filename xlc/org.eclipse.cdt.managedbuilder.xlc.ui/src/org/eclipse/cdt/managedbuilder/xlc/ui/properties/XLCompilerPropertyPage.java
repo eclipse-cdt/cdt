@@ -65,7 +65,7 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 		Composite versionParent = getFieldEditorParent();
 		
 		fVersionEditor = new BuildOptionComboFieldEditor(PreferenceConstants.P_XLC_COMPILER_VERSION,
-				Messages.XLCompilerPropertyPage_1, null, versionEntries, null, versionParent);
+				Messages.XLCompilerPropertyPage_1, versionEntries, null, versionParent);
 		
 		addField(fVersionEditor);
 		

@@ -59,7 +59,7 @@ template<class X> bool IsGreaterThan(X,X);
 template<class Bar> void Foo::fum(int i) {}
 
 // TEMPLATE_VARIABLES
-template <bool threads, int inst> char* default_alloc_template<threads, inst>::S_start_free = 0;
+template <bool   threads, int inst> char* default_alloc_template<threads, inst>::S_start_free = 0;
 
 // an instantiation, not a template:
 complex

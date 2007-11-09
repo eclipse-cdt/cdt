@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Kevin Doyle (IBM) - [199871] LocalFileService needs to implement getMessage()
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * Kevin Doyle (IBM) - [209355] Retrieving list of FILE_TYPE_FOLDERS should return Archive's
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -719,6 +720,11 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 					if (type == IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS || 
 						type == IFileServiceConstants.FILE_TYPE_FILES)
 					{
+						results.add(new LocalHostFile(file));
+					} else if (type == IFileServiceConstants.FILE_TYPE_FOLDERS && 
+						ArchiveHandlerManager.getInstance().isArchive(file)) {
+						// On Local Archive's should be considered Folders
+						// as they are containers that can be opened.
 						results.add(new LocalHostFile(file));
 					}
 				}

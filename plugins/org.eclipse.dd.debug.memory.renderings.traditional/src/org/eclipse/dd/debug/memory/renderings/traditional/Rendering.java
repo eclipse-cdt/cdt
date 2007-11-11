@@ -464,6 +464,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
         packColumns();
         layout(true);
     }
+    
+    static int suspendCount = 0;
 
     public void handleDebugEvents(DebugEvent[] events)
     {
@@ -830,6 +832,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
                         fCache.start = startAddress;
                         fCache.end = endAddress;
                         fCache.bytes = cachedBytesFinal;
+                        
+                        // If the history does not exist, populate the history with the just populated cache. This solves the
+                        // use case of 1) connect to target; 2) edit memory before the first suspend debug event; 3) paint
+                        // differences in changed color.
+                        if(fHistoryCache == null)
+                        	fHistoryCache = fCache.clone();
 
                         Rendering.this.redrawPanes();
                     }

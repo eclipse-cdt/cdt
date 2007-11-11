@@ -56,6 +56,8 @@ public class FindReplaceDialog extends SelectionDialog
 
 	private IMemoryBlockExtension fMemoryBlock;
 	
+	final static int preFetchSize = 10 * 1024;
+	
 	private Text findText;
 	private Text replaceText;
 	
@@ -671,9 +673,48 @@ public class FindReplaceDialog extends SelectionDialog
 		forwardButton.setSelection(true);
 		formatAsciiButton.setSelection(true);
 		
+		composite.setTabList(new Control[] {
+			findText, 
+			replaceText, 			
+			directionGroup,
+			rangeGroup,
+			formatGroup,
+			optionsGroup,
+		});
+			
 		findText.setFocus();
 		
 		return composite;
+	}
+	
+
+	class FindReplaceMemoryCache
+	{
+		BigInteger memoryCacheStartAddress = BigInteger.ZERO;
+		MemoryByte memoryCacheData[] = new MemoryByte[0];
+	}
+	
+	MemoryByte[] getBytesFromAddress(final BigInteger address, final int length, FindReplaceMemoryCache cache) 
+		throws DebugException
+	{
+		if(! (address.compareTo(cache.memoryCacheStartAddress) >= 0 
+			&& address.add(BigInteger.valueOf(length)).compareTo(cache.memoryCacheStartAddress
+					.add(BigInteger.valueOf(cache.memoryCacheData.length))) < 0))
+		{
+			BigInteger fetchAddress = address.subtract(BigInteger.valueOf(preFetchSize));
+			if(fetchAddress.compareTo(BigInteger.ZERO) < 0) // TODO replace ZERO with address space start
+				fetchAddress = BigInteger.ZERO;
+			
+			MemoryByte bytes[] = fMemoryBlock.getBytesFromAddress(fetchAddress, preFetchSize * 2);
+			
+			cache.memoryCacheStartAddress = fetchAddress;
+			cache.memoryCacheData = bytes;
+		}
+		
+		MemoryByte bytes[] = new MemoryByte[length];
+		System.arraycopy(cache.memoryCacheData, address.subtract(cache.memoryCacheStartAddress).intValue(), 
+			bytes, 0, length);
+		return bytes;
 	}
 	
 	private void performFind(final BigInteger start, final BigInteger end, final SearchPhrase searchPhrase, 
@@ -684,6 +725,7 @@ public class FindReplaceDialog extends SelectionDialog
 				BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
 				BigInteger range = searchForward ? end.subtract(start) : start.subtract(end);
 				BigInteger currentPosition = start;
+				
 				
 				boolean isReplace = replaceData != null;
 				
@@ -699,18 +741,20 @@ public class FindReplaceDialog extends SelectionDialog
 				
 				BigInteger replaceCount = BigInteger.ZERO;
 				
+				FindReplaceMemoryCache cache = new FindReplaceMemoryCache();
+				
 				monitor.beginTask(Messages.getString("FindReplaceDialog.SearchingMemoryFor") + searchPhrase, jobs.intValue()); //$NON-NLS-1$
 				
 				boolean matched = false;
 				while(!matched && 
 						((searchForward && currentPosition.compareTo(end.subtract(searchPhraseLength)) < 0) 
 								|| (!searchForward && currentPosition.compareTo(end) > 0))
-						&& !monitor.isCanceled())
+						&& !monitor.isCanceled()) 
 				{
 					try
 					{
 						// TODO cache and reuse previously read bytes?
-						MemoryByte bytes[] = fMemoryBlock.getBytesFromAddress(currentPosition, searchPhraseLength.longValue());
+						MemoryByte bytes[] = getBytesFromAddress(currentPosition, searchPhraseLength.intValue(), cache);
 						matched = searchPhrase.isMatch(bytes);
 					}
 					catch(DebugException e)
@@ -772,7 +816,10 @@ public class FindReplaceDialog extends SelectionDialog
 						}
 					}
 				}
-					
+				
+				if(monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				
 				if(matched)
 				{
 					ISelection selection = fMemoryView.getViewPane(IDebugUIConstants.ID_RENDERING_VIEW_PANE_1).getSelectionProvider().getSelection();
@@ -901,20 +948,21 @@ public class FindReplaceDialog extends SelectionDialog
 		
 		public boolean isMatch(MemoryByte[] bytes)
 		{
-			byte[] targetBytes = new byte[bytes.length];
+			byte[] targetBytes = new byte[bytes.length + 1];
+			targetBytes[0] = 0;
 			for(int i = 0; i < bytes.length; i++)
-				targetBytes[i] = bytes[i].getValue();
+				targetBytes[i + 1] = bytes[i].getValue();
 			
 			// TODO endian?
-			BigInteger targetBigInteger = new BigInteger(targetBytes).and(BigInteger.valueOf(0xFF));
-			
+			BigInteger targetBigInteger = new BigInteger(targetBytes);
+
 			return fPhrase.equals(targetBigInteger);
 		}
 	}
 	
 	private byte[] removeZeroPrefixByte(byte[] bytes)
 	{
-		if(bytes[0] != 0)
+		if(bytes[0] != 0 || bytes.length == 1)
 			return bytes;
 		
 		byte[] processedBytes = new byte[bytes.length - 1];

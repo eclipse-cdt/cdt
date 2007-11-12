@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [207095] check for null datastore 
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
+ * David McKnight   (IBM)        - [209423] Fix for null pointer - filter attributes need unique ids
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -203,12 +204,16 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return _uploadLogElement;
 	}
 	
+
 	protected DataElement getAttributes(String fileNameFilter, boolean showHidden)
 	{
 		DataStore ds = getDataStore();
 		if (ds != null)
 		{
-			DataElement attributes = ds.createTransientObject(_filterAttributes);
+			String[] clonedAttributes = (String[])_filterAttributes.clone();
+			clonedAttributes[DE.A_ID] = fileNameFilter;
+				
+			DataElement attributes = ds.createTransientObject(clonedAttributes);
 			String version = IServiceConstants.VERSION_1;
 			StringBuffer buffer = new StringBuffer();
 			String filter = ((fileNameFilter == null) ? "*" : fileNameFilter); //$NON-NLS-1$

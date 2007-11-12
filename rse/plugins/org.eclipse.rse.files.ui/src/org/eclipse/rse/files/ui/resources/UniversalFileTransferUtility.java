@@ -31,6 +31,7 @@
  * David McKnight   (IBM)        - [195285] mount path mapper changes
  * Kevin Doyle (IBM)	  - [203014] Copy/Paste Across Connections doesn't display Overwrite dialog when folder already exists
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [209375] new API copyRemoteResourcesToWorkspaceMultiple to optimize downloads
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -153,6 +154,39 @@ public class UniversalFileTransferUtility
 		}
 	}
 
+	private static boolean tempFileAvailable(IFile tempFile, IRemoteFile remoteFile)
+	{
+		// before we make the transfer to the temp file check whether a temp file already exists
+		if (tempFile.exists() && ((Resource)tempFile).getPropertyManager() != null)
+		{
+			SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+
+			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
+
+			// compare timestamps
+			if (storedModifiedStamp > 0)
+			{
+				// ;if they're the same, just use temp file							
+				long remoteModifiedStamp = remoteFile.getLastModified();
+
+				boolean usedBin = properties.getUsedBinaryTransfer();
+				boolean shouldUseBin = remoteFile.isBinary();
+				
+				// changed encodings matter too
+				String remoteEncoding = remoteFile.getEncoding();
+				String lastEncoding = properties.getEncoding();
+				if (storedModifiedStamp == remoteModifiedStamp && 
+						(usedBin == shouldUseBin) &&
+						(remoteEncoding.equals(lastEncoding))
+				)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * replicates a remote file to the temp files project in the workspace
 	 * 
@@ -167,37 +201,10 @@ public class UniversalFileTransferUtility
 
 		IFile tempFile = (IFile) tempResource;
 		
-		// before we make the transfer to the temp file check whether a temp file already exists
-		if (tempFile.exists() && ((Resource)tempFile).getPropertyManager() != null)
-		{
-			SystemIFileProperties properties = new SystemIFileProperties(tempFile);
-
-			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
-
-			// compare timestamps
-			if (storedModifiedStamp > 0)
-			{
-				// ;if they're the same, just use temp file							
-				long remoteModifiedStamp = srcFileOrFolder.getLastModified();
-
-				boolean usedBin = properties.getUsedBinaryTransfer();
-				boolean shouldUseBin = srcFileOrFolder.isBinary();
-				if (storedModifiedStamp == remoteModifiedStamp && (usedBin == shouldUseBin))
-				{
-					return tempFile;
-				}
-			}
+		boolean available = tempFileAvailable(tempFile, srcFileOrFolder);
+		if (available){
+			return tempFile;
 		}
-
-		/*
-		if (monitor != null)
-		{
-			SystemMessage copyMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_COPYTHINGGENERIC_PROGRESS);
-			copyMessage.makeSubstitution(srcFileOrFolder.getName());
-
-			monitor.beginTask(copyMessage.getLevelOneText(), IProgressMonitor.UNKNOWN);
-		}
-*/
 		
 		try
 		{	
@@ -332,6 +339,163 @@ public class UniversalFileTransferUtility
 		}
 	}
 	
+	/**
+	 * This method downloads a set of remote resources to the workspace.  It uses
+	 * the downloadMultiple() API of the remote file subsystem and service layers so
+	 * for some service implementations, this is a big optimization
+	 * 
+	 * @param remoteSet the set of resources to download
+	 * @param monitor the progress monitor
+	 * @return the set of temp files created as a result of the download.
+	 */
+	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
+	{
+		SystemWorkspaceResourceSet resultSet = new SystemWorkspaceResourceSet();
+		List set = remoteSet.getResourceSet();
+		IRemoteFileSubSystem srcFS = (IRemoteFileSubSystem)remoteSet.getSubSystem();
+		
+		SystemUniversalTempFileListener listener = SystemUniversalTempFileListener.getListener();
+		
+		
+		List remoteFilesForDownload = new ArrayList();
+		List tempFilesForDownload = new ArrayList();
+		List remoteEncodingsForDownload = new ArrayList();
+		
+		// step 1: pre-download processing
+		for (int i = 0; i < set.size() && !resultSet.hasMessage(); i++){
+			
+			if (monitor != null && monitor.isCanceled())
+			{
+				return resultSet;
+			}
+			
+			IRemoteFile srcFileOrFolder = (IRemoteFile)set.get(i);
+			// first check for existence
+			if (!srcFileOrFolder.exists()){
+				SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
+				errorMessage.makeSubstitution(srcFileOrFolder.getAbsolutePath(), srcFS.getHostAliasName());
+				resultSet.setMessage(errorMessage);
+			}
+			else
+			{
+				if (srcFileOrFolder.isFile()) // file transfer
+				{
+					IResource tempResource = getTempFileFor(srcFileOrFolder);
+
+					IFile tempFile = (IFile) tempResource;
+					
+					boolean available = tempFileAvailable(tempFile, srcFileOrFolder);
+					if (available){
+						resultSet.addResource(tempFile);
+					}
+					else {						
+						listener.addIgnoreFile(tempFile);
+						
+						remoteFilesForDownload.add(srcFileOrFolder);
+						tempFilesForDownload.add(tempFile);
+						remoteEncodingsForDownload.add(srcFileOrFolder.getEncoding());
+					}
+				}
+				else if (srcFileOrFolder.isDirectory()) // recurse for folders and add to our consolidated resource set
+				{		
+					IResource tempFolder = getTempFileFor(srcFileOrFolder);
+					try
+					{
+						IRemoteFile[] children = srcFS.list(srcFileOrFolder,monitor);
+						
+						
+						SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
+						SystemWorkspaceResourceSet childResults = copyRemoteResourcesToWorkspaceMultiple(childSet, monitor);
+						if (childResults.hasMessage())
+						{
+							resultSet.setMessage(childResults.getMessage());
+						}
+						resultSet.addResource(tempFolder);
+					}
+					catch (SystemMessageException e)
+					{
+						e.printStackTrace();
+					}	
+				}
+			}				
+		}
+		
+		// step 2: downloading
+		IRemoteFile[] sources = (IRemoteFile[])remoteFilesForDownload.toArray(new IRemoteFile[remoteFilesForDownload.size()]);
+		
+		String[] encodings = (String[])remoteEncodingsForDownload.toArray(new String[remoteEncodingsForDownload.size()]);
+		
+		// destinations
+		String[] destinations = new String[remoteFilesForDownload.size()];
+		for (int t = 0; t < tempFilesForDownload.size(); t++){
+			destinations[t] = ((IFile)tempFilesForDownload.get(t)).getLocation().toOSString();
+		}
+		
+		try {
+			srcFS.downloadMulti(sources, destinations, encodings, monitor);
+		}
+		catch (SystemMessageException e){
+			resultSet.setMessage(e.getSystemMessage());
+		}
+		
+		// step 3: post download processing
+		if (!resultSet.hasMessage())
+		{
+
+			for (int p = 0; p < remoteFilesForDownload.size(); p++) {
+				
+				IRemoteFile srcFileOrFolder = (IRemoteFile)remoteFilesForDownload.get(p);
+				IFile tempFile = (IFile)tempFilesForDownload.get(p);
+				resultSet.addResource(tempFile);
+				String remoteEncoding = (String)remoteEncodingsForDownload.get(p);
+				listener.removeIgnoreFile(tempFile);
+				
+			    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
+			    {
+			    	// eclipse doesn't like this if the resource appears to be from another project
+			    	try
+			    	{
+			    		//tempFile.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			    		tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+			    	}
+			    	catch (Exception e)
+			    	{    		
+			    	}
+			    }
+			    if (tempFile.exists())
+			    {		    	
+					// if the file is virtual, set read only if necessary
+					// TODO: why set this here? And why for virtual only??
+					if (srcFileOrFolder instanceof IVirtualRemoteFile)
+					{
+						setReadOnly(tempFile, srcFileOrFolder.canWrite());
+					}
+					
+					if (srcFileOrFolder.isText())
+					{
+						try
+						{
+							String cset = tempFile.getCharset();
+							if (!cset.equals(remoteEncoding))
+							{
+							
+								//System.out.println("charset ="+cset);
+								//System.out.println("tempfile ="+tempFile.getFullPath());
+								tempFile.setCharset(remoteEncoding, monitor);
+							}
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
+					}
+			    }
+			}
+		}
+		
+		return resultSet;
+	}
+	
 	
 	/**
 	 * Replicates a set of remote files or folders to the workspace
@@ -340,9 +504,7 @@ public class UniversalFileTransferUtility
 	 * @return the temporary objects that was created after the download
 	 */
 	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspace(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
-	{
-
-		
+	{		
 		boolean ok = true;
 		SystemWorkspaceResourceSet resultSet = new SystemWorkspaceResourceSet();
 		IRemoteFileSubSystem srcFS = (IRemoteFileSubSystem)remoteSet.getSubSystem();

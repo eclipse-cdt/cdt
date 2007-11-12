@@ -35,6 +35,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Kevin Doyle      (IBM)		 - [186125] Changing encoding of a file is not reflected when it was opened before
  * David McKnight   (IBM)        - [208803] add exists() method
+ * David McKnight   (IBM)        - [209375] download using copyRemoteResourcesToWorkspaceMultiple
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1510,7 +1511,9 @@ public class SystemViewRemoteFileAdapter
 			
 			try
 			{
-				SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspace(flatSet, monitor);		
+				//SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspace(flatSet, monitor);		
+				// for bug 209375, using multiple instead of single
+				SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspaceMultiple(flatSet, monitor);		
 				if (flatResult.hasMessage())
 				{
 					return flatResult;

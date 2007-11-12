@@ -53,7 +53,7 @@ public class TextPane extends AbstractPane
             StringBuffer cellTextBuffer = new StringBuffer(cellText);
             cellTextBuffer.setCharAt(subCellPosition, character);
 
-            byte byteData[] = cellTextBuffer.toString().getBytes();
+            byte byteData[] = cellTextBuffer.toString().getBytes(fRendering.getCharacterSet(fRendering.getTextMode()));
             if(byteData.length != bytes.length)
                 return;
 

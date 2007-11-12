@@ -581,7 +581,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				}
 				else
 				{
-					if (properties.getUsedBinaryTransfer() == remoteFile.isBinary())
+					if (properties.getUsedBinaryTransfer() == remoteFile.isBinary() &&
+							properties.getEncoding().equals(remoteFile.getEncoding()) // changed encodings matter too
+					)
 					{
 						// we already have same file, use the current file
 						refresh();

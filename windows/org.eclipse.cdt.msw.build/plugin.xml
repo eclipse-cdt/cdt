@@ -8,6 +8,7 @@
             archList="all"
             configurationEnvironmentSupplier="org.eclipse.cdt.msw.build.WinEnvironmentVariableSupplier"
             id="org.eclipse.cdt.msvc.toolchain.base"
+            isAbstract="true"
             name="%toolchain.name"
             osList="win32"
             targetTool="org.eclipse.cdt.msvc.link;org.eclipse.cdt.msvc.lib">
@@ -259,7 +260,7 @@
          <inputType
                dependencyContentType="org.eclipse.cdt.core.cxxHeader"
                id="org.eclipse.cdt.msvc.cl.inputType"
-               scannerConfigDiscoveryProfileId="org.eclipse.cdt.msvc.build.clScannerInfo"
+               scannerConfigDiscoveryProfileId="org.eclipse.cdt.msw.build.clScannerInfo"
                sourceContentType="org.eclipse.cdt.core.cxxSource">
          </inputType>
          <outputType

@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -115,10 +116,6 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 		return new IASTNodeLocation[]{fFileLocation};
 	}
 
-	public int getOffset() {
-		throw new UnsupportedOperationException();
-	}
-
 	public String getRawSignature() {
 		if (fFileLocation == null) {
 			throw new UnsupportedOperationException();
@@ -128,13 +125,27 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 }
 
 class ASTMacroReferenceName extends ASTPreprocessorName {
+	private ImageLocationInfo fImageLocationInfo;
+	
 	public ASTMacroReferenceName(IASTNode parent, int offset, int endOffset, IMacroBinding macro, ImageLocationInfo imgLocationInfo) {
 		super(parent, IASTTranslationUnit.EXPANSION_NAME, offset, endOffset, macro.getNameCharArray(), macro);
+		fImageLocationInfo= imgLocationInfo;
 	}
 
 	public boolean isReference() {
 		return true;
 	}
-	
-	// mstodo- image-locations.
+
+	public IASTImageLocation getImageLocation() {
+		if (fImageLocationInfo != null) {
+			IASTTranslationUnit tu= getTranslationUnit();
+			if (tu != null) {
+				LocationMap lr= (LocationMap) tu.getAdapter(LocationMap.class);
+				if (lr != null) {
+					return fImageLocationInfo.createLocation(lr, fImageLocationInfo);
+				}
+			}
+		}
+		return null;
+	}	
 }

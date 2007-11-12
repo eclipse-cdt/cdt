@@ -13,6 +13,7 @@
 package org.eclipse.cdt.core.model;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -37,6 +38,13 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 	 * Instructs the parser to add comment nodes to the ast.
 	 */
 	public final static int OPTION_ADD_COMMENTS= 2;
+
+	/**
+	 * Option for {@link #getASTTranslationUnit(CodeReader, IScannerInfo, ICodeReaderFactory, IIndex, int, IParserLogService)}
+	 * Performance optimization, instructs the parser not to create image-locations. 
+	 * When using this option {@link IASTName#getImageLocation()} will always return <code>null</code>.
+	 */
+	public final static int OPTION_NO_IMAGE_LOCATIONS= 4;
 
 	/** 
 	 * @deprecated, throws an UnsupportedOperationException

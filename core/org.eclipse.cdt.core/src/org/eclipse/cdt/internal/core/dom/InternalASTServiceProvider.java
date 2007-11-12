@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -123,9 +125,8 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		       scannerExtensionConfiguration = CPP_GNU_SCANNER_EXTENSION;
 		    else
 		       scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;
-		    
-		    scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-	                l, ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator);
+			scanner= createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, l, ParserFactory.createDefaultLogService(), 
+					scannerExtensionConfiguration, fileCreator);
 		    scanner.setScanComments(parseComment);
 		    //assume GCC
 		    if( l == ParserLanguage.C )
@@ -137,13 +138,11 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		{
 		    String dialect = configuration.getParserDialect();
 		    if( dialect.equals( dialects[0]) || dialect.equals( dialects[2]))	
-			    scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-		                ParserLanguage.C, 
-		                ParserUtil.getScannerLogService(), C_GNU_SCANNER_EXTENSION, fileCreator);
+				scanner= createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.C, 
+						ParserUtil.getScannerLogService(), C_GNU_SCANNER_EXTENSION, fileCreator);
 		    else if( dialect.equals( dialects[1] ) || dialect.equals( dialects[3] ))
-			    scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-			            ParserLanguage.CPP, 
-		                ParserUtil.getScannerLogService(), CPP_GNU_SCANNER_EXTENSION, fileCreator);
+			    scanner = createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, 
+						ParserUtil.getScannerLogService(), CPP_GNU_SCANNER_EXTENSION, fileCreator);
 		    else
 		        throw new UnsupportedDialectException();
 		    
@@ -208,9 +207,8 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		else
 			scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;
 
-		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETION_PARSE,
-				l, ParserFactory.createDefaultLogService(),
-				scannerExtensionConfiguration, fileCreator);
+		IScanner scanner= createScanner(reader, scanInfo, ParserMode.COMPLETION_PARSE, l, 
+				ParserFactory.createDefaultLogService(), scannerExtensionConfiguration, fileCreator);
 		scanner.setContentAssistMode(offset);
 		
 		// assume GCC
@@ -228,6 +226,15 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		parser.parse();
 		IASTCompletionNode node = parser.getCompletionNode();
 		return node;
+	}
+
+	private IScanner createScanner(CodeReader reader, IScannerInfo scanInfo,
+			ParserMode mode, ParserLanguage lang, IParserLogService log,
+			IScannerExtensionConfiguration scanConfig, ICodeReaderFactory fileCreator) {
+		if (CPreprocessor.PROP_VALUE.equals(System.getProperty("scanner"))) { //$NON-NLS-1$
+			return new CPreprocessor(reader, scanInfo, lang, log, scanConfig, fileCreator);
+		}
+		return new DOMScanner(reader, scanInfo, mode, lang, log, scanConfig, fileCreator);
 	}
 	
     /*

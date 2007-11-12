@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -148,6 +149,10 @@ public class PDOMASTAdapter {
 
 		public char[] toCharArray() {
 			return fDelegate.toCharArray();
+		}
+
+		public IASTImageLocation getImageLocation() {
+			return null;
 		}
 	}
 

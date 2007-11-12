@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
+import org.eclipse.cdt.core.dom.parser.AbstractScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.index.IIndex;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
@@ -58,7 +60,6 @@ import org.eclipse.core.runtime.CoreException;
  * </p>
  * 
  * @see AbstractScannerExtensionConfiguration
- * @see AbstractCParserExtensionConfiguration
  * 
  * @since 4.0
  */
@@ -98,6 +99,8 @@ public abstract class AbstractCLanguage extends AbstractLanguage implements ICLa
 
 		IScanner scanner= createScanner(reader, scanInfo, codeReaderFactory, log);
 		scanner.setScanComments((options & OPTION_ADD_COMMENTS) != 0);
+		scanner.setComputeImageLocations((options & AbstractLanguage.OPTION_NO_IMAGE_LOCATIONS) == 0);
+
 		ISourceCodeParser parser= createParser(scanner, log, index, false, options);
 		
 		// Parse
@@ -149,6 +152,9 @@ public abstract class AbstractCLanguage extends AbstractLanguage implements ICLa
 	 * @return an instance of IScanner
 	 */
 	protected IScanner createScanner(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IParserLogService log) {
+		if (CPreprocessor.PROP_VALUE.equals(System.getProperty("scanner"))) { //$NON-NLS-1$
+			return new CPreprocessor(reader, scanInfo, ParserLanguage.C, log, getScannerExtensionConfiguration(), fileCreator);
+		}
 		return new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.C,
 				log, getScannerExtensionConfiguration(), fileCreator);
 	}

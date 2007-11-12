@@ -93,11 +93,21 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 						IASTName[] selectedNames= 
 							lang.getSelectedNames(ast, selection.getOffset(), selection.getLength());
 
-						IRegion linkRegion;
+						IRegion linkRegion= null;
 						if(selectedNames.length > 0 && selectedNames[0] != null) { // found a name
-							linkRegion = new Region(selection.getOffset(), selection.getLength());
+							// prefer include statement over the include name
+							if (selectedNames[0].getParent() instanceof IASTPreprocessorIncludeStatement) {
+								IASTFileLocation loc= selectedNames[0].getParent().getFileLocation();
+								if (loc != null) {
+									linkRegion= new Region(loc.getNodeOffset(), loc.getNodeLength());
+								}
+							}
+							if (linkRegion == null) {
+								linkRegion = new Region(selection.getOffset(), selection.getLength());
+							}
 						}
 						else { // check if we are in an include statement
+							// mstodo- support for old scanner
 							linkRegion = matchIncludeStatement(ast, selection);
 						}
 

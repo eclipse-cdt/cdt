@@ -215,7 +215,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		Token token;
 		try {
 			token= fLexer.nextToken();
-			if (token.getType() == Lexer.tEND_OF_INPUT) {
+			if (token.getType() == IToken.tEND_OF_INPUT) {
 				token = null;
 			}
 		} catch (OffsetLimitReachedException exc) {

@@ -99,7 +99,7 @@ class MacroDefinitionParser {
 		final char[] nameChars = name.getCharImage();
 		final char[][] paramList= parseParamList(lexer, name);
 		final Token replacementToken = lexer.currentToken();
-		if (replacementToken.getType() != Lexer.tEND_OF_INPUT) {
+		if (replacementToken.getType() != IToken.tEND_OF_INPUT) {
 			throw new InvalidMacroDefinitionException(nameChars, replacementToken.getOffset(), replacementToken.getEndOffset());
 		}
 		
@@ -222,7 +222,7 @@ class MacroDefinitionParser {
 			switch(candidate.getType()) {
 			case IToken.tCOMPLETION:
 				throw new OffsetLimitReachedException(ORIGIN_PREPROCESSOR_DIRECTIVE, candidate);
-			case Lexer.tEND_OF_INPUT:
+			case IToken.tEND_OF_INPUT:
 			case Lexer.tNEWLINE:
 				break loop;
 			case IToken.tIDENTIFIER:

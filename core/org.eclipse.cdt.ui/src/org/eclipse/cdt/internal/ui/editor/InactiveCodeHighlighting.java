@@ -29,7 +29,7 @@ import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorEndifStatement;
@@ -232,21 +232,17 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 
 		for (int i = 0; i < preprocStmts.length; i++) {
 			IASTPreprocessorStatement statement = preprocStmts[i];
-			if (!fileName.equals(statement.getContainingFilename())) {
+			IASTFileLocation floc= statement.getFileLocation();
+			if (floc == null || !fileName.equals(floc.getFileName())) {
 				// preprocessor directive is from a different file
 				continue;
 			}
-			IASTNodeLocation[] nodeLocations = statement.getNodeLocations();
-			if (nodeLocations.length != 1) {
-				continue;
-			}
-			IASTNodeLocation stmtLocation= nodeLocations[0];
 			if (statement instanceof IASTPreprocessorIfStatement) {
 				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifStmt.taken()) {
 					if (!inInactiveCode) {
-						inactiveCodeStart = stmtLocation.getNodeOffset();
+						inactiveCodeStart = floc.getNodeOffset();
 						inInactiveCode = true;
 					}
 				}
@@ -255,7 +251,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifdefStmt.taken()) {
 					if (!inInactiveCode) {
-						inactiveCodeStart = stmtLocation.getNodeOffset();
+						inactiveCodeStart = floc.getNodeOffset();
 						inInactiveCode = true;
 					}
 				}
@@ -264,27 +260,27 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 				inactiveCodeStack.push(Boolean.valueOf(inInactiveCode));
 				if (!ifndefStmt.taken()) {
 					if (!inInactiveCode) {
-						inactiveCodeStart = stmtLocation.getNodeOffset();
+						inactiveCodeStart = floc.getNodeOffset();
 						inInactiveCode = true;
 					}
 				}
 			} else if (statement instanceof IASTPreprocessorElseStatement) {
 				IASTPreprocessorElseStatement elseStmt = (IASTPreprocessorElseStatement)statement;
 				if (!elseStmt.taken() && !inInactiveCode) {
-					inactiveCodeStart = stmtLocation.getNodeOffset();
+					inactiveCodeStart = floc.getNodeOffset();
 					inInactiveCode = true;
 				} else if (elseStmt.taken() && inInactiveCode) {
-					int inactiveCodeEnd = stmtLocation.getNodeOffset();
+					int inactiveCodeEnd = floc.getNodeOffset();
 					positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, false, fHighlightKey));
 					inInactiveCode = false;
 				}
 			} else if (statement instanceof IASTPreprocessorElifStatement) {
 				IASTPreprocessorElifStatement elifStmt = (IASTPreprocessorElifStatement)statement;
 				if (!elifStmt.taken() && !inInactiveCode) {
-					inactiveCodeStart = stmtLocation.getNodeOffset();
+					inactiveCodeStart = floc.getNodeOffset();
 					inInactiveCode = true;
 				} else if (elifStmt.taken() && inInactiveCode) {
-					int inactiveCodeEnd = stmtLocation.getNodeOffset();
+					int inactiveCodeEnd = floc.getNodeOffset();
 					positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, false, fHighlightKey));
 					inInactiveCode = false;
 				}
@@ -292,7 +288,7 @@ public class InactiveCodeHighlighting implements ICReconcilingListener, ITextInp
 				try {
 					boolean wasInInactiveCode = ((Boolean)inactiveCodeStack.pop()).booleanValue();
 					if (inInactiveCode && !wasInInactiveCode) {
-						int inactiveCodeEnd = stmtLocation.getNodeOffset() + stmtLocation.getNodeLength();
+						int inactiveCodeEnd = floc.getNodeOffset() + floc.getNodeLength();
 						positions.add(createHighlightPosition(inactiveCodeStart, inactiveCodeEnd, true, fHighlightKey));
 					}
 					inInactiveCode = wasInInactiveCode;

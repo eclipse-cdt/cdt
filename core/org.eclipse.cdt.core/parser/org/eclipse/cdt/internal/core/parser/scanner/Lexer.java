@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
  * Returns preprocessor tokens.
  * <p>
  * In addition to the preprocessor tokens the following tokens may also be returned:
- * {@link #tBEFORE_INPUT}, {@link #tEND_OF_INPUT}, {@link IToken#tCOMPLETION}.
+ * {@link #tBEFORE_INPUT}, {@link IToken#tEND_OF_INPUT}, {@link IToken#tCOMPLETION}.
  * <p>
  * Number literals are split up into {@link IToken#tINTEGER} and {@link IToken#tFLOATINGPT}. 
  * No checks are done on the number literals.
@@ -38,10 +38,9 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 final public class Lexer {
 	public static final int tBEFORE_INPUT   = IToken.FIRST_RESERVED_SCANNER;
 	public static final int tNEWLINE		= IToken.FIRST_RESERVED_SCANNER + 1;
-	public static final int tEND_OF_INPUT	= IToken.FIRST_RESERVED_SCANNER + 2;
-	public static final int tQUOTE_HEADER_NAME    = IToken.FIRST_RESERVED_SCANNER + 3;
-	public static final int tSYSTEM_HEADER_NAME   = IToken.FIRST_RESERVED_SCANNER + 4;
-	public static final int tOTHER_CHARACTER 	  = IToken.FIRST_RESERVED_SCANNER + 5;
+	public static final int tQUOTE_HEADER_NAME    = IToken.FIRST_RESERVED_SCANNER + 2;
+	public static final int tSYSTEM_HEADER_NAME   = IToken.FIRST_RESERVED_SCANNER + 3;
+	public static final int tOTHER_CHARACTER 	  = IToken.FIRST_RESERVED_SCANNER + 4;
 	
 	private static final int END_OF_INPUT = -1;
 	private static final int ORIGIN_LEXER = OffsetLimitReachedException.ORIGIN_LEXER;
@@ -49,7 +48,7 @@ final public class Lexer {
 	public final static class LexerOptions implements Cloneable {
 		public boolean fSupportDollarInitializers= true;
 		public boolean fSupportMinAndMax= true;
-		public boolean fSupportContentAssist= false;
+		public boolean fCreateImageLocations= true;
 		
 		public Object clone() {
 			try {
@@ -62,6 +61,7 @@ final public class Lexer {
 
 	// configuration
 	private final LexerOptions fOptions;
+	private boolean fSupportContentAssist= false;
 	private final ILexerLog fLog;
 	private final Object fSource;
 	
@@ -77,12 +77,12 @@ final public class Lexer {
 	
 	private boolean fInsideIncludeDirective= false;
 	private Token fToken;
+	private Token fLastToken;
 	
 	// for the few cases where we have to lookahead more than one character
 	private int fMarkOffset;
 	private int fMarkEndOffset;
 	private int fMarkPrefetchedChar;
-	private boolean fFirstTokenAfterNewline= true;
 	
 	
 	public Lexer(char[] input, LexerOptions options, ILexerLog log, Object source) {
@@ -96,7 +96,7 @@ final public class Lexer {
 		fOptions= options;
 		fLog= log;
 		fSource= source;
-		fToken= new Token(tBEFORE_INPUT, source, start, start);
+		fLastToken= fToken= new Token(tBEFORE_INPUT, source, start, start);
 		nextCharPhase3();
 	}
 	
@@ -111,8 +111,8 @@ final public class Lexer {
 	 * Resets the lexer to the first char and prepares for content-assist mode. 
 	 */
 	public void setContentAssistMode(int offset) {
-		fOptions.fSupportContentAssist= true;
-		fLimit= Math.min(fLimit, fInput.length);
+		fSupportContentAssist= true;
+		fLimit= Math.min(offset, fInput.length);
 		// re-initialize 
 		fOffset= fEndOffset= fStart;
 		nextCharPhase3();
@@ -132,25 +132,32 @@ final public class Lexer {
 	public Token currentToken() {
 		return fToken;
 	}
-	
+
+	/**
+	 * Returns the endoffset of the token before the current one.
+	 */
+	public int getLastEndOffset() {
+		return fLastToken.getEndOffset();
+	}
+
 	/**
 	 * Advances to the next token, skipping whitespace other than newline.
 	 * @throws OffsetLimitReachedException when completion is requested in a literal or a header-name.
 	 */
 	public Token nextToken() throws OffsetLimitReachedException {
-		final int t= fToken.getType();
-		fFirstTokenAfterNewline= t == tNEWLINE || t == tBEFORE_INPUT;
+		fLastToken= fToken;
 		return fToken= fetchToken();
 	}
 
 	public boolean currentTokenIsFirstOnLine() {
-		return fFirstTokenAfterNewline;
+		final int type= fLastToken.getType();
+		return type == tNEWLINE || type == tBEFORE_INPUT;
 	}
 	
 	/**
-	 * Advances to the next newline.
-	 * @return the end offset of the last token before the newline or the start of the newline
-	 * if there were no other tokens.
+	 * Advances to the next newline or the end of input. The newline will not be consumed. If the
+	 * current token is a newline no action is performed.
+	 * Returns the end offset of the last token before the newline. 
 	 * @param origin parameter for the {@link OffsetLimitReachedException} when it has to be thrown.
 	 * @since 5.0
 	 */
@@ -160,17 +167,22 @@ final public class Lexer {
 		while(true) {
 			switch(t.getType()) {
 			case IToken.tCOMPLETION:
+				if (lt != null) {
+					fLastToken= lt;
+				}
 				fToken= t;
 				throw new OffsetLimitReachedException(origin, t);
-			case Lexer.tEND_OF_INPUT:
-				fToken= t;
-				if (fOptions.fSupportContentAssist) {
-					throw new OffsetLimitReachedException(origin, lt);
+			case IToken.tEND_OF_INPUT:
+				if (fSupportContentAssist) {
+					throw new OffsetLimitReachedException(origin, t);
 				}
-				return lt != null ? lt.getEndOffset() : t.getOffset();
+				// no break;
 			case Lexer.tNEWLINE:
 				fToken= t;
-				return lt != null ? lt.getEndOffset() : t.getOffset();
+				if (lt != null) {
+					fLastToken= lt;
+				}
+				return getLastEndOffset();
 			}
 			lt= t;
 			t= fetchToken();
@@ -219,7 +231,7 @@ final public class Lexer {
 
 			switch(c) {
 			case END_OF_INPUT:
-				fToken= newToken(Lexer.tEND_OF_INPUT, start);
+				fLastToken= fToken= newToken(IToken.tEND_OF_INPUT, start);
 				return fToken;
 			case '\n':
 				haveNL= true;
@@ -266,7 +278,7 @@ final public class Lexer {
 							}
 							restorePhase3();
 						}
-						fFirstTokenAfterNewline= true;
+						fLastToken= new Token(tNEWLINE, fSource, 0, start); // offset not significant
 						fToken= newDigraphToken(IToken.tPOUND, start);
 						return fToken;
 					}
@@ -275,7 +287,7 @@ final public class Lexer {
 
 			case '#':
 				if (hadNL && d != '#') {
-					fFirstTokenAfterNewline= true;
+					fLastToken= new Token(tNEWLINE, fSource, 0, start); // offset not significant
 					fToken= newToken(IToken.tPOUND, start);
 					return fToken;
 				}
@@ -297,7 +309,7 @@ final public class Lexer {
 			final int d= nextCharPhase3();
 			switch(c) {
 			case END_OF_INPUT:
-				return newToken(Lexer.tEND_OF_INPUT, start);
+				return newToken(IToken.tEND_OF_INPUT, start);
 			case '\n':
 				fInsideIncludeDirective= false;
 				return newToken(Lexer.tNEWLINE, start);
@@ -633,7 +645,7 @@ final public class Lexer {
 		loop: while (!done) {
 			switch (c) {
 			case END_OF_INPUT:
-				if (fOptions.fSupportContentAssist) {
+				if (fSupportContentAssist) {
 					throw new OffsetLimitReachedException(ORIGIN_LEXER, 
 							newToken((expectQuotes ? tQUOTE_HEADER_NAME : tSYSTEM_HEADER_NAME), start, length));
 				}
@@ -695,7 +707,7 @@ final public class Lexer {
 		loop: while (!done) {
 			switch(c) {
 			case END_OF_INPUT:
-				if (fOptions.fSupportContentAssist) {
+				if (fSupportContentAssist) {
 					throw new OffsetLimitReachedException(ORIGIN_LEXER, newToken(wide ? IToken.tLSTRING : IToken.tSTRING, start, length));
 				}
 				// no break;
@@ -731,7 +743,7 @@ final public class Lexer {
 		loop: while (!done) {
 			switch(c) {
 			case END_OF_INPUT:
-				if (fOptions.fSupportContentAssist) {
+				if (fSupportContentAssist) {
 					throw new OffsetLimitReachedException(ORIGIN_LEXER, newToken(wide ? IToken.tLCHAR : IToken.tCHAR, start, length));
 				}
 				// no break;
@@ -788,7 +800,7 @@ final public class Lexer {
             	break;
 
             case END_OF_INPUT:
-				if (fOptions.fSupportContentAssist) {
+				if (fSupportContentAssist) {
 					tokenKind= IToken.tCOMPLETION;
 				}
 				isPartOfIdentifier= false;
@@ -878,8 +890,8 @@ final public class Lexer {
             	}
             	break;
             
-            case tEND_OF_INPUT:
-				if (fOptions.fSupportContentAssist) {
+            case END_OF_INPUT:
+				if (fSupportContentAssist) {
 					throw new OffsetLimitReachedException(ORIGIN_LEXER, 
 							newToken((isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER), start, length));
 				}

@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -120,7 +121,7 @@ public class LocationMap implements ILocationResolver {
 		int nameEndNumber= getSequenceNumberForOffset(nameEndOffset);
 		int endNumber= getSequenceNumberForOffset(endOffset);
 		final ASTInclusionStatement inclusionStatement= 
-			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, name, filename, userInclude, true);
+			new ASTInclusionStatement(fTranslationUnit, startNumber, nameNumber, nameEndNumber, endNumber, name, filename, userInclude, true);
 		fDirectives.add(inclusionStatement);
 		fCurrentContext= new LocationCtxFile((LocationCtxContainer) fCurrentContext, filename, buffer, startOffset, endOffset, endNumber, inclusionStatement);
 		fLastChildInsertionOffset= 0;
@@ -208,8 +209,8 @@ public class LocationMap implements ILocationResolver {
 		startOffset= getSequenceNumberForOffset(startOffset);	
 		nameOffset= getSequenceNumberForOffset(nameOffset);		
 		nameEndOffset= getSequenceNumberForOffset(nameEndOffset);
-		// not using endOffset, compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
-		fDirectives.add(new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset, nameEndOffset, name, filename, userInclude, active));
+		endOffset= getSequenceNumberForOffset(endOffset);
+		fDirectives.add(new ASTInclusionStatement(fTranslationUnit, startOffset, nameOffset, nameEndOffset, endOffset, name, filename, userInclude, active));
 	}
 
 	public void encounteredComment(int offset, int endOffset, boolean isBlockComment) {
@@ -365,6 +366,25 @@ public class LocationMap implements ILocationResolver {
 		fRootContext.collectLocations(sequenceNumber, length, result);
 		return (IASTNodeLocation[]) result.toArray(new IASTNodeLocation[result.size()]);
 	} 
+	
+	public IASTImageLocation getImageLocation(int sequenceNumber, int length) {
+		ArrayList result= new ArrayList();
+		fRootContext.collectLocations(sequenceNumber, length, result);
+		if (result.size() != 1) {
+			return null;
+		}
+		IASTNodeLocation loc= (IASTNodeLocation) result.get(0);
+		if (loc instanceof IASTFileLocation) {
+			IASTFileLocation floc= (IASTFileLocation) loc;
+			return new ASTImageLocation(IASTImageLocation.REGULAR_CODE, 
+					floc.getFileName(), floc.getNodeOffset(), floc.getNodeLength());
+		}
+		if (loc instanceof ASTMacroExpansionLocation) { 
+			ASTMacroExpansionLocation mel= (ASTMacroExpansionLocation) loc;
+			return mel.getImageLocation();
+		}
+		return null;
+	}
 
 	public IASTNode findSurroundingPreprocessorNode(int sequenceNumber, int length) {
 		int lower=0;
@@ -386,6 +406,17 @@ public class LocationMap implements ILocationResolver {
 				upper= middle-1;
 			}
 		}
+		// search for a macro-expansion
+		LocationCtxMacroExpansion ctx= fRootContext.findSurroundingMacroExpansion(sequenceNumber, length);
+		if (ctx != null) {
+			ASTMacroReferenceName candidate= ctx.getMacroReference();
+			final int candSequenceNumber = candidate.getOffset();
+			final int candEndSequenceNumber = candSequenceNumber + candidate.getLength();
+			if (candSequenceNumber <= sequenceNumber && sequenceNumber + length <= candEndSequenceNumber) {
+				return candidate;
+			}
+		}
+		
 		return null;
 	}
 	
@@ -497,11 +528,12 @@ public class LocationMap implements ILocationResolver {
 	public ASTPreprocessorSelectionResult getPreprocessorNode(String path, int offset, int length) {
 		throw new UnsupportedOperationException();
 	}
-	// mstodo- locations
+
+	// mstodo- old location resolver
 	public char[] getUnpreprocessedSignature(IASTNodeLocation[] locations) {
 		throw new UnsupportedOperationException();
 	}	
-	// mstodo- scanner removal
+	// mstodo- old location resolver
 	public IASTName[] getMacroExpansions() {
 		throw new UnsupportedOperationException();
 	}

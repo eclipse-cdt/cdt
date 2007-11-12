@@ -4293,4 +4293,6 @@ abstract class BaseScanner implements IScanner {
 
     protected abstract IToken newToken(int signal, char[] buffer);
 
+	public void setComputeImageLocations(boolean val) {
+	}
 }

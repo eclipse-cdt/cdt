@@ -727,7 +727,7 @@ public class ASTSignatureUtil {
 		StringBuffer result = new StringBuffer();
 		result.append(expression.toString());
 		if (expression.getKind() == IASTLiteralExpression.lk_string_literal) {
-			// mstodo- support for old scanner
+			// mstodo- old scanner, remove
 			if (result.length() == 0 || result.charAt(0) != '"') {
 				result.insert(0, '"');
 				result.append('"');

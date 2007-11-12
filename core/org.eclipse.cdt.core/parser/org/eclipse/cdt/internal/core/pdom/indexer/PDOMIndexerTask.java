@@ -199,7 +199,7 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 	private void internalParseTUs(IWritableIndex index, int readlockCount, Collection sources, Collection headers, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		TodoTaskUpdater taskUpdater = new TodoTaskUpdater();
 
-		int options= AbstractLanguage.OPTION_ADD_COMMENTS;
+		int options= AbstractLanguage.OPTION_ADD_COMMENTS | AbstractLanguage.OPTION_NO_IMAGE_LOCATIONS;
 		if (checkProperty(IndexerPreferences.KEY_SKIP_ALL_REFERENCES)) {
 			options |= AbstractLanguage.OPTION_SKIP_FUNCTION_BODIES;
 		}

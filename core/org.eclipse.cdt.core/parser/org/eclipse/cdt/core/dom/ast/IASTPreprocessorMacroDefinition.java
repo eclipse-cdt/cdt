@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -45,6 +46,13 @@ public interface IASTPreprocessorMacroDefinition extends
 	 * @return String
 	 */
 	public String getExpansion();
+
+	/**
+	 * Returns the location of the macro expansion, or <code>null</code> if not supported.
+	 * For built-in macros the location will always be null.
+	 * @since 5.0
+	 */
+	public IASTFileLocation getExpansionLocation();
 
 	/**
 	 * Set the macro expansion.

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 
@@ -22,7 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 class LocationCtxMacroExpansion extends LocationCtx {
 	private final LocationMap fLocationMap;
 	private final int fLength;
-	private ASTMacroReferenceName fName;
+	private final ASTMacroReferenceName fName;
+	private final ImageLocationInfo[] fLocationInfos;
 
 	public LocationCtxMacroExpansion(LocationMap map, LocationCtxContainer parent, int parentOffset, int parentEndOffset,
 			int sequenceNumber, int length, ImageLocationInfo[] imageLocations,	ASTMacroReferenceName expansion) {
@@ -30,6 +32,7 @@ class LocationCtxMacroExpansion extends LocationCtx {
 		fLocationMap= map;
 		fLength= length;
 		fName= expansion;
+		fLocationInfos= imageLocations;
 	}
 
 	public int getSequenceLength() {
@@ -49,8 +52,47 @@ class LocationCtxMacroExpansion extends LocationCtx {
 		return false;
 	}	
 	
+	public ASTMacroReferenceName getMacroReference() {
+		return fName;
+	}
+	
 	public IASTPreprocessorMacroDefinition getMacroDefinition() {
 		return fLocationMap.getMacroDefinition((IMacroBinding) fName.getBinding());
+	}
+	
+	public LocationCtxMacroExpansion findSurroundingMacroExpansion(int sequenceNumber, int length) {
+		return this;
+	}
+
+	public IASTImageLocation getImageLocation(int offset, int length) {
+		if (length == 0) {
+			return null;
+		}
+		final int end= offset+length;
+		int nextToCheck= offset;
+		ImageLocationInfo firstInfo= null;
+		ImageLocationInfo lastInfo= null;
+		for (int i = 0; i < fLocationInfos.length; i++) {
+			ImageLocationInfo info = fLocationInfos[i];
+			if (info.fTokenOffsetInExpansion == nextToCheck) {
+				if (lastInfo == null) {
+					firstInfo= lastInfo= info;
+				}
+				else if (lastInfo.canConcatenate(info)) {
+					lastInfo= info;
+				}
+				else {
+					return null;
+				}
+				if (++nextToCheck == end) {
+					return firstInfo.createLocation(fLocationMap, lastInfo);
+				}
+			}
+			else if (info.fTokenOffsetInExpansion > nextToCheck) {
+				return null;
+			}
+		}
+		return null;
 	}
 }
 

@@ -105,7 +105,7 @@ public class LexerTests extends BaseTestCase {
 
 	private void eof() throws Exception {
 		IToken t= fLexer.nextToken();
-		assertEquals("superfluous token " + t, Lexer.tEND_OF_INPUT, t.getType());
+		assertEquals("superfluous token " + t, IToken.tEND_OF_INPUT, t.getType());
 		assertEquals(0, fLog.getProblemCount());
 		assertEquals(0, fLog.getCommentCount());
 	}

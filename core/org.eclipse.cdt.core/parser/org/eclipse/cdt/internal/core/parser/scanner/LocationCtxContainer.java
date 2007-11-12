@@ -83,17 +83,26 @@ class LocationCtxContainer extends LocationCtx {
 
 	public final LocationCtx findSurroundingContext(int sequenceNumber, int length) {
 		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
-		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber);
+		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
 		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
 			return child.findSurroundingContext(sequenceNumber, length);
 		}
 		return this;
 	}
-	
+
+	public final LocationCtxMacroExpansion findSurroundingMacroExpansion(int sequenceNumber, int length) {
+		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
+		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, true);
+		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
+			return child.findSurroundingMacroExpansion(sequenceNumber, length);
+		}
+		return null;
+	}
+
 	public IASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
 		// try to delegate to a child.
 		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
-		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber);
+		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
 		if (child != null && child.fSequenceNumber+child.getSequenceLength() > testEnd) {
 			return child.findMappedFileLocation(sequenceNumber, length);
 		}
@@ -103,7 +112,7 @@ class LocationCtxContainer extends LocationCtx {
 	public boolean collectLocations(int sequenceNumber, final int length, ArrayList locations) {
 		final int endSequenceNumber= sequenceNumber+length;
 		if (fChildren != null) {
-			int childIdx= Math.max(0, findChildIdxLessOrEqualThan(sequenceNumber));
+			int childIdx= Math.max(0, findChildIdxLessOrEqualThan(sequenceNumber, false));
 			for (; childIdx < fChildren.size(); childIdx++) {
 				final LocationCtx child= (LocationCtx) fChildren.get(childIdx);
 
@@ -154,7 +163,7 @@ class LocationCtxContainer extends LocationCtx {
 		return null;
 	}
 
-	final int findChildIdxLessOrEqualThan(int sequenceNumber) {
+	final int findChildIdxLessOrEqualThan(int sequenceNumber, boolean beforeReplacedChars) {
 		if (fChildren == null) {
 			return -1;
 		}
@@ -163,7 +172,11 @@ class LocationCtxContainer extends LocationCtx {
 		while (upper > lower) {
 			int middle= (upper+lower)/2;
 			LocationCtx child= (LocationCtx) fChildren.get(middle);
-			if (child.fSequenceNumber <= sequenceNumber) {
+			int childSequenceNumber= child.fSequenceNumber;
+			if (beforeReplacedChars) {
+				childSequenceNumber-= child.fEndOffsetInParent-child.fOffsetInParent; 
+			}
+			if (childSequenceNumber <= sequenceNumber) {
 				lower= middle+1;
 			}
 			else {
@@ -173,8 +186,8 @@ class LocationCtxContainer extends LocationCtx {
 		return lower-1;
 	}
 
-	final LocationCtx findChildLessOrEqualThan(final int sequenceNumber) {
-		final int idx= findChildIdxLessOrEqualThan(sequenceNumber);
+	final LocationCtx findChildLessOrEqualThan(final int sequenceNumber, boolean beforeReplacedChars) {
+		final int idx= findChildIdxLessOrEqualThan(sequenceNumber, beforeReplacedChars);
 		return idx >= 0 ? (LocationCtx) fChildren.get(idx) : null;
 	}
 

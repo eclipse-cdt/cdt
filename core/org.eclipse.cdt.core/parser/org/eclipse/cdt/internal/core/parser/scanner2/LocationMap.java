@@ -771,6 +771,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             return r_unclear;
         }
 
+		public IASTFileLocation getExpansionLocation() {
+			return null;
+		}
+
     }
 
     public static interface _IPreprocessorDirective {
@@ -1021,6 +1025,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public void setExpansion(String exp) {
             this.expansion = exp;
         }
+
+		public IASTFileLocation getExpansionLocation() {
+			return null;
+		}
 
     }
 

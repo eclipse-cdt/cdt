@@ -119,7 +119,8 @@ public class CallHierarchyBaseTest extends BaseUITestCase {
 			for (int i=0; i<200; i++) {
 				item= root.getItem(i1);
 				try {
-					if (!"...".equals(item.getText())) {
+					String text= item.getText();
+					if (!"...".equals(text) && !"".equals(text)) {
 						break;
 					}
 				} catch (SWTException e) {

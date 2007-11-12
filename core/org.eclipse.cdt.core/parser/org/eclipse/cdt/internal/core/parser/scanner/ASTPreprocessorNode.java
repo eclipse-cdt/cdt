@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -65,10 +66,6 @@ abstract class ASTPreprocessorNode extends ASTNode {
         	}
         }
 		return CharArrayUtils.EMPTY;
-	}
-
-	public IASTNodeLocation[] getNodeLocations() {
-		return super.getNodeLocations();
 	}
 
 	public String getContainingFilename() {
@@ -228,9 +225,10 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	private final boolean fIsResolved;
 	private final boolean fIsSystemInclude;
 
-	public ASTInclusionStatement(IASTTranslationUnit parent, int startNumber, int nameStartNumber, int nameEndNumber, 
+	public ASTInclusionStatement(IASTTranslationUnit parent, 
+			int startNumber, int nameStartNumber, int nameEndNumber, int endNumber,
 			char[] headerName, String filePath, boolean userInclude, boolean active) {
-		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, nameEndNumber);
+		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fName= new ASTPreprocessorName(this, IASTPreprocessorIncludeStatement.INCLUDE_NAME, nameStartNumber, nameEndNumber, headerName, null);
 		fPath= filePath == null ? "" : filePath; //$NON-NLS-1$
 		fIsActive= active;
@@ -270,6 +268,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 
 class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyleMacroDefinition {
 	private final ASTPreprocessorName fName;
+	private final int fExpansionNumber;
 	
 	/**
 	 * Regular constructor.
@@ -277,6 +276,7 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyl
 	public ASTMacro(IASTTranslationUnit parent, IMacroBinding macro, 
 			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
+		fExpansionNumber= expansionNumber;
 		fName= new ASTPreprocessorDefinition(this, IASTPreprocessorMacroDefinition.MACRO_NAME, nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
 	}
 
@@ -287,6 +287,7 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyl
 	public ASTMacro(IASTTranslationUnit parent, IMacroBinding macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, -1, -1);
 		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, filename, nameOffset, nameEndOffset, macro.getNameCharArray(), macro);
+		fExpansionNumber= -1;
 	}
 
 	protected IMacroBinding getMacro() {
@@ -316,6 +317,19 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyl
 
 	public void setExpansion(String exp) {assert false;}
 	public void setName(IASTName name) {assert false;}
+
+	public IASTFileLocation getExpansionLocation() {
+		if (fExpansionNumber >= 0) {
+			IASTTranslationUnit ast = getTranslationUnit();
+			if (ast != null) {
+				ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
+				if (lr != null) {
+					return lr.getMappedFileLocation(fExpansionNumber, getOffset() + getLength() - fExpansionNumber);
+				}
+			}
+		}
+		return null;
+	}
 }
 
 class ASTMacroParameter extends ASTPreprocessorNode implements IASTFunctionStyleMacroParameter  {
@@ -502,6 +516,10 @@ class ASTMacroExpansionLocation implements IASTMacroExpansion {
 	public String toString() {
 		return fContext.getMacroDefinition().getName().toString() + "[" + fOffset + "," + (fOffset+fLength) + ")";    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
+
+	public IASTImageLocation getImageLocation() {
+		return fContext.getImageLocation(fOffset, fLength);
+	}
 }
 
 class ASTFileLocationForBuiltins implements IASTFileLocation {
@@ -540,4 +558,17 @@ class ASTFileLocationForBuiltins implements IASTFileLocation {
 	}
 }
 
+
+class ASTImageLocation extends ASTFileLocationForBuiltins implements IASTImageLocation {
+	private final int fKind;
+
+	public ASTImageLocation(int kind, String file, int offset, int length) {
+		super(file, offset, length);
+		fKind= kind;
+	}
+
+	public int getLocationKind() {
+		return fKind;
+	}
+}
 

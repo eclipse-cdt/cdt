@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Jun 4, 2003
@@ -14,12 +15,15 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
+import java.util.LinkedHashMap;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 
 /**
  * @author bnicolle
@@ -27,11 +31,14 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  */
 public class IIncludeTests extends IntegratedCModelTest {
 
+	private boolean fUseCPreprocessor;
+
 	/**
 	 * @param string
 	 */
 	public IIncludeTests(String string) {
 		super( string );
+		fUseCPreprocessor= CPreprocessor.PROP_VALUE.equals(System.getProperty("scanner"));
 	}
 
 	/**
@@ -69,57 +76,39 @@ public class IIncludeTests extends IntegratedCModelTest {
 			assertNotNull("CModelException thrown",c);
 		}
 
-		String getIncludeNameList[] =  new String[] {
-			new String("stdio.h"),
-			new String("whatever.h"),
-			new String("src/slash.h"),
-			new String("src\\backslash.h"), // that's a single backslash, escaped
-			new String("Program Files/space.h"),
-			new String("../up1dir.h"),
-			new String("./samedir.h"),
-			new String("different_extension1.hpp"),
-			new String("different_extension2.hh"),
-			new String("different_extension3.x"),
-			new String("no_extension"),
-			new String("whitespace_after_hash"),
-			new String("whitespace_before_hash"),
-			new String("resync_after_bad_parse_1"),			
-			new String("resync_after_bad_parse_2"),
-			new String("one"),  // C-spec does not allow this, but that's OK for our present purposes
-			new String("resync_after_bad_parse_3"),
-			new String("invalid.h"),  // C-spec does not allow this, but that's OK for our present purposes
-			new String("myInclude1.h"),
-			new String("vers2.h")						
-		};
+		LinkedHashMap expectIncludes= new LinkedHashMap();
+		expectIncludes.put("stdio.h", Boolean.TRUE);
+		expectIncludes.put("whatever.h", Boolean.FALSE);
+		expectIncludes.put("src/slash.h", Boolean.TRUE);
+		expectIncludes.put("src\\backslash.h", Boolean.TRUE); // that's a single backslash, escaped
+		expectIncludes.put("Program Files/space.h", Boolean.FALSE);
+		expectIncludes.put("../up1dir.h", Boolean.FALSE);
+		expectIncludes.put("./samedir.h", Boolean.FALSE);
+		expectIncludes.put("different_extension1.hpp", Boolean.FALSE);
+		expectIncludes.put("different_extension2.hh", Boolean.FALSE);
+		expectIncludes.put("different_extension3.x", Boolean.FALSE);
+		expectIncludes.put("no_extension", Boolean.TRUE);
+		expectIncludes.put("whitespace_after_hash", Boolean.FALSE);
+		expectIncludes.put("whitespace_before_hash", Boolean.FALSE);
+		expectIncludes.put("resync_after_bad_parse_1", Boolean.FALSE);			
+		expectIncludes.put("resync_after_bad_parse_2", Boolean.FALSE);
+		expectIncludes.put("one", Boolean.FALSE);  // C-spec does not allow this, gcc warns and includes, so we should include it, also.
+		expectIncludes.put("resync_after_bad_parse_3", Boolean.FALSE);
+		if (!fUseCPreprocessor) {
+			expectIncludes.put("invalid.h", Boolean.FALSE);  // C-spec does not allow this, but that's OK for our present purposes
+		}
+		expectIncludes.put("myInclude1.h", Boolean.FALSE);
+		expectIncludes.put("vers2.h", Boolean.FALSE);					
+
+		String[] getIncludeNameList= (String[]) expectIncludes.keySet().toArray(new String[expectIncludes.size()]);
 		assertEquals( getIncludeNameList.length, theIncludes.length );
 		for( int i=0; i<getIncludeNameList.length; i++ )
 		{
 			IInclude inc1 = theIncludes[i];
-			assertEquals( getIncludeNameList[i], inc1.getIncludeName() );
-		}
-		
-	}
-	
-	public void testIsStandard() throws CModelException
-	{
-		ITranslationUnit tu = getTU();
-		IInclude[] theIncludes = null;
-		try {
-			theIncludes = tu.getIncludes();
-		}
-		catch( CModelException c )
-		{
-			assertNotNull("CModelException thrown",c);
-		}
-		boolean isStandardList[] =  new boolean[] {
-			true, false
-		};
-		for( int i=0; i<isStandardList.length; i++ )
-		{
-			IInclude inc1 = theIncludes[i];
-			assertEquals( isStandardList[i], inc1.isStandard() );
+			String expectName= getIncludeNameList[i];
+			assertEquals( expectName, inc1.getIncludeName() );
+			assertEquals( ((Boolean) expectIncludes.get(expectName)).booleanValue(), inc1.isStandard());
 		}
 	}
-	
 }
 

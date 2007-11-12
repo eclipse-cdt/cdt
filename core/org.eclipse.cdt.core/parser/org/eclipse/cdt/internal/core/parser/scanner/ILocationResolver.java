@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -74,7 +75,7 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
     
     /**
      * @see IASTTranslationUnit#getContainingFilename()
-     * mstodo- scanner removal should be renamed
+     * mstodo- old location resolver, should be renamed
      */
 	String getContainingFilename(int sequenceNumber);
 	
@@ -109,6 +110,11 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
 	IASTNodeLocation[] getLocations(int sequenceNumber, int length);
 
 	/**
+	 * @see IASTName#getImageLocation()
+	 */
+	IASTImageLocation getImageLocation(int offset, int length);
+
+	/**
 	 * Returns the sequence-number for the given file-path and offset, or <code>-1</code> if this file
 	 * is not part of the translation-unit.
 	 * @param filePath a file path or <code>null</code> to specify the root of the translation unit.
@@ -122,7 +128,9 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
 	char[] getUnpreprocessedSignature(IASTFileLocation loc);
 	
 	/**
-	 * Returns a preprocessor node surrounding the given range, or <code>null</code>.
+	 * Returns a preprocessor node surrounding the given range, or <code>null</code>. The result is either a
+	 * preprocessing directive ({@link IASTPreprocessorStatement}) or a name contained therein {@link IASTName} or 
+	 * a macro expansion ({@link IASTName}).
 	 */
 	IASTNode findSurroundingPreprocessorNode(int sequenceNumber, int length);
 }

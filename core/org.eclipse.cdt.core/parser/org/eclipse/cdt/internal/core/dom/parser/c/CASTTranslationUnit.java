@@ -409,7 +409,7 @@ public class CASTTranslationUnit extends CASTNode implements
 	        return result;
 		}
 		
-		// mstodo- support for old location resolver
+		// mstodo- old location resolver remove
     	IASTNode node = null;
 		ASTPreprocessorSelectionResult result = null;
 		int globalOffset = 0;

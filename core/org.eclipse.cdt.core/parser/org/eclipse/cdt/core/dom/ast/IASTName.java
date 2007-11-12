@@ -62,4 +62,18 @@ public interface IASTName extends IASTNode, IName {
 	 * Determines the current linkage in which the name has to be resolved.
 	 */
 	public ILinkage getLinkage();
+	
+	/**
+	 * Returns the image location for this name or <code>null</code> if the information is not available.
+	 * <p>
+	 * An image location can be computed when the name is either found directly in the code, is (part of) 
+	 * an argument to a macro expansion or is (part of) a macro definition found in the source code.
+	 * <p>
+	 * The image location is <code>null</code>, when the name consists of multiple tokens (qualified names)
+	 * and the tokens are not found side by side in the code or if 
+	 * the name is the result of a token-paste operation or the name is found in the definition of a 
+	 * built-in macro.
+	 * @since 5.0
+	 */
+	public IASTImageLocation getImageLocation();
 }

@@ -154,7 +154,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     // Use to create the completion node
     protected ASTCompletionNode createCompletionNode(IToken token) {
-        if (completionNode == null)
+        if (completionNode == null && token != null)
             completionNode = new ASTCompletionNode(token, getTranslationUnit());
         return completionNode;
     }
@@ -284,6 +284,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             OffsetLimitReachedException exception) throws EndOfFileException {
         if (mode != ParserMode.COMPLETION_PARSE)
             throw new EndOfFileException();
+        createCompletionNode(exception.getFinalToken());
         throw exception;
     }
 

@@ -139,11 +139,17 @@ public class LocationMapTests extends BaseTestCase {
 	}
 	
 	private void checkLocation(IASTFileLocation loc, String filename, int offset, int length, int line, int endline) {
-		assertEquals(filename, loc.getFileName());
-		assertEquals(offset, loc.getNodeOffset());
-		assertEquals(length, loc.getNodeLength());
-		assertEquals(line, loc.getStartingLineNumber());
-		assertEquals(endline, loc.getEndingLineNumber());
+		if (loc == null) {
+			assertEquals(0, offset);
+			assertEquals(0, length);
+		}
+		else {
+			assertEquals(filename, loc.getFileName());
+			assertEquals(offset, loc.getNodeOffset());
+			assertEquals(length, loc.getNodeLength());
+			assertEquals(line, loc.getStartingLineNumber());
+			assertEquals(endline, loc.getEndingLineNumber());
+		}
 	}
 	
 	private void checkComment(IASTComment comment, String content, boolean blockComment,  
@@ -319,7 +325,7 @@ public class LocationMapTests extends BaseTestCase {
 		IASTPreprocessorIncludeStatement[] includes= fLocationMap.getIncludeDirectives();
 		assertEquals(2, includes.length);
 		checkInclude(includes[0], "", "", "n1", "", true, false, FN, 0, 0, 1, 0, 0);
-		checkInclude(includes[1], "012", "12", "n2", "f2", false, true, FN, 0, 3, 1, 1, 2);
+		checkInclude(includes[1], new String(DIGITS), "12", "n2", "f2", false, true, FN, 0, 16, 1, 1, 2);
 	}
 
 	public void testIf() {
@@ -434,7 +440,6 @@ public class LocationMapTests extends BaseTestCase {
 	}
 
 	public void testMacroExpansion() {
-		ImageLocationInfo ili= new ImageLocationInfo();
 		IMacroBinding macro1= new TestMacro("n1", "exp1", null);
 		IMacroBinding macro2= new TestMacro("n2", "exp2", null);
 		IMacroBinding macro3= new TestMacro("n3", "exp3", null);
@@ -444,8 +449,8 @@ public class LocationMapTests extends BaseTestCase {
 		fLocationMap.registerPredefinedMacro(macro1);
 		fLocationMap.registerMacroFromIndex(macro2, "ifile", 2, 12, 32);
 		fLocationMap.encounterPoundDefine(3, 13, 33, 63, 103, macro3);
-		IASTName name1= fLocationMap.encounterImplicitMacroExpansion(macro1, ili);
-		IASTName name2= fLocationMap.encounterImplicitMacroExpansion(macro2, ili);
+		IASTName name1= fLocationMap.encounterImplicitMacroExpansion(macro1, null);
+		IASTName name2= fLocationMap.encounterImplicitMacroExpansion(macro2, null);
 		fLocationMap.pushMacroExpansion(110, 115, 125, 30, macro3, new IASTName[]{name1, name2}, new ImageLocationInfo[0]);
 		fLocationMap.encounteredComment(12, 23, false);
 		checkComment(fLocationMap.getComments()[0], new String(LONGDIGITS, 110, 15), false, FN, 110, 15, 2, 2);
@@ -551,7 +556,7 @@ public class LocationMapTests extends BaseTestCase {
 		
 		inclusions= inclusions[0].getNestedInclusions();
 		assertEquals(1, inclusions.length);
-		checkInclude(inclusions[0].getIncludeDirective(), "b4", "4", "pre11", "pre11", false, true, "pre1", 6, 2, 1, 7, 1);
+		checkInclude(inclusions[0].getIncludeDirective(), "b4b", "4", "pre11", "pre11", false, true, "pre1", 6, 3, 1, 7, 1);
 		assertEquals(0, inclusions[0].getNestedInclusions().length);
 	}
 }

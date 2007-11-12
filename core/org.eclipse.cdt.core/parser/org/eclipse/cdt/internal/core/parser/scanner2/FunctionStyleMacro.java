@@ -104,19 +104,20 @@ public class FunctionStyleMacro extends ObjectStyleMacro {
 	        return sig;
 	    
 	    int len = name.length + 2 /*()*/;
-	    for( int i = 0; i < arglist.length && arglist[i] != null; i++ ){
-            if( i + 1 < arglist.length && arglist[i+1] != null) 
+	    final char[][] params = getOriginalParameters();
+		for( int i = 0; i < params.length && params[i] != null; i++ ){
+            if( i + 1 < params.length && params[i+1] != null) 
                 len += 1; /*,*/
-            len += arglist[i].length;
+            len += params[i].length;
 	    }
 	    sig = new char[len];
 	    System.arraycopy( name, 0, sig, 0, name.length );
 	    sig[name.length] = '(';
 	    int idx = name.length + 1;
-	    for( int i = 0; i < arglist.length && arglist[i] != null; i++ ){
-	        System.arraycopy( arglist[i], 0, sig, idx, arglist[i].length );
-	        idx += arglist[i].length;
-	        if( i + 1 < arglist.length && arglist[i+1] != null )
+	    for( int i = 0; i < params.length && params[i] != null; i++ ){
+	        System.arraycopy( params[i], 0, sig, idx, params[i].length );
+	        idx += params[i].length;
+	        if( i + 1 < params.length && params[i+1] != null )
 	            sig[idx++] = ',';
 	    }
 	    sig[idx] = ')';

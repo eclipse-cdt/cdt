@@ -242,8 +242,9 @@ public interface IToken {
 	static public final int tBLOCKCOMMENT = 143;
 	/** @deprecated don't use it */
 	static public final int tLAST = 143;
+	static public final int tEND_OF_INPUT= 144;
 	
-	int FIRST_RESERVED_IGCCToken		= 144;
+	int FIRST_RESERVED_IGCCToken		= 150;
 	int LAST_RESERVED_IGCCToken			= 199;
 	
 	int FIRST_RESERVED_IExtensionToken	= 243;

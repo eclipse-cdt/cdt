@@ -42,6 +42,13 @@ public interface IScanner extends IMacroCollector {
 	 */
 	public void setScanComments(boolean val);
 	
+	/**
+	 * Turns on/off creation of image locations. 
+	 * @see IASTName#getImageLocation().
+	 * @since 5.0
+	 */
+	public void setComputeImageLocations(boolean val);
+
 	public IMacro addDefinition(char[] key, char[] value); 
 	public IMacro addDefinition(char[] name, char[][] params, char[] expansion);
 	public void addDefinition(IMacro macro);

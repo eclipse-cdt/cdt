@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo.MacroImageLocationInfo;
+import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo.ParameterImageLocationInfo;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.TokenParameterReference;
 
@@ -27,7 +29,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.TokenP
  * @since 5.0
  */
 public class MacroExpander {
-	private static final int ORIGIN = OffsetLimitReachedException.ORIGIN_MACRO_EXPANSION;	
+	private static final int ORIGIN = OffsetLimitReachedException.ORIGIN_MACRO_EXPANSION;
+	private static final Token END_TOKEN = new Token(IToken.tEND_OF_INPUT, null, 0, 0);	
 	
 	/** 
 	 * Marks the beginning and the end of the scope of a macro expansion. Necessary to properly
@@ -66,17 +69,25 @@ public class MacroExpander {
 	 * Combines a list of tokens with the preprocessor to form the input for macro expansion.
 	 */
 	private class TokenSource extends TokenList {
-		private boolean fUseCpp;
+		private final Lexer fLexer;
+		private final boolean fStopAtNewline;
 
-		public TokenSource(boolean useCpp) {
-			fUseCpp= useCpp;
+		public TokenSource(Lexer lexer, boolean stopAtNewline) {
+			fLexer= lexer;
+			fStopAtNewline= stopAtNewline;
 		}
 
 		public Token fetchFirst() throws OffsetLimitReachedException {
 			Token t= removeFirst();
-			if (t == null && fUseCpp) {
-				t= fCpp.fetchTokenFromPreprocessor();
-				fEndOffset= t.getEndOffset();
+			if (t == null && fLexer != null) {
+				t= fLexer.currentToken();
+				if (fStopAtNewline && t.getType() == Lexer.tNEWLINE) {
+					t= END_TOKEN;
+				}
+				else {
+					fEndOffset= t.getEndOffset();
+					fLexer.nextToken();
+				}
 			}
 			return t;
 		}
@@ -98,36 +109,46 @@ public class MacroExpander {
 				t= (Token) t.getNext();
 			}
 
-			if (fUseCpp) {
-				return fCpp.findLParenthesisInContext();
-			}
+			if (fLexer != null) {
+				t= fLexer.currentToken();
+				if (!fStopAtNewline) {
+					while(t.getType() == Lexer.tNEWLINE) {
+						t= fLexer.nextToken();
+					}
+				}
+				return t.getType() == IToken.tLPAREN;
+    		}
+
 			return false;
 		}
 	}
 
+	private final ILexerLog fLog;
 	private final MacroDefinitionParser fDefinitionParser;
 	private final CharArrayObjectMap fDictionary;
 	private final LocationMap fLocationMap;
-	private final CPreprocessor fCpp;
 	private final LexerOptions fLexOptions;
-	private int fEndOffset;	
 	private ArrayList fImplicitMacroExpansions= new ArrayList();
+	private ArrayList fImageLocationInfos= new ArrayList();
 	private boolean fCompletionMode;
 	private int fStartOffset;
+	private int fEndOffset;
 
-	public MacroExpander(CPreprocessor cpp, CharArrayObjectMap dict, LocationMap locationMap, MacroDefinitionParser mdp, LexerOptions lexOptions) {
-		fCpp= cpp;
+	public MacroExpander(ILexerLog log, CharArrayObjectMap dict, LocationMap locationMap, MacroDefinitionParser mdp, LexerOptions lexOptions) {
 		fDictionary= dict;
 		fLocationMap= locationMap;
 		fDefinitionParser= mdp;
 		fLexOptions= lexOptions;
+		fLog= log;
 	}
 	
 	/** 
-	 * Expects that the identifier has been consumed, stores the result in the list provided and returns the
-	 * end offset of the last token read from the preprocessor input.
+	 * Expects that the identifier has been consumed, stores the result in the list provided.
 	 */
-	public int expand(PreprocessorMacro macro, Token identifier, boolean completionMode, TokenList expansion) throws OffsetLimitReachedException {
+	public TokenList expand(Lexer lexer, boolean stopAtNewline, PreprocessorMacro macro, Token identifier, boolean completionMode) throws OffsetLimitReachedException {
+		fImplicitMacroExpansions.clear();
+		fImageLocationInfos.clear();
+		
 		fStartOffset= identifier.getOffset();
 		fEndOffset= identifier.getEndOffset();
 		fCompletionMode= completionMode;
@@ -135,13 +156,15 @@ public class MacroExpander {
 		IdentityHashMap forbidden= new IdentityHashMap();
 		
 		// setup input sequence
-		TokenSource input= new TokenSource(true);
+		TokenSource input= new TokenSource(lexer, stopAtNewline);
 		TokenList firstExpansion= new TokenList();
 		expandOne(identifier, macro, forbidden, input, firstExpansion);
 		input.prepend(firstExpansion);
 		
-		expandAll(input, forbidden, expansion);
-		return fEndOffset;
+		TokenList result= expandAll(input, forbidden);
+		postProcessTokens(result);
+		
+		return result;
 	}
 
 	/**
@@ -161,8 +184,7 @@ public class MacroExpander {
 			for (int i = 0; i < argInputs.length; i++) {
 				final TokenSource argInput = argInputs[i];
 				clonedArgs[i]= argInput.cloneTokens();
-				final TokenList expandedArg= new TokenList();
-				expandAll(argInput, forbidden, expandedArg);
+				final TokenList expandedArg= expandAll(argInput, forbidden);
 				expandedArgs[i]= expandedArg;
 			}
 			replaceArgs(macro, clonedArgs, expandedArgs, result);
@@ -174,7 +196,8 @@ public class MacroExpander {
 		return lastConsumed;
 	}
 
-	private void expandAll(TokenSource input, IdentityHashMap forbidden, TokenList result) throws OffsetLimitReachedException {
+	private TokenList expandAll(TokenSource input, IdentityHashMap forbidden) throws OffsetLimitReachedException {
+		final TokenList result= new TokenList();
 		Token l= null;
 		Token t= input.removeFirst();
 		while(t != null) {
@@ -194,8 +217,11 @@ public class MacroExpander {
 					result.append(t);
 				}
 				else {
-					// mstodo- image location
-					fImplicitMacroExpansions.add(fLocationMap.encounterImplicitMacroExpansion(macro, null));
+					ImageLocationInfo info= null;
+					if (fLexOptions.fCreateImageLocations) {
+						info = createImageLocationInfo(t);
+					}
+					fImplicitMacroExpansions.add(fLocationMap.encounterImplicitMacroExpansion(macro, info));
 
 					TokenList replacement= new TokenList();
 
@@ -213,6 +239,20 @@ public class MacroExpander {
 			l= t;
 			t= input.removeFirst();
 		}
+		return result;
+	}
+
+	private ImageLocationInfo createImageLocationInfo(Token t) {
+		final Object s= t.fSource;
+		if (s instanceof ObjectStyleMacro) {
+			return new MacroImageLocationInfo((ObjectStyleMacro) s, fEndOffset, fEndOffset);
+		}
+		else if (s instanceof CPreprocessor) {
+			int sequenceNumber= fLocationMap.getSequenceNumberForOffset(t.getOffset());
+			int sequenceEndNumber= fLocationMap.getSequenceNumberForOffset(t.getEndOffset());
+			return new ParameterImageLocationInfo(sequenceNumber, sequenceEndNumber);
+		}
+		return null;
 	}
 
 	private void addSpacemarker(Token l, Token t, TokenList target) {
@@ -242,7 +282,7 @@ public class MacroExpander {
 		int idx= 0;
 		int nesting= -1;
 		for (int i = 0; i < result.length; i++) {
-			result[i]= new TokenSource(false);
+			result[i]= new TokenSource(null, false);
 		}
 		
 		boolean complete= false;
@@ -256,7 +296,7 @@ public class MacroExpander {
     		}
 			lastToken= t;
         	switch(t.getType()) {
-        	case Lexer.tEND_OF_INPUT:
+        	case IToken.tEND_OF_INPUT:
         		assert nesting >= 0;
         		if (fCompletionMode) {
         			throw new OffsetLimitReachedException(ORIGIN, null);
@@ -266,7 +306,6 @@ public class MacroExpander {
         		throw new OffsetLimitReachedException(ORIGIN, t);
         		
         	case Lexer.tNEWLINE:
-        		assert false; // we should not get any newlines from macros or the preprocessor.
         		continue loop;
 
         	case IToken.tLPAREN:
@@ -336,7 +375,7 @@ public class MacroExpander {
 	}
 	
 	private void handleProblem(int problemID, char[] arg) {
-		fCpp.handleProblem(problemID, arg, fStartOffset, fEndOffset);
+		fLog.handleProblem(problemID, arg, fStartOffset, fEndOffset);
 	}
 
 	private void replaceArgs(PreprocessorMacro macro, TokenList[] args, TokenList[] expandedArgs, TokenList result) {
@@ -545,7 +584,7 @@ public class MacroExpander {
 		try {
 			Token t1= lex.nextToken();
 			Token t2= lex.nextToken();
-			if (t1.getType() != Lexer.tEND_OF_INPUT && t2.getType() == Lexer.tEND_OF_INPUT) {
+			if (t1.getType() != IToken.tEND_OF_INPUT && t2.getType() == IToken.tEND_OF_INPUT) {
 				t1.setOffset(arg1.getOffset(), arg2.getEndOffset());
 				return t1;
 			}
@@ -604,26 +643,44 @@ public class MacroExpander {
 		}
 	}
 	
-	public IASTName[] createImplicitExpansions() {
+	public IASTName[] clearImplicitExpansions() {
 		IASTName[] result= (IASTName[]) fImplicitMacroExpansions.toArray(new IASTName[fImplicitMacroExpansions.size()]);
 		fImplicitMacroExpansions.clear();
 		return result;
 	}
 
-	public ImageLocationInfo[] createImageLocations(TokenList replacement) {
-		// mstodo- image locations
-		return ImageLocationInfo.NO_LOCATION_INFOS;
+	public ImageLocationInfo[] clearImageLocationInfos() {
+		ImageLocationInfo[] result= (ImageLocationInfo[]) fImageLocationInfos.toArray(new ImageLocationInfo[fImageLocationInfos.size()]);
+		fImageLocationInfos.clear();
+		return result;
 	}
 
-
-	public int adjustOffsets(TokenList replacement) {
+	private void postProcessTokens(TokenList replacement) {
+		final boolean createImageLocations= fLexOptions.fCreateImageLocations;
 		int offset= 0;
 		Token l= null;
 		for (Token t= replacement.first(); t!=null; t= (Token) t.getNext()) {
 			switch(t.getType()) {
 			case CPreprocessor.tEXPANDED_IDENTIFIER:
 				t.setType(IToken.tIDENTIFIER);
+				if (createImageLocations) {
+					ImageLocationInfo info= createImageLocationInfo(t);
+					if (info != null) {
+						info.fTokenOffsetInExpansion= offset;
+						fImageLocationInfos.add(info);
+					}
+				}
 				break;
+			case IToken.tIDENTIFIER:
+				if (createImageLocations) {
+					ImageLocationInfo info= createImageLocationInfo(t);
+					if (info != null) {
+						info.fTokenOffsetInExpansion= offset;
+						fImageLocationInfos.add(info);
+					}
+				}
+				break;
+
 			case CPreprocessor.tSCOPE_MARKER:
 			case CPreprocessor.tSPACE:
 			case CPreprocessor.tNOSPACE:
@@ -633,6 +690,5 @@ public class MacroExpander {
 			t.setOffset(offset, ++offset);
 			l= t;
 		}
-		return offset;
 	}
 }

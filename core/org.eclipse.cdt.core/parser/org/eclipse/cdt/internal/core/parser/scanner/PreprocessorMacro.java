@@ -217,7 +217,7 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 		char[][] result= new char[length][];
 		System.arraycopy(fParamList, 0, result, 0, length-1);
 		if (fHasVarArgs == VAARGS) {
-			result[length-1] = Keywords.cVA_ARGS;
+			result[length-1]= Keywords.cpELLIPSIS;
 		}
 		else {
 			final char[] param= fParamList[length-1];

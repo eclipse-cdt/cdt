@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -97,6 +98,17 @@ public abstract class ASTNode implements IASTNode {
         return locations;
     }
 
+    public IASTImageLocation getImageLocation() {
+    	final IASTTranslationUnit tu= getTranslationUnit();
+    	if (tu != null) {
+    		ILocationResolver l= (ILocationResolver) tu.getAdapter(ILocationResolver.class);
+    		if (l != null) {
+    			return l.getImageLocation(offset, length);
+    		}
+    	}
+        return null;
+    }
+
     public String getRawSignature() {
     	final IASTFileLocation floc= getFileLocation();
         final IASTTranslationUnit ast = getTranslationUnit();
@@ -106,7 +118,7 @@ public abstract class ASTNode implements IASTNode {
         		return new String(lr.getUnpreprocessedSignature(getFileLocation()));
         	}
         	else {
-        		// mstodo- support for old location map
+        		// mstodo- old location resolver, remove
         		return ast.getUnpreprocessedSignature(getNodeLocations());
         	}
         }
@@ -120,6 +132,9 @@ public abstract class ASTNode implements IASTNode {
     public IASTFileLocation getFileLocation() {
         if( fileLocation != null )
             return fileLocation;
+        if (offset == 0 && length == 0) {
+        	return null;
+        }
         IASTTranslationUnit ast = getTranslationUnit();
         if (ast != null) {
         	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);

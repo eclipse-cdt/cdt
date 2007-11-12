@@ -41,9 +41,9 @@ class LocationCtxFile extends LocationCtxContainer {
 		// try to delegate to a child.
 		final int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
 		final int sequenceEnd= sequenceNumber+length;
-		final LocationCtx child1= findChildLessOrEqualThan(sequenceNumber);
-		final LocationCtx child2= testEnd == sequenceNumber ? child1 : findChildLessOrEqualThan(testEnd);
-
+		final LocationCtx child1= findChildLessOrEqualThan(sequenceNumber, false);
+		final LocationCtx child2= testEnd == sequenceNumber ? child1 : findChildLessOrEqualThan(testEnd, false);
+	
 		if (child1 == child2 && child1 != null && child1.fSequenceNumber + child1.getSequenceLength() > testEnd) {
 			return child1.findMappedFileLocation(sequenceNumber, length);
 		}

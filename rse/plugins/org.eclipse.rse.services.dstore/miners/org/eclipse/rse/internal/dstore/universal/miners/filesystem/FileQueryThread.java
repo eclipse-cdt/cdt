@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * David McKnight (IBM) - [192884] Should not use filter to determine previous query results
+ * David McKnight (IBM) - [209387] Should not delete elements for files that still exist (but are filtered out)
  ********************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -339,10 +340,26 @@ public class FileQueryThread extends QueryThread
 				} // end for j
 				
 				//Object left over in the filteredChildren is no longer in the system any more.  Need to remove.
-				Iterator myIterator = filteredChildren.keySet().iterator();
-				while(myIterator.hasNext()) 
+				if (!filteredChildren.isEmpty())
 				{
-					ds.deleteObject(subject, (DataElement)(filteredChildren.get(myIterator.next())));
+					// get the complete list of files (because we're only working with filtered right now
+					String[] completeList = _fileobj.list();
+					
+					Iterator myIterator = filteredChildren.keySet().iterator();
+					while(myIterator.hasNext()) 
+					{
+						DataElement oldChild = (DataElement)filteredChildren.get(myIterator.next());
+						String oldName = oldChild.getName();
+						boolean foundOnSystem = false;
+						for (int c = 0; c < completeList.length && !foundOnSystem; c++){
+							if (completeList[c].equals(oldName)){
+								foundOnSystem = true;
+							}
+						}
+						if (!foundOnSystem){
+							ds.deleteObject(subject, oldChild);
+						}
+					}
 				}
 
 		} catch (Exception e) {

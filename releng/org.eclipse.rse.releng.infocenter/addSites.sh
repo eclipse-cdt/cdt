@@ -1,6 +1,6 @@
 #!/bin/sh
 #*******************************************************************************
-# Copyright (c) 2006 Wind River Systems, Inc.
+# Copyright (c) 2006, 2007 Wind River Systems, Inc.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0 
 # which accompanies this distribution, and is available at 
@@ -10,7 +10,7 @@
 # Martin Oberhuber - initial API and implementation 
 #*******************************************************************************
 #
-# Add new Eclipse "extsion locations" to the infocenter
+# Add new Eclipse "extension locations" to the infocenter
 #
 IHOME=/home/infocenter/latest
 $IHOME/bin/infocenter.sh addSite -from $IHOME/plugins/rse/eclipse

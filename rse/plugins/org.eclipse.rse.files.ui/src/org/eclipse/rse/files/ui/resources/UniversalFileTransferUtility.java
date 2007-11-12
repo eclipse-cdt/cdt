@@ -22,16 +22,17 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * Xuan Chen        (IBM)        - [187548] Editor shows incorrect file name after renaming file on Linux dstore
  * David McKnight   (IBM)        - [191472] should not use super transfer with SSH/FTP Folder Copy and Paste
- * Xuan Chen (IBM)        - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
- * Xuan Chen (IBM)        - [201790] [dnd] Copy and Paste across connections to a Drive doesn't work
- * Xuan Chen (IBM)        - [202668] [Supertransfer] Subfolders not copied when doing first copy from dstore to Local
- * Xuan Chen (IBM)        - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
- * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
+ * Xuan Chen (IBM)               - [191367] with supertransfer on, Drag & Drop Folder from DStore to DStore doesn't work
+ * Xuan Chen (IBM)               - [201790] [dnd] Copy and Paste across connections to a Drive doesn't work
+ * Xuan Chen (IBM)               - [202668] [Supertransfer] Subfolders not copied when doing first copy from dstore to Local
+ * Xuan Chen (IBM)               - [202670] [Supertransfer] After doing a copy to a directory that contains folders some folders name's display "deleted"
+ * Xuan Chen (IBM)               - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
  * David McKnight   (IBM)        - [195285] mount path mapper changes
- * Kevin Doyle (IBM)	  - [203014] Copy/Paste Across Connections doesn't display Overwrite dialog when folder already exists
+ * Kevin Doyle (IBM)	         - [203014] Copy/Paste Across Connections doesn't display Overwrite dialog when folder already exists
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [209375] new API copyRemoteResourcesToWorkspaceMultiple to optimize downloads
+ * Rupen Mardirossian (IBM)      - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances, passed through check collision as well through overloading.
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1229,7 +1230,7 @@ public class UniversalFileTransferUtility
 		
 		// clear the list so that next time we use renamed names
 		newFilePathList.clear();
-		
+		List toCopyNames = new ArrayList();
  
 		for (int i = 0; i < resources.size() && !resultSet.hasMessage(); i++)
 		{
@@ -1247,11 +1248,12 @@ public class UniversalFileTransferUtility
 				String oldPath = newPathBuf.toString() + name;
 				if (checkForCollisions)
 				{
-					RenameStatus status = checkForCollision(existingFiles, targetFolder, name, oldPath);
+					RenameStatus status = checkForCollision(existingFiles, targetFolder, name, oldPath, toCopyNames);
 					int severity = status.getSeverity();
 					
 					if (severity == IStatus.OK) {
 						name = status.getMessage();
+						toCopyNames.add(name);
 					}
 					else if (severity == IStatus.CANCEL) {
 						
@@ -1320,11 +1322,12 @@ public class UniversalFileTransferUtility
 				String oldPath = newPathBuf.toString() + name;
 				if (checkForCollisions)
 				{
-					RenameStatus status = checkForCollision(existingFiles, targetFolder, name, oldPath);
+					RenameStatus status = checkForCollision(existingFiles, targetFolder, name, oldPath, toCopyNames);
 					int severity = status.getSeverity();
 					
 					if (severity == IStatus.OK) {
 						name = status.getMessage();
+						toCopyNames.add(name);
 					}
 					else if (severity == IStatus.CANCEL) {
 						
@@ -2306,6 +2309,10 @@ public class UniversalFileTransferUtility
 
 	protected static RenameStatus checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath)
 	{
+		return checkForCollision(existingFiles, targetFolder, oldName, oldPath, null);
+	}
+	protected static RenameStatus checkForCollision(SystemRemoteResourceSet existingFiles, IRemoteFile targetFolder, String oldName, String oldPath, List NamesInUse)
+	{
 		String newName = oldName;
 
 		IRemoteFile targetFileOrFolder = (IRemoteFile) existingFiles.get(oldPath);
@@ -2313,7 +2320,7 @@ public class UniversalFileTransferUtility
 		RenameStatus status = new RenameStatus(IStatus.OK, Activator.getDefault().getBundle().getSymbolicName(), IStatus.OK, newName, null);
 
 		if (targetFileOrFolder != null && targetFileOrFolder.exists()) {
-			RenameRunnable rr = new RenameRunnable(targetFileOrFolder);
+			RenameRunnable rr = new RenameRunnable(targetFileOrFolder, NamesInUse);
 			Display.getDefault().syncExec(rr);
 			newName = rr.getNewName();
 
@@ -2341,6 +2348,7 @@ public class UniversalFileTransferUtility
 	{
 		private IRemoteFile _targetFileOrFolder;
 		private String _newName;
+		private List _namesInUse = new ArrayList();
 		private int cancelStatus;
 		
 		public static int RENAME_DIALOG_NOT_CANCELLED = -1;
@@ -2352,10 +2360,24 @@ public class UniversalFileTransferUtility
 			_targetFileOrFolder = targetFileOrFolder;
 			cancelStatus = RENAME_DIALOG_NOT_CANCELLED;
 		}
+		public RenameRunnable(IRemoteFile targetFileOrFolder, List namesInUse)
+		{
+			_targetFileOrFolder = targetFileOrFolder;
+			cancelStatus = RENAME_DIALOG_NOT_CANCELLED;
+			_namesInUse=namesInUse;
+		}
 		
 		public void run() {
 			ValidatorFileUniqueName validator = null; 				
-			SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
+			SystemRenameSingleDialog dlg;
+			if(_namesInUse!=null && _namesInUse.size()>0)
+			{
+				dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator, _namesInUse); // true => copy-collision-mode
+			}
+			else
+			{
+				dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
+			}
 			dlg.setShowCancelAllButton(true);
 			
 			dlg.open();

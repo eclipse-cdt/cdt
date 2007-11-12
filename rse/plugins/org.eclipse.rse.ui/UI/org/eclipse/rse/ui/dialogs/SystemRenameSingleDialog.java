@@ -12,9 +12,13 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Rupen Mardirossian (IBM)		 - [208435] When validating name, check for previously used names for multiple renaming instances
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -98,6 +102,7 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
     private ISystemViewElementAdapter adapter = null;
     private Object inputElement = null;    
     private String description = null;
+    private List _namesInUse = new ArrayList();
     
 	/**
 	 * Constructor 
@@ -137,7 +142,24 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 		setNameValidator(nameValidator);
 		
 	}
-	
+	/**
+	 * Constructor with an input object and validator 
+	 * This constructor is in copy/move dialogs when there is a collision
+	 * @param shell The parent dialog
+	 * @param copyCollisionMode true if this is being called because of a name collision on a copy or move operation
+	 * @param inputObject The object that is being renamed, or on a copy/move the object in the target container which already exists. Used to get the old name and the name validator
+	 * @param nameValidator The name validator to use. Can be null, in which case it is queried from the adapter of the input object
+	 * @param nameInUse the List of names that have been previously selected for other files that are to be renamed for multiple file renaming. 
+	 */
+	public SystemRenameSingleDialog(Shell shell, boolean copyCollisionMode, Object inputObject, ISystemValidator nameValidator, List nameInUse) 
+	{
+		this(shell);
+		setInputObject(inputObject);
+		setCopyCollisionMode(copyCollisionMode);
+		setNameValidator(nameValidator);
+		_namesInUse = nameInUse;
+		
+	}
 	/**
 	 * Set the label and tooltip of the prompt. The default is "New name:"
 	 */
@@ -612,6 +634,16 @@ public class SystemRenameSingleDialog extends SystemPromptDialog
 	    
 		if ((errorMessage == null) && (uniqueNameValidator != null))
 		  errorMessage = uniqueNameValidator.validate(theNewName);
+		if(_namesInUse != null && _namesInUse.size()>0)
+		{
+			for(int i=0;i<_namesInUse.size();i++)
+			{
+				if(theNewName.equals(_namesInUse.get(i)))
+				{
+					errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_VALIDATE_ENTRY_NOTUNIQUE);
+				}
+			}
+		}
 		if (errorMessage != null)
 		  setErrorMessage(errorMessage);
 		else

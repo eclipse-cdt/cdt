@@ -36,6 +36,7 @@
  * Kevin Doyle      (IBM)		 - [186125] Changing encoding of a file is not reflected when it was opened before
  * David McKnight   (IBM)        - [208803] add exists() method
  * David McKnight   (IBM)        - [209375] download using copyRemoteResourcesToWorkspaceMultiple
+ * Rupen Mardirossian (IBM)		 - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1739,15 +1740,28 @@ public class SystemViewRemoteFileAdapter
 	{
 		private IRemoteFile _targetFileOrFolder;
 		private String _newName;
+		private List _namesInUse = new ArrayList();
 		public RenameRunnable(IRemoteFile targetFileOrFolder)
 		{
 			_targetFileOrFolder = targetFileOrFolder;
 		}
+		public RenameRunnable(IRemoteFile targetFileOrFolder, List namesInUse)
+		{
+			_targetFileOrFolder = targetFileOrFolder;
+			_namesInUse=namesInUse;
+		}
 		
 		public void run() {
-			ValidatorFileUniqueName validator = null; 				
-			SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
-			
+			ValidatorFileUniqueName validator = null; 	
+			SystemRenameSingleDialog dlg;
+			if(_namesInUse!=null && _namesInUse.size()>0)
+			{
+				dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator, _namesInUse); // true => copy-collision-mode
+			}
+			else
+			{
+				dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
+			}
 			dlg.open();
 			if (!dlg.wasCancelled())
 				_newName = dlg.getNewName();
@@ -1933,7 +1947,7 @@ public class SystemViewRemoteFileAdapter
 										IRemoteFile existingFileOrFolder = ((IRemoteFileSubSystem)srcSubSystem).getRemoteFileObject(targetFolder, name, monitor);
 										if (existingFileOrFolder.exists())
 										{
-											RenameRunnable rr = new RenameRunnable(existingFileOrFolder);
+											RenameRunnable rr = new RenameRunnable(existingFileOrFolder, toCopyNames);
 											Display.getDefault().syncExec(rr);
 											name = rr.getNewName();
 	

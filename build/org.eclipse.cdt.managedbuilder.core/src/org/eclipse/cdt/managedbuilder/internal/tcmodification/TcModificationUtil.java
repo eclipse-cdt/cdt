@@ -165,6 +165,63 @@ public class TcModificationUtil {
 		return storage;
 	}
 	
+	public static TreeMap createResultingChangesMap(TreeMap resultingMap, TreeMap initialMap){
+		int[] types = ObjectTypeBasedStorage.getSupportedObjectTypes();
+		int type;
+		TreeMap result = new TreeMap(PathComparator.INSTANCE);
+		initialMap = (TreeMap)initialMap.clone();
+		
+		for(Iterator iter = resultingMap.entrySet().iterator(); iter.hasNext();){
+			Map.Entry entry = (Map.Entry)iter.next();
+			Object oPath = entry.getKey();
+			
+			PerTypeSetStorage resStorage = (PerTypeSetStorage)entry.getValue();
+			PerTypeSetStorage initStorage = (PerTypeSetStorage)initialMap.remove(oPath);
+			PerTypeSetStorage storage;
+			
+			if(initStorage == null && initStorage.isEmpty(true)){
+				if(resStorage != null && !resStorage.isEmpty(true)){
+					storage = (PerTypeSetStorage)resStorage.clone();
+				} else {
+					storage = new PerTypeSetStorage();
+				}
+			} else if(resStorage == null || resStorage.isEmpty(true)){
+				storage = new PerTypeSetStorage();
+				for(int i = 0; i < types.length; i++){
+					Set set = initStorage.getSet(types[i], false);
+					if(set != null && set.size() != 0){
+						storage.getSet(types[i], true);
+					}
+				}
+			} else {
+				Set initSet, resSet;
+				storage = new PerTypeSetStorage();
+				for(int i = 0; i < types.length; i++){
+					type = types[i];
+					initSet = initStorage.getSet(type, false);
+					resSet = resStorage.getSet(type, false);
+					if(initSet == null || initSet.isEmpty()){
+						if(resSet != null && !resSet.isEmpty()){
+							storage.getSet(type, true).addAll(resSet);
+						}
+					} else if (resSet == null || resSet.isEmpty()){
+						storage.getSet(type, true);
+					} else {
+						if(!initSet.equals(resSet)){
+							storage.getSet(type, true).addAll(resSet);
+						}
+					}
+				}
+			}
+			
+			if(!storage.isEmpty(false)){
+				result.put(oPath, storage);
+			}
+		}
+		
+		return result;
+	}
+	
 	private static void processFolderInfo(PerTypeMapStorage storage, FolderInfo info, PerTypeMapStorage skipMapStorage, boolean addSkipPaths){
 		IPath p = info.getPath();
 		IToolChain rtc = ManagedBuildManager.getRealToolChain(info.getToolChain());
@@ -356,6 +413,12 @@ public class TcModificationUtil {
 		set.add(realBuilder);
 	}
 	
+	public static TreeMap createPathMap(IConfiguration cfg){
+		//TODO: optimize to calculate the map directly
+		PerTypeMapStorage storage = createRealToolToPathSet(cfg, null, false);
+		return createPathMap(storage);
+	}
+
 	public static TreeMap createPathMap(PerTypeMapStorage storage){
 		int[] types = ObjectTypeBasedStorage.getSupportedObjectTypes();
 		TreeMap result = new TreeMap(PathComparator.INSTANCE);
@@ -367,7 +430,6 @@ public class TcModificationUtil {
 			
 			for(Iterator iter = map.entrySet().iterator(); iter.hasNext(); ){
 				Map.Entry entry = (Map.Entry)iter.next();
-				IRealBuildObjectAssociation obj = (IRealBuildObjectAssociation)entry.getKey();
 				SortedSet pathSet = (SortedSet)entry.getValue();
 				
 				for(Iterator pathIter = pathSet.iterator(); pathIter.hasNext(); ){
@@ -378,7 +440,7 @@ public class TcModificationUtil {
 						result.put(path, oset);
 					}
 					
-					oset.getSet(obj.getType(), true).add(obj);
+					oset.getSet(type, true).add(entry.getKey());
 				}
 			}
 		}

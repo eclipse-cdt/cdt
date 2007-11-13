@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class PerTypeSetStorage {
+public class PerTypeSetStorage implements Cloneable {
 	private ObjectTypeBasedStorage fStorage = new ObjectTypeBasedStorage();
 	
 	public Set getSet(int type, boolean create){
@@ -27,8 +27,40 @@ public class PerTypeSetStorage {
 	
 	protected Set createSet(Set set){
 		if(set == null)
-			return new HashSet();
-		return (Set)((HashSet)set).clone();
+			return new LinkedHashSet();
+		return (Set)((LinkedHashSet)set).clone();
 	}
 
+	public Object clone(){
+		try {
+			PerTypeSetStorage clone = (PerTypeSetStorage)super.clone();
+			clone.fStorage = (ObjectTypeBasedStorage)fStorage.clone();
+			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
+			for(int i = 0; i < types.length; i++){
+				Object o = clone.fStorage.get(i); 
+				if(o != null){
+					clone.fStorage.set(i, createSet((Set)o));
+				}
+			}
+			return clone;
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean isEmpty(boolean emptySetAsNull){
+		if(fStorage.isEmpty())
+			return true;
+		if(emptySetAsNull){
+			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
+			for(int i = 0; i < types.length; i++){
+				Object o = fStorage.get(i); 
+				if(o != null && !((Set)o).isEmpty())
+					return false;
+			}
+			return true;
+		}
+		return false;
+	}
 }

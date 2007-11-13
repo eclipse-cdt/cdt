@@ -22,12 +22,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.internal.core.Builder;
+import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChainModificationHelper;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolListModificationInfo;
 import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager.ConflictMatchSet;
@@ -36,7 +43,9 @@ import org.eclipse.cdt.managedbuilder.tcmodification.IModificationOperation;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolModification;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 public abstract class ToolListModification implements
 		IToolListModification {
@@ -438,9 +447,69 @@ public abstract class ToolListModification implements
 		return fAllSysTools;
 	}
 	
-	public void apply() throws CoreException {
-		ToolListModificationInfo info = getModificationInfo();
+	public final void apply() throws CoreException {
+		TreeMap initialMap = TcModificationUtil.createPathMap(fRcInfo.getParent());
+		TreeMap cur = getCompletePathMapStorage();
+		TreeMap result = TcModificationUtil.createResultingChangesMap(cur, initialMap);
+		apply(result);
+	}
+	
+	private void apply(TreeMap resultingChangeMap) throws CoreException {
+		//the order matters here: we first should process tool-chain than a builder and then tools
+		int types[] = new int[]{
+				IRealBuildObjectAssociation.OBJECT_TOOLCHAIN,
+				IRealBuildObjectAssociation.OBJECT_BUILDER,
+				IRealBuildObjectAssociation.OBJECT_TOOL,
+		};
+
+		int type;
+		IConfiguration cfg = fRcInfo.getParent();
+		for(Iterator iter = resultingChangeMap.entrySet().iterator(); iter.hasNext(); ){
+			Map.Entry entry = (Map.Entry)iter.next();
+			IPath path = (IPath)entry.getKey();
+			ResourceInfo rcInfo = (ResourceInfo)cfg.getResourceInfo(path, true);
+			if(rcInfo == null){
+				rcInfo = (FolderInfo)cfg.createFolderInfo(path);
+			}
+			PerTypeSetStorage storage = (PerTypeSetStorage)entry.getValue();
+			for(int i = 0; i < types.length; i++){
+				type = types[i];
+				Set set = storage.getSet(type, false);
+				if(set != null){
+					apply(rcInfo, type, set);
+				}
+			}
+		}
+	}
+	
+	private void apply(ResourceInfo rcInfo, int type, Set set) throws CoreException {
+		switch(type){
+		case IRealBuildObjectAssociation.OBJECT_TOOL:
+			ToolListModificationInfo info = rcInfo == fRcInfo ? getModificationInfo() : 
+				ToolChainModificationHelper.getModificationInfo(rcInfo, rcInfo.getTools(), (Tool[])set.toArray(new Tool[set.size()]));
 		info.apply();
+			break;
+		case IRealBuildObjectAssociation.OBJECT_TOOLCHAIN:
+			if(rcInfo.isFolderInfo()){
+				if(set.size() != 0){
+					ToolChain tc = (ToolChain)set.iterator().next();
+					try {
+						((FolderInfo)rcInfo).changeToolChain(tc, CDataUtil.genId(tc.getId()), null);
+					} catch (BuildException e) {
+						throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), e.getLocalizedMessage(), e));
+					} 
+				}
+			}
+			break;
+		case IRealBuildObjectAssociation.OBJECT_BUILDER:
+			if(rcInfo.isRoot()){
+				if(set.size() != 0){
+					Builder b = (Builder)set.iterator().next();
+					rcInfo.getParent().changeBuilder(b, CDataUtil.genId(b.getId()), null);
+				}
+			}
+			break;
+		}
 	}
 	
 	private ToolListModificationInfo getModificationInfo(){

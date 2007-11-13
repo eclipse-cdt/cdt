@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.tcmodification;
 
+import org.eclipse.core.runtime.CoreException;
+
 
 public interface IApplicableModification extends IModification {
 	/**
@@ -17,6 +19,5 @@ public interface IApplicableModification extends IModification {
 	 * resource info 
 	 * @throws CoreException
 	 */
-	//TODO: not implemented yet
-//	void apply() throws CoreException;
+	void apply() throws CoreException;
 }

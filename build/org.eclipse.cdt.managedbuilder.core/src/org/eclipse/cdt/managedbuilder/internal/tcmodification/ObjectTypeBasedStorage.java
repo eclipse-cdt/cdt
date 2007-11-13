@@ -83,4 +83,12 @@ public final class ObjectTypeBasedStorage implements Cloneable {
 			return null;
 		}
 	}
+	
+	public boolean isEmpty(){
+		for(int i = 0; i < fStorage.length; i++){
+			if(fStorage[i] != null)
+				return false;
+		}
+		return true;
+	}
 }

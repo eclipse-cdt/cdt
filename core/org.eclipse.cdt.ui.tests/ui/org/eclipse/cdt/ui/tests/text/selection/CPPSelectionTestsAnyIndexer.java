@@ -14,6 +14,10 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -939,5 +943,25 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         offset1 = scode.indexOf("MY_MACRO");
         decl = testF3(file, offset1);
         assertNode("MY_MACRO", offset0, decl);
+    }
+    
+    //  int wurscht;
+
+	//  #include "aheader.h"
+    public void testIncludeNavigation() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("aheader.h", hcode); 
+        IFile file = importFile("includenavi.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset0, offset1;
+
+        offset1 = scode.indexOf("aheader.h");
+        testF3(file, offset1);
+        IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+        IEditorInput input = part.getEditorInput();
+        assertEquals("aheader.h", ((FileEditorInput)input).getFile().getName());
     }
 }

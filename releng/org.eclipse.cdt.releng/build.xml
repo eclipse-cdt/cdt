@@ -143,7 +143,7 @@
 	</target>
 	
 	<target name="copy" depends="init" unless="hasErrors">
-		<property name="copyToDir" value="/var/www/html/builds/${branchVersion}"/>
+		<property name="copyToDir" value="/home/www/tools/cdt/builds/${branchVersion}"/>
 		<replace file="${copyToDir}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
 			<replacevalue><![CDATA[  <li><a href="@buildType@.@buildId@/index.html">@buildId@</a></li>

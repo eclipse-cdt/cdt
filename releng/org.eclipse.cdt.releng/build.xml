@@ -102,6 +102,8 @@
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/testing" />
 		</ant>
+		<copy file="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-linux.ppc.tar.gz"
+			tofile="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-linux.ppc64.tar.gz"/>
 		<antcall target="unpack">
 			<param name="srcPrefix" value="${zipsdir}/org.eclipse.cdt-${branchVersion}-${buildId}-${osgi.os}.${osgi.arch}"/>
 			<param name="dest" value="${buildDirectory}"/>

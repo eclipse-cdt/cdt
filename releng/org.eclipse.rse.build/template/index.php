@@ -123,12 +123,11 @@
         <td><a href="http://www.eclipse.org/downloads/download.php?file=/dsdp/tm/downloads/drops/@dropDir@/TM-terminal-@buildId@.zip">TM-terminal-@buildId@.zip</a></td>
         <td>
 			A stand-alone ANSI / vt102 terminal emulator widget and view (with minor 
-			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal/README.txt?revision=1.3&root=DSDP_Project&view=markup">
+			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal/README.txt?revision=1.4&root=DSDP_Project&view=markup">
 			limitations</a>). Includes pluggable connectors 
 			for serial line (through RXTX, see the 
-			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?revision=1.4&root=DSDP_Project&view=markup">
-			installation notes</a> and 
-			  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175336">bug 175336</a>), ssh and telnet. Includes Source.
+			  <a href="http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.tm.core/terminal/org.eclipse.tm.terminal.serial/README.txt?revision=1.5&root=DSDP_Project&view=markup">
+			installation notes</a>), ssh and telnet. Includes Source.
         </td>
     </tr>
 	<tr><td><div align=left><img src = "OK.gif" width=19 height=23></div></td>

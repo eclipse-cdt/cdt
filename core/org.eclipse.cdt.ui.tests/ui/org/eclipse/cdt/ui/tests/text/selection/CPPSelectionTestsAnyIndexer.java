@@ -876,4 +876,68 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         decl = testF3(file, offset1);
         assertNode("func", offset0, decl);        
     }
+    
+    //    #define MY_MACRO 0xDEADBEEF
+    //    #define MY_FUNC() 00
+    //    #define MY_PAR( aRef );
+
+	//  #include "macrodef.h"
+	//	int basictest(void){
+	//	   int tester = MY_MACRO;  //OK: F3 works
+	//	   int xx= MY_FUNC();
+    //     MY_PAR(0);
+    //  }
+    public void testMacroNavigation() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("macrodef.h", hcode); 
+        IFile file = importFile("macronavi.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset0, offset1;
+        
+        offset0 = hcode.indexOf("MY_MACRO");
+        offset1 = scode.indexOf("MY_MACRO");
+        decl = testF3(file, offset1);
+        assertNode("MY_MACRO", offset0, decl);
+        
+        offset0 = hcode.indexOf("MY_FUNC");
+        offset1 = scode.indexOf("MY_FUNC");
+        decl = testF3(file, offset1);
+        assertNode("MY_FUNC", offset0, decl);
+
+        offset0 = hcode.indexOf("MY_PAR");
+        offset1 = scode.indexOf("MY_PAR");
+        decl = testF3(file, offset1);
+        assertNode("MY_PAR", offset0, decl);
+    }
+    
+    //    #define MY_MACRO 0xDEADBEEF
+    //    #define MY_PAR( aRef );
+
+	//  #include "macrodef.h"
+	//	int basictest(void){
+	//	   int tester = MY_PAR(MY_MACRO);
+    //  }
+    public void _testMacroNavigation_Bug208300() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String hcode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile hfile = importFile("macrodef.h", hcode); 
+        IFile file = importFile("macronavi.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, file, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset0, offset1;
+        
+        offset0 = hcode.indexOf("MY_PAR");
+        offset1 = scode.indexOf("MY_PAR");
+        decl = testF3(file, offset1);
+        assertNode("MY_PAR", offset0, decl);
+
+        offset0 = hcode.indexOf("MY_MACRO");
+        offset1 = scode.indexOf("MY_MACRO");
+        decl = testF3(file, offset1);
+        assertNode("MY_MACRO", offset0, decl);
+    }
 }

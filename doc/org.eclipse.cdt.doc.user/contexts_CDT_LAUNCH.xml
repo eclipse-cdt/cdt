@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.contexts"?>
-<!--
-******************************************************************
-**  (C) COPYRIGHT International Business Machines Corp. 2001,2003
-**  All Rights Reserved * Licensed Materials - Property of IBM
-******************************************************************
--->
 <!DOCTYPE contexts [
 	<!ENTITY defaultCSHelp "Default Context Sensitive Help">
 	<!ENTITY mainPage "Main page, Run/Debug dialog box">

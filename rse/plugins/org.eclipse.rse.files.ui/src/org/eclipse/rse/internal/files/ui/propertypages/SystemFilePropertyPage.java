@@ -19,6 +19,7 @@
  * David McKnight (IBM) - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
  * Kevin Doyle (IBM) - [197976] Changing a file to read-only when it is open doesn't update local copy
  * Kevin Doyle (IBM) - [186125] Changing encoding of a file is not reflected when it was opened before
+ * David McKnight   (IBM)        - [209660] use parent encoding as default, rather than system encoding
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -41,6 +42,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.subsystems.files.core.subsystems.IVirtualRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFileEncodingManager;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -212,13 +214,16 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 				}
 			};
 		
-			// default encoding field
-			defaultEncoding = file.getParentRemoteFileSubSystem().getRemoteEncoding();
+			// default encoding field						
+			defaultEncoding = file.getParentRemoteFile().getEncoding();
+			
 			String defaultEncodingLabel = SystemFileResources.RESID_PP_FILE_ENCODING_DEFAULT_LABEL;
 			int idx = defaultEncodingLabel.indexOf('%');
 			
 			if (idx != -1) {
-				defaultEncodingLabel = defaultEncodingLabel.substring(0, idx) + file.getParentRemoteFileSubSystem().getRemoteEncoding() + defaultEncodingLabel.substring(idx+2);
+				defaultEncodingLabel = defaultEncodingLabel.substring(0, idx) + 
+					defaultEncoding +
+				defaultEncodingLabel.substring(idx+2);
 			}
 			
 			defaultEncodingButton = SystemWidgetHelpers.createRadioButton(encodingGroup, null, defaultEncodingLabel, SystemFileResources.RESID_PP_FILE_ENCODING_DEFAULT_TOOLTIP);
@@ -541,8 +546,23 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 		
 	    // set the encoding
 		String selectedEncoding = getSelectedEncoding();
+		
+		
 		if (ok && encodingFieldAdded && prevEncoding != null && !prevEncoding.equals(selectedEncoding)) {
-			RemoteFileEncodingManager.getInstance().setEncoding(getRemoteFile().getParentRemoteFileSubSystem().getHost().getHostName(), getRemoteFile().getAbsolutePath(), selectedEncoding);
+			IRemoteFile rfile = getRemoteFile();
+			IRemoteFileSubSystem subsys = rfile.getParentRemoteFileSubSystem();
+			String hostName = subsys.getHost().getHostName();
+
+			RemoteFileEncodingManager mgr = RemoteFileEncodingManager.getInstance();
+			if (defaultEncodingButton.getSelection())
+			{					
+				mgr.setEncoding(hostName, rfile.getAbsolutePath(),null);
+			}
+			else
+			{
+				mgr.setEncoding(hostName, rfile.getAbsolutePath(), getSelectedEncoding());
+			}
+
 			
 			SystemEditableRemoteFile editable = new SystemEditableRemoteFile(remoteFile);
 			if (editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN) {

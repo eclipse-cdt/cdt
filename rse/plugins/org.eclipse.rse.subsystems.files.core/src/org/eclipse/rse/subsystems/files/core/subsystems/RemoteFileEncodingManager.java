@@ -10,6 +10,7 @@
  * 
  * Contributors:
  * Kushal Munir IBM - Initial creation of this file.
+ * David McKnight  (IBM)             [209660] delete encoding mapping when null is specified
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -125,12 +126,23 @@ public class RemoteFileEncodingManager {
 			if (hostMap.containsKey(hostname)) {
 				props = (Properties)(hostMap.get(hostname));
 			}
-			else {
+			else if (encoding != null)
+			{
 				props = new Properties();
 			}
-			
-			props.setProperty(remotePath, encoding);
-			hostMap.put(hostname, props);
+
+			if (props != null)
+			{
+				if (encoding == null)
+				{
+					props.remove(remotePath);
+				}
+				else
+				{
+					props.setProperty(remotePath, encoding);
+					hostMap.put(hostname, props);
+				}
+			}
 		}
 	}
 	

@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [187130] New Folder/File, Move and Rename should be available for read-only folders
  * Kevin Doyle      (IBM) 		 - [197976] Changing a file to read-only when it is open doesn't update local copy
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
+ * David McKnight   (IBM)         -[209660] check for changed encoding before using cached file
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -581,8 +582,9 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				}
 				else
 				{
+					String encoding = properties.getEncoding();
 					if (properties.getUsedBinaryTransfer() == remoteFile.isBinary() &&
-							properties.getEncoding().equals(remoteFile.getEncoding()) // changed encodings matter too
+							encoding != null && encoding.equals(remoteFile.getEncoding()) // changed encodings matter too
 					)
 					{
 						// we already have same file, use the current file
@@ -1459,7 +1461,8 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		
 		// if we have an xml file, find the local encoding of the file
 		SystemEncodingUtil util = SystemEncodingUtil.getInstance();
-		String encoding = null;
+		String encoding = remoteFile.getEncoding();
+		properties.setEncoding(encoding);
 		
 		String tempPath = file.getLocation().toOSString();
 		
@@ -1473,9 +1476,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				throw new CoreException(s);
 			}
 		}
-		else {
-			encoding = remoteFile.getEncoding();
-		}
+
 		
 		try
 		{

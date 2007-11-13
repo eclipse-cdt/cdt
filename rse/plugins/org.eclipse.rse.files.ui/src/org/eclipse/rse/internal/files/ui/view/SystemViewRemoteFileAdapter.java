@@ -36,7 +36,8 @@
  * Kevin Doyle      (IBM)		 - [186125] Changing encoding of a file is not reflected when it was opened before
  * David McKnight   (IBM)        - [208803] add exists() method
  * David McKnight   (IBM)        - [209375] download using copyRemoteResourcesToWorkspaceMultiple
- * Rupen Mardirossian (IBM)		 - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances 
+ * Rupen Mardirossian (IBM)		 - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances
+ * David McKnight   (IBM)        - [209660] need to check if remote encoding has changed before using cached file 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2972,7 +2973,12 @@ public class SystemViewRemoteFileAdapter
 			boolean dirty = properties.getDirty();
 	
 			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
-			return (!dirty && !remoteNewer);
+			
+			String remoteEncoding = remoteFile.getEncoding();
+			String storedEncoding = properties.getEncoding();
+			
+			boolean encodingChanged = storedEncoding == null || !(remoteEncoding.equals(storedEncoding));
+			return (!dirty && !remoteNewer && !encodingChanged);
 		}
 		return false;
 	}

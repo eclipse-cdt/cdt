@@ -13,8 +13,9 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
- * David McKnight (IBM)          - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
+ * David McKnight   (IBM)        - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
+ * David McKnight   (IBM)        - [209660] use parent encoding as default, rather than system encoding
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1124,28 +1125,70 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	}
 
 
-    /**
-     * Returns the encoding of the remote file. Queries {@link RemoteFileEncodingManager} for the encoding of the remote file.
-     * @return the encoding of the remote file.
-     * @see org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile#getEncoding()
+	
+	private String getParentPathFor(String path)
+	{		
+		boolean isUnix = getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().isUnixStyle();
+		
+		String separator = getSeparator();
+		
+		if (isUnix && path.equals(separator))
+		{
+			return null; // no parent of root
+		}
+		
+		int lastSep = path.lastIndexOf(separator);		
+		
+		if (lastSep == 0) // root is the parent (on unix)
+		{
+			return separator;
+		}
+		else if (lastSep > 0)
+		{
+			return path.substring(0, lastSep);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns the encoding of the remote file. If a user specified value does not exist, then we check
+	 * it's ancestry for an encoding.  Otherwise the encoding of the parent subsystem is returned.
+	 * @see com.ibm.etools.systems.subsystems.IRemoteFile#getEncoding()
 	 */
 	public String getEncoding() {
+		String hostName = getParentRemoteFileSubSystem().getHost().getHostName();
+		String path = getAbsolutePath();
+		String encoding = RemoteFileEncodingManager.getInstance().getEncoding(hostName, path);
 		
-		String encoding = RemoteFileEncodingManager.getInstance().getEncoding(getHostName(), getAbsolutePath());
-		
+		// ask the parent folder
 		if (encoding == null) {
-			
-			if (isRoot()) {
-				encoding = getParentRemoteFileSubSystem().getRemoteEncoding();
+			if (_parentFile != null)
+			{
+				encoding = _parentFile.getEncoding();
 			}
-			else {
-				encoding = getParentRemoteFile().getEncoding();
+			else
+			{
+				
+				// manually extra parents				
+				String parentPath = getParentPathFor(path);
+				while (parentPath != null && encoding == null)
+				{
+					encoding = RemoteFileEncodingManager.getInstance().getEncoding(hostName, parentPath);
+					parentPath = getParentPathFor(parentPath);
+				}
+				
+				if (encoding == null) // no encoding found - fall back to system
+				{
+					encoding = getParentRemoteFileSubSystem().getRemoteEncoding();
+				}
 			}
 		}
 		
 		return encoding;
 	}
-
 	/**
 	 * Sets the encoding of the remote file. It sets the encoding of the remote file in {@link RemoteFileEncodingManager}.
 	 * @param encoding the encoding to be set for the remote file.

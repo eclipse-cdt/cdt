@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)         -[209660] check for changed encoding before using cached file
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -136,7 +137,12 @@ public class SystemEditFilesAction extends SystemBaseAction {
 			boolean dirty = properties.getDirty();
 	
 			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
-			return (!dirty && !remoteNewer);
+
+			String remoteEncoding = remoteFile.getEncoding();
+			String storedEncoding = properties.getEncoding();
+			
+			boolean encodingChanged = storedEncoding == null || !(remoteEncoding.equals(storedEncoding));
+			return (!dirty && !remoteNewer && !encodingChanged);
 		}
 		return false;
 	}

@@ -307,13 +307,16 @@ public class IndexUI {
 	}
 	
 	public static ITranslationUnit getTranslationUnit(ICProject cproject, IName name) {
-		IPath path= Path.fromOSString(name.getFileLocation().getFileName());
-		try {
-			return CoreModelUtil.findTranslationUnitForLocation(path, cproject);
-		} catch (CModelException e) {
-			CUIPlugin.getDefault().log(e);
-			return null;
+		final IASTFileLocation fileLocation = name.getFileLocation();
+		if (fileLocation != null) {
+			IPath path= Path.fromOSString(fileLocation.getFileName());
+			try {
+				return CoreModelUtil.findTranslationUnitForLocation(path, cproject);
+			} catch (CModelException e) {
+				CUIPlugin.getDefault().log(e);
+			}
 		}
+		return null;
 	}
 
 	public static ICElementHandle getCElementForName(ICProject preferProject, IIndex index, IIndexName declName) 

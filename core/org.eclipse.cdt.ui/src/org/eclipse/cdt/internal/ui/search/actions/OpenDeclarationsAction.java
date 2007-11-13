@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -126,6 +127,11 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			if (selectedNames.length > 0 && selectedNames[0] != null) { // just right, only one name selected
 				boolean found = false;
 				IASTName searchName = selectedNames[0];
+				final IASTNode parent = searchName.getParent();
+				if (parent instanceof IASTPreprocessorIncludeStatement) {
+					openInclude(((IASTPreprocessorIncludeStatement) parent));
+					return Status.OK_STATUS;
+				}
 				boolean isDefinition= searchName.isDefinition();
 				IBinding binding = searchName.resolveBinding();
 				if (binding != null && !(binding instanceof IProblemBinding)) {
@@ -164,49 +170,48 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 				if (!found) {
 					reportSymbolLookupFailure(new String(searchName.toCharArray()));
 				}
-				
-			} else {
-				// Check if we're in an include statement
-				IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
-				boolean foundInInclude = false;
-				for (int i = 0; i < preprocs.length; ++i) {
-					if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
-						continue;
-					IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
-					IASTFileLocation loc = preprocs[i].getFileLocation();
-					if (loc != null
-							&& loc.getFileName().equals(ast.getFilePath())
-							&& loc.getNodeOffset() < selectionStart
-							&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
-						// Got it
-						foundInInclude = true;
-						String name = null;
-						if (incStmt.isResolved())
-							name = incStmt.getPath();
-						
-						if (name != null) {
-							final IPath path = new Path(name);
-							runInUIThread(new Runnable() {
-								public void run() {
-									try {
-										open(path, 0, 0);
-									} catch (CoreException e) {
-										CUIPlugin.getDefault().log(e);
-									}
-								}
-							});
-						} else {
-							reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
-						}
-						
-						break;
-					}
-					if (!foundInInclude) {
-						reportSelectionMatchFailure();
-					}
+				return Status.OK_STATUS;
+			} 
+			
+			// Check if we're in an include statement
+			IASTPreprocessorStatement[] preprocs = ast.getAllPreprocessorStatements();
+			for (int i = 0; i < preprocs.length; ++i) {
+				if (!(preprocs[i] instanceof IASTPreprocessorIncludeStatement))
+					continue;
+				IASTPreprocessorIncludeStatement incStmt = (IASTPreprocessorIncludeStatement)preprocs[i];
+				IASTFileLocation loc = preprocs[i].getFileLocation();
+				if (loc != null
+						&& loc.getFileName().equals(ast.getFilePath())
+						&& loc.getNodeOffset() < selectionStart
+						&& loc.getNodeOffset() + loc.getNodeLength() > selectionStart) {
+					// Got it
+					openInclude(incStmt);
+					return Status.OK_STATUS;
 				}
 			}
-			return Status.OK_STATUS;
+			reportSelectionMatchFailure();
+			return Status.OK_STATUS; 
+		}
+
+		private void openInclude(IASTPreprocessorIncludeStatement incStmt) {
+			String name = null;
+			if (incStmt.isResolved())
+				name = incStmt.getPath();
+			
+			if (name != null) {
+				final IPath path = new Path(name);
+				runInUIThread(new Runnable() {
+					public void run() {
+						try {
+							open(path, 0, 0);
+						} catch (CoreException e) {
+							CUIPlugin.getDefault().log(e);
+						}
+					}
+				});
+			} else {
+				reportIncludeLookupFailure(new String(incStmt.getName().toCharArray()));
+			}
 		}
 
 		private boolean navigateOneLocation(IName[] declNames) {

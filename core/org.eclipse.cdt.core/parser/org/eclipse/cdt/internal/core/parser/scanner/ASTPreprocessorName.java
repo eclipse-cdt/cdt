@@ -103,9 +103,6 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 	}
 
 	public IASTFileLocation getFileLocation() {
-		if (fFileLocation == null) {
-			throw new UnsupportedOperationException();
-		}
 		return fFileLocation;
 	}
 

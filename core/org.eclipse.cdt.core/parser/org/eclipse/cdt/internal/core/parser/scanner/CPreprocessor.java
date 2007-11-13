@@ -21,8 +21,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
@@ -811,17 +813,18 @@ public class CPreprocessor implements ILexerLog, IScanner {
     }
 	
     
-    public Object createMacro(char[] name, char[][] parameters, char[] expansion) {
-    	return fMacroDefinitionParser.parseMacroDefinition(name, parameters, expansion);
-    }
-    
-    public void addMacroDefinition(Object macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
-    	if (!(macro instanceof PreprocessorMacro)) {
-    		throw new IllegalArgumentException();
+    public void addMacroDefinition(IIndexMacro macro) {
+    	try {
+    		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(macro.getName(), macro.getParameterList(), macro.getExpansion());
+    		final IASTFileLocation loc= macro.getFileLocation();
+    		int offset= loc.getNodeOffset();
+    		int endOffset= offset + loc.getNodeLength();
+    		fLocationMap.registerMacroFromIndex(result, loc.getFileName(), offset, endOffset, -1);
+	    	fMacroDictionary.put(result.getNameCharArray(), result);
     	}
-    	PreprocessorMacro pm= (PreprocessorMacro) macro;
-    	fLocationMap.registerMacroFromIndex(pm, filename, nameOffset, nameEndOffset, expansionOffset);
-    	fMacroDictionary.put(pm.getNameCharArray(), pm);
+    	catch (Exception e) {
+    		fLog.traceLog("Invalid macro definition: '" + String.valueOf(macro.getName()) + "'");     //$NON-NLS-1$//$NON-NLS-2$
+    	}
     }
     
     public ILocationResolver getLocationMap() {
@@ -1397,7 +1400,12 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	throw new UnsupportedOperationException();
     }
     public void addDefinition(IMacro macro) {
-    	addMacroDefinition(macro.getSignature(), macro.getExpansion());
+    	if (macro instanceof IIndexMacro) {
+    		addMacroDefinition((IIndexMacro) macro);
+    	}
+    	else {
+    		addMacroDefinition(macro.getSignature(), macro.getExpansion());
+    	}
     }
 	public IMacro addDefinition(char[] key, char[] value) {
     	throw new UnsupportedOperationException();

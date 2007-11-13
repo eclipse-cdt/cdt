@@ -113,32 +113,34 @@ class MacroDefinitionParser {
 	 * Parses a macro definition basically checking for var-args.
 	 */
 	public PreprocessorMacro parseMacroDefinition(final char[] name, char[][] paramList, final char[] replacement) {
-		final int length = paramList.length;
 		fHasVarArgs= 0;
-		if (paramList != null && length > 0) {
-			char[] lastParam= paramList[length-1];
-			final int lpl = lastParam.length;
-			switch(lpl) {
-			case 0: case 1: case 2:
+		if (paramList != null) {
+			final int length = paramList.length;
+			if (length > 0) {
+				char[] lastParam= paramList[length-1];
+				final int lpl = lastParam.length;
+				switch(lpl) {
+				case 0: case 1: case 2:
+					break;
+				case 3:
+					if (CharArrayUtils.equals(lastParam, Keywords.cpELLIPSIS)) {
+						fHasVarArgs= FunctionStyleMacro.VAARGS;
+						char[][] copy= new char[length][];
+						System.arraycopy(paramList, 0, copy, 0, length-1);
+						copy[length-1]= Keywords.cVA_ARGS;
+						paramList= copy;
+					}
+					break;
+				default:
+					if (CharArrayUtils.equals(lastParam, lpl-3, 3, Keywords.cpELLIPSIS)) {
+						fHasVarArgs= FunctionStyleMacro.NAMED_VAARGS;
+						char[][] copy= new char[length][];
+						System.arraycopy(paramList, 0, copy, 0, length-1);
+						copy[length-1]= CharArrayUtils.subarray(lastParam, 0, lpl-3);
+						paramList= copy;
+					}
 				break;
-			case 3:
-				if (CharArrayUtils.equals(lastParam, Keywords.cpELLIPSIS)) {
-					fHasVarArgs= FunctionStyleMacro.VAARGS;
-					char[][] copy= new char[length][];
-					System.arraycopy(paramList, 0, copy, 0, length-1);
-					copy[length-1]= Keywords.cVA_ARGS;
-					paramList= copy;
 				}
-				break;
-			default:
-				if (CharArrayUtils.equals(lastParam, lpl-3, 3, Keywords.cpELLIPSIS)) {
-					fHasVarArgs= FunctionStyleMacro.NAMED_VAARGS;
-					char[][] copy= new char[length][];
-					System.arraycopy(paramList, 0, copy, 0, length-1);
-					copy[length-1]= CharArrayUtils.subarray(lastParam, 0, lpl-3);
-					paramList= copy;
-				}
-				break;
 			}
 		}
 		

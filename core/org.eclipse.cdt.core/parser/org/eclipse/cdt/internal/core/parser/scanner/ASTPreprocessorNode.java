@@ -269,6 +269,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyleMacroDefinition {
 	private final ASTPreprocessorName fName;
 	private final int fExpansionNumber;
+	private final int fExpansionOffset;
 	
 	/**
 	 * Regular constructor.
@@ -277,6 +278,7 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyl
 			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fExpansionNumber= expansionNumber;
+		fExpansionOffset= -1;
 		fName= new ASTPreprocessorDefinition(this, IASTPreprocessorMacroDefinition.MACRO_NAME, nameNumber, nameEndNumber, macro.getNameCharArray(), macro);
 	}
 
@@ -288,6 +290,7 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyl
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, -1, -1);
 		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, filename, nameOffset, nameEndOffset, macro.getNameCharArray(), macro);
 		fExpansionNumber= -1;
+		fExpansionOffset= expansionOffset;
 	}
 
 	protected IMacroBinding getMacro() {
@@ -326,6 +329,12 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyl
 				if (lr != null) {
 					return lr.getMappedFileLocation(fExpansionNumber, getOffset() + getLength() - fExpansionNumber);
 				}
+			}
+		}
+		if (fExpansionOffset >= 0) {
+			String fileName= fName.getContainingFilename();
+			if (fileName != null) {
+				return new ASTFileLocationForBuiltins(fileName, fExpansionOffset, getMacro().getExpansionImage().length);
 			}
 		}
 		return null;

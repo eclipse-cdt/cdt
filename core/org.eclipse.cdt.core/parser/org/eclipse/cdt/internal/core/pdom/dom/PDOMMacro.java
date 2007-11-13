@@ -42,7 +42,7 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 
 	private final PDOM pdom;
 	private final int record;
-	private IMacro macro;
+	private IIndexMacro macro;
 
 	private static final byte MACROSTYLE_UNKNOWN = 0; // for reading versions of PDOM <39
 	private static final byte MACROSTYLE_OBJECT  = 1;
@@ -158,6 +158,9 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		public int getNodeLength() {
 			return PDOMMacro.this.getNodeLength();
 		}
+		public char[][] getParameterList() {
+			return null;
+		}
 	}
 	
 	private class FunctionStylePDOMMacro extends FunctionStyleMacro implements IIndexMacro {
@@ -179,6 +182,9 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		public int getNodeLength() {
 			return PDOMMacro.this.getNodeLength();
 		}
+		public char[][] getParameterList() {
+			return getOriginalParameters();
+		}
 	}
 	
 	private char[] getMacroExpansion() {
@@ -196,31 +202,43 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	}
 	
 	private void rebuildMacro() throws CoreException {
-		char[] name = getNameInDB(pdom, record).getChars();
-		PDOMMacroParameter param= getFirstParameter();
-		
-		byte style= pdom.getDB().getByte(record + MACRO_STYLE);
-		if(style == MACROSTYLE_UNKNOWN) {
-			/* PDOM formats < 39 do not store MACRO_STYLE (208558) */
-			style= param != null ? MACROSTYLE_FUNCTION : MACROSTYLE_OBJECT;
-		}
-				
-		switch(style) {
-		case MACROSTYLE_OBJECT:
-			macro= new ObjectStylePDOMMacro(name);
-			break;
-		case MACROSTYLE_FUNCTION:
-			List paramList = new ArrayList();
-			while (param != null) {
-				paramList.add(param.getName().getChars());
-				param = param.getNextParameter();
+		if (macro == null) {
+			char[] name = getNameInDB(pdom, record).getChars();
+			PDOMMacroParameter param= getFirstParameter();
+
+			byte style= pdom.getDB().getByte(record + MACRO_STYLE);
+			if(style == MACROSTYLE_UNKNOWN) {
+				/* PDOM formats < 39 do not store MACRO_STYLE (208558) */
+				style= param != null ? MACROSTYLE_FUNCTION : MACROSTYLE_OBJECT;
 			}
-			char[][] params = (char[][])paramList.toArray(new char[paramList.size()][]);
-			macro= new FunctionStylePDOMMacro(name, params);
-			break;
-		default:
+
+			switch(style) {
+			case MACROSTYLE_OBJECT:
+				macro= new ObjectStylePDOMMacro(name);
+				break;
+			case MACROSTYLE_FUNCTION:
+				List paramList = new ArrayList();
+				while (param != null) {
+					paramList.add(param.getName().getChars());
+					param = param.getNextParameter();
+				}
+				char[][] params = (char[][])paramList.toArray(new char[paramList.size()][]);
+				macro= new FunctionStylePDOMMacro(name, params);
+				break;
+			default:
 				throw new PDOMNotImplementedError();
+			}
 		}
+	}
+
+	public char[][] getParameterList() {
+		try {
+			rebuildMacro();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return new char[][]{};
+		}
+		return macro.getParameterList();
 	}
 
 	public char[] getSignature() {

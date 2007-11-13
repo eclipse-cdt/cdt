@@ -498,6 +498,13 @@ public class LocationMap implements ILocationResolver {
 	IASTPreprocessorMacroDefinition getMacroDefinition(IMacroBinding binding) {
 		if (fMacroDefinitionMap == null) {
 			fMacroDefinitionMap= new IdentityHashMap();
+			for (int i = 0; i < fBuiltinMacros.size(); i++) {
+				final IASTPreprocessorMacroDefinition def = (IASTPreprocessorMacroDefinition) fBuiltinMacros.get(i);
+				final IASTName name = def.getName();
+				if (name != null) {
+					fMacroDefinitionMap.put(name.getBinding(), def);
+				}
+			}
 			IASTPreprocessorMacroDefinition[] defs= getMacroDefinitions();
 			for (int i = 0; i < defs.length; i++) {
 				final IASTPreprocessorMacroDefinition def = defs[i];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,9 +54,9 @@ public interface IInputOrder {
 	 * for the case where a single input file needs to be specified multiple times on the 
 	 * command line.  The order numbers begin at 1.  Not all values need to be specified.  
 	 * Unordered resources will fill the first "gap".  For example:
-	 *   •	To specify the first input file, use 1.
-	 *   •	To specify the last input file, without specifying an order for any other input file, use 2.
-	 *   •	To specify only the first two input files and last input file, use 1, 2 & 4.
+	 *   -	To specify the first input file, use 1.
+	 *   -	To specify the last input file, without specifying an order for any other input file, use 2.
+	 *   -	To specify only the first two input files and last input file, use 1, 2 & 4.
 	 * 
 	 * @return String
 	 */

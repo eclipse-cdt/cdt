@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
 /**
  * This class represents a project instance in the managed build system.
  * Project instances are stored in the .cdtbuild file.  Note that there 
- * is no reason to define a project element in a manifest file – it 
+ * is no reason to define a project element in a manifest file - it 
  * would never be used.
  * <p>
  * The following steps occur when a CDT user creates a new Managed Build 
@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
  *    tool-chain that is the child of the selected configuration element.
  * 4. For each tool element child of the tool-chain that is the child of 
  *    the selected configuration element, create a tool element child of 
- *    the cloned configuration’s tool-chain element that specifies the 
+ *    the cloned configuration's tool-chain element that specifies the 
  *    original tool element as its superClass.
  * This prepares the new project/configurations for modification by the user. 
  * 

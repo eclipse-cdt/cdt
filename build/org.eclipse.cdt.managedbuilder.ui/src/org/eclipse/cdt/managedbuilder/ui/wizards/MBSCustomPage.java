@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Texas Instruments Incorporated and others.
+ * Copyright (c) 2005, 2007 Texas Instruments Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *     IBM Corporation
@@ -19,7 +19,7 @@ import org.eclipse.jface.wizard.IWizardPage;
  * This abstract class provides a convenient, partial implementation of the IWizardPage interface.
  * This class consults with the MBSCustomPageManager to determine its actions.
  
- * If an ISV’s custom pages do not subclass MBSCustomPage then their page implementation must be
+ * If an ISV's custom pages do not subclass MBSCustomPage then their page implementation must be
  * carefully coded to function properly while still respecting the rules laid out by the page manager.
  */
 public abstract class MBSCustomPage implements IWizardPage

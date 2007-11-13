@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Symbian Ltd and others.
+ * Copyright (c) 2005, 2007 Symbian Ltd and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,8 +145,8 @@ public interface IHoldsOptions extends IBuildObject {
 
 	* This method should be called in order to obtain the option whose value and attributes could be directly changed/adjusted
 	* 
-	* @param id –the option to be modified
-	* @param adjustExtension – if false, modifications are to be made for the non-extension element 
+	* @param id -the option to be modified
+	* @param adjustExtension - if false, modifications are to be made for the non-extension element 
 	* (only for some particular configuration associated with some eclipse project)
 	* This is the most common use of this method.
 	* 

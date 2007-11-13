@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,9 +59,9 @@ public interface IAdditionalInput {
 
 	/**
 	 * Returns the kind of additional input.  The valid values are: 
-	 *   •	KIND_ADDITIONAL_DEPENDENCY – added as a tool dependency, but not to the command line.
-	 *   •	KIND_ADDITIONAL_INPUT – added as an additional input to the command line, but not as a dependency.
-	 *   •	KIND_ADDITIONAL_INPUT_DEPENDENCY – added as both.
+	 *   KIND_ADDITIONAL_DEPENDENCY - added as a tool dependency, but not to the command line.
+	 *   KIND_ADDITIONAL_INPUT - added as an additional input to the command line, but not as a dependency.
+	 *   KIND_ADDITIONAL_INPUT_DEPENDENCY - added as both.
 	 * The default is KIND_ADDITIONAL_INPUT_DEPENDENCY
      */
 	public int getKind();

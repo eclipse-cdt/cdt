@@ -79,16 +79,11 @@ class ASTPreprocessorDefinition extends ASTPreprocessorName {
 
 
 class ASTBuiltinName extends ASTPreprocessorDefinition {
-	private final ASTFileLocationForBuiltins fFileLocation;
+	private final IASTFileLocation fFileLocation;
 
-	public ASTBuiltinName(IASTNode parent, ASTNodeProperty property, String filename, int nameOffset, int nameEndOffset, char[] name, IBinding binding) {
+	public ASTBuiltinName(IASTNode parent, ASTNodeProperty property, IASTFileLocation floc, char[] name, IBinding binding) {
 		super(parent, property, -1, -1, name, binding);
-		if (filename != null) {
-			fFileLocation= new ASTFileLocationForBuiltins(filename, nameOffset, nameEndOffset-nameOffset);
-		}
-		else {
-			fFileLocation= null;
-		}
+		fFileLocation= floc;
 	}
 
 	public boolean contains(IASTNode node) {

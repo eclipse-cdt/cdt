@@ -59,20 +59,20 @@ public class LocationMap implements ILocationResolver {
 
     
 	public void registerPredefinedMacro(IMacroBinding macro) {
-		registerPredefinedMacro(macro, null, -1, -1, -1);
+		registerPredefinedMacro(macro, null, -1);
 	}
 
-	public void registerMacroFromIndex(IMacroBinding macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
-		registerPredefinedMacro(macro, filename, nameOffset, nameEndOffset, expansionOffset);
+	public void registerMacroFromIndex(IMacroBinding macro, IASTFileLocation nameLocation, int expansionOffset) {
+		registerPredefinedMacro(macro, nameLocation, expansionOffset);
 	}
 	
-	private void registerPredefinedMacro(IMacroBinding macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
-		ASTMacro astmacro;
+	private void registerPredefinedMacro(IMacroBinding macro, IASTFileLocation nameloc, int expansionOffset) {
+		ASTObjectStyleMacroDefinition astmacro;
 		if (macro.isFunctionStyle()) {
-			astmacro= new ASTFunctionMacro(fTranslationUnit, macro, filename, nameOffset, nameEndOffset, expansionOffset);
+			astmacro= new ASTFunctionStyleMacroDefinition(fTranslationUnit, macro, nameloc, expansionOffset);
 		}
 		else {
-			astmacro= new ASTMacro(fTranslationUnit, macro, filename, nameOffset, nameEndOffset, expansionOffset);
+			astmacro= new ASTObjectStyleMacroDefinition(fTranslationUnit, macro, nameloc, expansionOffset);
 		}
 		fBuiltinMacros.add(astmacro);
 	}
@@ -294,10 +294,10 @@ public class LocationMap implements ILocationResolver {
 		endOffset= getSequenceNumberForOffset(endOffset);
 		ASTPreprocessorNode astMacro;
 		if (!macrodef.isFunctionStyle()) {
-			astMacro= new ASTMacro(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);
+			astMacro= new ASTObjectStyleMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);
 		}
 		else {
-			astMacro= new ASTFunctionMacro(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);
+			astMacro= new ASTFunctionStyleMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);
 		}
 		fDirectives.add(astMacro);
 	}

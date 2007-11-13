@@ -266,7 +266,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 }
 
-class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyleMacroDefinition {
+class ASTObjectStyleMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessorObjectStyleMacroDefinition {
 	private final ASTPreprocessorName fName;
 	private final int fExpansionNumber;
 	private final int fExpansionOffset;
@@ -274,7 +274,7 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyl
 	/**
 	 * Regular constructor.
 	 */
-	public ASTMacro(IASTTranslationUnit parent, IMacroBinding macro, 
+	public ASTObjectStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
 			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fExpansionNumber= expansionNumber;
@@ -286,9 +286,9 @@ class ASTMacro extends ASTPreprocessorNode implements IASTPreprocessorObjectStyl
 	 * Constructor for built-in macros
 	 * @param expansionOffset 
 	 */
-	public ASTMacro(IASTTranslationUnit parent, IMacroBinding macro, String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
+	public ASTObjectStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IASTFileLocation floc, int expansionOffset) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, -1, -1);
-		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, filename, nameOffset, nameEndOffset, macro.getNameCharArray(), macro);
+		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, floc, macro.getNameCharArray(), macro);
 		fExpansionNumber= -1;
 		fExpansionOffset= expansionOffset;
 	}
@@ -356,11 +356,11 @@ class ASTMacroParameter extends ASTPreprocessorNode implements IASTFunctionStyle
 	public void setParameter(String value) {assert false;}
 }
 
-class ASTFunctionMacro extends ASTMacro implements IASTPreprocessorFunctionStyleMacroDefinition {
+class ASTFunctionStyleMacroDefinition extends ASTObjectStyleMacroDefinition implements IASTPreprocessorFunctionStyleMacroDefinition {
 	/**
 	 * Regular constructor.
 	 */
-	public ASTFunctionMacro(IASTTranslationUnit parent, IMacroBinding macro, 
+	public ASTFunctionStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
 			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber) {
 		super(parent, macro, startNumber, nameNumber, nameEndNumber, expansionNumber, endNumber);
 	}
@@ -368,9 +368,9 @@ class ASTFunctionMacro extends ASTMacro implements IASTPreprocessorFunctionStyle
 	/**
 	 * Constructor for builtins
 	 */
-	public ASTFunctionMacro(IASTTranslationUnit parent, IMacroBinding macro, 
-			String filename, int nameOffset, int nameEndOffset, int expansionOffset) {
-		super(parent, macro, filename, nameOffset, nameEndOffset, expansionOffset);
+	public ASTFunctionStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
+			IASTFileLocation nameLoc, int expansionOffset) {
+		super(parent, macro, nameLoc, expansionOffset);
 	}
 
 	public IASTFunctionStyleMacroParameter[] getParameters() {

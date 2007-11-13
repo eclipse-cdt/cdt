@@ -50,6 +50,35 @@ import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
 
 public class LocationMapTests extends BaseTestCase {
+	public class Loc implements IASTFileLocation {
+		private String fFile;
+		private int fOffset;
+		private int fEndOffset;
+		public Loc(String file, int offset, int endOffset) {
+			fFile= file;
+			fOffset= offset;
+			fEndOffset= endOffset;
+		}
+		public int getEndingLineNumber() {
+			return 0;
+		}
+		public String getFileName() {
+			return fFile;
+		}
+		public int getNodeLength() {
+			return fEndOffset-fOffset;
+		}
+		public int getNodeOffset() {
+			return fOffset;
+		}
+		public int getStartingLineNumber() {
+			return 0;
+		}
+		public IASTFileLocation asFileLocation() {
+			return this;
+		}
+	}
+
 	private static final String FN = "filename";
 	private static final int ROLE_DEFINITION = IASTNameOwner.r_definition;
 	private static final int ROLE_UNCLEAR = IASTNameOwner.r_unclear;
@@ -419,8 +448,8 @@ public class LocationMapTests extends BaseTestCase {
 		final String[] params = new String[]{"p1", "p2"};
 		IMacroBinding macro2= new TestMacro("n2", "exp2", params);
 		init(DIGITS);
-		fLocationMap.registerMacroFromIndex(macro1, "fidx1", 0, 0, 0);
-		fLocationMap.registerMacroFromIndex(macro2, "fidx2", 1, 4, 8);
+		fLocationMap.registerMacroFromIndex(macro1, new Loc("fidx1", 0, 0), 0);
+		fLocationMap.registerMacroFromIndex(macro2, new Loc("fidx2", 1, 4), 8);
 		IASTPreprocessorMacroDefinition[] prep= fLocationMap.getBuiltinMacroDefinitions();
 		assertEquals(2, prep.length);
 		checkMacroDefinition(prep[0], macro1, "", "n1", "n1", "exp1", null, "fidx1", -1, 0, 0, 0, 0);
@@ -447,7 +476,7 @@ public class LocationMapTests extends BaseTestCase {
 		assertEquals(1, fLocationMap.getCurrentLineNumber('\n'));
 		assertEquals(2, fLocationMap.getCurrentLineNumber('\n'+1));
 		fLocationMap.registerPredefinedMacro(macro1);
-		fLocationMap.registerMacroFromIndex(macro2, "ifile", 2, 12, 32);
+		fLocationMap.registerMacroFromIndex(macro2, new Loc("ifile", 2, 12), 32);
 		fLocationMap.encounterPoundDefine(3, 13, 33, 63, 103, macro3);
 		IASTName name1= fLocationMap.encounterImplicitMacroExpansion(macro1, null);
 		IASTName name2= fLocationMap.encounterImplicitMacroExpansion(macro2, null);

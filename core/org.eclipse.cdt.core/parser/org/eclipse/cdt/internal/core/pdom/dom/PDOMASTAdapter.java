@@ -425,8 +425,8 @@ public class PDOMASTAdapter {
 	 * Otherwise if the provided name is not empty, it is returned unchanged.
 	 */
 	public static IASTName getAdapterIfAnonymous(IASTName name) {
-		if (name.getFileLocation() == null) {
-			if (name.toCharArray().length == 0) {
+		if (name.toCharArray().length == 0) {
+			if (name.getFileLocation() == null) {
 				IASTNode parent= name.getParent();
 				if (parent != null) {
 					IASTFileLocation loc= parent.getFileLocation();

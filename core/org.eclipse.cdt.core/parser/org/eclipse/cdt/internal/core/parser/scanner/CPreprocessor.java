@@ -817,9 +817,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	try {
     		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(macro.getName(), macro.getParameterList(), macro.getExpansion());
     		final IASTFileLocation loc= macro.getFileLocation();
-    		int offset= loc.getNodeOffset();
-    		int endOffset= offset + loc.getNodeLength();
-    		fLocationMap.registerMacroFromIndex(result, loc.getFileName(), offset, endOffset, -1);
+    		fLocationMap.registerMacroFromIndex(result, loc, -1);
 	    	fMacroDictionary.put(result.getNameCharArray(), result);
     	}
     	catch (Exception e) {

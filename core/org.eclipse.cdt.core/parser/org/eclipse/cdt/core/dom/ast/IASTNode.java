@@ -47,9 +47,14 @@ public interface IASTNode {
 	public IASTNodeLocation[] getNodeLocations();
 	
     /**
-     * Get the location of the node as a file.
+     * Computes a file location for the node. When the node actually resides in a macro-expansion the 
+     * location of the expansion is returned. In case the node spans multiple files the location will
+     * be in a common root file and will contain the appropriate include directives.
+     * <p>
+     * The method may return <code>null</code> in case the node does not have a file-location. This is 
+     * for instance the case for built-in macro names or empty names for anonymous type declarations.
      * 
-     * @return <code>IASTFileLocation</code>
+     * @return the mapped file location or <code>null</code>.
      */
     public IASTFileLocation getFileLocation();
     

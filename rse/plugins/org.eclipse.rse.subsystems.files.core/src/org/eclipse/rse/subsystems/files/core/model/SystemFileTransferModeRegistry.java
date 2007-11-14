@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
+ * David McKnight   (IBM)        - [208951] Use remoteFileTypes extension point to determine file types
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
@@ -29,20 +30,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 
 
@@ -51,7 +51,7 @@ import org.eclipse.ui.XMLMemento;
  * An internal class. Clients must not instantiate or subclass it.
  */
 
-public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRegistry, IPropertyListener {
+public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRegistry {
 
 	private static SystemFileTransferModeRegistry instance;
 	
@@ -70,6 +70,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 	private static final String BINARY_VALUE = "binary";  //$NON-NLS-1$
 	private static final String TEXT_VALUE = "text"; //$NON-NLS-1$
 
+	
 
 	/**
 	 * Constructor for SystemFileTransferModeRegistry
@@ -102,66 +103,106 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		// load our current associations (if any)
 		loadAssociations();
 		
-		// now we need to ensure that our mapping is in sync with the
-		// editor registry. We can be out of sync because we may not have
-		// been listening for editor registry changes (e.g. if our plugin wasn't
-		// started while those changes were made).
-		IWorkbench wb = null;
 		
-		try {
-			wb = PlatformUI.getWorkbench();
-		}
-		// exception occurs if this is initialized before workbench has started
-		// TODO: we need to listen for workbench start to complete, then reinitialize
-		catch (Exception e) {
-			wb = null;
+		// lists to hold the information from the extensions to our
+		// extension point
+		Vector extTextList = new Vector();
+		Vector extBinaryList = new Vector();
+		
+		// get reference to the extension registry
+		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
+
+		// get extensions to our extension point
+		IConfigurationElement[] elements = extRegistry.getConfigurationElementsFor("org.eclipse.rse.subsystems.files.core", "remoteFileTypes"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		// go through all extensions
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[i];
+
+			// get the extension attribute value
+			String extension = element.getAttribute("extension"); //$NON-NLS-1$
+
+			if (extension != null && !extension.equals("")) { //$NON-NLS-1$
+
+				// get the type attribute value
+				String type = element.getAttribute("type"); //$NON-NLS-1$
+
+				if (type != null && !type.equals("")) { //$NON-NLS-1$
+
+					// add extension to list of text types
+					if (type.equalsIgnoreCase("text")) { //$NON-NLS-1$
+
+						// if the extension is not already part of our text
+						// types list
+						if (!extTextList.contains(extension)) {
+
+							// add to list
+							extTextList.add(extension);
+
+							// create an editor mapping
+							// FileEditorMapping mapping = new FileEditorMapping("*", extension);
+
+							// add to editor mapping list
+							// editorMappings.add(mapping);
+						}
+					}
+					// add extension to list of binary types
+					if (type.equalsIgnoreCase("binary")) { //$NON-NLS-1$
+
+						// if the extension is not already part of our
+						// binary types list
+						if (!extBinaryList.contains(extension)) {
+
+							// add to list
+							extBinaryList.add(extension);
+
+							// create an editor mapping
+							// FileEditorMapping mapping = new FileEditorMapping("*", extension);
+
+							// add to editor mapping list
+							// editorMappings.add(mapping);
+						}
+					}
+					else {
+						continue;
+					}
+				}
+			}
+			else {
+				continue;
+			}
 		}
 		
-		if (wb != null)
+		// add text extension to the mappings list
+		for (int t = 0; t < extTextList.size(); t++)
 		{
-			IEditorRegistry registry = wb.getEditorRegistry();
-			syncWithEditorRegistry(registry);
-		
-			registry.addPropertyListener(this);
+			String extension = (String)extTextList.get(t);
+			SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(extension);
+			
+			String key = getMappingKey(mapping);
+			if (!typeModeMappings.containsKey(key))
+			{
+				mapping.setAsText();		
+				typeModeMappings.put(key, mapping);
+			}
 		}
+		
+		// add binary extension to the mappings list
+		for (int b = 0; b < extBinaryList.size(); b++)
+		{
+			String extension = (String)extBinaryList.get(b);
+			SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(extension);
+			
+			
+			String key = getMappingKey(mapping);
+			if (!typeModeMappings.containsKey(key))
+			{
+				mapping.setAsBinary();		
+				typeModeMappings.put(key, mapping);
+			}
+		}		
 	}
 	
-	
-	/**
-	 * Listen for changes to the Editor Registry content.
-	 * Update our registry by changing the hashmap and saving the new
-	 * mappings on disk.
-	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(Object, int)
-	 */
-	public void propertyChanged(Object source, int propId) {
-	
-		if ((source instanceof IEditorRegistry) && (propId == IEditorRegistry.PROP_CONTENTS)) {
-			IEditorRegistry registry = (IEditorRegistry)source;
-			syncWithEditorRegistry(registry);
-		}
-	}
-	
-	
-	/**
-	 * Ensures that our registry is in sync with the editor registry, e.g.
-	 * we have exactly the same types as in the editor registry. We can be
-	 * out of sync if changes are made to the registry while we are not listening.
-	 */
-	private void syncWithEditorRegistry(IEditorRegistry registry) {
-		
-		IFileEditorMapping[] editorMappings = registry.getFileEditorMappings();
-		
-		SystemFileTransferModeMapping[] modeMappings = new SystemFileTransferModeMapping[editorMappings.length];
-		
-		for (int i = 0; i < editorMappings.length; i++) {
-			modeMappings[i] = getMapping(editorMappings[i]);
-		}
- 
-		setModeMappings(modeMappings);		// set new mappings
-		saveAssociations();					// now save associations
-	}
-
-
 	/**
 	 * @see ISystemFileTransferModeRegistry#getModeMappings()
 	 */
@@ -274,15 +315,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 	 */
 	public boolean isText(IRemoteFile remoteFile) {
 		return isText(remoteFile.getName());
-	}
-	
-	
-	/**
-	 * Get a mode mapping given a file editor mapping
-	 */
-	public SystemFileTransferModeMapping getMapping(IFileEditorMapping editorMapping) {
-		return getMapping(editorMapping.getLabel());
-	}
+	}	
 	
 	
 	/**
@@ -383,84 +416,8 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 			extension = fileName.substring(extIndex + 1);			
 		}
 		
-		SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(name, extension);		
-	
-	
-		// check if it's a default text file name
-		for (int i = 0; i < DEFAULT_TEXT_FILE_NAMES.length; i++) 
-		{			
-			if (fileName.equalsIgnoreCase(DEFAULT_TEXT_FILE_NAMES[i])) 
-			{				
-				mapping.setAsText();
-				return mapping;
-			}
-		}
-			
-		// DKM
-		// no longer default to text - instead we default based on preferences
-		// after the if (extension != null), we pick up preferences for default
-		/*
-		if (extension == null)
-		{		
-			// DY mapping.setAsBinary();
-			mapping.setAsText();
-			return mapping;
-		}			*/	
-		
 
-		
-		if (extension != null)
-		{
-			// check if it's a default text file extension
-			for (int i = 0; i < DEFAULT_TEXT_FILE_EXTENSIONS.length; i++) 
-			{			
-				if (extension.equalsIgnoreCase(DEFAULT_TEXT_FILE_EXTENSIONS[i])) 
-				{
-					mapping.setAsText();
-					return mapping;
-				}
-			}
-			
-			// check if it's a default LPEX text file extension
-			for (int i = 0; i < DEFAULT_LPEX_TEXT_FILE_EXTENSIONS.length; i++) 
-			{			
-				if (extension.equalsIgnoreCase(DEFAULT_LPEX_TEXT_FILE_EXTENSIONS[i])) 
-				{
-					mapping.setAsText();
-					return mapping;
-				}
-			}
-			
-			// check if it's a default iSeries LPEX text file extension
-			for (int i = 0; i < DEFAULT_ISERIES_LPEX_TEXT_FILE_EXTENSIONS.length; i++) 
-			{			
-				if (extension.equalsIgnoreCase(DEFAULT_ISERIES_LPEX_TEXT_FILE_EXTENSIONS[i])) 
-				{
-					mapping.setAsText();
-					return mapping;
-				}
-			}
-			
-			// check if it's a default Universal LPEX text file extension (Phil 10/16/2002)
-			for (int i = 0; i < DEFAULT_UNIX_LPEX_TEXT_FILE_EXTENSIONS.length; i++) 
-			{			
-				if (extension.equalsIgnoreCase(DEFAULT_UNIX_LPEX_TEXT_FILE_EXTENSIONS[i])) 
-				{
-					mapping.setAsText();
-					return mapping;
-				}
-			}				
-						
-			// check for known binary types
-			for (int i = 0; i < DEFAULT_BINARY_FILE_EXTENSIONS.length; i++) 
-			{			
-				if (extension.equalsIgnoreCase(DEFAULT_BINARY_FILE_EXTENSIONS[i])) 
-				{
-					mapping.setAsBinary();
-					return mapping;
-				}
-			}				
-		}
+		SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(name, extension);		
 		
 		// default	
 		int defaultFileTransferMode = getFileTransferModeDefaultPreference();

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [208951] no longer used editor registry for file type associations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -35,6 +36,7 @@ import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesCons
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageFile;
+import org.eclipse.rse.subsystems.files.core.model.ISystemFileTransferModeMapping;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeMapping;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.ui.ISystemMessages;
@@ -65,12 +67,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
-import org.eclipse.ui.internal.registry.EditorRegistry;
-import org.eclipse.ui.internal.registry.FileEditorMapping;
 
 /**
  * "Files" Preference page within the Remote Systems preference node.
@@ -96,10 +98,8 @@ public class UniversalPreferencePage
 	protected Button defaultTextButton;
 	
 	protected SystemFileTransferModeRegistry modeRegistry;
-	protected IEditorRegistry editorRegistry;
 	
 	protected ArrayList modeMappings; 
-	protected ArrayList editorMappings;
 	protected ArrayList imagesToDispose;
 	
 	protected Combo archiveTypeCombo;
@@ -129,10 +129,9 @@ public class UniversalPreferencePage
 	protected void createFieldEditors() {
 		
 		modeRegistry = SystemFileTransferModeRegistry.getInstance();
-		editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
+		//editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
 		
 		modeMappings = new ArrayList();
-		editorMappings = new ArrayList();
 		imagesToDispose = new ArrayList();
 		
 		Composite parent = getFieldEditorParent();
@@ -428,11 +427,11 @@ public class UniversalPreferencePage
 		tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
 		tableCol.setResizable(false);
 		tableCol.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_TABLECOL_LABEL);
+
+		ISystemFileTransferModeMapping[] mappings =  modeRegistry.getModeMappings();
 		
-		IFileEditorMapping[] mappingArray = editorRegistry.getFileEditorMappings();
-		
-		for (int i = 0; i < mappingArray.length; i++) {
-			newResourceTableItem(mappingArray[i], i, false);
+		for (int i = 0; i < mappings.length; i++) {
+			newResourceTableItem(mappings[i], i, false);
 		}
 		
 		int defaultFileTransferMode = getFileTransferModeDefaultPreference();
@@ -452,16 +451,14 @@ public class UniversalPreferencePage
 	protected void resetResourceTypeTable()
 	{
 		//clear table and reload defaults
-		editorMappings.clear();
 		modeMappings.clear();
 		resourceTypeTable.setRedraw(false);
 		resourceTypeTable.removeAll();
-		
-		
-		IFileEditorMapping[] mappingArray = editorRegistry.getFileEditorMappings();
-		for (int i = 0; i < mappingArray.length; i++) 
+				
+		ISystemFileTransferModeMapping[] mappings = modeRegistry.getModeMappings();
+		for (int i = 0; i < mappings.length; i++) 
 		{
-		 newResourceTableItem(mappingArray[i], i, false);
+		 newResourceTableItem(mappings[i], i, false);
 		}
 		resourceTypeTable.setRedraw(true);
 
@@ -493,16 +490,22 @@ public class UniversalPreferencePage
 	    uploadBufferSize.setText(ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + ""); //$NON-NLS-1$
 	}
 	
+	private Image getImageDescriptor(ISystemFileTransferModeMapping mapping)
+	{
+		//String extension = mapping.getExtension();
+		// for now just always using the same image
+		return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE).createImage();
+	}
+	
 	/**
  	 * Create a new <code>TableItem</code> to represent the resource
  	 * type editor description supplied.
  	 */
-	protected TableItem newResourceTableItem(IFileEditorMapping mapping, int index, boolean selected) {
+	protected TableItem newResourceTableItem(ISystemFileTransferModeMapping mapping, int index, boolean selected) {
 		
-		editorMappings.add(index, ((FileEditorMapping)mapping).clone());
-		modeMappings.add(index, modeRegistry.getMapping(mapping).clone());
-		
-		Image image = mapping.getImageDescriptor().createImage(false);
+		modeMappings.add(index, mapping);
+				
+		Image image = getImageDescriptor(mapping);
 		
 		if (image != null)
 			imagesToDispose.add(image);
@@ -513,7 +516,7 @@ public class UniversalPreferencePage
 		
 		if (selected)
 			resourceTypeTable.setSelection(index);
-
+				
 		return item;
 	}
 	
@@ -614,7 +617,6 @@ public class UniversalPreferencePage
 		
 		int index = resourceTypeTable.getSelectionIndex();
 		
-		editorMappings.remove(index);
 		modeMappings.remove(index);
 		
 		TableItem[] items = resourceTypeTable.getSelection();
@@ -662,15 +664,16 @@ public class UniversalPreferencePage
 			newFileName = (newName + "." + newExtension).toUpperCase(); //$NON-NLS-1$
 		}
 		
-		IFileEditorMapping resourceType;
+		
 		boolean found = false;
 		int i = 0;
+		SystemFileTransferModeMapping mapping = null;
 		
-		while (i < editorMappings.size() && !found) {
+		while (i < modeMappings.size() && !found) {
 			
-			resourceType = (FileEditorMapping)(editorMappings.get(i));
+			mapping = (SystemFileTransferModeMapping)(modeMappings.get(i));
 			
-			int result = newFileName.compareTo(resourceType.getLabel().toUpperCase());
+			int result = newFileName.compareTo(mapping.getLabel().toUpperCase());
 			
 			// if the type already exists
 			if (result == 0) {
@@ -680,18 +683,25 @@ public class UniversalPreferencePage
 					FileResources.FileEditorPreference_existsTitle,
 					// TODO: Cannot use WorkbenchMessages -- it's internal
 					FileResources.FileEditorPreference_existsMessage);
+				
+				// select the existing mapping
+				resourceTypeTable.select(i);
 				return;
 			}
 
 			if (result < 0)
+			{
 				found = true;
+			}
 			else
 				i++;
 		}
 
+		
 		// Create the new type and insert it
-		resourceType = new FileEditorMapping(newName, newExtension);
-		newResourceTableItem(resourceType, i, true);
+		mapping = new SystemFileTransferModeMapping(newName,newExtension);			
+		newResourceTableItem(mapping, i, true);
+		
 		resourceTypeTable.setFocus();
 		fillMode();
 	}
@@ -778,7 +788,7 @@ public class UniversalPreferencePage
 		super.performOk();
 		if (modeMappings != null)
 		{
-			IFileEditorMapping[] originalMappingArray = editorRegistry.getFileEditorMappings();
+			//IFileEditorMapping[] originalMappingArray = editorRegistry.getFileEditorMappings();
 			
 			// first save the transfer mode registry
 			Object[] array1 = modeMappings.toArray();
@@ -789,19 +799,7 @@ public class UniversalPreferencePage
 			}
 				
 			modeRegistry.setModeMappings(mappingArray1);
-			modeRegistry.saveAssociations();
-			
-			// then save the editor registry
-			Object[] array2 = editorMappings.toArray();
-			FileEditorMapping[] mappingArray2 = new FileEditorMapping[array2.length];
-			
-			for (int j = 0; j < array2.length; j++) {
-				mappingArray2[j] = (FileEditorMapping)(array2[j]);
-			}
-			
-			((EditorRegistry)editorRegistry).setFileEditorMappings(mappingArray2);
-			((EditorRegistry)editorRegistry).saveAssociations();
-			
+			modeRegistry.saveAssociations();					
 			
 			// editorRegistry.removePropertyListener(this);
 			int defaultFileTransferMode = ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+<!-- ================================================================= -->
+<!-- 		Define Remote File Types extension point -->
+<!-- ================================================================= -->
+   <extension-point id="remoteFileTypes" name="%extPoint.remoteFileTypes" schema="schema/remoteFileTypes.exsd"/>
+
+
+
+<extension point="org.eclipse.rse.subsystems.files.core.remoteFileTypes">
+  <remoteFileTypes extension="txt" type="text"/>
+  <remoteFileTypes extension="gif" type="binary"/>
+</extension>
+
+</plugin>

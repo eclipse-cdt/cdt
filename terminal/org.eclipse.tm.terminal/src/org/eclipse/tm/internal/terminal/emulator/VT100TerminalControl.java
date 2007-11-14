@@ -581,7 +581,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	}
 
 	public OutputStream getRemoteToTerminalOutputStream() {
-		return fInputStream.getOutputStream();
+		if(Logger.isLogEnabled()) {
+			return new LoggingOutputStream(fInputStream.getOutputStream());
+		} else {
+			return fInputStream.getOutputStream();
+		}
 	}
 	protected boolean isLogCharEnabled() {
 		return TerminalPlugin.isOptionEnabled(Logger.TRACE_DEBUG_LOG_CHAR);

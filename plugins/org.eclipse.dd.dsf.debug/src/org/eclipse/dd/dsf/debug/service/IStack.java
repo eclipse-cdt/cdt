@@ -104,10 +104,12 @@ public interface IStack extends IDMService {
     
     /**
      * Retrieves the stack depth of the specified stack frame.
+     * @param dmc Context to retrieve data for.
+     * @param The maximum depth of stack to calculate.  Should be 0 to calculate 
+     * depth with no limit.
+     * @param rm Callback 
      */
-    void getStackDepth(DataRequestMonitor<Integer> rm);
-    
-    void getStackDepth(int maxDepth, DataRequestMonitor<Integer> rm);
+    void getStackDepth(IDMContext dmc, int maxDepth, DataRequestMonitor<Integer> rm);
 
         
 }

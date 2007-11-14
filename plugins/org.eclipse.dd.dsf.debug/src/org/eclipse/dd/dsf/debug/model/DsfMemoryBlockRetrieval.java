@@ -33,6 +33,7 @@ import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.core.DebugException;
@@ -66,7 +67,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	private final String fModelId;
 	private final DsfSession fSession;
 	private final DsfExecutor fExecutor;
-	private       IDMContext fContext;
+	private       IMemoryDMContext fContext;
 	private final ServiceTracker fMemoryServiceTracker;
 	private final ServiceTracker fExpressionServiceTracker;
 
@@ -77,7 +78,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 * @param dmc
 	 * @throws DebugException
 	 */
-	public DsfMemoryBlockRetrieval(String modelId, IDMContext dmc) throws DebugException {
+	public DsfMemoryBlockRetrieval(String modelId, IMemoryDMContext dmc) throws DebugException {
 
 		fModelId = modelId;
 		fContext = dmc;
@@ -263,11 +264,8 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 				return null;
 			}
 
-			// Update the DMC
-			fContext = dmc;
-
 			// Resolve the expression
-			blockAddress = resolveMemoryAddress(fContext, expression);
+			blockAddress = resolveMemoryAddress(dmc, expression);
 			if (blockAddress == null) {
 				return null;
 			}

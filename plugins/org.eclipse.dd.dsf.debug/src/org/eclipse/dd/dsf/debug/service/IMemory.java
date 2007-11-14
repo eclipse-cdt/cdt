@@ -26,6 +26,8 @@ import org.eclipse.debug.core.model.MemoryByte;
  */
 public interface IMemory extends IDsfService {
 
+    public interface IMemoryDMContext extends IDMContext {}
+    
 	/**
 	 * Event generated every time a range of bytes is modified.
 	 * 

@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
-import org.eclipse.dd.dsf.datamodel.IDMData;
-import org.eclipse.dd.dsf.datamodel.IDMEvent;
-import org.eclipse.dd.dsf.datamodel.IDMService;
-import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
  * Breakpoint service interface.  The breakpoint service tracks platform breakpoint
@@ -24,26 +21,28 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * breakpoint status in more detail and more dynamically than it it possible with
  * just the marker-based breakpoint object.
  */
-public interface IBreakpoints extends IDMService {
-   
-    public enum BreakpointStatus { INSTALLED, FAILED_TO_INSTALL, FILTERED_OUT }
+public interface IBreakpoints extends IDsfService {
+
+    /**
+     * Marker interface for a context for which breakpoints can be installed.
+     */
+    public interface IBreakpointsDMContext extends IDMContext {};
     
-    public interface IBreakpointDMContext extends IDMContext {}
+    /**
+     * Install and begin tracking breakpoints for given context.  The service 
+     * will keep installing new breakpoints that appear in the IDE for this 
+     * context until {@link #uninstallBreakpoints(IDMContext)} is called for that
+     * context.
+     * @param dmc Context to start tracking breakpoints for.
+     * @param rm Completion callback.
+     */
+    public void installBreakpoints(IDMContext dmc, RequestMonitor rm);
     
-    public interface IBreakpointDMData extends IDMData {
-        IBreakpoint getPlatformBreakpoint();
-        BreakpointStatus getStatus();
-    }
-    
-    public interface IBreakpointDMEvent extends IDMEvent<IBreakpointDMContext> {}
-    
-    public interface IBreakpointInstalledDMEvent extends IBreakpointDMEvent {}
-    public interface IBreakpointUninstalledDMEvent extends IBreakpointDMEvent {}
-    public interface IBreakpointInstallFailedDMEvent extends IBreakpointDMEvent {}
-    
-    public interface IBreakpointHitEvent extends IBreakpointDMEvent {}
-    
-    public void getAllBreakpoints(IDMContext ctx, DataRequestMonitor<IBreakpointDMContext[]> rm);
-    public void getBreakpoints(IDMContext ctx, IBreakpoint platformBp, DataRequestMonitor<IBreakpointDMContext[]> rm);
+    /**
+     * Uninstall and stop tracking breakpoints for the given context.
+     * @param dmc Context to start tracking breakpoints for.
+     * @param rm Completion callback.
+     */
+    public void uninstallBreakpoints(IDMContext dmc, RequestMonitor rm);
 }
 

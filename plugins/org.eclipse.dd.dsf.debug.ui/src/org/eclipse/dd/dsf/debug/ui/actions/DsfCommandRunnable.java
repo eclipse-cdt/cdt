@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.datamodel.DMContexts;
-import org.eclipse.dd.dsf.debug.service.INativeProcesses;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IStepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
@@ -38,10 +37,6 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
     }
     public IStepQueueManager getStepQueueMgr() {
         return fTracker.getService(IStepQueueManager.class);
-    }
-
-    public INativeProcesses getProcesses() {
-        return fTracker.getService(INativeProcesses.class);
     }
 
     public DsfCommandRunnable(DsfServicesTracker servicesTracker, Object element, IDebugCommandRequest request) {

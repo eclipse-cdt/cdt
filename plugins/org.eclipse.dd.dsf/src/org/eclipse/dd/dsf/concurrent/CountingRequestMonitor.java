@@ -12,6 +12,7 @@ package org.eclipse.dd.dsf.concurrent;
 
 import java.util.concurrent.Executor;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.dd.dsf.DsfPlugin;
 
@@ -88,4 +89,12 @@ public class CountingRequestMonitor extends RequestMonitor {
     public String toString() {
         return "CountingRequestMonitor: " + getStatus().toString(); //$NON-NLS-1$
     }
+    
+    @Override
+    public synchronized void setStatus(IStatus status) {
+        if (!(getStatus() instanceof MultiStatus)) {
+            super.setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Combined status of multiple asynchronous operations", null)); //$NON-NLS-1$
+        }
+        ((MultiStatus)getStatus()).add(status);
+    };
 }

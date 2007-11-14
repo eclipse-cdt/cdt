@@ -1,2 +1,2 @@
 dropPrefix[]=R&dropPrefix[]=S&
-dropType[]=Archived Release&dropType[]=Archived 2.0 Stream Stable Build&
+dropType[]=Archived Release&dropType[]=Archived Stable Build&

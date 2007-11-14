@@ -2,15 +2,48 @@
 <?eclipse version="3.0"?>
 <plugin>
 <!-- ================================================================= -->
-<!-- 		Define Remote File Types extension point -->
+<!-- 		Define Remote File Types extension point                   -->
 <!-- ================================================================= -->
    <extension-point id="remoteFileTypes" name="%extPoint.remoteFileTypes" schema="schema/remoteFileTypes.exsd"/>
 
 
 
+<!-- ================================================================= -->
+<!-- 		Define Default File Types                                  -->
+<!-- ================================================================= -->
 <extension point="org.eclipse.rse.subsystems.files.core.remoteFileTypes">
-  <remoteFileTypes extension="txt" type="text"/>
+
+  <remoteFileTypes extension="a" type="binary"/>
+  <remoteFileTypes extension="bmp" type="binary"/>
+  <remoteFileTypes extension="c" type="text"/>
+  <remoteFileTypes extension="cc" type="text"/>
+  <remoteFileTypes extension="class" type="binary"/>
+  <remoteFileTypes extension="com" type="binary"/>
+  <remoteFileTypes extension="cpp" type="text"/>
+  <remoteFileTypes extension="cvv" type="text"/>
+  <remoteFileTypes extension="dll" type="binary"/>
+  <remoteFileTypes extension="doc" type="binary"/>
+  <remoteFileTypes extension="exe" type="binary"/>
   <remoteFileTypes extension="gif" type="binary"/>
+  <remoteFileTypes extension="h" type="text"/>
+  <remoteFileTypes extension="hh" type="text"/>
+  <remoteFileTypes extension="hpp" type="text"/>
+  <remoteFileTypes extension="ico" type="binary"/>
+  <remoteFileTypes extension="ini" type="text"/>
+  <remoteFileTypes extension="jar" type="binary"/>
+  <remoteFileTypes extension="java" type="text"/>
+  <remoteFileTypes extension="jpeg" type="binary"/>
+  <remoteFileTypes extension="jpg" type="binary"/>
+  <remoteFileTypes extension="pdf" type="binary"/>
+  <remoteFileTypes extension="ppt" type="binary"/>
+  <remoteFileTypes extension="so" type="binary"/>
+  <remoteFileTypes extension="tif" type="binary"/>
+  <remoteFileTypes extension="txt" type="text"/>
+  <remoteFileTypes extension="xls" type="binary"/>
+  <remoteFileTypes extension="xmi" type="binary"/>
+  <remoteFileTypes extension="xml" type="binary"/>
+  <remoteFileTypes extension="zip" type="binary"/>
+
 </extension>
 
 </plugin>

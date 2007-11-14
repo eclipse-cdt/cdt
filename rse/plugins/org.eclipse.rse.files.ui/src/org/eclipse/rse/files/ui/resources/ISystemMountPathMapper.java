@@ -20,15 +20,15 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 
 /**
  * This interface is used to provide a common way of mapping mounted resources to the temp files project.
- * Since local (or remote) mounts can change or be removed (i.e. disconnected) this provides a way for a vender to
- * remap a particular resource if the vender software is able to determine the new mount location.
- * Implementors of this interface should register their mappers via the mountPathMapper extension point.
+ * Since local (or remote) mounts can change or be removed (i.e. disconnected) this provides a way for a vendor to
+ * remap a particular resource if the vendor software is able to determine the new mount location.
+ * Implementors of this interface should register their mappers via the mountPathMappers extension point.
  */
 public interface ISystemMountPathMapper
 {
 
 	/**
-	 * Indicates whether this mapper handles recapping of the specified resource
+	 * Indicates whether this mapper handles remapping of the specified resource
 	 * @param hostname the remote host
 	 * @param remotePath the remote path as seen by the file subsystem
 	 * @return whether this mapper handles remapping of the specified remote resource

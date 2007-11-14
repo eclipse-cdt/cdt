@@ -63,7 +63,7 @@ if [ `basename $SITE` = testUpdates ]; then
     mv -f index.html.new index.html
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/testUpdates,g' \
         -e 's,Project 2.0 Update,Project Test Update,g' \
-    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_1 -->/d' \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_2 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project Test Update,g' \
@@ -184,7 +184,7 @@ elif [ `basename $SITE` = signedUpdates ]; then
     mv -f index.html.new index.html
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/signedUpdates,g' \
         -e 's,Project 2.0 Update,Project Signed Test Update,g' \
-    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_1 -->/d' \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_2 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project Signed Test Update,g' \
@@ -219,7 +219,7 @@ being contributed to the Europa coordinated release train (Eclipse 3.3).' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## keep 2.0.1 features in site.xml
-    ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
+    ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_2 -->/d' \
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/milestones,g' \
         -e 's,Project 2.0 Update,Project Milestone Update,g' \
         site.xml > site.xml.new
@@ -242,7 +242,7 @@ to test them before going live.' \
     	index.html > index.html.new
     mv -f index.html.new index.html
     ## keep 2.0.1 features in site.xml
-    ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_1 -->/d' \
+    ##	-e '/<!-- BEGIN_2_0_1 -->/,/<!-- END_2_0_2 -->/d' \
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/interim,g' \
         -e 's,Project 2.0 Update,Project Interim Update,g' \
         site.xml > site.xml.new
@@ -267,7 +267,7 @@ being contributed to the Ganymede coordinated release train (Eclipse 3.4).' \
     ## dont keep 2.0.x features in site.xml
     sed -e 's,/dsdp/tm/updates/2.0,/dsdp/tm/updates/3.0,g' \
         -e 's,Project 2.0 Update,Project 3.0 Milestone Update,g' \
-    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_1_patches -->/d' \
+    	-e '/<!-- BEGIN_2_0 -->/,/<!-- END_2_0_2 -->/d' \
         site.xml > site.xml.new
     mv -f site.xml.new site.xml
     sed -e 's,Project 2.0 Update,Project 3.0 Milestone Update,g' \
@@ -280,7 +280,7 @@ else
     stamp=`date +'%Y%m%d-%H%M'`
     rm index.html site.xml web/site.xsl
     cvs -q update -dPR
-    sed -e '/<!-- BEGIN_2_0_2 -->/,/<!-- END_2_0_2 -->/d' \
+    sed -e '/<!-- BEGIN_2_0_3 -->/,/<!-- END_2_0_3 -->/d' \
         site.xml > site.xml.new1
     sed -e '/<!-- BEGIN_3_0 -->/,/<!-- END_3_0 -->/d' \
         site.xml.new1 > site.xml.new

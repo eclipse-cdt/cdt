@@ -45,7 +45,6 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.IServiceSubSystemConfiguration;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.services.clientserver.PathUtility;
-import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
@@ -522,8 +521,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	
 	protected boolean isBinary(String localEncoding, String hostEncoding, String remotePath)
 	{
-		return SystemFileTransferModeRegistry.getInstance().isBinary(remotePath) ||
-		       SystemEncodingUtil.getInstance().isXML(remotePath);	
+		return SystemFileTransferModeRegistry.getInstance().isBinary(remotePath);	
 	}
 	
 	protected boolean isBinary(IRemoteFile source)

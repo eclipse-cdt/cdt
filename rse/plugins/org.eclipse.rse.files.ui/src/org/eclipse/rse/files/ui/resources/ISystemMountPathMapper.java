@@ -37,7 +37,7 @@ public interface ISystemMountPathMapper
 	
 	/**
 	 * Returns the qualified workspace path for a replica of this mounted file.  Since the
-	 * system path is not unique for mounted files, this allows a vender to make sure it is unique.
+	 * system path is not unique for mounted files, this allows a vendor to make sure it is unique.
 	 * The workspace mapping should always be the remote path on the originating host.
 	 * 
 	 * @param hostname the remote host

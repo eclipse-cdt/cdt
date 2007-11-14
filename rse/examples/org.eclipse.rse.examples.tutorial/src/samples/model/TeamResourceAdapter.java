@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted original tutorial code to Open RSE.
+ * Xuan Chen (IBM) - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package samples.model;
@@ -139,9 +140,9 @@ public class TeamResourceAdapter extends AbstractSystemViewAdapter implements
 	 * Intercept of parent method to actually do the rename. RSE supplies the rename GUI, but 
 	 * defers the action work of renaming to this adapter method.
 	 *  
-	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#doRename(Shell, Object, String)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#doRename(Shell, Object, String, IProgressMonitor)
 	 */
-	public boolean doRename(Shell shell, Object element, String newName)
+	public boolean doRename(Shell shell, Object element, String newName, IProgressMonitor monitor)
 	{
 		((TeamResource)element).setName(newName);
 		return true;

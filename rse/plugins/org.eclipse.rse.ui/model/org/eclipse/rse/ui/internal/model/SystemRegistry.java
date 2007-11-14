@@ -2767,7 +2767,7 @@ public class SystemRegistry implements ISystemRegistry
 		// mark stale any filters that reference this object
 		invalidateFiltersFor(resourceParent, subsystem);
 		
-		if (remoteEvent == null)
+		//if (remoteEvent == null)
 			remoteEvent = new SystemRemoteChangeEvent();
 		remoteEvent.setEventType(eventType);
 		remoteEvent.setResource(resource);

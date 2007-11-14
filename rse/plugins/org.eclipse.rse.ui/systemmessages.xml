@@ -522,6 +522,10 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                           <LevelOne>The xml file '%1' appears to be corrupted. It has been replaced</LevelOne>
                           <LevelTwo>Expected root tag to be named '%2'. The corrupted file has been renamed to '%3' and a new file created for you</LevelTwo>
                     </Message>
+                    <Message ID="1142" Indicator="I">
+                          <LevelOne>Rename %1...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
                     <Message ID="1150" Indicator="E">
                           <LevelOne>Unable to perform action as the underlying file system folder is in use</LevelOne>		
                           <LevelTwo>The file system folder %1 is in use by another task and cannot be removed or modified</LevelTwo>
@@ -673,6 +677,30 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                     <Message ID="1244" Indicator="E">
                           <LevelOne>The selected encoding is not supported.</LevelOne>		
                           <LevelTwo></LevelTwo>
+					</Message>
+					<Message ID="1245" Indicator="E">
+                          <LevelOne>Operation interrupted. Some objects have been moved.
+                          </LevelOne>		
+                          <LevelTwo>The following objects have been moved:
+%1</LevelTwo>
+					</Message>
+					<Message ID="1246" Indicator="E">
+                          <LevelOne>Operation interrupted. Some objects have been renamed.
+                          </LevelOne>		
+                          <LevelTwo>The following objects have been renamed:
+%1</LevelTwo>
+					</Message>
+					<Message ID="1247" Indicator="E">
+                          <LevelOne>Operation interrupted. Some objects have been deleted.
+                          </LevelOne>		
+                          <LevelTwo>The following objects have been deleted:
+%1</LevelTwo>
+					</Message>
+					<Message ID="1248" Indicator="E">
+                          <LevelOne>Operation interrupted. Some objects have been copied to the destination.
+                          </LevelOne>		
+                          <LevelTwo>The following objects have been copied:
+%1</LevelTwo>
 					</Message>
 
     				<!-- universal find files pattern verification -->

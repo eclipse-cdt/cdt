@@ -23,6 +23,7 @@
  * Kevin Doyle (IBM) - [199871] LocalFileService needs to implement getMessage()
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Kevin Doyle (IBM) - [209355] Retrieving list of FILE_TYPE_FOLDERS should return Archive's
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -49,8 +50,10 @@ import org.eclipse.rse.internal.services.local.LocalServiceResources;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
+import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
+import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler;
@@ -189,6 +192,35 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		
 	}
 
+	private class CheckArchiveOperationStatusThread extends Thread {
+		
+		private ISystemOperationMonitor archiveOperationMonitor = null;
+		private IProgressMonitor monitor = null;
+		
+		public CheckArchiveOperationStatusThread(ISystemOperationMonitor archiveOperationMonitor, IProgressMonitor monitor) {
+			this.archiveOperationMonitor = archiveOperationMonitor;
+			this.monitor = monitor;
+		}
+		
+		public void run() 
+		{
+			int a = 0;
+			while(!monitor.isCanceled() && !archiveOperationMonitor.isDone())		
+			{
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {}
+			}
+			
+			//evaluate result
+			
+			if(monitor.isCanceled() && !archiveOperationMonitor.isDone())
+			{
+				archiveOperationMonitor.setCanceled(true);
+			}
+		}
+	}
+	
 	public boolean upload(InputStream stream, String remoteParent, String remoteFile, boolean isBinary, String hostEncoding, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		boolean isCancelled = false;
@@ -209,7 +241,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (handler == null)
 					throwCorruptArchiveException(this.getClass() + ".upload()"); //$NON-NLS-1$
 				else 
-					return handler.add(stream, child.path, remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary);
+					return handler.add(stream, child.path, remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary, null);
 			}
 			if (ArchiveHandlerManager.getInstance().isArchive(destinationFile))
 			{
@@ -217,7 +249,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (handler == null)
 					throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
 				else 
-					return handler.add(stream, "", remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary); //$NON-NLS-1$
+					return handler.add(stream, "", remoteFile, SystemEncodingUtil.ENCODING_UTF_8, hostEncoding, !isBinary, null); //$NON-NLS-1$
 			}
 			
 			File destinationParent = destinationFile.getParentFile();
@@ -454,48 +486,51 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	private boolean copyToArchive(File file, File destination, String newName, IProgressMonitor monitor, String sourceEncoding, String targetEncoding, boolean isText) throws SystemMessageException 
 	{
 		boolean ok = false;
+		
+		ISystemArchiveHandler handler = null;
+		String path = "";  //$NON-NLS-1$
 		if (ArchiveHandlerManager.isVirtual(destination.getAbsolutePath()))
 		{
 			VirtualChild virtualChild = ArchiveHandlerManager.getInstance().getVirtualObject(destination.getAbsolutePath());
-			String path = virtualChild.fullName;
+			handler = virtualChild.getHandler();
+			path = virtualChild.fullName;
 			if (!virtualChild.isDirectory)
 			{
 				path = virtualChild.path;
 			}
-			ISystemArchiveHandler handler = virtualChild.getHandler();
-			if (handler == null)
-				throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
-			else
-			{
-				if (file.isDirectory())
-				{
-				    ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, _fileTypeRegistry);
-				}
-				else
-				{
-					ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, isText);
-				}
-			}
 		}
 		else if (ArchiveHandlerManager.getInstance().isArchive(destination))
 		{
-			ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(destination);
-			if (handler == null)
-				throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
-			else
-			{
-				if (file.isDirectory())
-				{
-				    ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, _fileTypeRegistry); //$NON-NLS-1$			    
-				}
-				else
-				{
-					ok = handler.add(file, "", newName, sourceEncoding, targetEncoding, isText); //$NON-NLS-1$
-				}
-			}
+			handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(destination);
 		}
+		
+		if (handler == null)
+			throwCorruptArchiveException(this.getClass() + ".copyToArchive()"); //$NON-NLS-1$
+			
+		ISystemOperationMonitor archiveOperationMonitor = null;
+		if (null != monitor)
+		{
+			archiveOperationMonitor = new SystemOperationMonitor();
+			CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
+			checkArchiveOperationStatusThread.start();
+		}
+		
+		if (file.isDirectory())
+		{
+		    ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, _fileTypeRegistry, archiveOperationMonitor);
+		}
+		else
+		{
+			ok = handler.add(file, path, newName, sourceEncoding, targetEncoding, isText, archiveOperationMonitor);
+		}
+			
 		if (!ok)
 		{
+			if (null != monitor && monitor.isCanceled())
+			{
+				//This operation has been canceled by the user.
+				throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.copyToArchive(): Handler's add() method returned false.");
 			SystemMessage msg = getMessage("RSEF5006"); //$NON-NLS-1$
 			msg.makeSubstitution(destination.getName(), "localhost"); //$NON-NLS-1$
@@ -872,7 +907,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			throwCorruptArchiveException(this.getClass() + ".createFileInArchive()"); //$NON-NLS-1$
 		else
 		{
-			if (!handler.createFile(child.fullName))
+			if (!handler.createFile(child.fullName, null))
 			{
 				//SystemPlugin.logError("LocalFileSubSystemImpl.createFileInArchive(): Archive Handler's createFile method returned false. Couldn't create virtual object.");
 				throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFile)); //$NON-NLS-1$
@@ -928,7 +963,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
 			throwCorruptArchiveException(this.getClass() + ".createFolderInArchive()"); //$NON-NLS-1$
-		else if (!handler.createFolder(child.fullName))
+		else if (!handler.createFolder(child.fullName, null))
 		{
 			// SystemPlugin.logError("LocalFileSubSystemImpl.createFolderInArchive(): Archive Handler's createFolder method returned false. Couldn't create virtual object.");
 			throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFolder)); //$NON-NLS-1$
@@ -942,10 +977,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			fileName = fileName.substring(0, fileName.length() - ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
 		}
+		File remoteParentFile = new File(remoteParent);
+		if (ArchiveHandlerManager.getInstance().isArchive(remoteParentFile))
+		{
+			remoteParent = remoteParent + ArchiveHandlerManager.VIRTUAL_SEPARATOR;
+		}
 		File fileToDelete = new File(remoteParent, fileName);
 		if (ArchiveHandlerManager.isVirtual(fileToDelete.getAbsolutePath()))
 		{
-			return deleteFromArchive(fileToDelete);
+			return deleteFromArchive(fileToDelete, monitor);
 		}
 		else if (ArchiveHandlerManager.getInstance().isArchive(fileToDelete))
 		{
@@ -989,14 +1029,27 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 * 
 	 * @param destination virtual file to delete from archive
 	 */
-	protected boolean deleteFromArchive(File destination) throws SystemMessageException
+	protected boolean deleteFromArchive(File destination, IProgressMonitor monitor) throws SystemMessageException
 	{
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(destination.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
 			throwCorruptArchiveException(this.getClass() + ".deleteFromArchive()"); //$NON-NLS-1$
-		else if (!handler.delete(child.fullName))
+		ISystemOperationMonitor archiveOperationMonitor = null;
+		if (null != monitor)
 		{
+			archiveOperationMonitor = new SystemOperationMonitor();
+			CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
+			checkArchiveOperationStatusThread.start();
+		}
+		boolean returnValue = handler.delete(child.fullName, archiveOperationMonitor);
+		if (!returnValue)
+		{
+			if (monitor != null && monitor.isCanceled())
+			{
+				//This operation has been canceled by the user.
+				throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+			}
 			// SystemPlugin.logError("LocalFileSubSystemImpl.deleteFromArchive(): Archive Handler's delete method returned false. Couldn't delete virtual object.");
 			throw new SystemMessageException(getMessage("RSEG1125").makeSubstitution(destination)); //$NON-NLS-1$
 		}
@@ -1014,7 +1067,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		File fileToRename = new File(remoteParent, oldName);
 		if (ArchiveHandlerManager.isVirtual(fileToRename.getAbsolutePath()))
 		{
-			return renameVirtualFile(fileToRename, newName);
+			return renameVirtualFile(fileToRename, newName, monitor);
 		}
 		File newFile = new File(remoteParent, newName);
 		boolean result =  fileToRename.renameTo(newFile);
@@ -1041,7 +1094,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 * @param newName the new name of the virtual file
 	 * @return whether the operation was successful or not
 	 */
-	protected boolean renameVirtualFile(File destination, String newName) throws SystemMessageException
+	protected boolean renameVirtualFile(File destination, String newName, IProgressMonitor monitor) throws SystemMessageException
 	{
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(destination.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
@@ -1051,11 +1104,25 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		}
 		else
 		{
-			boolean retval = handler.rename(child.fullName, newName);
+			ISystemOperationMonitor archiveOperationMonitor = null;
+			if (null != monitor)
+			{
+				archiveOperationMonitor = new SystemOperationMonitor();
+				CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
+				checkArchiveOperationStatusThread.start();
+			}
+			
+			boolean retval = handler.rename(child.fullName, newName, archiveOperationMonitor);
 			if (!retval)
 			{
+				if (null != monitor && monitor.isCanceled())
+				{
+					//This operation has been canceled by the user.
+					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				}
 				// SystemPlugin.logError("LocalFileSubSystemImpl.renameVirtualFile(): Archive Handler's rename method returned false. Couldn't rename virtual object.");
-				throw new SystemMessageException(getMessage("RSEG1127").makeSubstitution(child.fullName)); //$NON-NLS-1$
+				//SystemMessageDialog.displayErrorMessage(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_RENAME_FILE_FAILED).makeSubstitution(file.toString()));
+				throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(child.fullName)); //$NON-NLS-1$
 			}
 			return retval;
 		}
@@ -1086,7 +1153,21 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{	
 			if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
 			{
-				movedOk = delete(srcParent, srcName, monitor);
+				try
+				{
+					movedOk = delete(srcParent, srcName, monitor);
+				}
+				catch (SystemMessageException exc)
+				{
+					if (monitor.isCanceled())
+					{
+						//This mean the copy operation is ok, but delete operation has been canceled by user.
+						//The delete() call will take care of recovered from the cancel operation.
+						//So we need to make sure to remove the already copied file/folder.
+						delete(tgtParent, tgtName, null);
+					}
+					throw exc;
+				}
 			}
 		}
 		return movedOk;
@@ -1261,16 +1342,58 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		boolean folderCopy = sourceFolderOrFile.isDirectory();
 		String src = sourceFolderOrFile.getAbsolutePath();
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(sourceFolderOrFile.getAbsolutePath());
+		ISystemOperationMonitor archiveOperationMonitor = null;
+		CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = null;
+		if (null != monitor)
+		{
+			archiveOperationMonitor = new SystemOperationMonitor();
+			checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
+		}
 		if (!(ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath())) && !ArchiveHandlerManager.getInstance().isArchive(targetFolder))
 		{
 			// this is an optimization to speed up extractions from large zips. Instead of
 			// extracting to a temp location and then copying the temp files to the target location
 			// we simply instruct the handler to extract to the target location.
-			return child.getExtractedFile(new File(targetFolder, child.name), sourceEncoding, isText);
+			if (null != monitor)
+			{
+				checkArchiveOperationStatusThread.start();
+			}
+			File destinationFile = new File(targetFolder, child.name);
+			boolean returnValue = child.getExtractedFile(destinationFile, sourceEncoding, isText, archiveOperationMonitor);
+			if (!returnValue)
+			{
+				if (destinationFile.isDirectory())
+				{
+					deleteContents(destinationFile, monitor);
+				}
+				else
+				{
+					destinationFile.delete();
+				}
+				
+				if (monitor != null && monitor.isCanceled())
+				{
+					//This operation has been canceled by the user.
+					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				}
+				// SystemPlugin.logError("LocalFileSubSystemImpl.renameVirtualFile(): Archive Handler's rename method returned false. Couldn't rename virtual object.");
+				//SystemMessageDialog.displayErrorMessage(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_RENAME_FILE_FAILED).makeSubstitution(file.toString()));
+				throw new SystemMessageException(getMessage("RSEF1301").makeSubstitution(child.fullName)); //$NON-NLS-1$
+			}
+			return returnValue;
 		}
 		
-		src = child.getExtractedFile(sourceEncoding, isText).getAbsolutePath();
-
+		if (null != monitor)
+		{
+			checkArchiveOperationStatusThread.start();
+		}
+		
+		src = child.getExtractedFile(sourceEncoding, isText, archiveOperationMonitor).getAbsolutePath();
+		if (monitor != null && monitor.isCanceled())
+		{
+			//This operation has been canceled by the user.
+			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+		}
 		if (child.isDirectory)
 		{
 			File tempSource = null;
@@ -1294,15 +1417,25 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			if (handler == null)
 				throwCorruptArchiveException(this.getClass() + ".copy()"); //$NON-NLS-1$
 			else 
-				handler.extractVirtualDirectory(child.fullName, tempSource, sourceEncoding, isText);
+				handler.extractVirtualDirectory(child.fullName, tempSource, sourceEncoding, isText, archiveOperationMonitor);
 			src = tempSource.getAbsolutePath() + File.separatorChar + child.name;
 		}
 		if (ArchiveHandlerManager.isVirtual(targetFolder.getAbsolutePath()) || ArchiveHandlerManager.getInstance().isArchive(targetFolder))
 		{
 			File source = new File(src);
-			return copyToArchive(source, targetFolder, newName, monitor, SystemEncodingUtil.ENCODING_UTF_8, targetEncoding, isText);
+			boolean returnValue = copyToArchive(source, targetFolder, newName, monitor, SystemEncodingUtil.ENCODING_UTF_8, targetEncoding, isText);
+			if (!returnValue)
+			{
+				if (monitor != null && monitor.isCanceled())
+				{
+					//This operation has been canceled by the user.
+					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				}
+			}
+			return returnValue;
 		}
-
+		
+		//Don't think the code below here ever got executed, since it scenario has been covered by extract directly to the destination archive file.
 		String target = targetFolder.getAbsolutePath() + java.io.File.separator + newName;
 		// handle embedded blanks of from or to name...
 		if (src.indexOf(' ') >= 0)
@@ -1359,9 +1492,14 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	public boolean copyBatch(String[] srcParents, String[] srcNames, String tgtParent, IProgressMonitor monitor) throws SystemMessageException 
 	{
 		boolean ok = true;
+		SystemMessage msg = getMessage("RSEG1117");   //$NON-NLS-1$
+		String deletingMessage = msg.makeSubstitution("").getLevelOneText(); //$NON-NLS-1$
+		monitor.beginTask(deletingMessage, srcParents.length);
 		for (int i = 0; i < srcParents.length; i++)
 		{
+			monitor.subTask(msg.makeSubstitution(srcNames[i]).getLevelOneText());
 			ok = ok && copy(srcParents[i], srcNames[i], tgtParent, srcNames[i], monitor);
+			monitor.worked(1);
 		}
 		return ok;
 	}

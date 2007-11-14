@@ -14,6 +14,7 @@
  * Contributors:
  * Michael Berger   (IBM) - Bug 147791 - symbolic links can cause circular search.
  * David McKnight   (IBM)  - [190010] cancelling search
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -218,7 +219,7 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 					
 					// if it's not a file search, call the handler method to search
 					if (!_isFileSearch) {
-						results = vc.getHandler().search(vc.fullName, _stringMatcher);
+						results = vc.getHandler().search(vc.fullName, _stringMatcher, null);
 					
 						// if at least one match found, then send back the remote file with matches
 						if (results != null && results.length > 0) {

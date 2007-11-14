@@ -22,6 +22,7 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * Kevin Doyle (IBM) - [187707] Added separator between New Folder and New File in context menu
  * David McKnight   (IBM)        - [199566] Remove synchronzied from internalGetChildren
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -638,7 +639,7 @@ public class SystemViewFilterReferenceAdapter
 	/**
 	 * Perform the rename action. Assumes uniqueness checking was done already.
 	 */
-	public boolean doRename(Shell shell, Object element, String name) throws Exception
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
 	{
 		ISystemFilter filter = getFilter(element);
 		ISystemFilterPoolManager fpMgr = filter.getSystemFilterPoolManager();

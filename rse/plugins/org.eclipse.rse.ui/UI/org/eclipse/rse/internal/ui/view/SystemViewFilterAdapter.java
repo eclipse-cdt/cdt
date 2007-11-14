@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -470,7 +471,7 @@ public class SystemViewFilterAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Perform the rename action.
 	 */
-	public boolean doRename(Shell shell, Object element, String name) throws Exception
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
 	{
 		ISystemFilter filter = getFilter(element);
 		ISystemFilterPoolManager fpMgr = filter.getSystemFilterPoolManager();

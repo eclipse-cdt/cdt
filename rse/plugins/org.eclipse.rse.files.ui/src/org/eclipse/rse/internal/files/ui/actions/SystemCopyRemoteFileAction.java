@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [196588] Move Dialog doesn't show Archives
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -58,6 +59,7 @@ import org.eclipse.rse.ui.dialogs.SystemRenameSingleDialog;
 import org.eclipse.rse.ui.dialogs.SystemSimpleContentElement;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -131,7 +133,32 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
     // --------------------------
     // PARENT METHOD OVERRIDES...
     // --------------------------
-    
+	public static class RenameRunnable implements Runnable
+	{
+		private IRemoteFile _targetFileOrFolder;
+		private String _newName;
+		public RenameRunnable(IRemoteFile targetFileOrFolder)
+		{
+			_targetFileOrFolder = targetFileOrFolder;
+		}
+		
+		public void run() {
+			ValidatorFileUniqueName validator = null; 				
+			SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(null, true, _targetFileOrFolder, validator); // true => copy-collision-mode
+			
+			dlg.open();
+			if (!dlg.wasCancelled())
+				_newName = dlg.getNewName();
+			else
+				_newName = null;
+		}
+		
+		public String getNewName()
+		{
+			return _newName;
+		}
+	}
+
 	/**
 	 * @see SystemBaseCopyAction#checkForCollision(Shell, IProgressMonitor, Object, Object, String)
 	 * @param shell Window to host dialog
@@ -165,12 +192,9 @@ public class SystemCopyRemoteFileAction extends SystemBaseCopyAction
 		      // object's system view adaptor for its name validator. See getNameValidator in SystemViewRemoteFileAdapter. phil
 			  ValidatorFileUniqueName validator = null; // new ValidatorFileUniqueName(shell, targetFolder, srcFileOrFolder.isDirectory());
 			  //SystemCollisionRenameDialog dlg = new SystemCollisionRenameDialog(shell, validator, oldName);
-			  SystemRenameSingleDialog dlg = new SystemRenameSingleDialog(shell, true, targetFileOrFolder, validator); // true => copy-collision-mode
-			  dlg.open();
-			  if (!dlg.wasCancelled())
-			    newName = dlg.getNewName();
-			  else
-			    newName = null;
+			  RenameRunnable rr = new RenameRunnable(targetFileOrFolder);
+				Display.getDefault().syncExec(rr);
+				newName = rr.getNewName();
 			}
 		} catch (SystemMessageException e) {
 			SystemBasePlugin.logError("SystemCopyRemoteFileAction.checkForCollision()", e); //$NON-NLS-1$

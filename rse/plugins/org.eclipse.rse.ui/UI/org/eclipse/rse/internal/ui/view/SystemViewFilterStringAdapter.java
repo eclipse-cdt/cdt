@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -256,7 +257,7 @@ public class SystemViewFilterStringAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Perform the rename action.
 	 */
-	public boolean doRename(Shell shell, Object element, String name) throws Exception
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
 	{
 		return true;
 	}    	

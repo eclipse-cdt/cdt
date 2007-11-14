@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste with Search view open
+ * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -1397,7 +1398,7 @@ public class SystemTableTreeView
 				if (remoteAdapter != null)
 					oldFullName = remoteAdapter.getAbsoluteName(element);
 				// pre-rename
-				ok = adapter.doRename(getShell(), element, newNames[nameIdx++]);
+				ok = adapter.doRename(getShell(), element, newNames[nameIdx++], null);
 				if (ok)
 				{
 					if (remoteAdapter != null) {

@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * Xuan Chen (IBM)     - [200872] [Archives] Size Property displays size of Archive not of file inside Archive
+ * Xuan Chen (IBM)     - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.local.model;
@@ -167,7 +168,7 @@ public class LocalVirtualFile extends LocalFile implements IVirtualRemoteFile
 	
 	public Object getFile(String srcEncoding, boolean isText) 
 	{
-		return _node.getChild().getExtractedFile(srcEncoding, isText);
+		return _node.getChild().getExtractedFile(srcEncoding, isText, null);
 	}
 
 	public String getContainingArchiveFullName() 

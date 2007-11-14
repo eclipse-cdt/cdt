@@ -33,6 +33,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [209375] new API copyRemoteResourcesToWorkspaceMultiple to optimize downloads
  * Rupen Mardirossian (IBM)      - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances, passed through check collision as well through overloading.
+ * Xuan Chen          (IBM)      - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1892,12 +1893,12 @@ public class UniversalFileTransferUtility
 			
 			ISystemArchiveHandler handler = ArchiveHandlerManager.getInstance().getRegisteredHandler(dest);
 	
-			VirtualChild[] arcContents = handler.getVirtualChildrenList();
+			VirtualChild[] arcContents = handler.getVirtualChildrenList(null);
 			monitor.beginTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_EXTRACT, arcContents.length);
 			
 			for (int i = 0; i < arcContents.length; i++)
 			{
-				if (arcContents[i].isDirectory && handler.getVirtualChildren(arcContents[i].fullName) == null) continue;
+				if (arcContents[i].isDirectory && handler.getVirtualChildren(arcContents[i].fullName, null) == null) continue;
 				String currentTargetPath = targetResource.getParent().getLocation().toOSString() + localSS.getSeparator() + useLocalSeparator(arcContents[i].fullName);
 				IRemoteFile currentTarget = localSS.getRemoteFileObject(currentTargetPath, monitor);
 				boolean replace = false;

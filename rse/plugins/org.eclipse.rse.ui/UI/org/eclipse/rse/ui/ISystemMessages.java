@@ -15,6 +15,9 @@
  *                                API to the user actions plugin
  * Kevin Doyle (IBM) - [160769] Added FILEMSG_MOVE_FILTER_NOT_VALID
  * Kevin Doyle (IBM) - [199324] Added FILEMSG_MOVE_TARGET_EQUALS_PARENT_OF_SRC
+ * Xuan Chen   (IBM) - [160775] Added MSG_RENAMEGENERIC_PROGRESS, FILEMSG_MOVE_INTERRUPTED
+ *                                    FILEMSG_RENAME_INTERRUPTED, FILEMSG_DELETE_INTERRUPTED
+ *                                    FILEMSG_COPY_INTERRUPTED
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -195,6 +198,7 @@ public interface ISystemMessages
 	public static final String MSG_MOVEGENERIC_PROGRESS = "RSEG1116"; //$NON-NLS-1$
 	public static final String MSG_COPYTHINGGENERIC_PROGRESS = "RSEG1117";	 //$NON-NLS-1$
 	public static final String MSG_MOVETHINGGENERIC_PROGRESS = "RSEG1118"; //$NON-NLS-1$
+	public static final String MSG_RENAMEGENERIC_PROGRESS = "RSEG1142";	 //$NON-NLS-1$
 
 	public static final String MSG_SAVING_PROGRESS = "RSEG1119"; //$NON-NLS-1$
 	
@@ -266,6 +270,10 @@ public interface ISystemMessages
 	public static final String FILEMSG_MOVE_TARGET_DESCENDS_FROM_SOURCE = "RSEF1312"; //$NON-NLS-1$
 	public static final String FILEMSG_MOVE_FILTER_NOT_VALID = "RSEF1313"; //$NON-NLS-1$
 	public static final String FILEMSG_DELETING = "RSEF1315"; //$NON-NLS-1$
+	public static final String FILEMSG_MOVE_INTERRUPTED = "RSEG1245"; //$NON-NLS-1$
+	public static final String FILEMSG_RENAME_INTERRUPTED = "RSEG1246"; //$NON-NLS-1$
+	public static final String FILEMSG_DELETE_INTERRUPTED = "RSEG1247"; //$NON-NLS-1$
+	public static final String FILEMSG_COPY_INTERRUPTED = "RSEG1248"; //$NON-NLS-1$
 	
 	// -------------------------	
 	// IMPORT/EXPORT MESSAGES...

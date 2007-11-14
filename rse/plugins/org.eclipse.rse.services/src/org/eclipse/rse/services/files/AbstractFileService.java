@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -125,9 +126,14 @@ public abstract class AbstractFileService implements IFileService
 	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean ok = true;
+		SystemMessage msg = getMessage("RSEF1315");   //$NON-NLS-1$
+		String deletingMessage = msg.makeSubstitution("").getLevelOneText(); //$NON-NLS-1$
+		monitor.beginTask(deletingMessage, remoteParents.length);
 		for (int i = 0; i < remoteParents.length; i++)
 		{
+			monitor.subTask(msg.makeSubstitution(fileNames[i]).getLevelOneText());
 			ok = ok && delete(remoteParents[i], fileNames[i], monitor);
+			monitor.worked(1);
 		}
 		return ok;
 	}

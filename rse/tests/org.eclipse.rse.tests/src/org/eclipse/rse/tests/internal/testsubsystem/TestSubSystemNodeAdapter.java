@@ -9,6 +9,7 @@
  * Tobias Schwarz (Wind River) - initial API and implementation
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 package org.eclipse.rse.tests.internal.testsubsystem;
 
@@ -301,9 +302,9 @@ public class TestSubSystemNodeAdapter extends AbstractSystemViewAdapter
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#doRename(org.eclipse.swt.widgets.Shell, java.lang.Object, java.lang.String)
+	 * @see org.eclipse.rse.ui.view.AbstractSystemViewAdapter#doRename(org.eclipse.swt.widgets.Shell, java.lang.Object, java.lang.String, IProgressMonitor)
 	 */
-	public boolean doRename(Shell shell, Object element, String name) throws Exception {
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception {
 		if (name != null && isTestSubSystemNode(element)) {
 			String oldName = ((ITestSubSystemNode)element).getName();
 			if (oldName == null || !oldName.equals(name)) {

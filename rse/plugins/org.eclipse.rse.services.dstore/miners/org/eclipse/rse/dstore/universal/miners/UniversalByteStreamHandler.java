@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -127,7 +128,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 					String filePath = virtualFileName.substring(0, virtualIndex);
 					handler = mgr.getRegisteredHandler(new File(filePath));
 				}
-					boolean success = handler != null && handler.add(newFile, child.path, child.name);
+					boolean success = handler != null && handler.add(newFile, child.path, child.name, null);
 				if (!success)
 				{
 					if (status == null) return;
@@ -241,7 +242,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 						String filePath = virtualFileName.substring(0, virtualIndex);
 						handler = mgr.getRegisteredHandler(new File(filePath));
 					}
-					success = handler != null && handler.add(newFile, child.path, child.name);
+					success = handler != null && handler.add(newFile, child.path, child.name, null);
 
 				}
 				else
@@ -317,7 +318,7 @@ public class UniversalByteStreamHandler extends ByteStreamHandler
 						String filePath = virtualFileName.substring(0, virtualIndex);
 						handler = mgr.getRegisteredHandler(new File(filePath));
 					}
-					success = handler != null && handler.add(newFile, child.path, child.name);
+					success = handler != null && handler.add(newFile, child.path, child.name, null);
 
 				}
 				

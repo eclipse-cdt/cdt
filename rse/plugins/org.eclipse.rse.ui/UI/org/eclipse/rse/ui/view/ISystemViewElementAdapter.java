@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight   (IBM)        - [208803] add exists() method
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -329,7 +330,7 @@ public interface ISystemViewElementAdapter extends IPropertySource, ISystemDragD
 	/**
 	 * Perform the rename on the given item. 
 	 */
-	public boolean doRename(Shell shell, Object element, String name)
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor)
 	    throws Exception;	
 	    
 	    

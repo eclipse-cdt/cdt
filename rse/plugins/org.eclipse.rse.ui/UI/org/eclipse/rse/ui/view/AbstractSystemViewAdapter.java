@@ -22,6 +22,7 @@
  * Tobias Schwarz   (Wind River) - [173267] "empty list" should not be displayed 
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight   (IBM)        - [208803] add exists() method
+ * Xuan Chen        (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -979,7 +980,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * <p>By default, returns true.
 	 * @return true if we should show the rename action in the popup for the given element.
 	 * @see #canRename(Object)
-	 * @see #doRename(Shell,Object,String)
+	 * @see #doRename(Shell,Object,String, IProgressMonitor)
 	 */
 	public boolean showRename(Object element)
 	{
@@ -992,7 +993,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * By default, returns false. Override if your object is renamable.
 	 * @return true if this object is renamable by the user
 	 * @see #showRename(Object)
-	 * @see #doRename(Shell,Object,String)
+	 * @see #doRename(Shell,Object,String,IProgressMonitor)
 	 * @see #getNameValidator(Object)
 	 * @see #getCanonicalNewName(Object,String)
 	 * @see #namesAreEqual(Object,String)
@@ -1011,7 +1012,7 @@ public abstract class AbstractSystemViewAdapter implements ISystemViewElementAda
 	 * @see #showRename(Object)
 	 * @see #canRename(Object)
 	 */
-	public boolean doRename(Shell shell, Object element, String name) throws Exception
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
 	{
 		//org.eclipse.rse.core.ui.SystemMessage.displayErrorMessage("INSIDE DORENAME");
 		return false;

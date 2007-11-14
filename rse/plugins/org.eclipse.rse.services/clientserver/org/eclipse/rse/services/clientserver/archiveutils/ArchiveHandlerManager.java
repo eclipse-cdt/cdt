@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
+ * Xuan Chen (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -79,7 +80,7 @@ public class ArchiveHandlerManager
 		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
 		if (handler == null || !handler.exists()) throw new IOException();	
-		return handler.getVirtualChildren(virtualpath);	
+		return handler.getVirtualChildren(virtualpath, null);	
 	}
 
 	/**
@@ -97,7 +98,7 @@ public class ArchiveHandlerManager
 		if (virtualpath == null) virtualpath = ""; //$NON-NLS-1$
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
 		if (handler == null) return null;
-		return handler.getVirtualChildFolders(virtualpath);	
+		return handler.getVirtualChildFolders(virtualpath, null);	
 	}
 	
 	/**
@@ -187,7 +188,7 @@ public class ArchiveHandlerManager
 		File file = new File(zipfile);
 		ISystemArchiveHandler handler = getRegisteredHandler(file);
 		if (handler == null) return new VirtualChild(avp.getVirtualPart(), new File(avp.getContainingArchiveString()));
-		VirtualChild vc = handler.getVirtualFile(avp.getVirtualPart());
+		VirtualChild vc = handler.getVirtualFile(avp.getVirtualPart(), null);
 		return vc;
 	}
 
@@ -484,7 +485,7 @@ public class ArchiveHandlerManager
 	{
 		ISystemArchiveHandler handler = getRegisteredHandler(archive);
 		if (handler == null || !handler.exists()) return 0;
-		VirtualChild[] allEntries = handler.getVirtualChildrenList();
+		VirtualChild[] allEntries = handler.getVirtualChildrenList(null);
 		int total = 0;
 		for (int i = 0; i < allEntries.length; i++)
 		{

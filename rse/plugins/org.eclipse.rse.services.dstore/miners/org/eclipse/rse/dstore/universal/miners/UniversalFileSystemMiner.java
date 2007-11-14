@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [199548] Avoid touching files on setReadOnly() if unnecessary
  * Kevin Doyle (IBM) - [191548]  Deleting Read-Only directory removes it from view and displays no error
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -275,7 +276,7 @@ public class UniversalFileSystemMiner extends Miner {
 						return statusDone(status);
 					}
 				
-					VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart());
+					VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart(), null);
 					srcFile = child.getExtractedFile();
 				}
 				else {
@@ -290,7 +291,7 @@ public class UniversalFileSystemMiner extends Miner {
 				//call ISystemArchiveHandler#add(File[] ...) to add them in batch.
 				if (srcFile.isDirectory())
 				{
-					result = handler.add(srcFile, virtualContainer, srcName);
+					result = handler.add(srcFile, virtualContainer, srcName, null);
 					if (!result) {
 						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 						return statusDone(status);
@@ -308,7 +309,7 @@ public class UniversalFileSystemMiner extends Miner {
 				File[] resultFiles = (File[])nonDirectoryArrayList.toArray(new File[nonDirectoryArrayList.size()]);
 				String[] resultNames = (String[])nonDirectoryNamesArrayList.toArray(new String[nonDirectoryNamesArrayList.size()]);
 				//we need to add those files into the archive file as well.
-				result = handler.add(resultFiles, virtualContainer, resultNames);
+				result = handler.add(resultFiles, virtualContainer, resultNames, null);
 			}
 			
 			if (result)
@@ -345,18 +346,18 @@ public class UniversalFileSystemMiner extends Miner {
 						return statusDone(status);
 					}
 			
-					VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart());
+					VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart(), null);
 
 					File parentDir = getFileFor(targetFolder);
 					File destination = new File(parentDir, sourceFile.getName());
 			
 					if (child.isDirectory) 
 					{
-						shandler.extractVirtualDirectory(svpath.getVirtualPart(), parentDir, destination);
+						shandler.extractVirtualDirectory(svpath.getVirtualPart(), parentDir, destination, null);
 					}
 					else 
 					{
-						shandler.extractVirtualFile(svpath.getVirtualPart(), destination);
+						shandler.extractVirtualFile(svpath.getVirtualPart(), destination, null);
 					}
 				}
 				else // source is regular file or folder
@@ -1025,11 +1026,11 @@ public class UniversalFileSystemMiner extends Miner {
 							.getContainingArchiveString()));
 			boolean success = !(handler == null)
 					&& handler.fullRename(oldAbsPath.getVirtualPart(),
-							newAbsPath.getVirtualPart());
+							newAbsPath.getVirtualPart(), null);
 			if (success && handler != null) {
 				subject.setAttribute(DE.A_NAME, filerename.getName());
 				subject.setAttribute(DE.A_SOURCE, setProperties(handler
-						.getVirtualFile(newAbsPath.getVirtualPart())));
+						.getVirtualFile(newAbsPath.getVirtualPart(), null)));
 				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 				_dataStore.update(subject);
 			} else {
@@ -1429,7 +1430,7 @@ public class UniversalFileSystemMiner extends Miner {
 				status.setAttribute(DE.A_SOURCE, "false"); //$NON-NLS-1$
 				return statusDone(status);
 			}
-			VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
+			VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart(), null);
 			if (child.exists()) {
 				status.setAttribute(DE.A_SOURCE, "true"); //$NON-NLS-1$
 				return statusDone(status);
@@ -2129,7 +2130,7 @@ public class UniversalFileSystemMiner extends Miner {
 			ISystemArchiveHandler handler = _archiveHandlerManager
 					.getRegisteredHandler(new File(vpath
 							.getContainingArchiveString()));
-			if (handler == null || !handler.delete(vpath.getVirtualPart())) {
+			if (handler == null || !handler.delete(vpath.getVirtualPart(), null)) {
 				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + vpath.toString()); //$NON-NLS-1$
 				_dataStore.refresh(subject);
 				return statusDone(status);
@@ -2187,8 +2188,8 @@ public class UniversalFileSystemMiner extends Miner {
 			return statusDone(status);
 		}
 //		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
-		handler.getVirtualFile(vpath.getVirtualPart());
-		handler.createFile(vpath.getVirtualPart());
+		handler.getVirtualFile(vpath.getVirtualPart(), null);
+		handler.createFile(vpath.getVirtualPart(), null);
 
 		status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
@@ -2221,8 +2222,8 @@ public class UniversalFileSystemMiner extends Miner {
 			return statusDone(status);
 		}
 //		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
-		handler.getVirtualFile(vpath.getVirtualPart());
-		handler.createFolder(vpath.getVirtualPart());
+		handler.getVirtualFile(vpath.getVirtualPart(), null);
+		handler.createFolder(vpath.getVirtualPart(), null);
 
 		status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
@@ -2315,7 +2316,7 @@ public class UniversalFileSystemMiner extends Miner {
 						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 						return statusDone(status);
 					}
-					child = shandler.getVirtualFile(svpath.getVirtualPart());
+					child = shandler.getVirtualFile(svpath.getVirtualPart(), null);
 				}
 				else
 				{
@@ -2331,7 +2332,7 @@ public class UniversalFileSystemMiner extends Miner {
 				virtualContainer = vpath.getVirtualPart();
 			}
 
-			boolean result = handler.add(srcFile, virtualContainer, newName);
+			boolean result = handler.add(srcFile, virtualContainer, newName, null);
 			
 			if (result) {
 				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
@@ -2352,7 +2353,7 @@ public class UniversalFileSystemMiner extends Miner {
 					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
 					return statusDone(status);
 				}
-				child = shandler.getVirtualFile(svpath.getVirtualPart());
+				child = shandler.getVirtualFile(svpath.getVirtualPart(), null);
 			}
 			else
 			{
@@ -2365,10 +2366,10 @@ public class UniversalFileSystemMiner extends Miner {
 			File destination = new File(parentDir, newName);
 			
 			if (child.isDirectory) {
-				shandler.extractVirtualDirectory(svpath.getVirtualPart(), parentDir, destination);
+				shandler.extractVirtualDirectory(svpath.getVirtualPart(), parentDir, destination, null);
 			}
 			else {
-				shandler.extractVirtualFile(svpath.getVirtualPart(), destination);
+				shandler.extractVirtualFile(svpath.getVirtualPart(), destination, null);
 			}
 		}
 		else {

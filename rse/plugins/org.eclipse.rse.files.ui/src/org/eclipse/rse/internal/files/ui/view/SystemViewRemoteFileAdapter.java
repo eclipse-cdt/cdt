@@ -38,6 +38,7 @@
  * David McKnight   (IBM)        - [209375] download using copyRemoteResourcesToWorkspaceMultiple
  * Rupen Mardirossian (IBM)		 - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances
  * David McKnight   (IBM)        - [209660] need to check if remote encoding has changed before using cached file 
+ * Xuan Chen        (IBM)        - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -153,6 +154,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.omg.PortableServer.AdapterActivator;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.NumberFormat;
@@ -2006,7 +2008,38 @@ public class SystemViewRemoteFileAdapter
 							}
 							catch (SystemMessageException e)
 							{
-								SystemMessageDialog.displayMessage(e);
+								if (monitor.isCanceled() && resultSet.size() > 0)
+								{
+									//Get the moved file names
+									Object thisObject = resultSet.get(0);
+									String copiedFileNames = null;
+									if (thisObject instanceof IRemoteFile)
+									{
+										copiedFileNames = ((IRemoteFile)thisObject).getName();
+										for (int i=1; i<(resultSet.size()); i++)
+										{
+											if (thisObject instanceof IRemoteFile)
+											{
+												copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)thisObject).getName();
+											}
+										}
+									}
+									//getMessage("RSEG1125").makeSubstitution(movedFileName));
+									if (copiedFileNames != null)
+									{
+										SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_INTERRUPTED);
+										thisMessage.makeSubstitution(copiedFileNames);
+										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+									}
+									else
+									{
+										SystemMessageDialog.displayMessage(e);
+									}
+								}
+								else
+								{
+									SystemMessageDialog.displayMessage(e);
+								}
 							}
 							catch (Exception e)
 							{
@@ -2035,7 +2068,47 @@ public class SystemViewRemoteFileAdapter
 							}
 							catch (SystemMessageException e)
 							{
-								SystemMessageDialog.displayMessage(e);
+								if (monitor.isCanceled() && srcFileOrFolders.length > 1)
+								{
+									//ISystemViewElementAdapter adapter = fromSet.getViewAdapter();
+									for (int i = 0; i < srcFileOrFolders.length; i++)
+									{
+										IRemoteFile thisCopiedFile = null;
+										try
+										{
+											thisCopiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[i].getName(), monitor);
+										}
+										catch (SystemMessageException thsiException)
+										{
+											thsiException.printStackTrace();
+											thisCopiedFile = null;
+										}
+										if (thisCopiedFile != null && thisCopiedFile.exists())
+										{
+											//This object has been deleted
+											resultSet.addResource(thisCopiedFile);
+										}	
+									}
+									if (resultSet.size() > 0)
+									{
+										//Get the copied file names
+										Object thisObject = resultSet.get(0);
+										String copiedFileNames = null;
+										copiedFileNames = ((IRemoteFile)thisObject).getName();
+										for (int i=1; i<(resultSet.size()); i++)
+										{
+											thisObject = resultSet.get(i);
+											copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)resultSet.get(i)).getName(); //$NON-NLS-1$
+										}
+										SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_INTERRUPTED); 
+										thisMessage.makeSubstitution(copiedFileNames);
+										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+									}
+								}
+								else
+								{
+									SystemMessageDialog.displayMessage(e);
+								}
 							}
 							catch (Exception e)
 							{
@@ -2563,13 +2636,12 @@ public class SystemViewRemoteFileAdapter
 	/**
 	 * Perform the rename action. Defers request to the remote file subsystem
 	 */
-	public boolean doRename(Shell shell, Object element, String newName) throws Exception
+	public boolean doRename(Shell shell, Object element, String newName, IProgressMonitor monitor) throws Exception
 	{
 		boolean ok = true;
 		IRemoteFile file = (IRemoteFile) element;
 		IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
-		try
-		{
+		
 			
 			String newRemotePath = file.getParentPath() + "/" + newName; //$NON-NLS-1$
 			IResource localResource = null;
@@ -2578,7 +2650,7 @@ public class SystemViewRemoteFileAdapter
 				localResource = UniversalFileTransferUtility.getTempFileFor(file);
 			}
 					
-			ss.rename(file, newName, new NullProgressMonitor());
+			ok = ss.rename(file, newName, monitor);
 			if (localResource != null && localResource.exists())
 			{
 				
@@ -2601,14 +2673,8 @@ public class SystemViewRemoteFileAdapter
 //				//sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, file, file.getParentRemoteFile(), file.getParentRemoteFileSubSystem(), null, null);
 //			}		
 //			file.markStale(true);
-
-		}
-		catch (Exception exc)
-		{
-			ok = false;
-			SystemMessageDialog.displayErrorMessage(shell, RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_RENAME_FILE_FAILED).makeSubstitution(file.toString()));
-		}
-		return ok;
+			return ok;
+		
 	}
 
 	/**

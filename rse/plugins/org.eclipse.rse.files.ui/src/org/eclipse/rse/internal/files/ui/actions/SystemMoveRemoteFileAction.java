@@ -17,12 +17,17 @@
  * Kevin Doyle (IBM) - [198007] Moving multiple folders allows moving to themselves
  * Kevin Doyle (IBM) - [160769] Move Resource dialog allows user to continue on invalid destination
  * Kevin Doyle (IBM) - [199324] [nls] Move dialog SystemMessages should be added/updated
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
 import java.util.Vector;
 
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
@@ -35,6 +40,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.actions.SystemBaseCopyAction;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.rse.ui.validators.IValidatorRemoteSelection;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.swt.widgets.Shell;
@@ -51,6 +57,86 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	private SystemMessage invalidFilterMsg = null;
 	protected Vector movedFiles = new Vector();
 
+	private class MoveRemoteFileJob extends WorkspaceJob
+	{
+		
+		/**
+		 * RenameJob job.
+		 * @param message text used as the title of the job
+		 */
+		public MoveRemoteFileJob(String message)
+		{
+			super(message);
+			setUser(true);
+		}
+
+		public IStatus runInWorkspace(IProgressMonitor monitor) 
+		{
+			SystemMessage msg = getCopyingMessage();
+			
+			IStatus status = Status.OK_STATUS;
+			
+	        try
+	        {
+	           int steps = oldObjects.length;
+		       monitor.beginTask(msg.getLevelOneText(), steps);
+		       copiedOk = true;
+		       String oldName = null;
+		       String newName = null;
+		       Object oldObject = null;
+		       newNames = new String[oldNames.length];
+		       for (int idx=0; copiedOk && (idx<steps); idx++)
+		       {
+		       	  oldName = oldNames[idx];
+		       	  oldObject = oldObjects[idx];
+		       	  monitor.subTask(getCopyingMessage(oldName).getLevelOneText());
+		       	  newName = checkForCollision(getShell(), monitor, targetContainer, oldObject, oldName);
+		       	  if (newName == null)
+		       	    copiedOk = false;
+		       	  else
+			        copiedOk = doCopy(targetContainer, oldObject, newName, monitor);
+			      newNames[idx] = newName;
+			      monitor.worked(1);
+		       }
+	           monitor.done();
+	        }
+			catch (SystemMessageException exc)
+			{
+				copiedOk = false;
+				//If this operation is canceled, need to display a proper message to the user.
+				if (monitor.isCanceled() && movedFiles.size() > 0)
+				{
+					//Get the moved file names
+					String movedFileName = ((IRemoteFile)movedFiles.get(0)).getName();
+					for (int i=1; i<(movedFiles.size()); i++)
+					{
+						movedFileName = movedFileName + "\n" + ((IRemoteFile)movedFiles.get(i)).getName(); //$NON-NLS-1$
+					}
+					SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_INTERRUPTED);
+					thisMessage.makeSubstitution(movedFileName);
+					SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+					status = Status.CANCEL_STATUS;
+				}
+				else
+				{
+					SystemMessageDialog.displayErrorMessage(shell, exc.getSystemMessage());
+				}
+			}
+			catch (Exception exc)
+			{
+				copiedOk = false;
+				exc.printStackTrace();
+			}
+			
+			if (movedFiles.size() > 0)
+			{
+				copyComplete();  //Need to reflect the views.
+			}
+	        
+	        return status;
+		}
+	}
+	
 	/**
 	 * Constructor
 	 */
@@ -74,6 +160,16 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		
 		//targetEqualsSrcMsg = null;
 	}
+	
+	 public void run(IProgressMonitor monitor)
+     throws java.lang.reflect.InvocationTargetException,
+            java.lang.InterruptedException
+     {
+		 SystemMessage moveMessage = getCopyingMessage();
+		 moveMessage.makeSubstitution(""); //$NON-NLS-1$
+			MoveRemoteFileJob moveRemoteFileJob = new MoveRemoteFileJob(moveMessage.getLevelOneText());
+			moveRemoteFileJob.schedule();
+     }
     
 	/**
 	 * @param targetContainer will be the IRemoteFile folder selected to move into
@@ -189,8 +285,9 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 		ISubSystem fileSS = targetFolder.getParentRemoteFileSubSystem();
 		//RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
 		  // ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, copiedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
+		Viewer originatingViewer = getViewer();
     	RSECorePlugin.getTheSystemRegistry().fireRemoteResourceChangeEvent(
-		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, movedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, null);
+		   ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_DELETED, movedFiles, firstSelectionParent.getAbsolutePath(), fileSS, null, originatingViewer);
 
     	
     	/* old release 1.0 way of doing it...

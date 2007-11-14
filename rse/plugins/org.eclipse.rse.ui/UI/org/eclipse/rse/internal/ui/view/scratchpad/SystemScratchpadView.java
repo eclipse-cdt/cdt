@@ -21,6 +21,7 @@
  * Kevin Doyle (IBM) - [189421] Scratchpad not updated after Rename
  * David McKnight   (IBM)        - [197860] drag and drop consistency - no text transfer
  * Kevin Doyle (IBM) - [197841] "Terminate and Remove" should remove the shell from Scratchpad
+ * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.scratchpad;
@@ -970,7 +971,7 @@ public class SystemScratchpadView
 				if (remoteAdapter != null)
 					oldFullName = remoteAdapter.getAbsoluteName(element);
 				// pre-rename
-				ok = adapter.doRename(getShell(), element, newNames[nameIdx++]);
+				ok = adapter.doRename(getShell(), element, newNames[nameIdx++], null);
 				if (ok)
 				{
 					if (remoteAdapter != null) {

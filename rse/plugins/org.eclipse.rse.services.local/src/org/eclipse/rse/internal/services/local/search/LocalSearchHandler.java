@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Bug 147791 - symbolic links can cause circular search.
+ * Xuan Chen      (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.search;
@@ -236,7 +237,7 @@ public class LocalSearchHandler implements ISearchHandler
 				// method
 				if (!_isFileSearch && vc != null)
 				{
-					matches = vc.getHandler().search(vc.fullName, _stringMatcher);
+					matches = vc.getHandler().search(vc.fullName, _stringMatcher, null);
 					IHostSearchResult[] results = convert(file, matches);
 
 					/** TODO - how to store search results related to files

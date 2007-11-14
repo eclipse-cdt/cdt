@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [196842] Don't have open menu for folders
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -1012,7 +1013,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	 * Return true if this was successful. Return false if it failed and you issued a msg. 
 	 * Throw an exception if it failed and you want to use the generic msg.
 	 */
-	public boolean doRename(Shell shell, Object element, String name) throws Exception
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
 	{
 		return false;
 	}

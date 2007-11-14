@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -20,6 +21,7 @@ package org.eclipse.rse.services.clientserver.archiveutils;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 
 
@@ -36,6 +38,12 @@ public final class VirtualChild {
 	protected ISystemArchiveHandler _handler;
 	protected File _extractedFile;
 	protected File _containingArchive;
+	
+	private String comment;
+	private long compressedSize;
+	private String compressionMethod;
+	private long size;
+	private long timeStamp;
 
 	/**
 	 * Constructs a new VirtualChild given a reference to its parent archive's
@@ -51,6 +59,12 @@ public final class VirtualChild {
 		_handler = handler;
 		_extractedFile = null;
 		_containingArchive = null;
+		
+		comment = "";  //$NON-NLS-1$
+		compressedSize = -1;
+		compressionMethod = "";  //$NON-NLS-1$
+		size = -1;
+		timeStamp = -1;  
 	}
 	
 	/**
@@ -94,8 +108,19 @@ public final class VirtualChild {
 	 */
 	public long getTimeStamp()
 	{
+		/*
 		if (_handler == null) return 0;
 		return _handler.getTimeStampFor(fullName);
+		*/
+		return timeStamp;
+	}
+	
+	/**
+	 * @param value the time stamp value
+	 */
+	public void setTimeStamp(long value) 
+	{
+		timeStamp = value;
 	}
 	
 	/**
@@ -104,8 +129,19 @@ public final class VirtualChild {
 	 */
 	public long getSize()
 	{
+		/*
 		if (_handler == null) return 0;
 		return _handler.getSizeFor(fullName);
+		*/
+		return size;
+	}
+	
+	/**
+	 * @param value the size value
+	 */
+	public void setSize(long value) 
+	{
+		size = value;
 	}
 	
 	/**
@@ -113,8 +149,19 @@ public final class VirtualChild {
 	 */
 	public String getComment() 
 	{
+		/*
 		if (_handler == null) return ""; //$NON-NLS-1$
 		return _handler.getCommentFor(fullName);
+		*/
+		return comment;
+	}
+	
+	/**
+	 * @param value the comment value
+	 */
+	public void setComment(String value) 
+	{
+		comment = value;
 	}
 
 	/**
@@ -123,8 +170,19 @@ public final class VirtualChild {
 	 */
 	public long getCompressedSize() 
 	{
+		/*
 		if (_handler == null) return 0;
 		return _handler.getCompressedSizeFor(fullName);
+		*/
+		return compressedSize;
+	}
+	
+	/**
+	 * @param value the compressedSize value
+	 */
+	public void setCompressedSize(long value) 
+	{
+		compressedSize = value;
 	}
 
 	/**
@@ -132,21 +190,44 @@ public final class VirtualChild {
 	 */
 	public String getCompressionMethod() 
 	{
+		/*
 		if (_handler == null) return ""; //$NON-NLS-1$
 		return _handler.getCompressionMethodFor(fullName);
+		*/
+		return compressionMethod;
 	}
 
+	/**
+	 * @param value the compression method value
+	 */
+	public void setCompressionMethod(String value) 
+	{
+		compressionMethod = value;
+	}
+	
 	/**
 	 * @return The actual minus compressed size of this VirtualChild, divided
 	 * by the actual size.
 	 */
 	public double getCompressionRatio() 
 	{
+		/*
 		if (getSize() == 0)
 		{
 			return 1;
 		}
 		else return  ((double)getSize() - (double)getCompressedSize()) / getSize();
+		*/
+		if (size <= 0)
+		{
+			return 1;
+		}
+		if (compressedSize <= 0)
+		{
+			return 1;
+		}
+		
+		return  ((double)size - (double)compressedSize) / size;
 	}
 	
 	/**
@@ -157,7 +238,7 @@ public final class VirtualChild {
 	 */
 	public File getExtractedFile()
 	{
-		return getExtractedFile(SystemEncodingUtil.ENCODING_UTF_8, false);
+		return getExtractedFile(SystemEncodingUtil.ENCODING_UTF_8, false, null);
 	}
 	
 	/**
@@ -167,8 +248,9 @@ public final class VirtualChild {
 	 * timestamps on the cached and archived files do not match, the cached file is erased,
 	 * and reextracted from the archive.
 	 */
-	public File getExtractedFile(String sourceEncoding, boolean isText)
+	public File getExtractedFile(String sourceEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor)
 	{
+		File returnedFile = null;
 		if (_extractedFile == null || _extractedFile.lastModified() != getTimeStamp())
 		{
 			try
@@ -193,14 +275,19 @@ public final class VirtualChild {
 						if (!(_extractedFile.delete() && _extractedFile.mkdirs()))
 						{
 							System.out.println("VirtualChild.getExtractedFile(): Could not create temp dir."); //$NON-NLS-1$
+							//We only set the status of the archive operation montor to done if it is not been canceled.
+							if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+							{
+								archiveOperationMonitor.setDone(true);
+							}
 							return null;
 						}
 					}
-					_handler.extractVirtualDirectory(fullName, _extractedFile, sourceEncoding, isText);
+					_handler.extractVirtualDirectory(fullName, _extractedFile, sourceEncoding, isText, archiveOperationMonitor);
 				}
 				else
 				{
-					_handler.extractVirtualFile(fullName, _extractedFile, sourceEncoding, isText);
+					_handler.extractVirtualFile(fullName, _extractedFile, sourceEncoding, isText, archiveOperationMonitor);
 				}
 			}
 			catch (IOException e)
@@ -212,12 +299,20 @@ public final class VirtualChild {
 		
 		if (isDirectory)
 		{
-			return new File(_extractedFile, name);
+			returnedFile = new File(_extractedFile, name);
 		}
 		else
 		{
-			return _extractedFile;
+			returnedFile = _extractedFile;
 		}
+		
+		//We only set the status of the archive operation montor to done if it is not been canceled.
+		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+		{
+			archiveOperationMonitor.setDone(true);
+		}
+		
+		return returnedFile;
 	}
 
 	/**
@@ -230,9 +325,9 @@ public final class VirtualChild {
 	 * what is in the archive.
 	 * @return true if and only if the extraction succeeded.
 	 */
-	public boolean getExtractedFile(File destination)
+	public boolean getExtractedFile(File destination, ISystemOperationMonitor archiveOperationMonitor)
 	{
-		return getExtractedFile(destination, SystemEncodingUtil.ENCODING_UTF_8, false);
+		return getExtractedFile(destination, SystemEncodingUtil.ENCODING_UTF_8, false, archiveOperationMonitor);
 	}
 	
 	/**
@@ -245,7 +340,7 @@ public final class VirtualChild {
 	 * what is in the archive.
 	 * @return true if and only if the extraction succeeded.
 	 */
-	public boolean getExtractedFile(File destination, String sourceEncoding, boolean isText)
+	public boolean getExtractedFile(File destination, String sourceEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor)
 	{
 		boolean success = true;
 		if (_handler == null) return false;
@@ -256,13 +351,18 @@ public final class VirtualChild {
 		{
 			if (isDirectory)
 			{
-				success = _handler.extractVirtualDirectory(fullName, destination.getParentFile(), destination, sourceEncoding, isText);
+				success = _handler.extractVirtualDirectory(fullName, destination.getParentFile(), destination, sourceEncoding, isText, archiveOperationMonitor);
 			}
 			else
 			{
-				success = _handler.extractVirtualFile(fullName, destination, sourceEncoding, isText);
+				success = _handler.extractVirtualFile(fullName, destination, sourceEncoding, isText, archiveOperationMonitor);
 			}
 			_extractedFile = destination;
+		}
+		//We only set the status of the archive operation montor to done if it is not been canceled.
+		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+		{
+			archiveOperationMonitor.setDone(true);
 		}
 		return success;
 	}
@@ -273,7 +373,7 @@ public final class VirtualChild {
 	public boolean exists()
 	{
 		if (_handler == null) return false;
-		return _handler.exists(fullName);
+		return _handler.exists(fullName, null);
 	}
 	
 	/**

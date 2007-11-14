@@ -15,6 +15,7 @@
  * {Name} (company) - description of contribution.
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  * Xuan Chen        (IBM)        - [199132] [Archives-TAR][Local-Windows] Can't open files in tar archives
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -41,6 +42,7 @@ import org.eclipse.rse.internal.services.clientserver.archiveutils.TarEntry;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.TarFile;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.TarOutputStream;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
+import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.java.BasicClassFileParser;
 import org.eclipse.rse.services.clientserver.search.SystemSearchLineMatch;
 import org.eclipse.rse.services.clientserver.search.SystemSearchStringMatchLocator;
@@ -212,7 +214,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 
 		/**
 		 * Returns an array of children of the entry with the given path.
-		 * @param the path of the parent entry, or "" to indicate the root entry.
+		 * @param path of the parent entry, or "" to indicate the root entry.
 		 * @return an array of children, or an empty array if none exists, or if the entry is not a directory.
 		 */
 		public VirtualChild[] getChildren(String path) {
@@ -234,7 +236,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		/**
 		 * Returns an array of children folders of the entry with the given path.
-		 * @param the path of the parent entry, or "" to indicate the root entry.
+		 * @param path of the parent entry, or "" to indicate the root entry.
 		 * @return an array of children, or an empty array if none exists, or if the entry is not a directory.
 		 */
 		public VirtualChild[] getChildrenFolders(String path) {
@@ -625,9 +627,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildrenList()
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildrenList(ISystemOperationMonitor archiveOperationMonitor)
 	 */
-	public VirtualChild[] getVirtualChildrenList() {
+	public VirtualChild[] getVirtualChildrenList(ISystemOperationMonitor archiveOperationMonitor) {
 		
 		// this method does not read from cache
 		Vector v = new Vector();
@@ -654,9 +656,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildrenList(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildrenList(java.lang.String, ISystemOperationMonitor)
 	 */
-	public VirtualChild[] getVirtualChildrenList(String parent) {
+	public VirtualChild[] getVirtualChildrenList(String parent, ISystemOperationMonitor archiveOperationMonitor) {
 		parent = ArchiveHandlerManager.cleanUpVirtualPath(parent);
 		
 		// this method does not read from cache
@@ -690,9 +692,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildren(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildren(java.lang.String, ISystemOperationMonitor)
 	 */
-	public VirtualChild[] getVirtualChildren(String fullVirtualName) {
+	public VirtualChild[] getVirtualChildren(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		try {
 			updateCache();
@@ -707,9 +709,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildFolders(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualChildFolders(java.lang.String, ISystemOperationMonitor)
 	 */
-	public VirtualChild[] getVirtualChildFolders(String fullVirtualName) {
+	public VirtualChild[] getVirtualChildFolders(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		try {
 			updateCache();
@@ -724,9 +726,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualFile(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getVirtualFile(java.lang.String, ISystemOperationMonitor)
 	 */
-	public VirtualChild getVirtualFile(String fullVirtualName) {
+	public VirtualChild getVirtualFile(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		
@@ -754,9 +756,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#exists(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#exists(java.lang.String, ISystemOperationMonitor)
 	 */
-	public boolean exists(String fullVirtualName) {
+	public boolean exists(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		
@@ -832,7 +834,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualFile(java.lang.String, java.io.File)
 	 */
-	public boolean extractVirtualFile(String fullVirtualName, File destination) {
+	public boolean extractVirtualFile(String fullVirtualName, File destination, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		TarEntry entry = getTarFile().getEntry(fullVirtualName);
 		
@@ -918,16 +920,16 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, ISystemOperationMonitor)
 	 */
-	public boolean extractVirtualDirectory(String fullVirtualName, File destinationParent) {
-		return extractVirtualDirectory(fullVirtualName, destinationParent, (File) null);
+	public boolean extractVirtualDirectory(String fullVirtualName, File destinationParent, ISystemOperationMonitor archiveOperationMonitor) {
+		return extractVirtualDirectory(fullVirtualName, destinationParent, (File) null, archiveOperationMonitor);
 	}
 	
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.io.File)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.io.File, ISystemOperationMonitor)
 	 */
-	public boolean extractVirtualDirectory(String fullVirtualName, File destinationParent, File destination) {
+	public boolean extractVirtualDirectory(String fullVirtualName, File destinationParent, File destination, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		// if the destination directory doesn't exist, create it
 		if (!destinationParent.exists()) {
@@ -988,7 +990,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			return false;				// log error and quit if we fail to create the directory
 		}
 		else {
-			extractVirtualFile(fullVirtualName, topDir);
+			extractVirtualFile(fullVirtualName, topDir, archiveOperationMonitor);
 		}
 		
 		// get the children of this directory
@@ -1003,11 +1005,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			if (tempChild.isDirectory) {
 				
 				// and now extract its children
-				extractVirtualDirectory(tempChild.fullName, childFile, (File) null);
+				extractVirtualDirectory(tempChild.fullName, childFile, (File) null, archiveOperationMonitor);
 			}
 			// otherwise if the child is a file, simply extract it
 			else {
-				extractVirtualFile(tempChild.fullName, childFile);
+				extractVirtualFile(tempChild.fullName, childFile, archiveOperationMonitor);
 			}
 		}
 		
@@ -1015,24 +1017,24 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File, java.lang.String, java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File, java.lang.String, java.lang.String, ISystemOperationMonitor)
 	 */
-	public boolean add(File file, String virtualPath, String name) {
+	public boolean add(File file, String virtualPath, String name, ISystemOperationMonitor archiveOperationMonitor ) {
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
 		
 		if (!file.isDirectory()) {
 			
 			// if it exists, call replace
 			String fullVirtualName = getFullVirtualName(virtualPath, name);
-			if (exists(fullVirtualName)) { 
-				return replace(fullVirtualName, file, name); 
+			if (exists(fullVirtualName, archiveOperationMonitor)) { 
+				return replace(fullVirtualName, file, name, archiveOperationMonitor); 
 			}
 			else {
 				File[] files = new File[1];
 				files[0] = file;
 				String[] names = new String[1];
 				names[0] = name;
-				return add(files, virtualPath, names);
+				return add(files, virtualPath, names, archiveOperationMonitor);
 			}
 		}
 		else {
@@ -1060,7 +1062,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				newNames[numOfChildren] = newNames[numOfChildren] + "/"; //$NON-NLS-1$
 			}
 			 
-			return add(sources, virtualPath, newNames);
+			return add(sources, virtualPath, newNames, archiveOperationMonitor);
 		}
 	}
 	
@@ -1084,9 +1086,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File[], java.lang.String, java.lang.String[])
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File[], java.lang.String, java.lang.String[], ISystemOperationMonitor)
 	 */
-	public boolean add(File[] files, String virtualPath, String[] names) {
+	public boolean add(File[] files, String virtualPath, String[] names, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		// update our cache before accessing cache
 		try {
@@ -1111,8 +1113,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// TODO (KM): should we simply replace and return?
 			// I think we should check each entry and replace or create for each one
 			String fullVirtualName = getFullVirtualName(virtualPath, names[i]);
-			if (exists(fullVirtualName)) { 
-				return replace(fullVirtualName, files[i], names[i]); 
+			if (exists(fullVirtualName, archiveOperationMonitor)) { 
+				return replace(fullVirtualName, files[i], names[i], archiveOperationMonitor); 
 			}
 		}
 		
@@ -1123,7 +1125,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 
 			// get all the entries in the current tar				  
-			VirtualChild[] children = getVirtualChildrenList();
+			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
 				
 			// if it is an empty temp file, no need to recreate it
 			if (children.length != 0) {
@@ -1457,7 +1459,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	/**
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#replace(java.lang.String, java.io.File, java.lang.String)
 	 */
-	public boolean replace(String fullVirtualName, File file, String name) {
+	public boolean replace(String fullVirtualName, File file, String name, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		// update our cache before accessing cache
 		try {
@@ -1475,8 +1477,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		
 		// if the virtual file does not exist, we actually want to add
-		if (!exists(fullVirtualName)) {
-			return add(file, fullVirtualName, name);
+		if (!exists(fullVirtualName, archiveOperationMonitor)) {
+			return add(file, fullVirtualName, name, archiveOperationMonitor);
 		}
 		
 		try {
@@ -1487,7 +1489,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 			
 			// get all the entries
-			VirtualChild[] children = getVirtualChildrenList();
+			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
 			
 			// create a set of omissions
 			HashSet omissions = new HashSet();
@@ -1548,9 +1550,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#delete(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#delete(java.lang.String, ISystemOperationMonitor)
 	 */
-	public boolean delete(String fullVirtualName) {
+	public boolean delete(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		// update our cache before accessing cache
 		try {
@@ -1562,7 +1564,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 		
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		VirtualChild child = getVirtualFile(fullVirtualName);
+		VirtualChild child = getVirtualFile(fullVirtualName, archiveOperationMonitor);
 		VirtualChild[] omitArray = new VirtualChild[0];
 		
 		// child does not exist, so quit
@@ -1572,7 +1574,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		// child is a directory, so get its children since we need to delete them as well
 		if (child.isDirectory) {
-			omitArray = getVirtualChildrenList(fullVirtualName);
+			omitArray = getVirtualChildrenList(fullVirtualName, archiveOperationMonitor);
 		}
 		
 		try {
@@ -1582,7 +1584,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 		
 			// get all the entries in the current tar				  
-			VirtualChild[] children = getVirtualChildrenList();
+			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
 		
 			// create a set to hold omissions
 			HashSet omissions = new HashSet();
@@ -1619,27 +1621,27 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#rename(java.lang.String, java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#rename(java.lang.String, java.lang.String, ISystemOperationMonitor)
 	 */
-	public boolean rename(String fullVirtualName, String newName) {
+	public boolean rename(String fullVirtualName, String newName, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 		
 		// if the original does not have any separator, simply rename it.
 		if (i == -1) {
-			return fullRename(fullVirtualName, newName);
+			return fullRename(fullVirtualName, newName, archiveOperationMonitor);
 		}
 		// otherwise, get the parent path and append the new name to it.
 		else {
 			String fullNewName = fullVirtualName.substring(0, i+1) + newName;
-			return fullRename(fullVirtualName, fullNewName);
+			return fullRename(fullVirtualName, fullNewName, archiveOperationMonitor);
 		}
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#move(java.lang.String, java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#move(java.lang.String, java.lang.String, ISystemOperationMonitor)
 	 */
-	public boolean move(String fullVirtualName, String destinationVirtualPath) {
+	public boolean move(String fullVirtualName, String destinationVirtualPath, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		destinationVirtualPath = ArchiveHandlerManager.cleanUpVirtualPath(destinationVirtualPath);
 		
@@ -1647,19 +1649,19 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		// if the original does not have any separator, simply append it to the destination path.
 		if (i == -1) {
-			return fullRename(fullVirtualName, destinationVirtualPath + "/" + fullVirtualName); //$NON-NLS-1$
+			return fullRename(fullVirtualName, destinationVirtualPath + "/" + fullVirtualName, archiveOperationMonitor); //$NON-NLS-1$
 		}
 		// otherwise, get the last segment (the name) and append that to the destination path.
 		else {
 			String name = fullVirtualName.substring(i);
-			return fullRename(fullVirtualName, destinationVirtualPath + name);
+			return fullRename(fullVirtualName, destinationVirtualPath + name, archiveOperationMonitor);
 		}
 	}
 
 	/**
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#fullRename(java.lang.String, java.lang.String)
 	 */
-	public boolean fullRename(String fullVirtualName, String newFullVirtualName) {
+	public boolean fullRename(String fullVirtualName, String newFullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		// update our cache before accessing cache
 		try {
@@ -1672,7 +1674,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		newFullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(newFullVirtualName);
-		VirtualChild child = getVirtualFile(fullVirtualName);
+		VirtualChild child = getVirtualFile(fullVirtualName, archiveOperationMonitor);
 		
 		// if the virtual file to be renamed does not exist, then quit
 		if (!child.exists()) {
@@ -1686,7 +1688,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 			
 			// get all the entries
-			VirtualChild[] children = getVirtualChildrenList();
+			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
 			
 			// the rename list
 			// a hashmap containing old name, new name associations for each
@@ -1702,7 +1704,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				names.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				// get all the children of the entry to be renamed
-				VirtualChild[] childrenArray = getVirtualChildrenList(fullVirtualName);
+				VirtualChild[] childrenArray = getVirtualChildrenList(fullVirtualName, archiveOperationMonitor);
 				
 				// now we need to get the relative path of each child with respect to the virtual name
 				// and append the relative path to the new virtual name
@@ -1732,8 +1734,12 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			}
 			
 			// create tar with renamed entries
-			createTar(children, outStream, names);
+			boolean isCanceled = createTar(children, outStream, names, archiveOperationMonitor);
 			
+			if (true == isCanceled)
+			{
+				return false;
+			}
 			// close the output stream
 			outStream.close();
 		
@@ -1760,12 +1766,17 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * in the map, and the values are the new names.
 	 * @throws IOException if an I/O exception occurs.
 	 */
-	protected void createTar(VirtualChild[] children, TarOutputStream outStream, HashMap renameMap) throws IOException {
+	protected boolean createTar(VirtualChild[] children, TarOutputStream outStream, HashMap renameMap, ISystemOperationMonitor archiveOperationMonitor) throws IOException {
 		
 		TarFile tarFile = getTarFile();
 		
 		// go through each child
 		for (int i = 0; i < children.length; i++) {
+			
+			if (archiveOperationMonitor.isCanceled())
+			{
+				return true;
+			}
 			
 			VirtualChild child = children[i];
 			String oldPath = child.getArchiveStandardName();
@@ -1829,6 +1840,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				outStream.closeEntry();
 			}
 		}
+		
+		return false;
 	}
 	
 	/**
@@ -1849,9 +1862,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 	
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getFiles(java.lang.String[])
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#getFiles(java.lang.String[], ISystemOperationMonitor)
 	 */
-	public File[] getFiles(String[] fullNames) {
+	public File[] getFiles(String[] fullNames, ISystemOperationMonitor archiveOperationMonitor) {
 
 		File[] files = new File[fullNames.length];
 		
@@ -1871,7 +1884,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			try {	
 				files[i] = File.createTempFile(name, "virtual"); //$NON-NLS-1$
 				files[i].deleteOnExit();
-				extractVirtualFile(fullNames[i], files[i]);
+				extractVirtualFile(fullNames[i], files[i], archiveOperationMonitor);
 			}
 			catch (IOException e) {
 				// TODO: log error
@@ -1883,20 +1896,20 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#createFolder(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#createFolder(java.lang.String, ISystemOperationMonitor)
 	 */
-	public boolean createFolder(String fullVirtualName) {
+	public boolean createFolder(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		fullVirtualName = fullVirtualName + "/"; //$NON-NLS-1$
-		return createVirtualObject(fullVirtualName);
+		return createVirtualObject(fullVirtualName, archiveOperationMonitor);
 	}
 
 	/**
-	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#createFile(java.lang.String)
+	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#createFile(java.lang.String, ISystemOperationMonitor)
 	 */
-	public boolean createFile(String fullVirtualName) {
+	public boolean createFile(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		return createVirtualObject(fullVirtualName);
+		return createVirtualObject(fullVirtualName, archiveOperationMonitor);
 	}
 	
 	/**
@@ -1905,7 +1918,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * @param name the name of the virtual object.
 	 * @return <code>true</code> if the object was created successfully, <code>false</code> otherwise. 
 	 */
-	protected boolean createVirtualObject(String name) {
+	protected boolean createVirtualObject(String name, ISystemOperationMonitor archiveOperationMonitor) {
 		
 		// update our cache before accessing cache
 		try {
@@ -1917,7 +1930,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		}
 		
 		// if the object already exists, return false
-		if (exists(name)) {
+		if (exists(name, archiveOperationMonitor)) {
 			return false;
 		}
 		
@@ -1928,7 +1941,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
 			
 			// get all the entries
-			VirtualChild[] children = getVirtualChildrenList();
+			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
 			
 			// if it is an empty temp file, no need to recreate it
 			if (children.length != 0) {
@@ -2062,7 +2075,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return true;
 	}
 	
-	public SystemSearchLineMatch[] search(String fullVirtualName, SystemSearchStringMatcher matcher) {
+	public SystemSearchLineMatch[] search(String fullVirtualName, SystemSearchStringMatcher matcher, ISystemOperationMonitor archiveOperationMonitor) {
 		// if the search string is empty or if it is "*", then return no matches
 		// since it is a file search
 		if (matcher.isSearchStringEmpty() || matcher.isSearchStringAsterisk()) {
@@ -2071,7 +2084,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 			
-		VirtualChild vc = getVirtualFile(fullVirtualName);
+		VirtualChild vc = getVirtualFile(fullVirtualName, archiveOperationMonitor);
 		
 		if (!vc.exists() || vc.isDirectory) {
 			return new SystemSearchLineMatch[0];
@@ -2153,44 +2166,44 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * @return whether the add was successful
 	 */
 	public boolean add(File file, String virtualPath, String name,
-			String encoding, ISystemFileTypes registry) {
-		return add(file, virtualPath, name);
+			String encoding, ISystemFileTypes registry, ISystemOperationMonitor archiveOperationMonitor) {
+		return add(file, virtualPath, name, archiveOperationMonitor);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	public boolean add(File file, String virtualPath, String name,
-			String sourceEncoding, String targetEncoding, boolean isText) {
-		return add(file, virtualPath, name);
+			String sourceEncoding, String targetEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor) {
+		return add(file, virtualPath, name, archiveOperationMonitor);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#add(java.io.File[], java.lang.String, java.lang.String[], java.lang.String[], java.lang.String[], boolean[])
 	 */
 	public boolean add(File[] files, String virtualPath, String[] names,
-			String[] sourceEncodings, String[] targetEncodings, boolean[] isTexts) {
-		return add(files, virtualPath, names);
+			String[] sourceEncodings, String[] targetEncodings, boolean[] isTexts, ISystemOperationMonitor archiveOperationMonitor) {
+		return add(files, virtualPath, names, archiveOperationMonitor);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.io.File, java.lang.String, boolean)
 	 */
 	public boolean extractVirtualDirectory(String dir, File destinationParent,
-			File destination, String sourceEncoding, boolean isText) {
-		return extractVirtualDirectory(dir, destinationParent, destination);
+			File destination, String sourceEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor) {
+		return extractVirtualDirectory(dir, destinationParent, destination, archiveOperationMonitor);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualDirectory(java.lang.String, java.io.File, java.lang.String, boolean)
 	 */
 	public boolean extractVirtualDirectory(String dir, File destinationParent,
-			String sourceEncoding, boolean isText) {
-		return extractVirtualDirectory(dir, destinationParent);
+			String sourceEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor) {
+		return extractVirtualDirectory(dir, destinationParent, archiveOperationMonitor);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#extractVirtualFile(java.lang.String, java.io.File, java.lang.String, boolean)
 	 */
 	public boolean extractVirtualFile(String fullVirtualName, File destination,
-			String sourceEncoding, boolean isText) {
-		return extractVirtualFile(fullVirtualName, destination);
+			String sourceEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor) {
+		return extractVirtualFile(fullVirtualName, destination, archiveOperationMonitor);
 	}
 	
 	/**
@@ -2251,16 +2264,16 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		return type;
 	}
 
-	public boolean add(InputStream stream, String virtualPath, String name, String sourceEncoding, String targetEncoding, boolean isText) {
+	public boolean add(InputStream stream, String virtualPath, String name, String sourceEncoding, String targetEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	public boolean add(File file, String virtualPath, String name, String sourceEncoding, String targetEncoding, ISystemFileTypes typeRegistery) {
-		return add(file, virtualPath, name);
+	public boolean add(File file, String virtualPath, String name, String sourceEncoding, String targetEncoding, ISystemFileTypes typeRegistery, ISystemOperationMonitor archiveOperationMonitor) {
+		return add(file, virtualPath, name, archiveOperationMonitor);
 	}
 
-	public boolean replace(String fullVirtualName, InputStream stream, String name, String sourceEncoding, String targetEncoding, boolean isText) {
+	public boolean replace(String fullVirtualName, InputStream stream, String name, String sourceEncoding, String targetEncoding, boolean isText, ISystemOperationMonitor archiveOperationMonitor) {
 		// TODO Auto-generated method stub
 		return false;
 	}

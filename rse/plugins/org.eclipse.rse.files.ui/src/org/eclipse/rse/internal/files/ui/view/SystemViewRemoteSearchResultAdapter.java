@@ -640,7 +640,7 @@ public class SystemViewRemoteSearchResultAdapter extends AbstractSystemViewAdapt
 	 * Return true if this was successful. Return false if it failed and you issued a msg. 
 	 * Throw an exception if it failed and you want to use the generic msg.
 	 */
-	public boolean doRename(Shell shell, Object element, String name) throws Exception
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
 	{
 		return false;
 	}

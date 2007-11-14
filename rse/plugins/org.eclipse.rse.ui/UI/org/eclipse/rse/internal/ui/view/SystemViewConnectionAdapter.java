@@ -28,6 +28,7 @@
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
  * David McKnight    (IBM)       - [191288] Up To Action doesn't go all the way back to the connections
  * Uwe Stieber (Wind River)      - [199032] [api] Remove method acceptContextMenuActionContribution(...) from RSESystemTypeAdapter
+ * Xuan Chen         (IBM)       - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -628,7 +629,7 @@ public class SystemViewConnectionAdapter
 	/**
 	 * Perform the rename action.
 	 */
-	public boolean doRename(Shell shell, Object element, String name) throws Exception
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor) throws Exception
 	{
 		boolean ok = true;
 		IHost conn = (IHost)element;

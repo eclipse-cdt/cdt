@@ -18,6 +18,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * David Dykstal (IBM) - [191130] use new getRemoteSystemsProject(boolean) call
+ * Xuan Chen     (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -370,7 +371,7 @@ public class SystemTeamViewProfileAdapter
 	/**
 	 * Perform the rename action.
 	 */
-	public boolean doRename(Shell shell, Object element, String newName) throws Exception
+	public boolean doRename(Shell shell, Object element, String newName, IProgressMonitor monitor) throws Exception
 	{
 		boolean ok = true;		
 		RSECorePlugin.getTheSystemRegistry().renameSystemProfile((ISystemProfile)element, newName);

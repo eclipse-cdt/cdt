@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Xuan Chen        (IBM)        - [187016] [menus] Remote Systems Details View should have Refresh on context menu
  * David McKnight   (IBM)        - [193329] using "Resource" instead of "Name" in the label column
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
@@ -26,9 +27,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -79,6 +83,7 @@ import org.eclipse.rse.internal.ui.view.SystemViewDataDragAdapter;
 import org.eclipse.rse.internal.ui.view.SystemViewDataDropAdapter;
 import org.eclipse.rse.internal.ui.view.SystemViewMenuListener;
 import org.eclipse.rse.services.clientserver.StringCompare;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
@@ -1522,7 +1527,102 @@ public class SystemTableView
 	// ISYSTEMRENAMETARGET METHODS
 	// ---------------------------
 
-	
+	private class RenameJob extends WorkspaceJob
+	{
+		String[] newNames = null;
+		Object[] elements = null;
+		Object[] elementAdapters = null;
+		Object parentElement = null;
+		String renameMessage = null;
+		/**
+		 * RenameJob job.
+		 * @param newNames array of new names of all the elements need to be renamed
+		 * @param elements array of all the elements need to be renamed
+		 * @param elementAdapters array of all the view adapters of the elements need to be renamed
+		 * @param renameMessage the title of the Rename job.
+		 */
+		public RenameJob(String[] newNames, Object[] elements, Object[] elementAdapters, String renameMessage)
+		{
+			super(renameMessage);
+			this.newNames = newNames;
+			this.elements = elements;
+			this.elementAdapters = elementAdapters;
+			setUser(true);
+		}
+
+		public IStatus runInWorkspace(IProgressMonitor monitor) 
+		{
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			Object element = null;
+			ISystemViewElementAdapter adapter = null;
+			ISystemRemoteElementAdapter remoteAdapter = null;
+			String oldFullName = null;
+			String oldName = null;
+			Vector fileNamesRenamed = new Vector();
+			boolean ok = true;
+			
+			try {
+				int steps = elements.length;
+			    monitor.beginTask(renameMessage, steps);
+				for (int i=0; i < elements.length; i++)
+				{
+					element = elements[i];
+					adapter = (ISystemViewElementAdapter)elementAdapters[i];
+					remoteAdapter = getRemoteAdapter(element);
+					Object parentElement = getParentForContent(element);
+					if (remoteAdapter != null) 
+					{
+						oldName = remoteAdapter.getName(element);
+						oldFullName = remoteAdapter.getAbsoluteName(element); // pre-rename
+						monitor.subTask(getRenamingMessage(oldName).getLevelOneText());
+					}
+					ok = adapter.doRename(null, element, newNames[i], monitor);
+					if (ok) 
+					{
+						fileNamesRenamed.add(oldName);
+						if (remoteAdapter != null)
+						{
+							// Don't think we need to do findItem and updateItem here.
+							sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, adapter.getSubSystem(element), oldFullName, this);
+							
+						}
+
+						else
+							sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_RENAME, parentElement));
+					}
+					monitor.worked(1);
+				}
+			} 
+			catch (SystemMessageException exc) {
+				ok = false;
+				//If this operation is canceled, need to display a proper message to the user.
+				if (monitor.isCanceled() && fileNamesRenamed.size() > 0)
+				{
+					//Get the renamed file names
+					String renamedFileNames = (String)(fileNamesRenamed.get(0));
+					for (int i=1; i<(fileNamesRenamed.size()); i++)
+					{
+						renamedFileNames = renamedFileNames + "\n" + fileNamesRenamed.get(i); //$NON-NLS-1$
+					}
+					//getMessage("RSEG1125").makeSubstitution(movedFileName));
+					SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_RENAME_INTERRUPTED);
+					thisMessage.makeSubstitution(renamedFileNames);
+					SystemMessageDialog.displayErrorMessage(null, thisMessage);
+				}
+				else
+				{
+					SystemMessageDialog.displayErrorMessage(null, exc.getSystemMessage());
+				}
+			} catch (Exception exc) {
+				exc.printStackTrace();
+				SystemMessageDialog.displayErrorMessage(null, RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element, exc), //msg),
+						exc);
+				ok = false;
+			}
+			
+			return Status.OK_STATUS;
+		}
+	}
 	/**
 	 * Required method from ISystemRenameTarget.
 	 * Decides whether to even show the rename menu item.
@@ -1554,67 +1654,41 @@ public class SystemTableView
 	}
 
 	/**
+	 * Get the specific "Renaming %1..." 
+	 */
+    protected SystemMessage getRenamingMessage(String oldName)
+    {
+    	SystemMessage msg = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_RENAMEGENERIC_PROGRESS); 
+		msg.makeSubstitution(oldName);
+		return msg;
+    }
+    
+	/**
 	* Required method from ISystemRenameTarget
 	*/
 	public boolean doRename(String[] newNames)
 	{
-		ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+		
 		IStructuredSelection selection = (IStructuredSelection) getSelection();
 		Iterator elements = selection.iterator();
-		Object element = null;
-
-		ISystemViewElementAdapter adapter = null;
-		IRemoteObjectIdentifier remoteAdapter = null;
-		String oldFullName = null;
-		boolean ok = true;
-		try
-		{
-			int nameIdx = 0;
-			while (ok && elements.hasNext())
-			{
-				element = elements.next();
-				adapter = getViewAdapter(element);
-				Object parentElement = getParentForContent(element);
-
-				remoteAdapter = getViewAdapter(element);
-				if (remoteAdapter != null)
-					oldFullName = remoteAdapter.getAbsoluteName(element);
-				// pre-rename
-				ok = adapter.doRename(getShell(), element, newNames[nameIdx++]);
-				if (ok)
-				{
-					if (remoteAdapter != null)
-					{
-						// do rename here
-						Widget widget = findItem(element);
-						if (widget != null)
-						{
-							updateItem(widget, element);
-						}
-						sr.fireRemoteResourceChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_RENAMED, element, parentElement, adapter.getSubSystem(element), oldFullName, this);
-
-					}
-					else
-						sr.fireEvent(new org.eclipse.rse.core.events.SystemResourceChangeEvent(element, ISystemResourceChangeEvents.EVENT_RENAME, parentElement));
-				}
-			}
+		
+		
+		Object[] renameElements = new Object[newNames.length];
+		Object[] elementAdapters = new Object[newNames.length];
+		int i = 0;
+		while (elements.hasNext()) {
+			renameElements[i] = elements.next();
+			elementAdapters[i] = getViewAdapter(renameElements[i]);
+			i++;
+			//remoteAdapter = getRemoteAdapter(element);
 		}
-		catch (SystemMessageException exc)
-		{
-			SystemMessageDialog.displayErrorMessage(getShell(), exc.getSystemMessage());
-			ok = false;
-		}
-		catch (Exception exc)
-		{
-			//String msg = exc.getMessage();
-			//if ((msg == null) || (exc instanceof ClassCastException))
-			//  msg = exc.getClass().getName();
-			SystemMessageDialog.displayErrorMessage(getShell(), RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_EXCEPTION_RENAMING).makeSubstitution(element, exc),
-			//msg),
-			exc);
-			ok = false;
-		}
-		return ok;
+		SystemMessage renameMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_RENAMEGENERIC_PROGRESS);
+		renameMessage.makeSubstitution("");  //$NON-NLS-1$
+		String renameMessageText = renameMessage.getLevelOneText();
+		RenameJob renameJob = new RenameJob(newNames, renameElements, elementAdapters, renameMessageText);
+		renameJob.schedule();
+		return true;
+		
 	}
 
 	/**

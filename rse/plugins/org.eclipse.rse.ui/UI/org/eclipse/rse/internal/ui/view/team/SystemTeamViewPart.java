@@ -17,6 +17,7 @@
  * David Dykstal (IBM) - [186589] move user types, user actions, and compile commands
  *   API to the user actions plugin
  * Rupen Mardirossian (IBM) - [187741] Implemented the handleDoubleClick method
+ * Xuan Chen          (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.team;
@@ -1116,7 +1117,7 @@ public class SystemTeamViewPart
 			ISystemProfile profile = (ISystemProfile) elements.next();
 			try {
 				SystemTeamViewProfileAdapter profileAdapter = getProfileAdapter(profile);
-				profileAdapter.doRename(getShell(), profile, newNames[idx++]);
+				profileAdapter.doRename(getShell(), profile, newNames[idx++], null);
 			} catch (SystemMessageException exc) {
 				SystemMessageDialog.displayMessage(getShell(), exc);
 				ok = false;

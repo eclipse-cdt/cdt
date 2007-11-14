@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
+ * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -682,7 +683,7 @@ public class SystemViewSubSystemAdapter extends AbstractSystemViewAdapter
 	/**
 	 * Perform the rename action. Assumes uniqueness checking was done already.
 	 */
-	public boolean doRename(Shell shell, Object element, String name)
+	public boolean doRename(Shell shell, Object element, String name, IProgressMonitor monitor)
 	{
 		ISubSystem ss = (ISubSystem)element;
 		ISubSystemConfiguration parentSSFactory = ss.getSubSystemConfiguration();

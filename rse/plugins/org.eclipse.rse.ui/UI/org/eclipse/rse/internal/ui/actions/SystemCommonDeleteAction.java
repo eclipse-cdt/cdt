@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [188637] Handle the caught exception in DeleteJob.run when file fails to be deleted
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste with Remote Search view open
+ * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -36,9 +37,11 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.ISystemDeleteTarget;
+import org.eclipse.rse.ui.ISystemMessages;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
 import org.eclipse.rse.ui.actions.SystemBaseDialogAction;
@@ -106,6 +109,7 @@ public class SystemCommonDeleteAction
 			super(SystemResources.ACTION_DELETE_LABEL);
 			_localResources = localResources;
 			_remoteSets = remoteSets;
+			setUser(true);
 		}
 		
 		public IStatus run(IProgressMonitor monitor)
@@ -152,14 +156,43 @@ public class SystemCommonDeleteAction
 				}
 				catch (SystemMessageException e)
 				{
-					SystemMessageDialog.displayMessage(e);
+					if (monitor.isCanceled() && set.size() > 1)
+					{
+						for (int i = 0; i < set.size(); i++)
+						{
+							Object thisObject = set.get(i);
+							if (!(adapter.exists(thisObject)))
+							{
+								//This object has been deleted
+								remoteDeletedObjects.add(thisObject);
+							}	
+						}
+						if (remoteDeletedObjects.size() > 0)
+						{
+							//Get the moved file names
+							Object thisObject = remoteDeletedObjects.get(0);
+							String deletedFileNames = null;
+							deletedFileNames = adapter.getName(thisObject);
+							for (int i=1; i<(remoteDeletedObjects.size()); i++)
+							{
+								thisObject = remoteDeletedObjects.get(i);
+								deletedFileNames = deletedFileNames + "\n" + adapter.getName(thisObject); //$NON-NLS-1$
+							}
+							SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_DELETE_INTERRUPTED); 
+							thisMessage.makeSubstitution(deletedFileNames);
+							SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+						}
+					}
+					else
+					{
+						SystemMessageDialog.displayMessage(e);
+					}
 				}
 				catch (Exception e)
 				{
 					SystemMessageDialog.displayExceptionMessage(getShell(), e);
 				}
 			}
-			
 			
 			// start a runnable to do the action refresh events
 			DeleteEventRunnable fireEvents = new DeleteEventRunnable(localDeletedObjects, remoteDeletedObjects);

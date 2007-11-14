@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -132,7 +133,7 @@ public class UniversalDownloadHandler extends Thread implements ICancellableHand
 						_dataStore.refresh(arg1);
 						return _miner.statusDone(status);
 					}
-					VirtualChild vChild = handler.getVirtualFile(vpath.getVirtualPart());
+					VirtualChild vChild = handler.getVirtualFile(vpath.getVirtualPart(), null);
 					file = vChild.getExtractedFile();
 
 				}

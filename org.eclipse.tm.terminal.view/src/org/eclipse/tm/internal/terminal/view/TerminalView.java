@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -613,28 +614,48 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	 *
 	 */
 	protected class TerminalMenuHandlerEdit implements MenuListener, IMenuListener {
-		protected String fActionDefinitionIdCopy;
-
-		protected String fActionDefinitionIdPaste;
-
-		protected String fActionDefinitionIdSelectAll;
-
-		protected int fAcceleratorCopy;
-
-		protected int fAcceleratorPaste;
-
-		protected int fAcceleratorSelectAll;
-
+		AcceleratorDisabler fAcceleratorDisablerCopy=new AcceleratorDisabler();
+		AcceleratorDisabler fAcceleratorDisablerPaste=new AcceleratorDisabler();
+		AcceleratorDisabler fAcceleratorDisablerSelectAll=new AcceleratorDisabler();
+		/**
+		 * @author scharf
+		 * 209656: [terminal] ClassCastException in TerminalView under Eclipse-3.4M3
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=209656
+		 * 
+		 * 
+		 * TODO: eliminate this code.
+		 */
+		class AcceleratorDisabler {
+			String fActionDefinitionId;
+			int fAccelerator;
+			ActionContributionItem fActionContributionItem;
+			public void menuAboutToShow(IContributionItem contribution) {
+				fActionContributionItem=null;
+				if(contribution instanceof ActionContributionItem) {
+					ActionContributionItem item = (ActionContributionItem) contribution;
+					if(item.getAction() instanceof RetargetAction) {
+						RetargetAction action = (RetargetAction) item.getAction();
+						fActionDefinitionId = action.getActionDefinitionId();
+						fAccelerator = action.getAccelerator();
+						action.setActionDefinitionId(null);
+						action.enableAccelerator(false);
+						item.update();
+						fActionContributionItem=item;
+					}
+				}
+			}
+			public void menuHidden() {
+				if(fActionContributionItem!=null) {
+					RetargetAction action = (RetargetAction) fActionContributionItem.getAction();
+					action.setActionDefinitionId(fActionDefinitionId);
+					action.setAccelerator(fAccelerator);
+					action.enableAccelerator(true);
+					fActionContributionItem.update();
+					fActionContributionItem=null;
+				}
+			}			
+		}
 		protected TerminalMenuHandlerEdit() {
-			super();
-
-			fActionDefinitionIdCopy = ""; //$NON-NLS-1$
-			fActionDefinitionIdPaste = ""; //$NON-NLS-1$
-			fActionDefinitionIdSelectAll = ""; //$NON-NLS-1$
-
-			fAcceleratorCopy = 0;
-			fAcceleratorPaste = 0;
-			fAcceleratorSelectAll = 0;
 		}
 		public void menuAboutToShow(IMenuManager menuMgr) {
 
@@ -643,68 +664,21 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 			updateEditCut();
 			updateEditPaste();
 			updateEditSelectAll();
-
-			ActionContributionItem item = (ActionContributionItem) menuMgr.find(ActionFactory.COPY.getId());
-			RetargetAction action = (RetargetAction) item.getAction();
-			fActionDefinitionIdCopy = action.getActionDefinitionId();
-			fAcceleratorCopy = action.getAccelerator();
-			action.setActionDefinitionId(null);
-			action.enableAccelerator(false);
-			item.update();
-
-			item = (ActionContributionItem) menuMgr.find(ActionFactory.PASTE.getId());
-			action = (RetargetAction) item.getAction();
-			fActionDefinitionIdPaste = action.getActionDefinitionId();
-			fAcceleratorPaste = action.getAccelerator();
-			action.setActionDefinitionId(null);
-			action.enableAccelerator(false);
-			item.update();
-
-			item = (ActionContributionItem) menuMgr.find(ActionFactory.SELECT_ALL.getId());
-			action = (RetargetAction) item.getAction();
-			fActionDefinitionIdSelectAll = action.getActionDefinitionId();
-			fAcceleratorSelectAll = action.getAccelerator();
-			action.setActionDefinitionId(null);
-			action.enableAccelerator(false);
-			item.update();
+			fAcceleratorDisablerCopy.menuAboutToShow(menuMgr.find(ActionFactory.COPY.getId()));
+			fAcceleratorDisablerPaste.menuAboutToShow(menuMgr.find(ActionFactory.PASTE.getId()));
+			fAcceleratorDisablerSelectAll.menuAboutToShow(menuMgr.find(ActionFactory.SELECT_ALL.getId()));
 		}
 		public void menuShown(MenuEvent event) {
 			// do nothing
 		}
 		public void menuHidden(MenuEvent event) {
-			MenuManager menuMgr;
-			ActionContributionItem item;
-			RetargetAction action;
-
 			fMenuAboutToShow = false;
 			updateEditCopy();
 			updateEditCut();
 
-			menuMgr = getEditMenuManager();
-
-			item = (ActionContributionItem) menuMgr.find(ActionFactory.COPY
-					.getId());
-			action = (RetargetAction) item.getAction();
-			action.setActionDefinitionId(fActionDefinitionIdCopy);
-			action.setAccelerator(fAcceleratorCopy);
-			action.enableAccelerator(true);
-			item.update();
-
-			item = (ActionContributionItem) menuMgr.find(ActionFactory.PASTE
-					.getId());
-			action = (RetargetAction) item.getAction();
-			action.setActionDefinitionId(fActionDefinitionIdPaste);
-			action.setAccelerator(fAcceleratorPaste);
-			action.enableAccelerator(true);
-			item.update();
-
-			item = (ActionContributionItem) menuMgr
-					.find(ActionFactory.SELECT_ALL.getId());
-			action = (RetargetAction) item.getAction();
-			action.setActionDefinitionId(fActionDefinitionIdSelectAll);
-			action.setAccelerator(fAcceleratorSelectAll);
-			action.enableAccelerator(true);
-			item.update();
+			fAcceleratorDisablerCopy.menuHidden();
+			fAcceleratorDisablerPaste.menuHidden();
+			fAcceleratorDisablerSelectAll.menuHidden();
 		}
 	}
 

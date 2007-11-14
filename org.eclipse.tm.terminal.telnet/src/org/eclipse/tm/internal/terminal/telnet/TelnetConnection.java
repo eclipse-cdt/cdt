@@ -311,8 +311,9 @@ public class TelnetConnection extends Thread implements TelnetCodes {
 					terminalControl.setState(TerminalState.CLOSED);
 					break;
 				} else {
-					Logger.log("Received " + nRawBytes + " bytes: '" + //$NON-NLS-1$ //$NON-NLS-2$
-							Logger.encode(new String(rawBytes, 0, nRawBytes)) + "'"); //$NON-NLS-1$
+					if(Logger.isLogEnabled())
+						Logger.log("Received " + nRawBytes + " bytes: '" + //$NON-NLS-1$ //$NON-NLS-2$
+								Logger.encode(new String(rawBytes, 0, nRawBytes)) + "'"); //$NON-NLS-1$
 
 					// Process any TELNET protocol data that we receive. Don't
 					// send any TELNET protocol data until we are sure the remote

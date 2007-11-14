@@ -18,6 +18,7 @@
 		-->
 		<topic label="org.eclipse.rse.ui.mountPathMappers" href="reference/extension-points/org_eclipse_rse_ui_mountPathMappers.html" />
 		<topic label="org.eclipse.rse.ui.newConnectionWizards" href="reference/extension-points/org_eclipse_rse_ui_newConnectionWizards.html" />
+	    <topic label="org.eclipse.rse.subsystems.files.core.remoteFileTypes" href="reference/extension-points/org_eclipse_rse_subsystems_files_core_remoteFileTypes.html" />
 		<anchor id="rse-extension-points-ref" />
 	</topic>
 	

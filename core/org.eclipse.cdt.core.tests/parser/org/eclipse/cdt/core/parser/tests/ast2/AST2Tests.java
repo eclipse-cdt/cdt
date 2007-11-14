@@ -30,12 +30,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
@@ -67,6 +69,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -3950,5 +3953,76 @@ public class AST2Tests extends AST2BaseTest {
         assertInstance(col.getName(1).resolveBinding(), ICPPNamespace.class);
         assertInstance(col.getName(2).resolveBinding(), ICPPNamespace.class);
         assertInstance(col.getName(3).resolveBinding(), ICPPClassType.class);
+    }
+    
+    // #define WRAP(var) var
+    // #define MACRO 1
+    // int a= MACRO;
+    // int b= WRAP(MACRO);
+    public void testBug94673_refsForMacrosAsArguments() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu= parseAndCheckBindings( buffer.toString(), ParserLanguage.CPP, true );
+    	IASTPreprocessorMacroDefinition[] defs= tu.getMacroDefinitions();
+    	assertEquals(2, defs.length);
+    	IASTPreprocessorMacroDefinition md= defs[1];
+    	assertEquals("MACRO", md.getName().toString());
+    	IMacroBinding binding= (IMacroBinding) md.getName().resolveBinding();
+    	assertNotNull(binding);
+    	IASTName[] refs= tu.getReferences(binding);
+    	assertEquals(2, refs.length);
+    	IASTFileLocation loc= refs[1].getFileLocation();
+    	final int idx = buffer.indexOf("WRAP(MACRO)");
+		assertEquals(idx, loc.getNodeOffset());
+    	IASTImageLocation iloc= refs[1].getImageLocation();
+    	assertEquals(idx+5, iloc.getNodeOffset());
+    }
+    
+	//	void OSi_Panic(const char *file, int line) {};
+	//	void OSi_Panic(const char *file, int line, const char *fmt, ...) {};
+	//
+	//	#define ASSERT(exp, args...)\
+	//	{\
+	//	    if (!(exp))\
+	//	    {\
+	//	        OSi_Panic(__FILE__, __LINE__, ##args);\
+	//	    }\
+	//	}\
+	//
+	//	int main()
+	//	{
+	//	    int a = 0;
+	//	    int b = 0;
+	//	    ASSERT(a > b, "Error: a=%d, b=%d", a, b);// marked with error
+	//	    ASSERT(a > b, "Error!");// marked with error also
+	//	    ASSERT(false);// fine
+	//	}
+
+	//	void OSi_Panic(const char *file, int line) {};
+	//	void OSi_Panic(const char *file, int line, const char *fmt, ...) {};
+	//
+	//	#define ASSERT(exp, ...)\
+	//	{\
+	//	    if (!(exp))\
+	//	    {\
+	//	        OSi_Panic(__FILE__, __LINE__, ##__VA_ARGS__);\
+	//	    }\
+	//	}\
+	//
+	//	int main()
+	//	{
+	//	    int a = 0;
+	//	    int b = 0;
+	//	    ASSERT(a > b, "Error: a=%d, b=%d", a, b);// marked with error
+	//	    ASSERT(a > b, "Error!");// marked with error also
+	//	    ASSERT(false);// fine
+	//	}
+    public void testBug188855_gccExtensionForVariadicMacros() throws Exception {
+    	StringBuffer[] buffer = getContents(2);
+    	final String content1 = buffer[0].toString();
+    	final String content2 = buffer[1].toString();
+    	parse( content1, ParserLanguage.CPP); 
+    	parse( content1, ParserLanguage.C); 
+    	parse( content2, ParserLanguage.CPP); 
+    	parse( content2, ParserLanguage.C); 
     }
 }

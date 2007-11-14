@@ -14,6 +14,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -225,5 +226,28 @@ public class CommentTests extends AST2BaseTest {
 		assertEquals(1, comments.length);
 		assertNotNull(comments[0].getFileLocation());
 		assertNotNull(comments[0].getNodeLocations());
+	}
+	
+	// // TODO: shows up in task list 
+	// #include "somefile.h"  // TODO: ignored
+    //
+	// #ifdef WHATEVA // TODO: ignored
+	// #endif // TODO: ignored
+	// // TODO: shows up in task list
+
+	public void testCommentInDirectives_bug192546() throws Exception {
+		StringBuffer code= getContents(1)[0];
+		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, false, true);
+		IASTComment[] comments = tu.getComments();
+		
+		assertEquals(5, comments.length);
+		assertNotNull(comments[0].getFileLocation());
+		assertNotNull(comments[0].getNodeLocations());
+		for (int i = 0; i < comments.length; i++) {
+			IASTComment comment = comments[i];
+			IASTFileLocation loc= comment.getFileLocation();
+			int idx= loc.getNodeOffset() + comment.getRawSignature().indexOf("TODO");
+			assertEquals("TODO", code.substring(idx, idx+4));			
+		}
 	}
 }

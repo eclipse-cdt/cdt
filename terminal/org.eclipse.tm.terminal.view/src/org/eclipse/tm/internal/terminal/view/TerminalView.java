@@ -14,6 +14,7 @@
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [206892] State handling: Only allow connect when CLOSED
+ * Michael Scharf (Wind River) - [209656] ClassCastException in TerminalView under Eclipse-3.4M3
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 

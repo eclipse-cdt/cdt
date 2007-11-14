@@ -72,9 +72,9 @@ public class ToolSelectionDialog extends Dialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		if (ri instanceof IFolderInfo)
-			tmod = ManagedBuildManager.getToolChainModificationManager().getModification((IFolderInfo)ri);
+			tmod = ManagedBuildManager.getToolChainModificationManager().createModification((IFolderInfo)ri);
 		else 	
-			tmod = ManagedBuildManager.getToolChainModificationManager().getModification((IFileInfo)ri);
+			tmod = ManagedBuildManager.getToolChainModificationManager().createModification((IFileInfo)ri);
 	}
 
 	/* (non-Javadoc)

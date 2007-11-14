@@ -4209,4 +4209,8 @@ public class Tool extends HoldsOptions implements ITool, IOptionCategory, IMatch
 	public boolean isRealBuildObject() {
 		return getRealBuildObject() == this;
 	}
+
+	public boolean isExtensionBuildObject() {
+		return isExtensionElement();
+	}
 }

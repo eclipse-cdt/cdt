@@ -117,6 +117,21 @@ public class TcModificationUtil {
 		return storage;
 	}
 
+	public static PerTypeMapStorage cloneRealToolToPathSet(PerTypeMapStorage starage){
+		starage = (PerTypeMapStorage)starage.clone();
+		int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
+		for(int i = 0; i < types.length; i++){
+			Map map = starage.getMap(types[i], false);
+			if(map != null){
+				for(Iterator iter = map.entrySet().iterator(); iter.hasNext(); ){
+					Map.Entry entry = (Map.Entry)iter.next();
+					entry.setValue(((TreeSet)entry.getValue()).clone());
+				}
+			}
+		}
+
+		return starage;
+	}
 	
 	public static PerTypeMapStorage createRealToolToPathSet(IConfiguration cfg, PerTypeMapStorage skipMapStorage, boolean addSkipPaths){
 		PerTypeMapStorage storage = new PerTypeMapStorage();
@@ -446,6 +461,17 @@ public class TcModificationUtil {
 		}
 		
 		return result;
+	}
+
+	public static TreeMap clonePathMap(TreeMap map){
+		map = (TreeMap)map.clone();
+		
+		for(Iterator iter = map.entrySet().iterator(); iter.hasNext(); ){
+			Map.Entry entry = (Map.Entry)iter.next();
+			entry.setValue(((PerTypeSetStorage)entry.getValue()).clone());
+		}
+		
+		return map;
 	}
 
 	private static boolean pathContainsObjects(PerTypeMapStorage storage, IPath path, int type){

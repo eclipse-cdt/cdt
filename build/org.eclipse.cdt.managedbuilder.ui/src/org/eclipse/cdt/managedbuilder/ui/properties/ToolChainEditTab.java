@@ -167,7 +167,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	
 	private void showErrorMessage() {
 		if (ri instanceof IFolderInfo) {
-			IFolderInfoModification foim = tcmm.getModification((IFolderInfo)ri);
+			IFolderInfoModification foim = tcmm.createModification((IFolderInfo)ri);
 			if (foim.isToolChainCompatible()) {
 				st_toolchain.setText(EMPTY_STR);
 			} else {
@@ -186,7 +186,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 				}
 			}
 		} else { // FileInfo
-			IFileInfoModification fim = tcmm.getModification((IFileInfo)ri);
+			IFileInfoModification fim = tcmm.createModification((IFileInfo)ri);
 			fim.getProjectToolModifications();
 		}
 	}
@@ -202,7 +202,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		
 		IToolChain[] tcs = r_tcs;
 		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
-			IFolderInfoModification fim = tcmm.getModification((IFolderInfo)ri);
+			IFolderInfoModification fim = tcmm.createModification((IFolderInfo)ri);
 			tcs = fim.getCompatibleToolChains();
 			IToolChain[] tcs1 = new IToolChain[tcs.length + 1];
 			System.arraycopy(tcs, 0, tcs1, 0, tcs.length);
@@ -245,7 +245,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		IBuilder[] bs = r_bs;
 		
 		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
-			IFolderInfoModification fim = tcmm.getModification((IFolderInfo)ri);
+			IFolderInfoModification fim = tcmm.createModification((IFolderInfo)ri);
 			if (fim instanceof IConfigurationModification) {
 				IBuilder[] bs1 = ((IConfigurationModification)fim).getCompatibleBuilders();
 				bs = new IBuilder[bs1.length + 1];
@@ -347,7 +347,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 		st_tool.setImage(null);
 		if (tool == null)
 			return;
-		IFileInfoModification fim = tcmm.getModification((IFileInfo)ri);
+		IFileInfoModification fim = tcmm.createModification((IFileInfo)ri);
 		IToolModification tm = fim.getToolModification(tool);
 		if (tm != null && !tm.isCompatible()) {
 			CompatibilityStatus cs = tm.getCompatibilityStatus();
@@ -361,7 +361,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private boolean updateCompatibleTools(ITool real) {
 		boolean result = false;
 		ArrayList list = new ArrayList();
-		IFileInfoModification fim = tcmm.getModification((IFileInfo)ri);
+		IFileInfoModification fim = tcmm.createModification((IFileInfo)ri);
 		
 		if (real != null) { // Current tool exists 
 			real = ManagedBuildManager.getRealTool(real);

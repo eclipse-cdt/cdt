@@ -63,7 +63,7 @@ public class ToolChainModificationTests extends BasicTestCase {
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(des.getConfigurations()[0]);
 		IToolChainModificationManager mngr = ManagedBuildManager.getToolChainModificationManager();
 		
-		IConfigurationModification cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		IConfigurationModification cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());
 		
@@ -132,7 +132,7 @@ public class ToolChainModificationTests extends BasicTestCase {
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(des.getConfigurations()[0]);
 		IToolChainModificationManager mngr = ManagedBuildManager.getToolChainModificationManager();
 		
-		IConfigurationModification cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		IConfigurationModification cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertEquals(cfgM.getToolChain(), cfg.getToolChain());
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());
@@ -142,11 +142,11 @@ public class ToolChainModificationTests extends BasicTestCase {
 		fo.create(true, true, null);
 		
 		IFolderInfo foInfo = cfg.createFolderInfo(foPath);
-		IFolderInfoModification foM = mngr.getModification(foInfo);
+		IFolderInfoModification foM = mngr.createModification(foInfo);
 		assertEquals(foM.getToolChain(), foInfo.getToolChain());
 		assertTrue(foM.isToolChainCompatible());
 
-		cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertEquals(cfgM.getToolChain(), cfg.getToolChain());
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());
@@ -165,9 +165,9 @@ public class ToolChainModificationTests extends BasicTestCase {
 		foM.setToolChain(incompatibleTc);
 		assertFalse(foM.isToolChainCompatible());
 		foInfo.changeToolChain(incompatibleTc, CDataUtil.genId("blah.blah"), incompatibleTc.getName());
-		cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertTrue(cfgM.isToolChainCompatible());
-		foM = mngr.getModification(foInfo);
+		foM = mngr.createModification(foInfo);
 		assertFalse(foM.isToolChainCompatible());
 		
 		project.delete(true, null);
@@ -183,7 +183,7 @@ public class ToolChainModificationTests extends BasicTestCase {
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(des.getConfigurations()[0]);
 		IToolChainModificationManager mngr = ManagedBuildManager.getToolChainModificationManager();
 		
-		IConfigurationModification cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		IConfigurationModification cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertEquals(cfgM.getToolChain(), cfg.getToolChain());
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());
@@ -193,11 +193,11 @@ public class ToolChainModificationTests extends BasicTestCase {
 		fo.create(true, true, null);
 		
 		IFolderInfo foInfo = cfg.createFolderInfo(foPath);
-		IFolderInfoModification foM = mngr.getModification(foInfo);
+		IFolderInfoModification foM = mngr.createModification(foInfo);
 		assertEquals(foM.getToolChain(), foInfo.getToolChain());
 		assertTrue(foM.isToolChainCompatible());
 
-		cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertEquals(cfgM.getToolChain(), cfg.getToolChain());
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());
@@ -222,9 +222,9 @@ public class ToolChainModificationTests extends BasicTestCase {
 		foM.setToolChain(ManagedBuildManager.getExtensionToolChain("tcm.derive2.tc1"));
 		assertFalse(foM.isToolChainCompatible());
 		foInfo.changeToolChain(ManagedBuildManager.getExtensionToolChain("tcm.derive2.tc1"), CDataUtil.genId("blah.blah"), null);
-		cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertTrue(cfgM.isToolChainCompatible());
-		foM = mngr.getModification(foInfo);
+		foM = mngr.createModification(foInfo);
 		assertFalse(foM.isToolChainCompatible());
 		
 		project.delete(true, null);
@@ -324,7 +324,7 @@ public class ToolChainModificationTests extends BasicTestCase {
 		
 		IToolChainModificationManager mngr = ManagedBuildManager.getToolChainModificationManager();
 		
-		IConfigurationModification cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		IConfigurationModification cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertEquals(cfgM.getToolChain(), cfg.getToolChain());
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());
@@ -334,11 +334,11 @@ public class ToolChainModificationTests extends BasicTestCase {
 		fo.create(true, true, null);
 		
 		IFolderInfo foInfo = cfg.createFolderInfo(foPath);
-		IFolderInfoModification foM = mngr.getModification(foInfo);
+		IFolderInfoModification foM = mngr.createModification(foInfo);
 		assertEquals(foM.getToolChain(), foInfo.getToolChain());
 		assertTrue(foM.isToolChainCompatible());
 		
-		cfgM = (IConfigurationModification)mngr.getModification(cfg.getRootFolderInfo());
+		cfgM = (IConfigurationModification)mngr.createModification(cfg.getRootFolderInfo());
 		assertEquals(cfgM.getToolChain(), cfg.getToolChain());
 		assertTrue(cfgM.isToolChainCompatible());
 		assertTrue(cfgM.isBuilderCompatible());

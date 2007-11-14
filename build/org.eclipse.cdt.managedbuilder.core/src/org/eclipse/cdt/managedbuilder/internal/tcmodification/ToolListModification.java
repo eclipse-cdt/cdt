@@ -50,17 +50,17 @@ import org.eclipse.core.runtime.Status;
 public abstract class ToolListModification implements
 		IToolListModification {
 //	private Tool []fTools;
-	private Set fInputExtsSet = new HashSet();
+	private HashSet fInputExtsSet = new HashSet();
 	private ResourceInfo fRcInfo;
 	private LinkedHashMap fProjCompInfoMap = new LinkedHashMap();
 	private HashMap fSysCompInfoMap = new HashMap();
 	private Tool[] fAllSysTools;
-	private Set fFilteredOutSysTools;
+	private HashSet fFilteredOutSysTools;
 //	private LinkedHashMap fRealToToolMap = new LinkedHashMap();
 //	private boolean fSysInfoMapInited;
 	private PerTypeMapStorage fCompleteObjectStorage;
 	private TreeMap fCompletePathMapStorage;
-	private Set fAddCapableTools;
+	private HashSet fAddCapableTools;
 	private Map fFilteredOutTools;
  
 	private ToolListModificationInfo fModificationInfo;
@@ -378,6 +378,55 @@ public abstract class ToolListModification implements
 		clearToolInfo(tools);
 	}
 	
+	public ToolListModification(ResourceInfo rcInfo, ToolListModification base){
+		fRcInfo = rcInfo;
+		Tool[] initialTools = (Tool[])rcInfo.getTools();
+		Map initRealToToolMap = TcModificationUtil.getRealToObjectsMap(initialTools, new LinkedHashMap());
+		Tool[] updatedTools = base.getTools(true, false);
+		Map updatedRealToToolMap = TcModificationUtil.getRealToObjectsMap(updatedTools, new LinkedHashMap());
+		for(Iterator iter = updatedRealToToolMap.entrySet().iterator(); iter.hasNext(); ){
+			Map.Entry entry = (Map.Entry)iter.next();
+			Object real = entry.getKey();
+			Object initial = initRealToToolMap.get(real);
+			if(initial != null){
+				entry.setValue(initial);
+			} else {
+				IRealBuildObjectAssociation updated = (IRealBuildObjectAssociation)entry.getValue();
+				if(!updated.isExtensionBuildObject()){
+					updated = updated.getExtensionObject();
+					entry.setValue(updated);
+				}
+			}
+		}
+		
+		updatedRealToToolMap.values().toArray(updatedTools);
+		clearToolInfo(updatedTools);
+		
+//		if(base.fInputExtsSet != null)
+//			fInputExtsSet = (HashSet)base.fInputExtsSet.clone();
+//		private LinkedHashMap fProjCompInfoMap = new LinkedHashMap();
+//		private HashMap fSysCompInfoMap = new HashMap();
+		if(base.fAllSysTools != null)
+			fAllSysTools = (Tool[])base.fAllSysTools.clone();
+
+		if(base.fFilteredOutSysTools != null)
+			fFilteredOutSysTools = (HashSet)base.fFilteredOutSysTools.clone();
+		
+		if(base.fCompleteObjectStorage != null){
+			fCompleteObjectStorage = TcModificationUtil.cloneRealToolToPathSet(base.fCompleteObjectStorage);
+		}
+		
+		if(base.fCompletePathMapStorage != null){
+			fCompletePathMapStorage = base.fCompletePathMapStorage;
+		}
+//		if(base.fAddCapableTools)
+//			fAddCapableTools = (HashSet)base.fAddCapableTools.clone();
+		//private Map fFilteredOutTools;
+	 
+//		private ToolListModificationInfo fModificationInfo;
+	}
+
+	
 	public IResourceInfo getResourceInfo(){
 		return fRcInfo;
 	}
@@ -440,7 +489,7 @@ public abstract class ToolListModification implements
 		if(fAllSysTools == null){
 			ITool[] allSys = ManagedBuildManager.getRealTools();
 			fAllSysTools = filterTools((Tool[])allSys);
-			Set set = new HashSet(Arrays.asList(allSys));
+			HashSet set = new HashSet(Arrays.asList(allSys));
 			set.removeAll(Arrays.asList(fAllSysTools));
 			fFilteredOutSysTools = set;
 		}

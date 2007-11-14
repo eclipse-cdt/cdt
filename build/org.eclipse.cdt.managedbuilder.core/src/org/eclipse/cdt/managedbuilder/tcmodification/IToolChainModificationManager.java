@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.tcmodification;
 
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
@@ -28,7 +29,7 @@ public interface IToolChainModificationManager {
 	 * @param rcInfo
 	 * @return
 	 */
-	IFolderInfoModification getModification(IFolderInfo rcInfo);
+	IFolderInfoModification createModification(IFolderInfo rcInfo);
 
 	/**
 	 * returns the modification info calculator for the given file info
@@ -36,5 +37,9 @@ public interface IToolChainModificationManager {
 	 * @param rcInfo
 	 * @return
 	 */
-	IFileInfoModification getModification(IFileInfo rcInfo);
+	IFileInfoModification createModification(IFileInfo rcInfo);
+	
+	IFolderInfoModification createModification(IConfiguration cfg, IFolderInfoModification base) throws IllegalArgumentException;
+
+	IFileInfoModification createModification(IConfiguration cfg, IFileInfoModification base) throws IllegalArgumentException;
 }

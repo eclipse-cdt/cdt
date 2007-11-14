@@ -13,7 +13,7 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PerTypeMapStorage {
+public class PerTypeMapStorage implements Cloneable {
 	private ObjectTypeBasedStorage fStorage = new ObjectTypeBasedStorage();
 	
 	public Map getMap(int type, boolean create){
@@ -29,5 +29,21 @@ public class PerTypeMapStorage {
 		if(map == null)
 			return new HashMap();
 		return (Map)((HashMap)map).clone();
+	}
+
+	public Object clone(){
+		try {
+			PerTypeMapStorage clone = (PerTypeMapStorage)super.clone();
+			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
+			for(int i = 0; i < types.length; i++){
+				Object o = clone.fStorage.get(types[i]);
+				if(o != null){
+					clone.fStorage.set(types[i], clone.createMap((Map)o));
+				}
+			}
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

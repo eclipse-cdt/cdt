@@ -58,6 +58,15 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		fRealToolChain = (ToolChain)ManagedBuildManager.getRealToolChain(fSelectedToolChain);
 	}
 	
+	public FolderInfoModification(FolderInfo foInfo, FolderInfoModification base) {
+		super(foInfo, base);
+		fSelectedToolChain = base.fSelectedToolChain;
+		if(!fSelectedToolChain.isExtensionElement())
+			fSelectedToolChain = (ToolChain)fSelectedToolChain.getExtensionObject();
+		
+		fRealToolChain = base.fRealToolChain;
+	}
+	
 	private ConflictMatchSet getParentConflictMatchSet(){
 		if(fParentConflicts == null){
 			PerTypeMapStorage storage = getParentObjectStorage();

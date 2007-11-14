@@ -2796,4 +2796,8 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 	public boolean isRealBuildObject() {
 		return getRealBuildObject() == this;
 	}
+
+	public boolean isExtensionBuildObject() {
+		return isExtensionElement();
+	}
 }

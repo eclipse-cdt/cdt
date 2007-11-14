@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
@@ -30,6 +32,8 @@ import org.eclipse.cdt.managedbuilder.internal.tcmodification.extension.RulesMan
 import org.eclipse.cdt.managedbuilder.tcmodification.IFileInfoModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IFolderInfoModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManager;
+import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
+import org.eclipse.core.runtime.IPath;
 
 public class ToolChainModificationManager implements
 		IToolChainModificationManager {
@@ -54,15 +58,55 @@ public class ToolChainModificationManager implements
 		RulesManager.getInstance().start();
 	}
 	
-	public IFileInfoModification getModification(IFileInfo rcInfo) {
+	public IFileInfoModification createModification(IFileInfo rcInfo) {
 		return new FileInfoModification((ResourceConfiguration)rcInfo);
 	}
 
-	public IFolderInfoModification getModification(IFolderInfo rcInfo) {
+	public IFolderInfoModification createModification(IFolderInfo rcInfo) {
 		FolderInfo foInfo = (FolderInfo)rcInfo;
 		if(foInfo.isRoot())
 			return new ConfigurationModification(foInfo);
 		return new FolderInfoModification(foInfo);
+	}
+
+	public IFolderInfoModification createModification(IConfiguration cfg,
+			IFolderInfoModification base) throws IllegalArgumentException {
+		IResourceInfo baseRcInfo = base.getResourceInfo();
+		IPath path = baseRcInfo.getPath();
+		IResourceInfo rcInfo = cfg.getResourceInfo(path, true);
+		FolderInfo folderInfo;
+		if(rcInfo != null){
+			if(rcInfo instanceof FolderInfo){
+				folderInfo = (FolderInfo)rcInfo;
+			} else {
+				throw new IllegalArgumentException();
+			}
+		} else {
+			folderInfo = (FolderInfo)cfg.createFolderInfo(path);
+		}
+		
+		return folderInfo.isRoot() ?
+				new ConfigurationModification(folderInfo, (ConfigurationModification)base)
+				: new FolderInfoModification(folderInfo, (FolderInfoModification)base);
+	}
+
+	public IFileInfoModification createModification(IConfiguration cfg,
+			IFileInfoModification base) throws IllegalArgumentException {
+		IResourceInfo baseRcInfo = base.getResourceInfo();
+		IPath path = baseRcInfo.getPath();
+		IResourceInfo rcInfo = cfg.getResourceInfo(path, true);
+		ResourceConfiguration fileInfo;
+		if(rcInfo != null){
+			if(rcInfo instanceof ResourceConfiguration){
+				fileInfo = (ResourceConfiguration)rcInfo;
+			} else {
+				throw new IllegalArgumentException();
+			}
+		} else {
+			fileInfo = (ResourceConfiguration)cfg.createFileInfo(path);
+		}
+		
+		return new FileInfoModification(fileInfo, (FileInfoModification)base);
 	}
 
 	public static boolean checkFlags(int flags, int value){
@@ -77,38 +121,6 @@ public class ToolChainModificationManager implements
 		return flags &= (~value);
 	}
 	
-//	public static final int SCOPE_MATCH_EXACT = 1;
-//	public static final int SCOPE_MATCH_PARTIAL = 1 << 1;
-//	public static final int SCOPE_MATCH_SCOPE_COVERS = 1 << 2;
-//	public static final int SCOPE_MATCH_SET_SCOPE_COVERS = 1 << 3;
-//	public static final int SCOPE_MATCH_NO = 1 << 4;
-//	public static final int SCOPE_MATCH_ANY_MATCH = 
-//						SCOPE_MATCH_EXACT 
-//						| SCOPE_MATCH_PARTIAL
-//						| SCOPE_MATCH_SCOPE_COVERS
-//						| SCOPE_MATCH_SET_SCOPE_COVERS;
-//
-//	
-//	public static boolean matchScope(int scope, int setScope, int matchType){
-//		int applicableTypes = 0;
-//		if(scope == setScope){
-//			applicableTypes |= SCOPE_MATCH_EXACT;
-//		} else {
-//			int conjunction = scope & setScope;
-//			if(conjunction == scope){
-//				applicableTypes |= SCOPE_MATCH_SET_SCOPE_COVERS;
-//			} else if (conjunction == setScope) {
-//				applicableTypes |= SCOPE_MATCH_SCOPE_COVERS;
-//			} else if (conjunction == 0){
-//				applicableTypes |= SCOPE_MATCH_NO;
-//			} else {
-//				applicableTypes |= SCOPE_MATCH_PARTIAL;
-//			}
-//		}
-//		
-//		return (applicableTypes & matchType) != 0;
-//	}
-
 	private boolean getMatchingObjects(int type, IObjectSet[] oSets, Set skipSet, IRealBuildObjectAssociation additionalSkip, Set result){
 		Set tmp = null;
 		boolean added = false;

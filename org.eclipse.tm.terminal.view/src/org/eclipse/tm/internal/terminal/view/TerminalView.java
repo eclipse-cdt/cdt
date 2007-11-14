@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
  * Martin Oberhuber (Wind River) - [206892] State handling: Only allow connect when CLOSED
  * Michael Scharf (Wind River) - [209656] ClassCastException in TerminalView under Eclipse-3.4M3
+ * Michael Scharf (Wind River) - [189774] Ctrl+V does not work in the command input field. 
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.view;
 
@@ -22,8 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -32,7 +31,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.MenuEvent;
@@ -61,15 +59,11 @@ import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnectorInfo;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.part.ViewPart;
 
 public class TerminalView extends ViewPart implements ITerminalView, ITerminalListener {
@@ -108,8 +102,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	protected TerminalAction fActionEditSelectAll;
 
 	protected TerminalAction fActionToggleCommandInputField;
-
-	protected TerminalMenuHandlerEdit fMenuHandlerEdit;
 
 	protected TerminalPropertyChangeHandler fPropertyChangeHandler;
 
@@ -431,7 +423,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		setPartName(findUniqueTitle(ViewMessages.PROP_TITLE));
 		setupControls(wndParent);
 		setupActions();
-		setupMenus();
 		setupLocalToolBars();
 		setupContextMenus();
 		setupListeners(wndParent);
@@ -445,14 +436,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		TerminalViewPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPreferenceListener);
 
 		JFaceResources.getFontRegistry().removeListener(fPropertyChangeHandler);
-		MenuManager menuMgr = getEditMenuManager();
-		Menu menu = menuMgr.getMenu();
-
-		menuMgr.removeMenuListener(fMenuHandlerEdit);
-
-		if (menu != null)
-			menu.removeMenuListener(fMenuHandlerEdit);
-
 		fCtlTerminal.disposeTerminal();
 		super.dispose();
 	}
@@ -525,36 +508,7 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		fActionEditClearAll = new TerminalActionClearAll(this);
 		fActionEditSelectAll = new TerminalActionSelectAll(this);
 		fActionToggleCommandInputField = new TerminalActionToggleCommandInputField(this);
-
-		IActionBars actionBars = getViewSite().getActionBars();
-		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fActionEditCopy);
-
-		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), fActionEditCut);
-
-		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), fActionEditPaste);
-
-		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), fActionEditSelectAll);
 	}
-
-	protected void setupMenus() {
-		MenuManager menuMgr = getEditMenuManager();
-		Menu menu = menuMgr.getMenu();
-
-		fMenuHandlerEdit = new TerminalMenuHandlerEdit();
-		menuMgr.addMenuListener(fMenuHandlerEdit);
-		menu.addMenuListener(fMenuHandlerEdit);
-	}
-	/**
-	 * @return the Edit Menu
-	 */
-	private MenuManager getEditMenuManager() {
-		ApplicationWindow workbenchWindow = (ApplicationWindow) TerminalViewPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-		MenuManager menuMgr = workbenchWindow.getMenuBarManager();
-		menuMgr = (MenuManager) menuMgr.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		return menuMgr;
-	}
-
-
 	protected void setupLocalToolBars() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 
@@ -578,7 +532,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 		contextMenuHandler = new TerminalContextMenuHandler();
 
 		ctlText.setMenu(menu);
-		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(contextMenuHandler);
 		menu.addMenuListener(contextMenuHandler);
 	}
@@ -601,86 +554,6 @@ public class TerminalView extends ViewPart implements ITerminalView, ITerminalLi
 	protected void setupListeners(Composite wndParent) {
 		fPropertyChangeHandler = new TerminalPropertyChangeHandler();
 		JFaceResources.getFontRegistry().addListener(fPropertyChangeHandler);
-	}
-
-	// Inner classes
-
-	/**
-	 * Because it is too expensive to update the cut/copy/pase/selectAll actions
-	 * each time the selection in the terminal view has changed, we update them,
-	 * when the menu is shown.
-	 * <p>
-	 * TODO: this might be dangerous because those actions might be shown in the toolbar
-	 * and might not update...
-	 *
-	 */
-	protected class TerminalMenuHandlerEdit implements MenuListener, IMenuListener {
-		AcceleratorDisabler fAcceleratorDisablerCopy=new AcceleratorDisabler();
-		AcceleratorDisabler fAcceleratorDisablerPaste=new AcceleratorDisabler();
-		AcceleratorDisabler fAcceleratorDisablerSelectAll=new AcceleratorDisabler();
-		/**
-		 * @author scharf
-		 * 209656: [terminal] ClassCastException in TerminalView under Eclipse-3.4M3
-		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=209656
-		 * 
-		 * 
-		 * TODO: eliminate this code.
-		 */
-		class AcceleratorDisabler {
-			String fActionDefinitionId;
-			int fAccelerator;
-			ActionContributionItem fActionContributionItem;
-			public void menuAboutToShow(IContributionItem contribution) {
-				fActionContributionItem=null;
-				if(contribution instanceof ActionContributionItem) {
-					ActionContributionItem item = (ActionContributionItem) contribution;
-					if(item.getAction() instanceof RetargetAction) {
-						RetargetAction action = (RetargetAction) item.getAction();
-						fActionDefinitionId = action.getActionDefinitionId();
-						fAccelerator = action.getAccelerator();
-						action.setActionDefinitionId(null);
-						action.enableAccelerator(false);
-						item.update();
-						fActionContributionItem=item;
-					}
-				}
-			}
-			public void menuHidden() {
-				if(fActionContributionItem!=null) {
-					RetargetAction action = (RetargetAction) fActionContributionItem.getAction();
-					action.setActionDefinitionId(fActionDefinitionId);
-					action.setAccelerator(fAccelerator);
-					action.enableAccelerator(true);
-					fActionContributionItem.update();
-					fActionContributionItem=null;
-				}
-			}			
-		}
-		protected TerminalMenuHandlerEdit() {
-		}
-		public void menuAboutToShow(IMenuManager menuMgr) {
-
-			fMenuAboutToShow = true;
-			updateEditCopy();
-			updateEditCut();
-			updateEditPaste();
-			updateEditSelectAll();
-			fAcceleratorDisablerCopy.menuAboutToShow(menuMgr.find(ActionFactory.COPY.getId()));
-			fAcceleratorDisablerPaste.menuAboutToShow(menuMgr.find(ActionFactory.PASTE.getId()));
-			fAcceleratorDisablerSelectAll.menuAboutToShow(menuMgr.find(ActionFactory.SELECT_ALL.getId()));
-		}
-		public void menuShown(MenuEvent event) {
-			// do nothing
-		}
-		public void menuHidden(MenuEvent event) {
-			fMenuAboutToShow = false;
-			updateEditCopy();
-			updateEditCut();
-
-			fAcceleratorDisablerCopy.menuHidden();
-			fAcceleratorDisablerPaste.menuHidden();
-			fAcceleratorDisablerSelectAll.menuHidden();
-		}
 	}
 
 	protected class TerminalContextMenuHandler implements MenuListener, IMenuListener {

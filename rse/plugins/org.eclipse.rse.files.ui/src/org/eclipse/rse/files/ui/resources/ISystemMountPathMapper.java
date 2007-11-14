@@ -28,7 +28,7 @@ public interface ISystemMountPathMapper
 {
 
 	/**
-	 * Indicates whether this mapper handles remapping of the specified resource
+	 * Indicates whether this mapper handles recapping of the specified resource
 	 * @param hostname the remote host
 	 * @param remotePath the remote path as seen by the file subsystem
 	 * @return whether this mapper handles remapping of the specified remote resource
@@ -42,7 +42,7 @@ public interface ISystemMountPathMapper
 	 * 
 	 * @param hostname the remote host
 	 * @param remotePath the remote path as seen by the file subsystem
-	 * @param the remote file subsystem.  User the subsystem to customize how the temp file is located.  If null
+	 * @param subsystem the remote file subsystem.  User the subsystem to customize how the temp file is located.  If null
 	 *        is specified, then the subsystem is not used in determining the mapping
      * @return the corresponding workspace replica mapping
 	 */
@@ -54,7 +54,7 @@ public interface ISystemMountPathMapper
 	 * Returns the corresponding hostname for the specified path on the specified host.  If a file is mounted
 	 * then the actual host containing the file will not be local.  If there is no mapping, then
 	 * the hostname will be the same as the argument.  If the file is remote (i.e. not locally mounted) then
-	 * this will retrun the same as the hostname argument.
+	 * this will return the same as the hostname argument.
 	 * 
 	 * @param hostname the system host
 	 * @param remotePath the path on the system host

@@ -30,6 +30,10 @@ public class FileInfoModification extends
 		super(rcInfo, rcInfo.getTools());
 	}
 
+	public FileInfoModification(ResourceConfiguration rcInfo, FileInfoModification base) {
+		super(rcInfo, base);
+	}
+
 	protected boolean canRemove(ITool realTool) {
 		return true;
 	}

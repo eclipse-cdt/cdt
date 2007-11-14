@@ -28,6 +28,8 @@ public interface IRealBuildObjectAssociation extends IBuildObject {
 
 	boolean isRealBuildObject();
 	
+	boolean isExtensionBuildObject();
+	
 	IRealBuildObjectAssociation[] getIdenticBuildObjects();
 	
 	IRealBuildObjectAssociation getSuperClassObject();

@@ -2704,4 +2704,8 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean isRealBuildObject() {
 		return ManagedBuildManager.getRealBuilder(this) == this;
 	}
+
+	public boolean isExtensionBuildObject() {
+		return isExtensionElement();
+	}
 }

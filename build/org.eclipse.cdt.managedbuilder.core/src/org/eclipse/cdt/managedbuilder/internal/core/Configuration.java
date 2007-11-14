@@ -3027,4 +3027,8 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 	public String getUniqueRealName() {
 		return getName();
 	}
+
+	public boolean isExtensionBuildObject() {
+		return isExtensionElement();
+	}
 }

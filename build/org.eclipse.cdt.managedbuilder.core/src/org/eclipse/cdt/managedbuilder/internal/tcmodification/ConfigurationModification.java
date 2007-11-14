@@ -79,6 +79,16 @@ public class ConfigurationModification extends FolderInfoModification implements
 		setBuilder(foInfo.getParent().getBuilder());
 	}
 
+	public ConfigurationModification(FolderInfo foInfo, ConfigurationModification base) {
+		super(foInfo, base);
+		
+		fSelectedBuilder = base.fSelectedBuilder;
+		if(!fSelectedBuilder.isExtensionElement())
+			fSelectedBuilder = ManagedBuildManager.getExtensionBuilder(fSelectedBuilder);
+			
+		fRealBuilder = base.fRealBuilder;
+	}
+
 	public IBuilder getBuilder() {
 		return fSelectedBuilder;
 	}

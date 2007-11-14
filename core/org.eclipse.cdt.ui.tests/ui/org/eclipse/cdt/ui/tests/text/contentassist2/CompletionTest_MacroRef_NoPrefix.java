@@ -56,9 +56,6 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 	
 	public CompletionTest_MacroRef_NoPrefix(String name) {
 		super(name);
-		setExpectFailure(0); // no bugnumber, the test fails because I added additional macros that
-		// are reported by the CPreprocessor, but not by Scanner2. As soon as we switch over to the
-		// CPreprocessor, the test-case works again.
 	}
 
 	public static Test suite() {

@@ -136,7 +136,8 @@ More information can be found in the associated bugzilla items.
 <ul>
 <!-- <li>None</li> -->
 <li><b>Optimized IFileService for multi-queries</b>. This is not a breaking API change for clients
-    that extend AbstractFileService rather than implementing IFileService directly. But the
+    that extend <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/AbstractFileService.html"><tt>AbstractFileService</tt></a>
+    rather than implementing IFileService directly. But the
     now deprecated methods <tt>getFiles()</tt>, <tt>getFolders()</tt> and <tt>getFilesAndFolders()</tt>
     may be removed soon in favor of the new list() API
     [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207178">207178</a>].</li>

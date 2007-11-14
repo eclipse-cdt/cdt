@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [207100] fire event after upload and download
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
+ * David McKnight   (IBM)        - [203114] don't treat XML files specially (no hidden prefs for bin vs text) 
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -527,15 +528,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 	
 	protected boolean isBinary(IRemoteFile source)
 	{
-		// if binary or XML file, transfer in binary mode
-		if (source.isBinary() || SystemEncodingUtil.getInstance().isXML(source.getAbsolutePath()))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return source.isBinary(); // always use preferences (whether xml or not)
 	}
 
 	/*

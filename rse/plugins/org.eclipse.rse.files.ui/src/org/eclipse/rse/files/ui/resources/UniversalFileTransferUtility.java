@@ -34,6 +34,7 @@
  * David McKnight   (IBM)        - [209375] new API copyRemoteResourcesToWorkspaceMultiple to optimize downloads
  * Rupen Mardirossian (IBM)      - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances, passed through check collision as well through overloading.
  * Xuan Chen          (IBM)      - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
+ * David Mcknight     (IBM)      - [203114] don't treat XML files specially (no hidden prefs for bin vs text) 
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -840,7 +841,7 @@ public class UniversalFileTransferUtility
 			}
 
 			// encoding conversion required if it a text file but not an xml file
-			boolean isBinary = SystemFileTransferModeRegistry.getInstance().isBinary(file) || SystemEncodingUtil.getInstance().isXML(file.getAbsolutePath());
+			boolean isBinary = SystemFileTransferModeRegistry.getInstance().isBinary(file);
 			boolean isEncodingConversionRequired = !isBinary;
 			
 			inputStream = new FileInputStream(file);

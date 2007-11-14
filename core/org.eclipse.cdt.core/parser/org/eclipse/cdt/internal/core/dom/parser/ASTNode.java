@@ -126,13 +126,23 @@ public abstract class ASTNode implements IASTNode {
     }
 
     public String getContainingFilename() {
+    	if (offset <= 0 && (length == 0 || offset < 0)) {
+    		final IASTNode parent = getParent();
+    		if (parent == null) {
+    			if (this instanceof IASTTranslationUnit) {
+    				return ((IASTTranslationUnit) this).getFilePath();
+    			}
+    			return ""; //$NON-NLS-1$
+    		}
+    		return parent.getContainingFilename();
+    	}
         return getTranslationUnit().getContainingFilename(offset);
     }
 
     public IASTFileLocation getFileLocation() {
         if( fileLocation != null )
             return fileLocation;
-        if (offset == 0 && length == 0) {
+        if (offset <= 0 && (length == 0 || offset < 0)) {
         	return null;
         }
         IASTTranslationUnit ast = getTranslationUnit();

@@ -36,9 +36,12 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author jcamelon
+ * @deprecated will be removed in 5.0
  */
 public class DOMScanner extends BaseScanner {
     private static final Class CHAR_ARRAY_CLASS = new char[]{}.getClass();
+
+	public static final String PROP_VALUE = "DOMScanner"; //$NON-NLS-1$
 
     private final IScannerPreprocessorLog locationMap = new LocationMap();
     private final IIncludeFileTester createPathTester= new IIncludeFileTester() { 

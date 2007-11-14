@@ -92,7 +92,7 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 
 	public String getContainingFilename() {
 		if (fFileLocation == null) {
-			throw new UnsupportedOperationException();
+			return ""; //$NON-NLS-1$
 		}
 		return fFileLocation.getFileName();
 	}

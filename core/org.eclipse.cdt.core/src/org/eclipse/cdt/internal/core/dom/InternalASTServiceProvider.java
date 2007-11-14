@@ -231,7 +231,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 	private IScanner createScanner(CodeReader reader, IScannerInfo scanInfo,
 			ParserMode mode, ParserLanguage lang, IParserLogService log,
 			IScannerExtensionConfiguration scanConfig, ICodeReaderFactory fileCreator) {
-		if (CPreprocessor.PROP_VALUE.equals(System.getProperty("scanner"))) { //$NON-NLS-1$
+		if (!DOMScanner.PROP_VALUE.equals(System.getProperty("scanner"))) { //$NON-NLS-1$
 			return new CPreprocessor(reader, scanInfo, lang, log, scanConfig, fileCreator);
 		}
 		return new DOMScanner(reader, scanInfo, mode, lang, log, scanConfig, fileCreator);

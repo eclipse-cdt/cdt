@@ -23,7 +23,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
+import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 
 /**
  * @author bnicolle
@@ -38,7 +38,7 @@ public class IIncludeTests extends IntegratedCModelTest {
 	 */
 	public IIncludeTests(String string) {
 		super( string );
-		fUseCPreprocessor= CPreprocessor.PROP_VALUE.equals(System.getProperty("scanner"));
+		fUseCPreprocessor= !DOMScanner.PROP_VALUE.equals(System.getProperty("scanner"));
 	}
 
 	/**

@@ -68,42 +68,6 @@ abstract class ASTPreprocessorNode extends ASTNode {
 		return CharArrayUtils.EMPTY;
 	}
 
-	public String getContainingFilename() {
-		if (super.getOffset() == -1) {
-			throw new UnsupportedOperationException();
-		}
-		return super.getContainingFilename();
-	}
-
-	public IASTFileLocation getFileLocation() {
-		if (super.getOffset() == -1) {
-			throw new UnsupportedOperationException();
-		}
-		return super.getFileLocation();
-	}
-
-	public int getLength() {
-		if (super.getOffset() == -1) {
-			throw new UnsupportedOperationException();
-		}
-		return super.getLength();
-	}
-
-	public int getOffset() {
-		final int offset = super.getOffset();
-		if (offset == -1) {
-			throw new UnsupportedOperationException();
-		}
-		return offset;
-	}
-
-	public String getRawSignature() {
-		if (super.getOffset() == -1) {
-			throw new UnsupportedOperationException();
-		}
-		return super.getRawSignature();
-	}
-
 	/**
 	 * Returns a subnode surrounding the given range or this.
 	 */
@@ -291,6 +255,14 @@ class ASTObjectStyleMacroDefinition extends ASTPreprocessorNode implements IASTP
 		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, floc, macro.getNameCharArray(), macro);
 		fExpansionNumber= -1;
 		fExpansionOffset= expansionOffset;
+	}
+
+	
+	public String getContainingFilename() {
+		if (fName instanceof ASTBuiltinName) {
+			return fName.getContainingFilename();
+		}
+		return super.getContainingFilename();
 	}
 
 	protected IMacroBinding getMacro() {

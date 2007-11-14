@@ -125,32 +125,15 @@ public class LocationMapTests extends BaseTestCase {
 		assertSame(parent, node.getParent());
 		assertEquals(property, node.getPropertyInParent());
 		assertSame(parent.getTranslationUnit(), node.getTranslationUnit());
+		assertEquals(filename, node.getContainingFilename());
 		
 		if (offset >= 0) {
-			assertEquals(filename, node.getContainingFilename());
 			IASTFileLocation loc= node.getFileLocation();
 			checkLocation(loc, filename, offset, length, line, endline);
 			assertEquals(sig, node.getRawSignature());
 		}
 		else {
-			try {
-				node.getContainingFilename();
-				fail();
-			}
-			catch (UnsupportedOperationException e) {
-			}
-			try {
-				node.getFileLocation();
-				fail();
-			}
-			catch (UnsupportedOperationException e) {
-			}
-			try {
-				node.getRawSignature();
-				fail();
-			}
-			catch (UnsupportedOperationException e) {
-			}
+			assertNull(node.getFileLocation());
 		}
 	}
 	
@@ -287,12 +270,9 @@ public class LocationMapTests extends BaseTestCase {
 				checkASTNode(mp, fd, IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER, filename, -1, 0, -1, 0, null);
 			}
 		}
-		int expectCount= offset >= 0 ? 1 : 0;
 		IASTName[] decls= fLocationMap.getDeclarations(binding);
-		assertEquals(expectCount, decls.length);
-		if (expectCount > 0) {
-			assertSame(macro.getName(), decls[0]);
-		}
+		assertEquals(1, decls.length);
+		assertSame(macro.getName(), decls[0]);
 	}
 
 	private void checkMacroUndef(IASTPreprocessorStatement s, IBinding binding, String image, String name, String nameImage, 
@@ -439,8 +419,8 @@ public class LocationMapTests extends BaseTestCase {
 		fLocationMap.registerPredefinedMacro(macro2);
 		IASTPreprocessorMacroDefinition[] prep= fLocationMap.getBuiltinMacroDefinitions();
 		assertEquals(2, prep.length);
-		checkMacroDefinition(prep[0], macro1, "", "n1", "n1", "exp1", null, FN, -1, 0, 0, -1, 0);
-		checkMacroDefinition(prep[1], macro2, "", "n2", "n2", "exp2", params, FN, -1, 0, 0, -1, 0);
+		checkMacroDefinition(prep[0], macro1, "", "n1", "n1", "exp1", null, "", -1, 0, 0, -1, 0);
+		checkMacroDefinition(prep[1], macro2, "", "n2", "n2", "exp2", params, "", -1, 0, 0, -1, 0);
 	}
 
 	public void testIndexDefine() {

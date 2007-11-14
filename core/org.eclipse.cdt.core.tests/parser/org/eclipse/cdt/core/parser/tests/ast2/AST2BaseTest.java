@@ -162,7 +162,7 @@ public class AST2BaseTest extends BaseTestCase {
         else
             configuration = new GPPScannerExtensionConfiguration();
         IScanner scanner;
-        if (CPreprocessor.PROP_VALUE.equals(System.getProperty("scanner"))) {
+        if (!DOMScanner.PROP_VALUE.equals(System.getProperty("scanner"))) {
         	scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
         			FileCodeReaderFactory.getInstance());
         }

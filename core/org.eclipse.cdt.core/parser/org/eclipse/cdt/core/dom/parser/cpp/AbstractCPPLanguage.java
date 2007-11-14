@@ -148,7 +148,7 @@ public abstract class AbstractCPPLanguage extends AbstractLanguage implements IC
 	 * @return an instance of IScanner
 	 */
 	protected IScanner createScanner(CodeReader reader, IScannerInfo scanInfo, ICodeReaderFactory fileCreator, IParserLogService log) {
-		if (CPreprocessor.PROP_VALUE.equals(System.getProperty("scanner"))) { //$NON-NLS-1$
+		if (!DOMScanner.PROP_VALUE.equals(System.getProperty("scanner"))) { //$NON-NLS-1$
 			return new CPreprocessor(reader, scanInfo, ParserLanguage.CPP, log, getScannerExtensionConfiguration(), fileCreator);
 		}
 		return new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP,

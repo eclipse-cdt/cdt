@@ -31,26 +31,6 @@ public class AST2CPPSpecFailingTest extends AST2SpecBaseTest {
 	}
 
 	/**
-	 [--Start Example(CPP 2.3-2):
-	 ??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)
-	 // becomes
-	 #define arraycheck(a,b) a[b] || b[a]
-	 --End Example]
-	 */
-	public void test2_3s2()  { // TODO exists bug 64993
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n"); //$NON-NLS-1$
-		buffer.append("// becomes\n"); //$NON-NLS-1$
-		buffer.append("#define arraycheck(a,b) a[b] || b[a]\n"); //$NON-NLS-1$
-		
-		try {
-		parseCandCPP(buffer.toString(), true, 0);
-		assertTrue(false);
-		} catch (Exception e) {
-		}
-	}
-
-	/**
 	 [--Start Example(CPP 6.4-3):
 	int foo() {
 	if (int x = f()) {

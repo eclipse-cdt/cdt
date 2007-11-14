@@ -70,6 +70,22 @@ public class AST2CPPSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(CPP 2.3-2):
+	 ??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)
+	 // becomes
+	 #define arraycheck(a,b) a[b] || b[a]
+	 --End Example]
+	 */
+	public void test2_3s2() throws Exception { // TODO exists bug 64993
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n"); //$NON-NLS-1$
+		buffer.append("// becomes\n"); //$NON-NLS-1$
+		buffer.append("#define arraycheck(a,b) a[b] || b[a]\n"); //$NON-NLS-1$
+		
+		parseCandCPP(buffer.toString(), true, 0);
+	}
+
+	/**
 	 [--Start Example(CPP 3.1-3):
 	 int a; // defines a
 	 extern const int c = 1; // defines c

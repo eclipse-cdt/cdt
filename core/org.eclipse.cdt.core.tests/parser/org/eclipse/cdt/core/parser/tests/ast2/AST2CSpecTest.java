@@ -1912,6 +1912,51 @@ public class AST2CSpecTest extends AST2SpecBaseTest {
 	}
 	
 	/**
+	 [--Start Example(C 6.10.3.5-5):
+	#define x 3
+	#define f(a) f(x * (a))
+	#undef x
+	#define x 2
+	#define g f
+	#define z z[0]
+	#define h g(~
+	#define m(a) a(w)
+	#define w 0,1
+	#define t(a) a
+	#define p() int
+	#define q(x) x
+	#define r(x,y) x ## y
+	#define str(x) # x
+	int foo() {
+	p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
+	char c[2][6] = { str(hello), str() };
+	}
+	 --End Example]
+	 */
+	public void test6_10_3_5s5() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("#define x 3\n"); //$NON-NLS-1$
+		buffer.append("#define f(a) f(x * (a))\n"); //$NON-NLS-1$
+		buffer.append("#undef x\n"); //$NON-NLS-1$
+		buffer.append("#define x 2\n"); //$NON-NLS-1$
+		buffer.append("#define g f\n"); //$NON-NLS-1$
+		buffer.append("#define z z[0]\n"); //$NON-NLS-1$
+		buffer.append("#define h g(~\n"); //$NON-NLS-1$
+		buffer.append("#define m(a) a(w)\n"); //$NON-NLS-1$
+		buffer.append("#define w 0,1\n"); //$NON-NLS-1$
+		buffer.append("#define t(a) a\n"); //$NON-NLS-1$
+		buffer.append("#define p() int\n"); //$NON-NLS-1$
+		buffer.append("#define q(x) x\n"); //$NON-NLS-1$
+		buffer.append("#define r(x,y) x ## y\n"); //$NON-NLS-1$
+		buffer.append("#define str(x) # x\n"); //$NON-NLS-1$
+		buffer.append("int foo() {\n"); //$NON-NLS-1$
+		buffer.append("p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };\n"); //$NON-NLS-1$
+		buffer.append("char c[2][6] = { str(hello), str() };\n"); //$NON-NLS-1$
+		buffer.append("}\n"); //$NON-NLS-1$
+		parseCandCPP(buffer.toString(), true, 0);
+	}
+
+	/**
 	 [--Start Example(C 6.10.3.5-6):
 	#define str(s) # s
 	#define xstr(s) str(s)

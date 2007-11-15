@@ -39,7 +39,6 @@
  * Rupen Mardirossian (IBM)		 - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances
  * David McKnight   (IBM)        - [209660] need to check if remote encoding has changed before using cached file 
  * Xuan Chen        (IBM)        - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
- * Xuan Chen        (IBM)        - [209899] system view did not refresh properly if rename multiple folders in table view.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -155,7 +154,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.omg.PortableServer.AdapterActivator;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.NumberFormat;
@@ -1473,10 +1471,10 @@ public class SystemViewRemoteFileAdapter
 		if (element instanceof IRemoteFile)
 		{
 			IRemoteFile srcFileOrFolder = (IRemoteFile) element;
-			return UniversalFileTransferUtility.copyRemoteResourceToWorkspace(srcFileOrFolder, monitor);
+			return UniversalFileTransferUtility.downloadResourceToWorkspace(srcFileOrFolder, monitor);
 		}
 		else if (element instanceof File) {
-			return UniversalFileTransferUtility.copyRemoteResourceToWorkspace((File)element, monitor);
+			return UniversalFileTransferUtility.downloadResourceToWorkspace((File)element, monitor);
 		}
 		else if (element instanceof IResource)
 		{
@@ -1518,7 +1516,7 @@ public class SystemViewRemoteFileAdapter
 			{
 				//SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspace(flatSet, monitor);		
 				// for bug 209375, using multiple instead of single
-				SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.copyRemoteResourcesToWorkspaceMultiple(flatSet, monitor);		
+				SystemWorkspaceResourceSet flatResult = UniversalFileTransferUtility.downloadResourcesToWorkspaceMultiple(flatSet, monitor);		
 				if (flatResult.hasMessage())
 				{
 					return flatResult;
@@ -1547,7 +1545,7 @@ public class SystemViewRemoteFileAdapter
 		}
 		else
 		{
-			return UniversalFileTransferUtility.copyRemoteResourcesToWorkspace(set, monitor);
+			return UniversalFileTransferUtility.downloadResourcesToWorkspace(set, monitor);
 		}
 	}
 	
@@ -1845,11 +1843,11 @@ public class SystemViewRemoteFileAdapter
 						    monitor.beginTask(_uploadMessage.getLevelOneText(), size);
 						}  
 						// back to hierarchy
-						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
+						return UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
 					}
 					else
 					{
-						return UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
+						return UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
 					}
 				}
 				else if (fromSet instanceof SystemRemoteResourceSet)
@@ -2212,7 +2210,7 @@ public class SystemViewRemoteFileAdapter
 				if (src instanceof IResource)
 				{
 					IResource srcFileOrFolder = (IResource) src;
-					return UniversalFileTransferUtility.copyWorkspaceResourceToRemote(srcFileOrFolder, targetFolder, monitor, true);
+					return UniversalFileTransferUtility.uploadResourceFromWorkspace(srcFileOrFolder, targetFolder, monitor, true);
 				}
 			}
 				

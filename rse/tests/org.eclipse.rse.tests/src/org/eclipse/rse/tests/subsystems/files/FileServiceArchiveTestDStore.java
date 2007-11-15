@@ -221,7 +221,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet3.addResource(sourceFolderToCopy1);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, tempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, tempDir, mon, true);
 		
 		//Then, we need to retrieve children of the tempDir to cache their information.
 		Object[] children = fss.resolveFilterString(tempDir, null, mon);
@@ -261,7 +261,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet1 = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet1.addResource(sourceFolderToCopy1);
 		ISystemResourceSet tempObjects1 = srcAdapter1.doDrag(fromSet1, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
 		
 		//Then, we need to retrieve children of the tempDir to cache their information.
 		fss.resolveFilterString(tempDir, null, mon);
@@ -311,7 +311,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet2 = new SystemRemoteResourceSet(fss, srcAdapter2);
 		fromSet2.addResource(sourceFolderToCopy2);
 		ISystemResourceSet tempObjects2 = srcAdapter2.doDrag(fromSet2, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects2, dstoreWindowsTempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects2, dstoreWindowsTempDir, mon, true);
 		
 		Object[] children = dstoreWindowsFss.resolveFilterString(dstoreWindowsTempDir, null, mon);
 		//Make sure there is no temp archive file left 
@@ -357,7 +357,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet1 = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet1.addResource(sourceFolderToCopy1);
 		ISystemResourceSet tempObjects1 = srcAdapter1.doDrag(fromSet1, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
 		
 		//Then, we need to retrieve children of the tempDir to cache their information.
 		fss.resolveFilterString(tempDir, null, mon);
@@ -385,7 +385,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet2 = new SystemRemoteResourceSet(fss, srcAdapter2);
 		fromSet2.addResource(sourceFolderToCopy2);
 		ISystemResourceSet tempObjects2 = srcAdapter2.doDrag(fromSet2, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects2, localTempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects2, localTempDir, mon, true);
 		
 		Object[] localChildren = localFss.resolveFilterString(localTempDir, null, mon);
 		//Make sure there is no temp archive file left 
@@ -449,7 +449,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(fss, srcAdapter1);
 		fromSet3.addResource(firstLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, folder1, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, folder1, mon, true);
 		
 		//make sure some delay before checking the result
 		Thread.sleep(50);
@@ -510,7 +510,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(fss, srcAdapter1);
 		fromSet3.addResource(secondLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, folder1, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, folder1, mon, true);
 		
 		Thread.sleep(50);
 		
@@ -552,7 +552,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet3.addResource(firstLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, folder1, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, folder1, mon, true);
 		
 		Object copiedVirtualFolder = getChildFromFolder(fss, folder1, folderToCopyName1);
 		
@@ -596,7 +596,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet3.addResource(secondLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, folder1, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, folder1, mon, true);
 		
 		Object copiedVirtualFolder = getChildFromFolder(fss, folder1, secondLeveChildName);
 		
@@ -640,7 +640,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(fss, srcAdapter1);
 		fromSet3.addResource(firstLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, destinationArchiveFile, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, destinationArchiveFile, mon, true);
 		
 		Thread.sleep(50);
 		Object copiedVirtualFolder = getChildFromFolder(localFss, destinationArchiveFile, folderToCopyName1);
@@ -689,7 +689,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(fss, srcAdapter1);
 		fromSet3.addResource(secondLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, destinationArchiveFile, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, destinationArchiveFile, mon, true);
 		
 		Thread.sleep(50);
 		
@@ -737,7 +737,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		fromSet3.addResource(firstLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
 		//The drop to the destination virtual folder in dstore connection.
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, destinationArchiveFile, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, destinationArchiveFile, mon, true);
 		
 		//The result is in the dstore connection
 		Thread.sleep(50);
@@ -789,7 +789,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet3.addResource(secondLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, destinationArchiveFile, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, destinationArchiveFile, mon, true);
 		
 		//The result is in the dstore connection
 		Thread.sleep(50);
@@ -834,7 +834,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(fss, srcAdapter1);
 		fromSet3.addResource(firstLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, destinationVirtualFolder, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, destinationVirtualFolder, mon, true);
 		
 		Thread.sleep(50);
 		Object copiedVirtualFolder = getChildFromFolder(localFss, destinationVirtualFolder, folderToCopyName1);
@@ -883,7 +883,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(fss, srcAdapter1);
 		fromSet3.addResource(secondLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, destinationVirtualFolder, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, destinationVirtualFolder, mon, true);
 		
 		Thread.sleep(50);
 		Object copiedVirtualFolder = getChildFromFolder(localFss, destinationVirtualFolder, secondLeveChildName);
@@ -930,7 +930,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		fromSet3.addResource(firstLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
 		//The drop to the destination virtual folder in dstore connection.
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, destinationVirtualFolder, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, destinationVirtualFolder, mon, true);
 		
 		//The result is in the dstore connection
 		Thread.sleep(50);
@@ -982,7 +982,7 @@ public class FileServiceArchiveTestDStore extends FileServiceArchiveTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet3.addResource(secondLevelChild);
 		ISystemResourceSet tempObjects3 = srcAdapter1.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, destinationVirtualFolder, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, destinationVirtualFolder, mon, true);
 		
 		//The result is in the dstore connection
 		Thread.sleep(50);

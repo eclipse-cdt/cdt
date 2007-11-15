@@ -119,7 +119,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		SystemRemoteResourceSet fromSet3 = new SystemRemoteResourceSet(localFss, srcAdapter3);
 		fromSet3.addResource(sourceFolderToCopy3);
 		ISystemResourceSet tempObjects3 = srcAdapter3.doDrag(fromSet3, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects3, tempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects3, tempDir, mon, true);
 		
 		//Then, we need to retrieve children of the tempDir to cache their information.
 		fss.resolveFilterString(tempDir, null, mon);
@@ -350,14 +350,14 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		SystemRemoteResourceSet fromSet = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet.addResource(sourceFolderToCopy1);
 		ISystemResourceSet tempObjects1 = srcAdapter1.doDrag(fromSet, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects1, targetDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects1, targetDir, mon, true);
 		
 		IRemoteFile sourceFolderToCopy2 = localFss.getRemoteFileObject(tempPath + '\\' + folderToCopyName2, mon);
 		ISystemDragDropAdapter srcAdapter2 = (ISystemDragDropAdapter) ((IAdaptable) sourceFolderToCopy2).getAdapter(ISystemDragDropAdapter.class);
 		SystemRemoteResourceSet fromSet2 = new SystemRemoteResourceSet(localFss, srcAdapter2);
 		fromSet2.addResource(sourceFolderToCopy2);
 		ISystemResourceSet tempObjects2 = srcAdapter2.doDrag(fromSet2, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects2, targetDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects2, targetDir, mon, true);
 		
 		IRemoteFile zipSource1 = createFileOrFolder(inputFss, targetDir.getAbsolutePath(), zipSourceFileName1, false);
 		assertNotNull(zipSource1);
@@ -567,7 +567,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		SystemRemoteResourceSet fromSet = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet.addResource(META_INF_folder);
 		ISystemResourceSet tempObjects1 = srcAdapter1.doDrag(fromSet, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
 		
 		//now, copy org into the folder in the remote system
 		IRemoteFile org_folder = localFss.getRemoteFileObject(tempPath + '\\' + tarSourceForOpenFolderName2, mon);
@@ -576,7 +576,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		SystemRemoteResourceSet fromSet2 = new SystemRemoteResourceSet(localFss, srcAdapter2);
 		fromSet2.addResource(org_folder);
 		ISystemResourceSet tempObjects2 = srcAdapter2.doDrag(fromSet2, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects2, tempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects2, tempDir, mon, true);
 		
 		//now, create tar file in the host
 		IRemoteFile tarSource = createFileOrFolder(tempDir.getAbsolutePath(), tarSourceForOpenTest, false);
@@ -1533,7 +1533,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		SystemRemoteResourceSet fromSet = new SystemRemoteResourceSet(localFss, srcAdapter1);
 		fromSet.addResource(META_INF_folder);
 		ISystemResourceSet tempObjects1 = srcAdapter1.doDrag(fromSet, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects1, tempDir, mon, true);
 		
 		//now, copy org into the folder in the remote system
 		IRemoteFile org_folder = localFss.getRemoteFileObject(tempPath + '\\' + tarSourceFolderName2, mon);
@@ -1542,7 +1542,7 @@ public class FileServiceArchiveTest extends FileServiceBaseTest {
 		SystemRemoteResourceSet fromSet2 = new SystemRemoteResourceSet(localFss, srcAdapter2);
 		fromSet2.addResource(org_folder);
 		ISystemResourceSet tempObjects2 = srcAdapter2.doDrag(fromSet2, mon);
-		UniversalFileTransferUtility.copyWorkspaceResourcesToRemote((SystemWorkspaceResourceSet)tempObjects2, tempDir, mon, true);
+		UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)tempObjects2, tempDir, mon, true);
 		
 		//now, create tar file in the host
 		IRemoteFile tarSource = createFileOrFolder(tempDir.getAbsolutePath(), tarSourceFileName1, false);

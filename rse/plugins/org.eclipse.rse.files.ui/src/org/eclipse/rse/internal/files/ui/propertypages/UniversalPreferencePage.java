@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [177523] Unify singleton getter methods
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [208951] no longer used editor registry for file type associations
+ * David McKnight   (IBM)        - [203114] Usability improvements for file transfer mode prefs
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -26,11 +27,19 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.window.Window;
+import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.subsystems.files.core.ISystemFilePreferencesConstants;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
@@ -64,9 +73,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IFileEditorMapping;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -81,7 +87,7 @@ import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
  */
 public class UniversalPreferencePage 
        extends FieldEditorPreferencePage 
-       implements IWorkbenchPreferencePage, Listener, IPropertyListener
+       implements IWorkbenchPreferencePage, Listener, ICellModifier
 {
 
 
@@ -90,8 +96,7 @@ public class UniversalPreferencePage
 	protected Table resourceTypeTable;
 	protected Button addResourceTypeButton;
 	protected Button removeResourceTypeButton;
-	protected Button binaryButton;
-	protected Button textButton;
+
 	protected Button doSuperTransferButton;
 	
 	protected Button defaultBinaryButton;
@@ -107,6 +112,11 @@ public class UniversalPreferencePage
 	
 	protected Text downloadBufferSize;
 	protected Text uploadBufferSize;
+	
+	protected Image fileImage;
+	protected Image binaryFileImage;
+	
+	protected String[] columnProperties = { "P_ICON", "P_TYPE", "P_CONTENT" };
 	
 	/**
 	 * Constructor
@@ -129,7 +139,6 @@ public class UniversalPreferencePage
 	protected void createFieldEditors() {
 		
 		modeRegistry = SystemFileTransferModeRegistry.getInstance();
-		//editorRegistry = PlatformUI.getWorkbench().getEditorRegistry();
 		
 		modeMappings = new ArrayList();
 		imagesToDispose = new ArrayList();
@@ -200,36 +209,7 @@ public class UniversalPreferencePage
 		removeResourceTypeButton.setLayoutData(data);
 		
 		
-		// transfer mode 
-		Group modeGroup = new Group(groupComponent, SWT.SHADOW_ETCHED_IN);
-		modeGroup.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_LABEL);
-		modeGroup.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TOOLTIP);
-		
-		layout = new GridLayout();
-		layout.numColumns = 1;
-		//layout.verticalSpacing = 10;
-		layout.horizontalSpacing = 10;
-		modeGroup.setLayout(layout);
-		data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 2;		
-		data.widthHint = 100;
-		data.grabExcessHorizontalSpace = true;
-		modeGroup.setLayoutData(data);
-		
-		// add the binary radio button
-		binaryButton = new Button(modeGroup, SWT.RADIO);
-		binaryButton.addListener(SWT.Selection, this);
-		binaryButton.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL);
-		binaryButton.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_TOOLTIP);
-				
-		// add the text radio button
-		textButton = new Button(modeGroup, SWT.RADIO);
-		textButton.addListener(SWT.Selection, this);
-		textButton.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);
-		textButton.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_TOOLTIP);
-
-	
-//		 default file transfer mode
+		// default file transfer mode
 		Group defaultModeGroup = new Group(groupComponent, SWT.SHADOW_ETCHED_IN);
 		defaultModeGroup.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_DEFAULT_MODE_LABEL);
 		defaultModeGroup.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_DEFAULT_MODE_TOOLTIP);
@@ -239,7 +219,7 @@ public class UniversalPreferencePage
 		//layout.verticalSpacing = 10;
 		layout.horizontalSpacing = 10;
 		defaultModeGroup.setLayout(layout);
-		data = new GridData(GridData.FILL_BOTH);
+		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		data.widthHint = 100;		
 		data.grabExcessHorizontalSpace = true;
@@ -383,8 +363,7 @@ public class UniversalPreferencePage
 			resourceTypeTable.setSelection(0);
 			resourceTypeTable.setFocus();
 		}
-		
-		fillMode();
+
 		updateEnabledState();
 		
         (new Mnemonics()).setOnPreferencePage(true).setMnemonics(parent);	
@@ -411,24 +390,52 @@ public class UniversalPreferencePage
 	 */
 	protected void fillResourceTypeTable() {
 		
+		
+		
 		// Setup the columns (icon, type)
 		TableLayout tableLayout = new TableLayout();
 		resourceTypeTable.setLayout(tableLayout);
 		resourceTypeTable.setHeaderVisible(true);
-
+		resourceTypeTable.setLinesVisible(true);
+		
+		// cell modifier stuff so that we can change the transfer
+		// mode directly from the cell
+		TableViewer tableViewer = new TableViewer(resourceTypeTable);
+		tableViewer.setCellModifier(this);
+		
 		ColumnLayoutData layoutData = new ColumnPixelData(20, false);
 		tableLayout.addColumnData(layoutData);
-		TableColumn tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
+		TableColumn tableCol = new TableColumn(resourceTypeTable, SWT.NONE, 0);
 		tableCol.setResizable(false);
 		tableCol.setText(""); //$NON-NLS-1$
 
-		layoutData = new ColumnWeightData(40, false);
+		layoutData = new ColumnWeightData(40, true);
 		tableLayout.addColumnData(layoutData);
-		tableCol = new TableColumn(resourceTypeTable, SWT.NONE);
-		tableCol.setResizable(false);
+		tableCol = new TableColumn(resourceTypeTable, SWT.NONE, 1);
+		tableCol.setResizable(true);
 		tableCol.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_TABLECOL_LABEL);
 
-		ISystemFileTransferModeMapping[] mappings =  modeRegistry.getModeMappings();
+		layoutData = new ColumnWeightData(60, true);
+		tableLayout.addColumnData(layoutData);
+		tableCol = new TableColumn(resourceTypeTable, SWT.NONE, 2);
+		tableCol.setResizable(true);
+		tableCol.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_LABEL);
+		
+	
+		String[] contentTypes = new String[2];
+		contentTypes[0] = FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL;
+		contentTypes[1] = FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL;
+		
+	    CellEditor editors[] = new CellEditor[3];
+	    editors[0] = null;
+	    editors[1] = new TextCellEditor(resourceTypeTable);
+	    editors[2] = new ComboBoxCellEditor(resourceTypeTable, contentTypes, SWT.READ_ONLY); 
+	    
+	    
+	    tableViewer.setColumnProperties(columnProperties);
+	    tableViewer.setCellEditors(editors);
+		
+		ISystemFileTransferModeMapping[] mappings =  getModeMappings();
 		
 		for (int i = 0; i < mappings.length; i++) {
 			newResourceTableItem(mappings[i], i, false);
@@ -442,7 +449,20 @@ public class UniversalPreferencePage
 		else if (defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_TEXT)
 		{		
 			defaultTextButton.setSelection(true);
+		}		
+	}
+	
+	protected ISystemFileTransferModeMapping[] getModeMappings()
+	{
+		// cloning the registry ones so that we can restore later	
+		ISystemFileTransferModeMapping[] mappings = modeRegistry.getModeMappings();
+		
+		ISystemFileTransferModeMapping[] clonedMappings = new ISystemFileTransferModeMapping[mappings.length];
+		for (int i = 0; i < mappings.length; i++){
+			SystemFileTransferModeMapping mapping = (SystemFileTransferModeMapping)mappings[i];
+			clonedMappings[i] = (ISystemFileTransferModeMapping)mapping.clone();			
 		}
+		return clonedMappings;
 	}
 	
 	/**
@@ -455,7 +475,7 @@ public class UniversalPreferencePage
 		resourceTypeTable.setRedraw(false);
 		resourceTypeTable.removeAll();
 				
-		ISystemFileTransferModeMapping[] mappings = modeRegistry.getModeMappings();
+		ISystemFileTransferModeMapping[] mappings = getModeMappings();
 		for (int i = 0; i < mappings.length; i++) 
 		{
 		 newResourceTableItem(mappings[i], i, false);
@@ -471,8 +491,7 @@ public class UniversalPreferencePage
 			resourceTypeTable.setSelection(0);
 			resourceTypeTable.setFocus();
 		}
-		
-		fillMode();
+
 		updateEnabledState();
 	}
 	
@@ -490,11 +509,32 @@ public class UniversalPreferencePage
 	    uploadBufferSize.setText(ISystemFilePreferencesConstants.DEFAULT_DOWNLOAD_BUFFER_SIZE + ""); //$NON-NLS-1$
 	}
 	
-	private Image getImageDescriptor(ISystemFileTransferModeMapping mapping)
+	
+	private Image applyBinaryDecoration(Image source) {
+		ImageDescriptor binaryOverlay = Activator.getImageDescriptor("/icons/full/ovr16/binary_ovr.gif");
+		DecorationOverlayIcon icon = new DecorationOverlayIcon(source, binaryOverlay, 3);
+		return icon.createImage();
+	}
+	
+	private Image getImageFor(ISystemFileTransferModeMapping mapping)
 	{
-		//String extension = mapping.getExtension();
+		if (fileImage == null){
+			fileImage = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE).createImage();
+		}
+		if (binaryFileImage == null)
+		{
+			binaryFileImage = applyBinaryDecoration(fileImage);
+		}
+		
 		// for now just always using the same image
-		return WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE).createImage();
+		if (mapping.isBinary())
+		{
+			return binaryFileImage;
+		}
+		else
+		{
+			return fileImage;
+		}
 	}
 	
 	/**
@@ -504,15 +544,19 @@ public class UniversalPreferencePage
 	protected TableItem newResourceTableItem(ISystemFileTransferModeMapping mapping, int index, boolean selected) {
 		
 		modeMappings.add(index, mapping);
-				
-		Image image = getImageDescriptor(mapping);
 		
+		Image image = getImageFor(mapping);
 		if (image != null)
 			imagesToDispose.add(image);
 	
 		TableItem item = new TableItem(resourceTypeTable, SWT.NULL, index);
+		item.setData(mapping);
 		item.setImage(0, image);
 		item.setText(1, mapping.getLabel());
+		
+		boolean binary = mapping.isBinary();
+		item.setText(2, binary ? FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL : FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);
+				
 		
 		if (selected)
 			resourceTypeTable.setSelection(index);
@@ -547,48 +591,17 @@ public class UniversalPreferencePage
 	 */
 	public void handleEvent(Event event) {
 		
-		if ((event.widget == resourceTypeTable) && ((event.type == SWT.Selection) || (event.type == SWT.DefaultSelection))) {
-			fillMode();
-		}
 		if ((event.widget == addResourceTypeButton) && (event.type == SWT.Selection)) {
 			promptForResourceType();
 		}
 		else if ((event.widget == removeResourceTypeButton) && (event.type == SWT.Selection)) {
 			removeSelectedResourceType();
 		}
-		else if ((event.widget == binaryButton) && (event.type == SWT.Selection)) {
-			binaryButtonSelected();
-		}
-		else if ((event.widget == textButton) && (event.type == SWT.Selection)) {
-			textButtonSelected();
-		}
 		else if ((event.widget == doSuperTransferButton) && (event.type == SWT.Selection))
 		{
 		    doSuperTransferButtonSelected();
 		}
 		updateEnabledState();
-	}
-	
-	
-	/**
-	 * Fill the mode widgets
-	 */
-	public void fillMode() {
-		
-		int index = resourceTypeTable.getSelectionIndex();
-		SystemFileTransferModeMapping modeMapping = getModeMapping(index);
-		
-		if (modeMapping !=null)
-		{
-			if (modeMapping.isBinary()) {
-				binaryButton.setSelection(true);
-				textButton.setSelection(false);
-			}
-			else {
-				binaryButton.setSelection(false);
-				textButton.setSelection(true);
-			}
-		}
 	}
 	
 	
@@ -699,41 +712,21 @@ public class UniversalPreferencePage
 
 		
 		// Create the new type and insert it
-		mapping = new SystemFileTransferModeMapping(newName,newExtension);			
+		mapping = new SystemFileTransferModeMapping(newName,newExtension);	
+		
+		// default to default
+		if (defaultBinaryButton.getSelection()) {
+			mapping.setAsBinary();
+		}
+		else {
+			mapping.setAsText();
+		}
+		
 		newResourceTableItem(mapping, i, true);
 		
 		resourceTypeTable.setFocus();
-		fillMode();
 	}
-	
-	
-	/**
-	 * Helper method to configure things when binary mode radio button
-	 * is selected
-	 */
-	private void binaryButtonSelected() {
-		//binaryButton.setSelection(true); // causes hang on linux
-		//textButton.setSelection(false);
 		
-		int index = resourceTypeTable.getSelectionIndex();
-		SystemFileTransferModeMapping modeMapping = getModeMapping(index);
-		if (modeMapping != null)
-			modeMapping.setAsBinary();
-	}
-	
-	
-	/**
-	 * Helper method to configure things when text mode is selected
-	 */
-	private void textButtonSelected() {
-	//	textButton.setSelection(true); // causes hang on linux
-	//	binaryButton.setSelection(false);
-		
-		int index = resourceTypeTable.getSelectionIndex();
-		SystemFileTransferModeMapping modeMapping = getModeMapping(index);
-		if (modeMapping != null)
-			modeMapping.setAsText();
-	}		
 	
 	private void doSuperTransferButtonSelected()
 	{
@@ -746,17 +739,7 @@ public class UniversalPreferencePage
 	        archiveTypeCombo.setEnabled(false);
 	    }
 	}
-	
-	/**
-	 * Gets the mode mapping given the editor mapping selected
-	 */
-	private SystemFileTransferModeMapping getModeMapping(int index) {
-		
-		if (index >=0 && index < modeMappings.size())
-			return (SystemFileTransferModeMapping)(modeMappings.get(index));
-		else
-			return null;
-	}
+
 	
 	
 	/**
@@ -927,38 +910,77 @@ public class UniversalPreferencePage
 	 */
 	private static void savePreferenceStore()
 	{	 
-		/* DY:  This was causing ClassCastException in 2.0
-		 *      getPreferenceStore retutrns CompatibilityPreferenceStore now
-		PreferenceStore store = (PreferenceStore)RSEUIPlugin.getDefault().getPreferenceStore();				
-		try {
-			store.save();
-		} catch (Exception exc)
-		{
-			System.out.println("Error saving preferences: " + exc.getMessage() + ": " + exc.getClass().getName());
-		}
-		*/
-		// ok, a couple hours of research leads me to believe this is now the new
-		// thing to do... phil
 		RSEUIPlugin.getDefault().savePluginPreferences();
 	}
+
+	public boolean canModify(Object element, String property) {
+		if (property.equals(columnProperties[2]))
+		{
+			return true;
+		}
+		else if (property.equals(columnProperties[1]))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public Object getValue(Object element, String property) {
+		SystemFileTransferModeMapping mapping = (SystemFileTransferModeMapping)element;
+		if (property.equals(columnProperties[2])){
+			return mapping.isBinary() ? new Integer(0) : new Integer(1);
+		}
+		else if (property.equals(columnProperties[1])){
+			return mapping.getLabel();		
+		}
+		return null;
+	}
+
+	public void modify(Object element, String property, Object value) 
+	{
+		TableItem item = (TableItem)element;
+		SystemFileTransferModeMapping mapping = (SystemFileTransferModeMapping)item.getData();
+		if (mapping != null)
+		{
+			if (property.equals(columnProperties[2])){
 	
-	/**
-	 * Listen for changes to the Editor Registry content.
-	 * Update our registry by changing the hashmap and saving the new
-	 * mappings on disk.
-	 * @see IPropertyListener#propertyChanged(Object, int)
-	 */
-	public void propertyChanged(Object source, int propId) {
-	
-		if ((source instanceof IEditorRegistry) && (propId == IEditorRegistry.PROP_CONTENTS)) {
-			
-			// the OK button was pressed, and we need to incorporate changes from the File Editors preference page
-			IEditorRegistry registry = (IEditorRegistry)source;
-			
-			IFileEditorMapping[] editorMappingArray = registry.getFileEditorMappings();
-		
-			for (int i = 0; i < editorMappingArray.length; i++) {
+				if (value instanceof Integer)
+				{
+					int index = ((Integer)value).intValue();
+					if (index == 0)
+					{
+						mapping.setAsBinary();
+						item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL);
+						item.setImage(getImageFor(mapping));
+					}
+					else
+					{
+						mapping.setAsText();
+						item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);
+						item.setImage(getImageFor(mapping));
+					}
+				}
+				
+			}
+			else if (property.equals(columnProperties[1])){
+				if (value instanceof String)
+				{
+					String nameExtension = (String)value;
+					
+					int dotIndex = nameExtension.lastIndexOf('.');
+					if (dotIndex != -1)
+					{
+						String name = nameExtension.substring(0, dotIndex);					
+						
+						String ext = nameExtension.substring(dotIndex + 1);
+
+						mapping.setName(name);
+						mapping.setExtension(ext);
+						item.setText(1, nameExtension);
+					}
+				}
 			}
 		}
 	}
+	
 }

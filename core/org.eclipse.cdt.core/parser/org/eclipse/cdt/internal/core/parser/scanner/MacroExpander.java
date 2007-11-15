@@ -245,7 +245,7 @@ public class MacroExpander {
 	private ImageLocationInfo createImageLocationInfo(Token t) {
 		final Object s= t.fSource;
 		if (s instanceof ObjectStyleMacro) {
-			return new MacroImageLocationInfo((ObjectStyleMacro) s, fEndOffset, fEndOffset);
+			return new MacroImageLocationInfo((ObjectStyleMacro) s, t.getOffset(), t.getEndOffset());
 		}
 		else if (s instanceof CPreprocessor) {
 			int sequenceNumber= fLocationMap.getSequenceNumberForOffset(t.getOffset());

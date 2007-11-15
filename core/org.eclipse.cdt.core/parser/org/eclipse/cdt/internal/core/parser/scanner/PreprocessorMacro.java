@@ -136,8 +136,10 @@ class ObjectStyleMacro extends PreprocessorMacro {
 	}
 	
 	private void setSource(Token t) {
+		final int shift= -fExpansionOffset;
 		while (t != null) {
 			t.fSource= this;
+			t.shiftOffset(shift);
 			t= (Token) t.getNext();
 		}
 	}

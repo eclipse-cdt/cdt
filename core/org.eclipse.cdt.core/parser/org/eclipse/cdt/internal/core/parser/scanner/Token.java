@@ -65,6 +65,11 @@ public class Token implements IToken, Cloneable {
 		fEndOffset= endOffset;
 	}
 
+	public void shiftOffset(int shift) {
+		fOffset+= shift;
+		fEndOffset+= shift;
+	}
+
 	public char[] getCharImage() {
 		return TokenUtil.getImage(getType());
 	}

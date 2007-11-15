@@ -108,7 +108,7 @@ if [ -f package.count -a "$FILES" != "" ]; then
     ${mydir}/batch_sign.sh `pwd`
   fi
 
-  if [ ${buildType} != M -a -d ../N.latest ]; then
+  if [ ${buildType} = N -a -d ../N.latest ]; then
     #update the doc server
     rm -f ../N.latest/RSE-*.zip
     rm -f ../N.latest/TM-*.zip
@@ -117,8 +117,9 @@ if [ -f package.count -a "$FILES" != "" ]; then
     cp -f RSE-remotecdt-*.zip ../N.latest/RSE-remotecdt-latest.zip
     chgrp dsdp-tmadmin ../N.latest/*.zip
     chmod g+w ../N.latest/*.zip
+  fi
 
-    if [ ${buildType} != N ]; then
+  if [ ${buildType} != M -a ${buildType} != N ]; then
       #Update the testUpdates site
       echo "Refreshing update site"
       cd $HOME/downloads-tm/testUpdates/bin
@@ -129,7 +130,6 @@ if [ -f package.count -a "$FILES" != "" ]; then
       cd $HOME/downloads-tm/signedUpdates/bin
       cvs update
       ./mkTestUpdates.sh
-    fi
   fi
   
   cd "$curdir"

@@ -175,6 +175,8 @@ public class UniversalPreferencePage
 		data.grabExcessHorizontalSpace = true;
 		resourceTypeTable.setLayoutData(data);
 		
+		
+		
 		// container for buttons
 		Composite groupComponent= new Composite(pageComponent, SWT.NULL);
 		groupComponent.setLayout(new GridLayout());
@@ -208,8 +210,18 @@ public class UniversalPreferencePage
 		removeResourceTypeButton.setLayoutData(data);
 		
 		
+		Composite afterTableComposite = new Composite(parent, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.verticalSpacing = 10;
+		layout.horizontalSpacing = 10;
+		afterTableComposite.setLayout(layout);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		afterTableComposite.setLayoutData(data);
+		
 		// default file transfer mode
-		Group defaultModeGroup = new Group(groupComponent, SWT.SHADOW_ETCHED_IN);
+		Group defaultModeGroup = new Group(afterTableComposite, SWT.SHADOW_ETCHED_IN);
 		defaultModeGroup.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_DEFAULT_MODE_LABEL);
 		defaultModeGroup.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_DEFAULT_MODE_TOOLTIP);
 		
@@ -218,9 +230,8 @@ public class UniversalPreferencePage
 		//layout.verticalSpacing = 10;
 		layout.horizontalSpacing = 10;
 		defaultModeGroup.setLayout(layout);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		data.widthHint = 100;		
+		data = new GridData();//GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 1;	
 		data.grabExcessHorizontalSpace = true;
 		defaultModeGroup.setLayoutData(data);
 		
@@ -236,6 +247,15 @@ public class UniversalPreferencePage
 		defaultTextButton.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);
 		defaultTextButton.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_TOOLTIP);
 	
+		
+		Composite propertiesComposite = new Composite(afterTableComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		
+		data = new GridData();
+		data.horizontalSpan = 1;
+		propertiesComposite.setLayout(layout);
+		propertiesComposite.setLayoutData(data);
 
 	
 		// Add the boolean field editor for users to choose whether
@@ -243,22 +263,23 @@ public class UniversalPreferencePage
 		BooleanFieldEditor showHiddenEditor = new BooleanFieldEditor(
 			ISystemFilePreferencesConstants.SHOWHIDDEN,
 			FileResources.RESID_PREF_UNIVERSAL_SHOWHIDDEN_LABEL,
-			groupComponent);
+			propertiesComposite);
 			
 		addField(showHiddenEditor);
-		
-
-		
+	
 		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
 		
 		// field to indicate whether or not to preserve timestamps during copy
 		BooleanFieldEditor preserveTimestamps = new BooleanFieldEditor(
 				ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, 
 				FileResources.RESID_PREF_UNIVERSAL_PRESERVE_TIMESTAMPS_LABEL,
-				parent);
+				propertiesComposite);
 		addField(preserveTimestamps);
 		
+		
 		store.setDefault(ISystemFilePreferencesConstants.PRESERVETIMESTAMPS, true);
+
+		
 		// download and upload buffer size
 		Group transferGroup = new Group(parent, SWT.NULL);
 		transferGroup.setText(FileResources.RESID_FILES_PREFERENCES_BUFFER);

@@ -34,7 +34,8 @@
  * David McKnight   (IBM)        - [209375] new API copyRemoteResourcesToWorkspaceMultiple to optimize downloads
  * Rupen Mardirossian (IBM)      - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances, passed through check collision as well through overloading.
  * Xuan Chen          (IBM)      - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
- * David Mcknight     (IBM)      - [203114] don't treat XML files specially (no hidden prefs for bin vs text) 
+ * David Mcknight     (IBM)      - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
+ * David McKnight     (IBM)      - [209552] get rid of copy APIs to be clearer with download and upload  
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -150,10 +151,10 @@ public class UniversalFileTransferUtility
 	 */
 	public static void transferRemoteResource(IRemoteFile srcFileOrFolder, IRemoteFile tgtFolder, IProgressMonitor monitor)
 	{
-		Object tempSrc = copyRemoteResourceToWorkspace(srcFileOrFolder, monitor);
+		Object tempSrc = downloadResourceToWorkspace(srcFileOrFolder, monitor);
 		if (tempSrc instanceof IResource)
 		{
-			copyWorkspaceResourceToRemote((IResource) tempSrc, tgtFolder, monitor);
+			uploadResourceFromWorkspace((IResource) tempSrc, tgtFolder, monitor);
 		}
 	}
 
@@ -197,7 +198,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor the progress monitor
 	 * @return the resulting local replica
 	 */
-	protected static IFile copyRemoteFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
+	protected static IFile downloadFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
 	{
 		IRemoteFileSubSystem srcFS = srcFileOrFolder.getParentRemoteFileSubSystem();
 		IResource tempResource = getTempFileFor(srcFileOrFolder);
@@ -351,7 +352,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor the progress monitor
 	 * @return the set of temp files created as a result of the download.
 	 */
-	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
+	public static SystemWorkspaceResourceSet downloadResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
 	{
 		SystemWorkspaceResourceSet resultSet = new SystemWorkspaceResourceSet();
 		List set = remoteSet.getResourceSet();
@@ -408,7 +409,7 @@ public class UniversalFileTransferUtility
 						
 						
 						SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
-						SystemWorkspaceResourceSet childResults = copyRemoteResourcesToWorkspaceMultiple(childSet, monitor);
+						SystemWorkspaceResourceSet childResults = downloadResourcesToWorkspaceMultiple(childSet, monitor);
 						if (childResults.hasMessage())
 						{
 							resultSet.setMessage(childResults.getMessage());
@@ -506,7 +507,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor a progress monitor 
 	 * @return the temporary objects that was created after the download
 	 */
-	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspace(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
+	public static SystemWorkspaceResourceSet downloadResourcesToWorkspace(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
 	{		
 		boolean ok = true;
 		SystemWorkspaceResourceSet resultSet = new SystemWorkspaceResourceSet();
@@ -540,7 +541,7 @@ public class UniversalFileTransferUtility
 				if (srcFileOrFolder.isFile()) // file transfer
 				{
 
-					IFile tempFile = copyRemoteFileToWorkspace(srcFileOrFolder, monitor);
+					IFile tempFile = downloadFileToWorkspace(srcFileOrFolder, monitor);
 					resultSet.addResource(tempFile);										
 				}
 				else // folder transfer
@@ -552,7 +553,7 @@ public class UniversalFileTransferUtility
 					{
 						try
 						{ 
-							tempFolder = compressedCopyRemoteResourceToWorkspace(srcFileOrFolder, monitor);
+							tempFolder = compressedDownloadToWorkspace(srcFileOrFolder, monitor);
 						}
 						catch (Exception e)
 						{
@@ -574,7 +575,7 @@ public class UniversalFileTransferUtility
 							
 							
 							SystemRemoteResourceSet childSet = new SystemRemoteResourceSet(srcFS, children);
-							SystemWorkspaceResourceSet childResults = copyRemoteResourcesToWorkspace(childSet, monitor);
+							SystemWorkspaceResourceSet childResults = downloadResourcesToWorkspace(childSet, monitor);
 							if (childResults.hasMessage())
 							{
 								resultSet.setMessage(childResults.getMessage());
@@ -685,7 +686,7 @@ public class UniversalFileTransferUtility
 		}
 	}
 	
-	public static Object copyRemoteResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {
+	public static Object downloadResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {
 		
 		if (!srcFileOrFolder.exists()) {
 			SystemMessage errorMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_ERROR_FILE_NOTFOUND);
@@ -694,7 +695,7 @@ public class UniversalFileTransferUtility
 		}
 		
 		if (srcFileOrFolder.isFile()) {
-			IFile tempFile = copyRemoteFileToWorkspace(srcFileOrFolder, monitor);
+			IFile tempFile = downloadFileToWorkspace(srcFileOrFolder, monitor);
 			
 			if (!tempFile.exists())
 			{
@@ -743,7 +744,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor the progress monitor.
 	 * @return the resulting local replica.
 	 */
-	protected static IFile copyRemoteFileToWorkspace(File srcFileOrFolder, IProgressMonitor monitor)
+	protected static IFile downloadFileToWorkspace(File srcFileOrFolder, IProgressMonitor monitor)
 	{
 		IResource tempResource = getTempFileFor(srcFileOrFolder);
 
@@ -951,7 +952,7 @@ public class UniversalFileTransferUtility
 	 * @param monitor a progress monitor 
 	 * @return the temporary object that was created after the download
 	 */
-	public static Object copyRemoteResourceToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
+	public static Object downloadResourceToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
 	{
 
 		boolean ok = true;
@@ -971,7 +972,7 @@ public class UniversalFileTransferUtility
 
 		if (srcFileOrFolder.isFile())
 		{
-			IFile tempFile = copyRemoteFileToWorkspace(srcFileOrFolder, monitor);
+			IFile tempFile = downloadFileToWorkspace(srcFileOrFolder, monitor);
 
 			if (!tempFile.exists())
 			{
@@ -1020,7 +1021,7 @@ public class UniversalFileTransferUtility
 			{
 				try
 				{ 
-					tempFolder = compressedCopyRemoteResourceToWorkspace(srcFileOrFolder, monitor);
+					tempFolder = compressedDownloadToWorkspace(srcFileOrFolder, monitor);
 				}
 				catch (Exception e)
 				{
@@ -1062,11 +1063,11 @@ public class UniversalFileTransferUtility
 						IResource childResource = null;
 						if (child.isFile())
 						{
-							childResource = copyRemoteFileToWorkspace(child, monitor);
+							childResource = downloadFileToWorkspace(child, monitor);
 						}
 						else
 						{
-							childResource = (IResource) copyRemoteResourceToWorkspace(child, monitor);
+							childResource = (IResource) downloadResourceToWorkspace(child, monitor);
 						}
 						if (childResource == null)
 						{
@@ -1137,9 +1138,9 @@ public class UniversalFileTransferUtility
 	 * @param monitor the progress monitor
 	 * @return the resulting remote object
 	 */ 
-	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor)
+	public static Object uploadResourceFromWorkspace(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor)
 	{
-		return copyWorkspaceResourceToRemote(srcFileOrFolder, targetFolder, monitor, true);
+		return uploadResourceFromWorkspace(srcFileOrFolder, targetFolder, monitor, true);
 	}
 	
 /**
@@ -1151,7 +1152,7 @@ public class UniversalFileTransferUtility
 	 * @param checkForCollisions indicates whether to check for colllisions or not
 	 * @return the resulting remote objects
 	 */
-	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
+	public static SystemRemoteResourceSet uploadResourcesFromWorkspace(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
 	{	
 		
 	 
@@ -1380,7 +1381,7 @@ public class UniversalFileTransferUtility
 					
 					if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
 					{
-						compressedCopyWorkspaceResourceToRemote(directory, newTargetFolder, monitor);					
+						compressedUploadFromWorkspace(directory, newTargetFolder, monitor);					
 					}
 					else
 					{
@@ -1389,7 +1390,7 @@ public class UniversalFileTransferUtility
 						directory.refreshLocal(IResource.DEPTH_ONE, monitor);
 						IResource[] children = directory.members();
 						SystemWorkspaceResourceSet childSet = new SystemWorkspaceResourceSet(children);			
-						SystemRemoteResourceSet childResults = copyWorkspaceResourcesToRemote(childSet, newTargetFolder, monitor, false);																	
+						SystemRemoteResourceSet childResults = uploadResourcesFromWorkspace(childSet, newTargetFolder, monitor, false);																	
 						if (childResults == null)
 						{
 							return null;
@@ -1440,7 +1441,7 @@ public class UniversalFileTransferUtility
 	 * @param checkForCollisions indicates whether to check for colllisions or not
 	 * @return the result remote object
 	 */
-	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
+	public static Object uploadResourceFromWorkspace(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
 	{
 		Object result = null;
 
@@ -1633,7 +1634,7 @@ public class UniversalFileTransferUtility
 				boolean doSuperTransferPreference = doSuperTransfer(targetFS);
 				if (doCompressedTransfer && doSuperTransferPreference && !destInArchive && !isTargetLocal)
 				{
-					compressedCopyWorkspaceResourceToRemote(directory, newTargetFolder, monitor);					
+					compressedUploadFromWorkspace(directory, newTargetFolder, monitor);					
 				}
 				else
 				{
@@ -1647,7 +1648,7 @@ public class UniversalFileTransferUtility
 						else
 						{
 							IResource child = children[i];
-							if (copyWorkspaceResourceToRemote(child, newTargetFolder, monitor, false) == null)
+							if (uploadResourceFromWorkspace(child, newTargetFolder, monitor, false) == null)
 							{
 								return null;
 							}
@@ -1676,7 +1677,7 @@ public class UniversalFileTransferUtility
 		return result;
 	}
 
-	public static void compressedCopyWorkspaceResourceToRemote(IContainer directory, IRemoteFile newTargetFolder, IProgressMonitor monitor) throws Exception
+	public static void compressedUploadFromWorkspace(IContainer directory, IRemoteFile newTargetFolder, IProgressMonitor monitor) throws Exception
 	{
 		if (!newTargetFolder.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return;
 		if (ArchiveHandlerManager.isVirtual(newTargetFolder.getAbsolutePath()))
@@ -1816,7 +1817,7 @@ public class UniversalFileTransferUtility
 		return archiveType;
 	}
 	
-	public static IResource compressedCopyRemoteResourceToWorkspace(IRemoteFile directory, IProgressMonitor monitor) throws Exception
+	public static IResource compressedDownloadToWorkspace(IRemoteFile directory, IProgressMonitor monitor) throws Exception
 	{
 		if (!directory.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement()) return null;
 		IRemoteFile destinationArchive = null;
@@ -2460,4 +2461,168 @@ public class UniversalFileTransferUtility
 			display.syncExec(runnable);
 		}
 	}
+
+	
+		
+		
+	/**
+	 * replicates a remote file to the temp files project in the workspace
+	 * 
+	 * @param srcFileOrFolder the file to copy
+	 * @param monitor the progress monitor
+	 * @return the resulting local replica
+	 * 
+	 * @deprecated use downloadFileToWorkspace
+	 */
+	protected static IFile copyRemoteFileToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
+	{
+		return downloadFileToWorkspace(srcFileOrFolder, monitor);
+	}
+	
+	
+	
+
+	/**
+	 * This method downloads a set of remote resources to the workspace.  It uses
+	 * the downloadMultiple() API of the remote file subsystem and service layers so
+	 * for some service implementations, this is a big optimization
+	 * 
+	 * @param remoteSet the set of resources to download
+	 * @param monitor the progress monitor
+	 * @return the set of temp files created as a result of the download.
+	 * 
+	 * @deprecated use downloadResourcesToWorkspaceMultiple
+	 */
+	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
+	{
+		return downloadResourcesToWorkspaceMultiple(remoteSet, monitor);
+	}
+	
+	
+	/**
+	 * Replicates a set of remote files or folders to the workspace
+	 * @param remoteSet the objects which are being copied
+	 * @param monitor a progress monitor 
+	 * @return the temporary objects that was created after the download
+	 * 
+	 * @deprecated use downloadResourcesToWorkspace
+	 */
+	public static SystemWorkspaceResourceSet copyRemoteResourcesToWorkspace(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
+	{		
+		return downloadResourcesToWorkspace(remoteSet, monitor);
+	}
+	
+	/**
+	 * 
+	 * @deprecated use downloadResourceToWorkspace
+	 */
+	public static Object copyRemoteResourceToWorkspace(File srcFileOrFolder, IProgressMonitor monitor) {	
+		return downloadResourceToWorkspace(srcFileOrFolder, monitor);
+	}
+	
+	/**
+	 * Replicates a local file to the temp files project in the workspace. 
+	 * @param srcFileOrFolder the file to copy.
+	 * @param monitor the progress monitor.
+	 * @return the resulting local replica.
+	 * 
+	 * @deprecated use downloadFileToWorkspace
+	 */
+	protected static IFile copyRemoteFileToWorkspace(File srcFileOrFolder, IProgressMonitor monitor)
+	{
+		return downloadFileToWorkspace(srcFileOrFolder, monitor);
+	}
+	
+
+
+	/**
+	 * Replicates a remote file or folder to the workspace
+	 * @param srcFileOrFolder the object which is being copied
+	 * @param monitor a progress monitor 
+	 * @return the temporary object that was created after the download
+	 * 
+	 * @deprecated use downloadResourceToWorkspace
+	 */
+	public static Object copyRemoteResourceToWorkspace(IRemoteFile srcFileOrFolder, IProgressMonitor monitor)
+	{
+		return downloadResourceToWorkspace(srcFileOrFolder, monitor);
+	}
+	/**
+	 * Perform a copy via drag and drop.
+	 * @param srcFileOrFolder the object to be copied.  If the target and source are not on the same system, then this is a
+	 * temporary object produced by the doDrag.
+	 * @param targetFolder the object to be copied to.
+	 * @param monitor the progress monitor
+	 * @return the resulting remote object
+	 * 
+	 * @deprecated use uploadResourceFromWorkspace
+	 */ 
+	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor)
+	{
+		return uploadResourceFromWorkspace(srcFileOrFolder, targetFolder, monitor);
+	}
+	
+/**
+	 * Perform a copy via drag and drop.
+	 * @param workspaceSet the objects to be copied.  If the target and sources are not on the same system, then this is a
+	 * temporary object produced by the doDrag.
+	 * @param targetFolder the object to be copied to.
+	 * @param monitor the progress monitor
+	 * @param checkForCollisions indicates whether to check for collisions or not
+	 * @return the resulting remote objects
+	 * 
+	 * @deprecated use uploadResourcesFromWorkspace
+	 */
+	public static SystemRemoteResourceSet copyWorkspaceResourcesToRemote(SystemWorkspaceResourceSet workspaceSet, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
+	{	
+		return uploadResourcesFromWorkspace(workspaceSet, targetFolder, monitor, checkForCollisions);
+	}
+	
+	/**
+	 * Perform a copy via drag and drop.
+	 * @param srcFileOrFolder the object to be copied.  If the target and source are not on the same system, then this is a
+	 * temporary object produced by the doDrag.
+	 * @param targetFolder the object to be copied to.
+	 * @param monitor the progress monitor
+	 * @param checkForCollisions indicates whether to check for colllisions or not
+	 * @return the result remote object
+	 * 
+	 * @deprecated use uploadResourceFromWorkspace
+	 */
+	public static Object copyWorkspaceResourceToRemote(IResource srcFileOrFolder, IRemoteFile targetFolder, IProgressMonitor monitor, boolean checkForCollisions)
+	{
+		return uploadResourceFromWorkspace(srcFileOrFolder, targetFolder, monitor, checkForCollisions);
+	}
+
+	/**
+	 * @param directory
+	 * @param newTargetFolder
+	 * @param monitor
+	 * @throws Exception
+	 * 
+	 * @deprecated use compressedUploadFromWorkspace
+	 */
+	public static void compressedCopyWorkspaceResourceToRemote(IContainer directory, IRemoteFile newTargetFolder, IProgressMonitor monitor) throws Exception
+	{
+		compressedUploadFromWorkspace(directory, newTargetFolder, monitor);
+	}
+	
+	/**
+	 * 
+	 * @param directory
+	 * @param monitor
+	 * @return
+	 * @throws Exception
+	 * 
+	 * @deprecated use compressedDownloadToWorkspace
+	 */
+	public static IResource compressedCopyRemoteResourceToWorkspace(IRemoteFile directory, IProgressMonitor monitor) throws Exception
+	{
+		return compressedDownloadToWorkspace(directory, monitor);
+	}
+
 }
+
+
+
+

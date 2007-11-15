@@ -28,41 +28,24 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-<li>On FTP, <b>delete now works recursively</b> like for the other IFileService implementations
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196351">196351</a>].</li>
-<li>API: New <b>listMultiple()</b>, <b>getFiles()</b>, <b>uploadMulti()</b>, <b>downloadMulti()</b> API has been 
-  added to <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/IFileService.html"><tt>IFileService</tt></a>.
-  This allows for optimized file service implementations which avoid
-  unnecessary client/server round trips. Currently, only dstore makes use of the new API; API changes have
-  been made in a backward compatible manner, as long as implementations derive from 
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/AbstractFileService.html"><tt>AbstractFileService</tt></a>
-  rather than implementing <tt>IFileService</tt> directly
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207178">207178</a>]
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162195">162195</a>].</li>
-<li>API: The <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_ui_mountPathMappers.html"><b>mountPathMappers</b></a>
-  extension point has been generalized to support cache mappings that take additional connection properties 
-  like the port or user name into account. To facilitate this,
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/files/ui/resources/ISystemMountPathMapper.html"><tt>ISystemMountPathMapper</a>#getWorkspaceMappingFor()</tt>
-  has been changed to accept an additional parameter of type 
-  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/subsystems/files/core/subsystems/IRemoteFileSubSystem.html"><tt>IRemoteFileSubSystem</tt></a>.
-  This will help fixing issues like 
-  <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=193858">bug 193858</a> in the future
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=195285">195285</a>].</li>
-<li>API: Listeners can now subscribe to events for completed file uploads and downloads
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207100">207100</a>].</li>
-<li>API: Added an <tt><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/ui/view/ISystemViewElementAdapter.html">ISystemViewElementAdapter</a>#exists()</tt>
-  method in order to avoid queries on the dispatch thread in the future
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208803">208803</a>].</li>
+<li>API: The new <b>uploadMulti()</b>, <b>downloadMulti()</b> API has been renamed in  
+  <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/IFileService.html"><tt>IFileService</tt></a>.
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162195">162195</a>]. 
+  Also, the new multi-API is now being leveraged in <tt>UniversalFileTransferUtility</tt>
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209375">209375</a>].</li>
+<li>API: An extension point has been added to specify file transfer mode (binary/ascii) for a specific filetype
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208951">208951</a>].</li>
+<li>Remote file encoding now defaults to the parent folder encoding
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209660">209660</a>].</li>
 </ul></li>
-<li>All bugs from the TM 2.0.1 and 2.0.2 maintenance releases were merged into this milestone.
-  At least 40 additional bugs were fixed: Use 
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-09-29&chfieldto=2007-11-14&chfield=resolution&cmdtype=doit"> -->
-  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-09-29&chfieldto=2007-11-14&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=substring&value0-0-1=3.0+M4"> -->
-  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=3.0+M3&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit">
+<li>At least 10 bugs were fixed: Use 
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-11-06&chfieldto=2008-01-07&chfield=resolution&cmdtype=doit"> -->
+  <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-11-06&chfieldto=2008-01-07&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=substring&value0-0-1=3.0+M3">
+  <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=3.0+M4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
   this query</a> to show the list of bugs fixed since the last milestone,
-  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-2.0.2-200711131300/index.php">
-  TM 2.0.2</a>
-  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/R-2.0.2-200711131300/buildNotes.php">build notes</a>].</li>
+  <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M3-200711141025/index.php">
+  TM 3.0M3</a>
+  [<a href="http://download.eclipse.org/dsdp/tm/downloads/drops/S-3.0M3-200711141025/buildNotes.php">build notes</a>].</li>
 <li>For details on checkins, see the
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/index.html">
   RSE CVS changelog</a>, and the
@@ -134,7 +117,18 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ Breaking API Changes
 <ul>
-<!-- <li>None</li> -->
+<li><b>Archive Handler API</b> has been changed to support background operation and cancellation.
+    To facilitate this, an additional ISystemOperationMonitor interface was added as last parameter
+    of most method calls in 
+    <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/archiveutils/ISystemArchiveHandler.html"><tt>ISystemArchiveHandler</tt></a>. In addition to that,
+    <tt><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/clientserver/archiveutils/VirtualChild.html">VirtualChild</a>#getExtractedFile()</tt> was also changed
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160775">160775</a>].</li>
+<li><b>Removed</b> obsolete method
+    <tt><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/ui/RSESystemTypeAdapter.html">RSESystemTypeAdapter</a>#acceptContextMenuActionContribution()</tt>
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=199032">199032</a>].</li>
+</ul>
+<li>TM 3.0M3 Breaking API Changes
+<ul>
 <li><b>Optimized IFileService for multi-queries</b>. This is not a breaking API change for clients
     that extend <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/AbstractFileService.html"><tt>AbstractFileService</tt></a>
     rather than implementing IFileService directly. But the
@@ -188,7 +182,6 @@ We'll strive to fix these as soon as possible.
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198143">bug 198143</a> - maj - [dstore][performance] Refresh a big directory takes very long time, and freezes workbench</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=203501">bug 203501</a> - maj - NPE in PFMetadataLocation when saving RSEDOM</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207308">bug 207308</a> - maj - Removing a file type should not delete the platform's file association to editors</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208778">bug 208778</a> - maj - [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND</li>
 </ul>
 <!--

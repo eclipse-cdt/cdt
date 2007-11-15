@@ -57,7 +57,7 @@ public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate 
 				containers.add( 0, new ProjectSourceContainer( project, true ) );
 			}
 		}
-		containers.add( new AbsolutePathSourceContainer() );
+		containers.add( 0, new AbsolutePathSourceContainer() );
 		return (ISourceContainer[])containers.toArray( new ISourceContainer[containers.size()] );
 	}
 }

@@ -138,12 +138,6 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 
 							// add to list
 							extTextList.add(extension);
-
-							// create an editor mapping
-							// FileEditorMapping mapping = new FileEditorMapping("*", extension);
-
-							// add to editor mapping list
-							// editorMappings.add(mapping);
 						}
 					}
 					// add extension to list of binary types
@@ -155,12 +149,6 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 
 							// add to list
 							extBinaryList.add(extension);
-
-							// create an editor mapping
-							// FileEditorMapping mapping = new FileEditorMapping("*", extension);
-
-							// add to editor mapping list
-							// editorMappings.add(mapping);
 						}
 					}
 					else {

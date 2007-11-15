@@ -435,7 +435,7 @@ public class UniversalFileTransferUtility
 		}
 		
 		try {
-			srcFS.downloadMulti(sources, destinations, encodings, monitor);
+			srcFS.downloadMultiple(sources, destinations, encodings, monitor);
 		}
 		catch (SystemMessageException e){
 			resultSet.setMessage(e.getSystemMessage());

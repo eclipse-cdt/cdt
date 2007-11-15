@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [209423] Fix for null pointer - filter attributes need unique ids
+ * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -833,7 +834,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	/**
 	 * Default implementation - just iterate through each file
 	 */
-	public boolean downloadMulti(String[] remoteParents, String[] remoteFiles,
+	public boolean downloadMultiple(String[] remoteParents, String[] remoteFiles,
 			File[] localFiles, boolean[] isBinaries, String[] hostEncodings,
 			IProgressMonitor monitor) throws SystemMessageException 
 	{		
@@ -1038,7 +1039,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	/**
 	 * Default implementation - just iterate through each file
 	 */
-	public boolean uploadMulti(File[] localFiles, String[] remoteParents,
+	public boolean uploadMultiple(File[] localFiles, String[] remoteParents,
 			String[] remoteFiles, boolean[] isBinaries, String[] srcEncodings,
 			String[] hostEncodings, IProgressMonitor monitor)
 			throws SystemMessageException 

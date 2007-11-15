@@ -23,7 +23,8 @@
  * David McKnight   (IBM)        - [207100] fire event after upload and download
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
- * David McKnight   (IBM)        - [203114] don't treat XML files specially (no hidden prefs for bin vs text) 
+ * David McKnight   (IBM)        - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
+ * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated 
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -576,7 +577,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		sr.fireEvent(new SystemRemoteChangeEvent(ISystemRemoteChangeEvents.SYSTEM_REMOTE_RESOURCE_UPLOADED, destination, destination.getParentRemoteFile(), this));
 	}
 	
-	public void uploadMulti(String[] sources, String[] srcEncodings,
+	public void uploadMultiple(String[] sources, String[] srcEncodings,
 			String[] remotePaths, String[] rmtEncodings,
 			IProgressMonitor monitor) throws SystemMessageException 
 	{
@@ -612,7 +613,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 					
 		// upload
-		getFileService().uploadMulti(sourceFiles, remoteParentPaths, remoteFileNames, isBinaries, srcEncodings, rmtEncodings, monitor);
+		getFileService().uploadMultiple(sourceFiles, remoteParentPaths, remoteFileNames, isBinaries, srcEncodings, rmtEncodings, monitor);
 		
 		// notification
 		// notify that the file was uploaded
@@ -625,7 +626,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 	}
 
-	public void uploadMulti(String[] sources, IRemoteFile[] destinations,
+	public void uploadMultiple(String[] sources, IRemoteFile[] destinations,
 			String[] encodings, IProgressMonitor monitor)
 			throws SystemMessageException 
 {		
@@ -657,7 +658,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 		
 		// upload
-		getFileService().uploadMulti(sourceFiles, remoteParentPaths, remoteFileNames, isBinaries, encodings, hostEncodings, monitor);
+		getFileService().uploadMultiple(sourceFiles, remoteParentPaths, remoteFileNames, isBinaries, encodings, hostEncodings, monitor);
 		
 		// notification
 		// notify that the file was uploaded
@@ -698,7 +699,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		}
 	}
 	
-	public void downloadMulti(IRemoteFile[] sources, String[] destinations,
+	public void downloadMultiple(IRemoteFile[] sources, String[] destinations,
 			String[] encodings, IProgressMonitor monitor)
 			throws SystemMessageException 
 	{
@@ -722,7 +723,7 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 			localFiles[i] = new File(destinations[i]);
 		}
 		
-		getFileService().downloadMulti(parentPaths, names, localFiles, isBinaries, encodings, monitor);
+		getFileService().downloadMultiple(parentPaths, names, localFiles, isBinaries, encodings, monitor);
 		if (monitor.isCanceled())
 		{
 			for (int d = 0; d < localFiles.length; d++)

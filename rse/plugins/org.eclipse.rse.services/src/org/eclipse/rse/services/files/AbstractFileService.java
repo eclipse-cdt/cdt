@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -141,7 +142,7 @@ public abstract class AbstractFileService implements IFileService
 	/**
 	 * Default implementation - just iterate through each file
 	 */
-	public boolean downloadMulti(String[] remoteParents, String[] remoteFiles,
+	public boolean downloadMultiple(String[] remoteParents, String[] remoteFiles,
 			File[] localFiles, boolean[] isBinaries, String[] hostEncodings,
 			IProgressMonitor monitor) throws SystemMessageException 
 	{
@@ -161,7 +162,7 @@ public abstract class AbstractFileService implements IFileService
 	/**
 	 * Default implementation - just iterate through each file
 	 */
-	public boolean uploadMulti(File[] localFiles, String[] remoteParents,
+	public boolean uploadMultiple(File[] localFiles, String[] remoteParents,
 			String[] remoteFiles, boolean[] isBinaries, String[] srcEncodings,
 			String[] hostEncodings, IProgressMonitor monitor)
 			throws SystemMessageException 

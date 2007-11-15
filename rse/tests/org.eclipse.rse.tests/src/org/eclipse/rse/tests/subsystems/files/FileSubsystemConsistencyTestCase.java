@@ -8,6 +8,7 @@
  * Contributors: 
  * David McKnight   (IBM)        - [207095] test case to compare same op between subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
+ * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -475,7 +476,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 					System.out.println(systemType + ":Starting multi-file Download");
 				
 					// transfer the files
-					ss.downloadMulti(files, destinations, encodings, monitor);
+					ss.downloadMultiple(files, destinations, encodings, monitor);
 				}
 				else // single file download
 				{

@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [204710] Update Javadoc to mention that getUserHome() may return null
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
+ * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -94,7 +95,7 @@ public interface IFileService extends IService
 	 *     Typically this would be one of those in the
 	 *     {@link RemoteFileException} family.
 	 */
-	public boolean uploadMulti(File[] localFiles, String[] remoteParents, String[] remoteFiles, boolean[] isBinary, String[] srcEncodings, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
+	public boolean uploadMultiple(File[] localFiles, String[] remoteParents, String[] remoteFiles, boolean[] isBinary, String[] srcEncodings, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
 
 	
 	/**
@@ -127,7 +128,7 @@ public interface IFileService extends IService
 	 *     Typically this would be one of those in the 
 	 *     {@link RemoteFileException} family.
 	 */
-	public boolean downloadMulti(String[] remoteParents, String[] remoteFiles, File[] localFiles, boolean[] isBinary, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
+	public boolean downloadMultiple(String[] remoteParents, String[] remoteFiles, File[] localFiles, boolean[] isBinary, String[] hostEncodings, IProgressMonitor monitor) throws SystemMessageException;
 
 	
 	

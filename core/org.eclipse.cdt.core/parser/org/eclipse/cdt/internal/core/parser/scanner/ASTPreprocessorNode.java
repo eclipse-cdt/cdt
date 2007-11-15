@@ -459,6 +459,14 @@ class ASTFileLocation implements IASTFileLocation {
 	public String toString() {
 		return getFileName() + "[" + fOffset + "," + (fOffset+fLength) + ")";    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
+
+	public int getSequenceNumber() {
+		return fLocationCtx.getSequenceNumberForOffset(fOffset, true);
+	}
+	
+	public int getSequenceEndNumber() {
+		return fLocationCtx.getSequenceNumberForOffset(fOffset+fLength, true);
+	}
 }
 
 class ASTMacroExpansionLocation implements IASTMacroExpansion {

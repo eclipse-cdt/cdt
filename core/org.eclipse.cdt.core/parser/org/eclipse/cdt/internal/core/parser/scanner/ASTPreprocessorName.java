@@ -103,14 +103,14 @@ class ASTBuiltinName extends ASTPreprocessorDefinition {
 
 	public IASTNodeLocation[] getNodeLocations() {
 		if (fFileLocation == null) {
-			throw new UnsupportedOperationException();
+			return new IASTNodeLocation[0];
 		}
 		return new IASTNodeLocation[]{fFileLocation};
 	}
 
 	public String getRawSignature() {
 		if (fFileLocation == null) {
-			throw new UnsupportedOperationException();
+			return ""; //$NON-NLS-1$
 		}
 		return toString();
 	}

@@ -421,8 +421,9 @@ public class PDOMASTAdapter {
 	/**
 	 * If the name is empty and has no file location, either an adapter 
 	 * that has a file location is returned, or <code>null</code> if that 
-	 * is not possible.
-	 * Otherwise if the provided name is not empty, it is returned unchanged.
+	 * is not possible (no parent with a file location).
+	 * Otherwise if the provided name is not empty or has a file location, 
+	 * it is returned unchanged.
 	 */
 	public static IASTName getAdapterIfAnonymous(IASTName name) {
 		if (name.toCharArray().length == 0) {
@@ -434,6 +435,7 @@ public class PDOMASTAdapter {
 						return new AnonymousASTName(name, loc);
 					}
 				}
+				return null;
 			}
 		}
 		return name;

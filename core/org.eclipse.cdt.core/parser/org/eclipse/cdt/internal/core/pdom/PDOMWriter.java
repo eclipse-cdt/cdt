@@ -364,10 +364,12 @@ abstract public class PDOMWriter {
 					
 				// assign a location to anonymous types.
 				name= PDOMASTAdapter.getAdapterIfAnonymous(name);
-				IASTFileLocation nameLoc = name.getFileLocation();
-				if (nameLoc != null) {
-					IIndexFileLocation location = findLocation(nameLoc.getFileName());
-					addToMap(symbolMap, 2, location, new IASTName[]{name, caller});
+				if (name != null) {
+					IASTFileLocation nameLoc = name.getFileLocation();
+					if (nameLoc != null) {
+						IIndexFileLocation location = findLocation(nameLoc.getFileName());
+						addToMap(symbolMap, 2, location, new IASTName[]{name, caller});
+					}
 				}
 			}
 		});

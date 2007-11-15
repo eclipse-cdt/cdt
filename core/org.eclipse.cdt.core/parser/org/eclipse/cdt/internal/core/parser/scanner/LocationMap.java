@@ -445,9 +445,23 @@ public class LocationMap implements ILocationResolver {
 		return -1;
 	}
 
-	// mstodo implement
 	public IASTFileLocation flattenLocations(IASTNodeLocation[] locations) {
-		throw new UnsupportedOperationException();
+		if (locations.length == 0) {
+			return null;
+		}
+		IASTFileLocation from= locations[0].asFileLocation();
+		IASTFileLocation to= locations[locations.length-1].asFileLocation();
+		if (from == to) {
+			return from;
+		}
+		if (from instanceof ASTFileLocation && to instanceof ASTFileLocation) {
+			int sequenceNumber= ((ASTFileLocation) from).getSequenceNumber();
+			int length= ((ASTFileLocation) from).getSequenceEndNumber() - sequenceNumber;
+			if (length > 0) {
+				return getMappedFileLocation(sequenceNumber, length);
+			}
+		}
+		return null;
 	}
 
 

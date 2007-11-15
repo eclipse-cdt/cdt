@@ -680,7 +680,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 						}
 						else
 						{
-							children = listFolders(parent, filter, monitor);
+							children = list(parent, filter, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);
 						}
 					}
 					else
@@ -691,7 +691,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 						}
 						else
 						{
-							children = listFiles(parent, filter, monitor);
+							children = list(parent, filter, IFileServiceConstants.FILE_TYPE_FILES, monitor);
 						}
 					}
 				}
@@ -841,7 +841,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 			else if (showDirs)
 				children = list((IRemoteFile) parent, filterString, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
 			else
-				children = listFiles((IRemoteFile) parent, filterString, monitor);
+				children = list((IRemoteFile) parent, filterString, IFileServiceConstants.FILE_TYPE_FILES, monitor);
 			if (sort && (children != null) && (children.length > 1))
 				Arrays.sort(children);
 		}
@@ -1469,78 +1469,5 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		else {
 			return System.getProperty("file.encoding"); //$NON-NLS-1$
 		}
-	}
-	
-	/**
-	 * Return a list of all remote folders in the given parent folder on the remote system
-	 * @param parent The parent folder to list folders in
-	 * 
-	 * @deprecated use list
-	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException
-	{
-		return list(parent, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);
-	}
-
-	/**
-	 * Return a full list of remote folders in the given parent folder on the remote system.
-	 * @param parent The parent folder to list folders in
-	 * @param fileNameFilter The name pattern for subsetting the file list when this folder is subsequently expanded, or null to return all folders.
-	 * 
-	 * @deprecated use list
-	 */
-	public IRemoteFile[] listFolders(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
-	{
-		return list(parent, fileNameFilter, IFileServiceConstants.FILE_TYPE_FOLDERS,  monitor);
-	}
-
-	
-	/**
-	 * Return a list of all remote files in the given parent folder on the remote system
-	 * @param parent The parent folder to list files in
-	 * 
-	 * @deprecated use list
-	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException
-	{
-		return list(parent, IFileServiceConstants.FILE_TYPE_FILES, monitor);
-	}
-
-	/**
-	 * Return a list of remote files in the given folder, which match the given name pattern.
-	 * @param parent The parent folder to list files in
-	 * @param fileNameFilter The name pattern to subset the list by, or null to return all files.
-	 * 
-	 * @deprecated use list
-	 */
-	public IRemoteFile[] listFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
-	{
-		return list(parent, fileNameFilter, IFileServiceConstants.FILE_TYPE_FILES, monitor);
-	}
-	
-	/**
-	 * Return a list of all remote folders and files in the given folder. The list is not subsetted.
-	 * @param parent The parent folder to list folders and files in
-	 * 
-	 * @deprecated use list
-	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException
-	{
-		return list(parent, monitor);
-	}
-
-	/**
-	 * Return a list of remote folders and files in the given folder. 
-	 * <p>
-	 * The files part of the list is subsetted by the given file name filter. It can be null for no subsetting.
-	 * 
-	 * @param parent The parent folder to list folders and files in
-	 * @param fileNameFilter The name pattern to subset the file list by, or null to return all files.
-	 * 
-	 * @deprecated use list
-	 */
-	public IRemoteFile[] listFoldersAndFiles(IRemoteFile parent, String fileNameFilter, IProgressMonitor monitor) throws SystemMessageException
-	{
-		return list(parent, fileNameFilter, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
 	}
 }

@@ -48,6 +48,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
@@ -349,7 +350,7 @@ public class RSEFileStoreImpl extends FileStore
 				
 				if (subSys instanceof FileServiceSubSystem) {
 					FileServiceSubSystem fileServiceSubSystem = ((FileServiceSubSystem)subSys);
-					IHostFile[] results = fileServiceSubSystem.getFileService().getFilesAndFolders(remoteFile.getAbsolutePath(), "*", monitor); //$NON-NLS-1$
+					IHostFile[] results = fileServiceSubSystem.getFileService().list(remoteFile.getAbsolutePath(), "*", IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor); //$NON-NLS-1$
 					IRemoteFileSubSystemConfiguration config = subSys.getParentRemoteFileSubSystemConfiguration();
 					RemoteFileFilterString filterString = new RemoteFileFilterString(config, remoteFile.getAbsolutePath(), "*"); //$NON-NLS-1$
 					filterString.setShowFiles(true);
@@ -424,7 +425,7 @@ public class RSEFileStoreImpl extends FileStore
 				
 				if (subSys instanceof FileServiceSubSystem) {
 					FileServiceSubSystem fileServiceSubSystem = ((FileServiceSubSystem)subSys);
-					IHostFile[] results = fileServiceSubSystem.getFileService().getFilesAndFolders(remoteFile.getAbsolutePath(), "*", monitor); //$NON-NLS-1$
+					IHostFile[] results = fileServiceSubSystem.getFileService().list(remoteFile.getAbsolutePath(), "*", IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor); //$NON-NLS-1$
 					IRemoteFileSubSystemConfiguration config = subSys.getParentRemoteFileSubSystemConfiguration();
 					RemoteFileFilterString filterString = new RemoteFileFilterString(config, remoteFile.getAbsolutePath(), "*"); //$NON-NLS-1$
 					filterString.setShowFiles(true);

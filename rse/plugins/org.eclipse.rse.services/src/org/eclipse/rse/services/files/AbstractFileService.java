@@ -206,28 +206,4 @@ public abstract class AbstractFileService implements IFileService
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
 	}
-	
-	/**
-	 * @deprecated
-	 */
-	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
-	{
-		return internalFetch(remoteParent, fileFilter, IFileServiceConstants.FILE_TYPE_FILES, monitor);
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor) throws SystemMessageException 
-	{
-		return internalFetch(remoteParent, fileFilter, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);
-	}
-	
-	/**
-	 * @deprecated
-	 */
-	public IHostFile[] getFilesAndFolders(String parentPath, String fileFilter, IProgressMonitor monitor) throws SystemMessageException
-	{
-		return internalFetch(parentPath, fileFilter, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
-	}
 }

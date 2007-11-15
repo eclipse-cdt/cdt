@@ -17,6 +17,7 @@
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  * Xuan Chen        (IBM)        - [181784] [archivehandlers] zipped text files have unexpected contents
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -1859,10 +1860,15 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 */
 	protected boolean createVirtualObject(String name, boolean closeZipFile, ISystemOperationMonitor archiveOperationMonitor)
 	{
-		if (!_exists) return false;
+		if (!_exists) 
+		{
+			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+			return false;
+		}
 		if (exists(name, archiveOperationMonitor))
 		{
 			// The object already exists.
+			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 			return false;
 		}
 		
@@ -1908,6 +1914,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					replaceOldZip(outputTempFile);
 				
 					if (closeZipFile) closeZipFile();
+					setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 					return true;
 				}
 			}
@@ -1917,12 +1924,14 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			System.out.println("Could not add a file."); //$NON-NLS-1$
 			System.out.println(e.getMessage());
 			if (closeZipFile) closeZipFile();
+			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 			return false;				   
 		}
 		finally
 		{
 			releaseMutex(mutexLockStatus);
 		}
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 		return false;
 	}
 	

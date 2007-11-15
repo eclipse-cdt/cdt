@@ -14,14 +14,18 @@
  * Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
  * Rupen Mardirossian	(IBM) - [187530] Commented out line 192, in order to stop logging of SystemMessageException
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
+ * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.wizards;
 
 import java.util.Vector;
 
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
@@ -62,6 +66,75 @@ public class SystemNewFileWizard
   
     private static final String CLASSNAME = "SystemNewFileWizard";    //$NON-NLS-1$
 
+	private class CreateNewFileJob extends WorkspaceJob
+	{
+		IRemoteFile parentFolder = null;
+		String      name = null;
+		String      absName = null;
+		String      message = null;
+		
+		/**
+		 * CreateNewFileJob job.
+		 * @param message text used as the title of the job
+		 */
+		public CreateNewFileJob(IRemoteFile parentFolder, String name, String absName, String message)
+		{
+			super(message);
+			this.parentFolder = parentFolder;
+			this.name = name;
+			this.absName = absName;
+			this.message = message;
+			setUser(true);
+		}
+
+		public IStatus runInWorkspace(IProgressMonitor monitor) 
+		{
+			boolean ok = true;
+			IStatus status = Status.OK_STATUS;
+			SystemMessage msg; 
+			IRemoteFileSubSystem rfss = parentFolder.getParentRemoteFileSubSystem(); 
+			
+            // ok, proceed with actual creation...
+            IRemoteFile newFile = null;         
+            try 
+            {    	
+                IRemoteFile newFilePath = rfss.getRemoteFileObject(parentFolder, name, monitor); 
+                newFile = rfss.createFile(newFilePath, monitor);
+            } 
+            catch (RemoteFileIOException exc ) 
+            {	
+            	ok = false;
+            	SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            	msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
+            	SystemMessageDialog.displayErrorMessage(null, msg);
+            } 
+            catch (RemoteFileSecurityException e)  
+            {
+            	ok = false;
+            	msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED)).makeSubstitution(absName);
+            	SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileSecurityException ");  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            	SystemMessageDialog.displayErrorMessage(null, msg);                                               
+            } 
+            catch (SystemMessageException exc)
+			{
+            	ok = false;
+            	if (monitor.isCanceled())
+            	{
+            		status = Status.CANCEL_STATUS;
+            	}
+				SystemMessageDialog.displayErrorMessage(null, exc.getSystemMessage());
+			}
+		          
+		   if (ok) 
+		   {
+			   updateGUI(parentFolder, newFile, getViewer(), isInputAFilter(), getSelectedFilterReference());
+		   }
+		
+		   return status;
+		}
+
+	}
+	
     /**
      * Constructor
      */	
@@ -128,7 +201,6 @@ public class SystemNewFileWizard
             IRemoteFile parentFolder = mainPage.getParentFolder();
 			String name = mainPage.getfileName();          
 			String absName = getNewAbsoluteName(parentFolder, name);
-            IRemoteFileSubSystem rfss = parentFolder.getParentRemoteFileSubSystem(); 
             if (!parentFolder.exists())
             {
             	/* Be nice to do this someday...
@@ -172,39 +244,12 @@ public class SystemNewFileWizard
             	  return false;
             }
             // ok, proceed with actual creation...
-            IRemoteFile newFile = null;         
-            IProgressMonitor monitor = new NullProgressMonitor();
-            try {    	
-                IRemoteFile newFilePath = rfss.getRemoteFileObject(parentFolder, name, monitor); 
-                newFile = rfss.createFile(newFilePath, monitor);
-            } catch (RemoteFileIOException exc ) {
-               SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileIOException " );  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-               msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED_EXIST)).makeSubstitution(absName);
-	           mainPage.setMessage(msg);
-	           ok = false;
-//DY        } catch (Exception RemoteFileSecurityException)  {
-            } catch (RemoteFileSecurityException e)  {
-               msg = (RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_CREATE_FILE_FAILED)).makeSubstitution(absName);
-	           SystemBasePlugin.logDebugMessage(CLASSNAME+ ":", " Creating remote file "+ absName + " failed with RemoteFileSecurityException ");  	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-               //SystemMessage.displayErrorMessage(SystemMessage.getDefaultShell(), msg); 
-	           mainPage.setMessage(msg);	                                                
-	           ok = false;
-            } catch (SystemMessageException e) {
-            	//SystemBasePlugin.logError(CLASSNAME+ ":", e); //$NON-NLS-1$
-            	mainPage.setMessage(e.getSystemMessage());
-            	ok = false;
-            }
-		          
-		   // return ok;
-		   if (ok) 
-		     updateGUI(parentFolder, newFile, getViewer(), isInputAFilter(), getSelectedFilterReference());
-
+            SystemMessage createMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.MSG_CREATEFILEGENERIC_PROGRESS); 
+            createMessage.makeSubstitution(name); 
+            CreateNewFileJob createNewFileJob = new CreateNewFileJob(parentFolder, name, absName,  createMessage.getLevelOneText());
+            createNewFileJob.schedule();
 		}
-		else
-		  ok = false;
-		  
-		
-	    return ok;
+		return ok;
 	}
 	
 	/**

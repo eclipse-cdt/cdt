@@ -526,6 +526,14 @@ Kevin Doyle (IBM) - [160769] Added message for invalid filter when moving files
                           <LevelOne>Rename %1...</LevelOne>		
                           <LevelTwo></LevelTwo>
                     </Message>
+                    <Message ID="1143" Indicator="I">
+                          <LevelOne>Creating file %1...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
+                     <Message ID="1144" Indicator="I">
+                          <LevelOne>Creating folder %1...</LevelOne>		
+                          <LevelTwo></LevelTwo>
+                    </Message>
                     <Message ID="1150" Indicator="E">
                           <LevelOne>Unable to perform action as the underlying file system folder is in use</LevelOne>		
                           <LevelTwo>The file system folder %1 is in use by another task and cannot be removed or modified</LevelTwo>

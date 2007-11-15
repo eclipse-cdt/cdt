@@ -24,6 +24,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Kevin Doyle (IBM) - [209355] Retrieving list of FILE_TYPE_FOLDERS should return Archive's
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -204,7 +205,6 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		
 		public void run() 
 		{
-			int a = 0;
 			while(!monitor.isCanceled() && !archiveOperationMonitor.isDone())		
 			{
 				try {
@@ -866,7 +866,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			if (ArchiveHandlerManager.isVirtual(fileToCreate.getAbsolutePath()))
 			{
-				return createFileInArchive(fileToCreate);
+				return createFileInArchive(fileToCreate, monitor);
 			}
 			else if (!parentFile.exists())
 			{
@@ -899,7 +899,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return new LocalHostFile(fileToCreate);
 	}
 
-	protected LocalVirtualHostFile createFileInArchive(File newFile) throws SystemMessageException
+	protected LocalVirtualHostFile createFileInArchive(File newFile, IProgressMonitor monitor) throws SystemMessageException
 	{
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(newFile.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
@@ -907,10 +907,25 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 			throwCorruptArchiveException(this.getClass() + ".createFileInArchive()"); //$NON-NLS-1$
 		else
 		{
-			if (!handler.createFile(child.fullName, null))
+			ISystemOperationMonitor archiveOperationMonitor = null;
+			if (null != monitor)
 			{
-				//SystemPlugin.logError("LocalFileSubSystemImpl.createFileInArchive(): Archive Handler's createFile method returned false. Couldn't create virtual object.");
-				throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFile)); //$NON-NLS-1$
+				archiveOperationMonitor = new SystemOperationMonitor();
+				CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
+				checkArchiveOperationStatusThread.start();
+			}
+			boolean ok = handler.createFile(child.fullName, archiveOperationMonitor);
+				
+			if (!ok)
+			{
+				if (null != monitor && monitor.isCanceled())
+				{
+					//This operation has been canceled by the user.
+					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				}
+				SystemMessage msg = getMessage("RSEG1124"); //$NON-NLS-1$
+				msg.makeSubstitution(newFile); 
+				throw new SystemMessageException(msg);
 			}
 		}
 		return new LocalVirtualHostFile(child);
@@ -942,7 +957,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		{
 			if (ArchiveHandlerManager.isVirtual(folderToCreate.getAbsolutePath()))
 			{
-				return createFolderInArchive(folderToCreate);
+				return createFolderInArchive(folderToCreate, monitor);
 			}
 			else
 			{
@@ -957,16 +972,34 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		return new LocalHostFile(folderToCreate);
 	}
 
-	protected LocalVirtualHostFile createFolderInArchive(File newFolder) throws SystemMessageException
+	protected LocalVirtualHostFile createFolderInArchive(File newFolder, IProgressMonitor monitor) throws SystemMessageException
 	{
 		VirtualChild child = ArchiveHandlerManager.getInstance().getVirtualObject(newFolder.getAbsolutePath());
 		ISystemArchiveHandler handler = child.getHandler();
 		if (handler == null)
 			throwCorruptArchiveException(this.getClass() + ".createFolderInArchive()"); //$NON-NLS-1$
-		else if (!handler.createFolder(child.fullName, null))
+		else
 		{
-			// SystemPlugin.logError("LocalFileSubSystemImpl.createFolderInArchive(): Archive Handler's createFolder method returned false. Couldn't create virtual object.");
-			throw new SystemMessageException(getMessage("RSEG1124").makeSubstitution(newFolder)); //$NON-NLS-1$
+			ISystemOperationMonitor archiveOperationMonitor = null;
+			if (null != monitor)
+			{
+				archiveOperationMonitor = new SystemOperationMonitor();
+				CheckArchiveOperationStatusThread checkArchiveOperationStatusThread = new CheckArchiveOperationStatusThread(archiveOperationMonitor, monitor);
+				checkArchiveOperationStatusThread.start();
+			}
+			boolean ok = handler.createFolder(child.fullName, archiveOperationMonitor);
+				
+			if (!ok)
+			{
+				if (null != monitor && monitor.isCanceled())
+				{
+					//This operation has been canceled by the user.
+					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				}
+				SystemMessage msg = getMessage("RSEG1124"); //$NON-NLS-1$
+				msg.makeSubstitution(newFolder); 
+				throw new SystemMessageException(msg);
+			}
 		}
 		return new LocalVirtualHostFile(child);
 	}

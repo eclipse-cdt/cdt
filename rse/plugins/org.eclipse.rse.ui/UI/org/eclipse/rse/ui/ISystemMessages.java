@@ -18,6 +18,7 @@
  * Xuan Chen   (IBM) - [160775] Added MSG_RENAMEGENERIC_PROGRESS, FILEMSG_MOVE_INTERRUPTED
  *                                    FILEMSG_RENAME_INTERRUPTED, FILEMSG_DELETE_INTERRUPTED
  *                                    FILEMSG_COPY_INTERRUPTED
+ * Xuan Chen   (IBM)        - [209828] Need to move the Create operation to a job.
  ********************************************************************************/
 
 package org.eclipse.rse.ui;
@@ -199,6 +200,8 @@ public interface ISystemMessages
 	public static final String MSG_COPYTHINGGENERIC_PROGRESS = "RSEG1117";	 //$NON-NLS-1$
 	public static final String MSG_MOVETHINGGENERIC_PROGRESS = "RSEG1118"; //$NON-NLS-1$
 	public static final String MSG_RENAMEGENERIC_PROGRESS = "RSEG1142";	 //$NON-NLS-1$
+	public static final String MSG_CREATEFILEGENERIC_PROGRESS = "RSEG1143";	 //$NON-NLS-1$
+	public static final String MSG_CREATEFOLDERGENERIC_PROGRESS = "RSEG1144";	 //$NON-NLS-1$
 
 	public static final String MSG_SAVING_PROGRESS = "RSEG1119"; //$NON-NLS-1$
 	

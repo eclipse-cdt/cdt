@@ -13,6 +13,7 @@
  * Contributors:
  * Michael Scharf (Wind River) - split into core, view and connector plugins
  * Martin Oberhuber (Wind River) - fixed copyright headers and beautified
+ * Michael Scharf (Wind River) - [209746] There are cases where some colors not displayed correctly
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
@@ -777,7 +778,7 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case 37:
-				text.setStyle(style.setForground("WHITE")); //$NON-NLS-1$
+				text.setStyle(style.setForground("WHITE_FOREGROUND")); //$NON-NLS-1$
 				break;
 
 			case 40:

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.envvar;
 
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.core.runtime.Platform;
 
 
@@ -65,12 +66,10 @@ public class EnvirinmentVariable implements IEnvironmentVariable, Cloneable {
 	}
 
 	public String getDelimiter(){
-		if (fDelimiter != null)
-			return fDelimiter;
-		else if (Platform.getOS() == Platform.OS_WIN32)
-			return ";";
+		if (fDelimiter == null)
+			return EnvironmentVariableManager.getDefault().getDefaultDelimiter();
 		else
-			return ":";
+			return fDelimiter;
 	}
 	
 	public Object clone(){

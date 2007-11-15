@@ -5,6 +5,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
 
 /**
  * The View Model Provider handles the layout of a given model within a 
@@ -14,7 +15,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 @ThreadSafe
 @SuppressWarnings("restriction")
 public interface IVMProvider 
-    extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory 
+    extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory, IViewerInputProvider
 {
     /**
      * Returns the VM Adapter associated with the provider.

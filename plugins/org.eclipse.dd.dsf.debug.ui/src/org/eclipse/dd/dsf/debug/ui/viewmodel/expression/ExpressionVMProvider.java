@@ -24,8 +24,8 @@ import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.DMVMRootLayoutNode;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IExpressionsListener;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.internal.core.IExpressionsListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
@@ -33,10 +33,10 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
  * 
  */
 @SuppressWarnings("restriction")
-public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache implements IExpressionsListener
+public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache implements IExpressionsListener2
 {
     public static class ExpressionsChangedEvent {
-        enum Type {ADDED, CHANGED, REMOVED}
+        enum Type {ADDED, CHANGED, REMOVED, MOVED, INSERTED}
         public final Type fType;
         public final IExpression[] fExpressions;
         public ExpressionsChangedEvent(Type type, IExpression[] expressions) {
@@ -161,5 +161,13 @@ public class ExpressionVMProvider extends AbstractDebugDMVMProviderWithCache imp
     
     public void expressionsRemoved(IExpression[] expressions) {
         handleEvent(new ExpressionsChangedEvent(ExpressionsChangedEvent.Type.REMOVED, expressions));
+    }
+    
+    public void expressionsInserted(IExpression[] expressions, int index) {
+        handleEvent(new ExpressionsChangedEvent(ExpressionsChangedEvent.Type.INSERTED, expressions));
+    }
+
+    public void expressionsMoved(IExpression[] expressions, int index) {
+        handleEvent(new ExpressionsChangedEvent(ExpressionsChangedEvent.Type.MOVED, expressions));
     }
 }

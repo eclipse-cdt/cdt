@@ -29,6 +29,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /** 
@@ -110,7 +111,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     public void update(final IChildrenUpdate[] updates) {
         handleUpdates(updates);
     }
-
+    
     private void handleUpdates(final IViewerUpdate[] updates) {
         try {
             getExecutor().execute(new DsfRunnable() {
@@ -131,6 +132,10 @@ abstract public class AbstractVMAdapter implements IVMAdapter
                 }
             });
         } catch(RejectedExecutionException e) {
+            for (IViewerUpdate update : updates) {
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "VM adapter executor not available", e)); //$NON-NLS-1$
+                update.done();
+            }
         }
     }
     
@@ -190,7 +195,15 @@ abstract public class AbstractVMAdapter implements IVMAdapter
         }
         return null;
     }
-    
+
+
+    public void update(IViewerInputUpdate update) {
+        final IVMProvider provider = getVMProvider(update.getPresentationContext());
+        if (provider != null) {
+            provider.update(update);
+        }
+    }
+
     /**
      * Creates a new View Model Provider for given presentation context.  Returns null
      * if the presentation context is not supported.

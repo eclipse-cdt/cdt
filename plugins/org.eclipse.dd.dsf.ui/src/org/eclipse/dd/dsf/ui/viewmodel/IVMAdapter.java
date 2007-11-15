@@ -5,6 +5,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
 
 /**
  * The View Model adapter handles the layout of a given data model within a 
@@ -15,7 +16,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 @ThreadSafe
 @SuppressWarnings("restriction")
 public interface IVMAdapter
-    extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory 
+    extends IElementContentProvider, IModelProxyFactory, IColumnPresentationFactory, IViewerInputProvider 
 {
     /**
      * Returns the View Model Provider that is registered for the given presentation

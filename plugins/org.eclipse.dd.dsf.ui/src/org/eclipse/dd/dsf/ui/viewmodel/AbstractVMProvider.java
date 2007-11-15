@@ -38,6 +38,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdat
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
@@ -486,7 +488,21 @@ abstract public class AbstractVMProvider implements IVMProvider
         return null;
     }
 
-
+    /**
+     * Calculates the proxy input object to be used for the given input in the given
+     * viewer.  By default no proxy object is used an the given element is used
+     * as the input into the view. 
+     * <p>
+     * Sub classes can override this method for view-specific behavior.
+     * 
+     * @see IViewerInputProvider
+     */
+    public void update(IViewerInputUpdate update) {
+        update.setViewerInput(update.getElement());
+        update.done();
+    }
+    
+    
     /**
      * Convenience method that finds the VMC corresponding to given parent 
      * argument given to isContainer() or retrieveChildren().  

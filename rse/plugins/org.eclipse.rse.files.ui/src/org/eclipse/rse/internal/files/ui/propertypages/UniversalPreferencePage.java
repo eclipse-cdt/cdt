@@ -501,8 +501,10 @@ public class UniversalPreferencePage
 			resourceTypeTable.setSelection(0);
 			resourceTypeTable.setFocus();
 		}
-
+		
 		updateEnabledState();
+		
+		archiveTypeCombo.setEnabled(false);
 	}
 	
 	protected void resetSuperTransferPrefs()

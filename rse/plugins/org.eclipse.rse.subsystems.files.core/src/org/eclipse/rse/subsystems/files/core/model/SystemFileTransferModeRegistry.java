@@ -94,6 +94,14 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		return instance;
 	}
 	
+	/**
+	 * Delete's the existing file associations and reinitializes with defaults
+	 */
+	public void renit()
+	{
+		deleteAssociations();
+		initialize();
+	}
 	
 	/**
 	 * Initialize the registry from storage.
@@ -489,6 +497,12 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		return result;
 	}
 	
+	private void deleteAssociations() 
+	{
+		String location = getFileLocation();
+		File assFile = new File(location);
+		assFile.delete();
+	}
 	
 	/**
 	 * Save the contents of the registry

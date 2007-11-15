@@ -172,7 +172,6 @@ public class UniversalPreferencePage
 		resourceTypeTable.addListener(SWT.DefaultSelection, this);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = resourceTypeTable.getItemHeight() * 12;
-		data.widthHint = 200;
 		data.grabExcessHorizontalSpace = true;
 		resourceTypeTable.setLayoutData(data);
 		
@@ -407,19 +406,29 @@ public class UniversalPreferencePage
 		tableLayout.addColumnData(layoutData);
 		TableColumn tableCol = new TableColumn(resourceTypeTable, SWT.NONE, 0);
 		tableCol.setResizable(false);
+		tableCol.pack();
+		tableCol.setWidth(20);
 		tableCol.setText(""); //$NON-NLS-1$
+
 
 		layoutData = new ColumnWeightData(40, true);
 		tableLayout.addColumnData(layoutData);
 		tableCol = new TableColumn(resourceTypeTable, SWT.NONE, 1);
 		tableCol.setResizable(true);
 		tableCol.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_TABLECOL_LABEL);
+		tableCol.pack();
+		tableCol.setWidth(100);
 
+		
 		layoutData = new ColumnWeightData(60, true);
 		tableLayout.addColumnData(layoutData);
 		tableCol = new TableColumn(resourceTypeTable, SWT.NONE, 2);
 		tableCol.setResizable(true);
 		tableCol.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_LABEL);
+		
+		tableCol.pack();
+		tableCol.setWidth(200);
+		
 		
 	
 		String[] contentTypes = new String[2];
@@ -471,6 +480,7 @@ public class UniversalPreferencePage
 	protected void resetResourceTypeTable()
 	{
 		//clear table and reload defaults
+		modeRegistry.renit();		
 		modeMappings.clear();
 		resourceTypeTable.setRedraw(false);
 		resourceTypeTable.removeAll();
@@ -482,7 +492,7 @@ public class UniversalPreferencePage
 		}
 		resourceTypeTable.setRedraw(true);
 
-		int defaultFileTransferMode = getFileTransferModeDefaultPreference();
+		int defaultFileTransferMode = ISystemFilePreferencesConstants.DEFAULT_FILETRANSFERMODE;
 		defaultBinaryButton.setSelection(defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_BINARY);
 		defaultTextButton.setSelection(defaultFileTransferMode == ISystemFilePreferencesConstants.FILETRANSFERMODE_TEXT);
 		
@@ -809,7 +819,7 @@ public class UniversalPreferencePage
 	 */
 	public static int getFileTransferModeDefaultPreference() 
 	{
-		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= RSEUIPlugin.getDefault().getPreferenceStore();			
 		return store.getInt(ISystemFilePreferencesConstants.FILETRANSFERMODEDEFAULT);
 	}
 	/**

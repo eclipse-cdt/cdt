@@ -287,7 +287,7 @@ public class UniversalPreferencePage
 		GridLayout tlayout = new GridLayout();
 		tlayout.numColumns = 4;
 		transferGroup.setLayout(tlayout);
-		transferGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		transferGroup.setLayoutData(new GridData());//GridData.FILL_HORIZONTAL));
 		
 		Label downloadBufferLabel = new Label(transferGroup, SWT.NULL);
 		downloadBufferLabel.setText(FileResources.RESID_FILES_PREFERENCES_DOWNLOAD_BUFFER_SIZE_LABEL);

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.envvar;
 
+import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
+
 
 
 /**
@@ -50,32 +52,23 @@ public class EnvirinmentVariable implements IEnvironmentVariable, Cloneable {
 		this(var.getName(),var.getValue(),var.getOperation(),var.getDelimiter());	
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable#getName()
-	 */
 	public String getName(){
 		return fName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable#getValue()
-	 */
 	public String getValue(){
 		return fValue;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable#getOperation()
-	 */
 	public int getOperation(){
 		return fOperation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable#getDelimiter()
-	 */
 	public String getDelimiter(){
-		return fDelimiter;
+		if (fDelimiter == null)
+			return EnvironmentVariableManager.getDefault().getDefaultDelimiter();
+		else
+			return fDelimiter;
 	}
 	
 	public Object clone(){

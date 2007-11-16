@@ -185,4 +185,16 @@ public class InclusionTests extends PreprocessorTestsBase {
     		validateEOF();
         }
     }
+    
+    public void testBug156990() throws Exception {
+        IFile inclusion = importFile( "file.h", "ok" ); 
+        StringBuffer buffer = new StringBuffer( "#include \"file.h\"" );
+    	IFile base = importFile( "base.cpp", buffer.toString() ); //$NON-NLS-1$
+
+    	CodeReader reader= new CodeReader(base.getLocation().toString());
+    	initializeScanner(reader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, new ScannerInfo());
+    	validateIdentifier("ok");
+    	validateEOF();
+    }
+    
 }

@@ -52,10 +52,51 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  */
 public interface IFileService extends IService
 {	
-
-	public static final int FILE_TYPE_FILES = 1;
-	public static final int FILE_TYPE_FILES_AND_FOLDERS = 0;
-	public static final int FILE_TYPE_FOLDERS = 2;
+	/** 
+	 * Query constant (bit mask value 1) which indicates that a query should be 
+	 * on files.  The filter(s) passed into the list methods will produce a subset
+	 * of files matching the filter(s).
+	 * 
+	 * This constant is passed into the IFileService list calls.  Implementors of 
+	 * IFileService make use of this to determine what to query and what to return 
+	 * from the query.
+	 *
+	 * @see IFileService#list(String,String,int,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 */
+	public static final int FILE_TYPE_FILES =  0x1;
+	
+	/** 
+	 * Query constant (bit mask value 2) which indicates that a query should be 
+	 * on folders.  The filter(s) passed into the list methods will produce a subset
+	 * of folders matching the filter(s).
+	 * 
+	 * This constant is passed into the IFileService list calls.  Implementors of 
+	 * IFileService make use of this to determine what to query and what to return 
+	 * from the query.
+	 *
+	 * @see IFileService#list(String,String,int,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 */
+	public static final int FILE_TYPE_FOLDERS =  0x2;
+	
+	/** 
+	 * Query constant (bit mask value 0) which indicates that a query should produce 
+	 * folders and files.  The filter(s) passed into the list methods will produce a 
+	 * subset of files matching the filter(s) and all the folders.
+	 * Note that only files are filtered and all folders are returned when this is used.
+	 * 
+	 * This constant is passed into the IFileService list calls.  Implementors of 
+	 * IFileService make use of this to determine what to query and what to return 
+	 * from the query.
+	 *
+	 * @see IFileService#list(String,String,int,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int,IProgressMonitor)
+	 * @see IFileService#listMultiple(String[],String[],int[],IProgressMonitor)
+	 */
+	public static final int FILE_TYPE_FILES_AND_FOLDERS = 0x0;
 
 	/**
 	 * Copy a file to the remote file system.  The remote target is denoted by a

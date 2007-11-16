@@ -108,7 +108,7 @@ public class FileInfoModification extends
 			}
 		}
 		
-		if(add)
+		if(add && tool != null)
 			changeProjectTools(null, tool);
 	}
 }

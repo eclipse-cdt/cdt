@@ -41,6 +41,7 @@ public class PerTypeMapStorage implements Cloneable {
 					clone.fStorage.set(types[i], clone.createMap((Map)o));
 				}
 			}
+			return clone;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}

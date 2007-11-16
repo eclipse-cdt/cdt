@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [208951] no longer used editor registry for file type associations
  * David McKnight   (IBM)        - [203114] Usability improvements for file transfer mode prefs
+ * David McKnight   (IBM)        - [210142] for accessability need transfer mode toggle button
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -96,7 +97,8 @@ public class UniversalPreferencePage
 	protected Table resourceTypeTable;
 	protected Button addResourceTypeButton;
 	protected Button removeResourceTypeButton;
-
+	protected Button toggleModeButton;
+	
 	protected Button doSuperTransferButton;
 	
 	protected Button defaultBinaryButton;
@@ -209,6 +211,18 @@ public class UniversalPreferencePage
 		data.widthHint = Math.max(widthHint, removeResourceTypeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		removeResourceTypeButton.setLayoutData(data);
 		
+		toggleModeButton = new Button(groupComponent, SWT.PUSH);
+		toggleModeButton.setText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_TOGGLEBUTTON_LABEL);
+	    toggleModeButton.setToolTipText(FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_TOGGLEBUTTON_TOOLTIP);
+		toggleModeButton.addListener(SWT.Selection, this);
+		data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, toggleModeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		toggleModeButton.setLayoutData(data);
+		
+			
 		
 		Composite afterTableComposite = new Composite(parent, SWT.NONE);
 		layout = new GridLayout();
@@ -630,6 +644,9 @@ public class UniversalPreferencePage
 		else if ((event.widget == removeResourceTypeButton) && (event.type == SWT.Selection)) {
 			removeSelectedResourceType();
 		}
+		else if ((event.widget == toggleModeButton) && (event.type == SWT.Selection)) {
+			toggleSelectedResourceTypeMode();
+		}
 		else if ((event.widget == doSuperTransferButton) && (event.type == SWT.Selection))
 		{
 		    doSuperTransferButtonSelected();
@@ -672,6 +689,22 @@ public class UniversalPreferencePage
 		}
 	}
 	
+	public void toggleSelectedResourceTypeMode() {
+		
+		TableItem item= resourceTypeTable.getSelection()[0];
+		SystemFileTransferModeMapping mapping = (SystemFileTransferModeMapping)item.getData();
+	
+		if (mapping.isBinary()){
+			mapping.setAsText();
+			item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_TEXT_LABEL);
+			item.setImage(getImageFor(mapping));
+		}
+		else if (mapping.isText()){
+			mapping.setAsBinary();
+			item.setText(2, FileResources.RESID_PREF_UNIVERSAL_FILES_FILETYPES_MODE_BINARY_LABEL);
+			item.setImage(getImageFor(mapping));
+		}
+	}
 	
 	/**
 	 * Add a new resource type to the collection shown in the top of the page.

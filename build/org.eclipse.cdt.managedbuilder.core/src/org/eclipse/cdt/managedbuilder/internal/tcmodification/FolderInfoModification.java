@@ -57,7 +57,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		fSelectedToolChain = (ToolChain)foInfo.getToolChain();
 		fRealToolChain = (ToolChain)ManagedBuildManager.getRealToolChain(fSelectedToolChain);
 	}
-	
+
 	public FolderInfoModification(FolderInfo foInfo, FolderInfoModification base) {
 		super(foInfo, base);
 		fSelectedToolChain = base.fSelectedToolChain;
@@ -191,7 +191,9 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	public void setToolChain(IToolChain tc){
 		if(tc == fSelectedToolChain)
 			return;
-		
+	
+		applyToolChain((ToolChain)tc);
+
 		fSelectedToolChain = (ToolChain)tc;
 		IToolChain newReal = ManagedBuildManager.getRealToolChain(tc);
 		if(newReal == fRealToolChain)
@@ -200,7 +202,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		fRealToolChain = (ToolChain)newReal;
 
 //		setProjectTools(tc.getTools());
-		applyToolChain(fSelectedToolChain);
+//		applyToolChain(fSelectedToolChain);
 		clearToolInfo(tc.getTools());
 		fCurrentCompatibilityInfo = null;
 		

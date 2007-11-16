@@ -25,6 +25,7 @@
  * Kevin Doyle (IBM) - [209355] Retrieving list of FILE_TYPE_FOLDERS should return Archive's
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -64,7 +65,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -174,7 +174,7 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				if (entry.isFile()) {
 					result = _matcher.matches(name);
 				} else if (entry.isDirectory()) {
-					if (type == IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS || type == IFileServiceConstants.FILE_TYPE_FOLDERS) {
+					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS || type == IFileService.FILE_TYPE_FOLDERS) {
 						result = true;
 					}
 				}
@@ -744,19 +744,19 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 				File file = files[i];
 				if (file.isDirectory())
 				{
-					if (type == IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS || 
-					    type == IFileServiceConstants.FILE_TYPE_FOLDERS)
+					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS || 
+					    type == IFileService.FILE_TYPE_FOLDERS)
 					{
 						results.add(new LocalHostFile(file));
 					}
 				}
 				else if (file.isFile())
 				{
-					if (type == IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS || 
-						type == IFileServiceConstants.FILE_TYPE_FILES)
+					if (type == IFileService.FILE_TYPE_FILES_AND_FOLDERS || 
+						type == IFileService.FILE_TYPE_FILES)
 					{
 						results.add(new LocalHostFile(file));
-					} else if (type == IFileServiceConstants.FILE_TYPE_FOLDERS && 
+					} else if (type == IFileService.FILE_TYPE_FOLDERS && 
 						ArchiveHandlerManager.getInstance().isArchive(file)) {
 						// On Local Archive's should be considered Folders
 						// as they are containers that can be opened.

@@ -25,6 +25,7 @@
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [209423] Fix for null pointer - filter attributes need unique ids
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -68,7 +69,6 @@ import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -1608,15 +1608,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		String queryString = null;
 		switch (fileType)
 		{
-		case IFileServiceConstants.FILE_TYPE_FILES:
+		case IFileService.FILE_TYPE_FILES:
 			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_FILES;
 			break;
 		
-		case IFileServiceConstants.FILE_TYPE_FOLDERS:
+		case IFileService.FILE_TYPE_FOLDERS:
 			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS;
 		break;
 		
-		case IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS:
+		case IFileService.FILE_TYPE_FILES_AND_FOLDERS:
 		default:				
 			queryString = IUniversalDataStoreConstants.C_QUERY_VIEW_ALL;
 			break;
@@ -1631,15 +1631,15 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		{
 			switch (fileTypes[i])
 			{
-			case IFileServiceConstants.FILE_TYPE_FILES:
+			case IFileService.FILE_TYPE_FILES:
 				queryStrings[i] = IUniversalDataStoreConstants.C_QUERY_VIEW_FILES;
 				break;
 			
-			case IFileServiceConstants.FILE_TYPE_FOLDERS:
+			case IFileService.FILE_TYPE_FOLDERS:
 				queryStrings[i] = IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS;
 			break;
 			
-			case IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS:
+			case IFileService.FILE_TYPE_FILES_AND_FOLDERS:
 			default:				
 				queryStrings[i] = IUniversalDataStoreConstants.C_QUERY_VIEW_ALL;
 				break;

@@ -15,6 +15,7 @@
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
  * Martin Oberhuber (Wind River) - [174945] Remove obsolete icons from rse.shells.ui
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -37,7 +38,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.internal.shells.ui.ShellsUIPlugin;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.services.files.IFileServiceConstants;
+import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileUtility;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
@@ -514,7 +515,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 				 }
 				 else
 				 {
-				 	fileList = parent.getParentRemoteFileSubSystem().list(parent, currentText + "*", IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor); //$NON-NLS-1$
+				 	fileList = parent.getParentRemoteFileSubSystem().list(parent, currentText + "*", IFileService.FILE_TYPE_FILES_AND_FOLDERS, monitor); //$NON-NLS-1$
 				 }
 			
 
@@ -571,7 +572,7 @@ public class CommandEntryContentAssistProcessor implements IContentAssistProcess
 		 {
 			 try
 			 {	
-				 fileList = workingDirectory.getParentRemoteFileSubSystem().list(workingDirectory, filterString, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
+				 fileList = workingDirectory.getParentRemoteFileSubSystem().list(workingDirectory, filterString, IFileService.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
 			 }
 			 catch (SystemMessageException e)
 			 {

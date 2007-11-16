@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -37,12 +38,12 @@ public abstract class AbstractFileService implements IFileService
 	/* Bring constants for {@link #internalFetch(String, String, int, IProgressMonitor)} 
 	 * into local namespace for backward compatibility with 2.x service implementations
 	 */
-	/** @deprecated use {@link IFileServiceConstants#FILE_TYPE_FILES_AND_FOLDERS} directly */
-	public static final int FILE_TYPE_FILES_AND_FOLDERS = IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS;
-	/** @deprecated use {@link IFileServiceConstants#FILE_TYPE_FILES} directly */
-	public static final int FILE_TYPE_FILES = IFileServiceConstants.FILE_TYPE_FILES;
-	/** @deprecated use {@link IFileServiceConstants#FILE_TYPE_FOLDERS} directly */
-	public static final int FILE_TYPE_FOLDERS = IFileServiceConstants.FILE_TYPE_FOLDERS;
+	/** @deprecated use {@link IFileService#FILE_TYPE_FILES_AND_FOLDERS} directly */
+	public static final int FILE_TYPE_FILES_AND_FOLDERS = IFileService.FILE_TYPE_FILES_AND_FOLDERS;
+	/** @deprecated use {@link IFileService#FILE_TYPE_FILES} directly */
+	public static final int FILE_TYPE_FILES = IFileService.FILE_TYPE_FILES;
+	/** @deprecated use {@link IFileService#FILE_TYPE_FOLDERS} directly */
+	public static final int FILE_TYPE_FOLDERS = IFileService.FILE_TYPE_FOLDERS;
  
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 	
@@ -101,9 +102,9 @@ public abstract class AbstractFileService implements IFileService
 	{
 		switch (fileType)
 		{
-		case IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS:
+		case IFileService.FILE_TYPE_FILES_AND_FOLDERS:
 			return true;
-		case IFileServiceConstants.FILE_TYPE_FILES:
+		case IFileService.FILE_TYPE_FILES:
 			if (node.isFile())
 			{
 				return true;			
@@ -112,7 +113,7 @@ public abstract class AbstractFileService implements IFileService
 			{
 				return false;
 			}				
-		case IFileServiceConstants.FILE_TYPE_FOLDERS:
+		case IFileService.FILE_TYPE_FOLDERS:
 			if (node.isDirectory())
 			{
 				return true;

@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [196664] prevent unnecessary query on the parent
  * Rupen Mardirossian (IBM)  	 - [204307] listFolders now deals with a null parameter for fileNameFilter preventing NPE
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -64,7 +65,7 @@ import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.services.files.IFileServiceConstants;
+import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.search.IHostSearchResult;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
@@ -658,17 +659,17 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 						else if (hasFileContents)
 						{
 							// already have the files, now add the folders
-							list(parent, filter, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);						
+							list(parent, filter, IFileService.FILE_TYPE_FOLDERS, monitor);						
 						}
 						else if (hasFolderContents)
 						{
 							// already have the folders, now add the files
-							list(parent, filter, IFileServiceConstants.FILE_TYPE_FILES, monitor);				
+							list(parent, filter, IFileService.FILE_TYPE_FILES, monitor);				
 						}
 						else
 						{
 							// don't have anything - query both
-							list(parent, filter, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
+							list(parent, filter, IFileService.FILE_TYPE_FILES_AND_FOLDERS, monitor);
 						}
 						children = parent.getContents(RemoteChildrenContentsType.getInstance(), filter);
 					}
@@ -680,7 +681,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 						}
 						else
 						{
-							children = list(parent, filter, IFileServiceConstants.FILE_TYPE_FOLDERS, monitor);
+							children = list(parent, filter, IFileService.FILE_TYPE_FOLDERS, monitor);
 						}
 					}
 					else
@@ -691,7 +692,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 						}
 						else
 						{
-							children = list(parent, filter, IFileServiceConstants.FILE_TYPE_FILES, monitor);
+							children = list(parent, filter, IFileService.FILE_TYPE_FILES, monitor);
 						}
 					}
 				}
@@ -837,11 +838,11 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		{
 			if (showDirs && showFiles)
 				//children = listFoldersAndFiles((IRemoteFile)parent, filterString);
-				children = list((IRemoteFile) parent, filterString, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
+				children = list((IRemoteFile) parent, filterString, IFileService.FILE_TYPE_FILES_AND_FOLDERS, monitor);
 			else if (showDirs)
-				children = list((IRemoteFile) parent, filterString, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
+				children = list((IRemoteFile) parent, filterString, IFileService.FILE_TYPE_FILES_AND_FOLDERS, monitor);
 			else
-				children = list((IRemoteFile) parent, filterString, IFileServiceConstants.FILE_TYPE_FILES, monitor);
+				children = list((IRemoteFile) parent, filterString, IFileService.FILE_TYPE_FILES, monitor);
 			if (sort && (children != null) && (children.length > 1))
 				Arrays.sort(children);
 		}
@@ -905,7 +906,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, IProgressMonitor monitor) throws SystemMessageException
 	{
-		return list(parent, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, monitor);
+		return list(parent, IFileService.FILE_TYPE_FILES_AND_FOLDERS, monitor);
 	}
 	
 	/**

@@ -17,6 +17,7 @@
  * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Martin Oberhuber (Wind River) - [208912] Cannot expand /C on a VxWorks SSH Server
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -63,7 +64,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -461,7 +461,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			    			//don't show the trivial names
 			    			continue;
 			    		}
-			    		if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileServiceConstants.FILE_TYPE_FOLDERS)) {
+			    		if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileService.FILE_TYPE_FOLDERS)) {
 							//get ALL directory names (unless looking for folders only)
 			    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
 			    			if (isRightType(fileType, node)) {

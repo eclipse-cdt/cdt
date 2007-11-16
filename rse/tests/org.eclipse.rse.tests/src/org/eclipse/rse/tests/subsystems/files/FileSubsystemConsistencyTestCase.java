@@ -9,6 +9,7 @@
  * David McKnight   (IBM)        - [207095] test case to compare same op between subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  *******************************************************************************/
 package org.eclipse.rse.tests.subsystems.files;
 
@@ -25,7 +26,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.files.IFileServiceConstants;
+import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.tests.RSETestsPlugin;
@@ -272,7 +273,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			{
 				try
 				{
-					IRemoteFile[] children = ss.list(remoteFiles[q], IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
+					IRemoteFile[] children = ss.list(remoteFiles[q], IFileService.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
 					for (int c = 0; c < children.length; c++)
 					{
 						consolidatedResults.add(children[c]);
@@ -358,7 +359,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 			long t3 = System.currentTimeMillis();
 			try
 			{				
-				results = ss.listMultiple(remoteFiles, IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
+				results = ss.listMultiple(remoteFiles, IFileService.FILE_TYPE_FILES_AND_FOLDERS, new NullProgressMonitor());
 			}
 			catch (Exception e){
 				exception = e;
@@ -450,7 +451,7 @@ public class FileSubsystemConsistencyTestCase extends RSEBaseConnectionTestCase 
 				IRemoteFile includeDir = ss.getRemoteFileObject(remoteParentDir, monitor);
 									
 				// get all the files
-				IRemoteFile[] files = ss.list(includeDir, IFileServiceConstants.FILE_TYPE_FILES, monitor);
+				IRemoteFile[] files = ss.list(includeDir, IFileService.FILE_TYPE_FILES, monitor);
 
 				System.out.println(systemType + ": downloading "+files.length+ " files");
 				

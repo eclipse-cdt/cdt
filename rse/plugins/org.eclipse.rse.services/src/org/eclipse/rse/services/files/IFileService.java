@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -51,6 +52,10 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  */
 public interface IFileService extends IService
 {	
+
+	public static final int FILE_TYPE_FILES = 1;
+	public static final int FILE_TYPE_FILES_AND_FOLDERS = 0;
+	public static final int FILE_TYPE_FOLDERS = 2;
 
 	/**
 	 * Copy a file to the remote file system.  The remote target is denoted by a

@@ -66,6 +66,7 @@
  * Javier Montalvo Orus (Symbian) - [187096] Drag&Drop + Copy&Paste shows error message on FTP connection
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Javier Montalvo Orus (Symbian) - [208912] Cannot expand /C on a VxWorks SSH Server
+ * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -107,7 +108,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
 import org.eclipse.rse.services.files.IFileService;
-import org.eclipse.rse.services.files.IFileServiceConstants;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
@@ -713,7 +713,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 							if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
 								//Never return the default directory names
 								continue;
-							} else if (f.isDirectory() && fileType!=IFileServiceConstants.FILE_TYPE_FOLDERS) {
+							} else if (f.isDirectory() && fileType!=IFileService.FILE_TYPE_FOLDERS) {
 								//get ALL directory names (unless looking for folders only)
 								results.add(f);
 							} else if (filematcher.matches(name)) { 

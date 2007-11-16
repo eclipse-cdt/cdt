@@ -15,7 +15,6 @@
  * Martin Oberhuber (Wind River) - [168870] refactor org.eclipse.rse.core package of the UI plugin
  * David McKnight   (IBM)        - [208951] Use remoteFileTypes extension point to determine file types
  *******************************************************************************/
-
 package org.eclipse.rse.subsystems.files.core.model;
 
 import java.io.File;
@@ -30,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -69,8 +67,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 	private static final String MODE_ATTRIBUTE = "mode"; //$NON-NLS-1$
 	private static final String BINARY_VALUE = "binary";  //$NON-NLS-1$
 	private static final String TEXT_VALUE = "text"; //$NON-NLS-1$
-
-	
+	private static final String PRIORITY_ATTRIBUTE = "priority";	
 
 	/**
 	 * Constructor for SystemFileTransferModeRegistry
@@ -112,11 +109,6 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 		loadAssociations();
 		
 		
-		// lists to hold the information from the extensions to our
-		// extension point
-		Vector extTextList = new Vector();
-		Vector extBinaryList = new Vector();
-		
 		// get reference to the extension registry
 		IExtensionRegistry extRegistry = Platform.getExtensionRegistry();
 
@@ -136,67 +128,58 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 				String type = element.getAttribute("type"); //$NON-NLS-1$
 
 				if (type != null && !type.equals("")) { //$NON-NLS-1$
-
+																								
+					SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(extension);
+															
 					// add extension to list of text types
 					if (type.equalsIgnoreCase("text")) { //$NON-NLS-1$
-
-						// if the extension is not already part of our text
-						// types list
-						if (!extTextList.contains(extension)) {
-
-							// add to list
-							extTextList.add(extension);
-						}
+						mapping.setAsText();
 					}
 					// add extension to list of binary types
 					if (type.equalsIgnoreCase("binary")) { //$NON-NLS-1$
-
-						// if the extension is not already part of our
-						// binary types list
-						if (!extBinaryList.contains(extension)) {
-
-							// add to list
-							extBinaryList.add(extension);
+						mapping.setAsBinary();
+					}
+					
+					int priority = SystemFileTransferModeMapping.DEFAULT_PRIORITY;
+					String priorityStr = element.getAttribute("priority");
+					try
+					{
+						if (priorityStr != null && !priorityStr.equals("")){
+							priority = Integer.parseInt(priorityStr);
 						}
 					}
+					catch (Exception e)
+					{						
+					}
+					mapping.setPriority(priority);
+					
+					String key = getMappingKey(mapping);
+					if (!typeModeMappings.containsKey(key)){
+						typeModeMappings.put(key, mapping);
+					}
 					else {
-						continue;
+						SystemFileTransferModeMapping existingMapping = (SystemFileTransferModeMapping)typeModeMappings.get(key);
+						int existingPriority = existingMapping.getPriority();
+						if (priority < existingPriority){
+							
+							// change properties of existing mapping to that of new priority
+							if (mapping.isBinary() && existingMapping.isText()){
+								existingMapping.setAsBinary();
+							}
+							else if (mapping.isText() && existingMapping.isBinary()){
+								existingMapping.setAsText();
+							}
+							
+							existingMapping.setPriority(priority);
+						}
 					}
 				}
+				
 			}
 			else {
 				continue;
 			}
-		}
-		
-		// add text extension to the mappings list
-		for (int t = 0; t < extTextList.size(); t++)
-		{
-			String extension = (String)extTextList.get(t);
-			SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(extension);
-			
-			String key = getMappingKey(mapping);
-			if (!typeModeMappings.containsKey(key))
-			{
-				mapping.setAsText();		
-				typeModeMappings.put(key, mapping);
-			}
-		}
-		
-		// add binary extension to the mappings list
-		for (int b = 0; b < extBinaryList.size(); b++)
-		{
-			String extension = (String)extBinaryList.get(b);
-			SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(extension);
-			
-			
-			String key = getMappingKey(mapping);
-			if (!typeModeMappings.containsKey(key))
-			{
-				mapping.setAsBinary();		
-				typeModeMappings.put(key, mapping);
-			}
-		}		
+		}	
 	}
 	
 	/**
@@ -463,6 +446,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 				String extension = mementos[i].getString(EXTENSION_ATTRIBUTE);
 				String mode = mementos[i].getString(MODE_ATTRIBUTE);
 				
+				
 				SystemFileTransferModeMapping mapping = new SystemFileTransferModeMapping(name, extension);
 				
 				if (mode.equals(TEXT_VALUE)) {
@@ -471,6 +455,19 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 				else {
 					mapping.setAsBinary();
 				}
+				
+				try
+				{
+					Integer priorityInt = mementos[i].getInteger(PRIORITY_ATTRIBUTE);
+					if (priorityInt != null){
+						int priority = priorityInt.intValue();
+						mapping.setPriority(priority);
+					}
+				}
+				catch (Exception e)
+				{						
+				}
+					
 				
 				typeModeMappings.put(getMappingKey(mapping), mapping);
 			}
@@ -521,6 +518,7 @@ public class SystemFileTransferModeRegistry implements ISystemFileTransferModeRe
 			infoMemento.putString(NAME_ATTRIBUTE, mapping.getName());
 			infoMemento.putString(EXTENSION_ATTRIBUTE, mapping.getExtension());
 			infoMemento.putString(MODE_ATTRIBUTE, mapping.isBinary() ? BINARY_VALUE : TEXT_VALUE); 
+			infoMemento.putInteger(PRIORITY_ATTRIBUTE, mapping.getPriority());
 		}
 		
 		FileOutputStream stream = null;

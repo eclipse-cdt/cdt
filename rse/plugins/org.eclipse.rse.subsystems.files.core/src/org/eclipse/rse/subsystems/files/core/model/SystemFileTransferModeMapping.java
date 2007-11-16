@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [208951] new priority field
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
@@ -24,9 +24,11 @@ package org.eclipse.rse.subsystems.files.core.model;
 
 public class SystemFileTransferModeMapping implements ISystemFileTransferModeMapping, Cloneable {
 	
+	public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 	private String name;
 	private String extension;
 	private boolean isBinary = true;
+	private int priority = DEFAULT_PRIORITY;
 
 	/**
 	 * Constructor for SystemFileTransferModeMapping. The name is set to <code>*</code>.
@@ -130,6 +132,23 @@ public class SystemFileTransferModeMapping implements ISystemFileTransferModeMap
 	 */
 	public void setExtension(String extension) {
 		this.extension = extension;
+	}
+	
+	/**
+	 * Set the priority - the smaller the number, the higher priority
+	 * @param priority
+	 */
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+	
+	/**
+	 * Gets the priority - the smaller the number, the higher priority
+	 * @return the priority
+	 */
+	public int getPriority()
+	{
+		return this.priority;
 	}
 	
 	

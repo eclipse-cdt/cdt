@@ -11,13 +11,12 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [208951] new priority field
  ********************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.model;
 
 public interface ISystemFileTransferModeMapping {
-
 
 
 
@@ -59,4 +58,11 @@ public interface ISystemFileTransferModeMapping {
 	 * @return true if text, false if binary
 	 */
 	public boolean isText();
+	
+	
+	/**
+	 * Gets the priority - the smaller the number, the higher priority
+	 * @return the priority
+	 */
+	public int getPriority();
 }

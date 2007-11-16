@@ -60,6 +60,15 @@ Providers may provide an extension for this extension point. No code beyond the 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  Priority used if there are more than one match of a file type. Integer values are allowed.
+In case of more than one matching file type, the with lower priority number will be used. 
+If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_VALUE&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -80,6 +89,7 @@ Providers may provide an extension for this extension point. No code beyond the 
          &lt;extension point=&quot;org.eclipse.rse.subsystems.files.core.remoteFileTypes&quot;&gt;
  &lt;remoteFileTypes extension=&quot;txt&quot; type=&quot;text&quot;/&gt;
  &lt;remoteFileTypes extension=&quot;gif&quot; type=&quot;binary&quot;/&gt;
+ &lt;remoteFileTypes extension=&quot;exe&quot; type=&quot;binary&quot; priority=&quot;100&quot;/&gt;
 &lt;/extension&gt;
       </documentation>
    </annotation>
@@ -107,7 +117,7 @@ Providers may provide an extension for this extension point. No code beyond the 
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-      Copyright (c) 2006, 2007 IBM Corporation. All Rights Reserved.
+         Copyright (c) 2006, 2007 IBM Corporation. All Rights Reserved.
 This program and the accompanying materials are made available under the terms
 of the Eclipse Public License v1.0 which accompanies this distribution, and is 
 available at http://www.eclipse.org/legal/epl-v10.html

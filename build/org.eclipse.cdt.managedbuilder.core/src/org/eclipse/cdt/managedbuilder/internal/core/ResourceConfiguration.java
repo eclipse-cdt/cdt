@@ -454,12 +454,12 @@ public class ResourceConfiguration extends ResourceInfo implements IFileInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IResourceConfiguration#getTools()
 	 */
 	public ITool[] getTools() {
-		ITool[] tools = new ITool[getToolList().size()];
+		Tool[] tools = new Tool[getToolList().size()];
 		Iterator iter = getToolList().listIterator();
 		int i = 0;
 		while (iter.hasNext()) {
 			Tool tool = (Tool)iter.next();
-			tools[i++] = (ITool)tool; 
+			tools[i++] = tool; 
 		}
 		return tools;
 	}

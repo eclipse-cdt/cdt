@@ -101,6 +101,7 @@
 		<record name="${basedir}/temp.convert.txt" action="start" />
 		<pde.convertSchemaToHTML manifest="../org.eclipse.rse.core/plugin.xml" destination="${dest}" />
 		<pde.convertSchemaToHTML manifest="../org.eclipse.rse.services/plugin.xml" destination="${dest}" />
+		<pde.convertSchemaToHTML manifest="../org.eclipse.rse.subsystems.files.core/plugin.xml" destination="${dest}" />
 		<pde.convertSchemaToHTML manifest="../org.eclipse.rse.subsystems.files.ftp/plugin.xml" destination="${dest}" />
 		<pde.convertSchemaToHTML manifest="../org.eclipse.rse.ui/plugin.xml" destination="${dest}" />
 		<record name="${basedir}/temp.convert.txt" action="stop" />

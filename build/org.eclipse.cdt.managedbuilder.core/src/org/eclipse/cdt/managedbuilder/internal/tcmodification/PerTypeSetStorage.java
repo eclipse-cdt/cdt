@@ -37,9 +37,9 @@ public class PerTypeSetStorage implements Cloneable {
 			clone.fStorage = (ObjectTypeBasedStorage)fStorage.clone();
 			int types[] = ObjectTypeBasedStorage.getSupportedObjectTypes();
 			for(int i = 0; i < types.length; i++){
-				Object o = clone.fStorage.get(i); 
+				Object o = clone.fStorage.get(types[i]); 
 				if(o != null){
-					clone.fStorage.set(i, createSet((Set)o));
+					clone.fStorage.set(types[i], createSet((Set)o));
 				}
 			}
 			return clone;

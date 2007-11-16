@@ -201,7 +201,7 @@ public class TcModificationUtil {
 			PerTypeSetStorage initStorage = (PerTypeSetStorage)initialMap.remove(oPath);
 			PerTypeSetStorage storage;
 			
-			if(initStorage == null && initStorage.isEmpty(true)){
+			if(initStorage == null || initStorage.isEmpty(true)){
 				if(resStorage != null && !resStorage.isEmpty(true)){
 					storage = (PerTypeSetStorage)resStorage.clone();
 				} else {

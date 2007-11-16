@@ -194,7 +194,7 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		return fSelectedToolChain;
 	}
 
-	public void setToolChain(IToolChain tc){
+	public final void setToolChain(IToolChain tc){
 		setToolChain(tc, false);
 	}
 
@@ -388,10 +388,6 @@ public class FolderInfoModification extends ToolListModification implements IFol
 		for(int i = 0; i < newTools.length; i++){
 			newTools[i] = (Tool)ManagedBuildManager.getRealTool(newTools[i]);
 		}
-		
-		for(int i = 0; i < newTools.length; i++){
-			TcModificationUtil.addPaths(toolMap, newTools[i], tcApplicability.fFolderInfoPaths);
-		}
 
 		for(Iterator iter = tcApplicability.fToolPathMap.entrySet().iterator(); iter.hasNext(); ){
 			Map.Entry entry = (Map.Entry)iter.next();
@@ -400,7 +396,11 @@ public class FolderInfoModification extends ToolListModification implements IFol
 			
 			TcModificationUtil.removePaths(toolMap, tool, pathSet);
 		}
-		
+
+		for(int i = 0; i < newTools.length; i++){
+			TcModificationUtil.addPaths(toolMap, newTools[i], tcApplicability.fFolderInfoPaths);
+		}
+
 		if(tcApplicability.fFileInfoPaths.size() != 0){
 			FolderInfo foInfo = (FolderInfo)getResourceInfo();
 			IManagedProject mProj = foInfo.getParent().getManagedProject();

@@ -2752,6 +2752,14 @@ public class ToolChain extends HoldsOptions implements IToolChain, IBuildPropert
 		unusedChildren = translateUnusedIdSetToString(set);
 	}
 	
+	void setUnusedChildren(String children){
+		if(CDataUtil.objectsEqual(unusedChildren, children))
+			return;
+		
+		unusedChildrenSet = null;
+		unusedChildren = children;
+	}
+	
 	private String translateUnusedIdSetToString(Set set){
 		return CDataUtil.arrayToString(set.toArray(), ";"); //$NON-NLS-1$
 	}

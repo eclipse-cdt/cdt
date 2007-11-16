@@ -12,7 +12,7 @@
  * 
  * Contributors:
  * David Dykstal (IBM) - 176488: adding some text for the cache limit checkbox
- * David McKnight(IBM) - [210142] for accessability need transfer mode toggle button
+ * David McKnight(IBM) - [210142] for accessibility need transfer mode toggle button
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;

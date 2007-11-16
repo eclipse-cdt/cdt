@@ -15,7 +15,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [208951] no longer used editor registry for file type associations
  * David McKnight   (IBM)        - [203114] Usability improvements for file transfer mode prefs
- * David McKnight   (IBM)        - [210142] for accessability need transfer mode toggle button
+ * David McKnight   (IBM)        - [210142] for accessibility need transfer mode toggle button
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;

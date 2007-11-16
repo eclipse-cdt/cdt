@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.internal.tcmodification;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,6 +34,8 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
 import org.eclipse.core.runtime.IPath;
 
 public class TcModificationUtil {
@@ -181,8 +184,12 @@ public class TcModificationUtil {
 	}
 	
 	public static TreeMap createResultingChangesMap(TreeMap resultingMap, TreeMap initialMap){
-		int[] types = ObjectTypeBasedStorage.getSupportedObjectTypes();
-		int type;
+		int[] types = new int []{
+				IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, 
+				IRealBuildObjectAssociation.OBJECT_BUILDER,
+				IRealBuildObjectAssociation.OBJECT_TOOL,
+				};
+		
 		TreeMap result = new TreeMap(PathComparator.INSTANCE);
 		initialMap = (TreeMap)initialMap.clone();
 		
@@ -209,23 +216,58 @@ public class TcModificationUtil {
 					}
 				}
 			} else {
-				Set initSet, resSet;
+				Set tcInitSet, resSet, setToStore;
+				Set bInitSet = null, tInitSet = null;
 				storage = new PerTypeSetStorage();
-				for(int i = 0; i < types.length; i++){
-					type = types[i];
-					initSet = initStorage.getSet(type, false);
-					resSet = resStorage.getSet(type, false);
-					if(initSet == null || initSet.isEmpty()){
-						if(resSet != null && !resSet.isEmpty()){
-							storage.getSet(type, true).addAll(resSet);
+				
+				tcInitSet = initStorage.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+				resSet = resStorage.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, false);
+				setToStore = compareSets(resSet, tcInitSet);
+				if(setToStore != null) {
+					storage.getSet(IRealBuildObjectAssociation.OBJECT_TOOLCHAIN, true).addAll(setToStore);
+					
+					//need to change the initial storage to contain 
+					//tools and a builder from the newly assigned tool-chain
+					//for the correct change calculation
+							
+					ToolChain tc = setToStore.size() != 0 ?
+							(ToolChain)setToStore.iterator().next() : null;
+					
+					IPath path = (IPath)oPath;
+					if(tc != null){
+						tInitSet = new LinkedHashSet();
+						TcModificationUtil.getRealObjectsSet((Tool[])tc.getTools(), tInitSet);
+						if(path.segmentCount() == 0){
+							bInitSet = new LinkedHashSet();
+							IBuilder builder = tc.getBuilder();
+							if(builder != null){
+								bInitSet.add(ManagedBuildManager.getRealBuilder(builder));
+							}
 						}
-					} else if (resSet == null || resSet.isEmpty()){
-						storage.getSet(type, true);
 					} else {
-						if(!initSet.equals(resSet)){
-							storage.getSet(type, true).addAll(resSet);
+						tcInitSet = Collections.EMPTY_SET;
+						if(path.segmentCount() == 0){
+							bInitSet = Collections.EMPTY_SET;
 						}
 					}
+						}
+
+				if(bInitSet == null)
+					bInitSet = initStorage.getSet(IRealBuildObjectAssociation.OBJECT_BUILDER, false);
+				
+				resSet = resStorage.getSet(IRealBuildObjectAssociation.OBJECT_BUILDER, false);
+				setToStore = compareSets(resSet, bInitSet);
+				if(setToStore != null) {
+					storage.getSet(IRealBuildObjectAssociation.OBJECT_BUILDER, true).addAll(setToStore);
+					}
+
+				if(tInitSet == null)
+					tInitSet = initStorage.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+				
+				resSet = resStorage.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, false);
+				setToStore = compareSets(resSet, tInitSet);
+				if(setToStore != null) {
+					storage.getSet(IRealBuildObjectAssociation.OBJECT_TOOL, true).addAll(setToStore);
 				}
 			}
 			
@@ -237,6 +279,23 @@ public class TcModificationUtil {
 		return result;
 	}
 	
+	private static Set compareSets(Set resSet, Set initSet){
+		Set result = null;
+		if(initSet == null || initSet.isEmpty()){
+			if(resSet != null && !resSet.isEmpty()){
+				result = resSet;
+			}
+		} else if (resSet == null || resSet.isEmpty()){
+			result = Collections.EMPTY_SET;
+		} else {
+			if(!initSet.equals(resSet)){
+				result = resSet;
+			}
+		}
+		
+		return result;
+	}
+
 	private static void processFolderInfo(PerTypeMapStorage storage, FolderInfo info, PerTypeMapStorage skipMapStorage, boolean addSkipPaths){
 		IPath p = info.getPath();
 		IToolChain rtc = ManagedBuildManager.getRealToolChain(info.getToolChain());

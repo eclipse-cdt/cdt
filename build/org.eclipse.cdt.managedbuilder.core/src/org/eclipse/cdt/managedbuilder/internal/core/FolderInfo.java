@@ -84,6 +84,7 @@ public class FolderInfo extends ResourceInfo implements IFolderInfo {
 		createToolChain(extTc, tcId, parTc.getName(), false);
 		
 		toolChain.createOptions(parTc);
+		toolChain.setUnusedChildren(parTc.getUnusedChildren());
 		
 		ITool tools[] = parTc.getTools();
 		String subId = new String();

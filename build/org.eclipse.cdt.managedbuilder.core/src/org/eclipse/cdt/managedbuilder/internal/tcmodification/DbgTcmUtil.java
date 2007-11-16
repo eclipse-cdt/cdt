@@ -20,7 +20,7 @@ import org.eclipse.cdt.managedbuilder.internal.tcmodification.extension.MatchObj
 
 public class DbgTcmUtil {
 	private static final PrintStream OUT = System.out;
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 	
 	private DbgTcmUtil(){
 	}

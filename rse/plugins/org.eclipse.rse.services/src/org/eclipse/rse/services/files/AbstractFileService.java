@@ -34,6 +34,16 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public abstract class AbstractFileService implements IFileService
 {
+	/* Bring constants for {@link #internalFetch(String, String, int, IProgressMonitor)} 
+	 * into local namespace for backward compatibility with 2.x service implementations
+	 */
+	/** @deprecated use {@link IFileServiceConstants#FILE_TYPE_FILES_AND_FOLDERS} directly */
+	public static final int FILE_TYPE_FILES_AND_FOLDERS = IFileServiceConstants.FILE_TYPE_FILES_AND_FOLDERS;
+	/** @deprecated use {@link IFileServiceConstants#FILE_TYPE_FILES} directly */
+	public static final int FILE_TYPE_FILES = IFileServiceConstants.FILE_TYPE_FILES;
+	/** @deprecated use {@link IFileServiceConstants#FILE_TYPE_FOLDERS} directly */
+	public static final int FILE_TYPE_FOLDERS = IFileServiceConstants.FILE_TYPE_FOLDERS;
+ 
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 	
 	public IHostFile[] getFileMultiple(String remoteParents[], String names[], IProgressMonitor monitor) 

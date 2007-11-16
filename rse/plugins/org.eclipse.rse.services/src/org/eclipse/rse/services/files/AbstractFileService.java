@@ -17,6 +17,7 @@
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
+ * Martin Oberhuber (Wind River) - [210109] no need to declare IFileService constants in AbstractFileService
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -35,15 +36,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public abstract class AbstractFileService implements IFileService
 {
-	/* Bring constants for {@link #internalFetch(String, String, int, IProgressMonitor)} 
-	 * into local namespace for backward compatibility with 2.x service implementations
-	 */
-	/** @deprecated use {@link IFileService#FILE_TYPE_FILES_AND_FOLDERS} directly */
-	public static final int FILE_TYPE_FILES_AND_FOLDERS = IFileService.FILE_TYPE_FILES_AND_FOLDERS;
-	/** @deprecated use {@link IFileService#FILE_TYPE_FILES} directly */
-	public static final int FILE_TYPE_FILES = IFileService.FILE_TYPE_FILES;
-	/** @deprecated use {@link IFileService#FILE_TYPE_FOLDERS} directly */
-	public static final int FILE_TYPE_FOLDERS = IFileService.FILE_TYPE_FOLDERS;
  
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 	

@@ -22,10 +22,9 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 
@@ -1539,12 +1538,6 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		StringBuffer buffer = new StringBuffer(
 				"#if CONST \n #endif \n #elif CONST \n int"); 
 		final List problems = new ArrayList();
-		ISourceElementRequestor requestor = new NullSourceElementRequestor() {
-			public boolean acceptProblem(IProblem problem) {
-				problems.add(problem);
-				return super.acceptProblem(problem);
-			}
-		};
 		initializeScanner(buffer.toString());
 		validateToken(IToken.t_int);
 		validateProblemCount(1);
@@ -2393,4 +2386,31 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		initializeScanner(buffer.toString());
 		validateToken(IToken.tPLUS);
 	}
+	
+    public void testBug39698() throws Exception	{
+    	initializeScanner( "<? >?"); //$NON-NLS-1$
+    	validateToken( IGCCToken.tMIN );
+    	validateToken( IGCCToken.tMAX );
+    	validateEOF();
+	}
+
+    public void test__attribute__() throws Exception {
+    	initializeScanner(
+    			"#define __cdecl __attribute__((cdecl))\n" + //$NON-NLS-1$
+				"__cdecl;"); //$NON-NLS-1$
+    	validateToken(IGCCToken.t__attribute__);
+    	validateToken(IToken.tLPAREN);
+    	validateToken(IToken.tLPAREN);
+    	validateToken(IToken.tIDENTIFIER);
+    	validateToken(IToken.tRPAREN);
+    	validateToken(IToken.tRPAREN);
+    	validateToken(IToken.tSEMI);
+    	validateEOF();
+	}
+        
+    public void testImaginary() throws Exception {
+        initializeScanner( "3i", ParserLanguage.C ); //$NON-NLS-1$
+        validateInteger( "3i" ); //$NON-NLS-1$
+        validateEOF();
+    }
 }

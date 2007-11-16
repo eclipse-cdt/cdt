@@ -56,18 +56,16 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	protected void initializeScanner(String input, ParserMode mode) throws IOException {
-		initializeScanner(input, ParserLanguage.CPP, mode);
+		initializeScanner(new CodeReader(input.toCharArray()), ParserLanguage.CPP, mode, new ScannerInfo());
 	}
 
 	protected void initializeScanner(String input, ParserLanguage lang) throws IOException {
-		initializeScanner(input, lang, ParserMode.COMPLETE_PARSE);
+		initializeScanner(new CodeReader(input.toCharArray()), lang, ParserMode.COMPLETE_PARSE, new ScannerInfo());
 	}
 
-	protected void initializeScanner(String input, ParserLanguage lang, ParserMode mode) throws IOException {
+	protected void initializeScanner(CodeReader input, ParserLanguage lang, ParserMode mode, IScannerInfo scannerInfo) throws IOException {
 		ICodeReaderFactory readerFactory= FileCodeReaderFactory.getInstance();
-		CodeReader reader= new CodeReader(input.toCharArray());
 		IScannerExtensionConfiguration scannerConfig;
-	    IScannerInfo scannerInfo= new ScannerInfo();
 	
 	    if (lang == ParserLanguage.C) {
 	    	scannerConfig= new GCCScannerExtensionConfiguration();
@@ -76,7 +74,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	    	scannerConfig= new GPPScannerExtensionConfiguration();
 	    }
 	    
-		fScanner= new CPreprocessor(reader, scannerInfo, lang, NULL_LOG, scannerConfig, readerFactory);
+		fScanner= new CPreprocessor(input, scannerInfo, lang, NULL_LOG, scannerConfig, readerFactory);
 		fLocationResolver= (ILocationResolver) fScanner.getAdapter(ILocationResolver.class);
 	}
 

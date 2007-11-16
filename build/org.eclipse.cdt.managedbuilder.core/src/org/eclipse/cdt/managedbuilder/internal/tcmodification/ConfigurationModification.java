@@ -182,6 +182,7 @@ public class ConfigurationModification extends FolderInfoModification implements
 			return;
 		
 		fRealBuilder = realBuilder;
+		fCompletePathMapStorage = null;
 		
 		PerTypeMapStorage storage = getCompleteObjectStore();
 		TcModificationUtil.applyBuilder(storage, getResourceInfo().getPath(), fSelectedBuilder);

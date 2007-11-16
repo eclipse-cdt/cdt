@@ -59,7 +59,7 @@ public abstract class ToolListModification implements
 //	private LinkedHashMap fRealToToolMap = new LinkedHashMap();
 //	private boolean fSysInfoMapInited;
 	private PerTypeMapStorage fCompleteObjectStorage;
-	private TreeMap fCompletePathMapStorage;
+	protected TreeMap fCompletePathMapStorage;
 	private HashSet fAddCapableTools;
 	private Map fFilteredOutTools;
  
@@ -739,4 +739,5 @@ public abstract class ToolListModification implements
 		}
 		return fCompletePathMapStorage;
 	}
+	
 }

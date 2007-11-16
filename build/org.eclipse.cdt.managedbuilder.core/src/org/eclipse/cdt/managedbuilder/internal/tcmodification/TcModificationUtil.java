@@ -276,6 +276,33 @@ public class TcModificationUtil {
 			}
 		}
 		
+		if(initialMap.size() != 0){
+			for(Iterator iter = initialMap.entrySet().iterator(); iter.hasNext(); ){
+				Map.Entry entry = (Map.Entry)iter.next();
+				Object oPath = entry.getKey();
+				
+				PerTypeSetStorage initStorage = (PerTypeSetStorage)entry.getValue();
+
+				if(!initStorage.isEmpty(true)){
+					PerTypeSetStorage storage = new PerTypeSetStorage();
+
+					for(int i = 0; i < types.length; i++){
+						Set set = initStorage.getSet(types[i], false);
+						if(set != null && set.size() != 0){
+							storage.getSet(types[i], true).addAll(set);
+						}
+					}
+					
+					if(!storage.isEmpty(false)){
+						result.put(oPath, storage);
+					}
+
+				}
+				
+			}
+		}
+
+		
 		return result;
 	}
 	

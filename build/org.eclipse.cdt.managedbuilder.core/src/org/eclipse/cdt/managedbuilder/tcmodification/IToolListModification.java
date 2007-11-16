@@ -60,4 +60,6 @@ public interface IToolListModification extends IApplicableModification {
 	 * @return
 	 */
 	IToolModification getToolModification(ITool tool);
+	
+	void restoreDefaults();
 }

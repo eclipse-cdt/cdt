@@ -14,7 +14,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.managedbuilder.core.IFileInfo;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.tcmodification.IFileInfoModification;
@@ -81,4 +85,30 @@ public class FileInfoModification extends
 		return fProject;
 	}
 
+	public void restoreDefaults() {
+//		3.per-file : change to the tool from the parent folder's tool-chain suitable
+//		for the given file. NOTE: the custom build step tool should be preserved!
+		ResourceConfiguration rcInfo = (ResourceConfiguration)getResourceInfo();
+		IFolderInfo parentFo = rcInfo.getParentFolderInfo();
+		String ext = rcInfo.getPath().getFileExtension();
+		if(ext == null)
+			ext = "";
+
+		ITool tool = parentFo.getToolFromInputExtension(ext);
+		ITool realTool = ManagedBuildManager.getRealTool(tool);
+		boolean add = true;
+		
+		ITool[] curTools = getProjectTools();
+		for(int i = 0; i < curTools.length; i++){
+			ITool cur = curTools[i];
+			if(ManagedBuildManager.getRealTool(cur) == realTool){
+				add = false;
+			} else if (!cur.getCustomBuildStep()){
+				changeProjectTools(cur, null);
+			}
+		}
+		
+		if(add)
+			changeProjectTools(null, tool);
+	}
 }

@@ -22,6 +22,10 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -29,8 +33,10 @@ import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.FolderInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
+import org.eclipse.cdt.managedbuilder.internal.core.ResourceInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.internal.core.ToolChain;
+import org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider;
 import org.eclipse.cdt.managedbuilder.internal.tcmodification.ToolChainModificationManager.ConflictMatchSet;
 import org.eclipse.cdt.managedbuilder.tcmodification.CompatibilityStatus;
 import org.eclipse.cdt.managedbuilder.tcmodification.IFolderInfoModification;
@@ -189,14 +195,18 @@ public class FolderInfoModification extends ToolListModification implements IFol
 	}
 
 	public void setToolChain(IToolChain tc){
-		if(tc == fSelectedToolChain)
+		setToolChain(tc, false);
+	}
+
+	public void setToolChain(IToolChain tc, boolean force){
+		if(tc == fSelectedToolChain && !force)
 			return;
 	
 		applyToolChain((ToolChain)tc);
 
 		fSelectedToolChain = (ToolChain)tc;
 		IToolChain newReal = ManagedBuildManager.getRealToolChain(tc);
-		if(newReal == fRealToolChain)
+		if(newReal == fRealToolChain && !force)
 			return;
 
 		fRealToolChain = (ToolChain)newReal;
@@ -421,6 +431,43 @@ public class FolderInfoModification extends ToolListModification implements IFol
 			} else if (DbgTcmUtil.DEBUG){
 				DbgTcmUtil.println("no filtered tools"); //$NON-NLS-1$
 			}
+		}
+	}
+
+	private IToolChain getDefaultToolChain(){
+		IResourceInfo rcInfo = getResourceInfo();
+		IToolChain defaultTc = null;
+		if (rcInfo.getPath().segmentCount() == 0) {
+//			1.Per-project : change to the "default" tool-chain defined in the extension
+//			super-class of the project configuration. NOTE: the makefile project case might
+//			need a special handling in this case.
+			
+			IConfiguration cfg = rcInfo.getParent();
+			IConfiguration extCfg = cfg.getParent();
+			defaultTc = extCfg.getToolChain(); 
+			if (defaultTc == null) {
+				if (cfg.getToolChain() != null) {
+					defaultTc = cfg.getToolChain().getSuperClass();
+				}
+			}
+		} else {
+//			2.per-folder : change to the same tool-chain as the one used by the parent
+//			folder.
+			IFolderInfo parentFo = ((ResourceInfo)rcInfo).getParentFolderInfo();
+			IToolChain tc = parentFo.getToolChain();
+			defaultTc = ManagedBuildManager.getExtensionToolChain(tc);
+		}
+		
+		if(defaultTc != null && defaultTc.getId().equals(ConfigurationDataProvider.PREF_TC_ID))
+			defaultTc = null;
+
+		return defaultTc;
+	}
+	
+	public final void restoreDefaults() {
+		IToolChain tc = getDefaultToolChain();
+		if(tc != null){
+			setToolChain(tc, true);
 		}
 	}
 }

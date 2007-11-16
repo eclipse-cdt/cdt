@@ -40,9 +40,14 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  * <p>
  * This is a very bare bones definition.  A real definition would probably have changed
  * terminology, use URI's rather than Strings, and have much more robust error handling.
- * <p>
+ * </p><p>
  * Implementers of this interface will have to either be instantiated, initialized, or
  * somehow derive a connection as part of its state.
+ * </p><p>
+ * This interface is not intended to be implemented by clients.  File service
+ * implementations must subclass {@link AbstractFileService} rather than implementing
+ * this interface directly.
+ * </p>
  */
 public interface IFileService extends IService
 {	

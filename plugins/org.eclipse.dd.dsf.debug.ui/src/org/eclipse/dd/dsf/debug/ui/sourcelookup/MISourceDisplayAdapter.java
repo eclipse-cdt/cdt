@@ -288,7 +288,7 @@ public class MISourceDisplayAdapter implements ISourceDisplay
                             @Override
                             public void handleOK() {
                                 FramePositioningData clientData = new FramePositioningData();
-                                clientData.fLevel = getData().getLevel();
+                                clientData.fLevel = frameDmc.getLevel();
                                 // Document line numbers are 0-based. While debugger line numbers are 1-based.
                                 clientData.fLine = getData().getLine() - 1;
                                 rm.setData(clientData);

@@ -212,7 +212,7 @@ public class StackFramesLayoutNode extends AbstractDMVMLayoutNode {
         
         // Add frame number (if total number of frames in known)
         if (fCachedOldFrameVMCs != null) {
-            label.append(fCachedOldFrameVMCs.length - dmData.getLevel());
+            label.append(fCachedOldFrameVMCs.length - dmContext.getLevel());
         }
         
         // Add the function name

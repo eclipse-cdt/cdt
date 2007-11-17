@@ -51,7 +51,7 @@ public interface IExpressions extends IFormattedValues {
     /**
      * This is the model data interface that corresponds to IExpressionDMContext.
      */
-    interface IExpressionDMData extends IDMData {
+    public interface IExpressionDMData extends IDMData {
         // These static fields define the possible return values of method getTypeId().
         
         final static String TYPEID_UNKNOWN = "TYPEID_UNKNOWN";
@@ -128,7 +128,7 @@ public interface IExpressions extends IFormattedValues {
      * Event indicating that a given expression is changed. If an expression is changed, it's implied that all
      * the children of that expression are changed too.
      */
-    interface IExpressionChangedDMEvent extends IDMEvent<IExpressionDMContext> {}
+    public interface IExpressionChangedDMEvent extends IDMEvent<IExpressionDMContext> {}
 
     /**
      * Retrieves the expression DM data object for the given expression context(<tt>dmc</tt>).
@@ -154,15 +154,15 @@ public interface IExpressions extends IFormattedValues {
     
     /**
      * Returns the data model context object for the specified expression in the context
-     * specified by <b>ctx</b>.
+     * specified by <b>ctx</b>.   
      * 
      * @param ctx: Context in which to evaluate the expression.  This context could include the
      * PC location, stack frame, thread, or just a symbol context.
      *                
      * @param expression: The expression to evaluate.
      * 
-     * @return  An expression data model context object that must be passed to getModelData() to obtain the
-     *          value of the expression.
+     * @return  An expression data model context object that must be passed to 
+     * getModelData() to obtain the value of the expression. 
      */
     IExpressionDMContext createExpression(IDMContext ctx, String expression);
 

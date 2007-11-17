@@ -47,22 +47,41 @@ public interface IRunControl extends IDMService
     public enum StateChangeReason { UNKNOWN, USER_REQUEST, STEP, BREAKPOINT, EXCEPTION, CONTAINER, WATCHPOINT, SIGNAL, SHAREDLIB, ERROR };
         
     /**
-     * Events signaling a state changes.
+     * Indicates that the given thread has suspended.
      */
     public interface ISuspendedDMEvent extends IDMEvent<IExecutionDMContext> {
         StateChangeReason getReason();
     }
     
+    /**
+     * Indicates that the given thread has resumed.
+     */
     public interface IResumedDMEvent extends IDMEvent<IExecutionDMContext> {
         StateChangeReason getReason();
     }
 
+    /**
+     * Indicates that the given container has suspended.
+     */
     public interface IContainerSuspendedDMEvent extends ISuspendedDMEvent {
-    	       IExecutionDMContext getTriggeringContext();
+        /**
+         * Returns the context which triggered the resume, which could be 
+         * <code>null</code> if not known. 
+         */
+        IExecutionDMContext getTriggeringContext();
     }
 
+    /**
+     * Indicates that the given container has resumed.
+     */
     public interface IContainerResumedDMEvent extends IResumedDMEvent {
+        /**
+         * Returns the context which triggered the resume, which could be 
+         * <code>null</code> if not known. 
+         */
+        IExecutionDMContext getTriggeringContext();
     }
+    
     /**
      * Indicates that a new execution context (thread) was started.  The DMC 
      * for the event is the container of the new exec context.

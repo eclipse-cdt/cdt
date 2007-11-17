@@ -27,13 +27,14 @@ public interface IStack extends IDMService {
      * frame data, this context is used by other services that require a stack
      * frame for evaluation.  
      */
-    public interface IFrameDMContext extends IDMContext {}
+    public interface IFrameDMContext extends IDMContext {
+        int getLevel();
+    }
 
     /**
      * Stack frame information. 
      */
     public interface IFrameDMData extends IDMData {
-        int getLevel();
         IAddress getAddress();
         String getFile();
         String getFunction();

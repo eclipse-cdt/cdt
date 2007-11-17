@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
@@ -439,19 +441,15 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode implements 
     
     @Override
     protected void getElementForExpressionPart(IChildrenUpdate update, String expressionPartText, DataRequestMonitor<Object> rm) {
-        /*
-         * Create a valid DMC for this entered expression.
-         */
         final IFrameDMContext frameDmc = findDmcInPath(update.getElementPath(), IFrameDMContext.class);
         final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
 
-        IExpressionDMContext expressionDMC = expressionService.createExpression(frameDmc, expressionPartText);
-        
-        /*
-         *  Now create the valid VMC which wrappers it.
-         */
-        IVMContext vmc = createVMContext(expressionDMC);
-        rm.setData(vmc);
+        if (frameDmc != null) {
+            IExpressionDMContext expressionDMC = expressionService.createExpression(frameDmc, expressionPartText);
+            rm.setData(createVMContext(expressionDMC));
+        } else {
+            rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Invalid context", null)); //$NON-NLS-1$
+        }
         rm.done();
     }
     

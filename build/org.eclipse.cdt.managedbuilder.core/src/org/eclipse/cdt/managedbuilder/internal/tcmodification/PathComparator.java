@@ -95,7 +95,7 @@ public class PathComparator implements Comparator {
 			IPath childPath = (IPath)iter.next();
 			result.add(childPath);
 			
-			children = getChildPathSet(children, getNext(childPath), true, false);
+			children = children.tailSet(getNext(childPath));//getChildPathSet(children, getNext(childPath), true, false);
 		}
 		
 		return result;
@@ -110,7 +110,7 @@ public class PathComparator implements Comparator {
 			IPath childPath = (IPath)entry.getKey();
 			result.put(childPath, entry.getValue());
 			
-			children = getChildPathMap(children, getNext(childPath), true, false);
+			children = children.tailMap(getNext(childPath));//getChildPathMap(children, getNext(childPath), true, false);
 		}
 		
 		return result;

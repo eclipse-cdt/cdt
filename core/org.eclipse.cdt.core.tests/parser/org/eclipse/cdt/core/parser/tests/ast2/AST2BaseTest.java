@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -37,6 +38,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -413,4 +416,11 @@ public class AST2BaseTest extends BaseTestCase {
 		assertNotNull("Expected object of "+c.getName()+" but got a null value", o);
 		assertTrue("Expected "+c.getName()+" but got "+o.getClass().getName(), c.isInstance(o));
 	}
+	
+	protected static void assertField(IBinding binding, String fieldName, String ownerName) throws DOMException {
+    	assertInstance(binding, IField.class);
+    	assertEquals(fieldName, binding.getName());
+    	ICompositeType struct = ((IField) binding).getCompositeTypeOwner();
+    	assertEquals(ownerName, struct.getName());
+    }
 }

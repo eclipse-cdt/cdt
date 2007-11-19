@@ -4025,4 +4025,135 @@ public class AST2Tests extends AST2BaseTest {
     	parse( content2, ParserLanguage.CPP); 
     	parse( content2, ParserLanguage.C); 
     }
+    
+    
+    // typedef struct Point {
+    // 	int x;
+    // 	int y;
+    // } Point ;
+    // 
+    // typedef struct Tag {
+    // 	int tag;
+    // } Tag ;
+    // 
+    // typedef struct Line {
+    // 	Point p1;
+    // 	Point p2;
+    // 	Tag t;
+    // } Line ;
+    //  
+    // int foo() {
+    // 	Point p1 = {.x = 1, .y = 2}; 
+    // 	 
+    // 	Line l1 = {.p1 = {.x = 1, .y = 2}, {.x = 1, .y = 2}, {.tag = 5}}; 
+    // 	Line l2 = {.t.tag = 9, .p1.x = 1, .p2.x = 3, .p1.y = 4, .p2.y = 9};
+    // 	
+    // 	Point points[] = {{.x=1, .y=1}, {.x=2, .y=2}};
+    // }   
+    public void _testBug210019_nestedDesignatedInitializers() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu = parseAndCheckBindings(buffer.toString(), ParserLanguage.C);
+		CNameCollector col = new CNameCollector();
+        tu.accept(col);
+
+        // Point p1        
+        assertField(col.getName(18).resolveBinding(), "x", "Point");
+        assertField(col.getName(19).resolveBinding(), "y", "Point");
+        
+        // Line l1
+        assertField(col.getName(22).resolveBinding(), "p1", "Line");
+        assertField(col.getName(23).resolveBinding(), "x", "Point");
+        assertField(col.getName(24).resolveBinding(), "y", "Point");
+        assertField(col.getName(25).resolveBinding(), "x", "Point");
+        assertField(col.getName(26).resolveBinding(), "y", "Point");
+        assertField(col.getName(27).resolveBinding(), "tag", "Tag");
+        
+        // Line l2
+        assertField(col.getName(30).resolveBinding(), "t",  "Line");
+        assertField(col.getName(31).resolveBinding(), "tag", "Tag");
+        assertField(col.getName(32).resolveBinding(), "p1", "Line");
+        assertField(col.getName(33).resolveBinding(), "x", "Point");
+        assertField(col.getName(34).resolveBinding(), "p2", "Line");
+        assertField(col.getName(35).resolveBinding(), "x", "Point");
+        assertField(col.getName(36).resolveBinding(), "p1", "Line");
+        assertField(col.getName(37).resolveBinding(), "y", "Point");
+        assertField(col.getName(38).resolveBinding(), "p2", "Line");
+        assertField(col.getName(39).resolveBinding(), "y", "Point");
+        
+        // Point points[]
+        assertField(col.getName(42).resolveBinding(), "x", "Point");
+        assertField(col.getName(43).resolveBinding(), "y", "Point");
+        assertField(col.getName(44).resolveBinding(), "x", "Point");
+        assertField(col.getName(45).resolveBinding(), "y", "Point");
+    }
+
+    
+
+    // struct S1 { 
+    //   int i; 
+    //   float f;
+    //   int a[2];
+    // };
+    // 
+    // struct S1 x = {
+    //   .f=3.1, 
+    //   .i=2,
+    //   .a[1]=9
+    // };
+    //  
+    // struct S2 {
+    //   int x, y;
+    // };
+    // 
+    // struct S2 a1[3] = {1, 2, 3, 4, 5, 6};
+    // 
+    // struct S2 a2[3] =
+    // {{1, 2},{3, 4}, 5, 6};
+    // 
+    // struct S2 a3[3] =
+    // {
+    //   [2].y=6, [2].x=5,
+    //   [1].y=4, [1].x=3,
+    //   [0].y=2, [0].x=1
+    // };
+    //   
+    // struct S2 a4[3] =
+    // {
+    //   [0].x=1, [0].y=2,
+    //   {.x=3, .y=4},
+    //   5, [2].y=6
+    // };
+    // 
+    // struct S2 a5[3] =
+    // {
+    //   [2].x=5, 6,
+    //   [0].x=1, 2,
+    //   3, 4
+    // };
+    public void testBug210019_designatedInitializers() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu = parseAndCheckBindings(buffer.toString(), ParserLanguage.C);
+		CNameCollector col = new CNameCollector();
+        tu.accept(col);
+        
+        assertField(col.getName(6).resolveBinding(), "f", "S1");
+        assertField(col.getName(7).resolveBinding(), "i", "S1");
+        assertField(col.getName(8).resolveBinding(), "a", "S1");
+        
+        assertField(col.getName(18).resolveBinding(), "y", "S2");
+        assertField(col.getName(19).resolveBinding(), "x", "S2");
+        assertField(col.getName(20).resolveBinding(), "y", "S2");
+        assertField(col.getName(21).resolveBinding(), "x", "S2");
+        assertField(col.getName(22).resolveBinding(), "y", "S2");
+        assertField(col.getName(23).resolveBinding(), "x", "S2");
+        
+        assertField(col.getName(26).resolveBinding(), "x", "S2");
+        assertField(col.getName(27).resolveBinding(), "y", "S2");
+        assertField(col.getName(28).resolveBinding(), "x", "S2");
+        assertField(col.getName(29).resolveBinding(), "y", "S2");
+        assertField(col.getName(30).resolveBinding(), "y", "S2");
+        
+        assertField(col.getName(33).resolveBinding(), "x", "S2");
+        assertField(col.getName(34).resolveBinding(), "x", "S2");
+    }
 }

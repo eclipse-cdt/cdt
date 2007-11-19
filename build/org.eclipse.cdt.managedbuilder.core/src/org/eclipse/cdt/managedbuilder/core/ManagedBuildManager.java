@@ -3517,8 +3517,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			// If there is a converter element for projectType, invoke it.
 			// projectType converter should take care of invoking converters of
 			// it's children
-			 
-			if (invokeConverter(managedProject, element) == null) {
+
+			if (invokeConverter(buildInfo, managedProject, element) == null) {
 				buildInfo.getManagedProject().setValid(false);
 				return false;
 			}			
@@ -3542,7 +3542,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					// If there is a converter element for toolChain, invoke it
 					// toolChain converter should take care of invoking
 					// converters of it's children
-					if (invokeConverter(toolChain, element) == null) {
+					if (invokeConverter(buildInfo, toolChain, element) == null) {
 						buildInfo.getManagedProject().setValid(false);
 						return false;
 					}
@@ -3560,7 +3560,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 									.getPreviousMbsVersionConversionElement();
 						}
 						if (element != null) {
-							if (invokeConverter(tool, element) == null) {
+							if (invokeConverter(buildInfo, tool, element) == null) {
 								buildInfo.getManagedProject().setValid(false);
 								return false;
 							}
@@ -3577,7 +3577,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 						}
 
 						if (element != null) {
-							if (invokeConverter(builder, element) == null) {
+							if (invokeConverter(buildInfo, builder, element) == null) {
 								buildInfo.getManagedProject().setValid(false);
 								return false;
 							}
@@ -3604,7 +3604,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 										.getPreviousMbsVersionConversionElement();
 							}
 							if (element != null) {
-								if (invokeConverter(resTool, element) == null) {
+								if (invokeConverter(buildInfo, resTool, element) == null) {
 									buildInfo.getManagedProject().setValid(
 											false);
 									return false;
@@ -3621,7 +3621,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return true;
 	}
 
-	private static IBuildObject invokeConverter(IBuildObject buildObject, IConfigurationElement element) {
+	private static IBuildObject invokeConverter(ManagedBuildInfo bi, IBuildObject buildObject, IConfigurationElement element) {
 
 		if (element != null) {
 			IConvertManagedBuildObject convertBuildObject = null;
@@ -3638,7 +3638,19 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 			if (convertBuildObject != null) {
 				// invoke the converter
-				return convertBuildObject.convert(buildObject, fromId, toId, false);
+				IProject prj = null;
+				IBuildObject result = null;
+				try {
+					if (bi != null) {
+						prj = (IProject)bi.getManagedProject().getOwner();
+						UpdateManagedProjectManager.addInfo(prj, bi);
+					}
+					result = convertBuildObject.convert(buildObject, fromId, toId, false);
+				} finally {
+					if (bi != null)
+						UpdateManagedProjectManager.delInfo(prj);
+				}
+				return result;
 			}
 		}
 		// if control comes here, it means that either 'convertBuildObject' is null or 
@@ -3675,7 +3687,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					if (element.getName().equals("converter") && (isBuildObjectApplicableForConversion(buildObj, element) == true)) { //$NON-NLS-1$
 						tmpToId = element.getAttribute("toId");	//$NON-NLS-1$
 						if (tmpToId.equals(toId)) {
-							return invokeConverter(buildObj, element);
+							return invokeConverter(null, buildObj, element);
 						}
 					}
 				}

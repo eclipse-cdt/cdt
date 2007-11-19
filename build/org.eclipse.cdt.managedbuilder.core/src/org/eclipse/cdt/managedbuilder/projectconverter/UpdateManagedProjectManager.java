@@ -83,6 +83,14 @@ public class UpdateManagedProjectManager {
 		return mngr;
 	}
 
+	static public void addInfo(final IProject project, ManagedBuildInfo info) {
+		getUpdateManager(project).setBuildInfo(info);
+	}
+	
+	static public void delInfo(final IProject project) {
+		removeUpdateManager(project);
+	}
+	
 	static private void removeUpdateManager(IProject project){
 		UpdateManagedProjectManager mngr = getExistingUpdateManager(project);
 		if(mngr == null)
@@ -269,6 +277,10 @@ public class UpdateManagedProjectManager {
 	
 	private ManagedBuildInfo getConvertedManagedBuildInfo(){
 		return fConvertedInfo;
+	}
+	
+	private void setBuildInfo(ManagedBuildInfo info) {
+		fConvertedInfo = info;
 	}
 	
 	private void doProjectUpdate(ManagedBuildInfo info) 

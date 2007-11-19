@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
 
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.Symbols;
@@ -38,7 +39,7 @@ import org.eclipse.cdt.internal.ui.text.Symbols;
  * 
  * @since 4.0
  */
-public class CContentAssistInvocationContext extends ContentAssistInvocationContext {
+public class CContentAssistInvocationContext extends ContentAssistInvocationContext implements ICEditorContentAssistInvocationContext {
 	
 	private final IEditorPart fEditor;
 	private final boolean fIsCompletion;

@@ -2699,9 +2699,17 @@ public class Configuration extends BuildObject implements IConfiguration, IBuild
 					List list = new ArrayList(entries.length + 1);
 					
 					list.add(new CIncludePathEntry(path.toString(), ICLanguageSettingEntry.VALUE_WORKSPACE_PATH));
+
+					entries = CDataUtil.resolveEntries(entries, des);
 					for(int i = 0; i < entries.length; i++){
 						ICOutputEntry out = entries[i];
-						ICLibraryPathEntry lib = new CLibraryPathEntry(out.getValue(), out.getFlags() & (~ICLanguageSettingEntry.RESOLVED));
+						String value = out.getValue();
+
+						IPath p = new Path(value);
+						if(!p.isAbsolute())
+							value = getOwner().getFullPath().append(value).toString();
+						
+						ICLibraryPathEntry lib = new CLibraryPathEntry(value, out.getFlags() & (~ICSettingEntry.RESOLVED));
 						list.add(lib);
 					}
 					

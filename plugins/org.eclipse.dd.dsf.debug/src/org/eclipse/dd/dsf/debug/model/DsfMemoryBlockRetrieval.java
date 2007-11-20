@@ -144,7 +144,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 		return fExecutor;
 	}
 
-	public IDMContext getContext() {
+	public IMemoryDMContext getContext() {
 		return fContext;
 	}
 

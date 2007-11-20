@@ -18,8 +18,8 @@ import org.eclipse.dd.dsf.debug.service.IRegisters;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMData;
+import org.eclipse.dd.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IGroupChangedDMEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
@@ -41,11 +41,11 @@ public class ModulesLayoutNode extends AbstractDMVMLayoutNode
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         if (!checkService(IRegisters.class, null, update)) return;
         
-        final IExecutionDMContext execDmc = findDmcInPath(update.getElementPath(), IExecutionDMContext.class) ;
+        final ISymbolDMContext symDmc = findDmcInPath(update.getElementPath(), ISymbolDMContext.class) ;
         
-        if (execDmc != null) {
+        if (symDmc != null) {
             getServicesTracker().getService(IModules.class).getModules(
-                execDmc,
+                symDmc,
                 new DataRequestMonitor<IModuleDMContext[]>(getSession().getExecutor(), null) { 
                     @Override
                     public void handleCompleted() {

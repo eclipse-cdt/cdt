@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.service;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.service.IDsfService;
@@ -46,21 +45,21 @@ public interface IStepQueueManager extends IDsfService {
      * Returns the number of step commands that are queued for given execution
      * context.
      */
-    int getPendingStepCount(IDMContext ctx);
+    int getPendingStepCount(IExecutionDMContext ctx);
 
     /**
      * Checks whether a step command can be queued up for given context.
      */
-    boolean canEnqueueStep(IDMContext execCtx);
+    boolean canEnqueueStep(IExecutionDMContext execCtx);
 
-    boolean canEnqueueInstructionStep(IDMContext ctx);
+    boolean canEnqueueInstructionStep(IExecutionDMContext ctx);
 
     /**
      * Adds a step command to the execution queue for given context.
      * @param execCtx Execution context that should perform the step. 
      * @param stepType Type of step to execute.
      */
-    void enqueueStep(IDMContext ctx, IRunControl.StepType stepType);
+    void enqueueStep(IExecutionDMContext ctx, IRunControl.StepType stepType);
     
     /**
      * Adds an instruction step command to the execution queue for given 
@@ -68,7 +67,7 @@ public interface IStepQueueManager extends IDsfService {
      * @param execCtx Execution context that should perform the step. 
      * @param stepType Type of step to execute.
      */
-    void enqueueInstructionStep(IDMContext ctx, IRunControl.StepType stepType);
+    void enqueueInstructionStep(IExecutionDMContext ctx, IRunControl.StepType stepType);
 
-    boolean isSteppingTimedOut(IDMContext context);
+    boolean isSteppingTimedOut(IExecutionDMContext context);
 }

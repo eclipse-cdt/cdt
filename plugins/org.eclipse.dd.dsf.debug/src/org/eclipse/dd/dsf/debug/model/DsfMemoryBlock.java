@@ -27,12 +27,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.Query;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.datamodel.DMContexts;
 import org.eclipse.dd.dsf.debug.DsfDebugPlugin;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IRunControl;
-import org.eclipse.dd.dsf.debug.service.IMemory.MemoryChangedEvent;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryChangedEvent;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -509,28 +507,14 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
     }
     
     @DsfServiceEventHandler
-    public void eventDispatched(MemoryChangedEvent e) {
+    public void eventDispatched(IMemoryChangedEvent e) {
 
-    	// Find the container of the event
-		IContainerDMContext eventContext = DMContexts.getAncestorOfType(e.getContext(), IContainerDMContext.class); 
-    	if (eventContext == null) {
-    		return;
-    	}
-
-    	// Find the container of the block
-		IContainerDMContext blockContext = DMContexts.getAncestorOfType(fRetrieval.getContext(), IContainerDMContext.class); 
-    	if (blockContext == null) {
-    		return;
-    	}
-
-    	// Check if we are in the same address space 
-    	if (eventContext != blockContext) {
-    		return;
-    	}
-
-    	IAddress[] addresses = e.getAddresses();
-    	for (int i = 0; i < addresses.length; i++)
-    		handleMemoryChange(addresses[i].getValue());
+        // Check if we are in the same address space 
+        if (e.getDMContext().equals(fRetrieval.getContext())) {
+        	IAddress[] addresses = e.getAddresses();
+        	for (int i = 0; i < addresses.length; i++)
+        		handleMemoryChange(addresses[i].getValue());
+        }
     }
     
     /**

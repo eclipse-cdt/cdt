@@ -104,7 +104,7 @@ public interface IStack extends IDMService {
     void getLocals(IDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
     
     /**
-     * Retrieves the stack depth of the specified stack frame.
+     * Retrieves the number of stack frames available for the given context..
      * @param dmc Context to retrieve data for.
      * @param The maximum depth of stack to calculate.  Should be 0 to calculate 
      * depth with no limit.

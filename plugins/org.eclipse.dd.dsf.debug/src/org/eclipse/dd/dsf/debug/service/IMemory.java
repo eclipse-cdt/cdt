@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.debug.core.model.MemoryByte;
 
@@ -27,47 +28,33 @@ import org.eclipse.debug.core.model.MemoryByte;
 public interface IMemory extends IDsfService {
 
     public interface IMemoryDMContext extends IDMContext {}
-    
-	/**
-	 * Event generated every time a range of bytes is modified.
-	 * 
-	 * A client wishing to receive such events has to register as a service
-	 * event listener and implement the corresponding eventDispatched method.
-	 * 
-	 * E.g.:
-	 *
-	 *   MyMemoryBlock(MIRunControl fRunControl)
-	 *   {
-	 *       ...
-	 *       fRunControl.getSession().addServiceEventListener(MyMemoryBlock.this, null);
-	 *       ...
-	 *   }
-	 *     
-	 *     @DsfServiceEventHandler
-	 *     public void eventDispatched(MemoryChangedEvent e) {
-	 *        IDMContext<?> context = e.getContext();
-	 *        IAddress[] addresses = e.getAddresses();
-	 *        // do whatever...
-	 *     }
-	 */
-    public class MemoryChangedEvent {
-        IAddress[] fAddresses;
-        IDMContext fContext;
-        
-        public MemoryChangedEvent(IDMContext context, IAddress[] addresses) {
-        	fContext = context;
-        	fAddresses = addresses;
-        }
 
-        public IDMContext getContext() {
-            return fContext;
-        }
-
-        public IAddress[] getAddresses() {
-            return fAddresses;
-        }
+    /**
+     * Event generated every time a range of bytes is modified.
+     * 
+     * A client wishing to receive such events has to register as a service
+     * event listener and implement the corresponding eventDispatched method.
+     * 
+     * E.g.:
+     *
+     *   MyMemoryBlock(MIRunControl fRunControl)
+     *   {
+     *       ...
+     *       fRunControl.getSession().addServiceEventListener(MyMemoryBlock.this, null);
+     *       ...
+     *   }
+     *     
+     *     @DsfServiceEventHandler
+     *     public void eventDispatched(MemoryChangedEvent e) {
+     *        IDMContext<?> context = e.getContext();
+     *        IAddress[] addresses = e.getAddresses();
+     *        // do whatever...
+     *     }
+     */
+    public interface IMemoryChangedEvent extends IDMEvent<IMemoryDMContext> {
+        IAddress[] getAddresses();
     }
-
+    
     /**
      * Reads a memory block from the target.
      * 
@@ -88,7 +75,7 @@ public interface IMemory extends IDsfService {
      * @param count		the number of data elements to read
      * @param drm		the asynchronous data request monitor
      */
-    public void getMemory(IDMContext context, IAddress address, long offset,
+    public void getMemory(IMemoryDMContext context, IAddress address, long offset,
     		int word_size, int count, DataRequestMonitor<MemoryByte[]> drm);
 
     /**
@@ -109,7 +96,7 @@ public interface IMemory extends IDsfService {
      * @param buffer	the source buffer
      * @param rm		the asynchronous data request monitor
      */
-    public void setMemory(IDMContext context, IAddress address, long offset,
+    public void setMemory(IMemoryDMContext context, IAddress address, long offset,
     		int word_size, int count, byte[] buffer, RequestMonitor rm);
 
     /**
@@ -125,7 +112,7 @@ public interface IMemory extends IDsfService {
      * @param pattern	the source buffer
      * @param rm		the asynchronous data request monitor
      */
-    public void fillMemory(IDMContext context, IAddress address, long offset,
+    public void fillMemory(IMemoryDMContext context, IAddress address, long offset,
     		int word_size, int count, byte[] pattern, RequestMonitor rm);
 
 }

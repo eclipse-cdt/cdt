@@ -36,13 +36,13 @@ public interface IBreakpoints extends IDsfService {
      * @param dmc Context to start tracking breakpoints for.
      * @param rm Completion callback.
      */
-    public void installBreakpoints(IDMContext dmc, RequestMonitor rm);
+    public void installBreakpoints(IBreakpointsDMContext dmc, RequestMonitor rm);
     
     /**
      * Uninstall and stop tracking breakpoints for the given context.
      * @param dmc Context to start tracking breakpoints for.
      * @param rm Completion callback.
      */
-    public void uninstallBreakpoints(IDMContext dmc, RequestMonitor rm);
+    public void uninstallBreakpoints(IBreakpointsDMContext dmc, RequestMonitor rm);
 }
 

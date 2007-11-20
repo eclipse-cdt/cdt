@@ -21,8 +21,14 @@ import org.eclipse.dd.dsf.datamodel.IDMEvent;
  */
 public interface IRegisters extends IFormattedValues {
     
-    /** Event indicating groups have changed. */
-    public interface IGroupsChangedDMEvent extends IDMEvent<IRunControl.IExecutionDMContext> {}
+    /** 
+     * Event indicating groups have changed.  The type of context returned by this 
+     * event is generic, because different implementations of the the register service 
+     * could configure register groups using different contexts.  Some implementations
+     * could configure different register groups for each execution context, other 
+     * services may have a global list of groups.   
+     */
+    public interface IGroupsChangedDMEvent extends IDMEvent<IDMContext> {}
 
     /** Register group context */
     public interface IRegisterGroupDMContext extends IFormattedDataDMContext {
@@ -133,14 +139,9 @@ public interface IRegisters extends IFormattedValues {
     void getRegisterGroups(IDMContext ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
     
     /** 
-     * Retrieves list of sub-groups of given register group. 
-     * @param ctx Context for the returned data.
-     * @param rm Request completion monitor.
-     */
-    void getRegisterSubGroups(IDMContext ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
-    
-    /** 
-     * Retrieves registers in given register group.
+     * Retrieves the list of registers for the given context.  The given context could include
+     * a register group and an execution context or just an execution context, in which case all
+     * registers for all groups should be returned.
      * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
@@ -151,7 +152,7 @@ public interface IRegisters extends IFormattedValues {
      * @param ctx Context for the returned data.
      * @param rm Request completion monitor.
      */
-    void getBitFields(IDMContext ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
+    void getBitFields(IRegisterDMContext ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
     
     /** 
      * Writes a register value for a given register to the target
@@ -160,7 +161,7 @@ public interface IRegisters extends IFormattedValues {
      * @param formatId Format of the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeRegister(IDMContext regCtx, String regValue, String formatId, RequestMonitor rm);
+    void writeRegister(IRegisterDMContext regCtx, String regValue, String formatId, RequestMonitor rm);
     
     /** 
      * Writes a bit field value for a given bit field to the target
@@ -169,7 +170,7 @@ public interface IRegisters extends IFormattedValues {
      * @param formatId Format of the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeBitField(IDMContext bitFieldCtx, String bitFieldValue, String formatId, RequestMonitor rm);
+    void writeBitField(IBitFieldDMContext bitFieldCtx, String bitFieldValue, String formatId, RequestMonitor rm);
     
     /** 
      * Writes a bit field value for a given bit field to the target
@@ -177,5 +178,5 @@ public interface IRegisters extends IFormattedValues {
      * @param mnemonic Mnemonic which represents the value to be written.
      * @param rm Request completion monitor.
      */
-    void writeBitField(IDMContext bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm);
+    void writeBitField(IBitFieldDMContext bitFieldCtx, IMnemonic mnemonic, RequestMonitor rm);
 }

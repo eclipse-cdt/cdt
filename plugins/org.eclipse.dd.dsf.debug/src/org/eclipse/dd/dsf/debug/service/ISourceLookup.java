@@ -30,10 +30,10 @@ public interface ISourceLookup extends IDsfService {
     /**
      * Retrieves the host source object for given debugger path string.
      */
-    void getSource(IDMContext ctx, String debuggerPath, DataRequestMonitor<Object> rm);
+    void getSource(ISourceLookupDMContext ctx, String debuggerPath, DataRequestMonitor<Object> rm);
     
     /**
      * Retrieves the debugger path string for given host source object.
      */
-    void getDebuggerPath(IDMContext ctx, Object source, DataRequestMonitor<String> rm);
+    void getDebuggerPath(ISourceLookupDMContext ctx, Object source, DataRequestMonitor<String> rm);
 }

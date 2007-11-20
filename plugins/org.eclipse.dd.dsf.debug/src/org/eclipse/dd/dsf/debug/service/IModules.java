@@ -90,16 +90,16 @@ public interface IModules extends IDsfService {
     /** 
      * Retreives the list of modules loaded in given symbol context. 
      */ 
-    void getModules(IDMContext symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
+    void getModules(ISymbolDMContext symCtx, DataRequestMonitor<IModuleDMContext[]> rm);
 
     /**
      * Calculates the line numbers corresponding to the given address. 
      */
-    void calcLineInfo(IDMContext symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm);
+    void calcLineInfo(ISymbolDMContext symCtx, IAddress address, DataRequestMonitor<LineInfo[]> rm);
     
     /**
      * Calculates the addresses corresponding to the given source file location.
      */
-    void calcAddressInfo(IDMContext symCtx, String file, int line, int col, DataRequestMonitor<AddressRange[]> rm);
+    void calcAddressInfo(ISymbolDMContext symCtx, String file, int line, int col, DataRequestMonitor<AddressRange[]> rm);
 
 }

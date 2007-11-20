@@ -32,5 +32,22 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		initializeScanner();
 		validateEOF();
 		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "regxag4.sfr");
+		validateProblemCount(1);
+	}
+	
+	//	#define FUNKY(x) __##x##__
+	//	#define __foo__ 127
+	//
+	//	#if FUNKY(foo) == 0x7f
+	//	#define MSG "hello"
+	//	#else
+	//	#define MSG "goodbye"
+	//	#endif
+	//  MSG
+	public void testTokenPaste_Bug210344() throws Exception {
+		initializeScanner();
+		validateString("hello");
+		validateEOF();
+		validateProblemCount(0);
 	}
 }

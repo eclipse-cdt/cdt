@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
@@ -78,11 +81,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 /**
  */
 public abstract class Variable extends VariableDescriptor implements ICDIVariable {
-
+	private static final ICDIVariable[] NO_CHILDREN = new ICDIVariable[0];
 	protected MIVarCreate fVarCreateCMD;
 	protected MIVar fMIVar;
 	Value value;
-	public ICDIVariable[] children = new ICDIVariable[0];
+	public ICDIVariable[] children = NO_CHILDREN;
 	String editable = null;
 	String language;
 	boolean isFake = false;
@@ -210,6 +213,7 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 	 * allow the override of the timeout.
 	 */
 	public ICDIVariable[] getChildren(int timeout) throws CDIException {
+		children = NO_CHILDREN;
 		MISession mi = ((Target)getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarListChildren var = factory.createMIVarListChildren(getMIVar().getVarName());
@@ -224,9 +228,10 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
 			MIVar[] vars = info.getMIVars();
-			children = new Variable[vars.length];
+			List childrenList = new ArrayList(vars.length);
+//			children = new Variable[vars.length];
 			// For C++ in GDB the children of the
-			// the struture are the scope and the inherited classes.
+			// the structure are the scope and the inherited classes.
 			// For example:
 			// class foo: public bar {
 			// int x;
@@ -243,14 +248,14 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			// but carry over to those "fake" variables the typename and the qualified name
 			boolean cppFakeLayer = isCPPLanguage() && (!isFake() || (isFake() && !isAccessQualifier(fName)));
 			ICDIType t = getType();
-			boolean containter = isStructureProvider(t);
+			boolean container = isStructureProvider(t);
 			for (int i = 0; i < vars.length; i++) {
 				String prefix = "(" + getFullName() + ")"; // parent qualified name
-				String childName = vars[i].getExp(); // chield simple name
+				String childName = vars[i].getExp(); // child simple name
 				String childFullName = prefix + "." + childName; // fallback full name
 				ICDIType childType = null;
 				boolean childFake = false;
-				if (cppFakeLayer && containter) {
+				if (cppFakeLayer && container) {
 					childFake = true;
 					childType = t;
 					if (!isAccessQualifier(childName)) {
@@ -267,13 +272,13 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 						childFullName = prefix + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
 						childName = getName() + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 					} else if (t instanceof ICDIPointerType) {
-						if (containter) {
+						if (container) {
 							childFullName = prefix + "->" + childName; //$NON-NLS-1$ 
 						} else {
 							childFullName = "*" + prefix; //$NON-NLS-1$ 
 						}
 					} else if (t instanceof ICDIReferenceType) {
-						if (containter) {
+						if (container) {
 							childFullName = prefix + "." + childName; //$NON-NLS-1$  
 						} else {
 							childFullName = prefix;
@@ -289,8 +294,18 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 					v.fType = childType;
 				}
 				v.setIsFake(childFake);
-				children[i] = v;
+				if (childFake && isAccessQualifier(childName)) {
+					// Replace a fake variable representing an access qualifier with its children. 
+					ICDIVariable[] grandchildren = v.getChildren(timeout);
+					for (int j = 0; j < grandchildren.length; j++) {
+						childrenList.add(grandchildren[j]);
+					}
+				} else {
+					childrenList.add(v);
+				}
 			}
+			if (!childrenList.isEmpty())
+				children = (ICDIVariable[]) childrenList.toArray(new Variable[childrenList.size()]);
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
@@ -522,5 +537,9 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			}
 		}
 		return fTypename;
+	}
+
+	public void setMIVarCreate(MIVarCreate miVar) {
+		fVarCreateCMD = miVar;
 	}
 }

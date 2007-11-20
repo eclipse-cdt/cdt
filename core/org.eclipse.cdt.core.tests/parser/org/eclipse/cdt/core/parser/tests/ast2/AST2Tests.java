@@ -4085,8 +4085,7 @@ public class AST2Tests extends AST2BaseTest {
         assertField(col.getName(43).resolveBinding(), "y", "Point");
         assertField(col.getName(44).resolveBinding(), "x", "Point");
         assertField(col.getName(45).resolveBinding(), "y", "Point");
-    }
-
+}
     
 
     // struct S1 { 

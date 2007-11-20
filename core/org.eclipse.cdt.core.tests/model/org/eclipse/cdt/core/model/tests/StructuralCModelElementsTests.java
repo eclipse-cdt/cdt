@@ -88,6 +88,7 @@ public class StructuralCModelElementsTests extends TestCase {
 				e.printStackTrace();
 			}
 		}
+		CCorePlugin.getIndexManager().joinIndexer(10000, new NullProgressMonitor());
 	}
 
 	

@@ -13,17 +13,12 @@ package org.eclipse.cdt.core;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.EndOfFileException;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
+import org.eclipse.cdt.internal.core.parser.scanner.ILexerLog;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -323,30 +318,14 @@ public class CConventions {
 		// create a scanner and get the type of the token
 		// assuming that you are given a valid identifier
 		IToken token = null;
-		IScanner scanner = ParserFactory.createScanner(
-				new CodeReader(name.toCharArray()),
-				new ScannerInfo(),
-				ParserMode.QUICK_PARSE,
-				ParserLanguage.CPP,
-				null,
-				null,
-				null
-				);
-
+		Lexer lexer= new Lexer(name.toCharArray(), new Lexer.LexerOptions(), ILexerLog.NULL, null);
 		try {
-			token = scanner.nextToken();
+			token = lexer.nextToken();
+			if (token.getType() == IToken.tIDENTIFIER && lexer.nextToken().getType() == IToken.tEND_OF_INPUT) {
+				return true;
+			}
 		} catch (Exception e) {
 		}
-
-		if ((token != null) && (token.getType() == IToken.tIDENTIFIER)) {
-			try {
-				scanner.nextToken();
-			} catch (EndOfFileException e) {
-				return true;
-			} catch (Exception e) {
-			}
-		}
-
 		return false;
 	}
 	

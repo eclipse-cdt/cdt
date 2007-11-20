@@ -88,7 +88,6 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		try	{
 			for(;;) {
 				IToken t= fScanner.nextToken();
-				assertTrue(t.getType() <= IToken.tLAST);
 			}
 		}
 		catch ( EndOfFileException e){

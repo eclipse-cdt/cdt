@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
+import org.eclipse.cdt.internal.core.parser.EmptyIterator;
 
 /**
  * @author jcamelon

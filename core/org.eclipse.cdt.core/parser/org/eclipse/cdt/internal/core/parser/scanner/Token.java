@@ -93,29 +93,4 @@ public class Token implements IToken, Cloneable {
 			return null;
 		}
 	}
-	
-	public char[] getFilename() {
-		// mstodo- parser removal
-		throw new UnsupportedOperationException();
-	}
-
-	public boolean looksLikeExpression() {
-		// mstodo- parser removal
-		throw new UnsupportedOperationException();
-	}
-
-	public boolean canBeAPrefix() {
-		// mstodo- parser removal
-		throw new UnsupportedOperationException();
-	}
-	
-	public int getLineNumber() {
-		// mstodo- parser removal
-		throw new UnsupportedOperationException();
-	}
-
-	public boolean isPointer() {
-		// mstodo- parser removal
-		throw new UnsupportedOperationException();
-	}
 }

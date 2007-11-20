@@ -39,7 +39,6 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -81,11 +80,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
     private static final ObjectStyleMacro __STDC__ = new ObjectStyleMacro("__STDC__".toCharArray(), ONE);  //$NON-NLS-1$
     private static final ObjectStyleMacro __STDC_HOSTED__ = new ObjectStyleMacro("__STDC_HOSTED_".toCharArray(), ONE);  //$NON-NLS-1$
     private static final ObjectStyleMacro __STDC_VERSION__ = new ObjectStyleMacro("__STDC_VERSION_".toCharArray(), "199901L".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-
-    private static final ILexerLog LEXERLOG_NULL= new ILexerLog() {
-		public void handleComment(boolean isBlockComment, int offset, int endOffset) {}
-		public void handleProblem(int problemID, char[] source, int offset, int endOffset) {}
-    };
 
 	private interface IIncludeFileTester {
     	Object checkFile(String path, String fileName);
@@ -368,9 +362,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	}
     
     public PreprocessorMacro addMacroDefinition(char[] key, char[] value) {
-     	final Lexer lex= new Lexer(key, fLexOptions, LEXERLOG_NULL, null);
+     	final Lexer lex= new Lexer(key, fLexOptions, ILexerLog.NULL, null);
     	try {
-    		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(lex, LEXERLOG_NULL, value);
+    		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(lex, ILexerLog.NULL, value);
     		fLocationMap.registerPredefinedMacro(result);
 	    	fMacroDictionary.put(result.getNameCharArray(), result);
 	    	return result;
@@ -1410,19 +1404,10 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	}
 	public void setScanComments(boolean val) {
 	}
-	public char[] getMainFilename() {
-    	throw new UnsupportedOperationException();
-	}
 	public IMacro addDefinition(char[] name, char[][] params, char[] expansion) {
     	throw new UnsupportedOperationException();
     }
-	public void setASTFactory(IASTFactory f) {
-    	throw new UnsupportedOperationException();
-	}
 	public org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver getLocationResolver() {
 		return fLocationMap;
-	}
-	public void setOffsetBoundary(int offset) {
-    	throw new UnsupportedOperationException();
 	}
 }

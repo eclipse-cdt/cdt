@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.parser;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.IMacroCollector;
-import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
 
@@ -30,12 +29,11 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
  */
 public interface IScanner extends IMacroCollector {
 	
-	/** @deprecated */ public static final int tPOUNDPOUND = IToken.tPOUNDPOUND;
-	/** @deprecated */ public static final int tPOUND      = IToken.tPOUND;
-
-    public void setOffsetBoundary( int offset );
+	/**
+	 * Puts the scanner into content assist mode.
+	 */
 	public void setContentAssistMode( int offset );
-	public void setASTFactory( IASTFactory f );
+
 	/**
 	 * Turns on/off comment parsing.
 	 * @since 4.0
@@ -50,7 +48,6 @@ public interface IScanner extends IMacroCollector {
 	public void setComputeImageLocations(boolean val);
 
 	public IMacro addDefinition(char[] key, char[] value); 
-	public IMacro addDefinition(char[] name, char[][] params, char[] expansion);
 	public void addDefinition(IMacro macro);
 	
 	public Map 				getDefinitions();
@@ -65,7 +62,6 @@ public interface IScanner extends IMacroCollector {
 	public boolean isOnTopContext();
 	public CharArrayObjectMap getRealDefinitions();
 	public void cancel();
-	public char[] getMainFilename();
 	
 	public ILocationResolver getLocationResolver();
 }

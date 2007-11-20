@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import java.io.File;
-import java.util.Iterator;
-
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 
 /**
  * @author jcamelon
@@ -128,50 +124,4 @@ public class ScannerUtility {
 		boolean pathEmpty = (path == null || path.length() == 0);
 		return (pathEmpty ? fileName : reconcilePath(path + File.separatorChar + fileName));
 	}
-
-	public static CodeReader createReaderDuple( String path, ISourceElementRequestor requestor, Iterator workingCopies )
-	{
-		return requestor.createReader( path, workingCopies );
-	}
-	
-	public static class InclusionDirective
-	{
-		public InclusionDirective( String fileName, boolean useIncludePaths, int startOffset, int endOffset )
-		{
-			this.fileName = fileName;
-			this.useIncludePaths = useIncludePaths;
-			this.startOffset = startOffset;
-			this.endOffset = endOffset;
-		}
-		
-		private final boolean useIncludePaths;
-		private final String fileName;
-		private final int startOffset;
-		private final int endOffset; 
-
-		boolean useIncludePaths()
-		{
-			return useIncludePaths;
-		}
-		
-		public String getFilename()
-		{
-			return fileName;
-		}
-		
-		int getStartOffset()
-		{
-			return startOffset;
-		}
-		
-		int getEndOffset()
-		{
-			return endOffset;
-		}
-	}
-	
-	public static class InclusionParseException extends Exception
-	{
-	}
-
 }

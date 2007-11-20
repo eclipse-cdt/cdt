@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser;
 import java.io.File;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
+import org.eclipse.cdt.internal.core.parser.EmptyIterator;
 import org.eclipse.cdt.internal.core.util.ILRUCacheable;
 import org.eclipse.cdt.internal.core.util.LRUCache;
 import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;

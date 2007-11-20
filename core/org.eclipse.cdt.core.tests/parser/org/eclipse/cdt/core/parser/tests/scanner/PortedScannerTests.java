@@ -2388,7 +2388,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 	
     public void testBug39698() throws Exception	{
-    	initializeScanner( "<? >?"); //$NON-NLS-1$
+    	initializeScanner( "<? >?"); 
     	validateToken( IGCCToken.tMIN );
     	validateToken( IGCCToken.tMAX );
     	validateEOF();
@@ -2396,8 +2396,8 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
     public void test__attribute__() throws Exception {
     	initializeScanner(
-    			"#define __cdecl __attribute__((cdecl))\n" + //$NON-NLS-1$
-				"__cdecl;"); //$NON-NLS-1$
+    			"#define __cdecl __attribute__((cdecl))\n" + 
+				"__cdecl;"); 
     	validateToken(IGCCToken.t__attribute__);
     	validateToken(IToken.tLPAREN);
     	validateToken(IToken.tLPAREN);
@@ -2409,8 +2409,8 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
         
     public void testImaginary() throws Exception {
-        initializeScanner( "3i", ParserLanguage.C ); //$NON-NLS-1$
-        validateInteger( "3i" ); //$NON-NLS-1$
+        initializeScanner( "3i", ParserLanguage.C ); 
+        validateInteger( "3i" ); 
         validateEOF();
     }
 }

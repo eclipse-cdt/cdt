@@ -35,8 +35,6 @@ public class ExpressionEvaluator {
 
     private int[] bufferLimit = new int[initSize];
 
-    private ScannerCallbackManager callbackManager = null;
-
     private ScannerProblemFactory problemFactory = null;
 
     private int lineNumber = 1;
@@ -52,9 +50,7 @@ public class ExpressionEvaluator {
         super();
     }
 
-    public ExpressionEvaluator(ScannerCallbackManager manager,
-            ScannerProblemFactory spf) {
-        this.callbackManager = manager;
+    public ExpressionEvaluator(ScannerProblemFactory spf) {
         this.problemFactory = spf;
     }
 
@@ -1044,16 +1040,6 @@ public class ExpressionEvaluator {
     }
 
     private void handleProblem(int id, int startOffset) {
-        if (callbackManager != null && problemFactory != null)
-            callbackManager
-                    .pushCallback(problemFactory
-                            .createProblem(
-                                    id,
-                                    startOffset,
-                                    bufferPos[(bufferStackPos == -1 ? 0
-                                            : bufferStackPos)],
-                                    lineNumber,
-                                    (fileName == null ? "".toCharArray() : fileName), emptyCharArray, false, true)); //$NON-NLS-1$
     }
 
     private boolean isValidTokenSeparator(char c, char c2)

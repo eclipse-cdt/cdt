@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -293,11 +292,6 @@ public class BasicTokenDuple implements ITokenDuple {
 		return String.valueOf(stringRepresentation);
 	}
 	
-	public boolean isIdentifier()
-	{
-		return ( (firstToken == lastToken ) && (firstToken.getType() == IToken.tIDENTIFIER ));
-	}
-
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ITokenDuple#length()
      */
@@ -364,12 +358,6 @@ public class BasicTokenDuple implements ITokenDuple {
 	 */
 	public int getEndOffset() {
 		return getLastToken().getEndOffset();
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getLineNumber()
-	 */
-	public int getLineNumber() {
-		return getFirstToken().getLineNumber();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getStartOffset()
@@ -578,30 +566,11 @@ public class BasicTokenDuple implements ITokenDuple {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
-	 */
-	public void freeReferences() {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#acceptElement(org.eclipse.cdt.core.parser.ast.IReferenceManager)
-	 */
-	public void acceptElement(ISourceElementRequestor requestor) {
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#toCharArray()
 	 */
 	public char[] toCharArray() {
 	    if( stringRepresentation == null )
 			stringRepresentation = createCharArrayRepresentation(firstToken, lastToken);
 	    return stringRepresentation;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getFilename()
-	 */
-	public char[] getFilename() {
-		return firstToken.getFilename();
 	}
 }

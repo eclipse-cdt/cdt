@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 
@@ -35,14 +34,8 @@ public class TokenFactory {
         public String toString() {
             return fToken.toString();
         }
-        public boolean contains(ITokenDuple duple) {
-        	return fToken == duple.getFirstToken() && fToken == duple.getLastToken();
-        }
         public char[] extractNameFromTemplateId(){
             return fToken.getCharImage();
-        }
-        public int findLastTokenType(int t) {
-            return fToken.getType() == t ? 0 : -1;
         }
         public IToken getFirstToken() {
             return fToken;
@@ -62,21 +55,13 @@ public class TokenFactory {
         public int getStartOffset() {
             return fToken.getOffset();
         }
-        public ITokenDuple getSubrange(int startIndex, int endIndex) {
-            if( startIndex == 0 && endIndex == 0 ) return this;
-            return null;
-        }
         public List[] getTemplateIdArgLists() {
             return null;
         }
         public IToken getToken(int index) {
             if( index == 0 ) return fToken;
             return null;
-        }
-        public boolean isIdentifier() {
-            return ( fToken.getType() == IToken.tIDENTIFIER );
-        }
-        
+        }        
         public Iterator iterator() {
             return new Iterator() {
                 private boolean hasNext = true;
@@ -95,38 +80,17 @@ public class TokenFactory {
         public int length() {
             return 1;
         }
-        public boolean syntaxOfName() {
-            return isIdentifier();
-        }
-        public String[] toQualifiedName() {
-            return new String[] {fToken.getImage()};
-        }
-        public void freeReferences() {
-        }
-        public void acceptElement(ISourceElementRequestor requestor) {
-        }
         public ITokenDuple[] getSegments() {
         	return new ITokenDuple[] {this};
         }
 		public int getEndOffset() {
 			return fToken.getEndOffset();
 		}
-		public char[] getFilename() {
-			return fToken.getFilename();
-		}
-		public int getLineNumber() {
-			return fToken.getLineNumber();
-		}
 		public char[] toCharArray() {
 			return fToken.getCharImage();
 		}
 	}
 	
-	public static IToken createStandAloneToken( int type, String image )
-	{
-		return new ImagedToken( type, image.toCharArray(), 0, EMPTY_CHAR_ARRAY, 0);
-	}
-
 	public static ITokenDuple createTokenDuple(IToken first, IToken last) {
 		if (first == last) {
 			if (first instanceof ITokenDuple) {

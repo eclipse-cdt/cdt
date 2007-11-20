@@ -618,7 +618,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
         }
         translationUnit.setComments((IASTComment[]) ArrayUtil.trim(IASTComment.class, comments));
-        // compilationUnit.exitScope( requestor );
     }
 
     /**
@@ -826,7 +825,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             return unaryOperatorCastExpression(IASTUnaryExpression.op_minus);
         case IToken.tNOT:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_not);
-        case IToken.tCOMPL:
+        case IToken.tBITCOMPLEMENT:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_tilde);
         case IToken.tINCR:
             return unaryOperatorCastExpression(IASTUnaryExpression.op_prefixIncr);

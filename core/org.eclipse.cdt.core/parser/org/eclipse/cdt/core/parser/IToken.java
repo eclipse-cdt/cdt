@@ -32,34 +32,6 @@ public interface IToken {
 	public void setType(int i);	
 
 	public boolean isOperator();
-
-	/** 
-	 * @deprecated semantics is unclear, depends on the parser.
-	 * will be removed in 5.0
-	 */
-	public boolean isPointer();
-	
-	/** 
-	 * @deprecated semantics is unclear, depends on the parser.
-	 * will be removed in 5.0
-	 */
-	public boolean canBeAPrefix();
-
-	/** 
-	 * @deprecated semantics is unclear, depends on the parser.
-	 * will be removed in 5.0
-	 */
-	public boolean looksLikeExpression();
-
-	/** 
-	 * @deprecated will be removed in 5.0
-	 */
-	public int getLineNumber();
-	
-	/** 
-	 * @deprecated will be removed in 5.0
-	 */
-	public char [] getFilename();
 	
 	// Token types
 	int FIRST_RESERVED_PREPROCESSOR= -200;
@@ -240,8 +212,6 @@ public interface IToken {
 	static public final int tCOMMENT = 142;
 	/** @deprecated don't use it */
 	static public final int tBLOCKCOMMENT = 143;
-	/** @deprecated don't use it */
-	static public final int tLAST = 143;
 	static public final int tEND_OF_INPUT= 144;
 	
 	int FIRST_RESERVED_IGCCToken		= 150;

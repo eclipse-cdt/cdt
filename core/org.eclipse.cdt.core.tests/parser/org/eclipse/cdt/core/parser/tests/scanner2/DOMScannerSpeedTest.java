@@ -18,9 +18,7 @@ import java.util.Collections;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
@@ -33,7 +31,6 @@ import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
  */
 public class DOMScannerSpeedTest extends SpeedTest2 {
 	
-	private static final ISourceElementRequestor CALLBACK = new NullSourceElementRequestor();
 	private PrintStream stream;
 
 	public static void main(String[] args) {
@@ -83,7 +80,7 @@ public class DOMScannerSpeedTest extends SpeedTest2 {
 	 */
 	protected long testScan(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
 		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
-		DOMScanner scanner = createScanner(reader, info, mode, lang, CALLBACK, null, Collections.EMPTY_LIST ); 
+		DOMScanner scanner = createScanner(reader, info, mode, lang, null, Collections.EMPTY_LIST ); 
 		long startTime = System.currentTimeMillis();
 		int count = 0;
 		try {

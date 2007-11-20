@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner2;
 
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -21,14 +20,9 @@ import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -38,63 +32,11 @@ import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 // A test that just calculates the speed of the parser
 // Eventually, we'll peg a max time and fail the test if it exceeds it
 public class SpeedTest2 extends TestCase {
-
-	public static void main(String[] args) {
-		try {
-			new SpeedTest2().runTest(1);
-		} catch (Exception e) {
-			System.out.println(e);
-		}
-	}
-
-	public void test() throws Exception {
-		runTest(20);
-	}
 	
-	private void runTest(int n) throws Exception {
-		String code =
-			"#include <windows.h>\n" +
-			"#include <stdio.h>\n" +
-			"#include <iostream>\n";
-		
-		CodeReader reader = new CodeReader(code.toCharArray());
-		IScannerInfo info = getScannerInfo(false);
-		long totalTime = 0;
-		for (int i = 0; i < n; ++i) {
-			long time = testParse(reader, false, info, ParserLanguage.CPP);
-			if (i > 4)
-				totalTime += time;
-		}
-		
-		if (n > 5) {
-			System.out.println("Average Time: " + (totalTime / (n - 5)) + " millisecs");
-		}
-	}
-
-	/**
-	 * @param path
-	 * @param quick TODO
-	 */
-	protected long testParse(CodeReader reader, boolean quick, IScannerInfo info, ParserLanguage lang) throws Exception {
-		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE;
-		IScanner scanner = createScanner(reader, info, mode, lang, CALLBACK, null, Collections.EMPTY_LIST ); 
-		IParser parser = ParserFactory.createParser( scanner, CALLBACK, mode, lang, null);
-		long startTime = System.currentTimeMillis();
-		long totalTime;
-		parser.parse();
-		totalTime = System.currentTimeMillis() - startTime;
-		System.out.println( "Resulting parse took " + totalTime + " millisecs " +
-				scanner.getCount() + " tokens");
-		return totalTime;
-	}
-
-    public static DOMScanner createScanner( CodeReader code, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError
+    public static DOMScanner createScanner( CodeReader code, IScannerInfo config, ParserMode mode, ParserLanguage language, IParserLogService log, List workingCopies )
     {
-    	if( config == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_CONFIG );
-    	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
     	IParserLogService logService = ( log == null ) ? ParserFactory.createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
-		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
 		IScannerExtensionConfiguration configuration  = null;
 		if( language == ParserLanguage.C )
 		    configuration = new GCCScannerExtensionConfiguration();
@@ -103,7 +45,6 @@ public class SpeedTest2 extends TestCase {
 		return new DOMScanner( code, config, ourMode, language, logService, configuration, FileCodeReaderFactory.getInstance() );
     }
 
-	private static final ISourceElementRequestor CALLBACK = new NullSourceElementRequestor();
 
 	protected IScannerInfo getScannerInfo(boolean quick) {
 		if (quick)

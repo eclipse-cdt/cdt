@@ -34,21 +34,17 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArraySet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.CharTable;
-import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
@@ -603,9 +599,9 @@ abstract class BaseScanner implements IScanner {
 		    result = fetchToken();
 		} catch (OffsetLimitReachedException olre) {
 			if (contentAssistMode) {
-				IASTCompletionNode node= olre.getCompletionNode();
-				if (node != null) {
-					result= newToken(IToken.tCOMPLETION, node.getCompletionPrefix().toCharArray());
+				String prefix= olre.getPrefix();
+				if (prefix != null) {
+					result= newToken(IToken.tCOMPLETION, prefix.toCharArray());
 				} else {
 					result= newToken(IToken.tCOMPLETION);
 				}
@@ -4170,12 +4166,7 @@ abstract class BaseScanner implements IScanner {
      */
     protected void handleCompletionOnDefinition(String definition)
             throws EndOfFileException {
-        IASTCompletionNode node = new ASTCompletionNode(
-                IASTCompletionNode.CompletionKind.MACRO_REFERENCE, null, null,
-                definition, KeywordSets.getKeywords(KeywordSetKey.EMPTY,
-                        language), EMPTY_STRING, null);
-
-        throw new OffsetLimitReachedException(node);
+        throw new OffsetLimitReachedException(definition);
     }
 
     /**
@@ -4184,7 +4175,6 @@ abstract class BaseScanner implements IScanner {
     protected void handleCompletionOnExpression(char[] buffer)
             throws EndOfFileException {
 
-        IASTCompletionNode.CompletionKind kind = IASTCompletionNode.CompletionKind.MACRO_REFERENCE;
         int lastSpace = CharArrayUtils.lastIndexOf(SPACE, buffer);
         int lastTab = CharArrayUtils.lastIndexOf(TAB, buffer);
         int max = lastSpace > lastTab ? lastSpace : lastTab;
@@ -4199,41 +4189,20 @@ abstract class BaseScanner implements IScanner {
                 continue;
             handleInvalidCompletion();
         }
-        IASTCompletionNode node = new ASTCompletionNode(
-                kind,
-                null,
-                null,
-                new String(prefix),
-                KeywordSets
-                        .getKeywords(
-                                ((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND) ? KeywordSetKey.EMPTY
-                                        : KeywordSetKey.MACRO), language),
-                EMPTY_STRING, null);
-
-        throw new OffsetLimitReachedException(node);
+        throw new OffsetLimitReachedException(new String(prefix));
     }
 
     protected void handleNoSuchCompletion() throws EndOfFileException {
-        throw new OffsetLimitReachedException(new ASTCompletionNode(
-                IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null,
-                EMPTY_STRING, KeywordSets.getKeywords(KeywordSetKey.EMPTY,
-                        language), EMPTY_STRING, null));
+        throw new OffsetLimitReachedException(EMPTY_STRING);
     }
 
     protected void handleInvalidCompletion() throws EndOfFileException {
-        throw new OffsetLimitReachedException(new ASTCompletionNode(
-                IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null,
-                EMPTY_STRING, KeywordSets.getKeywords(KeywordSetKey.EMPTY,
-                        language), EMPTY_STRING, null));
+        throw new OffsetLimitReachedException(EMPTY_STRING);
     }
 
     protected void handleCompletionOnPreprocessorDirective(String prefix)
             throws EndOfFileException {
-        throw new OffsetLimitReachedException(new ASTCompletionNode(
-                IASTCompletionNode.CompletionKind.PREPROCESSOR_DIRECTIVE, null,
-                null, prefix, KeywordSets.getKeywords(
-                        KeywordSetKey.PP_DIRECTIVE, language), EMPTY_STRING,
-                null));
+        throw new OffsetLimitReachedException(prefix);
     }
 
     protected int getCurrentOffset() {

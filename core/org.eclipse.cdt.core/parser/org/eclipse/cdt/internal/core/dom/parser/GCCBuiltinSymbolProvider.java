@@ -84,7 +84,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	private static final char[] __BUILTIN_CLZLL   = "__builtin_clzll".toCharArray(); //$NON-NLS-1$
 	private static final char[] __BUILTIN_CTZLL   = "__builtin_ctzll".toCharArray(); //$NON-NLS-1$
 	private static final char[] __BUILTIN_POPCOUNTLL = "__builtin_popcountll".toCharArray(); //$NON-NLS-1$
-	private static final char[] __BUILTIN_PARITYLL   = "__builtin_parityll".toCharArray(); //$NON-NLS-1$	
+	private static final char[] __BUILTIN_PARITYLL   = "__builtin_parityll".toCharArray(); //$NON-NLS-1$
+	private static final char[] __BUILTIN_CHOOSE_EXPR = "__builtin_choose_expr".toCharArray(); //$NON-NLS-1$
 	private static final char[] __BUILTIN_TYPES_COMPATIBLE_P = "__builtin_types_compatible_p".toCharArray(); //$NON-NLS-1$
 	private static final char[] __BUILTIN_POWI   = "__builtin_powi".toCharArray(); //$NON-NLS-1$	
 	private static final char[] __BUILTIN_POWIF   = "__builtin_powif".toCharArray(); //$NON-NLS-1$	
@@ -306,6 +307,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
         __builtin_unsigned_long();
         __builtin_unsigned_long_long();
         __builtin_types_compatible_p();
+        __builtin_choose_expr();
 		__builtin_powi();
         __builtin_exit();
         __builtin_conj();
@@ -810,7 +812,26 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		}
 		bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
 	}
-	
+
+	private void __builtin_choose_expr() {
+		// type __builtin_choose_expr (const_exp, exp1, exp2)
+		IBinding temp = null;
+		if (lang == ParserLanguage.C) {
+			IFunctionType functionType = null;
+			IType[] parms = new IType[3];
+			parms[0] = c_unspecified;
+			parms[1] = c_unspecified;
+			parms[2] = c_unspecified;
+			functionType = new CFunctionType(c_unspecified, parms);
+			IParameter[] theParms = new IParameter[3];
+			theParms[0] = new CBuiltinParameter(parms[0]);
+			theParms[1] = theParms[0];
+			theParms[2] = theParms[0];
+			temp = new CImplicitFunction(__BUILTIN_CHOOSE_EXPR, scope, functionType, theParms, true);
+			bindings = (IBinding[])ArrayUtil.append(IBinding.class, bindings, temp);
+		} 
+	}
+
 	private void __builtin_types_compatible_p() {
 		// int __builtin_types_compatible_p( type1, type2 ) implemented via ( ... )
 		IBinding temp = null;

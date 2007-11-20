@@ -29,10 +29,8 @@ import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -91,7 +89,6 @@ public class DOMScannerTests extends BaseTestCase {
 		try	{
 			for(;;) {
 				IToken t= fScanner.nextToken();
-				assertTrue(t.getType() <= IToken.tLAST);
 			}
 		}
 		catch ( EndOfFileException e){
@@ -1658,12 +1655,6 @@ public class DOMScannerTests extends BaseTestCase {
 		StringBuffer buffer = new StringBuffer(
 				"#if CONST \n #endif \n #elif CONST \n int"); 
 		final List problems = new ArrayList();
-		ISourceElementRequestor requestor = new NullSourceElementRequestor() {
-			public boolean acceptProblem(IProblem problem) {
-				problems.add(problem);
-				return super.acceptProblem(problem);
-			}
-		};
 		initializeScanner(buffer.toString());
 		validateToken(IToken.t_int);
 		validateProblemCount(1);

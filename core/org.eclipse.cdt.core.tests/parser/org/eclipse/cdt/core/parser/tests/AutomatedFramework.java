@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,6 @@ import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 
 /**
  * @author aniefer
@@ -157,7 +154,6 @@ public abstract class AutomatedFramework extends TestCase {
 		return suite;
 	}
 
-	protected static ISourceElementRequestor nullCallback = new NullSourceElementRequestor();
 	protected static Properties properties = new Properties();
 	protected static String defaultNature;
 	protected static String outputFile = null;

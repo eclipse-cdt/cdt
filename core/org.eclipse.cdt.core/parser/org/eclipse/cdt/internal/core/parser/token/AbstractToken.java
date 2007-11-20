@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser.token;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -265,12 +264,6 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 		if( index == 0 ) return this;
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#isIdentifier()
-	 */
-	public boolean isIdentifier() {
-		return ( getType() == IToken.tIDENTIFIER );
-	}
 	
 	
 	private class SingleIterator implements Iterator
@@ -325,21 +318,8 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 		qualifiedName[0] = getImage();
 		return qualifiedName;
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
-	 */
-	public void freeReferences() {
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#acceptElement(org.eclipse.cdt.core.parser.ast.IReferenceManager)
-	 */
-	public void acceptElement(ISourceElementRequestor requestor) {
-	}
-	
+		
+		
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ITokenDuple#getSegmentIterator()
      */

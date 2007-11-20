@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.core.parser.Enum;
+
 
 /**
  * @author jcamelon
@@ -20,10 +19,7 @@ import org.eclipse.cdt.core.parser.Enum;
  */
 public interface IASTCompletionNode {
 
-	public static class CompletionKind extends Enum
-	{
-		// x.[ ] x->[ ]
-		public static final CompletionKind MEMBER_REFERENCE = new CompletionKind( 0 );
+	public static class CompletionKind extends Enum {
 		
 		// class member declaration type reference
 		public static final CompletionKind FIELD_TYPE = new CompletionKind( 2 );
@@ -92,42 +88,9 @@ public interface IASTCompletionNode {
 	 * @return		kind of completion expected
 	 */
 	public CompletionKind	getCompletionKind();
-	
-	/**
-	 * @return		the scope the code completion is within
-	 * 				should never be null 
-	 */
-	public IASTScope		getCompletionScope(); 
-	
-	/**
-	 * @return		the context (inter-statement) 
-	 * 		e.g.  LHS of postfix expression a->b, a.b or qualified name a::b is 'a'	
-	 * 		this can be null
-	 */
-	public IASTNode			getCompletionContext(); 
-
-	/**
-	 * @return		the name of the function/constructor being completed in
-	 * 					CONSTRUCTOR_REFERENCE
-	 * 					FUNCTION_REFERENCE
-	 */
-	public String			getFunctionName();
-	
-	/**
-	 * 
-	 * @return		the IASTExpression representing the number of parameters
-	 * input in the CONSTRUCTOR_REFERENCE/FUNCTION_REFERENCE context.  
-	 */
-	public IASTExpression   getFunctionParameters();
-	
+		
 	/**
 	 * @return		the prefix
 	 */
 	public String			getCompletionPrefix(); 
-	
-	/**
-	 * @return		iterator of string keywords
-	 */
-	public Iterator 		getKeywords();
-	
 }

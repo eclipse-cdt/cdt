@@ -23,15 +23,12 @@ import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
@@ -94,7 +91,7 @@ public class DOMScanner extends BaseScanner {
             IScannerExtensionConfiguration configuration,
             ICodeReaderFactory readerFactory) {
         super(reader, info, parserMode, language, log, configuration);
-        this.expressionEvaluator = new ExpressionEvaluator(null, null);
+        this.expressionEvaluator = new ExpressionEvaluator(null);
         this.codeReaderFactory = readerFactory;
         postConstructorSetup(reader, info);
     }
@@ -136,15 +133,6 @@ public class DOMScanner extends BaseScanner {
         if (locationMap instanceof ILocationResolver)
             return (ILocationResolver) locationMap;
         return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.cdt.core.parser.IScanner#setASTFactory(org.eclipse.cdt.core.parser.ast.IASTFactory)
-     */
-    public void setASTFactory(IASTFactory f) {
-        // do nothing
     }
 
     /*
@@ -898,21 +886,8 @@ public class DOMScanner extends BaseScanner {
             qualifiedName[0] = getImage();
             return qualifiedName;
         }
-        
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.core.parser.ITokenDuple#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
-         */
-        public void freeReferences() {
-        }
-        
-        
-        /* (non-Javadoc)
-         * @see org.eclipse.cdt.core.parser.ITokenDuple#acceptElement(org.eclipse.cdt.core.parser.ast.IReferenceManager)
-         */
-        public void acceptElement(ISourceElementRequestor requestor) {
-        }
-        
+                
+                
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ITokenDuple#getSegmentIterator()
          */
@@ -1194,9 +1169,9 @@ public class DOMScanner extends BaseScanner {
                         return Keywords._IMAGINARY ;
                     case IToken.t_restrict :
                         return Keywords.RESTRICT ;
-                    case IScanner.tPOUND:
+                    case IToken.tPOUND:
                         return "#"; //$NON-NLS-1$
-                    case IScanner.tPOUNDPOUND:
+                    case IToken.tPOUNDPOUND:
                         return "##"; //$NON-NLS-1$
                     case IToken.tEOC:
                         return "EOC"; //$NON-NLS-1$
@@ -1424,8 +1399,8 @@ public class DOMScanner extends BaseScanner {
         case IToken.t__Complex :    return Keywords.c_COMPLEX ;
         case IToken.t__Imaginary :  return Keywords.c_IMAGINARY ;
         case IToken.t_restrict :    return Keywords.cRESTRICT ;
-        case IScanner.tPOUND:       return Keywords.cpPOUND; 
-        case IScanner.tPOUNDPOUND:  return Keywords.cpPOUNDPOUND;
+        case IToken.tPOUND:       return Keywords.cpPOUND; 
+        case IToken.tPOUNDPOUND:  return Keywords.cpPOUNDPOUND;
         
         default :
             // we should never get here!

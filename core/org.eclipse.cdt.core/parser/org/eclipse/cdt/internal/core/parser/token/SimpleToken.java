@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2005 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.token;
 
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
 
@@ -295,9 +294,9 @@ public class SimpleToken extends AbstractToken implements IToken {
 					return Keywords._IMAGINARY ;
 				case IToken.t_restrict :
 					return Keywords.RESTRICT ;
-				case IScanner.tPOUND:
+				case IToken.tPOUND:
 					return "#"; //$NON-NLS-1$
-				case IScanner.tPOUNDPOUND:
+				case IToken.tPOUNDPOUND:
 					return "##"; //$NON-NLS-1$
 				case IToken.tEOC:
 					return "EOC"; //$NON-NLS-1$
@@ -451,8 +450,8 @@ public class SimpleToken extends AbstractToken implements IToken {
 		case IToken.t__Complex :	return Keywords.c_COMPLEX ;
 		case IToken.t__Imaginary :	return Keywords.c_IMAGINARY ;
 		case IToken.t_restrict :	return Keywords.cRESTRICT ;
-		case IScanner.tPOUND:		return Keywords.cpPOUND; 
-		case IScanner.tPOUNDPOUND:	return Keywords.cpPOUNDPOUND;
+		case IToken.tPOUND:		return Keywords.cpPOUND; 
+		case IToken.tPOUNDPOUND:	return Keywords.cpPOUNDPOUND;
 		
 		default :
 			// we should never get here!

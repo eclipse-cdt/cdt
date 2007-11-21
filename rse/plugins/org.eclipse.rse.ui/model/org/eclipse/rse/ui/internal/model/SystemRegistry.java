@@ -36,6 +36,7 @@
  * Martin Oberhuber (Wind River) - [165674] Sort subsystem configurations by priority then Id
  * Martin Oberhuber (Wind River) - [194898] Avoid NPE when doing EVENT_REFRESH_REMOTE on a subsys without filters
  * David McKnight   (IBM)        - [207100] adding ISystemRegistry.isRegisteredSystemRemoteChangeListener
+ * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -1392,22 +1393,25 @@ public class SystemRegistry implements ISystemRegistry
 	}
 
 	/**
-	 * Return all connections in all active profiles. Never returns null, but may return a zero-length array.
+	 * Return all connections in all active profiles.
+	 * Never returns null, but may return a zero-length array.
+	 * All array elements are valid hosts (never returns null elements).
 	 */
 	public IHost[] getHosts()
 	{
 		ISystemHostPool[] pools = getHostPools();
-		Vector v = new Vector();
-		for (int idx = 0; idx < pools.length; idx++)
-		{
-			IHost[] conns = getHostsByProfile(getSystemProfile(pools[idx]));
-			if (conns != null)
-				for (int jdx = 0; jdx < conns.length; jdx++)
-					v.addElement(conns[jdx]);
+		List hosts = new ArrayList();
+		for (int idx = 0; idx < pools.length; idx++) {
+			IHost[] conns = pools[idx].getHosts();
+			if (conns != null) {
+				for (int jdx = 0; jdx < conns.length; jdx++) {
+					//ISystemHostPool ensures that we never have "null" hosts.
+					assert conns[jdx]!=null : "Null host in pool "+pools[idx].getName()+" at "+jdx; //$NON-NLS-1$ //$NON-NLS-2$
+					hosts.add(conns[jdx]);
+				}
+			}
 		}
-		IHost[] allConns = new IHost[v.size()];
-		for (int idx = 0; idx < v.size(); idx++)
-			allConns[idx] = (IHost) v.elementAt(idx);
+		IHost[] allConns = (IHost[])hosts.toArray(new IHost[hosts.size()]); 
 		return allConns;
 	}
 	

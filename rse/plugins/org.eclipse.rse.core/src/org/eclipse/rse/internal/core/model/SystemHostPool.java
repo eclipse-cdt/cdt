@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * David Dykstal (IBM) - [176577] wrong enablement of "Move up/down" in connection context menu
+ * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -44,22 +45,31 @@ import org.eclipse.rse.internal.core.RSECoreMessages;
 
 /**
  * A pool of host objects.
- * There is one pool per profile.
- * It is named the same as its owning profile.
+ * <p>
+ * The host pool is tightly coupled to its owning profile: there is exactly one pool
+ * per profile, it always has the same name as the owning profile, and renaming it 
+ * also renames the profile. Persistence of the host pool is also handled through 
+ * persisting the owning profile.
+ * </p><p>
  * It is not persisted but provides a means of manipulating lists of host objects.
- * Hosts are created and destroyed by the host pool so that the the relationships between the two can be maintained. 
+ * Hosts are created and destroyed by the host pool so that the the relationships
+ * between the two can be maintained.
+ * </p><p>
+ * This class is thread-safe in the sense that integrity of the host list is maintained
+ * even if multiple threads call multiple methods in this interface concurrently.
+ * </p>
+ * @see ISystemHostPool
  */
 public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 {
 
 	protected static final String NAME_EDEFAULT = null;
 
-    private static Hashtable pools = null;
+    private static Hashtable pools = new Hashtable();
     private static String CONNECTION_FILE_NAME = "connection"; //$NON-NLS-1$
 
-
 	protected String name = NAME_EDEFAULT;
-    private java.util.List connections = null;
+    private List connections = new ArrayList();
 
     /**
      * Default constructor.
@@ -74,7 +84,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	 */
 	public static void reset()
 	{
-		pools = null;
+		pools.clear();
 	}
 
     // -------------------------------------------------------------------------------------
@@ -82,18 +92,20 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     // -------------------------------------------------------------------------------------
 	/**
 	 * Return (and create if necessary) the connection pool for a given system profile.
+	 * @param profile the profile to create a host pool for.
+	 * @throws Exception
 	 */
 	public static ISystemHostPool getSystemHostPool(ISystemProfile profile)
 	    throws Exception
 	{
-		if (pools == null)
-		  pools = new Hashtable();
 		SystemHostPool pool = (SystemHostPool)pools.get(profile);
 		if (pool == null)
 		{
 		  pool = new SystemHostPool();
 		  pool.setName(profile.getName());
 		  try {
+			//FIXME Class Javadocs say that SystemHostPool is not persisted, so this should be removed!
+			//Or should we get the pool contents by restoring the profile instead?
 		    pool.restore(); // restore connections
 		  } catch (Exception exc) {
 		  }
@@ -102,26 +114,35 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 		return pool;
 	}
 	
-    /**
-     * Return the system profile that owns this connection pool
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#getSystemProfile()
      */
     public ISystemProfile getSystemProfile()
     {
     	return SystemProfileManager.getDefault().getSystemProfile(getName());
     }	
 	
-	/**
-	 * Rename this connection pool.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemHostPool#renameHostPool(java.lang.String)
 	 */
 	public void renameHostPool(String newName)
 	{
-		IHost[] connections = getHosts();
-		String oldName = getName();
-		for (int idx=0; idx<connections.length; idx++)
-		{
-			connections[idx].renamingSystemProfile(oldName, newName);
+		//Threading: We need to ensure that new hosts are not added while the rename is 
+		//ongoing. Therefore, we lock even though renamingSystemProfile() is an alien
+		//method -- Javadoc in that method warns about the possible deadlock.
+		List hostList = getHostList();
+		synchronized(hostList) {
+			String oldName = getName();
+			Iterator it = hostList.iterator();
+			while (it.hasNext()) {
+				IHost curHost = (IHost)it.next();
+				curHost.renamingSystemProfile(oldName, newName);
+				
+			}
+			setName(newName);
 		}
-		setName(newName);
 	}
 	
 
@@ -131,24 +152,26 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      */
     public void printConnections()
     {
-        java.util.List conns = getHostList();
-        Iterator connsList = conns.iterator();
-        if (!connsList.hasNext())
-        {
-          System.out.println();
-          System.out.println("No connections"); //$NON-NLS-1$
-        }
-        while (connsList.hasNext())
-        {
-           System.out.println();
-           IHost conn = (IHost)connsList.next();
-           System.out.println("  AliasName.....: " + conn.getAliasName()); //$NON-NLS-1$
-           System.out.println("  -----------------------------------------------------"); //$NON-NLS-1$
-           System.out.println("  HostName......: " + conn.getHostName()); //$NON-NLS-1$
-           System.out.println("  SystemType....: " + conn.getSystemType().getId()); //$NON-NLS-1$
-           System.out.println("  Description...: " + conn.getDescription()); //$NON-NLS-1$
-           System.out.println("  UserId........: " + conn.getDefaultUserId()); //$NON-NLS-1$
-        }
+        List conns = getHostList();
+    	synchronized(conns) {
+            Iterator connsList = conns.iterator();
+            if (!connsList.hasNext())
+            {
+              System.out.println();
+              System.out.println("No connections"); //$NON-NLS-1$
+            }
+            while (connsList.hasNext())
+            {
+               System.out.println();
+               IHost conn = (IHost)connsList.next();
+               System.out.println("  AliasName.....: " + conn.getAliasName()); //$NON-NLS-1$
+               System.out.println("  -----------------------------------------------------"); //$NON-NLS-1$
+               System.out.println("  HostName......: " + conn.getHostName()); //$NON-NLS-1$
+               System.out.println("  SystemType....: " + conn.getSystemType().getId()); //$NON-NLS-1$
+               System.out.println("  Description...: " + conn.getDescription()); //$NON-NLS-1$
+               System.out.println("  UserId........: " + conn.getDefaultUserId()); //$NON-NLS-1$
+            }
+    	}
     }
 
     // -------------------------------------------------------------------------------------
@@ -198,8 +221,8 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         	  conn = systemType.createNewHostInstance(profile);
           }
           // Fallback to create host object instance here if failed by system type provider.
-          if (conn == null) conn = new Host(profile);
           assert conn != null;
+          if (conn == null) conn = new Host(profile);
           
           addHost(conn); // only record internally if saved successfully
           conn.setHostPool(this);          
@@ -258,19 +281,20 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
    	    commit(conn);
     }
     
-    
-    /**
-     * Return array of connections in this pool
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#getHosts()
      */
     public IHost[] getHosts()
     {
-
-    	return (IHost[])getHostList().toArray(new IHost[connections.size()]);
+    	//Must be synchronized in order to avoid change of host list size while populating the array
+    	List conns = getHostList();
+    	synchronized(conns) {
+        	return (IHost[])conns.toArray(new IHost[conns.size()]);
+    	}
     }
     
- 
-    
-    /*
+    /**
      * Invalidate cache so it will be regenerated
      */
     protected void invalidateCache()
@@ -278,127 +302,121 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     	setDirty(true);
     }
 
-    /**
-     * Return a connection object, given its alias name.
-     * Can be used to test if an alias name is already used (non-null return).
-     * @param aliasName unique aliasName (case insensitive) to search on.
-     * @return SystemConnection object with unique aliasName, or null if
-     *  no connection object with this name exists.
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#getHost(java.lang.String)
      */
-    public IHost getHost(String aliasName)
+    public final IHost getHost(String aliasName)
     {
-        IHost conn = null;
-        IHost currconn = null;
-        java.util.List conns = getHostList();
-        Iterator i = conns.iterator();
-        while (i.hasNext() && (conn==null))
-        {
-           currconn = (IHost)i.next();
-           if (currconn.getAliasName().equalsIgnoreCase(aliasName))
-             conn = currconn;
+    	//This method is final because it is called from inside the synchronized block
+    	//in the orderHosts() method. Also, if subclasses want to override the way how
+    	//hosts are returned and compared, they better need to override the List 
+    	//implementation that's returned by getHostList().
+        List conns = getHostList();
+        synchronized(conns) {
+            Iterator i = conns.iterator();
+            while (i.hasNext())
+            {
+               IHost currconn = (IHost)i.next();
+               if (currconn.getAliasName().equalsIgnoreCase(aliasName))
+            	   return currconn;
+            }
         }
-        return conn;
+        return null;
     }
-    /**
-     * Return the connection at the given zero-based offset
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#getHost(int)
      */
-    public IHost getHost(int pos)
+    public final IHost getHost(int pos)
     {
-        java.util.List conns = getHostList();
-        if (pos < conns.size())
-          return (IHost)conns.get(pos);
-        else
-          return null;
+    	List conns = getHostList();
+        synchronized(conns) {
+            if (pos < conns.size())
+              return (IHost)conns.get(pos);
+            else
+              return null;
+        }
     }
-    /**
-     * Return the zero-based position of a SystemConnection object within its profile.
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#getHostPosition(org.eclipse.rse.core.model.IHost)
      */
     public int getHostPosition(IHost conn)
     {
-    	int position = -1;
-    	boolean match = false;    	
-    	java.util.List conns = getHostList();
-    	Iterator i = conns.iterator();
-    	int idx = 0;
-    	while (!match && i.hasNext())
-    	{
-           IHost currConn = (IHost)i.next();
-           if (conn.equals(currConn))
-           {
-           	 match = true;
-           	 position = idx;
-           }
-           idx++;
+    	List hostList = getHostList();
+    	synchronized(hostList) {
+    		return hostList.indexOf(conn);
     	}
-    	return position;
     }
     
-    /**
-     * Return the number of SystemConnection objects within this pool.
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#getHostCount()
      */
     public int getHostCount()
     {
-        java.util.List conns = getHostList();    	
-        return conns.size();
+        List conns = getHostList();    	
+    	synchronized(conns) {
+            return conns.size();
+    	}
     }
 
 
     public boolean addHost(IHost conn)
     {
-    	List hostList = getHostList();
-    	if (!hostList.contains(conn))
-    	{
-    		hostList.add(conn);
+    	assert conn!=null;
+    	if (conn!=null) {
+           	List hostList = getHostList();
+       		synchronized(hostList) {
+            	if (!hostList.contains(conn))
+            	{
+            		hostList.add(conn);
+            	}
+    		}
+            conn.setHostPool(this);
+            invalidateCache();
+            return true;
     	}
-        conn.setHostPool(this);
-        invalidateCache();
-        return true;
+        return false;
     }
 
-    /**
-     * Removes a given connection from the list and deletes it from disk.
-     * <p>
-	 * This will:
-	 * <ul>
-	 *    <li>Delete the connection in memory
-	 *    <li>Delete the underlying folder
-	 * </ul> 
-     * <p>
-     * @param conn SystemConnection object to remove
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#deleteHost(org.eclipse.rse.core.model.IHost)
      */
     public void deleteHost(IHost conn)
     {
     	conn.deletingHost(); // let connection do any necessary cleanup
-        getHostList().remove(conn);
+    	List hostList = getHostList();
+		synchronized(hostList) {
+			hostList.remove(conn);
+		}
         setDirty(true);
         conn.getSystemProfile().commit();
     }
 
-    /**
-     * Renames a given connection in the list.
-	 * This will:
-	 * <ul>
-	 *    <li>Rename the profile in memory
-	 *    <li>Rename the underlying folder
-	 *    <li>Update the user preferences if this profile is currently active.
-	 * </ul>
-     * @param conn SystemConnection object to rename
-     * @param newName The new name to give that connection.
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#renameHost(org.eclipse.rse.core.model.IHost, java.lang.String)
      */
     public void renameHost(IHost conn, String newName)
            throws Exception
     {
-        conn.setAliasName(newName);
+    	//must not change the alias name while a getHost() or orderHosts() is ongoing
+    	synchronized(connections) {
+            conn.setAliasName(newName);
+    	}
         invalidateCache();
    	    commit(conn);
     }
 
 
-    /**
-     * Duplicates a given connection in this list within this list or another list.
-     * @param targetPool The SystemConnectionPool to hold the copied connection. Can equal this connection, as long as alias name is unique
-     * @param conn SystemConnection object (within our pool) to clone
-     * @param aliasName New, unique, alias name to give this connection. Clone will fail if this is not unique.
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#cloneHost(org.eclipse.rse.core.model.ISystemHostPool, org.eclipse.rse.core.model.IHost, java.lang.String)
      */
     public IHost cloneHost(ISystemHostPool targetPool, IHost conn, String aliasName)
        throws Exception
@@ -409,14 +427,10 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         return copy;
     }
 
-    /**
-	 * Move existing hosts a given number of positions in the same pool.
-	 * If the delta is negative, they are all moved up (left) by the given amount. If 
-	 * positive, they are all moved down (right) by the given amount.<p>
-	 * After the move, the pool containing the moved host is committed.
-	 * @param hosts an Array of hosts to move, can be empty but must not be null.
-	 * @param delta the amount by which to move the hosts
-	 */
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.rse.core.model.ISystemHostPool#moveHosts(org.eclipse.rse.core.model.IHost[], int)
+     */
 	public void moveHosts(IHost hosts[], int delta) {
 		/* 
 		 * Determine the indices of the supplied hosts in this pool.
@@ -429,19 +443,22 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 				return  m * ((Integer)o1).compareTo((Integer)o2);
 			}
 		});
+		boolean moved;
 		List hostList = getHostList();
-		for (int i = 0; i < hosts.length; i++) {
-			IHost host = hosts[i];
-			int index = hostList.indexOf(host);
-			if (index >= 0) {
-				indices.add(new Integer(index));
+		synchronized(hostList) {
+			for (int i = 0; i < hosts.length; i++) {
+				IHost host = hosts[i];
+				int index = hostList.indexOf(host);
+				if (index >= 0) {
+					indices.add(new Integer(index));
+				}
 			}
-		}
-		// Go through the sorted list of indices.
-		boolean moved = indices.size() > 0;
-		for (Iterator z = indices.iterator(); z.hasNext() && moved;) {
-			int index = ((Integer) z.next()).intValue();
-			moved &= moveHost(hostList, index, delta);
+			// Go through the sorted list of indices.
+			moved = indices.size() > 0;
+			for (Iterator z = indices.iterator(); z.hasNext() && moved;) {
+				int index = ((Integer) z.next()).intValue();
+				moved &= moveHost(hostList, index, delta);
+			}
 		}
 		if (moved) {
 			invalidateCache();
@@ -450,7 +467,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	}
     
     /**
-	 * Move a host to a new location in the host pool.
+	 * Move a host to a new location in the passed-in host list.
 	 * @param hostList the list of hosts to modify
 	 * @param oldPos the index of the host to move. If outside the bounds of the list, the list is not altered.
 	 * @param delta the amount by which to move the host. If the resulting
@@ -471,19 +488,29 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 		return moved;
 	}
 
-	/**
-	 * Order connections according to user preferences.
-	 * Called after restore.
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.ISystemHostPool#orderHosts(java.lang.String[])
 	 */
 	public void orderHosts(String[] names) {
 		List connList = getHostList();
-		IHost[] conns = new IHost[names.length];
-		for (int idx = 0; idx < conns.length; idx++) {
-			conns[idx] = getHost(names[idx]);
-		}
-		connList.clear();
-		for (int idx = 0; idx < conns.length; idx++) {
-			connList.add(conns[idx]);
+		synchronized(connList) {
+			//Threading: need to call getHost() from inside the synchronized block in order
+			//to avoid problems with adding/removing hosts while the re-ordering is taking
+			//place... hosts added during the re-ordering could otherwise be deleted.
+			//In order to not have an alien method call here, getHost() is declared final.
+			IHost[] conns = new IHost[names.length];
+			for (int idx = 0; idx < conns.length; idx++) {
+				conns[idx] = getHost(names[idx]); //may return null host
+			}
+			//TODO what should we do with hosts that are not in the name list?
+			//Currently, these will be removed... should they be added at the end instead?
+			connList.clear();
+			for (int idx = 0; idx < conns.length; idx++) {
+				if (conns[idx]!=null) {
+					connList.add(conns[idx]);
+				}
+			}
 		}
 		invalidateCache();
 	}
@@ -503,6 +530,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     {
         return getRootSaveFileName(connection.getAliasName());
     }
+    
     /**
      * Return the root save file name without the extension .xmi
      */
@@ -521,8 +549,9 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
           return getName();
     }
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEModelObject#getName()
 	 */
 	public String getName()
 	{
@@ -535,20 +564,41 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	}
 
 	/**
-	 * @generated This field/method will be replaced during code generation.
+	 * Set the name of this host pool.
+	 * <p>
+	 * This method should not be called by clients directly in order 
+	 * to maintain correct relationship to the owning profile. Clients
+	 * should call {@link #renameHostPool(String)} instead.
+	 * </p>
+	 * @param newName The new value of the Name attribute.
 	 */
-	public void setName(String newName)
+	protected void setName(String newName)
 	{
 		name = newName;
 	}
 
-
-	public List getHostList()
+	/**
+	 * Return the internal list of connection references.
+	 * 
+	 * The list returned is considered internal and not synchronized.
+	 * Modifications will directly apply to any other client or thread.
+	 * Therefore, users of the returned host list should typically be
+	 * synchronized to avoid modification of the list through another thread
+	 * when working on it.
+	 * 
+	 * Clients are not expected to get a handle on this list and
+	 * are expected to use @link{#getHosts()} instead.
+	 * 
+	 * Subclasses may override this method to perform additional work
+	 * or return a different kind of List implementation, but they must
+	 * ensure that they always return the same List object (because 
+	 * clients will synchronize on that object). In other words, the
+	 * List may be modified but never totally exchanged.
+	 * 
+	 * @return The internal list of connection references.
+	 */
+	protected List getHostList()
 	{
-		if (connections == null)
-		{
-			connections = new ArrayList();
-		}
 		return connections;
 	}
 

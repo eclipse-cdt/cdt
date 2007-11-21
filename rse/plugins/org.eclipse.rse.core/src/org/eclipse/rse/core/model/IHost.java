@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [175262] IHost.getSystemType() should return IRSESystemType 
+ * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -87,7 +88,13 @@ public interface IHost extends IAdaptable, IRSEModelObject {
 	 * Notification method called when this connection's profile is being renamed.
 	 * Allows doing pre-death cleanup in overriders.
 	 * <p>
+	 * Implementations must not fork off other threads in the implementation of this method,
+	 * since the old and new profiles will be locked during the rename operation so deadlock
+	 * could occur when another thread tries to access theprofile during the time of rename
+	 * ongoing.
+	 * </p><p>
 	 * What we need to do is rename our entry in the preference store for our default userId.
+	 * </p>
 	 */
 	public void renamingSystemProfile(String oldName, String newName);
 

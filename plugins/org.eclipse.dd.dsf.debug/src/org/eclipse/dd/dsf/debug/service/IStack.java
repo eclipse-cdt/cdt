@@ -96,12 +96,12 @@ public interface IStack extends IDMService {
     /**
      * Retrieves variables which were arguments to the stack frame's function.
      */
-    void getArguments(IDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+    void getArguments(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
     
     /**
      * Retrieves variables local to the stack frame.
      */
-    void getLocals(IDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
+    void getLocals(IFrameDMContext frameCtx, DataRequestMonitor<IVariableDMContext[]> rm);
     
     /**
      * Retrieves the number of stack frames available for the given context..

@@ -96,6 +96,19 @@ public class CommandCache implements ICommandListener
         }
     }
 
+    class CommandResultInfo {
+    	private final ICommandResult fData;
+    	private final IStatus fStatus;
+
+    	public CommandResultInfo(ICommandResult data, IStatus status) {
+    		fData = data;
+    		fStatus = status;
+    	}
+
+    	public ICommandResult getData() { return fData; }
+    	public IStatus getStatus() { return fStatus; }
+    }
+    
     /*
      *  This class contains 5 significant lists.
      *
@@ -135,7 +148,7 @@ public class CommandCache implements ICommandListener
 
     private ICommandControl fCommandControl;
     
-    private Map<IDMContext, HashMap<CommandInfo, ICommandResult>> fCachedContexts = new HashMap<IDMContext, HashMap<CommandInfo, ICommandResult>>();
+    private Map<IDMContext, HashMap<CommandInfo, CommandResultInfo>> fCachedContexts = new HashMap<IDMContext, HashMap<CommandInfo, CommandResultInfo>>();
     
     private ArrayList<CommandInfo> fPendingQCommandsSent = new ArrayList<CommandInfo>();
     
@@ -239,13 +252,14 @@ public class CommandCache implements ICommandListener
          * If command is already cached, just return the cached data.
          */ 
         if(fCachedContexts.get(context) != null && fCachedContexts.get(context).containsKey(cachedCmd)){
-            // Cast to the erased type of the returned command result.   
-            // To ensure type safety, we are relying on the correct matching
-            // of command and result in the cached results map.
-            @SuppressWarnings("unchecked") 
-            V v = (V) fCachedContexts.get(context).get(cachedCmd);
-            
-            rm.setData(v);
+        	CommandResultInfo result = fCachedContexts.get(context).get(cachedCmd);
+            if (result.getStatus().isOK()) {
+            	@SuppressWarnings("unchecked") 
+            	V v = (V)result.getData();
+            	rm.setData(v);
+            } else {
+            	rm.setStatus(result.getStatus());
+            }
             rm.done();
             return;
         } 
@@ -316,14 +330,16 @@ public class CommandCache implements ICommandListener
                         return ;
                     }
 
+                    ICommandResult result = getData();
+                    IStatus status = getStatus();
+
                     if ( finalCachedCmd.getCommandstyle() == CommandStyle.COALESCED ) {
                         /*
                          *  We matched a command which is itself  already a COALESCED command.  So
-                         *  we need to go throught the list of unsent commands which were not sent
+                         *  we need to go through the list of unsent commands which were not sent
                          *  because  the coalesced command represented it.  For each match we find
                          *  we create a new result from the coalesced command for it.
                          */
-                        ICommandResult result = getData();
                         
                         for ( CommandInfo waitingEntry : new ArrayList<CommandInfo>(fPendingQWaitingForCoalescedCompletion) ) {
                             
@@ -336,40 +352,39 @@ public class CommandCache implements ICommandListener
                                 
                                 // Cast the calculated result back to the requested type.
                                 @SuppressWarnings("unchecked")
-                                V newresult = (V)result.getSubsetResult(waitingEntry.getCommand());
-
+                                V subResult = (V)result.getSubsetResult(waitingEntry.getCommand());
+                                CommandResultInfo subResultInfo = new CommandResultInfo(subResult, status);
                                 
                                 if(fCachedContexts.get(context) != null){
-                                	fCachedContexts.get(context).put(waitingEntry, newresult);
-                                }	
-                                else{
-                                	HashMap<CommandInfo, ICommandResult> map = new HashMap<CommandInfo, ICommandResult>();
-                                	map.put(waitingEntry, newresult);
+                                	fCachedContexts.get(context).put(waitingEntry, subResultInfo);
+                                } else {
+                                	HashMap<CommandInfo, CommandResultInfo> map = new HashMap<CommandInfo, CommandResultInfo>();
+                                	map.put(waitingEntry, subResultInfo);
                                 	fCachedContexts.put(context, map);
                                 }	
 
-                                if (!getStatus().isOK()) {
+                                if (!status.isOK()) {
                                     
                                     /*
                                      *  We had some form of error with the original command. So notify the 
-                                     *  original requestors of the issues.
+                                     *  original requesters of the issues.
                                      */
                                     for (DataRequestMonitor<?> pendingRM : waitingEntry.getRequestMonitorList()) {
-                                        pendingRM.setStatus(getStatus());
+                                        pendingRM.setStatus(status);
                                         pendingRM.done();
                                     }
                                 } else {
-                                    assert newresult != null;
+                                    assert subResult != null;
                                     
                                     /*
-                                     *  Notify the original requestors of the positive results.
+                                     *  Notify the original requesters of the positive results.
                                      */
                                     for (DataRequestMonitor<? extends ICommandResult> pendingRM : waitingEntry.getRequestMonitorList()) {
                                         // Cast the pending return token to match the requested type.
                                         @SuppressWarnings("unchecked")
                                         DataRequestMonitor<V> vPendingRM = (DataRequestMonitor<V>) pendingRM;
                                         
-                                        vPendingRM.setData(newresult);
+                                        vPendingRM.setData(subResult);
                                         vPendingRM.done();
                                     }
                                 }
@@ -378,38 +393,38 @@ public class CommandCache implements ICommandListener
                     } else {
                         /*
                          *  This is an original request which completed. Indicate success or
-                         *  failure to the original requestors.
+                         *  failure to the original requesters.
                          */
+                        CommandResultInfo resultInfo = new CommandResultInfo(result, status);
 
-                        if (!getStatus().isOK()) {
+                        if (fCachedContexts.get(context) != null){
+                        	fCachedContexts.get(context).put(finalCachedCmd, resultInfo);
+                        } else {
+                        	HashMap<CommandInfo, CommandResultInfo> map = new HashMap<CommandInfo, CommandResultInfo>();
+                        	map.put(finalCachedCmd, resultInfo);
+                        	fCachedContexts.put(context, map);
+                        }
+                        
+                        if (!status.isOK()) {
                             /*
                              *  We had some form of error with the original command. So notify the 
-                             *  original requestors of the issues.
+                             *  original requesters of the issues.
                              */
                             for (DataRequestMonitor<?> pendingRM : finalCachedCmd.getRequestMonitorList()) {
-                                pendingRM.setStatus(getStatus());
+                                pendingRM.setStatus(status);
                                 pendingRM.done();
                             }
                         } else {
                             // Cast the calculated result back to the requested type.
                             @SuppressWarnings("unchecked")
-                            V result = (V)getData();
+                            V vResult = (V)result;
                             
-                            if(fCachedContexts.get(context) != null){
-                            	fCachedContexts.get(context).put(finalCachedCmd, result);
-                            }	
-                            else{
-                            	HashMap<CommandInfo, ICommandResult> map = new HashMap<CommandInfo, ICommandResult>();
-                            	map.put(finalCachedCmd, result);
-                            	fCachedContexts.put(context, map);
-                            }	
-
                             for (DataRequestMonitor<? extends ICommandResult> pendingRM : finalCachedCmd.getRequestMonitorList()) {
                                 // Cast the pending return token to match the requested type.
                                 @SuppressWarnings("unchecked")
                                 DataRequestMonitor<V> vPendingRM = (DataRequestMonitor<V>) pendingRM;
                                 
-                                vPendingRM.setData(result);
+                                vPendingRM.setData(vResult);
                                 vPendingRM.done();
                             }
                         }

@@ -11,7 +11,7 @@ import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 

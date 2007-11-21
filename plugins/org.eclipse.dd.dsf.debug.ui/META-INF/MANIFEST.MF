@@ -26,9 +26,9 @@ Export-Package:
  org.eclipse.dd.dsf.debug.ui.viewmodel,
  org.eclipse.dd.dsf.debug.ui.viewmodel.dm,
  org.eclipse.dd.dsf.debug.ui.viewmodel.expression,
- org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport,
  org.eclipse.dd.dsf.debug.ui.viewmodel.launch,
  org.eclipse.dd.dsf.debug.ui.viewmodel.modules,
+ org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat,
  org.eclipse.dd.dsf.debug.ui.viewmodel.register,
  org.eclipse.dd.dsf.debug.ui.viewmodel.variable
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

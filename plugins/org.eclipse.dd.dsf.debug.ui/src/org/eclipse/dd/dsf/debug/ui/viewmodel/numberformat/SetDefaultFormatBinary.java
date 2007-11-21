@@ -8,15 +8,15 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat;
 
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 
 @SuppressWarnings("restriction")
-public class SetDefaultFormatDecimal extends AbstractSetFormatStyle {
+public class SetDefaultFormatBinary extends AbstractSetFormatStyle {
 
     @Override
     protected String getFormatStyle() {
-        return IFormattedValues.DECIMAL_FORMAT;
+        return IFormattedValues.BINARY_FORMAT;
     }
 }

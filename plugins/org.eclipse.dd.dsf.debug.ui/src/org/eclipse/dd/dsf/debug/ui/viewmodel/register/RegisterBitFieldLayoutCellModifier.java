@@ -14,7 +14,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMData;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IMnemonic;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.WatchExpressionCellModifier;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.IFormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;

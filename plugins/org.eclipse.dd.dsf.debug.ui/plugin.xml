@@ -211,11 +211,18 @@
    </extension>
    
 	<extension 
-	   point="org.eclipse.debug.ui.detailPaneFactories">
-       <detailFactories
-             class="org.eclipse.dd.dsf.debug.ui.viewmodel.detailpanesupport.DetailPaneFactory"
+	    point="org.eclipse.debug.ui.detailPaneFactories">
+        <detailFactories
+             class="org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail.NumberFormatDetailPaneFactory"
              id="org.eclipse.dd.dsf.debug.ui.viewmodel.detailPaneFactory">
-       </detailFactories>
+			<enablement>
+		        <with variable="selection">
+	        		<iterate>
+					    <instanceof value="org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext"/>
+	        		</iterate>
+	      		</with>
+	      	</enablement>      
+        </detailFactories>
     </extension>
     
 </plugin>

@@ -12,6 +12,7 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.dd.dsf.debug.ui"; //$NON-NLS-1$
 
+	
 	// The shared instance
 	private static DsfDebugUIPlugin plugin;
     
@@ -33,6 +34,7 @@ public class DsfDebugUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
         fgBundleContext = context;
+
 	}
 
 	/*

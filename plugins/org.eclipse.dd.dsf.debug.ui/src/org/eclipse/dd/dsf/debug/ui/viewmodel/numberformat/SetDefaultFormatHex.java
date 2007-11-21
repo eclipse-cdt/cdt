@@ -8,13 +8,15 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat;
 
-import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 
-/**
- * 
- */
-public interface IFormattedValueVMContext extends IVMContext {
-    IFormattedValuePreferenceStore getPreferenceStore();
+@SuppressWarnings("restriction")
+public class SetDefaultFormatHex extends AbstractSetFormatStyle {
+
+    @Override
+    protected String getFormatStyle() {
+        return IFormattedValues.HEX_FORMAT;
+    }
 }

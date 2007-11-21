@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Randy Rohrbach (Wind River Systems, Inc.) - extended implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.detailpanesupport;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.ITextOperationTarget;

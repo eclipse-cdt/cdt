@@ -8,15 +8,21 @@
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat;
 
-import org.eclipse.dd.dsf.debug.service.IFormattedValues;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+
+/**
+ * 
+ */
 
 @SuppressWarnings("restriction")
-public class SetDefaultFormatNatural extends AbstractSetFormatStyle {
-
-    @Override
-    protected String getFormatStyle() {
-        return IFormattedValues.NATURAL_FORMAT;
-    }
+public interface IFormattedValuePreferenceStore {
+    /*
+     *  Retrieves for the specified Presentation Context the configured format.
+     *  
+     *  @param context Specified Presentation Context 
+     *  @return Format ID.
+     */
+    public String getCurrentNumericFormat( IPresentationContext context );
 }

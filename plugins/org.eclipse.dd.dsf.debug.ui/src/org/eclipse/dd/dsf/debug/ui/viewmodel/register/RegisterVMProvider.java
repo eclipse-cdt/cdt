@@ -11,7 +11,7 @@
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
 import org.eclipse.dd.dsf.debug.ui.viewmodel.dm.AbstractDebugDMVMProviderWithCache;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.formatsupport.FormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.FormattedValuePreferenceStore;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;

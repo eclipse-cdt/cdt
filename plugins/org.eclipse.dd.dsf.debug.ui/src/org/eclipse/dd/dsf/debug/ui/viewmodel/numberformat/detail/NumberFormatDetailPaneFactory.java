@@ -8,7 +8,7 @@
  * Contributors:
  *     Randy Rohrbach (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.detailpanesupport;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,18 +21,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  *  This provides a simple Detail Pane Factory for the core debug views for DSF.
  */
 
-@SuppressWarnings("restriction")
-public class DetailPaneFactory implements IDetailPaneFactory {
+public class NumberFormatDetailPaneFactory implements IDetailPaneFactory {
 
-    public static final String DSF_DETAIL_PANE_ID   = Messages.getString("DetailPaneFactory.0"); //$NON-NLS-1$
-    public static final String DSF_DETAIL_PANE_NAME = Messages.getString("DetailPaneFactory.1"); //$NON-NLS-1$
-    public static final String DSF_DETAIL_PANE_DESC = Messages.getString("DetailPaneFactory.2");  //$NON-NLS-1$
-    
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#createDetailsArea(java.lang.String)
      */
     public IDetailPane createDetailPane(String id) {
-        return new DetailPane();
+        return new NumberFormatDetailPane();
     }
 
     /* (non-Javadoc)
@@ -41,7 +36,7 @@ public class DetailPaneFactory implements IDetailPaneFactory {
     @SuppressWarnings("unchecked")
     public Set getDetailPaneTypes(IStructuredSelection selection) {
         Set<String> possibleIDs = new HashSet<String>(1);
-        possibleIDs.add(DSF_DETAIL_PANE_ID);
+        possibleIDs.add(NumberFormatDetailPane.ID);
         return possibleIDs;
     }
     
@@ -49,15 +44,15 @@ public class DetailPaneFactory implements IDetailPaneFactory {
      * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
      */
     public String getDefaultDetailPane(IStructuredSelection selection) {
-        return DSF_DETAIL_PANE_ID;
+        return NumberFormatDetailPane.ID;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getName(java.lang.String)
      */
     public String getDetailPaneName(String id) {
-        if (id.equals(DSF_DETAIL_PANE_ID)){
-            return DSF_DETAIL_PANE_NAME;
+        if (id.equals(NumberFormatDetailPane.ID)){
+            return MessagesForNumberFormatDetail.NumberFormatDetailPane_name;
         }
         return null;
     }
@@ -66,8 +61,8 @@ public class DetailPaneFactory implements IDetailPaneFactory {
      * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getDescription(java.lang.String)
      */
     public String getDetailPaneDescription(String id) {
-        if (id.equals(DSF_DETAIL_PANE_ID)){
-            return DSF_DETAIL_PANE_DESC;
+        if (id.equals(NumberFormatDetailPane.ID)){
+            return MessagesForNumberFormatDetail.NumberFormatDetailPane_description;
         }
         return null;
     }

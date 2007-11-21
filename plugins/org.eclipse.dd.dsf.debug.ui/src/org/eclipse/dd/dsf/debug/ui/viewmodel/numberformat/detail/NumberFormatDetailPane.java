@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Randy Rohrbach (Wind River Systems, Inc.) - extended implementation
  *******************************************************************************/
-package org.eclipse.dd.dsf.debug.ui.viewmodel.detailpanesupport;
+package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -110,8 +110,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
-@SuppressWarnings("restriction")
-public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListener {
+public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropertyChangeListener {
 
     /**
      * The <code>IWorkbenchPartSite</code> that the details area (and the 
@@ -258,9 +257,7 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
      * The ID, name and description of this pane are stored in constants so that the class
      * does not have to be instantiated to access them.
      */
-    public static final String ID = DetailMessages.DefaultDetailPane_0;
-    public static final String NAME = DetailMessages.DefaultDetailPane_1;
-    public static final String DESCRIPTION = DetailMessages.DefaultDetailPane_57;
+    public static final String ID = "NumberFormatPane";
     
     /**
      * Data structure for the position label value.
@@ -304,12 +301,11 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
          */
-        @SuppressWarnings("unchecked")
         @Override
         protected IStatus run(IProgressMonitor monitor) {
             String message = null;
             fMonitor = monitor;
-            Iterator<Object> iterator = fElements.iterator();
+            Iterator<?> iterator = fElements.iterator();
             while (iterator.hasNext()) {
                 if (monitor.isCanceled()) {
                     break;
@@ -821,21 +817,21 @@ public class DetailPane implements IDetailPane, IAdaptable, IPropertyChangeListe
      * @see org.eclipse.debug.ui.IDetailPane#getDescription()
      */
     public String getDescription() {
-        return DetailPaneFactory.DSF_DETAIL_PANE_DESC;
+        return MessagesForNumberFormatDetail.NumberFormatDetailPane_description;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getID()
      */
     public String getID() {
-        return DetailPaneFactory.DSF_DETAIL_PANE_ID;
+        return ID;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.IDetailPane#getName()
      */
     public String getName() {
-        return DetailPaneFactory.DSF_DETAIL_PANE_NAME;
+        return MessagesForNumberFormatDetail.NumberFormatDetailPane_name;
     }
     
     /* (non-Javadoc)

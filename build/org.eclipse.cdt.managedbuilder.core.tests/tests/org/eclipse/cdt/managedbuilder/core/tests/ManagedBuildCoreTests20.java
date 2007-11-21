@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -20,18 +19,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -48,8 +38,6 @@ import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.testplugin.BuildSystemTestHelper;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -1889,30 +1877,6 @@ public class ManagedBuildCoreTests20 extends TestCase {
 
 	public void testThatAlwaysFails() {
 		assertTrue(false);
-	}
-	
-	public void testBug43450 () throws Exception{
-		IProject project = createProject( projectName );
-		
-		IFolder folder = project.getProject().getFolder( "includes" );
-		if( !folder.exists() ){
-			folder.create( false, true, null );
-		}
-		
-		IFile file = project.getProject().getFile( "includes/header.h" );
-		if( !file.exists()   ){
-			file.create( new ByteArrayInputStream( "class A { public : static int i; };".getBytes() ), false, null );
-		}
-		
-		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
-		IScannerInfo info = provider.getScannerInformation( project );
-		ISourceElementRequestor callback = new NullSourceElementRequestor();
-		
-		IScanner scanner = ParserFactory.createScanner( new CodeReader( "#include <header.h>\n int A::i = 1;".toCharArray() ), 
-														info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback, new NullLogService(), null);
-		
-		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, null );
-		assertTrue( parser.parse() );
 	}
 	
 }

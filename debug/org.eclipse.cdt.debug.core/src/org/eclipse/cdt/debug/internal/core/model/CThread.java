@@ -10,6 +10,7 @@
  *     Stefan Bylund (Enea, steby@enea.se) - patch for bug 155464
  *     Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
  *     Ling Wang (Nokia) - Bug 176077
+ *     Denis Pilat (ST) - Bug 205017
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -742,6 +743,13 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			CDebugCorePlugin.getDefault().getBreakpointActionManager().executeActions(platformBreakpoint, this);
 		fireSuspendEvent( DebugEvent.BREAKPOINT );
 	}
+	
+	private void handleWatchpointHit( ICDIWatchpointTrigger watchPointTrigger ) {
+		IBreakpoint platformBreakpoint = ((CDebugTarget)getDebugTarget()).getBreakpointManager().getBreakpoint(watchPointTrigger.getWatchpoint());
+		if (platformBreakpoint != null)
+			CDebugCorePlugin.getDefault().getBreakpointActionManager().executeActions(platformBreakpoint, this);
+		fireSuspendEvent( DebugEvent.BREAKPOINT );
+	}
 
 	private void handleSuspendedBySignal( ICDISignalReceived signal ) {
 		fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
@@ -943,6 +951,9 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			}
 			else if ( reason instanceof ICDIBreakpointHit ) {
 				handleBreakpointHit( (ICDIBreakpointHit)reason );
+			}
+			else if ( reason instanceof ICDIWatchpointTrigger ) {
+				handleWatchpointHit( (ICDIWatchpointTrigger)reason );
 			}
 			else if ( reason instanceof ICDISignalReceived ) {
 				handleSuspendedBySignal( (ICDISignalReceived)reason );

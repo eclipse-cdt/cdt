@@ -25,6 +25,7 @@ public class ShortString implements IString {
 	
 	private final Database db;
 	private final int record;
+	private int hash;
 	
 	private static final int LENGTH = 0;
 	private static final int CHARS = 4;
@@ -152,9 +153,24 @@ public class ShortString implements IString {
 		return false;
 	}
 	
+	/**
+	 * Compatible with {@link String#hashCode()}
+	 */
 	public int hashCode() {
-		// Custom hash code function to allow DBStrings in hashmaps.
-		return record;
+		int h = hash;
+		if (h == 0) {
+			char chars[];
+			try {
+				chars = getChars();
+				final int len = chars.length;
+				for (int i = 0; i < len; i++) {
+					h = 31*h + chars[i];
+				}
+			} catch (CoreException e) {
+			}
+			hash = h;
+		}
+		return h;
 	}
 	
 	public int compare(char[] other, boolean caseSensitive) throws CoreException {

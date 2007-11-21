@@ -236,7 +236,7 @@ public class DBTest extends BaseTestCase {
 		doTrials(600, ShortString.MAX_LENGTH+1, ShortString.MAX_LENGTH*2, r, true);
 		doTrials(600, ShortString.MAX_LENGTH+1, ShortString.MAX_LENGTH*2, r, false);
 	}
-	
+		
 	private void doTrials(int n, int min, int max, Random r, boolean caseSensitive) throws CoreException {
 		long start = System.currentTimeMillis();
 		for(int i=0; i<n; i++) {
@@ -272,6 +272,16 @@ public class DBTest extends BaseTestCase {
 		IString biss = db.newString(b);
 		IString aisc = db.newString(acs);
 		IString bisc = db.newString(bcs);
+		
+		assertEquals(a.hashCode(), aiss.hashCode());
+		assertEquals(a.hashCode(), aisc.hashCode());
+		assertEquals(b.hashCode(), biss.hashCode());
+		assertEquals(b.hashCode(), bisc.hashCode());
+		
+		assertEquals(aiss, a);
+		assertEquals(aisc, a);
+		assertEquals(biss, b);
+		assertEquals(bisc, b);
 		
 		assertSignEquals(expected, aiss.compare(bcs, caseSensitive));
 		assertSignEquals(expected, aiss.compare(biss, caseSensitive));

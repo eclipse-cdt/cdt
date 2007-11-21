@@ -50,7 +50,6 @@ import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.cdt.internal.core.pdom.dom.ApplyVisitor;
 import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
@@ -81,10 +80,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 39;
-	public static final int MIN_SUPPORTED_VERSION= 36;
-	public static final int MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX= 37;	// to be removed in 5.0
-	public static final int MIN_VERSION_TO_WRITE_MACROS_INDEX= 38;	// to be removed in 5.0
+	public static final int CURRENT_VERSION = 50;
+	public static final int MIN_SUPPORTED_VERSION= CURRENT_VERSION;
 	
 	/**
 	 * The earliest PDOM version that the CURRENT_VERSION can be read as. For example,
@@ -94,7 +91,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 * Ideally this would always be CURRENT_VERSION on the basis that CURRENT_VERSION is
 	 * not incrementing.
 	 */
-	public static final int EARLIEST_FORWARD_COMPATIBLE_VERSION= 36; 
+	public static final int EARLIEST_FORWARD_COMPATIBLE_VERSION= CURRENT_VERSION; 
 	
 	/* 
 	 * PDOM internal format history
@@ -141,16 +138,14 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 * #37#- added index for nested bindings (189811), compatible with version 36 - <<CDT 4.0.1>>
 	 *  38 - added b-tree for macros (193056), compatible with version 36 and 37
 	 * #39#- added flag for function-style macros (208558), compatible with version 36,37,38 - <<CDT 4.0.2>>
+	 *  40 - string optimizations, removed compatibility with prior versions.
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
 	public static final int PROPERTIES = Database.DATA_AREA + 8;
-	public static final int HAS_NESTED_BINDING_BTREES= Database.DATA_AREA + 12; 
-	public static final int HAS_MACRO_BTREES= Database.DATA_AREA + 13; 
-	// 2-bytes of freedom
-	public static final int MACRO_BTREE= Database.DATA_AREA + 16; 
-	public static final int END= Database.DATA_AREA + 20;
+	public static final int MACRO_BTREE= Database.DATA_AREA + 12; 
+	public static final int END= Database.DATA_AREA + 16;
 	static {
 		assert END <= Database.CHUNK_SIZE;
 	}
@@ -163,8 +158,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
 	private Map fPDOMLinkageFactoryCache;
-	private boolean fHasBTreeForNestedBindings;
-	private boolean fHasBTreeForMacros;
 	private HashMap fResultCache= new HashMap();
 
 	
@@ -197,24 +190,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		int version= db.getVersion();
 		if (version >= MIN_SUPPORTED_VERSION) {
 			readLinkages();
-			fHasBTreeForNestedBindings= db.getByte(HAS_NESTED_BINDING_BTREES) == 1;
-			fHasBTreeForMacros= db.getByte(HAS_MACRO_BTREES) == 1;
-			
-			// new PDOM with version ready to write nested bindings index
-			if (!isPermanentlyReadOnly()) {
-				if (version >= MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
-					if (!fHasBTreeForNestedBindings) {
-						fHasBTreeForNestedBindings= true;
-						db.putByte(HAS_NESTED_BINDING_BTREES, (byte) 1);
-					}
-				}
-				if (version >= MIN_VERSION_TO_WRITE_MACROS_INDEX) {
-					if (!fHasBTreeForMacros) {
-						fHasBTreeForMacros= true;
-						db.putByte(HAS_MACRO_BTREES, (byte) 1);
-					}
-				}
-			}
 		}
 		db.setLocked(lockCount != 0);
 	}
@@ -313,10 +288,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		
 		// Clear out the database, everything is set to zero.
 		db.clear(CURRENT_VERSION);
-		db.putByte(HAS_NESTED_BINDING_BTREES, (byte) 1);
-		db.putByte(HAS_MACRO_BTREES, (byte) 1);
-		fHasBTreeForNestedBindings= true;
-		fHasBTreeForMacros= true;
 		clearCaches();
 	}
 	
@@ -786,12 +757,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 				try {
 					linkage.accept(visitor);
 					if (!filescope) {
-						if (fHasBTreeForNestedBindings) {
-							linkage.getNestedBindingsIndex().accept(visitor);
-						}
-						else {
-							linkage.accept(new ApplyVisitor(linkage, visitor));
-						}
+						linkage.getNestedBindingsIndex().accept(visitor);
 					}
 				}
 				catch (OperationCanceledException e) {
@@ -807,9 +773,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		if (!fHasBTreeForMacros) {
-			return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
-		}
 		ArrayList result= new ArrayList();
 		MacroCollector visitor = new MacroCollector(this, prefix, isPrefix, isCaseSensitive);
 		visitor.setMonitor(monitor);

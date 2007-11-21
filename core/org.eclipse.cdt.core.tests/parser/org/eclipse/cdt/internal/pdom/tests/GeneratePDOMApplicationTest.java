@@ -104,7 +104,6 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		});
 		assertTrue(target.exists());
 		WritablePDOM wpdom= new WritablePDOM(target, new URIRelativeLocationConverter(baseURI), LanguageManager.getInstance().getPDOMLinkageFactoryMappings());
-		assertEquals(36, wpdom.getDB().getVersion()); // faked version, remove for CDT 4.1
 		verifyProject1Content(wpdom);
 
 		String fid;

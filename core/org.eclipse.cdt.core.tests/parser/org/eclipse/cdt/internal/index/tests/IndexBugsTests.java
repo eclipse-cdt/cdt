@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -1076,5 +1078,16 @@ public class IndexBugsTests extends BaseTestCase {
 				fIndex.releaseReadLock();
 			}
 		}
+	}
+	
+	// void func_209049(long long x);
+	public void testGPPTypes_Bug209049() throws Exception {
+		StringBuffer[] contents= getContentsForTest(1);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[0].toString());
+		waitForIndexer();
+		IIndexBinding[] bindings= fIndex.findBindings("func_209049".toCharArray(), IndexFilter.ALL, NPM);
+		IFunctionType ft= ((IFunction) bindings[0]).getType();
+		assertEquals("void (long long)", ASTTypeUtil.getType(ft));
 	}
 }

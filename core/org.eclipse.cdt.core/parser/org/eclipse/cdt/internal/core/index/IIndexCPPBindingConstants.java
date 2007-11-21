@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
@@ -53,4 +54,6 @@ public interface IIndexCPPBindingConstants {
 	 int CPP_TYPEDEF_SPECIALIZATION= IIndexBindingConstants.LAST_CONSTANT + 37;
 	 int CPP_TEMPLATE_TYPE_PARAMETER= IIndexBindingConstants.LAST_CONSTANT + 38;
 	 int CPP_FUNCTION_TYPE= IIndexBindingConstants.LAST_CONSTANT + 39;
+	 int GPPBASICTYPE = IIndexBindingConstants.LAST_CONSTANT + 40;
+
 }

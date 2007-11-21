@@ -348,9 +348,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 */
 	public void afterAddBinding(PDOMBinding pdomBinding) throws CoreException {
 		if (pdomBinding.getParentNodeRec() != record) {
-			if (pdom.getDB().getVersion() >= PDOM.MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
-				getNestedBindingsIndex().insert(pdomBinding.getRecord());
-			}
+			getNestedBindingsIndex().insert(pdomBinding.getRecord());
 		}
 	}
 
@@ -362,9 +360,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 */
 	public void beforeRemoveBinding(PDOMBinding pdomBinding) throws CoreException {
 		if (pdomBinding.getParentNodeRec() != record) {
-			if (pdom.getDB().getVersion() >= PDOM.MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
-				getNestedBindingsIndex().delete(pdomBinding.getRecord());
-			}
+			getNestedBindingsIndex().delete(pdomBinding.getRecord());
 		}
 	}
 

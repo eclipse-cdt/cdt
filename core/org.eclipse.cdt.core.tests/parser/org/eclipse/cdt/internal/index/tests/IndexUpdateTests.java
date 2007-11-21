@@ -108,6 +108,7 @@ public class IndexUpdateTests extends IndexTestBase {
 		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
 		fFile= TestSourceReader.createFile(project, "file" + (cpp ? ".cpp" : ".c"), fContents[++fContentUsed].toString());
 		fContentUsed= 0;
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
 	}
 	

@@ -183,22 +183,25 @@ public class ASTTypeUtil {
 			}
 			
 			try {
-				if( needSpace )
-					result.append( SPACE );
 				switch (((IBasicType)type).getType()) {
 					case IBasicType.t_char:
+						if (needSpace) result.append( SPACE );
 						result.append(Keywords.CHAR);
 						break;
 					case IBasicType.t_double:
+						if (needSpace) result.append( SPACE );
 						result.append(Keywords.DOUBLE);
 						break;
 					case IBasicType.t_float:
+						if (needSpace) result.append( SPACE );
 						result.append(Keywords.FLOAT);
 						break;
 					case IBasicType.t_int:
+						if (needSpace) result.append( SPACE );
 						result.append(Keywords.INT);
 						break;
 					case IBasicType.t_void:
+						if (needSpace) result.append( SPACE );
 						result.append(Keywords.VOID);
 						break;
 				}

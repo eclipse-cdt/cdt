@@ -149,6 +149,11 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 
 	/**
 	 * Add a new connection to the list.
+	 * <p>
+	 * This method will not ensure that the added connection's alias name is 
+	 * different (case-insensitive) than all other existing alias names. 
+	 * Clients are responsible for maintaining this invariant.
+	 * </p>
 	 * @param conn Connection to add. Must not be <code>null</code>.
 	 * @return <code>true</code> if the new connection was added successfully, false otherwise.
 	 */
@@ -227,9 +232,9 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	/**
 	 * Order connections by alias name, in the order given by the names parameter.
 	 * 
-	 * Called after restore to order by user preferences. Existing connections in
-	 * the internal connection list that do not match any alias name in the given
-	 * name list, will be deleted!
+	 * Called after restore to order by user preferences. Alias names are case-insensitive.
+	 * Existing connections in the internal connection list that do not match any
+	 * alias name in the given name list, will be deleted from this host pool!
 	 * 
 	 * @param names list of connection alias names in expected order.
 	 */

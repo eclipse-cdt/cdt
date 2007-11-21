@@ -29,6 +29,7 @@ import java.net.InetAddress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
 import org.eclipse.rse.subsystems.files.core.ILanguageUtilityFactory;
@@ -151,8 +152,10 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param parents The parent folders to list folders and files in
 	 * @param fileNameFilters The name patterns to subset the file list by, or null to return all files.  
 	 *             There should be exactly one fileNameFilter per parent.
-	 * @param fileType - indicates whether to query files, folders, both or some other type.  This fileType is used for each parent query.
-	 * 				For the default list of available file types see <code>IFileServiceContants</code>
+	 * @param fileType - indicates whether to query files, folders, both or some other type.  
+	 * 		Available file types include {@link IFileService#FILE_TYPE_FILES},
+	 *      {@link IFileService#FILE_TYPE_FOLDERS}, and 
+	 *      {@link IFileService#FILE_TYPE_FILES_AND_FOLDERS}.
 	 * @param monitor the progress monitor
 	 */
 	public IRemoteFile[] listMultiple(IRemoteFile[] parents, String[] fileNameFilters, int fileType,  IProgressMonitor monitor) throws SystemMessageException;
@@ -171,7 +174,9 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * 
 	 * @param parent The parent folder to list folders and files in
 	 * @param fileType - indicates whether to query files, folders, both or some other type.  
-	 * 					For the default list of available file types see <code>IFileServiceContants</code>
+	 * 		Available file types include {@link IFileService#FILE_TYPE_FILES},
+	 *      {@link IFileService#FILE_TYPE_FOLDERS}, and 
+	 *      {@link IFileService#FILE_TYPE_FILES_AND_FOLDERS}.
 	 * @param monitor the progress monitor
 	 */
 	public IRemoteFile[] list(IRemoteFile parent, int fileType, IProgressMonitor monitor) throws SystemMessageException;		

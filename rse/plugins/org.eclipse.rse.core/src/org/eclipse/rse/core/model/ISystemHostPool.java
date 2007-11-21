@@ -12,38 +12,52 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * Martin Oberhuber (Wind River) - [210534] Remove ISystemHostPool.getHostList() and setName()
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
 
-import java.util.List;
-
 import org.eclipse.rse.core.IRSESystemType;
 import org.eclipse.rse.core.IRSEUserIdConstants;
 
-
-//
 /**
- * A list of connections.
+ * An ordered list of connections ({@link IHost} objects), owned by an {@link ISystemProfile}.
+ * <p>
+ * Implementations of this interface are expected to be thread-safe in the sense
+ * that integrity of the host list is maintained even if multiple threads call 
+ * multiple methods in this interface concurrently.
+ * </p><p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  */
-/**
- * @lastgen interface SystemConnectionPool  {}
- */
-
 public interface ISystemHostPool extends IRSEPersistableContainer {
 
 	/**
-	 * Return the system profile that owns this connection pool
+	 * Return the system profile that owns this connection pool.
+	 * @return the system profile that owns this connection pool.
 	 */
 	public ISystemProfile getSystemProfile();
 
 	/**
+	 * Return the name of this host pool.
+	 * @return The value of the Name attribute.
+	 */
+	String getName();
+
+	/**
 	 * Rename this connection pool.
+	 * @param newName the new name for this connection pool.
 	 */
 	public void renameHostPool(String newName);
 
 	/**
-	 * Return array of connections in this pool
+	 * Return array of connections in this pool.
+	 * 
+	 * The returned array is a copy of the internal connection list. Modifications by
+	 * clients will not affect the internal list of connections, but modifications to
+	 * the array elements will affect the actual IHost objects maintained in the list.
+	 * 
+	 * @return array of connections in this pool.
 	 */
 	public IHost[] getHosts();
 
@@ -54,9 +68,10 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
      * @param systemType system type matching one of the system types
      *     defined via the systemTypes extension point.
      * @param aliasName unique connection name.
-     * @param hostName ip name of host.
-     * @return SystemConnection object, or null if it failed to create
+     * @param hostName IP name or address of the host.
+     * @return IHost object, or null if it failed to create
      *   because the aliasName is not unique. All other errors throw an exception.
+     * @throws Exception if something goes wrong creating the connection.
      */
 	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName) throws Exception;
 
@@ -67,10 +82,11 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
      * @param systemType system type matching one of the system types
      *     defined via the systemTypes extension point.
      * @param aliasName unique connection name.
-     * @param hostName ip name of host.
+     * @param hostName IP name or address of the host.
      * @param description optional description of the connection. Can be null.
-     * @return SystemConnection object, or null if it failed to create
+     * @return IHost object, or <code>null</code> if it failed to create
      *   because the aliasName is not unique. All other errors throw an exception.
+     * @throws Exception if something goes wrong creating the connection.
      */
 	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description) throws Exception;
 
@@ -81,13 +97,14 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
      * @param systemType system type matching one of the system types
      *     defined via the systemTypes extension point.
      * @param aliasName unique connection name.
-     * @param hostName ip name of host.
+     * @param hostName IP name or address of the host.
      * @param description optional description of the connection. Can be null.
      * @param defaultUserId userId to use as the default for the subsystems.
      * @param defaultUserIdLocation where to set the given default user Id. See IRSEUserIdConstants for values.
-     * @return SystemConnection object, or null if it failed to create
+     * @return IHost object, or <code>null</code> if it failed to create
      *   because the aliasName is not unique. All other errors throw an exception.
      * @see IRSEUserIdConstants
+     * @throws Exception if something goes wrong creating the connection.
      */
 	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation) throws Exception;
 
@@ -99,30 +116,41 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 *  <li>saves the connection to disk (renaming its folder if needed)
 	 * </ul>
 	 * <p>
-	 * @param conn SystemConnection to be updated
+	 * @param conn IHost to be updated
 	 * @param systemType system type matching one of the system types
 	 *     defined via the systemType extension point.
 	 * @param aliasName unique connection name.
-	 * @param hostName ip name of host.
+     * @param hostName IP name or address of the host.
 	 * @param description optional description of the connection. Can be null.
 	 * @param defaultUserId userId to use as the default for the subsystems.
 	 * @param defaultUserIdLocation where to set the given default user Id from IRSEUserIdConstants.
 	 * @see IRSEUserIdConstants
+     * @throws Exception if something goes wrong updating the connection.
 	 */
 	public void updateHost(IHost conn, IRSESystemType systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation) throws Exception;
 
-	/**
-	 * Return a connection given its name.
-	 */
+    /**
+     * Return a connection object, given its alias name.
+     * 
+     * Can be used to test if an alias name is already used (non-null return).
+     * 
+     * @param aliasName unique aliasName (case insensitive) to search on.
+     * @return IHost object with unique aliasName, or null if
+     *  no connection object with this name exists.
+     */
 	public IHost getHost(String aliasName);
 
 	/**
-	 * Return the connection at the given zero-based offset
+	 * Return the connection at the given zero-based offset.
+	 * @param pos zero-based offset of requested connection in the connection list.
+	 * @return IHost object requested. 
 	 */
 	public IHost getHost(int pos);
 
 	/**
 	 * Add a new connection to the list.
+	 * @param conn Connection to add. Must not be <code>null</code>.
+	 * @return <code>true</code> if the new connection was added successfully, false otherwise.
 	 */
 	public boolean addHost(IHost conn);
 
@@ -135,7 +163,7 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 *    <li>Delete the underlying folder
 	 * </ul> 
 	 * <p>
-	 * @param conn SystemConnection object to remove
+	 * @param conn IHost object to remove
 	 */
 	public void deleteHost(IHost conn);
 
@@ -147,65 +175,64 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 *    <li>Rename the underlying folder
 	 *    <li>Update the user preferences if this profile is currently active.
 	 * </ul>
-	 * @param conn SystemConnection object to rename
-	 * @param newName The new name to give that connection.
+	 * @param conn IHost object to rename
+	 * @param newName The new alias name to give that connection.
+	 *     The alias name is not checked for uniqueness. Clients are responsible
+	 *     themselves for ensuring that no two connections with the same alias
+	 *     name (compared case insensitive) are created.
+	 * @throws Exception if anything goes wrong renaming the connection.
 	 */
 	public void renameHost(IHost conn, String newName) throws Exception;
 
 	/**
-	 * Return the zero-based position of a SystemConnection object within its profile.
+	 * Return the zero-based position of a connection object within this host pool.
+	 * @param conn connection to find in this host pool.
+	 * @return the zero-based position of the requested connection in this host pool,
+	 *     or -1 if the connection was not found.
 	 */
 	public int getHostPosition(IHost conn);
 
 	/**
-	 * Return the number of SystemConnection objects within this pool.
+	 * Return the number of connections within this pool.
+	 * @return the number of IHost objects within this pool.
 	 */
 	public int getHostCount();
 
 	/**
 	 * Duplicates a given connection in this list within this list or another list.
-	 * @param targetPool The SystemConnectionPool to hold the copied connection. Can equal this connection, as long as alias name is unique
-	 * @param conn SystemConnection object (within our pool) to clone
-	 * @param aliasName New, unique, alias name to give this connection. Clone will fail if this is not unique.
+	 * @param targetPool The ISystemHostPool to hold the copied connection. Can equal this pool,
+	 *     as long as alias name is unique.
+	 * @param conn IHost object (within our pool) to clone.
+	 * @param aliasName New, unique, alias name to give this connection. Clone will fail
+	 *     (returning <code>null</code> as result) if this is not unique.
+	 * @return the cloned host, or <code>null</code> if the new alias name was not unique.
+	 * @throws Exception if anything goes wrong during cloning.
 	 */
 	public IHost cloneHost(ISystemHostPool targetPool, IHost conn, String aliasName) throws Exception;
 
 	/**
 	 * Move existing connections a given number of positions in the same pool.
-	 * If the delta is negative, they are all moved up by the given amount. If 
-	 * positive, they are all moved down by the given amount.<p>
+	 * If the delta is negative, they are all moved up (left) by the given amount. If 
+	 * positive, they are all moved down (right) by the given amount.<p>
 	 * <ul>
 	 * <li>After the move, the pool containing the moved connection is saved to disk.
 	 * <li>The connection's alias name must be unique in pool.
 	 * </ul>
 	 * <b>TODO PROBLEM: CAN'T RE-ORDER FOLDERS SO CAN WE SUPPORT THIS ACTION?</b>
-	 * @param conns Array of SystemConnections to move.
+	 * @param conns an Array of hosts to move, can be empty but must not be null.
 	 * @param delta the amount by which to move the hosts within this pool
 	 */
 	public void moveHosts(IHost conns[], int delta);
 
 	/**
-	 * Order connections according to user preferences.
-	 * Called after restore.
+	 * Order connections by alias name, in the order given by the names parameter.
+	 * 
+	 * Called after restore to order by user preferences. Existing connections in
+	 * the internal connection list that do not match any alias name in the given
+	 * name list, will be deleted!
+	 * 
+	 * @param names list of connection alias names in expected order.
 	 */
 	public void orderHosts(String[] names);
-
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @return The value of the Name attribute
-	 */
-	String getName();
-
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @param value The new value of the Name attribute
-	 */
-	void setName(String value);
-
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * @return The list of Connections references
-	 */
-	List getHostList();
 
 }

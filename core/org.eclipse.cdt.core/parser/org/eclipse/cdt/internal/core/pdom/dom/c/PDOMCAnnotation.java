@@ -60,7 +60,7 @@ public class PDOMCAnnotation {
 			modifiers |= (function.isAuto() ? 1 : 0) << PDOMCAnnotation.AUTO_OFFSET;
 			modifiers |= (function.isExtern() ? 1 : 0) << PDOMCAnnotation.EXTERN_OFFSET;
 			modifiers |= (function.isRegister() ? 1 : 0) << PDOMCAnnotation.REGISTER_OFFSET;
-			modifiers |= (ASTInternal.isStatic(function, false) ? 1 : 0) << PDOMCAnnotation.STATIC_OFFSET;
+			modifiers |= (ASTInternal.isStatic(function, false, true) ? 1 : 0) << PDOMCAnnotation.STATIC_OFFSET;
 			modifiers |= (function.isInline() ? 1 : 0) << PDOMCAnnotation.INLINE_OFFSET;
 			modifiers |= (function.takesVarArgs() ? 1 : 0) << PDOMCAnnotation.VARARGS_OFFSET;
 		}

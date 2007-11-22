@@ -58,9 +58,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -801,17 +801,15 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		if (binding instanceof ICPPVariable) {
 			if (!(binding.getScope() instanceof CPPBlockScope)) {
-				ICPPVariable var= (ICPPVariable) binding;
-				return var.isStatic();
+				return ASTInternal.isStatic((ICPPVariable) binding, false);
 			}
 			return false;
 		}
 		if (binding instanceof ICPPMethod) {
 			return false;
 		}
-		if (binding instanceof ICPPInternalFunction) {
-			ICPPInternalFunction func = (ICPPInternalFunction)binding;
-			return func.isStatic(false);
+		if (binding instanceof ICPPFunction) {
+			return ASTInternal.isStatic((ICPPFunction) binding, false, false);
 		}
 		return false;
 	}

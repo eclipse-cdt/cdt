@@ -98,6 +98,8 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
     private IASTComment[] comments = new ASTComment[0];
+
+	private boolean fIsHeader;
     
     public IASTTranslationUnit getTranslationUnit() {
     	return this;
@@ -577,5 +579,13 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
 			return resolver;
 		}
 		return null;
+	}
+
+	public boolean isHeaderUnit() {
+		return fIsHeader;
+	}
+
+	public void setIsHeaderUnit(boolean headerUnit) {
+		fIsHeader= headerUnit;
 	}
 }

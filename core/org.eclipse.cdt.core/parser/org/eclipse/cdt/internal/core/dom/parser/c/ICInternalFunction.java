@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,21 +7,26 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
-/*
- * Created on Jun 6, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 
 /**
- * @author aniefer
- *
+ * Interface for ast-internal implementations of function bindings.
  */
 public interface ICInternalFunction extends ICInternalBinding {
 	public void setFullyResolved( boolean resolved );
 	
 	public void addDeclarator( IASTFunctionDeclarator fnDeclarator );
+	
+    /**
+     * Returns whether there is a static declaration for this function.
+     * @param resolveAll checks for names that are not yet resolved to this binding.
+     * @param checkHeaders if <code>false</code> declarations within header files are not 
+     * considered.
+     */
+    public boolean isStatic(boolean resolveAll, boolean checkHeaders);
 }

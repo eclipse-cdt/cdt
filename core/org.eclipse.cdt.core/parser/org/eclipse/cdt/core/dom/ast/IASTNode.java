@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
@@ -32,7 +32,7 @@ public interface IASTNode {
 	/**
 	 * Get the location of this node. In cases not involving macro expansions,
 	 * the IASTNodeLocation [] result will only have one element in it, and it
-	 * will be an IASTFileLocation or subinterface.
+	 * will be an IASTFileLocation or sub-interface.
 	 * 
 	 * Where the node is completely generated within a macro expansion,
 	 * IASTNodeLocation [] result will have one element in it, and it will be an
@@ -66,6 +66,12 @@ public interface IASTNode {
 	public String getContainingFilename();
 	
 	/**
+	 * Lightweight check to see whether this node is part of the root file. 
+	 * @since 5.0 
+	 */
+	public boolean isPartOfTranslationUnitFile();
+	
+	/**
 	 * Get the parent node of this node in the tree.
 	 * 
 	 * @return the parent node of this node
@@ -96,7 +102,7 @@ public interface IASTNode {
 	public void setPropertyInParent(ASTNodeProperty property);
 
 	/**
-	 * Abstract method to be overriden by all subclasses. Necessary for
+	 * Abstract method to be overridden by all subclasses. Necessary for
 	 * visitation of the tree using an <code>ASTVisitor</code>.
 	 * 
 	 * @param visitor
@@ -116,7 +122,7 @@ public interface IASTNode {
 
     /**
      * Returns whether this node contains the given one. The decision is made
-     * purly on location information and therefore the method is fast.
+     * purely on location information and therefore the method is fast.
      * @param node the node to check
      * @return whether this node contains the given one.
      * @since 4.0

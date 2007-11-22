@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems) 
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems) 
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -335,18 +335,31 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
      */
     public boolean isStatic() {
-        return hasStorageClass( IASTDeclSpecifier.sc_static );
+    	return isStatic(true, true);
     }
-
-	public boolean hasStorageClass( int storage ){
-	    if( (bits & FULLY_RESOLVED) == 0 ){
+    
+    public boolean isStatic(boolean resolveAll, boolean checkHeaders) {
+        if( resolveAll && (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
+		return hasStorageClass( IASTDeclSpecifier.sc_static, checkHeaders );
+    }
+
+	public boolean hasStorageClass( int storage, boolean checkHeaders){
 	    IASTDeclarator dtor = definition;
 	    IASTDeclarator[] ds = declarators;
+
+	    boolean useDeclsInRoot= checkHeaders;
         int i = -1;
         do{ 
             if( dtor != null ){
+	            if (!useDeclsInRoot) {
+	            	if (dtor.getTranslationUnit().isHeaderUnit()) {
+	            		return false;
+	            	}
+	            	useDeclsInRoot= true;
+	            }
+
 	            IASTNode parent = dtor.getParent();
 	            while( !(parent instanceof IASTDeclaration) )
 	                parent = parent.getParent();
@@ -357,8 +370,11 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	            } else if( parent instanceof IASTFunctionDefinition )
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
 	            
-	            if( declSpec.getStorageClass() == storage )
-	                return true;
+	            if( declSpec.getStorageClass() == storage ) {
+	            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
+	            		return true;
+	            	}
+	            }
             }
             
             if( ds != null && ++i < ds.length )
@@ -373,21 +389,34 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+    	return isExtern(true);
+    }
+    
+    public boolean isExtern(boolean resolveAll) {
+        if( resolveAll && (bits & FULLY_RESOLVED) == 0 ){
+            resolveAllDeclarations();
+        }
+        return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+        if( (bits & FULLY_RESOLVED) == 0 ){
+            resolveAllDeclarations();
+        }
+        return hasStorageClass( IASTDeclSpecifier.sc_auto, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register );
+        if( (bits & FULLY_RESOLVED) == 0 ){
+            resolveAllDeclarations();
+        }
+        return hasStorageClass( IASTDeclSpecifier.sc_register, true);
     }
 
     /* (non-Javadoc)

@@ -84,7 +84,7 @@ public class PDOMASTAdapter {
 		}
 
 		public String getContainingFilename() {
-			return fDelegate.getContainingFilename();
+			return fLocation.getFileName();
 		}
 
 		public IASTFileLocation getFileLocation() {
@@ -153,6 +153,10 @@ public class PDOMASTAdapter {
 
 		public IASTImageLocation getImageLocation() {
 			return null;
+		}
+
+		public boolean isPartOfTranslationUnitFile() {
+			return fLocation.getFileName().equals(fDelegate.getTranslationUnit().getFilePath());
 		}
 	}
 

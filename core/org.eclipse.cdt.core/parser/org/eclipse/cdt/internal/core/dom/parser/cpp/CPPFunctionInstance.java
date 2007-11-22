@@ -6,12 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Mar 29, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -140,10 +137,10 @@ public class CPPFunctionInstance extends CPPInstance implements ICPPFunction, IC
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
      */
-    public boolean isStatic( boolean resolveAll ) {
+    public boolean isStatic( boolean resolveAll, boolean checkHeaders ) {
     	ICPPFunction func = (ICPPFunction) getTemplateDefinition();
     	try {
-			return ASTInternal.isStatic(func, resolveAll);
+			return ASTInternal.isStatic(func, resolveAll, checkHeaders);
 		} catch (DOMException e) {
 			return false;
 		}

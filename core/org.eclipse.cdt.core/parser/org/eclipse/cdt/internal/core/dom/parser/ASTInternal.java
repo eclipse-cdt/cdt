@@ -17,8 +17,12 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalFunction;
+import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalVariable;
 
 /**
  * Access to methods on scopes and bindings internal to the parser.
@@ -78,10 +82,23 @@ public class ASTInternal {
 		}		
 	}		
 	
-	public static boolean isStatic(IFunction func, boolean resolveAll) throws DOMException {
+	public static boolean isStatic(IFunction func, boolean resolveAll, boolean checkHeaders) throws DOMException {
 		if (func instanceof ICPPInternalFunction) {
-			return ((ICPPInternalFunction)func).isStatic(resolveAll);
+			return ((ICPPInternalFunction)func).isStatic(resolveAll, checkHeaders);
+		}
+		if (func instanceof ICInternalFunction) {
+			return ((ICInternalFunction) func).isStatic(resolveAll, checkHeaders);
 		}
 		return func.isStatic();
+	}
+
+	public static boolean isStatic(IVariable var, boolean checkHeaders) throws DOMException {
+		if (var instanceof ICPPInternalVariable) {
+			return ((ICPPInternalVariable)var).isStatic(checkHeaders);
+		}
+		if (var instanceof ICInternalVariable) {
+			return ((ICInternalVariable)var).isStatic(checkHeaders);
+		}
+		return var.isStatic();
 	}
 }

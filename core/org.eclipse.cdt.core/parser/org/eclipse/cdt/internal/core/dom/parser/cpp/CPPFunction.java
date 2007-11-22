@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Dec 1, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -86,9 +83,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         public boolean takesVarArgs() throws DOMException {
             return ((ICPPFunction)getBinding()).takesVarArgs();
         }
-        public boolean isStatic( boolean resolveAll ) {
+        public boolean isStatic( boolean resolveAll, boolean checkHeaders) {
         	try {
-    			return ASTInternal.isStatic((IFunction) getBinding(), resolveAll);
+    			return ASTInternal.isStatic((IFunction) getBinding(), resolveAll, checkHeaders);
     		} catch (DOMException e) {
     			return false;
     		}
@@ -429,16 +426,16 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
      */
     public boolean isStatic( ) {
-        return isStatic( true );
+        return isStatic( true, true );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
      */
-    public boolean isStatic( boolean resolveAll ) {
+    public boolean isStatic( boolean resolveAll, boolean checkHeaders ) {
         if( resolveAll && (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
-		return hasStorageClass( this, IASTDeclSpecifier.sc_static );
+		return hasStorageClass( this, IASTDeclSpecifier.sc_static, checkHeaders );
     }
 //    }
 //	static public boolean isStatic
@@ -507,12 +504,23 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
     }
 
 	static public boolean hasStorageClass( ICPPInternalFunction function, int storage ){
+		return hasStorageClass(function, storage, true);
+	}
+	
+	static public boolean hasStorageClass( ICPPInternalFunction function, int storage, boolean checkHeaders){
 	    ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) function.getDefinition();
 	    IASTNode[] ds = function.getDeclarations();
 
+	    boolean useDeclsInRoot= checkHeaders;
         int i = -1;
         do{
             if( dtor != null ){
+	            if (!useDeclsInRoot) {
+	            	if (dtor.getTranslationUnit().isHeaderUnit()) {
+	            		return false;
+	            	}
+	            	useDeclsInRoot= true;
+	            }
                 IASTNode parent = dtor.getParent();
 	            while( !(parent instanceof IASTDeclaration) )
 	                parent = parent.getParent();
@@ -522,8 +530,11 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
 	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 	            else if( parent instanceof IASTFunctionDefinition )
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
-                if( declSpec.getStorageClass() == storage )
-                    return true;
+	            if( declSpec.getStorageClass() == storage ) {
+	            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
+	            		return true;
+	            	}
+	            }
             }
             if( ds != null && ++i < ds.length ) {
             	dtor = (ICPPASTFunctionDeclarator) ds[i];

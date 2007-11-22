@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -161,7 +158,7 @@ public class CPPField extends CPPVariable implements ICPPField, ICPPInternalBind
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable#isMutable()
      */
     public boolean isMutable() {
-        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable );
+        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable, true);
     }
     
     public boolean isExtern() {

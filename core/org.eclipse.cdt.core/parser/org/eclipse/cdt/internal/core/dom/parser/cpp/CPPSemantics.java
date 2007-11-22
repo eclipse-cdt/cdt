@@ -6,14 +6,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Bryan Wilkinson (QNX)
- * Andrew Ferguson (Symbian)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
-/*
- * Created on Dec 8, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
@@ -1355,7 +1352,7 @@ public class CPPSemantics {
 				}
 			    //it is not ambiguous if they are the same thing and it is static or an enumerator
 		        if( binding instanceof IEnumerator ||
-		           (binding instanceof IFunction && ASTInternal.isStatic((IFunction) binding, false)) ||
+		           (binding instanceof IFunction && ASTInternal.isStatic((IFunction) binding, false, true)) ||
 			       (binding instanceof IVariable && ((IVariable)binding).isStatic()) ) 
 		        {
 		        	ok = true;
@@ -2396,7 +2393,7 @@ public class CPPSemantics {
 				} else 
 					varArgs = true;
 				
-				if( useImplicitObj && j == 0 &&  ASTInternal.isStatic(currFn, false)) {
+				if( useImplicitObj && j == 0 &&  ASTInternal.isStatic(currFn, false, true)) {
 				    //13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
 				    cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost

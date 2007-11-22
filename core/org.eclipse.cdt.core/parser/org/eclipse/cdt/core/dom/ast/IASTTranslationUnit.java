@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -261,5 +262,20 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	 * @since 4.0
 	 */
 	public IASTComment[] getComments();
-    
+	
+	
+	/**
+	 * Returns the linkage this ast was parsed in
+	 */
+	public ILinkage getLinkage();
+	
+	/**
+	 * Returns whether this ast represents a header file.
+	 */
+	public boolean isHeaderUnit();
+
+	/**
+	 * Sets whether this ast represents a header file.
+	 */
+	public void setIsHeaderUnit(boolean headerUnit);
 }

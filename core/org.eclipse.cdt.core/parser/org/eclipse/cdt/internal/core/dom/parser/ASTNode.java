@@ -159,6 +159,17 @@ public abstract class ASTNode implements IASTNode {
         return fileLocation;
     }
     
+    public boolean isPartOfTranslationUnitFile() {
+        IASTTranslationUnit ast = getTranslationUnit();
+        if (ast != null) {
+        	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
+        	if (lr != null) {
+        		return lr.isPartOfTranslationUnitFile(offset);
+        	}
+        }
+        return false;
+    }
+    
     public IASTTranslationUnit getTranslationUnit() {
        	return parent != null ? parent.getTranslationUnit() : null;
     }

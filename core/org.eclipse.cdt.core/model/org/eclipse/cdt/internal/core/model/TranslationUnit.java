@@ -766,6 +766,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			ILanguage language= configureWith.getLanguage();
 			fLanguageOfContext= language;
 			if (language != null) {
+				IASTTranslationUnit ast= null;
 				if (language instanceof AbstractLanguage) {
 					int options= 0;
 					if ((style & AST_SKIP_FUNCTION_BODIES) != 0) {
@@ -774,9 +775,15 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 					if ((style & AST_CREATE_COMMENT_NODES) != 0) {
 						options |= AbstractLanguage.OPTION_ADD_COMMENTS;
 					}
-					return ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, options, ParserUtil.getParserLogService());
+					ast= ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, options, ParserUtil.getParserLogService());
 				}
-				return language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
+				else {
+					ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
+				}
+				if (ast != null) {
+					ast.setIsHeaderUnit(isHeaderUnit());
+				}
+				return ast;
 			}
 		}
 		return null;

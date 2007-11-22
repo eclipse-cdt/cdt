@@ -1090,4 +1090,89 @@ public class IndexBugsTests extends BaseTestCase {
 		IFunctionType ft= ((IFunction) bindings[0]).getType();
 		assertEquals("void (long long)", ASTTypeUtil.getType(ft));
 	}
+	
+	// static inline void staticInHeader() {};
+	
+	// #include "header.h"
+	// void f1() {
+	//    staticInHeader();
+	// }
+	public void testStaticFunctionsInHeader_Bug180305() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", contents[1].toString());
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndexBinding[] bindings= fIndex.findBindings("staticInHeader".toCharArray(), IndexFilter.ALL, NPM);
+		IFunction func= (IFunction) bindings[0];
+		assertTrue(func.isStatic());
+		IIndexName[] refs= fIndex.findReferences(func);
+		assertEquals(2, refs.length);
+	}
+	
+	// static const int staticConstInHeader= 12;
+	
+	// #include "header.h"
+	// void f1() {
+	//    int a= staticConstInHeader;
+	// }
+	public void testStaticVariableInHeader_Bug180305() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source1.cpp", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", contents[1].toString());
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndexBinding[] bindings= fIndex.findBindings("staticConstInHeader".toCharArray(), IndexFilter.ALL, NPM);
+		IVariable var= (IVariable) bindings[0];
+		assertTrue(var.isStatic());
+		IIndexName[] refs= fIndex.findReferences(var);
+		assertEquals(2, refs.length);
+	}
+
+	// static inline void staticInHeader() {};
+	
+	// #include "header.h"
+	// void f1() {
+	//    staticInHeader();
+	// }
+	public void testStaticFunctionsInHeaderC_Bug180305() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source1.c", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source2.c", contents[1].toString());
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndexBinding[] bindings= fIndex.findBindings("staticInHeader".toCharArray(), IndexFilter.ALL, NPM);
+		IFunction func= (IFunction) bindings[0];
+		assertTrue(func.isStatic());
+		IIndexName[] refs= fIndex.findReferences(func);
+		assertEquals(2, refs.length);
+	}
+	
+	// static const int staticConstInHeader= 12;
+	
+	// #include "header.h"
+	// void f1() {
+	//    int a= staticConstInHeader;
+	// }
+	public void testStaticVariableInHeaderC_Bug180305() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "header.h", contents[0].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source1.c", contents[1].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source2.c", contents[1].toString());
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndexBinding[] bindings= fIndex.findBindings("staticConstInHeader".toCharArray(), IndexFilter.ALL, NPM);
+		IVariable var= (IVariable) bindings[0];
+		assertTrue(var.isStatic());
+		IIndexName[] refs= fIndex.findReferences(var);
+		assertEquals(2, refs.length);
+	}
+
 }

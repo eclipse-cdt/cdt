@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Apr 14, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -175,9 +172,9 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
      */
-    public boolean isStatic( boolean resolveAll ) {
+    public boolean isStatic( boolean resolveAll, boolean checkHeaders) {
     	try {
-			return ASTInternal.isStatic((IFunction) getTemplateDefinition(), resolveAll);
+			return ASTInternal.isStatic((IFunction) getTemplateDefinition(), resolveAll, checkHeaders);
 		} catch (DOMException e) {
 			return false;
 		}

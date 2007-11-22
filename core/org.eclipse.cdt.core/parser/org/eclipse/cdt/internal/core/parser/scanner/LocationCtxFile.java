@@ -90,4 +90,12 @@ class LocationCtxFile extends LocationCtxContainer {
 	ASTFileLocation createFileLocation(int start, int length) {
 		return new ASTFileLocation(this, start, length);
 	}
+
+	public boolean isThisFile(int sequenceNumber) {
+		LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
+		if (!(child instanceof LocationCtxFile)) {
+			return true;
+		}
+		return sequenceNumber >= child.fSequenceNumber + child.getSequenceLength();
+	}
 }

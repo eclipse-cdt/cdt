@@ -10,9 +10,6 @@
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
  *******************************************************************************/
-/*
- * Created on Nov 29, 2004
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -39,7 +36,7 @@ import org.eclipse.core.runtime.PlatformObject;
 /**
  * @author aniefer
  */
-public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalBinding {
+public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInternalVariable {
     public static class CPPVariableDelegate extends CPPDelegate implements ICPPVariable {
         public CPPVariableDelegate( IASTName name, ICPPVariable binding ) {
             super( name, binding );
@@ -255,30 +252,6 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	}
 	
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#isStatic()
-     */
-    public boolean isStatic() {
-        IASTDeclarator dtor = null;
-        if( declarations != null ) {
-            dtor= findDeclarator(declarations[0]);
-        }
-        else {
-        	dtor= findDeclarator(definition);
-        }
-        
-        if (dtor == null) {
-        	return false;
-        }
-        
-        IASTNode node = dtor.getParent();
-        if( node instanceof IASTSimpleDeclaration ){
-            IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)node).getDeclSpecifier();
-            return (declSpec.getStorageClass() == IASTDeclSpecifier.sc_static );
-        }
-        return false;
-    }
-    
-    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getFullyQualifiedName()
      */
     public String[] getQualifiedName() {
@@ -319,20 +292,32 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		addDeclaration( node );
 	}
 
-	public boolean hasStorageClass( int storage ){
+	public boolean hasStorageClass(int storage, boolean checkHeaders) {
 	    IASTName name = (IASTName) getDefinition();
         IASTNode[] ns = getDeclarations();
+        
+	    boolean useDeclsInRoot= checkHeaders;
         int i = -1;
         do{
             if( name != null ){
+	            if (!useDeclsInRoot) {
+	            	if (name.getTranslationUnit().isHeaderUnit()) {
+	            		return false;
+	            	}
+	            	useDeclsInRoot= true;
+	            }
+
                 IASTNode parent = name.getParent();
 	            while( !(parent instanceof IASTDeclaration) )
 	                parent = parent.getParent();
 	            
 	            if( parent instanceof IASTSimpleDeclaration ){
 	                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-	                if( declSpec.getStorageClass() == storage )
-	                    return true;
+	                if (declSpec.getStorageClass() == storage) {
+		            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
+		            		return true;
+		            	}
+	                }
 	            }
             }
             if( ns != null && ++i < ns.length )
@@ -351,28 +336,37 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
         return false;
     }
 
-    /* (non-Javadoc)
+    
+    public boolean isStatic(boolean checkHeaders) {
+		return hasStorageClass(IASTDeclSpecifier.sc_static, checkHeaders);
+	}
+
+	public boolean isStatic() {
+		return isStatic(true);
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+        return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+        return hasStorageClass( IASTDeclSpecifier.sc_auto, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register );
+        return hasStorageClass( IASTDeclSpecifier.sc_register, true);
     }
     
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
-	}    
+	}
 }

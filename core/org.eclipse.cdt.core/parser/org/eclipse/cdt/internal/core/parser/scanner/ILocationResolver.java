@@ -133,4 +133,11 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
 	 * a macro expansion ({@link IASTName}).
 	 */
 	IASTNode findSurroundingPreprocessorNode(int sequenceNumber, int length);
+
+	/**
+	 * Returns whether the specified sequence number points into the root file of the
+	 * translation unit, or not.
+	 * @param offset
+	 */
+	boolean isPartOfTranslationUnitFile(int sequenceNumber);
 }

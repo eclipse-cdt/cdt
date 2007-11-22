@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Bryan Wilkinson (QNX)
+ *    IBM - Initial API and implementation
+ *    Bryan Wilkinson (QNX)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Apr 22, 2005
@@ -95,19 +96,19 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		return getFunction().isInline();
 	}
 	public boolean isStatic() {
-		return isStatic( true );
+		return isStatic(true, true);
 	}
-	public boolean isStatic(boolean resolveAll) {
+	public boolean isStatic(boolean resolveAll, boolean checkHeaders) {
 		//TODO resolveAll
 		IBinding f = getSpecializedBinding();
 		if( f instanceof ICPPInternalFunction)
-			return ((ICPPInternalFunction)f).isStatic( resolveAll );
+			return ((ICPPInternalFunction)f).isStatic( resolveAll, checkHeaders);
 		if( f instanceof IIndexBinding && f instanceof ICPPFunction ) {
 			try {
 				return ((ICPPFunction) f).isStatic();
 			} catch(DOMException de) { /* cannot occur as we query the index */}
 		}
-		return CPPFunction.hasStorageClass( this, IASTDeclSpecifier.sc_static );
+		return CPPFunction.hasStorageClass( this, IASTDeclSpecifier.sc_static, checkHeaders);
 	}
 
 	public boolean isExtern() throws DOMException {

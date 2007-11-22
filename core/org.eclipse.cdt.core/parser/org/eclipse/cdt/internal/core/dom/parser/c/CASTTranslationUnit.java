@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTComment;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
@@ -83,7 +85,8 @@ public class CASTTranslationUnit extends CASTNode implements
 
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
     
-    private IASTComment[] comments = new ASTComment[0];
+    private IASTComment[] comments = new ASTComment[0];	
+	private boolean fIsHeader;
 
     public IASTTranslationUnit getTranslationUnit() {
     	return this;
@@ -613,5 +616,17 @@ public class CASTTranslationUnit extends CASTNode implements
 			return resolver;
 		}
 		return null;
+	}
+
+	public ILinkage getLinkage() {
+		return Linkage.C_LINKAGE;
+	}
+
+	public boolean isHeaderUnit() {
+		return fIsHeader;
+	}
+
+	public void setIsHeaderUnit(boolean headerUnit) {
+		fIsHeader= headerUnit;
 	}
 }

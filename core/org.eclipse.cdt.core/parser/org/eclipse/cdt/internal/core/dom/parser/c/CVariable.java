@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems) 
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems) 
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.dom.parser.c;
@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.PlatformObject;
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CVariable extends PlatformObject implements IVariable, ICInternalBinding {
+public class CVariable extends PlatformObject implements IVariable, ICInternalVariable {
     public static class CVariableProblem extends ProblemBinding implements IVariable {
         public CVariableProblem( IASTNode node, int id, char[] arg ) {
             super( node, id, arg );
@@ -93,25 +93,40 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalBi
 		IASTDeclarator declarator = (IASTDeclarator) declarations[0].getParent();
 		return CVisitor.getContainingScope( declarator.getParent() );
 	}
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IVariable#isStatic()
-     */
-    public boolean isStatic() {
-        return hasStorageClass( IASTDeclSpecifier.sc_static );
-    }
-    
-    public boolean hasStorageClass( int storage ){
+
+    public boolean isStatic(boolean checkHeaders) {
+		return hasStorageClass(IASTDeclSpecifier.sc_static, checkHeaders);
+	}
+
+	public boolean isStatic() {
+		return isStatic(true);
+	}
+
+    public boolean hasStorageClass( int storage, boolean checkHeaders){
         if( declarations == null )
             return false;
+        
+	    boolean useDeclsInRoot= checkHeaders;
         for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
-            IASTNode parent = declarations[i].getParent();
+            final IASTName name = declarations[i];
+            if (!useDeclsInRoot) {
+            	if (name.getTranslationUnit().isHeaderUnit()) {
+            		return false;
+            	}
+            	useDeclsInRoot= true;
+            }
+
+			IASTNode parent = name.getParent();
             while( !(parent instanceof IASTDeclaration) )
                 parent = parent.getParent();
             
             if( parent instanceof IASTSimpleDeclaration ){
                 IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
-                if( declSpec.getStorageClass() == storage )
-                    return true;
+                if( declSpec.getStorageClass() == storage ) {
+	            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
+	            		return true;
+	            	}
+                }
             }
         }
         return false;
@@ -120,19 +135,19 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalBi
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+        return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+        return hasStorageClass( IASTDeclSpecifier.sc_auto, true);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register );
+        return hasStorageClass( IASTDeclSpecifier.sc_register, true);
     }
 	
     public ILinkage getLinkage() {

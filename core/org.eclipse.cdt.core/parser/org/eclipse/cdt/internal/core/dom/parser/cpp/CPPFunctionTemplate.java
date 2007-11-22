@@ -6,12 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Mar 31, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -221,12 +218,20 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		return type;
 	}
 
-	public boolean hasStorageClass( int storage ){
+	public boolean hasStorageClass( int storage, boolean checkHeaders){
 	    IASTName name = (IASTName) getDefinition();
         IASTNode[] ns = getDeclarations();
         int i = -1;
+        boolean useDeclsInRoot= checkHeaders;
         do{
             if( name != null ){
+	            if (!useDeclsInRoot) {
+	            	if (name.getTranslationUnit().isHeaderUnit()) {
+	            		return false;
+	            	}
+	            	useDeclsInRoot= true;
+	            }
+            	
                 IASTNode parent = name.getParent();
 	            while( !(parent instanceof IASTDeclaration) )
 	                parent = parent.getParent();
@@ -236,8 +241,11 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	                declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 	            else if( parent instanceof IASTFunctionDefinition )
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
-                if( declSpec.getStorageClass() == storage )
-                    return true;
+	            if( declSpec.getStorageClass() == storage ) {
+	            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
+	            		return true;
+	            	}
+	            }
             }
             if( ns != null && ++i < ns.length )
                 name = (IASTName) ns[i];
@@ -310,13 +318,13 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
 	 */
 	public boolean isStatic() {
-		return hasStorageClass( IASTDeclSpecifier.sc_static );
+		return hasStorageClass( IASTDeclSpecifier.sc_static, true);
 	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
      */
     public boolean isMutable() {
-        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable );
+        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable, true);
     }
 
     /* (non-Javadoc)
@@ -353,21 +361,21 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern );
+        return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto );
+        return hasStorageClass( IASTDeclSpecifier.sc_auto, true );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register);
+        return hasStorageClass( IASTDeclSpecifier.sc_register, true);
     }
 
     /* (non-Javadoc)
@@ -404,8 +412,8 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
      */
-    public boolean isStatic( boolean resolveAll ) {
-    	return hasStorageClass( IASTDeclSpecifier.sc_static );
+    public boolean isStatic( boolean resolveAll, boolean checkHeaders ) {
+    	return hasStorageClass( IASTDeclSpecifier.sc_static, checkHeaders);
     }
 
     /* (non-Javadoc)

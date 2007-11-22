@@ -49,7 +49,7 @@ public class LocationMap implements ILocationResolver {
     private ArrayList fBuiltinMacros= new ArrayList();
 	private IdentityHashMap fMacroReferences= new IdentityHashMap();
 	
-    private LocationCtx fRootContext= null;
+    private LocationCtxFile fRootContext= null;
     private LocationCtx fCurrentContext= null;
 	private int fLastChildInsertionOffset;
 
@@ -84,7 +84,7 @@ public class LocationMap implements ILocationResolver {
 	public ILocationCtx pushTranslationUnit(String filename, char[] buffer) {
 		assert fCurrentContext == null;
 		fTranslationUnitPath= filename;
-		fRootContext= fCurrentContext= new LocationCtxFile(null, filename, buffer, 0, 0, 0, null);
+		fCurrentContext= fRootContext= new LocationCtxFile(null, filename, buffer, 0, 0, 0, null);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
@@ -367,6 +367,11 @@ public class LocationMap implements ILocationResolver {
 		return (IASTNodeLocation[]) result.toArray(new IASTNodeLocation[result.size()]);
 	} 
 	
+	
+	public boolean isPartOfTranslationUnitFile(int sequenceNumber) {
+		return fRootContext.isThisFile(sequenceNumber);
+	}
+
 	public IASTImageLocation getImageLocation(int sequenceNumber, int length) {
 		ArrayList result= new ArrayList();
 		fRootContext.collectLocations(sequenceNumber, length, result);

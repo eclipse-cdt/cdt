@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -258,11 +259,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 		}
 		if (binding instanceof IVariable) {
 			IVariable var= (IVariable) binding;
-			return var.isStatic();
+			return ASTInternal.isStatic(var, false);
 		}
 		if (binding instanceof IFunction) {
 			IFunction f= (IFunction) binding;
-			return f.isStatic();
+			return ASTInternal.isStatic(f, false, false);
 		}
 		return false;
 	}

@@ -165,7 +165,11 @@ public abstract class PDOMIndexerTask extends PDOMWriter implements IPDOMIndexer
 			return null;
 		}
 		
-		return createAST((AbstractLanguage) language, codeReader, scannerInfo, options, pm);
+		IASTTranslationUnit ast= createAST((AbstractLanguage) language, codeReader, scannerInfo, options, pm);
+		if (ast != null) {
+			ast.setIsHeaderUnit(tu.isHeaderUnit());
+		}
+		return ast;
 	}
 
 	/**

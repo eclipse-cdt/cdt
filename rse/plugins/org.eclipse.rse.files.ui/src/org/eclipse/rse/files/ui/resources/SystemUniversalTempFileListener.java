@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [195285] mount path mapper changes
  * Kevin Doyle	    (IBM) 		 - [197976] Synch up Read-Only attribute when performing save based on local copy
  * Kevin Doyle 		(IBM)		 - [204810] Saving file in Eclipse does not update remote file
+ * Kevin Doyle 		(IBM)		 - [210389] Display error dialog when setting file not read-only fails when saving
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -36,6 +37,7 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.files.ui.actions.SystemUploadConflictAction;
 import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
@@ -185,7 +187,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					if (remoteFile.exists() && !remoteFile.canWrite() && !tempFile.isReadOnly()) {
 						remoteFile.getParentRemoteFileSubSystem().setReadOnly(
 								remoteFile, false, new NullProgressMonitor());
-					}				
+					}	
 					
 					// get associated editable
 					SystemEditableRemoteFile editable = getEditedFile(remoteFile);
@@ -230,6 +232,10 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 
 					upload(fs, remoteFile, tempFile, properties, storedModifiedStamp, editable, monitor);				
 				}
+			} 
+			catch (SystemMessageException e) {
+				DisplaySystemMessageAction msgAction = new DisplaySystemMessageAction(e.getSystemMessage());
+				Display.getDefault().syncExec(msgAction);
 			}
 			catch (Exception e)
 			{

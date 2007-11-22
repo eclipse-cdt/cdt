@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public class CBasicType implements ICBasicType {
 		   				  ( sds.isShort()   ? CBasicType.IS_SHORT : 0 ) |
 		   				  ( sds.isSigned()  ? CBasicType.IS_SIGNED: 0 ) |
 		   				  ( sds.isUnsigned()? CBasicType.IS_UNSIGNED : 0 ) |
-						  ( sds.isUnsigned()? CBasicType.IS_LONGLONG : 0 ) |
+						  ( sds.isLongLong()? CBasicType.IS_LONGLONG : 0 ) |
 						  ( sds.isComplex() ? CBasicType.IS_COMPLEX : 0 ) |
 						  ( sds.isImaginary()?CBasicType.IS_IMAGINARY : 0 );
 		

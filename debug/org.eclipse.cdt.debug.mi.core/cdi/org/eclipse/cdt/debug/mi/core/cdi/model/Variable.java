@@ -20,7 +20,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIBoolType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIEnumType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatType;
@@ -81,11 +80,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 /**
  */
 public abstract class Variable extends VariableDescriptor implements ICDIVariable {
-	private static final ICDIVariable[] NO_CHILDREN = new ICDIVariable[0];
+
 	protected MIVarCreate fVarCreateCMD;
 	protected MIVar fMIVar;
 	Value value;
-	public ICDIVariable[] children = NO_CHILDREN;
+	public ICDIVariable[] children = new ICDIVariable[0];
 	String editable = null;
 	String language;
 	boolean isFake = false;
@@ -208,12 +207,15 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		return getChildren(-1);
 	}
 
+	private boolean isAccessModifier(String name) {
+		return name.equals("private") || name.equals("public") || name.equals("protected");
+	}
+	
 	/**
 	 * This can be a potentially long operation for GDB.
 	 * allow the override of the timeout.
 	 */
 	public ICDIVariable[] getChildren(int timeout) throws CDIException {
-		children = NO_CHILDREN;
 		MISession mi = ((Target)getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarListChildren var = factory.createMIVarListChildren(getMIVar().getVarName());
@@ -229,104 +231,99 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			}
 			MIVar[] vars = info.getMIVars();
 			List childrenList = new ArrayList(vars.length);
-//			children = new Variable[vars.length];
-			// For C++ in GDB the children of the
-			// the structure are the scope and the inherited classes.
-			// For example:
-			// class foo: public bar {
-			// int x;
-			// public: int y;
-			// } foobar;
-			// This will map to
-			// - foobar
-			// + bar
-			// - private
-			// - x
-			// - public
-			// - y
-			// So we choose to ignore the first set of children
-			// but carry over to those "fake" variables the typename and the qualified name
-			boolean cppFakeLayer = isCPPLanguage() && (!isFake() || (isFake() && !isAccessQualifier(fName)));
-			ICDIType t = getType();
-			boolean container = isStructureProvider(t);
 			for (int i = 0; i < vars.length; i++) {
-				String prefix = "(" + getFullName() + ")"; // parent qualified name
-				String childName = vars[i].getExp(); // child simple name
-				String childFullName = prefix + "." + childName; // fallback full name
+				String fn = getQualifiedName();
+				String childName = vars[i].getExp();
 				ICDIType childType = null;
 				boolean childFake = false;
-				if (cppFakeLayer && container) {
-					childFake = true;
-					childType = t;
-					if (!isAccessQualifier(childName)) {
-						// if field is not access modifier and fake - it is a basetype
-						// cast to it to see reduced structure as value
-						childFullName = "(" + childName + ")" + prefix;
+				ICDIType t = getType();
+				if (t instanceof ICDIArrayType) {
+					// For Array gdb varobj only return the index, override here.
+					int index = castingIndex + i;
+					fn = "(" + fn + ")[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					childName = getName() + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (t instanceof ICDIPointerType) {
+					ICDIType subType = ((ICDIPointerType)t).getComponentType();
+					if (subType instanceof ICDIStructType || t instanceof IncompleteType) {
+						if (isCPPLanguage()) {
+							if (!isFake() || (isFake() && !isAccessModifier(fName))) {
+								childFake = true;
+								childType = t;
+							} else {
+								fn = "(" + fn + ")->" + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+						} else { // If not C++ language
+							fn = "(" + fn + ")->" + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 					} else {
-						childFullName = prefix;
+						fn = "*(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
-				} else {
-					if (t instanceof ICDIArrayType) {
-						// For Array gdb varobj only return the index, override here.
-						int index = castingIndex + i;
-						childFullName = prefix + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$ 
-						childName = getName() + "[" + index + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-					} else if (t instanceof ICDIPointerType) {
-						if (container) {
-							childFullName = prefix + "->" + childName; //$NON-NLS-1$ 
-						} else {
-							childFullName = "*" + prefix; //$NON-NLS-1$ 
+				} else if (t instanceof ICDIReferenceType) {
+					ICDIType subType = ((ICDIReferenceType)t).getComponentType();
+					if (subType instanceof ICDIStructType || t instanceof IncompleteType) {
+						if (isCPPLanguage()) {
+							if (!isFake() || (isFake() && !isAccessModifier(fName))) {
+								childFake = true;
+								childType = t;
+							} else {
+								fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+						} else { // If not C++ language
+							fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
 						}
-					} else if (t instanceof ICDIReferenceType) {
-						if (container) {
-							childFullName = prefix + "." + childName; //$NON-NLS-1$  
+					} else {
+						fn = "(" + fn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				} else if (t instanceof ICDIStructType || t instanceof IncompleteType) {
+					if (isCPPLanguage()) {
+						// For C++ in GDB the children of the
+						// the struture are the scope and the inherited classes.
+						// For example:
+						// class foo: public bar {
+						//   int x;
+						//   public: int y;
+						// } foobar;
+						// This will map to
+						// - foobar
+						//    + bar
+						//    - private
+						//       - x
+						//    - public
+						//       - y
+						// So we choose to ignore the first set of children
+						// but carry over to those "fake" variables the typename and the qualified name
+						if (!isFake() || (isFake() && !isAccessModifier(fName))) {
+							childFake = true;
+							childType = t;
 						} else {
-							childFullName = prefix;
+							fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
 						}
-					} else if (t instanceof ICDIStructType) {
-						// already correct name
+					} else { // If not C++ language
+						fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
-				Variable v = createVariable((Target) getTarget(), (Thread) getThread(), (StackFrame) getStackFrame(), childName,
-				        childFullName, getPosition(), getStackDepth(), vars[i]);
+				Variable v = createVariable((Target)getTarget(), (Thread)getThread(), (StackFrame)getStackFrame(),
+						childName, fn, getPosition(), getStackDepth(), vars[i]);
 				if (childType != null) {
 					// Hack to reset the typename to a known value
 					v.fType = childType;
 				}
 				v.setIsFake(childFake);
-				if (childFake && isAccessQualifier(childName)) {
-					// Replace a fake variable representing an access qualifier with its children. 
-					ICDIVariable[] grandchildren = v.getChildren(timeout);
-					for (int j = 0; j < grandchildren.length; j++) {
+				if (childFake && isAccessModifier(childName)) {
+					// don't add these, add their kids
+					ICDIVariable[] grandchildren = v.getChildren();
+					for (int j = 0; j < grandchildren.length; ++j)
 						childrenList.add(grandchildren[j]);
-					}
-				} else {
+				} else
 					childrenList.add(v);
-				}
 			}
-			if (!childrenList.isEmpty())
-				children = (ICDIVariable[]) childrenList.toArray(new Variable[childrenList.size()]);
+			
+			children = (ICDIVariable[])childrenList.toArray(new ICDIVariable[childrenList.size()]);
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
 		return children;
 	}
-
-	private boolean isStructureProvider(ICDIType t) {
-		// IncompleteType can be only struct or class, so same rules apply
-	    if (t instanceof ICDIStructType || t instanceof IncompleteType)
-	    	return true;
-	    if (t instanceof ICDIPointerType || t instanceof ICDIReferenceType) {
-	    	ICDIType type = ((ICDIDerivedType)t).getComponentType();
-	    	return (type instanceof ICDIStructType || type instanceof IncompleteType);
-	    }
-	    return false;
-	    			
-    }
-
-	 boolean isAccessQualifier(String foo) {
-	    return foo.equals("private") || foo.equals("public") || foo.equals("protected");  //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$ 
-    }
 
 	protected abstract Variable createVariable(Target target, Thread thread, StackFrame frame,
 			String name, String fullName, int pos, int depth, MIVar miVar);
@@ -537,9 +534,5 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 			}
 		}
 		return fTypename;
-	}
-
-	public void setMIVarCreate(MIVarCreate miVar) {
-		fVarCreateCMD = miVar;
 	}
 }

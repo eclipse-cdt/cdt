@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
+import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
@@ -130,11 +131,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					return 0;
 				}
 				public boolean visit(int record) throws CoreException {
-					PDOMBinding binding = pdom.getBinding(record);
-					if (binding != null) {
-						if (visitor.visit(binding))
-							binding.accept(visitor);
-						visitor.leave(binding);
+					PDOMNode node= getNode(record);
+					if (node != null) {
+						if (visitor.visit(node))
+							node.accept(visitor);
+						visitor.leave(node);
 					}
 					return true;
 				}
@@ -372,15 +373,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * @since 4.0
 	 */
 	final protected PDOMFileLocalScope findFileLocalScope(String fileName, boolean create) throws CoreException {
-		char[] fname= fileName.toCharArray();
-		int fnamestart= findFileNameStart(fname);
-		StringBuffer buf= new StringBuffer();
-		buf.append('{');
-		buf.append(fname, fnamestart, fname.length-fnamestart);
-		buf.append(':');
-		buf.append(fileName.hashCode());
-		buf.append('}');
-		fname= buf.toString().toCharArray();
+		char[] fname = CIndex.getFileLocalScopeQualifier(fileName);
 
 		final PDOMFileLocalScope[] fls= new PDOMFileLocalScope[] {null};
 		NamedNodeCollector collector= new NamedNodeCollector(this, fname) {
@@ -398,17 +391,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			addChild(fls[0]);
 		}
 		return fls[0];
-	}
-
-	private static int findFileNameStart(char[] fname) {
-		for (int i= fname.length-2; i>=0; i--) {
-			switch (fname[i]) {
-			case '/':
-			case '\\':
-				return i+1;
-			}
-		}
-		return 0;
 	}
 	
 	public void deleteType(IType type, int ownerRec) throws CoreException {

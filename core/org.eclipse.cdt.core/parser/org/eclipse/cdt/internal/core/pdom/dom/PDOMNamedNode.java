@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * IBM Corporation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    IBM Corporation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -74,5 +75,9 @@ public abstract class PDOMNamedNode extends PDOMNode {
 			db.free(namerec);
 		}
 		super.delete(linkage);
+	}
+	
+	public boolean mayHaveChildren() {
+		return false;
 	}
 }

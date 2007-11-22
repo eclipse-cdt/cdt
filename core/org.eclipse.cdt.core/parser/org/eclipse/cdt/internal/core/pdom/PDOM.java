@@ -54,12 +54,14 @@ import org.eclipse.cdt.internal.core.pdom.dom.BindingCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.MacroCollector;
+import org.eclipse.cdt.internal.core.pdom.dom.NamedNodeCollector;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMInclude;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -372,20 +374,20 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			if (monitor.isCanceled())
 				throw new CoreException(Status.OK_STATUS);
 
-			if (node instanceof PDOMBinding) {
-				PDOMBinding binding = (PDOMBinding)node;
-				String name = binding.getName();
+			if (node instanceof PDOMNamedNode) {
+				PDOMNamedNode nnode = (PDOMNamedNode)node;
+				String name = new String(nnode.getNameCharArray());
 
 				// check if we have a complete match.
 				final int lastIdx = pattern.length-1;
 				if (matchesUpToLevel.get(lastIdx) && pattern[lastIdx].matcher(name).matches()) {
-					if (filter.acceptBinding(binding)) {
-						bindings.add(binding);
+					if (nnode instanceof IBinding && filter.acceptBinding((IBinding) nnode)) {
+						bindings.add(nnode);
 					}
 				}
 
 				// check if we have a partial match
-				if (binding.mayHaveChildren()) {
+				if (nnode.mayHaveChildren()) {
 					boolean visitNextLevel= false;
 					BitSet updatedMatchesUpToLevel= new BitSet();
 					if (!isFullyQualified) {
@@ -401,7 +403,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 					if (visitNextLevel) {
 						matchStack.add(matchesUpToLevel);
 						matchesUpToLevel= updatedMatchesUpToLevel;
-						currentPath.add(binding);
+						currentPath.add(nnode);
 						return true;
 					}
 				}
@@ -449,24 +451,33 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexFragmentBinding[] findBindings(char[][] names, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (names.length == 0) {
+			return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+		}
 		ArrayList result= new ArrayList();
+		ArrayList nodes= new ArrayList();
 		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
 			PDOMLinkage linkage = (PDOMLinkage) iter.next();
 			if (filter.acceptLinkage(linkage)) {
-				ArrayList bindings= new ArrayList();
-				bindings.add(linkage);
-				for (int i=0; i < names.length; i++) {
+				nodes.add(linkage);
+				for (int i=0; i < names.length-1; i++) {
 					char[] name= names[i];
-					IndexFilter levelFilter= i==names.length-1 ? filter : IndexFilter.ALL;
-					BindingCollector collector= new BindingCollector(linkage, name, levelFilter, false, true);
-					for (Iterator in = bindings.iterator(); in.hasNext();) {
+					NamedNodeCollector collector= new NamedNodeCollector(linkage, name, false, true);
+					for (Iterator in = nodes.iterator(); in.hasNext();) {
 						PDOMNode node= (PDOMNode) in.next();
 						node.accept(collector);
 					}
-					bindings.clear();
-					bindings.addAll(Arrays.asList(collector.getBindings()));
+					nodes.clear();
+					nodes.addAll(Arrays.asList(collector.getNodes()));
 				}
-				result.addAll(bindings);
+				char[] name= names[names.length-1];
+				BindingCollector collector= new BindingCollector(linkage, name, filter, false, true);
+				for (Iterator in = nodes.iterator(); in.hasNext();) {
+					PDOMNode node= (PDOMNode) in.next();
+					node.accept(collector);
+				}
+				nodes.clear();
+				result.addAll(Arrays.asList(collector.getBindings()));
 			}
 		}
 		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);

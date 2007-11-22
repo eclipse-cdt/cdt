@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -242,10 +242,6 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
      * Convenience method to shorten subclass file length
      */
 	protected final void fail() { throw new PDOMNotImplementedError(); }
-
-	public boolean mayHaveChildren() {
-		return false;
-	}
 	
 	public IName getScopeName() throws DOMException {
 		try {
@@ -279,7 +275,15 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	final public boolean isFileLocal() throws CoreException {
 		return getParentNode() instanceof PDOMFileLocalScope;
 	}
-	
+
+	final public String getFileLocalScopeQualifier() throws CoreException {
+		final PDOMNode parentNode = getParentNode();
+		if (parentNode instanceof PDOMFileLocalScope) {
+			return ((PDOMFileLocalScope) parentNode).getDBName().getString();
+		}
+		return null;
+	}
+
 
 	public boolean hasDefinition() throws CoreException {
 		return getFirstDefinition()!=null;

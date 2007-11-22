@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.pdom.tests;
@@ -117,9 +118,9 @@ public class CPPFunctionTests extends PDOMTestBase {
 	
 	public void testStaticCPPFunction() throws Exception {
 		// static elements cannot be found on global scope, see bug 161216
-		IBinding[] bindings = findQualifiedName(pdom, "staticCPPFunction");
-		assertEquals(0, bindings.length);
-//		assertTrue(((ICPPFunction) bindings[0]).isStatic());
+		IBinding[] bindings = findUnqualifiedName(pdom, "staticCPPFunction");
+		assertEquals(1, bindings.length);
+		assertTrue(((ICPPFunction) bindings[0]).isStatic());
 	}
 	
 	public void testInlineCPPFunction() throws Exception {

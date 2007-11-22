@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -121,7 +122,7 @@ class PDOMCPPParameter extends PDOMNamedNode
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPPPARAMETER;
+		return IIndexCPPBindingConstants.CPPPARAMETER;
 	}
 	
 	public void setNextParameter(PDOMCPPParameter nextParam) throws CoreException {
@@ -234,6 +235,10 @@ class PDOMCPPParameter extends PDOMNamedNode
 	
 	public boolean isFileLocal() throws CoreException {
 		return true;
+	}
+	
+	public String getFileLocalScopeQualifier() throws CoreException {
+		return null;
 	}
 	
 	public int getBindingConstant() {

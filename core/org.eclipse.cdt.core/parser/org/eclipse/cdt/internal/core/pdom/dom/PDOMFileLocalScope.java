@@ -56,4 +56,8 @@ public class PDOMFileLocalScope extends PDOMNamedNode implements IPDOMMemberOwne
 		// no support for deleting bindings and their scopes.
 		assert false;
 	}
+	
+	public boolean mayHaveChildren() {
+		return true;
+	}
 }

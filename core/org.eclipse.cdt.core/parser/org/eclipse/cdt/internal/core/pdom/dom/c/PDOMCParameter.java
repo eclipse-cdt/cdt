@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.c;
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -74,7 +75,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 	}
 
 	public int getNodeType() {
-		return PDOMCLinkage.CPARAMETER;
+		return IIndexCBindingConstants.CPARAMETER;
 	}
 	
 	public void setNextParameter(PDOMCParameter nextParam) throws CoreException {
@@ -160,6 +161,9 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 	
 	public boolean isFileLocal() throws CoreException {
 		return true;
+	}
+	public String getFileLocalScopeQualifier() throws CoreException {
+		return null;
 	}
 	
 	public String[] getQualifiedName() {

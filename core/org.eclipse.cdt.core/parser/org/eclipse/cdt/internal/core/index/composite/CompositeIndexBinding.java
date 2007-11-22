@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * Markus Schorn (Wind River Systems)
- * Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite;
 
@@ -87,9 +87,13 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 	}
 	
 	public boolean isFileLocal() throws CoreException {
-		return rbinding instanceof IIndexBinding ? ((IIndexBinding)rbinding).isFileLocal() : true;
+		return rbinding != null ? rbinding.isFileLocal() : false;
 	}
-	
+
+	public String getFileLocalScopeQualifier() throws CoreException {
+		return rbinding != null ? rbinding.getFileLocalScopeQualifier() : null;
+	}
+
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;

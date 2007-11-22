@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
- * Symbian - Fix a race condition (157992)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
+ *    Symbian - Fix a race condition (157992)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -119,6 +119,15 @@ public class PDOMTestBase extends BaseTestCase {
 			pattern[i] = Pattern.compile(segments[i]);
 		}
 		return pdom.findBindings(pattern, true, IndexFilter.ALL, PROGRESS);
+	}
+
+	protected IBinding[] findUnqualifiedName(PDOM pdom, String name) throws CoreException {
+		String[] segments = name.split("::");
+		Pattern[] pattern = new Pattern[segments.length];
+		for (int i = 0; i < segments.length; i++) {
+			pattern[i] = Pattern.compile(segments[i]);
+		}
+		return pdom.findBindings(pattern, false, IndexFilter.ALL, PROGRESS);
 	}
 
 	/**

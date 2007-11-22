@@ -271,10 +271,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			final IndexFilter filter= new IndexFilter() {
 				public boolean acceptBinding(IBinding binding) throws CoreException {
 					if (isVisibleType(IndexModelUtil.getElementType(binding))) {
-						if (IndexFilter.ALL_DECLARED.acceptBinding(binding)) {
-							// until we have correctly modeled file-local variables and functions, don't show them. 
-							return !((IIndexBinding) binding).isFileLocal();
-						}
+						return IndexFilter.ALL_DECLARED.acceptBinding(binding);
 					}
 					return false;
 				}

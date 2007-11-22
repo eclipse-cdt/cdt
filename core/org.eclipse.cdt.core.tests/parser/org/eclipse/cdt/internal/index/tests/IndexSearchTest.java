@@ -234,18 +234,18 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsEnumeration(bindings[0]);
 	}
 	
-	public void _testFindStatic_161216() throws CoreException {
+	public void testFindStatic_161216() throws CoreException {
 		Pattern pFunc= Pattern.compile("staticFunc20061017");
 		Pattern pVar= Pattern.compile("staticVar20061017");
 		
 		IIndexBinding[] bindings;
 		
-		bindings= fIndex.findBindings(pFunc, true, INDEX_FILTER, NPM);
+		bindings= fIndex.findBindings(pFunc, false, INDEX_FILTER, NPM);
 		assertEquals(2, bindings.length);
 		checkIsFunction(bindings[0]);
 		checkIsFunction(bindings[1]);
 
-		bindings= fIndex.findBindings(pVar, true, INDEX_FILTER, NPM);
+		bindings= fIndex.findBindings(pVar, false, INDEX_FILTER, NPM);
 		assertEquals(2, bindings.length);
 		checkIsVariable(bindings[0]);
 		checkIsVariable(bindings[1]);

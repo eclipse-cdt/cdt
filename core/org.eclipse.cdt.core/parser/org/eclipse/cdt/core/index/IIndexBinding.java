@@ -43,4 +43,11 @@ public interface IIndexBinding extends IBinding {
 	 * in another index.
 	 */
 	boolean isFileLocal() throws CoreException;
+
+	/**
+	 * Returns the qualifier that can be used to search for file local bindings using
+	 * {@link IIndex#findBindings(char[][], IndexFilter, org.eclipse.core.runtime.IProgressMonitor)}. 
+	 * In case the binding is not file-local, <code>null</code> is returned.
+	 */
+	String getFileLocalScopeQualifier() throws CoreException;
 }

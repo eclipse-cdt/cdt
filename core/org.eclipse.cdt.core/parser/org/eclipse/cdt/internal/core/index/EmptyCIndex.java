@@ -121,4 +121,8 @@ final public class EmptyCIndex implements IIndex {
 	public IIndexMacro[] findMacrosForPrefix(char[] prefix, IndexFilter filter, IProgressMonitor monitor) {
 		return IIndexMacro.EMPTY_INDEX_MACRO_ARRAY;
 	}
+
+	public String getFileLocalScopeQualifier(IIndexFileLocation loc) {
+		return new String(CIndex.getFileLocalScopeQualifier(loc.getFullPath()));
+	}
 }

@@ -66,6 +66,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	}
 
 	private final String[] fqn;
+	private final String fileLocal;
 	private final int elementType;
 	private final IIndex index;
 	private final String[] params;
@@ -81,6 +82,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	public static IndexTypeInfo create(IIndex index, IIndexBinding binding) {
 		String[] fqn;
 		int elementType;
+		String flsq= null;
 		try {
 			elementType = IndexModelUtil.getElementType(binding);
 			if (binding instanceof ICPPBinding) {
@@ -94,18 +96,22 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			else {
 				fqn= new String[] {binding.getName()};
 			}
+			try {
+				flsq = binding.getFileLocalScopeQualifier();
+			} catch (CoreException e) {
+			}
 			if (binding instanceof IFunction) {
 				final IFunction function= (IFunction)binding;
 				final String[] paramTypes= IndexModelUtil.extractParameterTypes(function);
 				final String returnType= IndexModelUtil.extractReturnType(function);
-				return new IndexTypeInfo(fqn, elementType, paramTypes, returnType, index);
+				return new IndexTypeInfo(fqn, flsq, elementType, index, paramTypes, returnType, null);
 			}
 		} catch (DOMException e) {
 			// index bindings don't throw DOMExceptions.
 			throw new AssertionError();
 		}
 
-		return new IndexTypeInfo(fqn, elementType, index);
+		return new IndexTypeInfo(fqn, flsq, elementType, index, null, null, null);
 	}
 
 	/**
@@ -119,9 +125,10 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return new IndexTypeInfo(new String[] {new String(name)}, ICElement.C_MACRO, index);
 	}
 
-	private IndexTypeInfo(String[] fqn, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
+	private IndexTypeInfo(String[] fqn, String fileLocal, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
 		Assert.isTrue(index != null);
 		this.fqn= fqn;
+		this.fileLocal= fileLocal;
 		this.elementType= elementType;
 		this.index= index;
 		this.params= params;
@@ -133,18 +140,18 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @deprecated, use {@link #create(IIndex, IBinding)}.
 	 */
 	public IndexTypeInfo(String[] fqn, int elementType, IIndex index) {
-		this(fqn, elementType, index, null, null, null);
+		this(fqn, null, elementType, index, null, null, null);
 	}
 
 	/**
 	 * @deprecated, use {@link #create(IIndex, IBinding)}.
 	 */
 	public IndexTypeInfo(String[] fqn, int elementType, String[] params, String returnType, IIndex index) {
-		this(fqn, elementType, index, params, returnType, null);
+		this(fqn, null, elementType, index, params, returnType, null);
 	}
 	
 	public IndexTypeInfo(IndexTypeInfo rhs, ITypeReference ref) {
-		this(rhs.fqn, rhs.elementType, rhs.index, rhs.params, rhs.returnType, ref);
+		this(rhs.fqn, rhs.fileLocal, rhs.elementType, rhs.index, rhs.params, rhs.returnType, ref);
 	}
 
 	public void addDerivedReference(ITypeReference location) {
@@ -337,11 +344,19 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		List references= new ArrayList();
 		try {
 			index.acquireReadLock();
-
-			char[][] cfqn = new char[fqn.length][];
-			for(int i=0; i<fqn.length; i++)
-				cfqn[i] = fqn[i].toCharArray();
-
+			int j= 0;
+			char[][] cfqn;
+			if (fileLocal != null) {
+				cfqn = new char[fqn.length+1][];
+				cfqn[j++]= fileLocal.toCharArray();
+			}
+			else {
+				cfqn = new char[fqn.length][];				
+			}
+			for(int i=0; i<fqn.length; i++) {
+				cfqn[j++] = fqn[i].toCharArray();
+			}
+			
 			IIndexBinding[] ibs = index.findBindings(cfqn, new IndexFilter() {
 				public boolean acceptBinding(IBinding binding) {
 					boolean sameType= IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType});
@@ -366,7 +381,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				if (names.length == 0) {
 					names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
 				}
-				for (int j = 0; j < names.length; j++) {
+				for (j = 0; j < names.length; j++) {
 					IIndexName indexName = names[j];
 					if (checkFile(iflMap, indexName.getFile())) {
 						IndexTypeReference ref= createReference(binding, indexName);

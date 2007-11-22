@@ -558,4 +558,32 @@ public class CIndex implements IIndex {
 			fFragments[i].resetCacheCounters();
 		}
 	}
+
+	public String getFileLocalScopeQualifier(IIndexFileLocation loc) {
+		return new String(getFileLocalScopeQualifier(loc.getFullPath()));
+	}
+
+	public static char[] getFileLocalScopeQualifier(String fullPath) {
+		char[] fname= fullPath.toCharArray();
+		int fnamestart= findFileNameStart(fname);
+		StringBuffer buf= new StringBuffer();
+		buf.append('{');
+		buf.append(fname, fnamestart, fname.length-fnamestart);
+		buf.append(':');
+		buf.append(fullPath.hashCode());
+		buf.append('}');
+		fname= buf.toString().toCharArray();
+		return fname;
+	}
+	
+	private static int findFileNameStart(char[] fname) {
+		for (int i= fname.length-2; i>=0; i--) {
+			switch (fname[i]) {
+			case '/':
+			case '\\':
+				return i+1;
+			}
+		}
+		return 0;
+	}
 }

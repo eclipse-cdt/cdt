@@ -215,13 +215,15 @@ public class IndexFactory {
 		if(pd!=null) {
 			IndexProviderManager ipm = CCoreInternals.getPDOMManager().getIndexProviderManager();
 			ICConfigurationDescription cfg= pd.getDefaultSettingConfiguration();
-			try {
-				IIndexFragment[] pFragments= ipm.getProvidedIndexFragments(cfg);
-				for(int i=0; i<pFragments.length; i++) {
-					safeAddFragment(fragments, pFragments[i]);
+			if (cfg != null) {
+				try {
+					IIndexFragment[] pFragments= ipm.getProvidedIndexFragments(cfg);
+					for(int i=0; i<pFragments.length; i++) {
+						safeAddFragment(fragments, pFragments[i]);
+					}
+				} catch(CoreException ce) {
+					CCorePlugin.log(ce);
 				}
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce);
 			}
 		}
 	}

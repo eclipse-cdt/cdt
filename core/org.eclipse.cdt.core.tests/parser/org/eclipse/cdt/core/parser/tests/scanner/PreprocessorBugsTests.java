@@ -50,4 +50,20 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);
 	}
+	
+	// #ifndef PREFIX
+	// #define PREFIX
+	// #endif
+	// #define STRING(x) #x
+	// #define CONCAT(x,y) STRING(x##y)
+	// #define EXPAND(x,y) CONCAT(x,y)
+	// #define PREFIXED(x) EXPAND(PREFIX,x)
+	// #include PREFIXED(bar.h)
+	public void testEmptyStringInMacroInInclusion_Bug145270() throws Exception {
+		initializeScanner();
+		validateEOF();
+		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "bar.h");
+		validateProblemCount(1);
+	}
+
 }

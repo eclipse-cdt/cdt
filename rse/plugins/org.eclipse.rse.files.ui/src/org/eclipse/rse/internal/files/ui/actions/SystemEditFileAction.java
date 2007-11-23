@@ -116,7 +116,11 @@ public class SystemEditFileAction extends SystemBaseAction {
 			boolean dirty = properties.getDirty();
 	
 			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
-			return (!dirty && !remoteNewer);
+			
+			String encoding = remoteFile.getEncoding();
+			String storedEncoding = properties.getEncoding();
+			
+			return (!dirty && !remoteNewer && (encoding != null && encoding.equals(storedEncoding)));
 		}
 		return false;
 	}

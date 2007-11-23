@@ -23,6 +23,7 @@
  * Kevin Doyle (IBM) - [187707] Added separator between New Folder and New File in context menu
  * David McKnight   (IBM)        - [199566] Remove synchronzied from internalGetChildren
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)        - [210563] error messages need to be shown if incurred during filter expansion
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -269,7 +270,8 @@ public class SystemViewFilterReferenceAdapter
 		ISubSystemConfiguration configuration = subsystem.getSubSystemConfiguration();
 		Object adapter = Platform.getAdapterManager().getAdapter(configuration, ISubSystemConfigurationAdapter.class);
 		
-		if (adapter instanceof ISubSystemConfigurationAdapter) {
+		if (adapter instanceof ISubSystemConfigurationAdapter) 
+		{
 			children = ((ISubSystemConfigurationAdapter)adapter).applyViewFilters(element, children);
 		}
 		
@@ -424,21 +426,27 @@ public class SystemViewFilterReferenceAdapter
 						}
 						else
 						{
+							if (allChildren.length == 1 && allChildren[0] instanceof ISystemMessageObject)
+							{
+								// error to display
+								return allChildren; // nothing to sort or cache - just show the error
+							}
+							
 							if (nestedFilterReferences != null)
 							{
-							int nbrNestedFilters = nestedFilterReferences.length;
-							children = new Object[nbrNestedFilters + allChildren.length];
-							int idx = 0;
-							for (idx = 0; idx < nbrNestedFilters; idx++)
-								children[idx] = nestedFilterReferences[idx];
-							for (int jdx = 0; jdx < allChildren.length; jdx++)
-								children[idx++] = allChildren[jdx];
-							
-				
-							if (!referencedFilter.isTransient() && ssf.supportsFilterCaching())
-							{
-								fRef.setContents(SystemChildrenContentsType.getInstance(), children);
-							}
+								int nbrNestedFilters = nestedFilterReferences.length;
+								children = new Object[nbrNestedFilters + allChildren.length];
+								int idx = 0;
+								for (idx = 0; idx < nbrNestedFilters; idx++)
+									children[idx] = nestedFilterReferences[idx];
+								for (int jdx = 0; jdx < allChildren.length; jdx++)
+									children[idx++] = allChildren[jdx];
+								
+					
+								if (!referencedFilter.isTransient() && ssf.supportsFilterCaching())
+								{
+									fRef.setContents(SystemChildrenContentsType.getInstance(), children);
+								}
 							}
 						}
 					}

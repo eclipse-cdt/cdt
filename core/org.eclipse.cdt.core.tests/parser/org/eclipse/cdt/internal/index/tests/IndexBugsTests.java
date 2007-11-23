@@ -1188,4 +1188,23 @@ public class IndexBugsTests extends BaseTestCase {
 		IIndexBinding[] bindings= fIndex.findBindings("ok".toCharArray(), IndexFilter.ALL, NPM);
 		assertEquals(1, bindings.length);
 	}
+	
+	// inline void MyClass::method() {}
+	
+	// class MyClass {
+	//    void method();
+	// };
+	// #include "MyClass_inline.h"
+	public void testAddingMemberBeforeContainer_Bug203170() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "MyClass_inline.h", contents[0].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1].toString());
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndexBinding[] bindings= fIndex.findBindings(new char[][]{"MyClass".toCharArray(), "method".toCharArray()}, IndexFilter.ALL, NPM);
+		assertEquals(1, bindings.length);
+		IIndexName[] decls= fIndex.findDeclarations(bindings[0]);
+		assertEquals(2, decls.length);
+	}
 }

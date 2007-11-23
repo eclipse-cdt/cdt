@@ -223,8 +223,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 		else {
 			try {
-				boolean addParent = shouldAddParent(binding);
-				PDOMNode parent = getAdaptedParent(binding, true, addParent);
+				PDOMNode parent = getAdaptedParent(binding, true, true);
 				if (parent == null)
 					return null;
 				pdomBinding = addBinding(parent, binding);
@@ -258,15 +257,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return false;
 	}
 
-	private boolean shouldAddParent(IBinding binding) throws CoreException {
-		if (binding instanceof ICPPTemplateParameter) {
-			return true;
-		} else if (binding instanceof ICPPSpecialization) {
-			return true;
-		}
-		return false;
-	}
-	
 	private PDOMBinding addBinding(PDOMNode parent, IBinding binding) throws CoreException, DOMException {
 		PDOMBinding pdomBinding= null;
 		

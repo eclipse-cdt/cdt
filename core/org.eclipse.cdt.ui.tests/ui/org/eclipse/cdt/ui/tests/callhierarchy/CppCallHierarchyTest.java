@@ -21,6 +21,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
+import org.eclipse.cdt.core.CCorePlugin;
+
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
@@ -187,6 +189,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
 		CEditor editor= openFile(sourceFile1);
+		CCorePlugin.getIndexManager().reindex(fCProject);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
 		editor.selectAndReveal(source1.indexOf("method3"), 2);
@@ -194,9 +197,9 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		TreeViewer tv = getCHTreeViewer();
 
 		TreeItem item= checkTreeNode(tv.getTree(), 0, "MyClass::method3()");
-		TreeItem item0= checkTreeNode(item, 0, "MyClass::method1()");
-		TreeItem item1= checkTreeNode(item, 1, "MyClass::method2()");
-		checkTreeNode(item, 2, null); item= null;
+		TreeItem item0= checkTreeNode(tv.getTree(), 0, 0, "MyClass::method1()");
+		TreeItem item1= checkTreeNode(tv.getTree(), 0, 1, "MyClass::method2()");
+		checkTreeNode(tv.getTree(), 0, 2, null); item= null;
 		
 		// method 1
 		tv.setExpandedState(item0.getData(), true); 

@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * David McKnight   (IBM)        - [210812] for text transfer, need to honour the preference (instead of straight binary)
+ * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -44,8 +45,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
@@ -69,7 +77,9 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
+import org.eclipse.rse.services.files.DefaultFileServiceCodePageConverter;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.IFileServiceCodePageConverter;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -84,6 +94,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	private int _bufferDownloadSize = IUniversalDataStoreConstants.BUFFER_SIZE;
 	protected ISystemFileTypes _fileTypeRegistry;
 	private String remoteEncoding;
+	private IFileServiceCodePageConverter _defaultCodePageConverter;
+	protected Vector _codePageConverters;
 	
 	protected boolean unixStyle = false;
 	
@@ -114,6 +126,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		_dstoreFileMap.clear();
 		_uploadLogElement = null;
 	}
+	
+
 	
 	public String getName()
 	{
@@ -205,6 +219,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}
 		return _uploadLogElement;
 	}
+	
 	
 
 	protected DataElement getAttributes(String fileNameFilter, boolean showHidden)
@@ -420,6 +435,60 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return true;
 	}
 
+	protected IFileServiceCodePageConverter getDefaultCodePageConverter()
+	{
+		if (_defaultCodePageConverter == null){
+			_defaultCodePageConverter = new DefaultFileServiceCodePageConverter();
+		}
+		return _defaultCodePageConverter;
+	}
+	
+	/**
+	 * Retrieves the first codepage converter provided via the codePageConverter extension point for the specified 
+	 * encoding
+	 * @param serverEncoding	The server encoding for which to retrieve a code page converter 
+	 * @return	A code page converter for the specified encoding, or null if no converter was found for that encoding.
+	 */
+	protected IFileServiceCodePageConverter getCodePageConverter(String serverEncoding) {
+		if (_codePageConverters == null) {
+			// retrieve all extension points
+        	IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint ep = registry.getExtensionPoint("org.eclipse.rse.services", "codePageConverter"); //$NON-NLS-1$
+			if (ep != null){
+			IExtension[] extensions = ep.getExtensions();
+			_codePageConverters = new Vector();
+			for (int i = 0; i < extensions.length; i++) {
+				IExtension extension = extensions[i];
+				IConfigurationElement[] configElements = extension.getConfigurationElements();
+				for (int j = 0; j < configElements.length; j++) {
+					IConfigurationElement element = configElements[j];
+					if (element.getName().equalsIgnoreCase("codePageConverter")) {								
+						try {
+							Object codePageConverter = element.createExecutableExtension("class");
+							if (codePageConverter!=null && codePageConverter instanceof IFileServiceCodePageConverter)
+								// only save extension point which implement the correct interface
+								_codePageConverters.add(codePageConverter);
+						} catch (CoreException e) {
+							//shouldn't get here....
+						}
+					}
+				}
+			}
+			}
+        }
+		if (_codePageConverters != null)
+		{
+		//scan through the available converters and return the first valid one for the specified encoding for this 
+		// subsystem implementation
+		for (int i=0; i<_codePageConverters.size(); i++) {
+			IFileServiceCodePageConverter codePageConverter = (IFileServiceCodePageConverter)_codePageConverters.elementAt(i); 
+			if (codePageConverter.isServerEncodingSupported(serverEncoding, this))
+				return codePageConverter;
+		}
+		}
+		return null;
+	}
+	
 	public boolean upload(File file, String remoteParent, String remoteFile, boolean isBinary,
 			String srcEncoding, String hostEncoding, IProgressMonitor monitor)
 	{
@@ -479,6 +548,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			
 			int localLineSepLength = localLineSep.length();
+			
+			IFileServiceCodePageConverter codePageConverter = getCodePageConverter(hostEncoding);
+			if (codePageConverter == null) {
+				codePageConverter = getDefaultCodePageConverter();
+			}
 
 			// upload bytes while available
 			while (available > 0 && !isCancelled)
@@ -529,7 +603,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 						}
 					}
 
-					convBytes = tempStr.getBytes(hostEncoding);
+					
+					convBytes = codePageConverter.convertClientStringToRemoteBytes(tempStr, hostEncoding, this);
 				
 					if (first)
 					{ // send first set of bytes
@@ -675,7 +750,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataStore ds = getDataStore();
 		DataElement universaltemp = getMinerElement();
 		
-		int mode = isBinary ? IUniversalDataStoreConstants.BINARY_MODE : IUniversalDataStoreConstants.TEXT_MODE; 
+		//int mode = isBinary ? IUniversalDataStoreConstants.BINARY_MODE : IUniversalDataStoreConstants.TEXT_MODE; 
+		int mode = IUniversalDataStoreConstants.BINARY_MODE;
 		
 		if (!makeSureLocalExists(localFile))
 		{
@@ -770,7 +846,18 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			resultChild = (DataElement) resultList.get(i);
 
 			if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
-			{
+			{								
+				if (!isBinary){ // do standard conversion if this is text!	
+					String localEncoding = System.getProperty("file.encoding");
+					IFileServiceCodePageConverter codePageConverter = getCodePageConverter(encoding);
+					if (codePageConverter == null) {
+						codePageConverter = getDefaultCodePageConverter();
+					}
+					codePageConverter.convertFileFromRemoteEncoding(localFile, encoding, localEncoding, this);
+				}
+					
+				
+				
 				return true;
 			}
 			else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
@@ -880,7 +967,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		// kick off all downloads
 		for (int i = 0; i < des.length && result == true; i++)
 		{
-			int mode = isBinaries[i] ? IUniversalDataStoreConstants.BINARY_MODE : IUniversalDataStoreConstants.TEXT_MODE; 
+			int mode = IUniversalDataStoreConstants.BINARY_MODE;
 			DataElement de = des[i];
 			String remotePath = paths[i];
 			
@@ -990,6 +1077,16 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 				if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
 				{
+					// do standard conversion if this is text!
+					if (!isBinaries[i]){ // do standard conversion if this is text!	
+						String localEncoding = System.getProperty("file.encoding");
+						IFileServiceCodePageConverter codePageConverter = getCodePageConverter(hostEncodings[i]);
+						if (codePageConverter == null) {
+							codePageConverter = getDefaultCodePageConverter();
+						}
+						codePageConverter.convertFileFromRemoteEncoding(localFile, hostEncodings[i], localEncoding, this);
+					}
+					
 					result = true;
 				}
 				else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))

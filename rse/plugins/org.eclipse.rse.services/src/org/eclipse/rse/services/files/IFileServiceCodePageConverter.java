@@ -1,0 +1,56 @@
+/********************************************************************************
+ * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * The following IBM employees contributed to the Remote System Explorer
+ * component that contains this file: David McKnight.
+ * 
+ * Contributors:
+ * David McKnight    (IBM)  -[209704] [api] Ability to override default encoding conversion needed.
+ ********************************************************************************/
+
+package org.eclipse.rse.services.files;
+
+import java.io.File;
+
+
+/**
+ * This interface is used by the extension point 
+ * It allows overriding the Universal File Subsystem translation of files, and results in 
+ * binary transfer, with calls to the implementor to handle code page conversion.
+ * @since 7.1
+ */
+public interface IFileServiceCodePageConverter {
+
+	/**
+	 * Converts a client string to remote bytes, for use when uploading in binary mode.  
+	 * @param clientString		the client string to convert
+	 * @param remoteEncoding	The remote encoding for the desired server bytes
+	 * @param fs                The file service to apply conversion to.
+	 *                          Can be used to determine implementation specific settings to the converter
+	 * @return					The bytes to upload to the server
+	 */
+	public byte [] convertClientStringToRemoteBytes(String clientString, String remoteEncoding, IFileService fs);
+	
+	/**
+	 * Converts the specified file (which was downloaded from the server in binary mode) from server encoding bytes, to local encoding
+	 * @param file				The file to convert 
+	 * @param localEncoding		The remote encoding of the file
+	 * @param fs                The file service to apply conversion to.
+	 *                          Can be used to determine implementation specific settings to the converter
+	 */
+	public void convertFileFromRemoteEncoding(File file, String remoteEncoding, String localEncoding, IFileService uss);
+	
+	/**
+	 * Indicates whether or not the specified server encoding and subsystem implementation is supported by this code page converter
+	 * @param remoteEncoding		The remote encoding from the server to check
+	 * @param fs                The file service to apply conversion to.
+	 *                          Can be used to determine implementation specific settings to the converter
+	 * @return						True if this code page converter can convert the specified encoding, false otherwise
+	 */
+	public boolean isServerEncodingSupported(String remoteEncoding, IFileService uss);
+	
+}

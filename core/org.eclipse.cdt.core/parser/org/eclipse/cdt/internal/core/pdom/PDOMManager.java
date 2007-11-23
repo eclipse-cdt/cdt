@@ -21,7 +21,9 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -564,8 +566,25 @@ public class PDOMManager implements IWritableIndexManager, IListener {
     }
 
 	public void enqueue(IPDOMIndexerTask subjob) {
+		final HashSet referencing= new HashSet();
+		final IPDOMIndexer indexer = subjob.getIndexer();
+		if (indexer != null) {
+			getReferencingProjects(indexer.getProject().getProject(), referencing);
+		}
     	synchronized (fTaskQueueMutex) {
-    		fTaskQueue.addLast(subjob);
+    		int i=0;
+    		for (Iterator it = fTaskQueue.iterator(); it.hasNext();) {
+				final IPDOMIndexerTask task= (IPDOMIndexerTask) it.next();
+				final IPDOMIndexer ti = task.getIndexer();
+				if (ti != null && referencing.contains(ti.getProject().getProject())) {
+					fTaskQueue.add(i, subjob);
+					break;
+				}
+				i++;
+			}
+    		if (i == fTaskQueue.size()) {
+        		fTaskQueue.addLast(subjob);
+    		}
 			if (fIndexerJob == null) {
 				fCompletedSources= 0;
 				fCompletedHeaders= 0;
@@ -577,6 +596,17 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
     }
     
+	private void getReferencingProjects(IProject prj, HashSet result) {
+		LinkedList projectsToSearch= new LinkedList();
+		projectsToSearch.add(prj);
+		while (!projectsToSearch.isEmpty()) {
+			prj= (IProject) projectsToSearch.removeFirst();
+			if (result.add(prj)) {
+				projectsToSearch.addAll(Arrays.asList(prj.getReferencingProjects()));
+			}
+		}
+	}
+
 	IPDOMIndexerTask getNextTask() {
 		IPDOMIndexerTask result= null;
     	synchronized (fTaskQueueMutex) {

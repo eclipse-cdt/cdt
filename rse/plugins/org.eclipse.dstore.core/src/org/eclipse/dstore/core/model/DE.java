@@ -207,7 +207,6 @@ public class DE
     
     /*
      * Source location attribute index.   
-     * @deprecated
      */
     public static final int    A_SOURCE_LOCATION     = 5;
 

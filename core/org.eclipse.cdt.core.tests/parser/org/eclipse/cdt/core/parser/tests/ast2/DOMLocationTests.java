@@ -720,4 +720,19 @@ public class DOMLocationTests extends AST2BaseTest {
         assertSoleLocation(problems[1], code, "\"deprecated include\"");
         assertSoleLocation(problems[2], code, fUsesCPreprocessor ? "#invalid" : "invalid");        	
     }
+    
+    // int main(void){	
+    // 	#define one 1
+    //	int integer = one; 
+    //	return integer;
+    // }
+    public void testRawSignature_Bug117029() throws Exception {
+    	String content= getContents(1)[0].toString();
+    	IASTTranslationUnit tu= parse(content, ParserLanguage.CPP);
+    	IASTFunctionDefinition decl= (IASTFunctionDefinition) tu.getDeclarations()[0];
+    	IASTCompoundStatement compound= (IASTCompoundStatement) decl.getBody();
+    	assertEquals("int integer = one;", compound.getStatements()[0].getRawSignature());
+    	assertEquals("return integer;", compound.getStatements()[1].getRawSignature());
+    }
+    
 }

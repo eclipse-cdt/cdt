@@ -12,7 +12,11 @@
 
 package org.eclipse.cdt.internal.core.pdom.indexer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -25,11 +29,18 @@ import org.eclipse.cdt.internal.core.pdom.ITodoTaskUpdater;
 import org.eclipse.cdt.internal.core.pdom.indexer.TodoTaskParser.Task;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 
 
@@ -83,37 +94,78 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 	}
 
 	public void updateTasks(IASTComment[] comments, IIndexFileLocation[] filesToUpdate) {
+		class TaskList {
+			IFile fFile;
+			List  fTasks;
+			public TaskList(IFile file) {
+				fFile= file;
+			}
+			public void add(Task task) {
+				if (fTasks == null) {
+					fTasks= new ArrayList();
+				}
+				fTasks.add(task);
+			}
+		}
+
 		final IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 
-		// first collect all valid file-locations and remove old tasks.
-		final HashMap locationToFile= new HashMap();
+		// first collect all valid file-locations
+		final HashMap pathToTaskList= new HashMap();
+		final HashSet projects= new HashSet();
 		for (int i = 0; i < filesToUpdate.length; i++) {
 			final IIndexFileLocation indexFileLocation = filesToUpdate[i];
 			final String filepath = indexFileLocation.getFullPath();
 			if (filepath != null) {
 				IFile file = workspaceRoot.getFile(new Path(filepath));
-				if (file.exists()) {
-					locationToFile.put(IndexLocationFactory.getAbsolutePath(indexFileLocation), file);
-					removeTasksFor(file);
+				if (file != null && file.exists()) {
+					projects.add(file.getProject());
+					pathToTaskList.put(IndexLocationFactory.getAbsolutePath(indexFileLocation), new TaskList(file));
 				}
 			}
 		}
 
-		if (comments.length == 0) {
-			return;
-		}
-
-		final Task[] tasks = taskParser.parse(comments);
-		for (int i = 0; i < tasks.length; i++) {
-			final Task task = tasks[i];
-			final IFile file= (IFile) locationToFile.get(new Path(task.getFileLocation()));
-			if (file != null) {
-				try {
-					applyTask(task, file);
-				} catch (CoreException e) {
-					CCorePlugin.log(e);
+		if (comments.length > 0) {
+			final Task[] tasks = taskParser.parse(comments);
+			for (int i = 0; i < tasks.length; i++) {
+				final Task task = tasks[i];
+				TaskList list= (TaskList) pathToTaskList.get(new Path(task.getFileLocation()));
+				if (list != null) {
+					list.add(task);
 				}
 			}
+		}
+		
+		// run this in a job in order not to block the indexer (bug 210730).
+		if (!pathToTaskList.isEmpty()) {
+			Job job= new Job(Messages.TodoTaskUpdater_UpdateJob) {
+				protected IStatus run(IProgressMonitor monitor) {
+					MultiStatus status= new MultiStatus(CCorePlugin.PLUGIN_ID, 0, Messages.TodoTaskUpdater_UpdateJob, null);
+
+					for (Iterator it = pathToTaskList.values().iterator(); it.hasNext();) {
+						final TaskList tasklist = (TaskList) it.next();
+						try {
+							final IFile file= tasklist.fFile;
+							if (file.exists()) {
+								file.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
+								final List tasks= tasklist.fTasks;
+								if (tasks != null) {
+									for (Iterator itTasks = tasks.iterator(); itTasks.hasNext();) {
+										Task task = (Task) itTasks.next();
+										applyTask(task, file);
+									}
+								}
+							}
+						} catch (CoreException e) {
+							status.add(e.getStatus());
+						}
+					}
+					return status;
+				}
+			};
+			job.setRule(new MultiRule((IProject[]) projects.toArray(new IProject[projects.size()])));
+			job.setSystem(true);
+			job.schedule();
 		}
 	}
 
@@ -134,15 +186,6 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 			});
 	}
 	
-	public static void removeTasksFor(IResource resource) {
-		try {
-			if (resource != null && resource.exists())
-				resource.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-	}
-	
     private String[] split(String value, String delimiters) {
         StringTokenizer tokenizer = new StringTokenizer(value, delimiters);
         int size = tokenizer.countTokens();
@@ -151,4 +194,27 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
             tokens[i] = tokenizer.nextToken();
         return tokens;
     }
+    
+	public static void removeTasksFor(final IResource resource) {
+		if (resource == null || !resource.exists()) {
+			return;
+		}
+		
+		// run this in a job in order not to block the indexer (bug 210730).
+		Job job= new Job(Messages.TodoTaskUpdater_DeleteJob) {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					if (resource.exists()) {
+						resource.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
+					}
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setRule(resource);
+		job.setSystem(true);
+		job.schedule();
+	}
 }

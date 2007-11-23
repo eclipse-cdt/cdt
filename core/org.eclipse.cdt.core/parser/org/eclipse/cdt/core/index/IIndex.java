@@ -251,8 +251,8 @@ public interface IIndex {
 	 * Searches for all bindings in global scope with a given name. In case a binding exists in multiple projects, no duplicate bindings are returned.
 	 * This method makes use of the BTree and is faster than the methods using patterns.
 	 * <p>
-	 * To find bindings for file-local (static) variables or functions you need to provide an additional qualifier. It can be obtained by calling
-	 * {@link #getFileLocalScopeQualifier()} or {@link IndexLocationFactory#getFileLocalQualifier(IIndexLocation)}.
+	 * To find bindings for file-local (static) variables or functions you need to provide an additional qualifier. 
+	 * It can be obtained by calling {@link IIndexBinding#getFileLocalScopeQualifier()}.
 	 * @param names an array of names, which has to be matched by the qualified name of the bindings.
 	 * @param filter a filter that allows for skipping parts of the index 
 	 * @param monitor a monitor to report progress, may be <code>null</code>.
@@ -345,11 +345,4 @@ public interface IIndex {
 	 * @throws CoreException
 	 */
 	public IIndexBinding adaptBinding(IBinding binding);
-	
-	/**
-	 * Returns the additional qualifier with which you can search for static (file-local) functions and
-	 * variables. 
-	 * @see #findBindings(char[][], IndexFilter, IProgressMonitor).
-	 */
-	public String getFileLocalScopeQualifier(IIndexFileLocation loc);
 }

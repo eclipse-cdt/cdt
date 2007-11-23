@@ -2527,12 +2527,14 @@ public class PathEntryTranslator {
 
 			public boolean visit(PathSettingsContainer container) {
 				CResourceData data = (CResourceData)container.getValue();
-				PathEntryCollector child = cr.createChild(container.getPath());
-				for(int i = 0; i < kinds.length; i++){
-					List list = new ArrayList();
-					if(collectEntries(kinds[i], data, list)){
-						ICLanguageSettingEntry[] entries = (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
-						child.setEntries(kinds[i], entries, exportedSettings);
+				if (data != null) {
+					PathEntryCollector child = cr.createChild(container.getPath());
+					for(int i = 0; i < kinds.length; i++){
+						List list = new ArrayList();
+						if(collectEntries(kinds[i], data, list)){
+							ICLanguageSettingEntry[] entries = (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
+							child.setEntries(kinds[i], entries, exportedSettings);
+						}
 					}
 				}
 				return true;

@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [209423] Fix for null pointer - filter attributes need unique ids
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
+ * David McKnight   (IBM)        - [210812] for text transfer, need to honour the preference (instead of straight binary)
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -674,17 +675,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataStore ds = getDataStore();
 		DataElement universaltemp = getMinerElement();
 		
-		// just download as binary since we do not have to convert to UTF-8 anyway
-		// the miner does a binary download anyway
-		int mode = IUniversalDataStoreConstants.BINARY_MODE;
+		int mode = isBinary ? IUniversalDataStoreConstants.BINARY_MODE : IUniversalDataStoreConstants.TEXT_MODE; 
 		
 		if (!makeSureLocalExists(localFile))
 		{
 			return false;
 		}
-
-
-
 		
 
 		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
@@ -882,10 +878,9 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			
 		
 		// kick off all downloads
-		int mode = IUniversalDataStoreConstants.BINARY_MODE;
-		
 		for (int i = 0; i < des.length && result == true; i++)
 		{
+			int mode = isBinaries[i] ? IUniversalDataStoreConstants.BINARY_MODE : IUniversalDataStoreConstants.TEXT_MODE; 
 			DataElement de = des[i];
 			String remotePath = paths[i];
 			

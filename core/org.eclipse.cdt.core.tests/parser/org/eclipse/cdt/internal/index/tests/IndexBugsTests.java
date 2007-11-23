@@ -1175,4 +1175,17 @@ public class IndexBugsTests extends BaseTestCase {
 		assertEquals(2, refs.length);
 	}
 
+	// int ok;
+	
+	// #include "header.x"
+	public void testNonStandardSuffix_Bug205778() throws Exception {
+		StringBuffer[] contents= getContentsForTest(2);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		TestSourceReader.createFile(fCProject.getProject(), "header.x", contents[0].toString());
+		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1].toString());
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		IIndexBinding[] bindings= fIndex.findBindings("ok".toCharArray(), IndexFilter.ALL, NPM);
+		assertEquals(1, bindings.length);
+	}
 }

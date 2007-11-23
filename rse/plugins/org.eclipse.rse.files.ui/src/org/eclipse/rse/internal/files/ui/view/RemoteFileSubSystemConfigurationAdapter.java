@@ -25,6 +25,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
+import org.eclipse.rse.core.model.ISystemMessageObject;
 import org.eclipse.rse.core.model.ISystemNewConnectionWizardPage;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.files.ui.actions.SystemFileUpdateFilterAction;
@@ -163,6 +164,9 @@ public class RemoteFileSubSystemConfigurationAdapter extends SubSystemConfigurat
 					if (!remoteFile.isHidden()) {
 						results.add(remoteFile);
 					}
+				}
+				else if (children[i] instanceof ISystemMessageObject){
+					results.add(children[i]);
 				}
 			}
 			

@@ -117,10 +117,20 @@ public class SystemEditFileAction extends SystemBaseAction {
 	
 			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
 			
-			String encoding = remoteFile.getEncoding();
+
+				
+			String remoteEncoding = remoteFile.getEncoding();
 			String storedEncoding = properties.getEncoding();
 			
-			return (!dirty && !remoteNewer && (encoding != null && encoding.equals(storedEncoding)));
+			boolean encodingChanged = storedEncoding == null || !(remoteEncoding.equals(storedEncoding));
+
+			boolean usedBinary = properties.getUsedBinaryTransfer();
+			boolean isBinary = remoteFile.isBinary();
+			
+			return (!dirty && 
+					!remoteNewer && 
+					usedBinary == isBinary &&
+					!encodingChanged);
 		}
 		return false;
 	}

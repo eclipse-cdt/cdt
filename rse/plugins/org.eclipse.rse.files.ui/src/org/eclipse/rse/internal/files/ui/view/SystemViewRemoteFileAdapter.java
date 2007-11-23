@@ -3045,7 +3045,14 @@ public class SystemViewRemoteFileAdapter
 			String storedEncoding = properties.getEncoding();
 			
 			boolean encodingChanged = storedEncoding == null || !(remoteEncoding.equals(storedEncoding));
-			return (!dirty && !remoteNewer && !encodingChanged);
+
+			boolean usedBinary = properties.getUsedBinaryTransfer();
+			boolean isBinary = remoteFile.isBinary();
+			
+			return (!dirty && 
+					!remoteNewer && 
+					usedBinary == isBinary &&
+					!encodingChanged);
 		}
 		return false;
 	}

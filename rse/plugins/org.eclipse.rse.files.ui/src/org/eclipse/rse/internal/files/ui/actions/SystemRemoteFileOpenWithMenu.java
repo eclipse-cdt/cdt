@@ -248,7 +248,19 @@ private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile r
 		boolean dirty = properties.getDirty();
 
 		boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
-		return (!dirty && !remoteNewer);
+		
+		String remoteEncoding = remoteFile.getEncoding();
+		String storedEncoding = properties.getEncoding();
+		
+		boolean encodingChanged = storedEncoding == null || !(remoteEncoding.equals(storedEncoding));
+
+		boolean usedBinary = properties.getUsedBinaryTransfer();
+		boolean isBinary = remoteFile.isBinary();
+		
+		return (!dirty && 
+				!remoteNewer && 
+				usedBinary == isBinary &&
+				!encodingChanged);
 	}
 	return false;
 }

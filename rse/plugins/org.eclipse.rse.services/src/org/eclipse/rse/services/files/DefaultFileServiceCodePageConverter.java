@@ -50,7 +50,8 @@ public class DefaultFileServiceCodePageConverter implements
 			byte[] localBuffer = new String(buffer, 0, bytesRead, remoteEncoding).getBytes(localEncoding);
 			
 			FileOutputStream outStream = new FileOutputStream(file);		
-			outStream.write(localBuffer, 0, localBuffer.length);			
+			outStream.write(localBuffer, 0, localBuffer.length);
+			outStream.close();
 		}
 		catch (Exception e)
 		{
@@ -61,6 +62,14 @@ public class DefaultFileServiceCodePageConverter implements
 	public boolean isServerEncodingSupported(String remoteEncoding,
 			IFileService fs) {
 		return true;
+	}
+	
+	/**
+	 * to make another converter take precedence over this, supply a 
+	 * code page converter returning a lower number (i.e. higher priority)
+	 */
+	public int getPriority(String remoteEString, IFileService fs){
+		return 1000;
 	}
 
 }

@@ -42,7 +42,7 @@ public interface IFileServiceCodePageConverter {
 	 * @param fs                The file service to apply conversion to.
 	 *                          Can be used to determine implementation specific settings to the converter
 	 */
-	public void convertFileFromRemoteEncoding(File file, String remoteEncoding, String localEncoding, IFileService uss);
+	public void convertFileFromRemoteEncoding(File file, String remoteEncoding, String localEncoding, IFileService fs);
 	
 	/**
 	 * Indicates whether or not the specified server encoding and subsystem implementation is supported by this code page converter
@@ -51,6 +51,12 @@ public interface IFileServiceCodePageConverter {
 	 *                          Can be used to determine implementation specific settings to the converter
 	 * @return						True if this code page converter can convert the specified encoding, false otherwise
 	 */
-	public boolean isServerEncodingSupported(String remoteEncoding, IFileService uss);
+	public boolean isServerEncodingSupported(String remoteEncoding, IFileService fs);
 	
+	/**
+	 * Indicates the priority of this code page converter if more than one code page converter
+	 * handle a particular encoding.  The lower the number, the higher the priority.
+	 * @return priority
+	 */
+	public int getPriority(String remoteEncoding, IFileService fs);
 }

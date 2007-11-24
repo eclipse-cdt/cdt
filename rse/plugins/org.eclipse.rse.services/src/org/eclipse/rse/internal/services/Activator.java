@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Moved from org.eclipse.rse.services
+ * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services;
@@ -19,8 +20,12 @@ package org.eclipse.rse.internal.services;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
@@ -31,6 +36,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.files.DefaultFileServiceCodePageConverter;
+import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.services.files.IFileServiceCodePageConverter;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -39,6 +47,9 @@ public class Activator extends Plugin {
 
 	//The shared instance.
 	private static Activator plugin;
+	
+	private static IFileServiceCodePageConverter _defaultCodePageConverter;
+	protected static Vector _codePageConverters;
 	
 	/**
 	 * The constructor.
@@ -54,6 +65,7 @@ public class Activator extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		registerArchiveHandlers();
+		registerCodePageConverters();
 	}
 
 	/*
@@ -113,6 +125,85 @@ public class Activator extends Plugin {
 		}
 	}
 
+
+
+	
+	private void registerCodePageConverters()
+	{
+		if (_codePageConverters == null) {
+			// retrieve all extension points
+        	IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IExtensionPoint ep = registry.getExtensionPoint("org.eclipse.rse.services", "codePageConverters"); //$NON-NLS-1$
+			if (ep != null){
+				IExtension[] extensions = ep.getExtensions();
+				_codePageConverters = new Vector();
+				for (int i = 0; i < extensions.length; i++) {
+					IExtension extension = extensions[i];
+					IConfigurationElement[] configElements = extension.getConfigurationElements();
+					for (int j = 0; j < configElements.length; j++) {
+						IConfigurationElement element = configElements[j];
+						if (element.getName().equalsIgnoreCase("codePageConverter")) {								
+							try {
+								Object codePageConverter = element.createExecutableExtension("class");
+								if (codePageConverter!=null && codePageConverter instanceof IFileServiceCodePageConverter){
+									// only save extension point which implement the correct interface
+									_codePageConverters.add(codePageConverter);									
+								}
+							} 
+							catch (CoreException e) {
+								//shouldn't get here....
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (_defaultCodePageConverter == null){
+			_defaultCodePageConverter = new DefaultFileServiceCodePageConverter();
+		}
+	}
+	
+	public static IFileServiceCodePageConverter getDefaultCodePageConverter()
+	{
+		return _defaultCodePageConverter;
+	}
+	
+	/**
+	 * Retrieves the first codepage converter provided via the codePageConverter extension point for the specified 
+	 * encoding
+	 * @param serverEncoding	The server encoding for which to retrieve a code page converter 
+	 * @return	A code page converter for the specified encoding, or null if no converter was found for that encoding.
+	 */
+	public static IFileServiceCodePageConverter getCodePageConverter(String serverEncoding, IFileService fileService) {
+
+		IFileServiceCodePageConverter matchingCodePageConverter = null;
+		if (_codePageConverters != null)
+		{
+			
+			//scan through the available converters and return the first valid one for the specified encoding for this 
+			// subsystem implementation
+			for (int i=0; i<_codePageConverters.size(); i++) {
+				IFileServiceCodePageConverter codePageConverter = (IFileServiceCodePageConverter)_codePageConverters.elementAt(i); 
+				if (codePageConverter.isServerEncodingSupported(serverEncoding, fileService))
+				{
+					if (matchingCodePageConverter != null){
+						int matchingPriority = matchingCodePageConverter.getPriority(serverEncoding, fileService);
+						int newPriority = codePageConverter.getPriority(serverEncoding, fileService);
+						if (newPriority < matchingPriority){
+							matchingCodePageConverter = codePageConverter;
+						}
+					}
+					else {
+						matchingCodePageConverter = codePageConverter;
+					}
+				}
+			}
+		}
+		return matchingCodePageConverter;
+	}
+	
 	/**
 	 * Logs an throwable to the log for this plugin.
 	 * @param t the Throwable to be logged.

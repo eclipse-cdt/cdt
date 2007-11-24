@@ -2,5 +2,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    <extension-point id="archivehandlers" name="%extPoint.archivehandlers" schema="schema/archivehandlers.exsd"/>
-
+   <extension-point id="codePageConverters" name="%extPoint.codePageConverters" schema="schema/codePageConverters.exsd"/>
+   
 </plugin>

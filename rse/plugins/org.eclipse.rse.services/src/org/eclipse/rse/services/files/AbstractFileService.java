@@ -28,15 +28,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -44,8 +37,6 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 public abstract class AbstractFileService implements IFileService
 {
-	protected Vector _codePageConverters;
-	private IFileServiceCodePageConverter _defaultCodePageConverter;
 	
 	protected abstract IHostFile[] internalFetch(String parentPath, String fileFilter, int fileType, IProgressMonitor monitor) throws SystemMessageException;
 	
@@ -217,60 +208,6 @@ public abstract class AbstractFileService implements IFileService
 	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(String, String, boolean, IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		return null;
-	}
-	
-	protected IFileServiceCodePageConverter getDefaultCodePageConverter()
-	{
-		if (_defaultCodePageConverter == null){
-			_defaultCodePageConverter = new DefaultFileServiceCodePageConverter();
-		}
-		return _defaultCodePageConverter;
-	}
-	
-	/**
-	 * Retrieves the first codepage converter provided via the codePageConverter extension point for the specified 
-	 * encoding
-	 * @param serverEncoding	The server encoding for which to retrieve a code page converter 
-	 * @return	A code page converter for the specified encoding, or null if no converter was found for that encoding.
-	 */
-	protected IFileServiceCodePageConverter getCodePageConverter(String serverEncoding) {
-		if (_codePageConverters == null) {
-			// retrieve all extension points
-        	IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IExtensionPoint ep = registry.getExtensionPoint("org.eclipse.rse.services", "codePageConverter"); //$NON-NLS-1$
-			if (ep != null){
-			IExtension[] extensions = ep.getExtensions();
-			_codePageConverters = new Vector();
-			for (int i = 0; i < extensions.length; i++) {
-				IExtension extension = extensions[i];
-				IConfigurationElement[] configElements = extension.getConfigurationElements();
-				for (int j = 0; j < configElements.length; j++) {
-					IConfigurationElement element = configElements[j];
-					if (element.getName().equalsIgnoreCase("codePageConverter")) {								
-						try {
-							Object codePageConverter = element.createExecutableExtension("class");
-							if (codePageConverter!=null && codePageConverter instanceof IFileServiceCodePageConverter)
-								// only save extension point which implement the correct interface
-								_codePageConverters.add(codePageConverter);
-						} catch (CoreException e) {
-							//shouldn't get here....
-						}
-					}
-				}
-			}
-			}
-        }
-		if (_codePageConverters != null)
-		{
-		//scan through the available converters and return the first valid one for the specified encoding for this 
-		// subsystem implementation
-		for (int i=0; i<_codePageConverters.size(); i++) {
-			IFileServiceCodePageConverter codePageConverter = (IFileServiceCodePageConverter)_codePageConverters.elementAt(i); 
-			if (codePageConverter.isServerEncodingSupported(serverEncoding, this))
-				return codePageConverter;
-		}
-		}
 		return null;
 	}
 }

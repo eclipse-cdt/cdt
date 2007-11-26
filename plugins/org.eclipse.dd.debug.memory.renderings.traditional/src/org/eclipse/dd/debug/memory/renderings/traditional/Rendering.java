@@ -455,7 +455,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         setCurrentScrollSelection();
     }
     
-    public Selection getSelection()
+    public IMemorySelection getSelection()
     {
         return fSelection;
     }
@@ -1045,7 +1045,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         super.dispose();
     }
 
-    class Selection
+    class Selection implements IMemorySelection
     {
         private BigInteger fStartHigh;
         private BigInteger fStartLow;
@@ -1053,19 +1053,19 @@ public class Rendering extends Composite implements IDebugEventSetListener
         private BigInteger fEndHigh;
         private BigInteger fEndLow;
 
-        protected void clear()
+        public void clear()
         {
             fEndHigh = fEndLow = fStartHigh = fStartLow = null;
             redrawPanes();
         }
         
-        protected boolean hasSelection()
+        public boolean hasSelection()
         {
         	return fStartHigh != null && fStartLow != null
         		&& fEndHigh != null && fEndLow != null;
         }
         
-        protected boolean isSelected(BigInteger address)
+        public boolean isSelected(BigInteger address)
         {
             // do we have valid start and end addresses
             if(getEnd() == null || getStart() == null)
@@ -1089,7 +1089,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             return false;
         }
     
-        protected void setStart(BigInteger high, BigInteger low)
+        public void setStart(BigInteger high, BigInteger low)
         {
             if(high == null && low == null)
             {
@@ -1121,7 +1121,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 redrawPanes();
         }
     
-        protected void setEnd(BigInteger high, BigInteger low)
+        public void setEnd(BigInteger high, BigInteger low)
         {
             if(high == null && low == null)
             {
@@ -1153,7 +1153,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 redrawPanes();
         }
     
-        protected BigInteger getHigh()
+        public BigInteger getHigh()
         {
         	if(!hasSelection())
         		return null;
@@ -1161,7 +1161,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         	return getStart().max(getEnd());
         }
         
-        protected BigInteger getLow()
+        public BigInteger getLow()
         {
         	if(!hasSelection())
         		return null;
@@ -1169,7 +1169,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         	return getStart().min(getEnd());
         }
         
-        protected BigInteger getStart()
+        public BigInteger getStart()
         {
             // if there is no start, return null
             if(fStartHigh == null)
@@ -1194,7 +1194,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 return fStartLow;
         }
     
-        protected BigInteger getEnd()
+        public BigInteger getEnd()
         {
             // if there is no end, return null
             if(fEndHigh == null)

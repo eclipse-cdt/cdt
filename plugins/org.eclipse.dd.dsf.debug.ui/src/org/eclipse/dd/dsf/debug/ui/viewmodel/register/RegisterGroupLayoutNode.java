@@ -23,7 +23,6 @@ import org.eclipse.dd.dsf.debug.service.IRunControl;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IGroupChangedDMEvent;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
-import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.AbstractExpressionLayoutNode;
@@ -34,6 +33,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -151,25 +151,19 @@ public class RegisterGroupLayoutNode extends AbstractExpressionLayoutNode
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
         if (!checkService(IRegisters.class, null, update)) return;
         
-        final IExecutionDMContext execDmc = findDmcInPath(update.getElementPath(), IExecutionDMContext.class) ;
-        
-        if (execDmc != null) {
-            getServicesTracker().getService(IRegisters.class).getRegisterGroups(
-                execDmc,
-                new DataRequestMonitor<IRegisterGroupDMContext[]>(getSession().getExecutor(), null) { 
-                    @Override
-                    public void handleCompleted() {
-                        if (!getStatus().isOK()) {
-                            update.done();
-                            return;
-                        }
-                        fillUpdateWithVMCs(update, getData());
+        CompositeDMContext compositeDmc = new CompositeDMContext(getVMProvider().getRootElement(), update.getElementPath());
+        getServicesTracker().getService(IRegisters.class).getRegisterGroups(
+            compositeDmc,
+            new DataRequestMonitor<IRegisterGroupDMContext[]>(getSession().getExecutor(), null) { 
+                @Override
+                public void handleCompleted() {
+                    if (!getStatus().isOK()) {
                         update.done();
-                    }}); 
-        } else {
-            handleFailedUpdate(update);
-        }          
-        
+                        return;
+                    }
+                    fillUpdateWithVMCs(update, getData());
+                    update.done();
+                }}); 
     }
     
     @Override

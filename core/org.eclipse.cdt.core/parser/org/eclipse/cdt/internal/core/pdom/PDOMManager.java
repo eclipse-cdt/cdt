@@ -63,7 +63,6 @@ import org.eclipse.cdt.internal.core.index.provider.IndexProviderManager;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
-import org.eclipse.cdt.internal.core.pdom.indexer.DeltaAnalyzer;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMRebuildTask;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMUpdateTask;
@@ -471,7 +470,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		createPolicy(project).setIndexer(indexer);
 	}
 
-	private IPDOMIndexer getIndexer(ICProject project) {
+	IPDOMIndexer getIndexer(ICProject project) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		synchronized (fUpdatePolicies) {
 			IndexUpdatePolicy policy= getPolicy(project);
@@ -724,18 +723,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		}
 	}
 
-	void changeProject(ICProject project, ICElementDelta delta) throws CoreException {
+	void changeProject(ICProject project, ITranslationUnit[] added, ITranslationUnit[] changed, ITranslationUnit[] removed) {
 		assert !Thread.holdsLock(fProjectToPDOM);
 		IPDOMIndexer indexer = getIndexer(project);
 		if (indexer != null && indexer.getID().equals(IPDOMManager.ID_NO_INDEXER)) {
 			return;
 		}
 		
-		DeltaAnalyzer deltaAnalyzer = new DeltaAnalyzer();
-		deltaAnalyzer.analyzeDelta(delta);
-		ITranslationUnit[] added= deltaAnalyzer.getAddedTUs();
-		ITranslationUnit[] changed= deltaAnalyzer.getChangedTUs();
-		ITranslationUnit[] removed= deltaAnalyzer.getRemovedTUs();
 		if (added.length > 0 || changed.length > 0 || removed.length > 0) {
 			synchronized (fUpdatePolicies) {
 				IndexUpdatePolicy policy= createPolicy(project);

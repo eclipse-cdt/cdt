@@ -88,4 +88,12 @@ public class DeltaAnalyzer {
 	public ITranslationUnit[] getRemovedTUs() {
 		return (ITranslationUnit[]) fRemoved.toArray(new ITranslationUnit[fRemoved.size()]);
 	}
+
+	public List getAddedList() {
+		return fAdded;
+	}
+
+	public List getChangedList() {
+		return fChanged;
+	}
 }

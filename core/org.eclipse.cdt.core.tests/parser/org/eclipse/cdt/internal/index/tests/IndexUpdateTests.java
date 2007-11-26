@@ -96,7 +96,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			fContentUsed= -1;
 		}
 		IProject project= cpp ? fCppProject.getProject() : fCProject.getProject();
-		fFile= TestSourceReader.createFile(project, "header.h", fContents[++fContentUsed].toString());
+		fHeader= TestSourceReader.createFile(project, "header.h", fContents[++fContentUsed].toString());
 		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
 	}
 
@@ -711,4 +711,49 @@ public class IndexUpdateTests extends IndexTestBase {
 		}
 	}
 
+	// int globalVar;
+	
+	// #include "header.h"
+	// void test() {
+	//    globalVar= 1;
+	// }
+	public void testChangingSourceBeforeHeader_Bug171834() throws Exception {
+		setupHeader(2, true);
+		setupFile(0, true);
+		IBinding binding;
+		ICompositeType ct;
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("globalVar");
+			assertTrue(binding instanceof IVariable);
+			assertEquals(2, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURENCES).length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		fFile= TestSourceReader.createFile(fFile.getParent(), fFile.getName(), fContents[1].toString().replaceAll("globalVar", "newVar"));
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, fFile, INDEXER_WAIT_TIME);
+		
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("globalVar");
+			assertTrue(binding instanceof IVariable);
+			assertEquals(1, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURENCES).length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+
+		fHeader= TestSourceReader.createFile(fHeader.getParent(), fHeader.getName(), fContents[0].toString().replaceAll("globalVar", "newVar"));
+		TestSourceReader.waitUntilFileIsIndexed(fIndex, fHeader, INDEXER_WAIT_TIME);
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM));
+
+		fIndex.acquireReadLock();
+		try {
+			binding = findBinding("newVar");
+			assertTrue(binding instanceof IVariable);
+			assertEquals(2, fIndex.findNames(binding, IIndex.FIND_ALL_OCCURENCES).length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
 }

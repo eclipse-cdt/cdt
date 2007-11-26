@@ -239,12 +239,20 @@ public class DataPane extends AbstractPane
     {
         super.paint(pe);
 
+        // Allow subclasses to override this method to do their own painting
+        doPaintData(pe);
+
+    }
+
+    // Allow subclasses to override this method to do their own painting
+    protected void doPaintData(PaintEvent pe)
+    {
         GC gc = pe.gc;
         gc.setFont(fRendering.getFont());
 
         int cellHeight = getCellHeight();
         int cellWidth = getCellWidth();
-        
+
         int columns = fRendering.getColumnCount();
 
         try
@@ -282,30 +290,10 @@ public class DataPane extends AbstractPane
                         gc.fillRectangle(cellWidth * col
                             + fRendering.getCellPadding(), cellHeight * i,
                             cellWidth, cellHeight);
+                        
+                        // Allow subclasses to override this method to do their own coloring
+                        applyCustomColor(gc, bytes, col);
 
-                        // TODO consider adding finer granularity?
-                        boolean anyByteChanged = false;
-                        for(int n = 0; n < bytes.length && !anyByteChanged; n++)
-                            if(bytes[n].isChanged())
-                                anyByteChanged = true;
-                        
-                        // TODO consider adding finer granularity?
-                        boolean anyByteEditing = false;
-                        for(int n = 0; n < bytes.length && !anyByteEditing; n++)
-                        	if(bytes[n] instanceof TraditionalMemoryByte)
-                        		if(((TraditionalMemoryByte) bytes[n]).isEdited())
-                        			anyByteEditing = true;
-                        
-                        if(anyByteEditing)
-                        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
-                        else if(anyByteChanged)
-                        	gc.setForeground(fRendering.getTraditionalRendering().getColorChanged());
-                        else if(isOdd(col))
-                    		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-                    	else
-                    		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-                        
-                        gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
                     }
 
                     gc.drawText(getCellText(bytes), cellWidth * col
@@ -345,7 +333,35 @@ public class DataPane extends AbstractPane
             fRendering.logError(TraditionalRenderingMessages
                 .getString("TraditionalRendering.FAILURE_PAINT"), e); //$NON-NLS-1$
         }
+    	
+    }
 
+   // Allow subclasses to override this method to do their own coloring
+   protected  void applyCustomColor(GC gc, MemoryByte bytes[], int col)
+    {
+        // TODO consider adding finer granularity?
+        boolean anyByteChanged = false;
+        for(int n = 0; n < bytes.length && !anyByteChanged; n++)
+            if(bytes[n].isChanged())
+                anyByteChanged = true;
+        
+        // TODO consider adding finer granularity?
+        boolean anyByteEditing = false;
+        for(int n = 0; n < bytes.length && !anyByteEditing; n++)
+        	if(bytes[n] instanceof TraditionalMemoryByte)
+        		if(((TraditionalMemoryByte) bytes[n]).isEdited())
+        			anyByteEditing = true;
+        
+        if(anyByteEditing)
+        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
+        else if(anyByteChanged)
+        	gc.setForeground(fRendering.getTraditionalRendering().getColorChanged());
+        else if(isOdd(col))
+    		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+    	else
+    		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+        
+        gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
     }
 
 }

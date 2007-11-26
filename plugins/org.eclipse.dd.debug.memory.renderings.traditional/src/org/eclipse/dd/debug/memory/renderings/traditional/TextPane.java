@@ -259,30 +259,7 @@ public class TextPane extends AbstractPane
                         gc.fillRectangle(cellWidth * col, cellHeight * i,
                             cellWidth, cellHeight);
 
-                        // TODO reuse, this could be in the abstract base
-                        // TODO consider adding finer granularity?
-                        boolean anyByteChanged = false;
-                        for(int n = 0; n < bytes.length && !anyByteChanged; n++)
-                            if(bytes[n].isChanged())
-                                anyByteChanged = true;
-                        
-                        // TODO consider adding finer granularity?
-                        boolean anyByteEditing = false;
-                        for(int n = 0; n < bytes.length && !anyByteEditing; n++)
-                        	if(bytes[n] instanceof TraditionalMemoryByte)
-                            if(((TraditionalMemoryByte) bytes[n]).isEdited())
-                                anyByteEditing = true;
-                        
-                        if(anyByteEditing)
-                        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
-                        else if(anyByteChanged)
-                        	gc.setForeground(fRendering.getTraditionalRendering().getColorChanged());
-                        else if(isOdd(col))
-                    		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
-                    	else
-                    		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
-                        
-                        gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+                        applyCustomColor(gc, bytes, col);
                     }
 
                     gc.drawText(fRendering.formatText(bytes,
@@ -304,4 +281,31 @@ public class TextPane extends AbstractPane
 
     }
 
+    protected  void applyCustomColor(GC gc, MemoryByte bytes[], int col)
+    {
+        // TODO reuse, this could be in the abstract base
+        // TODO consider adding finer granularity?
+        boolean anyByteChanged = false;
+        for(int n = 0; n < bytes.length && !anyByteChanged; n++)
+            if(bytes[n].isChanged())
+                anyByteChanged = true;
+        
+        // TODO consider adding finer granularity?
+        boolean anyByteEditing = false;
+        for(int n = 0; n < bytes.length && !anyByteEditing; n++)
+        	if(bytes[n] instanceof TraditionalMemoryByte)
+            if(((TraditionalMemoryByte) bytes[n]).isEdited())
+                anyByteEditing = true;
+        
+        if(anyByteEditing)
+        	gc.setForeground(fRendering.getTraditionalRendering().getColorEdit());
+        else if(anyByteChanged)
+        	gc.setForeground(fRendering.getTraditionalRendering().getColorChanged());
+        else if(isOdd(col))
+    		gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+    	else
+    		gc.setForeground(fRendering.getTraditionalRendering().getColorTextAlternate());
+        
+        gc.setBackground(fRendering.getTraditionalRendering().getColorBackground());
+    }
 }

@@ -229,7 +229,8 @@ public class AddressPane extends AbstractPane
                     gc.fillRectangle(fRendering.getCellPadding() * 2,
                         cellHeight * i, getCellWidth(), cellHeight);
 
-                    gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+                    // Allow subclass to override this method to do its own coloring
+                    applyCustomColor(gc);
                 }
 
                 gc.drawText(fRendering.getAddressString(lineAddress),
@@ -244,4 +245,9 @@ public class AddressPane extends AbstractPane
         }
     }
 
+    // Allow subclass to override this method to do its own coloring
+    protected void applyCustomColor(GC gc)
+    {
+        gc.setForeground(fRendering.getTraditionalRendering().getColorText());
+    }
 }

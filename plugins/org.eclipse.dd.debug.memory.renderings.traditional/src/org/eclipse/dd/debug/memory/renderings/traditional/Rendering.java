@@ -82,7 +82,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     BigInteger fMemoryBlockStartAddress = null;
     BigInteger fMemoryBlockEndAddress = null;
     
-    BigInteger fBaseAddress = null; // remember the base address
+    protected BigInteger fBaseAddress = null; // remember the base address
     
     private int fColumnCount = 0; 	// auto calculate can be disabled by user,
     								// making this user settable
@@ -108,31 +108,31 @@ public class Rendering extends Composite implements IDebugEventSetListener
     private boolean fIsDisplayLittleEndian = false;
 
     // constants used to identify radix
-    protected final static int RADIX_HEX = 1;
+    public final static int RADIX_HEX = 1;
 
-    protected final static int RADIX_DECIMAL_SIGNED = 2;
+    public final static int RADIX_DECIMAL_SIGNED = 2;
 
-    protected final static int RADIX_DECIMAL_UNSIGNED = 3;
+    public final static int RADIX_DECIMAL_UNSIGNED = 3;
 
-    protected final static int RADIX_OCTAL = 4;
+    public final static int RADIX_OCTAL = 4;
 
-    protected final static int RADIX_BINARY = 5;
+    public final static int RADIX_BINARY = 5;
 
     // constants used to identify panes
-    protected final static int PANE_ADDRESS = 1;
+    public final static int PANE_ADDRESS = 1;
 
-    protected final static int PANE_BINARY = 2;
+    public final static int PANE_BINARY = 2;
 
-    protected final static int PANE_TEXT = 3;
+    public final static int PANE_TEXT = 3;
     
     // constants used to identify text, maybe java should be queried for all available sets
-    protected final static int TEXT_ISO_8859_1 = 1;
-    protected final static int TEXT_USASCII = 2;
-    protected final static int TEXT_UTF8 = 3;
+    public final static int TEXT_ISO_8859_1 = 1;
+    public final static int TEXT_USASCII = 2;
+    public final static int TEXT_UTF8 = 3;
     protected final static int TEXT_UTF16 = 4;
     
     // internal constants
-    protected final static int COLUMNS_AUTO_SIZE_TO_FIT = 0;
+    public final static int COLUMNS_AUTO_SIZE_TO_FIT = 0;
     
     // view internal settings
     private int fCellPadding = 2;
@@ -166,9 +166,9 @@ public class Rendering extends Composite implements IDebugEventSetListener
         
         // instantiate the panes, TODO default visibility from state or
         // plugin.xml?
-        this.fAddressPane = new AddressPane(this);
-        this.fBinaryPane = new DataPane(this);
-        this.fTextPane = new TextPane(this);
+        this.fAddressPane = createAddressPane();
+        this.fBinaryPane = createDataPane();
+        this.fTextPane = createTextPane();
         
         fAddressBar = new GoToAddressComposite();
 		fAddressBarControl = fAddressBar.createControl(parent);
@@ -398,7 +398,22 @@ public class Rendering extends Composite implements IDebugEventSetListener
         DebugPlugin.getDefault().addDebugEventListener(this);
     }
 
-    protected TraditionalRendering getTraditionalRendering() // TODO rename
+    protected AddressPane createAddressPane()
+    {
+    	return new AddressPane(this);
+    }
+    
+    protected DataPane createDataPane()
+    {
+    	return new DataPane(this);
+    }
+
+    protected TextPane createTextPane()
+    {
+    	return new TextPane(this);
+    }
+
+    public TraditionalRendering getTraditionalRendering() // TODO rename
     {
     	return fParent;
     }
@@ -440,12 +455,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
         setCurrentScrollSelection();
     }
     
-    protected Selection getSelection()
+    public Selection getSelection()
     {
         return fSelection;
     }
-    
-    protected void logError(String message, Exception e)
+
+    public void logError(String message, Exception e)
     {
         Status status = new Status(IStatus.ERROR, fParent.getRenderingId(),
             DebugException.INTERNAL_ERROR, message, e);
@@ -486,44 +501,62 @@ public class Rendering extends Composite implements IDebugEventSetListener
                 if(source.getDebugTarget() == getMemoryBlock()
                         .getDebugTarget())
                 {
-                	if(kind == DebugEvent.SUSPEND && detail == 0)
+                	if(kind == DebugEvent.SUSPEND)
                 	{
-	                    Display.getDefault().asyncExec(new Runnable()
-	                    {
-	                        public void run()
-	                        {
-	                            archiveDeltas();
-	                            refresh();
-	                        }
-	                    });
+                		handleSuspendEvent(detail);
                 	}
                 	else if(kind == DebugEvent.CHANGE)
                 	{
-	                    Display.getDefault().asyncExec(new Runnable()
-	                    {
-	                        public void run()
-	                        {
-	                            refresh();
-	                        }
-	                    });
+                		handleChangeEvent();
                 	}
 //                	else if(kind == DebugEvent.RESUME)
 //                	{
-//	                    Display.getDefault().asyncExec(new Runnable()
-//	                    {
-//	                        public void run()
-//	                        {
-//	                            //archiveDeltas();
-//	                        }
-//	                    });
+//                		handleResumeEvent();
 //                	}
                 }
             }
         }
     }
 
+    protected void handleSuspendEvent(int detail)
+    {
+    	if(detail == 0)
+    	{
+	        Display.getDefault().asyncExec(new Runnable()
+	        {
+	            public void run()
+	            {
+	            	archiveDeltas();
+	                refresh();
+	            }
+	        });
+    	}
+    }
+    
+    protected void handleChangeEvent()
+    {
+        Display.getDefault().asyncExec(new Runnable()
+        {
+            public void run()
+            {
+                refresh();
+            }
+        });
+    }
+    
+    protected void handleResumeEvent()
+    {
+        Display.getDefault().asyncExec(new Runnable()
+        {
+            public void run()
+            {
+//                archiveDeltas();
+            }
+        });    	
+    }
+    
     // return true to enable development debug print statements
-    protected boolean isDebug()
+    public boolean isDebug()
     {
         return false;
     }
@@ -537,8 +570,8 @@ public class Rendering extends Composite implements IDebugEventSetListener
 
         return null;
     }
-    
-    protected BigInteger getBigBaseAddress()
+
+    public BigInteger getBigBaseAddress()
     {
     	return fParent.getBigBaseAddress();
     }
@@ -553,7 +586,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return fViewportCache;
     }
 
-    protected MemoryByte[] getBytes(BigInteger address, int bytes)
+    public MemoryByte[] getBytes(BigInteger address, int bytes)
         throws DebugException
     {
         return fViewportCache.getBytes(address, bytes);
@@ -1183,7 +1216,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         }
     }
     
-    protected void setPaneVisible(int pane, boolean visible)
+    public void setPaneVisible(int pane, boolean visible)
     {
         switch(pane)
         {
@@ -1202,7 +1235,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         layoutPanes();
     }
 
-    protected boolean getPaneVisible(int pane)
+    public boolean getPaneVisible(int pane)
     {
         switch(pane)
         {
@@ -1281,13 +1314,13 @@ public class Rendering extends Composite implements IDebugEventSetListener
      	Rendering.this.redrawPanes();
     }
 
-    protected AbstractPane[] getRenderingPanes()
+    public AbstractPane[] getRenderingPanes()
     {
         return new AbstractPane[] { fAddressPane, fBinaryPane,
             fTextPane };
     }
 
-    protected int getCellPadding()
+    public int getCellPadding()
     {
         return fCellPadding;
     }
@@ -1297,7 +1330,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return fPaneSpacing;
     }
 
-    protected void refresh()
+    public void refresh()
     {
     	if(!this.isDisposed())
     	{
@@ -1318,7 +1351,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	fViewportCache.archiveDeltas();
     }
 
-    protected void gotoAddress(BigInteger address)
+    public void gotoAddress(BigInteger address)
     {
     	// Ensure that the GoTo address is within the addressable range
     	if((address.compareTo(this.getMemoryBlockStartAddress())< 0) ||
@@ -1336,17 +1369,17 @@ public class Rendering extends Composite implements IDebugEventSetListener
         fViewportAddress = newAddress;
     }
     
-    protected BigInteger getViewportStartAddress()
+    public BigInteger getViewportStartAddress()
     {
         return fViewportAddress;
     }
 
-    protected BigInteger getViewportEndAddress()
+    public BigInteger getViewportEndAddress()
     {
         return fViewportAddress.add(BigInteger.valueOf(this.getBytesPerRow() * getRowCount() / getAddressableSize()));
     }
 
-    protected String getAddressString(BigInteger address)
+    public String getAddressString(BigInteger address)
     {
         StringBuffer addressString = new StringBuffer(address.toString(16)
             .toUpperCase());
@@ -1364,7 +1397,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return fParent.getAddressSize();
     }
 
-    protected int getColumnCount()
+    public int getColumnCount()
     {
         return fColumnCount;
     }
@@ -1410,7 +1443,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return rowCount;
     }
 
-    protected int getBytesPerColumn()
+    public int getBytesPerColumn()
     {
         return fBytesPerColumn;
     }
@@ -1425,7 +1458,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	return getBytesPerRow() / getAddressableSize();
     }
     
-    protected int getAddressesPerColumn()
+    public int getAddressesPerColumn()
     {
     	return this.getBytesPerColumn() / getAddressableSize();
     }
@@ -1465,7 +1498,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
 		return fMemoryBlockEndAddress;
 	}
 
-    protected int getRadix()
+    public int getRadix()
     {
         return fRadix;
     }
@@ -1488,7 +1521,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return -1;
     }
 
-    protected void setRadix(int mode)
+    public void setRadix(int mode)
     {
         if(fRadix == mode)
             return;
@@ -1498,7 +1531,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         layoutPanes();
     }
 
-    protected void setTextMode(int mode)
+    public void setTextMode(int mode)
     {
     	fTextMode = mode;
     	
@@ -1506,7 +1539,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         layoutPanes();
     }
     
-    protected int getTextMode()
+    public int getTextMode()
     {
     	return fTextMode;
     }
@@ -1527,7 +1560,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     	}
     }
 
-    protected int getBytesPerCharacter()
+    public int getBytesPerCharacter()
     {
     	if(fTextMode == Rendering.TEXT_UTF16)
     		return 2;
@@ -1535,12 +1568,12 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return 1;
     }
 
-    protected boolean isTargetLittleEndian()
+    public boolean isTargetLittleEndian()
     {
         return fIsTargetLittleEndian;
     }
 
-    protected void setTargetLittleEndian(boolean littleEndian)
+    public void setTargetLittleEndian(boolean littleEndian)
     {
         if(fIsTargetLittleEndian == littleEndian)
             return;
@@ -1572,7 +1605,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         layoutPanes();
     }
     
-    protected void setBytesPerColumn(int byteCount)
+    public void setBytesPerColumn(int byteCount)
     {
         if(fBytesPerColumn != byteCount)
         {
@@ -1655,7 +1688,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
     static final char[] hexdigits = { '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
     
-    protected String getRadixText(MemoryByte bytes[], int radix,
+    public String getRadixText(MemoryByte bytes[], int radix,
             boolean isLittleEndian)
     {
         boolean readable = true;
@@ -1800,7 +1833,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
         return errorText.toString();
     }
 
-    protected int getRadixCharacterCount(int radix, int bytes)
+    public int getRadixCharacterCount(int radix, int bytes)
     {
         switch(radix)
         {
@@ -1863,7 +1896,7 @@ public class Rendering extends Composite implements IDebugEventSetListener
             || character == ' ';
     }
     
-    protected String formatText(MemoryByte[] memoryBytes,
+    public String formatText(MemoryByte[] memoryBytes,
         boolean isLittleEndian, int textMode)
     {
     	// check memory byte for unreadable bytes

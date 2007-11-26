@@ -49,9 +49,9 @@ public abstract class AbstractPane extends Canvas
     // caret
     protected Caret fCaret = null;
 
-    protected int fSubCellCaretPosition = 0; // character may not fall on
-
-    // byte boundary
+    // character may not fall on byte boundary
+    protected int fSubCellCaretPosition = 0;
+    protected int fOldSubCellCaretPosition = 0; 
 
     protected boolean fCaretEnabled = false;
 
@@ -185,6 +185,7 @@ public abstract class AbstractPane extends Canvas
         {
             public void keyPressed(KeyEvent ke)
             {
+               	fOldSubCellCaretPosition = fSubCellCaretPosition;
                 if((ke.stateMask & SWT.SHIFT) != 0)
                 {
                     switch(ke.keyCode)

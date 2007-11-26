@@ -23,6 +23,7 @@
  * Kevin Doyle (IBM) - [193394] After Deleting the folder shown in Table get an error
  * Kevin Doyle (IBM) - [197971] NPE when table has no input and doing commands in Systems View
  * Martin Oberhuber (Wind River) - [199585] Fix NPE during testConnectionRemoval unit test
+ * David McKnight   (IBM)        - [187543] use view filter to only show containers for set input dialog
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -76,6 +77,7 @@ import org.eclipse.rse.internal.ui.actions.SystemCommonRenameAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.rse.ui.SystemPreferencesManager;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.actions.SystemCopyToClipboardAction;
@@ -409,6 +411,12 @@ public class SystemTableViewPart extends ViewPart
 		{
 			
 			SystemSelectAnythingDialog dlg = new SystemSelectAnythingDialog(_viewer.getShell(), SystemResources.ACTION_SELECT_INPUT_DLG);
+			
+			SystemActionViewerFilter filter = new SystemActionViewerFilter();
+			Class[] types = {Object.class};
+			filter.addFilterCriterion(types, "hasChildren", "true"); //$NON-NLS-1$ //$NON-NLS-2$	
+			dlg.setViewerFilter(filter);
+			
 			Object inputObject = _viewer.getInput();
 			if (inputObject == null)
 			{

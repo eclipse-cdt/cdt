@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David McKnight   (IBM)        - [187543] added setViewerFilter() method
  ********************************************************************************/
 
 package org.eclipse.rse.ui.dialogs;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
 import org.eclipse.rse.internal.ui.view.SystemViewForm;
+import org.eclipse.rse.ui.SystemActionViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -35,6 +37,8 @@ public class SystemSelectAnythingDialog extends SystemPromptDialog
 {
 	private SystemViewForm _view = null;
 	private Object _selected = null;
+	private SystemActionViewerFilter _filter = null;
+	
 	public SystemSelectAnythingDialog(Shell shell, String title)
 	{
 		super(shell, title);
@@ -45,7 +49,10 @@ public class SystemSelectAnythingDialog extends SystemPromptDialog
 		
 		_view = new SystemViewForm(getShell(), parent, SWT.NONE, getInputProvider(), true, this); 
 		_view.getSystemView().addSelectionChangedListener(this);	
-		//_view.getSystemView().ref
+		
+		if (_filter != null){
+			_view.getSystemView().addFilter(_filter);
+		}
 		
 		return _view.getTreeControl();
 	}
@@ -84,8 +91,21 @@ public class SystemSelectAnythingDialog extends SystemPromptDialog
 	{
 		IStructuredSelection selection = (IStructuredSelection)e.getSelection();
 		
-		_selected = selection.getFirstElement();
+		_selected = selection.getFirstElement();	
+	}
+	
+	/**
+	 * Use this method to limit the objects that are seen in the view of this dialog.
+	 * 
+	 * @param filter the filter that limits the visible objects 
+	 */
+	public void setViewerFilter(SystemActionViewerFilter filter)
+	{
+		_filter = filter;
+		if (_view != null)
+		{
+			_view.getSystemView().addFilter(filter);
+		}
 
-		
 	}
 }

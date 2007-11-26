@@ -38,6 +38,7 @@ import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -71,6 +72,8 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	protected Table table;
 	protected CheckboxTableViewer tv;
 	protected Composite parserGroup;
+
+	private ICTargetPlatformSetting tps;
 	
 	protected class BinaryParserConfiguration {
 		IExtension fExtension;
@@ -167,7 +170,19 @@ public class BinaryParsTab extends AbstractCPropertyTab {
     }
 
 	public void updateData(ICResourceDescription cfgd) {
-		String[] ids = CoreModelUtil.getBinaryParserIds(page.getCfgsEditable());
+		String[] ids = null;
+		if (page.isForPrefs()) { // prefs
+			if (cfgd != null &&	cfgd.getConfiguration() != null) {
+				tps = cfgd.getConfiguration().getTargetPlatformSetting();
+				if (tps != null)
+					ids = tps.getBinaryParserIds();
+			}
+			if (ids == null)	
+				ids = new String[0]; // no selection
+		} else { // project
+			ICConfigurationDescription[] cfgs = page.getCfgsEditable();
+			ids = CoreModelUtil.getBinaryParserIds(cfgs);
+		}
 		Object[] data = new Object[configMap.size()];
 		HashMap clone = new HashMap(configMap);
 		// add checked elements
@@ -292,8 +307,12 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 		}
 	}
 	
-	protected void performDefaults() { 
-		CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), null);
+	protected void performDefaults() {
+		if (page.isForProject())
+			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), null);
+		else
+			if (tps != null) 
+				tps.setBinaryParserIds(null);
 		informPages(false); 
 		updateData(getResDesc());
 	}	
@@ -355,7 +374,11 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 				ids[i] = ((BinaryParserConfiguration)objs[i]).getID();
 			}
 		}
-		CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), ids);
+		if (page.isForPrefs()) {
+			if (tps != null) tps.setBinaryParserIds(ids);
+		} else {
+			CoreModelUtil.setBinaryParserIds(page.getCfgsEditable(), ids);
+		}
 	}
 	// This page can be displayed for project only
 	public boolean canBeVisible() {

@@ -24,6 +24,7 @@
  * Kevin Doyle (IBM) - [197971] NPE when table has no input and doing commands in Systems View
  * Martin Oberhuber (Wind River) - [199585] Fix NPE during testConnectionRemoval unit test
  * David McKnight   (IBM)        - [187543] use view filter to only show containers for set input dialog
+ * David McKnight   (IBM)        - [210229] table refresh needs unique table-specific tooltip-text
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -343,9 +344,10 @@ public class SystemTableViewPart extends ViewPart
 	{
 		public RefreshAction()
 		{
-			super(SystemResources.ACTION_REFRESH_LABEL, 
+			super(SystemResources.ACTION_REFRESH_TABLE_LABLE, 
 					//RSEUIPlugin.getDefault().getImageDescriptor(ICON_SYSTEM_REFRESH_ID));
 					RSEUIPlugin.getDefault().getImageDescriptor(ISystemIconConstants.ICON_SYSTEM_REFRESH_ID));
+			setToolTipText(SystemResources.ACTION_REFRESH_TABLE_TOOLTIP);
 		}
 
 		public void run()

@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [181066] NLS missing messages with DAEMON and Shells
  * Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActions extension point
+ * David McKnight   (IBM)        - [210229] table refresh needs unique table-specific tooltip-text
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui;
@@ -980,6 +981,8 @@ public class SystemResources extends NLS
 	public static String ACTION_REFRESH_LABEL;
 	public static String ACTION_REFRESH_TOOLTIP;
 
+	public static String ACTION_REFRESH_TABLE_LABLE;
+	public static String ACTION_REFRESH_TABLE_TOOLTIP;
 
 	public static String ACTION_DELETE_LABEL;
 	public static String ACTION_DELETE_TOOLTIP;

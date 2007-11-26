@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.fast;
@@ -79,7 +79,9 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 				}
 			}
 
-			setupIndexAndReaderFactory();
+			if (!setupIndexAndReaderFactory()) {
+				return;
+			}
 			fIndex.acquireReadLock();
 			try {
 				registerTUsInReaderFactory(sources);
@@ -114,12 +116,16 @@ class PDOMFastIndexerTask extends PDOMIndexerTask implements CallbackHandler {
 		traceEnd(start, fIndex);
 	}
 
-	private void setupIndexAndReaderFactory() throws CoreException {
+	private boolean setupIndexAndReaderFactory() throws CoreException {
 		fIndex= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
+		if (fIndex == null) {
+			return false;
+		}
 		fIndex.resetCacheCounters();
 		fIflCache = new HashMap/*<String,IIndexFileLocation>*/();
 		fCodeReaderFactory = new IndexBasedCodeReaderFactory(getCProject(), fIndex, fIflCache);
 		fCodeReaderFactory.setCallbackHandler(this);
+		return true;
 	}
 
 	private void registerTUsInReaderFactory(Collection tus) throws CoreException {

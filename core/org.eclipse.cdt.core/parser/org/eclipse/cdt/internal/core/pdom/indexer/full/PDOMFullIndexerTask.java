@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.indexer.full;
@@ -86,10 +86,12 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 				}
 			}
 
-			setupIndex();
+			if (!setupIndex()) {
+				return;
+			}
 			registerTUsInReaderFactory(sources);
 			registerTUsInReaderFactory(headers);
-								
+
 			Iterator i= fRemoved.iterator();
 			while (i.hasNext()) {
 				if (monitor.isCanceled())
@@ -118,12 +120,16 @@ class PDOMFullIndexerTask extends PDOMIndexerTask {
 		traceEnd(start, fIndex);
 	}
 
-	private void setupIndex() throws CoreException {
+	private boolean setupIndex() throws CoreException {
 		// there is no mechanism to clear dirty files from the cache, so flush it.
 		SavedCodeReaderFactory.getInstance().getCodeReaderCache().flush();	
 
 		fIndex = ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(getProject());
+		if (fIndex == null) {
+			return false;
+		}
 		fIndex.resetCacheCounters();
+		return true;
 	}
 
 	private void registerTUsInReaderFactory(Collection/*<ITranslationUnit>*/ sources)

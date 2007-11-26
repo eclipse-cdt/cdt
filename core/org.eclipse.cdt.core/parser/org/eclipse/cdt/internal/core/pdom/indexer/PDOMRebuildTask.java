@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndexManager;
 import org.eclipse.cdt.internal.core.pdom.IndexerProgress;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -58,13 +59,19 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		monitor.subTask(NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, 
 				fIndexer.getProject().getElementName()));
 
-		ICProject project= fIndexer.getProject();
-		if (project.getProject().isOpen()) {
+		ICProject cproject= fIndexer.getProject();
+		IProject project= cproject.getProject();
+		if (project.isOpen() && project.exists()) {
 			try {
-				clearIndex(project);
-				if (!IPDOMManager.ID_NO_INDEXER.equals(fIndexer.getID())) {
-					createDelegate(project, monitor);
+				IWritableIndex index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(cproject);
+				if (index != null) {
+					clearIndex(cproject, index);
+					if (!IPDOMManager.ID_NO_INDEXER.equals(fIndexer.getID())) {
+						createDelegate(cproject, monitor);
+					}
 				}
+				// remove task-tags.
+				TodoTaskUpdater.removeTasksFor(project);
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 			} catch (InterruptedException e) {
@@ -76,8 +83,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		}
 	}
 	
-	private void clearIndex(ICProject project) throws CoreException, InterruptedException {
-		IWritableIndex index= ((IWritableIndexManager) CCorePlugin.getIndexManager()).getWritableIndex(project);
+	private void clearIndex(ICProject project, IWritableIndex index) throws CoreException, InterruptedException {
 		// First clear the pdom
 		index.acquireWriteLock(0);
 		try {
@@ -90,8 +96,6 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		finally {
 			index.releaseWriteLock(0);
 		}
-		// remove task-tags.
-		TodoTaskUpdater.removeTasksFor(project.getProject());
 	}
 
 	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {

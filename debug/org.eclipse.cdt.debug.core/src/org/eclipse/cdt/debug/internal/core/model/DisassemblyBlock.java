@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Mike Caraman (Frescale) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=210863
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.model;
 
@@ -18,6 +19,7 @@ import java.io.LineNumberReader;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
@@ -167,6 +169,9 @@ public class DisassemblyBlock implements IDisassemblyBlock, IAdaptable {
 			if ( element instanceof IFile ) {
 				file = ((IFile)element).getLocation().toFile();
 			}
+			else if ( element instanceof ITranslationUnit ) {
+                file = ((ITranslationUnit)element).getLocation().toFile();
+            }
 			else if ( element instanceof IStorage ) {
 				file = ((IStorage)element).getFullPath().toFile();
 			}

@@ -182,4 +182,10 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 		final String[] expected= new String[0];
 		assertCompletionResults(expected);
 	}
+	
+	// void func() {float a; a= 1./*cursor*/}
+	public void testCompletionInFloatingPointLiteral_Bug193464() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(expected);
+	}
 }

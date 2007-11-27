@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Ed Swartz (Nokia)
- * Mike Kucera (IBM) - bug #206952
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Ed Swartz (Nokia)
+ *    Mike Kucera (IBM) - bug #206952
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -154,8 +154,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     // Use to create the completion node
     protected ASTCompletionNode createCompletionNode(IToken token) {
+    	// the preprocessor may deliver tokens for literals or header-names.
         if (completionNode == null && token != null)
-            completionNode = new ASTCompletionNode(token, getTranslationUnit());
+        	switch(token.getType()) {
+        	case IToken.tCOMPLETION:
+                completionNode = new ASTCompletionNode(token, getTranslationUnit());
+                break;
+        	}
         return completionNode;
     }
 

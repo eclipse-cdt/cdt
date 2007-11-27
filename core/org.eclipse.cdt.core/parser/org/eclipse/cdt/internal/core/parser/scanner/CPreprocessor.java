@@ -173,6 +173,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     private String[][] fPreIncludedFiles= null;
 
     private int fContentAssistLimit= -1;
+	private boolean fHandledCompletion= false;
 
     // state information
     private final CharArrayObjectMap fMacroDictionary = new CharArrayObjectMap(512);
@@ -416,7 +417,12 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		return t;
     	}
     	
-    	t= internalFetchToken(true, false, true, fRootContext);
+    	try {
+			t= internalFetchToken(true, false, true, fRootContext);
+		} catch (OffsetLimitReachedException e) {
+			fHandledCompletion= true;
+			throw e;
+		}
     	final int offset= fLocationMap.getSequenceNumberForOffset(t.getOffset());
 		final int endOffset= fLocationMap.getSequenceNumberForOffset(t.getEndOffset());
 		t.setOffset(offset, endOffset);
@@ -440,18 +446,18 @@ public class CPreprocessor implements ILexerLog, IScanner {
         }
         
     	Token t1= fetchToken();
-    	if (t1.getType() == IToken.tEND_OF_INPUT) {
+    	switch (t1.getType()) {
+    	case IToken.tCOMPLETION:
+    		fHandledCompletion= true;
+    		break;
+    	case IToken.tEND_OF_INPUT:
     		if (fContentAssistLimit >= 0) {
-    			int useType= IToken.tCOMPLETION; 
-    			if (fLastToken != null) {
-    				final int lt= fLastToken.getType();
-    				if (lt == IToken.tCOMPLETION || lt == IToken.tEOC) {
-    					useType= IToken.tEOC;
-    				}
-    			}
+        		int useType= fHandledCompletion ? IToken.tEOC : IToken.tCOMPLETION; 
     			int sequenceNumber= fLocationMap.getSequenceNumberForOffset(fContentAssistLimit);
     			t1= new Token(useType, null, sequenceNumber, sequenceNumber);
+    			fHandledCompletion= true;
     		}
+    		break;
     	}
     	if (fLastToken != null) {
     		fLastToken.setNext(t1);
@@ -474,19 +480,18 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	
     	final int tt1= t1.getType();
     	switch(tt1) {
+    	case IToken.tCOMPLETION:
+    		fHandledCompletion= true;
+    		break;
+    		
     	case IToken.tEND_OF_INPUT:
     		if (fContentAssistLimit < 0) {
     			throw new EndOfFileException();
     		}
-    		int useType= IToken.tCOMPLETION; 
-    		if (fLastToken != null) {
-    			final int lt= fLastToken.getType();
-    			if (lt == IToken.tCOMPLETION || lt == IToken.tEOC) {
-    				useType= IToken.tEOC;
-    			}
-    		}
+    		int useType= fHandledCompletion ? IToken.tEOC : IToken.tCOMPLETION; 
     		int sequenceNumber= fLocationMap.getSequenceNumberForOffset(fContentAssistLimit);
     		t1= new Token(useType, null, sequenceNumber, sequenceNumber);
+    		fHandledCompletion= true;
     		break;
     		
     	case IToken.tSTRING:

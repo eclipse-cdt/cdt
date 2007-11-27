@@ -889,4 +889,10 @@ public class CompletionTests extends AbstractContentAssistTest {
 		final String[] expected= new String[0];
 		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
 	}
+	
+	// void func() {float a; a= 1./*cursor*/}
+	public void testCompletionInFloatingPointLiteral_Bug193464() throws Exception {
+		final String[] expected= new String[0];
+		assertCompletionResults(fCursorOffset, expected, AbstractContentAssistTest.COMPARE_REP_STRINGS);
+	}
 }

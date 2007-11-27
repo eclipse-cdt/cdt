@@ -174,6 +174,7 @@ final public class Lexer {
 				throw new OffsetLimitReachedException(origin, t);
 			case IToken.tEND_OF_INPUT:
 				if (fSupportContentAssist) {
+					t.setType(IToken.tCOMPLETION);
 					throw new OffsetLimitReachedException(origin, t);
 				}
 				// no break;

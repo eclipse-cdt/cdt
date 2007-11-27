@@ -299,6 +299,7 @@ public class MacroExpander {
         	case IToken.tEND_OF_INPUT:
         		assert nesting >= 0;
         		if (fCompletionMode) {
+        			t.setType(IToken.tCOMPLETION);
         			throw new OffsetLimitReachedException(ORIGIN, null);
         		}
         		break loop;

@@ -137,26 +137,27 @@ public final class IndexProviderManager implements IElementChangedListener {
 	public IIndexFragment[] getProvidedIndexFragments(ICConfigurationDescription config) throws CoreException {
 		Map id2fragment = new HashMap();
 
-		IProject project= config.getProjectDescription().getProject();
-		for(int i=0; i<allProviders.length; i++) {
-			try {
-				if(providesForProject(allProviders[i], project)) {
-					IIndexFragment[] fragments= allProviders[i].getIndexFragments(config);
-					for(int j=0; j<fragments.length; j++) {
-						try {
-							processCandidate(id2fragment, fragments[j]);
-						} catch(InterruptedException ie) {
-							CCorePlugin.log(ie); // continue with next candidate
-						} catch(CoreException ce) {
-							CCorePlugin.log(ce); // continue with next candidate
-						}
-					}		
+		if (config != null){
+			for(int i=0; i<allProviders.length; i++) {
+				IProject project= config.getProjectDescription().getProject();
+				try {
+					if(providesForProject(allProviders[i], project)) {
+						IIndexFragment[] fragments= allProviders[i].getIndexFragments(config);
+						for(int j=0; j<fragments.length; j++) {
+							try {
+								processCandidate(id2fragment, fragments[j]);
+							} catch(InterruptedException ie) {
+								CCorePlugin.log(ie); // continue with next candidate
+							} catch(CoreException ce) {
+								CCorePlugin.log(ce); // continue with next candidate
+							}
+						}		
+					}
+				} catch(CoreException ce) {
+					CCorePlugin.log(ce); // move to next provider
 				}
-			} catch(CoreException ce) {
-				CCorePlugin.log(ce); // move to next provider
 			}
 		}
-
 		// Make log entries for any fragments which have no compatible equivalents
 		List preresult= new ArrayList();
 		for(Iterator i=id2fragment.entrySet().iterator(); i.hasNext(); ) {

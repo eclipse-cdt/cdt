@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -168,6 +169,10 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization implements ICP
 
 	public boolean isExtern() throws DOMException {
 		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.EXTERN_OFFSET);
+	}
+
+	public boolean isExternC() throws DOMException {
+		return getBit(getByte(record + ANNOTATION), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
 	public boolean isRegister() throws DOMException {

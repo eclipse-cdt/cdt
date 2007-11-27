@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 /*
  * Created on Mar 15, 2005
  */
-package org.eclipse.cdt.core.dom.ast.cpp;
-
-import org.eclipse.cdt.core.dom.ast.DOMException;
+package org.import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+pse.cdt.core.dom.ast.IFunction;
 
 /**
  * @author aniefer
@@ -33,4 +33,9 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
      * is this an inline function
      */
     public boolean isInline() throws DOMException;
+    
+    /**
+     * Returns whether this function is declared as extern "C".
+     */
+    public boolean isExternC() throws DOMException;
 }

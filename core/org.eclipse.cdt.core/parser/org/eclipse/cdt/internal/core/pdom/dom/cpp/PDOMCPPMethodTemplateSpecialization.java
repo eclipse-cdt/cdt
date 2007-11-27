@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -87,5 +88,9 @@ class PDOMCPPMethodTemplateSpecialization extends
 			((ICPPMethod)spec).getVisibility();
 		}
 		return 0;
+	}
+	
+	public boolean isExternC() {
+		return false;
 	}
 }

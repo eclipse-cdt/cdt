@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -91,6 +92,10 @@ class PDOMCPPFieldSpecialization extends PDOMCPPSpecialization implements
 
 	public boolean isExtern() throws DOMException {
 		return getField().isExtern();
+	}
+
+	public boolean isExternC() {
+		return false;
 	}
 
 	public boolean isRegister() throws DOMException {

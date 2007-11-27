@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * IBM Corporation
+ *    QNX - Initial API and implementation
+ *    IBM Corporation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -76,6 +77,11 @@ class PDOMCPPField extends PDOMCPPVariable implements ICPPField, ICPPDelegateCre
 	// @Override
 	public boolean isExtern() {
 		// ISO/IEC 14882:2003 9.2.6
+		return false; 
+	}
+
+	// @Override
+	public boolean isExternC() {
 		return false; 
 	}
 

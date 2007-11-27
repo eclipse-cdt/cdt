@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Mar 29, 2005
@@ -93,5 +93,9 @@ public class CPPParameterSpecialization extends CPPSpecialization implements ICP
 
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPParameterDelegate( name, this );
+	}
+
+	public boolean isExternC() {
+		return false;
 	}
 }

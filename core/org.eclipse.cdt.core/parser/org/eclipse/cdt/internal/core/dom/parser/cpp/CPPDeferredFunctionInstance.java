@@ -134,6 +134,13 @@ public class CPPDeferredFunctionInstance extends CPPInstance implements	ICPPFunc
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
+	 */
+	public boolean isExternC() throws DOMException {
+		return ((ICPPFunction)getTemplateDefinition()).isExternC();	
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
 	 */
 	public boolean isExtern() throws DOMException {

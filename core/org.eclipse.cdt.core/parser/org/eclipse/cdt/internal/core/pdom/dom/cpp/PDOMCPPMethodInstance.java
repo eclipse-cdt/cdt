@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -49,6 +50,10 @@ class PDOMCPPMethodInstance extends PDOMCPPFunctionInstance implements
 	
 	public boolean isDestructor() throws DOMException {
 		return ((ICPPMethod)getTemplateDefinition()).isDestructor();
+	}
+
+	public boolean isExternC() {
+		return false;
 	}
 
 	public boolean isImplicit() {

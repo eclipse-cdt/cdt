@@ -82,7 +82,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 50;
+	public static final int CURRENT_VERSION = 51;
 	public static final int MIN_SUPPORTED_VERSION= CURRENT_VERSION;
 	
 	/**
@@ -140,7 +140,9 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 * #37#- added index for nested bindings (189811), compatible with version 36 - <<CDT 4.0.1>>
 	 *  38 - added b-tree for macros (193056), compatible with version 36 and 37
 	 * #39#- added flag for function-style macros (208558), compatible with version 36,37,38 - <<CDT 4.0.2>>
-	 *  40 - string optimizations, removed compatibility with prior versions.
+	 *  
+	 *  50 - support for complex, imaginary and long long (bug 209049).
+	 *  51 - modeling extern "C" (bug 191989)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

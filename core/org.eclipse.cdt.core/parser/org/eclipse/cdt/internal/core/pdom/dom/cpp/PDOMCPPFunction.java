@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * IBM Corporation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    IBM Corporation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -179,6 +179,10 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	
 	public boolean isInline() throws DOMException {
 		return getBit(getByte(record + ANNOTATION), PDOMCAnnotation.INLINE_OFFSET);
+	}
+
+	public boolean isExternC() throws DOMException {
+		return getBit(getByte(record + ANNOTATION), PDOMCPPAnnotation.EXTERN_C_OFFSET);
 	}
 
 	public boolean isMutable() throws DOMException {

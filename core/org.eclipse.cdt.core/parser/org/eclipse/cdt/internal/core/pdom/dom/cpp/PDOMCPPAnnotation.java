@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation.
+ * Copyright (c) 2006, 2007 IBM Corporation.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -15,16 +16,20 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 
 class PDOMCPPAnnotation {
 
 	// "Mutable" shares the same offset as "inline" because
 	// only fields can be mutable and only functions can be inline.
-	public static final int MUTABLE_OFFSET = 2;
-	
+	public static final int MUTABLE_OFFSET = PDOMCAnnotation.INLINE_OFFSET;
+	// extern C shares the same offset as visibility because
+	// only members have visibility and cannot be extern C.
+	public static final int EXTERN_C_OFFSET= 6;
 	public static final int VISIBILITY_OFFSET = 6;
 	private static final int VISIBILITY_MASK = 0x03;
 
@@ -46,15 +51,28 @@ class PDOMCPPAnnotation {
 	 */	
 	public static byte encodeAnnotation(IBinding binding) throws DOMException {
 		byte modifiers = PDOMCAnnotation.encodeAnnotation(binding);
-		if (binding instanceof ICPPField) {
-			ICPPField variable = (ICPPField) binding;
-			modifiers |= (variable.isMutable() ? 1 : 0) << MUTABLE_OFFSET;
-		}
 		if (binding instanceof ICPPMember) {
 			ICPPMember member = (ICPPMember) binding;
 			int mask = ~(VISIBILITY_MASK << VISIBILITY_OFFSET);
 			modifiers &= mask;
 			modifiers |= (member.getVisibility() & VISIBILITY_MASK) << VISIBILITY_OFFSET;
+
+			if (binding instanceof ICPPField) {
+				ICPPField variable = (ICPPField) binding;
+				modifiers |= (variable.isMutable() ? 1 : 0) << MUTABLE_OFFSET;
+			}
+		}
+		else {
+			if (binding instanceof ICPPFunction) {
+				if (((ICPPFunction) binding).isExternC()) {
+					modifiers |= 1 << EXTERN_C_OFFSET;
+				}
+			}
+			if (binding instanceof ICPPVariable) {
+				if (((ICPPVariable) binding).isExternC()) {
+					modifiers |= 1 << EXTERN_C_OFFSET;
+				}
+			}
 		}
 		return modifiers;
 	}

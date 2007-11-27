@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * IBM Corporation
- * Andrew Ferguson (Symbian)
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    IBM Corporation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -114,6 +114,10 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 
 	public boolean isExtern() throws DOMException {
 		// ISO/IEC 14882:2003 9.2.6
+		return false;
+	}
+
+	public boolean isExternC() {
 		return false;
 	}
 

@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
@@ -756,4 +757,47 @@ public class IndexUpdateTests extends IndexTestBase {
 			fIndex.releaseReadLock();
 		}
 	}
+	
+	
+	// int globalVar;
+	// void func();
+	
+	// extern "C" {
+	//    int globalVar;
+	//    void func();
+	// }
+	
+	// int globalVar;
+	// void func();
+	
+	// extern "C" int globalVar;
+	// extern "C" void func();
+
+	// int globalVar;
+	// void func();
+	public void testExternC() throws Exception {
+		setupFile(5, true);
+		checkExternC(false);
+		updateFile();
+		checkExternC(true);
+		updateFile();
+		checkExternC(false);
+		updateFile();
+		checkExternC(true);
+		updateFile();
+		checkExternC(false);
+	}
+
+	private void checkExternC(boolean value) throws Exception {
+		fIndex.acquireReadLock();
+		try {
+			ICPPVariable var = (ICPPVariable) findBinding("globalVar");
+			assertEquals(value, var.isExternC());
+			ICPPFunction func = (ICPPFunction) findBinding("func");
+			assertEquals(value, func.isExternC());
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
 }

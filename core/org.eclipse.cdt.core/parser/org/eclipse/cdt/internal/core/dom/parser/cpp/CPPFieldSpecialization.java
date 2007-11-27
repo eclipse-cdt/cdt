@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Mar 29, 2005
@@ -76,6 +77,10 @@ public class CPPFieldSpecialization extends CPPSpecialization implements ICPPFie
 
     public boolean isMutable() throws DOMException {
         return getField().isMutable();
+    }
+
+    public boolean isExternC() {
+    	return false;
     }
 
 	public ICPPDelegate createDelegate(IASTName name) {

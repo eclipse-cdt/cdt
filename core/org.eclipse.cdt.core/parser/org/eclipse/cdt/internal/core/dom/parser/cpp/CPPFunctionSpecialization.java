@@ -95,6 +95,14 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 		}
 		return getFunction().isInline();
 	}
+	
+	public boolean isExternC() throws DOMException {
+		if (CPPVisitor.isExternC(getDefinition())) {
+			return true;
+		}
+		return getFunction().isExternC();
+	}
+
 	public boolean isStatic() {
 		return isStatic(true, true);
 	}

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -89,6 +90,10 @@ class PDOMCPPMethodSpecialization extends PDOMCPPFunctionSpecialization
 		return false;
 	}
 	
+	public boolean isExternC() {
+		return false;
+	}
+
 	public ICPPClassType getClassOwner() throws DOMException {
 		ICPPMethod f = (ICPPMethod) getSpecializedBinding();
 		if( f != null )

@@ -64,6 +64,9 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		public boolean hasDefaultValue() {
 			return ((ICPPParameter)getBinding()).hasDefaultValue();
 		}
+		public boolean isExternC() {
+			return false;
+		}
     }
     
     public static class CPPParameterProblem extends ProblemBinding implements ICPPParameter {
@@ -99,6 +102,9 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 		}
 		public boolean isGloballyQualified() throws DOMException {
             throw new DOMException( this );
+		}
+		public boolean isExternC() {
+			return false;
 		}
     }
 
@@ -319,5 +325,9 @@ public class CPPParameter extends PlatformObject implements ICPPParameter, ICPPI
 	
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+
+	public boolean isExternC() {
+		return false;
 	}
 }

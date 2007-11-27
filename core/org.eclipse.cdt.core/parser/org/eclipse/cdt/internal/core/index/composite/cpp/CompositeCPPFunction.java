@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -29,6 +30,10 @@ class CompositeCPPFunction extends CompositeCPPBinding implements ICPPFunction, 
 
 	public CompositeCPPFunction(ICompositesFactory cf, ICPPFunction rbinding) {
 		super(cf, rbinding);
+	}
+
+	public boolean isExternC() throws DOMException {
+		return ((ICPPFunction)rbinding).isExternC();
 	}
 
 	public boolean isInline() throws DOMException {

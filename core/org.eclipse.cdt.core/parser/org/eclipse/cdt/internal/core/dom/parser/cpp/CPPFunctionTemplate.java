@@ -65,6 +65,9 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		public boolean isInline() throws DOMException {
 			throw new DOMException( this );
 		}
+		public boolean isExternC() throws DOMException {
+			throw new DOMException( this );
+		}
 		public IParameter[] getParameters() throws DOMException {
 			throw new DOMException( this );
 		}
@@ -354,6 +357,21 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
             else
                 break;
         } while( name != null );
+        return false;
+    }
+
+    public boolean isExternC() throws DOMException {
+	    if (CPPVisitor.isExternC(getDefinition())) {
+	    	return true;
+	    }
+        IASTNode[] ds= getDeclarations();
+        if (ds != null) {
+        	for (int i = 0; i < ds.length; i++) {
+        		if (CPPVisitor.isExternC(ds[i])) {
+        			return true;
+        		}
+			}
+        }
         return false;
     }
 

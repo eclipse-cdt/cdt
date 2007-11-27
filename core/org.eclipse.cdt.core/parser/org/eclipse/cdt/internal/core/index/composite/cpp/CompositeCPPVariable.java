@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -28,6 +29,10 @@ class CompositeCPPVariable extends CompositeCPPBinding implements ICPPVariable, 
 	
 	public boolean isMutable() throws DOMException {
 		return ((ICPPVariable)rbinding).isMutable();
+	}
+
+	public boolean isExternC() throws DOMException {
+		return ((ICPPVariable)rbinding).isExternC();
 	}
 
 	public IType getType() throws DOMException {

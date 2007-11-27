@@ -171,6 +171,10 @@ class PDOMCPPParameter extends PDOMNamedNode
 		return false; 
 	}
 
+	public boolean isExternC() {
+		return false;
+	}
+
 	public boolean isRegister() throws DOMException {
 		throw new PDOMNotImplementedError();
 	}

@@ -71,6 +71,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
         public boolean isInline() throws DOMException {
             return ((ICPPFunction)getBinding()).isInline();
         }
+        public boolean isExternC() throws DOMException {
+            return ((ICPPFunction)getBinding()).isExternC();
+        }
         public boolean isExtern() throws DOMException {
             return ((ICPPFunction)getBinding()).isExtern();
         }
@@ -126,6 +129,9 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
             throw new DOMException( this );
         }
         public boolean isInline() throws DOMException {
+            throw new DOMException( this );
+        }
+        public boolean isExternC() throws DOMException {
             throw new DOMException( this );
         }
         public boolean isExtern() throws DOMException {
@@ -579,6 +585,24 @@ public class CPPFunction extends PlatformObject implements ICPPFunction, ICPPInt
             else
                 break;
         } while( dtor != null );
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isInline()
+     */
+    public boolean isExternC() throws DOMException {
+	    if (CPPVisitor.isExternC(getDefinition())) {
+	    	return true;
+	    }
+        IASTNode[] ds= getDeclarations();
+        if (ds != null) {
+        	for (int i = 0; i < ds.length; i++) {
+        		if (CPPVisitor.isExternC(ds[i])) {
+        			return true;
+        		}
+			}
+        }
         return false;
     }
 

@@ -53,6 +53,9 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
         public boolean isExtern() throws DOMException {
             return ((ICPPVariable)getBinding()).isExtern();
         }
+        public boolean isExternC() throws DOMException {
+            return ((ICPPVariable)getBinding()).isExternC();
+        }
         public boolean isAuto() throws DOMException {
             return ((ICPPVariable)getBinding()).isAuto();
         }
@@ -86,6 +89,9 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
         }
         public boolean isExtern() throws DOMException {
              throw new DOMException( this );
+        }
+        public boolean isExternC() throws DOMException {
+            throw new DOMException( this );
         }
         public boolean isAuto() throws DOMException {
             throw new DOMException( this );
@@ -350,6 +356,24 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
      */
     public boolean isExtern() {
         return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
+    }
+
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
+     */
+    public boolean isExternC() {
+	    if (CPPVisitor.isExternC(getDefinition())) {
+	    	return true;
+	    }
+        IASTNode[] ds= getDeclarations();
+        if (ds != null) {
+        	for (int i = 0; i < ds.length; i++) {
+        		if (CPPVisitor.isExternC(ds[i])) {
+        			return true;
+        		}
+			}
+        }
+        return false;
     }
 
     /* (non-Javadoc)

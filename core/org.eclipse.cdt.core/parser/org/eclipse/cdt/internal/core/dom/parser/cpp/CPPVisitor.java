@@ -90,6 +90,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -2132,5 +2133,17 @@ public class CPPVisitor {
 			parentScope= unit.getScope();
 		}
 		return parentScope;
+	}
+	
+	public static boolean isExternC(IASTNode node) {
+		while (node != null) {
+			node= node.getParent();
+			if (node instanceof ICPPASTLinkageSpecification) {
+				if ("\"C\"".equals(((ICPPASTLinkageSpecification) node).getLiteral())) { //$NON-NLS-1$
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

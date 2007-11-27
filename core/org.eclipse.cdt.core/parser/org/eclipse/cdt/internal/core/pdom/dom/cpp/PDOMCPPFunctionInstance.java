@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -154,6 +155,10 @@ class PDOMCPPFunctionInstance extends PDOMCPPInstance implements ICPPFunction {
 
 	public boolean isExtern() throws DOMException {
 		return ((ICPPFunction)getTemplateDefinition()).isExtern();
+	}
+
+	public boolean isExternC() throws DOMException {
+		return ((ICPPFunction)getTemplateDefinition()).isExternC();
 	}
 
 	public boolean isRegister() throws DOMException {

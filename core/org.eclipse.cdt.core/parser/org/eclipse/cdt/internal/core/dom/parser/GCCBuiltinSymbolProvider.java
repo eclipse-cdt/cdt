@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Anton Leherbauer (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -2408,6 +2408,10 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
         public boolean isExtern() {
             return false;
         }
+
+		public boolean isExternC() {
+			return false;
+		}
 
         /**
          * returns false

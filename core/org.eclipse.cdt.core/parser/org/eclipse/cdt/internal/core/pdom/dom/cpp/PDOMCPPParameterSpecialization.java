@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -16,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -80,7 +82,7 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_PARAMETER_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_PARAMETER_SPECIALIZATION;
 	}
 
 	public void setNextParameter(PDOMCPPParameterSpecialization nextParam) throws CoreException {
@@ -122,7 +124,11 @@ class PDOMCPPParameterSpecialization extends PDOMCPPSpecialization implements IC
 	public boolean isExtern() throws DOMException {
 		return false;
 	}
-	
+
+	public boolean isExternC() {
+		return false;
+	}
+
 	public boolean isStatic() throws DOMException {
 		return false;
 	}

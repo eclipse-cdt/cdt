@@ -101,4 +101,10 @@ public class ASTInternal {
 		}
 		return var.isStatic();
 	}
+
+	public static void setFullyResolved(IBinding binding, boolean val) {
+		if (binding instanceof ICInternalFunction) {
+			((ICInternalFunction) binding).setFullyResolved(true);
+		}
+	}
 }

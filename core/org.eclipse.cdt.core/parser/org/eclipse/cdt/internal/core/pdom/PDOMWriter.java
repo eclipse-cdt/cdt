@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
@@ -455,6 +456,12 @@ abstract public class PDOMWriter {
 			IASTPreprocessorMacroDefinition[] macros= (IASTPreprocessorMacroDefinition[]) list.toArray(new IASTPreprocessorMacroDefinition[list.size()]);
 			list= lists[2];
 			IASTName[][] names= (IASTName[][]) list.toArray(new IASTName[list.size()][]);
+			for (int j= 0; j<names.length; j++) {
+				final IASTName name= names[j][0];
+				if (name != null) {
+					ASTInternal.setFullyResolved(name.getBinding(), true);
+				}
+			}
 
 			list= lists[0];
 			IncludeInformation[] includeInfos= new IncludeInformation[list.size()];

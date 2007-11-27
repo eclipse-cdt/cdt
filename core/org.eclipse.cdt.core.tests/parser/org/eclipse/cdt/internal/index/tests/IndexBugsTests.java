@@ -496,7 +496,7 @@ public class IndexBugsTests extends BaseTestCase {
 	
 	// // header.h	
 	// enum E {A,B,C};
-	public void _test171834() throws Exception {
+	public void test171834() throws Exception {
 		waitForIndexer();
 
 		ICProject cproject = CProjectHelper.createCCProject("seq1", "bin", IPDOMManager.ID_FAST_INDEXER);

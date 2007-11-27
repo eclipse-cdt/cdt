@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Martin Oberhuber (Wind River) - [210109] no need to declare IFileService constants in AbstractFileService
  * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
+ * Xuan Chen        (IBM)        - [210555] [regression] NPE when deleting a file on SSH
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -131,14 +132,9 @@ public abstract class AbstractFileService implements IFileService
 	public boolean deleteBatch(String[] remoteParents, String[] fileNames, IProgressMonitor monitor) throws SystemMessageException
 	{
 		boolean ok = true;
-		SystemMessage msg = getMessage("RSEF1315");   //$NON-NLS-1$
-		String deletingMessage = msg.makeSubstitution("").getLevelOneText(); //$NON-NLS-1$
-		monitor.beginTask(deletingMessage, remoteParents.length);
 		for (int i = 0; i < remoteParents.length; i++)
 		{
-			monitor.subTask(msg.makeSubstitution(fileNames[i]).getLevelOneText());
 			ok = ok && delete(remoteParents[i], fileNames[i], monitor);
-			monitor.worked(1);
 		}
 		return ok;
 	}

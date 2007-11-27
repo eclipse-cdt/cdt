@@ -169,7 +169,8 @@ public class ConfigurationModification extends FolderInfoModification implements
 	}
 
 	public boolean isBuilderCompatible() {
-		return getCurrentBuilderCompatibilityInfo().isCompatible();
+		BuilderCompatibilityInfoElement be = getCurrentBuilderCompatibilityInfo(); 
+		return be == null ? false : be.isCompatible();
 	}
 
 	public void setBuilder(IBuilder builder) {

@@ -37,7 +37,6 @@ import org.eclipse.cdt.managedbuilder.tcmodification.IToolChainModificationManag
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolListModification;
 import org.eclipse.cdt.managedbuilder.tcmodification.IToolModification;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
@@ -272,7 +271,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			}
 		}
 		for (int i=0; i<bs.length; i++) {
-			if (bs[i].isSystemObject()) 
+			if (bs[i].isSystemObject() && ! b.equals(bs[i])) 
 				continue;
 			list.add(bs[i]);
 		}

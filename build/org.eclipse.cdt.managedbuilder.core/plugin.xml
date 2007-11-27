@@ -347,7 +347,7 @@
       	/-->
       </tool>
 	  <builder
-	  	  isAbstract="true"
+	  	  isAbstract="false"
 	      id="org.eclipse.cdt.build.core.settings.default.builder"
           command="make"
           arguments=""

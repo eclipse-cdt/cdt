@@ -2708,4 +2708,8 @@ public class Builder extends BuildObject implements IBuilder, IMatchKeyProvider,
 	public boolean isExtensionBuildObject() {
 		return isExtensionElement();
 	}
+	public String toString() {
+		return getUniqueRealName();
+	}
+
 }

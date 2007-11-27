@@ -144,7 +144,10 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 			super(name, null);
 		}
 		public char[] getExpansion() {
-			return getMacroExpansion();
+			if (expansion == null) {
+				expansion= getMacroExpansion();
+			}
+			return expansion;
 		}
 		public IASTFileLocation getFileLocation() {
 			return PDOMMacro.this;
@@ -168,7 +171,10 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 			super(name, null, arglist);
 		}
 		public char[] getExpansion() {
-			return getMacroExpansion();
+			if (expansion == null) {
+				expansion= getMacroExpansion();
+			}
+			return expansion;
 		}
 		public IASTFileLocation getFileLocation() {
 			return PDOMMacro.this;

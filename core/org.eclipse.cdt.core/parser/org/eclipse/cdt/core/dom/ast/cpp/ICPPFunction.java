@@ -13,9 +13,10 @@
 /*
  * Created on Mar 15, 2005
  */
-package org.import org.eclipse.cdt.core.dom.ast.DOMException;
+package org.eclipse.cdt.core.dom.ast.cpp;
+
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunction;
-pse.cdt.core.dom.ast.IFunction;
 
 /**
  * @author aniefer

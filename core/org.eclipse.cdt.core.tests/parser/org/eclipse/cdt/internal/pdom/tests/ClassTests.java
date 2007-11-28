@@ -43,7 +43,7 @@ public class ClassTests extends PDOMTestBase {
 	protected PDOM pdom;
 
 	public static Test suite() {
-		return suite(ClassTests.class);
+		return suite(ClassTests.class, "_");
 	}
 
 	protected void setUp() throws Exception {
@@ -141,7 +141,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(bindings[0], friends[0]); //functionB is a friend of ClassC
 	}
 	
-	public void _testConstructor() throws Exception {
+	public void noTest_testConstructor() throws Exception {
 		// the source does not define Class1, so it is no surprise that the test is failing.
 		//TODO PDOM doesn't have information on constructor
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("Class1"), false, IndexFilter.ALL, NPM);

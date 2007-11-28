@@ -164,7 +164,7 @@ public class BaseTestCase extends TestCase {
 	}
 
     public void run( TestResult result ) {
-    	if (!fExpectFailure) {
+    	if (!fExpectFailure || "true".equals(System.getProperty("SHOW_EXPECTED_FAILURES"))) {
     		super.run(result);
     		return;
     	}

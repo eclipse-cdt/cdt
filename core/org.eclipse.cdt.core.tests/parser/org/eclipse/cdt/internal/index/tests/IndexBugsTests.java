@@ -177,8 +177,8 @@ public class IndexBugsTests extends BaseTestCase {
 	// class A {};
 	// class B {};
 	// B var;
-	public void _test173997_2() throws Exception {
-		StringBuffer[] content= getContentsForTest(3);
+	public void test173997_2() throws Exception {
+		StringBuffer[] content= getContentsForTest(2);
 		
 		IFile file= createFile(getProject(), "header.h", content[0].toString());
 		waitUntilFileIsIndexed(file, INDEX_WAIT_TIME);

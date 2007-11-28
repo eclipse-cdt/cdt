@@ -1086,9 +1086,15 @@ public class IndexBugsTests extends BaseTestCase {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		IFile f1= TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[0].toString());
 		waitForIndexer();
-		IIndexBinding[] bindings= fIndex.findBindings("func_209049".toCharArray(), IndexFilter.ALL, NPM);
-		IFunctionType ft= ((IFunction) bindings[0]).getType();
-		assertEquals("void (long long)", ASTTypeUtil.getType(ft));
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings("func_209049".toCharArray(),
+					IndexFilter.ALL, NPM);
+			IFunctionType ft = ((IFunction) bindings[0]).getType();
+			assertEquals("void (long long)", ASTTypeUtil.getType(ft));
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 	
 	// static inline void staticInHeader() {};
@@ -1105,11 +1111,17 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", contents[1].toString());
 		indexManager.reindex(fCProject);
 		waitForIndexer();
-		IIndexBinding[] bindings= fIndex.findBindings("staticInHeader".toCharArray(), IndexFilter.ALL, NPM);
-		IFunction func= (IFunction) bindings[0];
-		assertTrue(func.isStatic());
-		IIndexName[] refs= fIndex.findReferences(func);
-		assertEquals(2, refs.length);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings("staticInHeader".toCharArray(),
+					IndexFilter.ALL, NPM);
+			IFunction func = (IFunction) bindings[0];
+			assertTrue(func.isStatic());
+			IIndexName[] refs = fIndex.findReferences(func);
+			assertEquals(2, refs.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 	
 	// static const int staticConstInHeader= 12;
@@ -1126,11 +1138,17 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.createFile(fCProject.getProject(), "source2.cpp", contents[1].toString());
 		indexManager.reindex(fCProject);
 		waitForIndexer();
-		IIndexBinding[] bindings= fIndex.findBindings("staticConstInHeader".toCharArray(), IndexFilter.ALL, NPM);
-		IVariable var= (IVariable) bindings[0];
-		assertTrue(var.isStatic());
-		IIndexName[] refs= fIndex.findReferences(var);
-		assertEquals(2, refs.length);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings("staticConstInHeader".toCharArray(),
+					IndexFilter.ALL, NPM);
+			IVariable var = (IVariable) bindings[0];
+			assertTrue(var.isStatic());
+			IIndexName[] refs = fIndex.findReferences(var);
+			assertEquals(2, refs.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 
 	// static inline void staticInHeader() {};
@@ -1147,11 +1165,17 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.createFile(fCProject.getProject(), "source2.c", contents[1].toString());
 		indexManager.reindex(fCProject);
 		waitForIndexer();
-		IIndexBinding[] bindings= fIndex.findBindings("staticInHeader".toCharArray(), IndexFilter.ALL, NPM);
-		IFunction func= (IFunction) bindings[0];
-		assertTrue(func.isStatic());
-		IIndexName[] refs= fIndex.findReferences(func);
-		assertEquals(2, refs.length);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings("staticInHeader".toCharArray(),
+					IndexFilter.ALL, NPM);
+			IFunction func = (IFunction) bindings[0];
+			assertTrue(func.isStatic());
+			IIndexName[] refs = fIndex.findReferences(func);
+			assertEquals(2, refs.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 	
 	// static const int staticConstInHeader= 12;
@@ -1168,11 +1192,17 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.createFile(fCProject.getProject(), "source2.c", contents[1].toString());
 		indexManager.reindex(fCProject);
 		waitForIndexer();
-		IIndexBinding[] bindings= fIndex.findBindings("staticConstInHeader".toCharArray(), IndexFilter.ALL, NPM);
-		IVariable var= (IVariable) bindings[0];
-		assertTrue(var.isStatic());
-		IIndexName[] refs= fIndex.findReferences(var);
-		assertEquals(2, refs.length);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings("staticConstInHeader".toCharArray(),
+					IndexFilter.ALL, NPM);
+			IVariable var = (IVariable) bindings[0];
+			assertTrue(var.isStatic());
+			IIndexName[] refs = fIndex.findReferences(var);
+			assertEquals(2, refs.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 
 	// int ok;
@@ -1185,8 +1215,14 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1].toString());
 		indexManager.reindex(fCProject);
 		waitForIndexer();
-		IIndexBinding[] bindings= fIndex.findBindings("ok".toCharArray(), IndexFilter.ALL, NPM);
-		assertEquals(1, bindings.length);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex
+					.findBindings("ok".toCharArray(), IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 	
 	// inline void MyClass::method() {}
@@ -1202,9 +1238,15 @@ public class IndexBugsTests extends BaseTestCase {
 		TestSourceReader.createFile(fCProject.getProject(), "source.cpp", contents[1].toString());
 		indexManager.reindex(fCProject);
 		waitForIndexer();
-		IIndexBinding[] bindings= fIndex.findBindings(new char[][]{"MyClass".toCharArray(), "method".toCharArray()}, IndexFilter.ALL, NPM);
-		assertEquals(1, bindings.length);
-		IIndexName[] decls= fIndex.findDeclarations(bindings[0]);
-		assertEquals(2, decls.length);
+		fIndex.acquireReadLock();
+		try {
+			IIndexBinding[] bindings = fIndex.findBindings(new char[][] { "MyClass".toCharArray(),
+					"method".toCharArray() }, IndexFilter.ALL, NPM);
+			assertEquals(1, bindings.length);
+			IIndexName[] decls = fIndex.findDeclarations(bindings[0]);
+			assertEquals(2, decls.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
 	}
 }

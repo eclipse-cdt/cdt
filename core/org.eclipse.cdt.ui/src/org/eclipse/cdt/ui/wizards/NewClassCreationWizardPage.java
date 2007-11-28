@@ -423,7 +423,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             ICElement ns = NewClassWizardUtil.getNamespace(celem);
             if (ns != null) {
                 namespace = TypeUtil.getFullyQualifiedName(ns).toString();
-                if (namespace == null && namespace.length() == 0) {
+                if (namespace != null && namespace.length() == 0) {
                     namespace = null;
                 }
             }

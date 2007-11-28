@@ -40,7 +40,7 @@ public final class IndentUtil {
 	/**
 	 * The result of an indentation operation. The result may be passed to
 	 * subsequent calls to
-	 * {@link IndentUtil#indentLines(IDocument, ILineRange, ICProject, IndentResult) indentLines}
+	 * {@link IndentUtil#indentLines(IDocument, ILineRange, ICProject, IndentUtil.IndentResult) indentLines}
 	 * to obtain consistent results with respect to the indentation of
 	 * line-comments.
 	 */

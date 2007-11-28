@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -35,13 +37,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @author dsteffle
@@ -91,8 +92,7 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
         if (node == null) return new DOMASTNodeLeafContinue(null);
         
         // only do length check for ASTNode (getNodeLocations on PreprocessorStatements is very expensive)
-        if (!(node instanceof ICPPASTLinkageSpecification) && 
-        	node instanceof ASTNode && ((ASTNode)node).getLength() <= 0)
+        if (node instanceof ASTNode && ((ASTNode)node).getLength() <= 0)
             return new DOMASTNodeLeafContinue(null);
         
         DOMASTNodeParent parent = null;

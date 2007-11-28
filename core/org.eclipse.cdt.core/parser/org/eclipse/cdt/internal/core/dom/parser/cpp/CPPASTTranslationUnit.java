@@ -50,7 +50,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -288,8 +287,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     		}
     		
     		// skip the rest of this node if the selection is outside of its bounds
-			// TODO take out fix below for bug 86993 check for: !(node instanceof ICPPASTLinkageSpecification)
-    		if (node instanceof ASTNode && !(node instanceof ICPPASTLinkageSpecification) &&
+    		if (node instanceof ASTNode &&
     				offset > ((ASTNode)node).getOffset() + ((ASTNode)node).getLength())
     			return PROCESS_SKIP;
     		
@@ -299,8 +297,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
  
     	public int visit(IASTDeclaration declaration) {
     		// use declarations to determine if the search has gone past the offset (i.e. don't know the order the visitor visits the nodes)
-			// TODO take out fix below for bug 86993 check for: !(declaration instanceof ICPPASTLinkageSpecification)
-    		if (declaration instanceof ASTNode && !(declaration instanceof ICPPASTLinkageSpecification) && ((ASTNode)declaration).getOffset() > offset)
+    		if (declaration instanceof ASTNode && ((ASTNode)declaration).getOffset() > offset)
     			return PROCESS_ABORT;
     		
     		return processNode(declaration);

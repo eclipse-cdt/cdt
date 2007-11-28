@@ -34,17 +34,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class EmptyIndexFragment implements IIndexFragment {
 	public void acquireReadLock() throws InterruptedException {}
 
-	public IIndexFragmentBinding adaptBinding(IBinding binding)
-			throws CoreException {
+	public IIndexFragmentBinding adaptBinding(IBinding binding) {
 		return null;
 	}
 
-	public IIndexFragmentBinding adaptBinding(IIndexFragmentBinding proxy)
-			throws CoreException {
-		return null;
-	}
-
-	public IIndexFragmentBinding findBinding(IASTName astName) throws CoreException {
+	public IIndexFragmentBinding findBinding(IASTName astName) {
 		return null;
 	}
 
@@ -74,8 +68,7 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return IIndexFragmentInclude.EMPTY_FRAGMENT_INCLUDES_ARRAY;
 	}
 
-	public IIndexFragmentName[] findNames(IIndexFragmentBinding binding,
-			int flags) throws CoreException {
+	public IIndexFragmentName[] findNames(IBinding binding,	int flags) {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 

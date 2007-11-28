@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,23 @@ package org.eclipse.cdt.core.dom;
  * @since 4.0
  */
 public interface ILinkage {
-	final static String NO_LINKAGE_ID= "none"; //$NON-NLS-1$
-	final static String C_LINKAGE_ID= "C"; //$NON-NLS-1$
-	final static String CPP_LINKAGE_ID= "C++"; //$NON-NLS-1$
-	final static String FORTRAN_LINKAGE_ID= "Fortran"; //$NON-NLS-1$
+	final static String NO_LINKAGE_NAME= "none"; //$NON-NLS-1$
+	final static String C_LINKAGE_NAME= "C"; //$NON-NLS-1$
+	final static String CPP_LINKAGE_NAME= "C++"; //$NON-NLS-1$
+	final static String FORTRAN_LINKAGE_NAME= "Fortran"; //$NON-NLS-1$
 
-	String getID();
+	final static int NO_LINKAGE_ID= 0;
+	final static int C_LINKAGE_ID= 1;
+	final static int CPP_LINKAGE_ID= 2;
+	final static int FORTRAN_LINKAGE_ID= 3;
+
+	/**
+	 * Returns the name of the linkage.
+	 */
+	String getLinkageName();
+	
+	/**
+	 * Returns a unique id for the linkage.
+	 */
+	int getLinkageID();
 }

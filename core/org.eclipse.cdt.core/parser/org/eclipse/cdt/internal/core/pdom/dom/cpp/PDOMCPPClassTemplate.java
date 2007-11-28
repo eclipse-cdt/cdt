@@ -6,8 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Andrew Ferguson (Symbian)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
@@ -163,7 +164,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
 				}
 				public boolean acceptLinkage(ILinkage linkage) {
-					return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
+					return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
 				}
 			};
 		    
@@ -190,7 +191,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 					return !(binding instanceof ICPPTemplateParameter || binding instanceof ICPPSpecialization);
 				}
 				public boolean acceptLinkage(ILinkage linkage) {
-					return linkage.getID() == ILinkage.CPP_LINKAGE_ID;
+					return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
 				}
 			};
 			

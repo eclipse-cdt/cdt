@@ -79,7 +79,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	
 	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		PDOMBinding result= null;
-		PDOMLinkage linkage= createLinkage(name.getLinkage().getID());
+		PDOMLinkage linkage= createLinkage(name.getLinkage().getLinkageName());
 		if (linkage == null) {
 			CCorePlugin.log(MessageFormat.format(Messages.WritablePDOM_error_unknownLinkage, new Object[]{name.getLinkage()}));
 		}

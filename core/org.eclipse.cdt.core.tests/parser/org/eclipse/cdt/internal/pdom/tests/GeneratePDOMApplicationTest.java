@@ -258,13 +258,13 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 
 		IndexFilter CLinkage= new IndexFilter() {
 			public boolean acceptLinkage(ILinkage linkage) {
-				return linkage.getID().equals(ILinkage.C_LINKAGE_ID);
+				return linkage.getLinkageID() == ILinkage.C_LINKAGE_ID;
 			}
 		};
 
 		IndexFilter CPPLinkage= new IndexFilter() {
 			public boolean acceptLinkage(ILinkage linkage) {
-				return linkage.getID().equals(ILinkage.CPP_LINKAGE_ID);
+				return linkage.getLinkageID() == ILinkage.CPP_LINKAGE_ID;
 			}
 		};
 		

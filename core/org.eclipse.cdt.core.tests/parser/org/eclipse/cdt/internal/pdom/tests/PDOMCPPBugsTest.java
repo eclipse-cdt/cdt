@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
@@ -20,16 +20,12 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
-import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
-import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -47,8 +43,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * Tests bugs found in the PDOM
@@ -208,21 +202,14 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		pdom.releaseWriteLock();
 	}
 	
-	public void _test191679() throws Exception {
+	public void test191679() throws Exception {
 		IProject project= cproject.getProject();
 		IFolder cHeaders= cproject.getProject().getFolder("cHeaders");
 		cHeaders.create(true, true, NPM);
 		LanguageManager lm= LanguageManager.getInstance();
 		
-		IFile cHeader= TestSourceReader.createFile(cHeaders, "cHeader.h", "extern \"C\" void foo(int i) {}\n");
-		ICProjectDescription pd= CCorePlugin.getDefault().getProjectDescription(project);
-		ICConfigurationDescription cfgd= pd.getDefaultSettingConfiguration();
-		ProjectLanguageConfiguration plc= LanguageManager.getInstance().getLanguageConfiguration(project);
-		plc.addFileMapping(cfgd, cHeader, GCCLanguage.ID);
-		IContentType ct= Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_CHEADER);
-		lm.storeLanguageMappingConfiguration(project, new IContentType[] {ct});
-		
-		IFile cppSource= TestSourceReader.createFile(cHeaders, "cppSource.cpp", "void ref() {foo(1);}");
+		IFile cHeader= TestSourceReader.createFile(cHeaders, "cSource.c", "void foo(int i){}");		
+		IFile cppSource= TestSourceReader.createFile(cHeaders, "cppSource.cpp", "extern \"C\" void foo(int i); void ref() {foo(1);}");
 		
 		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(cproject);
@@ -233,14 +220,29 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		try {
 			{ // test reference to 'foo' was resolved correctly
 				IIndexBinding[] ib= pdom.findBindings(new char[][]{"foo".toCharArray()}, IndexFilter.ALL, NPM);
-				assertEquals(1, ib.length);
-				
+				assertEquals(2, ib.length);
+				if (ib[0] instanceof ICPPBinding) {
+					IIndexBinding h= ib[0]; ib[0]= ib[1]; ib[1]= h;
+				}
 				assertTrue(ib[0] instanceof IFunction);
-				assertTrue(!(ib[0] instanceof ICPPBinding));
+				assertFalse(ib[0] instanceof ICPPBinding);
 				
-				IName[] nms= pdom.findNames(ib[0], IIndexFragment.FIND_REFERENCES);
+				assertTrue(ib[1] instanceof IFunction);
+				assertTrue(ib[1] instanceof ICPPBinding);
+				
+				IName[] nms= pdom.findNames(ib[0], IIndexFragment.FIND_REFERENCES | IIndexFragment.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 				assertEquals(1, nms.length);
 				assertTrue(nms[0].getFileLocation().getFileName().endsWith(".cpp"));
+
+				nms= pdom.findNames(ib[0], IIndexFragment.FIND_REFERENCES);
+				assertEquals(0, nms.length);
+				
+				nms= pdom.findNames(ib[1], IIndexFragment.FIND_DEFINITIONS | IIndexFragment.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
+				assertEquals(1, nms.length);
+				assertTrue(nms[0].getFileLocation().getFileName().endsWith(".c"));
+
+				nms= pdom.findNames(ib[1], IIndexFragment.FIND_DEFINITIONS);
+				assertEquals(0, nms.length);
 			}
 		} finally {
 			pdom.releaseReadLock();

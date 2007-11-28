@@ -31,8 +31,8 @@ import org.eclipse.core.runtime.CoreException;
 
 abstract public class IndexFilter {
 	public static final IndexFilter ALL = new IndexFilter() {};
-	public static final IndexFilter ALL_DECLARED = getDeclaredBindingFilter(null, false);
-	public static final IndexFilter ALL_DECLARED_OR_IMPLICIT = getDeclaredBindingFilter(null, true);
+	public static final IndexFilter ALL_DECLARED = getDeclaredBindingFilter(-1, false);
+	public static final IndexFilter ALL_DECLARED_OR_IMPLICIT = getDeclaredBindingFilter(-1, true);
 	public static final IndexFilter CPP_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.CPP_LINKAGE_ID, true);
 	public static final IndexFilter C_DECLARED_OR_IMPLICIT= getDeclaredBindingFilter(ILinkage.C_LINKAGE_ID, true);
 
@@ -42,10 +42,10 @@ abstract public class IndexFilter {
 	 * @param linkageID the id of the linkage whose bindings should be retained
 	 * @return an IndexFilter instance
 	 */
-	public static IndexFilter getFilter(final String linkageID) {
+	public static IndexFilter getFilter(final int linkageID) {
 		return new IndexFilter() {
 			public boolean acceptLinkage(ILinkage linkage) {
-				return linkageID.equals(linkage.getID());
+				return linkageID == linkage.getLinkageID();
 			}
 		};
 	}
@@ -53,10 +53,11 @@ abstract public class IndexFilter {
 	/**
 	 * Get an IndexFilter that filters out bindings without declarations and those
 	 * from linkages other than that specified. 
-	 * @param linkageID the id of the linkage whose bindings should be retained
+	 * @param linkageID the id of the linkage whose bindings should be retained, or -1 
+	 * to accept all linkages.
 	 * @return an IndexFilter instance
 	 */
-	public static IndexFilter getDeclaredBindingFilter(final String linkageID, boolean acceptImplicit) {
+	public static IndexFilter getDeclaredBindingFilter(final int linkageID, boolean acceptImplicit) {
 		return new DeclaredBindingsFilter(linkageID, acceptImplicit);
 	}
 

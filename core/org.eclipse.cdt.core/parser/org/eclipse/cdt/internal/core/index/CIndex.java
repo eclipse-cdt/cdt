@@ -78,7 +78,7 @@ public class CIndex implements IIndex {
 				for (int i = 0; i < fPrimaryFragmentCount; i++) {
 					IIndexFragmentBinding binding= fFragments[i].findBinding((IASTName) name);
 					if(binding!=null) {
-						return getCompositesFactory(binding.getLinkage().getID()).getCompositeBinding(binding);
+						return getCompositesFactory(binding.getLinkage().getLinkageID()).getCompositeBinding(binding);
 					}
 				}
 			}
@@ -109,7 +109,7 @@ public class CIndex implements IIndex {
 							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 						}
 					}
-					ICompositesFactory factory = getCompositesFactory(linkages[j].getID());
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getLinkageID());
 					result.add(factory.getCompositeBindings(fragmentBindings));
 				}
 			}
@@ -121,13 +121,10 @@ public class CIndex implements IIndex {
 		LinkedList result= new LinkedList();
 		int fragCount= 0;
 		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			IIndexFragmentBinding adaptedBinding= fFragments[i].adaptBinding(binding);
-			if (adaptedBinding != null) {
-				final IIndexFragmentName[] names = fFragments[i].findNames(adaptedBinding, flags);
-				if (names.length > 0) {
-					result.addAll(Arrays.asList(names));
-					fragCount++;
-				}
+			final IIndexFragmentName[] names = fFragments[i].findNames(binding, flags);
+			if (names.length > 0) {
+				result.addAll(Arrays.asList(names));
+				fragCount++;
 			}
 		}
 		// bug 192352, files can reside in multiple fragments, remove duplicates
@@ -333,7 +330,7 @@ public class CIndex implements IIndex {
 							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 						}
 					}
-					ICompositesFactory factory = getCompositesFactory(linkages[j].getID());
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getLinkageID());
 					result.add(factory.getCompositeBindings(fragmentBindings));
 				}
 			}
@@ -351,7 +348,7 @@ public class CIndex implements IIndex {
 				for (int i = 0; i < fPrimaryFragmentCount; i++) {
 					IIndexFragmentBinding adaptedBinding= fFragments[i].adaptBinding(binding);
 					if (adaptedBinding != null) {
-						return getCompositesFactory(binding.getLinkage().getID()).getCompositeBinding(adaptedBinding);
+						return getCompositesFactory(binding.getLinkage().getLinkageID()).getCompositeBinding(adaptedBinding);
 					}
 				}
 			}
@@ -401,20 +398,21 @@ public class CIndex implements IIndex {
 		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 	
-	private ICompositesFactory getCompositesFactory(String linkageID) {
-		if(linkageID.equals(ILinkage.CPP_LINKAGE_ID)) {
+	private ICompositesFactory getCompositesFactory(int linkageID) {
+		switch (linkageID) {
+		case ILinkage.CPP_LINKAGE_ID:
 			if(cppCF==null) {
 				cppCF = new CPPCompositesFactory(new CIndex(fFragments, fFragments.length));
 			}
 			return cppCF; 
-		}
-		if(linkageID.equals(ILinkage.C_LINKAGE_ID)) {
+		
+		case ILinkage.C_LINKAGE_ID:
 			if(cCF==null) {
 				cCF = new CCompositesFactory(new CIndex(fFragments, fFragments.length));
 			}
 			return cCF;
-		}
-		if(linkageID.equals(ILinkage.FORTRAN_LINKAGE_ID)) {
+		
+		case ILinkage.FORTRAN_LINKAGE_ID:
 			if(fCF==null) {
 				fCF = new CCompositesFactory(new CIndex(fFragments, fFragments.length)); 
 			}
@@ -431,7 +429,7 @@ public class CIndex implements IIndex {
 				return filter.acceptBinding(binding);
 			}
 			public boolean acceptLinkage(ILinkage other) {
-				return linkage.getID().equals(other.getID());
+				return linkage.getLinkageID() == other.getLinkageID();
 			}
 		};
 	}
@@ -455,7 +453,7 @@ public class CIndex implements IIndex {
 							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 						}
 					}
-					ICompositesFactory factory = getCompositesFactory(linkages[j].getID());
+					ICompositesFactory factory = getCompositesFactory(linkages[j].getLinkageID());
 					result.add(factory.getCompositeBindings(fragmentBindings));
 				}
 			}

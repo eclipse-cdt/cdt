@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmentBinding {
+	public static final PDOMBinding[] EMPTY_PDOMBINDING_ARRAY = {};
 
 	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE +  0; // size 4
 	private static final int FIRST_DEF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 4; // size 4

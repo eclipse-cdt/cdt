@@ -82,10 +82,14 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 
 	public PDOMCPPLinkage(PDOM pdom) throws CoreException {
-		super(pdom, CPP_LINKAGE_ID, CPP_LINKAGE_ID.toCharArray());
+		super(pdom, CPP_LINKAGE_NAME, CPP_LINKAGE_NAME.toCharArray());
 	}
 
-	public String getID() {
+	public String getLinkageName() {
+		return CPP_LINKAGE_NAME;
+	}
+
+	public int getLinkageID() {
 		return CPP_LINKAGE_ID;
 	}
 

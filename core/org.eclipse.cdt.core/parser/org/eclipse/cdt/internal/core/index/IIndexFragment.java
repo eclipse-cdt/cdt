@@ -44,6 +44,10 @@ public interface IIndexFragment {
 	 */
 	final int FIND_REFERENCES   = IIndex.FIND_REFERENCES;
 	/**
+	 * @see IIndex#SEARCH_ACCROSS_LANGUAGE_BOUNDARIES
+	 */
+	final int SEARCH_ACCROSS_LANGUAGE_BOUNDARIES= IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES;
+	/**
 	 * @see IIndex#FIND_DECLARATIONS_DEFINITIONS
 	 */
 	final int FIND_DECLARATIONS_DEFINITIONS = IIndex.FIND_DECLARATIONS_DEFINITIONS;
@@ -89,7 +93,7 @@ public interface IIndexFragment {
 	 * another fragment. All of the include directives returned must belong to files managed by 
 	 * this fragment.
 	 * @param file a file to search for includes pointing to it
-	 * @return an array of inlucde directives managed by this fragment
+	 * @return an array of include directives managed by this fragment
 	 * @throws CoreException
 	 */
 	IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException;
@@ -102,15 +106,6 @@ public interface IIndexFragment {
 	 * @throws CoreException 
 	 */
 	IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException;
-
-	/**
-	 * Looks for a proxy binding matching the given one. May return <code>null</code>, if no
-	 * such binding exists. The binding may belong to another index fragment.
-	 * @param proxy the binding to look for.
-	 * @return the binding, or <code>null</code>
-	 * @throws CoreException 
-	 */
-	IIndexFragmentBinding adaptBinding(IIndexFragmentBinding proxy) throws CoreException;
 
 	/**
 	 * Looks for a binding of the given name from the AST. May return <code>null</code>, if no
@@ -153,7 +148,7 @@ public interface IIndexFragment {
 	 * @return an array of names
 	 * @throws CoreException
 	 */
-	IIndexFragmentName[] findNames(IIndexFragmentBinding binding, int flags) throws CoreException;
+	IIndexFragmentName[] findNames(IBinding binding, int flags) throws CoreException;
 	
 	/**
 	 * Acquires a read lock.

@@ -37,6 +37,7 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
     
     /**
      * Returns whether this function is declared as extern "C".
+     * @since 5.0
      */
     public boolean isExternC() throws DOMException;
 }

@@ -52,14 +52,18 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	}
 
 	public PDOMCLinkage(PDOM pdom) throws CoreException {
-		super(pdom, C_LINKAGE_ID, C_LINKAGE_ID.toCharArray()); 
+		super(pdom, C_LINKAGE_NAME, C_LINKAGE_NAME.toCharArray()); 
 	}
 
 	public int getNodeType() {
 		return LINKAGE;
 	}
 	
-	public String getID() {
+	public String getLinkageName() {
+		return C_LINKAGE_NAME;
+	}
+
+	public int getLinkageID() {
 		return C_LINKAGE_ID;
 	}
 

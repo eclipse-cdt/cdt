@@ -18,20 +18,20 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.core.runtime.CoreException;
 
 public class DeclaredBindingsFilter extends IndexFilter {
-	final private String fLinkageID;
+	final private int fLinkageID;
 	final private boolean fAcceptImplicit;
 
 	public DeclaredBindingsFilter() {
-		this(null, false);
+		this(-1, false);
 	}
 
-	public DeclaredBindingsFilter(String linkageID, boolean acceptImplicit) {
+	public DeclaredBindingsFilter(int linkageID, boolean acceptImplicit) {
 		fLinkageID= linkageID;
 		fAcceptImplicit= acceptImplicit;
 	}
 	
 	public boolean acceptLinkage(ILinkage linkage) {
-		return fLinkageID == null || fLinkageID.equals(linkage.getID());
+		return fLinkageID == -1 || fLinkageID == linkage.getLinkageID();
 	}
 
 	public boolean acceptBinding(IBinding binding) throws CoreException {

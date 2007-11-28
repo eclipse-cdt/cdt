@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -42,7 +42,7 @@ public final class BindingCollector extends NamedNodeCollector {
 	}
 		
 	public boolean addNode(PDOMNamedNode tBinding) throws CoreException {
-		if (tBinding instanceof IBinding) {
+		if (tBinding instanceof PDOMBinding) {
 			if (filter == null || filter.acceptBinding((IBinding) tBinding)) {
 				return super.addNode(tBinding);
 			}
@@ -50,8 +50,8 @@ public final class BindingCollector extends NamedNodeCollector {
 		return true; // look for more
 	}
 	
-	public IBinding[] getBindings() {
+	public PDOMBinding[] getBindings() {
 		List bindings= getNodeList();
-		return (IBinding[])bindings.toArray(new IBinding[bindings.size()]);
+		return (PDOMBinding[])bindings.toArray(new PDOMBinding[bindings.size()]);
 	}
 }

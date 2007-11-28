@@ -61,12 +61,6 @@ public class PDOMProxy implements IPDOM {
 		return null;
 	}
 
-	public synchronized IIndexFragmentBinding adaptBinding(IIndexFragmentBinding proxy) throws CoreException {
-		if (fDelegate != null)
-			return fDelegate.adaptBinding(proxy);
-		return null;
-	}
-
 	public synchronized IIndexFragmentBinding findBinding(IASTName astName) throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.findBinding(astName);
@@ -104,7 +98,7 @@ public class PDOMProxy implements IPDOM {
 		return new IIndexFragmentInclude[0];
 	}
 
-	public synchronized IIndexFragmentName[] findNames(IIndexFragmentBinding binding, int flags)
+	public synchronized IIndexFragmentName[] findNames(IBinding binding, int flags)
 			throws CoreException {
 		if (fDelegate != null)
 			return fDelegate.findNames(binding, flags);

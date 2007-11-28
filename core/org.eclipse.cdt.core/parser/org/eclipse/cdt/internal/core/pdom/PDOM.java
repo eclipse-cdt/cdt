@@ -31,8 +31,15 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLinkage;
@@ -40,6 +47,7 @@ import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
@@ -75,7 +83,7 @@ import org.eclipse.core.runtime.Status;
  * 
  * @author Doug Schaefer
  */
-public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
+public class PDOM extends PlatformObject implements IPDOM {
 	/**
 	 * Identifier for PDOM format
 	 * @see IIndexFragment#PROPERTY_FRAGMENT_FORMAT_ID
@@ -499,7 +507,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		}
 	}
 
-	public PDOMLinkage getLinkage(String linkageID) throws CoreException {
+	public PDOMLinkage getLinkage(String linkageID) {
 		return (PDOMLinkage) fLinkageIDCache.get(linkageID);
 	}
 
@@ -549,7 +557,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
 		linkage.setNext(db.getInt(LINKAGES));
 		db.putInt(LINKAGES, linkage.getRecord());
-		fLinkageIDCache.put(linkage.getID(), linkage);
+		fLinkageIDCache.put(linkage.getLinkageName(), linkage);
 	}
 
 	public PDOMBinding getBinding(int record) throws CoreException {
@@ -670,10 +678,13 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	protected PDOMLinkage adaptLinkage(ILinkage linkage) throws CoreException {
-		return (PDOMLinkage) fLinkageIDCache.get(linkage.getID());
+		return (PDOMLinkage) fLinkageIDCache.get(linkage.getLinkageName());
 	}
 
 	public IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {
+		if (binding == null) {
+			return null;
+		}
 		PDOMBinding pdomBinding= (PDOMBinding) binding.getAdapter(PDOMBinding.class);
 		if (pdomBinding != null && pdomBinding.getPDOM() == this) {
 			return pdomBinding;
@@ -682,13 +693,6 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		PDOMLinkage linkage= adaptLinkage(binding.getLinkage());
 		if (linkage != null) {
 			return linkage.adaptBinding(binding);
-		}
-		return null;
-	}
-
-	public IIndexFragmentBinding adaptBinding(IIndexFragmentBinding binding) throws CoreException {
-		if (binding != null) {
-			return adaptBinding((IBinding) binding);
 		}
 		return null;
 	}
@@ -702,37 +706,39 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	}
 
 	public IIndexFragmentName[] findNames(IBinding binding, int options) throws CoreException {
-		IIndexFragmentBinding proxyBinding= adaptBinding(binding);
-		if (proxyBinding != null) {
-			return findNames(proxyBinding, options);
+		ArrayList names= new ArrayList();
+		PDOMBinding pdomBinding = (PDOMBinding) adaptBinding(binding);
+		if (pdomBinding != null) {
+			names= new ArrayList();
+			findNamesForMyBinding(pdomBinding, options, names);
 		}
-		return IIndexFragmentName.EMPTY_NAME_ARRAY;
+		if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
+			PDOMBinding[] xlangBindings= getCrossLanguageBindings(binding);
+			for (int j = 0; j < xlangBindings.length; j++) {
+				findNamesForMyBinding(xlangBindings[j], options, names);
+			}
+		}
+		return (IIndexFragmentName[]) names.toArray(new IIndexFragmentName[names.size()]);
 	}
 
-	public IIndexFragmentName[] findNames(IIndexFragmentBinding binding, int options) throws CoreException {
-		PDOMBinding pdomBinding = (PDOMBinding) adaptBinding(binding);
-
-		if (pdomBinding != null) {
-			PDOMName name;
-			List names = new ArrayList();
-			if ((options & FIND_DECLARATIONS) != 0) {
-				for (name= pdomBinding.getFirstDeclaration(); name != null; name= name.getNextInBinding()) {
-					names.add(name);
-				}
+	private void findNamesForMyBinding(PDOMBinding pdomBinding, int options, ArrayList names)
+			throws CoreException {
+		PDOMName name;
+		if ((options & FIND_DECLARATIONS) != 0) {
+			for (name= pdomBinding.getFirstDeclaration(); name != null; name= name.getNextInBinding()) {
+				names.add(name);
 			}
-			if ((options & FIND_DEFINITIONS) != 0) {
-				for (name = pdomBinding.getFirstDefinition(); name != null; name= name.getNextInBinding()) {
-					names.add(name);
-				}
-			}
-			if ((options & FIND_REFERENCES) != 0) {
-				for (name = pdomBinding.getFirstReference(); name != null; name= name.getNextInBinding()) {
-					names.add(name);
-				}
-			}
-			return (IIndexFragmentName[]) names.toArray(new IIndexFragmentName[names.size()]);
 		}
-		return IIndexFragmentName.EMPTY_NAME_ARRAY;
+		if ((options & FIND_DEFINITIONS) != 0) {
+			for (name = pdomBinding.getFirstDefinition(); name != null; name= name.getNextInBinding()) {
+				names.add(name);
+			}
+		}
+		if ((options & FIND_REFERENCES) != 0) {
+			for (name = pdomBinding.getFirstReference(); name != null; name= name.getNextInBinding()) {
+				names.add(name);
+			}
+		}
 	}
 
 	public IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException {
@@ -872,4 +878,82 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	public String createKeyForCache(int record, char[] name) {
 		return new StringBuffer(name.length+2).append((char) (record >> 16)).append((char) record).append(name).toString();
 	}
+	
+	private PDOMBinding[] getCrossLanguageBindings(IBinding binding) throws CoreException {
+		switch(binding.getLinkage().getLinkageID()) {
+		case ILinkage.C_LINKAGE_ID:
+			return getCPPBindingForC(binding);
+		case ILinkage.CPP_LINKAGE_ID:
+			return getCBindingForCPP(binding);
+		}
+		return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
+	}
+
+	private PDOMBinding[] getCBindingForCPP(IBinding binding) throws CoreException {
+		PDOMBinding result= null;
+		PDOMLinkage c= getLinkage(ILinkage.C_LINKAGE_NAME);
+		if (c == null) {
+			return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
+		}
+		try {
+			if (binding instanceof ICPPFunction) {
+				ICPPFunction func = (ICPPFunction) binding;
+				if (func.isExternC()) {
+					result = FindBinding.findBinding(c.getIndex(), this, func.getNameCharArray(),
+							new int[] { IIndexCBindingConstants.CFUNCTION });
+				}
+			} else if (binding instanceof ICPPVariable) {
+				ICPPVariable var = (ICPPVariable) binding;
+				if (var.isExternC()) {
+					result = FindBinding.findBinding(c.getIndex(), this, var.getNameCharArray(),
+							new int[] { IIndexCBindingConstants.CVARIABLE });
+				}
+			}
+		} catch (DOMException e) {
+		}
+		return result == null ? PDOMBinding.EMPTY_PDOMBINDING_ARRAY : new PDOMBinding[] {result};
+	}
+
+	private PDOMBinding[] getCPPBindingForC(IBinding binding) throws CoreException {
+		PDOMLinkage cpp= getLinkage(ILinkage.CPP_LINKAGE_NAME);
+		if (cpp == null) {
+			return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
+		}
+		IndexFilter filter= null;
+		if (binding instanceof IFunction) {
+			filter= new IndexFilter() {
+				public boolean acceptBinding(IBinding binding) {
+					try {
+						if (binding instanceof ICPPFunction) {
+							return ((ICPPFunction) binding).isExternC();
+						}
+					} catch (DOMException e) {
+					}
+					return false;
+				}
+			};
+		} else if (binding instanceof IVariable) {
+			if (!(binding instanceof IField) && !(binding instanceof IParameter)) {
+				filter= new IndexFilter() {
+					public boolean acceptBinding(IBinding binding) {
+						try {
+							if (binding instanceof ICPPVariable) {
+								return ((ICPPVariable) binding).isExternC();
+							}
+						} catch (DOMException e) {
+						}
+						return false;
+					}
+				};
+			}
+		}
+		if (filter != null) {
+			BindingCollector collector= new BindingCollector(cpp, binding.getNameCharArray(), filter, false, true);
+			cpp.accept(collector);
+			return collector.getBindings();
+		}
+		return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
+	}
+
+
 }

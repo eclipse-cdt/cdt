@@ -71,7 +71,7 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 	// #include "user.h"
 	// #include <system.h>
 	
-	public void _testInclusionAccrossProjects() throws Exception {
+	public void testInclusionAccrossProjects() throws Exception {
 		ICProject op= CProjectHelper.createCCProject("__ibTest_other__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
 			IndexerPreferences.set(op.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");

@@ -181,25 +181,12 @@ public class CIndex implements IIndex {
 			return null;
 		}
 		IIndexFragmentInclude fragmentInclude = (IIndexFragmentInclude) include;
-		IIndexFragment frag= fragmentInclude.getFragment();
-		if (isPrimaryFragment(frag)) {
-			IIndexFile result= fragmentInclude.getIncludes();
-			if (result != null) {
-				return result;
-			}
+		IIndexFragmentFile result= fragmentInclude.getIncludes();
+		if (result != null && result.hasNames()) {
+			return result;
 		}
 
-		IIndexFileLocation location= include.getIncludesLocation();
-		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			IIndexFragment otherFrag = fFragments[i];
-			if (otherFrag != frag) {
-				IIndexFile result= otherFrag.getFile(location);
-				if (result != null) {
-					return result;
-				}
-			}
-		}
-		return null;
+		return getFile(include.getIncludesLocation());
 	}
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {
@@ -253,20 +240,17 @@ public class CIndex implements IIndex {
 		List nextLevel= depth != 0 ? new LinkedList() : null;
 		for (Iterator it= in.iterator(); it.hasNext(); ) {
 			IIndexFragmentFile file = (IIndexFragmentFile) it.next();
-			IIndexFragment frag= file.getIndexFragment();
-			if (isPrimaryFragment(frag)) {
-				IIndexInclude[] includes= file.getIncludes();
-				for (int k= 0; k < includes.length; k++) {
-					IIndexInclude include = includes[k];
-					IIndexFileLocation target= include.getIncludesLocation();
-					Object key= target != null ? (Object) target : include.getName();
-					if (handled.add(key)) {
-						out.add(include);
-						if (depth != 0) {
-							IIndexFile includedByFile= resolveInclude(include);
-							if (includedByFile != null) {
-								nextLevel.add(includedByFile);
-							}
+			IIndexInclude[] includes= file.getIncludes();
+			for (int k= 0; k < includes.length; k++) {
+				IIndexInclude include = includes[k];
+				IIndexFileLocation target= include.getIncludesLocation();
+				Object key= target != null ? (Object) target : include.getName();
+				if (handled.add(key)) {
+					out.add(include);
+					if (depth != 0) {
+						IIndexFile includedByFile= resolveInclude(include);
+						if (includedByFile != null) {
+							nextLevel.add(includedByFile);
 						}
 					}
 				}
@@ -405,16 +389,7 @@ public class CIndex implements IIndex {
 		System.arraycopy(fFragments, 0, result, 0, fPrimaryFragmentCount);
 		return result;
 	}
-	
-	private boolean isPrimaryFragment(IIndexFragment frag) {
-		for (int i = 0; i < fPrimaryFragmentCount; i++) {
-			if (frag == fFragments[i]) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
+		
 	public IIndexFragmentBinding[] findEquivalentBindings(IBinding binding) throws CoreException {
 		List result = new ArrayList();
 		for (int i = 0; i < fFragments.length; i++) {

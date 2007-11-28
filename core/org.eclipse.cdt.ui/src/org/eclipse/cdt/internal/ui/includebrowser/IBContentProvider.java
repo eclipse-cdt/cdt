@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
-import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -79,8 +79,8 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 			
 			IIndex index;
 			try {
-				index = CCorePlugin.getIndexManager().getIndex(project, 
-						fComputeIncludedBy ? IIndexManager.ADD_DEPENDENT : IIndexManager.ADD_DEPENDENCIES);
+				ICProject[] scope= CoreModel.getDefault().getCModel().getCProjects();
+				index= CCorePlugin.getIndexManager().getIndex(scope);
 				index.acquireReadLock();
 			} catch (CoreException e) {
 				CUIPlugin.getDefault().log(e);

@@ -4155,4 +4155,17 @@ public class AST2Tests extends AST2BaseTest {
         assertField(col.getName(33).resolveBinding(), "x", "S2");
         assertField(col.getName(34).resolveBinding(), "x", "S2");
     }
+    
+    // extern "C" {
+    // extern "C" {
+    //    void externFunc();
+    // }
+    // }
+    // void test() {
+    //    externFunc();
+    // }
+    public void testBug183126_nestedLinkageSpecs() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
+    }
 }

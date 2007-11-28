@@ -1497,6 +1497,7 @@ public class CPPSemantics {
 			        nodes = ((ICPPASTLinkageSpecification)item).getDeclarations();
 			        idx = 0;
 				    item = nodes[idx];
+				    continue;
 		        }
 			}
 

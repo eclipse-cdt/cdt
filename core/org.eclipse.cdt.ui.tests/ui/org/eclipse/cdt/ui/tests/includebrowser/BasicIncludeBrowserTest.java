@@ -75,7 +75,6 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 		ICProject op= CProjectHelper.createCCProject("__ibTest_other__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		try {
 			IndexerPreferences.set(op.getProject(), IndexerPreferences.KEY_INDEX_ALL_FILES, "true");
-			CCorePlugin.getIndexManager().reindex(op);
 			fIndex= CCorePlugin.getIndexManager().getIndex(new ICProject[] {getProject(), op});
 			
 			TestScannerProvider.sIncludes= new String[]{op.getProject().getLocation().toOSString()};
@@ -84,7 +83,8 @@ public class BasicIncludeBrowserTest extends IncludeBrowserBaseTest {
 			IFile user= createFile(op.getProject(), "user.h", "");
 			IFile system= createFile(op.getProject(), "system.h", "");
 			IFile source= createFile(getProject().getProject(), "source.cpp", contents[0].toString());
-			waitForIndexer(fIndex, source, INDEXER_WAIT_TIME);
+			CCorePlugin.getIndexManager().reindex(op);
+			CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
 
 			openIncludeBrowser(source);
 			Tree tree = getIBTree();

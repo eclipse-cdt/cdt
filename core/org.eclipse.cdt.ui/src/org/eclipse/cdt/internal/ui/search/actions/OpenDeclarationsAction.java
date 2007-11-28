@@ -326,7 +326,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			IName[] declNames= ast.getDefinitionsInAST(binding);
 			if (declNames.length == 0) {
 					// 2. Try definition in index
-				declNames = index.findDefinitions(binding);
+				declNames = index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 			}
 			return declNames;
 		}
@@ -341,7 +341,7 @@ public class OpenDeclarationsAction extends SelectionParseAction {
 			}
 			declNames= (IName[]) ArrayUtil.removeNulls(IName.class, declNames);
 			if (declNames.length == 0) {
-				declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS);
+				declNames= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 			}
 			return declNames;
 		}

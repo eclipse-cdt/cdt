@@ -261,7 +261,7 @@ public class IndexUI {
 
 	public static ICElementHandle[] findAllDefinitions(IIndex index, IBinding binding) throws CoreException {
 		if (binding != null) {
-			IIndexName[] defs= index.findDefinitions(binding);
+			IIndexName[] defs= index.findNames(binding, IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 
 			ArrayList result= new ArrayList();
 			for (int i = 0; i < defs.length; i++) {

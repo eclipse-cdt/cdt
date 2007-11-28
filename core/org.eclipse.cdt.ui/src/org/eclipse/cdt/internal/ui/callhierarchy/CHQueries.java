@@ -52,7 +52,7 @@ public class CHQueries {
 	private static void findCalledBy(IIndex index, IBinding callee, ICProject project, CalledByResult result) 
 			throws CoreException {
 		if (callee != null) {
-			IIndexName[] names= index.findReferences(callee);
+			IIndexName[] names= index.findNames(callee, IIndex.FIND_REFERENCES | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 			for (int i = 0; i < names.length; i++) {
 				IIndexName rname = names[i];
 				IIndexName caller= rname.getEnclosingDefinition();

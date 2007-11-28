@@ -273,8 +273,7 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		catch (Throwable e) {
 			TreeItem tmp= item0; item0= item1; item1= tmp;
 		}
-		
-		tv.setExpandedState(item0.getData(), true); 
+		expandTreeItem(item0); 
 		nextItem= checkTreeNode(item0, 0,  "MyClass::method2()");
 		checkTreeNode(item0, 1, null); item0= nextItem;
 		tv.setExpandedState(item0.getData(), true); 
@@ -286,6 +285,100 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(item1, 1, null); item1= nextItem;
 		tv.setExpandedState(item1.getData(), true); 
 		checkTreeNode(item1, 0, null);
+	}
+
+	
+	// void cfunc();
+	// void cxcpp() {
+	//    cfunc();
+	// }
+	
+	// extern "C" void cxcpp();
+	// void cppfunc() {
+	//    cxcpp();
+	// }
+	public void testCPPCallsC() throws Exception {
+		StringBuffer[] content= getContentsForTest(2);
+		String cSource= content[0].toString();
+		String cppSource = content[1].toString();
+		IFile cFile= createFile(getProject(), "s.c", cSource);
+		IFile cppFile= createFile(getProject(), "s.cpp", cppSource);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, cFile);
+		waitForIndexer(fIndex, cppFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		
+		editor.selectAndReveal(cSource.indexOf("cfunc"), 2);
+		openCallHierarchy(editor);
+		Tree tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "cfunc()");
+		TreeItem node= checkTreeNode(tree, 0, 0, "cxcpp()");
+		checkTreeNode(tree, 0, 1, null);
+		
+		expandTreeItem(node); 
+		checkTreeNode(node, 0, "cppfunc()");
+		checkTreeNode(node, 1, null);
+		
+
+		editor= (CEditor) IDE.openEditor(page, cppFile);
+		editor.selectAndReveal(cppSource.indexOf("cppfunc"), 2);
+		openCallHierarchy(editor, false);
+		tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "cppfunc()");
+		node= checkTreeNode(tree, 0, 0, "cxcpp()");
+		checkTreeNode(tree, 0, 1, null);
+		
+		expandTreeItem(node); 
+		checkTreeNode(node, 0, "cfunc()");
+		checkTreeNode(node, 1, null);
+	}
+
+	// void cfunc() {
+	//    cxcpp();
+	// }
+	
+	// void cppfunc() {}
+	// extern "C" {void cxcpp() {
+	//    cppfunc();
+	// }}
+	public void testCCallsCPP() throws Exception {
+		StringBuffer[] content= getContentsForTest(2);
+		String cSource= content[0].toString();
+		String cppSource = content[1].toString();
+		IFile cFile= createFile(getProject(), "s.c", cSource);
+		IFile cppFile= createFile(getProject(), "s.cpp", cppSource);
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		CEditor editor= (CEditor) IDE.openEditor(page, cFile);
+		waitForIndexer(fIndex, cppFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+		CCorePlugin.getIndexManager().joinIndexer(INDEXER_WAIT_TIME, NPM);
+		
+		editor.selectAndReveal(cSource.indexOf("cfunc"), 2);
+		openCallHierarchy(editor, false);
+		Tree tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "cfunc()");
+		TreeItem node= checkTreeNode(tree, 0, 0, "cxcpp()");
+		checkTreeNode(tree, 0, 1, null);
+		
+		expandTreeItem(node); 
+		checkTreeNode(node, 0, "cppfunc()");
+		checkTreeNode(node, 1, null);
+		
+
+		editor= (CEditor) IDE.openEditor(page, cppFile);
+		editor.selectAndReveal(cppSource.indexOf("cppfunc"), 2);
+		openCallHierarchy(editor, true);
+		tree = getCHTreeViewer().getTree();
+
+		checkTreeNode(tree, 0, "cppfunc()");
+		node= checkTreeNode(tree, 0, 0, "cxcpp()");
+		checkTreeNode(tree, 0, 1, null);
+		
+		expandTreeItem(node); 
+		checkTreeNode(node, 0, "cfunc()");
+		checkTreeNode(node, 1, null);
 	}
 
 }

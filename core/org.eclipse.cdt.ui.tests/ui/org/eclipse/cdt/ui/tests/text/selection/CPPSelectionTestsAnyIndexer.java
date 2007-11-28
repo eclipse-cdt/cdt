@@ -964,4 +964,80 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
         IEditorInput input = part.getEditorInput();
         assertEquals("aheader.h", ((FileEditorInput)input).getFile().getName());
     }
+    
+	// void cfunc();
+	// void cxcpp() {
+	//    cfunc();
+	// }
+	
+	// extern "C" void cxcpp();
+	// void cppfunc() {
+	//    cxcpp();
+	// }
+    public void testNavigationCppCallsC() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String ccode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile cfile = importFile("s.c", ccode); 
+        IFile cppfile = importFile("s.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, cppfile, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset1, offset2;
+
+        offset1 = scode.indexOf("cxcpp");
+        offset2 = scode.indexOf("cxcpp", offset1+1);
+        testF3(cppfile, offset1);
+        IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+        IEditorInput input = part.getEditorInput();
+        assertEquals("s.c", ((FileEditorInput)input).getFile().getName());
+
+        testF3(cppfile, offset2);
+        part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+        input = part.getEditorInput();
+        assertEquals("s.c", ((FileEditorInput)input).getFile().getName());
+
+        offset1 = ccode.indexOf("cxcpp");
+        testF3(cfile, offset1);
+        part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+        input = part.getEditorInput();
+        assertEquals("s.cpp", ((FileEditorInput)input).getFile().getName());
+    }
+
+    // void cxcpp();
+	// void cfunc() {
+	//    cxcpp();
+	// }
+	
+	// void cppfunc() {}
+	// extern "C" {void cxcpp() {
+	//    cppfunc();
+	// }}
+    public void testNavigationCCallsCpp() throws Exception {
+        StringBuffer[] buffers= getContents(2);
+        String ccode= buffers[0].toString();
+        String scode= buffers[1].toString();
+        IFile cfile = importFile("s.c", ccode); 
+        IFile cppfile = importFile("s.cpp", scode); 
+        TestSourceReader.waitUntilFileIsIndexed(index, cppfile, MAX_WAIT_TIME);
+        IASTNode decl;
+        int offset1, offset2;
+
+        offset1 = ccode.indexOf("cxcpp");
+        offset2 = ccode.indexOf("cxcpp", offset1+1);
+        testF3(cfile, offset1);
+        IEditorPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+        IEditorInput input = part.getEditorInput();
+        assertEquals("s.cpp", ((FileEditorInput)input).getFile().getName());
+
+        testF3(cfile, offset2);
+        part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+        input = part.getEditorInput();
+        assertEquals("s.cpp", ((FileEditorInput)input).getFile().getName());
+
+        offset1 = scode.indexOf("cxcpp");
+        testF3(cppfile, offset1);
+        part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor(); 
+        input = part.getEditorInput();
+        assertEquals("s.c", ((FileEditorInput)input).getFile().getName());
+    }
 }

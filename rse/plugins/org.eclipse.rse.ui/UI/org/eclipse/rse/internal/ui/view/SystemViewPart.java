@@ -25,6 +25,7 @@
  * Martin Oberhuber (Wind River) - [196936] Hide disabled system types
  * Martin Oberhuber (Wind River) - [197025] Wait for model complete before restoring initial state
  * Martin Oberhuber (Wind River) - [197025][197167] Improved wait for model complete
+ * David McKnight   (IBM)        - [199424] restoring memento state asynchronously
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -98,6 +99,7 @@ import org.eclipse.rse.ui.actions.SystemPasteFromClipboardAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
+import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.IRSEViewPart;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -1558,6 +1560,171 @@ public class SystemViewPart
 		return v;
 	}
 
+	protected class ShowRestoredRemoteObject implements Runnable
+	{
+		private Object _restoredObject;
+		private Object[] _children;
+		public ShowRestoredRemoteObject(Object restoredObject, Object[] children)
+		{
+			_restoredObject = restoredObject;
+			_children = children;
+		}
+		
+		public void run()
+		{
+			Vector matches = new Vector();
+			systemView.findAllRemoteItemReferences(_restoredObject, _restoredObject, matches);
+			if (matches.size() > 0){
+				TreeItem item = (TreeItem)matches.get(0);
+				systemView.createTreeItems(item, _children);				
+				item.setExpanded(true);
+			}
+
+		}
+	}
+	
+	
+	protected class RestoreRemoteObjects extends Job
+	{
+		private Vector _remoteObjectsToRestore;
+		private List _cacheSubSystemList;
+		private Vector _remoteObjectsToSelect;
+		
+		public RestoreRemoteObjects(Vector remoteObjects, List cacheSubSystemList, Vector remoteObjectsToSelect)
+		{			
+			super("Restore Remote Objects"); //$NON-NLS-1$
+			_remoteObjectsToRestore = remoteObjects;
+			_cacheSubSystemList = cacheSubSystemList;
+			_remoteObjectsToSelect = remoteObjectsToSelect;
+		}
+
+		protected IStatus run(IProgressMonitor monitor) 
+		{
+			IStatus status = doRestore(monitor);
+			if (status.isOK()){
+				status = doSelect(monitor);
+			}
+			return status;
+		}
+		
+		protected IStatus doSelect(IProgressMonitor monitor)
+		{		
+			Vector v = new Vector();
+			for (int i = 0; i < _remoteObjectsToSelect.size(); i++){
+				
+				Object object = _remoteObjectsToSelect.get(i);
+				if (object instanceof RemoteObject)
+				{
+					RemoteObject robject = (RemoteObject)object;					
+					v.addElement(robject.name);
+				}
+			}
+			SystemResourceChangeEvent event = new SystemResourceChangeEvent(v, ISystemResourceChangeEvents.EVENT_SELECT_REMOTE, null);
+			systemView.systemResourceChanged(event);
+			
+			return Status.OK_STATUS;
+		}
+		
+		
+		protected IStatus doRestore(IProgressMonitor monitor)
+		{
+			for (int i = 0; i < _remoteObjectsToRestore.size(); i++){
+				
+				if (monitor.isCanceled()){
+					return Status.CANCEL_STATUS;
+				}
+				
+				Object object = _remoteObjectsToRestore.get(i);
+				if (object instanceof RemoteObject)
+				{
+					RemoteObject robject = (RemoteObject)object;
+				
+					ISubSystem ss = robject.subsystem;
+
+					// yantzi: artemis 6.0:  notify subsystems that this is a restore from memento so they 
+					// can optionally use the cache if desired
+					if (ss != null && ss.supportsCaching())
+					{
+						ss.getCacheManager().setRestoreFromMemento(true);
+					}
+										
+					String path = robject.name;
+					ISystemFilterReference fref = robject.fRef;
+					
+					try
+					{
+						Object actualObject = ss.getObjectWithAbsoluteName(path, monitor);
+						
+						if (actualObject instanceof IAdaptable)
+						{
+							// get the adapter
+							ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)actualObject).getAdapter(ISystemViewElementAdapter.class);
+							
+							// get the context
+							ContextObject contextObject = new ContextObject(actualObject, ss, fref);
+							
+							// get the children	
+							Object[] children = adapter.getChildren(contextObject, monitor);
+						
+							ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(actualObject, children);
+							Display.getDefault().asyncExec(showRunnable);
+						}
+						
+					}
+					catch (Exception e)
+					{
+						// unexpected
+					}
+					
+					// yantzi: artemis 6.0:  reset restore from memento flag
+					if (ss != null && ss.supportsCaching())
+					{
+						ss.getCacheManager().setRestoreFromMemento(false);
+					}	
+				}
+				else if (object instanceof ISystemFilterReference)
+				{
+					ISystemFilterReference fref = (ISystemFilterReference)object;
+					ISubSystem ss = fref.getSubSystem();
+					if (!ss.isConnected()){
+						try
+						{
+							ss.connect(monitor, false);
+						}
+						catch (Exception e){
+							return Status.CANCEL_STATUS;
+						}
+					}
+					if (ss.isConnected())
+					{
+						// get the adapter
+						ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)object).getAdapter(ISystemViewElementAdapter.class);
+						
+						// get the context
+						ContextObject contextObject = new ContextObject(fref, ss, fref);
+						
+						// get the children	
+						Object[] children = adapter.getChildren(contextObject, monitor);
+					
+						ShowRestoredRemoteObject showRunnable = new ShowRestoredRemoteObject(fref, children);
+						Display.getDefault().asyncExec(showRunnable);
+					}	
+				}
+			}
+			boolean restoreFromCache = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
+			// yantzi: artemis 6.0, restore memento flag for affected subsystems
+			if (restoreFromCache)
+			{
+				for (int i = 0; i < _cacheSubSystemList.size(); i++)
+				{
+					((ISubSystem) _cacheSubSystemList.get(i)).getCacheManager().setRestoreFromMemento(false);
+				}
+			}
+			
+			return Status.OK_STATUS;
+		}				
+	}
+	
 	protected class RemoteObject
 	{
 		public String name;
@@ -1576,6 +1743,16 @@ public class SystemViewPart
 		public String toString()
 		{
 			return "Remote object: " + name; //$NON-NLS-1$
+		}
+		
+		public boolean equals(RemoteObject compared)
+		{
+			if (name.equals(compared.name) &&
+				subsystem == compared.subsystem &&
+				fRef == compared.fRef)
+				return true;
+		
+			return false;
 		}
 	}
 
@@ -1667,15 +1844,17 @@ public class SystemViewPart
 			}
 			// restore expansion state
 			childMem = memento.getChild(TAG_EXPANDED);
+			Vector remoteElementsToRestore = new Vector();
+			List cacheSubSystemList = new ArrayList();
 			if (childMem != null)
 			{
 				ArrayList elements = new ArrayList();
-				Vector remoteElements = new Vector();
+				
 				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 
 				// yantzi: artemis6.0, keep track subsystems which have their memento flag set in order
 				// to restore system view from cache (if the subsystem supports this)
-				List cacheSubSystemList = new ArrayList();
+				
 				ISubSystem cacheSubSystem;
 				boolean restoreFromCache = RSEUIPlugin.getDefault().getPreferenceStore().getBoolean(ISystemPreferencesConstants.RESTORE_STATE_FROM_CACHE);
 
@@ -1686,12 +1865,12 @@ public class SystemViewPart
 					if (element != null)
 						if (element instanceof RemoteObject) // this is a remote object
 						{
-							remoteElements.add(element);
+							remoteElementsToRestore.add(element);
 							//System.out.println("Added to remote expansion list: " + element);
 						}
 						else if (element instanceof ISystemFilterReference)
 						{
-							elements.add(element);
+							remoteElementsToRestore.add(element); // filters trigger asynchronous queries, so best to expand this with remote items
 
 							if (restoreFromCache)
 							{								
@@ -1712,57 +1891,23 @@ public class SystemViewPart
 				}
 				// expand non-remote...
 				systemView.setExpandedElements(elements.toArray());
-				// expand remote...
-				if (remoteElements.size() > 0)
-				{
-					for (int idx = 0; idx < remoteElements.size(); idx++)
-					{
-						RemoteObject ro = (RemoteObject) remoteElements.elementAt(idx);
-						//event = new SystemResourceChangeEvent(ro.name,ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE,
-						//                                      SystemViewDummyObject.getInstance()); // This tells SystemView to expand this remote object, but don't select a child
-						//systemView.systemResourceChanged(event);
-						
-						// yantzi: artemis 6.0:  notify subsystems that this is a restore from memento so they 
-						// can optionally use the cache if desired
-						if (ro.subsystem != null && ro.subsystem.supportsCaching())
-						{
-							ro.subsystem.getCacheManager().setRestoreFromMemento(true);
-						}
-						
-						systemView.refreshRemoteObject(ro.name, SystemViewDummyObject.getInstance(), true);
-						
-						// yantzi: artemis 6.0:  reset restore from memento flag
-						if (ro.subsystem != null && ro.subsystem.supportsCaching())
-						{
-							ro.subsystem.getCacheManager().setRestoreFromMemento(false);
-						}						
-						
-					}
-				}
-				
-				// yantzi: artemis 6.0, restore memento flag for affected subsystems
-				if (restoreFromCache)
-				{
-					for (int i = 0; i < cacheSubSystemList.size(); i++)
-					{
-						((ISubSystem) cacheSubSystemList.get(i)).getCacheManager().setRestoreFromMemento(false);
-					}
-				}
 			}
 
 			// restoreSelection
 			childMem = memento.getChild(TAG_SELECTION);
+			
+			Vector remoteElementsToSelect = new Vector();
 			if (childMem != null)
 			{
 				ArrayList list = new ArrayList();
-				Vector remoteElements = new Vector();
+				
 				IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 				for (int i = 0; i < elementMem.length; i++)
 				{
 					Object element = getObjectFromMemento(showFilterPools, showFilterStrings, elementMem[i].getString(TAG_PATH));
 					if (element != null)
 						if (element instanceof RemoteObject) // this is a remote object
-							remoteElements.add(element);
+							remoteElementsToSelect.add(element);
 						else
 							list.add(element);
 					//System.out.println("Added to selection list: " + element);
@@ -1770,18 +1915,14 @@ public class SystemViewPart
 				if (list.size()>0) {
 					systemView.setSelection(new StructuredSelection(list));
 				}
-				if (remoteElements.size() > 0)
-				{
-					Vector v = new Vector();
-					for (int idx = 0; idx < remoteElements.size(); idx++)
-					{
-						RemoteObject ro = (RemoteObject) remoteElements.elementAt(idx);
-						v.addElement(ro.name);
-					}
-					SystemResourceChangeEvent event = new SystemResourceChangeEvent(v, ISystemResourceChangeEvents.EVENT_SELECT_REMOTE, null);
-					systemView.systemResourceChanged(event);
-				}
 			}
+			
+			if (remoteElementsToRestore.size() > 0)
+			{
+				RestoreRemoteObjects restoreRemoteJob = new RestoreRemoteObjects(remoteElementsToRestore, cacheSubSystemList, remoteElementsToSelect);
+				restoreRemoteJob.schedule();				
+			}				
+			
 			Tree tree = systemView.getTree();
 			//restore vertical position
 			ScrollBar bar = tree.getVerticalBar();

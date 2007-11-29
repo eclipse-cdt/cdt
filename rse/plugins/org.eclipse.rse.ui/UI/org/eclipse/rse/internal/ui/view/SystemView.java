@@ -45,6 +45,7 @@
  * David McKnight (IBM)          - [205592] CheckExistsJob should use the context model object to get adapter
  * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
  * Xuan Chen      (IBM)          - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)        - [199424] api to create tree items after query complete
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -3044,7 +3045,7 @@ public class SystemView extends SafeTreeViewer
 			if ((match instanceof TreeItem) && !((TreeItem) match).isDisposed()) {
 				TreeItem matchedItem = (TreeItem)match;
 				Object data = matchedItem.getData();
-				boolean wasExpanded = matchedItem.getExpanded();
+				boolean wasExpanded = matchedItem.getExpanded();							
 				smartRefresh(new TreeItem[] { matchedItem }); // refresh the remote object
 				if (firstSelection && // for now, we just select the first binary occurrence we find
 						(data == remoteObject)) // same binary object as given?
@@ -6165,6 +6166,34 @@ public class SystemView extends SafeTreeViewer
 		}
 	}
 
+	
+	/**
+	 * Create tree items for the specified children
+	 * 
+	 * @param widget the parent item for the items to create
+	 * @param children the children to create items for
+	 */
+	public void createTreeItems(TreeItem widget, Object[] children)
+	{
+		TreeItem[] tis = widget.getItems();		
+		
+		// first dispose of dummies
+		for (int i = 0; i < tis.length; i++) {
+			if (tis[i].getData() != null) {
+				disassociate(tis[i]);
+				Assert.isTrue(tis[i].getData() == null,
+						"Second or later child is non -null");//$NON-NLS-1$
+			}
+			tis[i].dispose();
+		}
+		
+		// now create children
+		for (int i = 0; i < children.length; i++) 
+		{	
+			createTreeItem(widget, children[i], -1);
+		}
+	}
+	
 	/**
 	 * Overridden so that we can pass a wrapper IContextObject into the provider to get children instead 
 	 * of the model object, itself
@@ -6275,4 +6304,5 @@ public class SystemView extends SafeTreeViewer
 			internalUpdate((Widget)matches.get(i), element, properties);
 		}		
 	}
+	
 }

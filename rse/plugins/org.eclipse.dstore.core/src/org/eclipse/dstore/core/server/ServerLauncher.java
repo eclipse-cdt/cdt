@@ -569,6 +569,8 @@ public class ServerLauncher extends Thread {
 					} catch (Exception e) {
 						// don't display exceptions 193426
 						//e.printStackTrace();
+						System.err.println(e.getMessage());
+						System.exit(-1);
 					}
 				} else {
 					_serverSocket = new ServerSocket(port);

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -1711,27 +1712,25 @@ public class SemanticHighlightings {
 				}
 				if (name.isReference()) {
 					IBinding binding= token.getBinding();
-					if (binding instanceof IIndexBinding) {
-						IIndex index= token.getRoot().getIndex();
-						return isExternalSDKReference((IIndexBinding)binding, index);
-					}
+					IIndex index= token.getRoot().getIndex();
+					return isExternalSDKReference(binding, index);
 				}
 			}
 			return false;
 		}
 
-		private boolean isExternalSDKReference(IIndexBinding binding, IIndex index) {
+		private boolean isExternalSDKReference(IBinding binding, IIndex index) {
 			if (binding instanceof IFunction) {
-				// unwrap binding from composite binding
-//				IIndexBinding binding2= (IIndexBinding)binding.getAdapter(IIndexBinding.class);
-//				if (binding2 != null) {
-//					binding= binding2;
-//				}
 				try {
-					if (binding.isFileLocal()) {
+					if (binding instanceof IIndexBinding) {
+						if (((IIndexBinding) binding).isFileLocal()) {
+							return false;
+						}
+					}
+					else if (!(binding instanceof ICExternalBinding)) {
 						return false;
 					}
-					IIndexName[] decls= index.findDeclarations(binding);
+					IIndexName[] decls= index.findNames(binding, IIndex.FIND_DECLARATIONS | IIndex.SEARCH_ACCROSS_LANGUAGE_BOUNDARIES);
 					for (int i = 0; i < decls.length; i++) {
 						IIndexFile indexFile= decls[i].getFile();
 						if (indexFile != null && indexFile.getLocation().getFullPath() != null) {

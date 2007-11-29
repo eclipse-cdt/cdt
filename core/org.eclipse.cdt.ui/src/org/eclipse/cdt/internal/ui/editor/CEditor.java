@@ -1867,11 +1867,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);
 		setAction("OpenDeclarations", action); //$NON-NLS-1$
 
-//		  removed, see bug 167162		
-//        action = new OpenDefinitionAction(this);
-//        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DEF);
-//        setAction("OpenDefinition", action); //$NON-NLS-1$
-        
         action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenOutline.", this, CSourceViewer.SHOW_OUTLINE, true); //$NON-NLS-1$
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
         setAction("OpenOutline", action); //$NON-NLS-1$*/

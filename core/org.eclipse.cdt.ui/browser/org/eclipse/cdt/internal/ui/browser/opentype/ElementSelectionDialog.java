@@ -81,13 +81,12 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 						public void run() {
 							if (!shell.isDisposed() && !monitor.isCanceled()) {
 								setListElements(elements);
-								done(Status.OK_STATUS);
 								updateOkState();
 							}
 						}};
 					shell.getDisplay().asyncExec(update);
 					monitor.done();
-					return Job.ASYNC_FINISH;
+					return Status.OK_STATUS;
 				}
 			}
 			return Status.CANCEL_STATUS;
@@ -346,7 +345,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 			newPrefix= null;
 			needQuery= needQuery || fCurrentPrefix != null;
 		}
-		if(needQuery) {
+		if(needQuery || fUpdateJob.getState() == Job.WAITING  || fUpdateJob.getState() == Job.SLEEPING) {
 			fUpdateJob.cancel();
 			fCurrentPrefix= newPrefix;
 			fUpdateJob.schedule(200);

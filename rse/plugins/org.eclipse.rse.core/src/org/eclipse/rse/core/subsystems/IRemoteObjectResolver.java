@@ -12,10 +12,12 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [182454] improve getAbsoluteName() documentation
+ * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
@@ -70,6 +72,7 @@ public interface IRemoteObjectResolver {
 	 * 
 	 * @param key the unique id of the remote object.
 	 *     Must not be <code>null</code>.
+	 * @param monitor the progress monitor
 	 * @return the remote object instance, or <code>null</code> if no 
 	 *     object is found with the given id.
 	 * @throws Exception in case an error occurs contacting the remote 
@@ -80,6 +83,14 @@ public interface IRemoteObjectResolver {
 	 *     remote objects during startup, clients are typically allowed 
 	 *     to ignore these exceptions and treat them as if the remote 
 	 *     object were simply not there.
+	 */
+	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception;
+	
+	/**
+	 * @deprecated - use getObjectwithAbsoluteName(String key, IProgressMonitor monitor)
+	 * @param key
+	 * @return
+	 * @throws Exception
 	 */
 	public Object getObjectWithAbsoluteName(String key) throws Exception;
 }

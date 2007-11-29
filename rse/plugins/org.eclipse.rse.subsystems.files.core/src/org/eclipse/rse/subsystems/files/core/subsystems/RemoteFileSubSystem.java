@@ -22,6 +22,7 @@
  * Rupen Mardirossian (IBM)  	 - [204307] listFolders now deals with a null parameter for fileNameFilter preventing NPE
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
+ * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -1027,6 +1028,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 * a file, this is simply a wrapper to getRemoteFileObject().
 	 *  
 	 * @see SubSystem#getObjectWithAbsoluteName(String)
+	 * @param monitor the progress monitor
 	 * @param key the unique id of the remote object.
 	 *     Must not be <code>null</code>.
 	 * @return the remote object instance, or <code>null</code> if no 
@@ -1040,9 +1042,9 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 	 *     to ignore these exceptions and treat them as if the remote 
 	 *     object were simply not there.
 	 */
-	public Object getObjectWithAbsoluteName(String key) throws Exception
+	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception
 	{
-		Object filterRef = super.getObjectWithAbsoluteName(key);
+		Object filterRef = super.getObjectWithAbsoluteName(key, monitor);
 		if (filterRef != null) {
 			return filterRef;
 		}
@@ -1051,7 +1053,7 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		// if not, the key must be for a file
 		if (key.lastIndexOf(IHostSearchResult.SEARCH_RESULT_DELIMITER) < 0) {
 		    
-		    IRemoteFile remoteFile = getRemoteFileObject(key, new NullProgressMonitor());
+		    IRemoteFile remoteFile = getRemoteFileObject(key, monitor);
 		
 		    if (remoteFile != null) {
 		        return remoteFile;

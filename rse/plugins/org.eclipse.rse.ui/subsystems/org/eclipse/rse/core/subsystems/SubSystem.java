@@ -26,6 +26,7 @@
  * Xuan Chen        (IBM)        - [187342] Open in New Window expand failed error when not connected
  * David McKnight   (IBM)        - [186363] remove deprecated calls in checkIsConnected
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
+ * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -781,6 +782,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * 
 	 * @param key the unique id of the remote object.
 	 *     Must not be <code>null</code>.
+	 * @param monitor the progress monitor
 	 * @return the remote object instance, or <code>null</code> if no 
 	 *     object is found with the given id.
 	 * @throws Exception in case an error occurs contacting the remote 
@@ -792,11 +794,19 @@ public abstract class SubSystem extends RSEModelObject
 	 *     to ignore these exceptions and treat them as if the remote 
 	 *     object were simply not there.
 	 */
-	public Object getObjectWithAbsoluteName(String key) throws Exception
+	public Object getObjectWithAbsoluteName(String key, IProgressMonitor monitor) throws Exception
 	{
 		// by default, the subsystem will attempt to find a filter reference for the key.
 		// Return null when no such filter is found.
 		return getFilterReferenceWithAbsoluteName(key);
+	}
+	
+	/**
+	 * @deprecated use getObjectWithAbsoluteName(String key, IProgressMonitor monitor)
+	 */
+	public Object getObjectWithAbsoluteName(String key) throws Exception
+	{
+		return getObjectWithAbsoluteName(key, new NullProgressMonitor());
 	}
 
 	/**

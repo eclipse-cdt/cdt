@@ -28,17 +28,31 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
+<li><b>Archive Handling</b> has been improved to run outside the dispatch thread on the
+  Local and DStore subsystems. Several API changes were made to support a cancelable
+  progress monitor with the archive operations
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=160775">160775</a>].</li>
+<li>The <b>File Transfer Mode Preference Page</b> has been improved for better usability.
+  Transfer mode preferences are now decoupled from Eclipse Platform Editor File Types
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=203114">203114</a>];
+  Upload and Download do honor the preference such that in text mode, encoding conversions
+  are performed to ensure that remote text files are always locally stored in the local
+  default encoding. This allows for external tools to easily perform operations on remote
+  files which are in uncommon encodings
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=210812">210812</a>].</li>
+<li>API: An extension point has been added to specify the default file transfer mode (binary/ascii) for a specific filetype
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208951">208951</a>].</li>
+<li>Remote file encoding now defaults to the parent folder encoding
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209660">209660</a>].</li>
+<li>API: The <b>Select Input Dialog</b> now supports setting a viewer filter such that unwanted kinds of items
+  can not e selected [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187543">187543</a>].</li>
 <li>API: The new <b>uploadMulti()</b>, <b>downloadMulti()</b> API has been renamed in  
   <a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/IFileService.html"><tt>IFileService</tt></a>.
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162195">162195</a>]. 
   Also, the new multi-API is now being leveraged in <tt>UniversalFileTransferUtility</tt>
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209375">209375</a>].</li>
-<li>API: An extension point has been added to specify file transfer mode (binary/ascii) for a specific filetype
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208951">208951</a>].</li>
-<li>Remote file encoding now defaults to the parent folder encoding
-  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209660">209660</a>].</li>
 </ul></li>
-<li>At least 10 bugs were fixed: Use 
+<li>At least 28 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-11-06&chfieldto=2008-01-07&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-11-06&chfieldto=2008-01-07&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=substring&value0-0-1=3.0+M3">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=3.0+M4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->
@@ -117,6 +131,11 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ Breaking API Changes
 <ul>
+<li><b>Removed</b> the now obsolete IFileService.list(...) methods in favor of the new API
+    from <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207178">bug 207178</a>.
+    Clients of IRemoteFileSubSystem and IFileService need to be changed, though the change
+    is simple and compiler will mark error positions
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209552">209552</a>].</li>
 <li><b>Archive Handler API</b> has been changed to support background operation and cancellation.
     To facilitate this, an additional ISystemOperationMonitor interface was added as last parameter
     of most method calls in 

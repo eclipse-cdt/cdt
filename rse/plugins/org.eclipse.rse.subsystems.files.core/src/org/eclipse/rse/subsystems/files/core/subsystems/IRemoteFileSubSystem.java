@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
+ * Kevin Doyle		(IBM)		 - [208778] new API getOutputSteam for getting an output stream in append mode
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -657,7 +658,22 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param monitor the progress monitor.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since 2.0
+	 * @deprecated  As of 3.0M4, replaced by
+	 *              {@link #getOutputStream(String, String, boolean, boolean, IProgressMonitor)}
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
 
+	/**
+	 * Gets the output stream to write/append to a remote file. Clients should close the output stream when done. Implementations should not return <code>null</code>.
+	 * @param remoteParent the absolute path of the parent.
+	 * @param remoteFile the name of the remote file.
+	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
+	 * @param append <code>true</code> if you want to append to a file, <code>false</code> if you want to overwrite the file's contents.
+	 * @return the input stream to access the contents of the remote file.
+	 * @param monitor the progress monitor.
+	 * @throws SystemMessageException if an error occurs.
+	 * @since 3.0
+	 */
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException;
+	
 }

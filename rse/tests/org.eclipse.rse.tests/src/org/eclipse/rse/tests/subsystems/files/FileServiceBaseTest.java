@@ -239,8 +239,8 @@ public class FileServiceBaseTest extends RSEBaseConnectionTestCase {
 	//----------------------------------------------------------------------
 	protected IFileStore createDir(IFileStore store, boolean clear) throws CoreException {
 		if (clear && store.fetchInfo().exists())
-			store.delete(EFS.NONE, null);
-		store.mkdir(EFS.NONE, null);
+			store.delete(EFS.NONE, new NullProgressMonitor());
+		store.mkdir(EFS.NONE, new NullProgressMonitor());
 		IFileInfo info = store.fetchInfo();
 		assertTrue("createDir.1", info.exists());
 		assertTrue("createDir.1", info.isDirectory());

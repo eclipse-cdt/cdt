@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [210109] no need to declare IFileService constants in AbstractFileService
  * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
  * Xuan Chen        (IBM)        - [210555] [regression] NPE when deleting a file on SSH
+ * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -204,6 +205,10 @@ public abstract class AbstractFileService implements IFileService
 	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(String, String, boolean, IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
+		return null;
+	}
+	
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
 	}
 }

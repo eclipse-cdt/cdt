@@ -18,6 +18,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Martin Oberhuber (Wind River) - [208912] Cannot expand /C on a VxWorks SSH Server
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
+ * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -1095,6 +1096,46 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		try {
 			SftpProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
 			int mode = ChannelSftp.OVERWRITE;
+			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
+			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
+		    channel.connect();
+			stream = new SftpBufferedOutputStream(channel.put(recodeSafe(dst), sftpMonitor, mode), channel); 
+			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		catch (Exception e) {
+			Activator.trace("SftpFileService.getOutputStream " + dst + " failed: " + e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			throw makeSystemMessageException(e);
+		}
+		if (monitor.isCanceled()) {
+			throw new RemoteFileCancelledException();
+		}
+		return stream;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
+		
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		
+		OutputStream stream = null;
+		String dst = remoteParent;
+		if (remoteFile!=null) {
+			dst = concat(remoteParent, remoteFile);
+		}
+		
+		try {
+			SftpProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
+			int mode;
+			if (!append) {
+				mode = ChannelSftp.OVERWRITE;
+			} else {
+				mode = ChannelSftp.APPEND;
+			}
 			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
 			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
 		    channel.connect();

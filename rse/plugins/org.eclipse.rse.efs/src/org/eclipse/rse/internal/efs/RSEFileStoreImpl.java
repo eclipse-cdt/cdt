@@ -24,6 +24,7 @@
  * Martin Oberhuber (Wind River) - [191589] fix Rename by adding putInfo() for RSE EFS, and fetch symlink info
  * Martin Oberhuber (Wind River) - [199552] fix deadlock with dstore-backed efs access
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  ********************************************************************************/
 
 package org.eclipse.rse.internal.efs;
@@ -649,6 +650,7 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#openOutputStream(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
+		boolean append = (options & EFS.APPEND) != 0;
 		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		if (remoteFile==null) {
@@ -671,7 +673,7 @@ public class RSEFileStoreImpl extends FileStore
 			
 		if (remoteFile.isFile()) {
 			try {
-				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), true, monitor);
+				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), true, append, monitor);
 			}
 			catch (SystemMessageException e) {
 				throw new CoreException(new Status(IStatus.ERROR,

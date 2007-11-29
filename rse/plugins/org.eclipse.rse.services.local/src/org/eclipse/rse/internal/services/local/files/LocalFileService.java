@@ -27,6 +27,7 @@
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Xuan Chen        (IBM)        - [210555] [regression] NPE when deleting a file on SSH
+ * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -1645,6 +1646,28 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 		
 		try {
 			stream = new FileOutputStream(file);
+		}
+		catch (Exception e) {
+			throw new RemoteFileIOException(e);
+		}
+		
+		return stream;
+	}	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
+		File file = new File(remoteParent, remoteFile);
+		OutputStream stream = null;
+		
+		try {
+			if (!append) {
+				stream = new FileOutputStream(file);
+			} else {
+				stream = new FileOutputStream(file, true);
+			}
 		}
 		catch (Exception e) {
 			throw new RemoteFileIOException(e);

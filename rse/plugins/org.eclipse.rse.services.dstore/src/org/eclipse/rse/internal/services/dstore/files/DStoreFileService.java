@@ -28,6 +28,7 @@
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * David McKnight   (IBM)        - [210812] for text transfer, need to honour the preference (instead of straight binary)
  * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
+ * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1977,7 +1978,25 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			mode = IUniversalDataStoreConstants.TEXT_MODE;
 		}
 		
-		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode, unixStyle);
+		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode, unixStyle, false);
+		return outputStream;
+	}
+	
+
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
+		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
+		int mode;
+
+		if (isBinary)
+		{
+			mode = IUniversalDataStoreConstants.BINARY_MODE;
+		}
+		else
+		{
+			mode = IUniversalDataStoreConstants.TEXT_MODE;
+		}
+		
+		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode, unixStyle, append);
 		return outputStream;
 	}
 	

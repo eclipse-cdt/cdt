@@ -67,6 +67,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * Javier Montalvo Orus (Symbian) - [208912] Cannot expand /C on a VxWorks SSH Server
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
+ * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -1640,6 +1641,37 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 			clearCache(remoteParent);
 			ftpClient.changeWorkingDirectory(remoteParent);
 			stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
+		}
+		catch (Exception e) {
+			throw new RemoteFileIOException(e);
+		}
+		
+		return stream;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
+    	remoteParent = checkEncoding(remoteParent);
+    	remoteFile = checkEncoding(remoteFile);
+				
+		if (monitor != null && monitor.isCanceled()){
+			throw new RemoteFileCancelledException();
+		}
+		
+		OutputStream stream = null;
+		
+		try {
+			FTPClient ftpClient = cloneFTPClient(isBinary);
+			clearCache(remoteParent);
+			ftpClient.changeWorkingDirectory(remoteParent);
+			if (!append){
+				stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
+			} else {
+				stream = new FTPBufferedOutputStream(ftpClient.appendFileStream(remoteFile), ftpClient);
+			}
 		}
 		catch (Exception e) {
 			throw new RemoteFileIOException(e);

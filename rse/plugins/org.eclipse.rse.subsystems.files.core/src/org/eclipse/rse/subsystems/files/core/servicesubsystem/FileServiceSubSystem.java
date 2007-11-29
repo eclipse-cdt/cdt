@@ -24,7 +24,8 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [162195] new APIs for upload multi and download multi
  * David McKnight   (IBM)        - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
- * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated 
+ * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
+ * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND 
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -1028,4 +1029,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, isBinary, monitor), remoteParent, remoteFile, this);			
 	}
 
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
+		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, isBinary, append, monitor), remoteParent, remoteFile, this);			
+	}
+	
 }

@@ -9,7 +9,7 @@
  * component that contains this file: David McKnight.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  ********************************************************************************/
 package org.eclipse.rse.internal.services.dstore.files;
 
@@ -27,12 +27,13 @@ public class DStoreOutputStream extends OutputStream
 	private String _encoding;
 	private int _mode;
 	private boolean _firstWrite = true;
+	private boolean _append;
 	private String _byteStreamHandlerId;
 	private String _localLineSep;
 	private String _targetLineSep;
 	private int _localLineSepLength;
 	
-	public DStoreOutputStream(DataStore dataStore, String remotePath, String encoding, int mode, boolean unixStyle)
+	public DStoreOutputStream(DataStore dataStore, String remotePath, String encoding, int mode, boolean unixStyle, boolean append)
 	{		
 		_dataStore = dataStore;
 		_remotePath = remotePath;
@@ -51,20 +52,17 @@ public class DStoreOutputStream extends OutputStream
 		}
 		
 		_localLineSepLength = _localLineSep.length();
-	}
-	
-		
+		_append = append;
+	}	
 	
 	public void close() throws IOException 
 	{
-		// TODO Auto-generated method stub
 		super.close();
 	}
 
 
 
 	public void flush() throws IOException {
-		// TODO Auto-generated method stub
 		super.flush();
 	}
 
@@ -80,7 +78,7 @@ public class DStoreOutputStream extends OutputStream
 			
 			b = tempStr.getBytes(_encoding);
 		}
-		if (_firstWrite)
+		if (_firstWrite && !_append)
 		{ 
 			_firstWrite = false;
 						
@@ -136,7 +134,7 @@ public class DStoreOutputStream extends OutputStream
 			
 			b = tempStr.getBytes(_encoding);
 		}
-		if (_firstWrite)
+		if (_firstWrite && !_append)
 		{ 
 			_firstWrite = false;
 			// send first set of bytes
@@ -158,7 +156,7 @@ public class DStoreOutputStream extends OutputStream
 			String tempStr = new String(b, 0, 1);
 			b = tempStr.getBytes(_encoding);
 		}
-		if (_firstWrite)
+		if (_firstWrite && !_append)
 		{ 
 			_firstWrite = false;
 			// send first set of bytes

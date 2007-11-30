@@ -50,7 +50,10 @@ import org.eclipse.ui.IWorkbench;
  * The New Connection wizard. This wizard allows users to create new RSE connections.
  */
 public class RSEMainNewConnectionWizard extends Wizard implements INewWizard, ISelectionProvider {
-	protected static final String LAST_SELECTED_SYSTEM_TYPE_ID = "lastSelectedSystemTypeId"; //$NON-NLS-1$
+	/**
+	 * Dialog settings slot id: Last selected system type id within the wizard.
+	 */
+	public static final String LAST_SELECTED_SYSTEM_TYPE_ID = "lastSelectedSystemTypeId"; //$NON-NLS-1$
 	
 	// The selected context as passed in from the invoking class.
 	// Just pass on to the wizards. Do not interpret here!

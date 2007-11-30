@@ -37,7 +37,7 @@ import org.eclipse.rse.ui.ISystemPreferencesConstants;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.internal.model.SystemRegistry;
 
-public class FileAppendOutputSteamTestCase extends FileServiceBaseTest {
+public class FileOutputStreamTestCase extends FileServiceBaseTest {
 
 	private String SYSTEM_ADDRESS = "sles8rm";//"SLES8RM";
 	private String USER_ID = "xxxxxx";
@@ -116,22 +116,34 @@ public class FileAppendOutputSteamTestCase extends FileServiceBaseTest {
 	}
 	
 	public void testRSEFileStoreAppendOutputStream() throws Exception {
-		// Go through each connection type setting it up and calling
-		// appendToOutputStream(host)	
 		host = getLocalHost();
-		appendToOutputStream();
+		outputStreamFileWriting(EFS.APPEND);
 		
 		host = getFTPHost();
-		appendToOutputStream();
+		outputStreamFileWriting(EFS.APPEND);
 		
 		host = getDStoreHost();
-		appendToOutputStream();
+		outputStreamFileWriting(EFS.APPEND);
 		
 		host = getSSHHost();
-		appendToOutputStream();
+		outputStreamFileWriting(EFS.APPEND);
 	}
 	
-	public void appendToOutputStream() throws Exception {
+	public void testRSEFileStoreOverwriteOutputStream() throws Exception {
+		host = getLocalHost();
+		outputStreamFileWriting(EFS.NONE);
+		
+		host = getFTPHost();
+		outputStreamFileWriting(EFS.NONE);
+		
+		host = getDStoreHost();
+		outputStreamFileWriting(EFS.NONE);
+		
+		host = getSSHHost();
+		outputStreamFileWriting(EFS.NONE);
+	}
+	
+	public void outputStreamFileWriting(int options) throws Exception {
 		// RSE URI: rse://SYSTEM_ADDRESS/PATH_TO_FIlE
 		OutputStream outputStream = null;
 		InputStream inputStream = null;
@@ -160,9 +172,8 @@ public class FileAppendOutputSteamTestCase extends FileServiceBaseTest {
 		
 		IFileStore childFS = parentFS.getChild("append.txt");
 		
-		outputStream = childFS.openOutputStream(EFS.APPEND, new NullProgressMonitor());
-		
-		// Append to an empty file
+		outputStream = childFS.openOutputStream(options, new NullProgressMonitor());
+
 		String contents = getRandomString();
 		byte[] readBytes = new byte[contents.length()];
 		outputStream.write(contents.getBytes());
@@ -173,13 +184,16 @@ public class FileAppendOutputSteamTestCase extends FileServiceBaseTest {
 		
 		String input = new String(readBytes);
 		inputStream.close();
-		assertTrue(systemType + ": Contents incorrect when appending to an empty file.  Expected Contents: " + contents + " Actual Contents: " + input, contents.equals(input));
+		assertTrue(systemType + ": Contents incorrect writing to an empty file.  Expected Contents: " + contents + " Actual Contents: " + input, contents.equals(input));
 		
-		outputStream = childFS.openOutputStream(EFS.APPEND, new NullProgressMonitor());
+		outputStream = childFS.openOutputStream(options, new NullProgressMonitor());
 		
-		// Append to a not empty file
 		String write = " " + getRandomString();
-		contents += write;
+		if ((options & EFS.APPEND) != 0) {
+			contents += write;
+		} else {
+			contents = write;
+		}
 		outputStream.write(write.getBytes());
 		outputStream.close();
 		
@@ -189,7 +203,7 @@ public class FileAppendOutputSteamTestCase extends FileServiceBaseTest {
 		
 		input = new String(readBytes);
 		inputStream.close();
-		assertTrue(systemType + ": Contents incorrect when appending to a non-empty file.  Expected Contents: " + contents + " Actual Contents: " + input, contents.equals(input));
+		assertTrue(systemType + ": Contents incorrect writing to a non-empty file.  Expected Contents: " + contents + " Actual Contents: " + input, contents.equals(input));
 		// Cleanup, so IFileStore uses the correct connection next time.
 		cleanup();
 	}

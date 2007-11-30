@@ -189,7 +189,7 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 	 */
 	public MemoryByte[] getBytesFromAddress( BigInteger address, long length ) throws DebugException {
 		ICDIMemoryBlock cdiBlock = getCDIBlock();
-		if ( cdiBlock == null || 
+		if ( fBytes == null || cdiBlock == null || 
 			 cdiBlock.getStartAddress().compareTo( address ) > 0 || 
 			 cdiBlock.getStartAddress().add( BigInteger.valueOf( cdiBlock.getLength()/cdiBlock.getWordSize() ) ).compareTo( address.add( BigInteger.valueOf( length ) ) ) < 0 ) {
 			synchronized( this ) {

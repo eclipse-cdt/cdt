@@ -19,6 +19,7 @@
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  * Xuan Chen        (IBM)        - [209825] Update SystemTarHandler so that archive operations could be cancelable.
  * Xuan Chen        (IBM)        - [211551] NPE when moving multiple folders from one tar file to another tar file
+ * Xuan Chen        (IBM)        - [211653] Copy virtual directory with nested directory of tar file did not work
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -1015,7 +1016,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				
 				for (int i = 0; i < children.length; i++) {
 					VirtualChild tempChild = children[i];
-					String childPath = topDirPath + File.separator + tempChild.name;
+					String childPath = topDirPath;
+					if (!tempChild.isDirectory)
+					{
+						childPath = topDirPath + File.separator + tempChild.name;
+					}
 					File childFile = new File(childPath);
 					
 					boolean returnCode = false;

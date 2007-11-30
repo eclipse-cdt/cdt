@@ -18,6 +18,7 @@
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  * Xuan Chen        (IBM)        - [209825] Update SystemTarHandler so that archive operations could be cancelable.
+ * Xuan Chen        (IBM)        - [211551] NPE when moving multiple folders from one tar file to another tar file
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -678,8 +679,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// only add those entries that have names that begin with the parent name
 			// also check that the entry name isn't just the parent name + '/' (i.e. still the same
 			// as the parent)
-			if (entry.getName().startsWith(parent) && !entry.getName().equals(parent + "/")) { //$NON-NLS-1$
-				VirtualChild child = new VirtualChild(this, entry.getName());
+			String entryName = entry.getName();
+			String parentNameEndWithSlash = parent + "/";  //$NON-NLS-1$
+			if (entryName.startsWith(parentNameEndWithSlash) && !entryName.equals(parentNameEndWithSlash)) { 
+				VirtualChild child = new VirtualChild(this, entryName);
 				child.isDirectory = entry.isDirectory();
 				v.add(child);
 			}

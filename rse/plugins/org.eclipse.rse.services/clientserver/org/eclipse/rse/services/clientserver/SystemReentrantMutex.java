@@ -8,6 +8,7 @@
  * {Name} (company) - description of contribution.
  * 
  * Xuan Chen (IBM) - initial API and implementation 
+ * Xuan Chen        (IBM)        - [209825] add some info of printing the lock status
  ********************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -206,5 +207,22 @@ public class SystemReentrantMutex {
 			}
 		}
 	}
+	
+	/*
+	 * Method used to debug this mutex
+	 * uncomment it when needed
+	 * 
+	private void printLockMessage(int status, Thread myself)
+	{
+		if (status == LOCK_STATUS_AQUIRED)
+		{
+			System.out.println("Lock is AQUIRED by thread " + myself.getId());
+		}
+		else if (status == LOCK_STATUS_BORROWED)
+		{
+			System.out.println("Lock is BORROWED by thread " + myself.getId());
+		}
+	}
+	*/
 
 }

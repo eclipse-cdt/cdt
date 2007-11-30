@@ -1838,7 +1838,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	{
 		name = ArchiveHandlerManager.cleanUpVirtualPath(name);
 		name = name + "/"; //$NON-NLS-1$
-		return createVirtualObject(name, true, archiveOperationMonitor);
+		boolean returnCode = createVirtualObject(name, true, archiveOperationMonitor);
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+		return returnCode;
 	}
 	
 	/* (non-Javadoc)
@@ -1847,7 +1849,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	public boolean createFile(String name, ISystemOperationMonitor archiveOperationMonitor)
 	{
 		name = ArchiveHandlerManager.cleanUpVirtualPath(name);
-		return createVirtualObject(name, true, archiveOperationMonitor);
+		boolean returnCode = createVirtualObject(name, true, archiveOperationMonitor);
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+		return returnCode;
 	}
 	
 	/**
@@ -1862,13 +1866,11 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	{
 		if (!_exists) 
 		{
-			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 			return false;
 		}
 		if (exists(name, archiveOperationMonitor))
 		{
 			// The object already exists.
-			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 			return false;
 		}
 		
@@ -1914,7 +1916,6 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					replaceOldZip(outputTempFile);
 				
 					if (closeZipFile) closeZipFile();
-					setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 					return true;
 				}
 			}
@@ -1924,14 +1925,12 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			System.out.println("Could not add a file."); //$NON-NLS-1$
 			System.out.println(e.getMessage());
 			if (closeZipFile) closeZipFile();
-			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 			return false;				   
 		}
 		finally
 		{
 			releaseMutex(mutexLockStatus);
 		}
-		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 		return false;
 	}
 	

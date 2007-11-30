@@ -16,6 +16,8 @@
  * Xuan Chen        (IBM)        - [194293] [Local][Archives] Saving file second time in an Archive Errors
  * Xuan Chen        (IBM)        - [199132] [Archives-TAR][Local-Windows] Can't open files in tar archives
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
+ * Xuan Chen        (IBM)        - [209825] Update SystemTarHandler so that archive operations could be cancelable.
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -43,6 +45,7 @@ import org.eclipse.rse.internal.services.clientserver.archiveutils.TarFile;
 import org.eclipse.rse.internal.services.clientserver.archiveutils.TarOutputStream;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;
+import org.eclipse.rse.services.clientserver.SystemReentrantMutex;
 import org.eclipse.rse.services.clientserver.java.BasicClassFileParser;
 import org.eclipse.rse.services.clientserver.search.SystemSearchLineMatch;
 import org.eclipse.rse.services.clientserver.search.SystemSearchStringMatchLocator;
@@ -57,6 +60,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	protected File file;
 	protected long modTimeDuringCache;
 	protected VirtualFileSystem vfs;
+	protected SystemReentrantMutex _mutex;
 	
 	/**
 	 * This class represents a virtual file system. A virtual file system is simply a data structure that
@@ -556,6 +560,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		init(file);
 		createCache();
 		modTimeDuringCache = file.lastModified();
+		_mutex = new SystemReentrantMutex();
 	}
 	
 	/**
@@ -836,60 +841,59 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public boolean extractVirtualFile(String fullVirtualName, File destination, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		TarEntry entry = getTarFile().getEntry(fullVirtualName);
+		TarEntry entry = null;
 		
-		try {
-			updateCache();
-		}
-		catch (IOException e) {
-			// TODO: log error
-			return false;
-		}
-		
-		// if the entry is a directory, simply create the destination and set the last modified time to
-		// the entry's last modified time
-		if (entry.isDirectory()) {
-			
-			// if destination exists, then delete it			
-			if (destination.exists()) {
-				destination.delete();
-			}
-
-			// create destination directory, and set the last modified time to
-			// the entry's last modified time
-			destination.mkdirs();
-			destination.setLastModified(entry.getModificationTime());
-			return true;
-		}
-		
-		// entry is not a directory
 		InputStream inStream = null;
 		OutputStream outStream = null;
-		
-		try {
-			inStream = getTarFile().getInputStream(entry);
-		
-			if (inStream == null) {
-				destination.setLastModified(entry.getModificationTime());
-				return false;			// TODO: return true or false?
-			}
-			//Need to make sure destination file exists.
-			if (!destination.exists())
+		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
+		try
+		{
+			mutexLockStatus = _mutex.waitForLock(archiveOperationMonitor, Long.MAX_VALUE);
+			if (SystemReentrantMutex.LOCK_STATUS_NOLOCK != mutexLockStatus)
 			{
-			    File parentFile = destination.getParentFile();
-			    if (!parentFile.exists())
-			        parentFile.mkdirs();
-			    destination.createNewFile();
-			}
+				entry = getTarFile().getEntry(fullVirtualName);
+				updateCache();
 		
-			outStream = new FileOutputStream(destination);
+				// if the entry is a directory, simply create the destination and set the last modified time to
+				// the entry's last modified time
+				if (entry.isDirectory()) {
+					
+					// if destination exists, then delete it			
+					if (destination.exists()) {
+						destination.delete();
+					}
+		
+					// create destination directory, and set the last modified time to
+					// the entry's last modified time
+					destination.mkdirs();
+					destination.setLastModified(entry.getModificationTime());
+					return true;
+				}
+		
+				inStream = getTarFile().getInputStream(entry);
 			
-			byte[] buf = new byte[ITarConstants.BLOCK_SIZE];
-			int numRead = inStream.read(buf);
+				if (inStream == null) {
+					destination.setLastModified(entry.getModificationTime());
+					return false;			// TODO: return true or false?
+				}
+				//Need to make sure destination file exists.
+				if (!destination.exists())
+				{
+				    File parentFile = destination.getParentFile();
+				    if (!parentFile.exists())
+				        parentFile.mkdirs();
+				    destination.createNewFile();
+				}
 			
-			while (numRead > 0) {
-				outStream.write(buf, 0, numRead);
-				numRead = inStream.read(buf);	
+				outStream = new FileOutputStream(destination);
+				
+				byte[] buf = new byte[ITarConstants.BLOCK_SIZE];
+				int numRead = inStream.read(buf);
+				
+				while (numRead > 0) {
+					outStream.write(buf, 0, numRead);
+					numRead = inStream.read(buf);	
+				}
 			}
 		}
 		catch (IOException e) {
@@ -906,14 +910,19 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				if (inStream != null) {
 					inStream.close();
 				}
+			
+			
+				// finished creating and writing to the file, so now set the last modified time
+				// to the entry's last modified time
+				if (entry != null)
+				{	
+					destination.setLastModified(entry.getModificationTime());
+				}
 			}
 			catch (IOException e) {
-				// TODO: log error
+				e.printStackTrace();
 			}
-			
-			// finished creating and writing to the file, so now set the last modified time
-			// to the entry's last modified time
-			destination.setLastModified(entry.getModificationTime());
+			releaseMutex(mutexLockStatus);
 			
 		}
 		return true;
@@ -946,73 +955,93 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		
-		// update our cache before accessing cache
-		try {
-			updateCache();
-		}
-		catch (IOException e) {
-			// TODO: log error
-			return false;
-		}
 		
-		VirtualChild dir = vfs.getEntry(fullVirtualName);
+		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
+		try
+		{
+			mutexLockStatus = _mutex.waitForLock(archiveOperationMonitor, Long.MAX_VALUE);
+			if (SystemReentrantMutex.LOCK_STATUS_NOLOCK != mutexLockStatus)
+			{
 		
-		if (dir == null || !dir.isDirectory) {
-			return false;
-		}
+				updateCache();
 		
-		if (destination == null) {
-			
-			if (fullVirtualName.equals("")) { //$NON-NLS-1$
-				destination = destinationParent;
-			}
-			else {
-				destination = new File(destinationParent, dir.name);
-			} 
-		}
-		
-		File topDir = destination;
-		String topDirPath = topDir.getAbsolutePath();
-		
-		// TODO: why are we checking that destination and destination parent are not equal?
-		if (!destination.equals(destinationParent)) {
-			
-			if (destination.isFile() && destination.exists()) {
-				SystemArchiveUtil.delete(destination);
-			}
-			
-			destination.mkdirs();
-		}
-		
-		// if the directory does not exist, try to create it
-		if (!topDir.exists() && !topDir.mkdirs()) {
-			// TODO: log error
-			return false;				// log error and quit if we fail to create the directory
-		}
-		else {
-			extractVirtualFile(fullVirtualName, topDir, archiveOperationMonitor);
-		}
-		
-		// get the children of this directory
-		VirtualChild[] children = vfs.getChildren(fullVirtualName);
-		
-		for (int i = 0; i < children.length; i++) {
-			VirtualChild tempChild = children[i];
-			String childPath = topDirPath + File.separator + tempChild.name;
-			File childFile = new File(childPath);
-			
-			// if the child is a directory, then we need to extract it and its children
-			if (tempChild.isDirectory) {
+				VirtualChild dir = vfs.getEntry(fullVirtualName);
 				
-				// and now extract its children
-				extractVirtualDirectory(tempChild.fullName, childFile, (File) null, archiveOperationMonitor);
-			}
-			// otherwise if the child is a file, simply extract it
-			else {
-				extractVirtualFile(tempChild.fullName, childFile, archiveOperationMonitor);
+				if (dir == null || !dir.isDirectory) {
+					return false;
+				}
+				
+				if (destination == null) {
+					
+					if (fullVirtualName.equals("")) { //$NON-NLS-1$
+						destination = destinationParent;
+					}
+					else {
+						destination = new File(destinationParent, dir.name);
+					} 
+				}
+				
+				File topDir = destination;
+				String topDirPath = topDir.getAbsolutePath();
+				
+				// TODO: why are we checking that destination and destination parent are not equal?
+				if (!destination.equals(destinationParent)) {
+					
+					if (destination.isFile() && destination.exists()) {
+						SystemArchiveUtil.delete(destination);
+					}
+					
+					destination.mkdirs();
+				}
+				
+				// if the directory does not exist, try to create it
+				if (!topDir.exists() && !topDir.mkdirs()) {
+					// TODO: log error
+					return false;				// log error and quit if we fail to create the directory
+				}
+				else {
+					boolean returnCode = extractVirtualFile(fullVirtualName, topDir, archiveOperationMonitor);
+					if (returnCode == false)
+					{
+						return returnCode;
+					}
+				}
+				
+				// get the children of this directory
+				VirtualChild[] children = vfs.getChildren(fullVirtualName);
+				
+				for (int i = 0; i < children.length; i++) {
+					VirtualChild tempChild = children[i];
+					String childPath = topDirPath + File.separator + tempChild.name;
+					File childFile = new File(childPath);
+					
+					boolean returnCode = false;
+					// if the child is a directory, then we need to extract it and its children
+					if (tempChild.isDirectory) {
+						
+						// and now extract its children
+						returnCode = extractVirtualDirectory(tempChild.fullName, childFile, (File) null, archiveOperationMonitor);
+					}
+					// otherwise if the child is a file, simply extract it
+					else {
+						returnCode = extractVirtualFile(tempChild.fullName, childFile, archiveOperationMonitor);
+					}
+					if (returnCode == false)
+					{
+						return returnCode;
+					}
+				}
 			}
 		}
-		
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return false;				   
+		}
+		finally
+		{
+			releaseMutex(mutexLockStatus);
+		}
 		return true;
 	}
 
@@ -1022,48 +1051,72 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	public boolean add(File file, String virtualPath, String name, ISystemOperationMonitor archiveOperationMonitor ) {
 		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
 		
-		if (!file.isDirectory()) {
-			
-			// if it exists, call replace
-			String fullVirtualName = getFullVirtualName(virtualPath, name);
-			if (exists(fullVirtualName, archiveOperationMonitor)) { 
-				return replace(fullVirtualName, file, name, archiveOperationMonitor); 
-			}
-			else {
-				File[] files = new File[1];
-				files[0] = file;
-				String[] names = new String[1];
-				names[0] = name;
-				return add(files, virtualPath, names, archiveOperationMonitor);
-			}
-		}
-		else {
-			Vector children = new Vector();
-			listAllFiles(file, children);
-			int numOfChildren = children.size();
-			File[] sources = new File[numOfChildren + 1];
-			String[] newNames = new String[numOfChildren + 1];
-			int charsToTrim = file.getParentFile().getAbsolutePath().length() + 1;
-			for (int i = 0; i < numOfChildren; i++)
+		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
+		try
+		{
+			mutexLockStatus = _mutex.waitForLock(archiveOperationMonitor, Long.MAX_VALUE);
+			if (SystemReentrantMutex.LOCK_STATUS_NOLOCK != mutexLockStatus)
 			{
-				sources[i] = (File)children.get(i);
-				newNames[i] = sources[i].getAbsolutePath().substring(charsToTrim);
-				newNames[i] = newNames[i].replace('\\','/');
-				
-				if (sources[i].isDirectory() && !newNames[i].endsWith("/")) { //$NON-NLS-1$
-					newNames[i] = newNames[i] + "/"; //$NON-NLS-1$
+				if (!file.isDirectory()) {
+					
+					// if it exists, call replace
+					String fullVirtualName = getFullVirtualName(virtualPath, name);
+					if (exists(fullVirtualName, archiveOperationMonitor)) { 
+						boolean returnCode = replace(fullVirtualName, file, name, archiveOperationMonitor); 
+						setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+						return returnCode;
+					}
+					else {
+						File[] files = new File[1];
+						files[0] = file;
+						String[] names = new String[1];
+						names[0] = name;
+						boolean returnCode = add(files, virtualPath, names, archiveOperationMonitor);
+						setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+						return returnCode;
+					}
+				}
+				else {
+					Vector children = new Vector();
+					listAllFiles(file, children);
+					int numOfChildren = children.size();
+					File[] sources = new File[numOfChildren + 1];
+					String[] newNames = new String[numOfChildren + 1];
+					int charsToTrim = file.getParentFile().getAbsolutePath().length() + 1;
+					for (int i = 0; i < numOfChildren; i++)
+					{
+						sources[i] = (File)children.get(i);
+						newNames[i] = sources[i].getAbsolutePath().substring(charsToTrim);
+						newNames[i] = newNames[i].replace('\\','/');
+						
+						if (sources[i].isDirectory() && !newNames[i].endsWith("/")) { //$NON-NLS-1$
+							newNames[i] = newNames[i] + "/"; //$NON-NLS-1$
+						}
+					}
+					
+					sources[numOfChildren] = file;
+					newNames[numOfChildren] = name;
+					
+					if  (!newNames[numOfChildren].endsWith("/")) { //$NON-NLS-1$
+						newNames[numOfChildren] = newNames[numOfChildren] + "/"; //$NON-NLS-1$
+					}
+					 
+					boolean returnCode = add(sources, virtualPath, newNames, archiveOperationMonitor);
+					setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+					return returnCode;
 				}
 			}
-			
-			sources[numOfChildren] = file;
-			newNames[numOfChildren] = name;
-			
-			if  (!newNames[numOfChildren].endsWith("/")) { //$NON-NLS-1$
-				newNames[numOfChildren] = newNames[numOfChildren] + "/"; //$NON-NLS-1$
-			}
-			 
-			return add(sources, virtualPath, newNames, archiveOperationMonitor);
 		}
+		catch (Exception e)
+		{
+			e.printStackTrace();	
+		}
+		finally
+		{
+			releaseMutex(mutexLockStatus);
+		}
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+		return false;
 	}
 	
 	/**
@@ -1090,76 +1143,113 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public boolean add(File[] files, String virtualPath, String[] names, ISystemOperationMonitor archiveOperationMonitor) {
 		
-		// update our cache before accessing cache
-		try {
-			updateCache();
+		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
+		File outputTempFile = null;
+		TarOutputStream outStream = null;
+		
+		try
+		{
+			mutexLockStatus = _mutex.waitForLock(archiveOperationMonitor, Long.MAX_VALUE);
+			if (SystemReentrantMutex.LOCK_STATUS_NOLOCK != mutexLockStatus)
+			{
+		
+				updateCache();
+			
+				virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
+				
+				int numFiles = files.length;
+				
+				for (int i = 0; i < numFiles; i++) {		
+					
+					if (!files[i].exists() || !files[i].canRead()) {
+						setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+						return false;
+					}
+					
+					// if the entry already exists, then we should do a replace
+					// TODO (KM): should we simply replace and return?
+					// I think we should check each entry and replace or create for each one
+					String fullVirtualName = getFullVirtualName(virtualPath, names[i]);
+					if (exists(fullVirtualName, archiveOperationMonitor)) { 
+						
+						boolean returnCode = replace(fullVirtualName, files[i], names[i], archiveOperationMonitor);
+						setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+						return returnCode;
+					}
+				}
+			
+					// open a new temp file which will be our destination for the new tar file
+					outputTempFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
+					outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
+		
+					// get all the entries in the current tar				  
+					VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
+						
+					// if it is an empty temp file, no need to recreate it
+					if (children.length != 0) {
+						boolean isCanceled = createTar(children, outStream, (HashSet)null, archiveOperationMonitor);
+						if (isCanceled)
+						{
+							outStream.close();
+							if (outputTempFile != null)
+							{
+								outputTempFile.delete();
+							}
+							return false;
+							
+						}
+					}
+						
+					// for each new file to add
+					for (int i = 0; i < numFiles; i++) {
+						
+						String childVirtualPath = virtualPath + "/" + names[i]; //$NON-NLS-1$
+						
+						TarEntry newEntry = createTarEntry(files[i], childVirtualPath);
+						
+						// append the additional entry to the tar file
+						appendFile(files[i], newEntry, outStream);
+						
+						// add the new entry to the cache, so that the cache is updated
+						VirtualChild temp = getVirtualChild(newEntry);
+						vfs.addEntry(temp);
+					}
+					
+					// close output stream
+					outStream.close();
+						
+					// replace the current tar file with the new one, and do not update cache since
+					// we just did
+					replaceFile(outputTempFile, false);
+			}
+			
 		}
 		catch (IOException e) {
-			// TODO: log error
-			return false;
-		}
-		
-		virtualPath = ArchiveHandlerManager.cleanUpVirtualPath(virtualPath);
-		
-		int numFiles = files.length;
-		
-		for (int i = 0; i < numFiles; i++) {		
-			
-			if (!files[i].exists() || !files[i].canRead()) {
-				return false;
-			}
-			
-			// if the entry already exists, then we should do a replace
-			// TODO (KM): should we simply replace and return?
-			// I think we should check each entry and replace or create for each one
-			String fullVirtualName = getFullVirtualName(virtualPath, names[i]);
-			if (exists(fullVirtualName, archiveOperationMonitor)) { 
-				return replace(fullVirtualName, files[i], names[i], archiveOperationMonitor); 
-			}
-		}
-		
-		try {
-			
-			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
-			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
-
-			// get all the entries in the current tar				  
-			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
-				
-			// if it is an empty temp file, no need to recreate it
-			if (children.length != 0) {
-				createTar(children, outStream, (HashSet)null);
-			}
-				
-			// for each new file to add
-			for (int i = 0; i < numFiles; i++) {
-				
-				String childVirtualPath = virtualPath + "/" + names[i]; //$NON-NLS-1$
-				
-				TarEntry newEntry = createTarEntry(files[i], childVirtualPath);
-				
-				// append the additional entry to the tar file
-				appendFile(files[i], newEntry, outStream);
-				
-				// add the new entry to the cache, so that the cache is updated
-				VirtualChild temp = getVirtualChild(newEntry);
-				vfs.addEntry(temp);
-			}
-			
+			e.printStackTrace();
 			// close output stream
-			outStream.close();
-				
-			// replace the current tar file with the new one, and do not update cache since
-			// we just did
-			replaceFile(outFile, false);
-			
-		}
-		catch (IOException e) {
-			// TODO: log error
+			if (outStream != null)
+			{
+				try
+				{
+					outStream.close();
+				}
+				catch (Exception exp)
+				{
+					exp.printStackTrace();
+				}
+			}
+			if (outputTempFile != null)
+			{
+				outputTempFile.delete();
+			}
+			setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 			return false;
 		}
-		
+		finally
+		{
+			releaseMutex(mutexLockStatus);
+		}
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
 		return true;
 	}
 	
@@ -1169,13 +1259,14 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 * @param children an array of virtual children from which to create a tar file.
 	 * @param outStream the tar output stream to use.
 	 * @param omitChildren the set of names for children that should be omitted from the given array of virtual children.
+	 * @param the operation progress monitor
 	 * @throws IOException if an I/O exception occurs.
 	 */
-	protected void createTar(VirtualChild[] children, TarOutputStream outStream, HashSet omitChildren) throws IOException {
+	protected boolean createTar(VirtualChild[] children, TarOutputStream outStream, HashSet omitChildren, ISystemOperationMonitor archiveOperationMonitor) throws IOException {
 		
 		// TODO: if all children are to be deleted, we leave the tar file with a dummy entry
 		if (omitChildren != null && children.length == omitChildren.size()) {
-			return;
+			return false;
 		}
 		
 		TarFile tarFile = getTarFile();
@@ -1183,6 +1274,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		// go through each child
 		for (int i = 0; i < children.length; i++) {
 			
+			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+			{
+				//the operation has been canceled
+				return true;
+			}
 			// if entry name is in the omit set, then do not include it 
 			if (omitChildren != null && omitChildren.contains(children[i].fullName)) {
 				continue;
@@ -1229,6 +1325,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				outStream.closeEntry();
 			}
 		}
+		return false;
 	}
 	
 	/**
@@ -1414,6 +1511,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	protected VirtualChild getVirtualChild(TarEntry entry) {
 		VirtualChild child = new VirtualChild(this, entry.getName());
 		child.isDirectory = entry.isDirectory();
+		child.setComment("");  //$NON-NLS-1$
+		child.setCompressedSize(entry.getSize());
+		child.setCompressionMethod(""); //$NON-NLS-1$;
+		child.setSize(entry.getSize());
+		child.setTimeStamp(entry.getModificationTime());
 		return child;	
 	}
 	
@@ -1484,9 +1586,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		try {
 			
 			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(getArchive().getAbsolutePath() + "temp"); //$NON-NLS-1$
+			File outputTempFile = new File(getArchive().getAbsolutePath() + "temp"); //$NON-NLS-1$
 			
-			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
+			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
 			
 			// get all the entries
 			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
@@ -1497,8 +1599,17 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			// add the virtual file to be replaced
 			omissions.add(fullVirtualName);
 			
-			// create the temp tar
-			createTar(children, outStream, omissions);
+			boolean isCanceled = createTar(children, outStream, omissions, archiveOperationMonitor);
+			if (isCanceled)
+			{
+				outStream.close();
+				if (outputTempFile != null)
+				{
+					outputTempFile.delete();
+				}
+				return false;
+				
+			}
 			
 			// now append the new file to the tar
 			String parentVirtualPath = null;
@@ -1539,7 +1650,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			
 			// replace the current tar file with the new one, and do not update cache since
 			// we just did
-			replaceFile(outFile, false);
+			replaceFile(outputTempFile, false);
 			
 			return true;
 		}
@@ -1552,72 +1663,94 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	/**
 	 * @see org.eclipse.rse.services.clientserver.archiveutils.ISystemArchiveHandler#delete(java.lang.String, ISystemOperationMonitor)
 	 */
-	public boolean delete(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
+	public boolean delete(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) 
+	{
+		boolean returnCode = doDelete(fullVirtualName, archiveOperationMonitor);
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+		return returnCode;
+	}
+	
+	
+	protected boolean doDelete(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
-		// update our cache before accessing cache
-		try {
-			updateCache();
-		}
-		catch (IOException e) {
-			// TODO: log error
-			return false;
-		}
-		
-		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		VirtualChild child = getVirtualFile(fullVirtualName, archiveOperationMonitor);
-		VirtualChild[] omitArray = new VirtualChild[0];
-		
-		// child does not exist, so quit
-		if (!child.exists()) {
-			return false;
-		}
-		
-		// child is a directory, so get its children since we need to delete them as well
-		if (child.isDirectory) {
-			omitArray = getVirtualChildrenList(fullVirtualName, archiveOperationMonitor);
-		}
-		
-		try {
-		
-			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
-			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
-		
-			// get all the entries in the current tar				  
-			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
-		
-			// create a set to hold omissions
-			HashSet omissions = new HashSet();
-		
-			// add the child to it
-			omissions.add(child.fullName);
-		
-			// now go through array of children to be deleted
-			// this will be of length 0 if the child is not a directory
-			for (int i = 0; i < omitArray.length; i++) {
-				omissions.add(omitArray[i].fullName);
-			}
-			
-			// create the tar
-			createTar(children, outStream, omissions);
-			
-			// delete the child from the cache (this will also delete its children if it
-			// is a directory)
-			vfs.removeEntry(child);
-			
-			// close output stream
-			outStream.close();
+		File outputTempFile = null;
+		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
+		try
+		{
+			mutexLockStatus = _mutex.waitForLock(archiveOperationMonitor, Long.MAX_VALUE);
+			if (SystemReentrantMutex.LOCK_STATUS_NOLOCK != mutexLockStatus)
+			{
+				updateCache();
+				fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
+				VirtualChild child = getVirtualFile(fullVirtualName, archiveOperationMonitor);
+				VirtualChild[] omitArray = new VirtualChild[0];
 				
-			// replace the current tar file with the new one, and do not update cache since
-			// we just did
-			replaceFile(outFile, false);	
+				// child does not exist, so quit
+				if (!child.exists()) {
+					return false;
+				}
+				
+				// child is a directory, so get its children since we need to delete them as well
+				if (child.isDirectory) {
+					omitArray = getVirtualChildrenList(fullVirtualName, archiveOperationMonitor);
+				}
+		
+				// open a new temp file which will be our destination for the new tar file
+				outputTempFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
+				TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
 			
-			return true;
+				// get all the entries in the current tar				  
+				VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
+			
+				// create a set to hold omissions
+				HashSet omissions = new HashSet();
+			
+				// add the child to it
+				omissions.add(child.fullName);
+			
+				// now go through array of children to be deleted
+				// this will be of length 0 if the child is not a directory
+				for (int i = 0; i < omitArray.length; i++) {
+					omissions.add(omitArray[i].fullName);
+				}
+				
+				boolean isCanceled = createTar(children, outStream, omissions, archiveOperationMonitor);
+				if (isCanceled)
+				{
+					outStream.close();
+					if (outputTempFile != null)
+					{
+						outputTempFile.delete();
+					}
+					return false;
+					
+				}
+				
+				// delete the child from the cache (this will also delete its children if it
+				// is a directory)
+				vfs.removeEntry(child);
+				
+				// close output stream
+				outStream.close();
+					
+				// replace the current tar file with the new one, and do not update cache since
+				// we just did
+				replaceFile(outputTempFile, false);	
+				
+				return true;
+			}
 		}
 		catch (IOException e) {
-			// TODO: log error
+			System.out.println(e.getMessage());
+			System.out.println("Could not delete " + fullVirtualName); //$NON-NLS-1$
+			if (!(outputTempFile == null)) outputTempFile.delete();
 			return false;
 		}
+		finally
+		{
+			releaseMutex(mutexLockStatus);
+		}
+		return false; 
 	}
 
 	/**
@@ -1627,15 +1760,21 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		int i = fullVirtualName.lastIndexOf("/"); //$NON-NLS-1$
 		
+		boolean resultCode = false;
+		
 		// if the original does not have any separator, simply rename it.
-		if (i == -1) {
-			return fullRename(fullVirtualName, newName, archiveOperationMonitor);
+		if (i == -1) 
+		{
+			resultCode = fullRename(fullVirtualName, newName, archiveOperationMonitor);
 		}
 		// otherwise, get the parent path and append the new name to it.
-		else {
+		else 
+		{
 			String fullNewName = fullVirtualName.substring(0, i+1) + newName;
-			return fullRename(fullVirtualName, fullNewName, archiveOperationMonitor);
+			resultCode = fullRename(fullVirtualName, fullNewName, archiveOperationMonitor);
 		}
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+		return resultCode;
 	}
 
 	/**
@@ -1663,97 +1802,118 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public boolean fullRename(String fullVirtualName, String newFullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		
+		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
+		File outputTempFile = null;
 		// update our cache before accessing cache
-		try {
-			updateCache();
-		}
-		catch (IOException e) {
-			// TODO: log error
-			return false;
-		}
+		try 
+		{	
+			mutexLockStatus = _mutex.waitForLock(archiveOperationMonitor, Long.MAX_VALUE);
+			if (SystemReentrantMutex.LOCK_STATUS_NOLOCK != mutexLockStatus)
+			{
 		
-		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		newFullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(newFullVirtualName);
-		VirtualChild child = getVirtualFile(fullVirtualName, archiveOperationMonitor);
+				fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
+				newFullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(newFullVirtualName);
+				VirtualChild child = getVirtualFile(fullVirtualName, archiveOperationMonitor);
+				
+				// if the virtual file to be renamed does not exist, then quit
+				if (!child.exists()) {
+					return false;
+				}
 		
-		// if the virtual file to be renamed does not exist, then quit
-		if (!child.exists()) {
-			return false;
-		}
-		
-		try {
 			
-			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
-			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
-			
-			// get all the entries
-			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
-			
-			// the rename list
-			// a hashmap containing old name, new name associations for each
-			// child that has to be renamed
-			HashMap names = new HashMap();
-			
-			// if the entry to rename is a directory, we need to rename all
-			// its children entries
-			if (child.isDirectory) {
+				// open a new temp file which will be our destination for the new tar file
+				outputTempFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
+				TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
 				
-				// add the entry itself to the rename list
-				// include '/' in both the old name and the new name since it is a directory
-				names.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+				// get all the entries
+				VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
 				
-				// get all the children of the entry to be renamed
-				VirtualChild[] childrenArray = getVirtualChildrenList(fullVirtualName, archiveOperationMonitor);
+				// the rename list
+				// a hashmap containing old name, new name associations for each
+				// child that has to be renamed
+				HashMap names = new HashMap();
 				
-				// now we need to get the relative path of each child with respect to the virtual name
-				// and append the relative path to the new virtual name
-				for (int i = 0; i < childrenArray.length; i++) {
+				// if the entry to rename is a directory, we need to rename all
+				// its children entries
+				if (child.isDirectory) {
 					
-					int j = fullVirtualName.length();
+					// add the entry itself to the rename list
+					// include '/' in both the old name and the new name since it is a directory
+					names.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					
-					// get the relative path with respect to the virtual name
-					String suffix = childrenArray[i].fullName.substring(j);
+					// get all the children of the entry to be renamed
+					VirtualChild[] childrenArray = getVirtualChildrenList(fullVirtualName, archiveOperationMonitor);
 					
-					// add the relative path to the new virtual name
-					String newName = newFullVirtualName + suffix;
-					
-					// if a child is a directory, ensure that '/'s are added both for the old name
-					// and the new name
-					if (childrenArray[i].isDirectory) {
-						names.put(childrenArray[i].fullName + "/", newName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					else {
-						names.put(childrenArray[i].fullName, newName);
+					// now we need to get the relative path of each child with respect to the virtual name
+					// and append the relative path to the new virtual name
+					for (int i = 0; i < childrenArray.length; i++) {
+						
+						int j = fullVirtualName.length();
+						
+						// get the relative path with respect to the virtual name
+						String suffix = childrenArray[i].fullName.substring(j);
+						
+						// add the relative path to the new virtual name
+						String newName = newFullVirtualName + suffix;
+						
+						// if a child is a directory, ensure that '/'s are added both for the old name
+						// and the new name
+						if (childrenArray[i].isDirectory) {
+							names.put(childrenArray[i].fullName + "/", newName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+						else {
+							names.put(childrenArray[i].fullName, newName);
+						}
 					}
 				}
-			}
-			// otherwise entry is not a directory, so simply add it to the rename list
-			else {
-				names.put(fullVirtualName, newFullVirtualName);
-			}
+				// otherwise entry is not a directory, so simply add it to the rename list
+				else {
+					names.put(fullVirtualName, newFullVirtualName);
+				}
+				
+				// create tar with renamed entries
+				boolean isCanceled = createTar(children, outStream, names, archiveOperationMonitor);
+				if (isCanceled)
+				{
+					outStream.close();
+					if (outputTempFile != null)
+					{
+						outputTempFile.delete();
+					}
+					return false;
+					
+				}
+				
+				if (true == isCanceled)
+				{
+					return false;
+				}
+				// close the output stream
+				outStream.close();
 			
-			// create tar with renamed entries
-			boolean isCanceled = createTar(children, outStream, names, archiveOperationMonitor);
-			
-			if (true == isCanceled)
+				// replace the current tar file with the new one, and force an update of the cache.
+				// TODO: we force a fresh update of the cache because it is seemingly complicated
+				// to do the delta upgrade of the cache. But investigate this, since it will
+				// probably be more efficient
+				replaceFile(outputTempFile, true);
+				updateCache();
+				
+				return true;
+			}
+			else
 			{
 				return false;
 			}
-			// close the output stream
-			outStream.close();
-		
-			// replace the current tar file with the new one, and force an update of the cache.
-			// TODO: we force a fresh update of the cache because it is seemingly complicated
-			// to do the delta upgrade of the cache. But investigate this, since it will
-			// probably be more efficient
-			replaceFile(outFile, true);
-			
-			return true;
 		}
 		catch (IOException e) {
-			// TODO: log error
+			e.printStackTrace();
+			System.out.println("Could not rename " + fullVirtualName); //$NON-NLS-1$
+			if (!(outputTempFile == null)) outputTempFile.delete();
 			return false;
+		}
+		finally
+		{
+			releaseMutex(mutexLockStatus);
 		}
 	}
 	
@@ -1773,8 +1933,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		// go through each child
 		for (int i = 0; i < children.length; i++) {
 			
-			if (archiveOperationMonitor.isCanceled())
+			if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
 			{
+				//the operation has been canceled
 				return true;
 			}
 			
@@ -1901,7 +2062,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	public boolean createFolder(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
 		fullVirtualName = fullVirtualName + "/"; //$NON-NLS-1$
-		return createVirtualObject(fullVirtualName, archiveOperationMonitor);
+		boolean returnCode = createVirtualObject(fullVirtualName, archiveOperationMonitor);
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+		return returnCode;
 	}
 
 	/**
@@ -1909,7 +2072,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	public boolean createFile(String fullVirtualName, ISystemOperationMonitor archiveOperationMonitor) {
 		fullVirtualName = ArchiveHandlerManager.cleanUpVirtualPath(fullVirtualName);
-		return createVirtualObject(fullVirtualName, archiveOperationMonitor);
+		boolean returnCode = createVirtualObject(fullVirtualName, archiveOperationMonitor);
+		setArchiveOperationMonitorStatusDone(archiveOperationMonitor);
+		return returnCode;
 	}
 	
 	/**
@@ -1920,54 +2085,86 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	 */
 	protected boolean createVirtualObject(String name, ISystemOperationMonitor archiveOperationMonitor) {
 		
-		// update our cache before accessing cache
-		try {
-			updateCache();
-		}
-		catch (IOException e) {
-			// TODO: log error
-			return false;
-		}
-		
-		// if the object already exists, return false
-		if (exists(name, archiveOperationMonitor)) {
-			return false;
-		}
-		
-		try {
+		File outputTempFile = null;
+		TarOutputStream outStream = null;
+		int mutexLockStatus = SystemReentrantMutex.LOCK_STATUS_NOLOCK;
+		try
+		{
+			mutexLockStatus = _mutex.waitForLock(archiveOperationMonitor, Long.MAX_VALUE);
+			if (SystemReentrantMutex.LOCK_STATUS_NOLOCK != mutexLockStatus)
+			{
+				updateCache();
+				
+				
+				// if the object already exists, return false
+				if (exists(name, archiveOperationMonitor)) {
+					return false;
+				}
+				
+				// open a new temp file which will be our destination for the new tar file
+				outputTempFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
+				outStream = new TarOutputStream(new FileOutputStream(outputTempFile));
+				
+				// get all the entries
+				VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
+				
+				// if it is an empty temp file, no need to recreate it
+				if (children.length != 0) {
+					boolean isCanceled = createTar(children, outStream, (HashSet)null, archiveOperationMonitor);
+					if (isCanceled)
+					{
+						outStream.close();
+						if (outputTempFile != null)
+						{
+							outputTempFile.delete();
+						}
+						return false;
+						
+					}
+				}
+				
+				// append an empty file to the tar file
+				TarEntry newEntry = appendEmptyFile(outStream, name);
+				
+				// add to cache
+				VirtualChild temp = getVirtualChild(newEntry);
+				vfs.addEntry(temp);
+				
+				// close the output stream
+				outStream.close();
 			
-			// open a new temp file which will be our destination for the new tar file
-			File outFile = new File(file.getAbsolutePath() + "temp"); //$NON-NLS-1$
-			TarOutputStream outStream = new TarOutputStream(new FileOutputStream(outFile));
-			
-			// get all the entries
-			VirtualChild[] children = getVirtualChildrenList(archiveOperationMonitor);
-			
-			// if it is an empty temp file, no need to recreate it
-			if (children.length != 0) {
-				createTar(children, outStream, (HashSet)null);
+				// replace the current tar file with the new one, but do not update the cache
+				// since we have already updated to the cache
+				replaceFile(outputTempFile, false);
+				
+				return true;
 			}
-			
-			// append an empty file to the tar file
-			TarEntry newEntry = appendEmptyFile(outStream, name);
-			
-			// add to cache
-			VirtualChild temp = getVirtualChild(newEntry);
-			vfs.addEntry(temp);
-			
-			// close the output stream
-			outStream.close();
-		
-			// replace the current tar file with the new one, but do not update the cache
-			// since we have already updated to the cache
-			replaceFile(outFile, false);
-			
-			return true;
 		}
 		catch (IOException e) {
-			// TODO: log error
+			e.printStackTrace();
+			// close output stream
+			if (outStream != null)
+			{
+				try
+				{
+					outStream.close();
+				}
+				catch (Exception exp)
+				{
+					exp.printStackTrace();
+				}
+			}
+			if (outputTempFile != null)
+			{
+				outputTempFile.delete();
+			}
 			return false;
 		}
+		finally
+		{
+			releaseMutex(mutexLockStatus);
+		}
+		return false;
 	}
 	
 	/**
@@ -2296,5 +2493,23 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			fullVirtualName = virtualPath + "/" + name;  //$NON-NLS-1$
 		}
 		return fullVirtualName;
+	}
+	
+	private void releaseMutex(int mutexLockStatus)
+	{
+		//We only release the mutex if we aquired it, not borrowed it.
+		if (SystemReentrantMutex.LOCK_STATUS_AQUIRED == mutexLockStatus)
+		{
+			_mutex.release();
+		}
+	}
+	
+	private void setArchiveOperationMonitorStatusDone(ISystemOperationMonitor archiveOperationMonitor)
+	{
+		//We only set the status of the archive operation montor to done if it is not been canceled.
+		if (null != archiveOperationMonitor && !archiveOperationMonitor.isCanceled())
+		{
+			archiveOperationMonitor.setDone(true);
+		}
 	}
 }

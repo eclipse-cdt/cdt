@@ -74,7 +74,7 @@ abstract public class Query<V> extends DsfRunnable
     public V get() throws InterruptedException, ExecutionException { return fSync.doGet(); }
 
     public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return fSync.doGet();
+        return fSync.doGet(unit.toNanos(timeout));
     }
 
     /**

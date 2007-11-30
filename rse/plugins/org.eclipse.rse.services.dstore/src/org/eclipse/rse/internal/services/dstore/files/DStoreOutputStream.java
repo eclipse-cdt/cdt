@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalByteStreamHandler;
+import org.eclipse.rse.services.files.IFileService;
 
 public class DStoreOutputStream extends OutputStream 
 {
@@ -27,13 +28,13 @@ public class DStoreOutputStream extends OutputStream
 	private String _encoding;
 	private int _mode;
 	private boolean _firstWrite = true;
-	private boolean _append;
+	private int _options;
 	private String _byteStreamHandlerId;
 	private String _localLineSep;
 	private String _targetLineSep;
 	private int _localLineSepLength;
 	
-	public DStoreOutputStream(DataStore dataStore, String remotePath, String encoding, int mode, boolean unixStyle, boolean append)
+	public DStoreOutputStream(DataStore dataStore, String remotePath, String encoding, int mode, boolean unixStyle, int options)
 	{		
 		_dataStore = dataStore;
 		_remotePath = remotePath;
@@ -52,7 +53,7 @@ public class DStoreOutputStream extends OutputStream
 		}
 		
 		_localLineSepLength = _localLineSep.length();
-		_append = append;
+		_options = options;
 	}	
 	
 	public void close() throws IOException 
@@ -78,7 +79,7 @@ public class DStoreOutputStream extends OutputStream
 			
 			b = tempStr.getBytes(_encoding);
 		}
-		if (_firstWrite && !_append)
+		if (_firstWrite && (_options & IFileService.APPEND) == 0)
 		{ 
 			_firstWrite = false;
 						
@@ -134,7 +135,7 @@ public class DStoreOutputStream extends OutputStream
 			
 			b = tempStr.getBytes(_encoding);
 		}
-		if (_firstWrite && !_append)
+		if (_firstWrite && (_options & IFileService.APPEND) == 0)
 		{ 
 			_firstWrite = false;
 			// send first set of bytes
@@ -156,7 +157,7 @@ public class DStoreOutputStream extends OutputStream
 			String tempStr = new String(b, 0, 1);
 			b = tempStr.getBytes(_encoding);
 		}
-		if (_firstWrite && !_append)
+		if (_firstWrite && (_options & IFileService.APPEND) == 0)
 		{ 
 			_firstWrite = false;
 			// send first set of bytes

@@ -1978,12 +1978,12 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			mode = IUniversalDataStoreConstants.TEXT_MODE;
 		}
 		
-		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode, unixStyle, false);
+		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode, unixStyle, IFileService.NONE);
 		return outputStream;
 	}
 	
 
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
 		String remotePath = remoteParent + getSeparator(remoteParent) + remoteFile;
 		int mode;
 
@@ -1996,7 +1996,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			mode = IUniversalDataStoreConstants.TEXT_MODE;
 		}
 		
-		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode, unixStyle, append);
+		DStoreOutputStream outputStream = new DStoreOutputStream(getDataStore(), remotePath, getEncoding(monitor), mode, unixStyle, options);
 		return outputStream;
 	}
 	

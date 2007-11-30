@@ -1114,9 +1114,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
 		
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -1131,7 +1131,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		try {
 			SftpProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
 			int mode;
-			if (!append) {
+			if ((options & IFileService.APPEND) == 0) {
 				mode = ChannelSftp.OVERWRITE;
 			} else {
 				mode = ChannelSftp.APPEND;

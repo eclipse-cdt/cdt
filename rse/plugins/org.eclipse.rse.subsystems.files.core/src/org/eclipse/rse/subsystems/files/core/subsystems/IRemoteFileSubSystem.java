@@ -659,7 +659,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @throws SystemMessageException if an error occurs.
 	 * @since 2.0
 	 * @deprecated  As of 3.0M4, replaced by
-	 *              {@link #getOutputStream(String, String, boolean, boolean, IProgressMonitor)}
+	 *              {@link #getOutputStream(String, String, boolean, int, IProgressMonitor)}
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -668,12 +668,12 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
 	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
-	 * @param append <code>true</code> if you want to append to a file, <code>false</code> if you want to overwrite the file's contents.
+	 * @param options bit wise or of option constants.  Valid constants are {@link IFileService#APPEND} and {@link IFileService#NONE}
 	 * @return the input stream to access the contents of the remote file.
 	 * @param monitor the progress monitor.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since 3.0
 	 */
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException;
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException;
 	
 }

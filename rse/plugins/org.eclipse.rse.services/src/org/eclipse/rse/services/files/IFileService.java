@@ -100,6 +100,19 @@ public interface IFileService extends IService
 	public static final int FILE_TYPE_FILES_AND_FOLDERS = 0x0;
 
 	/**
+	 * Options constant (value 1 &lt;&lt;0) for specifying a stream 
+	 * that will append data to a file.
+	 * 
+	 * @see IFileService#getOutputStream(String, String, boolean, int, IProgressMonitor)
+	 */
+	public static final int APPEND = 1 << 0;
+	
+	/**
+	 * Options constant (value 0) to indicate that no bit options are set.
+	 */
+	public static final int NONE = 0;
+	
+	/**
 	 * Copy a file to the remote file system.  The remote target is denoted by a
 	 * string representing the parent and a string representing the file.
 	 * @param stream input stream to transfer
@@ -456,7 +469,7 @@ public interface IFileService extends IService
 	 * @throws SystemMessageException if an error occurs.
 	 * @since 2.0
 	 * @deprecated  As of 3.0M4, replaced by
-	 *              {@link #getOutputStream(String, String, boolean, boolean, IProgressMonitor)}
+	 *              {@link #getOutputStream(String, String, boolean, int, IProgressMonitor)}
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
   
@@ -465,12 +478,12 @@ public interface IFileService extends IService
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
 	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
-	 * @param append <code>true</code> if you want to append to a file, <code>false</code> if you want to overwrite the file's contents.
+	 * @param options bit wise or of option constants.  Valid constants are {@link IFileService#APPEND} and {@link IFileService#NONE}
 	 * @param monitor the progress monitor.
 	 * @return the input stream to access the contents of the remote file.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since 3.0
 	 */
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException;
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException;
 	
 }

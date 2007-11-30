@@ -650,7 +650,6 @@ public class RSEFileStoreImpl extends FileStore
 	 * @see org.eclipse.core.filesystem.IFileStore#openOutputStream(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
-		boolean append = (options & EFS.APPEND) != 0;
 		cacheRemoteFile(null);
 		IRemoteFile remoteFile = getRemoteFileObject(monitor, false);
 		if (remoteFile==null) {
@@ -673,7 +672,13 @@ public class RSEFileStoreImpl extends FileStore
 			
 		if (remoteFile.isFile()) {
 			try {
-				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), true, append, monitor);
+				// Convert from EFS option constants to IFileService option constants
+				if ((options & EFS.APPEND) != 0) {
+					options = IFileService.APPEND;
+				} else {
+					options = IFileService.NONE;
+				}
+				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), true, options, monitor);
 			}
 			catch (SystemMessageException e) {
 				throw new CoreException(new Status(IStatus.ERROR,

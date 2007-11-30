@@ -208,7 +208,7 @@ public abstract class AbstractFileService implements IFileService
 		return null;
 	}
 	
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, boolean append, IProgressMonitor monitor) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
 	}
 }

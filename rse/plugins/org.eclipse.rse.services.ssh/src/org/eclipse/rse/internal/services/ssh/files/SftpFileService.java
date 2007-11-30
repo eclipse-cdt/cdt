@@ -19,6 +19,7 @@
  * Martin Oberhuber (Wind River) - [208912] Cannot expand /C on a VxWorks SSH Server
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
+ * Kevin Doyle		(IBM)		 - [211374] [ssh] New File on SSH has unnecessary space in its contents
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -753,9 +754,6 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			try {
 				String fullPathRecoded = recodeSafe(concat(remoteParent, fileName));
 				OutputStream os = getChannel("SftpFileService.createFile").put(fullPathRecoded); //$NON-NLS-1$
-				//TODO workaround bug 153118: write a single space
-				//since jsch hangs when trying to close the stream without writing
-				os.write(32); 
 				os.close();
 				SftpATTRS attrs = getChannel("SftpFileService.createFile.stat").stat(fullPathRecoded); //$NON-NLS-1$
 				result = makeHostFile(remoteParent, fileName, attrs);

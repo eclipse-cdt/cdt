@@ -19,9 +19,19 @@ import java.util.concurrent.Executor;
  * @see RequestMonitor
  */
 public class ImmediateExecutor implements Executor {
+    
     private static ImmediateExecutor fInstance = new ImmediateExecutor();
     
-    private static Executor getInstance() {
+    /**
+     * The default constructor is hidden. {@link #getInstance()} should be 
+     * used instead.
+     */
+    private ImmediateExecutor() {}
+    
+    /**
+     * Returns the singleton instance of ImmediateExecutor.
+     */
+    public static Executor getInstance() {
         return fInstance;
     }
     

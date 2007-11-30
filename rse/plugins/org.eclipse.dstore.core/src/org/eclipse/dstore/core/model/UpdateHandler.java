@@ -82,6 +82,8 @@ public abstract class UpdateHandler extends Handler
 					DataElement parent = child.getParent();
 					DataElementRemover.addToRemovedCount();
 					
+					cleanChildren(child); // clean the children
+					
 					if (child.isSpirit())
 					{
 						// officially delete this now
@@ -105,6 +107,30 @@ public abstract class UpdateHandler extends Handler
 		// delete objects under temproot
 		_dataStore.getTempRoot().removeNestedData();
 		
+	}
+	
+	/**
+	 * Recursively clean children for deletion
+	 * @param parent
+	 */
+	protected void cleanChildren(DataElement parent)
+	{
+		List nestedData = parent.getNestedData();
+		if (nestedData != null)
+		{
+		for (int i = 0; i < nestedData.size(); i++){
+			DataElement child = (DataElement)nestedData.get(i);
+			cleanChildren(child);	
+			
+			if (child.isSpirit())
+			{
+				// officially delete this now
+				child.delete();
+			}
+			child.clear();
+			parent.removeNestedData(child);
+		}
+		}
 	}
 
 	/**

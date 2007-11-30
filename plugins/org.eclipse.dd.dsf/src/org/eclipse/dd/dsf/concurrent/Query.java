@@ -12,7 +12,6 @@ package org.eclipse.dd.dsf.concurrent;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -112,13 +111,7 @@ abstract public class Query<V> extends DsfRunnable
                  * shut down.  In that case, the DSF executor may throw a 
                  * RejectedExecutionException which would have to be handled by the query.
                  */
-                Executor rmExecutor = new Executor() {
-                    public void execute(Runnable command) {
-                        command.run();
-                    }
-                };
-                
-                execute(new DataRequestMonitor<V>(rmExecutor, null) {
+                execute(new DataRequestMonitor<V>(ImmediateExecutor.getInstance(), null) {
                     @Override
                     public void handleCompleted() {
                         if (getStatus().isOK()) fSync.doSet(getData());

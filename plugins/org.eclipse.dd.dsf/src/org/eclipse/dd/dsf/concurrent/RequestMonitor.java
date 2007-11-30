@@ -159,7 +159,7 @@ public class RequestMonitor {
 
     @Override
     public String toString() {
-        return "RequestMonitor: " + getStatus().toString(); //$NON-NLS-1$
+        return "RequestMonitor (" + super.toString() + "): " + getStatus().toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /**

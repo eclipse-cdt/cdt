@@ -12,9 +12,14 @@ package org.eclipse.tm.internal.terminal.control;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -22,6 +27,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 
 
 /**
@@ -38,6 +44,52 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class CommandInputFieldWithHistory implements ICommandInputField {
+	private class FieldAssist implements IContentProposalProvider {
+
+		public IContentProposal[] getProposals(String contents, int position) {
+			String prefix=contents.substring(0, position);
+			List result=new ArrayList();
+			// show an entry only once
+			Set seen=new HashSet();
+			for (Iterator iterator = fHistory.iterator(); iterator.hasNext();) {
+				String history = (String) iterator.next();
+				if(history.startsWith(prefix) && !seen.contains(history)) {
+					// the content is the rest of the history item
+					String content=history.substring(prefix.length());
+					result.add(new Proposal(content,history));
+					// don't add this proposal again
+					seen.add(history);
+				}
+			}
+			return (IContentProposal[]) result.toArray(new IContentProposal[result.size()]);
+		}
+		
+	}
+	private static class Proposal implements IContentProposal {
+		
+		private final String fContent;
+		private final String fLabel;
+		Proposal(String content, String label) {
+			fContent= content;
+			fLabel= label;
+		}
+		public String getContent() {
+			return fContent;
+		}
+		
+		public String getLabel() {
+			return fLabel;
+		}
+		
+		public String getDescription() {
+			return null;
+		}
+		
+		public int getCursorPosition() {
+			return fContent.length();
+		}
+	}
+
 	final List fHistory=new ArrayList();
 	/**
 	 * Keeps a modifiable history while in history editing mode
@@ -149,7 +201,15 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 	}
 	public void createControl(Composite parent,final ITerminalViewControl terminal) {
 		fInputField=new Text(parent, SWT.SINGLE|SWT.BORDER);
-		fInputField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		GridData data=new GridData(SWT.FILL, SWT.FILL, true, false);
+		boolean installDecoration=true;
+		if(installDecoration) {
+			// The ContentAssistCommandAdapter says: "The client is responsible for
+			// ensuring that adequate space is reserved for the decoration."
+			// TODO: what is the "adequate space"???
+			data.horizontalIndent=6;
+		}
+		fInputField.setLayoutData(data);
 		fInputField.setFont(terminal.getFont());
 		fInputField.addKeyListener(new KeyListener(){
 			public void keyPressed(KeyEvent e) {
@@ -180,6 +240,14 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 			public void keyReleased(KeyEvent e) {
 			}
 		});
+		// register the field assist
+		new ContentAssistCommandAdapter(
+				fInputField,
+				new TextContentAdapter(),
+				new FieldAssist(), 
+				null,
+				null,
+				installDecoration);
 	}
 	public void setFont(Font font) {
 		fInputField.setFont(font);

@@ -15,7 +15,11 @@
 package org.eclipse.rse.files.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -33,6 +37,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.internal.files.ui.Activator;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -72,12 +77,38 @@ public class SynchronizeCacheActionDelegate implements IActionDelegate {
 
 	private void cacheRemoteFiles(IRemoteFile[] files, IProgressMonitor monitor)
 	{
-		IRemoteFile firstFile = files[0];		
-		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)firstFile).getAdapter(ISystemViewElementAdapter.class);
-		SystemRemoteResourceSet set = new SystemRemoteResourceSet(firstFile.getParentRemoteFileSubSystem(), files);
-		adapter.doDrag(set, monitor);
+		SystemRemoteResourceSet[] sets = getResourceSetsFor(files);
+		for (int i = 0; i < sets.length; i++){
+			SystemRemoteResourceSet set = sets[i];
+			set.getAdapter().doDrag(set, monitor);
+		}
 	}
 	
+	private SystemRemoteResourceSet[] getResourceSetsFor(IRemoteFile[] files)
+	{
+		ISystemViewElementAdapter adapter = null;
+		Map sets = new HashMap();
+		for (int i = 0; i < files.length; i++){
+			IRemoteFile file = files[i];		
+			if (adapter == null){
+				adapter = (ISystemViewElementAdapter)((IAdaptable)file).getAdapter(ISystemViewElementAdapter.class);
+			}
+			IRemoteFileSubSystem ss = file.getParentRemoteFileSubSystem();
+			SystemRemoteResourceSet set = (SystemRemoteResourceSet)sets.get(ss);
+			if (set == null){
+				set = new SystemRemoteResourceSet(ss, adapter);
+				sets.put(ss, set);
+			}
+			set.addResource(file);
+		}
+		Iterator iterator = sets.values().iterator();			
+		List results = new ArrayList();
+		while (iterator.hasNext()){
+			results.add(iterator.next());
+		}
+		return (SystemRemoteResourceSet[])results.toArray(new SystemRemoteResourceSet[results.size()]);
+	}
+		
 	boolean performCacheRemoteFiles(final IRemoteFile[] files) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {

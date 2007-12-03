@@ -464,7 +464,7 @@ public class UniversalFileTransferUtility
 		try
 		{
 			if (broadestContainer != null && !broadestContainer.isSynchronized(IResource.DEPTH_INFINITE)){
-				broadestContainer.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				broadestContainer.refreshLocal(IResource.DEPTH_INFINITE, null);//monitor);
 			}
 		}
 		catch (Exception e)

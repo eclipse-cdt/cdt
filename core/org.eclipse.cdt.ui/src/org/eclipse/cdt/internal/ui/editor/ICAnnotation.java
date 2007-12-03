@@ -72,7 +72,7 @@ public interface ICAnnotation {
 	 * Adds the given annotation to the list of
 	 * annotations which are overlaid by this annotations.
 	 *  
-	 * @param annotation	the problem annoation
+	 * @param annotation	the problem annotation
 	 */
 	void addOverlaid(ICAnnotation annotation);
 	
@@ -80,7 +80,7 @@ public interface ICAnnotation {
 	 * Removes the given annotation from the list of
 	 * annotations which are overlaid by this annotation.
 	 *  
-	 * @param annotation	the problem annoation
+	 * @param annotation	the problem annotation
 	 */
 	void removeOverlaid(ICAnnotation annotation);
 	
@@ -101,4 +101,13 @@ public interface ICAnnotation {
 	String[] getArguments();
 	
 	int getId();
+
+	/**
+	 * Returns the marker type associated to this problem or <code>null<code> if no marker type
+	 * can be evaluated. See also {@link org.eclipse.cdt.ui.text.IProblemLocation#getMarkerType()}.
+	 * 
+	 * @return the type of the marker which would be associated to the problem or
+	 * <code>null<code> if no marker type can be evaluated. 
+	 */
+	String getMarkerType();
 }

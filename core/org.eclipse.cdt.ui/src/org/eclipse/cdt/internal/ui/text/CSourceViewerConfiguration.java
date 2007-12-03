@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
- *     Sergey Prigogin, Google
+ *     Sergey Prigogin (Google)
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
@@ -43,6 +43,7 @@ import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -85,6 +86,7 @@ import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.correction.CCorrectionAssistant;
 import org.eclipse.cdt.internal.ui.typehierarchy.THInformationControl;
 import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
 
@@ -93,6 +95,7 @@ import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
  * Configuration for an <code>SourceViewer</code> which shows C/C++ code.
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
+	private CTextTools fTextTools;
 	
 	private ITextEditor fTextEditor;
 	/**
@@ -371,6 +374,16 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 		return settings;
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getQuickAssistAssistant(org.eclipse.jface.text.source.ISourceViewer)
+	 * @since 5.0
+	 */
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		if (getEditor() != null)
+			return new CCorrectionAssistant(getEditor());
+		return null;
+	}
 
 	/*
 	 * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
@@ -379,7 +392,9 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		if (fTextEditor != null) {
 			//Delay changed and non-incremental reconciler used due to 
 			//PR 130089
-			MonoReconciler reconciler= new CReconciler(fTextEditor, new CReconcilingStrategy(fTextEditor));
+			CCompositeReconcilingStrategy strategy=
+				new CCompositeReconcilingStrategy(sourceViewer, fTextEditor, getConfiguredDocumentPartitioning(sourceViewer));
+			MonoReconciler reconciler= new CReconciler(fTextEditor, strategy);
 			reconciler.setIsIncrementalReconciler(false);
 			reconciler.setProgressMonitor(new NullProgressMonitor());
 			reconciler.setDelay(500);

@@ -400,13 +400,18 @@ public class EditorUtility {
 		if (page != null) {
 			IEditorPart part= page.getActiveEditor();
 			if (part != null) {
-				IEditorInput editorInput= part.getEditorInput();
-				if (editorInput != null) {
-					return (ICElement)editorInput.getAdapter(ICElement.class);
-				}
+				return getEditorInputCElement(part);
 			}
 		}
 		return null;    
+	}
+
+	public static ICElement getEditorInputCElement(IEditorPart part) {
+		IEditorInput editorInput= part.getEditorInput();
+		if (editorInput == null) {
+			return null;
+		}
+		return (ICElement) editorInput.getAdapter(ICElement.class);
 	}
         
 	/** 

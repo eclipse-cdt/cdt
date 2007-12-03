@@ -325,6 +325,17 @@ public class CPluginImages {
 	public static final String IMG_EMPTY = NAME_PREFIX + "tc_empty.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EMPTY = createManaged(T_OBJ, IMG_EMPTY);
 
+	public static final String IMG_OBJS_QUICK_ASSIST= NAME_PREFIX + "quickassist_obj.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_QUICK_ASSIST = createManaged(T_OBJ, IMG_OBJS_QUICK_ASSIST);
+	public static final String IMG_CORRECTION_ADD= NAME_PREFIX + "correction_add.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CORRECTION_ADD = createManaged(T_OBJ, IMG_CORRECTION_ADD);
+	public static final String IMG_CORRECTION_CHANGE= NAME_PREFIX + "correction_change.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CORRECTION_CHANGE = createManaged(T_OBJ, IMG_CORRECTION_CHANGE);
+	public static final String IMG_CORRECTION_RENAME= NAME_PREFIX + "correction_rename.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_CORRECTION_RENAME = createManaged(T_OBJ, IMG_CORRECTION_RENAME);
+
+	public static final String IMG_OBJS_NLS_NEVER_TRANSLATE= NAME_PREFIX + "never_translate.gif"; //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_NLS_NEVER_TRANSLATE = createManaged(T_OBJ, IMG_OBJS_NLS_NEVER_TRANSLATE);
 
 	private static ImageDescriptor createManaged(String prefix, String name) {
 		return createManaged(imageRegistry, prefix, name);

@@ -24,31 +24,15 @@ public class ScannerProblemFactory extends BaseProblemFactory implements IProble
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IProblemFactory#createProblem(int, int, int, int, char[], java.lang.String, boolean, boolean)
 	 */
-	public IProblem createProblem(
-		int id,
-		int start,
-		int end,
-		int line,
-		char[] file,
-		char[] arg,
-		boolean warn,
-		boolean error)
-	{
-		if( checkBitmask( id, IProblem.INTERNAL_RELATED ) )  
-			return createInternalProblem( id, start, end, line, file, arg, warn, error );		
+	public IProblem createProblem(int id, int start, int end, int line,	char[] file, String[] arg,
+			boolean warn, boolean error) {
+		if (checkBitmask(id, IProblem.INTERNAL_RELATED))  
+			return createInternalProblem(id, start, end, line, file, arg, warn, error);		
 		
-		if ( 	checkBitmask( id, IProblem.SCANNER_RELATED ) || 
-				checkBitmask( id, IProblem.PREPROCESSOR_RELATED ) )
-			return super.createProblem(
-				id,
-				start,
-				end,
-				line,
-				file,
-				arg,
-				warn,
-				error);
-				
+		if (checkBitmask(id, IProblem.SCANNER_RELATED) || 
+				checkBitmask(id, IProblem.PREPROCESSOR_RELATED)) {
+			return super.createProblem(id, start, end, line, file, arg,	warn, error);
+		}				
 		return null;
 	}
 

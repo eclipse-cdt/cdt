@@ -116,8 +116,8 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		/*
 		 * @see org.eclipse.cdt.core.parser.IProblem#getArguments()
 		 */
-		public String getArguments() {
-			return fASTProblem.getArguments();
+		public String[] getArguments() {
+			return new String[] { fASTProblem.getArguments() };
 		}
 
 		/*

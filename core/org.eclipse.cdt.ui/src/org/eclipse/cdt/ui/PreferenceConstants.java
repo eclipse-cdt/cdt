@@ -9,17 +9,24 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
+ * 	   Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
+
+import java.util.Locale;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
+import org.eclipse.cdt.internal.ui.ICThemeConstants;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
 
 /**
  * Preference constants used in the CDT-UI preference store. Clients should only read the
@@ -973,6 +980,198 @@ public class PreferenceConstants {
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED= "semanticHighlighting.enabled"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls if quick assist light bulbs are shown.
+	 * <p>
+	 * Value is of type <code>Boolean</code>: if <code>true</code> light bulbs are shown
+	 * for quick assists.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public static final String EDITOR_QUICKASSIST_LIGHTBULB="org.eclipse.cdt.quickassist.lightbulb"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that holds the background color used in the code assist selection dialog.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * 
+	 * @since 5.0
+	 */
+	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "content_assist_proposals_background"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that holds the foreground color used in the code assist selection dialog.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * 
+	 * @since 5.0
+	 */
+	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether words containing digits should
+	 * be skipped during spell checking.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_IGNORE_DIGITS= "spelling_ignore_digits"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether mixed case words should be
+	 * skipped during spell checking.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_IGNORE_MIXED= "spelling_ignore_mixed"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether sentence capitalization should
+	 * be ignored during spell checking.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_IGNORE_SENTENCE= "spelling_ignore_sentence"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether upper case words should be
+	 * skipped during spell checking.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_IGNORE_UPPER= "spelling_ignore_upper"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether URLs should be ignored during
+	 * spell checking.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_IGNORE_URLS= "spelling_ignore_urls"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether single letters
+	 * should be ignored during spell checking.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_IGNORE_SINGLE_LETTERS= "spelling_ignore_single_letters"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether string literals
+	 * should be ignored during spell checking.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_IGNORE_STRING_LITERALS= "spelling_ignore_string_literals"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether non-letters at word boundaries
+	 * should be ignored during spell checking.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_IGNORE_NON_LETTERS= "spelling_ignore_non_letters"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the locale used for spell checking.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_LOCALE= "spelling_locale"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the number of proposals offered during
+	 * spell checking.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_PROPOSAL_THRESHOLD= "spelling_proposal_threshold"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the maximum number of problems reported
+	 * during spell checking.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_PROBLEMS_THRESHOLD= "spelling_problems_threshold"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that specifies the workspace user dictionary.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_USER_DICTIONARY= "spelling_user_dictionary"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that specifies encoding of the workspace user dictionary.
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_USER_DICTIONARY_ENCODING= "spelling_user_dictionary_encoding"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that specifies whether spelling dictionaries are available to content assist.
+	 * 
+	 * <strong>Note:</strong> This is currently not supported because the spelling engine
+	 * cannot return word proposals but only correction proposals.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public final static String SPELLING_ENABLE_CONTENTASSIST= "spelling_enable_contentassist"; //$NON-NLS-1$
+
+	/**
 	 * Returns the CDT-UI preference store.
 	 * 
 	 * @return the CDT-UI preference store
@@ -987,13 +1186,15 @@ public class PreferenceConstants {
      * @param store the preference store to be initialized
      */
     public static void initializeDefaultValues(IPreferenceStore store) {
+		ColorRegistry registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
 
 		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION, false);
 		store.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);
 		store.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
 		
-		// Turned off by default since there are too many false reports right now 
-		store.setDefault(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, false);
+		// This option has to be turned on for the spelling checker too work.
+		// As of 4.0, it doesn't produce false positives any more. 
+		store.setDefault(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, true);
 		
 		int sourceHoverModifier= SWT.MOD2;
 		String sourceHoverModifierName= Action.findModifierString(sourceHoverModifier);	// Shift
@@ -1088,5 +1289,81 @@ public class PreferenceConstants {
 		// content assist
 		store.setDefault(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0"); //$NON-NLS-1$
+		
+		setDefaultAndFireEvent(
+				store,
+				PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, 
+				findRGB(registry, ICThemeConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(255, 255, 255)));
+		setDefaultAndFireEvent(
+				store,
+				PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, 
+				findRGB(registry, ICThemeConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0)));
+		
+		// spell checking
+		store.setDefault(PreferenceConstants.SPELLING_LOCALE, "en_US"); //$NON-NLS-1$
+		String isInitializedKey= "spelling_locale_initialized"; //$NON-NLS-1$
+		if (!store.getBoolean(isInitializedKey)) {
+			store.setValue(isInitializedKey, true);
+			Locale locale= SpellCheckEngine.getDefaultLocale();
+			locale= SpellCheckEngine.findClosestLocale(locale);
+			if (locale != null)
+				store.setValue(PreferenceConstants.SPELLING_LOCALE, locale.toString());
+		}
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_DIGITS, true);
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_MIXED, true);
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_SENTENCE, true);
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_UPPER, true);
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_URLS, true);
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_SINGLE_LETTERS, true);
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_STRING_LITERALS, true);
+		store.setDefault(PreferenceConstants.SPELLING_IGNORE_NON_LETTERS, true);
+		store.setDefault(PreferenceConstants.SPELLING_USER_DICTIONARY, ""); //$NON-NLS-1$
+		
+		// Note: For backwards compatibility we must use the property and not the workspace default
+		store.setDefault(PreferenceConstants.SPELLING_USER_DICTIONARY_ENCODING, System.getProperty("file.encoding")); //$NON-NLS-1$
+		
+		store.setDefault(PreferenceConstants.SPELLING_PROPOSAL_THRESHOLD, 20);
+		store.setDefault(PreferenceConstants.SPELLING_PROBLEMS_THRESHOLD, 100);
+		/*
+		 * XXX: This is currently disabled because the spelling engine
+		 * cannot return word proposals but only correction proposals.
+		 */
+		store.setToDefault(PreferenceConstants.SPELLING_ENABLE_CONTENTASSIST);
     }
+    
+	/**
+	 * Sets the default value and fires a property
+	 * change event if necessary.
+	 * 
+	 * @param store	the preference store
+	 * @param key the preference key
+	 * @param newValue the new value
+	 * @since 5.0
+	 */
+	private static void setDefaultAndFireEvent(IPreferenceStore store, String key, RGB newValue) {
+		RGB oldValue= null;
+		if (store.isDefault(key))
+			oldValue= PreferenceConverter.getDefaultColor(store, key);
+		
+		PreferenceConverter.setDefault(store, key, newValue);
+		
+		if (oldValue != null && !oldValue.equals(newValue))
+			store.firePropertyChangeEvent(key, oldValue, newValue);
+	}
+
+	/**
+	 * Returns the RGB for the given key in the given color registry.
+	 * 
+	 * @param registry the color registry
+	 * @param key the key for the constant in the registry
+	 * @param defaultRGB the default RGB if no entry is found
+	 * @return RGB the RGB
+	 * @since 5.0
+	 */
+	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
+		RGB rgb= registry.getRGB(key);
+		if (rgb != null)
+			return rgb;
+		return defaultRGB;
+	}
 }

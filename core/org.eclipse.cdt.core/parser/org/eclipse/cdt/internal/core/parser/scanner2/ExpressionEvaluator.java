@@ -19,8 +19,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner.MacroData;
 
 public class ExpressionEvaluator {
-
-    private static char[] emptyCharArray = new char[0];
+    private static char[] EMPTY_CHAR_ARRAY = new char[0];
 
     // The context stack
     private static final int initSize = 8;
@@ -786,7 +785,7 @@ public class ExpressionEvaluator {
                 continue;
             } else if (c == ',') {
                 // empty arg
-                exp.definitions.put(arglist[currarg], emptyCharArray);
+                exp.definitions.put(arglist[currarg], EMPTY_CHAR_ARRAY);
                 continue;
             } else if (c == '(') {
                 ++parens;
@@ -810,7 +809,7 @@ public class ExpressionEvaluator {
                     break;
             }
 
-            char[] arg = emptyCharArray;
+            char[] arg = EMPTY_CHAR_ARRAY;
             int arglen = argend - argstart + 1;
             if (arglen > 0) {
                 arg = new char[arglen];

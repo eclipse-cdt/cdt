@@ -20,11 +20,9 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 /**
  * @author jcamelon
- *
  */
 public class Problem implements IProblem {
-
-	private final char[] arg;
+	private final String[] arg;
 	private final int id;
 	private final int sourceStart;
 	private final int sourceEnd;
@@ -36,8 +34,8 @@ public class Problem implements IProblem {
 	
 	private String message = null;
 
-	public Problem( int id, int start, int end, int line, char [] file, char[] arg, boolean warn, boolean error )
-	{
+	public Problem( int id, int start, int end, int line, char[] file, String[] arg,
+			boolean warn, boolean error) {
 		this.id = id;
 		this.sourceStart = start;
 		this.sourceEnd = end;
@@ -47,7 +45,6 @@ public class Problem implements IProblem {
 		this.isWarning = warn;
 		this.isError = error;
 	}
-	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IProblem#getID()
@@ -241,27 +238,26 @@ public class Problem implements IProblem {
 	}
 	protected final static String PROBLEM_PATTERN = "BaseProblemFactory.problemPattern"; //$NON-NLS-1$
 
-	public String getMessage()
-	{
+	public String getMessage() {
 		if( message != null )
 			return message;
 		
 		String msg = (String) errorMessages.get( new Integer(id) );
-		if( msg == null )
+		if (msg == null)
 			msg = "";  //$NON-NLS-1$
 		
-		if( arg != null ){
-			msg = MessageFormat.format( msg, new Object [] { new String(arg) } );
+		if (arg != null) {
+			msg = MessageFormat.format(msg, arg);
 		}
 		
-		Object [] args = null;
-		if (originatingFileName != null)
-			args = new Object []{ msg, new String( originatingFileName ), new Integer( lineNumber ) };
-		else
-			args = new Object []{ msg, new String(""), new Integer( lineNumber ) }; //$NON-NLS-1$
+		String[] args = null;
+		if (originatingFileName != null) {
+			args = new String[] { msg, new String(originatingFileName), String.valueOf(lineNumber) };
+		} else {
+			args = new String[] { msg, "", String.valueOf(lineNumber) }; //$NON-NLS-1$
+		}
 		
-		message = ParserMessages.getFormattedString( PROBLEM_PATTERN, args ); 
-		
+		message = ParserMessages.getFormattedString(PROBLEM_PATTERN, args); 
 		return message; 
 	}
 
@@ -269,15 +265,13 @@ public class Problem implements IProblem {
 	 * @see org.eclipse.cdt.core.parser.IProblem#checkCategory(int)
 	 */
 	public boolean checkCategory(int bitmask) {
-		return ((id & bitmask) != 0 );
+		return (id & bitmask) != 0;
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IProblem#getArguments()
 	 */
-	public String getArguments() {
-		return arg != null ? String.valueOf(arg) : ""; //$NON-NLS-1$
+	public String[] getArguments() {
+		return arg;
 	}
-
 }

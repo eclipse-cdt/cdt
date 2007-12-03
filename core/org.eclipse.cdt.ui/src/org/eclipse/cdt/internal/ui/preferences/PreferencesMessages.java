@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -222,6 +223,36 @@ public final class PreferencesMessages extends NLS {
 	public static String TodoTaskInputDialog_error_comma;
 	public static String TodoTaskInputDialog_error_entryExists;
 	public static String TodoTaskInputDialog_error_noSpace;
+
+	public static String SpellingPreferencePage_empty_threshold;
+	public static String SpellingPreferencePage_invalid_threshold;
+	public static String SpellingPreferencePage_ignore_digits_label;
+	public static String SpellingPreferencePage_ignore_mixed_label;
+	public static String SpellingPreferencePage_ignore_sentence_label;
+	public static String SpellingPreferencePage_ignore_upper_label;
+	public static String SpellingPreferencePage_ignore_url_label;
+	public static String SpellingPreferencePage_ignore_non_letters_label;
+	public static String SpellingPreferencePage_ignore_single_letters_label;
+	public static String SpellingPreferencePage_ignore_string_literals_label;
+	public static String SpellingPreferencePage_proposals_threshold;
+	public static String SpellingPreferencePage_problems_threshold;
+	public static String SpellingPreferencePage_dictionary_label;
+	public static String SpellingPreferencePage_encoding_label;
+	public static String SpellingPreferencePage_workspace_dictionary_label;
+	public static String SpellingPreferencePage_browse_label;
+	public static String SpellingPreferencePage_dictionary_error;
+	public static String SpellingPreferencePage_dictionary_none;
+	public static String SpellingPreferencePage_locale_error;
+	public static String SpellingPreferencePage_filedialog_title;
+	public static String SpellingPreferencePage_filter_dictionary_label;
+	public static String SpellingPreferencePage_filter_all_label;
+	public static String SpellingPreferencePage_enable_contentassist_label;
+	public static String SpellingPreferencePage_group_user;
+	public static String SpellingPreferencePage_group_dictionary;
+	public static String SpellingPreferencePage_group_dictionaries;
+	public static String SpellingPreferencePage_group_advanced;
+	public static String SpellingPreferencePage_user_dictionary_description;
+	public static String SpellingPreferencePage_variables;
 
 	public static String LanguageMappings_missingLanguageTitle;
 	

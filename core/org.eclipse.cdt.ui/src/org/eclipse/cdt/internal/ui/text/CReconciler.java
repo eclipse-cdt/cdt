@@ -294,7 +294,7 @@ public class CReconciler extends MonoReconciler {
 	 * @param editor the text editor
 	 * @param strategy  the C reconciling strategy
 	 */
-	public CReconciler(ITextEditor editor, CReconcilingStrategy strategy) {
+	public CReconciler(ITextEditor editor, CCompositeReconcilingStrategy strategy) {
 		super(strategy, false);
 		fTextEditor= editor;
 	}
@@ -373,7 +373,7 @@ public class CReconciler extends MonoReconciler {
 	 * @see org.eclipse.jface.text.reconciler.AbstractReconciler#aboutToBeReconciled()
 	 */
 	protected void aboutToBeReconciled() {
-		CReconcilingStrategy strategy= (CReconcilingStrategy)getReconcilingStrategy(IDocument.DEFAULT_CONTENT_TYPE);
+		CCompositeReconcilingStrategy strategy= (CCompositeReconcilingStrategy)getReconcilingStrategy(IDocument.DEFAULT_CONTENT_TYPE);
 		strategy.aboutToBeReconciled();
 	}
 

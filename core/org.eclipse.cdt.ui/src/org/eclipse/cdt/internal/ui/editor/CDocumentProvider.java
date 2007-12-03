@@ -8,6 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -54,12 +55,14 @@ import org.eclipse.ui.texteditor.IMarkerUpdater;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.parser.IPersistableProblem;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -68,6 +71,7 @@ import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 
 import org.eclipse.cdt.internal.ui.text.IProblemRequestorExtension;
+import org.eclipse.cdt.internal.ui.text.spelling.CoreSpellingProblem;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
@@ -85,17 +89,17 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 	 * Annotation representing an <code>IProblem</code>.
 	 */
 	static protected class ProblemAnnotation extends Annotation implements ICAnnotation {
-
 		private static final String INDEXER_ANNOTATION_TYPE= "org.eclipse.cdt.ui.indexmarker"; //$NON-NLS-1$
 		
 		private ITranslationUnit fTranslationUnit;
 		private List fOverlaids;
 		private IProblem fProblem;
 		
-		public ProblemAnnotation(IProblem problem, ITranslationUnit cu) {
+		public ProblemAnnotation(IProblem problem, ITranslationUnit tu) {
 			fProblem= problem;
-			fTranslationUnit= cu;
-			setType(INDEXER_ANNOTATION_TYPE);
+			fTranslationUnit= tu;
+            setType(problem instanceof CoreSpellingProblem ?
+            		SpellingAnnotation.TYPE : INDEXER_ANNOTATION_TYPE);
 		}
 		
 		/*
@@ -109,7 +113,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * @see ICAnnotation#getArguments()
 		 */
 		public String[] getArguments() {
-			return isProblem() ? new String[]{fProblem.getArguments()} : null;
+			return isProblem() ? fProblem.getArguments() : null;
 		}
 	
 		/*
@@ -174,6 +178,15 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		public ITranslationUnit getTranslationUnit() {
 			return fTranslationUnit;
+		}
+
+		/*
+		 * @see org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation#getMarkerType()
+		 */
+		public String getMarkerType() {
+			if (fProblem instanceof IPersistableProblem)
+				return ((IPersistableProblem) fProblem).getMarkerType();
+			return null;
 		}
 	}
 		

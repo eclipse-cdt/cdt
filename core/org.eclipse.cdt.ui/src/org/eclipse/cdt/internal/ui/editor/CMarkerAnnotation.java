@@ -169,4 +169,12 @@ public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnot
 		}
 		return null;
 	}
+
+	public String getMarkerType() {
+		IMarker marker= getMarker();
+		if (marker == null || !marker.exists())
+			return null;
+		
+		return MarkerUtilities.getMarkerType(getMarker());
+	}
 }

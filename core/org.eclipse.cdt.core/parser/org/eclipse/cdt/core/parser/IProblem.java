@@ -50,7 +50,7 @@ public interface IProblem
 	 *
 	 * @return a map between parameter names and values.
 	 */
-	String getArguments();
+	String[] getArguments();
 
 	/**
 	 * Answer the file name in which the problem was found.

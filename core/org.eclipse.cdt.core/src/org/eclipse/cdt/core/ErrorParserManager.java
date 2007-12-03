@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core;
 
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -42,8 +44,8 @@ public class ErrorParserManager extends OutputStream {
 
 	private IProject fProject;
 	private IMarkerGenerator fMarkerGenerator;
-	private Map fFilesInProject;
-	private List fNameConflicts;
+	// Maps a file name without directory to a IFile object or a list of a IFile objects. 
+	private Map fFilesInProject;	// Files or lists of files keyed by the file name
 
 	private Map fErrorParsers;
 	private ArrayList fErrors;
@@ -88,7 +90,6 @@ public class ErrorParserManager extends OutputStream {
 
 	private void initErrorParserManager(IPath workingDirectory) {
 		fFilesInProject = new HashMap();
-		fNameConflicts = new ArrayList();
 		fDirectoryStack = new Vector();
 		fErrors = new ArrayList();
 
@@ -98,9 +99,18 @@ public class ErrorParserManager extends OutputStream {
 
 		for (int i = 0; i < collectedFiles.size(); i++) {
 			IFile file = (IFile) collectedFiles.get(i);
-			Object existing = fFilesInProject.put(file.getName(), file);
+			String filename = file.getName();
+			Object existing = fFilesInProject.put(filename, file);
 			if (existing != null) {
-				fNameConflicts.add(file.getName());
+				Collection files;
+				if (existing instanceof IFile) {
+					files = new ArrayList();
+					files.add(existing);
+				} else {
+					files = (Collection) existing;
+				}
+				files.add(file);
+				fFilesInProject.put(filename, files);
 			}
 		}
 	}
@@ -113,7 +123,7 @@ public class ErrorParserManager extends OutputStream {
 		if (fDirectoryStack.size() != 0) {
 			return (IPath) fDirectoryStack.lastElement();
 		}
-		// Fallback to the Project Location
+		// Fall back to the Project Location
 		return fBaseDirectory;
 	}
 
@@ -168,7 +178,7 @@ public class ErrorParserManager extends OutputStream {
 	protected void collectFiles(IProject parent, final List result) {
 		try {
 			parent.accept(new IResourceProxyVisitor() {
-				public boolean visit(IResourceProxy proxy) throws CoreException {
+				public boolean visit(IResourceProxy proxy) {
 					if (proxy.getType() == IResource.FILE) {
 						result.add(proxy.requestResource());
 						return false;
@@ -233,11 +243,35 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Called by the error parsers.
+	 * Returns the project file with the given name if that file can be uniquely identified.
+	 * Otherwise returns <code>null</code>. 
 	 */
 	public IFile findFileName(String fileName) {
 		IPath path = new Path(fileName);
-		return (IFile) fFilesInProject.get(path.lastSegment());
+		Object obj = fFilesInProject.get(path.lastSegment());
+		if (obj == null || obj instanceof IFile) {
+			return (IFile) obj;
+		}
+		Collection files = (Collection) obj;
+		IFile matchingFile = null;
+		for (Iterator it = files.iterator(); it.hasNext();) {
+			IFile file = (IFile) it.next();
+			IPath location = file.getLocation();
+			boolean match = false;
+			if (path.isAbsolute()) {
+				match = path.equals(location);
+			} else {
+				int prefixLen = location.segmentCount() - path.segmentCount(); 
+				match = prefixLen >= 0 && location.removeFirstSegments(prefixLen).equals(path);
+			}
+			if (match) {
+				if (matchingFile != null) {
+					return null;	// Ambiguous match
+				}
+				matchingFile = file;
+			}
+		}
+		return matchingFile;
 	}
 
 	protected IFile findFileInWorkspace(IPath path) {
@@ -263,11 +297,12 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	/**
-	 * Called by the error parsers.
+	 * Returns <code>true</code> if the project contains more than one file with the given name.
 	 */
 	public boolean isConflictingName(String fileName) {
 		IPath path = new Path(fileName);
-		return fNameConflicts.contains(path.lastSegment());
+		Object obj = fFilesInProject.get(path.lastSegment());
+		return obj != null && !(obj instanceof IFile);
 	}
 
 	/**
@@ -347,7 +382,6 @@ public class ErrorParserManager extends OutputStream {
 			hasErrors = true;
 	}
 
-	
 	/**
 	 * Called by the error parsers.  Return the previous line, save in the working buffer.
 	 */
@@ -357,7 +391,7 @@ public class ErrorParserManager extends OutputStream {
 
 	/**
 	 * Method setOutputStream.
-	 * @param cos
+	 * @param os
 	 */
 	public void setOutputStream(OutputStream os) {
 		outputStream = os;

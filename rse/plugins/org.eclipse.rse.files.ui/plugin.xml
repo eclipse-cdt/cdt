@@ -418,6 +418,21 @@ Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter fro
         </decorator>
 
     </extension>
-
+      <extension point="org.eclipse.ui.popupMenus">
+	      <objectContribution
+            objectClass="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"
+            id="org.eclipse.rse.files.ui.actions.synchronizeCache">
+                <visibility> 
+                	<objectState name="isdirectory" value="true"/>                  
+            </visibility>
+         <action
+               label="%synchronizeCache.label"
+                tooltip="%synchronizeCache.tooltip"
+               class="org.eclipse.rse.files.ui.actions.SynchronizeCacheActionDelegate"
+               menubarPath="group.importexport"
+               id="synchronizeCache">
+         </action>
+      </objectContribution>
+      </extension>
 </plugin>
  

@@ -1,0 +1,201 @@
+/********************************************************************************
+ * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * This program and the accompanying materials are made available under the terms
+ * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
+ * available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Initial Contributors:
+ * The following IBM employees contributed to the Remote System Explorer
+ * component that contains this file: David McKnight.
+ * 
+ * Contributors:
+ * {Name} (company) - description of contribution.
+ * David McKnight    (IBM)    [143503] [updating] need a synchronize cache operation
+ ********************************************************************************/
+package org.eclipse.rse.files.ui.actions;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.rse.core.model.SystemRemoteResourceSet;
+import org.eclipse.rse.internal.files.ui.Activator;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
+import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+
+/**
+ *  This action downloads remote files of a directory to the temp file cache 
+ *  if the lastest versions have not yet been cached.
+ *
+ */
+public class SynchronizeCacheActionDelegate implements IActionDelegate {
+
+	protected IStructuredSelection fSelection;
+	private IStatus errorStatus;
+	
+	public SynchronizeCacheActionDelegate() {
+	}
+
+	public void run(IAction action) {
+		errorStatus = null;
+
+		IRemoteFile[] files = getRemoteFiles(fSelection);
+		boolean completed = performCacheRemoteFiles(files);
+
+        if (!completed) {
+			return; // not appropriate to show errors
+		}
+
+        // If errors occurred, open an Error dialog
+        if (errorStatus != null) {
+            ErrorDialog.openError(getShell(), "Error Caching Remote Files", null, errorStatus);
+            errorStatus = null;
+        }
+	}
+
+	private void cacheRemoteFiles(IRemoteFile[] files, IProgressMonitor monitor)
+	{
+		IRemoteFile firstFile = files[0];		
+		ISystemViewElementAdapter adapter = (ISystemViewElementAdapter)((IAdaptable)firstFile).getAdapter(ISystemViewElementAdapter.class);
+		SystemRemoteResourceSet set = new SystemRemoteResourceSet(firstFile.getParentRemoteFileSubSystem(), files);
+		adapter.doDrag(set, monitor);
+	}
+	
+	boolean performCacheRemoteFiles(final IRemoteFile[] files) {
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+				try {
+					// download all files that need to be cached
+			        cacheRemoteFiles(files, monitor);
+				}
+				catch (Exception e) {
+					if (e.getCause() instanceof CoreException) {
+						recordError((CoreException)e.getCause());
+					} else {
+						Activator.getDefault().getLog().log(new Status(IStatus.ERROR,
+								Activator.getDefault().getBundle().getSymbolicName(),
+								-1, e.getMessage(), e));
+						displayError(e.getMessage());
+					}
+				}
+			}
+		};
+
+		try {
+			//TODO make this a Job an run in foreground with option to send to background
+			ProgressMonitorDialog mon = new ProgressMonitorDialog(getShell()) {
+			    protected void configureShell(Shell shell) {
+			        super.configureShell(shell);
+					shell.setText("Synchronizing Remote File Cache");
+			    }
+			};
+			mon.run(true, true, op);
+		} catch (InterruptedException e) {
+			return false;
+		} catch (InvocationTargetException e) {
+			displayError("Internal Error: "+e.getTargetException().getMessage()); //$NON-NLS-1$
+			return false;
+		}
+
+		return true;
+	}
+	
+
+	/**
+	 * Opens an error dialog to display the given message.
+	 * <p>
+	 * Note that this method must be called from UI thread.
+	 * </p>
+	 * 
+	 * @param message
+	 *            the message
+	 */
+	void displayError(String message) {
+		MessageDialog.openError(getShell(), "Error Caching Remote Files", message);
+	}
+	
+	/**
+	 * Records the core exception to be displayed to the user once the action is
+	 * finished.
+	 * 
+	 * @param error
+	 *            a <code>CoreException</code>
+	 */
+	final void recordError(CoreException error) {
+		this.errorStatus = error.getStatus();
+	}
+	
+	/**
+	 * Sets the selection. The selection is only set if given a structured selection, otherwise it is set to an
+	 * empty structured selection.
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		
+		if (selection instanceof IStructuredSelection) {
+			fSelection = (IStructuredSelection)selection;
+		}
+		else {
+			fSelection = StructuredSelection.EMPTY;
+		}
+	}
+	
+	/**
+	 * Returns the remote files in the selection.
+	 * Use this method if this action allows multiple remote file selection.
+	 * @return an array of remote files.
+	 */
+	protected IRemoteFile[] getRemoteFiles(IStructuredSelection selection) {
+
+		IRemoteFile[] files = new IRemoteFile[selection.size()];
+		Iterator iter = selection.iterator();
+		
+		int i = 0;
+		
+		while (iter.hasNext()) {
+			files[i++] = (IRemoteFile)iter.next();
+		}
+		
+		return files;
+	}
+	/**
+	 * Returns the workbench.
+	 * @return the workbench.
+	 */
+	protected IWorkbench getWorkbench() {
+		return PlatformUI.getWorkbench();
+	}
+	
+	/**
+	 * Returns the active shell.
+	 * @return the active shell.
+	 */
+	protected Shell getShell() {
+		return Display.getDefault().getActiveShell();
+	}
+
+	/**
+	 * Returns the selection.
+	 * @return the selection.
+	 */
+	protected IStructuredSelection getSelection() {
+		return fSelection;
+	}
+}

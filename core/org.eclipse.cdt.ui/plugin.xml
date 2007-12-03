@@ -2332,14 +2332,5 @@
             scheme="ffs">
       </filesystemContributor>
    </extension>
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            class="org.eclipse.cdt.ui.templateengine.TemplateClassWizard"
-            hasPages="true"
-            id="org.eclipse.cdt.ui.wizard1"
-            name="New Class from Template">
-      </wizard>
-   </extension>
  
  </plugin>

@@ -19,6 +19,7 @@
  * David McKnight   (IBM)        - [199565] taking out synchronize for internalConnect
  * David McKnight   (IBM)        - [205986] attempt SSL before non-SSL for daemon connect
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  ********************************************************************************/
 
 package org.eclipse.rse.connectorservice.dstore;
@@ -63,7 +64,7 @@ import org.eclipse.rse.core.subsystems.IServerLauncherProperties;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ServerLaunchType;
 import org.eclipse.rse.core.subsystems.SubSystem;
-import org.eclipse.rse.dstore.universal.miners.EnvironmentMiner;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.connectorservice.dstore.RexecDstoreServer;
 import org.eclipse.rse.internal.ui.SystemPropertyResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -204,7 +205,7 @@ public class DStoreConnectorService extends StandardConnectorService implements 
 		// Check if we have sysInfo cached already
 		if (sysInfo == null)
 		{
-			envMinerData = ds.findMinerInformation(EnvironmentMiner.MINER_ID);
+			envMinerData = ds.findMinerInformation(IUniversalDataStoreConstants.UNIVERSAL_ENVIRONMENT_MINER_ID);
 			if (envMinerData != null)
 			{
 				sysInfo = ds.find(envMinerData, DE.A_NAME, "systemInfo", 1); //$NON-NLS-1$

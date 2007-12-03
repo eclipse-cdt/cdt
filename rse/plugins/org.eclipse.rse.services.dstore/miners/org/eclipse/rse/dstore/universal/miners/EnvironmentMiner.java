@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -29,8 +30,6 @@ import org.eclipse.dstore.core.model.DataElement;
 
 public class EnvironmentMiner extends Miner
 {
-	public static final String MINER_ID = EnvironmentMiner.class.getName();//"org.eclipse.rse.dstore.universal.miners.environment.EnvironmentMiner";
-
     private DataElement _system;
     
     

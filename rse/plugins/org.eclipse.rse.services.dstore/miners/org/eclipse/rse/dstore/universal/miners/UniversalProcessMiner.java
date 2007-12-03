@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -45,9 +46,6 @@ import org.eclipse.rse.services.clientserver.processes.handlers.UniversalServerP
  */
 public class UniversalProcessMiner extends Miner
 {
-	
-	public static final String MINER_ID = UniversalProcessMiner.class.getName();
-	
 	private ProcessHandler handler;
 	
 	private static final String _minerVersion = "7.0.0"; //$NON-NLS-1$

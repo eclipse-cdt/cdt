@@ -12,7 +12,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
- * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
+ * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup 
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -25,8 +26,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
-import org.eclipse.rse.dstore.universal.miners.CommandMiner;
-import org.eclipse.rse.dstore.universal.miners.EnvironmentMiner;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
@@ -122,12 +122,12 @@ public class DStoreShellService extends AbstractDStoreService implements IShellS
 	
 	protected String getMinerId()
 	{
-		return CommandMiner.MINER_ID;
+		return IUniversalDataStoreConstants.UNIVERSAL_COMMAND_MINER_ID;
 	}
 
 	protected String getEnvSystemMinerId()
 	{
-		return EnvironmentMiner.MINER_ID;
+		return IUniversalDataStoreConstants.UNIVERSAL_ENVIRONMENT_MINER_ID;
 	}
 	
 	

@@ -14,6 +14,7 @@
  * Contributors:
  * David McKnight  (IBM)  - [191599] use specified encoding for shell
  * David McKnight  (IBM)  - [202822] canceled output should be created before thread cleanup
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -41,7 +42,6 @@ import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.Pattern
  */
 public class CommandMiner extends Miner
 {
-	public static final String MINER_ID = CommandMiner.class.getName();//"org.eclipse.rse.dstore.universal.miners.command.CommandMiner";
 
     public class CommandMinerDescriptors
     {
@@ -121,7 +121,7 @@ public class CommandMiner extends Miner
 	protected ArrayList getDependencies()
 	{
 		ArrayList dependencies = new ArrayList();
-		dependencies.add(EnvironmentMiner.MINER_ID);
+		dependencies.add(IUniversalDataStoreConstants.UNIVERSAL_ENVIRONMENT_MINER_ID);
 		return dependencies;
 	}
 

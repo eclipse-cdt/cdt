@@ -29,6 +29,7 @@
  * David McKnight   (IBM)        - [210812] for text transfer, need to honour the preference (instead of straight binary)
  * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -56,7 +57,6 @@ import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalByteStreamHandler;
-import org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner;
 import org.eclipse.rse.internal.services.Activator;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
@@ -154,7 +154,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 	protected String getMinerId()
 	{
-		return UniversalFileSystemMiner.MINER_ID;
+		return IUniversalDataStoreConstants.UNIVERSAL_FILESYSTEM_MINER_ID;
 	}
 	
 	protected String getByteStreamHandlerId()

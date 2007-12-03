@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  *  David McKnight  (IBM)  - [202822] updating cleanup
+ *  David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.command;
@@ -38,7 +39,7 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreAttributes;
 import org.eclipse.rse.dstore.universal.miners.CommandMiner;
-import org.eclipse.rse.dstore.universal.miners.EnvironmentMiner;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.ParsedOutput;
 import org.eclipse.rse.internal.dstore.universal.miners.command.patterns.Patterns;
 
@@ -648,7 +649,7 @@ public class CommandMinerThread extends MinerThread
 	private String[] getEnvironment(DataElement theSubject)
 	{
 		//Grab the system environment:
-		DataElement envMiner = _dataStore.findMinerInformation(EnvironmentMiner.MINER_ID);
+		DataElement envMiner = _dataStore.findMinerInformation(IUniversalDataStoreConstants.UNIVERSAL_ENVIRONMENT_MINER_ID);
 		DataElement systemEnv = _dataStore.find(envMiner, DE.A_NAME, "System Environment", 1); //$NON-NLS-1$
 		//Walk up until we find an element with an inhabits relationship.
 		DataElement theProject = theSubject;

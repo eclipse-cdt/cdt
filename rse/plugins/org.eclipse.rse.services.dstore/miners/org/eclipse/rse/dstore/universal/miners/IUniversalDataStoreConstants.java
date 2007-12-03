@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [183165] Do not implement constant interfaces
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  ********************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -22,6 +23,16 @@ public interface IUniversalDataStoreConstants
 	 * Miner names, used for logging
 	 */
 	public static final String UNIVERSAL_FILESYSTEM_MINER = "UniversalFileSystemMiner"; //$NON-NLS-1$
+	
+	
+	/*
+	 * Miner IDs
+	 */
+	public static final String UNIVERSAL_FILESYSTEM_MINER_ID = "org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner"; //$NON-NLS-1$
+	public static final String UNIVERSAL_COMMAND_MINER_ID = "org.eclipse.rse.dstore.universal.miners.CommandMiner"; //$NON-NLS-1$
+	public static final String UNIVERSAL_ENVIRONMENT_MINER_ID = "org.eclipse.rse.dstore.universal.miners.EnvironmentMiner"; //$NON-NLS-1$
+	public static final String UNIVERSAL_PROCESS_MINER_ID = "org.eclipse.rse.dstore.universal.miners.UniversalProcessMiner"; //$NON-NLS-1$
+	
 	
 	//
 	// Universal File descriptors for DataStore DataElements

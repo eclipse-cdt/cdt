@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.shells;
@@ -23,8 +24,7 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.DataStoreSchema;
-import org.eclipse.rse.dstore.universal.miners.CommandMiner;
-import org.eclipse.rse.dstore.universal.miners.EnvironmentMiner;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 
 
 
@@ -211,13 +211,13 @@ public class DStoreShellThread
 
 	protected String getCmdSystemMinerId()
 	{
-		return CommandMiner.MINER_ID;
+		return IUniversalDataStoreConstants.UNIVERSAL_COMMAND_MINER_ID;
 	}
 	
 	
 	protected String getEnvSystemMinerId()
 	{
-		return EnvironmentMiner.MINER_ID;
+		return IUniversalDataStoreConstants.UNIVERSAL_ENVIRONMENT_MINER_ID;
 	}
 	
 	protected String getRunShellId()

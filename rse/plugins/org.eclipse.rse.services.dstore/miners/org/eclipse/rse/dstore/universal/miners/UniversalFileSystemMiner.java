@@ -25,6 +25,7 @@
  * Kevin Doyle (IBM) - [191548]  Deleting Read-Only directory removes it from view and displays no error
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -63,27 +64,10 @@ import org.eclipse.rse.services.clientserver.archiveutils.VirtualChild;
 import org.eclipse.rse.services.clientserver.java.ClassFileUtil;
 
 public class UniversalFileSystemMiner extends Miner {
-    
-
-	public static final String MINER_ID = UniversalFileSystemMiner.class.getName();
-
-
-//	private DataElement deUFSfilters;
 
 	private DataElement deUFSnode;
 
-//	private DataElement deUFStemp;
-
 	private DataElement deUFSuploadlog;
-
-//	private DataElement dePropertyQuery;
-
-//	private DataElement deFileClassificationQuery;
-
-//	private DataElement deFolderClassificationQuery;
-	
-
-	
 
 	protected String filterString = "*"; //$NON-NLS-1$
 

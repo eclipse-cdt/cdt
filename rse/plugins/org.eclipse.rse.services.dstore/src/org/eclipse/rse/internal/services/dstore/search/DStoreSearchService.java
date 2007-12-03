@@ -13,7 +13,8 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Kevin Doyle (IBM) - [187640] Removed setting status to finish when search not finished
- * David McKnight      [190010] Set the status to finish or cancelled depending on dstore status.  
+ * David McKnight      [190010] Set the status to finish or canceled depending on dstore status.  
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -24,7 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
-import org.eclipse.rse.dstore.universal.miners.UniversalFileSystemMiner;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.internal.services.dstore.files.DStoreHostFile;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
@@ -51,7 +52,7 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 	
 	protected String getMinerId()
 	{
-		return UniversalFileSystemMiner.MINER_ID;
+		return IUniversalDataStoreConstants.UNIVERSAL_FILESYSTEM_MINER_ID;
 	}
 
 	public void search(IHostSearchResultConfiguration searchConfig, IFileService fileService, IProgressMonitor monitor)

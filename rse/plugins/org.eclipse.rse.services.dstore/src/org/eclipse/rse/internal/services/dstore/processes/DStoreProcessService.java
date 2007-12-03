@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
  * David McKnight   (IBM)        - [159092] For to use correct process miner id
+ * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.processes;
@@ -26,8 +27,8 @@ import org.eclipse.dstore.core.model.DE;
 import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStore;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
+import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.IUniversalProcessDataStoreConstants;
-import org.eclipse.rse.dstore.universal.miners.UniversalProcessMiner;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
@@ -170,7 +171,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	    if (_minerElement == null || _minerElement.getDataStore() != getDataStore())
 	    {
 	        _minerElement = getDataStore()
-				.findMinerInformation(UniversalProcessMiner.MINER_ID); 
+				.findMinerInformation(IUniversalDataStoreConstants.UNIVERSAL_PROCESS_MINER_ID); 
 	    }
 	    return _minerElement;
 	}
@@ -373,7 +374,7 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	
 	protected String getMinerId()
 	{
-		return UniversalProcessMiner.MINER_ID;
+		return IUniversalDataStoreConstants.UNIVERSAL_PROCESS_MINER_ID;
 	}
 	
 	public int getServerVersion()
@@ -388,6 +389,6 @@ public class DStoreProcessService extends AbstractProcessService implements IPro
 	
 	protected String getProcessMinerId()
 	{
-		return UniversalProcessMiner.MINER_ID;
+		return IUniversalDataStoreConstants.UNIVERSAL_PROCESS_MINER_ID;
 	}
 }

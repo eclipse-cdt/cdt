@@ -36,6 +36,7 @@
  * Xuan Chen          (IBM)      - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
  * David Mcknight     (IBM)      - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
  * David McKnight     (IBM)      - [209552] get rid of copy APIs to be clearer with download and upload  
+ * David McKnight     (IBM)      - [143503] encoding and isBinary needs to be stored in the IFile properties
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -294,6 +295,10 @@ public class UniversalFileTransferUtility
 		properties.setRemoteFileSubSystem(subSystemId);
 		properties.setRemoteFilePath(remotePath);
 		
+		
+		properties.setEncoding(remoteFile.getEncoding());
+		properties.setUsedBinaryTransfer(remoteFile.isBinary());
+		
 	    // get the modified timestamp from the File, not the IFile
 		// for some reason, the modified timestamp from the IFile does not always return
 		// the right value. There is a Javadoc comment saying the value from IFile might be a
@@ -354,6 +359,7 @@ public class UniversalFileTransferUtility
 	 */
 	public static SystemWorkspaceResourceSet downloadResourcesToWorkspaceMultiple(SystemRemoteResourceSet remoteSet, IProgressMonitor monitor)
 	{
+		IContainer broadestContainer = null;
 		SystemWorkspaceResourceSet resultSet = new SystemWorkspaceResourceSet();
 		List set = remoteSet.getResourceSet();
 		IRemoteFileSubSystem srcFS = (IRemoteFileSubSystem)remoteSet.getSubSystem();
@@ -398,6 +404,16 @@ public class UniversalFileTransferUtility
 						remoteFilesForDownload.add(srcFileOrFolder);
 						tempFilesForDownload.add(tempFile);
 						remoteEncodingsForDownload.add(srcFileOrFolder.getEncoding());
+						
+						IContainer parent = tempFile.getParent();
+						if (broadestContainer == null || parent.contains(broadestContainer)){
+							broadestContainer = parent;
+						}
+						else {
+							if (!broadestContainer.contains(parent)) { // siblings?
+								broadestContainer = broadestContainer.getParent();								
+							}
+						}
 					}
 				}
 				else if (srcFileOrFolder.isDirectory()) // recurse for folders and add to our consolidated resource set
@@ -435,11 +451,25 @@ public class UniversalFileTransferUtility
 			destinations[t] = ((IFile)tempFilesForDownload.get(t)).getLocation().toOSString();
 		}
 		
-		try {
-			srcFS.downloadMultiple(sources, destinations, encodings, monitor);
+		if (sources.length > 0){			
+			try {
+				srcFS.downloadMultiple(sources, destinations, encodings, monitor);
+			}
+			catch (SystemMessageException e){
+				resultSet.setMessage(e.getSystemMessage());
+			}
 		}
-		catch (SystemMessageException e){
-			resultSet.setMessage(e.getSystemMessage());
+		
+		// step 2.1: refresh the broadest container (keep it down to 1 big refresh)
+		try
+		{
+			if (broadestContainer != null && !broadestContainer.isSynchronized(IResource.DEPTH_INFINITE)){
+				broadestContainer.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			}
+		}
+		catch (Exception e)
+		{
+			
 		}
 		
 		// step 3: post download processing
@@ -453,47 +483,50 @@ public class UniversalFileTransferUtility
 				resultSet.addResource(tempFile);
 				String remoteEncoding = (String)remoteEncodingsForDownload.get(p);
 				listener.removeIgnoreFile(tempFile);
+
+				SystemIFileProperties properties = new SystemIFileProperties(tempFile);
+				long storedTime = properties.getRemoteFileTimeStamp();
+				long currentTime = srcFileOrFolder.getLastModified();
+				String storedEncoding = properties.getEncoding();
+				String currentEncoding = srcFileOrFolder.getEncoding();
 				
-			    if (!tempFile.exists() && !tempFile.isSynchronized(IResource.DEPTH_ZERO))
-			    {
-			    	// eclipse doesn't like this if the resource appears to be from another project
-			    	try
-			    	{
-			    		//tempFile.getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			    		tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
-			    	}
-			    	catch (Exception e)
-			    	{    		
-			    	}
-			    }
-			    if (tempFile.exists())
-			    {		    	
-					// if the file is virtual, set read only if necessary
-					// TODO: why set this here? And why for virtual only??
-					if (srcFileOrFolder instanceof IVirtualRemoteFile)
-					{
-						setReadOnly(tempFile, srcFileOrFolder.canWrite());
-					}
-					
-					if (srcFileOrFolder.isText())
-					{
+				if (storedTime != currentTime && (storedEncoding == null || !storedEncoding.equals(currentEncoding)))
+				{
+				    if (tempFile.exists())
+				    {		    	
+						// if the file is virtual, set read only if necessary
+						// TODO: why set this here? And why for virtual only??
+						if (srcFileOrFolder instanceof IVirtualRemoteFile)
+						{
+							setReadOnly(tempFile, srcFileOrFolder.canWrite());
+						}
+						
+						if (srcFileOrFolder.isText())
+						{
+							try
+							{
+								String cset = tempFile.getCharset();
+								if (!cset.equals(remoteEncoding))
+								{
+									tempFile.setCharset(remoteEncoding, null);//monitor);
+								}
+							}
+							catch (Exception e)
+							{
+								e.printStackTrace();
+							}
+						}
+	
 						try
 						{
-							String cset = tempFile.getCharset();
-							if (!cset.equals(remoteEncoding))
-							{
-							
-								//System.out.println("charset ="+cset);
-								//System.out.println("tempfile ="+tempFile.getFullPath());
-								tempFile.setCharset(remoteEncoding, monitor);
-							}
+							setIFileProperties(tempFile, srcFileOrFolder, srcFS);	
 						}
 						catch (Exception e)
 						{
 							e.printStackTrace();
 						}
-					}
-			    }
+				    }
+				}
 			}
 		}
 		

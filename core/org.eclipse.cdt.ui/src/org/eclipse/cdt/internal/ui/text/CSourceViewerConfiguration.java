@@ -95,7 +95,6 @@ import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
  * Configuration for an <code>SourceViewer</code> which shows C/C++ code.
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
-	private CTextTools fTextTools;
 	
 	private ITextEditor fTextEditor;
 	/**

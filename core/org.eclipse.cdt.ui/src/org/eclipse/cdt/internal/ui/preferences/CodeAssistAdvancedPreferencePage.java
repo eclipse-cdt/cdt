@@ -46,6 +46,7 @@ public final class CodeAssistAdvancedPreferencePage extends PropertyAndPreferenc
 	}
 
 	protected String getPropertyPageID() {
+		// no project settings supported
 		return null;
 	}
 	

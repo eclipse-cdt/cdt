@@ -63,10 +63,11 @@ import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.AddIncludesOperation;
+
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
-import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludesOperation;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 

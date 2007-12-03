@@ -22,7 +22,7 @@ public class NewHeaderFileCreationWizard extends AbstractFileCreationWizard {
         super();
         setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEW_HEADERFILE);
         setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle(NewFileWizardMessages.getString("NewHeaderFileCreationWizard.title")); //$NON-NLS-1$
+        setWindowTitle(NewFileWizardMessages.NewHeaderFileCreationWizard_title); 
     }
     
     /*

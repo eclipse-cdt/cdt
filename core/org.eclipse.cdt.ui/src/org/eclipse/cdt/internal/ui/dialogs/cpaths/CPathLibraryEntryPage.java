@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 QNX Software Systems and others.
+ * Copyright (c) 2002, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
+ * Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
@@ -95,7 +96,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		fLibrariesList.setDialogFieldListener(adapter);
 		fLibrariesList.setLabelText(CPathEntryMessages.getString("LibrariesEntryPage.libraries.label")); //$NON-NLS-1$
 
-		fLibrariesList.setViewerSorter(new CPElementSorter());
+		fLibrariesList.setViewerComparator(new CPElementSorter());
 		fLibrariesList.enableButton(IDX_EDIT, false);
 		fLibrariesList.enableButton(IDX_REMOVE, false);
 		fLibrariesList.enableButton(IDX_EXPORT, false);

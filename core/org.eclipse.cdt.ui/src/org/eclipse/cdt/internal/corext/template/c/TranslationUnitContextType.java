@@ -25,7 +25,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
-import org.eclipse.cdt.internal.ui.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+
 
 /**
  * A context type for translation units.
@@ -34,7 +35,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 
 	protected static class ReturnType extends TemplateVariableResolver {
 	 	public ReturnType() {
-	 	 	super("return_type", TemplateMessages.getString("CContextType.variable.description.return.type")); //$NON-NLS-1$ //$NON-NLS-2$
+	 	 	super("return_type", TemplateMessages.CContextType_variable_description_return_type);  //$NON-NLS-1$
 	 	}
 	 	public String resolve(TemplateContext context) {
 			ICElement element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_METHOD);
@@ -54,7 +55,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 
 	protected static class File extends TemplateVariableResolver {
 		public File() {
-			super("file", TemplateMessages.getString("CContextType.variable.description.file")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("file", TemplateMessages.CContextType_variable_description_file);  //$NON-NLS-1$
 		}
 		public String resolve(TemplateContext context) {
 			ITranslationUnit unit= ((TranslationUnitContext) context).getTranslationUnit();
@@ -78,37 +79,13 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 	
 	protected static class Method extends EnclosingCElement {
 		public Method() {
-			super("enclosing_method", TemplateMessages.getString("CContextType.variable.description.enclosing.method"), ICElement.C_METHOD); //$NON-NLS-1$ //$NON-NLS-2$
+			super("enclosing_method", TemplateMessages.CContextType_variable_description_enclosing_method, ICElement.C_METHOD);  //$NON-NLS-1$
 		}
 	}
-
-	/*
-	protected static class Type extends EnclosingCElement {
-		public Type() {
-			super("enclosing_type", TemplateMessages.getString("CContextType.variable.description.enclosing.type"), 0); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	protected static class SuperClass extends EnclosingCElement {
-		public Type() {
-			super("super_class", TemplateMessages.getString("CContextType.variable.description.type"), IJavaElement.TYPE);
-		}
-	}
-
-	protected static class Package extends EnclosingCElement {
-		public Package() {
-			super("enclosing_package", TemplateMessages.getString("CContextType.variable.description.enclosing.package"), 0); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}	
-*/
-//	protected static class Project extends EnclosingCElement {
-//		public Project() {
-//			super("enclosing_project", TemplateMessages.getString("CContextType.variable.description.enclosing.project"), ICElement.C_PROJECT); //$NON-NLS-1$ //$NON-NLS-2$
-//		}
-//	}	
 
 	protected static class Project extends TemplateVariableResolver {
 		public Project() {
-			super("enclosing_project", TemplateMessages.getString("CContextType.variable.description.enclosing.project")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("enclosing_project", TemplateMessages.CContextType_variable_description_enclosing_project);  //$NON-NLS-1$
 		}
 		public String resolve(TemplateContext context) {
 			ITranslationUnit unit= ((TranslationUnitContext) context).getTranslationUnit();
@@ -118,7 +95,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 
 	protected static class Arguments extends TemplateVariableResolver {
 		public Arguments() {
-			super("enclosing_method_arguments", TemplateMessages.getString("CContextType.variable.description.enclosing.method.arguments")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("enclosing_method_arguments", TemplateMessages.CContextType_variable_description_enclosing_method_arguments);  //$NON-NLS-1$
 		}
 		public String resolve(TemplateContext context) {
 			ICElement element= ((TranslationUnitContext) context).findEnclosingElement(ICElement.C_FUNCTION);
@@ -151,7 +128,7 @@ public abstract class TranslationUnitContextType extends TemplateContextType {
 	protected static class Todo extends TemplateVariableResolver {
 
 		public Todo() {
-			super("todo", TemplateMessages.getString("CContextType.variable.description.todo")); //$NON-NLS-1$ //$NON-NLS-2$
+			super("todo", TemplateMessages.CContextType_variable_description_todo);  //$NON-NLS-1$
 		}
 		protected String resolve(TemplateContext context) {
 			TranslationUnitContext cContext= (TranslationUnitContext) context;

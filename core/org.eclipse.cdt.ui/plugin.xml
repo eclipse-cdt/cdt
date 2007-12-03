@@ -319,7 +319,7 @@
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
+         <class class="org.eclipse.cdt.internal.ui.wizards.filewizard.NewFileFromTemplateWizard">
             <parameter name="cfile" value="true"/>
          </class>
          <description>
@@ -403,7 +403,7 @@
             category="org.eclipse.cdt.ui.newCCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
-         <class class="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
+         <class class="org.eclipse.cdt.internal.ui.wizards.filewizard.NewFileFromTemplateWizard">
             <parameter name="cfile" value="true"/>
          </class>
          <description>
@@ -708,6 +708,11 @@
             class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPreferencePage"
             id="org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage"
             name="%todoTaskPrefName"/>
+      <page
+            name="%codeTemplatePreferencePageName"
+            category="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage"
+            id="org.eclipse.cdt.ui.preferences.CodeTemplatePreferencePage"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
@@ -1799,6 +1804,14 @@
       		file="templates/default-templates.xml"
       		translations="$nl$/templates/default-templates.properties">
       </include>
+      <include
+      		file="templates/default-codetemplates.xml"
+      		translations="$nl$/templates/default-templates.properties">
+      </include>
+      <include
+      		file="templates/default-filetemplates.xml"
+      		translations="$nl$/templates/default-templates.properties">
+      </include>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.IndexerPage">
@@ -2142,6 +2155,21 @@
 			</or>
          </enablement>
 	   </commonWizard>
+	   <commonWizard
+	         associatedExtensionId="org.eclipse.cdt.ui.navigator.content"
+	         type="new"
+	         wizardId="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
+		 <enablement>
+			<or>
+				<instanceof value="org.eclipse.cdt.core.model.ICElement" />	
+	            <adapt type="org.eclipse.core.resources.IProject">
+	               <test
+	                     property="org.eclipse.core.resources.projectNature"
+	                     value="org.eclipse.cdt.core.cnature"/>
+	            </adapt>
+			</or>
+         </enablement>
+	   </commonWizard>
      <dropAssistant
            class="org.eclipse.cdt.internal.ui.navigator.CNavigatorDropAdapterAssistant"
            id="org.eclipse.cdt.ui.navigator.dropAssistant">
@@ -2303,6 +2331,15 @@
             label="Flexible File System"
             scheme="ffs">
       </filesystemContributor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            class="org.eclipse.cdt.ui.templateengine.TemplateClassWizard"
+            hasPages="true"
+            id="org.eclipse.cdt.ui.wizard1"
+            name="New Class from Template">
+      </wizard>
    </extension>
  
  </plugin>

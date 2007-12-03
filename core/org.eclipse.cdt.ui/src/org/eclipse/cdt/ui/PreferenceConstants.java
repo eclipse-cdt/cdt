@@ -15,6 +15,9 @@ package org.eclipse.cdt.ui;
 
 import java.util.Locale;
 
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -23,6 +26,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+
+import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.ui.ICThemeConstants;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
@@ -1003,7 +1008,6 @@ public class PreferenceConstants {
 	 * @since 5.0
 	 */
 	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "content_assist_proposals_background"; //$NON-NLS-1$
-
 	/**
 	 * A named preference that holds the foreground color used in the code assist selection dialog.
 	 * <p>
@@ -1172,6 +1176,16 @@ public class PreferenceConstants {
 	public final static String SPELLING_ENABLE_CONTENTASSIST= "spelling_enable_contentassist"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls if documentation comment stubs will be added
+	 * automatically to newly created types and methods.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 5.0
+	 */
+	public static final String CODEGEN_ADD_COMMENTS= "org.eclipse.cdt.ui.add_comments"; //$NON-NLS-1$
+
+	/**
 	 * Returns the CDT-UI preference store.
 	 * 
 	 * @return the CDT-UI preference store
@@ -1289,6 +1303,7 @@ public class PreferenceConstants {
 		// content assist
 		store.setDefault(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0"); //$NON-NLS-1$
+
 		
 		setDefaultAndFireEvent(
 				store,
@@ -1329,7 +1344,36 @@ public class PreferenceConstants {
 		 * cannot return word proposals but only correction proposals.
 		 */
 		store.setToDefault(PreferenceConstants.SPELLING_ENABLE_CONTENTASSIST);
+		
+		// codegen
+		store.setDefault(PreferenceConstants.CODEGEN_ADD_COMMENTS, false);
     }
+
+
+	/**
+	 * Returns the value for the given key in the given context.
+	 * @param key The preference key
+	 * @param project The current context or <code>null</code> if no context is available and the
+	 * workspace setting should be taken. Note that passing <code>null</code> should
+	 * be avoided.
+	 * @return Returns the current value for the string.
+	 * @since 5.0
+	 */
+	public static String getPreference(String key, ICProject project) {
+		String val;
+		if (project != null) {
+			val= new ProjectScope(project.getProject()).getNode(CUIPlugin.PLUGIN_ID).get(key, null);
+			if (val != null) {
+				return val;
+			}
+		}
+		val= new InstanceScope().getNode(CUIPlugin.PLUGIN_ID).get(key, null);
+		if (val != null) {
+			return val;
+		}
+		return new DefaultScope().getNode(CUIPlugin.PLUGIN_ID).get(key, null);
+	}
+
     
 	/**
 	 * Sets the default value and fires a property

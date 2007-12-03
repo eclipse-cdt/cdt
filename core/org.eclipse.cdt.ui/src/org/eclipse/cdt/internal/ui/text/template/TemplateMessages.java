@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin, Google
  *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
+package org.eclipse.cdt.internal.ui.text.template;
 
-package org.eclipse.cdt.internal.ui.text.comment;
+import org.eclipse.osgi.util.NLS;
 
-import org.eclipse.jface.text.formatter.FormattingContext;
+public final class TemplateMessages extends NLS {
 
-/**
- * Formatting context for the comment formatter.
- *
- * @since 4.0
- */
-public class CommentFormattingContext extends FormattingContext {
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.text.template.TemplateMessages";//$NON-NLS-1$
+
+	private TemplateMessages() {
+		// Do not instantiate
+	}
+
+	public static String TemplateVariableProposal_error_title;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, TemplateMessages.class);
+	}
 }

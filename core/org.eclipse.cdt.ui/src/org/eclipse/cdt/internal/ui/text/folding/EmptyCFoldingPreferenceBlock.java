@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * Empty preference block for extensions to the
- * <code>org.eclipse.jdt.ui.javaFoldingStructureProvider</code> extension
+ * <code>org.eclipse.cdt.ui.foldingStructureProviders</code> extension
  * point that do not specify their own.
  * 
  * @since 3.0

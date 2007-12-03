@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.formatter.FormattingContext;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.IContentFormatterExtension;
@@ -29,7 +30,6 @@ import org.eclipse.cdt.core.CCorePreferenceConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
-import org.eclipse.cdt.internal.ui.text.comment.CommentFormattingContext;
 
 
 public class TranslationUnitPreview extends CPreview {
@@ -53,7 +53,7 @@ public class TranslationUnitPreview extends CPreview {
         fPreviewDocument.set(fPreviewText);
 		
 		fSourceViewer.setRedraw(false);
-		final IFormattingContext context = new CommentFormattingContext();
+		final IFormattingContext context = new FormattingContext();
 		try {
 			final IContentFormatter formatter =	fViewerConfiguration.getContentFormatter(fSourceViewer);
 			if (formatter instanceof IContentFormatterExtension) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,13 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public abstract class AbstractMethodStub implements IMethodStub {
@@ -78,7 +82,7 @@ public abstract class AbstractMethodStub implements IMethodStub {
         return false;
     }
 	
-    public abstract String createMethodDeclaration(String className, IBaseClassInfo[] baseClasses, String lineDelimiter);
+    public abstract String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
     
-    public abstract String createMethodImplementation(String className, IBaseClassInfo[] baseClasses, String lineDelimiter);
+    public abstract String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException;
 }

@@ -10,7 +10,7 @@
  *     QNX Software Systems
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.ui.codemanipulation;
+package org.eclipse.cdt.internal.corext.codemanipulation;
 
 import java.util.ArrayList;
 import java.util.List;

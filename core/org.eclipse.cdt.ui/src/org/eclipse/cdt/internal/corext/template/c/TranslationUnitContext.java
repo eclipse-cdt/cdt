@@ -27,8 +27,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.util.Strings;
+import org.eclipse.cdt.internal.corext.util.Strings;
 
 /**
  * A translation unit context.
@@ -88,7 +87,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 
 
 	/*
-	 * @see org.eclipse.jdt.internal.corext.template.DocumentTemplateContext#getKey()
+	 * @see org.eclipse.cdt.internal.corext.template.DocumentTemplateContext#getKey()
 	 */
 	public String getKey() {
 		if (getCompletionLength() == 0)		
@@ -166,7 +165,7 @@ public abstract class TranslationUnitContext extends DocumentTemplateContext {
 			IRegion region= document.getLineInformationOfOffset(start);
 			String lineContent= document.get(region.getOffset(), region.getLength());
 			ICProject project= getCProject();
-			return Strings.computeIndent(lineContent, CodeFormatterUtil.getTabWidth(project), CodeFormatterUtil.getIndentWidth(project));
+			return Strings.computeIndentUnits(lineContent, CodeFormatterUtil.getTabWidth(project), CodeFormatterUtil.getIndentWidth(project));
 		} catch (BadLocationException e) {
 			return 0;
 		}

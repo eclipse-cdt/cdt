@@ -9,6 +9,7 @@
  *     QNX Software Systems - initial API and implementation
  *     IBM Corporation
  *     Warren Paul (Nokia) - 173555
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
@@ -16,11 +17,28 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
+import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
@@ -33,19 +51,14 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
-import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.cdt.ui.CodeGeneration;
+
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+
+import org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator;
 
 public class NewClassCodeGenerator {
 
@@ -53,12 +66,12 @@ public class NewClassCodeGenerator {
     private IPath fSourcePath = null;
     private String fClassName = null;
     private IQualifiedTypeName fNamespace = null;
-    private String fLineDelimiter;
     private IBaseClassInfo[] fBaseClasses = null;
     private IMethodStub[] fMethodStubs = null;
     private ITranslationUnit fCreatedHeaderTU = null;
     private ITranslationUnit fCreatedSourceTU = null;
     private ICElement fCreatedClass = null;
+	private String fFullyQualifiedClassName;
     
 	public static class CodeGeneratorException extends CoreException {
         /**
@@ -84,9 +97,13 @@ public class NewClassCodeGenerator {
         if (namespace != null && namespace.length() > 0) {
             fNamespace = new QualifiedTypeName(namespace);
         }
+        if (fNamespace != null) {
+        	fFullyQualifiedClassName= fNamespace.append(fClassName).getFullyQualifiedName();
+        } else {
+        	fFullyQualifiedClassName= fClassName;
+        }
         fBaseClasses = baseClasses;
         fMethodStubs = methodStubs;
-        fLineDelimiter = NewSourceFileGenerator.getLineDelimiter();
     }
 
     public ICElement getCreatedClass() {
@@ -155,6 +172,7 @@ public class NewClassCodeGenerator {
 	            // headerWorkingCopy = headerTU.getSharedWorkingCopy(null, CUIPlugin.getDefault().getBufferFactory());
 	
 	            String headerContent = constructHeaderFileContent(headerTU, publicMethods, protectedMethods, privateMethods, headerWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
+	            headerContent= formatSource(headerContent, headerTU);
 	            headerWorkingCopy.getBuffer().setContents(headerContent);
 	
 	            if (monitor.isCanceled()) {
@@ -165,11 +183,7 @@ public class NewClassCodeGenerator {
 	            headerWorkingCopy.commit(true, monitor);
 	            monitor.worked(50);
 	
-	            IQualifiedTypeName className = new QualifiedTypeName(fClassName);
-	            if(fNamespace != null){
-	            	className = fNamespace.append(className);
-	            }
-	            createdClass = headerWorkingCopy.getElement(className.getFullyQualifiedName());
+	            createdClass = headerWorkingCopy.getElement(fFullyQualifiedClassName);
 	            fCreatedClass = createdClass;
 	            fCreatedHeaderTU = headerTU;
             }
@@ -196,6 +210,7 @@ public class NewClassCodeGenerator {
 		            sourceWorkingCopy = sourceTU.getWorkingCopy();
 		
 		            String sourceContent = constructSourceFileContent(sourceTU, headerTU, publicMethods, protectedMethods, privateMethods, sourceWorkingCopy.getBuffer().getContents(), new SubProgressMonitor(monitor, 100));
+		            sourceContent= formatSource(sourceContent, sourceTU);
 		            sourceWorkingCopy.getBuffer().setContents(sourceContent);
 		
 		            if (monitor.isCanceled()) {
@@ -222,13 +237,40 @@ public class NewClassCodeGenerator {
         return fCreatedClass;
     }
 
-    public String constructHeaderFileContent(ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, String oldContents, IProgressMonitor monitor) throws CodeGeneratorException {
+    /**
+     * Format given source content according to the project's code style options.
+     * 
+	 * @param content  the source content
+	 * @param tu  the translation unit
+	 * @return the formatted source text or the original if the text could not be formatted successfully
+     * @throws CModelException 
+	 */
+	private String formatSource(String content, ITranslationUnit tu) throws CModelException {
+        String lineDelimiter= StubUtility.getLineDelimiterUsed(tu);
+        TextEdit edit= CodeFormatterUtil.format(CodeFormatter.K_TRANSLATION_UNIT, content, 0, lineDelimiter, tu.getCProject().getOptions(true));
+        if (edit != null) {
+        	IDocument doc= new Document(content);
+        	try {
+				edit.apply(doc);
+            	content= doc.get();
+			} catch (MalformedTreeException exc) {
+				CUIPlugin.getDefault().log(exc);
+			} catch (BadLocationException exc) {
+				CUIPlugin.getDefault().log(exc);
+			}
+        }
+        return content;
+	}
+
+	public String constructHeaderFileContent(ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, String oldContents, IProgressMonitor monitor) throws CoreException {
         monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header"), 100); //$NON-NLS-1$
         
-        if (oldContents != null && oldContents.length() == 0)
+        String lineDelimiter= StubUtility.getLineDelimiterUsed(headerTU);
+
+		if (oldContents != null && oldContents.length() == 0)
             oldContents = null;
         
-        //TODO should use code templates
+
         StringBuffer text = new StringBuffer();
         
         int appendFirstCharPos = -1;
@@ -247,45 +289,46 @@ public class NewClassCodeGenerator {
 	            }
 	            appendFirstCharPos = prependLastCharPos + 1;
 	        }
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
             
             // insert a blank line before class definition
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
         }
 
         if (fBaseClasses != null && fBaseClasses.length > 0) {
-            addBaseClassIncludes(headerTU, text, new SubProgressMonitor(monitor, 50));
-            text.append(fLineDelimiter);
+            addBaseClassIncludes(headerTU, text, lineDelimiter, new SubProgressMonitor(monitor, 50));
+            text.append(lineDelimiter);
         }
         
         if (fNamespace != null) {
-            beginNamespace(text);
+            beginNamespace(text, lineDelimiter);
         }
         
         text.append("class "); //$NON-NLS-1$
         text.append(fClassName);
         addBaseClassInheritance(text);
-        text.append(fLineDelimiter);
+        text.append(lineDelimiter);
         text.append('{');
-        text.append(fLineDelimiter);
+        text.append(lineDelimiter);
 
         //TODO sort methods (eg constructor always first?)
         if (!publicMethods.isEmpty()
 	            || !protectedMethods.isEmpty()
 	            || !privateMethods.isEmpty()) {
-            addMethodDeclarations(publicMethods, protectedMethods, privateMethods, text);
+            addMethodDeclarations(headerTU, publicMethods, protectedMethods, privateMethods, text, lineDelimiter);
         }
 
         text.append("};"); //$NON-NLS-1$
-        text.append(fLineDelimiter);
+        text.append(lineDelimiter);
 
         if (fNamespace != null) {
-            endNamespace(text);
+            endNamespace(text, lineDelimiter);
         }
 
+        String fileContent;
         if (oldContents != null && appendFirstCharPos != -1) {
             // insert a blank line after class definition
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
             
             // skip over any extra whitespace
             int len = oldContents.length();
@@ -295,11 +338,14 @@ public class NewClassCodeGenerator {
             if (appendFirstCharPos < len) {
                 text.append(oldContents.substring(appendFirstCharPos));
             }
+            fileContent= text.toString();
+        } else {
+        	String classComment= getClassComment(headerTU, lineDelimiter);
+    		fileContent= CodeGeneration.getHeaderFileContent(headerTU, classComment, text.toString(), lineDelimiter);
         }
-        
-        String newContents = text.toString();
+
         monitor.done();
-        return newContents;
+        return fileContent;
     }
 
     private int getClassDefInsertionPos(String contents) {
@@ -318,59 +364,100 @@ public class NewClassCodeGenerator {
         return insertPos;
     }
     
-    private void beginNamespace(StringBuffer text) {
+	/**
+	 * Retrieve the class comment. Returns the content of the 'type comment' template.
+	 * 
+	 * @param tu the translation unit
+	 * @param lineDelimiter the line delimiter to use
+	 * @return the type comment or <code>null</code> if a type comment 
+	 * is not desired
+     *
+     * @since 5.0
+	 */		
+	private String getClassComment(ITranslationUnit tu, String lineDelimiter) {
+		if (isAddComments(tu)) {
+			try {
+				String fqName= fFullyQualifiedClassName;
+				String comment= CodeGeneration.getClassComment(tu, fqName, lineDelimiter);
+				if (comment != null && isValidComment(comment)) {
+					return comment;
+				}
+			} catch (CoreException e) {
+				CUIPlugin.getDefault().log(e);
+			}
+		}
+		return null;
+	}
+
+	private boolean isValidComment(String template) {
+		// TODO verify comment
+		return true;
+	}
+	
+	/**
+	 * Returns if comments are added. The settings as specified in the preferences is used.
+	 * 
+	 * @param tu
+	 * @return Returns <code>true</code> if comments can be added
+	 * @since 5.0
+	 */
+	public boolean isAddComments(ITranslationUnit tu) {
+		return StubUtility.doAddComments(tu.getCProject()); 
+	}
+			
+    private void beginNamespace(StringBuffer text, String lineDelimiter) {
         for (int i = 0; i < fNamespace.segmentCount(); ++i) {
 	        text.append("namespace "); //$NON-NLS-1$
 	        text.append(fNamespace.segment(i));
-	        text.append(fLineDelimiter);
+	        text.append(lineDelimiter);
 	        text.append('{');
-	        text.append(fLineDelimiter);
-	        text.append(fLineDelimiter);
+	        text.append(lineDelimiter);
+	        text.append(lineDelimiter);
         }
     }
 
-    private void endNamespace(StringBuffer text) {
+    private void endNamespace(StringBuffer text, String lineDelimiter) {
         for (int i = 0; i < fNamespace.segmentCount(); ++i) {
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
 	        text.append("}"); //$NON-NLS-1$
-	        text.append(fLineDelimiter);
+	        text.append(lineDelimiter);
         }
     }
 
-    private void addMethodDeclarations(List publicMethods, List protectedMethods, List privateMethods, StringBuffer text) {
+    private void addMethodDeclarations(ITranslationUnit tu, List publicMethods, List protectedMethods, List privateMethods, StringBuffer text, String lineDelimiter) throws CoreException {
         if (!publicMethods.isEmpty()) {
             text.append("public:"); //$NON-NLS-1$
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
             for (Iterator i = publicMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
-                String code = stub.createMethodDeclaration(fClassName, fBaseClasses, fLineDelimiter);
+                String code = stub.createMethodDeclaration(tu, fClassName, fBaseClasses, lineDelimiter);
                 text.append('\t');
                 text.append(code);
-                text.append(fLineDelimiter);
+                text.append(lineDelimiter);
             }
         }
 
         if (!protectedMethods.isEmpty()) {
             text.append("protected:"); //$NON-NLS-1$
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
             for (Iterator i = protectedMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
-                String code = stub.createMethodDeclaration(fClassName, fBaseClasses, fLineDelimiter);
+                String code = stub.createMethodDeclaration(tu, fClassName, fBaseClasses, lineDelimiter);
                 text.append('\t');
                 text.append(code);
-                text.append(fLineDelimiter);
+                text.append(lineDelimiter);
             }
         }
 
         if (!privateMethods.isEmpty()) {
             text.append("private:"); //$NON-NLS-1$
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
             for (Iterator i = privateMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
-                String code = stub.createMethodDeclaration(fClassName, fBaseClasses, fLineDelimiter);
+                String code = stub.createMethodDeclaration(tu, fClassName, fBaseClasses, lineDelimiter);
                 text.append('\t');
                 text.append(code);
-                text.append(fLineDelimiter);
+                text.append(lineDelimiter);
             }
         }
     }
@@ -412,7 +499,7 @@ public class NewClassCodeGenerator {
         }
     }
 
-    private void addBaseClassIncludes(ITranslationUnit headerTU, StringBuffer text, IProgressMonitor monitor) throws CodeGeneratorException {
+    private void addBaseClassIncludes(ITranslationUnit headerTU, StringBuffer text, String lineDelimiter, IProgressMonitor monitor) throws CodeGeneratorException {
 
         monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.header.includePaths"), 100); //$NON-NLS-1$
         
@@ -465,7 +552,7 @@ public class NewClassCodeGenerator {
 			if (!(headerTU.getElementName().equals(includePath.toString()))) {
 			    String include = getIncludeString(includePath.toString(), true);
 			    text.append(include);
-			    text.append(fLineDelimiter);
+			    text.append(lineDelimiter);
 			}
         }
         
@@ -475,7 +562,7 @@ public class NewClassCodeGenerator {
 			if (!(headerTU.getElementName().equals(includePath.toString()))) {
 			    String include = getIncludeString(includePath.toString(), false);
 			    text.append(include);
-			    text.append(fLineDelimiter);
+			    text.append(lineDelimiter);
 			}
         }
         
@@ -649,9 +736,10 @@ public class NewClassCodeGenerator {
 	    return list;
     }
     
-    public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, String oldContents, IProgressMonitor monitor) {
+    public String constructSourceFileContent(ITranslationUnit sourceTU, ITranslationUnit headerTU, List publicMethods, List protectedMethods, List privateMethods, String oldContents, IProgressMonitor monitor) throws CoreException {
         monitor.beginTask(NewClassWizardMessages.getString("NewClassCodeGeneration.createType.task.source"), 150); //$NON-NLS-1$
         
+        String lineDelimiter= StubUtility.getLineDelimiterUsed(sourceTU);
         if (oldContents != null && oldContents.length() == 0)
             oldContents = null;
 
@@ -675,27 +763,27 @@ public class NewClassCodeGenerator {
     	        int insertionPos = getIncludeInsertionPos(oldContents);
     	        if (insertionPos == -1) {
     		        text.append(oldContents);
-                    text.append(fLineDelimiter);
+                    text.append(lineDelimiter);
                     text.append(includeString);
-                    text.append(fLineDelimiter);
+                    text.append(lineDelimiter);
     	        } else {
     	            text.append(oldContents.substring(0, insertionPos));
                     text.append(includeString);
-                    text.append(fLineDelimiter);
+                    text.append(lineDelimiter);
                     text.append(oldContents.substring(insertionPos));
     	        }
             } else {
                 text.append(includeString);
-                text.append(fLineDelimiter);
+                text.append(lineDelimiter);
             }
 
             // add a blank line
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
         } else if (oldContents != null) {
 	        text.append(oldContents);
 
 	        // add a blank line
-            text.append(fLineDelimiter);
+            text.append(lineDelimiter);
         }
         
         //TODO sort methods (eg constructor always first?)
@@ -705,19 +793,24 @@ public class NewClassCodeGenerator {
             // no methods
         } else {
             if (fNamespace != null) {
-                beginNamespace(text);
+                beginNamespace(text, lineDelimiter);
             }
 
-            addMethodBodies(publicMethods, protectedMethods, privateMethods, text, new SubProgressMonitor(monitor, 50));
+            addMethodBodies(sourceTU, publicMethods, protectedMethods, privateMethods, text, lineDelimiter, new SubProgressMonitor(monitor, 50));
 
             if (fNamespace != null) {
-                endNamespace(text);
+                endNamespace(text, lineDelimiter);
             }
         }
 
-        String newContents = text.toString();
+        String fileContent;
+        if (oldContents != null) {
+        	fileContent = text.toString();
+        } else {
+        	fileContent= CodeGeneration.getBodyFileContent(sourceTU, null, text.toString(), lineDelimiter);
+        }
         monitor.done();
-        return newContents;
+        return fileContent;
     }
     
     private String getHeaderIncludeString(ITranslationUnit sourceTU, ITranslationUnit headerTU, StringBuffer text, IProgressMonitor monitor) {
@@ -800,37 +893,37 @@ public class NewClassCodeGenerator {
         return -1;
     }
 
-    private void addMethodBodies(List publicMethods, List protectedMethods, List privateMethods, StringBuffer text, IProgressMonitor monitor) {
+    private void addMethodBodies(ITranslationUnit tu, List publicMethods, List protectedMethods, List privateMethods, StringBuffer text, String lineDelimiter, IProgressMonitor monitor) throws CoreException {
         if (!publicMethods.isEmpty()) {
             for (Iterator i = publicMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
-                String code = stub.createMethodImplementation(fClassName, fBaseClasses, fLineDelimiter);
+                String code = stub.createMethodImplementation(tu, fClassName, fBaseClasses, lineDelimiter);
                 text.append(code);
-                text.append(fLineDelimiter);
+                text.append(lineDelimiter);
                 if (i.hasNext())
-                    text.append(fLineDelimiter);
+                    text.append(lineDelimiter);
             }
         }
 
         if (!protectedMethods.isEmpty()) {
             for (Iterator i = protectedMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
-                String code = stub.createMethodImplementation(fClassName, fBaseClasses, fLineDelimiter);
+                String code = stub.createMethodImplementation(tu, fClassName, fBaseClasses, lineDelimiter);
                 text.append(code);
-                text.append(fLineDelimiter);
+                text.append(lineDelimiter);
                 if (i.hasNext())
-                    text.append(fLineDelimiter);
+                    text.append(lineDelimiter);
             }
         }
 
         if (!privateMethods.isEmpty()) {
             for (Iterator i = privateMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
-                String code = stub.createMethodImplementation(fClassName, fBaseClasses, fLineDelimiter);
+                String code = stub.createMethodImplementation(tu, fClassName, fBaseClasses, lineDelimiter);
                 text.append(code);
-                text.append(fLineDelimiter);
+                text.append(lineDelimiter);
                 if (i.hasNext())
-                    text.append(fLineDelimiter);
+                    text.append(lineDelimiter);
             }
         }
     }

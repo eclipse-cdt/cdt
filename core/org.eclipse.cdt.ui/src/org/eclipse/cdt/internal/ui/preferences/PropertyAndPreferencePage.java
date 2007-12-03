@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin, Google
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -20,20 +23,32 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 
 /**
  * Base for project property and preference pages
@@ -43,7 +58,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	private Control fConfigurationBlockControl;
 	private ControlEnableState fBlockEnableState;
 	private Link fChangeWorkspaceSettings;
-//	private SelectionButtonDialogField fUseProjectSettings;
+	private SelectionButtonDialogField fUseProjectSettings;
 	private IStatus fBlockStatus;
 	private Composite fParentComposite;
 	
@@ -73,48 +88,47 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		return fData == null || !Boolean.TRUE.equals(fData.get(DATA_NO_LINK));
 	}
 	
-// TODO: Project specific settings are not supported yet.
-//protected Label createDescriptionLabel(Composite parent) {
-//		fParentComposite= parent;
-//		if (isProjectPreferencePage()) {
-//			Composite composite= new Composite(parent, SWT.NONE);
-//			composite.setFont(parent.getFont());
-//			GridLayout layout= new GridLayout();
-//			layout.marginHeight= 0;
-//			layout.marginWidth= 0;
-//			layout.numColumns= 2;
-//			composite.setLayout(layout);
-//			composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-//			
-//			IDialogFieldListener listener= new IDialogFieldListener() {
-//				public void dialogFieldChanged(DialogField field) {
-//					enableProjectSpecificSettings(((SelectionButtonDialogField)field).isSelected());
-//				}
-//			};
-//			
-//			fUseProjectSettings= new SelectionButtonDialogField(SWT.CHECK);
-//			fUseProjectSettings.setDialogFieldListener(listener);
-//			fUseProjectSettings.setLabelText(PreferencesMessages.PropertyAndPreferencePage_useprojectsettings_label); 
-//			fUseProjectSettings.doFillIntoGrid(composite, 1);
-//			LayoutUtil.setHorizontalGrabbing(fUseProjectSettings.getSelectionButton(null));
-//			
-//			if (offerLink()) {
-//				fChangeWorkspaceSettings= createLink(composite, PreferencesMessages.PropertyAndPreferencePage_useworkspacesettings_change);
-//				fChangeWorkspaceSettings.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
-//			} else {
-//				LayoutUtil.setHorizontalSpan(fUseProjectSettings.getSelectionButton(null), 2);
-//			}
-//			
-//			Label horizontalLine= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-//			horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
-//			horizontalLine.setFont(composite.getFont());
-//		} else if (supportsProjectSpecificOptions() && offerLink()) {
-//			fChangeWorkspaceSettings= createLink(parent, PreferencesMessages.PropertyAndPreferencePage_showprojectspecificsettings_label);
-//			fChangeWorkspaceSettings.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
-//		}
-//
-//		return super.createDescriptionLabel(parent);
-//    }
+    protected Label createDescriptionLabel(Composite parent) {
+		fParentComposite= parent;
+		if (isProjectPreferencePage()) {
+			Composite composite= new Composite(parent, SWT.NONE);
+			composite.setFont(parent.getFont());
+			GridLayout layout= new GridLayout();
+			layout.marginHeight= 0;
+			layout.marginWidth= 0;
+			layout.numColumns= 2;
+			composite.setLayout(layout);
+			composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+			
+			IDialogFieldListener listener= new IDialogFieldListener() {
+				public void dialogFieldChanged(DialogField field) {
+					enableProjectSpecificSettings(((SelectionButtonDialogField)field).isSelected());
+				}
+			};
+			
+			fUseProjectSettings= new SelectionButtonDialogField(SWT.CHECK);
+			fUseProjectSettings.setDialogFieldListener(listener);
+			fUseProjectSettings.setLabelText(PreferencesMessages.PropertyAndPreferencePage_useprojectsettings_label);
+			fUseProjectSettings.doFillIntoGrid(composite, 1);
+			LayoutUtil.setHorizontalGrabbing(fUseProjectSettings.getSelectionButton(null));
+			
+			if (offerLink()) {
+				fChangeWorkspaceSettings= createLink(composite, PreferencesMessages.PropertyAndPreferencePage_useworkspacesettings_change);
+				fChangeWorkspaceSettings.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+			} else {
+				LayoutUtil.setHorizontalSpan(fUseProjectSettings.getSelectionButton(null), 2);
+			}
+			
+			Label horizontalLine= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+			horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 2, 1));
+			horizontalLine.setFont(composite.getFont());
+		} else if (supportsProjectSpecificOptions() && offerLink()) {
+			fChangeWorkspaceSettings= createLink(parent, PreferencesMessages.PropertyAndPreferencePage_showprojectspecificsettings_label);
+			fChangeWorkspaceSettings.setLayoutData(new GridData(SWT.END, SWT.CENTER, true, false));
+		}
+
+		return super.createDescriptionLabel(parent);
+    }
 	
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#createContents(Composite)
@@ -132,20 +146,33 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		fConfigurationBlockControl= createPreferenceContent(composite);
 		fConfigurationBlockControl.setLayoutData(data);
 
-//      TODO: Project specific settings are not supported yet.
-//		if (isProjectPreferencePage()) {
-//			boolean useProjectSettings= hasProjectSpecificOptions(getProject());
-//			enableProjectSpecificSettings(useProjectSettings);
-//		}
+		if (isProjectPreferencePage()) {
+			boolean useProjectSettings= hasProjectSpecificOptions(getProject());
+			enableProjectSpecificSettings(useProjectSettings);
+		}
 
 		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 
+	private Link createLink(Composite composite, String text) {
+		Link link= new Link(composite, SWT.NONE);
+		link.setFont(composite.getFont());
+		link.setText("<A>" + text + "</A>");  //$NON-NLS-1$//$NON-NLS-2$
+		link.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				doLinkActivated((Link) e.widget);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				doLinkActivated((Link) e.widget);
+			}
+		});
+		return link;
+	}
+	
 	protected boolean useProjectSettings() {
-//      TODO: Project specific settings are not supported yet.
-//		return isProjectPreferencePage() && fUseProjectSettings != null && fUseProjectSettings.isSelected();
-		return false;
+		return isProjectPreferencePage() && fUseProjectSettings != null && fUseProjectSettings.isSelected();
 	}
 	
 	protected boolean isProjectPreferencePage() {
@@ -154,6 +181,38 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	
 	protected IProject getProject() {
 		return fProject;
+	}
+	
+	/**
+	 * Handle link activation.
+	 * 
+	 * @param link the link
+	 */
+	final void doLinkActivated(Link link) {
+		Map data= new HashMap();
+		data.put(DATA_NO_LINK, Boolean.TRUE);
+		
+		if (isProjectPreferencePage()) {
+			openWorkspacePreferences(data);
+		} else {
+			HashSet projectsWithSpecifics= new HashSet();
+			try {
+				ICProject[] projects= CoreModel.getDefault().getCModel().getCProjects();
+				for (int i= 0; i < projects.length; i++) {
+					ICProject curr= projects[i];
+					if (hasProjectSpecificOptions(curr.getProject())) {
+						projectsWithSpecifics.add(curr);
+					}
+				}
+			} catch (CModelException e) {
+				// ignore
+			}
+			ProjectSelectionDialog dialog= new ProjectSelectionDialog(getShell(), projectsWithSpecifics);
+			if (dialog.open() == Window.OK) {
+				ICProject res= (ICProject) dialog.getFirstResult();
+				openProjectProperties(res.getProject(), data);
+			}
+		}
 	}
 	
 	protected final void openWorkspacePreferences(Object data) {
@@ -168,24 +227,25 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 		}
 	}
 	
-//	TODO: Project specific settings are not supported yet.
-//	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
-//		fUseProjectSettings.setSelection(useProjectSpecificSettings);
-//		enablePreferenceContent(useProjectSpecificSettings);
-//		updateLinkVisibility();
-//		doStatusChanged();
-//	}
-//	
-//	private void updateLinkVisibility() {
-//		if (fChangeWorkspaceSettings == null || fChangeWorkspaceSettings.isDisposed()) {
-//			return;
-//		}
-//		
-//		if (isProjectPreferencePage()) {
-//			fChangeWorkspaceSettings.setEnabled(!useProjectSettings());
-//		}
-//	}
 	
+	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
+		fUseProjectSettings.setSelection(useProjectSpecificSettings);
+		enablePreferenceContent(useProjectSpecificSettings);
+		updateLinkVisibility();
+		doStatusChanged();
+	}
+	
+	private void updateLinkVisibility() {
+		if (fChangeWorkspaceSettings == null || fChangeWorkspaceSettings.isDisposed()) {
+			return;
+		}
+		
+		if (isProjectPreferencePage()) {
+			fChangeWorkspaceSettings.setEnabled(!useProjectSettings());
+		}
+	}
+	
+
 	protected void setPreferenceContentStatus(IStatus status) {
 		fBlockStatus= status;
 		doStatusChanged();
@@ -201,7 +261,7 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 			public void statusChanged(IStatus status) {
 				setPreferenceContentStatus(status);
 			}
-		};		
+		};
 	}
 	
 	protected IStatus getPreferenceContentStatus() {
@@ -226,17 +286,16 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 			if (fBlockEnableState == null) {
 				fBlockEnableState= ControlEnableState.disable(fConfigurationBlockControl);
 			}
-		}	
+		}
 	}
 	
 	/*
 	 * @see org.eclipse.jface.preference.IPreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-//      TODO: Project specific settings are not supported yet.
-//		if (useProjectSettings()) {
-//			enableProjectSpecificSettings(false);
-//		}
+		if (useProjectSettings()) {
+			enableProjectSpecificSettings(false);
+		}
 		super.performDefaults();
 	}
 
@@ -284,4 +343,5 @@ public abstract class PropertyAndPreferencePage extends PreferencePage implement
 	protected Map getData() {
 		return fData;
 	}
+	
 }

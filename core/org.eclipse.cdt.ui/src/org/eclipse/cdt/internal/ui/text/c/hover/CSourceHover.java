@@ -84,11 +84,11 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.corext.util.Strings;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.text.CCodeReader;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.util.Strings;
 
 /**
  * A text hover presenting the source of the element under the cursor.
@@ -604,7 +604,7 @@ public class CSourceHover extends AbstractCEditorTextHover implements ITextHover
 				String firstLine= sourceLines[0];
 				if (!Character.isWhitespace(firstLine.charAt(0)))
 					sourceLines[0]= ""; //$NON-NLS-1$
-				Strings.trimIndentation(sourceLines, getTabWidth());
+				Strings.trimIndentation(sourceLines, getTabWidth(), getTabWidth());
 
 				if (!Character.isWhitespace(firstLine.charAt(0)))
 					sourceLines[0]= firstLine;

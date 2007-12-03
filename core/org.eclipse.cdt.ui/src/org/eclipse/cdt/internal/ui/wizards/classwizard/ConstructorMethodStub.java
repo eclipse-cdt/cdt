@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.ui.CodeGeneration;
 
 
 public final class ConstructorMethodStub extends AbstractMethodStub {
@@ -25,34 +29,42 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
         super(NAME, access, false, isInline);
     }
 
-    public String createMethodDeclaration(String className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
-        //TODO should use code templates
+    public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
         StringBuffer buf = new StringBuffer();
         buf.append(className);
         buf.append("()"); //$NON-NLS-1$
     	if (fIsInline) {
-    	    buf.append(" {}"); //$NON-NLS-1$
+            buf.append('{');
+            buf.append(lineDelimiter);
+        	String body= CodeGeneration.getConstructorBodyContent(tu, className, null, lineDelimiter);
+        	if (body != null) {
+        		buf.append(body);
+                buf.append(lineDelimiter);
+        	}
+            buf.append('}');
     	} else {
     	    buf.append(";"); //$NON-NLS-1$
     	}
         return buf.toString();
     }
 
-    public String createMethodImplementation(String className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
-        //TODO should use code templates
+    public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
         if (fIsInline) {
             return ""; //$NON-NLS-1$
         }
         StringBuffer buf = new StringBuffer();
         buf.append(className);
         buf.append("::"); //$NON-NLS-1$
-        buf.append(className.toString());
+        buf.append(className);
         buf.append("()"); //$NON-NLS-1$
         buf.append(lineDelimiter);
         buf.append('{');
         buf.append(lineDelimiter);
-        //buf.append("// TODO Auto-generated constructor stub");
-        //buf.append(lineDelimiter);
+    	String body= CodeGeneration.getConstructorBodyContent(tu, className, null, lineDelimiter);
+    	if (body != null) {
+    		buf.append(body);
+            buf.append(lineDelimiter);
+    	}
         buf.append('}');
         return buf.toString();
     }

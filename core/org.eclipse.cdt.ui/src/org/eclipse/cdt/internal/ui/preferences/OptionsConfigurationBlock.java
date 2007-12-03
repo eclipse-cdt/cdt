@@ -295,7 +295,7 @@ public abstract class OptionsConfigurationBlock {
 	}
 	
 	
-	public final boolean hasProjectSpecificOptions(IProject project) {
+	public boolean hasProjectSpecificOptions(IProject project) {
 		if (project != null) {
 			IScopeContext projectContext= new ProjectScope(project);
 			Key[] allKeys= fAllKeys;

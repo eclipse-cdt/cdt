@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
@@ -30,14 +31,7 @@ public class NewSourceFileGenerator {
     //TODO these should all be configurable in prefs
     private static final String HEADER_EXT = ".h"; //$NON-NLS-1$
     private static final String SOURCE_EXT = ".cpp"; //$NON-NLS-1$
-    private static boolean fUseIncludeGuard = true;
-    private static final String fLineDelimiter = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-    public static String getLineDelimiter() {
-        //TODO line delimiter part of code template prefs?
-        return fLineDelimiter;
-    }
-    
     public static String generateHeaderFileNameFromClass(String className) {
         //TODO eventually make this a prefs option - filename pattern
         return className + HEADER_EXT;
@@ -49,55 +43,14 @@ public class NewSourceFileGenerator {
     }
 
     public static IFile createHeaderFile(IPath filePath, boolean force, IProgressMonitor monitor) throws CoreException {
-        //TODO should use code templates
-        ByteArrayInputStream stream;
-        if (fUseIncludeGuard) {
-            String includeGuardSymbol = generateIncludeGuardSymbol(filePath);
-            StringBuffer buf = new StringBuffer();
-            buf.append("#ifndef "); //$NON-NLS-1$
-            buf.append(includeGuardSymbol);
-            buf.append(fLineDelimiter);
-            buf.append("#define "); //$NON-NLS-1$
-            buf.append(includeGuardSymbol);
-            buf.append(fLineDelimiter);
-            buf.append(fLineDelimiter);
-            buf.append("#endif /*"); //$NON-NLS-1$
-            buf.append(includeGuardSymbol);
-            buf.append("*/"); //$NON-NLS-1$
-            buf.append(fLineDelimiter);
-            stream = new ByteArrayInputStream(buf.toString().getBytes());
-        } else {
-            stream = new ByteArrayInputStream(new byte[0]);
-        }
-		return createNewFile(filePath, stream, force, monitor);
+		return createEmptyFile(filePath, force, monitor);
     }
     
-    private static String generateIncludeGuardSymbol(IPath headerPath) {
-        //TODO eventually make this a prefs option - filename pattern or
-        // unique id/incremental value
-        String name = headerPath.lastSegment();
-        if (name != null) {
-            //convert to upper case and remove invalid characters
-            //eg convert foo.h --> _FOO_H_
-            StringBuffer buf = new StringBuffer();
-            // Do not do this, leading underscores are discourage by the std.
-            //buf.append('_');
-            for (int i = 0; i < name.length(); ++i) {
-                char ch = name.charAt(i);
-                if (Character.isLetterOrDigit(ch)) {
-                    buf.append(Character.toUpperCase(ch));
-                } else if (ch == '.' || ch == '_') {
-                    buf.append('_');
-                }
-            }
-            buf.append('_');
-            return buf.toString();
-        }
-        return null;
+    public static IFile createSourceFile(IPath filePath, boolean force, IProgressMonitor monitor) throws CoreException {
+		return createEmptyFile(filePath, force, monitor);
     }
 
-    public static IFile createSourceFile(IPath filePath, boolean force, IProgressMonitor monitor) throws CoreException {
-        //TODO should use code templates
+    public static IFile createEmptyFile(IPath filePath, boolean force, IProgressMonitor monitor) throws CoreException {
         ByteArrayInputStream stream = new ByteArrayInputStream(new byte[0]);
 		return createNewFile(filePath, stream, force, monitor);
     }
@@ -106,7 +59,7 @@ public class NewSourceFileGenerator {
         int totalWork = 100;
         int createFileWork = totalWork;
 
-        monitor.beginTask(NewFileWizardMessages.getString("NewSourceFileGenerator.createFile.task"), totalWork); //$NON-NLS-1$
+        monitor.beginTask(NewFileWizardMessages.NewSourceFileGenerator_createFile_task, totalWork); 
 
         IWorkspaceRoot root = CUIPlugin.getWorkspace().getRoot();
         IFile newFile = root.getFileForLocation(newFilePath);

@@ -118,7 +118,7 @@ public class CFormatter {
 		if (fUseCodeFormatter) {
 			// try to format and fall back to indenting
 			try {
-				format(document, (TranslationUnitContext) context);
+				format(document);
 				return;
 			} catch (BadLocationException e) {
 			} catch (MalformedTreeException e) {
@@ -214,7 +214,7 @@ public class CFormatter {
 		return false;
 	}
 
-	private void format(IDocument doc, TranslationUnitContext context) throws BadLocationException {
+	private void format(IDocument doc) throws BadLocationException {
 		Map options;
 		if (fProject != null)
 			options= fProject.getOptions(true); 

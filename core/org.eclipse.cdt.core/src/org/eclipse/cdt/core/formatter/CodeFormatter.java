@@ -44,9 +44,14 @@ public abstract class CodeFormatter {
 	public static final int K_CLASS_BODY_DECLARATIONS = 0x04;
 	
 	/**
-	 * Kind used to format a compilation unit
+	 * Kind used to format a compilation unit.
+	 * @deprecated Use #K_TRANSLATION_UNIT
 	 */
 	public static final int K_COMPILATION_UNIT = 0x08;
+	/**
+	 * Kind used to format a translation unit.
+	 */
+	public static final int K_TRANSLATION_UNIT = 0x08;
 
 	/**
 	 * Kind used to format a single-line comment

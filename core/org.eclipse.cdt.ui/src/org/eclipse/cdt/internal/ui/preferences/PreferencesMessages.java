@@ -294,7 +294,72 @@ public final class PreferencesMessages extends NLS {
 	public static String CPluginPreferencePage_structuralParseMode_label;
 	public static String CPluginPreferencePage_note;
 	public static String CPluginPreferencePage_performanceHint;
-	
+
+	public static String PropertyAndPreferencePage_useworkspacesettings_change;
+	public static String PropertyAndPreferencePage_showprojectspecificsettings_label;
+	public static String PropertyAndPreferencePage_useprojectsettings_label;
+
+	public static String ProjectSelectionDialog_title;
+	public static String ProjectSelectionDialog_desciption;
+	public static String ProjectSelectionDialog_filter;
+
+	public static String CodeTemplatesPreferencePage_title;
+	public static String CodeTemplateBlock_link_tooltip;
+	public static String CodeTemplateBlock_templates_comment_node;
+	public static String CodeTemplateBlock_templates_code_node;
+	public static String CodeTemplateBlock_templates_file_node;
+	public static String CodeTemplateBlock_methodstub_label;
+	public static String CodeTemplateBlock_constructorstub_label;
+	public static String CodeTemplateBlock_destructorstub_label;
+	public static String CodeTemplateBlock_typecomment_label;
+	public static String CodeTemplateBlock_fieldcomment_label;
+	public static String CodeTemplateBlock_filecomment_label;
+	public static String CodeTemplateBlock_methodcomment_label;
+	public static String CodeTemplateBlock_constructorcomment_label;
+	public static String CodeTemplateBlock_destructorcomment_label;
+	public static String CodeTemplateBlock_templates_new_button;
+	public static String CodeTemplateBlock_templates_edit_button;
+	public static String CodeTemplateBlock_templates_remove_button;
+	public static String CodeTemplateBlock_templates_import_button;
+	public static String CodeTemplateBlock_templates_export_button;
+	public static String CodeTemplateBlock_templates_exportall_button;
+	public static String CodeTemplateBlock_createcomment_label;
+	public static String CodeTemplateBlock_templates_label;
+	public static String CodeTemplateBlock_preview;
+	public static String CodeTemplateBlock_import_title;
+	public static String CodeTemplateBlock_import_extension;
+	public static String CodeTemplateBlock_export_title;
+	public static String CodeTemplateBlock_export_filename;
+	public static String CodeTemplateBlock_export_extension;
+	public static String CodeTemplateBlock_export_exists_title;
+	public static String CodeTemplateBlock_export_exists_message;
+	public static String CodeTemplateBlock_error_read_title;
+	public static String CodeTemplateBlock_error_read_message;
+	public static String CodeTemplateBlock_error_parse_message;
+	public static String CodeTemplateBlock_error_write_title;
+	public static String CodeTemplateBlock_error_write_message;
+	public static String CodeTemplateBlock_export_error_title;
+	public static String CodeTemplateBlock_export_error_hidden;
+	public static String CodeTemplateBlock_export_error_canNotWrite;
+
+	public static String EditTemplateDialog_error_noname;
+	public static String EditTemplateDialog_error_invalidName;
+	public static String EditTemplateDialog_title_new;
+	public static String EditTemplateDialog_title_edit;
+	public static String EditTemplateDialog_name;
+	public static String EditTemplateDialog_description;
+	public static String EditTemplateDialog_contextType;
+	public static String EditTemplateDialog_pattern;
+	public static String EditTemplateDialog_insert_variable;
+	public static String EditTemplateDialog_undo;
+	public static String EditTemplateDialog_redo;
+	public static String EditTemplateDialog_cut;
+	public static String EditTemplateDialog_copy;
+	public static String EditTemplateDialog_paste;
+	public static String EditTemplateDialog_select_all;
+	public static String EditTemplateDialog_content_assist;
+	public static String EditTemplateDialog_autoinsert;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, PreferencesMessages.class);
 	}

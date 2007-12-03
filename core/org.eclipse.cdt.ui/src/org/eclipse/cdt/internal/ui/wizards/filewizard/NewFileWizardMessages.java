@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,54 +7,75 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
+import org.eclipse.osgi.util.NLS;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+public final class NewFileWizardMessages extends NLS {
 
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.wizards.filewizard.NewFileWizardMessages";//$NON-NLS-1$
 
-public class NewFileWizardMessages {
-
-	private static final String RESOURCE_BUNDLE= NewFileWizardMessages.class.getName();
-	private static ResourceBundle fgResourceBundle;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-		} catch (MissingResourceException x) {
-			fgResourceBundle = null;
-		}
-	}
-	
 	private NewFileWizardMessages() {
+		// Do not instantiate
 	}
-		
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
+
+	public static String AbstractFileCreationWizard_title;
+	public static String AbstractFileCreationWizardPage_description;
+	public static String AbstractFileCreationWizardPage_error_SelectedProjectError;
+	public static String AbstractFileCreationWizardPage_error_DefaultSourceFolderError;
+	public static String AbstractFileCreationWizardPage_error_NotAvailableForNonCProjects;
+	public static String AbstractFileCreationWizardPage_sourceFolder_label;
+	public static String AbstractFileCreationWizardPage_sourceFolder_button;
+	public static String AbstractFileCreationWizardPage_ChooseSourceFolderDialog_title;
+	public static String AbstractFileCreationWizardPage_ChooseSourceFolderDialog_description;
+	public static String AbstractFileCreationWizardPage_error_EnterSourceFolderName;
+	public static String AbstractFileCreationWizardPage_error_NotAFolder;
+	public static String AbstractFileCreationWizardPage_error_NotASourceFolder;
+	public static String AbstractFileCreationWizardPage_error_ProjectClosed;
+	public static String AbstractFileCreationWizardPage_error_FolderDoesNotExist;
+	public static String AbstractFileCreationWizardPage_template_label;
+	public static String AbstractFileCreationWizardPage_configure_label;
+	public static String AbstractFileCreationWizardPage_noTemplate;
+	public static String AbstractFileCreationWizardPage_warning_NotACProject;
+	public static String AbstractFileCreationWizardPage_warning_NotInACProject;
+	public static String NewHeaderFileCreationWizard_title;
+	public static String NewSourceFileCreationWizard_title;
+	public static String NewHeaderFileCreationWizardPage_title;
+	public static String NewHeaderFileCreationWizardPage_description;
+	public static String NewHeaderFileCreationWizardPage_headerFile_label;
+	public static String NewHeaderFileCreationWizardPage_error_EnterFileName;
+	public static String NewHeaderFileCreationWizardPage_error_FileNotInSourceFolder;
+	public static String NewHeaderFileCreationWizardPage_error_FileExists;
+	public static String NewHeaderFileCreationWizardPage_error_MatchingFolderExists;
+	public static String NewHeaderFileCreationWizardPage_error_MatchingResourceExists;
+	public static String NewHeaderFileCreationWizardPage_error_FolderDoesNotExist;
+	public static String NewHeaderFileCreationWizardPage_warning_FileNameDiscouraged;
+	public static String NewHeaderFileCreationWizardPage_error_InvalidFileName;
+	public static String NewSourceFileCreationWizardPage_title;
+	public static String NewSourceFileCreationWizardPage_description;
+	public static String NewSourceFileCreationWizardPage_sourceFile_label;
+	public static String NewSourceFileCreationWizardPage_error_EnterFileName;
+	public static String NewSourceFileCreationWizardPage_error_FileNotInSourceFolder;
+	public static String NewSourceFileCreationWizardPage_error_FileExists;
+	public static String NewSourceFileCreationWizardPage_error_MatchingFolderExists;
+	public static String NewSourceFileCreationWizardPage_error_MatchingResourceExists;
+	public static String NewSourceFileCreationWizardPage_error_FolderDoesNotExist;
+	public static String NewSourceFileCreationWizardPage_warning_FileNameDiscouraged;
+	public static String NewSourceFileCreationWizardPage_error_InvalidFileName;
+	public static String NewSourceFileGenerator_createFile_task;
+
+	public static String NewFileFromTemplateWizard_pageTitle;
+	public static String NewFileFromTemplateWizard_description;
+	public static String NewFileFromTemplateWizard_shellTitle;
+	public static String NewFileFromTemplateWizard_errorMessage;
 	
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		return MessageFormat.format(getString(key), new Object[] { arg });
-	}
+	public static String WizardNewFileFromTemplateCreationPage_configure_label;
+	public static String WizardNewFileFromTemplateCreationPage_noTemplate_name;
+	public static String WizardNewFileFromTemplateCreationPage_useTemplate_label;
 
-	/**
-	 * Gets a string from the resource bundle and formats it with arguments
-	 */	
-	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, NewFileWizardMessages.class);
 	}
-
 }

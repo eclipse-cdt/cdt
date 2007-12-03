@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,11 +28,19 @@ import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 
 public class CSourcePreviewerUpdater {
 
-	private CSourcePreviewerUpdater() {
+	/**
+	 * Handles editor font changes for source preview viewers.
+	 * 
+	 * @param viewer
+	 * @param configuration
+	 * @param store
+	 */
+	public CSourcePreviewerUpdater(SourceViewer viewer, CodeTemplateSourceViewerConfiguration configuration, IPreferenceStore store) {
+		registerPreviewer(viewer, configuration, store);
 	}
 
 	/**
-	 * Creates a source preview updater for the given viewer, configuration and preference store.
+	 * Registers a source preview updater for the given viewer, configuration and preference store.
 	 *
 	 * @param viewer the viewer
 	 * @param configuration the configuration

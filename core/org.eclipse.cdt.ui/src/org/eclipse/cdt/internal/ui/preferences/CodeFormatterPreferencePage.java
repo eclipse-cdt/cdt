@@ -79,15 +79,15 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		return fConfigurationBlock.hasProjectSpecificOptions(project);
 	}
 	
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#enableProjectSpecificSettings(boolean)
-//	 */
-//	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
-//		super.enableProjectSpecificSettings(useProjectSpecificSettings);
-//		if (fConfigurationBlock != null) {
-//			fConfigurationBlock.enableProjectSpecificSettings(useProjectSpecificSettings);
-//		}
-//	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#enableProjectSpecificSettings(boolean)
+	 */
+	protected void enableProjectSpecificSettings(boolean useProjectSpecificSettings) {
+		super.enableProjectSpecificSettings(useProjectSpecificSettings);
+		if (fConfigurationBlock != null) {
+			fConfigurationBlock.enableProjectSpecificSettings(useProjectSpecificSettings);
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPreferencePageID()
@@ -100,7 +100,9 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 	 * @see org.eclipse.cdt.internal.ui.preferences.PropertyAndPreferencePage#getPropertyPageID()
 	 */
 	protected String getPropertyPageID() {
-		return PROP_ID;
+		return null;
+		// project specific settings unsupported for now
+//		return PROP_ID;
 	}
 	
 	/* (non-Javadoc)

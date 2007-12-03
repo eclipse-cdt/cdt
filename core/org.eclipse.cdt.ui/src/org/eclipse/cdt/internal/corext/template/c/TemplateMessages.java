@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,53 +8,65 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QnX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-public class TemplateMessages {
+public final class TemplateMessages extends NLS {
 
-	private static final String RESOURCE_BUNDLE= TemplateMessages.class.getName();
-	private static ResourceBundle fgResourceBundle;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-		} catch (MissingResourceException x) {
-			fgResourceBundle = null;
-		}
-	}
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.corext.template.c.TemplateMessages";//$NON-NLS-1$
+
 	private TemplateMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
+	public static String CContextType_variable_description_file;
+	public static String CContextType_variable_description_array;
+	public static String CContextType_variable_description_array_type;
+	public static String CContextType_variable_description_array_element;
+	public static String CContextType_variable_description_index;
+	public static String CContextType_variable_description_collector;
+	public static String CContextType_variable_description_iterator;
+	public static String CContextType_variable_description_arguments;
+	public static String CContextType_variable_description_enclosing_method;
+	public static String CContextType_variable_description_enclosing_type;
+	public static String CContextType_variable_description_enclosing_project;
+	public static String CContextType_variable_description_enclosing_method_arguments;
+	public static String CContextType_variable_description_return_type;
+	public static String CContextType_variable_description_todo;
 	
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		return MessageFormat.format(getString(key), new Object[] { arg });
-	}
+	public static String CodeTemplateContextType_variable_description_todo;
+	public static String CodeTemplateContextType_variable_description_typedeclaration;
+	public static String CodeTemplateContextType_variable_description_fieldname;
+	public static String CodeTemplateContextType_variable_description_fieldtype;
+	public static String CodeTemplateContextType_variable_description_typecomment;
+	public static String CodeTemplateContextType_variable_description_enclosingtype;
+	public static String CodeTemplateContextType_variable_description_typename;
+	public static String CodeTemplateContextType_variable_description_include_guard_symbol;
+	public static String CodeTemplateContextType_variable_description_enclosingmethod;
+	public static String CodeTemplateContextType_variable_description_bodystatement;
+	public static String CodeTemplateContextType_variable_description_returntype;
+	public static String CodeTemplateContextType_variable_description_filecomment;
+	public static String CodeTemplateContextType_validate_invalidcomment;
+	public static String CodeTemplateContextType_csource_name;
+	public static String CodeTemplateContextType_cheader_name;
+	public static String CodeTemplateContextType_cppsource_name;
+	public static String CodeTemplateContextType_cppheader_name;
+	public static String CodeTemplateContextType_asmsource_name;
+	
+	public static String FileTemplateContextType__variable_description_eclipse;
+	public static String FileTemplateContextType_validate_unknownvariable;
+	public static String FileTemplateContextType_validate_missingvariable;
+	public static String FileTemplateContextType_variable_description_date;
+	public static String FileTemplateContextType_variable_description_filename;
+	public static String FileTemplateContextType_variable_description_filebase;
+	public static String FileTemplateContextType_variable_description_fileloc;
+	public static String FileTemplateContextType_variable_description_filepath;
+	public static String FileTemplateContextType_variable_description_projectname;
 
-
-	/**
-	 * Gets a string from the resource bundle and formats it with arguments
-	 */	
-	public static String getFormattedString(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, TemplateMessages.class);
 	}
 }
-
-

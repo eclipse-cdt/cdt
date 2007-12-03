@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,15 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.ui.CodeGeneration;
 
 
 public final class DestructorMethodStub extends AbstractMethodStub {
@@ -25,8 +30,7 @@ public final class DestructorMethodStub extends AbstractMethodStub {
         super(NAME, access, isVirtual, isInline);
     }
 
-    public String createMethodDeclaration(String className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
-        //TODO should use code templates
+    public String createMethodDeclaration(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
         StringBuffer buf = new StringBuffer();
     	if (fIsVirtual){
     	    buf.append("virtual "); //$NON-NLS-1$
@@ -35,15 +39,21 @@ public final class DestructorMethodStub extends AbstractMethodStub {
     	buf.append(className);
     	buf.append("()"); //$NON-NLS-1$
     	if (fIsInline) {
-    	    buf.append(" {}"); //$NON-NLS-1$
+            buf.append('{');
+            buf.append(lineDelimiter);
+        	String body= CodeGeneration.getDestructorBodyContent(tu, className, null, lineDelimiter);
+        	if (body != null) {
+        		buf.append(body);
+                buf.append(lineDelimiter);
+        	}
+            buf.append('}');
     	} else {
     	    buf.append(";"); //$NON-NLS-1$
     	}
         return buf.toString();
     }
 
-    public String createMethodImplementation(String className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
-        //TODO should use code templates
+    public String createMethodImplementation(ITranslationUnit tu, String className, IBaseClassInfo[] baseClasses, String lineDelimiter) throws CoreException {
     	if (fIsInline) {
     		return ""; //$NON-NLS-1$
     	}
@@ -53,11 +63,14 @@ public final class DestructorMethodStub extends AbstractMethodStub {
     	buf.append(className);
     	buf.append("()"); //$NON-NLS-1$
     	buf.append(lineDelimiter);
-    	buf.append('{');
-    	buf.append(lineDelimiter);
-    	//buf.append("// TODO Auto-generated destructor stub");
-    	//buf.append(lineDelimiter);
-    	buf.append('}');
+        buf.append('{');
+        buf.append(lineDelimiter);
+    	String body= CodeGeneration.getDestructorBodyContent(tu, className, null, lineDelimiter);
+    	if (body != null) {
+    		buf.append(body);
+            buf.append(lineDelimiter);
+    	}
+        buf.append('}');
     	return buf.toString();
     }
 

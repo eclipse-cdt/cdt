@@ -241,6 +241,3 @@ public class ContentAssistPreference {
 		changeCProcessor(assistant, store, p);
 	}
 }
-
-
-

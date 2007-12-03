@@ -70,7 +70,9 @@ import org.eclipse.cdt.core.model.IWorkingCopyProvider;
 
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
 import org.eclipse.cdt.internal.corext.template.c.CommentContextType;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
 
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
@@ -95,8 +97,6 @@ import org.eclipse.cdt.internal.ui.viewsupport.CDTContextActivator;
 
 public class CUIPlugin extends AbstractUIPlugin {
 
-	private ISharedTextColors fSharedTextColors;
-
 	public static final String PLUGIN_ID = "org.eclipse.cdt.ui"; //$NON-NLS-1$
 	public static final String PLUGIN_CORE_ID = "org.eclipse.cdt.core"; //$NON-NLS-1$
 	public static final String EDITOR_ID = PLUGIN_ID + ".editor.CEditor"; //$NON-NLS-1$
@@ -118,26 +118,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private static CUIPlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
-	private ImageDescriptorRegistry fImageDescriptorRegistry;
-	private CEditorTextHoverDescriptor[] fCEditorTextHoverDescriptors;
-
-	/**
-	 * The extension point registry for the <code>org.eclipse.cdt.ui.foldingStructureProviders</code>
-	 * extension point.
-	 */
-	private CFoldingStructureProviderRegistry fFoldingStructureProviderRegistry;
-
-	/**
-	 * The combined preference store.
-	 * @since 3.0
-	 */
-	private IPreferenceStore fCombinedPreferenceStore;
-
-	static String SEPARATOR = System.getProperty("file.separator"); //$NON-NLS-1$
 
 	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 
-	
 	/**
 	 * The id of the C perspective
 	 * (value <code>"org.eclipse.cdt.ui.CPerspective"</code>).
@@ -211,6 +194,12 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public static final String CVIEWS_SCOPE = "org.eclipse.cdt.ui.cViewScope"; //$NON-NLS-1$
 	
+	/**
+	 * The key to store customized code templates. 
+	 * @since 5.0
+	 */
+	private static final String CODE_TEMPLATES_KEY= "org.eclipse.cdt.ui.text.custom_code_templates"; //$NON-NLS-1$
+
 	// -------- static methods --------
 
 	static {
@@ -337,6 +326,23 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	// ------ CUIPlugin
 
+
+	private ISharedTextColors fSharedTextColors;
+	private ImageDescriptorRegistry fImageDescriptorRegistry;
+	private CEditorTextHoverDescriptor[] fCEditorTextHoverDescriptors;
+
+	/**
+	 * The extension point registry for the <code>org.eclipse.cdt.ui.foldingStructureProviders</code>
+	 * extension point.
+	 */
+	private CFoldingStructureProviderRegistry fFoldingStructureProviderRegistry;
+
+	/**
+	 * The combined preference store.
+	 * @since 3.0
+	 */
+	private IPreferenceStore fCombinedPreferenceStore;
+
 	private CoreModel fCoreModel;
 	private CDocumentProvider fDocumentProvider;
 	private ExternalSearchDocumentProvider fExternalDocumentProvider;
@@ -367,6 +373,17 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	private ASTProvider fASTProvider;
 
+	/** 
+	 * The code template context type registry for the C editor. 
+	 * @since 5.0
+	 */
+	private ContextTypeRegistry fCodeTemplateContextTypeRegistry;
+	
+	/**
+	 * The code template store for the C editor. 
+	 * @since 5.0
+	 */
+	private TemplateStore fCodeTemplateStore;
 
 	public CUIPlugin() {
 		fgCPlugin = this;
@@ -782,10 +799,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the registry of the extensions to the <code>org.eclipse.jdt.ui.javaFoldingStructureProvider</code>
+	 * Returns the registry of the extensions to the <code>org.eclipse.cdt.ui.foldingStructureProviders</code>
 	 * extension point.
 	 * 
-	 * @return the registry of contributed <code>IJavaFoldingStructureProvider</code>
+	 * @return the registry of contributed <code>ICFoldingStructureProvider</code>
 	 * @since 3.0
 	 */
 	public synchronized CFoldingStructureProviderRegistry getFoldingStructureProviderRegistry() {
@@ -827,6 +844,48 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fTemplateStore;
 	}
 
+	/**
+	 * Returns the template context type registry for the code generation
+	 * templates.
+	 * 
+	 * @return the template context type registry for the code generation
+	 *         templates
+	 * @since 5.0
+	 */
+	public ContextTypeRegistry getCodeTemplateContextRegistry() {
+		if (fCodeTemplateContextTypeRegistry == null) {
+			fCodeTemplateContextTypeRegistry= new ContributionContextTypeRegistry();
+			
+			CodeTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);
+			FileTemplateContextType.registerContextTypes(fCodeTemplateContextTypeRegistry);
+		}
+
+		return fCodeTemplateContextTypeRegistry;
+	}
+	
+	/**
+	 * Returns the template store for the code generation templates.
+	 * 
+	 * @return the template store for the code generation templates
+	 * @since 5.0
+	 */
+	public TemplateStore getCodeTemplateStore() {
+		if (fCodeTemplateStore == null) {
+			IPreferenceStore store= getPreferenceStore();
+			fCodeTemplateStore= new ContributionTemplateStore(getCodeTemplateContextRegistry(), store, CODE_TEMPLATES_KEY);
+
+			try {
+				fCodeTemplateStore.load();
+			} catch (IOException e) {
+				log(e);
+			}
+			
+			fCodeTemplateStore.startListeningForPreferenceChanges();
+		}
+		
+		return fCodeTemplateStore;
+	}
+	
 	/**
 	 * Returns the AST provider.
 	 * 

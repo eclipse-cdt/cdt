@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.dialogfields;
 
@@ -40,6 +41,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
@@ -56,7 +58,7 @@ public class TreeListDialogField extends DialogField {
 	protected ILabelProvider fLabelProvider;
 	protected TreeViewerAdapter fTreeViewerAdapter;
 	protected List fElements;
-	protected ViewerSorter fViewerSorter;
+	protected ViewerComparator fViewerComparator;
 
 	protected String[] fButtonLabels;
 	private Button[] fButtonControls;
@@ -149,9 +151,21 @@ public class TreeListDialogField extends DialogField {
 	 * 
 	 * @param viewerSorter
 	 *        The viewerSorter to set
+	 *        
+	 * @deprecated Use {@link #setViewerComparator(ViewerComparator)} instead.
 	 */
 	public void setViewerSorter(ViewerSorter viewerSorter) {
-		fViewerSorter = viewerSorter;
+		setViewerComparator(viewerSorter);
+	}
+
+	/**
+	 * Sets the viewerComparator.
+	 * 
+	 * @param viewerComparator
+	 *        The viewerComparator to set
+	 */
+	public void setViewerComparator(ViewerComparator viewerComparator) {
+		fViewerComparator = viewerComparator;
 	}
 
 	public void setTreeExpansionLevel(int level) {
@@ -274,8 +288,8 @@ public class TreeListDialogField extends DialogField {
 			fTree.setInput(fParentElement);
 			fTree.expandToLevel(fTreeExpandLevel);
 
-			if (fViewerSorter != null) {
-				fTree.setSorter(fViewerSorter);
+			if (fViewerComparator != null) {
+				fTree.setComparator(fViewerComparator);
 			}
 
 			fTreeControl.setEnabled(isEnabled());
@@ -666,9 +680,9 @@ public class TreeListDialogField extends DialogField {
 
 	public void selectFirstElement() {
 		Object element = null;
-		if (fViewerSorter != null) {
+		if (fViewerComparator != null) {
 			Object[] arr = fElements.toArray();
-			fViewerSorter.sort(fTree, arr);
+			fViewerComparator.sort(fTree, arr);
 			if (arr.length > 0) {
 				element = arr[0];
 			}

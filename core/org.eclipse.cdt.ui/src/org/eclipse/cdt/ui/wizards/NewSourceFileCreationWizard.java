@@ -22,7 +22,7 @@ public class NewSourceFileCreationWizard extends AbstractFileCreationWizard {
         super();
         setDefaultPageImageDescriptor(CPluginImages.DESC_WIZBAN_NEW_SOURCEFILE);
         setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
-        setWindowTitle(NewFileWizardMessages.getString("NewSourceFileCreationWizard.title")); //$NON-NLS-1$
+        setWindowTitle(NewFileWizardMessages.NewSourceFileCreationWizard_title); 
     }
     
     /*

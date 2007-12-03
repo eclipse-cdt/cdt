@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
@@ -88,7 +89,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		fOutputList.setDialogFieldListener(adapter);
 		fOutputList.setLabelText(CPathEntryMessages.getString("OutputPathEntryPage.folders.label")); //$NON-NLS-1$
 
-		fOutputList.setViewerSorter(new CPElementSorter());
+		fOutputList.setViewerComparator(new CPElementSorter());
 		fOutputList.enableButton(IDX_EDIT, false);
 		fOutputList.enableButton(IDX_REMOVE, false);
 		fOutputList.setTreeExpansionLevel(2);

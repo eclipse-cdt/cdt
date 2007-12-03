@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 QNX Software Systems and others.
+ * Copyright (c) 2004, 2007 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
@@ -88,7 +89,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		fFoldersList.setDialogFieldListener(adapter);
 		fFoldersList.setLabelText(CPathEntryMessages.getString("SourcePathEntryPage.folders.label")); //$NON-NLS-1$
 
-		fFoldersList.setViewerSorter(new CPElementSorter());
+		fFoldersList.setViewerComparator(new CPElementSorter());
 		fFoldersList.enableButton(IDX_EDIT, false);
 		fFoldersList.enableButton(IDX_REMOVE, false);
 		fFoldersList.setTreeExpansionLevel(2);

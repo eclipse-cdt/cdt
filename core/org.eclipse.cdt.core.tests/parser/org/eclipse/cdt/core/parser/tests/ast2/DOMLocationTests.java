@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
@@ -60,6 +61,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -735,4 +738,18 @@ public class DOMLocationTests extends AST2BaseTest {
     	assertEquals("return integer;", compound.getStatements()[1].getRawSignature());
     }
     
+	public void testTemplateIdNameLocation_Bug211444() throws Exception {
+		IASTTranslationUnit tu = parse( "Foo::template test<T> bar;", ParserLanguage.CPP ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+		tu.accept( col );
+		
+		ICPPASTQualifiedName qn = (ICPPASTQualifiedName) col.getName(0);
+		IASTName[] ns = qn.getNames();
+		assertTrue(ns[1] instanceof ICPPASTTemplateId);
+		ICPPASTTemplateId templateId= (ICPPASTTemplateId) ns[1];
+		IASTName templateIdName= templateId.getTemplateName();
+		
+		assertEquals("test", templateIdName.getRawSignature()); //$NON-NLS-1$
+	}
+	
 }

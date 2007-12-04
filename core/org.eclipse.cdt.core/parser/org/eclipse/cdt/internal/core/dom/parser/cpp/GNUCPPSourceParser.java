@@ -151,6 +151,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.parser.SimpleDeclarationStrategy;
 import org.eclipse.cdt.internal.core.parser.TemplateParameterManager;
+import org.eclipse.cdt.internal.core.parser.token.BasicTokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.OperatorTokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 
@@ -2582,10 +2583,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         ICPPASTTemplateId result = new CPPASTTemplateId();
         ((ASTNode) result).setOffsetAndLength(duple.getStartOffset(), duple
                 .getEndOffset() - duple.getStartOffset());
-        char[] image = duple.extractNameFromTemplateId();
-        CPPASTName templateIdName = (CPPASTName) createName();
-        templateIdName.setOffsetAndLength(duple.getStartOffset(), image.length);
-        templateIdName.setName(image);
+        CPPASTName templateIdName= null;
+        if (duple instanceof BasicTokenDuple) {
+        	ITokenDuple nameDuple= ((BasicTokenDuple)duple).getTemplateIdNameTokenDuple();
+        	templateIdName= (CPPASTName) createName(nameDuple);
+        }
+        else {
+        	templateIdName= (CPPASTName) createName();
+            char[] image = duple.extractNameFromTemplateId();
+        	templateIdName.setOffsetAndLength(duple.getStartOffset(), image.length);
+            templateIdName.setName(image);
+        }
         result.setTemplateName(templateIdName);
         if (duple.getTemplateIdArgLists() != null) {
             List args = duple.getTemplateIdArgLists()[0];

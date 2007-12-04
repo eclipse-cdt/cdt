@@ -234,7 +234,7 @@ public class BasicTokenDuple implements ITokenDuple {
 			if( prev != null && prev.getType() != IToken.tCOLONCOLON && 
 								prev.getType() != IToken.tIDENTIFIER && 
 								prev.getType() != IToken.tLT &&
-								prev.getType() != IToken.tCOMPL &&
+								prev.getType() != IToken.tBITCOMPLEMENT &&
 								iter.getType() != IToken.tGT && 
 								prev.getType() != IToken.tLBRACKET && 
 								iter.getType() != IToken.tRBRACKET && 
@@ -267,7 +267,7 @@ public class BasicTokenDuple implements ITokenDuple {
 			    prev.getType() != IToken.tCOLONCOLON && 
 				prev.getType() != IToken.tIDENTIFIER && 
 				prev.getType() != IToken.tLT &&
-				prev.getType() != IToken.tCOMPL &&
+				prev.getType() != IToken.tBITCOMPLEMENT &&
 				iter.getType() != IToken.tGT && 
 				prev.getType() != IToken.tLBRACKET && 
 				iter.getType() != IToken.tRBRACKET && 
@@ -397,7 +397,7 @@ public class BasicTokenDuple implements ITokenDuple {
 			}
 			switch( iter.getType() )
 			{
-				case IToken.tCOMPL:
+				case IToken.tBITCOMPLEMENT:
 				case IToken.tIDENTIFIER:
 				case IToken.tCOLONCOLON:
 				case IToken.t_operator:
@@ -422,6 +422,44 @@ public class BasicTokenDuple implements ITokenDuple {
 		return false;
 	}
 	
+	public ITokenDuple getTemplateIdNameTokenDuple() {
+	 	ITokenDuple nameDuple = getLastSegment(); 
+	 	
+	    List [] argLists = getTemplateIdArgLists(); 
+	    if( argLists == null || argLists[ argLists.length - 1 ] == null )
+	        return nameDuple;
+	 	
+	    IToken i = nameDuple.getFirstToken();
+	    IToken last = nameDuple.getLastToken();
+    	
+    	if( i.getType() == IToken.t_template )
+    		i = i.getNext();
+    	
+    	if( i == last )
+    		return TokenFactory.createTokenDuple(i, i);
+    	
+    	IToken first= i;
+    	    	
+    	//destructors
+    	if( i.getType() == IToken.tBITCOMPLEMENT ){
+    		i = i.getNext();
+    	} 
+    	//operators
+    	else if( i.getType() == IToken.t_operator ){
+    		i =  i.getNext();
+		    IToken temp = null;
+		    while( i != last ){
+		        temp = i.getNext();
+		        if( temp.getType() != IToken.tLT )
+		            i =  temp;
+		        else
+		            break;
+		    }
+    	}
+    	
+		return TokenFactory.createTokenDuple(first, i);
+	}
+
 	 public char[] extractNameFromTemplateId(){
 	 	ITokenDuple nameDuple = getLastSegment(); 
 	 	
@@ -451,7 +489,7 @@ public class BasicTokenDuple implements ITokenDuple {
     	//appending of spaces needs to be the same as in toString()
     	    	
     	//destructors
-    	if( i.getType() == IToken.tCOMPL ){
+    	if( i.getType() == IToken.tBITCOMPLEMENT ){
     		i = i.getNext();
     		tempArray = i.getCharImage();
     		CharArrayUtils.overWrite( nameBuffer, idx, tempArray );
@@ -517,7 +555,7 @@ public class BasicTokenDuple implements ITokenDuple {
 				i = i.getNext();
 				continue;
 			}
-			if( i.getType() == IToken.tCOMPL )
+			if( i.getType() == IToken.tBITCOMPLEMENT )
 			{
 				compl = true;
 				i = i.getNext();

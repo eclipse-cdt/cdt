@@ -96,7 +96,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
 
 /**
  */
-public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2, ICDIAddressToSource /*, ICDIMemorySpaceManagement  - wait till 5.0; see 211923*/ {
+public class Target extends SessionObject implements ICDITarget, ICDIBreakpointManagement2, ICDIAddressToSource, ICDIMemorySpaceManagement {
 
 	public class Lock {
 

@@ -30,6 +30,7 @@
  * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -2005,29 +2006,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		this.unixStyle = isUnixStyle;
 	}
 	
-
-	
-	/**
-	 * Deprecated
-	 */
-	public IHostFile[] getFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
-	{
-		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FOLDERS, monitor);
-	}
-	
-	/**
-	 * Deprecated
-	 */
-	public IHostFile[] getFiles(String remoteParent, String fileFilter, IProgressMonitor monitor)
-	{
-		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_FILES, monitor);
-	}
-	
-	/**
-	 * Deprecated
-	 */
-	public IHostFile[] getFilesAndFolders(String remoteParent, String fileFilter, IProgressMonitor monitor)
-	{
-		return fetch(remoteParent, fileFilter, IUniversalDataStoreConstants.C_QUERY_VIEW_ALL, monitor);
+	public boolean supportsEncodingConversion(){
+		return true;
 	}
 }

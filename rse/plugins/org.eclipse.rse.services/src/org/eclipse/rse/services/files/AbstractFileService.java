@@ -21,6 +21,7 @@
  * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
  * Xuan Chen        (IBM)        - [210555] [regression] NPE when deleting a file on SSH
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
+ * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -210,5 +211,13 @@ public abstract class AbstractFileService implements IFileService
 	
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
+	}
+	
+	/**
+	 * The default implementation returns false.  Clients should override this method if they make use
+	 * of IFileServiceCodePageConverter to do conversion during download and upload.
+	 */
+	public boolean supportsEncodingConversion(){
+		return false;
 	}
 }

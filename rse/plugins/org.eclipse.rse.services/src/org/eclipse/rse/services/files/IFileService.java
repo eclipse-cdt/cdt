@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Kevin Doyle		(IBM)		 - [208778] new API getOutputSteam for getting an output stream in append mode
+ * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  ********************************************************************************/
 
 package org.eclipse.rse.services.files;
@@ -485,5 +486,14 @@ public interface IFileService extends IService
 	 * @since 3.0
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException;
-	
+
+	/**
+	 * Indicates whether this file service supports code page conversion using
+	 * the IFileServiceCodePageConverter mechanism.  Certain extensions, such as 
+	 * property pages for encoding conversion can determine whether or not to 
+	 * display or enable themselves based on result of this call.
+	 * 
+	 * @return whether this service supports encoding conversion
+	 */
+	public boolean supportsEncodingConversion();
 }

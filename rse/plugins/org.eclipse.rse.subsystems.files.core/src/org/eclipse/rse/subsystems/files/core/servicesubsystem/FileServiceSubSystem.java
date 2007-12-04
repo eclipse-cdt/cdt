@@ -26,6 +26,7 @@
  * David McKnight   (IBM)        - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
  * David McKnight   (IBM)        - [209552] API changes to use multiple and getting rid of deprecated
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND 
+ * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.servicesubsystem;
@@ -1031,6 +1032,13 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
 		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, isBinary, options, monitor), remoteParent, remoteFile, this);			
+	}
+	
+	/**
+	 * Defers to the file service.
+	 */
+	public boolean supportsEncodingConversion(){
+		return getFileService().supportsEncodingConversion();
 	}
 	
 }

@@ -57,7 +57,6 @@ import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.dstore.core.model.IDataStoreProvider;
 import org.eclipse.rse.dstore.universal.miners.IUniversalDataStoreConstants;
 import org.eclipse.rse.dstore.universal.miners.UniversalByteStreamHandler;
-import org.eclipse.rse.internal.services.Activator;
 import org.eclipse.rse.internal.services.dstore.ServiceResources;
 import org.eclipse.rse.services.clientserver.FileTypeMatcher;
 import org.eclipse.rse.services.clientserver.IMatcher;
@@ -72,6 +71,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.dstore.AbstractDStoreService;
 import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
+import org.eclipse.rse.services.files.CodePageConverterManager;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IFileServiceCodePageConverter;
 import org.eclipse.rse.services.files.IHostFile;
@@ -489,10 +489,7 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			
 			int localLineSepLength = localLineSep.length();
 			
-			IFileServiceCodePageConverter codePageConverter = Activator.getCodePageConverter(hostEncoding, this);
-			if (codePageConverter == null) {
-				codePageConverter = Activator.getDefaultCodePageConverter();
-			}
+			IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncoding, this);
 
 			// upload bytes while available
 			while (available > 0 && !isCancelled)
@@ -788,12 +785,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
 			{								
 				if (!isBinary){ // do standard conversion if this is text!	
-					String localEncoding = System.getProperty("file.encoding");
+					String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 
-					IFileServiceCodePageConverter codePageConverter = Activator.getCodePageConverter(encoding, this);
-					if (codePageConverter == null) {
-						codePageConverter = Activator.getDefaultCodePageConverter();
-					}
+					IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(encoding, this);
+					
 					codePageConverter.convertFileFromRemoteEncoding(localFile, encoding, localEncoding, this);
 				}
 					
@@ -1011,60 +1006,61 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			List resultList = remoteElement.getNestedData();
 			DataElement resultChild = null;
 
-			for (int i = 0; i < resultList.size(); i++)
+			if (resultList != null)
 			{
-
-				resultChild = (DataElement) resultList.get(i);
-
-				if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
+				for (int i = 0; i < resultList.size(); i++)
 				{
-					// do standard conversion if this is text!
-					if (!isBinaries[i]){ // do standard conversion if this is text!	
-						String localEncoding = System.getProperty("file.encoding");
-						IFileServiceCodePageConverter codePageConverter = Activator.getCodePageConverter(hostEncodings[i], this);
-						if (codePageConverter == null) {
-							codePageConverter = Activator.getDefaultCodePageConverter();
+	
+					resultChild = (DataElement) resultList.get(i);
+	
+					if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_SUCCESS_TYPE))
+					{
+						// do standard conversion if this is text!
+						if (!isBinaries[i]){ // do standard conversion if this is text!	
+							String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
+							IFileServiceCodePageConverter codePageConverter = CodePageConverterManager.getCodePageConverter(hostEncodings[i], this);
+
+							codePageConverter.convertFileFromRemoteEncoding(localFile, hostEncodings[i], localEncoding, this);
 						}
-						codePageConverter.convertFileFromRemoteEncoding(localFile, hostEncodings[i], localEncoding, this);
+						
+						result = true;
+					}
+					else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
+					{
+						localFile.delete();
+						SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION); //$NON-NLS-1$
+						throw new SystemMessageException(msg);
+					}
+					else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION))
+					{
+						//SystemMessage msg = getMessage();
+						//throw new SystemMessageException(msg);
+						//UnsupportedEncodingException e = new UnsupportedEncodingException(resultChild.getName());
+						//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
+						//throw new RemoteFileIOException(e);
+						result = false;
 					}
 					
-					result = true;
+					else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION))
+					{
+						localFile.delete();
+						SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION); //$NON-NLS-1$
+						throw new SystemMessageException(msg);
+						//IOException e = new IOException(resultChild.getName());
+						//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
+						//throw new RemoteFileIOException(e);
+					}
+					else
+					{
+						result = false;
+					}
 				}
-				else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION))
+	
+				if (monitor != null)
 				{
-					localFile.delete();
-					SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_FILE_NOT_FOUND_EXCEPTION); //$NON-NLS-1$
-					throw new SystemMessageException(msg);
-				}
-				else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_UNSUPPORTED_ENCODING_EXCEPTION))
-				{
-					//SystemMessage msg = getMessage();
-					//throw new SystemMessageException(msg);
-					//UnsupportedEncodingException e = new UnsupportedEncodingException(resultChild.getName());
-					//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
-					//throw new RemoteFileIOException(e);
-					result = false;
-				}
-				
-				else if (resultChild.getType().equals(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION))
-				{
-					localFile.delete();
-					SystemMessage msg = getMessage("RSEF1001").makeSubstitution(IUniversalDataStoreConstants.DOWNLOAD_RESULT_IO_EXCEPTION); //$NON-NLS-1$
-					throw new SystemMessageException(msg);
-					//IOException e = new IOException(resultChild.getName());
-					//UniversalSystemPlugin.logError(CLASSNAME + "." + "copy: " + "error reading file " + remotePath, e);
-					//throw new RemoteFileIOException(e);
-				}
-				else
-				{
-					result = false;
-				}
+					//monitor.done();
+				}			
 			}
-
-			if (monitor != null)
-			{
-				//monitor.done();
-			}			
 		}
 		return result;
 	}

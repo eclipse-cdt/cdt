@@ -81,6 +81,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 import org.eclipse.cdt.internal.ui.text.CReconcilingStrategy;
+import org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy;
 
 
 /**
@@ -344,17 +345,22 @@ public class EditorTestHelper {
 		if (reconciler == null)
 			return true;
 		final Accessor backgroundThreadAccessor= getBackgroundThreadAccessor(reconciler);
-		final Accessor cReconcilerAccessor;
+		Accessor reconcilerAccessor= null;
 		if (reconciler instanceof MonoReconciler) {
 			IReconcilingStrategy strategy= reconciler.getReconcilingStrategy(IDocument.DEFAULT_CONTENT_TYPE);
 			if (strategy instanceof CReconcilingStrategy) {
-				cReconcilerAccessor= new Accessor(strategy, CReconcilingStrategy.class);
-			} else {
-				cReconcilerAccessor= null;
+				reconcilerAccessor= new Accessor(strategy, CReconcilingStrategy.class);
+			} else if (strategy instanceof CompositeReconcilingStrategy) {
+				IReconcilingStrategy[] strategies= ((CompositeReconcilingStrategy)strategy).getReconcilingStrategies();
+				for (int i = 0; i < strategies.length; i++) {
+					if (strategies[i] instanceof CReconcilingStrategy) {
+						reconcilerAccessor= new Accessor(strategies[i], CReconcilingStrategy.class);
+						break;
+					}
+				}
 			}
-		} else {
-			cReconcilerAccessor= null;
 		}
+		final Accessor cReconcilerAccessor= reconcilerAccessor;
 		DisplayHelper helper= new DisplayHelper() {
 			public boolean condition() {
 				return !isRunning(cReconcilerAccessor, backgroundThreadAccessor);

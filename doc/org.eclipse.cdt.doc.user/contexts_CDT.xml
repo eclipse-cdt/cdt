@@ -344,7 +344,7 @@
 </context>
 <context id="code_templates_preference_context">
     <description>Specify the templates used for code generation and new files.</description>
-    <topic label="Code Template Preferences" href="reference/cdt_u_c_code_templates_pref.htm"/>
+    <topic label="Code Templates Preferences" href="reference/cdt_u_c_code_templates_pref.htm"/>
 </context>
 
 </contexts>

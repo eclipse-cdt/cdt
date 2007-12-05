@@ -256,7 +256,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			IExtension[] extensions = extensionPoint.getExtensions();
 			if (extensions == null) return null;
 			
-			ArrayList items = new ArrayList();
+			List items = new ArrayList();
 			for (int i = 0; i < extensions.length; ++i)	{
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int k = 0; k < elements.length; k++) {
@@ -279,7 +279,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			
 			// bug # 211935 : allow items filtering.
 			if (ls != null) // NULL means call from prefs
-				ls.filterItems(items);
+				items = ls.filterItems(items);
 			addItemsToTree(tree, items);
 			
 			if (tree.getItemCount() > 0) {
@@ -300,7 +300,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			return null;
 		}
 
-		private static void addItemsToTree(Tree tree, ArrayList items) {
+		private static void addItemsToTree(Tree tree, List items) {
 		//  Sorting is disabled because of users requests	
 		//	Collections.sort(items, CDTListComparator.getInstance());
 			

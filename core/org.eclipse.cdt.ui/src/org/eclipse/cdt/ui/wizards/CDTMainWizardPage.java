@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.wizards;
 	import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -276,6 +277,9 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 				}
 			}
 			
+			// bug # 211935 : allow items filtering.
+			if (ls != null) // NULL means call from prefs
+				ls.filterItems(items);
 			addItemsToTree(tree, items);
 			
 			if (tree.getItemCount() > 0) {
@@ -395,6 +399,10 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			if (ed.getImage() != null) return ed.getImage();
 			if (ed.isCategory()) return IMG_CATEGORY;
 			return IMG_ITEM;
+		}
+
+		public List filterItems(List items) {
+			return items;
 		}
 }
 

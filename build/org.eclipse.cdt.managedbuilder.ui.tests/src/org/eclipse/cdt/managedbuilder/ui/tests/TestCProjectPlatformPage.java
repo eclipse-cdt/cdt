@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.tests;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -20,7 +22,6 @@ import org.eclipse.cdt.ui.wizards.CDTProjectWizard;
 import org.eclipse.cdt.ui.wizards.CWizardHandler;
 import org.eclipse.cdt.ui.wizards.IWizardItemsListListener;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -79,7 +80,8 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 	/* Test the new page, create page, set selection lifecycle. */
 	public void testProject() throws Exception {
 		
-		IPath p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+		//IPath p = 
+		ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		/*
 		NewModelProjectWizard wiz = new CDTProjectWizard();
 		/*
@@ -133,9 +135,16 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 			// TODO Auto-generated method stub
 			
 		}
+		public List filterItems(List items) {
+			return items;
+		}
 	}
 
 	// methods of IToolChainListListener
 	public boolean isCurrent() { return currentState; }
 	public void toolChainListChanged(int count) {}
+
+	public List filterItems(List items) {
+		return items;
+	}
 }

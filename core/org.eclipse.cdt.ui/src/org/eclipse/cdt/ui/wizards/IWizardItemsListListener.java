@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
+import java.util.List;
+
 /**
  * Interface should be implemented by some visible object
  * (usually - 1st page in CDT New Project wizard) 
@@ -29,4 +31,19 @@ public interface IWizardItemsListListener {
 	 * @return true if this page is visible 
 	 */
 	boolean isCurrent();
+
+	/**
+	 * Ability to filter items which would be shown
+	 * in the left pane of Main Wizard Page.
+	 * Standard implementation: return unchanged list.
+	 * When filtering, please note :
+	 * - Each item has {@link}EntryDescriptor type
+	 * - Items have hierarchical relations with others,
+	 *   so removing some item(s) can break a tree. 
+	 *  
+	 * @param items - list of EntryDescriptor objects 
+	 * @return - list with filtered items
+	 */
+	List filterItems(List items);
+	
 }

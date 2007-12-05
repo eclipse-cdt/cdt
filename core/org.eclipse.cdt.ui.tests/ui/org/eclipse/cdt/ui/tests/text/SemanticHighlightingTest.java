@@ -170,6 +170,7 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 		Position[] expected= new Position[] {
 				createPosition(11, 20, 1),
 				createPosition(28, 35, 3),
+				createPosition(29, 23, 3),
 				createPosition(30, 19, 3),
 				createPosition(77, 21, 4),
 				createPosition(77, 30, 4),

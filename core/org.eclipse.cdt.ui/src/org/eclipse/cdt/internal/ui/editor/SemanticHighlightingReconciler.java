@@ -271,9 +271,11 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				addNodeLocation(name.getFileLocation(), highlightingStyle);
 			} else {
 				int offset= imageLocation.getNodeOffset();
-				int length= imageLocation.getNodeLength();
-				if (offset > -1 && length > 0) {
-					addPosition(offset, length, highlightingStyle);
+				if (offset >= fMinLocation) {
+					int length= imageLocation.getNodeLength();
+					if (offset > -1 && length > 0) {
+						addPosition(offset, length, highlightingStyle);
+					}
 				}
 			}
 		}

@@ -20,8 +20,8 @@
 			<topic label="Comment out code" href="tasks/cdt_t_comment_out.htm"/>
 			<topic label="Working with Content Assist" href="tasks/cdt_o_con_assist.htm">
 				<topic label="Using Content Assist" href="tasks/cdt_t_contentassist.htm"/>
-				<topic label="Creating and editing code templates" href="tasks/cdt_t_add_codetemp.htm"/>
-				<topic label="Importing and exporting code templates" href="tasks/cdt_t_imp_code_temp.htm"/>
+				<topic label="Creating and editing templates" href="tasks/cdt_t_add_codetemp.htm"/>
+				<topic label="Importing and exporting templates" href="tasks/cdt_t_imp_code_temp.htm"/>
 			</topic>
 			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
 			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>

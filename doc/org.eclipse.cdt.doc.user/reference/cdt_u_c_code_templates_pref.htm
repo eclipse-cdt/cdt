@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2007. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>
+      Code templates
+    </title>
+    <link rel="stylesheet" href="../book.css" charset="ISO-8859-1" type="text/css">
+    <script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"> </script>
+  </head>
+  <body>
+    <h1>
+      Code templates
+    </h1>
+<p>The
+<a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.CodeTemplatePreferencePage)")'>
+<img src="PLUGINS_ROOT/org.eclipse.help/command_link.png" alt="Opens the Code Templates preference page">
+<b>C/C++ &gt; Code Style &gt; Code Templates</b></a> preference page
+lets you configure the format of newly generated code stubs, comments and files.</p>
+
+<p>The code templates page contains templates that are used by actions that generate code and/or source files. 
+E.g. the New Class wizard uses source and header file templates to create new files and code templates to insert generated method stubs. 
+Templates contain variables that are substituted when the template is applied. Some variables are available in all templates, some are specific to templates.</p><table
+	border="1" cellspacing="0" cellpadding="5" width="600">
+	<thead>
+		<tr>
+			<th>
+			<p>Action</p>
+			</th>
+			<th>
+			<p>Description</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top" width="25%">
+			<p>New...</p>
+			</td>
+			<td valign="top">
+			<p>Opens the Code Template dialog to create a new file template.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Edit...</p>
+			</td>
+			<td valign="top">
+			<p>Opens the Code Template dialog to edit the currently selected code template.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Remove</p>
+			</td>
+			<td valign="top">
+			<p>Removes a user added file template. Predefined templates cannot be removed.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			<p>Import...</p>
+			</td>
+			<td valign="top">
+			<p>Imports templates from the file system.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			<p>Export...</p>
+			</td>
+			<td valign="top">
+			<p>Exports all selected templates to the file system.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			<p>Export All...</p>
+			</td>
+			<td valign="top">
+			<p>Exports all templates to the file system.</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+
+<h2>Comment Templates</h2>
+
+<table border="1" cellspacing="0" cellpadding="5" width="600">
+	<thead>
+		<tr>
+			<th>
+			<p>Template Name</p>
+			</th>
+			<th>
+			<p>Specifies</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Files</p>
+			</td>
+			<td valign="top">
+			<p>Header comment for new source or header files.</p>
+			<p>Note that this template can be referenced in source and header file templates with <b>${filecomment}</b>.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Types</p>
+			</td>
+			<td valign="top">
+			<p>The comment for new types.</p>
+			<p>Note that this template can be referenced in source and header file templates with <b>${typecomment}</b>.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Fields</p>
+			</td>
+			<td valign="top">
+			<p>The comment for new fields.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Constructors</p>
+			</td>
+			<td valign="top">
+			<p>The comment for new constructors.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Destructors</p>
+			</td>
+			<td valign="top">
+			<p>The comment for new destructors.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Methods</p>
+			</td>
+			<td valign="top">
+			<p>The comment for new methods.</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>Code Templates</h2>
+<p></p>
+<table
+	border="1" cellspacing="0" cellpadding="5" width="600">
+	<thead>
+		<tr>
+			<th>
+			<p>Template Name</p>
+			</th>
+			<th>
+			<p>Description</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Method body</p>
+			</td>
+			<td valign="top">
+			<p>The 'Method body' templates are used when new method is created.</p> 
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Constructor body</p>
+			</td>
+			<td valign="top">
+			<p>The 'Constructor body' templates are used when a constructor is created.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Destructor body</p>
+			</td>
+			<td valign="top">
+			<p>The 'Destructor body' templates are used when the destructor is created.</p>
+			</td>
+	</tbody>
+</table>
+
+<h2>File Templates</h2>
+File templates can not only be defined and modified for C/C++ files, but also for other content types, like Assembly files or plain text files.
+The New File from Template wizard can be used to create new files based on one of the templates defined in this page.
+<p></p>
+<table
+	border="1" cellspacing="0" cellpadding="5" width="600">
+	<thead>
+		<tr>
+			<th>
+			<p>Template Name</p>
+			</th>
+			<th>
+			<p>Description</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Default C++ source template</p>
+			</td>
+			<td valign="top">
+			<p>Used by the New Class wizard and the New Source File wizard when a new C++ source file is created.</p> 
+			<p>The template can specify where comments are added. Note that the template can contain the variable <b>${typecomment}</b> and <b>${filecomment}</b> that will be substituted by the evaluation of the <b>Types</b> respectively <b>Files</b> comment template.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Default C++ header template</p>
+			</td>
+			<td valign="top">
+			<p>Used by the New Class wizard and the New Header File wizard when a new C++ header file is created.</p> 
+			<p>The template can specify where comments are added. Note that the template can contain the variable <b>${typecomment}</b> and <b>${filecomment}</b> that will be substituted by the evaluation of the <b>Types</b> respectively <b>Files</b> comment template.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Default C source template</p>
+			</td>
+			<td valign="top">
+			<p>Used by the New Source File wizard when a new C source file is created.</p> 
+			<p>The template can specify where comments are added. Note that the template can contain the variable <b>${typecomment}</b> and <b>${filecomment}</b> that will be substituted by the evaluation of the <b>Types</b> respectively <b>Files</b> comment template.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p>Default C header template</p>
+			</td>
+			<td valign="top">
+			<p>Used by the New Header File wizard when a new C source file is created.</p> 
+			<p>The template can specify where comments are added. Note that the template can contain the variable <b>${typecomment}</b> and <b>${filecomment}</b> that will be substituted by the evaluation of the <b>Types</b> respectively <b>Files</b> comment template.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" width="25%">
+			<p><i>Other file templates</i></p>
+			</td>
+			<td valign="top">
+			<p>File templates can be defined for other content types, e.g. Assembly or plain text.</p> 
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>Edit Template dialog</h2>
+
+<p>The following fields and buttons appear in the dialog:</p>
+<table border="1" cellspacing="0" cellpadding="5" width="100%">
+	<thead>
+		<tr>
+			<th>
+			<p>Action</p>
+			</th>
+			<th>
+			<p>Description</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td valign="top">
+			<p>Name</p>
+			</td>
+			<td valign="top">
+			<p>The name of the template. Only available for file templates.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			<p>Type</p>
+			</td>
+			<td valign="top">
+			<p>The file type (content type) of the template. Only available for file templates.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			<p>Description</p>
+			</td>
+			<td valign="top">
+			<p>A description of the template</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			<p>Pattern</p>
+			</td>
+			<td valign="top">
+			<p>The template pattern.</p>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+			<p>Insert Variables...</p>
+			</td>
+			<td valign="top">
+			<p>Displays a list of pre-defined template specific variables.</p>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
+<a href="../concepts/cdt_o_code_entry.htm">Coding aids</a></p>
+<p><img border="0" src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a></p>
+<img src="../images/ng00_07.gif" ALT="IBM Copyright Statement" >
+
+</body>
+</html>

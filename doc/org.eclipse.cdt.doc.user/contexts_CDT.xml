@@ -337,5 +337,14 @@
    <topic href="reference/cdt_u_search.htm"
    	label="C/C++ search page"/>
 </context>
+<context id ="open_element_dialog_context">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_open_element.htm"
+   	label="Open Element"/>
+</context>
+<context id="code_templates_preference_context">
+    <description>Specify the templates used for code generation and new files.</description>
+    <topic label="Code Template Preferences" href="reference/cdt_u_c_code_templates_pref.htm"/>
+</context>
 
 </contexts>

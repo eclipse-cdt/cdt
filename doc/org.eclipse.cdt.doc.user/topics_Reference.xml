@@ -59,6 +59,7 @@
 		</topic>
 		
 		<topic label="Code Style preferences" href="reference/cdt_u_c_code_style_pref.htm">
+			<topic label="Code Templates preferences" href="reference/cdt_u_c_code_templates_pref.htm"/>
 		</topic>
 		
 		<topic label="C/C++ Editor preferences" href="reference/cdt_o_ceditor_pref.htm">

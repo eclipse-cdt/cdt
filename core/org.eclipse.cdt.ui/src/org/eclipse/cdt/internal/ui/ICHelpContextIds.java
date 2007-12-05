@@ -123,6 +123,7 @@ public interface ICHelpContextIds {
 
 	// Dialogs
 	public static final String EDIT_TEMPLATE_DIALOG = PREFIX + "edit_template_dialog_context"; //$NON-NLS-1$
+	public static final String OPEN_ELEMENT_DIALOG = PREFIX + "open_element_dialog_context"; //$NON-NLS-1$
 
 	// view parts
 	public static final String TYPE_HIERARCHY_VIEW= PREFIX + "type_hierarchy_view_context"; //$NON-NLS-1$

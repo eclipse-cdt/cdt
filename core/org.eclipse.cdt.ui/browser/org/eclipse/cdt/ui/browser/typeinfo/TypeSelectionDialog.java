@@ -501,10 +501,12 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		section.put(SETTINGS_X_POS, location.x);
 		section.put(SETTINGS_Y_POS, location.y);
 
-		Point size = getShell().getSize();
-		section.put(SETTINGS_WIDTH, size.x);
-		section.put(SETTINGS_HEIGHT, size.y);
-
+		if (getTray() == null) {
+			// only save size if help tray is not shown
+			Point size = getShell().getSize();
+			section.put(SETTINGS_WIDTH, size.x);
+			section.put(SETTINGS_HEIGHT, size.y);
+		}
 		section.put(SETTINGS_SHOW_NAMESPACES, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_NAMESPACE)));
 		section.put(SETTINGS_SHOW_CLASSES, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_CLASS)));
 		section.put(SETTINGS_SHOW_STRUCTS, fFilterMatcher.getVisibleTypes().contains(new Integer(ICElement.C_STRUCT)));

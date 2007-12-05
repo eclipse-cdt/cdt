@@ -52,6 +52,8 @@ import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 
 import org.eclipse.cdt.internal.core.browser.util.IndexModelUtil;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+
 /**
  * A dialog to select an element from a filterable list of elements.
  *
@@ -161,6 +163,7 @@ public class ElementSelectionDialog extends TypeSelectionDialog {
 	 */
 	public ElementSelectionDialog(Shell parent) {
 		super(parent);
+		setHelpContextId(ICHelpContextIds.OPEN_ELEMENT_DIALOG);
 		setMatchEmptyString(false);
 		fUpdateJob= new UpdateElementsJob(OpenTypeMessages.ElementSelectionDialog_UpdateElementsJob_name);
 		fUpdateJob.setRule(SINGLE_INSTANCE_RULE);

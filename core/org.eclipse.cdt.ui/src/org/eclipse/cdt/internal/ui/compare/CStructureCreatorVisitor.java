@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -515,13 +514,7 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 			return null;
 		}
 		final IASTNodeLocation nodeLocation= locations[locations.length-1];
-		if (nodeLocation instanceof IASTFileLocation) {
-			return (IASTFileLocation)nodeLocation;
-		} else if (nodeLocation instanceof IASTMacroExpansion) {
-			IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
-			return getMaxFileLocation(macroLocations);
-		}
-		return null;
+		return nodeLocation.asFileLocation();
 	}
 
 	private static IASTFileLocation getMinFileLocation(IASTNodeLocation[] locations) {
@@ -529,12 +522,6 @@ class CStructureCreatorVisitor extends CPPASTVisitor {
 			return null;
 		}
 		final IASTNodeLocation nodeLocation= locations[0];
-		if (nodeLocation instanceof IASTFileLocation) {
-			return (IASTFileLocation)nodeLocation;
-		} else if (nodeLocation instanceof IASTMacroExpansion) {
-			IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
-			return getMinFileLocation(macroLocations);
-		}
-		return null;
+		return nodeLocation.asFileLocation();
 	}
 }

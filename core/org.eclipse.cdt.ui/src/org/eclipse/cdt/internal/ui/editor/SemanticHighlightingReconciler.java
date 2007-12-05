@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -200,7 +201,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					final int useOffset = useLocation.getNodeOffset();
 					if (useOffset <= fMinLocation) {
 						// performance: we had that macro expansion already
-						return true;
+						return false;
 					}
 					fMinLocation= useOffset;
 					// TLETODO This does not work correctly for nested macro substitutions
@@ -214,7 +215,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					}
 					IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useOffset, macroLength);
 					if (macroNode != null && visitMacro(macroNode, macroLength)) {
-						return true;
+						return false;
 					}
 				}
 			}
@@ -226,7 +227,11 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			for (int i= 0, n= fJobSemanticHighlightings.length; i < n; ++i) {
 				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
 				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
-					addMacroLocation(node.getFileLocation(), macroLength, fJobHighlightings[i]);
+					if (node instanceof IASTName) {
+						addNameLocation((IASTName)node, fJobHighlightings[i]);
+					} else {
+						addMacroLocation(node.getFileLocation(), macroLength, fJobHighlightings[i]);
+					}
 					break;
 				}
 			}
@@ -241,13 +246,36 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			for (int i= 0, n= fJobSemanticHighlightings.length; i < n; ++i) {
 				SemanticHighlighting semanticHighlighting= fJobSemanticHighlightings[i];
 				if (fJobHighlightings[i].isEnabled() && semanticHighlighting.consumes(fToken)) {
-					addNodeLocation(node.getFileLocation(), fJobHighlightings[i]);
+					if (node instanceof IASTName) {
+						addNameLocation((IASTName)node, fJobHighlightings[i]);
+					} else {
+						addNodeLocation(node.getFileLocation(), fJobHighlightings[i]);
+					}
 					consumed= true;
 					break;
 				}
 			}
 			fToken.clear();
 			return consumed;
+		}
+
+		/**
+		 * Add the a location range for the given name.
+		 * 
+		 * @param name  The name
+		 * @param highlighting The highlighting
+		 */
+		private void addNameLocation(IASTName name, HighlightingStyle highlightingStyle) {
+			IASTImageLocation imageLocation= name.getImageLocation();
+			if (imageLocation == null) {
+				addNodeLocation(name.getFileLocation(), highlightingStyle);
+			} else {
+				int offset= imageLocation.getNodeOffset();
+				int length= imageLocation.getNodeLength();
+				if (offset > -1 && length > 0) {
+					addPosition(offset, length, highlightingStyle);
+				}
+			}
 		}
 
 		/**
@@ -290,13 +318,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				return null;
 			}
 			final IASTNodeLocation nodeLocation= locations[0];
-			if (nodeLocation instanceof IASTFileLocation) {
-				return (IASTFileLocation)nodeLocation;
-			} else if (nodeLocation instanceof IASTMacroExpansion) {
-				IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
-				return getMinFileLocation(macroLocations);
-			}
-			return null;
+			return nodeLocation.asFileLocation();
 		}
 
 		/**

@@ -33,7 +33,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -1202,7 +1201,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @param astName
 	 * @throws CModelException 
 	 */
-	private void setIdentifierPosition(SourceManipulation element, IASTNode astName) throws CModelException {
+	private void setIdentifierPosition(SourceManipulation element, IASTName astName) throws CModelException {
 		setIdentifierPosition(element.getSourceManipulationInfo(), astName);
 	}
 
@@ -1213,9 +1212,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @param astName
 	 */
 	private void setIdentifierPosition(SourceManipulationInfo info, IASTNode astName) {
-		final IASTFileLocation location= astName.getFileLocation();
+		final IASTFileLocation location;
+		if (astName instanceof IASTName) {
+			location= ((IASTName)astName).getImageLocation();
+		} else {
+			location= astName.getFileLocation();
+		}
 		if (location != null) {
-			assert fTranslationUnitFileName.equals(location.getFileName());
 			info.setIdPos(location.getNodeOffset(), location.getNodeLength());
 		} else {
 			final IASTNodeLocation[] locations= astName.getNodeLocations();
@@ -1236,13 +1239,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			return null;
 		}
 		final IASTNodeLocation nodeLocation= locations[locations.length-1];
-		if (nodeLocation instanceof IASTFileLocation) {
-			return (IASTFileLocation)nodeLocation;
-		} else if (nodeLocation instanceof IASTMacroExpansion) {
-			IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
-			return getMaxFileLocation(macroLocations);
-		}
-		return null;
+		return nodeLocation.asFileLocation();
 	}
 
 	private static IASTFileLocation getMinFileLocation(IASTNodeLocation[] locations) {
@@ -1250,13 +1247,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			return null;
 		}
 		final IASTNodeLocation nodeLocation= locations[0];
-		if (nodeLocation instanceof IASTFileLocation) {
-			return (IASTFileLocation)nodeLocation;
-		} else if (nodeLocation instanceof IASTMacroExpansion) {
-			IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
-			return getMinFileLocation(macroLocations);
-		}
-		return null;
+		return nodeLocation.asFileLocation();
 	}
 
 	/**

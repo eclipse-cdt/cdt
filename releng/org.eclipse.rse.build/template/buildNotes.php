@@ -28,6 +28,10 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
+<li>API: A new <b><a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_services_codePageConverters.html">
+  CodePageConverters</a></b> extension point has been added to support services
+  that need to perform special additional conversions on encodings
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209704">209704</a>].</li>
 <li><b>Archive Handling</b> has been improved to run outside the dispatch thread on the
   Local and DStore subsystems. Several API changes were made to support a cancelable
   progress monitor with the archive operations
@@ -52,7 +56,7 @@
   Also, the new multi-API is now being leveraged in <tt>UniversalFileTransferUtility</tt>
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209375">209375</a>].</li>
 </ul></li>
-<li>At least 28 bugs were fixed: Use 
+<li>At least 37 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-11-06&chfieldto=2008-01-07&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2007-11-06&chfieldto=2008-01-07&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=substring&value0-0-1=3.0+M3">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=3.0+M4&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->

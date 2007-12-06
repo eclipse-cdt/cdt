@@ -68,6 +68,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 /**
  * This object is created per each Project type
@@ -79,6 +80,7 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class MBSWizardHandler extends CWizardHandler {
 	public static final String ARTIFACT = "org.eclipse.cdt.build.core.buildArtefactType";  //$NON-NLS-1$
+	public static final String EMPTY_STR = "";  //$NON-NLS-1$
 	
 	private static final String PROPERTY = "org.eclipse.cdt.build.core.buildType"; //$NON-NLS-1$
 	private static final String PROP_VAL = PROPERTY + ".debug"; //$NON-NLS-1$
@@ -305,17 +307,17 @@ public class MBSWizardHandler extends CWizardHandler {
 	}
 	
 	public Map getMainPageData() {
-		CDTMainWizardPage page = (CDTMainWizardPage)getStartingPage();
+		WizardNewProjectCreationPage page = (WizardNewProjectCreationPage)getStartingPage();
 		Map data = new HashMap();
 		String projName = page.getProjectName();
-		projName = projName != null ? projName.trim() : "";  //$NON-NLS-1$ 
+		projName = projName != null ? projName.trim() : EMPTY_STR; 
 		data.put("projectName", projName); //$NON-NLS-1$
 		data.put("baseName", getBaseName(projName)); //$NON-NLS-1$
 		data.put("baseNameUpper", getBaseName(projName).toUpperCase() ); //$NON-NLS-1$
 		data.put("baseNameLower", getBaseName(projName).toLowerCase() ); //$NON-NLS-1$
-		String location = page.getProjectLocationPath();
+		String location = page.getLocationPath().toOSString();
 		if(location == null)
-			location = "";  //$NON-NLS-1$
+			location = EMPTY_STR;
 		data.put("location", location); //getProjectLocation().toPortableString()); //$NON-NLS-1$
 		return data;
 	}

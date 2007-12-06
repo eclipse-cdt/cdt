@@ -5,7 +5,7 @@
 <!-- ============================================================================= -->
 <toc label="Reference">
 
-	<topic label="Extension Points Reference" href="provisional_api.html">
+	<topic label="Extension Points Reference" href="reference/extension-points/index.html">
 		<topic label="org.eclipse.rse.core.keystoreProviders" href="reference/extension-points/org_eclipse_rse_core_keystoreProviders.html" />
 		<topic label="org.eclipse.rse.core.persistenceProviders" href="reference/extension-points/org_eclipse_rse_core_persistenceProviders.html" />
 		<topic label="org.eclipse.rse.core.subsystemConfigurations" href="reference/extension-points/org_eclipse_rse_core_subsystemConfigurations.html" />

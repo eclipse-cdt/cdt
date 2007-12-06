@@ -202,14 +202,26 @@ public abstract class AbstractFileService implements IFileService
 	}
 
 	/**
-	 * The default implementation returns <code>null</code>. Clients can override to return an output stream to the file.
-	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(String, String, boolean, IProgressMonitor)
+	 * Gets the output stream to write/append to a remote file.
+	 * The default implementation returns <code>null</code>.
+	 * Clients can override to return an output stream to the file.
+	 * @deprecated
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
 		return null;
 	}
 	
+	/**
+	 * Gets the output stream to write/append to a remote file.
+	 * The default implementation returns <code>null</code>.
+	 * Clients can override to return an output stream to the file.
+	 * @see org.eclipse.rse.services.files.IFileService#getOutputStream(String, String, boolean, int, IProgressMonitor)
+	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
+		if ((options & IFileService.APPEND) == 0) {
+			//forward to old deprecated implementation for backward compatibility with old services
+			return getOutputStream(remoteParent, remoteFile, isBinary, monitor);
+		}
 		return null;
 	}
 	

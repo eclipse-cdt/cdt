@@ -6,16 +6,30 @@
          <meta.schema plugin="org.eclipse.rse.subsystems.files.core" id="remoteFileTypes" name="Remote File Types"/>
       </appInfo>
       <documentation>
-         This extension point is used to register information about whether particular file types should be considered text or binary. This information is important as it will determine how files will be transferred.
-
-Providers may provide an extension for this extension point. No code beyond the XML extension declaration is required.
+         This extension point is used to register information about whether particular file types should be considered to contain text or binary data.
+This information is important as it will determine how files will be transferred. The exact meaning of how the transfer of text files differs from binary
+files depends on the actual file service implementation. In general, though, services will strive to change the encoding of remote text files during transfer
+such that it matches the local platform default encoding.
+&lt;p&gt;
+Specific encoding conversions also depend on provided extensions to the
+&lt;a href="org_eclipse_rse_services_codePageConverters.html"&gt;org.eclipse.rse.services.codePageConverters&lt;/a&gt;
+extension point.
+For example, transferring files from a remote dstore Linux host to a local Windows client, the file service may convert text files from
+UTF-8 encoding to Windows cp1252 encoding, and convert remote LF only line endings to local CRLF line endings.
+The benefit of this conversion is that local (external) tools may operate on transferred files in the RSE
+files cache without having to worry about encodings.
+&lt;/p&gt;
+&lt;p&gt;
+Providers may provide an extension for this extension point.  No code beyond the XML extension declaration is required.
+See also the &lt;tt&gt;org.eclipse.team.core.fileTypes&lt;/tt&gt; extension point which provides similar information for Repository providers.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="remoteFileTypes"/>
+         <sequence>
+            <element ref="remoteFileTypes" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -31,34 +45,37 @@ Providers may provide an extension for this extension point. No code beyond the 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
    <element name="remoteFileTypes">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="extension"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="extension" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the file extension being identified by this contribution.                 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="type" type="string" use="required">
+         <attribute name="type" use="required">
             <annotation>
                <documentation>
-                  
+                  one of either &quot;text&quot; or &quot;binary&quot;, identifying the contents of files matching the value of extension.                  
                </documentation>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="text">
+                  </enumeration>
+                  <enumeration value="binary">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="priority" type="string">
             <annotation>
@@ -71,15 +88,6 @@ If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_V
          </attribute>
       </complexType>
    </element>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.0
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
@@ -100,6 +108,15 @@ If no priority is specified, the default value will be &lt;code&gt;Integer.MAX_V
       </appInfo>
       <documentation>
          There is no code to implement for this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
       </documentation>
    </annotation>
 

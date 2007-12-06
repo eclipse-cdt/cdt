@@ -312,7 +312,7 @@ Martin Oberhuber (Wind River) - [185552] Remove remoteSystemsViewPreferencesActi
 <!-- ================================================================= -->
 <!-- 		Define newConnectionWizards extension point				   -->
 <!-- ================================================================= -->
-   <extension-point id="newConnectionWizards" name="%extPoint.newConnectionWizard" schema="schema/newConnectionWizards.exsd"/>
+   <extension-point id="newConnectionWizards" name="%extPoint.newConnectionWizards" schema="schema/newConnectionWizards.exsd"/>
 
 <!-- ================================================================= -->
 <!-- Define the Drop Actions                                           -->

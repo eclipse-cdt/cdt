@@ -29,7 +29,7 @@
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
 <li>API: A new <b><a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_services_codePageConverters.html">
-  CodePageConverters</a></b> extension point has been added to support services
+  codePageConverters</a></b> extension point has been added to support services
   that need to perform special additional conversions on encodings
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209704">209704</a>].</li>
 <li><b>Archive Handling</b> has been improved to run outside the dispatch thread on the
@@ -44,7 +44,9 @@
   default encoding. This allows for external tools to easily perform operations on remote
   files which are in uncommon encodings
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=210812">210812</a>].</li>
-<li>API: An extension point has been added to specify the default file transfer mode (binary/ascii) for a specific filetype
+<li>API: The <b><a href="http://dsdp.eclipse.org/help/latest/index.jsp?topic=/org.eclipse.rse.doc.isv/reference/extension-points/org_eclipse_rse_subsystems_files_core_remoteFileTypes.html">
+  remoteFileTypes</a></b> extension point has been added to specify the default file transfer mode
+  (binary/ascii) for a specific file type
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208951">208951</a>].</li>
 <li>Remote file encoding now defaults to the parent folder encoding
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209660">209660</a>].</li>
@@ -135,6 +137,19 @@ More information can be found in the associated bugzilla items.
 <ul>
 <li>TM @buildId@ Breaking API Changes
 <ul>
+<li><b><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/core/subsystems/IRemoteObjectResolver.html#getObjectWithAbsoluteName(java.lang.String,%20org.eclipse.core.runtime.IProgressMonitor)">
+    IRemoteObjectResolver.getObjectWithAbsoluteName()</a></b>
+    now takes an additional <tt>IProgressMonitor</tt> parameter, in order to support cancellation of deferred queries.
+    The old method has been deprecated and will be removed for 3.0. Especially custom <b>Subsystem</b> implementations will need to 
+    be changed to implement the new method instead of the old one
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=211472">211472</a>].</li>
+<li><b><a href="http://dsdp.eclipse.org/help/latest/topic/org.eclipse.rse.doc.isv/reference/api/org/eclipse/rse/services/files/IFileService.html#getOutputStream(java.lang.String,%20java.lang.String,%20boolean,%20int,%20org.eclipse.core.runtime.IProgressMonitor)">
+    IFileService.getOutputStream()</a></b>
+    now takes an additional <tt>int options</tt> parameter, in order to support opening streams which append
+    to existing files. This was required in order to properly fulfill the EFS APIs. The corresponding old
+    method has been deprecated and will be removed for 3.0. Custom File Service implementations should be
+    changed to implement the new method instead of the old one
+    [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208778">208778</a>].</li>
 <li><b>Removed</b> the now obsolete IFileService.list(...) methods in favor of the new API
     from <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=207178">bug 207178</a>.
     Clients of IRemoteFileSubSystem and IFileService need to be changed, though the change
@@ -205,7 +220,7 @@ We'll strive to fix these as soon as possible.
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198143">bug 198143</a> - maj - [dstore][performance] Refresh a big directory takes very long time, and freezes workbench</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198395">bug 198395</a> - maj - [dstore] Can connect to DStore with expired password</li>
   <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=203501">bug 203501</a> - maj - NPE in PFMetadataLocation when saving RSEDOM</li>
-  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208778">bug 208778</a> - maj - [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND</li>
+  <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=208185">bug 208185</a> - maj - [terminal][serial] terminal can hang the UI when text is entered while the backend side is not reading characters</li>
 </ul>
 <!--
 <p>No major or critical bugs are known at the time of release.

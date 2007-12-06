@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.rse.subsystems.files.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.subsystems.files.core" id="remoteFileTypes" name="%extPoint.remoteFileTypes"/>
+         <meta.schema plugin="org.eclipse.rse.subsystems.files.core" id="remoteFileTypes" name="Remote File Types"/>
       </appInfo>
       <documentation>
          This extension point is used to register information about whether particular file types should be considered text or binary. This information is important as it will determine how files will be transferred.

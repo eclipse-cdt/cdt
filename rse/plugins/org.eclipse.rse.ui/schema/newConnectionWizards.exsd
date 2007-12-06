@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.rse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.rse.ui" id="newConnectionWizards" name="RSE New Connection Wizards"/>
+         <meta.schema plugin="org.eclipse.rse.ui" id="newConnectionWizards" name="New Connection Wizards"/>
       </appInfo>
       <documentation>
          This extension point is used to register new connection creation wizard extensions. New connection creation wizards appear as choices within the &quot;New Connection&quot; dialog, and are used to create connections from the registered system types. New connection creation wizards can be organized in categories. Uncategorized wizards or wizards with invalid category paths will be sorted in as non-categorized root element.

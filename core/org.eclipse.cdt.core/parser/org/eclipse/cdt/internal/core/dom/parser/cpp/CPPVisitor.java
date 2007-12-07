@@ -818,6 +818,15 @@ public class CPPVisitor {
 	}
 	
 	public static IScope getContainingScope( IASTName name ){
+		IScope scope= getContainingScopeOrNull(name);
+		if (scope == null) {
+			return new CPPScope.CPPScopeProblem( name, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray() );
+		}
+
+		return scope;
+	}
+	
+	private static IScope getContainingScopeOrNull(IASTName name) {
 		IASTNode parent = name.getParent();
 		try {
 		    if( parent instanceof ICPPASTTemplateId ){
@@ -883,11 +892,7 @@ public class CPPVisitor {
 				} 
 				type =  CPPSemantics.getUltimateType( type, false );
 				if( type instanceof ICPPClassType ){
-					IScope scope= ((ICPPClassType) type).getCompositeScope();
-					if (scope == null) {
-						scope= new CPPScope.CPPScopeProblem(fieldReference, IProblemBinding.SEMANTIC_BAD_SCOPE, name.toCharArray() );
-					}
-					return scope;
+					return ((ICPPClassType) type).getCompositeScope();
 				}
 			} else if( parent instanceof IASTGotoStatement || parent instanceof IASTLabelStatement ){
 			    while( !(parent instanceof IASTFunctionDefinition) ){

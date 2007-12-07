@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 
 public abstract class CASTAmbiguity extends CASTNode  {
 
@@ -73,7 +72,7 @@ public abstract class CASTAmbiguity extends CASTNode  {
                     IBinding b = names[j].resolveBinding();
                     if( b == null || b instanceof IProblemBinding )
                         ++issues[i];
-                    IScope scope = CPPVisitor.getContainingScope( names[j] );
+                    IScope scope = CVisitor.getContainingScope( names[j] );
                     if( scope != null )
                     {
                         try {

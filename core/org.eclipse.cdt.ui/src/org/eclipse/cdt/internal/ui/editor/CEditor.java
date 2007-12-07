@@ -1717,6 +1717,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			fProjectionSupport = null;
 		}
 
+    	uninstallSemanticHighlighting();
+    	
 		if (fCEditorErrorTickUpdater != null) {
 			fCEditorErrorTickUpdater.dispose();
 			fCEditorErrorTickUpdater = null;

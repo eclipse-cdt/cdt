@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -936,6 +937,7 @@ public class SemanticHighlightings {
 				if (binding instanceof IVariable
 						&& !(binding instanceof IField)
 						&& !(binding instanceof IParameter)
+						&& !(binding instanceof ICPPTemplateNonTypeParameter)
 						&& !(binding instanceof IProblemBinding)) {
 					try {
 						IScope scope= binding.getScope();

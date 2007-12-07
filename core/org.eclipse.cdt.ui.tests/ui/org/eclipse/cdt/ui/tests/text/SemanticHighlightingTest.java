@@ -193,6 +193,8 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(77, 27, 2),
 				createPosition(83, 15, 2),
 				createPosition(83, 66, 2),
+				createPosition(131, 14, 1),
+				createPosition(134, 9, 1),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
@@ -259,6 +261,7 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(12, 12, 16),
 				createPosition(19, 16, 10),
 				createPosition(98, 8, 13),
+				createPosition(132, 4, 1),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
@@ -275,6 +278,7 @@ public class SemanticHighlightingTest extends AbstractSemanticHighlightingTest {
 				createPosition(98, 8, 13),
 				createPosition(99, 1, 16),
 				createPosition(126, 4, 11),
+				createPosition(132, 4, 1),
 			};
 		if (PRINT_POSITIONS) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);

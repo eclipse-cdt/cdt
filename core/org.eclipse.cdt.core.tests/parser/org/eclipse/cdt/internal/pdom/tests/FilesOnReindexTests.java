@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
@@ -69,7 +70,7 @@ public class FilesOnReindexTests extends PDOMTestBase {
 	
 	void performAssertions(IFile file) throws CoreException {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(project);
-		assertNotNull(index.getFile(IndexLocationFactory.getWorkspaceIFL(file)));
+		assertNotNull(index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file)));
 		
 		IBinding[] bs = index.findBindings(Pattern.compile("C"), true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, bs.length);

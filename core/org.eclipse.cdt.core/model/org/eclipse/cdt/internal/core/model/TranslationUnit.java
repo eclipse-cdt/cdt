@@ -25,10 +25,12 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
@@ -60,6 +62,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -742,16 +745,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public IASTTranslationUnit getAST(IIndex index, int style) throws CoreException {
-		ICodeReaderFactory codeReaderFactory;
-		if ((style & AST_SKIP_NONINDEXED_HEADERS) != 0) {
-			codeReaderFactory= NullCodeReaderFactory.getInstance();
-		} else {
-			codeReaderFactory= SavedCodeReaderFactory.getInstance();
-		}
-		if (index != null && (style & AST_SKIP_INDEXED_HEADERS) != 0) {
-			codeReaderFactory= new IndexBasedCodeReaderFactory(getCProject(), index, codeReaderFactory);
-		}
-		
 		ITranslationUnit configureWith = getSourceContextTU(index, style);
 		
 		IScannerInfo scanInfo= configureWith.getScannerInfo( (style & AST_SKIP_IF_NO_BUILD_INFO) == 0);
@@ -766,6 +759,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			ILanguage language= configureWith.getLanguage();
 			fLanguageOfContext= language;
 			if (language != null) {
+				ICodeReaderFactory crf= getCodeReaderFactory(style, index, language.getLinkageID());
 				IASTTranslationUnit ast= null;
 				if (language instanceof AbstractLanguage) {
 					int options= 0;
@@ -775,10 +769,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 					if ((style & AST_CREATE_COMMENT_NODES) != 0) {
 						options |= AbstractLanguage.OPTION_ADD_COMMENTS;
 					}
-					ast= ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, options, ParserUtil.getParserLogService());
+					ast= ((AbstractLanguage)language).getASTTranslationUnit(reader, scanInfo, crf, index, options, ParserUtil.getParserLogService());
 				}
 				else {
-					ast= language.getASTTranslationUnit(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService());
+					ast= language.getASTTranslationUnit(reader, scanInfo, crf, index, ParserUtil.getParserLogService());
 				}
 				if (ast != null) {
 					ast.setIsHeaderUnit(isHeaderUnit());
@@ -789,27 +783,46 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return null;
 	}
 
+	private ICodeReaderFactory getCodeReaderFactory(int style, IIndex index, int linkageID) {
+		ICodeReaderFactory codeReaderFactory;
+		if ((style & AST_SKIP_NONINDEXED_HEADERS) != 0) {
+			codeReaderFactory= NullCodeReaderFactory.getInstance();
+		} else {
+			codeReaderFactory= SavedCodeReaderFactory.getInstance();
+		}
+		
+		if (index != null && (style & AST_SKIP_INDEXED_HEADERS) != 0) {
+			IndexBasedCodeReaderFactory ibcf= new IndexBasedCodeReaderFactory(index, new ProjectIndexerInputAdapter(getCProject()), linkageID, codeReaderFactory);
+			codeReaderFactory= ibcf;
+		}
+
+		return codeReaderFactory;
+	}
+
+	private static int[] CTX_LINKAGES= {ILinkage.CPP_LINKAGE_ID, ILinkage.C_LINKAGE_ID};
 	private ITranslationUnit getSourceContextTU(IIndex index, int style) {
-		ITranslationUnit configureWith= this;
 		if (index != null && (style & AST_CONFIGURE_USING_SOURCE_CONTEXT) != 0) {
 			try {
 				fLanguageOfContext= null;
-				IIndexFile context= null;
-				IIndexFile indexFile= index.getFile(IndexLocationFactory.getIFL(this));
-				if (indexFile != null) {
-					// bug 199412, when a source-file includes itself the context may recurse.
-					HashSet visited= new HashSet();
-					visited.add(indexFile);
-					indexFile = getParsedInContext(indexFile);
-					while (indexFile != null && visited.add(indexFile)) {
-						context= indexFile;
-						indexFile= getParsedInContext(indexFile);
+				for (int i = 0; i < CTX_LINKAGES.length; i++) {
+					IIndexFile context= null;
+					final IIndexFileLocation ifl = IndexLocationFactory.getIFL(this);
+					IIndexFile indexFile= index.getFile(CTX_LINKAGES[i], ifl);
+					if (indexFile != null) {
+						// bug 199412, when a source-file includes itself the context may recurse.
+						HashSet visited= new HashSet();
+						visited.add(indexFile);
+						indexFile = getParsedInContext(indexFile);
+						while (indexFile != null && visited.add(indexFile)) {
+							context= indexFile;
+							indexFile= getParsedInContext(indexFile);
+						}
 					}
-				}
-				if (context != null) {
-					ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(context.getLocation(), getCProject());
-					if (tu != null && tu.isSourceUnit()) {
-						configureWith= tu;
+					if (context != null) {
+						ITranslationUnit tu= CoreModelUtil.findTranslationUnitForLocation(context.getLocation(), getCProject());
+						if (tu != null && tu.isSourceUnit()) {
+							return tu;
+						}
 					}
 				}
 			}
@@ -817,7 +830,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				CCorePlugin.log(e);
 			}
 		}
-		return configureWith;
+		return this;
 	}
 
 	private IIndexFile getParsedInContext(IIndexFile indexFile)
@@ -830,20 +843,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public IASTCompletionNode getCompletionNode(IIndex index, int style, int offset) throws CoreException {
-		ICodeReaderFactory codeReaderFactory;
-		if (index != null && (style & (ITranslationUnit.AST_SKIP_INDEXED_HEADERS | ITranslationUnit.AST_SKIP_ALL_HEADERS)) != 0) {
-			ICodeReaderFactory fallbackFactory;
-			if ((style & ITranslationUnit.AST_SKIP_ALL_HEADERS) != 0) {
-				fallbackFactory= NullCodeReaderFactory.getInstance();
-			} else {
-				fallbackFactory= SavedCodeReaderFactory.getInstance();
-			}
-			codeReaderFactory= new IndexBasedCodeReaderFactory(getCProject(), index, fallbackFactory);
-		}
-		else {
-			codeReaderFactory = SavedCodeReaderFactory.getInstance();
-		}
-		
 		ITranslationUnit configureWith= getSourceContextTU(index, style);
 		
 		IScannerInfo scanInfo = configureWith.getScannerInfo( (style & ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO) == 0);
@@ -857,7 +856,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		ILanguage language= configureWith.getLanguage();
 		fLanguageOfContext= language;
 		if (language != null) {
-			return language.getCompletionNode(reader, scanInfo, codeReaderFactory, index, ParserUtil.getParserLogService(), offset);
+			ICodeReaderFactory crf= getCodeReaderFactory(style, index, language.getLinkageID());
+			return language.getCompletionNode(reader, scanInfo, crf, index, ParserUtil.getParserLogService(), offset);
 		}
 		return null;
 	}

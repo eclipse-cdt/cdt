@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -134,7 +135,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		TestSourceReader.waitUntilFileIsIndexed(fIndex, file, 4000);
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull("Can't find " + file.getLocation(), ifile);
 			assertTrue("timestamp not ok", ifile.getTimestamp() >= timestamp);
 
@@ -163,7 +164,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(2, includes.length);
@@ -188,7 +189,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
@@ -209,7 +210,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
@@ -231,7 +232,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
@@ -311,16 +312,17 @@ public class IndexIncludeTest extends IndexTestBase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
-			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
-			assertEquals(s2.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
 			
 			IIndexInclude context= ifile.getParsedInContext();
 			assertNotNull(context);
 			assertEquals(s1.getFullPath().toString(), context.getIncludedByLocation().getFullPath());
+
+			assertEquals(s1.getFullPath().toString(), includes[0].getIncludedByLocation().getFullPath());
+			assertEquals(s2.getFullPath().toString(), includes[1].getIncludedByLocation().getFullPath());
 		}
 		finally {
 			fIndex.releaseReadLock();
@@ -331,7 +333,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			assertEquals(1, fIndex.findBindings("a20070426".toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
@@ -350,7 +352,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		fIndex.acquireReadLock();
 		try {
 			assertEquals(1, fIndex.findBindings("b20070426".toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(2, includes.length);
@@ -435,8 +437,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
 
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
-			IIndexFile sfile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(s1));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(1, includes.length);
@@ -477,8 +479,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
 
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
-			IIndexFile sfile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(s1));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(0, includes.length);
@@ -509,8 +511,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
 
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
-			IIndexFile sfile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(s1));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(1, includes.length);
@@ -545,8 +547,8 @@ public class IndexIncludeTest extends IndexTestBase {
 		try {
 			assertEquals(1, fIndex.findBindings(tag.toCharArray(), IndexFilter.ALL_DECLARED, NPM).length);
 
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(header));
-			IIndexFile sfile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(s1));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(header));
+			IIndexFile sfile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(s1));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= fIndex.findIncludedBy(ifile);
 			assertEquals(1, includes.length);

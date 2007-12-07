@@ -9,7 +9,7 @@
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
 
-package org.eclipse.cdt.internal.core.pdom.indexer;
+package org.eclipse.cdt.internal.core.pdom;
 
 public class IndexerStatistics {
 	public int fResolutionTime;

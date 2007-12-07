@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
 import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -195,7 +196,7 @@ public class LanguageManager {
 		return getLanguageForContentTypeID(contentTypeID);
 	}
 	
-	private ILanguage getLanguageForContentTypeID(String contentTypeID) {
+	public ILanguage getLanguageForContentTypeID(String contentTypeID) {
 		cacheAllLanguages();
 		
 		ILanguage language = (ILanguage)fContentTypeToLanguageCache.get(contentTypeID);

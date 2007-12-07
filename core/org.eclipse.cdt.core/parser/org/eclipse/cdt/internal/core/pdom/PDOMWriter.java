@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,13 +43,10 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
-import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerASTVisitor;
-import org.eclipse.cdt.internal.core.pdom.indexer.IndexerStatistics;
-import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -68,13 +64,15 @@ abstract public class PDOMWriter {
 	
 	protected boolean fShowActivity;
 	protected boolean fShowProblems;
-	protected IndexerStatistics fStatistics;
+	protected final IndexerStatistics fStatistics;
+	protected final IndexerInputAdapter fResolver;
 	
 	private IndexerProgress fInfo= new IndexerProgress();
 	private int fSkipReferences= SKIP_NO_REFERENCES;
 	
-	public PDOMWriter() {
+	public PDOMWriter(IndexerInputAdapter resolver) {
 		fStatistics= new IndexerStatistics();
+		fResolver= resolver;
 	}
 	
 	public void setShowActivity(boolean val) {
@@ -93,38 +91,10 @@ abstract public class PDOMWriter {
 		fSkipReferences= options;
 	}
 	
-	/**
-	 * Called to check whether a translation unit still needs to be updated.
-	 * @see #addSymbols(IASTTranslationUnit, IWritableIndex, int, IProgressMonitor)
-	 * @since 4.0
-	 */
-	protected abstract boolean needToUpdate(IIndexFileLocation location, int confighash) throws CoreException;
-
-	/**
-	 * Called after a file was added to the index. 
-	 * @return whether the file was actually requested by the indexer.
-	 * @see #addSymbols(IASTTranslationUnit, IWritableIndex, int, IProgressMonitor)
-	 * @since 4.0
-	 */
-	protected abstract boolean postAddToIndex(IIndexFileLocation location, IIndexFile file) throws CoreException;
-
-	/**
-	 * Called to resolve an absolute path to an index file location. 
-	 * @since 4.0
-	 */
-	protected abstract IIndexFileLocation findLocation(String absolutePath);
-		
-	/**
-	 * Fully equivalent to 
-	 * <code>addSymbols(IASTTranslationUnit, IWritableIndex, int, true, int, null, IProgressMonitor)</code>.
-	 * @since 4.0
-	 */
-	public void addSymbols(IASTTranslationUnit ast, 
-			IWritableIndex index, int readlockCount,
-			int configHash, IProgressMonitor pm) throws InterruptedException, CoreException {
-		addSymbols(ast, index, readlockCount, true, configHash, null, pm);
+	public int getSkipReferences() {
+		return fSkipReferences;
 	}
-
+			
 	/**
 	 * Extracts symbols from the given ast and adds them to the index. It will
 	 * make calls to 	  
@@ -137,124 +107,31 @@ abstract public class PDOMWriter {
 	 * index after your last write operation.
 	 * @since 4.0
 	 */
-	public void addSymbols(IASTTranslationUnit ast, 
-			IWritableIndex index, int readlockCount, boolean flushIndex,
-			int configHash, ITodoTaskUpdater taskUpdater, IProgressMonitor pm) throws InterruptedException, CoreException {
+	public void addSymbols(IASTTranslationUnit ast, IIndexFileLocation[] ifls, IWritableIndex index, 
+			int readlockCount, boolean flushIndex, int configHash, ITodoTaskUpdater taskUpdater, IProgressMonitor pm) 
+			throws InterruptedException, CoreException {
 		final Map symbolMap= new HashMap();
-		ArrayList stati= new ArrayList();
-		IIndexFileLocation[] orderedPaths= null;
-		try {
-			HashSet contextIncludes= new HashSet();
-			orderedPaths= extractSymbols(ast, symbolMap, configHash, contextIncludes);
-			for (int i=0; i<orderedPaths.length; i++) {
-				if (pm.isCanceled()) {
-					return;
-				}
-				IIndexFileLocation path= orderedPaths[i];
-				ArrayList[] arrayLists = ((ArrayList[]) symbolMap.get(path));
-
-				// resolve the names
-				long start= System.currentTimeMillis();
-				ArrayList names= arrayLists[2];
-				boolean reported= false;
-				for (Iterator j = names.iterator(); j.hasNext();) {
-					final IASTName[] na= (IASTName[]) j.next();
-					final IASTName name = na[0];
-					try {
-						final IBinding binding = name.resolveBinding();
-						if (binding instanceof IProblemBinding)
-							reportProblem((IProblemBinding) binding);
-						else if (name.isReference()) {
-							if (fSkipReferences == SKIP_TYPE_REFERENCES) {
-								if (isTypeReferenceBinding(binding) && !isInheritanceSpec(name)) {
-									na[0]= null;
-									fStatistics.fReferenceCount--;
-								}
-							}
-							fStatistics.fReferenceCount++;
-						}
-						else {
-							fStatistics.fDeclarationCount++;
-						}
-					} catch (RuntimeException e) {
-						if (!reported) {
-							stati.add(CCorePlugin.createStatus(
-								NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
-						}
-						reported= true;
-						j.remove();
-					} catch (PDOMNotImplementedError e) {
-						if (!reported) {
-							stati.add(CCorePlugin.createStatus(
-									NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
-						}
-						reported= true;
-						j.remove();
-					}
-				}
-				fStatistics.fResolutionTime += System.currentTimeMillis()-start;
-			}
-
-			boolean isFirstRequest= true;
-			boolean isFirstAddition= true;
-			index.acquireWriteLock(readlockCount);
-			long start= System.currentTimeMillis();
-			try {
-				for (int i=0; i<orderedPaths.length; i++) {
-					if (pm.isCanceled()) 
-						return;
-
-					IIndexFileLocation path = orderedPaths[i];
-					if (path != null) {
-						if (fShowActivity) {
-							System.out.println("Indexer: adding " + path.getURI());  //$NON-NLS-1$
-						}
-						IIndexFile file;
-						try {
-							file = addToIndex(index, path, symbolMap, configHash, contextIncludes);
-						} catch (RuntimeException e) {
-							stati.add(CCorePlugin.createStatus(
-									NLS.bind(Messages.PDOMWriter_errorWhileParsing, path.getURI().getPath()), e));
-							break;
-						} catch (PDOMNotImplementedError e) {
-							stati.add(CCorePlugin.createStatus(
-									NLS.bind(Messages.PDOMWriter_errorWhileParsing, path.getURI().getPath()), e));
-							break;
-						}
-						boolean wasRequested= postAddToIndex(path, file);
-
-						synchronized(fInfo) {
-							if (wasRequested) {
-								if (isFirstRequest) 
-									isFirstRequest= false;
-								else 
-									fInfo.fTotalSourcesEstimate--;
-							}
-							if (isFirstAddition) 
-								isFirstAddition= false;
-							else
-								fInfo.fCompletedHeaders++;
-						}
-					}
-				}
-			} finally {
-				index.releaseWriteLock(readlockCount, flushIndex);
-			}
-			fStatistics.fAddToIndexTime+= System.currentTimeMillis()-start;
-			
-			if (taskUpdater != null) {
-				taskUpdater.updateTasks(ast.getComments(), orderedPaths);
-			}
+		for (int i = 0; i < ifls.length; i++) {
+			prepareInMap(symbolMap, ifls[i]);
 		}
-		finally {
-			synchronized(fInfo) {
-				fInfo.fCompletedSources++;
-			}
+		ArrayList stati= new ArrayList();
+
+		HashSet contextIncludes= new HashSet();
+		extractSymbols(ast, symbolMap, contextIncludes);
+			
+		// name resolution
+		resolveNames(symbolMap, ifls, stati, pm);
+
+		// index update
+		storeSymbolsInIndex(symbolMap, ifls, ast.getLinkage().getLinkageID(), configHash, contextIncludes, index, readlockCount, flushIndex,	stati, pm);
+
+		if (taskUpdater != null) {
+			taskUpdater.updateTasks(ast.getComments(), ifls);
 		}
 		if (!stati.isEmpty()) {
 			String path= null;
-			if (orderedPaths != null && orderedPaths.length > 0) {
-				path= orderedPaths[orderedPaths.length-1].getURI().getPath();
+			if (ifls != null && ifls.length > 0) {
+				path= ifls[ifls.length-1].getURI().getPath();
 			}
 			else {
 				path= ast.getFilePath().toString();
@@ -271,73 +148,119 @@ abstract public class PDOMWriter {
 		}
 	}
 
-	private IIndexFileLocation[] extractSymbols(IASTTranslationUnit ast, 
-			final Map symbolMap, int confighash, Collection contextIncludes) throws CoreException {
-		LinkedHashSet/*<IIndexFileLocation>*/ orderedIFLs= new LinkedHashSet/*<IIndexFileLocation>*/();
-		ArrayList/*<IIndexFileLocation>*/ iflStack= new ArrayList/*<IIndexFileLocation>*/();
-		HashMap firstIncludePerTarget= new HashMap();
-		
-		final IIndexFileLocation astLocation = findLocation(ast.getFilePath());
-		IIndexFileLocation aboveStackIFL = astLocation;
+	private void storeSymbolsInIndex(final Map symbolMap, IIndexFileLocation[] ifls, int linkageID, int configHash,
+			HashSet contextIncludes, IWritableIndex index, int readlockCount, boolean flushIndex,
+			ArrayList stati, IProgressMonitor pm) throws InterruptedException, CoreException {
+		index.acquireWriteLock(readlockCount);
+		long start= System.currentTimeMillis();
+		try {
+			for (int i=0; i<ifls.length; i++) {
+				if (pm.isCanceled()) 
+					return;
 
+				final IIndexFileLocation ifl= ifls[i];
+				if (ifl != null) {
+					if (fShowActivity) {
+						System.out.println("Indexer: adding " + ifl.getURI());  //$NON-NLS-1$
+					}
+					try {
+						storeFileInIndex(index, ifl, symbolMap, linkageID, configHash, contextIncludes);
+					} catch (RuntimeException e) {
+						stati.add(CCorePlugin.createStatus(
+								NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), e));
+						break;
+					} catch (PDOMNotImplementedError e) {
+						stati.add(CCorePlugin.createStatus(
+								NLS.bind(Messages.PDOMWriter_errorWhileParsing, ifl.getURI().getPath()), e));
+						break;
+					}
+					if (i<ifls.length-1) {
+						updateInfo(0, 1, 0); // update header count
+					}
+				}
+			}
+		} finally {
+			index.releaseWriteLock(readlockCount, flushIndex);
+		}
+		fStatistics.fAddToIndexTime+= System.currentTimeMillis()-start;
+	}
+
+	private void resolveNames(final Map symbolMap, IIndexFileLocation[] ifls, ArrayList stati, IProgressMonitor pm) {
+		long start= System.currentTimeMillis();
+		for (int i=0; i<ifls.length; i++) {
+			if (pm.isCanceled()) {
+				return;
+			}
+			IIndexFileLocation path= ifls[i];
+			ArrayList[] arrayLists = ((ArrayList[]) symbolMap.get(path));
+
+			ArrayList names= arrayLists[2];
+			boolean reported= false;
+			for (Iterator j = names.iterator(); j.hasNext();) {
+				final IASTName[] na= (IASTName[]) j.next();
+				final IASTName name = na[0];
+				try {
+					final IBinding binding = name.resolveBinding();
+					if (binding instanceof IProblemBinding)
+						reportProblem((IProblemBinding) binding);
+					else if (name.isReference()) {
+						if (fSkipReferences == SKIP_TYPE_REFERENCES) {
+							if (isTypeReferenceBinding(binding) && !isInheritanceSpec(name)) {
+								na[0]= null;
+								fStatistics.fReferenceCount--;
+							}
+						}
+						fStatistics.fReferenceCount++;
+					}
+					else {
+						fStatistics.fDeclarationCount++;
+					}
+				} catch (RuntimeException e) {
+					if (!reported) {
+						stati.add(CCorePlugin.createStatus(
+								NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
+					}
+					reported= true;
+					j.remove();
+				} catch (PDOMNotImplementedError e) {
+					if (!reported) {
+						stati.add(CCorePlugin.createStatus(
+								NLS.bind(Messages.PDOMWriter_errorResolvingName, name.toString(), path.getURI().getPath()), e));
+					}
+					reported= true;
+					j.remove();
+				}
+			}
+		}
+		fStatistics.fResolutionTime += System.currentTimeMillis()-start;
+	}
+
+	private void extractSymbols(IASTTranslationUnit ast, final Map symbolMap, Collection contextIncludes) throws CoreException {
+		
+		final HashSet contextIFLs= new HashSet();
+		final IIndexFileLocation astIFL = fResolver.resolveASTPath(ast.getFilePath());
+		
+		// includes
 		IASTPreprocessorIncludeStatement[] includes = ast.getIncludeDirectives();
 		for (int i= 0; i < includes.length; i++) {
 			final IASTPreprocessorIncludeStatement include = includes[i];
-			
-			// check if we have left a file.
-			final IASTFileLocation tmpLoc = include.getFileLocation();
-			final IIndexFileLocation nextIFL= tmpLoc != null ? findLocation(tmpLoc.getFileName()) : astLocation; // command-line includes
-			while (!aboveStackIFL.equals(nextIFL)) {
-				if (!iflStack.isEmpty()) { 
-					if (needToUpdate(aboveStackIFL, confighash)) {
-						prepareInMap(symbolMap, aboveStackIFL);
-						orderedIFLs.add(aboveStackIFL);
-					}
-					aboveStackIFL= (IIndexFileLocation) iflStack.remove(iflStack.size()-1);
-				}
-				else {
-					assert false; // logics in parser is broken, still do something useful
-					iflStack.add(aboveStackIFL);
-					aboveStackIFL= nextIFL;
-					break;
-				}
+			final IASTFileLocation astLoc= include.getFileLocation();
+			final IIndexFileLocation sourceIFL= astLoc != null ? fResolver.resolveASTPath(astLoc.getFileName()) : astIFL; // command-line includes
+			final boolean updateSource= symbolMap.containsKey(sourceIFL);
+			if (updateSource) {
+				addToMap(symbolMap, 0, sourceIFL, include);
 			}
-			
-			// save include in map
-			if (needToUpdate(nextIFL, confighash)) {
-				prepareInMap(symbolMap, nextIFL);
-				addToMap(symbolMap, 0, nextIFL, include);
-			}
-			
-			// prepare to go into next level
-			if (include.isResolved()) {
-				iflStack.add(nextIFL);
-				aboveStackIFL= findLocation(include.getPath());
-				if (include.isActive()) {
-					if (!firstIncludePerTarget.containsKey(aboveStackIFL)) {
-						firstIncludePerTarget.put(aboveStackIFL, include);
+			if (include.isActive()) {
+				if (!include.isResolved()) {
+					reportProblem(include);
+				}
+				else if (updateSource) {
+					// the include was parsed, check if we want to update the included file in the index
+					final IIndexFileLocation targetIFL= fResolver.resolveASTPath(include.getPath());
+					if (symbolMap.containsKey(targetIFL) && contextIFLs.add(targetIFL)) {
+						contextIncludes.add(include);
 					}
 				}
-			}
-			else if (include.isActive()) {
-				reportProblem(include);
-			}
-		}
-		iflStack.add(aboveStackIFL);
-		while (!iflStack.isEmpty()) {
-			aboveStackIFL= (IIndexFileLocation) iflStack.remove(iflStack.size()-1);
-			if (needToUpdate(aboveStackIFL, confighash)) {
-				prepareInMap(symbolMap, aboveStackIFL);
-				orderedIFLs.add(aboveStackIFL);
-			}
-		}
-
-		// extract context includes
-		for (Iterator iterator = orderedIFLs.iterator(); iterator.hasNext();) {
-			IndexFileLocation loc = (IndexFileLocation) iterator.next();
-			Object contextInclude= firstIncludePerTarget.get(loc);
-			if (contextInclude != null) {
-				contextIncludes.add(contextInclude);
 			}
 		}
 
@@ -347,7 +270,7 @@ abstract public class PDOMWriter {
 			IASTPreprocessorMacroDefinition macro = macros[i2];
 			IASTFileLocation sourceLoc = macro.getFileLocation();
 			if (sourceLoc != null) { // skip built-ins and command line macros
-				IIndexFileLocation path2 = findLocation(sourceLoc.getFileName());
+				IIndexFileLocation path2 = fResolver.resolveASTPath(sourceLoc.getFileName());
 				addToMap(symbolMap, 1, path2, macro);
 			}
 		}
@@ -368,13 +291,12 @@ abstract public class PDOMWriter {
 				if (name != null) {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null) {
-						IIndexFileLocation location = findLocation(nameLoc.getFileName());
+						IIndexFileLocation location = fResolver.resolveASTPath(nameLoc.getFileName());
 						addToMap(symbolMap, 2, location, new IASTName[]{name, caller});
 					}
 				}
 			}
 		});
-		return (IIndexFileLocation[]) orderedIFLs.toArray(new IIndexFileLocation[orderedIFLs.size()]);
 	}
 	
 	protected boolean isInheritanceSpec(IASTName name) {
@@ -439,16 +361,17 @@ abstract public class PDOMWriter {
 		return false;
 	}
 
-	private IIndexFragmentFile addToIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap, int configHash, Set contextIncludes) throws CoreException {
+	private IIndexFragmentFile storeFileInIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap, 
+			int linkageID, int configHash, Set contextIncludes) throws CoreException {
 		Set clearedContexts= Collections.EMPTY_SET;
-		IIndexFragmentFile file= index.getWritableFile(location);
+		IIndexFragmentFile file= index.getWritableFile(linkageID, location);
 		if (file != null) {
 			clearedContexts= new HashSet();
 			index.clearFile(file, clearedContexts);
 		} else {
-			file= index.addFile(location);
+			file= index.addFile(linkageID, location);
 		}
-		file.setTimestamp(getLastModified(location));
+		file.setTimestamp(fResolver.getLastModified(location));
 		file.setScannerConfigurationHashcode(configHash);
 		ArrayList[] lists= (ArrayList[]) symbolMap.get(location);
 		if (lists != null) {
@@ -470,13 +393,12 @@ abstract public class PDOMWriter {
 				final IncludeInformation info= includeInfos[i]= new IncludeInformation();
 				info.fStatement= include;
 				if (include.isResolved()) {
-					info.fLocation= findLocation(include.getPath());
+					info.fLocation= fResolver.resolveASTPath(include.getPath());
 					info.fIsContext= include.isActive() && 
-						(contextIncludes.contains(include) || 
-								clearedContexts.contains(info.fLocation));
+						(contextIncludes.contains(include) || clearedContexts.contains(info.fLocation));
 				}
 			}
-			index.setFileContent(file, includeInfos, macros, names);
+			index.setFileContent(file, linkageID, includeInfos, macros, names);
 		}
 		return file;
 	}
@@ -501,16 +423,5 @@ abstract public class PDOMWriter {
 			fInfo.fCompletedSources+= completedSources;
 			fInfo.fTotalSourcesEstimate+= totalEstimate;
 		}
-	}
-	
-	/**
-	 * Obtains the timestamp of an index file location.
-	 * @param location the location for which the timestamp is obtained.
-	 * @return the timestamp.
-	 * @throws CoreException
-	 * @since 4.0
-	 */
-	protected long getLastModified(IIndexFileLocation location) throws CoreException {
-		return EFS.getStore(location.getURI()).fetchInfo().getLastModified();
 	}
 }

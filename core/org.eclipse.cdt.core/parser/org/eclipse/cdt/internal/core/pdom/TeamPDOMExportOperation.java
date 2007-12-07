@@ -20,20 +20,20 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.core.CCoreInternals;
-import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -144,27 +144,30 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 	}
 
 	private void createChecksums(ICProject cproject, PDOM pdom, File target, IProgressMonitor monitor) throws CoreException {
-		List locs;
+		HashSet fullPaths= new HashSet();
 		try {
 			pdom.acquireReadLock();
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException();
 		}
 		try {
-			locs = pdom.getAllFileLocations();
+			IIndexFile[] ifiles= pdom.getAllFiles();
+			for (int i = 0; i < ifiles.length; i++) {
+				String fullPath= ifiles[i].getLocation().getFullPath();
+				if (fullPath != null) {
+					fullPaths.add(fullPath);
+				}
+			}
 		}
 		finally {
 			pdom.releaseReadLock();
 		}
 		int i=0;
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		IFile[] files= new IFile[locs.size()];
-		for (Iterator iterator = locs.iterator(); iterator.hasNext();) {
-			IndexFileLocation floc = (IndexFileLocation) iterator.next();
-			String fullPath= floc.getFullPath();
-			if (fullPath != null) {
-				files[i++]= root.getFile(new Path(fullPath));
-			}
+		IFile[] files= new IFile[fullPaths.size()];
+		for (Iterator iterator = fullPaths.iterator(); iterator.hasNext();) {
+			String fullPath= (String) iterator.next();
+			files[i++]= root.getFile(new Path(fullPath));
  		}
 		Map map= Checksums.createChecksumMap(files, fMessageDigest, monitor);
 		writeChecksums(map, target);

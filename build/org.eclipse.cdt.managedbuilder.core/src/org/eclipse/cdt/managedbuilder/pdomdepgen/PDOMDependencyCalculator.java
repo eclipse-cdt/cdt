@@ -8,6 +8,7 @@
  * Contributors: 
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Markus Schorn (Wind River Systems)
  **********************************************************************/
 
 package org.eclipse.cdt.managedbuilder.pdomdepgen;
@@ -63,9 +64,9 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 					IIndex index = CCorePlugin.getIndexManager().getIndex(project, IIndexManager.ADD_DEPENDENCIES);
 					index.acquireReadLock();
 					try {
-						IIndexFile file = index.getFile(IndexLocationFactory.getWorkspaceIFL((IFile)resource));
-						if (file != null) {
-							IIndexInclude[] includes = index.findIncludes(file, IIndex.DEPTH_INFINITE);
+						IIndexFile[] files = index.getFiles(IndexLocationFactory.getWorkspaceIFL((IFile)resource));
+						if (files.length > 0) {
+							IIndexInclude[] includes = index.findIncludes(files[0], IIndex.DEPTH_INFINITE);
 
 							List/*<IPath>*/ list = new ArrayList/*<IPath>*/();
 							for (int i = 0; i < includes.length; ++i) {

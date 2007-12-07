@@ -120,11 +120,18 @@ public class PDOMProxy implements IPDOM {
 		return 0;
 	}
 
-	public synchronized IIndexFragmentFile getFile(IIndexFileLocation location) throws CoreException {
+	public synchronized IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		if (fDelegate != null)
-			return fDelegate.getFile(location);
+			return fDelegate.getFile(linkageID, location);
 
 		return null;
+	}
+
+	public synchronized IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
+		if (fDelegate != null)
+			return fDelegate.getFiles(location);
+
+		return IIndexFragmentFile.EMPTY_ARRAY;
 	}
 
 	public synchronized long getLastWriteAccess() {

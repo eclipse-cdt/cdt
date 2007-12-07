@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -38,12 +39,19 @@ public interface IWritableIndex extends IIndex {
 	/**
 	 * Checks whether the given file can be written to in this index.
 	 */
-	boolean isWritableFile(IIndexFragmentFile file);
+	boolean isWritableFile(IIndexFile file);
 
 	/**
-	 * Returns a writable file for the given location, or null.
+	 * Returns a writable file for the given location and linkage, or null. This method
+	 * returns file-objects without content, also.
 	 */
-	IIndexFragmentFile getWritableFile(IIndexFileLocation location) throws CoreException;
+	IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location) throws CoreException;
+
+	/**
+	 * Returns the writable files for the given location in any linkage. This method
+	 * returns file-objects without content, also.
+	 */
+	IIndexFragmentFile[] getWritableFiles(IIndexFileLocation location) throws CoreException;
 
 	/**
 	 * Clears the given file in the index.
@@ -56,13 +64,13 @@ public interface IWritableIndex extends IIndex {
 	/**
 	 * Creates a file object for the given location or returns an existing one.
 	 */
-	IIndexFragmentFile addFile(IIndexFileLocation fileLocation) throws CoreException;
+	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException;
 
 	/**
 	 * Adds content to the given file.
 	 */
 	void setFileContent(IIndexFragmentFile sourceFile, 
-			IncludeInformation[] includes, 
+			int linkageID, IncludeInformation[] includes, 
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
 
 	/**

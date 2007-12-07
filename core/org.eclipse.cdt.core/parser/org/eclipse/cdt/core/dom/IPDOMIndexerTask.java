@@ -9,9 +9,6 @@
  *     QNX Software Systems - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
-/**
- * 
- */
 package org.eclipse.cdt.core.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -31,7 +28,7 @@ public interface IPDOMIndexerTask {
 	/**
 	 * Called by the framework to perform the task.
 	 */
-	public void run(IProgressMonitor monitor);
+	public void run(IProgressMonitor monitor) throws InterruptedException;
 
 	/**
 	 * Returns the indexer the task belongs to.

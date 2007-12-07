@@ -31,13 +31,11 @@ import java.util.zip.ZipFile;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
-import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.Messages;
 import org.eclipse.cdt.internal.core.pdom.indexer.PDOMIndexerTask;
@@ -68,9 +66,11 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 
 	private static final class FileAndChecksum {
 		public ITranslationUnit fFile;
+		public IIndexFragmentFile fIFile;
 		public byte[] fChecksum;
-		public FileAndChecksum(ITranslationUnit tu, byte[] checksum) {
+		public FileAndChecksum(ITranslationUnit tu, IIndexFragmentFile ifile, byte[] checksum) {
 			fFile= tu;
+			fIFile= ifile;
 			fChecksum= checksum;
 		}
 	}
@@ -193,8 +193,6 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 	}
 
 	private void checkIndex(Map checksums, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		List filesToCheck= new ArrayList();		
-		
 		IPDOM obj= CCoreInternals.getPDOMManager().getPDOM(fProject);
 		if (!(obj instanceof WritablePDOM)) {
 			return;
@@ -203,20 +201,22 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		WritablePDOM pdom= (WritablePDOM) obj;
 		pdom.acquireReadLock();
 		try {
+			List filesToCheck= new ArrayList();		
 			if (!pdom.isSupportedVersion()) {
 				throw new CoreException(CCorePlugin.createStatus(					
 						NLS.bind(Messages.PDOMImportTask_errorInvalidPDOMVersion, fProject.getElementName())));
 			}
 
 			final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			List filesToDelete= pdom.getAllFileLocations();
-			for (Iterator i = filesToDelete.iterator(); i.hasNext();) {
+			IIndexFragmentFile[] filesToDelete= pdom.getAllFiles();
+			for (int i = 0; i < filesToDelete.length; i++) {
 				checkMonitor(monitor);
+				IIndexFragmentFile ifile = filesToDelete[i];
 
 				byte[] checksum= null;
 				ITranslationUnit tu= null;
 
-				IIndexFileLocation ifl = (IIndexFileLocation) i.next();
+				IIndexFileLocation ifl = ifile.getLocation();
 				String fullPathStr= ifl.getFullPath();
 				if (fullPathStr != null) {
 					Path fullPath= new Path(fullPathStr);
@@ -238,8 +238,8 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 					}
 				}
 				if (checksum != null) {
-					filesToCheck.add(new FileAndChecksum(tu, checksum));
-					i.remove();
+					filesToCheck.add(new FileAndChecksum(tu, ifile, checksum));
+					filesToDelete[i]= null;
 				}
 			}			
 			try {
@@ -261,22 +261,22 @@ public class TeamPDOMImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void deleteFiles(WritablePDOM pdom, final int giveupReadlocks, List filesToDelete,
+	private void deleteFiles(WritablePDOM pdom, final int giveupReadlocks, IIndexFragmentFile[] filesToDelete,
 			List updateTimestamps, IProgressMonitor monitor) throws InterruptedException, CoreException {
 		pdom.acquireWriteLock(giveupReadlocks);
 		try {
-			for (Iterator i = filesToDelete.iterator(); i.hasNext();) {
-				checkMonitor(monitor);
-				
-				IndexFileLocation ifl = (IndexFileLocation) i.next();
-				IIndexFragmentFile file= pdom.getFile(ifl);
-				pdom.clearFile(file, null);
+			for (int i = 0; i < filesToDelete.length; i++) {
+				IIndexFragmentFile ifile = filesToDelete[i];
+				if (ifile != null) {
+					checkMonitor(monitor);
+					pdom.clearFile(ifile, null);
+				}
 			}
 			for (Iterator i = updateTimestamps.iterator(); i.hasNext();) {
 				checkMonitor(monitor);
 				
 				FileAndChecksum fc = (FileAndChecksum) i.next();
-				IIndexFragmentFile file= pdom.getFile(IndexLocationFactory.getIFL(fc.fFile));
+				IIndexFragmentFile file= fc.fIFile;
 				if (file != null) {
 					IResource r= fc.fFile.getResource();
 					if (r != null) {

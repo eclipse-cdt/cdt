@@ -28,9 +28,11 @@ public interface ILinkage {
 	final static String FORTRAN_LINKAGE_NAME= "Fortran"; //$NON-NLS-1$
 
 	final static int NO_LINKAGE_ID= 0;
-	final static int C_LINKAGE_ID= 1;
-	final static int CPP_LINKAGE_ID= 2;
+	final static int CPP_LINKAGE_ID= 1;
+	final static int C_LINKAGE_ID= 2;
 	final static int FORTRAN_LINKAGE_ID= 3;
+	
+	final static int MAX_LINKAGE_ID= FORTRAN_LINKAGE_ID;
 
 	/**
 	 * Returns the name of the linkage.

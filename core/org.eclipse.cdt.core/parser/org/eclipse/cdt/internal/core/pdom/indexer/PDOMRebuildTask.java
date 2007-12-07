@@ -32,6 +32,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * A task for rebuilding an index, works for all indexers.
+ */
 public class PDOMRebuildTask implements IPDOMIndexerTask {
 	protected static final String TRUE= String.valueOf(true);
 	protected static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
@@ -55,7 +58,7 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		return fIndexer;
 	}
 
-	public void run(IProgressMonitor monitor) {
+	public void run(IProgressMonitor monitor) throws InterruptedException {
 		monitor.subTask(NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, 
 				fIndexer.getProject().getElementName()));
 
@@ -102,15 +105,14 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
 		List sources= new ArrayList();
 		List headers= allFiles ? sources : null;
-		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, allFiles, monitor);
+		TranslationUnitCollector collector= new TranslationUnitCollector(sources, headers, monitor);
 		project.accept(collector);
 		ITranslationUnit[] tus= (ITranslationUnit[]) sources.toArray(new ITranslationUnit[sources.size()]);
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
 			final PDOMIndexerTask delegate = (PDOMIndexerTask) fDelegate;
-			delegate.setUpateFlags(IIndexManager.UPDATE_ALL);
+			delegate.setUpdateFlags(IIndexManager.UPDATE_ALL);
 			delegate.setParseUpFront();
-			delegate.setAllFilesProvided(allFiles);
 		}
 	}
 

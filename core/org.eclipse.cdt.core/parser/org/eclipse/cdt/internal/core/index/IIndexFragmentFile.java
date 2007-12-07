@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IIndexFragmentFile extends IIndexFile {
+	IIndexFragmentFile[] EMPTY_ARRAY = {};
 
 	/**
 	 * Returns the fragment that owns this file.
@@ -24,23 +25,24 @@ public interface IIndexFragmentFile extends IIndexFile {
 
 	/**
 	 * Sets the timestamp of the file
-	 * @throws CoreException 
 	 */
 	void setTimestamp(long timestamp) throws CoreException;
 
 	/**
-	 * Sets the hashcode of the scanner configuration.
-	 * @param hashcode a hashcode or <code>0</code> if it is unknown.
+	 * Sets the hash-code of the scanner configuration.
+	 * @param hashcode a hash-code or <code>0</code> if it is unknown.
 	 * @throws CoreException 
 	 */
 	void setScannerConfigurationHashcode(int hashcode) throws CoreException;
 
 	/**
-	 * Returns whether any names are associated with this file object
-	 * in this fragment - i.e. whether this file contains content in its
-	 * associated fragment
-	 * @return whether any names are associated with this file object
-	 * in this fragment
+	 * Returns whether this file contains content in its
+	 * associated fragment. Files without content are inserted to track includes.
 	 */
-	boolean hasNames() throws CoreException;
+	boolean hasContent() throws CoreException;
+
+	/**
+	 * Returns the id of the linkage this file belongs to.
+	 */
+	int getLinkageID() throws CoreException;
 }

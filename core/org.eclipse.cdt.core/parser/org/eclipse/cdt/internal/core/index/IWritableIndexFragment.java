@@ -39,12 +39,12 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	void clearFile(IIndexFragmentFile file, Collection contextsRemoved) throws CoreException;
 
 	/**
-	 * Creates a file object for the given location or returns an existing one.
+	 * Creates a file object for the given location and linkage or returns an existing one.
 	 * @param fileLocation an IIndexFileLocation representing the location of the file
 	 * @return the existing IIndexFragmentFile for this location, or a newly created one 
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile addFile(IIndexFileLocation fileLocation) throws CoreException;
+	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException;
 
 	/**
 	 * Adds an include to the given file.

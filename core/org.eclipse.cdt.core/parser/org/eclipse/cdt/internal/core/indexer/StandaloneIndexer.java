@@ -306,15 +306,13 @@ public abstract class StandaloneIndexer {
 			fDelegate= createTask(getFilesAdded(tus), NO_TUS, NO_TUS);
 			fDelegate.setUpdateFlags(fUpdateOptions);
 			
+			if (fDelegate != null) {
+				fDelegate.run(monitor);
+			}
 		} catch (CoreException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 		}
-		
-		if (fDelegate != null) {
-			fDelegate.run(monitor);
-		}
-		
 	}
 	
 	/**
@@ -329,12 +327,12 @@ public abstract class StandaloneIndexer {
 		fProgress= new IndexerProgress();
 				
 		fDelegate= createTask(getFilesAdded(added), changed, removed);
-		if (fDelegate instanceof StandaloneIndexerTask) {
-			fDelegate.setUpdateFlags(fUpdateOptions);
-		}
-		
 		if (fDelegate != null) {
-			fDelegate.run(monitor);
+			try {
+				fDelegate.setUpdateFlags(fUpdateOptions);
+				fDelegate.run(monitor);
+			} catch (InterruptedException e) {
+			}
 		}
 		
 	}
@@ -360,7 +358,7 @@ public abstract class StandaloneIndexer {
 			if (file.isDirectory()) {
 				String[] files = file.list(filter);
 				for (int i = 0; i < files.length; i++) {
-					added.add((String)files[i]);
+					added.add(files[i]);
 				}
 			}
 			else {				

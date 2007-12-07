@@ -80,9 +80,14 @@ public class EmptyIndexFragment implements IIndexFragment {
 		return 0;
 	}
 
-	public IIndexFragmentFile getFile(IIndexFileLocation location)
+	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location)
 			throws CoreException {
 		return null;
+	}
+
+	
+	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
+		return new IIndexFragmentFile[0];
 	}
 
 	public long getLastWriteAccess() {

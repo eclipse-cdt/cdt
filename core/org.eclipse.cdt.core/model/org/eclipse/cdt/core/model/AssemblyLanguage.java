@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -151,4 +152,7 @@ public class AssemblyLanguage extends AbstractLanguage implements IAsmLanguage, 
 		fId= CCorePlugin.PLUGIN_ID + '.' + config.getAttribute("id"); //$NON-NLS-1$
 	}
 
+	public int getLinkageID() {
+		return ILinkage.NO_LINKAGE_ID;
+	}
 }

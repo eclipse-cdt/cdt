@@ -74,7 +74,7 @@ public class DeltaAnalyzer {
 	}
 
 	private void collectSources(ICContainer container, Collection sources) throws CoreException {
-		container.accept(new TranslationUnitCollector(sources, sources, true, new NullProgressMonitor()));
+		container.accept(new TranslationUnitCollector(sources, sources, new NullProgressMonitor()));
 	}
 
 	public ITranslationUnit[] getAddedTUs() {

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import java.util.Collection;
 
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -23,13 +22,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 final class TranslationUnitCollector implements ICElementVisitor {
 	private final Collection fSources;
 	private final Collection fHeaders;
-	private final boolean fAllFiles;
 	private final IProgressMonitor fProgressMonitor;
 
-	public TranslationUnitCollector(Collection sources, Collection headers, boolean allFiles, IProgressMonitor pm) {
+	public TranslationUnitCollector(Collection sources, Collection headers, IProgressMonitor pm) {
 		fSources= sources;
 		fHeaders= headers;
-		fAllFiles = allFiles;
 		fProgressMonitor= pm;
 	}
 
@@ -41,9 +38,7 @@ final class TranslationUnitCollector implements ICElementVisitor {
 		case ICElement.C_UNIT:
 			ITranslationUnit tu = (ITranslationUnit)element;
 			if (tu.isSourceUnit()) {
-				if (fAllFiles || !CoreModel.isScannerInformationEmpty(tu.getResource())) {
-					fSources.add(tu);
-				}
+				fSources.add(tu);
 			}
 			else if (fHeaders != null && tu.isHeaderUnit()) {
 				fHeaders.add(tu);

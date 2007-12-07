@@ -32,6 +32,9 @@ public class Messages extends NLS {
 	public static String TeamPDOMExportOperation_subtaskCreateDatabase;
 	public static String TeamPDOMExportOperation_taskExportIndex;
 	public static String WritablePDOM_error_unknownLinkage;
+	public static String AbstractIndexerTask_parsingFileTask;
+	public static String AbstractIndexerTask_errorWhileParsing;
+	public static String AbstractIndexerTask_tooManyIndexProblems;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

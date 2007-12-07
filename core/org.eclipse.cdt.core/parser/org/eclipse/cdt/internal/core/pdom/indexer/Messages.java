@@ -18,9 +18,6 @@ public class Messages extends NLS {
 	public static String PDOMImportTask_errorInvalidArchive;
 	public static String PDOMImportTask_errorInvalidPDOMVersion;
 	public static String PDOMIndexerTask_collectingFilesTask;
-	public static String PDOMIndexerTask_errorWhileParsing;
-	public static String PDOMIndexerTask_parsingFileTask;
-	public static String PDOMIndexerTask_tooManyIndexProblems;
 	public static String TodoTaskUpdater_DeleteJob;
 	public static String TodoTaskUpdater_taskFormat;
 	public static String TodoTaskUpdater_UpdateJob;

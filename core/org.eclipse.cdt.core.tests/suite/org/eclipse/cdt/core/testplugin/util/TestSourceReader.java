@@ -27,6 +27,7 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
@@ -285,7 +286,11 @@ public class TestSourceReader {
 			Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 			index.acquireReadLock();
 			try {
-				IIndexFile pfile= index.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+				IIndexFile pfile= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
+					return;
+				}
+				pfile= index.getFile(ILinkage.C_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 				if (pfile != null && pfile.getTimestamp() >= file.getLocalTimeStamp()) {
 					return;
 				}

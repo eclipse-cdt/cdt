@@ -6,15 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
- * Anton Leherbauer (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom.ast.gnu.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.AbstractCLanguage;
 import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
@@ -40,6 +41,10 @@ public class GCCLanguage extends AbstractCLanguage {
 	
 	public String getId() {
 		return ID; 
+	}
+
+	public int getLinkageID() {
+		return ILinkage.C_LINKAGE_ID;
 	}
 
 	/*

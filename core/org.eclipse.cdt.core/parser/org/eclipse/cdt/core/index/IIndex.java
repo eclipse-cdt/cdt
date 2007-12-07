@@ -132,13 +132,21 @@ public interface IIndex {
 	public long getLastWriteAccess();
 	
 	/**
-	 * Looks for a file with the given location. Will return <code>null</code> if there
-     * is no entry in the index for the given location.
+	 * Returns the file-object for the given location and linkage or returns 
+	 * <code>null</code> if the file was not indexed in this linkage.
 	 * @param location an IIndexFileLocation representing the location of the file
 	 * @return the file in the index or <code>null</code>
 	 * @throws CoreException
 	 */
-	public IIndexFile getFile(IIndexFileLocation location) throws CoreException;
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException;
+
+	/**
+	 * Returns the file-objects for the given location in any linkage. 
+	 * @param location an IIndexFileLocation representing the location of the file
+	 * @return an array of file-objects.
+	 * @throws CoreException
+	 */
+	public IIndexFile[] getFiles(IIndexFileLocation location) throws CoreException;
 
 	/**
 	 * Looks for include relations originated by the given file.

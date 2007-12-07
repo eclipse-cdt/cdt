@@ -54,10 +54,11 @@ public class PDOMFile implements IIndexFragmentFile {
 	private static final int FIRST_INCLUDED_BY = 8;
 	private static final int FIRST_MACRO = 12;
 	private static final int LOCATION_REPRESENTATION = 16;
-	private static final int TIME_STAMP = 20;
-	private static final int SCANNER_CONFIG_HASH= 28;
+	private static final int LINKAGE_ID= 20;
+	private static final int TIME_STAMP = 24;
+	private static final int SCANNER_CONFIG_HASH= 32;
 
-	private static final int RECORD_SIZE = 32;
+	private static final int RECORD_SIZE = 36;
 
 	public static class Comparator implements IBTreeComparator {
 		private Database db;
@@ -69,7 +70,11 @@ public class PDOMFile implements IIndexFragmentFile {
 		public int compare(int record1, int record2) throws CoreException {
 			IString name1 = db.getString(db.getInt(record1 + LOCATION_REPRESENTATION));
 			IString name2 = db.getString(db.getInt(record2 + LOCATION_REPRESENTATION));
-			return name1.compare(name2, true);
+			int cmp= name1.compare(name2, true);
+			if (cmp == 0) {
+				cmp= db.getInt(record1+LINKAGE_ID) - db.getInt(record2+LINKAGE_ID);
+			}
+			return cmp;
 		}
 	}
 
@@ -78,7 +83,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		this.record = record;
 	}
 
-	public PDOMFile(PDOM pdom, IIndexFileLocation location) throws CoreException {
+	public PDOMFile(PDOM pdom, IIndexFileLocation location, int linkageID) throws CoreException {
 		this.pdom = pdom;
 		Database db = pdom.getDB();
 		record = db.malloc(RECORD_SIZE);
@@ -87,10 +92,12 @@ public class PDOMFile implements IIndexFragmentFile {
 			throw new CoreException(CCorePlugin.createStatus(Messages.getString("PDOMFile.toInternalProblem")+location.getURI())); //$NON-NLS-1$
 		IString locationDBString = db.newString(locationString);
 		db.putInt(record + LOCATION_REPRESENTATION, locationDBString.getRecord());
+		db.putInt(record + LINKAGE_ID, linkageID);
 		db.putLong(record + TIME_STAMP, 0);
 		setFirstName(null);
 		setFirstInclude(null);
 		setFirstIncludedBy(null);
+		setTimestamp(-1);
 	}
 
 	public int getRecord() {
@@ -123,6 +130,11 @@ public class PDOMFile implements IIndexFragmentFile {
 		int oldRecord = db.getInt(record + LOCATION_REPRESENTATION);
 		db.free(oldRecord);
 		db.putInt(record + LOCATION_REPRESENTATION, db.newString(internalLocation).getRecord());
+	}
+	
+	public int getLinkageID() throws CoreException {
+		Database db = pdom.getDB();
+		return db.getInt(record + LINKAGE_ID);
 	}
 
 	public long getTimestamp() throws CoreException {
@@ -281,6 +293,7 @@ public class PDOMFile implements IIndexFragmentFile {
 			name.delete();
 		}
 		setFirstName(null);
+		setTimestamp(-1);
 	}
 
 	public void addIncludesTo(IncludeInformation[] includeInfos) throws CoreException {
@@ -374,38 +387,88 @@ public class PDOMFile implements IIndexFragmentFile {
 		return (IIndexName[]) result.toArray(new IIndexName[result.size()]);
 	}
 
-	public static IIndexFragmentFile findFile(PDOM pdom, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
+	public static IIndexFragmentFile findFile(PDOM pdom, BTree btree, IIndexFileLocation location, int linkageID, IIndexLocationConverter strategy)
 			throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		int record= 0;
 		if(internalRepresentation!=null) {
-			Finder finder = new Finder(pdom.getDB(), internalRepresentation);
+			Finder finder = new Finder(pdom.getDB(), internalRepresentation, linkageID);
 			btree.accept(finder);
 			record= finder.getRecord();
 		}
 		return record != 0 ? new PDOMFile(pdom, record) : null;
 	}
-	
+
+	public static IIndexFragmentFile[] findFiles(PDOM pdom, BTree btree, IIndexFileLocation location, IIndexLocationConverter strategy)
+			throws CoreException {
+		String internalRepresentation= strategy.toInternalFormat(location);
+		if(internalRepresentation!=null) {
+			Finder finder = new Finder(pdom.getDB(), internalRepresentation, -1);
+			btree.accept(finder);
+			int[] records= finder.getRecords();
+			PDOMFile[] result= new PDOMFile[records.length];
+			for (int i = 0; i < result.length; i++) {
+				result[i]= new PDOMFile(pdom, records[i]);
+			}
+			return result;
+		}
+		return new IIndexFragmentFile[0];
+	}
+
 	private static class Finder implements IBTreeVisitor {
+		private static final int[] EMPTY = {};
 		private final Database db;
 		private final String rawKey;
 		private int record;
+		private int[] records;
+		private final int linkageID;
 
-		public Finder(Database db, String internalRepresentation)
-			throws CoreException
-		{
+		/**
+		 * Searches for a file with the given linkage id.
+		 */
+		public Finder(Database db, String internalRepresentation, int linkageID) {
 			this.db = db;
 			this.rawKey = internalRepresentation;
+			this.linkageID= linkageID;
+		}
+
+		public int[] getRecords() {
+			if (records == null) {
+				if (record == 0) {
+					return EMPTY;
+				}
+				return new int[] {record};
+			}
+			return records;
 		}
 
 		public int compare(int record) throws CoreException {
 			IString name = db.getString(db.getInt(record + PDOMFile.LOCATION_REPRESENTATION));
-			return name.compare(rawKey, true);
+			int cmp= name.compare(rawKey, true);
+			if (cmp == 0 && linkageID >= 0) {
+				cmp= db.getInt(record + PDOMFile.LINKAGE_ID) - linkageID;
+			}
+			return cmp;
 		}
 
 		public boolean visit(int record) throws CoreException {
-			this.record = record;
-			return false;
+			if (linkageID >= 0) {
+				this.record = record;
+				return false;
+			}
+			if (this.record == 0) {
+				this.record= record;
+			}
+			else if (this.records == null) {
+				this.records= new int[] {this.record, record};
+			}
+			else {
+				int[] cpy= new int[this.records.length+1];
+				System.arraycopy(this.records, 0, cpy, 0, this.records.length);
+				cpy[cpy.length-1]= record;
+				this.records= cpy;
+			}
+			return linkageID < 0;
 		}
 
 		public int getRecord() {
@@ -422,8 +485,8 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result;
 	}
 	
-	public boolean hasNames() throws CoreException {
-		return getFirstName()!=null || getFirstMacro() != null || getFirstInclude() != null;
+	public boolean hasContent() throws CoreException {
+		return getTimestamp() != -1;
 	}
 
 	public void convertIncludersToUnresolved() throws CoreException {

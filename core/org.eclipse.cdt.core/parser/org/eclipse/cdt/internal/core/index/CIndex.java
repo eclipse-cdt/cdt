@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.index;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -158,19 +159,34 @@ public class CIndex implements IIndex {
 		return findNames(binding, FIND_REFERENCES);
 	}
 
-	public IIndexFile getFile(IIndexFileLocation location) throws CoreException {
-		IIndexFile result= null, backup= null;
-		for (int i = 0; result==null && i < fPrimaryFragmentCount; i++) {
-			IIndexFragmentFile candidate= fFragments[i].getFile(location);
-			if(candidate!=null) {
-				if(candidate.hasNames()) {
-					result = candidate;
-				}
-				if(backup==null)
-					backup = candidate;
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile candidate= fFragments[i].getFile(linkageID, location);
+			if (candidate!=null && candidate.hasContent()) {
+				return candidate;
 			}
 		}
-		return result == null ? backup : result;
+		return null;
+	}
+
+	public IIndexFile[] getFiles(IIndexFileLocation location) throws CoreException {
+		ArrayList result= new ArrayList();
+		BitSet linkages= new BitSet();
+		for (int i = 0; i < fPrimaryFragmentCount; i++) {
+			IIndexFragmentFile[] candidates= fFragments[i].getFiles(location);
+			for (int j = 0; j < candidates.length; j++) {
+				IIndexFragmentFile candidate= candidates[j];
+				int linkage= candidate.getLinkageID();
+				if (!linkages.get(linkage) && candidate.hasContent()) {
+					result.add(candidate);
+					linkages.set(linkage);
+				}
+			}
+		}
+		if (result.isEmpty()) {
+			return IIndexFile.EMPTY_FILE_ARRAY;
+		}
+		return (IIndexFile[]) result.toArray(new IIndexFile[result.size()]);
 	}
 
 	public IIndexFile resolveInclude(IIndexInclude include) throws CoreException {
@@ -179,11 +195,11 @@ public class CIndex implements IIndex {
 		}
 		IIndexFragmentInclude fragmentInclude = (IIndexFragmentInclude) include;
 		IIndexFragmentFile result= fragmentInclude.getIncludes();
-		if (result != null && result.hasNames()) {
+		if (result != null && result.hasContent()) {
 			return result;
 		}
 
-		return getFile(include.getIncludesLocation());
+		return getFile(include.getIncludedBy().getLinkageID(), include.getIncludesLocation());
 	}
 
 	public IIndexInclude[] findIncludedBy(IIndexFile file) throws CoreException {

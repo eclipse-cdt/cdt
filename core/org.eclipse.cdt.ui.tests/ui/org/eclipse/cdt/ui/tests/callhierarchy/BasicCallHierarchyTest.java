@@ -615,11 +615,11 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content1.indexOf("sf"), 0);
 		openCallHierarchy(editor);
 		tree = getCHTreeViewer().getTree();
-		i0= checkTreeNode(tree, 0, "sf()");
+		checkTreeNode(tree, 0, "sf()");
 		assertEquals(1, tree.getItemCount());
 
-		i1= checkTreeNode(i0, 0, "sf()");	// sf()[f2] <- sf()[f2]
-		checkTreeNode(i0, 1, null);			// not called by gf()
+		i1= checkTreeNode(tree, 0, 0, "sf()");	// sf()[f2] <- sf()[f2]
+		checkTreeNode(tree, 0, 1, null);			// not called by gf()
 
 		expandTreeItem(i1);
 		checkTreeNode(i1, 0, null);

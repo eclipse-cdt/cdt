@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.pdom.tests;
 import junit.framework.Test;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
@@ -48,7 +49,7 @@ public class IncludesTests extends PDOMTestBase {
 	
 	public void testIncludedBy() throws Exception {
 		IResource loc = project.getProject().findMember("I2.h");
-		IIndexFile file = index.getFile(IndexLocationFactory.getWorkspaceIFL((IFile)loc));
+		IIndexFile file = index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL((IFile)loc));
 		assertNotNull(file);
 		IIndexInclude[] allIncludedBy = index.findIncludedBy(file, -1);
 		assertEquals(9, allIncludedBy.length); // i.e. all of them
@@ -56,7 +57,7 @@ public class IncludesTests extends PDOMTestBase {
 	
 	public void testIncludes() throws Exception {
 		IResource loc = project.getProject().findMember("I1.cpp");
-		IIndexFile file = index.getFile(IndexLocationFactory.getWorkspaceIFL((IFile)loc));
+		IIndexFile file = index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL((IFile)loc));
 		assertNotNull(file);
 		IIndexInclude[] allIncludesTo= index.findIncludes(file, -1);
 		assertEquals(2, allIncludesTo.length); // i.e. I1.h, I2.h

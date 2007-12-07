@@ -6,14 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.core.model;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -25,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
- * Models differences between languages. The interace is not supposed to be implemented directly.
+ * Models differences between languages. The interface is not supposed to be implemented directly.
  * Rather than that clients may subclass {@link AbstractLanguage}.
  * @author Doug Schaefer
  */
@@ -35,33 +36,19 @@ public interface ILanguage extends IAdaptable {
 	public static final String KEY = "language"; //$NON-NLS-1$
 
 	/**
-	 * @deprecated has no effect.
-	 */
-	public static final int AST_USE_INDEX = 1;
-
-	/**
-	 * @deprecated use {@link ITranslationUnit#AST_SKIP_ALL_HEADERS}
-	 */
-	public static final int AST_SKIP_ALL_HEADERS = ITranslationUnit.AST_SKIP_ALL_HEADERS;
-
-	/**
-	 * @deprecated use {@link ITranslationUnit#AST_SKIP_INDEXED_HEADERS}
-	 */
-	public static final int AST_SKIP_INDEXED_HEADERS = ITranslationUnit.AST_SKIP_INDEXED_HEADERS;
-
-	/**
-	 * @deprecated use {@link ITranslationUnit#AST_SKIP_IF_NO_BUILD_INFO}
-	 */
-	public static final int AST_SKIP_IF_NO_BUILD_INFO = ITranslationUnit.AST_SKIP_IF_NO_BUILD_INFO;
-	
-	/**
 	 * Return the language id for this language.
-	 * This is to differentiate languages from eachother.
-	 * 
-	 * @return language id
+	 * This is to differentiate languages from each other.
 	 */
 	public String getId();
 
+	/**
+	 * Return the id of the linkage this language contributes to. This is especially important
+	 * for languages that write to the index.
+	 * @see ILinkage
+	 * @since 5.0
+	 */
+	public int getLinkageID();
+	
 	/**
 	 * @return the human readable name corresponding to this language, suitable for display.
 	 * @since 4.0

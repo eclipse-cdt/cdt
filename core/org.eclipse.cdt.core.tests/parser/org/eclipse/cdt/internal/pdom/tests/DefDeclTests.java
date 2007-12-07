@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -218,7 +219,7 @@ public class DefDeclTests extends PDOMTestBase {
 		String elName = "foo" + "08";
 
 		IIndexFileLocation ifl= IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("func.c")));
-		IIndexFile file= pdom.getFile(ifl);
+		IIndexFile file= pdom.getFile(ILinkage.C_LINKAGE_ID, ifl);
 		int offset= TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
 		IIndexName[] names= file.findNames(offset, 5);
 		assertEquals(1, names.length);
@@ -230,7 +231,7 @@ public class DefDeclTests extends PDOMTestBase {
 
 		// check the other file
 		ifl= IndexLocationFactory.getIFL((ITranslationUnit) cproject.findElement(new Path("second.c")));
-		file= pdom.getFile(ifl);
+		file= pdom.getFile(ILinkage.C_LINKAGE_ID, ifl);
 		offset= TestSourceReader.indexOfInFile("foo08();", new Path(ifl.getFullPath()));
 		names= file.findNames(offset, 5);
 		assertEquals(1, names.length);

@@ -531,19 +531,19 @@
    		 id="nullindexer"
          name="%CDTIndexer.nullindexer"
          point="org.eclipse.cdt.core.CIndexer">
-      <run class="org.eclipse.cdt.internal.core.pdom.indexer.nulli.PDOMNullIndexer"/>
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.PDOMNullIndexer"/>
    </extension>
    <extension
          id="fastIndexer"
          name="%fastIndexer.name"
          point="org.eclipse.cdt.core.CIndexer">
-      <run class="org.eclipse.cdt.internal.core.pdom.indexer.fast.PDOMFastIndexer"/>
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.PDOMFastIndexer"/>
    </extension>
    <extension
          name="%CDTIndexer.domsourceindexer"
          id="domsourceindexer"
          point="org.eclipse.cdt.core.CIndexer">
-      <run class="org.eclipse.cdt.internal.core.pdom.indexer.full.PDOMFullIndexer"/>
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.PDOMFullIndexer"/>
    </extension>
    <extension
          point="org.eclipse.core.variables.dynamicVariables">

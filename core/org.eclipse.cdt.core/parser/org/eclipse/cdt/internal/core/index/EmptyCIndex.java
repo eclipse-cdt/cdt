@@ -50,8 +50,12 @@ final public class EmptyCIndex implements IIndex {
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
 
-	public IIndexFile getFile(IIndexFileLocation location) {
+	public IIndexFile getFile(int linkageID, IIndexFileLocation location) {
 		return null;
+	}
+	
+	public IIndexFile[] getFiles(IIndexFileLocation location) {
+		return IIndexFile.EMPTY_FILE_ARRAY;
 	}
 
 	public IIndexFile resolveInclude(IIndexInclude include) {

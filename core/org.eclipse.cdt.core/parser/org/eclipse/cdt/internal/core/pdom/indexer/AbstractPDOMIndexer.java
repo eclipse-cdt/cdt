@@ -18,6 +18,9 @@ import java.util.Properties;
 import org.eclipse.cdt.core.dom.IPDOMIndexer;
 import org.eclipse.cdt.core.model.ICProject;
 
+/**
+ * Abstract base class for all indexers.
+ */
 public abstract class AbstractPDOMIndexer implements IPDOMIndexer {
 	
 	protected ICProject project;

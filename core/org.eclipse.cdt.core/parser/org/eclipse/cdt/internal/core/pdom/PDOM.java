@@ -90,7 +90,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 51;
+	public static final int CURRENT_VERSION = 52;
 	public static final int MIN_SUPPORTED_VERSION= CURRENT_VERSION;
 	
 	/**
@@ -151,6 +151,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  
 	 *  50 - support for complex, imaginary and long long (bug 209049).
 	 *  51 - modeling extern "C" (bug 191989)
+	 *  52 - files per linkage (bug 191989)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
@@ -261,11 +262,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fileIndex;
 	}
 
-	public IIndexFragmentFile getFile(IIndexFileLocation location) throws CoreException {
-		return PDOMFile.findFile(this, getFileIndex(), location, locationConverter);
+	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		return PDOMFile.findFile(this, getFileIndex(), location, linkageID, locationConverter);
 	}
 
-	public List/*<IIndexFileLocation>*/ getAllFileLocations() throws CoreException {
+	public IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException {
+		return PDOMFile.findFiles(this, getFileIndex(), location, locationConverter);
+	}
+
+	public IIndexFragmentFile[] getAllFiles() throws CoreException {
 		final List locations = new ArrayList();
 		getFileIndex().accept(new IBTreeVisitor(){
 			public int compare(int record) throws CoreException {
@@ -273,17 +278,17 @@ public class PDOM extends PlatformObject implements IPDOM {
 			}
 			public boolean visit(int record) throws CoreException {
 				PDOMFile file = new PDOMFile(PDOM.this, record);
-				locations.add(file.getLocation());
+				locations.add(file);
 				return true;
 			}
 		});
-		return locations;
+		return (IIndexFragmentFile[]) locations.toArray(new IIndexFragmentFile[locations.size()]);
 	}
 	
-	protected IIndexFragmentFile addFile(IIndexFileLocation location) throws CoreException {
-		IIndexFragmentFile file = getFile(location);
+	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		IIndexFragmentFile file = getFile(linkageID, location);
 		if (file == null) {
-			PDOMFile pdomFile = new PDOMFile(this, location);
+			PDOMFile pdomFile = new PDOMFile(this, location, linkageID);
 			getFileIndex().insert(pdomFile.getRecord());
 			file= pdomFile;
 		}
@@ -758,7 +763,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return (PDOMFile) file;
 		}
 
-		return (PDOMFile) getFile(file.getLocation());
+		return (PDOMFile) getFile(file.getLinkageID(), file.getLocation());
 	}
 
 	public File getPath() {

@@ -6,21 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.pdom.indexer.nulli;
+package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import org.eclipse.cdt.core.dom.IPDOMIndexerTask;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.pdom.indexer.AbstractPDOMIndexer;
 
 /**
- * @author Doug Schaefer
- *
- * The Null Indexer which does nothing.
+ * Configures the abstract indexer to do nothing.
  */
 public class PDOMNullIndexer extends AbstractPDOMIndexer {
 

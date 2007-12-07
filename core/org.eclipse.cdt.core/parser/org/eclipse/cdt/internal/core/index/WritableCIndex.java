@@ -16,6 +16,7 @@ import java.util.Collection;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.core.runtime.CoreException;
 
@@ -40,19 +41,23 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		return fWritableFragment;
 	}
 	
-	public IIndexFragmentFile getWritableFile(IIndexFileLocation location) throws CoreException {
-		return fWritableFragment.getFile(location);
+	public IIndexFragmentFile getWritableFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		return fWritableFragment.getFile(linkageID, location);
 	}
 	
-	public IIndexFragmentFile addFile(IIndexFileLocation fileLocation) throws CoreException {
-		return fWritableFragment.addFile(fileLocation);
+	public IIndexFragmentFile[] getWritableFiles(IIndexFileLocation location) throws CoreException {
+		return fWritableFragment.getFiles(location);
+	}
+
+	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation) throws CoreException {
+		return fWritableFragment.addFile(linkageID, fileLocation);
 	}
 
 	private boolean isWritableFragment(IIndexFragment frag) {
 		return frag == fWritableFragment;
 	}
 
-	public void setFileContent(IIndexFragmentFile file, 
+	public void setFileContent(IIndexFragmentFile file, int linkageID,
 			IncludeInformation[] includes,
 			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
 
@@ -64,7 +69,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			for (int i = 0; i < includes.length; i++) {
 				IncludeInformation ii= includes[i];
 				if (ii.fLocation != null) {
-					ii.fTargetFile= addFile(ii.fLocation);
+					ii.fTargetFile= addFile(linkageID, ii.fLocation);
 				}
 			}
 			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names);
@@ -75,8 +80,9 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		fWritableFragment.clear();
 	}
 
-	public boolean isWritableFile(IIndexFragmentFile file) {
-		return isWritableFragment(file.getIndexFragment());
+	public boolean isWritableFile(IIndexFile file) {
+		return file instanceof IIndexFragmentFile && 
+				isWritableFragment(((IIndexFragmentFile)file).getIndexFragment());
 	}
 	
 	public void clearFile(IIndexFragmentFile file, Collection clearedContexts) throws CoreException {

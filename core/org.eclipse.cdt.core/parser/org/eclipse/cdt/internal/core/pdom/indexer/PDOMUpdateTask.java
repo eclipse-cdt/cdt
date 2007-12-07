@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
+/**
+ * A task for updating an index, suitable for all indexers.
+ */
 public class PDOMUpdateTask implements IPDOMIndexerTask {
 	protected static final String TRUE= String.valueOf(true);
 	protected static final ITranslationUnit[] NO_TUS = new ITranslationUnit[0];
@@ -54,7 +57,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		return fIndexer;
 	}
 
-	public void run(IProgressMonitor monitor) {
+	public void run(IProgressMonitor monitor) throws InterruptedException {
 		monitor.subTask(NLS.bind(Messages.PDOMIndexerTask_collectingFilesTask, 
 				fIndexer.getProject().getElementName()));
 
@@ -75,9 +78,8 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	}
 	
 	private synchronized void createDelegate(ICProject project, IProgressMonitor monitor) throws CoreException {
-		boolean allFiles= TRUE.equals(fIndexer.getProperty(IndexerPreferences.KEY_INDEX_ALL_FILES));
 		HashSet set= new HashSet();
-		TranslationUnitCollector collector= new TranslationUnitCollector(set, set, allFiles, monitor);
+		TranslationUnitCollector collector= new TranslationUnitCollector(set, set, monitor);
 		if (fFilesAndFolders == null) {
 			project.accept(collector);
 		}
@@ -91,8 +93,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 		fDelegate= fIndexer.createTask(tus, NO_TUS, NO_TUS);
 		if (fDelegate instanceof PDOMIndexerTask) {
 			final PDOMIndexerTask task = (PDOMIndexerTask) fDelegate;
-			task.setUpateFlags(fUpdateOptions);
-			task.setAllFilesProvided(allFiles);
+			task.setUpdateFlags(fUpdateOptions);
 		}
 	}
 

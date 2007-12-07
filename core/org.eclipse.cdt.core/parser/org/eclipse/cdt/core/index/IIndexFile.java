@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.CoreException;
  * @since 4.0
  */
 public interface IIndexFile {
+	IIndexFile[] EMPTY_FILE_ARRAY = {};
+
 	/**
 	 * Returns an IIndexFileLocation representing the location of this file
 	 * @return an IIndexFileLocation representing the location of this file
@@ -59,9 +61,9 @@ public interface IIndexFile {
 	long getTimestamp() throws CoreException;
 
 	/**
-	 * Returns the hashcode of the scanner configuration that was used to parse the file.
-	 * <code>0</code> will be returned in case the hashcode is unknown.
-	 * @return the hashcode of the scanner configuration or <code>0</code>.
+	 * Returns the hash-code of the scanner configuration that was used to parse the file.
+	 * <code>0</code> will be returned in case the hash-code is unknown.
+	 * @return the hash-code of the scanner configuration or <code>0</code>.
 	 * @throws CoreException 
 	 */
 	int getScannerConfigurationHashcode() throws CoreException;
@@ -75,5 +77,10 @@ public interface IIndexFile {
 	 * Returns the include that was used to parse this file, may be null.
 	 */
 	IIndexInclude getParsedInContext() throws CoreException;
-	 
+	
+	/**
+	 * Returns the id of the linkage this file was parsed in.
+	 * @since 5.0
+	 */
+	int getLinkageID() throws CoreException;
 }

@@ -304,7 +304,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
@@ -329,7 +329,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
@@ -355,7 +355,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
@@ -381,7 +381,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexInclude[] includes= ifile.getIncludes();
 			assertEquals(1, includes.length);
@@ -412,7 +412,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 		fIndex.acquireReadLock();
 		try {
-			IIndexFile ifile= fIndex.getFile(IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
 			assertNotNull(ifile);
 			IIndexMacro[] macros= ifile.getMacros();
 			assertEquals(2, macros.length);
@@ -826,7 +826,7 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, names.length);
 			assertEquals(f4.getFullPath().toString(), names[0].getFile().getLocation().getFullPath());
 			
-			IIndexFile idxFile= index.getFile(IndexLocationFactory.getWorkspaceIFL(f5));
+			IIndexFile idxFile= index.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(f5));
 			IIndexInclude[] includes= idxFile.getIncludes();
 			assertEquals(2, includes.length);
 			assertTrue(includes[0].isActive());

@@ -28,9 +28,6 @@ class LocationCtxFile extends LocationCtxContainer {
 	
 	public final void addChildSequenceLength(int childLength) {
 		super.addChildSequenceLength(childLength);
-		if (fASTInclude != null) {
-			fASTInclude.setLength(fASTInclude.getLength()+childLength);
-		}
 	}
 
 	public final String getFilePath() {

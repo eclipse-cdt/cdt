@@ -168,15 +168,16 @@ public class IndexUI {
 			if (tu != null) {
 				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
 				if (location != null) {
-					IIndexFile file= index.getFile(location);
-					if (file != null) {
+					IIndexFile[] files= index.getFiles(location);
+					for (int i = 0; i < files.length; i++) {
+						IIndexFile file = files[i];
 						String elementName= element.getElementName();
 						int idx= elementName.lastIndexOf(":")+1; //$NON-NLS-1$
 						ISourceRange pos= sf.getSourceRange();
 						IRegion region = getConvertedRegion(tu, file, pos.getIdStartPos()+idx, pos.getIdLength()-idx);
 						IIndexName[] names= file.findNames(region.getOffset(), region.getLength());
-						for (int i = 0; i < names.length; i++) {
-							IIndexName name = names[i];
+						for (int j = 0; j < names.length; j++) {
+							IIndexName name = names[j];
 							if (!name.isReference() && elementName.endsWith(new String(name.toCharArray()))) {
 								return name;
 							}
@@ -195,8 +196,8 @@ public class IndexUI {
 			if (tu != null) {
 				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
 				if (location != null) {
-					IIndexFile file= index.getFile(location);
-					return file != null;
+					IIndexFile[] files= index.getFiles(location);
+					return files.length > 0;
 				}
 			}
 		}
@@ -218,8 +219,9 @@ public class IndexUI {
 			if (tu != null) {
 				IIndexFileLocation location= IndexLocationFactory.getIFL(tu);
 				if (location != null) {
-					IIndexFile file= index.getFile(location);
-					if (file != null) {
+					IIndexFile[] files= index.getFiles(location);
+					for (int j=0; j<files.length; j++) {
+						IIndexFile file= files[j];
 						String elementName= include.getElementName();
 						elementName= elementName.substring(elementName.lastIndexOf('/')+1);
 						ISourceRange pos= include.getSourceRange();

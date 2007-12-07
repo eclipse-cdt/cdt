@@ -80,13 +80,25 @@ public interface IIndexFragment {
 	public static final String PROPERTY_FRAGMENT_FORMAT_VERSION= "org.eclipse.cdt.internal.core.index.fragment.format.version"; //$NON-NLS-1$
 	
 	/**
-	 * Returns the file for the given location. May return <code>null</code>, if no such file exists.
+	 * Returns the file for the given location and linkage. 
+	 * May return <code>null</code>, if no such file exists.
+	 * This method may only return files that are actually managed by this fragment.
+	 * This method returns files without content, also.
+	 * @param linkageID the id of the linkage in which the file has been parsed.
+	 * @param location the IIndexFileLocation representing the location of the file
+	 * @return the file for the location, or <code>null</code> if the file is not present in the index
+	 * @throws CoreException
+	 */
+	IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location) throws CoreException;
+
+	/**
+	 * Returns the files in all linkages for the given location. 
 	 * This method may only return files that are actually managed by this fragment.
 	 * @param location the IIndexFileLocation representing the location of the file
 	 * @return the file for the location, or <code>null</code> if the file is not present in the index
 	 * @throws CoreException
 	 */
-	IIndexFragmentFile getFile(IIndexFileLocation location) throws CoreException;
+	IIndexFragmentFile[] getFiles(IIndexFileLocation location) throws CoreException;
 
 	/**
 	 * Returns all include directives that point to the given file. The input file may belong to 

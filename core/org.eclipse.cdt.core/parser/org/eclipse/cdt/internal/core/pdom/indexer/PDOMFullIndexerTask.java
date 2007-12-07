@@ -8,33 +8,25 @@
  * Contributors:
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
- *    IBM Corporation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.indexer;
-
-import java.util.List;
+package org.eclipse.cdt.internal.core.pdom.indexer;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
+
 
 /**
- * A task for index updates.
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will work or
- * that it will remain the same. Please do not use this API without consulting
- * with the CDT team.
- * </p>
- * 
- * @since 4.0
+ * Configures the indexer task as a fast indexer task.
  */
-public class StandaloneFastIndexerTask extends StandaloneIndexerTask {
-	public StandaloneFastIndexerTask(StandaloneFastIndexer indexer, List added,	List changed, List removed) {
-		super(indexer, added, changed, removed, true);
+class PDOMFullIndexerTask extends PDOMIndexerTask {
+	public PDOMFullIndexerTask(PDOMFullIndexer indexer, ITranslationUnit[] added, 
+			ITranslationUnit[] changed, ITranslationUnit[] removed) {
+		super(added, changed, removed, indexer, false);
 	}
 
 	protected ICodeReaderFactory createReaderFactory() {
-		return new StandaloneIndexerFallbackReaderFactory();
+		return SavedCodeReaderFactory.getInstance();
 	}
 }

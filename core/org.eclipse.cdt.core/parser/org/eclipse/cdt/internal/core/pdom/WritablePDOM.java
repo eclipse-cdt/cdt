@@ -49,8 +49,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		super(dbPath, locationConverter, cache, linkageFactoryMappings);
 	}
 
-	public IIndexFragmentFile addFile(IIndexFileLocation location) throws CoreException {
-		return super.addFile(location);
+	public IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
+		return super.addFile(linkageID, location);
 	}
 
 	public void addFileContent(IIndexFragmentFile sourceFile, 

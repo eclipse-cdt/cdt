@@ -93,6 +93,9 @@ public class PDOMIndexerJob extends Job {
 							System.out.println("Indexer: completed " + name + "[" + time + "ms]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 					}
+					catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
 					catch (OperationCanceledException e) {
 					}
 				}

@@ -80,6 +80,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	private static class FileInfo {
 		IIndexFile fIndexFile= null;
 		boolean fRequestUpdate= false;
+		boolean fRequestIsCounted= true;
 		boolean fIsUpdated= false;
 		public IMacro[] fMacros;
 	}
@@ -476,6 +477,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				final IIndexFileLocation ifl = fResolver.resolveFile(tu);
 				final FileInfo info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
+					info.fRequestIsCounted= false;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
 					parseFile(tu, linkageID, ifl, scannerInfo, monitor);
 					if (info.fIsUpdated) {
@@ -501,6 +503,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						Object tu= findContext((IIndexFragmentFile) info.fIndexFile, contextMap);
 						if (tu != null) {
 							final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, tu);
+							info.fRequestIsCounted= false;
 							parseFile(tu, linkageID, fResolver.resolveFile(tu), scannerInfo, monitor);
 							if (info.fIsUpdated) {
 								updateInfo(0, 1, 0);	// a header was parsed in context
@@ -524,6 +527,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 				final IIndexFileLocation ifl = fResolver.resolveFile(header);
 				final FileInfo info= getFileInfo(linkageID, ifl);
 				if (info != null && info.fRequestUpdate && !info.fIsUpdated) {
+					info.fRequestIsCounted= false;
 					final IScannerInfo scannerInfo= fResolver.getBuildConfiguration(linkageID, header);
 					parseFile(header, linkageID, ifl, scannerInfo, monitor);
 					if (info.fIsUpdated) {
@@ -665,13 +669,16 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 			}
 			info= createFileInfo(new FileKey(linkageID, ifl.getURI()), ifile);
 			if (ifile == null) {
-				if (info.fRequestUpdate && !info.fIsUpdated) {
-					updateInfo(0,0,-1);	// header found implicitly
-				}
+				info.fRequestIsCounted= false;
 				info.fRequestUpdate= true;
 			}
 		} 
-		return !info.fIsUpdated && info.fRequestUpdate;
+		final boolean needUpdate= !info.fIsUpdated && info.fRequestUpdate;
+		if (needUpdate && info.fRequestIsCounted) {
+			updateInfo(0, 0, -1);
+			info.fRequestIsCounted= false;
+		}
+		return needUpdate;
 	}
 
 	private IPath getPathForLabel(IIndexFileLocation ifl) {

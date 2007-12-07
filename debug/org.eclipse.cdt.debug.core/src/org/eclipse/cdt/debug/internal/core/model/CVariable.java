@@ -314,7 +314,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 */
 	public boolean supportsValueModification() {
 		try {
-			return getCurrentInternalVariable().isEditable();
+			return fIsEnabled ? getCurrentInternalVariable().isEditable() : false;
 		}
 		catch( DebugException e ) {
 		}

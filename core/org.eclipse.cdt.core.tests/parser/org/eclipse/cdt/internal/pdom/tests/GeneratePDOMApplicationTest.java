@@ -213,7 +213,8 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		} finally {
 			wpdom.releaseReadLock();
 		}
-		assertTrue(stateCount[0] == 2);
+		// depending on the timing the index of the temporary project is changed once or twice. 
+		assertTrue(stateCount[0] == 2 || stateCount[0] == 4);
 	}
 
 	public void testExternalExportProjectProvider_SysIncludes() throws Exception {

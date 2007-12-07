@@ -139,6 +139,7 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 
 	private static final ISchedulingRule NOTIFICATION_SCHEDULING_RULE = new PerInstanceSchedulingRule();
 	private static final ISchedulingRule INDEXER_SCHEDULING_RULE = new PerInstanceSchedulingRule();
+	private static final ISchedulingRule INIT_INDEXER_SCHEDULING_RULE = new PerInstanceSchedulingRule();
 
 	/**
 	 * Protects indexerJob, currentTask and taskQueue.
@@ -683,10 +684,13 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 		// have to check for that.
 		ISchedulingRule rule= project.getWorkspace().getRuleFactory().refreshRule(project.getFolder(SETTINGS_FOLDER_NAME));
 		if (project.contains(rule)) {
-			rule= new MultiRule(new ISchedulingRule[] {project, INDEXER_SCHEDULING_RULE });
+			rule= MultiRule.combine(project, INIT_INDEXER_SCHEDULING_RULE);
 		}
-		else if (!rule.contains(project)) {
-			rule= new MultiRule(new ISchedulingRule[] {rule, project, INDEXER_SCHEDULING_RULE });
+		else if (rule.contains(project)) {
+			rule= MultiRule.combine(rule, INIT_INDEXER_SCHEDULING_RULE);
+		}
+		else {
+			rule= MultiRule.combine(new ISchedulingRule[] {rule, project, INIT_INDEXER_SCHEDULING_RULE });
 		}
 		addProject.setRule(rule); 
 		addProject.setSystem(true);

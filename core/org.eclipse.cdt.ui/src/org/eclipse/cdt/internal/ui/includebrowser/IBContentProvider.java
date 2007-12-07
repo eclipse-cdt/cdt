@@ -12,7 +12,7 @@
 package org.eclipse.cdt.internal.ui.includebrowser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -161,8 +161,15 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				}
 				if (files.length > 0) {
 					ArrayList list= new ArrayList();
+					HashSet handled= new HashSet();
 					for (int i = 0; i < files.length; i++) {
-						list.addAll(Arrays.asList(index.findIncludedBy(files[i])));
+						final IIndexInclude[] includes = index.findIncludedBy(files[i]);
+						for (int j = 0; j < includes.length; j++) {
+							IIndexInclude indexInclude = includes[j];
+							if (handled.add(indexInclude.getIncludedByLocation())) {
+								list.add(indexInclude);
+							}
+						}
 					}
 					return (IIndexInclude[]) list.toArray(new IIndexInclude[list.size()]);
 				}
@@ -183,8 +190,15 @@ public class IBContentProvider extends AsyncTreeContentProvider {
 				}
 				if (files.length > 0) {
 					ArrayList list= new ArrayList();
+					HashSet handled= new HashSet();
 					for (int i = 0; i < files.length; i++) {
-						list.addAll(Arrays.asList(index.findIncludes(files[i])));
+						final IIndexInclude[] includes = index.findIncludes(files[i]);
+						for (int j = 0; j < includes.length; j++) {
+							IIndexInclude indexInclude = includes[j];
+							if (handled.add(indexInclude.getIncludesLocation())) {
+								list.add(indexInclude);
+							}
+						}
 					}
 					return (IIndexInclude[]) list.toArray(new IIndexInclude[list.size()]);
 				}

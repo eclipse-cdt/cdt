@@ -11,6 +11,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * David McKnight   (IBM)        - [209704] [api] Ability to override default encoding conversion needed.
+ * David McKnight   (IBM)        - [212229] using default code page converter that isn't null
  ********************************************************************************/
 package org.eclipse.rse.services.files;
 
@@ -72,7 +73,7 @@ public class CodePageConverterManager {
 		
 		if (matchingCodePageConverter == null)
 		{
-			matchingCodePageConverter = _defaultCodePageConverter;
+			matchingCodePageConverter = getDefaultCodePageConverter();
 		}
 		
 		return matchingCodePageConverter;

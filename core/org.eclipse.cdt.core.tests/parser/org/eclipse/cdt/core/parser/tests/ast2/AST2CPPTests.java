@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -119,6 +121,10 @@ public class AST2CPPTests extends AST2BaseTest {
 
 	public AST2CPPTests(String name) {
 		super(name);
+	}
+
+	public static TestSuite suite() {
+		return suite(AST2CPPTests.class);
 	}
 
 	public void testBug102825() throws Exception {
@@ -4862,6 +4868,16 @@ public class AST2CPPTests extends AST2BaseTest {
                 .getDeclarations()[0]).getBody()).getStatements()[0];
         IASTDeclarator d = ((IASTSimpleDeclaration) ds.getDeclaration())
                 .getDeclarators()[0];
+        assertTrue(d.getName().resolveBinding() instanceof IVariable);
+    }
+
+    public void _testBug211756() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int t= 0;\n"); //$NON-NLS-1$
+        buffer.append("int s ( t );\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        IASTSimpleDeclaration sd = (IASTSimpleDeclaration) (tu.getDeclarations()[1]);
+        IASTDeclarator d = sd.getDeclarators()[0];
         assertTrue(d.getName().resolveBinding() instanceof IVariable);
     }
 

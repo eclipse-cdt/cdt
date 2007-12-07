@@ -29,7 +29,7 @@ public class DOMParserTestSuite extends TestCase {
 		suite.addTest(DOMScannerTests.suite());
 		suite.addTest(AST2Tests.suite());
 		suite.addTestSuite( GCCTests.class );
-		suite.addTestSuite( AST2CPPTests.class );
+		suite.addTest( AST2CPPTests.suite() );
 		suite.addTest( AST2TemplateTests.suite() );
 		suite.addTestSuite( QuickParser2Tests.class );
 		suite.addTest( CompleteParser2Tests.suite() );

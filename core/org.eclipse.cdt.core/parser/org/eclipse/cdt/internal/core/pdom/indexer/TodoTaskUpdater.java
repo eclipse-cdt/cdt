@@ -144,8 +144,8 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 
 					for (Iterator it = pathToTaskList.values().iterator(); it.hasNext();) {
 						final TaskList tasklist = (TaskList) it.next();
+						final IFile file= tasklist.fFile;
 						try {
-							final IFile file= tasklist.fFile;
 							if (file.exists()) {
 								file.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
 								final List tasks= tasklist.fTasks;
@@ -157,7 +157,9 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 								}
 							}
 						} catch (CoreException e) {
-							status.add(e.getStatus());
+							if (file.exists()) {
+								status.add(e.getStatus());
+							}
 						}
 					}
 					return status;
@@ -204,11 +206,11 @@ public class TodoTaskUpdater implements ITodoTaskUpdater {
 		Job job= new Job(Messages.TodoTaskUpdater_DeleteJob) {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					if (resource.exists()) {
-						resource.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
-					}
+					resource.deleteMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_INFINITE);
 				} catch (CoreException e) {
-					return e.getStatus();
+					if (resource.exists()) {
+						return e.getStatus();
+					}
 				}
 				return Status.OK_STATUS;
 			}

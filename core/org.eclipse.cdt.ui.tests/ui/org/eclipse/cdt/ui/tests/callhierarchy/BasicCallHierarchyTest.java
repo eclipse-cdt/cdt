@@ -573,7 +573,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		waitForIndexer(fIndex, file1, INDEXER_WAIT_TIME);
 		waitForIndexer(fIndex, file2, INDEXER_WAIT_TIME);
 
-		TreeItem i0, i1, i2, i3, i4, i5, i6;
+		TreeItem i1, i2, i3, i4, i5, i6;
 		Tree tree;
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		CEditor editor;
@@ -583,12 +583,12 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		editor.selectAndReveal(content1.indexOf("sf"), 0);
 		openCallHierarchy(editor);
 		tree = getCHTreeViewer().getTree();
-		i0= checkTreeNode(tree, 0, "sf()");
+		checkTreeNode(tree, 0, "sf()");
 		assertEquals(1, tree.getItemCount());
 
-		i1= checkTreeNode(i0, 0, "gf()");	// sf()[f1] <- gf()
-		i2= checkTreeNode(i0, 1, "sf()");   // sf()[f1] <- sf()[f1]
-		checkTreeNode(i0, 2, null);
+		i1= checkTreeNode(tree, 0, 0, "gf()");	// sf()[f1] <- gf()
+		i2= checkTreeNode(tree, 0, 1, "sf()");   // sf()[f1] <- sf()[f1]
+		checkTreeNode(tree, 0, 2, null);
 
 		expandTreeItem(i1);
 		expandTreeItem(i2);
@@ -598,7 +598,7 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		i5= checkTreeNode(i1, 2, "sf()");   // sf()[f1] <- gf() <- sf()[f2]
 
 		if (((CHNode) i4.getData()).getRepresentedDeclaration().getResource().equals(file2)) {
-			i0= i4; i4=i5; i5=i0;
+			TreeItem i0= i4; i4=i5; i5=i0;
 		}
 		expandTreeItem(i3);
 		expandTreeItem(i4);

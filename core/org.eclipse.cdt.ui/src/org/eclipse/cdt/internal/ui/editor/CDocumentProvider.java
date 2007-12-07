@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -613,7 +614,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		}
 		
 		private Object getAnnotations(Position position) {
-			return fReverseMap.get(position);
+			synchronized (getLockObject()) {
+				return fReverseMap.get(position);
+			}
 		}
 		
 		/*
@@ -622,17 +625,19 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {				
 			super.addAnnotation(annotation, position, fireModelChanged);
 			
-			Object cached= fReverseMap.get(position);
-			if (cached == null)
-				fReverseMap.put(position, annotation);
-			else if (cached instanceof List) {
-				List list= (List) cached;
-				list.add(annotation);
-			} else if (cached instanceof Annotation) {
-				List list= new ArrayList(2);
-				list.add(cached);
-				list.add(annotation);
-				fReverseMap.put(position, list);
+			synchronized (getLockObject()) {
+				Object cached= fReverseMap.get(position);
+				if (cached == null)
+					fReverseMap.put(position, annotation);
+				else if (cached instanceof List) {
+					List list= (List) cached;
+					list.add(annotation);
+				} else if (cached instanceof Annotation) {
+					List list= new ArrayList(2);
+					list.add(cached);
+					list.add(annotation);
+					fReverseMap.put(position, list);
+				}
 			}
 		}
 		
@@ -641,7 +646,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		protected void removeAllAnnotations(boolean fireModelChanged) {
 			super.removeAllAnnotations(fireModelChanged);
-			fReverseMap.clear();
+			synchronized (getLockObject()) {
+				fReverseMap.clear();
+			}
 		}
 		
 		/*
@@ -649,16 +656,18 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 */
 		protected void removeAnnotation(Annotation annotation, boolean fireModelChanged) {
 			Position position= getPosition(annotation);
-			Object cached= fReverseMap.get(position);
-			if (cached instanceof List) {
-				List list= (List) cached;
-				list.remove(annotation);
-				if (list.size() == 1) {
-					fReverseMap.put(position, list.get(0));
-					list.clear();
+			synchronized (getLockObject()) {
+				Object cached= fReverseMap.get(position);
+				if (cached instanceof List) {
+					List list= (List) cached;
+					list.remove(annotation);
+					if (list.size() == 1) {
+						fReverseMap.put(position, list.get(0));
+						list.clear();
+					}
+				} else if (cached instanceof Annotation) {
+					fReverseMap.remove(position);
 				}
-			} else if (cached instanceof Annotation) {
-				fReverseMap.remove(position);
 			}
 			super.removeAnnotation(annotation, fireModelChanged);
 		}
@@ -666,17 +675,17 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 
 	protected static class GlobalAnnotationModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
 		
-		private ArrayList fListenerList;
+		private ListenerList fListenerList;
 		
 		public GlobalAnnotationModelListener() {
-			fListenerList= new ArrayList();
+			fListenerList= new ListenerList(ListenerList.IDENTITY);
 		}
 		
 		/**
 		 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 		 */
 		public void modelChanged(IAnnotationModel model) {
-			Object[] listeners= fListenerList.toArray();
+			Object[] listeners= fListenerList.getListeners();
 			for (int i= 0; i < listeners.length; i++) {
 				((IAnnotationModelListener) listeners[i]).modelChanged(model);
 			}
@@ -686,7 +695,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
 		 */
 		public void modelChanged(AnnotationModelEvent event) {
-			Object[] listeners= fListenerList.toArray();
+			Object[] listeners= fListenerList.getListeners();
 			for (int i= 0; i < listeners.length; i++) {
 				Object curr= listeners[i];
 				if (curr instanceof IAnnotationModelListenerExtension) {

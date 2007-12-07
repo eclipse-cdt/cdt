@@ -127,3 +127,10 @@ label:
     SDKFunction();
     return 0;
 }
+
+//http://bugs.eclipse.org/209203
+template <int n>
+int f()
+{
+  return n;
+}

@@ -50,11 +50,7 @@ public class GASErrorParser implements IErrorParser {
 						file = eoParser.findFileName(fileName);
 					}
 				}
-				boolean isConflicting = false;
-				if (file != null) {
-					isConflicting = eoParser.isConflictingName(fileName);
-					file = null;
-				} else {
+				if (file == null) {
 					file = eoParser.findFileName(fileName);
 				}
 				if (file == null) {

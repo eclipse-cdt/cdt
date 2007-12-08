@@ -131,7 +131,7 @@ public class ErrorPattern {
 		IResource file = null;
 		if (fileName != null) {
 			file = eoParser.findFileName(fileName);
-			if (file == null || eoParser.isConflictingName(fileName)) {
+			if (file == null) {
 				file = eoParser.findFilePath(fileName);
 			}
 			

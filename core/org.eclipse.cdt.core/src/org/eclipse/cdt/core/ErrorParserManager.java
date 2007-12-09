@@ -298,11 +298,11 @@ public class ErrorParserManager extends OutputStream {
 	/**
 	 * Returns <code>true</code> if the project contains more than one file with the given name.
 	 */
-//	public boolean isConflictingName(String fileName) {
-//		IPath path = new Path(fileName);
-//		Object obj = fFilesInProject.get(path.lastSegment());
-//		return obj != null && !(obj instanceof IFile);
-//	}
+	public boolean isConflictingName(String fileName) {
+		IPath path = new Path(fileName);
+		Object obj = fFilesInProject.get(path.lastSegment());
+		return obj != null && !(obj instanceof IFile);
+	}
 
 	/**
 	 * Called by the error parsers.

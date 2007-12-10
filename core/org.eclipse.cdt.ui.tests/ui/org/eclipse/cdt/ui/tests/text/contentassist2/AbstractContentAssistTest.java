@@ -50,7 +50,7 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 	public static final int COMPARE_DISP_STRINGS = 1;
 	public static final int COMPARE_REP_STRINGS = 2;
 	
-	private ICProject fCProject;
+	protected ICProject fCProject;
 	private IFile fCFile;
 	protected ITextEditor fEditor;
 	private boolean fIsCpp;

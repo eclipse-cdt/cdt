@@ -21,6 +21,7 @@ import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 
 /**
  * Completion tests for plain C.
@@ -186,6 +187,31 @@ public class CompletionTests_PlainC extends AbstractContentAssistTest {
 	// void func() {float a; a= 1./*cursor*/}
 	public void testCompletionInFloatingPointLiteral_Bug193464() throws Exception {
 		final String[] expected= new String[0];
+		assertCompletionResults(expected);
+	}
+	
+	// #ifdef __cplusplus__
+	// extern "C" {
+	// #endif
+	// void c_linkage();
+	// #ifdef __cplusplus__
+	// }
+	// #endif
+	
+	// #include "header191315.h"
+	
+	// #include "header191315.h"
+	// void xxx() { c_lin/*cursor*/
+	public void testExtenC_bug191315() throws Exception {
+		StringBuffer[] content= getContentsForTest(3);
+		createFile(fProject, "header191315.h", content[0].toString());
+		createFile(fProject, "source191315.c", content[0].toString());
+		createFile(fProject, "source191315.cpp", content[0].toString());
+		IFile dfile= createFile(fProject, "header191315.h", content[0].toString());
+		TestSourceReader.waitUntilFileIsIndexed(CCorePlugin.getIndexManager().getIndex(fCProject), dfile, 8000);
+		final String[] expected= {
+			"c_linkage(void)"
+		};
 		assertCompletionResults(expected);
 	}
 }

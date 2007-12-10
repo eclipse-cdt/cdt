@@ -19,8 +19,7 @@ import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
- * Breakpoint service interface.  The breakpoint service tracks platform breakpoint
- * objects, and based on those, it manages breakpoints in the debugger back end.
+ * Breakpoint service interface
  */
 public interface IBreakpoints extends IDsfService {
 
@@ -30,40 +29,36 @@ public interface IBreakpoints extends IDsfService {
     public interface IBreakpointsTargetDMContext extends IDMContext {};
     
     /**
-     * Specific breakpoint context 
+     * Specific breakpoint context
      */
-    public interface IDsfBreakpointDMContext extends IDMContext {};
+    public interface IDsfBreakpointDMContext extends IDMContext {
+
+    	// Get the execution context
+    	IBreakpointsTargetDMContext getTargetContext();
+
+    	// Get the breakpoint reference
+    	Object getReference();
+    };
     
     /**
-     * Breakpoint structure.
-     * Properties are stored in a map.
+     * Breakpoint structure
      */
     public interface IDsfBreakpoint {
 
     	// Breakpoint types
     	public static enum IDsfBreakpointNature { BREAKPOINT, WATCHPOINT, CATCHPOINT, TRACEPOINT };
 
-    	// Minimal breakpoint properties
-    	public static final String DSFBREAKPOINT = "org.eclipse.dd.dsf.debug.service.breakpoint"; //$NON-NLS-1$
-    	public static final String FILE_NAME    = DSFBREAKPOINT + ".fileName";    //$NON-NLS-1$
-    	public static final String LINE_NUMBER  = DSFBREAKPOINT + ".lineNumber";  //$NON-NLS-1$
-    	public static final String FUNCTION     = DSFBREAKPOINT + ".function";    //$NON-NLS-1$
-    	public static final String CONDITION    = DSFBREAKPOINT + ".condition";   //$NON-NLS-1$
-    	public static final String IGNORE_COUNT = DSFBREAKPOINT + ".ignoreCount"; //$NON-NLS-1$
-    	public static final String IS_ENABLED   = DSFBREAKPOINT + ".isEnabled";   //$NON-NLS-1$
-
-    	// Minimal watchpoint properties
-    	public static final String EXPRESSION   = DSFBREAKPOINT + ".expression"; //$NON-NLS-1$
-    	public static final String READ         = DSFBREAKPOINT + ".read";       //$NON-NLS-1$
-    	public static final String WRITE        = DSFBREAKPOINT + ".write";      //$NON-NLS-1$
-
-    	public Object getReference();
+    	// Retrieve the breakpoint nature
     	public IDsfBreakpointNature getNature();
 
+    	// Retrieve the breakpoint set of properties
     	public Map<String,Object> getProperties();
+
+    	// Retrieve a single breakpoint property
     	public Object getProperty(String key, Object defaultValue);
 
-    	public Object setProperty(String key, Object value);
+    	// Update a single breakpoint property
+    	public void setProperty(String key, Object value);
     };
 
     /**
@@ -75,18 +70,17 @@ public interface IBreakpoints extends IDsfService {
      * @param context	the execution context of the breakpoint
      * @param drm		the list of breakpoints in the execution context
      */
-	public void getBreakpointList(IBreakpointsTargetDMContext context,
+	public void getBreakpoints(IBreakpointsTargetDMContext context,
 			DataRequestMonitor<IDsfBreakpointDMContext[]> drm);
 
 	/**
      * Retrieves a specific breakpoint from the service.
      * 
-     * @param context	the execution context of the breakpoint
      * @param dmc		the breakpoint reference
-     * @return IDsfBreakpoint
+     * @param drm		the DRM returning the breakpoint data
      */
-	public IDsfBreakpoint getBreakpoint(IBreakpointsTargetDMContext context,
-			IDsfBreakpointDMContext dmc);
+	public void getBreakpointDMData(IDsfBreakpointDMContext dmc,
+			DataRequestMonitor<IDsfBreakpoint> drm);
 
 	/**
      * Adds a breakpoint on the target.
@@ -102,27 +96,26 @@ public interface IBreakpoints extends IDsfService {
      * the back-end to decide if it is an error or not.
      * 
      * @param context		the execution context of the breakpoint
-     * @param breakpoint	the breakpoint to insert
+     * @param breakpoint	the breakpoint
      * @param drm			the DRM returning the breakpoint reference
      */
-	public void addBreakpoint(IBreakpointsTargetDMContext context,
+	public void insertBreakpoint(IBreakpointsTargetDMContext context,
 			IDsfBreakpoint breakpoint,
 			DataRequestMonitor<IDsfBreakpointDMContext> drm);
 
 	/**
-     * Removes the breakpoint or watchpoint on the target.
+     * Removes the breakpoint on the target.
      * 
      * If the breakpoint doesn't exist, silently ignore it.
      * 
-     * @param context	the execution context of the breakpoint
-     * @param dmc		the reference of breakpoint to remove
+     * @param dmc		the context of the breakpoints to remove
      * @param rm		the asynchronous request monitor
      */
-	public void removeBreakpoint(IBreakpointsTargetDMContext context,
-			IDsfBreakpointDMContext dmc, RequestMonitor rm);
+	public void removeBreakpoint(IDsfBreakpointDMContext dmc,
+			RequestMonitor rm);
 
 	/**
-     * Updates the breakpoint or watchpoint properties on the target.
+     * Updates the breakpoint properties on the target.
      * 
      * To add/update/remove a property, simply create a map with
      * the desired value(s) for the given key(s).
@@ -132,32 +125,13 @@ public interface IBreakpoints extends IDsfService {
      * removed then re-inserted.
      * 
      * A null value is used for removal of a property e.g.:
-     *    properties.set(FUNCTION, null);
+     *    properties.set(some_key, null);
      * 
-     * @param context	the execution context of the breakpoint
-     * @param dmc		the reference of breakpoint to modify
+     * @param delta     the delta properties
+     * @param dmc		the context of the breakpoints to modify
      * @param rm		the asynchronous request monitor
      */
-	public void updateBreakpoint(IBreakpointsTargetDMContext context,
-			IDsfBreakpointDMContext dmc, Map<String,Object> properties,
-			DataRequestMonitor<IDsfBreakpointDMContext> drm);
-
-	/**
-     * Adds a watchpoint on the target.
-     * 
-     * The watchpoint reference is returned in the DRM. The actual watchpoint
-     * object can be later be retrieved using getBreakpoint(reference).
-     * 
-     * E.g.:
-     *    IDsfBreakpointDMContext ref = addWatchpoint(...);
-     *    IDsfBreakpoint bp = getBreakpoint(ref);
-     * 
-     * @param context	 the execution context of the watchpoint
-     * @param watchpoint the watchpoint to insert
-     * @param rm		 the asynchronous request monitor
-     */
-	public void addWatchpoint(IBreakpointsTargetDMContext context,
-			IDsfBreakpoint watchpoint,
-			DataRequestMonitor<IDsfBreakpointDMContext> drm);
+	public void updateBreakpoint(IDsfBreakpointDMContext dmc,
+			Map<String,Object> delta, RequestMonitor drm);
 
 }

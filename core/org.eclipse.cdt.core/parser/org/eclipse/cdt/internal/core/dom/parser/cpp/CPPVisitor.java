@@ -705,9 +705,10 @@ public class CPPVisitor {
 	    
 	}
 	
-	public static IScope getContainingScope( IASTNode node ){
-		if( node == null )
+	public static IScope getContainingScope( final IASTNode inputNode ){
+		if( inputNode == null || inputNode instanceof IASTTranslationUnit)
 			return null;
+		IASTNode node= inputNode;
 		while( node != null ){
 		    if( node instanceof IASTName && !( node instanceof ICPPASTQualifiedName ) ){
 				return getContainingScope( (IASTName) node );
@@ -814,7 +815,7 @@ public class CPPVisitor {
 		    }
 		    node = node.getParent();
 		}
-	    return null;
+	    return new CPPScope.CPPScopeProblem( inputNode, IProblemBinding.SEMANTIC_BAD_SCOPE, inputNode.getRawSignature().toCharArray() );
 	}
 	
 	public static IScope getContainingScope( IASTName name ){

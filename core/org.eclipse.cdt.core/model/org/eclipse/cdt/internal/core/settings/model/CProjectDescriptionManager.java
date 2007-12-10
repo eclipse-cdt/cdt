@@ -473,10 +473,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			ICStorageElement oldEl = des.doGetCachedRootStorageElement();
 			if(oldEl != null){
 				InputStream newContents = getSharedProperty(project, STORAGE_FILE_NAME);
-				ByteArrayOutputStream oldOut = write(oldEl);
-				InputStream oldContents = new ByteArrayInputStream(oldOut.toByteArray());
-				if(streamsMatch(newContents, oldContents))
-					return null;
+				if (newContents != null) {
+					ByteArrayOutputStream oldOut = write(oldEl);
+					InputStream oldContents = new ByteArrayInputStream(oldOut.toByteArray());
+					if(streamsMatch(newContents, oldContents))
+						return null;
+				}
 			}
 		} catch (CoreException e){
 			CCorePlugin.log(e);

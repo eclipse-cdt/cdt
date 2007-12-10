@@ -778,7 +778,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * <code>super.getObjectWithAbsoluteName(key)</code>
 	 * when they do not find a reference for the key themselves.
 	 * </p>
-	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectResolver#getObjectWithAbsoluteName(java.lang.String)
+	 * @see org.eclipse.rse.core.subsystems.IRemoteObjectResolver#getObjectWithAbsoluteName(String, IProgressMonitor)
 	 * 
 	 * @param key the unique id of the remote object.
 	 *     Must not be <code>null</code>.
@@ -2949,12 +2949,9 @@ public abstract class SubSystem extends RSEModelObject
 		return;
 	}
 
-
-
-	
-	/**
-	 * @return true if this subsystem's properties should take precedence
-	 *  over other subsystems that share the same IConnectorService
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystem#isPrimarySubSystem()
 	 */
 	public boolean isPrimarySubSystem()
 	{
@@ -2962,7 +2959,8 @@ public abstract class SubSystem extends RSEModelObject
 	}
 	
 	/*
-	 * Returns the first subsystem associated with the connection
+	 * (non-Javadoc)
+	 * @see org.eclipse.rse.core.subsystems.ISubSystem#getPrimarySubSystem()
 	 */
 	public ISubSystem getPrimarySubSystem()
 	{

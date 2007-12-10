@@ -93,7 +93,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	public void uninitializeSubSystem(IProgressMonitor monitor);
 
 	/**
-	 * @return true if this subsystem's properties should take precedence over other subsystems that share the same IConnectorService
+	 * @return true if this subsystem's properties should take precedence over other
+	 * subsystems that share the same {@link IConnectorService}
 	 */
 	public boolean isPrimarySubSystem();
 

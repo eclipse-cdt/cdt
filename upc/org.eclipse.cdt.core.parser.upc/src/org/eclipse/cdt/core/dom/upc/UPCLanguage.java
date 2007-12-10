@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.upc;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.c99.BaseExtensibleLanguage;
 import org.eclipse.cdt.core.dom.c99.IC99TokenCollector;
 import org.eclipse.cdt.core.dom.c99.IKeywordMap;
@@ -53,6 +54,10 @@ public class UPCLanguage extends BaseExtensibleLanguage {
 		return ID;
 	}
 
+	public int getLinkageID() {
+		return ILinkage.C_LINKAGE_ID;
+	}
+	
 	public String getName() {
 		// TODO: this has to be read from a message bundle
 		return "UPC";//$NON-NLS-1$

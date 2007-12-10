@@ -41,7 +41,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -440,7 +440,7 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode implements 
     
     @Override
     protected void getElementForExpressionPart(IChildrenUpdate update, String expressionPartText, DataRequestMonitor<Object> rm) {
-        CompositeDMContext compositeDmc = new CompositeDMContext(getVMProvider().getRootElement(), update.getElementPath());
+        CompositeDMVMContext compositeDmc = new CompositeDMVMContext(getVMProvider().getRootElement(), update.getElementPath());
 
         final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
         IExpressionDMContext expressionDMC = expressionService.createExpression(compositeDmc, expressionPartText);

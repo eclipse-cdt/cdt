@@ -38,7 +38,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.update.VMCacheManager;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -371,7 +371,7 @@ public class RegisterLayoutNode extends AbstractExpressionLayoutNode
 
     @Override
     protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-        CompositeDMContext compositeDmc = new CompositeDMContext(getVMProvider().getRootElement(), update.getElementPath());
+        CompositeDMVMContext compositeDmc = new CompositeDMVMContext(getVMProvider().getRootElement(), update.getElementPath());
         
         getServicesTracker().getService(IRegisters.class).getRegisters(
             compositeDmc,

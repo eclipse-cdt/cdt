@@ -27,6 +27,7 @@
  * David McKnight   (IBM)        - [186363] remove deprecated calls in checkIsConnected
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
+ * David McKnight   (IBM)        - [212403] [apidoc][breaking] Fixing docs of SubSystem#getConnectorService() and making internalConnect() private
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -2420,35 +2421,26 @@ public abstract class SubSystem extends RSEModelObject
         return null;
     }
 
-    // ----------------------------------
-	// METHODS THAT MUST BE OVERRIDDEN...
-	// ----------------------------------
-
+ 
 	/**
 	 * Return the {@link org.eclipse.rse.core.subsystems.IConnectorService IConnectorService} object that represents the live connection for this system.
 	 * This must return an object that implements {@link IConnectorService}. A good starting point for that
 	 *  is the base class {@link AbstractConnectorService}.
-	 * <p>If you only have a single subsystem class, you may override this method to return the
-	 *  IConnectorService object that manages the connect/disconnect actions. If, on the other hand,
-	 *  you have multiple subsystem classes that desire to share a single IConnectorService connection,
-	 *  (ie, share the same communications pipe) then do not override this. By default, this
-	 *  calls getSystemManager() which returns an {@link AbstractConnectorServiceManager} object that manages maintaining a singleton
-	 *  IConnectorService object per system connection. You should subclass AbstractSystemManager,
-	 *  and override getSystemManager() to return a singleton instance of that subclass.
-	 * <p>Default implementation:</p>
-	 * <pre><code>
-	 *   return getSystemManager().getSystemObject(this);
-	 * </code></pre>
-	 * 
-	 * <p>We recommending using a subclass of {@link AbstractConnectorServiceManager} even for single
-	 * subsystems, because it doesn't hurt and allows easy growth if new subsystems
-	 * are added in the future.
+	 *  
+	 *  The connector service gets passed in to the constructor for the subsystem so there's normally no reason
+	 *  to override this method.
+	 *
 	 */
 	public IConnectorService getConnectorService()
 	{
 		return _connectorService;
 	}
 	
+	/**
+	 * Sets the {@link org.eclipse.rse.core.subsystems.IConnectorService IConnectorService} object that represents the live connection for this system.
+	 * 
+	 * @param connectorService the connector service
+	 */
 	public void setConnectorService(IConnectorService connectorService)
 	{
 		if (_connectorService != connectorService)
@@ -2464,7 +2456,9 @@ public abstract class SubSystem extends RSEModelObject
 		}
 	}
 	
-	
+	   // ----------------------------------
+	// METHODS THAT MUST BE OVERRIDDEN...
+	// ----------------------------------
 
 	
 	/**
@@ -2488,10 +2482,8 @@ public abstract class SubSystem extends RSEModelObject
 	}	
 	
 	/**
-	 * Connect to the remote host. This is called by the run(IProgressMonitor monitor) method.
-	 * <p>
-	 * DO NOT OVERRIDE THIS. Rather, this calls connect(IProgressMonitor) in the 
-	 * IConnectorService class that is returned from getConnectorService().
+	 * Connect to the remote host. This is called by the implicitConnect(boolean, IProgressMonitor, String, int) method.
+	 * Rather, this calls connect(IProgressMonitor) in the IConnectorService class that is returned from getConnectorService().
 	 * <p>
 	 * Your connect method in your IConnectorService class must follow these IRunnableWithProgress rules:
 	 * <ul>
@@ -2502,7 +2494,7 @@ public abstract class SubSystem extends RSEModelObject
 	 * </ul>
 	 * 
 	 */
-	protected void internalConnect(IProgressMonitor monitor)
+	private void internalConnect(IProgressMonitor monitor)
          throws InvocationTargetException, InterruptedException
     {
 		try 
@@ -2949,18 +2941,16 @@ public abstract class SubSystem extends RSEModelObject
 		return;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystem#isPrimarySubSystem()
-	 */
+
+
+	
 	public boolean isPrimarySubSystem()
 	{
 		return false;
 	}
 	
 	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.rse.core.subsystems.ISubSystem#getPrimarySubSystem()
+	 * Returns the first subsystem associated with the connection
 	 */
 	public ISubSystem getPrimarySubSystem()
 	{

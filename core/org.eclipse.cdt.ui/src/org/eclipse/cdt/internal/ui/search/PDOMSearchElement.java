@@ -6,13 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.IndexTypeInfo;
@@ -26,7 +30,7 @@ import org.eclipse.cdt.core.index.IIndexName;
  *  
  * @author Doug Schaefer
  */
-public class PDOMSearchElement {
+public class PDOMSearchElement implements IAdaptable {
 
 	private final ITypeInfo typeInfo;
 	private final IIndexFileLocation location;
@@ -58,4 +62,15 @@ public class PDOMSearchElement {
 	IIndexFileLocation getLocation() {
 		return location;
 	}
+	
+	public Object getAdapter(Class adapterType) {
+		if (adapterType.isAssignableFrom(IFile.class)) {
+			String fullPath= location.getFullPath();
+			if (fullPath != null) {
+				return ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(fullPath));
+			}
+		}
+		return null;
+	}
+
 }

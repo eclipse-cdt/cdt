@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -26,8 +26,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -145,24 +143,14 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 					remove(element);
 			}
 		}
-		
-		Display d= PlatformUI.getWorkbench().getDisplay();
-		d.asyncExec(new Runnable() {
-			public void run() {
-				if (!viewer.getTree().isDisposed()) {
-					viewer.refresh();
-				}
-			}
-		});
+		if (!viewer.getTree().isDisposed()) {
+			viewer.refresh();
+		}
 	}
 	
 	public void clear() {
 		tree.clear();
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				viewer.refresh();
-			}
-		});
+		viewer.refresh();
 	}
 	
 	protected void remove(Object element) {

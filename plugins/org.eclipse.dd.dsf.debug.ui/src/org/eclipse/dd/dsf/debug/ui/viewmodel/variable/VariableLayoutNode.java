@@ -290,7 +290,13 @@ public class VariableLayoutNode extends AbstractExpressionLayoutNode implements 
                             } else if (IDebugVMConstants.COLUMN_ID__DESCRIPTION.equals(localColumns[idx])) {
                                 update.setLabel("", idx);
                             } else if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(localColumns[idx])) {
-                                update.setLabel(getData().getName(), idx);
+                            	IVMContext vmc = (IVMContext)update.getElement();
+                                IExpression expression = (IExpression)vmc.getAdapter(IExpression.class);
+                                if (expression != null) {
+                                    update.setLabel(expression.getExpressionText(), idx);
+                                } else {
+                                    update.setLabel(getData().getName(), idx);
+                                }
                             }
                         }
                         

@@ -185,17 +185,14 @@ public final class CIndenter {
 
 		private int prefCaseIndent() {
 			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_SWITCH)))
-				return prefBlockIndent();
+				return 1;
 			else
 				return 0;
 		}
 
 		private int prefCaseBlockIndent() {
-			if (true)
-				return prefBlockIndent();
-
 			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_SWITCHSTATEMENTS_COMPARE_TO_CASES)))
-				return prefBlockIndent();
+				return 1;
 			else
 				return 0;
 		}
@@ -305,7 +302,7 @@ public final class CIndenter {
 		
 		private int prefAccessSpecifierIndent() {
 			if (DefaultCodeFormatterConstants.TRUE.equals(getCoreFormatterOption(DefaultCodeFormatterConstants.FORMATTER_INDENT_ACCESS_SPECIFIER_COMPARE_TO_TYPE_HEADER)))
-				return prefBlockIndent();
+				return 1;
 			else
 				return 0;
 		}
@@ -430,7 +427,7 @@ public final class CIndenter {
 		if (assumeOpeningBrace)
 			unit= findReferencePosition(offset, Symbols.TokenLBRACE);
 		else
-			unit= findReferencePosition(offset, peekChar(offset));
+			unit= findReferencePosition(offset, peekToken(offset));
 
 		// if we were unable to find anything, return null
 		if (unit == CHeuristicScanner.NOT_FOUND)
@@ -686,17 +683,17 @@ public final class CIndenter {
 	 *         should be indented, or {@link CHeuristicScanner#NOT_FOUND}
 	 */
 	public int findReferencePosition(int offset) {
-		return findReferencePosition(offset, peekChar(offset));
+		return findReferencePosition(offset, peekToken(offset));
 	}
 
 	/**
-	 * Peeks the next char in the document that comes after <code>offset</code>
+	 * Peeks the next token in the document that comes after <code>offset</code>
 	 * on the same line as <code>offset</code>.
 	 *
 	 * @param offset the offset into document
 	 * @return the token symbol of the next element, or TokenEOF if there is none
 	 */
-	private int peekChar(int offset) {
+	private int peekToken(int offset) {
 		if (offset < fDocument.getLength()) {
 			try {
 				IRegion line= fDocument.getLineInformationOfOffset(offset);
@@ -777,13 +774,15 @@ public final class CIndenter {
 						break;
 						
 					case Symbols.TokenLBRACE: // for opening-brace-on-new-line style
-						if (bracelessBlockStart && !fPrefs.prefIndentBracesForBlocks)
-							unindent= true;
+						if (bracelessBlockStart)
+							unindent= !fPrefs.prefIndentBracesForBlocks;
 						else if (prevToken == Symbols.TokenCOLON && !fPrefs.prefIndentBracesForBlocks)
 							unindent= true;
 						else if ((prevToken == Symbols.TokenEQUAL || prevToken == Symbols.TokenRBRACKET) && !fPrefs.prefIndentBracesForArrays)
 							unindent= true;
-						else if (!bracelessBlockStart && fPrefs.prefIndentBracesForMethods)
+						else if (prevToken == Symbols.TokenRPAREN && fPrefs.prefIndentBracesForMethods)
+							indent= true;
+						else if (prevToken == Symbols.TokenIDENT && fPrefs.prefIndentBracesForTypes)
 							indent= true;
 						break;
 						
@@ -807,8 +806,10 @@ public final class CIndenter {
 		int ref= findReferencePosition(offset, danglingElse, matchBrace, matchParen, matchCase, matchAccessSpecifier);
 		if (unindent)
 			fIndent--;
-		if (indent)
+		if (indent) {
+			fAlign= CHeuristicScanner.NOT_FOUND;
 			fIndent++;
+		}
 		return ref;
 	}
 
@@ -926,14 +927,24 @@ public final class CIndenter {
 
 			case Symbols.TokenCOLON:
 				pos= fPosition;
+				if (isAccessSpecifier()) {
+					fIndent= fPrefs.prefTypeIndent;
+					return pos;
+				}
+				fPosition= pos;
 				if (looksLikeCaseStatement()) {
 					fIndent= fPrefs.prefCaseBlockIndent;
 					return pos;
-				} else {
-					// TODO handle ternary deep indentation
-					fPosition= pos;
-					return skipToStatementStart(danglingElse, false);
 				}
+				fPosition= pos;
+				if (looksLikeTypeInheritanceDecl()) {
+					fIndent= fPrefs.prefBlockIndent;
+					return pos;
+				}
+				// TODO handle ternary deep indentation
+				fPosition= pos;
+				return skipToStatementStart(danglingElse, false);
+
 			case Symbols.TokenQUESTIONMARK:
 				if (fPrefs.prefTernaryDeepAlign) {
 					setFirstElementAlignment(fPosition, offset + 1);
@@ -952,6 +963,7 @@ public final class CIndenter {
 
 			case Symbols.TokenTRY:
 				return skipToStatementStart(danglingElse, false);
+
 			case Symbols.TokenRPAREN:
 				int line= fLine;
 				if (skipScope(Symbols.TokenLPAREN, Symbols.TokenRPAREN)) {
@@ -959,6 +971,9 @@ public final class CIndenter {
 					nextToken();
 					if (fToken == Symbols.TokenIF || fToken == Symbols.TokenWHILE || fToken == Symbols.TokenFOR) {
 						fIndent= fPrefs.prefSimpleIndent;
+						return fPosition;
+					}
+					if (fToken == Symbols.TokenSWITCH) {
 						return fPosition;
 					}
 					fPosition= scope;
@@ -992,8 +1007,45 @@ public final class CIndenter {
 	}
 
 	/**
+	 * Test whether an identifier encountered during scanning is part of
+	 * a type declaration, by scanning backward and ignoring any identifiers, commas,
+	 * and colons until we hit <code>class</code>, <code>struct</code>, <code>union</code>, 
+	 * or <code>enum</code>.  If any braces, semicolons, or parentheses are encountered,
+	 * this is not a type declaration. 
+	 * @return the reference offset of the start of the statement
+	 */
+	private int matchTypeDeclaration() {
+		while (true) {
+			nextToken();
+			if (fToken == Symbols.TokenIDENT 
+					|| fToken == Symbols.TokenCOMMA
+					|| fToken == Symbols.TokenCOLON
+					|| fToken == Symbols.TokenPUBLIC 
+					|| fToken == Symbols.TokenPROTECTED
+					|| fToken == Symbols.TokenPRIVATE) {
+				continue;
+			}
+			else if (fToken == Symbols.TokenCLASS 
+					|| fToken == Symbols.TokenSTRUCT
+					|| fToken == Symbols.TokenUNION
+					|| fToken == Symbols.TokenENUM) {
+				// inside a type declaration?  Only so if not preceded by '(' or ',' as in
+				// a parameter list.  To be safe, only accept ';' or EOF
+				int pos= fPosition;
+				nextToken();
+				if (fToken == Symbols.TokenSEMICOLON || fToken == Symbols.TokenEOF) {
+					return pos;
+				} else {
+					return CHeuristicScanner.NOT_FOUND;
+				}
+			}
+			else
+				return CHeuristicScanner.NOT_FOUND;
+		}
+	}
+
+	/**
 	 * Test whether the colon at the current position marks a case statement 
-	 * (or a similar construct increasing the indent).
 	 * 
 	 * @return <code>true</code> if this looks like a case statement
 	 */
@@ -1010,9 +1062,6 @@ public final class CIndenter {
 			}
 			switch (fToken) {
 			case Symbols.TokenCASE:
-			case Symbols.TokenCLASS:
-			case Symbols.TokenSTRUCT:
-			case Symbols.TokenUNION:
 				return true;
 			}
 			break;
@@ -1022,8 +1071,49 @@ public final class CIndenter {
 			case Symbols.TokenCASE:
 				return true;
 			}
-		case Symbols.TokenRPAREN: // constructor initializer
 		case Symbols.TokenDEFAULT:
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Test whether the colon at the current position marks a type inheritance decl. 
+	 * 
+	 * @return <code>true</code> if this looks like a a type inheritance decl
+	 */
+	private boolean looksLikeTypeInheritanceDecl() {
+		nextToken();
+		switch (fToken) {
+		case Symbols.TokenIDENT:
+			nextToken();
+			while (skipQualifiers()) {
+				nextToken();
+			}
+			switch (fToken) {
+			case Symbols.TokenCLASS:
+			case Symbols.TokenSTRUCT:
+			case Symbols.TokenUNION:
+				return true;
+			}
+			break;
+		case Symbols.TokenRPAREN: // constructor initializer
+		case Symbols.TokenPUBLIC:
+		case Symbols.TokenPROTECTED:
+		case Symbols.TokenPRIVATE:
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Test whether the colon at the current position marks an access specifier.
+	 * 
+	 * @return <code>true</code> if current position marks an access specifier
+	 */
+	private boolean isAccessSpecifier() {
+		nextToken();
+		switch (fToken) {
 		case Symbols.TokenPUBLIC:
 		case Symbols.TokenPROTECTED:
 		case Symbols.TokenPRIVATE:
@@ -1046,6 +1136,7 @@ public final class CIndenter {
 		int mayBeMethodBody= NOTHING;
 		boolean isTypeBody= false;
 		while (true) {
+			int prevToken= fToken;
 			nextToken();
 
 			if (isInBlock) {
@@ -1097,13 +1188,18 @@ public final class CIndenter {
 					// RBRACE is a little tricky: it can be the end of an array definition, but
 					// usually it is the end of a previous block
 					pos= fPreviousPos; // store state
-					if (skipScope() && looksLikeArrayInitializerIntro()) {
-						continue; // it's an array
-					} else {
-						if (isInBlock)
-							fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
-						return pos; // it's not - do as with all the above
+					if (skipScope()) {
+						if (looksLikeArrayInitializerIntro()) {
+							continue; // it's an array
+						}
+						if (prevToken == Symbols.TokenSEMICOLON) {
+							// end of type def
+							continue;
+						}
 					}
+					if (isInBlock)
+						fIndent= getBlockIndent(mayBeMethodBody == READ_IDENT, isTypeBody);
+					return pos; // it's not - do as with all the above
 
 				// scopes: skip them
 				case Symbols.TokenRPAREN:
@@ -1230,8 +1326,8 @@ public final class CIndenter {
 				case Symbols.TokenEOF:
 					return fPosition;
 					
-				case Symbols.TokenLBRACE:
-					// opening brace of switch statement
+				case Symbols.TokenSWITCH:
+					// start of switch statement
 					fIndent= fPrefs.prefCaseIndent;
 					return fPosition;
 					
@@ -1278,9 +1374,13 @@ public final class CIndenter {
 					
 				case Symbols.TokenLBRACE:
 					// opening brace of class body
+					int pos= fPosition;
+					int typeDeclPos= matchTypeDeclaration();
 					fIndent= fPrefs.prefAccessSpecifierIndent;
-					return fPosition;
-					
+					if (typeDeclPos != CHeuristicScanner.NOT_FOUND) {
+						return typeDeclPos;
+					}
+					return pos;
 				case Symbols.TokenPUBLIC:
 				case Symbols.TokenPROTECTED:
 				case Symbols.TokenPRIVATE:

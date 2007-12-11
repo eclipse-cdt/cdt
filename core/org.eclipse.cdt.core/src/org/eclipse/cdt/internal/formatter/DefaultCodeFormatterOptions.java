@@ -1785,7 +1785,6 @@ public class DefaultCodeFormatterOptions {
 		this.brace_position_for_array_initializer = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_block = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_block_in_case = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
-//		this.brace_position_for_enum_declaration = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_method_declaration = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_type_declaration = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
 		this.brace_position_for_namespace_declaration = DefaultCodeFormatterConstants.NEXT_LINE_SHIFTED;
@@ -1794,8 +1793,7 @@ public class DefaultCodeFormatterOptions {
 		this.indent_statements_compare_to_block = false;
 		this.indent_statements_compare_to_body = false;
 		this.indent_body_declarations_compare_to_namespace_header = false;
-//		this.indent_body_declarations_compare_to_enum_declaration_header = true;
-		this.indent_body_declarations_compare_to_access_specifier = false;
+		this.indent_body_declarations_compare_to_access_specifier = true;
 		this.indent_breaks_compare_to_cases = true;
 		this.indent_empty_lines = false;
 		this.indent_switchstatements_compare_to_cases = true;

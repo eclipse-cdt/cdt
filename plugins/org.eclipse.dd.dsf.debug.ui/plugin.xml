@@ -223,6 +223,10 @@
 	      		</with>
 	      	</enablement>      
         </detailFactories>
+        <detailFactories
+              class="org.eclipse.dd.dsf.debug.ui.viewmodel.modules.ModuleDetailPaneFactory"
+              id="org.eclipse.dd.dsf.debug.ui.viewmodel.moduleDetailPaneFactory">
+        </detailFactories>
     </extension>
     
 </plugin>

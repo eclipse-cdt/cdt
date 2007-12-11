@@ -20,6 +20,8 @@ import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMContext;
 import org.eclipse.dd.dsf.debug.service.IModules.IModuleDMData;
 import org.eclipse.dd.dsf.debug.service.IModules.ISymbolDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IGroupChangedDMEvent;
+import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
+import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
@@ -67,7 +69,9 @@ public class ModulesLayoutNode extends AbstractDMVMLayoutNode
         for (final ILabelUpdate update : updates) {
             final IModuleDMContext dmc = findDmcInPath(update.getElementPath(), IModuleDMContext.class);
             if (!checkDmc(dmc, update) || !checkService(IModules.class, null, update)) continue;
-            
+            // Use  different image for loaded and unloaded symbols when event to report loading of symbols is implemented.
+            update.setImageDescriptor(DsfDebugUIPlugin.getImageDescriptor(IDsfDebugUIConstants.IMG_OBJS_SHARED_LIBRARY_SYMBOLS_LOADED), 0);
+      
             getServicesTracker().getService(IModules.class, null).getModuleData(
                 dmc, 
                 new DataRequestMonitor<IModuleDMData>(getSession().getExecutor(), null) { 

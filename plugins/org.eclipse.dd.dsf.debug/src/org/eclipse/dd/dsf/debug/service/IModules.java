@@ -60,6 +60,10 @@ public interface IModules extends IDsfService {
         String getName();
         String getFile();
         long getTimeStamp();
+        String getBaseAddress();
+        String getToAddress();
+        boolean isSymbolsLoaded();
+        long getSize();
     }
     
     /** i information */

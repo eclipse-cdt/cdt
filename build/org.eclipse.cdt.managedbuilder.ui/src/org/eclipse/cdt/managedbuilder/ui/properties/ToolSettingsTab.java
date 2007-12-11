@@ -592,9 +592,14 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 	
 	public void updateData(ICResourceDescription cfgd) {
-		fInfo = getResCfg(cfgd);
-		setValues();
-		handleOptionSelection();
+		if (page.isMultiCfg()) {
+			usercomp.setVisible(false);
+		} else {
+			usercomp.setVisible(true);
+			fInfo = getResCfg(cfgd);
+			setValues();
+			handleOptionSelection();
+		}
 	}
 
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
@@ -621,6 +626,8 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	public void updateTitle() {}
 
 	public boolean canBeVisible() {
+		if (page.isMultiCfg())
+			return false;
 		return getCfg().getBuilder().isManagedBuildOn();
 	}
 }

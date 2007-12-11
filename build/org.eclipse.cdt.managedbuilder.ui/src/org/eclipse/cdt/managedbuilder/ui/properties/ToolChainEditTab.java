@@ -16,6 +16,7 @@ import java.util.Collections;
 
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.managedbuilder.core.BuildListComparator;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -75,7 +76,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	private Combo  c_tool; 
 	private Button button_edit;
 	private Group tools_group;
-	
+	private Group single_tool_group;	
 	private Label st_builder;
 	private Label st_toolchain;
 	private Label st_tool;
@@ -124,8 +125,8 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 
 		// make table for tools list
 		if (page.isForFile()) {
-			Group g = setupGroup(usercomp, Messages.getString("ToolChainEditTab.5"), 2, GridData.FILL_BOTH); //$NON-NLS-1$
-			c_tool = new Combo(g, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
+			single_tool_group = setupGroup(usercomp, Messages.getString("ToolChainEditTab.5"), 2, GridData.FILL_BOTH); //$NON-NLS-1$
+			c_tool = new Combo(single_tool_group, SWT.READ_ONLY | SWT.DROP_DOWN | SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			c_tool.setLayoutData(gd);
@@ -134,7 +135,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 					saveToolSelected();
 				}});
 			
-			st_tool = setupLabel(g, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
+			st_tool = setupLabel(single_tool_group, EMPTY_STR, 2, GridData.FILL_HORIZONTAL);
 			st_tool.setForeground(red);
 		} else { // Folder or Project
 			tools_group = setupGroup(usercomp, Messages.getString("ToolChainEditTab.3"), 2, GridData.FILL_BOTH); //$NON-NLS-1$
@@ -169,6 +170,12 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 	}
 	
 	protected void updateData(ICResourceDescription rcfg) {
+		if (page.isMultiCfg()) {
+			usercomp.setVisible(false);
+			return;
+		} else {
+			usercomp.setVisible(true);
+		}
 		cfg = getCfg(rcfg.getConfiguration());
 		ri = cfg.getResourceInfo(rcfg.getPath(), false);
 		mod = getModification();

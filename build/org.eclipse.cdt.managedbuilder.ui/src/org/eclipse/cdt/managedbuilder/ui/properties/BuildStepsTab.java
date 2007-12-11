@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -344,8 +345,18 @@ public class BuildStepsTab extends AbstractCBuildPropertyTab {
 	
 	// This page can be displayed for managed project only
 	public boolean canBeVisible() {
-		if (page.isForProject() || page.isForFile())
-			return getCfg().getBuilder().isManagedBuildOn();
+		if (page.isForProject() || page.isForFile()) {
+			if (page.isMultiCfg()) {
+				ICMultiItemsHolder mih = (ICMultiItemsHolder)getCfg();
+				IConfiguration[] cfs = (IConfiguration[])mih.getItems();
+				for (int i=0; i<cfs.length; i++) {
+					if (cfs[i].getBuilder().isManagedBuildOn())
+						return true;
+				}
+				return false;
+			} else
+				return getCfg().getBuilder().isManagedBuildOn();
+		}
 		else 
 			return false;
 	}

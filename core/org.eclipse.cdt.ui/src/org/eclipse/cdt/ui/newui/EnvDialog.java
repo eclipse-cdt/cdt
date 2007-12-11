@@ -34,21 +34,23 @@ public class EnvDialog extends Dialog {
 	Button b_add2all;
 	private Text text1;
 	private Text text2;
-	boolean newAction;
-	Shell shell;
-	ICConfigurationDescription cfgd;
+	private boolean newAction;
+	private boolean multiCfg;
+	private ICConfigurationDescription cfgd;
 	public String t1 = AbstractCPropertyTab.EMPTY_STR;
 	public String t2 = AbstractCPropertyTab.EMPTY_STR;
 	public boolean toAll = false;
 
 	public EnvDialog(Shell parent, 
 			IEnvironmentVariable _var, 
-			String title, boolean _newAction,
+			String title, 
+			boolean _newAction,
+			boolean _multiCfg,
 			ICConfigurationDescription _cfgd) {
 		super(parent);
-		shell = parent;
 		var = _var;
 		newAction = _newAction;
+		multiCfg = _multiCfg;
 		cfgd = _cfgd;
 	}
 
@@ -113,6 +115,9 @@ public class EnvDialog extends Dialog {
 					toAll = b_add2all.getSelection();
 				}});
 		
+		if (multiCfg)
+			b_add2all.setVisible(false);
+			
 		if (!newAction) {
 			gd.heightHint = 1;
 			b_add2all.setVisible(false);

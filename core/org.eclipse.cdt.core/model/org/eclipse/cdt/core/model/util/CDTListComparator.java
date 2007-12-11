@@ -8,23 +8,19 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui.newui;
+package org.eclipse.cdt.core.model.util;
 
 import java.util.Comparator;
-
-import org.eclipse.core.runtime.IConfigurationElement;
 
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.ui.newui.AbstractExportTab.ExtData;
-import org.eclipse.cdt.ui.wizards.EntryDescriptor;
 
 public class CDTListComparator implements Comparator {
-	private static CDTListComparator comparator = null;
+	protected static Comparator comparator = null;
 
-	public static CDTListComparator getInstance() {
+	public static Comparator getInstance() {
 		if (comparator == null)
 			comparator = new CDTListComparator();
 		return comparator;
@@ -47,25 +43,10 @@ public class CDTListComparator implements Comparator {
 			ICConfigurationDescription c2 = (ICConfigurationDescription)b;
 			return c1.getName().compareToIgnoreCase(c2.getName());
 		}
-		if (a instanceof ExtData) {
-			ExtData c1 = (ExtData)a;
-			ExtData c2 = (ExtData)b;
-			return c1.getName().compareToIgnoreCase(c2.getName());
-		} 
 		if (a instanceof ICdtVariable) {
 			ICdtVariable c1 = (ICdtVariable) a;
 			ICdtVariable c2 = (ICdtVariable) b;
 			return c1.getName().compareToIgnoreCase(c2.getName());			
-		}
-		if (a instanceof IConfigurationElement) {
-			IConfigurationElement e1 = (IConfigurationElement)a;
-			IConfigurationElement e2 = (IConfigurationElement)b;
-			return AbstractPage.getWeight(e1).compareTo(AbstractPage.getWeight(e2)); 
-		}
-		if (a instanceof EntryDescriptor) {
-			EntryDescriptor c1 = (EntryDescriptor) a;
-			EntryDescriptor c2 = (EntryDescriptor) b;
-			return c1.getName().compareToIgnoreCase(c2.getName());
 		}
 		return a.toString().compareTo(b.toString());
 	}

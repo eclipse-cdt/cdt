@@ -116,7 +116,16 @@ public class RefsTab extends AbstractCPropertyTab {
     }
 
 	public void updateData(ICResourceDescription cfgd) {
-		initData();
+		if (page.isMultiCfg()) {
+			usercomp.setVisible(false);
+			buttoncomp.setVisible(false);
+		} else {
+			if ( !usercomp.getVisible()) {
+				usercomp.setVisible(true);
+				buttoncomp.setVisible(true);
+			}
+			initData();
+		}
 	}
 
 	private void saveChecked() {

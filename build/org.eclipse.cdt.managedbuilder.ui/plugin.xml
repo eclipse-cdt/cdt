@@ -68,6 +68,12 @@
             class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"
             id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"
             name="%propSettingsPrefName"/>
+      <page
+            category="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"
+            class="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig"
+            id="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig"
+            name="%multicfg">
+      </page>
    </extension>
    
    <!-- Action for Project Converter in context menu -->
@@ -397,6 +403,11 @@
            class="org.eclipse.cdt.managedbuilder.ui.preferences.PropertyPageDefsTab"
            name="%PropertyPage.defaults"
            parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_PropertyPage"/>
+     <tab
+           class="org.eclipse.cdt.managedbuilder.ui.preferences.PropertyMultiCfgTab"
+           name="%multicfg"
+           parent="org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig">
+     </tab>
   </extension>   
 
       <extension

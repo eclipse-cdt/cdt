@@ -8,22 +8,20 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.managedbuilder.ui.properties;
+package org.eclipse.cdt.managedbuilder.core;
 
+import java.util.Comparator;
+
+import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
-import org.eclipse.cdt.managedbuilder.core.IBuilder;
-import org.eclipse.cdt.managedbuilder.core.ITool;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
-import org.eclipse.cdt.ui.newui.CDTListComparator;
 
 /**
  * This class is intended to compare MBS-specific classes
  */
 public class BuildListComparator extends CDTListComparator {
-	private static BuildListComparator comparator = null;
 	private static final String EMPTY = ""; //$NON-NLS-1$
 	
-	public static CDTListComparator getInstance() {
+	public static Comparator getInstance() {
 		if (comparator == null)
 			comparator = new BuildListComparator();
 		return comparator;

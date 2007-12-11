@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class IncludeDialog extends AbstractPropertyDialog {
@@ -96,7 +97,8 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		b_add2confs = new Button(c1, SWT.CHECK);
 		b_add2confs.setText(UIMessages.getString("IncludeDialog.2")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		if ((mode & OLD_MASK) == OLD_MASK) {
+		if (((mode & OLD_MASK) == OLD_MASK) ||
+				(cfgd instanceof ICMultiConfigDescription)) {
 			gd.heightHint = 1;
 			b_add2confs.setVisible(false);
 		}

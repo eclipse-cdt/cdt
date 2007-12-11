@@ -17,6 +17,7 @@ import java.util.Comparator;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
@@ -152,7 +153,7 @@ public class NewVarDialog extends Dialog {
 			}
 		});
 
-		if (fEditedMacro == null && cfgd != null) {
+		if (fEditedMacro == null && cfgd != null && !(cfgd instanceof ICMultiItemsHolder)) {
 			Button c_all = new Button(comp, SWT.CHECK);
 			c_all.setText(Messages.getString("NewVarDialog.1")); //$NON-NLS-1$
 			gd = new GridData(GridData.BEGINNING);

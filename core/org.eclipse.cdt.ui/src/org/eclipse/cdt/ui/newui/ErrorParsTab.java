@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Table;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
 
@@ -141,7 +142,9 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	public void updateData(ICResourceDescription _cfgd) {
 		cfgd = _cfgd.getConfiguration();
 		if (mapParsers == null) return;
-		String[] ss = cfgd.getBuildSetting().getErrorParserIDs();
+		String[] ss = (page.isMultiCfg()) ?
+			((ICMultiConfigDescription)cfgd).getErrorParserIDs() :
+			cfgd.getBuildSetting().getErrorParserIDs();
 		
 		ArrayList data = new ArrayList(mapParsers.size());
 		ArrayList checked = new ArrayList(ss.length);
@@ -176,10 +179,16 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 		buttonSetEnabled(4, cnt > 0);
 	}
 	
-	
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
-		String[] s1 = src.getConfiguration().getBuildSetting().getErrorParserIDs();
-		dst.getConfiguration().getBuildSetting().setErrorParserIDs(s1);
+		ICConfigurationDescription sd = src.getConfiguration();
+		ICConfigurationDescription dd = dst.getConfiguration();
+		String[] s = (sd instanceof ICMultiConfigDescription) ?
+			((ICMultiConfigDescription)sd).getErrorParserIDs() :
+			sd.getBuildSetting().getErrorParserIDs();
+		if (dd instanceof ICMultiConfigDescription)
+			((ICMultiConfigDescription)sd).setErrorParserIDs(s);
+		else	
+			dd.getBuildSetting().setErrorParserIDs(s);
 	}
 	
 	private void saveChecked() {
@@ -189,7 +198,11 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			for (int i=0; i<objs.length; i++) 
 				lst.add(((TableData)objs[i]).key);
 		}
-		cfgd.getBuildSetting().setErrorParserIDs((String[])lst.toArray(new String[lst.size()]));
+		String[] s = (String[])lst.toArray(new String[lst.size()]);
+		if (cfgd instanceof ICMultiConfigDescription)
+			((ICMultiConfigDescription)cfgd).setErrorParserIDs(s);
+		else
+			cfgd.getBuildSetting().setErrorParserIDs(s);
 	}
 	// This page can be displayed for project only
 	public boolean canBeVisible() {
@@ -197,7 +210,10 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 	}
 
 	protected void performDefaults() {
-		cfgd.getConfiguration().getBuildSetting().setErrorParserIDs(null);
+		if (cfgd instanceof ICMultiConfigDescription)
+			((ICMultiConfigDescription)cfgd).setErrorParserIDs(null);
+		else
+			cfgd.getBuildSetting().setErrorParserIDs(null);
 		updateData(getResDesc());
 	}	
 }

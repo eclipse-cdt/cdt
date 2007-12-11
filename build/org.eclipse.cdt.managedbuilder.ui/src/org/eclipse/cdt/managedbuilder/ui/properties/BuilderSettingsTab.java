@@ -14,8 +14,10 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.TriButton;
 import org.eclipse.core.runtime.CoreException;
@@ -50,9 +52,10 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	private Button b_dirWsp;
 	private Button b_dirFile;
 	private Button b_dirVars;
+	private Group group_dir;
 
-	IBuilder bld;
-	Configuration cfg;
+	private IBuilder bldr;
+	private IConfiguration icfg;
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -67,7 +70,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		c_builderType.add(Messages.getString("BuilderSettingsTab.3")); //$NON-NLS-1$
 		c_builderType.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
-				cfg.enableInternalBuilder(c_builderType.getSelectionIndex() == 1);
+				enableInternalBuilder(c_builderType.getSelectionIndex() == 1);
 		    	updateButtons();
 		 }});
 		
@@ -80,10 +83,10 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	        	String fullCommand = t_buildCmd.getText().trim();
 	        	String buildCommand = parseMakeCommand(fullCommand);
 	        	String buildArgs = fullCommand.substring(buildCommand.length()).trim();
-	        	if(!buildCommand.equals(bld.getCommand()) 
-	        			|| !buildArgs.equals(bld.getArguments())){
-		        	bld.setCommand(buildCommand);
-		        	bld.setArguments(buildArgs);
+	        	if(!buildCommand.equals(bldr.getCommand()) 
+	        			|| !buildArgs.equals(bldr.getArguments())){
+		        	setCommand(buildCommand);
+		        	setArguments(buildArgs);
 		        }
 			}});
 				
@@ -94,14 +97,14 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 		b_expandVars  = setupTri(g2, Messages.getString("BuilderSettingsTab.8"), 1, GridData.BEGINNING); //$NON-NLS-1$
 
 		// Build location group
-		Group g5 = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
-		setupLabel(g5, Messages.getString("BuilderSettingsTab.22"), 1, GridData.BEGINNING); //$NON-NLS-1$
-		t_dir = setupText(g5, 1, GridData.FILL_HORIZONTAL);
+		group_dir = setupGroup(usercomp, Messages.getString("BuilderSettingsTab.21"), 2, GridData.FILL_HORIZONTAL); //$NON-NLS-1$
+		setupLabel(group_dir, Messages.getString("BuilderSettingsTab.22"), 1, GridData.BEGINNING); //$NON-NLS-1$
+		t_dir = setupText(group_dir, 1, GridData.FILL_HORIZONTAL);
 		t_dir.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				bld.setBuildPath(t_dir.getText());
+				setBuildPath(t_dir.getText());
 			}} );
-		Composite c = new Composite(g5, SWT.NONE);
+		Composite c = new Composite(group_dir, SWT.NONE);
 		setupControl(c, 2, GridData.FILL_HORIZONTAL);
 		GridLayout f = new GridLayout(4, false);
 		c.setLayout(f);
@@ -113,52 +116,53 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	}
 
 	void setManagedBuild(boolean enable) {
-		try {
-			bld.setManagedBuildOn(enable);
-			page.informPages(MANAGEDBUILDSTATE, null);
-			updateButtons();
-		} catch (CoreException ex) {}
+		setManagedBuildOn(enable);
+		page.informPages(MANAGEDBUILDSTATE, null);
+		updateButtons();
 	}
 	
 	/**
 	 * sets widgets states
 	 */
 	protected void updateButtons() {
-		bld = cfg.getEditableBuilder();
+		bldr = icfg.getEditableBuilder();
 		
-		b_genMakefileAuto.setEnabled(cfg.supportsBuild(true));
-		b_genMakefileAuto.setSelection(bld.isManagedBuildOn());
-		b_useDefault.setSelection(bld.isDefaultBuildCmd());
+		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
+		b_genMakefileAuto.setSelection(bldr.isManagedBuildOn());
+		b_useDefault.setSelection(bldr.isDefaultBuildCmd());
 
-		c_builderType.select(cfg.isInternalBuilderEnabled() ? 1 : 0);
+		c_builderType.select(isInternalBuilderEnabled() ? 1 : 0);
 		c_builderType.setEnabled(
-				cfg.canEnableInternalBuilder(true) &&
-				cfg.canEnableInternalBuilder(false));
+				canEnableInternalBuilder(true) &&
+				canEnableInternalBuilder(false));
 		
 		t_buildCmd.setText(getMC());
 				
-		if(!bld.canKeepEnvironmentVariablesInBuildfile())
+		if(!bldr.canKeepEnvironmentVariablesInBuildfile())
 			b_expandVars.setEnabled(false);
 		else {
 			b_expandVars.setEnabled(true);
-			b_expandVars.setSelection(!bld.keepEnvironmentVariablesInBuildfile());
+			b_expandVars.setSelection(!bldr.keepEnvironmentVariablesInBuildfile());
 		}
-		t_dir.setText(bld.getBuildPath());
-		//	cfg.getBuildData().getBuilderCWD().toOSString());
 		
-		boolean mbOn = bld.isManagedBuildOn();
-		t_dir.setEnabled(!mbOn);
-		b_dirVars.setEnabled(!mbOn);
-		b_dirWsp.setEnabled(!mbOn);
-		b_dirFile.setEnabled(!mbOn);
-		
+		if (page.isMultiCfg()) {
+			group_dir.setVisible(false);
+		} else {
+			group_dir.setVisible(true);
+			t_dir.setText(bldr.getBuildPath());
+			boolean mbOn = bldr.isManagedBuildOn();
+			t_dir.setEnabled(!mbOn);
+			b_dirVars.setEnabled(!mbOn);
+			b_dirWsp.setEnabled(!mbOn);
+			b_dirFile.setEnabled(!mbOn);
+		}		
 		boolean external = (c_builderType.getSelectionIndex() == 0);
 		
 		b_useDefault.setEnabled(external);
 		t_buildCmd.setEnabled(external);
 		((Control)t_buildCmd.getData()).setEnabled(external & ! b_useDefault.getSelection());
 		
-		b_genMakefileAuto.setEnabled(external && cfg.supportsBuild(true));
+		b_genMakefileAuto.setEnabled(external && icfg.supportsBuild(true));
 		b_expandVars.setEnabled(external && b_genMakefileAuto.getSelection());
 		
 		if (external) {
@@ -239,16 +243,14 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 				c.setEnabled(val);
 			}
 		}
-		try {
-			if (b == b_useDefault) {
-				bld.setUseDefaultBuildCmd(!val);
-			} else if (b == b_genMakefileAuto) {
-				setManagedBuild(val);
-			} else if (b == b_expandVars) {
-				if(bld.canKeepEnvironmentVariablesInBuildfile()) 
-					bld.setKeepEnvironmentVariablesInBuildfile(!val);
-			}
-		} catch (CoreException e) {}
+		if (b == b_useDefault) {
+			setUseDefaultBuildCmd(!val);
+		} else if (b == b_genMakefileAuto) {
+			setManagedBuild(val);
+		} else if (b == b_expandVars) {
+			if(bldr.canKeepEnvironmentVariablesInBuildfile()) 
+				setKeepEnvironmentVariablesInBuildfile(!val);
+		}
 	}
 
 	/**
@@ -256,8 +258,8 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	 * @return
 	 */
 	private String getMC() {
-		String makeCommand = bld.getCommand();
-		String makeArgs = bld.getArguments();
+		String makeCommand = bldr.getCommand();
+		String makeArgs = bldr.getArguments();
 		if (makeArgs != null) {	makeCommand += " " + makeArgs; } //$NON-NLS-1$
 		return makeCommand;
 	}
@@ -269,9 +271,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	
 	public void updateData(ICResourceDescription cfgd) {
 		if (cfgd == null) return;
-		IConfiguration icfg = getCfg(cfgd.getConfiguration());
-		if (!(icfg instanceof Configuration)) return;
-		cfg = (Configuration)icfg;
+		icfg = getCfg(cfgd.getConfiguration());
 		updateButtons();
 	}
 
@@ -335,7 +335,96 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	}
 
 	protected void performDefaults() {
-		copyBuilders(bld.getSuperClass(), bld);
+		if (icfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+			for (int i=0; i<cfs.length; i++) {
+				IBuilder b = cfs[i].getEditableBuilder();
+				copyBuilders(b.getSuperClass(), b);
+			}
+		} else 
+			copyBuilders(bldr.getSuperClass(), bldr);
 		updateData(getResDesc());
+	}
+	
+	private boolean canEnableInternalBuilder(boolean v) {
+		if (icfg instanceof Configuration) 
+			return ((Configuration)icfg).canEnableInternalBuilder(v);
+		if (icfg instanceof IMultiConfiguration)
+			return ((IMultiConfiguration)icfg).canEnableInternalBuilder(v);
+		return false;
+	}
+	
+	private void enableInternalBuilder(boolean v) {
+		if (icfg instanceof Configuration) 
+			((Configuration)icfg).enableInternalBuilder(v);
+		if (icfg instanceof IMultiConfiguration)
+			((IMultiConfiguration)icfg).enableInternalBuilder(v);
+	}
+	
+	private boolean isInternalBuilderEnabled() {
+		if (icfg instanceof Configuration) 
+			return ((Configuration)icfg).isInternalBuilderEnabled();
+		if (icfg instanceof IMultiConfiguration)
+			return ((IMultiConfiguration)icfg).isInternalBuilderEnabled();
+		return false;
+	}
+	
+	private void setUseDefaultBuildCmd(boolean val) {
+		
+	}
+	private void setKeepEnvironmentVariablesInBuildfile(boolean val) {
+		
+	}
+
+	private void setCommand(String buildCommand) {
+		if (icfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+			for (int i=0; i<cfs.length; i++) {
+				IBuilder b = cfs[i].getEditableBuilder();
+				b.setCommand(buildCommand);
+			}
+		} else {
+			icfg.getEditableBuilder().setCommand(buildCommand);
+		}
+	}
+	
+	private void setArguments(String makeArgs) {
+		if (icfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+			for (int i=0; i<cfs.length; i++) {
+				IBuilder b = cfs[i].getEditableBuilder();
+				b.setArguments(makeArgs);
+			}
+		} else {
+			icfg.getEditableBuilder().setArguments(makeArgs);
+		}
+	}
+
+	private void setBuildPath(String path) {
+		if (icfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+			for (int i=0; i<cfs.length; i++) {
+				IBuilder b = cfs[i].getEditableBuilder();
+				b.setBuildPath(path);
+			}
+		} else {
+			icfg.getEditableBuilder().setBuildPath(path);
+		}
+	}
+	
+	private void setManagedBuildOn(boolean on) {
+		try {
+			if (icfg instanceof IMultiConfiguration) {
+				IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+				for (int i=0; i<cfs.length; i++) {
+					IBuilder b = cfs[i].getEditableBuilder();
+					b.setManagedBuildOn(on);
+				}
+			} else {
+				icfg.getEditableBuilder().setManagedBuildOn(on);
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
 	}
 }

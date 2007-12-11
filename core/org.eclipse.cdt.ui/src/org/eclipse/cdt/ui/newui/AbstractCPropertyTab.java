@@ -72,9 +72,6 @@ import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final int BUTTON_WIDTH = 120; // used as hint for all push buttons
 
-	// use 3-state buttons in property pages
-	public static final boolean USE_TRI_STATE = false;
-
 	// commonly used button names
 	public static final String EMPTY_STR = ""; //$NON-NLS-1$
 	public static final String ADD_STR = UIMessages.getString("FileListControl.add"); //$NON-NLS-1$
@@ -93,6 +90,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	public static final String WORKSPACE_FILE_DIALOG_MSG = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.msg");	//$NON-NLS-1$
 	public static final String WORKSPACE_FILE_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.file.dlg.err");	//$NON-NLS-1$
 	public static final String WORKSPACE_DIR_DIALOG_ERR = UIMessages.getString("BrowseEntryDialog.wsp.dir.dlg.err");	//$NON-NLS-1$
+
+	// use 3-state buttons in property pages
+	protected final boolean USE_TRI_STATE = CDTPrefUtil.getBool(CDTPrefUtil.KEY_MULTI) && CDTPrefUtil.getBool(CDTPrefUtil.KEY_3STATE);
 
 	protected Composite usercomp; // space where user can create widgets 
 	protected Composite buttoncomp; // space for buttons on the right

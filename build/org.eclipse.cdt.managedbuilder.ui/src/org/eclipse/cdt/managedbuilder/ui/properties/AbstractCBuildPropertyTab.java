@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -19,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.runtime.IPath;
 
@@ -45,7 +47,14 @@ public abstract class AbstractCBuildPropertyTab extends AbstractCPropertyTab {
 		return getCfg(getResDesc().getConfiguration());
 	}
 	public IConfiguration getCfg(ICConfigurationDescription cfgd) {
-		return ManagedBuildManager.getConfigurationForDescription(cfgd);
+		if (cfgd instanceof ICMultiConfigDescription) {
+			ICConfigurationDescription[] cfds = (ICConfigurationDescription[])((ICMultiConfigDescription)cfgd).getItems();
+			IConfiguration[] cfs = new IConfiguration[cfds.length];
+			for (int i=0; i<cfds.length; i++)
+				cfs[i] = ManagedBuildManager.getConfigurationForDescription(cfds[i]);
+			return new MultiConfiguration(cfs, 9);
+		} else 
+			return ManagedBuildManager.getConfigurationForDescription(cfgd);
 	}
 
 	/**

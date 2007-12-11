@@ -14,9 +14,11 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildProcessManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.TriButton;
 import org.eclipse.core.runtime.CoreException;
@@ -57,9 +59,9 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	private Button b_cmdClean;
 	private Text   t_cmdClean;	
 
-	private IBuilder bld;
-	private Configuration cfg;
-
+	private IBuilder bldr;
+	private IConfiguration icfg;
+	
 	protected final int cpuNumber = BuildProcessManager.checkCPUNumber(); 
 	
 	public void createControls(Composite parent) {
@@ -111,7 +113,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		((GridData)(b_parallelOpt.getLayoutData())).horizontalIndent = 15;
 		b_parallelOpt.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
-				cfg.setParallelDef(b_parallelOpt.getSelection());
+				setParallelDef(b_parallelOpt.getSelection());
 				updateButtons();
 		 }});
 		
@@ -121,7 +123,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		((GridData)(b_parallelNum.getLayoutData())).horizontalIndent = 15;
 		b_parallelNum.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
-				cfg.setParallelDef(!b_parallelNum.getSelection());
+				setParallelDef(!b_parallelNum.getSelection());
 				updateButtons();
 		 }});
 
@@ -130,7 +132,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		parallelProcesses.setValues(cpuNumber, 1, 10000, 0, 1, 10);
 		parallelProcesses.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
-				cfg.setParallelNumber(parallelProcesses.getSelection());
+				setParallelNumber(parallelProcesses.getSelection());
 				updateButtons();
 			}
 		});
@@ -148,9 +150,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		t_autoBuild = setupBlock(g4, b_autoBuild);
 		t_autoBuild.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				try {
-					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, t_autoBuild.getText());
-				} catch (CoreException ex) {}
+				setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_AUTO, t_autoBuild.getText());
 			}} );
 		t_autoBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 		setupLabel(g4, Messages.getString("BuilderSettingsTab.18"), 3, GridData.BEGINNING); //$NON-NLS-1$
@@ -158,18 +158,14 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 		t_cmdBuild = setupBlock(g4, b_cmdBuild);
 		t_cmdBuild.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				try { 
-					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, t_cmdBuild.getText());
-				} catch (CoreException ex) {}
+				setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_INCREMENTAL, t_cmdBuild.getText());
 			}} );
 		t_cmdBuild.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 		b_cmdClean = setupCheck(g4, Messages.getString("BuilderSettingsTab.20"), 1, GridData.BEGINNING); //$NON-NLS-1$
 		t_cmdClean = setupBlock(g4, b_cmdClean);
 		t_cmdClean.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				try { 
-					bld.setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, t_cmdClean.getText());
-				} catch (CoreException ex) {}
+				setBuildAttribute(IMakeBuilderInfo.BUILD_TARGET_CLEAN, t_cmdClean.getText());
 			}} );
 		t_cmdClean.getAccessible().addAccessibleListener(makeTargetLabelAccessibleListener);
 	}
@@ -178,33 +174,33 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	 * sets widgets states
 	 */
 	protected void updateButtons() {
-		bld = cfg.getEditableBuilder();
+		bldr = icfg.getEditableBuilder();
 		
-		b_stopOnError.setSelection(bld.isStopOnError());
+		b_stopOnError.setSelection(bldr.isStopOnError());
 		b_stopOnError.setEnabled(
-				bld.supportsStopOnError(true) &&
-				bld.supportsStopOnError(false));
+				bldr.supportsStopOnError(true) &&
+				bldr.supportsStopOnError(false));
 		// parallel
-		b_parallel.setSelection(cfg.getInternalBuilderParallel());
-		b_parallelOpt.setSelection(cfg.getParallelDef());
-		b_parallelNum.setSelection(!cfg.getParallelDef());
-		int n = cfg.getParallelNumber();
+		b_parallel.setSelection(getInternalBuilderParallel());
+		b_parallelOpt.setSelection(getParallelDef());
+		b_parallelNum.setSelection(!getParallelDef());
+		int n = getParallelNumber();
 		if (n < 0) n = -n;
 		parallelProcesses.setSelection(n);
 
-		b_parallel.setVisible(bld.supportsParallelBuild());
-		b_parallelOpt.setVisible(bld.supportsParallelBuild());
-		b_parallelNum.setVisible(bld.supportsParallelBuild());
-		parallelProcesses.setVisible(bld.supportsParallelBuild());
+		b_parallel.setVisible(bldr.supportsParallelBuild());
+		b_parallelOpt.setVisible(bldr.supportsParallelBuild());
+		b_parallelNum.setVisible(bldr.supportsParallelBuild());
+		parallelProcesses.setVisible(bldr.supportsParallelBuild());
 
-		b_autoBuild.setSelection(bld.isAutoBuildEnable());
-		t_autoBuild.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
-		b_cmdBuild.setSelection(bld.isIncrementalBuildEnabled());
-		t_cmdBuild.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
-		b_cmdClean.setSelection(bld.isCleanBuildEnabled());
-		t_cmdClean.setText(bld.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
+		b_autoBuild.setSelection(bldr.isAutoBuildEnable());
+		t_autoBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_AUTO, EMPTY_STR));
+		b_cmdBuild.setSelection(bldr.isIncrementalBuildEnabled());
+		t_cmdBuild.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_INCREMENTAL, EMPTY_STR));
+		b_cmdClean.setSelection(bldr.isCleanBuildEnabled());
+		t_cmdClean.setText(bldr.getBuildAttribute(IBuilder.BUILD_TARGET_CLEAN, EMPTY_STR));
 		
-		boolean external = ! cfg.isInternalBuilderEnabled(); 
+		boolean external = ! isInternalBuilderEnabled(); 
 		boolean parallel = b_parallel.getSelection();
 
 		b_parallelNum.setEnabled(parallel);
@@ -275,19 +271,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 				c.setEnabled(val);
 			}
 		}
-		try {
-			if (b == b_autoBuild) {
-				bld.setAutoBuildEnable(val);				
-			} else if (b == b_cmdBuild) {
-				bld.setIncrementalBuildEnable(val);				
-			} else if (b == b_cmdClean) {
-				bld.setCleanBuildEnable(val);
-			} else if (b == b_stopOnError) {
-				bld.setStopOnError(val);
-			} else if (b == b_parallel) {
-				bld.setParallelBuildOn(val);
-			}
-		} catch (CoreException e) {}
+		setValue(b, val);
 	}
 
 	/*
@@ -298,9 +282,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	
 	public void updateData(ICResourceDescription cfgd) {
 		if (cfgd == null) return;
-		IConfiguration icfg = getCfg(cfgd.getConfiguration());
-		if (!(icfg instanceof Configuration)) return;
-		cfg = (Configuration)icfg;
+		icfg = getCfg(cfgd.getConfiguration());
 		updateButtons();
 	}
 
@@ -321,7 +303,111 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	}
 
 	protected void performDefaults() {
-		BuilderSettingsTab.copyBuilders(bld.getSuperClass(), bld);
+		if (icfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+			for (int i=0; i<cfs.length; i++) {
+				IBuilder b = cfs[i].getEditableBuilder();
+				BuilderSettingsTab.copyBuilders(b.getSuperClass(), b);
+			}
+		} else 
+			BuilderSettingsTab.copyBuilders(bldr.getSuperClass(), bldr);
 		updateData(getResDesc());
+	}
+	
+	private boolean getParallelDef() {
+		if (icfg instanceof Configuration) 
+			return ((Configuration)icfg).getParallelDef();
+		if (icfg instanceof IMultiConfiguration)
+			return ((IMultiConfiguration)icfg).getParallelDef();
+		return false;
+	}
+	
+	private void setParallelDef(boolean def) {
+		if (icfg instanceof Configuration) 
+			((Configuration)icfg).setParallelDef(def);
+		if (icfg instanceof IMultiConfiguration)
+			((IMultiConfiguration)icfg).setParallelDef(def);
+	}
+	
+	private int getParallelNumber() {
+		if (icfg instanceof Configuration) 
+			return ((Configuration)icfg).getParallelNumber();
+		if (icfg instanceof IMultiConfiguration)
+			return ((IMultiConfiguration)icfg).getParallelNumber();
+		return 0;
+	}
+	private void setParallelNumber(int num) {
+		if (icfg instanceof Configuration) 
+			((Configuration)icfg).setParallelNumber(num);
+		if (icfg instanceof IMultiConfiguration)
+			((IMultiConfiguration)icfg).setParallelNumber(num);
+	}
+	
+	private boolean getInternalBuilderParallel() {
+		if (icfg instanceof Configuration) 
+			return ((Configuration)icfg).getInternalBuilderParallel();
+		if (icfg instanceof IMultiConfiguration)
+			return ((IMultiConfiguration)icfg).getInternalBuilderParallel();
+		return false;
+	}
+
+	private boolean isInternalBuilderEnabled() {
+		if (icfg instanceof Configuration) 
+			return ((Configuration)icfg).isInternalBuilderEnabled();
+		if (icfg instanceof IMultiConfiguration)
+			return ((IMultiConfiguration)icfg).isInternalBuilderEnabled();
+		return false;
+	}
+	
+	private void setBuildAttribute(String name, String value) {
+		try {
+			if (icfg instanceof IMultiConfiguration) {
+				IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+				for (int i=0; i<cfs.length; i++) {
+					IBuilder b = cfs[i].getEditableBuilder();
+					b.setBuildAttribute(name, value);
+				}
+			} else {
+				icfg.getEditableBuilder().setBuildAttribute(name, value);
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}		
+	}
+	
+	private void setValue(Control b, boolean val) {
+		try {
+			if (icfg instanceof IMultiConfiguration) {
+				IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+				for (int i=0; i<cfs.length; i++) {
+					IBuilder bld = cfs[i].getEditableBuilder();
+					if (b == b_autoBuild) {
+						bld.setAutoBuildEnable(val);				
+					} else if (b == b_cmdBuild) {
+						bld.setIncrementalBuildEnable(val);				
+					} else if (b == b_cmdClean) {
+						bld.setCleanBuildEnable(val);
+					} else if (b == b_stopOnError) {
+						bld.setStopOnError(val);
+					} else if (b == b_parallel) {
+						bld.setParallelBuildOn(val);
+					}
+				}
+			} else {
+				if (b == b_autoBuild) {
+					bldr.setAutoBuildEnable(val);				
+				} else if (b == b_cmdBuild) {
+					bldr.setIncrementalBuildEnable(val);				
+				} else if (b == b_cmdClean) {
+					bldr.setCleanBuildEnable(val);
+				} else if (b == b_stopOnError) {
+					bldr.setStopOnError(val);
+				} else if (b == b_parallel) {
+					bldr.setParallelBuildOn(val);
+				}
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
 	}
 }

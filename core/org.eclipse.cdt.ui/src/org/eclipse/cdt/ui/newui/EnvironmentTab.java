@@ -45,9 +45,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.envvar.IContributedEnvironment;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.utils.envvar.StorableEnvironment;
@@ -66,13 +65,13 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 	private static final String RBR = "]"; //$NON-NLS-1$
 	private static final UserDefinedEnvironmentSupplier fUserSupplier = EnvironmentVariableManager.fUserSupplier;
 	
+	private final MultiCfgContributedEnvironment ce = new MultiCfgContributedEnvironment();
 
 	private Table table;
 	private TableViewer tv;
 	private ArrayList data = new ArrayList();
 	private Button b1, b2;
 	
-	private static final IContributedEnvironment ce = CCorePlugin.getDefault().getBuildEnvironmentManager().getContributedEnvironment();
 	private ICConfigurationDescription cfgd = null;
 	private StorableEnvironment vars = null;
 
@@ -218,7 +217,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		int[] idx;
 		switch (i) {
 		case 0:
-			dlg = new EnvDialog(usercomp.getShell(), var, UIMessages.getString("EnvironmentTab.10"), true, cfgd); //$NON-NLS-1$
+			dlg = new EnvDialog(usercomp.getShell(), 
+					var, 
+					UIMessages.getString("EnvironmentTab.10"), //$NON-NLS-1$ 
+					true,
+					page.isMultiCfg(),
+					cfgd);
 			if (dlg.open() == Window.OK) {
 				if (dlg.t1.trim().length() > 0) {
 					ICConfigurationDescription[] cfgs;
@@ -246,7 +250,12 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		case 2: // edit
 			if (n == -1) return;
 			var = ((TabData)tv.getElementAt(n)).var;
-			dlg = new EnvDialog(usercomp.getShell(), var, UIMessages.getString("EnvironmentTab.11"), false, cfgd); //$NON-NLS-1$
+			dlg = new EnvDialog(usercomp.getShell(), 
+					var, 
+					UIMessages.getString("EnvironmentTab.11"),  //$NON-NLS-1$ 
+					false,
+					page.isMultiCfg(),
+					cfgd);
 			if (dlg.open() == Window.OK) {
 				if (cfgd != null)
 					ce.addVariable(	dlg.t1.trim(), dlg.t2.trim(), 
@@ -308,8 +317,11 @@ public class EnvironmentTab extends AbstractCPropertyTab {
 		cfgd = (_cfgd != null) ? _cfgd.getConfiguration() : null;
 		if (cfgd == null && vars == null)
 			vars = fUserSupplier.getWorkspaceEnvironmentCopy();
+		else
+			ce.setMulti(page.isMultiCfg());
 		updateData();
 	}
+
 	private void updateData() {
 		IEnvironmentVariable[] _vars = null;
 		if (cfgd != null) {

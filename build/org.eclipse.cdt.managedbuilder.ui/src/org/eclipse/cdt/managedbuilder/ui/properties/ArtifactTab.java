@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 import org.eclipse.cdt.managedbuilder.core.IBuildObjectProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IMultiConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -41,9 +43,9 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	private Combo c1;
 	private int savedPos = -1; // current project type
 	private IConfiguration fCfg; 
-	private IBuildObjectProperties fProp; 
+	private IBuildObjectProperties fProperties; 
 	private IBuildPropertyValue[] values;
-	private ITool targetTool;
+	private ITool tTool;
 	
 	public void createControls(Composite parent) {
 		super.createControls(parent);
@@ -85,19 +87,26 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 		t4.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t4.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if(targetTool != null)
-					targetTool.setOutputPrefixForPrimaryOutput(t4.getText());
+				if(tTool != null)
+					tTool.setOutputPrefixForPrimaryOutput(t4.getText());
+				else if (fCfg instanceof IMultiConfiguration)
+					((IMultiConfiguration)fCfg).setOutputPrefixForPrimaryOutput(t4.getText());
+					
 			}} );
 		updateData(getResDesc());
 	}
 
 	private void typeChanged() {
-		if (fProp == null) return;
 		int n = c1.getSelectionIndex();
 		if (n != savedPos) {
 			savedPos = n;
 			try {
-				fProp.setProperty(PROPERTY, values[n].getId());
+				if (fCfg instanceof IMultiConfiguration) {
+					((IMultiConfiguration)fCfg).setBuildProperty(PROPERTY, values[n].getId());
+				} else {				
+					if (fProperties == null) return;
+					fProperties.setProperty(PROPERTY, values[n].getId());
+				}
 			} catch (CoreException ex) {
 				ManagedBuilderUIPlugin.log(ex);
 			}
@@ -108,16 +117,22 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	public void updateData(ICResourceDescription cfgd) {
 		if (cfgd == null) return;
 		fCfg = getCfg();
-
-		fProp = fCfg.getBuildProperties();
-		values = fProp.getSupportedValues(PROPERTY);
+		if (page.isMultiCfg()) {
+			fProperties = null;
+			values = ((IMultiConfiguration)fCfg).getSupportedValues(PROPERTY);
+		} else {
+			fProperties = fCfg.getBuildProperties();
+			values = fProperties.getSupportedValues(PROPERTY);
+		}
 		c1.removeAll();
 		c1.setData(values);
 		for (int i=0; i<values.length; i++) {
 			c1.add(values[i].getName());
 		}
 		c1.setText(EMPTY_STR);
-		IBuildProperty pr = fProp.getProperty(PROPERTY);
+		IBuildProperty pr = (page.isMultiCfg()) ?
+			((IMultiConfiguration)fCfg).getBuildProperty(PROPERTY) :
+			fProperties.getProperty(PROPERTY);
 		if (pr != null) {
 			String s = pr.getValue().getId();
 			for (int i=0; i<values.length; i++) {
@@ -135,14 +150,21 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 			getCfg().setArtifactName(CWizardHandler.removeSpaces(s));
 		}
 		t2.setText(s);
+		
 		t3.setText(fCfg.getArtifactExtension());
 		
-		targetTool = fCfg.calculateTargetTool();
-		if(targetTool != null){
+		tTool = fCfg.calculateTargetTool();
+		if(tTool != null){
 			if (l4 != null) l4.setVisible(true);
 			if (t4 != null) {
 				t4.setVisible(true);
-				t4.setText(targetTool.getOutputPrefix());
+				t4.setText(tTool.getOutputPrefix());
+			}
+		} else if (page.isMultiCfg()) {
+			if (l4 != null) l4.setVisible(true);
+			if (t4 != null) {
+				t4.setVisible(true);
+				t4.setText(((IMultiConfiguration)fCfg).getToolOutputPrefix());
 			}
 		} else {
 			if (l4 != null) l4.setVisible(false);
@@ -178,14 +200,26 @@ public class ArtifactTab extends AbstractCBuildPropertyTab {
 	public void performDefaults() {
 		fCfg.setArtifactName(fCfg.getManagedProject().getDefaultArtifactName());
 		fCfg.setArtifactExtension(null);
-		if (targetTool != null)
-			targetTool.setOutputPrefixForPrimaryOutput(null);
+		if (tTool != null)
+			tTool.setOutputPrefixForPrimaryOutput(null);
+		else if (fCfg instanceof IMultiConfiguration)
+			((IMultiConfiguration)fCfg).setOutputPrefixForPrimaryOutput(null);
 		updateData(getResDesc());
 	}
 
 	public boolean canBeVisible() {
-		if (page.isForProject())
-			return getCfg().getBuilder().isManagedBuildOn();
+		if (page.isForProject()) {
+			if (page.isMultiCfg()) {
+				ICMultiItemsHolder mih = (ICMultiItemsHolder)getCfg();
+				IConfiguration[] cfs = (IConfiguration[])mih.getItems();
+				for (int i=0; i<cfs.length; i++) {
+					if (cfs[i].getBuilder().isManagedBuildOn())
+						return true;
+				}
+				return false;
+			} else
+				return getCfg().getBuilder().isManagedBuildOn();
+		}
 		else
 			return false;
 	}

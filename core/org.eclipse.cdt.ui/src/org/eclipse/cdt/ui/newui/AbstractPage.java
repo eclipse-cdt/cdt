@@ -68,11 +68,14 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -83,7 +86,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
  * It is a parent for all standard CDT property pages
  * in new CDT model. 
  * 
- * Although it is enougth for new page to implement
+ * Although it is enough for new page to implement
  * "IWorkbenchPropertyPage" interface, it would be
  * better to extend it from "AbstractPage".
  * 
@@ -109,7 +112,6 @@ implements
 {
 	private static ICResourceDescription resd = null;
 	private static ICConfigurationDescription[] cfgDescs = null;
-	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
 	private static int cfgIndex = -1;
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
@@ -148,7 +150,6 @@ implements
 	protected boolean isProject = false;
 	protected boolean isFolder  = false;
 	protected boolean isFile    = false;
-	protected boolean isMulti   = false;
 	
 	// tabs
 	protected TabFolder folder;
@@ -372,7 +373,6 @@ implements
 	 * Event Handlers
 	 */
 	private void handleConfigSelection() {
-		isMulti = false; // no multi config selection by default 
 		// If there is nothing in config selection widget just bail
 		if (configSelector.getItemCount() == 0) return;
 		int selectionIndex = configSelector.getSelectionIndex();
@@ -380,13 +380,15 @@ implements
 
 		// Check if the user has selected the "all / multiple" configuration
 		if (selectionIndex >= cfgDescs.length) {
-			if ((selectionIndex - cfgDescs.length) == 0)  // all
+			ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
+			if ((selectionIndex - cfgDescs.length) == 0) {  // all
 				multiCfgs = cfgDescs;
-			else {
+				cfgIndex = selectionIndex; 
+			} else {
 				ICConfigurationDescription[] mcfgs = ConfigMultiSelectionDialog.select(cfgDescs);
 				if (mcfgs == null || mcfgs.length == 0) {
-					// return back to previous selection, but not to multi !
-					if (cfgIndex >= cfgDescs.length) {
+					// return back to previous selection
+					if (cfgIndex > configSelector.getItemCount()) {
 						cfgIndex = 0;
 						configSelector.select(0);
 						cfgChanged(cfgDescs[0]);
@@ -397,11 +399,9 @@ implements
 				}
 				multiCfgs = mcfgs;
 			}
-
-			isMulti = true;
-			// if tab does not support multi cfg,
-			// it will show 1st cfg, at least.
-			cfgChanged(multiCfgs[0]); 
+			// TODO: avoid repeated update like for single cfg 
+			cfgChanged(MultiItemsHolder.createCDescription(multiCfgs, 
+					ICMultiItemsHolder.MODE_DEFAULT)); 
 			return;
 		} else {
 			String id1 = getResDesc() == null ? null : getResDesc().getId();
@@ -461,9 +461,19 @@ implements
 		
 		final boolean needs = (mode != SAVE_MODE_OK);
 		final ICProjectDescription local_prjd = needs ? CoreModel.getDefault().getProjectDescription(getProject()) : null;
-		ICConfigurationDescription c = needs ? local_prjd.getConfigurationById(resd.getConfiguration().getId()) : null;
-		final ICResourceDescription local_cfgd = needs ? getResDesc(c) : null;
-
+		
+		ICResourceDescription lc = null;
+		
+		if (needs) { 
+			if (isMultiCfg()) {
+				lc = resd;
+			} else {
+				ICConfigurationDescription c = needs ? local_prjd.getConfigurationById(resd.getConfiguration().getId()) : null;
+				lc = getResDesc(c);
+			}
+		}
+		final ICResourceDescription local_cfgd = lc;
+		
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			
 			private void sendOK() {
@@ -749,7 +759,6 @@ implements
 		if (CDTPropertyManager.getPagesCount() == 0) {
 			resd = null;
 			cfgDescs = null;
-			multiCfgs = null;
 		}
 	} 
 	
@@ -976,9 +985,7 @@ implements
 	public boolean isForFolder()   { return isFolder; }
 	public boolean isForFile()     { return isFile; }
 	public boolean isForPrefs()    { return false; }
-	
-	public boolean isMultiCfg()    { return isMulti; }
-	public ICConfigurationDescription[] getMultiCfg() { return (isMulti) ? multiCfgs : null; }
+	public boolean isMultiCfg()    { return resd instanceof ICMultiItemsHolder; }
 	
 	/**
 	 * Checks whether CDT property pages can be open for given object.

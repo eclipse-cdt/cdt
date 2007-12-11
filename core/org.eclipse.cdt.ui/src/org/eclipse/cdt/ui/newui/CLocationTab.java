@@ -43,6 +43,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -231,6 +232,13 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	}
 	
 	public void updateData(ICResourceDescription _cfgd) {
+		if (page.isMultiCfg()) {
+			usercomp.setVisible(false);
+			return;
+		}
+		if ( !usercomp.getVisible())
+			usercomp.setVisible(true);
+		
 		cfgd = _cfgd;
 		ICExclusionPatternPathEntry[] ent = getEntries(cfgd);
 		src = new ArrayList(ent.length);
@@ -263,6 +271,9 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	
 	// This page can be displayed for project only
 	public boolean canBeVisible() {
+		if (page.getResDesc() instanceof ICMultiItemsHolder)
+			return false; // cannot work with multi cfg
+		
 		return page.isForProject();
 	}
 	

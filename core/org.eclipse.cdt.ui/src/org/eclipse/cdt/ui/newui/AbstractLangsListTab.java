@@ -48,12 +48,14 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.cdt.core.model.ILanguageDescriptor;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICFileDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingBase;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
@@ -69,8 +71,6 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 	protected boolean toAllCfgs = false;
 	protected boolean toAllLang = false;
 	
-//	protected boolean showBI = false;
-//	boolean  savedShowBI  = false;
 	protected ICLanguageSetting lang;
 	protected LinkedList incs;
 	protected ArrayList exported; 
@@ -261,7 +261,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			else x += shift; // used only for UP/DOWN 
 			
 			incs = new LinkedList();
-			List lst = lang.getSettingEntriesList(getKind());
+			List lst = getSettingEntriesList(getKind());
 			if (lst != null) {
 				Iterator it = lst.iterator();
 				while (it.hasNext()) {
@@ -353,11 +353,11 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			toAllLang = false;
 			ent = doAdd();
 			if (ent != null) {
-				if (toAllCfgs || toAllLang) {
+				if ((toAllCfgs || toAllLang) && ! (getResDesc() instanceof ICMultiResourceDescription)) {
 					addToAll(ent);
 				} else {
 					incs.add(ent);
-					lang.setSettingEntries(getKind(), incs);
+					setSettingEntries(getKind(), incs, toAllLang);
 				}
 				update();
 			}
@@ -371,7 +371,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 				int toModify = incs.indexOf(old);
 				incs.remove(toModify);
 				incs.add(toModify, ent);
-				lang.setSettingEntries(getKind(), incs);
+				setSettingEntries(getKind(), incs, false);
 				update();
 			}
 			break;
@@ -380,7 +380,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			old = (ICLanguageSettingEntry)(table.getItem(n).getData());
 			if (old.isReadOnly()) return;
 			incs.remove(old);
-			lang.setSettingEntries(getKind(), incs);
+			setSettingEntries(getKind(), incs, false);
 			update();
 			break;
 		case 3: // toggle export	
@@ -407,7 +407,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			incs.remove(x - 1);
 			incs.add(x - 1, old);
 			incs.add(x, old2);
-			lang.setSettingEntries(getKind(), incs);
+			setSettingEntries(getKind(), incs, false);
 			update(i == 5 ? -1 : 1);			
 			break;			
 		default:
@@ -560,5 +560,15 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 				return true;
 		}
 		return false;
+	}
+	
+	private void setSettingEntries(int kind, List incs, boolean toAll) {
+		if (page.isMultiCfg()) {
+			((ICMultiResourceDescription)getResDesc()).setSettingEntries(lang, kind, incs, toAll);
+		} else
+			lang.setSettingEntries(kind, incs);
+	}
+	private List getSettingEntriesList(int kind) {
+		return lang.getSettingEntriesList(kind);
 	}
 }

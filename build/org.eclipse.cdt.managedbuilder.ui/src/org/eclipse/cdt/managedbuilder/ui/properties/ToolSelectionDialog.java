@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.managedbuilder.core.BuildListComparator;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IModificationStatus;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;

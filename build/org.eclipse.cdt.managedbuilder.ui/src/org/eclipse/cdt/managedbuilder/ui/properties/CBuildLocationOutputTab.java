@@ -9,6 +9,7 @@
  * Intel Corporation - Initial API and implementation
  *******************************************************************************/package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.ui.newui.CLocationOutputTab;
@@ -20,7 +21,11 @@ import org.eclipse.cdt.ui.newui.CLocationOutputTab;
 public class CBuildLocationOutputTab extends CLocationOutputTab {
 
 	public boolean canBeVisible() {
-		if (!page.isForProject()) return false;
+		if (!page.isForProject()) 
+			return false; // for project only
+		if (getResDesc() instanceof ICMultiItemsHolder)
+			return false; // multi cfgs not supported for now
+		
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(getResDesc().getConfiguration());
 		return !cfg.getBuilder().isManagedBuildOn();
 	}

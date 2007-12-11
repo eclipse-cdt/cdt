@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICExternalSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
@@ -199,8 +200,17 @@ public abstract class AbstractExportTab extends AbstractCPropertyTab {
 	 */
 	public void updateData(ICResourceDescription rcfg) {
 		if (rcfg == null) return;
-		cfg = rcfg.getConfiguration();
-		update();
+		if (page.isMultiCfg()) {
+			usercomp.setVisible(false);
+			buttoncomp.setVisible(false);
+		} else { 
+			if (! usercomp.getVisible()) {
+				usercomp.setVisible(true);
+				buttoncomp.setVisible(true);
+			}
+			cfg = rcfg.getConfiguration();
+			update();
+		}
 	}
 	/**
 	 * Unified "Add/Edit/Delete" buttons handler

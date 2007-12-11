@@ -24,6 +24,7 @@ public class CDTPrefUtil {
 	public static final String KEY_OTHERS  = "wizard.group.others.enable";  //$NON-NLS-1$
 	public static final String KEY_NOMNG   = "properties.manage.config.disable"; //$NON-NLS-1$
 	public static final String KEY_MULTI   = "properties.multi.config.enable"; //$NON-NLS-1$
+	public static final String KEY_3STATE  = "properties.multi.3state.enable"; //$NON-NLS-1$
 	public static final String KEY_DTREE   = "properties.data.hierarchy.enable"; //$NON-NLS-1$
 	public static final String KEY_NOTOOLM   = "properties.toolchain.modification.disable"; //$NON-NLS-1$
 	public static final String KEY_EXPORT   = "properties.export.page.enable"; //$NON-NLS-1$
@@ -42,6 +43,15 @@ public class CDTPrefUtil {
 		public static final int DISC_NAMING_ALWAYS_IDS = 3;
 		public static final int DISC_NAMING_DEFAULT = DISC_NAMING_UNIQUE_OR_BOTH;
 	
+	public static final String KEY_DMODE = "properties.multi.displ.mode"; //$NON-NLS-1$
+		public static final int DMODE_EMPTY = 1;
+		public static final int DMODE_CONJUNCTION = 2;
+		public static final int DMODE_DISJUNCTION = 4;
+		
+	public static final String KEY_WMODE = "properties.multi.write.mode"; //$NON-NLS-1$
+		public static final int WMODE_MODIFY  = 8;
+		public static final int WMODE_REPLACE = 16;
+		
 	public static final String NULL = "NULL"; //$NON-NLS-1$
 	private static final IPreferenceStore pref = CUIPlugin.getDefault().getPreferenceStore();
 	private static final String DELIMITER = " "; //$NON-NLS-1$

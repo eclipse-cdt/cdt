@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
- *     Wind River Systems - adopted to use with Modules view
+ *     Wind River Systems -  adopted to use with Modules view
+ *     Ericsson AB		  -  Modules view for DSF implementation
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.modules;
 

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -20,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.newmake.core.IMakeBuilderInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
+import org.eclipse.cdt.ui.newui.ICPropertyProvider;
 import org.eclipse.cdt.ui.newui.TriButton;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
@@ -42,6 +44,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
 public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
+	
+	private static int TRI_STATES_SIZE = 4;
 	// Widgets
 	//3
 	private TriButton b_stopOnError;
@@ -171,17 +175,86 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	}
 
 	/**
+	 * 
+	 * @return:
+	 * Mode 0:
+	 *    0: bld.isManagedBuildOn()
+	 *    1: bld.isDefaultBuildCmd()
+	 *    2: bld.canKeepEnvironmentVariablesInBuildfile()
+	 *    3: bld.keepEnvironmentVariablesInBuildfile()
+	 * Mode 1: 
+	 *    0: isStopOnError
+	 *    1: supportsStopOnError(true)
+	 *    2: bld.supportsStopOnError(false)  
+	 *    3: cfg.getInternalBuilderParallel()
+	 */
+	 static int[] calc3states(ICPropertyProvider p, 
+			 TriButton b3, 
+			 IConfiguration c,
+			 boolean p0) {
+		if (p.isMultiCfg() &&
+			b3.in3mode() && 
+			c instanceof ICMultiItemsHolder) 
+		{ 
+			IConfiguration[] cfs = (IConfiguration[])((ICMultiItemsHolder)c).getItems();
+			IBuilder b = cfs[0].getEditableBuilder();
+			int[]   res = new int[TRI_STATES_SIZE];
+			boolean[] x = new boolean[TRI_STATES_SIZE];
+			x[0] = (p0) ? b.isManagedBuildOn() : b.isStopOnError();
+			x[1] = (p0) ? b.isDefaultBuildCmd(): b.supportsStopOnError(true);
+			x[2] = (p0) ? b.canKeepEnvironmentVariablesInBuildfile() : 
+								 b.supportsStopOnError(false);
+			x[3] = (p0) ? b.keepEnvironmentVariablesInBuildfile() : 
+				                 ((Configuration)cfs[0]).getInternalBuilderParallel();
+			for (int i=1; i<cfs.length; i++) {
+				b = cfs[i].getEditableBuilder();
+				if (res[0] != TriButton.UNKNOWN && 
+						x[0] != (p0) ? b.isManagedBuildOn() : b.isStopOnError())
+					res[0] = TriButton.UNKNOWN;
+				if (res[1] != TriButton.UNKNOWN && 
+						x[1] != (p0) ? b.isDefaultBuildCmd() : b.supportsStopOnError(true))
+					res[1] = TriButton.UNKNOWN;
+				if (res[2] != TriButton.UNKNOWN && 
+						x[2] != (p0) ? b.canKeepEnvironmentVariablesInBuildfile() : b.supportsStopOnError(false))
+					res[2] = TriButton.UNKNOWN;
+				if (res[3] != TriButton.UNKNOWN && 
+						x[3] != (p0) ? b.keepEnvironmentVariablesInBuildfile() : ((Configuration)cfs[i]).getInternalBuilderParallel())
+					res[3] = TriButton.UNKNOWN;
+			}
+			for (int i=0; i<TRI_STATES_SIZE; i++) {
+				if (res[i] != TriButton.UNKNOWN)
+					res[i] = x[i] ? TriButton.YES : TriButton.NO;
+			}
+			return res;
+		} else
+			return null;
+	}
+	
+	/**
 	 * sets widgets states
 	 */
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
 		
-		b_stopOnError.setSelection(bldr.isStopOnError());
-		b_stopOnError.setEnabled(
-				bldr.supportsStopOnError(true) &&
-				bldr.supportsStopOnError(false));
+		int[] extStates = calc3states(page, b_stopOnError, icfg, false);
+		
+		if (extStates != null) {
+			b_stopOnError.setTriSelection(extStates[0]);
+			b_stopOnError.setEnabled(
+					extStates[1] == TriButton.YES &&
+					extStates[2] == TriButton.YES);
+		} else {
+			b_stopOnError.setSelection(bldr.isStopOnError());
+			b_stopOnError.setEnabled(
+					bldr.supportsStopOnError(true) &&
+					bldr.supportsStopOnError(false));
+		} 
 		// parallel
-		b_parallel.setSelection(getInternalBuilderParallel());
+		if (extStates == null) // no extended states
+			b_parallel.setSelection(getInternalBuilderParallel());
+		else
+			b_parallel.setTriSelection(extStates[3]);
+		
 		b_parallelOpt.setSelection(getParallelDef());
 		b_parallelNum.setSelection(!getParallelDef());
 		int n = getParallelNumber();

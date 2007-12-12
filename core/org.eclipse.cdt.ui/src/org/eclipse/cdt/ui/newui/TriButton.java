@@ -29,8 +29,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
 public class TriButton extends Composite implements SelectionListener {
-	private static final String[] ITEMS = {"No", "Yes", "?"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+	private static final String[] ITEMS = {"No", "Yes"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String QMARK = "?"; //$NON-NLS-1$
+	
 	public static final int NO  = 0;
 	public static final int YES = 1;
 	public static final int UNKNOWN = 2;
@@ -104,7 +105,13 @@ public class TriButton extends Composite implements SelectionListener {
 			selection != YES && 
 			selection != UNKNOWN) 
 			selection = NO;
-		if (triMode) combo.select(selection);
+		if (triMode) {
+			if (selection == UNKNOWN) {
+				combo.setText(QMARK);
+				combo.select(-1);
+			} else
+				combo.select(selection);
+		}
 		else button.setSelection(selection == 1);
 	}
 	
@@ -171,5 +178,9 @@ public class TriButton extends Composite implements SelectionListener {
 		e.widget = this;
 		SelectionEvent se = new SelectionEvent(e);
 		widgetSelected(se);
+	}
+	
+	public boolean in3mode() {
+		return triMode;
 	}
 }

@@ -127,23 +127,34 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
 		
-		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
-		b_genMakefileAuto.setSelection(bldr.isManagedBuildOn());
-		b_useDefault.setSelection(bldr.isDefaultBuildCmd());
+		int[] extStates = BuildBehaviourTab.calc3states(page, b_useDefault, icfg, true);
 
+		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
+		if (extStates == null) { // no extended states available
+			b_genMakefileAuto.setSelection(bldr.isManagedBuildOn());
+			b_useDefault.setSelection(bldr.isDefaultBuildCmd());
+			if(!bldr.canKeepEnvironmentVariablesInBuildfile())
+				b_expandVars.setEnabled(false);
+			else {
+				b_expandVars.setEnabled(true);
+				b_expandVars.setSelection(!bldr.keepEnvironmentVariablesInBuildfile());
+			}
+		} else {
+			b_genMakefileAuto.setTriSelection(extStates[0]);
+			b_useDefault.setTriSelection(extStates[1]);
+			if(extStates[2] != TriButton.YES)
+				b_expandVars.setEnabled(false);
+			else {
+				b_expandVars.setEnabled(true);
+				b_expandVars.setTriSelection(extStates[3]);
+			}
+		}
 		c_builderType.select(isInternalBuilderEnabled() ? 1 : 0);
 		c_builderType.setEnabled(
 				canEnableInternalBuilder(true) &&
 				canEnableInternalBuilder(false));
 		
 		t_buildCmd.setText(getMC());
-				
-		if(!bldr.canKeepEnvironmentVariablesInBuildfile())
-			b_expandVars.setEnabled(false);
-		else {
-			b_expandVars.setEnabled(true);
-			b_expandVars.setSelection(!bldr.keepEnvironmentVariablesInBuildfile());
-		}
 		
 		if (page.isMultiCfg()) {
 			group_dir.setVisible(false);
@@ -370,10 +381,33 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	}
 	
 	private void setUseDefaultBuildCmd(boolean val) {
-		
+		try {
+			if (icfg instanceof IMultiConfiguration) {
+				IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+				for (int i=0; i<cfs.length; i++) {
+					IBuilder b = cfs[i].getEditableBuilder();
+					if (b != null)
+						b.setUseDefaultBuildCmd(val);
+				}
+			} else {
+				icfg.getEditableBuilder().setUseDefaultBuildCmd(val);
+			}
+		} catch (CoreException e) {
+			CUIPlugin.getDefault().log(e);
+		}
 	}
+
 	private void setKeepEnvironmentVariablesInBuildfile(boolean val) {
-		
+		if (icfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[])((IMultiConfiguration)icfg).getItems();
+			for (int i=0; i<cfs.length; i++) {
+				IBuilder b = cfs[i].getEditableBuilder();
+				if (b != null)
+					b.setKeepEnvironmentVariablesInBuildfile(val);
+			}
+		} else {
+			icfg.getEditableBuilder().setKeepEnvironmentVariablesInBuildfile(val);
+		}
 	}
 
 	private void setCommand(String buildCommand) {

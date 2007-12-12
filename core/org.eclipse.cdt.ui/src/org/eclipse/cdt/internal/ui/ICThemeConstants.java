@@ -29,4 +29,15 @@ public interface ICThemeConstants {
 	 * A theme constant that holds the foreground color used in the code assist selection dialog.
 	 */
 	public final String CODEASSIST_PROPOSALS_FOREGROUND= ID_PREFIX + PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND;
+
+	/**
+	 * A theme constant that holds the background color used for parameter hints.
+	 */
+	public final String CODEASSIST_PARAMETERS_BACKGROUND= ID_PREFIX + PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND;
+
+	/**
+	 * A theme constant that holds the foreground color used for parameter hints.
+	 */
+	public final String CODEASSIST_PARAMETERS_FOREGROUND= ID_PREFIX + PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND;
+
 }

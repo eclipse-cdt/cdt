@@ -47,13 +47,14 @@ import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
  */
 public class CEditorPreferencePage extends AbstractPreferencePage implements IWorkbenchPreferencePage {
 
-	protected final String[][] fAppearanceColorListModel = new String[][] { 
-			{PreferencesMessages.CEditorPreferencePage_behaviorPage_matchingBracketColor, CEditor.MATCHING_BRACKETS_COLOR, null }, 
-			{PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCodeColor, CEditor.INACTIVE_CODE_COLOR, null }, 
-			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalBackgroundColor, ContentAssistPreference.PROPOSALS_BACKGROUND, null }, 
-			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalForegroundColor, ContentAssistPreference.PROPOSALS_FOREGROUND, null }, 
-			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_parameterBackgroundColor, ContentAssistPreference.PARAMETERS_BACKGROUND, null }, 
-			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_parameterForegroundColor, ContentAssistPreference.PARAMETERS_FOREGROUND, null }, 
+	protected final String[][] fAppearanceColorListModel = new String[][] {
+			{PreferencesMessages.CEditorPreferencePage_behaviorPage_matchingBracketColor, CEditor.MATCHING_BRACKETS_COLOR, null },
+			{PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCodeColor, CEditor.INACTIVE_CODE_COLOR, null },
+			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalBackgroundColor, ContentAssistPreference.PROPOSALS_BACKGROUND, null },
+			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_completionProposalForegroundColor, ContentAssistPreference.PROPOSALS_FOREGROUND, null },
+			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_parameterBackgroundColor, ContentAssistPreference.PARAMETERS_BACKGROUND, null },
+			{PreferencesMessages.CEditorPreferencePage_ContentAssistPage_parameterForegroundColor, ContentAssistPreference.PARAMETERS_FOREGROUND, null },
+			{PreferencesMessages.CEditorPreferencePage_sourceHoverBackgroundColor, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT},
 	};
 
 	private List fAppearanceColorList;
@@ -67,7 +68,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 	protected OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		ArrayList overlayKeys = new ArrayList();
-		
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.SUB_WORD_NAVIGATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.MATCHING_BRACKETS_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.MATCHING_BRACKETS));
@@ -78,7 +79,9 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND));
-      
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT));
+
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return keys;
@@ -86,24 +89,19 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(CEditor.SUB_WORD_NAVIGATION, true);
-		
+
 		store.setDefault(CEditor.MATCHING_BRACKETS, true);
 		PreferenceConverter.setDefault(store, CEditor.MATCHING_BRACKETS_COLOR, new RGB(170,170,170));
 
 		store.setDefault(CEditor.INACTIVE_CODE_ENABLE, true);
 		PreferenceConverter.setDefault(store, CEditor.INACTIVE_CODE_COLOR, new RGB(224, 224, 224));
-
-		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
-		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
-		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_BACKGROUND, new RGB(254, 241, 233));
-		PreferenceConverter.setDefault(store, ContentAssistPreference.PARAMETERS_FOREGROUND, new RGB(0, 0, 0));
 	}
 
 	/*
 	 * @see PreferencePage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		super.createControl(parent);		
+		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ICHelpContextIds.C_EDITOR_PREF_PAGE);
 	}
 
@@ -125,16 +123,16 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		layout.numColumns = 2;
 		behaviorComposite.setLayout(layout);
 
-		String label= PreferencesMessages.CEditorPreferencePage_behaviorPage_subWordNavigation; 
+		String label= PreferencesMessages.CEditorPreferencePage_behaviorPage_subWordNavigation;
 		addCheckBox(behaviorComposite, label, CEditor.SUB_WORD_NAVIGATION, 0);
 
-		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_matchingBrackets; 
+		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_matchingBrackets;
 		addCheckBox(behaviorComposite, label, CEditor.MATCHING_BRACKETS, 0);
 
-		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCode; 
+		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_inactiveCode;
 		addCheckBox(behaviorComposite, label, CEditor.INACTIVE_CODE_ENABLE, 0);
 
-		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_ensureNewline; 
+		label = PreferencesMessages.CEditorPreferencePage_behaviorPage_ensureNewline;
 		addCheckBox(behaviorComposite, label, PreferenceConstants.ENSURE_NEWLINE_AT_EOF, 0);
 
 		Label l = new Label(behaviorComposite, SWT.LEFT);
@@ -144,7 +142,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		l.setLayoutData(gd);
 
 		l = new Label(behaviorComposite, SWT.LEFT);
-		l.setText(PreferencesMessages.CEditorPreferencePage_behaviorPage_appearanceColorOptions); 
+		l.setText(PreferencesMessages.CEditorPreferencePage_behaviorPage_appearanceColorOptions);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		l.setLayoutData(gd);
@@ -173,7 +171,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		l = new Label(stylesComposite, SWT.LEFT);
-		l.setText(PreferencesMessages.CEditorPreferencePage_behaviorPage_Color); 
+		l.setText(PreferencesMessages.CEditorPreferencePage_behaviorPage_Color);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		l.setLayoutData(gd);
@@ -188,16 +186,16 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 			public void widgetSelected(SelectionEvent e) {
 				boolean systemDefault= fAppearanceColorDefault.getSelection();
 				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-				
+
 				int i= fAppearanceColorList.getSelectionIndex();
 				String key= fAppearanceColorListModel[i][2];
 				if (key != null)
 					fOverlayStore.setValue(key, systemDefault);
 			}
 		};
-		
+
 		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
-		fAppearanceColorDefault.setText(PreferencesMessages.CEditorPreferencePage_colorPage_systemDefault); 
+		fAppearanceColorDefault.setText(PreferencesMessages.CEditorPreferencePage_colorPage_systemDefault);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalSpan= 2;
@@ -243,7 +241,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	}
 
 	private Control createHeader(Composite parent) {
-		String text = PreferencesMessages.CEditorPreferencePage_link; 
+		String text = PreferencesMessages.CEditorPreferencePage_link;
 		Link link = new Link(parent, SWT.NONE);
 		link.setText(text);
 		link.addListener (SWT.Selection, new Listener () {
@@ -254,7 +252,7 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 		});
 		// TODO replace by link-specific tooltips when
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
-		link.setToolTipText(PreferencesMessages.CEditorPreferencePage_link_tooltip); 
+		link.setToolTipText(PreferencesMessages.CEditorPreferencePage_link_tooltip);
 
 		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.widthHint= 150; // only expand further if anyone else requires it
@@ -266,7 +264,6 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-
 		fOverlayStore.load();
 		fOverlayStore.start();
 
@@ -280,8 +277,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	}
 
 	private void initialize() {
-
 		initializeFields();
+		initializeDefaultColors();
 
 		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
 			fAppearanceColorList.add(fAppearanceColorListModel[i][0]);
@@ -292,14 +289,16 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 				handleAppearanceColorListSelection();
 			}
 		});
-
 	}
 
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#performOk()
+	/**
+	 * Initializes the default colors.
 	 */
-	public boolean performOk() {
-		return super.performOk();
+	private void initializeDefaultColors() {
+		if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT)) {
+			RGB rgb= fAppearanceColorList.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
+			PreferenceConverter.setValue(getPreferenceStore(), PreferenceConstants.EDITOR_SOURCE_HOVER_BACKGROUND_COLOR, rgb);
+		}
 	}
 
 	/*
@@ -307,15 +306,8 @@ public class CEditorPreferencePage extends AbstractPreferencePage implements IWo
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
-
+		initializeDefaultColors();
 		handleAppearanceColorListSelection();
-	}
-
-	/*
-	 * @see org.eclipse.cdt.internal.ui.preferences.AbstractPreferencePage#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
 	}
 
 }

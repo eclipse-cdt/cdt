@@ -57,6 +57,7 @@ public final class PreferencesMessages extends NLS {
 	public static String CEditorPreferencePage_ContentAssistPage_parameterForegroundColor;
 	public static String CEditorPreferencePage_ContentAssistPage_autoActivationEnableDoubleColon;
 	public static String CEditorPreferencePage_ContentAssistPage_sortingSection_title;
+	public static String CEditorPreferencePage_sourceHoverBackgroundColor;
 	public static String CEditorColoringConfigurationBlock_MultiLine;
 	public static String CEditorColoringConfigurationBlock_singleLine;
 	public static String CEditorColoringConfigurationBlock_keywords;
@@ -195,7 +196,7 @@ public final class PreferencesMessages extends NLS {
 	public static String SmartTypingConfigurationBlock_strings_title;
 
 	public static String CodeFormatterPreferencePage_title;
-	public static String CodeFormatterPreferencePage_description; 
+	public static String CodeFormatterPreferencePage_description;
 
 	public static String TodoTaskPreferencePage_title;
 	public static String TodoTaskPreferencePage_description;
@@ -211,7 +212,7 @@ public final class PreferencesMessages extends NLS {
 	public static String TodoTaskConfigurationBlock_casesensitive_label;
 	public static String TodoTaskConfigurationBlock_needsbuild_title;
 	public static String TodoTaskConfigurationBlock_tasks_default;
-	
+
 	public static String TodoTaskInputDialog_new_title;
 	public static String TodoTaskInputDialog_edit_title;
 	public static String TodoTaskInputDialog_name_label;
@@ -255,11 +256,11 @@ public final class PreferencesMessages extends NLS {
 	public static String SpellingPreferencePage_variables;
 
 	public static String LanguageMappings_missingLanguageTitle;
-	
+
 	public static String WorkspaceLanguagesPreferencePage_description;
 	public static String WorkspaceLanguagesPreferencePage_missingLanguage;
 	public static String WorkspaceLanguagesPreferencePage_mappingTableTitle;
-	
+
 	public static String ProjectLanguagesPropertyPage_description;
 	public static String ProjectLanguagesPropertyPage_configurationColumn;
 	public static String ProjectLanguagesPropertyPage_contentTypeColumn;
@@ -270,13 +271,13 @@ public final class PreferencesMessages extends NLS {
 	public static String ProjectLanguagesPropertyPage_overriddenContentType;
 	public static String ProjectLanguagesPropertyPage_missingLanguage;
 	public static String ProjectLanguagesPropertyPage_mappingTableTitle;
-	
+
 	public static String ContentTypeMappingsDialog_title;
 	public static String ContentTypeMappingsDialog_configuration;
 	public static String ContentTypeMappingsDialog_contentType;
 	public static String ContentTypeMappingsDialog_language;
 	public static String ContentTypeMappingsDialog_allConfigurations;
-	
+
 	public static String FileLanguagesPropertyPage_languageLabel;
 	public static String FileLanguagesPropertyPage_inheritedProjectMappingsGroup;
 	public static String FileLanguagesPropertyPage_contentTypeLabel;
@@ -289,7 +290,7 @@ public final class PreferencesMessages extends NLS {
 	public static String FileLanguagesPropertyPage_defaultMapping;
 	public static String FileLanguagesPropertyPage_missingLanguage;
 	public static String FileLanguagesPropertyPage_mappingTableTitle;
-	
+
 	public static String CPluginPreferencePage_caption;
 	public static String CPluginPreferencePage_structuralParseMode_label;
 	public static String CPluginPreferencePage_note;

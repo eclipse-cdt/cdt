@@ -35,40 +35,40 @@ import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
 
 /**
  * Preference constants used in the CDT-UI preference store. Clients should only read the
- * CDT-UI preference store using these values. Clients are not allowed to modify the 
+ * CDT-UI preference store using these values. Clients are not allowed to modify the
  * preference store programmatically.
- * 
+ *
  * @since 2.0
   */
 public class PreferenceConstants {
-	
+
 	private PreferenceConstants() {
 	}
-    
+
 	/**
 	 * Preference key suffix for bold text style preference keys.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_BOLD_SUFFIX= "_bold"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for italic text style preference keys.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_ITALIC_SUFFIX= "_italic"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key suffix for strikethrough text style preference keys.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_STRIKETHROUGH_SUFFIX= "_strikethrough"; //$NON-NLS-1$
-	
+
 	/**
 	 * Preference key suffix for underline text style preference keys.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_UNDERLINE_SUFFIX= "_underline"; //$NON-NLS-1$
@@ -79,7 +79,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -92,10 +92,10 @@ public class PreferenceConstants {
 	 * Value is of type <code>Boolean</code>. If <code>true</code> multi-line comments are rendered
 	 * in bold. If <code>false</code> the are rendered using no font style attribute.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_MULTI_LINE_COMMENT_BOLD= ICColorConstants.C_MULTI_LINE_COMMENT + EDITOR_BOLD_SUFFIX; 
+	public final static String EDITOR_MULTI_LINE_COMMENT_BOLD= ICColorConstants.C_MULTI_LINE_COMMENT + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether multi-line comments are rendered in italic.
@@ -103,18 +103,18 @@ public class PreferenceConstants {
 	 * Value is of type <code>Boolean</code>. If <code>true</code> multi-line comments are rendered
 	 * in italic. If <code>false</code> the are rendered using no italic font style attribute.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_MULTI_LINE_COMMENT_ITALIC= ICColorConstants.C_MULTI_LINE_COMMENT + EDITOR_ITALIC_SUFFIX;
-	
+
 	/**
 	 * A named preference that holds the color used to render single line comments.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -127,10 +127,10 @@ public class PreferenceConstants {
 	 * Value is of type <code>Boolean</code>. If <code>true</code> single line comments are rendered
 	 * in bold. If <code>false</code> the are rendered using no font style attribute.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
-	public final static String EDITOR_SINGLE_LINE_COMMENT_BOLD= ICColorConstants.C_SINGLE_LINE_COMMENT + EDITOR_BOLD_SUFFIX; 
+	public final static String EDITOR_SINGLE_LINE_COMMENT_BOLD= ICColorConstants.C_SINGLE_LINE_COMMENT + EDITOR_BOLD_SUFFIX;
 
 	/**
 	 * A named preference that controls whether single line comments are rendered in italic.
@@ -138,18 +138,18 @@ public class PreferenceConstants {
 	 * Value is of type <code>Boolean</code>. If <code>true</code> single line comments are rendered
 	 * in italic. If <code>false</code> the are rendered using no italic font style attribute.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_SINGLE_LINE_COMMENT_ITALIC= ICColorConstants.C_SINGLE_LINE_COMMENT + EDITOR_ITALIC_SUFFIX;
-	
+
 	/**
 	 * A named preference that holds the color used to render C/C++ keywords.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -161,7 +161,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_KEYWORD_BOLD= ICColorConstants.C_KEYWORD + EDITOR_BOLD_SUFFIX;
@@ -171,7 +171,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_KEYWORD_ITALIC= ICColorConstants.C_KEYWORD + EDITOR_ITALIC_SUFFIX;
@@ -182,7 +182,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -194,7 +194,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_PP_DIRECTIVE_BOLD= ICColorConstants.PP_DIRECTIVE + EDITOR_BOLD_SUFFIX;
@@ -204,7 +204,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_PP_DIRECTIVE_ITALIC= ICColorConstants.PP_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
@@ -215,19 +215,19 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_PP_HEADER_COLOR= ICColorConstants.PP_HEADER;	
+	public final static String EDITOR_PP_HEADER_COLOR= ICColorConstants.PP_HEADER;
 
 	/**
 	 * A named preference that controls whether headers are rendered in bold.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_PP_HEADER_BOLD= ICColorConstants.PP_HEADER + EDITOR_BOLD_SUFFIX;
@@ -237,18 +237,18 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_PP_HEADER_ITALIC= ICColorConstants.PP_HEADER + EDITOR_ITALIC_SUFFIX;
-	
+
 	/**
 	 * A named preference that holds the color used to render preprocessor text.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -260,7 +260,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_PP_DEFAULT_BOLD= ICColorConstants.PP_DEFAULT + EDITOR_BOLD_SUFFIX;
@@ -270,7 +270,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_PP_DEFAULT_ITALIC= ICColorConstants.PP_DEFAULT + EDITOR_ITALIC_SUFFIX;
@@ -281,7 +281,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -293,7 +293,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_BUILTIN_TYPE_BOLD= ICColorConstants.C_TYPE + EDITOR_BOLD_SUFFIX;
@@ -303,18 +303,18 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_BUILTIN_TYPE_ITALIC= ICColorConstants.C_TYPE + EDITOR_ITALIC_SUFFIX;
-	
+
 	/**
 	 * A named preference that holds the color used to render string constants.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -326,7 +326,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_STRING_BOLD= ICColorConstants.C_STRING + EDITOR_BOLD_SUFFIX;
@@ -336,63 +336,63 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_STRING_ITALIC= ICColorConstants.C_STRING + EDITOR_ITALIC_SUFFIX;
-	
+
 	/**
 	 * A named preference that holds the color used to render operators.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_OPERATOR_COLOR= ICColorConstants.C_OPERATOR;	
- 
+	public final static String EDITOR_C_OPERATOR_COLOR= ICColorConstants.C_OPERATOR;
+
 	/**
 	 * A named preference that controls whether operators are rendered in bold.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_OPERATOR_BOLD= ICColorConstants.C_OPERATOR + EDITOR_BOLD_SUFFIX;
-	
+
 	/**
 	 * A named preference that controls whether operators are rendered in italic.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_OPERATOR_ITALIC= ICColorConstants.C_OPERATOR + EDITOR_ITALIC_SUFFIX;
-	
+
 	/**
 	 * A named preference that holds the color used to render numbers.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_NUMBER_COLOR= ICColorConstants.C_NUMBER;	
+	public final static String EDITOR_C_NUMBER_COLOR= ICColorConstants.C_NUMBER;
 
 	/**
 	 * A named preference that controls whether number are rendered in bold.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_NUMBER_BOLD= ICColorConstants.C_NUMBER + EDITOR_BOLD_SUFFIX;
@@ -402,30 +402,30 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_NUMBER_ITALIC= ICColorConstants.C_NUMBER + EDITOR_ITALIC_SUFFIX;
-	
+
 	/**
 	 * A named preference that holds the color used to render braces.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
 	 */
-	public final static String EDITOR_C_BRACES_COLOR= ICColorConstants.C_BRACES;	
+	public final static String EDITOR_C_BRACES_COLOR= ICColorConstants.C_BRACES;
 
 	/**
 	 * A named preference that controls whether braces are rendered in bold.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_BRACES_BOLD= ICColorConstants.C_BRACES + EDITOR_BOLD_SUFFIX;
@@ -435,18 +435,18 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_BRACES_ITALIC= ICColorConstants.C_BRACES + EDITOR_ITALIC_SUFFIX;
-	
+
 	/**
 	 * A named preference that holds the color used to render C/C++ default text.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -458,7 +458,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_DEFAULT_BOLD= ICColorConstants.C_DEFAULT + EDITOR_BOLD_SUFFIX;
@@ -468,7 +468,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_C_DEFAULT_ITALIC= ICColorConstants.C_DEFAULT + EDITOR_ITALIC_SUFFIX;
@@ -479,7 +479,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.0
@@ -491,7 +491,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String EDITOR_ASM_LABEL_BOLD= ICColorConstants.ASM_LABEL + EDITOR_BOLD_SUFFIX;
@@ -501,7 +501,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String EDITOR_ASM_LABEL_ITALIC= ICColorConstants.ASM_LABEL + EDITOR_ITALIC_SUFFIX;
@@ -512,7 +512,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 5.0
@@ -524,7 +524,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String EDITOR_ASM_DIRECTIVE_BOLD= ICColorConstants.ASM_DIRECTIVE + EDITOR_BOLD_SUFFIX;
@@ -534,15 +534,15 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String EDITOR_ASM_DIRECTIVE_ITALIC= ICColorConstants.ASM_DIRECTIVE + EDITOR_ITALIC_SUFFIX;
 
 	/**
-	 * The symbolic font name for the C/C++ editor text font 
+	 * The symbolic font name for the C/C++ editor text font
 	 * (value <code>"org.eclipse.cdt.ui.editors.textfont"</code>).
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public final static String EDITOR_TEXT_FONT= "org.eclipse.cdt.ui.editors.textfont"; //$NON-NLS-1$
@@ -578,14 +578,14 @@ public class PreferenceConstants {
 	 * </p>
 	 */
 	public static final String EDITOR_SHOW_SEGMENTS= "org.eclipse.cdt.ui.editor.showSegments"; //$NON-NLS-1$
-    
+
     /**
      * A named preference that holds the color used to render task tags.
      * <p>
      * Value is of type <code>String</code>. A RGB color value encoded as a string
      * using class <code>PreferenceConverter</code>
      * </p>
-     * 
+     *
      * @see org.eclipse.jface.resource.StringConverter
      * @see org.eclipse.jface.preference.PreferenceConverter
      */
@@ -598,7 +598,7 @@ public class PreferenceConstants {
      * </p>
      */
     public final static String EDITOR_TASK_TAG_BOLD= ICColorConstants.TASK_TAG + EDITOR_BOLD_SUFFIX;
-     
+
     /**
      * A named preference that controls whether task tags are rendered in italic.
      * <p>
@@ -633,7 +633,7 @@ public class PreferenceConstants {
 	 * A named preference that defines the key for the hover modifier state masks.
 	 * The value is only used if the value of <code>EDITOR_TEXT_HOVER_MODIFIERS</code>
 	 * cannot be resolved to valid SWT modifier bits.
-	 * 
+	 *
 	 * @see #EDITOR_TEXT_HOVER_MODIFIERS
 	 */
 	public static final String EDITOR_TEXT_HOVER_MODIFIER_MASKS= "hoverModifierMasks"; //$NON-NLS-1$
@@ -732,16 +732,16 @@ public class PreferenceConstants {
 	 */
 	public static final String OUTLINE_GROUP_NAMESPACES= "org.eclipse.cdt.ui.outline.groupnamespaces"; //$NON-NLS-1$
 
-	
+
 	/**
-	 * A named preference that controls whether the outline view 
+	 * A named preference that controls whether the outline view
 	 * selection should stay in sync with with the element at the current cursor position.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
 	 */
 	public static final String OUTLINE_LINK_TO_EDITOR = "org.eclipse.cdt.ui.outline.linktoeditor"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls if the CView.
 	 * <p>
@@ -756,7 +756,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>String</code>, a "\0"-separated list of identifiers.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String CODEASSIST_EXCLUDED_CATEGORIES= "content_assist_disabled_computers"; //$NON-NLS-1$
@@ -766,7 +766,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>String</code>, a "\0"-separated list of identifiers.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String CODEASSIST_CATEGORY_ORDER= "content_assist_category_order"; //$NON-NLS-1$
@@ -776,25 +776,25 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public static final String EDITOR_FOLDING_ENABLED= "editor_folding_enabled"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that stores the configured folding provider.
 	 * <p>
 	 * Value is of type <code>String</code>.
 	 * </p>
-	 * 
+	 *
 	 */
 	public static final String EDITOR_FOLDING_PROVIDER= "editor_folding_provider"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that stores the value for Structure folding for the default folding provider.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String EDITOR_FOLDING_STRUCTURES= "editor_folding_default_structures"; //$NON-NLS-1$
@@ -804,7 +804,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String EDITOR_FOLDING_FUNCTIONS= "editor_folding_default_functions"; //$NON-NLS-1$
@@ -814,7 +814,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String EDITOR_FOLDING_METHODS= "editor_folding_default_methods"; //$NON-NLS-1$
@@ -824,7 +824,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String EDITOR_FOLDING_MACROS= "editor_folding_default_macros"; //$NON-NLS-1$
@@ -834,7 +834,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_FOLDING_COMMENTS= "editor_folding_default_comments"; //$NON-NLS-1$
@@ -844,7 +844,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_FOLDING_HEADERS= "editor_folding_default_headers"; //$NON-NLS-1$
@@ -854,7 +854,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_FOLDING_INACTIVE_CODE= "editor_folding_default_inactive"; //$NON-NLS-1$
@@ -864,11 +864,11 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED= "editor_folding_preprocessor_enabled"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls if templates are formatted when applied.
 	 * <p>
@@ -876,7 +876,7 @@ public class PreferenceConstants {
 	 * </p>
 	 *
 	 * @since 2.1
-	 */	
+	 */
 	public static final String TEMPLATES_USE_CODEFORMATTER= "org.eclipse.cdt.ui.text.templates.format"; //$NON-NLS-1$
 
 	/**
@@ -886,15 +886,15 @@ public class PreferenceConstants {
 	 * </p>
 	 *
 	 * @since 4.0
-	 */	
+	 */
 	public static final String FORMATTER_PROFILE = "formatter_profile"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * Preference key for whether to ensure a newline at the end of files when saving.
-	 * 
+	 *
 	 * @since 4.0
 	 */
-	public final static String ENSURE_NEWLINE_AT_EOF = "ensureNewlineAtEOF"; //$NON-NLS-1$	
+	public final static String ENSURE_NEWLINE_AT_EOF = "ensureNewlineAtEOF"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that defines whether the hint to make hover sticky should be shown.
@@ -906,18 +906,18 @@ public class PreferenceConstants {
 
 	/**
 	 * A named preference prefix for semantic highlighting preferences.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_PREFIX="semanticHighlighting."; //$NON-NLS-1$
-		
+
 	/**
 	 * A named preference suffix that controls a semantic highlighting's color.
 	 * <p>
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 4.0
@@ -929,7 +929,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>: <code>true</code> if bold.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_BOLD_SUFFIX=".bold"; //$NON-NLS-1$
@@ -939,27 +939,27 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>: <code>true</code> if italic.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ITALIC_SUFFIX=".italic"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference suffix that controls if semantic highlighting has the text attribute strikethrough.
 	 * <p>
 	 * Value is of type <code>Boolean</code>: <code>true</code> if strikethrough.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_STRIKETHROUGH_SUFFIX=".strikethrough"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference suffix that controls if semantic highlighting has the text attribute underline.
 	 * <p>
 	 * Value is of type <code>Boolean</code>: <code>true</code> if underline.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_UNDERLINE_SUFFIX=".underline"; //$NON-NLS-1$
@@ -969,7 +969,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>: <code>true</code> if enabled.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX=".enabled"; //$NON-NLS-1$
@@ -979,7 +979,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>: <code>true</code> if enabled.
 	 * </p>
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static final String EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED= "semanticHighlighting.enabled"; //$NON-NLS-1$
@@ -990,7 +990,7 @@ public class PreferenceConstants {
 	 * Value is of type <code>Boolean</code>: if <code>true</code> light bulbs are shown
 	 * for quick assists.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static final String EDITOR_QUICKASSIST_LIGHTBULB="org.eclipse.cdt.quickassist.lightbulb"; //$NON-NLS-1$
@@ -1001,10 +1001,10 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "content_assist_proposals_background"; //$NON-NLS-1$
@@ -1014,13 +1014,41 @@ public class PreferenceConstants {
 	 * Value is of type <code>String</code>. A RGB color value encoded as a string
 	 * using class <code>PreferenceConverter</code>
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "content_assist_proposals_foreground"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that holds the background color used for parameter hints.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 *
+	 * @since 5.0
+	 */
+	public final static String CODEASSIST_PARAMETERS_BACKGROUND= "content_assist_parameters_background"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that holds the foreground color used in the code assist selection dialog.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 *
+	 * @since 5.0
+	 */
+	public final static String CODEASSIST_PARAMETERS_FOREGROUND= "content_assist_parameters_foreground"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether words containing digits should
@@ -1028,7 +1056,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_IGNORE_DIGITS= "spelling_ignore_digits"; //$NON-NLS-1$
@@ -1039,7 +1067,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_IGNORE_MIXED= "spelling_ignore_mixed"; //$NON-NLS-1$
@@ -1050,7 +1078,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_IGNORE_SENTENCE= "spelling_ignore_sentence"; //$NON-NLS-1$
@@ -1061,7 +1089,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_IGNORE_UPPER= "spelling_ignore_upper"; //$NON-NLS-1$
@@ -1072,40 +1100,40 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_IGNORE_URLS= "spelling_ignore_urls"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether single letters
 	 * should be ignored during spell checking.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_IGNORE_SINGLE_LETTERS= "spelling_ignore_single_letters"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether string literals
 	 * should be ignored during spell checking.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_IGNORE_STRING_LITERALS= "spelling_ignore_string_literals"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that controls whether non-letters at word boundaries
 	 * should be ignored during spell checking.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_IGNORE_NON_LETTERS= "spelling_ignore_non_letters"; //$NON-NLS-1$
@@ -1115,7 +1143,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>String</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_LOCALE= "spelling_locale"; //$NON-NLS-1$
@@ -1126,7 +1154,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Integer</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_PROPOSAL_THRESHOLD= "spelling_proposal_threshold"; //$NON-NLS-1$
@@ -1137,7 +1165,7 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Integer</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_PROBLEMS_THRESHOLD= "spelling_problems_threshold"; //$NON-NLS-1$
@@ -1147,30 +1175,30 @@ public class PreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Integer</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_USER_DICTIONARY= "spelling_user_dictionary"; //$NON-NLS-1$
-	
+
 	/**
 	 * A named preference that specifies encoding of the workspace user dictionary.
 	 * <p>
 	 * Value is of type <code>String</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_USER_DICTIONARY_ENCODING= "spelling_user_dictionary_encoding"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that specifies whether spelling dictionaries are available to content assist.
-	 * 
+	 *
 	 * <strong>Note:</strong> This is currently not supported because the spelling engine
 	 * cannot return word proposals but only correction proposals.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public final static String SPELLING_ENABLE_CONTENTASSIST= "spelling_enable_contentassist"; //$NON-NLS-1$
@@ -1186,8 +1214,35 @@ public class PreferenceConstants {
 	public static final String CODEGEN_ADD_COMMENTS= "org.eclipse.cdt.ui.add_comments"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that holds the source hover background color.
+	 * <p>
+	 * Value is of type <code>String</code>. A RGB color value encoded as a string
+	 * using class <code>PreferenceConverter</code>
+	 * </p>
+	 *
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 5.0
+	 */
+	public final static String EDITOR_SOURCE_HOVER_BACKGROUND_COLOR= "sourceHoverBackgroundColor"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that tells whether to use the system
+	 * default color ({@link SWT#COLOR_INFO_BACKGROUND}) for
+	 * the source hover background color.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @see org.eclipse.jface.resource.StringConverter
+	 * @see org.eclipse.jface.preference.PreferenceConverter
+	 * @since 5.0
+	 */
+	public final static String EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT= "sourceHoverBackgroundColor.SystemDefault"; //$NON-NLS-1$
+
+	/**
 	 * Returns the CDT-UI preference store.
-	 * 
+	 *
 	 * @return the CDT-UI preference store
 	 */
 	public static IPreferenceStore getPreferenceStore() {
@@ -1196,7 +1251,7 @@ public class PreferenceConstants {
 
     /**
      * Initializes the given preference store with the default values.
-     * 
+     *
      * @param store the preference store to be initialized
      */
     public static void initializeDefaultValues(IPreferenceStore store) {
@@ -1205,16 +1260,18 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_CORRECTION_INDICATION, false);
 		store.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);
 		store.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
-		
+
 		// This option has to be turned on for the spelling checker too work.
-		// As of 4.0, it doesn't produce false positives any more. 
+		// As of 4.0, it doesn't produce false positives any more.
 		store.setDefault(PreferenceConstants.EDITOR_EVALUATE_TEMPORARY_PROBLEMS, true);
-		
+
 		int sourceHoverModifier= SWT.MOD2;
 		String sourceHoverModifierName= Action.findModifierString(sourceHoverModifier);	// Shift
 		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifierName); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS, "org.eclipse.cdt.ui.BestMatchHover;0;org.eclipse.cdt.ui.CSourceHover;" + sourceHoverModifier); //$NON-NLS-1$
-		
+
+		store.setDefault(EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT, true);
+
 		// coloring
 		PreferenceConverter.setDefault(store, EDITOR_MULTI_LINE_COMMENT_COLOR, new RGB(63, 127, 95));
 		store.setDefault(EDITOR_MULTI_LINE_COMMENT_BOLD, false);
@@ -1297,23 +1354,30 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.EDITOR_SMART_TAB, true);
 		store.setDefault(PreferenceConstants.EDITOR_WRAP_STRINGS, true);
 		store.setDefault(PreferenceConstants.EDITOR_ESCAPE_STRINGS, false);
-		
+
 		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);
-		
+
 		// content assist
 		store.setDefault(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0"); //$NON-NLS-1$
 
-		
 		setDefaultAndFireEvent(
 				store,
-				PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, 
+				PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND,
 				findRGB(registry, ICThemeConstants.CODEASSIST_PROPOSALS_BACKGROUND, new RGB(255, 255, 255)));
 		setDefaultAndFireEvent(
 				store,
-				PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, 
+				PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND,
 				findRGB(registry, ICThemeConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0)));
-		
+		setDefaultAndFireEvent(
+				store,
+				PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND,
+				findRGB(registry, ICThemeConstants.CODEASSIST_PARAMETERS_BACKGROUND, new RGB(255, 255, 255)));
+		setDefaultAndFireEvent(
+				store,
+				PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND,
+				findRGB(registry, ICThemeConstants.CODEASSIST_PARAMETERS_FOREGROUND, new RGB(0, 0, 0)));
+
 		// spell checking
 		store.setDefault(PreferenceConstants.SPELLING_LOCALE, "en_US"); //$NON-NLS-1$
 		String isInitializedKey= "spelling_locale_initialized"; //$NON-NLS-1$
@@ -1333,10 +1397,10 @@ public class PreferenceConstants {
 		store.setDefault(PreferenceConstants.SPELLING_IGNORE_STRING_LITERALS, true);
 		store.setDefault(PreferenceConstants.SPELLING_IGNORE_NON_LETTERS, true);
 		store.setDefault(PreferenceConstants.SPELLING_USER_DICTIONARY, ""); //$NON-NLS-1$
-		
+
 		// Note: For backwards compatibility we must use the property and not the workspace default
 		store.setDefault(PreferenceConstants.SPELLING_USER_DICTIONARY_ENCODING, System.getProperty("file.encoding")); //$NON-NLS-1$
-		
+
 		store.setDefault(PreferenceConstants.SPELLING_PROPOSAL_THRESHOLD, 20);
 		store.setDefault(PreferenceConstants.SPELLING_PROBLEMS_THRESHOLD, 100);
 		/*
@@ -1344,7 +1408,7 @@ public class PreferenceConstants {
 		 * cannot return word proposals but only correction proposals.
 		 */
 		store.setToDefault(PreferenceConstants.SPELLING_ENABLE_CONTENTASSIST);
-		
+
 		// codegen
 		store.setDefault(PreferenceConstants.CODEGEN_ADD_COMMENTS, false);
     }
@@ -1374,11 +1438,11 @@ public class PreferenceConstants {
 		return new DefaultScope().getNode(CUIPlugin.PLUGIN_ID).get(key, null);
 	}
 
-    
+
 	/**
 	 * Sets the default value and fires a property
 	 * change event if necessary.
-	 * 
+	 *
 	 * @param store	the preference store
 	 * @param key the preference key
 	 * @param newValue the new value
@@ -1388,16 +1452,16 @@ public class PreferenceConstants {
 		RGB oldValue= null;
 		if (store.isDefault(key))
 			oldValue= PreferenceConverter.getDefaultColor(store, key);
-		
+
 		PreferenceConverter.setDefault(store, key, newValue);
-		
+
 		if (oldValue != null && !oldValue.equals(newValue))
 			store.firePropertyChangeEvent(key, oldValue, newValue);
 	}
 
 	/**
 	 * Returns the RGB for the given key in the given color registry.
-	 * 
+	 *
 	 * @param registry the color registry
 	 * @param key the key for the constant in the registry
 	 * @param defaultRGB the default RGB if no entry is found

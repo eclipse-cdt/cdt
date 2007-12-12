@@ -17,6 +17,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
@@ -35,13 +37,13 @@ public class ContentAssistPreference {
 	/** Preference key for content assist timeout delay (unused) */
 	public final static String TIMEOUT_DELAY=  "content_assist_timeout_delay"; //$NON-NLS-1$
 	/** Preference key for content assist proposal color */
-	public final static String PROPOSALS_FOREGROUND=  "content_assist_proposals_foreground"; //$NON-NLS-1$
+	public final static String PROPOSALS_FOREGROUND=  PreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND;
 	/** Preference key for content assist proposal color */
-	public final static String PROPOSALS_BACKGROUND=  "content_assist_proposals_background"; //$NON-NLS-1$
+	public final static String PROPOSALS_BACKGROUND=  PreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND;
 	/** Preference key for content assist parameters color */
-	public final static String PARAMETERS_FOREGROUND=  "content_assist_parameters_foreground"; //$NON-NLS-1$
+	public final static String PARAMETERS_FOREGROUND=  PreferenceConstants.CODEASSIST_PARAMETERS_FOREGROUND;
 	/** Preference key for content assist parameters color */
-	public final static String PARAMETERS_BACKGROUND=  "content_assist_parameters_background"; //$NON-NLS-1$
+	public final static String PARAMETERS_BACKGROUND=  PreferenceConstants.CODEASSIST_PARAMETERS_BACKGROUND;
 	/** Preference key for content assist auto insert */
 	public final static String AUTOINSERT=  "content_assist_autoinsert"; //$NON-NLS-1$
 	/** Preference key for content assist to insert the common prefix */
@@ -104,7 +106,7 @@ public class ContentAssistPreference {
 //		boolean enabled;
 //		enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
 //		ccp.restrictProposalsToVisibility(enabled);
-//		
+//
 //		enabled= store.getBoolean(CASE_SENSITIVITY);
 //		ccp.restrictProposalsToMatchingCases(enabled);
 		
@@ -112,23 +114,23 @@ public class ContentAssistPreference {
 //		ccp.orderProposalsAlphabetically(enabled);
 		
 //		enabled= store.getBoolean(ADD_INCLUDE);
-//		ccp.allowAddingIncludes(enabled);		
+//		ccp.allowAddingIncludes(enabled);
 	}
 
 	
 	/**
 	 * Configure the given content assistant from the given store.
 	 */
-	public static void configure(ContentAssistant assistant, IPreferenceStore store) {	
+	public static void configure(ContentAssistant assistant, IPreferenceStore store) {
 			
 		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
-		IColorManager manager= textTools.getColorManager();		
+		IColorManager manager= textTools.getColorManager();
 		
 		boolean enabledDot= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 		boolean enabledArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 		boolean enabledDoubleColon= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
 		boolean enabled =  ((enabledDot) || ( enabledArrow ) || (enabledDoubleColon ));
-		assistant.enableAutoActivation(enabled);				
+		assistant.enableAutoActivation(enabled);
 		
 		int delay= store.getInt(AUTOACTIVATION_DELAY);
 		assistant.setAutoActivationDelay(delay);
@@ -162,7 +164,7 @@ public class ContentAssistPreference {
 		if (ccp == null)
 			return;
 			
-		if ( (AUTOACTIVATION_TRIGGERS_DOT.equals(key)) 
+		if ( (AUTOACTIVATION_TRIGGERS_DOT.equals(key))
 		     || (AUTOACTIVATION_TRIGGERS_ARROW.equals(key))
 			 || (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) ){
 			boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
@@ -205,14 +207,14 @@ public class ContentAssistPreference {
 		
 		String p= event.getProperty();
 		
-		if ((AUTOACTIVATION_TRIGGERS_DOT.equals(p)) 
+		if ((AUTOACTIVATION_TRIGGERS_DOT.equals(p))
 			|| (AUTOACTIVATION_TRIGGERS_ARROW.equals(p))
 			|| (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(p))){
 			boolean enabledDot= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 			boolean enabledArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 			boolean enabledDoubleColon= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
 			boolean enabled =  ((enabledDot) || ( enabledArrow ) || (enabledDoubleColon ));
-			assistant.enableAutoActivation(enabled);				
+			assistant.enableAutoActivation(enabled);
 		} else if (AUTOACTIVATION_DELAY.equals(p)) {
 			int delay= store.getInt(AUTOACTIVATION_DELAY);
 			assistant.setAutoActivationDelay(delay);
@@ -236,7 +238,7 @@ public class ContentAssistPreference {
 		} else if (PREFIX_COMPLETION.equals(p)) {
 			boolean enabled= store.getBoolean(PREFIX_COMPLETION);
 			assistant.enablePrefixCompletion(enabled);
-		} 
+		}
 		
 		changeCProcessor(assistant, store, p);
 	}

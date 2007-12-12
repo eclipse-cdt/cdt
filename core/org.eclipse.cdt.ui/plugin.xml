@@ -572,8 +572,8 @@
                contentTypeId="org.eclipse.cdt.core.binaryFile">
          </contentTypeBinding>
       </editor>
-      
    </extension>
+
    <extension
        point="org.eclipse.ui.themes">
        <themeElementCategory label="%CPresentation.label" id="org.eclipse.cdt.ui.presentation"/>
@@ -614,8 +614,51 @@
             %asmCompareFontDefiniton.description
          </description>
       </fontDefinition>
-      
+      <colorDefinition
+         id="org.eclipse.cdt.ui.content_assist_proposals_background"
+         isEditable="false"
+         label="%Dummy.label"
+         value="255,255,255">
+      </colorDefinition>
+      <colorDefinition
+         id="org.eclipse.cdt.ui.content_assist_proposals_foreground"
+         isEditable="false"
+         label="%Dummy.label"
+         value="0,0,0">
+      </colorDefinition>
+      <colorDefinition
+         id="org.eclipse.cdt.ui.content_assist_parameters_background"
+         isEditable="false"
+         label="%Dummy.label"
+         value="255,255,255">
+      </colorDefinition>
+      <colorDefinition
+         id="org.eclipse.cdt.ui.content_assist_parameters_foreground"
+         isEditable="false"
+         label="%Dummy.label"
+         value="0,0,0">
+      </colorDefinition>
+      <theme
+         id="org.eclipse.ui.ide.systemDefault">
+         <colorOverride
+            id="org.eclipse.cdt.ui.content_assist_proposals_background"
+            value="COLOR_LIST_BACKGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.content_assist_proposals_foreground"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.content_assist_parameters_background"
+            value="COLOR_LIST_BACKGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.cdt.ui.content_assist_parameters_foreground"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+      </theme>
    </extension>
+
    <extension
          point="org.eclipse.ui.preferencePages">
       <page

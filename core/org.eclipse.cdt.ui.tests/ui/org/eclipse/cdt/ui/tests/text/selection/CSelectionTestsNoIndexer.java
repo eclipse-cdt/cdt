@@ -123,16 +123,16 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     }
     
     protected void tearDown() throws Exception {
-        if( project == null || !project.exists() ) 
+        if( project == null || !project.exists() )
             return;
 
     	closeAllEditors();
 
         IResource [] members = project.members();
         for( int i = 0; i < members.length; i++ ){
-            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
-            if (members[i].getName().equals(".settings")) 
+            if (members[i].getName().equals(".settings"))
             	continue;
             try{
                 members[i].delete( true, monitor );
@@ -146,7 +146,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
         //Create file input stream
         if( file.exists() )
             file.setContents( stream, false, false, monitor );
@@ -162,7 +162,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); 
+        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName);
         
         File linkFile = new File(location.toOSString());
         if (!linkFile.exists()) {
@@ -171,7 +171,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         
         file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
         //Create file input stream
         if( file.exists() )
             file.setContents( stream, false, false, monitor );
@@ -196,7 +196,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     	
     	IFile file = linkedFolder.getFile(fileName);
     	
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
         //Create file input stream
         if( file.exists() )
             file.setContents( stream, false, false, monitor );
@@ -215,7 +215,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     	//Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        IPath location = new Path(folder.getLocation().toOSString() + File.separator + fileName); 
+        IPath location = new Path(folder.getLocation().toOSString() + File.separator + fileName);
         
         File linkFile = new File(location.toOSString());
         if (!linkFile.exists()) {
@@ -224,7 +224,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         
         file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
         //Create file input stream
         if( file.exists() )
             file.setContents( stream, false, false, monitor );
@@ -321,7 +321,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)def).getOffset(), 330);
         assertEquals(((ASTNode)def).getLength(), 5);
         
-        offset= code.indexOf("MyConst") + 2; 
+        offset= code.indexOf("MyConst") + 2;
         defOffset= code.indexOf("MyConst", offset) + 2;
         def = testF3(file, offset);
         decl = testF3(file, defOffset);
@@ -334,7 +334,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)def).getOffset(), 354);
         assertEquals(((ASTNode)def).getLength(), 7);
         
-        offset= code.indexOf("MyFunc") + 2; 
+        offset= code.indexOf("MyFunc") + 2;
         defOffset= code.indexOf("MyFunc", offset) + 2;
         def = testF3(file, offset);
         decl = testF3(file, defOffset);
@@ -347,7 +347,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)def).getOffset(), 373);
         assertEquals(((ASTNode)def).getLength(), 6);
         
-        offset= code.indexOf("MyStruct") + 2; 
+        offset= code.indexOf("MyStruct") + 2;
         defOffset= code.indexOf("MyStruct", offset) + 2;
         def = testF3(file, offset);
         decl = testF3(file, defOffset);
@@ -641,7 +641,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
     	buffer.append("int foo() {\n"); //$NON-NLS-1$
     	buffer.append(" return x;\n"); //$NON-NLS-1$
     	buffer.append("}\n"); //$NON-NLS-1$
-    	String code = buffer.toString(); 
+    	String code = buffer.toString();
     	
     	IFile file = importFileInsideLinkedFolder("testBug76043.c", code, "folder"); //$NON-NLS-1$ //$NON-NLS-2$
     	
@@ -669,7 +669,7 @@ public class CSelectionTestsNoIndexer extends BaseUITestCase {
         String code = buffer.toString();
         IFile file = importFileWithLink("testBug78354.cpp", code); //$NON-NLS-1$
         
-        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$ 
+        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "TestTypeOne"); //$NON-NLS-1$

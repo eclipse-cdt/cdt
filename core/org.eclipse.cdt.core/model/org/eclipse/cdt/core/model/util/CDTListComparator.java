@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSetting;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 
 public class CDTListComparator implements Comparator {
-	protected static Comparator comparator = null;
+	private static Comparator comparator = null;
 
 	public static Comparator getInstance() {
 		if (comparator == null)

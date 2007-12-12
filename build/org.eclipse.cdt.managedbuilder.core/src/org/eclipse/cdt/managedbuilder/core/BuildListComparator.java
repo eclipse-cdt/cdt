@@ -21,6 +21,8 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 public class BuildListComparator extends CDTListComparator {
 	private static final String EMPTY = ""; //$NON-NLS-1$
 	
+	private static Comparator comparator = null;
+	
 	public static Comparator getInstance() {
 		if (comparator == null)
 			comparator = new BuildListComparator();

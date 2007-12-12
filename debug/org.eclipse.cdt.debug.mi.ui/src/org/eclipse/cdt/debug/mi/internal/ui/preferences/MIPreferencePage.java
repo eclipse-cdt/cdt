@@ -326,6 +326,8 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	private MIIntegerFieldEditor fLaunchTimeoutText;
 
 	private BooleanFieldEditor fRefreshSolibsButton;
+	
+	private BooleanFieldEditor fMemorySpacesButton;
 
 	private MIPreferenceStore fMICorePreferenceStore = new MIPreferenceStore( MIPlugin.getDefault().getPluginPreferences() );
 
@@ -358,6 +360,8 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		composite.setLayoutData( data );
 		createSpacer( composite, 1 );
 		createCommunicationPreferences( composite );
+		createSpacer( composite, 1 );
+		fMemorySpacesButton = createCheckbox(IMIConstants.PREF_ENABLE_MEMORY_SPACES, PreferenceMessages.getString( "MIPreferencePage.7" ), composite ); //$NON-NLS-1$
 		return composite;
 	}
 
@@ -398,6 +402,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		fDebugTimeoutText.loadDefault();
 		fLaunchTimeoutText.loadDefault();
 		fRefreshSolibsButton.loadDefault();
+		fMemorySpacesButton.loadDefault();
 	}
 
 	/*
@@ -429,7 +434,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		fDebugTimeoutText.setPropertyChangeListener( this );
 		fLaunchTimeoutText = createTimeoutField( IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, PreferenceMessages.getString( "MIPreferencePage.3" ), spacingComposite ); //$NON-NLS-1$
 		fLaunchTimeoutText.setPropertyChangeListener( this );
-		fRefreshSolibsButton = createRefreshField( IMIConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, PreferenceMessages.getString( "MIPreferencePage.6" ), spacingComposite ); //$NON-NLS-1$
+		fRefreshSolibsButton = createCheckbox( IMIConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, PreferenceMessages.getString( "MIPreferencePage.6" ), spacingComposite ); //$NON-NLS-1$
 	}
 
 	/**
@@ -439,6 +444,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		fDebugTimeoutText.store();
 		fLaunchTimeoutText.store();
 		fRefreshSolibsButton.store();
+		fMemorySpacesButton.store();
 	}
 
 	private MIIntegerFieldEditor createTimeoutField( String preference, String label, Composite parent ) {
@@ -457,14 +463,14 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		return toText;
 	}
 
-	private BooleanFieldEditor createRefreshField( String preference, String label, Composite parent ) {
+	private BooleanFieldEditor createCheckbox( String preference, String label, Composite parent ) {
 		BooleanFieldEditor field = new BooleanFieldEditor( preference, label, parent );
 		field.setPage( this );
 		field.setPreferenceStore( new MIPreferenceStore( MIPlugin.getDefault().getPluginPreferences() ) );
 		field.load();
 		return field;
 	}
-
+	
 	protected MIPreferenceStore getMICorePreferenceStore() {
 		return fMICorePreferenceStore;
 	}
@@ -476,6 +482,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		fDebugTimeoutText.dispose();
 		fLaunchTimeoutText.dispose();
 		fRefreshSolibsButton.dispose();
+		fMemorySpacesButton.dispose();
 		super.dispose();
 	}
 

@@ -50,8 +50,10 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.CoreProcess;
+import org.eclipse.cdt.debug.mi.core.IMIConstants;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIInferior;
+import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.RxThread;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
@@ -1288,6 +1290,11 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 	}
 
 	public String[] getMemorySpaces() {
-		return new String[] { CODE_MEMORY_SPACE, DATA_MEMORY_SPACE };
+		if (MIPlugin.getDefault().getPluginPreferences().getBoolean(IMIConstants.PREF_ENABLE_MEMORY_SPACES)) {
+			return new String[] { CODE_MEMORY_SPACE, DATA_MEMORY_SPACE };	
+		}
+		else {
+			return new String[0];
+		}
 	}
 }

@@ -87,7 +87,6 @@ public class ManagedBuildCoreTests20 extends TestCase {
 		suite.addTest(new ManagedBuildCoreTests20("testConfigBuildArtifact"));
 		suite.addTest(new ManagedBuildCoreTests20("testMakeCommandManipulation"));
 		suite.addTest(new ManagedBuildCoreTests20("testScannerInfoInterface"));
-		suite.addTest(new ManagedBuildCoreTests20("testBug43450"));
 		suite.addTest(new ManagedBuildCoreTests20("testProjectRename"));
 		suite.addTest(new ManagedBuildCoreTests20("testErrorParsers"));
 		suite.addTest(new ManagedBuildCoreTests20("cleanup"));

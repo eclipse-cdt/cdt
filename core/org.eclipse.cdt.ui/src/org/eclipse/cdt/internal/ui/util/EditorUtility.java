@@ -79,31 +79,31 @@ public class EditorUtility {
 	private EditorUtility () {
 	}
 
-	/** 
+	/**
 	 * Tests if a cu is currently shown in an editor
 	 * @return the IEditorPart if shown, null if element is not open in an editor
-	 */     
+	 */
 	public static IEditorPart isOpenInEditor(Object inputElement) {
 		IEditorInput input = null;
-                
+
 		try {
 			input = getEditorInput(inputElement);
 		} catch (CModelException x) {
 			//CUIPlugin.log(x.getStatus());
 		}
-                
+
 		if (input != null) {
 			IWorkbenchPage p= CUIPlugin.getActivePage();
 			if (p != null) {
 				return p.findEditor(input);
 			}
 		}
-                
+
 		return null;
 	}
 
 	/**
-	 * Opens an editor for an element such as <code>ICElement</code>, 
+	 * Opens an editor for an element such as <code>ICElement</code>,
 	 * <code>IFile</code>, or <code>IStorage</code>.
 	 * The editor is activated by default.
 	 * @return the IEditorPart or null if wrong element type or opening failed
@@ -117,23 +117,23 @@ public class EditorUtility {
 	 * @return the IEditorPart or null if wrong element type or opening failed
 	 */
 	public static IEditorPart openInEditor(Object inputElement, boolean activate) throws CModelException, PartInitException {
-                
+
 		if (inputElement instanceof IFile) {
 			return openInEditor((IFile) inputElement, activate);
 		}
-                
+
 		IEditorInput input = getEditorInput(inputElement);
-                
+
 		if (input != null) {
 			return openInEditor(input, getEditorID(input, inputElement), activate);
 		}
-		
+
 		return null;
 	}
 
-	/** 
+	/**
 	 * Selects a C Element in an editor
-	 */     
+	 */
 	public static void revealInEditor(IEditorPart part, ICElement element) {
 		if (element == null) {
 			return;
@@ -158,25 +158,25 @@ public class EditorUtility {
 			closedProject(file.getProject());
 			return null;
 		}
-		
+
 		if (file != null) {
 		try {
 				if (!isLinked(file)) {
 					File tempFile = file.getRawLocation().toFile();
-				
+
 					if (tempFile != null){
 						String canonicalPath = null;
 						try {
 							canonicalPath = tempFile.getCanonicalPath();
 						} catch (IOException e1) {}
-						
+
 						if (canonicalPath != null){
 							IPath path = new Path(canonicalPath);
 							file = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
 						}
 					}
 				}
-				
+
 				IEditorInput input = getEditorInput(file);
 				if (input != null) {
 					return openInEditor(input, getEditorID(input, file), activate);
@@ -185,24 +185,24 @@ public class EditorUtility {
 		}
 		return null;
 	}
-	
+
 	public static boolean isLinked(IFile file) {
 		if (file.isLinked())
 			return true;
-		
+
 		IPath path = file.getLocation();
-		
+
 		while (path.segmentCount() > 0) {
 			path = path.removeLastSegments(1);
 			IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocation(path);
-			
+
 			for(int i=0; i<containers.length; i++) {
 				if (containers[i] instanceof IFolder && ((IFolder)containers[i]).isLinked()) {
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -214,9 +214,9 @@ public class EditorUtility {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
 		errorMsg.setText(CUIPlugin.getResourceString("EditorUtility.closedproject")); //$NON-NLS-1$
 		String desc= CUIPlugin.getResourceString("Editorutility.closedproject.description"); //$NON-NLS-1$
-		errorMsg.setMessage (MessageFormat.format(desc, new Object[]{project.getName()})); 
+		errorMsg.setMessage (MessageFormat.format(desc, new Object[]{project.getName()}));
 		errorMsg.open();
-		
+
 	}
 
 	private static IEditorPart openInEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {
@@ -235,12 +235,12 @@ public class EditorUtility {
  			if (element instanceof ISourceReference) {
  				ITranslationUnit tu = ((ISourceReference)element).getTranslationUnit();
  				if (tu != null) {
- 					element = tu;                    
+ 					element = tu;
  				}
  			}
-			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy()) 
+			if (element instanceof IWorkingCopy && ((IWorkingCopy) element).isWorkingCopy())
 				element= ((IWorkingCopy) element).getOriginalElement();
- 
+
 			if (element instanceof ITranslationUnit) {
 				ITranslationUnit unit= (ITranslationUnit) element;
 				IResource resource= unit.getResource();
@@ -256,10 +256,10 @@ public class EditorUtility {
 					return new FileEditorInput((IFile)resource);
 				}
 			}
-                        
+
 			element= element.getParent();
 		}
-                
+
 		return null;
 	}
 
@@ -267,10 +267,10 @@ public class EditorUtility {
 		if (input instanceof ICElement) {
 			return getEditorInput((ICElement) input);
 		}
-		if (input instanceof IFile) { 
+		if (input instanceof IFile) {
 			return new FileEditorInput((IFile) input);
 		}
-		if (input instanceof IStorage) { 
+		if (input instanceof IStorage) {
 			return new ExternalEditorInput((IStorage)input);
 		}
 		return null;
@@ -280,14 +280,14 @@ public class EditorUtility {
 	 * Utility method to open an editor for the given file system location
 	 * using {@link #getEditorInputForLocation(IPath, ICElement)} to create
 	 * the editor input.
-	 * 
+	 *
 	 * @param location  a file system location
 	 * @param element  an element related to the target file, may be <code>null</code>
-	 * @throws PartInitException 
+	 * @throws PartInitException
 	 */
 	public static IEditorPart openInEditor(IPath location, ICElement element) throws PartInitException {
 		IEditorInput input= getEditorInputForLocation(location, element);
-		return EditorUtility.openInEditor(input, getEditorID(input, element), true);		
+		return EditorUtility.openInEditor(input, getEditorID(input, element), true);
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class EditorUtility {
 	 * assuming the location points to an existing file in the file system.
 	 * The <code>ICElement</code> is used to determine the associated project
 	 * in case the location can not be resolved to a workspace <code>IFile</code>.
-	 * 
+	 *
 	 * @param location  a valid file system location
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an editor input
@@ -306,8 +306,8 @@ public class EditorUtility {
 		IFile resource= getWorkspaceFileAtLocation(location, context);
 		if (resource != null) {
 			return new FileEditorInput(resource);
-		} 
-		
+		}
+
 		if (context == null) {
 			// try to synthesize a context for a location appearing on a project's
 			// include paths
@@ -329,7 +329,7 @@ public class EditorUtility {
 			} catch (CModelException e) {
 			}
 		}
-		
+
 		if (context != null) {
 			// try to get a translation unit from the location and associated element
 			ICProject cproject= context.getCProject();
@@ -352,14 +352,15 @@ public class EditorUtility {
 	 * Utility method to resolve a file system location to a workspace resource.
 	 * If a context element is given and there are multiple matches in the workspace,
 	 * a resource with the same project of the context element are preferred.
-	 * 
+	 *
 	 * @param location  a valid file system location
 	 * @param context  an element related to the target file, may be <code>null</code>
 	 * @return an <code>IFile</code> or <code>null</code>
 	 */
 	private static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
+		// search non-linked resource
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
-		if (file == null) {
+		if (file == null || !CoreModel.hasCNature(file.getProject())) {
 			// try to find a linked resource
 			IProject project= null;
 			if (context != null) {
@@ -369,24 +370,27 @@ public class EditorUtility {
 				}
 			}
 			IFile bestMatch= null;
+			IFile secondBestMatch= null;
 			IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 			IFile[] files= root.findFilesForLocation(location);
 			for (int i= 0; i < files.length; i++) {
 				file= files[i];
 				if (file.isAccessible()) {
-					if (project != null && file.getProject() == project) {
+					if (project != null && file.getProject().equals(project)) {
 						bestMatch= file;
 						break;
-					}
-					if (bestMatch == null) {
+					} else if (CoreModel.hasCNature(file.getProject())) {
 						bestMatch= file;
 						if (project == null) {
 							break;
 						}
+					} else {
+						// match in  non-CDT project
+						secondBestMatch= file;
 					}
 				}
 			}
-			return bestMatch;
+			return bestMatch != null ? bestMatch : secondBestMatch;
 		}
 		return file;
 	}
@@ -403,7 +407,7 @@ public class EditorUtility {
 				return getEditorInputCElement(part);
 			}
 		}
-		return null;    
+		return null;
 	}
 
 	public static ICElement getEditorInputCElement(IEditorPart part) {
@@ -413,13 +417,13 @@ public class EditorUtility {
 		}
 		return (ICElement) editorInput.getAdapter(ICElement.class);
 	}
-        
-	/** 
+
+	/**
 	 * Gets the working copy of an compilation unit opened in an editor
-	 * 
+	 *
 	 * @param cu the original compilation unit (or another working copy)
 	 * @return the working copy of the compilation unit, or null if not found
-	*/     
+	*/
 	public static ITranslationUnit getWorkingCopy(ITranslationUnit cu) {
 		if (cu == null)
 			return null;
@@ -432,7 +436,7 @@ public class EditorUtility {
 	/**
 	 * Determine the editor id from the given file name using
 	 * the workspace-wide content-type definitions.
-	 * 
+	 *
 	 * @param name  the file name
 	 * @return a valid editor id, never <code>null</code>
 	 */
@@ -454,7 +458,7 @@ public class EditorUtility {
 	 * mechanism is used to determine the correct editor id.
 	 * If that fails, the editor id is determined by file name and extension using
 	 * the workspace-wide content-type definitions.
-	 * 
+	 *
 	 * @param input  the editor input
 	 * @param inputObject  the input object (used to create the editor input) or <code>null</code>
 	 * @return a valid editor id, never <code>null</code>
@@ -517,13 +521,13 @@ public class EditorUtility {
 	/**
 	 * Maps the localized modifier name to a code in the same
 	 * manner as #findModifier.
-	 * 
+	 *
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
 	 */
 	public static int findLocalizedModifier(String token) {
 		if (token == null)
 			return 0;
-		
+
 		if (token.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
 			return SWT.CTRL;
 		if (token.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
@@ -539,7 +543,7 @@ public class EditorUtility {
 	/**
 	 * Returns the modifier string for the given SWT modifier
 	 * modifier bits.
-	 * 
+	 *
 	 * @param stateMask	the SWT modifier bits
 	 * @return the modifier string
 	 * @since 2.1.1
@@ -554,14 +558,14 @@ public class EditorUtility {
 			modifierString= appendModifierString(modifierString, SWT.SHIFT);
 		if ((stateMask & SWT.COMMAND) == SWT.COMMAND)
 			modifierString= appendModifierString(modifierString,  SWT.COMMAND);
-		
+
 		return modifierString;
 	}
 
 	/**
 	 * Appends to modifier string of the given SWT modifier bit
 	 * to the given modifierString.
-	 * 
+	 *
 	 * @param modifierString	the modifier string
 	 * @param modifier			an int with SWT modifier bit
 	 * @return the concatenated modifier string
@@ -588,7 +592,7 @@ public class EditorUtility {
 		}
 		return store;
 	}
-	
+
 	public static IStorage getStorage(ITranslationUnit tu) {
 		IStorage store = null;
 		try {

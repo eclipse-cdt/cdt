@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.CoreException;
  * @author Doug Schaefer
  *
  */
-public class PDOMName implements IIndexFragmentName, IASTFileLocation {
+public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	private final PDOM pdom;
 	private final int record;
@@ -42,16 +42,17 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private static final int BINDING_PREV_OFFSET = 16;
 	private static final int BINDING_NEXT_OFFSET = 20;
 	private static final int NODE_OFFSET_OFFSET  = 24;
-	private static final int NODE_LENGTH_OFFSET  = 28; // short
-	private static final int FLAGS 				 = 30; // byte
+	private static final int NODE_LENGTH_OFFSET  = 28; 
+	private static final int FLAGS 				 = 32; 
 
-	private static final int RECORD_SIZE = 31;
+	private static final int RECORD_SIZE = 36;	// actual memory usage is the same from 28 - 44
 
-	private static final int IS_DECLARATION = 1;
-	private static final int IS_DEFINITION = 2;
-	private static final int IS_REFERENCE = 3;
-	private static final int DECL_DEF_REF_MASK= 3;
-	private static final int IS_INHERITANCE_SPEC = 4;
+	public static final int IS_DECLARATION = 1;
+	public static final int IS_DEFINITION = 2;
+	public static final int IS_REFERENCE = 3;
+	public static final int DECL_DEF_REF_MASK= 3;
+	public static final int IS_INHERITANCE_SPEC = 4;
+	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL= 8;
 
 	
 
@@ -61,18 +62,20 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		record = db.malloc(RECORD_SIZE);
 
 		// What kind of name are we
-		byte flags = 0;
+		int flags = 0;
 		if (name.isDefinition())
 			flags = IS_DEFINITION;
 		else if (name.isDeclaration())
 			flags = IS_DECLARATION;
 		else 
 			flags = IS_REFERENCE;
-		db.putByte(record + FLAGS, flags);
+		
+		flags |= binding.getAdditionalNameFlags(flags, name);
+		db.putInt(record + FLAGS, flags);
 
 		// Hook us up to the binding
 		if (binding != null) {
-			switch (flags) {
+			switch (flags & DECL_DEF_REF_MASK) {
 			case IS_DEFINITION:
 				binding.addDefinition(this);
 				break;
@@ -95,7 +98,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		// Record our location in the file
 		IASTFileLocation fileloc = name.getFileLocation();
 		db.putInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
-		db.putShort(record + NODE_LENGTH_OFFSET, (short) fileloc.getNodeLength());
+		db.putInt(record + NODE_LENGTH_OFFSET, fileloc.getNodeLength());
 	}
 	
 	public PDOMName(PDOM pdom, int nameRecord) {
@@ -197,26 +200,30 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 		}
 	}
 	
-	private byte getFlags(int mask) throws CoreException {
-		return (byte) (pdom.getDB().getByte(record + FLAGS) & mask);
+	private int getFlags(int mask) throws CoreException {
+		return pdom.getDB().getInt(record + FLAGS) & mask;
 	}
 
 	public void setIsBaseSpecifier(boolean val) throws CoreException {
-		byte flags= getFlags(0xff);
+		int flags= pdom.getDB().getInt(record + FLAGS);
 		if (val) 
 			flags |= IS_INHERITANCE_SPEC;
 		else
 			flags &= ~IS_INHERITANCE_SPEC;
-		pdom.getDB().putByte(record + FLAGS, flags);
+		pdom.getDB().putInt(record + FLAGS, flags);
 	}
 
 	public boolean isBaseSpecifier() throws CoreException {
 		return getFlags(IS_INHERITANCE_SPEC) == IS_INHERITANCE_SPEC;
 	}
 	
+	public boolean couldBePolymorphicMethodCall() throws CoreException {
+		return getFlags(COULD_BE_POLYMORPHIC_METHOD_CALL) == COULD_BE_POLYMORPHIC_METHOD_CALL;
+	}
+
 	public boolean isDeclaration() {
 		try {
-			byte flags = getFlags(DECL_DEF_REF_MASK);
+			int flags = getFlags(DECL_DEF_REF_MASK);
 			return flags == IS_DECLARATION || flags == IS_DEFINITION;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -226,7 +233,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public boolean isReference() {
 		try {
-			byte flags = getFlags(DECL_DEF_REF_MASK);
+			int flags = getFlags(DECL_DEF_REF_MASK);
 			return flags == IS_REFERENCE;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -236,7 +243,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public boolean isDefinition() {
 		try {
-			byte flags = getFlags(DECL_DEF_REF_MASK);
+			int flags = getFlags(DECL_DEF_REF_MASK);
 			return flags == IS_DEFINITION;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -281,7 +288,7 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public int getNodeLength() {
 		try {
-			return pdom.getDB().getShort(record + NODE_LENGTH_OFFSET);
+			return pdom.getDB().getInt(record + NODE_LENGTH_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;

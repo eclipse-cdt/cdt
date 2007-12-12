@@ -90,7 +90,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 52;
+	public static final int CURRENT_VERSION = 53;
 	public static final int MIN_SUPPORTED_VERSION= CURRENT_VERSION;
 	
 	/**
@@ -152,6 +152,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  50 - support for complex, imaginary and long long (bug 209049).
 	 *  51 - modeling extern "C" (bug 191989)
 	 *  52 - files per linkage (bug 191989)
+	 *  53 - polymorphic method calls (bug 156691)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

@@ -371,10 +371,8 @@ public class PDOMFile implements IIndexFragmentFile {
 		for (PDOMName name= getFirstName(); name != null; name= name.getNextInFile()) {
 			int nameOffset=  name.getNodeOffset();
 			if (nameOffset >= offset) {
-				if (nameOffset == offset) {
-					if (name.getNodeLength() == length) {
-						result.add(name);
-					}
+				if (nameOffset + name.getNodeLength() <= offset+length) {
+					result.add(name);
 				}
 				else if (name.isReference()) { 
 					// names are ordered, but callers are inserted before

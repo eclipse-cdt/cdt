@@ -17,11 +17,14 @@ import java.util.regex.Pattern;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
@@ -33,16 +36,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
-public class EnclosingNamesTest extends BaseTestCase {
+public class IndexNamesTests extends BaseTestCase {
 	private ICProject fCProject;
 	protected IIndex fIndex;
 
-	public EnclosingNamesTest(String name) {
+	public IndexNamesTests(String name) {
 		super(name);
 	}
 
 	public static TestSuite suite() {
-		return suite(EnclosingNamesTest.class);
+		return suite(IndexNamesTests.class);
 	}
 
 	protected void setUp() throws CoreException {
@@ -153,8 +156,6 @@ public class EnclosingNamesTest extends BaseTestCase {
 	//    func();
 	//    var=1;
 	// };
-	
-	
 	public void testNestingWithMethod() throws Exception {
 		waitForIndexer();
 		String content= getContentsForTest(1)[0].toString();
@@ -214,6 +215,64 @@ public class EnclosingNamesTest extends BaseTestCase {
 			enclosing= enclosed[2].getEnclosingDefinition();
 			assertNotNull(enclosing);
 			assertName("func", enclosing);			
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	//	class X {
+	//		public:
+	//			virtual void vm() {
+	//			}
+	//		};
+	//
+	//	class Y : public X {
+	//	public:
+	//		virtual void vm() {
+	//		}	
+	//		void test();
+	//	};
+	//	void Y::test() {
+	//		X* x= this;
+	//		X& xr= *this;
+	//		X xc= *this;
+	//		
+	//		vm();		// polymorphic
+	//		X::vm(); 	// call to X::vm()
+	//		x->vm(); 	// polymorphic
+	//		x->X::vm(); // call to X::vm()
+	//		xr.vm(); 	// polymorphic
+	//		xr.X::vm(); // call to X::vm()
+	//		xc.vm();    // call to X::vm()
+	//		xc.X::vm(); // call to X::vm()
+	//	}
+	public void testCouldBePolymorphicMethodCall_Bug156691() throws Exception {
+		waitForIndexer();
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject().getProject(), "test.cpp", content);
+		waitUntilFileIsIndexed(file, 4000);
+
+		boolean[] couldbepolymorphic= {true, false, true, false, true, false, false, false};
+		String[] container= 		  {"Y",  "X",   "X",  "X",   "X",  "X",   "X",   "X"  };  
+
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexName[] names= ifile.findNames(0, content.length());
+			int j= 0;
+			for (int i = 0; i < names.length; i++) {
+				IIndexName indexName = names[i];
+				if (indexName.isReference() && indexName.toString().equals("vm")) {
+					assertEquals(couldbepolymorphic[j], indexName.couldBePolymorphicMethodCall());
+					assertEquals(container[j], fIndex.findBinding(indexName).getQualifiedName()[0]);
+					j++;
+				}
+				else {
+					assertEquals(false, indexName.couldBePolymorphicMethodCall());
+				}
+			}
+			assertEquals(couldbepolymorphic.length, j);
 		}
 		finally {
 			fIndex.releaseReadLock();

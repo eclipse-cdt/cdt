@@ -16,18 +16,25 @@ package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
@@ -159,5 +166,33 @@ class PDOMCPPMethod extends PDOMCPPFunction implements ICPPMethod, ICPPDelegateC
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPMethod.CPPMethodDelegate(name, this);
 	}
-	
+
+	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
+		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
+			IASTNode parent= name.getParent();
+			if (parent instanceof ICPPASTFieldReference) {
+				// the name is not qualified
+				ICPPASTFieldReference fr= (ICPPASTFieldReference) parent;
+				parent= parent.getParent();
+				if (parent instanceof IASTFunctionCallExpression) {
+					// v->member()
+					if (fr.isPointerDereference()) {
+						return PDOMName.COULD_BE_POLYMORPHIC_METHOD_CALL;
+					}
+					// v.member()
+					IType type= fr.getFieldOwner().getExpressionType();
+					if (type instanceof ICPPReferenceType) {
+						return PDOMName.COULD_BE_POLYMORPHIC_METHOD_CALL;
+					}
+				}
+			}
+			// calling a member from within a member
+			else if (parent instanceof IASTIdExpression) {
+				if (parent.getParent() instanceof IASTFunctionCallExpression) {
+					return PDOMName.COULD_BE_POLYMORPHIC_METHOD_CALL;
+				}
+			}
+		}
+		return 0;
+	}
 }

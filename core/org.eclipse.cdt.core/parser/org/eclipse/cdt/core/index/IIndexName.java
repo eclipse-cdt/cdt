@@ -67,5 +67,12 @@ public interface IIndexName extends IName {
 	 * Returns whether a declaration is a base-class specifier.
 	 */
 	public boolean isBaseSpecifier() throws CoreException;
-
+	
+	/**
+	 * Returns whether this name potentially denotes a polymorphic method call. This is the case 
+	 * when the name is not qualified and denotes a method call and the method is accessed via a 
+	 * pointer or a reference to an object. <p>
+	 * No checks are performed whether the method is actually virtual or not.
+	 */
+	public boolean couldBePolymorphicMethodCall() throws CoreException;
 }

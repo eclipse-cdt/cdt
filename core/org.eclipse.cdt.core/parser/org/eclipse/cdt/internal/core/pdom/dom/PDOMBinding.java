@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
@@ -362,5 +363,14 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	
 	final public void delete(PDOMLinkage linkage) throws CoreException {
 		assert false;
+	}
+
+	/**
+	 * Bindings may set additional flags for their occurrences
+	 * Return a combination of flags defined in {@link PDOMName}.
+	 * @since 5.0
+	 */
+	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
+		return 0;
 	}
 }

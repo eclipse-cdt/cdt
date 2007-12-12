@@ -21,6 +21,8 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration3;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor;
@@ -142,12 +144,25 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#setEnabled(boolean)
 	 */
 	public void setEnabled( boolean enabled ) throws DebugException {
-		IInternalVariable iv = getOriginal();
-		if ( iv != null )
-			iv.dispose( true );
-		iv = getShadow();
-		if ( iv != null )
-			iv.dispose( true );
+		// Debugger engines that use active variable objects will benefit
+		// performance-wise if we dispose the internal variable when it's 
+		// disabled by the user (it will automatically get lazily recreated if 
+		// it's ever needed again). Engines using passive variables probably 
+		// won't, so we can defer the dispose until we have no use for the 
+		// variable altogether.
+		boolean disposeVariable = true;
+		ICDITargetConfiguration configuration = getParent().getCDITarget().getConfiguration();
+		if (configuration instanceof ICDITargetConfiguration2) {
+			disposeVariable = !((ICDITargetConfiguration2)configuration).supportsPassiveVariableUpdate();
+		}
+		if (disposeVariable) {
+			IInternalVariable iv = getOriginal();
+			if ( iv != null )
+				iv.dispose( true );
+			iv = getShadow();
+			if ( iv != null )
+				iv.dispose( true );
+		}
 		fIsEnabled = enabled;
 		fireChangeEvent( DebugEvent.STATE );
 	}

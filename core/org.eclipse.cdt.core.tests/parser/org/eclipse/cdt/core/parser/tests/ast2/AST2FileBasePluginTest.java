@@ -46,7 +46,7 @@ public class AST2FileBasePluginTest extends TestCase {
     static FileManager 				fileManager;
     static int						numProjects = 0;
     static Class					className;
-	static ICProject cPrj; 
+	static ICProject cPrj;
 
     public AST2FileBasePluginTest() {
 	}
@@ -103,14 +103,14 @@ public class AST2FileBasePluginTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        if( project == null || !project.exists() ) 
+        if( project == null || !project.exists() )
             return;
         
         IResource [] members = project.members();
         for( int i = 0; i < members.length; i++ ){
-            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
-            if (members[i].getName().equals(".settings")) 
+            if (members[i].getName().equals(".settings"))
             	continue;
             try{
                 members[i].delete( false, monitor );
@@ -133,7 +133,7 @@ public class AST2FileBasePluginTest extends TestCase {
 		//Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
 		
-		InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+		InputStream stream = new ByteArrayInputStream( contents.getBytes() );
 		//Create file input stream
 		if( file.exists() )
 		    file.setContents( stream, false, false, monitor );

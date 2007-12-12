@@ -138,16 +138,16 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     }
     
     protected void tearDown() throws Exception {
-        if( project == null || !project.exists() ) 
+        if( project == null || !project.exists() )
             return;
         
         closeAllEditors();
 
         IResource [] members = project.members();
         for( int i = 0; i < members.length; i++ ){
-            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
-            if (members[i].getName().equals(".settings")) 
+            if (members[i].getName().equals(".settings"))
             	continue;
             try{
                 members[i].delete( false, monitor );
@@ -161,7 +161,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
         //Create file input stream
         if( file.exists() )
             file.setContents( stream, false, false, monitor );
@@ -177,7 +177,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         //Obtain file handle
         IFile file = project.getProject().getFile(fileName);
         
-        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName); 
+        IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName);
         
         File linkFile = new File(location.toOSString());
         if (!linkFile.exists()) {
@@ -186,7 +186,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         
         file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
         
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
         //Create file input stream
         if( file.exists() )
             file.setContents( stream, false, false, monitor );
@@ -211,7 +211,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	
     	IFile file = linkedFolder.getFile(fileName);
     	
-        InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+        InputStream stream = new ByteArrayInputStream( contents.getBytes() );
         //Create file input stream
         if( file.exists() )
             file.setContents( stream, false, false, monitor );
@@ -347,7 +347,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)def).getOffset(), 330);
         assertEquals(((ASTNode)def).getLength(), 5);
         
-        offset= code.indexOf("MyConst") + 2; 
+        offset= code.indexOf("MyConst") + 2;
         defOffset= code.indexOf("MyConst", offset) + 2;
         def = testF3(file, offset);
         decl = testF3(file, defOffset);
@@ -360,7 +360,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)def).getOffset(), 354);
         assertEquals(((ASTNode)def).getLength(), 7);
         
-        offset= code.indexOf("MyFunc") + 2; 
+        offset= code.indexOf("MyFunc") + 2;
         defOffset= code.indexOf("MyFunc", offset) + 2;
         def = testF3(file, offset);
         decl = testF3(file, defOffset);
@@ -373,7 +373,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)def).getOffset(), 373);
         assertEquals(((ASTNode)def).getLength(), 6);
         
-        offset= code.indexOf("MyStruct") + 2; 
+        offset= code.indexOf("MyStruct") + 2;
         defOffset= code.indexOf("MyStruct", offset) + 2;
         def = testF3(file, offset);
         decl = testF3(file, defOffset);
@@ -386,7 +386,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         assertEquals(((ASTNode)def).getOffset(), 417);
         assertEquals(((ASTNode)def).getLength(), 8);
         
-        offset= code.indexOf("MyClass") + 2; 
+        offset= code.indexOf("MyClass") + 2;
         defOffset= code.indexOf("MyClass", offset) + 2;
         def = testF3(file, offset);
         decl = testF3(file, defOffset);
@@ -924,7 +924,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
         String code = buffer.toString();
         IFile file = importFileWithLink("testBug78354.cpp", code); //$NON-NLS-1$
         
-        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$ 
+        int offset = code.indexOf("TestTypeOne myFirstLink = 5;"); //$NON-NLS-1$
         IASTNode decl = testF3(file, offset);
         assertTrue(decl instanceof IASTName);
         assertEquals(((IASTName)decl).toString(), "TestTypeOne"); //$NON-NLS-1$
@@ -956,7 +956,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
     	buffer.append("int foo() {\n"); //$NON-NLS-1$
     	buffer.append(" return x;\n"); //$NON-NLS-1$
     	buffer.append("}\n"); //$NON-NLS-1$
-    	String code = buffer.toString(); 
+    	String code = buffer.toString();
     	
     	IFile file = importFileInsideLinkedFolder("testBug76043.c", code, "folder"); //$NON-NLS-1$ //$NON-NLS-2$
     	
@@ -982,7 +982,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 
     	String[] filenames= {"testBug195822.c", "testBug195822.cpp"};
     	for (int i=0; i<2; i++) {
-    		IFile file = importFile(filenames[i], code); 
+    		IFile file = importFile(filenames[i], code);
     		int od1 = code.indexOf("functionPointer");
     		int or1 = code.indexOf("functionPointer", od1+1);
 
@@ -1001,7 +1001,7 @@ public class CPPSelectionTestsNoIndexer extends BaseUITestCase {
 
     		decl = testF3(file, code.length() + or2);
     		assertTrue(decl instanceof IASTName);
-    		assertEquals(((IASTName)decl).toString(), "functionPointerArray"); 
+    		assertEquals(((IASTName)decl).toString(), "functionPointerArray");
     		assertEquals(((ASTNode)decl).getOffset(), code.length() + od2);
     	}
     }

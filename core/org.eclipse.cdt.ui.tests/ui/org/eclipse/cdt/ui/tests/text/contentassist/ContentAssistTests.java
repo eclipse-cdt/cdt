@@ -63,7 +63,7 @@ public class ContentAssistTests extends BaseUITestCase {
 		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
     	
     	if (project == null) {
-    		ICProject cPrj; 
+    		ICProject cPrj;
     		try {
     			cPrj = CProjectHelper.createCCProject("ContentAssistTestProject", "bin", IPDOMManager.ID_FAST_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -119,16 +119,16 @@ public class ContentAssistTests extends BaseUITestCase {
     }
     
     protected void tearDown() throws Exception {
-        if( project == null || !project.exists() ) 
+        if( project == null || !project.exists() )
             return;
         
         closeAllEditors();
 
         IResource [] members = project.members();
         for( int i = 0; i < members.length; i++ ){
-            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cdtproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
+            if( members[i].getName().equals( ".project" ) || members[i].getName().equals( ".cproject" ) ) //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
-            if (members[i].getName().equals(".settings")) 
+            if (members[i].getName().equals(".settings"))
             	continue;
             try{
                 members[i].delete( false, monitor );
@@ -136,14 +136,14 @@ public class ContentAssistTests extends BaseUITestCase {
                 /*boo*/
             }
         }
-        project= null;
+
 	}
     
     protected IFile importFile(String fileName, String contents ) throws Exception{
 		//Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
 		
-		InputStream stream = new ByteArrayInputStream( contents.getBytes() ); 
+		InputStream stream = new ByteArrayInputStream( contents.getBytes() );
 		//Create file input stream
 		if( file.exists() )
 		    file.setContents( stream, false, false, monitor );
@@ -226,7 +226,7 @@ public class ContentAssistTests extends BaseUITestCase {
         assertEquals( "IDIOT", results[1].getDisplayString()  ); //$NON-NLS-1$
         assertEquals( "NORMAL", results[2].getDisplayString()  ); //$NON-NLS-1$
 
-        // in a method definition context, constructors and methods should be proposed 
+        // in a method definition context, constructors and methods should be proposed
         
         c2 = code + "return 0;}\nStrategy::\n"; //$NON-NLS-1$
 

@@ -51,8 +51,6 @@ public class CTextTools {
 	private CCodeScanner fCodeScanner;
 	/** The C++ source code scanner */
 	private CCodeScanner fCppCodeScanner;
-	/** The C partitions scanner */
-	private FastCPartitionScanner fPartitionScanner;
 	/** The C multiline comment scanner */
 	private CCommentScanner fMultilineCommentScanner;
 	/** The C singleline comment scanner */
@@ -100,7 +98,6 @@ public class CTextTools {
 		fColorManager= new CColorManager(autoDisposeOnDisplayDispose);
 		fCodeScanner= new CCodeScanner(fColorManager, store, GCCLanguage.getDefault());
 		fCppCodeScanner= new CCodeScanner(fColorManager, store, GPPLanguage.getDefault());
-		fPartitionScanner= new FastCPartitionScanner();
 		
 		fMultilineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_MULTI_LINE_COMMENT);
 		fSinglelineCommentScanner= new CCommentScanner(fColorManager, store, coreStore, ICColorConstants.C_SINGLE_LINE_COMMENT);
@@ -132,9 +129,6 @@ public class CTextTools {
 	public void dispose() {
 		
 		fCodeScanner= null;
-		fPartitionScanner= null;
-		
-		
 		fMultilineCommentScanner= null;
 		fSinglelineCommentScanner= null;
 		fStringScanner= null;
@@ -186,7 +180,7 @@ public class CTextTools {
 	 * @return a C partition scanner
 	 */
 	public IPartitionTokenScanner getPartitionScanner() {
-		return fPartitionScanner;
+		return new FastCPartitionScanner();
 	}
 	
 	/**

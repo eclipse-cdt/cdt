@@ -29,6 +29,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -65,7 +67,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	/** 
 	 * Flag set in {@link #restoreState(IMemento) restoreState},
 	 * indicating whether link-with-editor should be enabled delayed 
-	 * as a workaround for 
+	 * as a (old) workaround for 
 	 * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344">bug 186344</a>
 	 */
 	private boolean fLinkingEnabledDelayed;
@@ -129,7 +131,7 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 			if (mementoValue != null) {
 				groupIncludes= Boolean.valueOf(mementoValue).booleanValue();
 			}
-			// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344
+			// old workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344
 			Integer value= memento.getInteger(LINKING_ENABLED_DELAYED);
 			fLinkingEnabledDelayed= value != null && value.intValue() != 0;
 		}
@@ -145,15 +147,8 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 		if (memento != null) {
 			memento.putString(PreferenceConstants.PREF_SHOW_CU_CHILDREN, String.valueOf(getProvideMembers()));
 			memento.putString(PreferenceConstants.CVIEW_GROUP_INCLUDES, String.valueOf(areIncludesGroup()));
-			// disable linking enabled on next startup
-			// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344
-			Integer linkingEnabled= memento.getInteger(LINKING_ENABLED);
-			if (linkingEnabled != null && linkingEnabled.intValue() != 0) {
-				memento.putInteger(LINKING_ENABLED, 0);
-				memento.putInteger(LINKING_ENABLED_DELAYED, linkingEnabled.intValue());
-			} else {
-				memento.putInteger(LINKING_ENABLED_DELAYED, 0);
-			}
+			// clear obsolete flag
+			memento.putInteger(LINKING_ENABLED_DELAYED, 0);
 		}
 	}
 
@@ -168,22 +163,29 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 	}
 
 	/**
-	 * Workaround for
-	 * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344">bug 186344</a>
+	 * Old workaround for
+	 * <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344">bug 186344</a>.
+	 * Kept for backword compatibility.
 	 */
 	private void workaroundForBug186344() {
 		if (fLinkingEnabledDelayed) {
 			// enable linking delayed
 			fLinkingEnabledDelayed= false;
-			IViewPart viewPart= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(PROJECT_EXPLORER_ID);
-			if (viewPart instanceof CommonNavigator) {
-				final CommonNavigator cn= ((CommonNavigator)viewPart);
-				viewPart.getSite().getShell().getDisplay().asyncExec(
-						new Runnable() {
-							public void run() {
-								cn.setLinkingEnabled(true);
-							}
-						});
+			final IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (window != null) {
+				final IWorkbenchPage page = window.getActivePage();
+				if (page != null) {
+					IViewPart viewPart= page.findView(PROJECT_EXPLORER_ID);
+					if (viewPart instanceof CommonNavigator) {
+						final CommonNavigator cn= ((CommonNavigator)viewPart);
+						viewPart.getSite().getShell().getDisplay().asyncExec(
+								new Runnable() {
+									public void run() {
+										cn.setLinkingEnabled(true);
+									}
+								});
+					}
+				}
 			}
 		}
 	}

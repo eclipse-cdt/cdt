@@ -3896,7 +3896,7 @@ public class AST2Tests extends AST2BaseTest {
 		long time= System.currentTimeMillis();
 		parse(buffer.toString(), ParserLanguage.CPP); 
 		parse( buffer.toString(), ParserLanguage.C);
-		assertTrue(System.currentTimeMillis()-time < 1000);
+		assertTrue(System.currentTimeMillis()-time < 2000);
 	}
 	
 	// int array[12]= {};

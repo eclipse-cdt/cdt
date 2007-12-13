@@ -102,7 +102,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		sashForm.setLayout(layout);
 
 		addTree(sashForm).setLayoutData(new GridData(GridData.FILL_VERTICAL));
-	    table = new Table(sashForm, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+	    table = new Table(sashForm, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
 	    GridData gd = new GridData(GridData.FILL_BOTH);
 	    gd.widthHint = 255;
 	    table.setLayoutData(gd);
@@ -171,10 +171,11 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
      */
     protected void updateButtons() {
     	int index = table.getSelectionIndex();
+    	int[] ids = table.getSelectionIndices(); 
     	boolean canAdd = langTree.getItemCount() > 0;
 		boolean canExport = index != -1;
-		boolean canEdit = canExport;
-		boolean canDelete = canEdit;
+		boolean canEdit = canExport && ids.length == 1;
+		boolean canDelete = canExport;                 
 		if (canExport) {
 			ICLanguageSettingEntry ent = (ICLanguageSettingEntry)(table.getItem(index).getData());
 			if (ent.isBuiltIn() || ent.isReadOnly()) canEdit = false;
@@ -346,7 +347,7 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		ICLanguageSettingEntry ent;
 		ICLanguageSettingEntry old;
 		int n = table.getSelectionIndex();
-
+		int ids[] = table.getSelectionIndices();
 		switch (i) {
 		case 0: // add
 			toAllCfgs = false;
@@ -377,6 +378,11 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 			break;
 		case 2: // delete
 			if (n == -1) return;
+			for (int x=ids.length-1; x>=0; x--) {
+				old = (ICLanguageSettingEntry)(table.getItem(ids[x]).getData());
+				if (old.isReadOnly()) continue;
+				incs.remove(old);
+			}
 			old = (ICLanguageSettingEntry)(table.getItem(n).getData());
 			if (old.isReadOnly()) return;
 			incs.remove(old);
@@ -386,10 +392,13 @@ public abstract class AbstractLangsListTab extends AbstractCPropertyTab {
 		case 3: // toggle export	
 			if (n == -1) return;
 			old = (ICLanguageSettingEntry)(table.getItem(n).getData());
-			if (exported.contains(old)) {
-				deleteExportSetting(old);
-			} else {
-				page.getResDesc().getConfiguration().createExternalSetting(new String[] {lang.getId()}, null, null, new ICLanguageSettingEntry[] {old});
+			for (int x=ids.length-1; x>=0; x--) {
+				old = (ICLanguageSettingEntry)(table.getItem(ids[x]).getData());
+				if (exported.contains(old)) {
+					deleteExportSetting(old);
+				} else {
+					page.getResDesc().getConfiguration().createExternalSetting(new String[] {lang.getId()}, null, null, new ICLanguageSettingEntry[] {old});
+				}
 			}
 			updateExport();
 			update();

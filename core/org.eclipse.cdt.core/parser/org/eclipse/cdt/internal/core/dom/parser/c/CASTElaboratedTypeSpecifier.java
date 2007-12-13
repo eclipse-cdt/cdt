@@ -35,7 +35,7 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 
 	public CASTElaboratedTypeSpecifier(int kind, IASTName name) {
 		this.kind = kind;
-		this.name = name;
+		setName(name);
 	}
 
 	public int getKind() {

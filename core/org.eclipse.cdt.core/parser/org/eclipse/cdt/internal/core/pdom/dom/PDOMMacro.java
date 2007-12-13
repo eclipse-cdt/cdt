@@ -44,7 +44,6 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	private final int record;
 	private IMacro macro;
 
-	private static final byte MACROSTYLE_UNKNOWN = 0; // for reading versions of PDOM <39
 	private static final byte MACROSTYLE_OBJECT  = 1;
 	private static final byte MACROSTYLE_FUNCTION= 2;
 	
@@ -93,7 +92,10 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 			}
 		}
 		db.putInt(record + FIRST_PARAMETER, last != null ? last.getRecord() : 0);
-		db.putByte(record + MACRO_STYLE, macroStyle);
+		
+		if (pdom.getDB().getVersion() >= PDOM.MIN_VERSION_TO_WRITE_MACRO_STYLE_BYTES) {
+			db.putByte(record + MACRO_STYLE, macroStyle);
+		}
 	}
 	
 	public int getRecord() {
@@ -199,9 +201,10 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		char[] name = getNameInDB(pdom, record).getChars();
 		PDOMMacroParameter param= getFirstParameter();
 		
-		byte style= pdom.getDB().getByte(record + MACRO_STYLE);
-		if(style == MACROSTYLE_UNKNOWN) {
-			/* PDOM formats < 39 do not store MACRO_STYLE (208558) */
+		byte style;
+		if (pdom.hasMacroStyleBytes()) {
+			style= pdom.getDB().getByte(record + MACRO_STYLE);
+		} else {
 			style= param != null ? MACROSTYLE_FUNCTION : MACROSTYLE_OBJECT;
 		}
 				

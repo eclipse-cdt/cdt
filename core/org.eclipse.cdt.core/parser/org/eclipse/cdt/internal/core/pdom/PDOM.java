@@ -81,10 +81,11 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 39;
+	public static final int CURRENT_VERSION = 40;
 	public static final int MIN_SUPPORTED_VERSION= 36;
 	public static final int MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX= 37;	// to be removed in 5.0
 	public static final int MIN_VERSION_TO_WRITE_MACROS_INDEX= 38;	// to be removed in 5.0
+	public static final int MIN_VERSION_TO_WRITE_MACRO_STYLE_BYTES= 40;	// to be removed in 5.0
 	
 	/**
 	 * The earliest PDOM version that the CURRENT_VERSION can be read as. For example,
@@ -140,15 +141,17 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	 * #36#- changed chunk size back to 4K (184892) - <<CDT 4.0>>
 	 * #37#- added index for nested bindings (189811), compatible with version 36 - <<CDT 4.0.1>>
 	 *  38 - added b-tree for macros (193056), compatible with version 36 and 37
-	 * #39#- added flag for function-style macros (208558), compatible with versions 36,37,38 - <<CDT 4.0.2>>
+	 * #39#- added flag for function-style macros (208558), almost compatible with versions 36,37,38 (see 211986) - <<CDT 4.0.2>>
+	 * #40#- added header chunk flag for whether macro style bytes can legitimately be read (211986) - <<CDT 4.0.3>>
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
 	public static final int FILE_INDEX = Database.DATA_AREA + 4;
 	public static final int PROPERTIES = Database.DATA_AREA + 8;
 	public static final int HAS_NESTED_BINDING_BTREES= Database.DATA_AREA + 12; 
-	public static final int HAS_MACRO_BTREES= Database.DATA_AREA + 13; 
-	// 2-bytes of freedom
+	public static final int HAS_MACRO_BTREES= Database.DATA_AREA + 13;
+	public static final int HAS_READABLE_MACRO_STYLE_BYTES= Database.DATA_AREA + 14;
+	// 1 byte of freedom
 	public static final int MACRO_BTREE= Database.DATA_AREA + 16; 
 	public static final int END= Database.DATA_AREA + 20;
 	static {
@@ -165,6 +168,7 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	private Map fPDOMLinkageFactoryCache;
 	private boolean fHasBTreeForNestedBindings;
 	private boolean fHasBTreeForMacros;
+	private boolean fHasReadableMacroStyleBytes;
 	private HashMap fResultCache= new HashMap();
 
 	
@@ -199,7 +203,8 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 			readLinkages();
 			fHasBTreeForNestedBindings= db.getByte(HAS_NESTED_BINDING_BTREES) == 1;
 			fHasBTreeForMacros= db.getByte(HAS_MACRO_BTREES) == 1;
-			
+			fHasReadableMacroStyleBytes= db.getByte(HAS_READABLE_MACRO_STYLE_BYTES) == 1; 
+				
 			// new PDOM with version ready to write nested bindings index
 			if (!isPermanentlyReadOnly()) {
 				if (version >= MIN_VERSION_TO_WRITE_NESTED_BINDINGS_INDEX) {
@@ -212,6 +217,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 					if (!fHasBTreeForMacros) {
 						fHasBTreeForMacros= true;
 						db.putByte(HAS_MACRO_BTREES, (byte) 1);
+					}
+				}
+				if (version >= MIN_VERSION_TO_WRITE_MACRO_STYLE_BYTES) {
+					if (!fHasReadableMacroStyleBytes) {
+						fHasReadableMacroStyleBytes= true;
+						db.putByte(HAS_READABLE_MACRO_STYLE_BYTES, (byte) 1);
 					}
 				}
 			}
@@ -315,8 +326,11 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 		db.clear(CURRENT_VERSION);
 		db.putByte(HAS_NESTED_BINDING_BTREES, (byte) 1);
 		db.putByte(HAS_MACRO_BTREES, (byte) 1);
+		db.putByte(HAS_READABLE_MACRO_STYLE_BYTES, (byte) 1);
+		
 		fHasBTreeForNestedBindings= true;
 		fHasBTreeForMacros= true;
+		fHasReadableMacroStyleBytes= true;
 		clearCaches();
 	}
 	
@@ -895,5 +909,12 @@ public class PDOM extends PlatformObject implements IIndexFragment, IPDOM {
 	
 	public String createKeyForCache(int record, char[] name) {
 		return new StringBuffer(name.length+2).append((char) (record >> 16)).append((char) record).append(name).toString();
+	}
+	
+	/**
+	 * @return if an additional byte for recording macro style in PDOMMacro may legitimately be read (211986) 
+	 */
+	public boolean hasMacroStyleBytes() {
+		return fHasReadableMacroStyleBytes;
 	}
 }

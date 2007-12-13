@@ -12,6 +12,8 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
 
 import junit.framework.Test;
 
@@ -23,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
+import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
@@ -31,15 +34,20 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
+import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
+import org.eclipse.cdt.internal.core.pdom.IPDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.PDOMManager;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -207,7 +215,88 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		pdom.acquireWriteLock();
 		pdom.releaseWriteLock();
 	}
+
+	// #define ONE 1
+	// #define TWO() 2
+	// #define THREE(X) 3
+	// #define FOUR(...) 4
+	public void testBug211986() throws Exception {
+		IProject project= cproject.getProject();
+		String content= getContentsForTest(1)[0].toString();
+		IFile cHeader= TestSourceReader.createFile(project, "macros.cpp", content);
+
+		IndexerPreferences.set(project, IndexerPreferences.KEY_INDEXER_ID, IPDOMManager.ID_FAST_INDEXER);
+		CCorePlugin.getIndexManager().reindex(cproject);
+		CCorePlugin.getIndexManager().joinIndexer(10000, NPM);
+
+		Field MACRO_STYLE= PDOMMacro.class.getDeclaredField("MACRO_STYLE");
+		MACRO_STYLE.setAccessible(true);
+		int msOffset= ((Integer) MACRO_STYLE.get(null)).intValue();
+		
+		{
+			PDOM pdom= (PDOM) ((PDOMManager) CCorePlugin.getIndexManager()).getPDOM(cproject);
+			pdom.acquireWriteLock();
+			try {
+				pdom.getDB().setVersion(38); // the version before MACROSTYLE bytes were introduced
+				pdom.getDB().putByte(PDOM.HAS_READABLE_MACRO_STYLE_BYTES, (byte) 0);
+				
+				PDOMMacro ONE= getMacro(pdom, "ONE"), TWO= getMacro(pdom, "TWO");
+				PDOMMacro THREE= getMacro(pdom, "THREE"), FOUR= getMacro(pdom, "FOUR"); 
+				assertEquals("1", new String(ONE.getExpansion()));
+				assertEquals("2", new String(TWO.getExpansion()));
+				assertEquals("3", new String(THREE.getExpansion()));
+				assertEquals("4", new String(FOUR.getExpansion()));
+				pdom.getDB().putByte(ONE.getRecord() + msOffset, (byte) 0xFF); // emulate non-zeroed data from incremental indexing
+				pdom.getDB().putByte(TWO.getRecord() + msOffset, (byte) 0xFF); // emulate non-zeroed data from incremental indexing
+				pdom.getDB().putByte(THREE.getRecord() + msOffset, (byte) 0xFF); // emulate non-zeroed data from incremental indexing
+				pdom.getDB().putByte(FOUR.getRecord() + msOffset, (byte) 0xFF); // emulate non-zeroed data from incremental indexing
+			} finally {
+				pdom.releaseWriteLock();
+			}
+		}
+		cproject.close();
+		project.close(NPM);
+		
+		CCorePlugin.getIndexManager().joinIndexer(5000, NPM);
+		
+		project.open(NPM);
+		cproject.open(NPM);
+		
+		CCorePlugin.getIndexManager().joinIndexer(5000, NPM);
+		
+		IPDOM pdom= ((PDOMManager) CCorePlugin.getIndexManager()).getPDOM(cproject);
+		pdom.acquireReadLock();
+		try {
+			PDOMMacro ONE= getMacro(pdom, "ONE"), TWO= getMacro(pdom, "TWO");
+			PDOMMacro THREE= getMacro(pdom, "THREE"), FOUR= getMacro(pdom, "FOUR"); 
+			assertEquals("1", new String(ONE.getExpansion()));
+			assertTrue(ONE.getMacro() instanceof ObjectStyleMacro);
+			assertEquals("2", new String(TWO.getExpansion()));
+			
+			 // we are testing for the old (incorrect) behaviour here
+			assertTrue(TWO.getMacro() instanceof ObjectStyleMacro);
+			
+			assertEquals("3", new String(THREE.getExpansion()));
+			assertTrue(THREE.getMacro() instanceof FunctionStyleMacro);
+			assertEquals("4", new String(FOUR.getExpansion()));
+			assertTrue(FOUR.getMacro() instanceof FunctionStyleMacro);
+		} finally {
+			pdom.releaseReadLock();
+		}
+	}
 	
+	/**
+	 * Assumes locks handled externally. 
+	 * @param pdom
+	 * @param name
+	 * @return single macro with specified name
+	 */
+	private PDOMMacro getMacro(IPDOM pdom, String name) throws CoreException {
+		IIndexMacro[] ms= pdom.findMacros(name.toCharArray(), false, true, IndexFilter.ALL, NPM);
+		assertEquals(1, ms.length);
+		return (PDOMMacro) ms[0];
+	}
+
 	public void _test191679() throws Exception {
 		IProject project= cproject.getProject();
 		IFolder cHeaders= cproject.getProject().getFolder("cHeaders");
@@ -245,6 +334,11 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		} finally {
 			pdom.releaseReadLock();
 		}
+	}
+	
+	protected StringBuffer[] getContentsForTest(int blocks) throws IOException {
+		return TestSourceReader.getContentsForTest(
+				CTestPlugin.getDefault().getBundle(), "parser", getClass(), getName(), blocks);
 	}
 }
 

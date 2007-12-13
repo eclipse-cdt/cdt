@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.tests.templateengine;
 
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Test the functionality of TemplateEngine.
@@ -50,6 +51,11 @@ public class TestTemplateEngine extends BaseTestCase {
 	 *
 	 */
 	public void testSharedDefaults(){
+		// when running the testcase in head-less mode, the  TestExtraPagesProvider class cannot be loaded,
+		// which is logged.
+		if (!PlatformUI.isWorkbenchRunning()) {
+			setExpectedNumberOfLoggedNonOKStatusObjects(1);
+		}
 	    assertNotNull(TemplateEngine.getSharedDefaults());
 	}
 	

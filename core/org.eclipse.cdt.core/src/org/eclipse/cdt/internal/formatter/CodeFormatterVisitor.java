@@ -326,7 +326,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			IASTNodeLocation[] locations= node.getNodeLocations();
 			if (locations.length == 0) {
 				throw new AbortFormatting("Empty location array in " + node.getClass().getName()); //$NON-NLS-1$
-			} else if (locations[0] instanceof IASTMacroExpansion) {
+			} else if (locations[0] instanceof IASTMacroExpansion && !(node instanceof IASTProblemDeclaration)) {
 				skipNode(node);
     		} else
     		if (node instanceof IASTFunctionDefinition) {
@@ -565,7 +565,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		try {
     		if (locations.length == 0) {
     			return PROCESS_SKIP;
-    		} else if (locations[0] instanceof IASTMacroExpansion) {
+    		} else if (locations[0] instanceof IASTMacroExpansion && !(node instanceof IASTProblemStatement)) {
     			skipNode(node);
     		} else if (locations[0].getNodeOffset()+locations[0].getNodeLength() < scribe.scanner.getCurrentPosition()) {
     			return PROCESS_SKIP;
@@ -2187,13 +2187,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			return null;
 		}
 		final IASTNodeLocation nodeLocation= locations[locations.length-1];
-		if (nodeLocation instanceof IASTFileLocation) {
-			return (IASTFileLocation)nodeLocation;
-		} else if (nodeLocation instanceof IASTMacroExpansion) {
-			IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
-			return getMaxFileLocation(macroLocations);
-		}
-		return null;
+		return nodeLocation.asFileLocation();
 	}
 
 	private static IASTFileLocation getMinFileLocation(IASTNodeLocation[] locations) {
@@ -2201,13 +2195,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			return null;
 		}
 		final IASTNodeLocation nodeLocation= locations[0];
-		if (nodeLocation instanceof IASTFileLocation) {
-			return (IASTFileLocation)nodeLocation;
-		} else if (nodeLocation instanceof IASTMacroExpansion) {
-			IASTNodeLocation[] macroLocations= ((IASTMacroExpansion)nodeLocation).getExpansionLocations();
-			return getMinFileLocation(macroLocations);
-		}
-		return null;
+		return nodeLocation.asFileLocation();
 	}
 
 	private void exitAlignments() {

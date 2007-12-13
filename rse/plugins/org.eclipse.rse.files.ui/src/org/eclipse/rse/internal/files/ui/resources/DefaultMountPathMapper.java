@@ -24,7 +24,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 public class DefaultMountPathMapper implements ISystemMountPathMapper
 {
 
-	public boolean handlesMappingFor(String hostname, String remotePath)
+	public boolean handlesMappingFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
 		return false;
 	}
@@ -45,5 +45,10 @@ public class DefaultMountPathMapper implements ISystemMountPathMapper
 	public String getMountedMappingFor(String hostname, String remotePath)
 	{
 		return remotePath;
+	}
+
+	public int getPriority(String hostname, String remotePath,
+			IRemoteFileSubSystem subsystem) {
+		return Integer.MAX_VALUE;
 	}
 }

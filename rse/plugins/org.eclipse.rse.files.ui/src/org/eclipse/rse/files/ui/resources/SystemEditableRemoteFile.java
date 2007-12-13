@@ -947,7 +947,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 		//DKM		&& subsystem.getHost().getSystemType().isLocal()
 				)
 		{
-			String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
+			String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath, subsystem);
 			if (!result.equals(hostname))
 			{
 				_isRemoteFileMounted = true;

@@ -96,11 +96,12 @@ public class SystemRemoteEditManager
 	 * the resource is mounted then a mount path mapper has the opportunity to return the actual host.
 	 * @param hostname the system on which a resource is obtained (may contain the file via a mount)
 	 * @param remotePath the path on the host where the resource is obtained
+	 * @param subsystem the subsystem
 	 * @return the actual host where the resource exists
 	 */
-	public String getActualHostFor(String hostname, String remotePath)
+	public String getActualHostFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
-		ISystemMountPathMapper mapper = getMountPathMapperFor(hostname, remotePath);
+		ISystemMountPathMapper mapper = getMountPathMapperFor(hostname, remotePath, subsystem);
 		if (mapper != null)
 		{
 			return mapper.getActualHostFor(hostname, remotePath);
@@ -115,12 +116,12 @@ public class SystemRemoteEditManager
 	 * Return the path to use on the system (i.e. Windows) for saving from the workspace to remote
 	 * @param hostname the remote host
 	 * @param remotePath the file path on the remote host
-
+	 * @param subsystem the subsystem
 	 * @return the system path
 	 */
-	public String getMountPathFor(String hostname, String remotePath)
+	public String getMountPathFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
-		ISystemMountPathMapper mapper = getMountPathMapperFor(hostname, remotePath);
+		ISystemMountPathMapper mapper = getMountPathMapperFor(hostname, remotePath, subsystem);
 		if (mapper != null)
 		{
 			return mapper.getMountedMappingFor(hostname, remotePath);
@@ -141,7 +142,7 @@ public class SystemRemoteEditManager
 	 */
 	public String getWorkspacePathFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
-		ISystemMountPathMapper mapper = getMountPathMapperFor(hostname, remotePath);
+		ISystemMountPathMapper mapper = getMountPathMapperFor(hostname, remotePath, subsystem);
 		if (mapper != null)
 		{
 			return mapper.getWorkspaceMappingFor(hostname, remotePath, subsystem);
@@ -156,22 +157,29 @@ public class SystemRemoteEditManager
 	 * Return the appropriate registered mapper for a host & path
 	 * @param hostname
 	 * @param remotePath
+	 * @param subsystem 
 	 * @return appropriate mapper 
 	 */
-	public ISystemMountPathMapper getMountPathMapperFor(String hostname, String remotePath)
+	public ISystemMountPathMapper getMountPathMapperFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
+		ISystemMountPathMapper result = null;
 		for (int i = 0; i < _mountPathMappers.size(); i++)
 		{
 			ISystemMountPathMapper mapper = (ISystemMountPathMapper) _mountPathMappers.get(i);
 			if (mapper != null)
 			{
-				if (mapper.handlesMappingFor(hostname, remotePath))
+				if (mapper.handlesMappingFor(hostname, remotePath, subsystem))
 				{
-					return mapper;
+					if (result == null) {
+						result = mapper;
+					}
+					else if (mapper.getPriority(hostname, remotePath, subsystem) < result.getPriority(hostname, remotePath, subsystem)){
+						result = mapper;
+					}
 				}
 			}
 		}
-		return null;
+		return result;
 	}
 
 	protected void registerMountPathMappers()

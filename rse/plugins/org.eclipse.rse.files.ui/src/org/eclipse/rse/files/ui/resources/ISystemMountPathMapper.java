@@ -22,18 +22,22 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
  * This interface is used to provide a common way of mapping mounted resources to the temp files project.
  * Since local (or remote) mounts can change or be removed (i.e. disconnected) this provides a way for a vendor to
  * remap a particular resource if the vendor software is able to determine the new mount location.
+ * 
+ * There are a number of use cases where a customized workspace mapping would be desirable:
+ * <ul>
+ *   <li>Two connections to the same host using different user IDs for each connection.  In that case, it may make
+ *   sense to store the temp files differently for each connection (for example, qualified by user ID).
+ *   <li>If port-forwarding is used then a port could be used to qualify the temp file path.
+ *   <li>If the remote path contains invalid characters for the local file system, then the temp file mapping could 
+ *   be made such that invalid characters ( e.g. :<>?* on Windows) translate to a sequence of valid characters on the client.   
+ * </ul>
+ * 
+ * 
  * Implementors of this interface should register their mappers via the mountPathMappers extension point.
  */
 public interface ISystemMountPathMapper
 {
 
-	/**
-	 * Indicates whether this mapper handles remapping of the specified resource
-	 * @param hostname the remote host
-	 * @param remotePath the remote path as seen by the file subsystem
-	 * @return whether this mapper handles remapping of the specified remote resource
-	 */
-	public boolean handlesMappingFor(String hostname, String remotePath);
 	
 	/**
 	 * Returns the qualified workspace path for a replica of this mounted file.  Since the
@@ -72,4 +76,29 @@ public interface ISystemMountPathMapper
 	 * @return the local system path that represents the mounted file
 	 */
 	public String getMountedMappingFor(String hostname, String remotePath);
+	
+	/**
+	 * Indicates whether this mapper handles remapping of the specified resource.  If more than one mount
+	 * path mapper returns true for this, then the getPriority() method will be used to determine precedence.
+	 * @param hostname the remote host
+	 * @param remotePath the remote path as seen by the file subsystem
+	 * @param subsystem the remote file subsystem
+	 * @return whether this mapper handles remapping of the specified remote resource
+	 */
+	public boolean handlesMappingFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem);
+
+
+	/**
+	 * 
+	 * Returns the priority of this mount path mapper.  This is used to determine which mount
+	 * path mapper to use when more than one are applicable.  The lower the return value, the
+	 * higher priority. 
+	 * 
+	 * @param hostname the host name for the file system
+	 * @param remotePath the path on the remote file system
+	 * @param subsystem the subsystem used to retrieve files
+	 * 
+	 * @return the priority, where the lower in value, the higher the priority.
+	 */
+	int getPriority(String hostname, String remotePath, IRemoteFileSubSystem subsystem);
 }

@@ -316,6 +316,13 @@ public class UniversalFileTransferUtility
 		}
 	}
 	
+	/**
+	 * Used for local files - special case!
+	 * @param tempFile
+	 * @param remoteFile
+	 * @param hostname
+	 * @param userId
+	 */
 	protected static void setIFileProperties(IFile tempFile, File remoteFile, String hostname, String userId)
 	{
 		// set it's properties for use later
@@ -326,10 +333,14 @@ public class UniversalFileTransferUtility
 		properties.setDirty(false);
 
 		String remotePath = remoteFile.getAbsolutePath();
-
-		// String subSystemId = registry.getAbsoluteNameForSubSystem(subSystem);
-		// properties.setRemoteFileSubSystem(subSystemId);
 		properties.setRemoteFilePath(remotePath);
+		try
+		{
+			properties.setEncoding(tempFile.getCharset());
+		}
+		catch (CoreException e){			
+		}
+		
 		
 	    // get the modified timestamp from the File, not the IFile
 		// for some reason, the modified timestamp from the IFile does not always return
@@ -337,11 +348,11 @@ public class UniversalFileTransferUtility
 		// cached value and that might be the cause of the problem.
 		properties.setDownloadFileTimeStamp(tempFile.getLocation().toFile().lastModified());
 		
-		boolean isMounted = isRemoteFileMounted(hostname, remotePath);
+		boolean isMounted = isRemoteFileMounted(hostname, remotePath, null); // no subsystem
 		properties.setRemoteFileMounted(isMounted);
 		if (isMounted)
 		{
-			String actualRemoteHost = getActualHostFor(hostname, remotePath);						
+			String actualRemoteHost = getActualHostFor(hostname, remotePath, null);	// no subsystem					
 			String actualRemotePath = getWorkspaceRemotePath(hostname, remotePath, null); // no subsystem
 			properties.setResolvedMountedRemoteFileHost(actualRemoteHost);
 			properties.setResolvedMountedRemoteFilePath(actualRemotePath);
@@ -2271,20 +2282,20 @@ public class UniversalFileTransferUtility
 	}
 
 
-	public static String getActualHostFor(ISubSystem subsystem, String remotePath)
+	public static String getActualHostFor(IRemoteFileSubSystem subsystem, String remotePath)
 	{
 			String hostname = subsystem.getHost().getHostName();
 			if (subsystem.getHost().getSystemType().isLocal())
 			{
-				String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
+				String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath, subsystem);
 				return result;
 			}
 			return hostname;	
 	}
 	
-	public static String getActualHostFor(String hostname, String remotePath)
+	public static String getActualHostFor(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
-		return SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
+		return SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath, subsystem);
 	}
 
 	private static void refreshResourceInWorkspace(IResource parent)
@@ -2310,7 +2321,7 @@ public class UniversalFileTransferUtility
 		String hostname = subsystem.getHost().getHostName();
 		if (subsystem.getHost().getSystemType().isLocal())
 		{
-			String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
+			String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath, (IRemoteFileSubSystem)subsystem);
 			if (!result.equals(hostname))
 			{
 				return true;
@@ -2319,9 +2330,9 @@ public class UniversalFileTransferUtility
 		return false;	
 	}
 	
-	protected static boolean isRemoteFileMounted(String hostname, String remotePath)
+	protected static boolean isRemoteFileMounted(String hostname, String remotePath, IRemoteFileSubSystem subsystem)
 	{
-		String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath);
+		String result = SystemRemoteEditManager.getInstance().getActualHostFor(hostname, remotePath, subsystem);
 		
 		if (!result.equals(hostname)) {
 			return true;

@@ -151,7 +151,7 @@ public class SystemUniversalTempFileListener extends SystemTempFileListener
 					{				
 						String mappedHostPath = properties.getResolvedMountedRemoteFilePath();
 						String mappedHostName = properties.getResolvedMountedRemoteFileHost();
-						String systemRemotePath = SystemRemoteEditManager.getInstance().getMountPathFor(mappedHostName, mappedHostPath);	
+						String systemRemotePath = SystemRemoteEditManager.getInstance().getMountPathFor(mappedHostName, mappedHostPath, (IRemoteFileSubSystem)subsystem);	
 						
 						if (systemRemotePath == null)
 						{

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.db;
 
@@ -91,6 +91,22 @@ final class Chunk {
 		int idx= offset % Database.CHUNK_SIZE;
 		return ((fBuffer[idx] & 0xff) << 24) |
 			((fBuffer[++idx] & 0xff) << 16) |
+			((fBuffer[++idx] & 0xff) <<  8) |
+			((fBuffer[++idx] & 0xff) <<  0);
+	}
+
+	public void put3ByteUnsignedInt(final int offset, final int value) {
+		assert fLocked;
+		fDirty= true;
+		int idx= offset % Database.CHUNK_SIZE;
+		fBuffer[idx]= (byte)(value >> 16);
+		fBuffer[++idx]= (byte)(value >> 8);
+		fBuffer[++idx]= (byte)(value);
+	}
+	
+	public int get3ByteUnsignedInt(final int offset) {
+		int idx= offset % Database.CHUNK_SIZE;
+		return ((fBuffer[idx] & 0xff) << 16) |
 			((fBuffer[++idx] & 0xff) <<  8) |
 			((fBuffer[++idx] & 0xff) <<  0);
 	}

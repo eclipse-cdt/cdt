@@ -30,7 +30,7 @@ public class ShortString implements IString {
 	private static final int LENGTH = 0;
 	private static final int CHARS = 4;
 	
-	public static final int MAX_LENGTH = (Database.MAX_SIZE - CHARS) / 2;
+	public static final int MAX_LENGTH = (Database.MAX_MALLOC_SIZE - CHARS) / 2;
 	
 	public ShortString(Database db, int offset) {
 		this.db = db;

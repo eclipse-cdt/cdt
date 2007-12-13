@@ -41,11 +41,11 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	private static final int BINDING_REC_OFFSET  = 12;
 	private static final int BINDING_PREV_OFFSET = 16;
 	private static final int BINDING_NEXT_OFFSET = 20;
-	private static final int NODE_OFFSET_OFFSET  = 24;
-	private static final int NODE_LENGTH_OFFSET  = 28; 
-	private static final int FLAGS 				 = 32; 
+	private static final int NODE_OFFSET_OFFSET  = 24; // 3-byte unsigned int (sufficient for files <= 16mb)
+	private static final int NODE_LENGTH_OFFSET  = 27; // short (sufficient for names <= 32k)
+	private static final int FLAGS 				 = 29; 
 
-	private static final int RECORD_SIZE = 36;	// actual memory usage is the same from 28 - 44
+	private static final int RECORD_SIZE = 30;	// 30 yields a 32-byte block. (31 would trigger a 40-byte block)
 
 	public static final int IS_DECLARATION = 1;
 	public static final int IS_DEFINITION = 2;
@@ -71,7 +71,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 			flags = IS_REFERENCE;
 		
 		flags |= binding.getAdditionalNameFlags(flags, name);
-		db.putInt(record + FLAGS, flags);
+		db.putByte(record + FLAGS, (byte) flags);
 
 		// Hook us up to the binding
 		if (binding != null) {
@@ -97,8 +97,8 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 		// Record our location in the file
 		IASTFileLocation fileloc = name.getFileLocation();
-		db.putInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
-		db.putInt(record + NODE_LENGTH_OFFSET, fileloc.getNodeLength());
+		db.put3ByteUnsignedInt(record + NODE_OFFSET_OFFSET, fileloc.getNodeOffset());
+		db.putShort(record + NODE_LENGTH_OFFSET, (short) fileloc.getNodeLength());
 	}
 	
 	public PDOMName(PDOM pdom, int nameRecord) {
@@ -201,16 +201,16 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	}
 	
 	private int getFlags(int mask) throws CoreException {
-		return pdom.getDB().getInt(record + FLAGS) & mask;
+		return pdom.getDB().getByte(record + FLAGS) & mask;
 	}
 
 	public void setIsBaseSpecifier(boolean val) throws CoreException {
-		int flags= pdom.getDB().getInt(record + FLAGS);
+		int flags= pdom.getDB().getByte(record + FLAGS) & 0xff;
 		if (val) 
 			flags |= IS_INHERITANCE_SPEC;
 		else
 			flags &= ~IS_INHERITANCE_SPEC;
-		pdom.getDB().putInt(record + FLAGS, flags);
+		pdom.getDB().putByte(record + FLAGS, (byte) flags);
 	}
 
 	public boolean isBaseSpecifier() throws CoreException {
@@ -288,7 +288,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public int getNodeLength() {
 		try {
-			return pdom.getDB().getInt(record + NODE_LENGTH_OFFSET);
+			return (pdom.getDB().getShort(record + NODE_LENGTH_OFFSET)) & 0xffff;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;
@@ -297,7 +297,7 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	public int getNodeOffset() {
 		try {
-			return pdom.getDB().getInt(record + NODE_OFFSET_OFFSET);
+			return pdom.getDB().get3ByteUnsignedInt(record + NODE_OFFSET_OFFSET);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 			return 0;

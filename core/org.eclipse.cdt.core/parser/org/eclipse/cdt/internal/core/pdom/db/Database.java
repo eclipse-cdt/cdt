@@ -42,12 +42,12 @@ import org.eclipse.core.runtime.Status;
  * offset            content
  * 	                 _____________________________
  * 0                | version number
- * INT_SIZE         | pointer to head of linked list of blocks of size MIN_SIZE
+ * INT_SIZE         | pointer to head of linked list of blocks of size MIN_BLOCK_DELTAS*BLOCK_SIZE_DELTA
  * ..               | ...
- * INT_SIZE * m (1) | pointer to head of linked list of blocks of size MIN_SIZE * m
+ * INT_SIZE * m (1) | pointer to head of linked list of blocks of size (m+MIN_BLOCK_DELTAS) * BLOCK_SIZE_DELTA 
  * DATA_AREA        | undefined (PDOM stores its own house-keeping data in this area) 
  * 
- * (1) where m <= (CHUNK_SIZE / MIN_SIZE)
+ * (1) where 2 <= m <= CHUNK_SIZE/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1
  * 
  * ===== block structure
  * 
@@ -59,7 +59,21 @@ import org.eclipse.core.runtime.Status;
  * 
  */
 public class Database {
+	// public for tests only, you shouldn't need these
+	public static final int INT_SIZE = 4;
+	public static final int CHUNK_SIZE = 1024 * 4;
+	public static final int BLOCK_HEADER_SIZE= 2;
+	public static final int BLOCK_SIZE_DELTA= 8;
+	public static final int MIN_BLOCK_DELTAS = 2;	// a block must at least be 2 + 2*4 bytes to link the free blocks.
+	public static final int MAX_BLOCK_DELTAS = CHUNK_SIZE/BLOCK_SIZE_DELTA;	
+	public static final int MAX_MALLOC_SIZE = MAX_BLOCK_DELTAS*BLOCK_SIZE_DELTA - BLOCK_HEADER_SIZE;  
 
+	public static final int VERSION_OFFSET = 0;
+	public static final int DATA_AREA = (CHUNK_SIZE / BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 2) * INT_SIZE;
+	
+	private static final int BLOCK_PREV_OFFSET = BLOCK_HEADER_SIZE;
+	private static final int BLOCK_NEXT_OFFSET = BLOCK_HEADER_SIZE + INT_SIZE;
+	
 	private final File fLocation;
 	private final RandomAccessFile fFile;
 	private boolean fExclusiveLock= false;	// necessary for any write operation
@@ -75,18 +89,6 @@ public class Database {
 	private long freed;
 	private long cacheHits;
 	private long cacheMisses;
-	
-	// public for tests only, you shouldn't need these
-	public static final int VERSION_OFFSET = 0;
-	public static final int CHUNK_SIZE = 1024 * 4;
-	public static final int MIN_SIZE = 16;
-	public static final int INT_SIZE = 4;
-	public static final int CHAR_SIZE = 2;
-	public static final int PREV_OFFSET = INT_SIZE;
-	public static final int NEXT_OFFSET = INT_SIZE * 2;
-	public static final int DATA_AREA = CHUNK_SIZE / MIN_SIZE * INT_SIZE + INT_SIZE;
-	
-	public static final int MAX_SIZE = CHUNK_SIZE - 4; // Room for overhead
 	
 	/**
 	 * Construct a new Database object, creating a backing file if necessary.
@@ -210,25 +212,25 @@ public class Database {
 	 * @param size
 	 * @return
 	 */ 
-	public int malloc(int size) throws CoreException {
+	public int malloc(final int datasize) throws CoreException {
 		assert fExclusiveLock;
-		if (size > MAX_SIZE)
+		if (datasize < 0 || datasize > MAX_MALLOC_SIZE)
 			// Too Big
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0,
 					CCorePlugin.getResourceString("pdom.requestTooLarge"), new IllegalArgumentException())); //$NON-NLS-1$
 		
+		int needDeltas= (datasize + BLOCK_HEADER_SIZE + BLOCK_SIZE_DELTA - 1) / BLOCK_SIZE_DELTA;
+		if (needDeltas < MIN_BLOCK_DELTAS) {
+			needDeltas= MIN_BLOCK_DELTAS;
+		}
+
 		// Which block size
 		int freeblock = 0;
-		int blocksize;
-		int matchsize = 0;
-		for (blocksize = MIN_SIZE; blocksize <= CHUNK_SIZE; blocksize += MIN_SIZE) {
-			if (blocksize - INT_SIZE >= size) {
-				if (matchsize == 0) // our real size
-					matchsize = blocksize;
-				freeblock = getFirstBlock(blocksize);
-				if (freeblock != 0)
-					break;
-			}
+		int useDeltas;
+		for (useDeltas= needDeltas; useDeltas <= MAX_BLOCK_DELTAS; useDeltas++) {
+			freeblock = getFirstBlock(useDeltas*BLOCK_SIZE_DELTA);
+			if (freeblock != 0)
+				break;
 		}
 		
 		// get the block
@@ -236,26 +238,29 @@ public class Database {
 		if (freeblock == 0) {
 			// allocate a new chunk
 			freeblock= createNewChunk();
-			blocksize = CHUNK_SIZE;
+			useDeltas = MAX_BLOCK_DELTAS;
 			chunk = getChunk(freeblock);
 		} else {
 			chunk = getChunk(freeblock);
-			removeBlock(chunk, blocksize, freeblock);
+			removeBlock(chunk, useDeltas*BLOCK_SIZE_DELTA, freeblock);
 		}
  
-		if (blocksize != matchsize) {
+		final int unusedDeltas = useDeltas-needDeltas;
+		if (unusedDeltas >= MIN_BLOCK_DELTAS) {
 			// Add in the unused part of our block
-			addBlock(chunk, blocksize - matchsize, freeblock + matchsize);
+			addBlock(chunk, unusedDeltas*BLOCK_SIZE_DELTA, freeblock + needDeltas*BLOCK_SIZE_DELTA);
+			useDeltas= needDeltas;
 		}
 		
 		// Make our size negative to show in use
-		chunk.putInt(freeblock, - matchsize);
+		final int usedSize= useDeltas*BLOCK_SIZE_DELTA;
+		chunk.putShort(freeblock, (short) -usedSize);
 
 		// Clear out the block, lots of people are expecting this
-		chunk.clear(freeblock + 4, size);
+		chunk.clear(freeblock + BLOCK_HEADER_SIZE, usedSize-BLOCK_HEADER_SIZE);
 
-		malloced += matchsize;
-		return freeblock + 4;
+		malloced+= usedSize;
+		return freeblock + BLOCK_HEADER_SIZE;
 	}
 	
 	private int createNewChunk() throws CoreException {
@@ -276,38 +281,38 @@ public class Database {
 	
 	private int getFirstBlock(int blocksize) throws CoreException {
 		assert fLocked;
-		return fHeaderChunk.getInt((blocksize / MIN_SIZE) * INT_SIZE);
+		return fHeaderChunk.getInt((blocksize/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE);
 	}
 	
 	private void setFirstBlock(int blocksize, int block) throws CoreException {
 		assert fExclusiveLock;
-		fHeaderChunk.putInt((blocksize / MIN_SIZE) * INT_SIZE, block);
+		fHeaderChunk.putInt((blocksize/BLOCK_SIZE_DELTA - MIN_BLOCK_DELTAS + 1) * INT_SIZE, block);
 	}
 	
 	private void removeBlock(Chunk chunk, int blocksize, int block) throws CoreException {
 		assert fExclusiveLock;
-		int prevblock = chunk.getInt(block + PREV_OFFSET);
-		int nextblock = chunk.getInt(block + NEXT_OFFSET);
+		int prevblock = chunk.getInt(block + BLOCK_PREV_OFFSET);
+		int nextblock = chunk.getInt(block + BLOCK_NEXT_OFFSET);
 		if (prevblock != 0)
-			putInt(prevblock + NEXT_OFFSET, nextblock);
+			putInt(prevblock + BLOCK_NEXT_OFFSET, nextblock);
 		else // we were the head
 			setFirstBlock(blocksize, nextblock);
 			
 		if (nextblock != 0)
-			putInt(nextblock + PREV_OFFSET, prevblock);
+			putInt(nextblock + BLOCK_PREV_OFFSET, prevblock);
 	}
 	
 	private void addBlock(Chunk chunk, int blocksize, int block) throws CoreException {
 		assert fExclusiveLock;
 		// Mark our size
-		chunk.putInt(block, blocksize);
+		chunk.putShort(block, (short) blocksize);
 
 		// Add us to the head of the list
 		int prevfirst = getFirstBlock(blocksize);
-		chunk.putInt(block + PREV_OFFSET, 0);
-		chunk.putInt(block + NEXT_OFFSET, prevfirst);
+		chunk.putInt(block + BLOCK_PREV_OFFSET, 0);
+		chunk.putInt(block + BLOCK_NEXT_OFFSET, prevfirst);
 		if (prevfirst != 0)
-			putInt(prevfirst + PREV_OFFSET, block);
+			putInt(prevfirst + BLOCK_PREV_OFFSET, block);
 		setFirstBlock(blocksize, block);
 	}
 	
@@ -319,9 +324,9 @@ public class Database {
 	public void free(int offset) throws CoreException {
 		assert fExclusiveLock;
 		// TODO - look for opportunities to merge blocks
-		int block = offset - 4;
+		int block = offset - BLOCK_HEADER_SIZE;
 		Chunk chunk = getChunk(block);
-		int blocksize = - chunk.getInt(block);
+		int blocksize = - chunk.getShort(block);
 		if (blocksize < 0)
 			// already freed
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "Already Freed", new Exception())); //$NON-NLS-1$
@@ -345,6 +350,14 @@ public class Database {
 		return getChunk(offset).getInt(offset);
 	}
 
+	public void put3ByteUnsignedInt(int offset, int value) throws CoreException {
+		getChunk(offset).put3ByteUnsignedInt(offset, value);
+	}
+	
+	public int get3ByteUnsignedInt(int offset) throws CoreException {
+		return getChunk(offset).get3ByteUnsignedInt(offset);
+	}
+	
 	public void putShort(int offset, short value) throws CoreException {
 		getChunk(offset).putShort(offset, value);
 	}
@@ -400,12 +413,12 @@ public class Database {
 		System.out.println("free'd: " + freed); //$NON-NLS-1$
 		System.out.println("wasted: " + (fChunks.length * CHUNK_SIZE - (malloced - freed))); //$NON-NLS-1$
 		System.out.println("Free blocks"); //$NON-NLS-1$
-		for (int bs = MIN_SIZE; bs <= CHUNK_SIZE; bs += MIN_SIZE) {
+		for (int bs = MIN_BLOCK_DELTAS*BLOCK_SIZE_DELTA; bs <= CHUNK_SIZE; bs += BLOCK_SIZE_DELTA) {
 			int count = 0;
 			int block = getFirstBlock(bs);
 			while (block != 0) {
 				++count;
-				block = getInt(block + NEXT_OFFSET);
+				block = getInt(block + BLOCK_NEXT_OFFSET);
 			}
 			if (count != 0)
 				System.out.println("Block size: " + bs + "=" + count); //$NON-NLS-1$ //$NON-NLS-2$

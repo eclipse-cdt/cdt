@@ -153,6 +153,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  51 - modeling extern "C" (bug 191989)
 	 *  52 - files per linkage (bug 191989)
 	 *  53 - polymorphic method calls (bug 156691)
+	 *  54 - optimization of database size (bug 210392)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;

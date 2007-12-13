@@ -36,13 +36,13 @@ public class LongString implements IString {
 	private static final int NEXT1 = 4;
 	private static final int CHARS1 = 8;
 	
-	private static final int NUM_CHARS1 = (Database.MAX_SIZE - CHARS1) / 2;
+	private static final int NUM_CHARS1 = (Database.MAX_MALLOC_SIZE - CHARS1) / 2;
 	
 	// Additional fields of subsequent records
 	private static final int NEXTN = 0;
 	private static final int CHARSN = 4;
 	
-	private static final int NUM_CHARSN = (Database.MAX_SIZE - CHARSN) / 2;
+	private static final int NUM_CHARSN = (Database.MAX_MALLOC_SIZE - CHARSN) / 2;
 	
 	public LongString(Database db, int record) {
 		this.db = db;
@@ -55,7 +55,7 @@ public class LongString implements IString {
 
 	private int createString(int length, IWriter writer) throws CoreException {
 		// write the first record
-		int firstRecord = db.malloc(Database.MAX_SIZE);
+		int firstRecord = db.malloc(Database.MAX_MALLOC_SIZE);
 		int start = 0;
 		db.putInt(firstRecord, length);
 		writer.writeChars(start, NUM_CHARS1, firstRecord + CHARS1);
@@ -64,7 +64,7 @@ public class LongString implements IString {
 		int lastNext = firstRecord + NEXT1;
 		start += NUM_CHARS1;
 		while (length - start > NUM_CHARSN) {
-			int nextRecord = db.malloc(Database.MAX_SIZE);
+			int nextRecord = db.malloc(Database.MAX_MALLOC_SIZE);
 			db.putInt(lastNext, nextRecord);
 			writer.writeChars(start, NUM_CHARSN, nextRecord + CHARSN);
 			start += NUM_CHARSN;

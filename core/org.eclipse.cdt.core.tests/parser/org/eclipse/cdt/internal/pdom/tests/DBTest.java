@@ -64,14 +64,16 @@ public class DBTest extends BaseTestCase {
 		assertEquals(0, db.getVersion());
 
 		final int realsize = 42;
-		final int blocksize = (realsize / Database.MIN_SIZE + 1) * Database.MIN_SIZE;
+		final int deltas = (realsize+Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
+		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
+		final int freeDeltas= Database.CHUNK_SIZE/Database.BLOCK_SIZE_DELTA-deltas;
 		
 		int mem = db.malloc(realsize);
-		assertEquals(-blocksize, db.getInt(mem - Database.INT_SIZE));
+		assertEquals(-blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
 		db.free(mem);
-		assertEquals(blocksize, db.getInt(mem - Database.INT_SIZE));
-		assertEquals(mem - Database.INT_SIZE, db.getInt((blocksize / Database.MIN_SIZE) * Database.INT_SIZE));
-		assertEquals(mem - Database.INT_SIZE + blocksize, db.getInt(((Database.CHUNK_SIZE - blocksize) / Database.MIN_SIZE) * Database.INT_SIZE));
+		assertEquals(blocksize, db.getShort(mem - Database.BLOCK_HEADER_SIZE));
+		assertEquals(mem - Database.BLOCK_HEADER_SIZE, db.getInt((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
+		assertEquals(mem - Database.BLOCK_HEADER_SIZE + blocksize, db.getInt((freeDeltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
 	}
 
 	public void testBug192437() throws IOException {
@@ -100,16 +102,18 @@ public class DBTest extends BaseTestCase {
 	
 	public void testFreeBlockLinking() throws Exception {
 		final int realsize = 42;
-		final int blocksize = (realsize / Database.MIN_SIZE + 1) * Database.MIN_SIZE;
+		final int deltas = (realsize+Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1) / Database.BLOCK_SIZE_DELTA;
+		final int blocksize = deltas * Database.BLOCK_SIZE_DELTA;
+		final int freeDeltas= Database.MIN_BLOCK_DELTAS-deltas;
 
 		int mem1 = db.malloc(realsize);
 		int mem2 = db.malloc(realsize);
 		db.free(mem1);
 		db.free(mem2);
-		assertEquals(mem2 - Database.INT_SIZE, db.getInt((blocksize / Database.MIN_SIZE) * Database.INT_SIZE));
+		assertEquals(mem2 - Database.BLOCK_HEADER_SIZE, db.getInt((deltas-Database.MIN_BLOCK_DELTAS+1) * Database.INT_SIZE));
 		assertEquals(0, db.getInt(mem2));
-		assertEquals(mem1 - Database.INT_SIZE, db.getInt(mem2 + Database.INT_SIZE));
-		assertEquals(mem2 - Database.INT_SIZE, db.getInt(mem1));
+		assertEquals(mem1 - Database.BLOCK_HEADER_SIZE, db.getInt(mem2 + Database.INT_SIZE));
+		assertEquals(mem2 - Database.BLOCK_HEADER_SIZE, db.getInt(mem1));
 		assertEquals(0, db.getInt(mem1 + Database.INT_SIZE));
 	}
 	

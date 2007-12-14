@@ -4168,4 +4168,31 @@ public class AST2Tests extends AST2BaseTest {
     	StringBuffer buffer = getContents(1)[0];
     	parseAndCheckBindings(buffer.toString(), ParserLanguage.CPP);
     }
+    
+	// int* i= 0;
+	// void f1(const int**);
+	// void f2(int *const*);
+	// void f3(const int *const*);
+	//
+	// void test() {
+	//  f1(&i); // forbidden
+	//  f2(&i); // ok
+	//  f3(&i); // ok
+	// }
+    public void testBug213029_cvConversion() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP, false ); 
+		CNameCollector col = new CNameCollector();
+		tu.accept(col);
+		Iterator i = col.nameList.iterator();
+		while (i.hasNext()) {
+		    IASTName n = (IASTName) i.next();
+		    if (n.isReference() && "f1".equals(n.toString())) {
+			    assertTrue(n.resolveBinding() instanceof IProblemBinding);
+		    }
+		    else {
+		    	assertFalse(n.resolveBinding() instanceof IProblemBinding);
+		    }
+		}
+    }
 }

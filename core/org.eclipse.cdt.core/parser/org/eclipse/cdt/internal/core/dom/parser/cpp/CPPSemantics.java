@@ -3009,6 +3009,7 @@ public class CPPSemantics {
 
 		IType s = cost.source, t = cost.target;
 		boolean constInEveryCV2k = true;
+		boolean firstPointer= true;
 		while( true ){
 			 s= getUltimateTypeViaTypedefs(s);
 			 t= getUltimateTypeViaTypedefs(t);
@@ -3039,15 +3040,22 @@ public class CPPSemantics {
 				requiredConversion = Cost.NO_MATCH_RANK;
 				break; 
 			}
-			constInEveryCV2k &= op2.isConst();
+			constInEveryCV2k &= (firstPointer || op2.isConst());
 			s = op1.getType();
 			t = op2.getType();
+			firstPointer= false;
 		}
 		
 		if( s instanceof IQualifierType ^ t instanceof IQualifierType ){
 		    if( t instanceof IQualifierType ){
-		        canConvert = true;
-		        requiredConversion = Cost.CONVERSION_RANK;
+		    	if (!constInEveryCV2k) {
+		    		canConvert= false;
+		    		requiredConversion= Cost.NO_MATCH_RANK;
+		    	}
+		    	else {
+		    		canConvert = true;
+		    		requiredConversion = Cost.CONVERSION_RANK;
+		    	}
 		    } else {
 		    	//4.2-2 a string literal can be converted to pointer to char
 		    	if( t instanceof IBasicType && ((IBasicType)t).getType() == IBasicType.t_char &&
@@ -3070,10 +3078,13 @@ public class CPPSemantics {
 		    }
 		} else if( s instanceof IQualifierType && t instanceof IQualifierType ){
 			IQualifierType qs = (IQualifierType) s, qt = (IQualifierType) t;
-			if( qs.isConst() && !qt.isConst() || qs.isVolatile() && !qt.isVolatile() )
-				requiredConversion = Cost.NO_MATCH_RANK;
-			else if( qs.isConst() == qt.isConst() && qs.isVolatile() == qt.isVolatile() )
+			if( qs.isConst() == qt.isConst() && qs.isVolatile() == qt.isVolatile() ) {
 				requiredConversion = Cost.IDENTITY_RANK;
+			}
+			else if( (qs.isConst() && !qt.isConst()) || (qs.isVolatile() && !qt.isVolatile()) || !constInEveryCV2k ) {
+				requiredConversion = Cost.NO_MATCH_RANK;
+				canConvert= false;
+			}
 			else
 				requiredConversion = Cost.CONVERSION_RANK;
 		} else if( constInEveryCV2k && !canConvert ){

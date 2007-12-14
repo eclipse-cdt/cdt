@@ -75,4 +75,22 @@ public interface IIndexName extends IName {
 	 * No checks are performed whether the method is actually virtual or not.
 	 */
 	public boolean couldBePolymorphicMethodCall() throws CoreException;
+	
+	/**
+	 * Returns whether this name is a read-reference to a variable or field.
+	 * The notion of a read-reference may not strictly reflect what your compiler generates, 
+	 * heuristics may be used. <p>
+	 * For pointers and arrays the access to the pointer itself is tracked, rather than considering
+	 * the target of the pointer.
+	 */
+	public boolean isReadAccess() throws CoreException;
+
+	/**
+	 * Returns whether this name is a write-reference to a variable or field.
+	 * The notion of a write-reference may not strictly reflect what your compiler generates, 
+	 * heuristics may be used. <p>
+	 * For pointers and arrays the access to the pointer itself is tracked, rather than considering
+	 * the target of the pointer.
+	 */
+	public boolean isWriteAccess() throws CoreException;
 }

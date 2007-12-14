@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCAnnotation;
 import org.eclipse.core.runtime.CoreException;
@@ -144,5 +145,12 @@ class PDOMCPPVariable extends PDOMCPPBinding implements ICPPVariable, ICPPDelega
 	
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPVariable.CPPVariableDelegate(name, this);
+	}
+	
+	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
+		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
+			return CPPVariableReadWriteFlags.getReadWriteFlags(name);
+		}
+		return 0;
 	}
 }	

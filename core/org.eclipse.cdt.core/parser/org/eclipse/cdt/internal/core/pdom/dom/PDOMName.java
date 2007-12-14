@@ -47,12 +47,14 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 
 	private static final int RECORD_SIZE = 30;	// 30 yields a 32-byte block. (31 would trigger a 40-byte block)
 
-	public static final int IS_DECLARATION = 1;
-	public static final int IS_DEFINITION = 2;
-	public static final int IS_REFERENCE = 3;
-	public static final int DECL_DEF_REF_MASK= 3;
-	public static final int IS_INHERITANCE_SPEC = 4;
-	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL= 8;
+	public static final int IS_DECLARATION 						= 0x01;
+	public static final int IS_DEFINITION 						= 0x02;
+	public static final int IS_REFERENCE 						= IS_DECLARATION | IS_DEFINITION;
+	public static final int DECL_DEF_REF_MASK					= IS_DECLARATION | IS_DEFINITION | IS_REFERENCE;
+	public static final int IS_INHERITANCE_SPEC 				= 0x04;
+	public static final int COULD_BE_POLYMORPHIC_METHOD_CALL	= 0x08;
+	public static final int READ_ACCESS 						= 0x10;
+	public static final int WRITE_ACCESS 						= 0x20;
 
 	
 
@@ -219,6 +221,14 @@ public final class PDOMName implements IIndexFragmentName, IASTFileLocation {
 	
 	public boolean couldBePolymorphicMethodCall() throws CoreException {
 		return getFlags(COULD_BE_POLYMORPHIC_METHOD_CALL) == COULD_BE_POLYMORPHIC_METHOD_CALL;
+	}
+
+	public boolean isReadAccess() throws CoreException {
+		return getFlags(READ_ACCESS) == READ_ACCESS;
+	}
+
+	public boolean isWriteAccess() throws CoreException {
+		return getFlags(WRITE_ACCESS) == WRITE_ACCESS;
 	}
 
 	public boolean isDeclaration() {

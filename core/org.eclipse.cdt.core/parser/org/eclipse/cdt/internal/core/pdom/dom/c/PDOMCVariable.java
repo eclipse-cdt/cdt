@@ -15,13 +15,16 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 
@@ -90,7 +93,7 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 	}
 
 	public int getNodeType() {
-		return PDOMCLinkage.CVARIABLE;
+		return IIndexCBindingConstants.CVARIABLE;
 	}
 	
 	public IType getType() {
@@ -117,5 +120,12 @@ class PDOMCVariable extends PDOMBinding implements IVariable {
 
 	public boolean isRegister() throws DOMException {
 		return getBit(getByte(record + ANNOTATIONS), PDOMCAnnotation.REGISTER_OFFSET);
+	}
+
+	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
+		if ((standardFlags & PDOMName.IS_REFERENCE) == PDOMName.IS_REFERENCE) {
+			return CVariableReadWriteFlags.getReadWriteFlags(name);
+		}
+		return 0;
 	}
 }

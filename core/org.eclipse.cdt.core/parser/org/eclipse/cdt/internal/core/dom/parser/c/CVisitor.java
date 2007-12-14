@@ -646,6 +646,9 @@ public class CVisitor {
 				if( binding instanceof IVariable ){
 					return ((IVariable)binding).getType();
 				}
+				else if (binding instanceof IFunction) {
+					return ((IFunction)binding).getType();
+				}
 		    } else if( expression instanceof IASTCastExpression ){
 		        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
 		        return createType( id.getAbstractDeclarator() );

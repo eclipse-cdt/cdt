@@ -279,4 +279,117 @@ public class IndexNamesTests extends BaseTestCase {
 		}
 	}
 
+	
+	//	int _i, ri, wi, rwi;
+	//  int* rp; int* wp; int* rwp;
+	//  const int* cip= &ri;
+	//  int* bla= &rwi;
+	//  void fi(int);
+	//  void fp(int*);
+	//  void fcp(const int*);
+	//  void fpp(int**);
+	//  void fcpp(int const**);
+	//  void fpcp(int *const*);
+	//  void fcpcp(int const *const*);
+	//
+	//	void test() {
+	//      _i; 	
+	//		wi= ri, _i, _i; 
+	//      rwi %= ri;     
+	//      ri ? _i : _i;   
+	//      (ri ? wi : wi)= ri; 
+	//      if (ri) _i;
+	//      for(wi=1; ri>ri; rwi++) _i;
+	//		do {_i;} while (ri);
+	//      while(ri) {_i;};
+	//      switch(ri) {case ri: _i;};
+	//      fi(ri); fp(&rwi); fcp(&ri);
+	//      fi(*rp); fp(rp); fcp(rp); fpp(&rwp); fcpp(&rwp); fpcp(&rp); fcpcp(&rp);
+	//      return ri;
+	//	}
+	public void testReadWriteFlagsC() throws Exception {
+		waitForIndexer();
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject().getProject(), "test.c", content);
+		waitUntilFileIsIndexed(file, 4000);
+
+		checkReadWriteFlags(file, ILinkage.C_LINKAGE_ID, 41);
+	}
+
+	private void checkReadWriteFlags(IFile file, int linkageID, int count) throws InterruptedException,
+			CoreException {
+		fIndex.acquireReadLock();
+		try {
+			IIndexFile ifile= fIndex.getFile(linkageID, IndexLocationFactory.getWorkspaceIFL(file));
+			IIndexName[] names= ifile.findNames(0, Integer.MAX_VALUE);
+			int j= 0;
+			for (int i = 0; i < names.length; i++) {
+				IIndexName indexName = names[i];
+				final String name = indexName.toString();
+				final char c0= name.length() > 0 ? name.charAt(0) : 0;
+				if ((c0 == '_' || c0 == 'r' || c0 == 'w') && indexName.isReference()) {
+					boolean isRead= name.charAt(0) == 'r';
+					boolean isWrite= name.charAt(isRead ? 1 : 0) == 'w';
+					String msg= "i=" + i + ", " + name + ":";
+					assertEquals(msg, isRead, indexName.isReadAccess());
+					assertEquals(msg, isWrite, indexName.isWriteAccess());
+					j++;
+				}
+				else {
+					assertEquals(false, indexName.couldBePolymorphicMethodCall());
+				}
+			}
+			assertEquals(count, j);
+		}
+		finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	//	int _i, ri, wi, rwi, rfind, ridebug;
+	//  int* rp; int* wp; int* rwp; 
+	//  int* const rpc= 0;
+	//  const int * const rcpc= 0;
+	//  const int* cip= &ri;
+	//  int* bla= &rwi;
+	//  void fi(int);
+	//  void fp(int*);
+	//  void fr(int&);
+	//  void fcp(const int*);
+	//  void fcr(const int&);
+	//  void fpp(int**);
+	//  void fpr(int*&);
+	//  void fcpp(int const**);
+	//  void fcpr(int const*&);
+	//  void fpcp(int *const*);
+	//  void fpcr(int *const&);
+	//  void fcpcp(int const *const*);
+	//  void fcpcr(int const *const&);
+	//
+	//	void test() {
+	//      _i; 	
+	//		wi= ri, _i, _i; // expr-list
+	//      rwi %= ri;     // assignment
+	//      ri ? _i : _i;   // conditional
+	//      (ri ? wi : wi)= ri; // conditional
+	//      if (ri) _i;
+	//      for(wi=1; ri>ri; rwi++) _i;
+	//		do {_i;} while (ri);
+	//      while(ri) {_i;};
+	//      switch(ri) {case ri: _i;};
+	//      fi(ri); fp(&rwi); fcp(&ri); 
+	//      fi(*rp); fp(rp); fcp(rp); fpp(&rwp); fcpp(&rwp); fpcp(&rpc); fcpcp(&rcpc); 
+	//      fr(rwi); fcr(ri); fpr(&rwi); 
+	//      fcpr(&ridebug); fpcr(&rwi); fcpcr(&ri);
+	//      fpr(rwp); fcpr(rwp); fpcr(rp); fcpcr(rp);
+	//      return ri;
+	//	}
+	public void testReadWriteFlagsCpp() throws Exception {
+		waitForIndexer();
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject().getProject(), "test.cpp", content);
+		waitUntilFileIsIndexed(file, 4000);
+
+		checkReadWriteFlags(file, ILinkage.CPP_LINKAGE_ID, 51);
+	}
 }

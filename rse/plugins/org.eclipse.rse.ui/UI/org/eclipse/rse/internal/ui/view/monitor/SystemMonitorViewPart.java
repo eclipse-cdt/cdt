@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [177587] Made MonitorViewPart a SelectionProvider
  * Kevin Doyle (IBM) - [160378] Subset action should be disabled when there are no tabs in Monitor
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste
+ * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -673,7 +674,7 @@ class SubSetAction extends BrowseAction
 		selectionService.addSelectionListener(this);
 		
 
-		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
+		SystemWidgetHelpers.setHelp(_folder, RSEUIPlugin.HELPPREFIX + "mntr0000"); //$NON-NLS-1$
 
 		ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 		registry.addSystemResourceChangeListener(this);

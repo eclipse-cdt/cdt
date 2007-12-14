@@ -13,6 +13,7 @@ Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
 
 Contributors:
 Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
+Kevin Doyle		 (IBM)		  - [212940] Added help for Remote Monitor
 -->
 <?NLS TYPE="org.eclipse.help.contexts"?>
 <contexts>
@@ -503,6 +504,11 @@ Martin Oberhuber (Wind River) - [174945] split importexport icons from rse.ui
 <!-- Remote Shell View...   -->
 <context id="cmdv0000">
 <description>This view shows the commands that have been run on remote systems, along with the resulting messages.
+</description>
+</context>
+<!-- Remote Monitor View...   -->
+<context id="mntr0000">
+<description>This view lets you view the contents and properties of remote objects and configure polling options to refresh remote objects every 5 to 200 seconds. 
 </description>
 </context>
 <!-- Connection Properties Page...   -->

@@ -16,6 +16,7 @@
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Kevin Doyle (IBM) - [177587] changed wrapped selection provider in setFocus()
+ * Kevin Doyle		(IBM)		 - [212940] Duplicate Help Context Identifiers
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view.monitor;
@@ -432,9 +433,6 @@ FocusListener
 				handleDoubleClick(event);
 			}
 		});
-
-		
-		SystemWidgetHelpers.setHelp(_viewer.getControl(), RSEUIPlugin.HELPPREFIX + "ucmd0000"); //$NON-NLS-1$
 
 		//TableLayout layout = new TableLayout();
 		//tree.setLayout(layout);

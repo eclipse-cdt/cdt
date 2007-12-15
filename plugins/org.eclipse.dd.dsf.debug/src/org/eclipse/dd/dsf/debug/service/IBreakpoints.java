@@ -13,9 +13,12 @@ package org.eclipse.dd.dsf.debug.service;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
+import org.eclipse.dd.dsf.concurrent.Immutable;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.service.IDsfService;
 
 /**
@@ -24,54 +27,89 @@ import org.eclipse.dd.dsf.service.IDsfService;
 public interface IBreakpoints extends IDsfService {
 
     /**
+     * Breakpoint attributes markers used in the map parameters of insert/updateBreakpoint().
+     * All are optional with the possible exception of TYPE. It is the responsibility of the
+     * service to ensure that the set of attributes provided is sufficient to create/update
+     * a valid breakpoint on the back-end.
+     */
+	// General markers
+	public static final String DSFBREAKPOINT   = "org.eclipse.dd.dsf.debug.breakpoint"; //$NON-NLS-1$
+	public static final String BREAKPOINT_TYPE = DSFBREAKPOINT + ".type";      //$NON-NLS-1$
+	public static final String BREAKPOINT      = "breakpoint";                 //$NON-NLS-1$
+	public static final String WATCHPOINT      = "watchpoint";                 //$NON-NLS-1$
+	public static final String CATCHPOINT      = "catchpoint";                 //$NON-NLS-1$
+
+	// Basic set of breakpoint attribute markers
+	public static final String FILE_NAME     = DSFBREAKPOINT + ".fileName";    //$NON-NLS-1$
+	public static final String LINE_NUMBER   = DSFBREAKPOINT + ".lineNumber";  //$NON-NLS-1$
+	public static final String FUNCTION      = DSFBREAKPOINT + ".function";    //$NON-NLS-1$
+	public static final String ADDRESS       = DSFBREAKPOINT + ".address";     //$NON-NLS-1$
+	public static final String CONDITION     = DSFBREAKPOINT + ".condition";   //$NON-NLS-1$
+	public static final String IGNORE_COUNT  = DSFBREAKPOINT + ".ignoreCount"; //$NON-NLS-1$
+	public static final String IS_ENABLED    = DSFBREAKPOINT + ".isEnabled";   //$NON-NLS-1$
+
+	// Basic set of watchpoint attribute markers
+	public static final String EXPRESSION    = DSFBREAKPOINT + ".expression";  //$NON-NLS-1$
+	public static final String READ          = DSFBREAKPOINT + ".read";        //$NON-NLS-1$
+	public static final String WRITE         = DSFBREAKPOINT + ".write";       //$NON-NLS-1$
+
+    /**
      * Marker interface for a context for which breakpoints can be installed
      */
-    public interface IBreakpointsTargetDMContext extends IDMContext {};
+    public interface IBreakpointsTargetDMContext extends IDMContext {}
     
     /**
      * Specific breakpoint context
      */
-    public interface IDsfBreakpointDMContext extends IDMContext {
+    @Immutable
+    public interface IBreakpointDMContext extends IDMContext {
 
-    	// Get the execution context
-    	IBreakpointsTargetDMContext getTargetContext();
-
-    	// Get the breakpoint reference
-    	Object getReference();
-    };
+    	public IBreakpointsTargetDMContext getTargetContext();
+    }
     
     /**
-     * Breakpoint structure
+	 * Breakpoint events
+	 */
+    public interface IBreakpointsChangedEvent extends IDMEvent<IBreakpointDMContext> {}
+    
+    public interface IBreakpointAddedEvent extends IBreakpointsChangedEvent {
+    	public IBreakpointDMContext getAddedBreakpoint();
+    }
+
+    public interface IBreakpointUpdatedEvent extends IBreakpointsChangedEvent {
+    	public IBreakpointDMContext getUpdatedBreakpoint();
+    }
+
+    public interface IBreakpointRemovedEvent extends IBreakpointsChangedEvent {
+    	public IBreakpointDMContext getRemovedBreakpoint();
+    }
+    
+    /**
+     * Effective breakpoint data as held by the back-end.
      */
-    public interface IDsfBreakpoint {
+    public interface IBreakpointDMData {
 
-    	// Breakpoint types
-    	public static enum IDsfBreakpointNature { BREAKPOINT, WATCHPOINT, CATCHPOINT, TRACEPOINT };
-
-    	// Retrieve the breakpoint nature
-    	public IDsfBreakpointNature getNature();
-
-    	// Retrieve the breakpoint set of properties
-    	public Map<String,Object> getProperties();
-
-    	// Retrieve a single breakpoint property
-    	public Object getProperty(String key, Object defaultValue);
-
-    	// Update a single breakpoint property
-    	public void setProperty(String key, Object value);
-    };
+    	public String     getBreakpointType();
+    	public String     getFileName();
+    	public int        getLineNumber();
+    	public String     getFunctionName();
+    	public IAddress[] getAddresses();
+    	public String     getCondition();
+    	public int        getIgnoreCount();
+    	public boolean    isEnabled();
+    	public String     getExpression();
+    }
 
     /**
-     * Refreshes the list of breakpoints from the [context] and returns the list 
-     * of references.
+     * Retrieves the list of breakpoints installed in the context.
      * 
-     * Use getBreakpoint() to retrieve individual breakpoints.
+     * Use getBreakpointDMData() to retrieve individual breakpoints.
      * 
      * @param context	the execution context of the breakpoint
      * @param drm		the list of breakpoints in the execution context
      */
 	public void getBreakpoints(IBreakpointsTargetDMContext context,
-			DataRequestMonitor<IDsfBreakpointDMContext[]> drm);
+			DataRequestMonitor<IBreakpointDMContext[]> drm);
 
 	/**
      * Retrieves a specific breakpoint from the service.
@@ -79,29 +117,29 @@ public interface IBreakpoints extends IDsfService {
      * @param dmc		the breakpoint reference
      * @param drm		the DRM returning the breakpoint data
      */
-	public void getBreakpointDMData(IDsfBreakpointDMContext dmc,
-			DataRequestMonitor<IDsfBreakpoint> drm);
+	public void getBreakpointDMData(IBreakpointDMContext dmc,
+			DataRequestMonitor<IBreakpointDMData> drm);
 
 	/**
      * Adds a breakpoint on the target.
      * 
-     * The breakpoint reference is returned in the DRM. The actual breakpoint
-     * object can be later be retrieved using getBreakpoint(reference).
+     * The breakpoint context is returned in the DRM. The actual breakpoint
+     * object can be later be retrieved using getBreakpoint(bp_context).
      * 
      * E.g.:
-     *    IDsfBreakpointDMContext ref = addBreakpoint(...);
-     *    IDsfBreakpoint bp = getBreakpoint(ref);
+     *    IBreakpointDMContext ref = insertBreakpoint(...);
+     *    IBreakpointDMData bp = getBreakpointDMData(ref);
      * 
      * If the breakpoint is a duplicate (already set previously), then it is up to
      * the back-end to decide if it is an error or not.
      * 
      * @param context		the execution context of the breakpoint
-     * @param breakpoint	the breakpoint
+     * @param attributes	the breakpoint attributes
      * @param drm			the DRM returning the breakpoint reference
      */
 	public void insertBreakpoint(IBreakpointsTargetDMContext context,
-			IDsfBreakpoint breakpoint,
-			DataRequestMonitor<IDsfBreakpointDMContext> drm);
+			Map<String,Object> attributes,
+			DataRequestMonitor<IBreakpointDMContext> drm);
 
 	/**
      * Removes the breakpoint on the target.
@@ -111,7 +149,7 @@ public interface IBreakpoints extends IDsfService {
      * @param dmc		the context of the breakpoints to remove
      * @param rm		the asynchronous request monitor
      */
-	public void removeBreakpoint(IDsfBreakpointDMContext dmc,
+	public void removeBreakpoint(IBreakpointDMContext dmc,
 			RequestMonitor rm);
 
 	/**
@@ -125,13 +163,13 @@ public interface IBreakpoints extends IDsfService {
      * removed then re-inserted.
      * 
      * A null value is used for removal of a property e.g.:
-     *    properties.set(some_key, null);
+     *    delta.set(some_key, null);
      * 
      * @param delta     the delta properties
      * @param dmc		the context of the breakpoints to modify
      * @param rm		the asynchronous request monitor
      */
-	public void updateBreakpoint(IDsfBreakpointDMContext dmc,
+	public void updateBreakpoint(IBreakpointDMContext dmc,
 			Map<String,Object> delta, RequestMonitor drm);
 
 }

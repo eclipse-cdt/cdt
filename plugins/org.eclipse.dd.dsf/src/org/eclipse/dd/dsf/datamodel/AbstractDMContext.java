@@ -43,6 +43,9 @@ abstract public class AbstractDMContext extends PlatformObject
     public AbstractDMContext(String sessionId, IDMContext[] parents) {
         fSessionId = sessionId;
         fParents = parents;
+        for (IDMContext parent : parents) {
+        	assert(parent != null);
+        }
     }
 
     /** Convenience constructor */

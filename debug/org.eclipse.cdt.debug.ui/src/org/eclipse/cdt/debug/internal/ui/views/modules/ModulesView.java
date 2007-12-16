@@ -233,7 +233,7 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
 		JFaceResources.getFontRegistry().addListener( this );
 
 		TreeModelViewer viewer = createTreeViewer( getSashForm() );
-		fInputService = new ViewerInputService(fInputRequestor, viewer.getPresentationContext());
+		fInputService = new ViewerInputService( viewer, fInputRequestor );
 
 		createDetailsViewer();
 		getSashForm().setMaximizedControl( viewer.getControl() );

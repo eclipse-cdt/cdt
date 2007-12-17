@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.index.composite;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -26,4 +27,11 @@ public class CompositeTypeContainer extends CompositeType implements ITypeContai
 		return cf.getCompositeType((IIndexType)((ITypeContainer)type).getType());
 	}
 
+	public String toString() {
+		try {
+			return ASTTypeUtil.getType(getType());
+		} catch (DOMException e) {
+			return "";
+		}
+	}
 }

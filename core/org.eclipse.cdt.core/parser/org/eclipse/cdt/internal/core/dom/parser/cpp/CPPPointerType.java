@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -113,4 +114,8 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
         }
         return t;
     }
+
+	public String toString() {
+		return ASTTypeUtil.getType(this);
+	}
 }

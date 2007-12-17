@@ -24,6 +24,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.dom.IPDOMVisitor;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -430,5 +431,8 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public ICPPDelegate createDelegate(IASTName name) {
 		return new CPPClassTypeDelegate(name, this);
 	}
-	
+
+	public String toString() {
+		return ASTTypeUtil.getType(this);
+	}
 }

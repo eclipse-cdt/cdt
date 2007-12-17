@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -25,15 +26,15 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
  * @author aniefer
  */
 public class CPPBasicType implements ICPPBasicType {
-	
+
 	protected int qualifierBits = 0;
 	protected int type;
 	protected IASTExpression value = null;
-	
+
 	public CPPBasicType( int t, int bits ){
 		type = t;
 		qualifierBits = bits;
-		
+
 		if( type == IBasicType.t_unspecified ){
 			if( (qualifierBits & ( IS_LONG | IS_SHORT | IS_SIGNED | IS_UNSIGNED )) != 0 )
 				type = IBasicType.t_int;
@@ -45,24 +46,24 @@ public class CPPBasicType implements ICPPBasicType {
 		qualifierBits = bits;
 		value = val;
 	}
-	
+
 	public boolean isSameType( IType object ) {
 		if( object == this )
 			return true;
-		
+
 	    if( object instanceof ITypedef || object instanceof IIndexType)
 	        return object.isSameType( this );
-	    
+
 		if( !(object instanceof CPPBasicType) )
 			return false;
-		
-		if( type == -1 ) 
+
+		if( type == -1 )
 			return false;
-		
+
 		CPPBasicType t = (CPPBasicType) object;
 		if( type != t.type )
 			return false;
-		
+
 		if( type == IBasicType.t_int ){
 			//signed int and int are equivalent
 			return (qualifierBits & ~IS_SIGNED ) == (t.qualifierBits & ~IS_SIGNED );
@@ -103,7 +104,7 @@ public class CPPBasicType implements ICPPBasicType {
 	public boolean isLong() {
 		return ( qualifierBits & IS_LONG ) != 0;
 	}
-	
+
     public Object clone(){
         IType t = null;
    		try {
@@ -120,12 +121,16 @@ public class CPPBasicType implements ICPPBasicType {
 	public IASTExpression getValue() {
 		return value;
 	}
-	
+
 	public void setValue( IASTExpression val ){
 		value = val;
 	}
 
 	public int getQualifierBits() {
 		return qualifierBits;
+	}
+
+	public String toString() {
+		return ASTTypeUtil.getType(this);
 	}
 }

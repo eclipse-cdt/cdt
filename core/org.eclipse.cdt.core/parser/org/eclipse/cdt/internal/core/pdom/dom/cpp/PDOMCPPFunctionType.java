@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -67,5 +68,9 @@ public class PDOMCPPFunctionType extends PDOMCFunctionType implements ICPPFuncti
 	
 	public int getNodeType() {
 		return PDOMCPPLinkage.CPP_FUNCTION_TYPE;
+	}
+
+	public String toString() {
+		return ASTTypeUtil.getType(this);
 	}
 }

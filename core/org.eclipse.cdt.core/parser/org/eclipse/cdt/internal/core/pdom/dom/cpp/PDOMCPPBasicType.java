@@ -13,6 +13,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -34,11 +35,11 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 
 	public static final int TYPE_ID = PDOMNode.RECORD_SIZE + 0; // short
 	public static final int FLAGS = PDOMNode.RECORD_SIZE + 2;   // short
-	
+
 	public static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 4;
-	
+
 	protected short fFlags= -1;
-		
+
 	public PDOMCPPBasicType(PDOM pdom, int record) {
 		super(pdom, record);
 	}
@@ -46,10 +47,10 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	public PDOMCPPBasicType(PDOM pdom, PDOMNode parent, ICPPBasicType type) throws CoreException {
 		this(pdom, parent, type, encodeFlags(type));
 	}
-	
+
 	protected PDOMCPPBasicType(PDOM pdom, PDOMNode parent, ICPPBasicType type, final short flags) throws CoreException {
 		super(pdom, parent);
-		
+
 		fFlags= flags;
 		Database db = pdom.getDB();
 		db.putShort(record + TYPE_ID, getTypeCode(type));
@@ -64,7 +65,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		}
 		return tc;
 	}
-	
+
 	protected static short encodeFlags(ICPPBasicType type) {
 		short flags = 0;
 		try {
@@ -84,7 +85,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
-	
+
 	public int getNodeType() {
 		return IIndexCPPBindingConstants.CPPBASICTYPE;
 	}
@@ -116,7 +117,7 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		}
 		return fFlags;
 	}
-	
+
 	public boolean isLong() throws DOMException {
 		return (getQualifierBits() & IS_LONG) != 0;
 	}
@@ -136,17 +137,17 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 	public boolean isSameType(IType rhs) {
 		if( rhs instanceof ITypedef )
 		    return rhs.isSameType( this );
-		
+
 		if( !(rhs instanceof ICPPBasicType))
 			return false;
-		
+
 		ICPPBasicType rhs1= (ICPPBasicType) rhs;
 		int type;
 		try {
 			type = this.getType();
-			if (type == -1 || type != rhs1.getType()) 
+			if (type == -1 || type != rhs1.getType())
 				return false;
-		
+
 			if( type == IBasicType.t_int ){
 				//signed int and int are equivalent
 				return (this.getQualifierBits() & ~ICPPBasicType.IS_SIGNED ) == (rhs1.getQualifierBits() & ~ICPPBasicType.IS_SIGNED );
@@ -163,5 +164,9 @@ class PDOMCPPBasicType extends PDOMNode implements ICPPBasicType, IIndexType {
 		} catch (CloneNotSupportedException e) {
 			return null;
 		}
+	}
+
+	public String toString() {
+		return ASTTypeUtil.getType(this);
 	}
 }

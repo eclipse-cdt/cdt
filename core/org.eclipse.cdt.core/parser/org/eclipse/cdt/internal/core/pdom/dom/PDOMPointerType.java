@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.pdom.dom;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -143,5 +144,9 @@ public class PDOMPointerType extends PDOMNode implements IPointerType,
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		linkage.deleteType(getType(), record);
 		super.delete(linkage);
+	}
+
+	public String toString() {
+		return ASTTypeUtil.getType(this);
 	}
 }

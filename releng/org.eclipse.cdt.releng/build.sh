@@ -16,7 +16,8 @@ mkdir -p tools
 cd tools
 cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 	checkout org.eclipse.releng.basebuilder
+echo finish checkout
 cd ..
-
+echo move up
 java -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*

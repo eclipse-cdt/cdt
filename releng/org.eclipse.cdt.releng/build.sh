@@ -19,5 +19,6 @@ cvs -d:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse \
 echo finish checkout
 cd ..
 echo move up
+java -version
 java -jar tools/org.eclipse.releng.basebuilder/plugins/org.eclipse.equinox.launcher.jar \
 	-ws gtk -arch ppc -os linux -application org.eclipse.ant.core.antRunner $*

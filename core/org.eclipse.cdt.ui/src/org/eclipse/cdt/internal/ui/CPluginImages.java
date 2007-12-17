@@ -16,11 +16,12 @@ package org.eclipse.cdt.internal.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Bundle of all images used by the C plugin.
@@ -264,6 +265,9 @@ public class CPluginImages {
     public static final ImageDescriptor DESC_OVR_SYSTEM_INCLUDE= create(T_OVR, "systeminclude_co.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_DEFINES= create(T_OVR, "defines_co.gif"); //$NON-NLS-1$
     public static final ImageDescriptor DESC_OVR_INACTIVE= create(T_OVR, "inactive_co.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_READ_ACCESS= create(T_OVR, "read.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_READ_WRITE_ACCESS= create(T_OVR, "readwrite.gif"); //$NON-NLS-1$
+    public static final ImageDescriptor DESC_OVR_WRITE_ACCESS= create(T_OVR, "write.gif"); //$NON-NLS-1$
     
 	public static final ImageDescriptor DESC_OVR_WARNING= create(T_OVR, "warning_co.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_ERROR= create(T_OVR, "error_co.gif"); //$NON-NLS-1$

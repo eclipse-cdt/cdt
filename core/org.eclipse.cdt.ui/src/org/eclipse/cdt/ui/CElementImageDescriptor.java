@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.core.runtime.Assert;
 
 
 /**
@@ -90,6 +90,12 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 
     /** Flag to render the 'inactive' adornment for include directives */
     public final static int INACTIVE= 0x8000;      
+
+    /** Flag to render the 'read access' adornment for references to variables or fields */
+	public static final int READ_ACCESS = 0x10000;      
+
+    /** Flag to render the 'read access' adornment for references to variables or fields */
+	public static final int WRITE_ACCESS = 0x20000;      
 
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
@@ -270,6 +276,22 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 			data= CPluginImages.DESC_OVR_INACTIVE.getImageData();
 			drawImage(data, 0, 0);
 		} 
+		
+		final boolean isReadAccess= (fFlags & READ_ACCESS) != 0;
+		final boolean isWriteAccess= (fFlags & WRITE_ACCESS) != 0;
+		if (isReadAccess) {
+			if (isWriteAccess) {
+				data= CPluginImages.DESC_OVR_READ_WRITE_ACCESS.getImageData();
+			}
+			else {
+				data= CPluginImages.DESC_OVR_READ_ACCESS.getImageData();
+			}
+			drawImage(data, 0, 0);
+		}
+		else if (isWriteAccess) {
+			data= CPluginImages.DESC_OVR_WRITE_ACCESS.getImageData();
+			drawImage(data, 0, 0);
+		}
 	}		
 
 	private void drawBottomLeft() {

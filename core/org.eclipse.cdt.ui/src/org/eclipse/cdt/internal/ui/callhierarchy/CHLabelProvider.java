@@ -142,6 +142,12 @@ public class CHLabelProvider extends LabelProvider implements IColorProvider {
             	}
             }
         }
+        if (node.isReadAccess()) {
+        	flags |= CElementImageDescriptor.READ_ACCESS;
+        }
+        if (node.isWriteAccess()) {
+        	flags |= CElementImageDescriptor.WRITE_ACCESS;
+        }
 
         String key= image.toString()+String.valueOf(flags);
         Image result= (Image) fCachedImages.get(key);

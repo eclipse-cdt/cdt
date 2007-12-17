@@ -28,16 +28,18 @@ import org.eclipse.cdt.internal.ui.util.CoreUtility;
 /**
  * Represents a node in the include browser
  */
-public class CHNode implements IAdaptable {
+public class CHNode implements IAdaptable {	
 	private CHNode fParent;
 	private ICElement fRepresentedDecl;
 	private ITranslationUnit fFileOfReferences;
     private List fReferences;
     
     private int fHashCode;
-    private boolean fIsRecursive;
     private long fTimestamp;
+    private boolean fIsRecursive;
 	private boolean fIsInitializer;
+	private boolean fIsReadAccess;
+	private boolean fIsWriteAccess;
 
     /**
      * Creates a new node for the include browser
@@ -174,5 +176,18 @@ public class CHNode implements IAdaptable {
 		if (fReferences.size() > 1) {
 			Collections.sort(fReferences, CHReferenceInfo.COMPARE_OFFSET);
 		}
+	}
+
+	public void setRWAccess(boolean readAccess, boolean writeAccess) {
+		fIsReadAccess= readAccess;
+		fIsWriteAccess= writeAccess;
+	}
+
+	public boolean isReadAccess() {
+		return fIsReadAccess;
+	}
+
+	public boolean isWriteAccess() {
+		return fIsWriteAccess;
 	}
 }

@@ -197,10 +197,15 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 		if (element instanceof IVariable || element instanceof IEnumerator) {
 			node.setInitializer(true);
 		}
+		boolean readAccess= false;
+		boolean writeAccess= false;
 		for (int i = 0; i < refs.length; i++) {
 			IIndexName reference = refs[i];
 			node.addReference(new CHReferenceInfo(reference.getNodeOffset(), reference.getNodeLength()));
+			readAccess= (readAccess || reference.isReadAccess());
+			writeAccess= (writeAccess || reference.isWriteAccess());
 		}
+		node.setRWAccess(readAccess, writeAccess);
 		node.sortReferencesByOffset();
 		return node;
 	}
@@ -236,11 +241,16 @@ public class CHContentProvider extends AsyncTreeContentProvider {
 			node= new CHMultiDefNode(parent, tu, timestamp, elements);
 		}
 		
+		boolean readAccess= false;
+		boolean writeAccess= false;
 		for (int i = 0; i < references.length; i++) {
 			IIndexName reference = references[i];
 			node.addReference(new CHReferenceInfo(reference.getNodeOffset(), reference.getNodeLength()));
+			readAccess= (readAccess || reference.isReadAccess());
+			writeAccess= (writeAccess || reference.isWriteAccess());
 		}
 		node.sortReferencesByOffset();
+		node.setRWAccess(readAccess, writeAccess);
 		return node;
 	}
 }

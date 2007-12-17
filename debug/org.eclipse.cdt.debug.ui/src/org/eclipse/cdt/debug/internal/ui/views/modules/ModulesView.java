@@ -213,9 +213,9 @@ public class ModulesView extends AbstractDebugView implements IDebugContextListe
      * resolved.
      */
     private IViewerInputRequestor fInputRequestor = new IViewerInputRequestor() {
-        public void viewerInputComplete(IViewerInputUpdate update) {
-            if (!update.isCanceled()) {
-                setViewerInput(update.getViewerInput());
+        public void viewerInputComplete( IViewerInputUpdate update ) {
+            if ( !update.isCanceled() ) {
+                setViewerInput( update.getInputElement() );
             }
         }
     };

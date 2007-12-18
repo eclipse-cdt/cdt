@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,9 @@
  * Contributors:
  * David Dykstal (IBM) - 142806: refactoring persistence framework
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
+ * David Dykstal (IBM) - [206901] fixing ArrayStoreException in getPersistableChildren
+ *   Removed caching that was here because of previous EMF/MOF implementation. This makes
+ *   the class simpler.
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.filters;
@@ -36,251 +39,43 @@ import org.eclipse.rse.core.filters.ISystemFilterString;
 import org.eclipse.rse.core.filters.SystemFilterSimple;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.core.references.IRSEReferencedObject;
 import org.eclipse.rse.internal.core.RSECoreMessages;
 import org.eclipse.rse.internal.references.SystemReferencedObject;
 
 
 /**
- * A filter is an encapsulation of a unique name, and a list
- *  of filter strings.
+ * A filter is an encapsulation of a unique name, and a list of filter strings.
  * Filters can be referenced.
  */
 /** 
  * @lastgen class SystemFilterImpl extends SystemReferencedObjectImpl implements SystemFilter, SystemReferencedObject, SystemFilterContainer, IAdaptable {}
  */
-public class SystemFilter extends SystemReferencedObject implements ISystemFilter, IRSEReferencedObject, IAdaptable
+public class SystemFilter extends SystemReferencedObject implements ISystemFilter, IAdaptable
 {
 	
-	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String NAME_EDEFAULT = null;
-
     private SystemFilterContainerCommonMethods helpers = null;
-    private ISystemFilterPool                   parentPool = null;
-    protected String[]                           filterStringArray = null;
-    protected ISystemFilterString[]               filterStringObjectArray = null;    
-    protected Vector                             filterStringVector = null;
-    
-    //protected static String SAVEFILE_PREFIX = DEFAULT_FILENAME_PREFIX_FILTER;
-    //protected static String SAVEFILE_SUFFIX = ".xmi";    
-    protected static boolean debug = true;    
-    /**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected String name = NAME_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getType()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String TYPE_EDEFAULT = null;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected String type = TYPE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isSupportsNestedFilters() <em>Supports Nested Filters</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSupportsNestedFilters()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean SUPPORTS_NESTED_FILTERS_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean supportsNestedFilters = SUPPORTS_NESTED_FILTERS_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getRelativeOrder() <em>Relative Order</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRelativeOrder()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final int RELATIVE_ORDER_EDEFAULT = 0;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected int relativeOrder = RELATIVE_ORDER_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isDefault() <em>Default</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDefault()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean DEFAULT_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean default_ = DEFAULT_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isStringsCaseSensitive() <em>Strings Case Sensitive</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isStringsCaseSensitive()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean STRINGS_CASE_SENSITIVE_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean stringsCaseSensitive = STRINGS_CASE_SENSITIVE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isPromptable() <em>Promptable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isPromptable()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean PROMPTABLE_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean promptable = PROMPTABLE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isSupportsDuplicateFilterStrings() <em>Supports Duplicate Filter Strings</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSupportsDuplicateFilterStrings()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean SUPPORTS_DUPLICATE_FILTER_STRINGS_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean supportsDuplicateFilterStrings = SUPPORTS_DUPLICATE_FILTER_STRINGS_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isNonDeletable() <em>Non Deletable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isNonDeletable()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean NON_DELETABLE_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean nonDeletable = NON_DELETABLE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isNonRenamable() <em>Non Renamable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isNonRenamable()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean NON_RENAMABLE_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean nonRenamable = NON_RENAMABLE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isNonChangable() <em>Non Changable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isNonChangable()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean NON_CHANGABLE_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean nonChangable = NON_CHANGABLE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isStringsNonChangable() <em>Strings Non Changable</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isStringsNonChangable()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean STRINGS_NON_CHANGABLE_EDEFAULT = false;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected boolean stringsNonChangable = STRINGS_NON_CHANGABLE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getRelease() <em>Release</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRelease()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final int RELEASE_EDEFAULT = 0;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected int release = RELEASE_EDEFAULT;
-	/**
-	 * The default value of the '{@link #isSingleFilterStringOnly() <em>Single Filter String Only</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSingleFilterStringOnly()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean SINGLE_FILTER_STRING_ONLY_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isSingleFilterStringOnly() <em>Single Filter String Only</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSingleFilterStringOnly()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
-
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected java.util.List nestedFilters = null;
-	/**
-	 * @generated This field/method will be replaced during code generation.
-	 */
-	protected java.util.List strings = null;
+    private ISystemFilterPool parentPool = null;
+    private List filterStrings = new ArrayList(3);    
+	private String name = null;
+	private String type = null;
+	private boolean supportsNestedFilters = false;
+	private int relativeOrder = 0;
+	private boolean default_ = false;
+	private boolean stringsCaseSensitive = false;
+	private boolean promptable = false;
+	private boolean supportsDuplicateFilterStrings = false;
+	private boolean nonDeletable = false;
+	private boolean nonRenamable = false;
+	private boolean nonChangable = false;
+	private boolean stringsNonChangable = false;
+	private int release = 0;
+	private boolean singleFilterStringOnly = false;
+	private List nestedFilters = new ArrayList(3);
+//	private List strings = null;
+	private ISystemFilter _parentFilter;
 	
-	
-	// FIXME
-	protected ISystemFilter _parentFilter;
-	
-/**
-	 * Constructor. Do not instantiate directly, let MOF do it!
+	/**
+	 * Constructor.
 	 */
 	protected SystemFilter() 
 	{
@@ -290,7 +85,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	/*
      * Private internal way to get filters. Makes it easy to change in future, if we don't use MOF.
      */
-	protected java.util.List internalGetFilters()
+	private List internalGetFilters()
 	{
 		return getNestedFilters();
 	}
@@ -353,7 +148,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
      */
     public void initializeFilterStrings()
     {
-    	java.util.List filterStrings = getStrings();
+    	List filterStrings = getStrings();
     	Iterator i = filterStrings.iterator();
     	while (i.hasNext())
     	  ((ISystemFilterString)i.next()).setParentSystemFilter(this);
@@ -613,64 +408,87 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
      * Internal way to return emf-modelled list of filter strings.
      * We use this so we can easily change to non-mof if we decide to.
      */
-    private java.util.List internalGetFilterStrings()
-    {
-    	return getStrings();
-    }
+//    private List internalGetFilterStrings()
+//    {
+//    	return getStrings();
+//    }
     
     /**
      * Clear internal cache so it will be rebuilt on next request.
      */
-    protected void invalidateCache()
-    {
-    	filterStringArray = null;
-    	filterStringObjectArray = null;
-    	filterStringVector = null;
-    	setDirty(true);
-    }
+//    protected void invalidateCache()
+//    {
+//    	filterStringArray = null;
+//    	filterStringObjectArray = null;
+//    	filterStringVector = null;
+//    	setDirty(true);
+//    }
     
     /**
-     * Return filter strings as an array of String objects.
+     * Returns the filter strings of this filter as an array of String objects.
+     * The array may be empty but will not be null.
      */
-    public String[] getFilterStrings()
-    {
-    	if (filterStringArray == null)
-    	{
-    	  java.util.List el = internalGetFilterStrings();
-    	  filterStringArray = new String[el.size()];
-    	  Iterator i = el.iterator();
-    	  int idx = 0;
-    	  while (i.hasNext())
-    	    filterStringArray[idx++] = ((ISystemFilterString)(i.next())).getString();
-    	}
-    	return filterStringArray;
+    public String[] getFilterStrings() {
+    	ISystemFilterString[] filterStrings = getSystemFilterStrings();
+    	String[] result = new String[filterStrings.length];
+    	for (int i = 0; i < filterStrings.length; i++) {
+			ISystemFilterString filterString = filterStrings[i];
+			result[i] = filterString.getString();
+		}
+    	return result;
     }
+//    public String[] getFilterStrings()
+//    {
+//    	if (filterStringArray == null)
+//    	{
+//    	  List el = internalGetFilterStrings();
+//    	  filterStringArray = new String[el.size()];
+//    	  Iterator i = el.iterator();
+//    	  int idx = 0;
+//    	  while (i.hasNext())
+//    	    filterStringArray[idx++] = ((ISystemFilterString)(i.next())).getString();
+//    	}
+//    	return filterStringArray;
+//    }
+    
     /**
-     * Return filter strings as a Vector of String objects
+     * Return filter strings as a Vector of String objects.
+     * This vector may be empty but will never be null.
      */
-    public Vector getFilterStringsVector()
-    {
-    	if (filterStringVector == null)
-    	{
-    	  java.util.List el = internalGetFilterStrings();
-    	  Iterator i = el.iterator();
-    	  filterStringVector = new Vector();
-    	  while (i.hasNext())
-    	    filterStringVector.addElement(((ISystemFilterString)(i.next())).getString());
-    	}
-    	return filterStringVector;
+    public Vector getFilterStringsVector() {
+    	String[] strings = getFilterStrings();
+    	List stringList = Arrays.asList(strings);
+    	Vector result = new Vector(stringList);
+    	return result;
     }
+//    public Vector getFilterStringsVector()
+//    {
+//    	if (filterStringVector == null)
+//    	{
+//    	  List el = internalGetFilterStrings();
+//    	  Iterator i = el.iterator();
+//    	  filterStringVector = new Vector();
+//    	  while (i.hasNext())
+//    	    filterStringVector.addElement(((ISystemFilterString)(i.next())).getString());
+//    	}
+//    	return filterStringVector;
+//    }
+    
 	/**
 	 * Get this filter's filter strings as a Vector of FilterString objects
 	 */	
 	public Vector getFilterStringObjectsVector()
 	{
-		java.util.List el = internalGetFilterStrings();
-		Iterator i = el.iterator();
-		Vector filterStringVector = new Vector();
-		while (i.hasNext())
-		  filterStringVector.addElement(i.next());		
-		return filterStringVector;
+		Vector result = new Vector(filterStrings.size());
+		result.addAll(filterStrings);
+		return result;
+//		
+//		List el = internalGetFilterStrings();
+//		Iterator i = el.iterator();
+//		Vector filterStringVector = new Vector();
+//		while (i.hasNext())
+//		  filterStringVector.addElement(i.next());		
+//		return filterStringVector;
 	}
 	    
     /**
@@ -678,8 +496,10 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
      */
     public int getFilterStringCount()
     {
-    	return internalGetFilterStrings().size();
+    	return filterStrings.size();
+//    	return internalGetFilterStrings().size();
     }        
+    
     /**
      * Get a filter string given its string value
      */
@@ -706,55 +526,73 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     	}
     	return match;
     }
+    
     /**
      * Set all the filter strings for this filter.
      * @param newStrings Vector of String objects
      */
     public void setFilterStrings(Vector newStrings)
     {
-    	java.util.List strings = internalGetFilterStrings();
-    	strings.clear();
-    	for (int idx=0; idx<newStrings.size(); idx++)
-    	{
-           String currString = (String)newStrings.elementAt(idx);
-           ISystemFilterString string = new SystemFilterString();
-        	   // FIXME initMOF().createSystemFilterString();
-           string.setString(currString);
-           string.setParentSystemFilter(this);
-           strings.add(string);               
-    	}    	
-    	invalidateCache();
+    	filterStrings.clear();
+    	for (Iterator z = newStrings.iterator(); z.hasNext();) {
+			String newString = (String) z.next();
+			ISystemFilterString filterString = createFilterString(newString);
+			filterStrings.add(filterString);
+		}
+    	setDirty(true);
+//    	List strings = internalGetFilterStrings();
+//    	strings.clear();
+//    	for (int idx=0; idx<newStrings.size(); idx++)
+//    	{
+//           String currString = (String)newStrings.elementAt(idx);
+//           ISystemFilterString string = new SystemFilterString();
+//        	   // FIXME initMOF().createSystemFilterString();
+//           string.setString(currString);
+//           string.setParentSystemFilter(this);
+//           strings.add(string);               
+//    	}    	
+//    	invalidateCache();
     }
+    
     /**
      * Get this filter's filter string objects as an array
      */
     public ISystemFilterString[] getSystemFilterStrings()
     {
-    	if (filterStringObjectArray == null)
-    	{
-    	  java.util.List el = internalGetFilterStrings();
-    	  filterStringObjectArray = new ISystemFilterString[el.size()];
-    	  Iterator i = el.iterator();
-    	  int idx = 0;
-    	  while (i.hasNext())
-    	    filterStringObjectArray[idx++] = (ISystemFilterString)(i.next());
-    	}
-    	return filterStringObjectArray;    	
+//    	List strings = internalGetFilterStrings();
+    	ISystemFilterString[] result = new ISystemFilterString[filterStrings.size()];
+    	filterStrings.toArray(result);
+    	return result;
+//    	if (filterStrings == null)
+//    	{
+//    	  List el = internalGetFilterStrings();
+//    	  filterStrings = new ISystemFilterString[el.size()];
+//    	  Iterator i = el.iterator();
+//    	  int idx = 0;
+//    	  while (i.hasNext())
+//    	    filterStrings[idx++] = (ISystemFilterString)(i.next());
+//    	}
+//    	return filterStrings;    	
     }    
+    
     /**
      * Set all the filter strings for this filter.
      * @param newStrings array of String objects
      */
     public void setFilterStrings(String newStrings[])
     {
-    	java.util.List strings = internalGetFilterStrings();
-    	strings.clear();
+//    	List strings = internalGetFilterStrings();
+    	filterStrings.clear();
     	for (int idx=0; idx<newStrings.length; idx++)
     	{
-           addFilterString(newStrings[idx]);
+    		ISystemFilterString filterString = createFilterString(newStrings[idx]);
+    		filterStrings.add(filterString);
+//           addFilterString(newStrings[idx]);
     	}
+    	setDirty(true);
     	//invalidateCache(); already done
     }
+    
     private ISystemFilterString createFilterString(String string)
     {
         ISystemFilterString filterstring = new SystemFilterString();
@@ -764,28 +602,33 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
         filterstring.setParentSystemFilter(this);
         return filterstring;    	
     }
+    
     /**
      * Append a new filter string to this filter's list
      */
     public ISystemFilterString addFilterString(String newString)
     {
-    	java.util.List strings = internalGetFilterStrings();
     	ISystemFilterString newFilterString = createFilterString(newString);
-        strings.add(newFilterString);
-    	invalidateCache();    	
-    	return newFilterString;    	
+//    	List strings = internalGetFilterStrings();
+        filterStrings.add(newFilterString);
+        setDirty(true);
+//    	invalidateCache();    	
+    	return newFilterString;    
     }
+    
     /**
      * Insert a new filter string to this filter's list, at the given zero-based position
      */
     public ISystemFilterString addFilterString(String newString, int position)
     {
-    	java.util.List strings = internalGetFilterStrings();
+//    	List strings = internalGetFilterStrings();
     	ISystemFilterString newFilterString = createFilterString(newString);
-    	strings.add(position, newFilterString);
-    	invalidateCache();    	
+    	filterStrings.add(position, newFilterString);
+    	setDirty(true);
+//    	invalidateCache();    	
     	return newFilterString;
     }
+    
     /**
      * Update a new filter string's string value
      */
@@ -800,9 +643,9 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
      */
     public ISystemFilterString removeFilterString(String oldString)
     {
-    	java.util.List strings = internalGetFilterStrings();
+//    	List strings = internalGetFilterStrings();
     	ISystemFilterString match = null;
-    	Iterator i = strings.iterator();
+    	Iterator i = filterStrings.iterator();
     	while ((match==null) && (i.hasNext()))
     	{
     		ISystemFilterString currstring = (ISystemFilterString)i.next();
@@ -811,8 +654,9 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     	}
     	if (match!=null)
     	{
-    	  strings.remove(match);
-    	  invalidateCache();   
+    	  filterStrings.remove(match);
+//    	  invalidateCache();
+    	  setDirty(true);
     	}
     	return match; 	
     }
@@ -823,12 +667,13 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
      */
     public ISystemFilterString removeFilterString(int position)
     {    	
-    	java.util.List strings = internalGetFilterStrings();
-    	if (position >= strings.size())
-    	  return null;
-    	ISystemFilterString filterString = (ISystemFilterString)strings.get(position);
-    	strings.remove(position);
-    	invalidateCache();    	
+//    	List strings = internalGetFilterStrings();
+    	ISystemFilterString filterString = null;
+    	if (position < filterStrings.size()) {
+        	filterString = (ISystemFilterString)filterStrings.remove(position);
+    		setDirty(true);
+    	}
+//    	invalidateCache();    	
     	return filterString;
     }
 
@@ -838,23 +683,35 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
      */
     public boolean removeFilterString(ISystemFilterString filterString)
     {    	
-    	java.util.List strings = internalGetFilterStrings();
-    	if (strings.contains(filterString))
-    	{
-    	  strings.remove(filterString);
-    	  invalidateCache();
-    	  return true;
+//    	List strings = internalGetFilterStrings();
+    	boolean removed = filterStrings.remove(filterString);
+    	if (removed) {
+    		setDirty(true);
     	}
-    	else
-    	  return false;
+    	return removed;
+//    	if (strings.contains(filterString))
+//    	{
+//    	  strings.remove(filterString);
+////    	  invalidateCache();
+//    	  return true;
+//    	}
+//    	else
+//    	  return false;
     }
+    
     /**
      * Move a given filter string to a given zero-based location
      */
     public void moveSystemFilterString(int pos, ISystemFilterString filterString)
     {
+//    	List strings = internalGetFilterStrings();
+    	boolean removed = filterStrings.remove(filterString);
+    	if (removed) {
+    		filterStrings.add(pos, filterString);
+    		setDirty(true);
+    	}
     	//FIXME internalGetFilterStrings().move(pos,filterString);    	
-    	invalidateCache();
+//    	invalidateCache();
     }
 
     /**
@@ -900,7 +757,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
      */
     public boolean hasChildren()
     {
-    	if (internalGetFilterStrings().size() > 0)
+    	if (filterStrings.size() > 0)
     	  return true;
     	else 
     	  return helpers.hasSystemFilters(internalGetFilters());
@@ -954,7 +811,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
     	/* FIXME
         String fileName = getRootSaveFileName(namingPolicy, name);
         
-    	java.util.List ext = mofHelpers.restore(folder,fileName);
+    	List ext = mofHelpers.restore(folder,fileName);
     	
         // should be exactly one...
         Iterator iList = ext.iterator();
@@ -1118,12 +975,16 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 */
 	public void unsetStringsCaseSensitive()
 	{
-		boolean oldStringsCaseSensitive = stringsCaseSensitive;
-		if (oldStringsCaseSensitive != STRINGS_CASE_SENSITIVE_EDEFAULT)
-		{
-			stringsCaseSensitive = STRINGS_CASE_SENSITIVE_EDEFAULT;
+		if (stringsCaseSensitive) {
+			stringsCaseSensitive = false;
 			setDirty(true);
 		}
+//		boolean oldStringsCaseSensitive = stringsCaseSensitive;
+//		if (oldStringsCaseSensitive != STRINGS_CASE_SENSITIVE_EDEFAULT)
+//		{
+//			stringsCaseSensitive = STRINGS_CASE_SENSITIVE_EDEFAULT;
+//			setDirty(true);
+//		}
 	}
 
 	/**
@@ -1189,7 +1050,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 */
-	public java.util.List getNestedFilters()
+	public List getNestedFilters()
 	{
 		if (nestedFilters == null)
 		{
@@ -1202,14 +1063,14 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	/**
 	 * @generated This field/method will be replaced during code generation 
 	 */
-	public java.util.List getStrings()
+	public List getStrings()
 	{
-		if (strings == null)
-		{
-			strings = new ArrayList();
-			//FIXME new EObjectContainmenteList(SystemFilterString.class, this, FiltersPackage.SYSTEM_FILTER__STRINGS);
-		}
-		return strings;
+//		if (filterStrings == null)
+//		{
+//			filterStrings = new ArrayList();
+//			//FIXME new EObjectContainmenteList(SystemFilterString.class, this, FiltersPackage.SYSTEM_FILTER__STRINGS);
+//		}
+		return filterStrings;
 	}
 
 	/**
@@ -1352,13 +1213,17 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 
 	public void unsetSingleFilterStringOnly()
 	{
-		boolean oldSingleFilterStringOnly = singleFilterStringOnly;
-		if (oldSingleFilterStringOnly != SINGLE_FILTER_STRING_ONLY_EDEFAULT)
-		{
-			singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
+		if (singleFilterStringOnly) {
+			singleFilterStringOnly = false;
 			setDirty(true);
 		}
-
+//		boolean oldSingleFilterStringOnly = singleFilterStringOnly;
+//		if (oldSingleFilterStringOnly != SINGLE_FILTER_STRING_ONLY_EDEFAULT)
+//		{
+//			singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
+//			setDirty(true);
+//		}
+//
 	}
 
 	public boolean isSetSingleFilterStringOnly()
@@ -1380,12 +1245,9 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	
 	public IRSEPersistableContainer[] getPersistableChildren() {
 		List children = new ArrayList(20);
-		if (nestedFilters != null) {
-			children.addAll(nestedFilters);
-		}
-		if (filterStringVector != null) {
-			children.addAll(filterStringVector);
-		}
+		List nf = getNestedFilters(); // guaranteed to not be null, none of these should be simple filters
+		children.addAll(nf);
+		children.addAll(filterStrings);
 		children.addAll(Arrays.asList(getPropertySets()));
 		IRSEPersistableContainer[] result = new IRSEPersistableContainer[children.size()];
 		children.toArray(result);

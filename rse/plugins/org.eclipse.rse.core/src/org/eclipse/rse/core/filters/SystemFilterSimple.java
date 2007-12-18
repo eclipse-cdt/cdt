@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,17 +12,21 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - [206901] fixing ArrayStoreException in getPersistableChildren
+ *   Fix involved removing visibility for data referenced in SystemFilter. Addressed
+ *   that by modifying the implementation of SystemFilterSimple to use its own data.
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.rse.core.model.ISystemContainer;
 import org.eclipse.rse.core.model.ISystemContentsType;
-import org.eclipse.rse.internal.core.filters.ISystemFilterConstants;
 import org.eclipse.rse.internal.core.filters.SystemFilter;
 
 
@@ -49,17 +53,14 @@ import org.eclipse.rse.internal.core.filters.SystemFilter;
 public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 {
 	
-    private String               name = null;
-    private String               type = ISystemFilterConstants.DEFAULT_TYPE;
-    private boolean              caseSensitive = false;
-    private boolean              promptable = false;
-    private Object               parent;
-    // the following are inherited...
-    //private String[]             filterStringArray = null;
-    //private SystemFilterString[] filterStringObjectArray = null;    
-    //private Vector               filterStringVector = null;
-	protected boolean isStale;	
-	protected HashMap cachedContents;
+    private String name = null;
+    private String type = null;
+    private boolean caseSensitive = false;
+    private boolean promptable = false;
+    private Object parent;
+	private boolean isStale;	
+    private List filterStrings = new ArrayList(3);
+	private HashMap cachedContents;
 
 	/**
 	 * Constructor for SystemFilterSimpleImpl
@@ -68,17 +69,17 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	{
 		//super();
 		this.name = name;
-		filterStringVector = new Vector();
+//		filterStringVector = new Vector();
 		isStale = true;
 		cachedContents = new HashMap();
 	}
 
-    protected void invalidateCache()
-    {
-    	filterStringArray = null;
-    	filterStringObjectArray = null;
-    	//filterStringVector = null;
-    }
+//    protected void invalidateCache()
+//    {
+//    	filterStringArray = null;
+//    	filterStringObjectArray = null;
+//    	//filterStringVector = null;
+//    }
 
     /**
      * Return true if this a transient or simple filter that is only created temporary "on the fly"
@@ -99,8 +100,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	public void clone(ISystemFilter targetFilter)
 	{
 		super.clone(targetFilter);
-		// hmm, due to polymorphism, we should not have to do anything here!
-		// well, except for this:
 		targetFilter.setFilterStrings(getFilterStringsVector());
 	}
 
@@ -114,20 +113,24 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
      */
     public void setFilterString(String filterString)
     {
-    	filterStringVector.clear();
-    	filterStringVector.addElement(filterString);
-    	invalidateCache();
+    	filterStrings.clear();
+    	filterStrings.add(filterString);
+//    	filterStringVector.clear();
+//    	filterStringVector.addElement(filterString);
+//    	invalidateCache();
     }
     /**
-     * Get the single filter string.
+     * Get the single (or the first) filter string.
      * Returns null if setFilterString has not been called.
      */
     public String getFilterString()
     {
-    	if (filterStringVector.size() == 0)
-    	  return null;
-    	else
-    	  return (String)filterStringVector.elementAt(0);
+    	String result = filterStrings.isEmpty() ? null : (String)filterStrings.get(0);
+    	return result;
+//    	if (filterStringVector.size() == 0)
+//    	  return null;
+//    	else
+//    	  return (String)filterStringVector.elementAt(0);
     }
 
     /**
@@ -158,6 +161,7 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
     {
     	this.name = name;
     }
+    
     /**
      * Get the filter's name
      */
@@ -165,6 +169,7 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
     {
     	return name;
     }
+    
     /**
      * Set the filter's type
      */
@@ -172,6 +177,7 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
     {
     	this.type = type;
     }
+    
     /**
      * Get the filter's type
      */
@@ -179,6 +185,7 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
     {
     	return type;
     }
+    
 	/**
 	 * Specify if filter strings in this filter are case sensitive. 
 	 * Default is false.
@@ -196,6 +203,7 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
     {
     	return caseSensitive;
     }        
+	
 	/**
 	 * Are filter strings in this filter case sensitive?
 	 */
@@ -224,72 +232,91 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
      */
     public String[] getFilterStrings()
     {
-    	if (filterStringArray == null)
-    	{
-    	  filterStringArray = new String[filterStringVector.size()];
-          for (int idx=0; idx<filterStringArray.length; idx++)
-    	    filterStringArray[idx] = (String)filterStringVector.elementAt(idx);
-    	}
-    	return filterStringArray;
+    	String[] result = new String[filterStrings.size()];
+    	filterStrings.toArray(result);
+    	return result;
+//    	if (filterStringArray == null)
+//    	{
+//    	  filterStringArray = new String[filterStringVector.size()];
+//          for (int idx=0; idx<filterStringArray.length; idx++)
+//    	    filterStringArray[idx] = (String)filterStringVector.elementAt(idx);
+//    	}
+//    	return filterStringArray;
     }
+    
     /**
      * Return filter strings as a Vector of String objects
      */
     public Vector getFilterStringsVector()
     {
-    	return filterStringVector;
+    	Vector result = new Vector(filterStrings.size());
+    	result.addAll(filterStrings);
+    	return result;
+//    	return filterStringVector;
     }
+    
     /**
      * Return how many filter strings are defined in this filter.
      */
     public int getFilterStringCount()
     {
-    	return filterStringVector.size();
+    	return filterStrings.size();
+//   	return filterStringVector.size();
     }        
+    
     /**
      * Set all the filter strings for this filter.
      * @param newStrings Vector of String objects
      */
     public void setFilterStrings(Vector newStrings)
     {
-    	filterStringVector.clear();
-    	for (int idx=0; idx<newStrings.size(); idx++)
-    	{
-    	   filterStringVector.addElement(newStrings.elementAt(idx));
-    	}    	
-    	invalidateCache();
+    	filterStrings.clear();
+    	filterStrings.addAll(newStrings);
+//    	filterStringVector.clear();
+//    	for (int idx=0; idx<newStrings.size(); idx++)
+//    	{
+//    	   filterStringVector.addElement(newStrings.elementAt(idx));
+//    	}    	
+//    	invalidateCache();
     }
+    
     /**
      * Set all the filter strings for this filter.
      * @param newStrings array of String objects
      */
     public void setFilterStrings(String newStrings[])
     {
-    	filterStringVector.clear();
-    	for (int idx=0; idx<newStrings.length; idx++)
-    	{
-           filterStringVector.addElement(newStrings[idx]);
-    	}
-    	invalidateCache(); 
+    	filterStrings.clear();
+    	filterStrings.addAll(Arrays.asList(newStrings)); // cannot just set since asList returns a fixed-size array
+//    	filterStringVector.clear();
+//    	for (int idx=0; idx<newStrings.length; idx++)
+//    	{
+//           filterStringVector.addElement(newStrings[idx]);
+//    	}
+//    	invalidateCache(); 
     }
+    
     /**
      * Append a new filter string to this filter's list.
      * Returns null.
      */
     public ISystemFilterString addFilterString(String newString)
     {
-    	filterStringVector.addElement(newString);
-    	invalidateCache();    	
+    	filterStrings.add(newString);
+//    	filterStringVector.addElement(newString);
+//    	invalidateCache();    	
     	return null;   	
     }
+    
     /**
      * Insert a new filter string to this filter's list, at the given zero-based position.
      * Returns null.
      */
     public ISystemFilterString addFilterString(String newString, int position)
     {
-    	filterStringVector.insertElementAt(newString,position);
-    	invalidateCache();    	
+    	filterStrings.add(position, newString);
+//    	filterStringVector.insertElementAt(newString,position);
+//    	invalidateCache();    	
     	return null;
     }
 
@@ -299,8 +326,9 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
      */
     public ISystemFilterString removeFilterString(String oldString)
     {
-    	filterStringVector.removeElement(oldString);    	
-    	invalidateCache();
+    	filterStrings.remove(oldString);
+//    	filterStringVector.removeElement(oldString);    	
+//    	invalidateCache();
     	return null; 	
     }
 
@@ -310,10 +338,12 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
      */
     public ISystemFilterString removeFilterString(int position)
     {    	
-    	filterStringVector.removeElementAt(position);
-    	invalidateCache();
+    	filterStrings.remove(position);
+//    	filterStringVector.removeElementAt(position);
+//    	invalidateCache();
     	return null; 	
     }
+    
     /**
      * Return the children of this filter.
      * This is the same as getFilterStrings()
@@ -322,13 +352,20 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
     {
     	return getFilterStrings();
     }
+    
     /**
      * Returns true if this filter has any filter strings
      */
     public boolean hasChildren()
     {
-    	return (filterStringVector.size() > 0);
+    	return filterStrings.size() > 0;
+//    	return (filterStringVector.size() > 0);
     }
+    
+    // ---------------------
+    // methods needed by ISystemFilter
+    // ---------------------
+    
 
     // -------------------------------------------------------
     // Non-applicable methods overridden to do nothing...
@@ -348,30 +385,36 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 * Overridden to do nothing
 	 */
 	public void setSupportsNestedFilters(boolean value) {}
+	
     /**
      * Does this support nested filters? No. Not for simple filtes.
      */
     public boolean supportsNestedFilters() {return false;}
+    
     /**
      * Return true if this filter is a nested filter or not. 
      * Overridden to return false;
      */
     public boolean isNested() { return false; }
+    
     /**
      * Update a new filter string's string value.
      * Overridden to do nothing.
      */
     public void updateFilterString(ISystemFilterString filterString, String newValue) {}
+    
     /**
      * Remove a filter string from this filter's list, given its SystemFilterString object.
      * Overridden to do nothing
      */
     public boolean removeFilterString(ISystemFilterString filterString) {return false;}
+    
     /**
      * Move a given filter string to a given zero-based location.
      * Overridden to do nothing
      */
     public void moveSystemFilterString(int pos, ISystemFilterString filterString) {}        
+    
 	/**
 	 * Overridden to do nothing
 	 */
@@ -381,66 +424,82 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 * Overridden to return -1
 	 */
 	public int getRelativeOrder() { return -1; }	
+	
 	/**
 	 * Overridden to do nothing
 	 */
 	public void setDefault(boolean value) {}	
+	
 	/**
 	 * Overridden to return false
 	 */
 	public boolean isDefault() {return false; }	
+	
 	/**
 	 * Overridden to do nothing
 	 */
 	public void setParentFilter(ISystemFilter l) {}
+	
 	/**
 	 * Overridden to return null
 	 */
 	public ISystemFilter getParentFilter() {return null;}
+	
     /**
 	 * Overridden to return null
      */
     public Vector getSystemFilterNames() {return null;}
+    
 	/**
 	 * Overridden to return null
 	 */
 	public java.util.List getNestedFilters() {return null;}
+	
     /**
      * Overridden to return null
      */
     public Vector getSystemFiltersVector() {return null;}
+    
     /**
      * Overridden to return null
      */
     public ISystemFilter[] getSystemFilters() {return null;}
+    
     /**
      * Overridden to return 0
      */
     public int getSystemFilterCount() {return 0;}
+    
 	/**
 	 * Overridden to return null
 	 */
 	public java.util.List getStrings() {return null;}
+	
 	/**
 	 * Overridden to return null
      */
     public ISystemFilter getSystemFilter(String aliasName) {return null;}
+    
     /**
      * Overridden to return null
      */
     public ISystemFilterPoolManagerProvider getProvider() {return null;}
+    
     /**
      * Overridden to return null
      */
     public ISystemFilterPoolManager getSystemFilterPoolManager() {return null;}
+    
     /**
      * Overridden to return null
      */
     public IFile getSaveFile() {return null;}
+    
     /**
      * Overridden to return null
      */
     public String getSaveFileName()	{return null;}
+    
     /**
      * Overridden to do nothing
      */
@@ -466,12 +525,10 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	/**
 	 * @see org.eclipse.rse.core.model.ISystemContainer#hasContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
-	public boolean hasContents(ISystemContentsType contentsType) {
-        
+	public boolean hasContents(ISystemContentsType contentsType) {     
 		if (cachedContents.containsKey(contentsType)) {
             return true;
-        }
-        
+        }       
         return false;
 	}
 	

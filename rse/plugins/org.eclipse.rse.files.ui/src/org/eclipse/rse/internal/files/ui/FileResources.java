@@ -256,6 +256,10 @@ public class FileResources extends NLS
 	// Property Pages
 	public static String MESSAGE_ENCODING_NOT_SUPPORTED;
 	
+	// synchronize cache action
+	public static String MESSAGE_ERROR_CACHING_REMOTE_FILES;
+	public static String MESSAGE_SYNCHRONIZING_REMOTE_FILE_CACHE;
+	
 	static 
 	{
 		// load message values from bundle file

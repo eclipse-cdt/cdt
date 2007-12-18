@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.model.SystemRemoteResourceSet;
 import org.eclipse.rse.internal.files.ui.Activator;
+import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
@@ -70,7 +71,7 @@ public class SynchronizeCacheActionDelegate implements IActionDelegate {
 
         // If errors occurred, open an Error dialog
         if (errorStatus != null) {
-            ErrorDialog.openError(getShell(), "Error Caching Remote Files", null, errorStatus);
+            ErrorDialog.openError(getShell(), FileResources.MESSAGE_ERROR_CACHING_REMOTE_FILES, null, errorStatus);
             errorStatus = null;
         }
 	}
@@ -134,7 +135,7 @@ public class SynchronizeCacheActionDelegate implements IActionDelegate {
 			ProgressMonitorDialog mon = new ProgressMonitorDialog(getShell()) {
 			    protected void configureShell(Shell shell) {
 			        super.configureShell(shell);
-					shell.setText("Synchronizing Remote File Cache");
+					shell.setText(FileResources.MESSAGE_SYNCHRONIZING_REMOTE_FILE_CACHE);
 			    }
 			};
 			mon.run(true, true, op);
@@ -159,7 +160,7 @@ public class SynchronizeCacheActionDelegate implements IActionDelegate {
 	 *            the message
 	 */
 	void displayError(String message) {
-		MessageDialog.openError(getShell(), "Error Caching Remote Files", message);
+		MessageDialog.openError(getShell(), FileResources.MESSAGE_ERROR_CACHING_REMOTE_FILES, message);
 	}
 	
 	/**

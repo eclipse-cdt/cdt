@@ -30,7 +30,6 @@ import org.eclipse.dd.dsf.debug.service.IExpressions;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.service.IMemory;
 import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMContext;
-import org.eclipse.dd.dsf.debug.service.IExpressions.IExpressionDMData;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.dd.dsf.debug.service.IMemory.IMemoryDMContext;
@@ -293,7 +292,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 
 	private BigInteger resolveMemoryAddress(final IDMContext idmContext, final String expression) throws DebugException {
 
-		// Use a Query to "synchronise" the downstream calls
+		// Use a Query to "synchronize" the downstream calls
 		Query<BigInteger> query = new Query<BigInteger>() {
 			@Override
 			protected void execute(final DataRequestMonitor<BigInteger> drm) {
@@ -302,32 +301,26 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 				if (expressionService != null) {
 					// Create the expression
 					final IExpressionDMContext expressionDMC = expressionService.createExpression(idmContext, expression);
-					expressionService.getExpressionData(expressionDMC, new DataRequestMonitor<IExpressionDMData>(getExecutor(), drm) {
-						@Override
-						protected void handleOK() {
-							// Evaluate the expression - request HEX since it works in every case 
-							String formatId = IFormattedValues.HEX_FORMAT;
-							FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC, formatId);
-			                expressionService.getFormattedExpressionValue(
-			                	valueDmc, 
-			                    new DataRequestMonitor<FormattedValueDMData>(getExecutor(), drm) {
-			            			@Override
-			            			protected void handleOK() {
-			            				// Store the result
-			            				FormattedValueDMData data = getData();
-		            					String value = data.getFormattedValue().substring(2);	// Strip the "0x"
-		            					drm.setData(new BigInteger(value, 16));
-			            				drm.done();
-			            			}
-			                	}
-			                );
-						}
-					});
+					String formatId = IFormattedValues.HEX_FORMAT;
+					FormattedValueDMContext valueDmc = expressionService.getFormattedValueContext(expressionDMC, formatId);
+	                expressionService.getFormattedExpressionValue(
+	                	valueDmc, 
+	                    new DataRequestMonitor<FormattedValueDMData>(getExecutor(), drm) {
+	            			@Override
+	            			protected void handleOK() {
+	            				// Store the result
+	            				FormattedValueDMData data = getData();
+            					String value = data.getFormattedValue().substring(2);	// Strip the "0x"
+            					drm.setData(new BigInteger(value, 16));
+	            				drm.done();
+	            			}
+	                	}
+	                );
 				}
-
 			}
 		};
 		fExecutor.execute(query);
+
 		try {
 			// The happy case
 			return query.get();

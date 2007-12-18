@@ -91,7 +91,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
-import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
@@ -119,9 +118,8 @@ public class CVisitor {
 		}
 		public int visit(IASTName name) {
 			if ( name.getBinding() != null ) {
-				 ICScope scope;
                 try {
-                    scope = (ICScope)name.resolveBinding().getScope();
+                    IScope scope = name.resolveBinding().getScope();
                     if ( scope != null ) 
                     	ASTInternal.removeBinding(scope, name.resolveBinding());
                 } catch ( DOMException e ) {
@@ -492,13 +490,14 @@ public class CVisitor {
 
 	private static IBinding createBinding( ICASTEnumerationSpecifier enumeration ){
 	    IASTName name = enumeration.getName();
-	    ICScope scope = (ICScope) getContainingScope( enumeration );
-	    IBinding binding;
-        try {
-            binding = scope.getBinding( name, false );
-        } catch ( DOMException e ) {
-            binding = null;
-        }
+	    IScope scope =  getContainingScope( enumeration );
+	    IBinding binding= null;
+	    if (scope != null) {
+	    	try {
+	    		binding = scope.getBinding( name, false );
+	    	} catch ( DOMException e ) {
+	    	}
+	    }
         if (binding != null && !(binding instanceof IIndexBinding)) {
         	if (binding instanceof IEnumeration) {
             	if (binding instanceof CEnumeration) {
@@ -721,9 +720,11 @@ public class CVisitor {
 				int op = ((IASTUnaryExpression)expression).getOperator(); 
 				if( op == IASTUnaryExpression.op_sizeof ){
 					IScope scope = getContainingScope( expression );
-					IBinding [] bs = scope.find( SIZE_T );
-					if( bs.length > 0 && bs[0] instanceof IType ){
-						return (IType) bs[0];
+					if (scope != null) {
+						IBinding [] bs = scope.find( SIZE_T );
+						if( bs.length > 0 && bs[0] instanceof IType ){
+							return (IType) bs[0];
+						}
 					}
 					return new CBasicType( IBasicType.t_int, CBasicType.IS_LONG | CBasicType.IS_UNSIGNED, expression );	
 				}
@@ -815,7 +816,7 @@ public class CVisitor {
 			    }
 
 				if ( declarator.getParent() instanceof IASTFunctionDefinition ) {
-					ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)declarator.getParent()).getBody()).getScope();
+					IScope scope =  ((IASTCompoundStatement)((IASTFunctionDefinition)declarator.getParent()).getBody()).getScope();
 					if ( scope != null && binding != null )
                         try {
                             ASTInternal.addName( scope, name);
@@ -854,7 +855,7 @@ public class CVisitor {
 		}
 		while (node instanceof IASTDeclarator);
 			
-		ICScope scope = (ICScope) getContainingScope( parent );
+		IScope scope =  getContainingScope( parent );
 		
 		ASTNodeProperty prop = parent.getPropertyInParent();
 		if( prop == IASTDeclarationStatement.DECLARATION ){
@@ -941,19 +942,21 @@ public class CVisitor {
 
 	
 	private static IBinding createBinding( ICASTCompositeTypeSpecifier compositeTypeSpec ){
-		ICScope scope = null;
+		IScope scope = null;
 		IBinding binding = null;
 		IASTName name = compositeTypeSpec.getName();
 		try {
-			scope = (ICScope) getContainingScope( compositeTypeSpec );
+			scope =  getContainingScope( compositeTypeSpec );
 			while( scope instanceof ICCompositeTypeScope )
-				scope = (ICScope) scope.getParent();
+				scope =  scope.getParent();
 				
-			binding = scope.getBinding( name, false );
-			if( binding != null && !(binding instanceof IIndexBinding)){
-				if (binding instanceof CStructure)
-					((CStructure)binding).addDefinition( compositeTypeSpec );
-				return binding;
+			if (scope != null) {
+				binding = scope.getBinding( name, false );
+				if( binding != null && !(binding instanceof IIndexBinding)){
+					if (binding instanceof CStructure)
+						((CStructure)binding).addDefinition( compositeTypeSpec );
+					return binding;
+				}
 			}
 		} catch (DOMException e2) {
 		}
@@ -961,8 +964,8 @@ public class CVisitor {
 	    binding = new CStructure( name );
 	    
         try {
-            scope = (ICScope) binding.getScope();
-            ASTInternal.addName( scope,  name );
+            scope= binding.getScope();
+            ASTInternal.addName(scope, name);
         } catch ( DOMException e ) {
         }
         
@@ -1094,6 +1097,9 @@ public class CVisitor {
 		return null;
 	}
 	
+	/**
+	 * May return <code>null</code>, e.g. for parameter names in function-prototypes.
+	 */
 	public static IScope getContainingScope( IASTNode node ){
 	    if( node == null )
 			return null;
@@ -1122,7 +1128,7 @@ public class CVisitor {
 					parent = ((IASTDeclarator)parent).getParent();
 					if ( parent instanceof IASTFunctionDefinition )
 						return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
-					return null;
+					return null;	// parameter name in function declarations
 				}
 		    }
 		    else if( node instanceof IASTEnumerator ){
@@ -1206,10 +1212,10 @@ public class CVisitor {
 			
 			IASTNode parent = blockItem.getParent();
 			IASTNode [] nodes = null;
-			ICScope scope = null;
+			IScope scope = null;
 			if( parent instanceof IASTCompoundStatement ){
 				IASTCompoundStatement compound = (IASTCompoundStatement) parent;
-				scope = (ICScope) compound.getScope();
+				scope =  compound.getScope();
 				
 				if( parent.getParent() instanceof IASTFunctionDefinition ){
 			        IASTFunctionDeclarator dtor = ((IASTFunctionDefinition)parent.getParent()).getDeclarator();
@@ -1225,7 +1231,7 @@ public class CVisitor {
 				IASTTranslationUnit translation = (IASTTranslationUnit) parent;
 				if (!prefix) {
 					nodes = translation.getDeclarations();
-					scope = (ICScope) translation.getScope();
+					scope =  translation.getScope();
 				} else {
 					// The index will be search later, still we need to look at the declarations found in
 					// the AST, bug 180883
@@ -1235,11 +1241,11 @@ public class CVisitor {
 			} else if( parent instanceof IASTStandardFunctionDeclarator ){
 			    IASTStandardFunctionDeclarator dtor = (IASTStandardFunctionDeclarator) parent;
 				nodes = dtor.getParameters();
-				scope = (ICScope) getContainingScope( blockItem );
+				scope =  getContainingScope( blockItem );
 			} else if( parent instanceof ICASTKnRFunctionDeclarator ){
 			    ICASTKnRFunctionDeclarator dtor = (ICASTKnRFunctionDeclarator) parent;
 				nodes = dtor.getParameterDeclarations();
-				scope = (ICScope) getContainingScope( blockItem );
+				scope =  getContainingScope( blockItem );
 			}
 			
 			boolean typesOnly = (bits & TAGS) != 0;
@@ -1401,7 +1407,7 @@ public class CVisitor {
 	    return external;
 	}
 	
-	private static IASTName checkForBinding( ICScope scope, IASTDeclSpecifier declSpec, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
+	private static IASTName checkForBinding( IScope scope, IASTDeclSpecifier declSpec, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
 		IASTName tempName = null;
 		IASTName resultName = null;
 		char [] n = name.toCharArray();
@@ -1485,7 +1491,7 @@ public class CVisitor {
         return prefixMap;
 	}
 	
-	private static IASTName checkForBinding( ICScope scope, IASTParameterDeclaration paramDecl, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
+	private static IASTName checkForBinding( IScope scope, IASTParameterDeclaration paramDecl, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
 	    if( paramDecl == null ) return null;
 	    
 	    IASTDeclarator dtor = paramDecl.getDeclarator();
@@ -1513,7 +1519,7 @@ public class CVisitor {
 	 * if not a prefix lookup, returns IASTName
 	 * if doing prefix lookup, results are in prefixMap, returns null
 	 */
-	private static IASTName checkForBinding( ICScope scope, IASTNode node, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
+	private static IASTName checkForBinding( IScope scope, IASTNode node, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
 	    if( node instanceof IASTDeclaration ){
 	        return checkForBinding( scope, (IASTDeclaration) node, name, typesOnly, prefixMap );
 	    } else if( node instanceof IASTParameterDeclaration ){
@@ -1528,7 +1534,7 @@ public class CVisitor {
 		}
 	    return null;
 	}
-	private static IASTName checkForBinding( ICScope scope, IASTDeclaration declaration, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
+	private static IASTName checkForBinding( IScope scope, IASTDeclaration declaration, IASTName name, boolean typesOnly, CharArrayObjectMap prefixMap ) throws DOMException{
 	    char [] n = name.toCharArray();
 		IASTName tempName = null;
 		IASTName resultName = null;

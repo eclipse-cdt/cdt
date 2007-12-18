@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -110,7 +109,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	        bits |= RESOLUTION_IN_PROGRESS;
 		    IASTTranslationUnit tu = getTranslationUnit();
 	        if( tu != null ){
-	            CPPVisitor.getDeclarations( tu, this );
+	            CVisitor.getDeclarations( tu, this );
 	        }
 	        declarators = (IASTStandardFunctionDeclarator[]) ArrayUtil.trim( IASTStandardFunctionDeclarator.class, declarators );
 	        bits |= FULLY_RESOLVED;

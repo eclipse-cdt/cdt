@@ -1168,7 +1168,7 @@ public class IndexBugsTests extends BaseTestCase {
 		fIndex.acquireReadLock();
 		try {
 			IIndexBinding[] bindings = fIndex.findBindings("staticInHeader".toCharArray(),
-					IndexFilter.ALL, NPM);
+					IndexFilter.C_DECLARED_OR_IMPLICIT, NPM);
 			IFunction func = (IFunction) bindings[0];
 			assertTrue(func.isStatic());
 			IIndexName[] refs = fIndex.findReferences(func);
@@ -1195,7 +1195,7 @@ public class IndexBugsTests extends BaseTestCase {
 		fIndex.acquireReadLock();
 		try {
 			IIndexBinding[] bindings = fIndex.findBindings("staticConstInHeader".toCharArray(),
-					IndexFilter.ALL, NPM);
+					IndexFilter.C_DECLARED_OR_IMPLICIT, NPM);
 			IVariable var = (IVariable) bindings[0];
 			assertTrue(var.isStatic());
 			IIndexName[] refs = fIndex.findReferences(var);

@@ -51,6 +51,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -142,6 +143,8 @@ abstract public class PDOMWriter {
 				if (msg.equals(status.getMessage())) {
 					throw new CoreException(status);
 				}
+				throw new CoreException(new Status(status.getSeverity(), status.getPlugin(), status.getCode(), 
+						msg + ':' + status.getMessage(), status.getException()));
 			}
 			throw new CoreException(new MultiStatus(CCorePlugin.PLUGIN_ID, 0, 
 					(IStatus[]) stati.toArray(new IStatus[stati.size()]), msg, null));

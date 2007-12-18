@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [184095] Replace systemTypeName by IRSESystemType
  * Martin Oberhuber (Wind River) - [210534] Remove ISystemHostPool.getHostList() and setName()
+ * David Dykstal (IBM) - [210537] removed exception signalling from this interface, no longer needed
  ********************************************************************************/
 
 package org.eclipse.rse.core.model;
@@ -71,9 +72,8 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
      * @param hostName IP name or address of the host.
      * @return IHost object, or null if it failed to create
      *   because the aliasName is not unique. All other errors throw an exception.
-     * @throws Exception if something goes wrong creating the connection.
      */
-	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName) throws Exception;
+	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName);
 
     /**
      * Create a connection object, given all the possible attributes except default userId.
@@ -86,9 +86,8 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
      * @param description optional description of the connection. Can be null.
      * @return IHost object, or <code>null</code> if it failed to create
      *   because the aliasName is not unique. All other errors throw an exception.
-     * @throws Exception if something goes wrong creating the connection.
      */
-	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description) throws Exception;
+	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description);
 
     /**
      * Create a connection object, given all the possible attributes.
@@ -102,11 +101,10 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
      * @param defaultUserId userId to use as the default for the subsystems.
      * @param defaultUserIdLocation where to set the given default user Id. See IRSEUserIdConstants for values.
      * @return IHost object, or <code>null</code> if it failed to create
-     *   because the aliasName is not unique. All other errors throw an exception.
+     *   because the aliasName is not unique.
      * @see IRSEUserIdConstants
-     * @throws Exception if something goes wrong creating the connection.
      */
-	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation) throws Exception;
+	public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation);
 
 	/**
 	 * Update an existing connection given the new information.
@@ -125,9 +123,8 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 * @param defaultUserId userId to use as the default for the subsystems.
 	 * @param defaultUserIdLocation where to set the given default user Id from IRSEUserIdConstants.
 	 * @see IRSEUserIdConstants
-     * @throws Exception if something goes wrong updating the connection.
 	 */
-	public void updateHost(IHost conn, IRSESystemType systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation) throws Exception;
+	public void updateHost(IHost conn, IRSESystemType systemType, String aliasName, String hostName, String description, String defaultUserId, int defaultUserIdLocation);
 
     /**
      * Return a connection object, given its alias name.
@@ -185,9 +182,8 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 *     The alias name is not checked for uniqueness. Clients are responsible
 	 *     themselves for ensuring that no two connections with the same alias
 	 *     name (compared case insensitive) are created.
-	 * @throws Exception if anything goes wrong renaming the connection.
 	 */
-	public void renameHost(IHost conn, String newName) throws Exception;
+	public void renameHost(IHost conn, String newName);
 
 	/**
 	 * Return the zero-based position of a connection object within this host pool.
@@ -211,9 +207,8 @@ public interface ISystemHostPool extends IRSEPersistableContainer {
 	 * @param aliasName New, unique, alias name to give this connection. Clone will fail
 	 *     (returning <code>null</code> as result) if this is not unique.
 	 * @return the cloned host, or <code>null</code> if the new alias name was not unique.
-	 * @throws Exception if anything goes wrong during cloning.
 	 */
-	public IHost cloneHost(ISystemHostPool targetPool, IHost conn, String aliasName) throws Exception;
+	public IHost cloneHost(ISystemHostPool targetPool, IHost conn, String aliasName);
 
 	/**
 	 * Move existing connections a given number of positions in the same pool.

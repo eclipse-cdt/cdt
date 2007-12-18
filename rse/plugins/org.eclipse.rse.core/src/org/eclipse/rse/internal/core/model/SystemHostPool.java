@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2002, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,7 @@
  * Martin Oberhuber (Wind River) - [186779] Fix IRSESystemType.getAdapter()
  * David Dykstal (IBM) - [176577] wrong enablement of "Move up/down" in connection context menu
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
+ * David Dykstal (IBM) - [210537] removed exception signalling from this class to match the interface
  ********************************************************************************/
 
 package org.eclipse.rse.internal.core.model;
@@ -93,22 +94,14 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
 	/**
 	 * Return (and create if necessary) the connection pool for a given system profile.
 	 * @param profile the profile to create a host pool for.
-	 * @throws Exception
 	 */
 	public static ISystemHostPool getSystemHostPool(ISystemProfile profile)
-	    throws Exception
 	{
 		SystemHostPool pool = (SystemHostPool)pools.get(profile);
 		if (pool == null)
 		{
 		  pool = new SystemHostPool();
 		  pool.setName(profile.getName());
-		  try {
-			//FIXME Class Javadocs say that SystemHostPool is not persisted, so this should be removed!
-			//Or should we get the pool contents by restoring the profile instead?
-		    pool.restore(); // restore connections
-		  } catch (Exception exc) {
-		  }
 		  pools.put(profile, pool); // store this pool reference, keyed by profile object.
 		}
 		return pool;
@@ -183,7 +176,6 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * @see org.eclipse.rse.core.model.ISystemHostPool#createHost(org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String)
      */
     public IHost createHost(IRSESystemType systemType, String aliasName, String hostName)
-        throws Exception                                                 
     {
         return createHost(systemType,aliasName,hostName,null,null,IRSEUserIdConstants.USERID_LOCATION_HOST);
     }
@@ -193,7 +185,6 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * @see org.eclipse.rse.core.model.ISystemHostPool#createHost(org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String)
      */
     public IHost createHost(IRSESystemType systemType, String aliasName, String hostName, String description)
-        throws Exception                                                 
     {
         return createHost(systemType,aliasName,hostName,description,null,IRSEUserIdConstants.USERID_LOCATION_HOST);
     }
@@ -203,8 +194,7 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * @see org.eclipse.rse.core.model.ISystemHostPool#createHost(org.eclipse.rse.core.IRSESystemType, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int)
      */
     public IHost createHost(IRSESystemType systemType, String aliasName, String hostName,
-                                             String description,String defaultUserId,int defaultUserIdLocation)        
-        throws Exception                                             
+                                             String description,String defaultUserId,int defaultUserIdLocation)
     {
         IHost conn = null;
         boolean exists = getHost(aliasName) != null;
@@ -212,32 +202,25 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
         {
           return null;
         }
-        try
-        {
-          ISystemProfile profile = getSystemProfile();
-          
-          // delegate the creation of the host object instance to the system type provider!!!
-          if (systemType != null) {
-        	  conn = systemType.createNewHostInstance(profile);
-          }
-          // Fallback to create host object instance here if failed by system type provider.
-          assert conn != null;
-          if (conn == null) conn = new Host(profile);
-          
-          addHost(conn); // only record internally if saved successfully
-          conn.setHostPool(this);          
-          conn.setAliasName(aliasName);
-          conn.setSystemType(systemType);
-          // if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
-          if (defaultUserId == null && defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_HOST) {
-              defaultUserId = conn.getDefaultUserId();
-          }
-          updateHost(conn, systemType, aliasName, hostName, description, defaultUserId, defaultUserIdLocation);          
-
-        } catch (Exception e)
-        {
-          throw e;
+        ISystemProfile profile = getSystemProfile();
+        
+        // delegate the creation of the host object instance to the system type provider!!!
+        if (systemType != null) {
+      	  conn = systemType.createNewHostInstance(profile);
         }
+        // Fallback to create host object instance here if failed by system type provider.
+        assert conn != null;
+        if (conn == null) conn = new Host(profile);
+        
+        addHost(conn); // only record internally if saved successfully
+        conn.setHostPool(this);          
+        conn.setAliasName(aliasName);
+        conn.setSystemType(systemType);
+        // if default userID is null, and location is in the connection we should retrieve it and use it as the initial value.
+        if (defaultUserId == null && defaultUserIdLocation == IRSEUserIdConstants.USERID_LOCATION_HOST) {
+            defaultUserId = conn.getDefaultUserId();
+        }
+        updateHost(conn, systemType, aliasName, hostName, description, defaultUserId, defaultUserIdLocation);          
         return conn;
     }
     
@@ -248,7 +231,6 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
     public void updateHost(IHost conn, IRSESystemType systemType,
                                  String aliasName, String hostName,
                                  String description,String defaultUserId, int defaultUserIdLocation)
-        throws Exception
     {
     	boolean aliasNameChanged = !aliasName.equalsIgnoreCase(conn.getAliasName());    	
     	if (aliasNameChanged)
@@ -403,7 +385,6 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * @see org.eclipse.rse.core.model.ISystemHostPool#renameHost(org.eclipse.rse.core.model.IHost, java.lang.String)
      */
     public void renameHost(IHost conn, String newName)
-           throws Exception
     {
     	//must not change the alias name while a getHost() or orderHosts() is ongoing
     	synchronized(connections) {
@@ -419,7 +400,6 @@ public class SystemHostPool extends RSEModelObject implements ISystemHostPool
      * @see org.eclipse.rse.core.model.ISystemHostPool#cloneHost(org.eclipse.rse.core.model.ISystemHostPool, org.eclipse.rse.core.model.IHost, java.lang.String)
      */
     public IHost cloneHost(ISystemHostPool targetPool, IHost conn, String aliasName)
-       throws Exception
     {
         IHost copy =
             targetPool.createHost(conn.getSystemType(), aliasName,

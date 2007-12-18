@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -37,6 +37,7 @@
  * Martin Oberhuber (Wind River) - [194898] Avoid NPE when doing EVENT_REFRESH_REMOTE on a subsys without filters
  * David McKnight   (IBM)        - [207100] adding ISystemRegistry.isRegisteredSystemRemoteChangeListener
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
+ * David Dykstal    (IBM)        - [210537] removed exception handling for SystemHostPool, no longer needed
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -1333,24 +1334,11 @@ public class SystemRegistry implements ISystemRegistry
 	/**
 	 * Return a connection pool given a profile
 	 */
-	private ISystemHostPool getHostPool(ISystemProfile profile)
-	{
-		lastException = null;
-		try
-		{
-			return SystemHostPool.getSystemHostPool(profile);
-		}
-		catch (Exception exc)
-		{
-			SystemBasePlugin.logError("Exception in getConnectionPool for " + profile.getName(), exc); //$NON-NLS-1$
-			lastException = exc;
-		}
-		catch (Throwable t)
-		{
-			SystemBasePlugin.logError("Exception in getConnectionPool for " + profile.getName(), t); //$NON-NLS-1$
-		}
-		return null;
+	private ISystemHostPool getHostPool(ISystemProfile profile) {
+		ISystemHostPool result = SystemHostPool.getSystemHostPool(profile);
+		return result;
 	}
+	
 	/**
 	 * Return connection pools for active profiles. One per.
 	 */

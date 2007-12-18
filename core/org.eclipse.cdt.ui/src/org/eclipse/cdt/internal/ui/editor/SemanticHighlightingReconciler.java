@@ -215,6 +215,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					}
 					IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useOffset, macroLength);
 					if (macroNode != null && visitMacro(macroNode, macroLength)) {
+						fMinLocation= useOffset + macroLength;
 						return false;
 					}
 				}
@@ -291,9 +292,11 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 				return;
 			}
 			int offset= nodeLocation.getNodeOffset();
-			int length= nodeLocation.getNodeLength();
-			if (offset > -1 && length > 0) {
-				addPosition(offset, length, highlighting);
+			if (offset >= fMinLocation) {
+				int length= nodeLocation.getNodeLength();
+				if (offset > -1 && length > 0) {
+					addPosition(offset, length, highlighting);
+				}
 			}
 		}
 

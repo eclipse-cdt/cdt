@@ -118,7 +118,7 @@ public class UniversalPreferencePage
 	protected Image fileImage;
 	protected Image binaryFileImage;
 	
-	protected String[] columnProperties = { "P_ICON", "P_TYPE", "P_CONTENT" };
+	protected String[] columnProperties = { "P_ICON", "P_TYPE", "P_CONTENT" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
 	/**
 	 * Constructor
@@ -558,7 +558,7 @@ public class UniversalPreferencePage
 	
 	
 	private Image applyBinaryDecoration(Image source) {
-		ImageDescriptor binaryOverlay = Activator.getImageDescriptor("/icons/full/ovr16/binary_ovr.gif");
+		ImageDescriptor binaryOverlay = Activator.getImageDescriptor("/icons/full/ovr16/binary_ovr.gif"); //$NON-NLS-1$
 		DecorationOverlayIcon icon = new DecorationOverlayIcon(source, binaryOverlay, 3);
 		return icon.createImage();
 	}

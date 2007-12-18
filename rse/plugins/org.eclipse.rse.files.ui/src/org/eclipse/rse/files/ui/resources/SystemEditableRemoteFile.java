@@ -1491,7 +1491,7 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 				}
 				else {
 					// using text mode so the char set needs to be local
-					String localEncoding = System.getProperty("file.encoding");
+					String localEncoding = System.getProperty("file.encoding"); //$NON-NLS-1$
 					file.setCharset(localEncoding, null);
 				}
 			}

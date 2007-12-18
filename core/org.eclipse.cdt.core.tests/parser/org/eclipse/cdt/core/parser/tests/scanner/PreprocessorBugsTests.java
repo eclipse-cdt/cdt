@@ -11,9 +11,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.IToken;
 
 
 /**
@@ -64,6 +68,24 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblem(0, IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, "bar.h");
 		validateProblemCount(1);
+	}
+	
+	// #define D
+	// #if defined D 
+	//     x;
+	// #endif 
+	// #if defined(D) 
+	//     y;
+	// #endif 
+	public void testBug186047() throws Exception {
+		initializeScanner();
+		
+		validateIdentifier("x");
+		validateToken(IToken.tSEMI);
+		validateIdentifier("y");
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
 	}
 
 }

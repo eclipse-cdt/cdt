@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.IProblem;
@@ -575,4 +578,627 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateEOF();
 		validateProblemCount(0);    	    	
     }
+    
+    // #define FOO 5
+    // # define BAR 10
+    // int x = FOO + BAR;
+    public void testSimpleObjectLike1() throws Exception {
+    	initializeScanner();
+    	validateToken(IToken.t_int);
+    	validateIdentifier("x");
+    	validateToken(IToken.tASSIGN);
+    	validateInteger("5");
+    	validateToken(IToken.tPLUS);
+    	validateInteger("10");
+    	validateToken(IToken.tSEMI);
+    	validateEOF();
+		validateProblemCount(0);
+	}
+	
+    // #define FOO BAR
+    // # define BAR 10
+    // int x = BAR;
+	public void testSimpleObjectLike2() throws Exception {
+		initializeScanner();
+		validateToken(IToken.t_int);
+		validateIdentifier("x");
+		validateToken(IToken.tASSIGN);
+		validateInteger("10");
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	// #define MAX(a, b) (a) > (b) ? (a) : (b)
+	// int max = MAX(x, y);
+	public void testSimpleFunctionLike1() throws Exception {
+		// int max = (x) > (y) ? (x) : (y);
+		initializeScanner();
+
+		validateToken(IToken.t_int);
+		validateIdentifier("max");
+		validateToken(IToken.tASSIGN);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("x");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tGT);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("y");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tQUESTION);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("x");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tCOLON);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("y");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	// #define ADD(a, b) (a) + (b)
+	// #define ADDPART(a) ADD(a
+	// int sum = ADDPART (x) , y);
+	public void testSimpleFunctionLike2() throws Exception {
+		// int sum = (x) + (y) ;
+		initializeScanner();
+
+		validateToken(IToken.t_int);
+		validateIdentifier("sum");
+		validateToken(IToken.tASSIGN);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("x");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tPLUS);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("y");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	// #define ADD(a, b) (a) + (b)
+	// int sum = ADD(x+1,y+1);
+	public void testSimpleFunctionLike3() throws Exception {
+		// int sum = (x+1) + (y+1) ;
+		initializeScanner();
+		
+		validateToken(IToken.t_int);
+		validateIdentifier("sum");
+		validateToken(IToken.tASSIGN);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("x");
+		validateToken(IToken.tPLUS);
+		validateInteger("1");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tPLUS);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("y");
+		validateToken(IToken.tPLUS);
+		validateInteger("1");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	// #define ADD(a, b) (a) + (b)
+	// int sum = ADD(f(x,y),z+1);
+	public void testSimpleFunctionLike4() throws Exception {
+		// int sum = (f(x,y)) + (z+1) ;
+		initializeScanner();
+		
+		validateToken(IToken.t_int);
+		validateIdentifier("sum");
+		validateToken(IToken.tASSIGN);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("f");
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("x");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("y");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tPLUS);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("z");
+		validateToken(IToken.tPLUS);
+		validateInteger("1");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	// #define hash_hash # ## #
+	// #define mkstr(a) # a
+	// #define in_between(a) mkstr(a)
+	// #define join(c, d) in_between(c hash_hash d)
+	// char p[] = join(x, y); 
+	public void testSpecHashHashExample() throws Exception {
+		// char p[] = "x ## y" ;
+		initializeScanner();
+		
+		validateToken(IToken.t_char);
+		validateIdentifier("p");
+		validateToken(IToken.tLBRACKET);
+		validateToken(IToken.tRBRACKET);
+		validateToken(IToken.tASSIGN);
+		validateString("x ## y");
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	private static StringBuffer getExample3Defines() {
+		return new StringBuffer()
+			.append("#define x 3 \n")
+			.append("#define f(a) f(x * (a)) \n")
+			.append("#undef x \n")
+			.append("#define x 2 \n")
+			.append("#define g f \n")
+			.append("#define z z[0] \n")
+			.append("#define h g(~ \n")
+			.append("#define m(a) a(w) \n")
+			.append("#define w 0,1 \n")
+			.append("#define t(a) a \n")
+			.append("#define p() int \n")
+			.append("#define q(x) x \n")
+			.append("#define r(x,y) x ## y \n")
+			.append("#define str(x) # x \n");
+	}
+	
+	
+	
+	public void testSpecExample3_1() throws Exception {
+		StringBuffer sb = getExample3Defines();
+		sb.append("f(y+1) + f(f(z)) % t(t(g)(0) + t)(1); \n"); 
+		
+		// f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+		initializeScanner(sb.toString());
+		
+		validateIdentifier("f");
+		validateToken(IToken.tLPAREN);
+		validateInteger("2");
+		validateToken(IToken.tSTAR);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("y");
+		validateToken(IToken.tPLUS);
+		validateInteger("1");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tPLUS);
+		validateIdentifier("f");
+		validateToken(IToken.tLPAREN);
+		validateInteger("2");
+		validateToken(IToken.tSTAR);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("f");
+		validateToken(IToken.tLPAREN);
+		validateInteger("2");
+		validateToken(IToken.tSTAR);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("z");
+		validateToken(IToken.tLBRACKET);
+		validateInteger("0");
+		validateToken(IToken.tRBRACKET);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tMOD);
+		validateIdentifier("f");
+		validateToken(IToken.tLPAREN);
+		validateInteger("2");
+		validateToken(IToken.tSTAR);
+		validateToken(IToken.tLPAREN);
+		validateInteger("0");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tPLUS);
+		validateIdentifier("t");
+		validateToken(IToken.tLPAREN);
+		validateInteger("1");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	public void _testSpecExample3_2() throws Exception {
+		StringBuffer sb = getExample3Defines();
+		sb.append("g(x+(3,4)-w) | h 5) & m (f)^m(m); \n");
+		
+		// f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1); //47
+		initializeScanner(sb.toString());
+		
+		validateIdentifier("g");
+		validateToken(IToken.tLPAREN);
+		validateInteger("2");
+		validateToken(IToken.tSTAR);
+		validateToken(IToken.tLPAREN);
+		validateInteger("2");
+		validateToken(IToken.tPLUS);
+		validateToken(IToken.tLPAREN);
+		validateInteger("3");
+		validateToken(IToken.tCOMMA);
+		validateInteger("4");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tMINUS);
+		validateInteger("0");
+		validateToken(IToken.tCOMMA);
+		validateInteger("1");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tBITOR);
+		validateIdentifier("f");
+		validateToken(IToken.tLPAREN);
+		validateInteger("2");
+		validateToken(IToken.tSTAR);
+		validateToken(IToken.tLPAREN);
+		validateToken(IToken.tBITCOMPLEMENT);
+		validateInteger("5");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tAMPER);
+		validateIdentifier("f");
+		validateToken(IToken.tLPAREN);
+		validateInteger("2");
+		validateToken(IToken.tLPAREN);
+		validateToken(IToken.tLPAREN);
+		validateInteger("0");
+		validateToken(IToken.tCOMMA);
+		validateInteger("1");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tXOR);
+		validateIdentifier("m");
+		validateToken(IToken.tLPAREN);
+		validateInteger("0");
+		validateToken(IToken.tCOMMA);
+		validateInteger("1");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	
+	public void testSpecExample3_3() throws Exception {
+		StringBuffer sb = getExample3Defines();
+		sb.append("p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) }; \n");
+		
+		// int i[] = { 1, 23, 4, 5, };
+		initializeScanner(sb.toString());
+		
+		validateToken(IToken.t_int);
+		validateIdentifier("i");
+		validateToken(IToken.tLBRACKET);
+		validateToken(IToken.tRBRACKET);
+		validateToken(IToken.tASSIGN);
+		validateToken(IToken.tLBRACE);
+		validateInteger("1");
+		validateToken(IToken.tCOMMA);
+		validateInteger("23");
+		validateToken(IToken.tCOMMA);
+		validateInteger("4");
+		validateToken(IToken.tCOMMA);
+		validateInteger("5");
+		validateToken(IToken.tCOMMA);
+		validateToken(IToken.tRBRACE);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	public void testSpecExample3_4() throws Exception {
+		StringBuffer sb = getExample3Defines();
+		sb.append("char c[2][6] = { str(hello), str() }; \n");   //31
+		
+		// char c[2][6] = { "hello", "" }; //15
+		initializeScanner(sb.toString());
+
+		validateToken(IToken.t_char);
+		validateIdentifier("c");
+		validateToken(IToken.tLBRACKET);
+		validateInteger("2");
+		validateToken(IToken.tRBRACKET);
+		validateToken(IToken.tLBRACKET);
+		validateInteger("6");
+		validateToken(IToken.tRBRACKET);
+		validateToken(IToken.tASSIGN);
+		validateToken(IToken.tLBRACE);
+		validateString("hello");
+		validateToken(IToken.tCOMMA);
+		validateString("");
+		validateToken(IToken.tRBRACE);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	private static StringBuffer getExample4Defines() {
+		return new StringBuffer()
+			.append("#define str(s) # s \n")
+			.append("#define xstr(s) str(s) \n")
+			.append("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\ \n")
+			.append("x ## s, x ## t) \n")
+			.append("#define INCFILE(n) vers ## n \n")
+			.append("#define glue(a, b) a ## b \n")
+			.append("#define xglue(a, b) glue(a, b) \n")
+			.append("#define HIGHLOW \"hello\" \n")
+			.append("#define LOW LOW \", world\" \n");
+	}
+	
+
+	public void testSpecExample4_1() throws Exception {
+		StringBuffer sb = getExample4Defines();
+		sb.append("debug(1, 2); \n");  //31
+		
+		// printf("x1= %d, x2= %s", x1, x2); // 9
+		initializeScanner(sb.toString());
+		
+		validateIdentifier("printf");
+		validateToken(IToken.tLPAREN);
+		validateString("x1= %d, x2= %s");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("x1");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("x2");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	public void testSpecExample4_2() throws Exception {
+		StringBuffer sb = getExample4Defines();
+		sb.append("fputs(str(strncmp(\"abc\\0d\", \"abc\", '\\4') // this goes away   \n");
+		sb.append("== 0) str(: @\\n), s); \n");
+		
+		// fputs( "strncmp(\"abc\\0d\", \"abc\", '\\4') == 0: @\n", s); // 7
+		initializeScanner(sb.toString());
+		
+		validateIdentifier("fputs");
+		validateToken(IToken.tLPAREN);
+		validateString("strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4') == 0: @\\n");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("s");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	public void testSpecExample4_3() throws Exception {
+		StringBuffer sb = getExample4Defines();
+		sb.append("xglue(HIGH, LOW) \n");
+		
+		// "hello, world"
+		initializeScanner(sb.toString());
+		
+		validateString("hello, world");
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	public void testSpecExample4_4() throws Exception {
+		StringBuffer sb = getExample4Defines();
+		sb.append("glue(HIGH, LOW); \n");
+		
+		// "hello";
+		initializeScanner(sb.toString());
+
+		validateString("hello");
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+
+	// #define t(x,y,z) x ## y ## z 
+	// int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,), t(10,,), t(,11,), t(,,12), t(,,) };
+	public void testSpecExample5() throws Exception {
+		// int j[] = {123, 45, 67, 89, 10, 11, 12, };
+		initializeScanner();
+		
+		validateToken(IToken.t_int);
+		validateIdentifier("j");
+		validateToken(IToken.tLBRACKET);
+		validateToken(IToken.tRBRACKET);
+		validateToken(IToken.tASSIGN);
+		validateToken(IToken.tLBRACE);
+		validateInteger("123");
+		validateToken(IToken.tCOMMA);
+		validateInteger("45");
+		validateToken(IToken.tCOMMA);
+		validateInteger("67");
+		validateToken(IToken.tCOMMA);
+		validateInteger("89");
+		validateToken(IToken.tCOMMA);
+		validateInteger("10");
+		validateToken(IToken.tCOMMA);
+		validateInteger("11");
+		validateToken(IToken.tCOMMA);
+		validateInteger("12");
+		validateToken(IToken.tCOMMA);
+		validateToken(IToken.tRBRACE);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	public StringBuffer getExample7Defines() {
+		return new StringBuffer()
+			.append("#define debug(...) fprintf(stderr, __VA_ARGS__) \n ")
+			.append("#define showlist(...) puts(#__VA_ARGS__)\n ")
+			.append("#define report(test, ...) ((test)?puts(#test):\\ \n ")
+			.append("printf(__VA_ARGS__))  \n ");
+	}
+	
+	
+	public void testSpecExample7_1() throws Exception {
+		StringBuffer sb = getExample7Defines();
+		sb.append("debug(\"Flag\"); \n");
+		
+		// fprintf(stderr, "Flag" ); //7
+		initializeScanner(sb.toString());
+		
+		validateIdentifier("fprintf");
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("stderr");
+		validateToken(IToken.tCOMMA);
+		validateString("Flag");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	public void testSpecExample7_2() throws Exception {
+		StringBuffer sb = getExample7Defines();
+		sb.append("debug(\"X = %d\\n\", x); \n");
+		
+		// fprintf(stderr, "X = %d\n", x ); //9
+		initializeScanner(sb.toString());
+		
+		validateIdentifier("fprintf");
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("stderr");
+		validateToken(IToken.tCOMMA);
+		validateString("X = %d\\n");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("x");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);	
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	public void testSpecExample7_3() throws Exception {
+		StringBuffer sb = getExample7Defines();
+		sb.append("showlist(The first, second, and third items.); \n");
+		
+		// puts( "The first, second, and third items." ); //5
+		initializeScanner(sb.toString());
+		
+		validateIdentifier("puts");
+		validateToken(IToken.tLPAREN);
+		validateString("The first, second, and third items.");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	
+	public void testSpecExample7_4() throws Exception {
+		StringBuffer sb = getExample7Defines();
+		sb.append("report(x>y, \"x is %d but y is %d\", x, y); \n");
+		
+		// ( (x>y) ? puts("x>y") : printf("x is %d but y is %d", x, y) ); //22
+		initializeScanner(sb.toString());
+		
+		validateToken(IToken.tLPAREN);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("x");
+		validateToken(IToken.tGT);
+		validateIdentifier("y");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tQUESTION);
+		validateIdentifier("puts");
+		validateToken(IToken.tLPAREN);
+		validateString("x>y");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tCOLON);
+		validateIdentifier("printf");
+		validateToken(IToken.tLPAREN );
+		validateString("x is %d but y is %d");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("x");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("y");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	
+	// #define foo g g g
+	// #define g f##oo
+	// foo
+	public void testRecursiveExpansion() throws Exception {
+		initializeScanner();
+		
+		validateIdentifier("foo");
+		validateIdentifier("foo");
+		validateIdentifier("foo");
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	// #define m !(m)+n 
+	// #define n(n) n(m)
+	// m(m)
+	public void testRecursiveExpansion2() throws Exception {
+		// !(m)+ !(m)+n(!(m)+n)
+		initializeScanner();
+		
+		validateToken(IToken.tNOT);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("m");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tPLUS);
+		validateToken(IToken.tNOT);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("m");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tPLUS);
+		validateIdentifier("n");
+		validateToken(IToken.tLPAREN);
+		validateToken(IToken.tNOT);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("m");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tPLUS);
+		validateIdentifier("n");
+		validateToken(IToken.tRPAREN);
+		validateEOF();
+		validateProblemCount(0);
+	}
+	
+	
+	// #define f g
+	// #define cat(a,b) a ## b
+	// #define g bad
+	// cat(f, f)
+	public void testRecursiveExpansion3() throws Exception {
+		// ff
+		initializeScanner();
+		
+		validateIdentifier("ff");
+		validateEOF();
+		validateProblemCount(0);
+	}
 }

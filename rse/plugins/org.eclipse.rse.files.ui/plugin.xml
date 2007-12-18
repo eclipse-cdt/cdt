@@ -428,7 +428,7 @@ Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter fro
          <action
                label="%synchronizeCache.label"
                 tooltip="%synchronizeCache.tooltip"
-               class="org.eclipse.rse.files.ui.actions.SynchronizeCacheActionDelegate"
+               class="org.eclipse.rse.internal.files.ui.actions.SynchronizeCacheActionDelegate"
                menubarPath="group.importexport"
                id="synchronizeCache">
          </action>

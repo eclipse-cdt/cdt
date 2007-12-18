@@ -12,7 +12,7 @@
  * {Name} (company) - description of contribution.
  * David McKnight    (IBM)    [143503] [updating] need a synchronize cache operation
  ********************************************************************************/
-package org.eclipse.rse.files.ui.actions;
+package org.eclipse.rse.internal.files.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

@@ -15,9 +15,11 @@
  * Kevin Doyle (IBM) - [188637] Handle the caught exception in DeleteJob.run when file fails to be deleted
  * Kevin Doyle (IBM) - [196582] ClassCastException when doing copy/paste with Remote Search view open
  * Xuan Chen   (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -51,7 +53,10 @@ import org.eclipse.rse.ui.model.SystemRemoteElementResourceSet;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -116,7 +121,8 @@ public class SystemCommonDeleteAction
 		{
 			boolean ok = true;
 			List localDeletedObjects = new Vector();
-			List remoteDeletedObjects = new Vector();
+			List remoteDeletedObjects = new Vector();  
+			HashMap objectsToDelete = new HashMap();
 			
 			// local delete is pretty straight-forward
 			for (int l = 0; l < _localResources.size() && ok; l++)
@@ -145,17 +151,18 @@ public class SystemCommonDeleteAction
 				ISystemViewElementAdapter adapter = set.getViewAdapter();
 				try
 				{
-					ok = adapter.doDeleteBatch(getShell(), set.getResourceSet(), monitor);
-					if (ok)
+					for (int i = 0; i < set.size(); i++)
 					{
-						for (int i = 0; i < set.size(); i++)
-						{
-							remoteDeletedObjects.add(set.get(i));
-						}
+						Object thisObject = set.get(i);
+						String objectName = adapter.getName(thisObject);
+						objectsToDelete.put(thisObject, objectName);
+						remoteDeletedObjects.add(thisObject);
 					}
+					ok = adapter.doDeleteBatch(getShell(), set.getResourceSet(), monitor);
 				}
 				catch (SystemMessageException e)
 				{
+					remoteDeletedObjects.clear();
 					if (monitor.isCanceled() && set.size() > 1)
 					{
 						for (int i = 0; i < set.size(); i++)
@@ -172,11 +179,14 @@ public class SystemCommonDeleteAction
 							//Get the moved file names
 							Object thisObject = remoteDeletedObjects.get(0);
 							String deletedFileNames = null;
-							deletedFileNames = adapter.getName(thisObject);
+							//We could not use adapter.getName(thisObject) here since in dstore case, this name has
+							//already been changed to "deleted".  So we need to remember the object and name map, and
+							//find the object name in the map here.
+							deletedFileNames = (String)objectsToDelete.get(thisObject);  
 							for (int i=1; i<(remoteDeletedObjects.size()); i++)
 							{
 								thisObject = remoteDeletedObjects.get(i);
-								deletedFileNames = deletedFileNames + "\n" + adapter.getName(thisObject); //$NON-NLS-1$
+								deletedFileNames = deletedFileNames + "\n" + (String)objectsToDelete.get(thisObject); //$NON-NLS-1$
 							}
 							SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_DELETE_INTERRUPTED); 
 							thisMessage.makeSubstitution(deletedFileNames);

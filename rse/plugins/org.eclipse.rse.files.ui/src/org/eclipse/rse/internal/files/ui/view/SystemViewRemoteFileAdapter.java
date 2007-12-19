@@ -39,6 +39,7 @@
  * Rupen Mardirossian (IBM)		 - [208435] added constructor to nested RenameRunnable class to take in names that are previously used as a parameter for multiple renaming instances
  * David McKnight   (IBM)        - [209660] need to check if remote encoding has changed before using cached file 
  * Xuan Chen        (IBM)        - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
+ * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -2075,7 +2076,7 @@ public class SystemViewRemoteFileAdapter
 										IRemoteFile thisCopiedFile = null;
 										try
 										{
-											thisCopiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[i].getName(), monitor);
+											thisCopiedFile = targetFS.getRemoteFileObject(targetFolder, srcFileOrFolders[i].getName(), null);
 										}
 										catch (SystemMessageException thsiException)
 										{
@@ -2102,6 +2103,10 @@ public class SystemViewRemoteFileAdapter
 										SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_INTERRUPTED); 
 										thisMessage.makeSubstitution(copiedFileNames);
 										SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+									}
+									else
+									{
+										SystemMessageDialog.displayMessage(e);
 									}
 								}
 								else

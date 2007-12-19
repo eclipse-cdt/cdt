@@ -31,6 +31,7 @@
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * David McKnight   (IBM)        - [209704] added supportsEncodingConversion()
+ * Xuan Chen        (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.files;
@@ -1272,6 +1273,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_CREATE_FILE, monitor);
 
 		if (status == null) return null;
+		
+		if (null != monitor && monitor.isCanceled())
+		{
+			//This operation has been canceled by the user.
+			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+		}
+		
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
 			return new DStoreHostFile(de);
 		else if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.FAILED_WITH_EXIST))
@@ -1296,6 +1304,13 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_CREATE_FOLDER, monitor);
 
 		if (status == null) return null;
+		
+		if (null != monitor && monitor.isCanceled())
+		{
+			//This operation has been canceled by the user.
+			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+		}
+		
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
 			return new DStoreHostFile(de);
 		else if(FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.FAILED_WITH_EXIST))
@@ -1319,6 +1334,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement de = getElementFor(remotePath);
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_DELETE, monitor);
 		if (status == null) return false;
+		if (null != monitor && monitor.isCanceled())
+		{
+			//This operation has been canceled by the user.
+			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+		}
 		String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
 		// When running a server older than 2.0.1 success is not set for directories, so we must
 		// check if the source message is an empty string
@@ -1342,6 +1362,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}	
 		DataElement status = dsStatusCommand((DataElement) dataElements.get(0), dataElements, IUniversalDataStoreConstants.C_DELETE_BATCH, monitor);
 		if (status == null) return false;
+		if (null != monitor && monitor.isCanceled())
+		{
+			//This operation has been canceled by the user.
+			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+		}
 		String sourceMsg = FileSystemMessageUtil.getSourceMessage(status);
 		// When running a server older than 2.0.1 success is not set for directories, so we must
 		// check if the source message is an empty string
@@ -1373,6 +1398,11 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		DataElement status = dsStatusCommand(de, IUniversalDataStoreConstants.C_RENAME, monitor);
 
 		if (status == null) return false;
+		if (null != monitor && monitor.isCanceled())
+		{
+			//This operation has been canceled by the user.
+			throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+		}
 		if (FileSystemMessageUtil.getSourceMessage(status).equals(IServiceConstants.SUCCESS)) 
 			return true;
 		else
@@ -1391,11 +1421,30 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 
 	protected boolean moveByCopy(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
 	{
+		boolean movedOk = false;
+		
 		if (copy(srcParent, srcName, tgtParent, tgtName, monitor))
-	 	{
-			return delete(srcParent, srcName, monitor);
-	 	}
-	 	return false;
+		{
+			try
+			{
+				movedOk = delete(srcParent, srcName, monitor);
+			}
+			catch (SystemMessageException exc)
+			{
+				if (null != monitor && monitor.isCanceled())
+				{
+					//This mean the copy operation is ok, but delete operation has been canceled by user.
+					//The delete() call will take care of recovered from the cancel operation.
+					//So we need to make sure to remove the already copied file/folder.
+					getFile(tgtParent, tgtName, null); //need to call getFile first to put this object into DataElement map first
+					                                   //otherwise it type will default to FilterObject, and could not be deleted properly for virtual object.
+					delete(tgtParent, tgtName, null);
+				}
+				throw exc;
+			}
+		}
+			
+	 	return movedOk;
 	}
 	
 	public boolean move(String srcParent, String srcName, String tgtParent, String tgtName, IProgressMonitor monitor) throws SystemMessageException
@@ -1566,7 +1615,16 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			catch (InterruptedException e)
 			{
-//				UniversalSystemPlugin.logError(CLASSNAME + " InterruptedException while waiting for command", e);
+				if (monitor != null && monitor.isCanceled())
+				{
+					//This operation has been canceled by the user.
+					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				}
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
 			}
 			return true;
 		}
@@ -1606,7 +1664,19 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 			}
 			catch (InterruptedException e)
 			{
-//				UniversalSystemPlugin.logError(CLASSNAME + " InterruptedException while waiting for command", e);
+				if (monitor != null && monitor.isCanceled())
+				{
+					//This operation has been canceled by the user.
+					throw new SystemMessageException(getMessage("RSEG1067")); //$NON-NLS-1$
+				}
+				// cancel monitor if it's still not canceled
+				if (monitor != null && !monitor.isCanceled())
+				{
+					monitor.setCanceled(true);
+				}
+				
+				//InterruptedException is used to report user cancellation, so no need to log
+				//This should be reviewed (use OperationCanceledException) with bug #190750
 			}
 			return true;
 		}

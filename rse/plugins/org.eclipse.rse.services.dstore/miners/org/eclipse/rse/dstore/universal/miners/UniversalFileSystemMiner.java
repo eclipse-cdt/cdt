@@ -26,14 +26,13 @@
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.ServerSocket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,14 +43,19 @@ import org.eclipse.dstore.core.model.DataElement;
 import org.eclipse.dstore.core.model.DataStoreResources;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.ArchiveQueryThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.ClassFileParser;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CopyBatchThread;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CopySingleThread;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CreateFileThread;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.CreateFolderThread;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.DeleteThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileClassifier;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileDescriptors;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.FileQueryThread;
+import org.eclipse.rse.internal.dstore.universal.miners.filesystem.RenameThread;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.UniversalDownloadHandler;
 import org.eclipse.rse.internal.dstore.universal.miners.filesystem.UniversalSearchHandler;
 import org.eclipse.rse.services.clientserver.IClientServerConstants;
 import org.eclipse.rse.services.clientserver.IServiceConstants;
-import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemFileClassifier;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
@@ -210,358 +214,18 @@ public class UniversalFileSystemMiner extends Miner {
 
 	private DataElement handleCopyBatch(DataElement targetFolder, DataElement theElement, DataElement status) 
 	{
-		String targetType = targetFolder.getType();
-		File tgtFolder = getFileFor(targetFolder);
-		int numOfSources = theElement.getNestedSize() - 2;
 		
-		if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR) || targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) 
-		{
-		    // if target is virtual or an archive, insert into an archive
-			AbsoluteVirtualPath vpath = getAbsoluteVirtualPath(targetFolder);
-			ISystemArchiveHandler handler = getArchiveHandlerFor(vpath.getContainingArchiveString());
-			boolean result = true;
-			
-			if (handler == null) 
-			{
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-				return statusDone(status);
-			}
+		CopyBatchThread copyBatchThread = new CopyBatchThread(targetFolder, theElement, this, _isWindows, status);
+		copyBatchThread.start();
 
-			List nonDirectoryArrayList = new ArrayList();
-			List nonDirectoryNamesArrayList = new ArrayList();
-			
-			String virtualContainer = ""; //$NON-NLS-1$
-			
-			if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) 
-			{
-				virtualContainer = vpath.getVirtualPart();
-			}
-			
-			for (int i = 0; i < numOfSources; i++)
-			{
-				DataElement sourceFile = getCommandArgument(theElement, i+1);
-				String srcType = sourceFile.getType();
-				String srcName = sourceFile.getName();
-				File srcFile;
-
-				if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
-					|| srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) 
-				{		
-					srcFile = getFileFor(sourceFile);
-				}
-				else if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) 
-				{
-					AbsoluteVirtualPath svpath = getAbsoluteVirtualPath(sourceFile);
-					ISystemArchiveHandler shandler = getArchiveHandlerFor(svpath.getContainingArchiveString());
-				
-					if (shandler == null) 
-					{
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						return statusDone(status);
-					}
-				
-					VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart(), null);
-					srcFile = child.getExtractedFile();
-				}
-				else {
-					//invalid source type
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-					return statusDone(status);
-				}
-				
-				//If this source file object is directory, we will call ISystemArchiveHandler#add(File ...) method to 
-				//it and all its descendants into the archive file.
-				//If this source file object is not a directory, we will add it into a list, and then
-				//call ISystemArchiveHandler#add(File[] ...) to add them in batch.
-				if (srcFile.isDirectory())
-				{
-					result = handler.add(srcFile, virtualContainer, srcName, null);
-					if (!result) {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						return statusDone(status);
-					}
-				}
-				else
-				{
-					nonDirectoryArrayList.add(srcFile);
-					nonDirectoryNamesArrayList.add(srcName);
-				}
-			}
-			
-			if (nonDirectoryArrayList.size() > 0)
-			{
-				File[] resultFiles = (File[])nonDirectoryArrayList.toArray(new File[nonDirectoryArrayList.size()]);
-				String[] resultNames = (String[])nonDirectoryNamesArrayList.toArray(new String[nonDirectoryNamesArrayList.size()]);
-				//we need to add those files into the archive file as well.
-				result = handler.add(resultFiles, virtualContainer, resultNames, null);
-			}
-			
-			if (result)
-			{
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-			}
-			else
-			{
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			}
-			return statusDone(status);
-		}
-		else // target is a regular folder
-		{
-			boolean folderCopy = false;
-			String source = ""; //$NON-NLS-1$
-			String tgt = enQuote(tgtFolder.getAbsolutePath());
-
-			int numOfNonVirtualSources = 0;
-			for (int i = 0; i < numOfSources; i++)
-			{
-				DataElement sourceFile = getCommandArgument(theElement, i+1);
-				String srcType = sourceFile.getType();
-				
-				if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) 
-				{
-					// extract from an archive to folder
-					AbsoluteVirtualPath svpath = getAbsoluteVirtualPath(sourceFile);
-					ISystemArchiveHandler shandler = getArchiveHandlerFor(svpath.getContainingArchiveString());
-			
-					if (shandler == null) 
-					{
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						return statusDone(status);
-					}
-			
-					VirtualChild child = shandler.getVirtualFile(svpath.getVirtualPart(), null);
-
-					File parentDir = getFileFor(targetFolder);
-					File destination = new File(parentDir, sourceFile.getName());
-			
-					if (child.isDirectory) 
-					{
-						shandler.extractVirtualDirectory(svpath.getVirtualPart(), parentDir, destination, null);
-					}
-					else 
-					{
-						shandler.extractVirtualFile(svpath.getVirtualPart(), destination, null);
-					}
-				}
-				else // source is regular file or folder
-				{
-					File srcFile = getFileFor(sourceFile);
-					folderCopy = folderCopy || srcFile.isDirectory();
-					String src = srcFile.getAbsolutePath();
-				
-					// handle special characters in source and target strings 
-					src = enQuote(src);
-					
-					// handle window case separately, since xcopy command could not handler
-					// multiple source names
-					if (_isWindows)
-					{
-						tgt = tgtFolder.getAbsolutePath() + File.separatorChar + srcFile.getName();
-						// Both unix and windows need src quoted, so it's already done
-						doCopyCommand(src, enQuote(tgt), folderCopy, status);
-						if (status.getAttribute(DE.A_SOURCE) == IServiceConstants.FAILED)
-						{
-							break;
-						}
-						continue;
-					}
-					if (numOfNonVirtualSources == 0)
-					{
-						source += src;
-					}
-					else
-					{
-						source = source + " " + src; //$NON-NLS-1$
-					}
-					numOfNonVirtualSources++;
-				} 
-			} // end for loop iterating through sources
-			
-			if (numOfNonVirtualSources > 0)
-			{
-				doCopyCommand(source, tgt, folderCopy, status);
-			} 
-		} // end if/then/else (target is regular folder)
-		return statusDone(status);
+		updateCancellableThreads(status.getParent(), copyBatchThread);
+		
+		return status;
 	}
 
-	protected void doCopyCommand(String source, String tgt, boolean folderCopy, DataElement status)
-	{
-		String command = null;
-		if (_isWindows) {
-			
-			if (folderCopy) {
-				command = "xcopy " + source //$NON-NLS-1$
-					+ " " + tgt //$NON-NLS-1$
-					+ " /S /E /K /Q /H /I /Y"; //$NON-NLS-1$
-			}
-			else {
-				String unquotedTgt = tgt.substring(1, tgt.length() - 1);
-				
-				File targetFile = new File(unquotedTgt);
-				if (!targetFile.exists())
-				{
-					// create file so as to avoid ambiguity
-					try
-					{
-						targetFile.createNewFile();
-					}
-					catch (Exception e)
-					{
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						status.setAttribute(DE.A_VALUE, e.getMessage());		
-						return;
-					}
-				}				
-				command = "xcopy " + source + " " + tgt + " /Y /K /Q /H"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
-			}
-		}
-		else {
-			if (folderCopy) {
-				command = "cp  -Rp " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			else {
-				command = "cp -p " + source + " " + tgt; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
 
-		// run copy command
-		try
-		{	
-			Runtime runtime = Runtime.getRuntime();
-			Process p = null;
-				
-			if (_isWindows)
-			{
-				String theShell = "cmd /C "; //$NON-NLS-1$
-				p = runtime.exec(theShell + command);	
-			}
-			else
-			{
-				String theShell = "sh"; //$NON-NLS-1$
-				String args[] = new String[3];
-				args[0] = theShell;					
-				args[1] = "-c"; //$NON-NLS-1$
-				args[2] = command;
-												
-				p = runtime.exec(args);
-			}
-			
-			// ensure there is a process
-			if (p != null) {
-			    
-			    // wait for process to finish
-			    p.waitFor();
-			    
-			    // get the exit value of the process
-			    int result = p.exitValue();
-			    
-			    // if the exit value is not 0, then the process did not terminate normally
-			    if (result != 0) {
-			        
-			        // get the error stream
-					InputStream errStream = p.getErrorStream();
-					
-					// error buffer
-					StringBuffer errBuf = new StringBuffer();
-					
-					byte[] bytes = null;
-					
-					int numOfBytesRead = 0;
-					
-					int available = errStream.available();
-					
-					// read error stream and store in error buffer
-					while (available > 0) {
-						
-						bytes = new byte[available];
-						
-						numOfBytesRead = errStream.read(bytes);
-						
-						if (numOfBytesRead > -1) {
-						    errBuf.append(new String(bytes, 0, numOfBytesRead));
-						}
-						else {
-						    break;
-						}
-						
-						available = errStream.available();
-					}
-					
-					String err = errBuf.toString();
-					
-					// omit new line if there is one at the end because datastore does not
-					// handle new line in the attributes
-					// TODO: what to do if newline occurs in the middle of the string?
-					String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
-					
-					if (newLine != null && err.endsWith(newLine)) {
-					    err = err.substring(0, err.length() - newLine.length());
-					}
-					
-					// if there is something in error buffer
-					// there was something in the error stream of the process
-					if (err.length() > 0) {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						status.setAttribute(DE.A_VALUE, err);
-					}
-					// otherwise, nothing in the error stream
-					// but we know process did not exit normally, so we indicate an unexpected error
-					else {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						status.setAttribute(DE.A_VALUE, IServiceConstants.UNEXPECTED_ERROR);
-					}
-			    }
-			    // otherwise if exit value is 0, process terminated normally
-			    else {
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-			    }
-			}
-			// no process, so something is wrong
-			else {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-				status.setAttribute(DE.A_VALUE, IServiceConstants.UNEXPECTED_ERROR);					
-			}
-		}
-		catch (Exception e)
-		{
-			UniversalServerUtilities.logError(CLASSNAME, "Exception is handleCopy", e); //$NON-NLS-1$
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			status.setAttribute(DE.A_VALUE, e.getMessage());
-		}	
-	}
 	
-	/**
-	 * Delete directory and its children.
-	 *  
-	 */
-	public void deleteDir(File fileObj, DataElement status) {
-		try {
-			File list[] = fileObj.listFiles();
-			for (int i = 0; i < list.length; ++i) {
-				if (list[i].isFile()) {
-					if (!(list[i].delete())) {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						UniversalServerUtilities.logWarning(CLASSNAME,
-								"Deletion of dir failed"); //$NON-NLS-1$
-					}
-				} else {
-					deleteDir(list[i], status);
-					if (!(list[i].delete())) {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						UniversalServerUtilities.logWarning(CLASSNAME,
-								"Deletion of dir failed"); //$NON-NLS-1$
-					}
-				}
-			}
-		} catch (Exception e) {
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXCEPTION);
-			status.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
-			UniversalServerUtilities.logError(CLASSNAME,
-					"Deletion of dir failed", e); //$NON-NLS-1$
-		}
-	}
+	
 
 	/**
 	 * Method to do a search.
@@ -632,10 +296,11 @@ public class UniversalFileSystemMiner extends Miner {
 	public DataElement handleCancel(DataElement subject, DataElement status) {
 		ICancellableHandler thread = (ICancellableHandler) _cancellableThreads
 				.get(subject);
-
+		System.out.println("Inside handleCancel(), and the thread is " + thread);
 		
 		if (thread != null) {
 			if (!thread.isDone()) {
+				System.out.println("Inside handleCancel(), and will call thread.cancel");
 				thread.cancel();
 			}
 		}
@@ -749,6 +414,7 @@ public class UniversalFileSystemMiner extends Miner {
 			_dataStore.trace(e);
 		}
 		// save find thread in hashmap for retrieval during cancel
+		System.out.println("put thread into the _cancellableThreads hashmap. " + thread.getClass());
 		_cancellableThreads.put(command, thread);
 	}
 	
@@ -909,163 +575,35 @@ public class UniversalFileSystemMiner extends Miner {
 	 * Method to Delete a file or folder.
 	 */
 	public DataElement handleDelete(DataElement subject, DataElement status, boolean refreshDataStore) {
-		String type = subject.getType();
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
-				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-			return handleDeleteFromArchive(subject, status);
-		}
+		DeleteThread deleteThread = new DeleteThread(subject,  this, _dataStore, false, status);
+		deleteThread.start();
 
-		File deleteObj = new File(subject.getAttribute(DE.A_VALUE)
-				+ File.separatorChar + subject.getName());
-		DataElement deObj = null;
-		if (!deleteObj.exists()) {
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_DOES_NOT_EXIST + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-			UniversalServerUtilities.logError(CLASSNAME,
-					"The object to delete does not exist", null); //$NON-NLS-1$
-		} else {
-			try {
-				if (deleteObj.isFile()) {
-					if (deleteObj.delete() == false) {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-					} else {
-						// delete was successful and delete the object from the
-						// datastore
-						deObj = _dataStore.find(subject, DE.A_NAME, subject
-								.getName(), 1);
-						_dataStore.deleteObject(subject, deObj);
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-					}
-					_dataStore.refresh(subject);
-				} else if (deleteObj.isDirectory()) { // it is directory and
-													  // need to delete the
-													  // entire directory +
-					// children
-					deleteDir(deleteObj, status);
-					if (deleteObj.delete() == false) {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-						UniversalServerUtilities.logError(CLASSNAME,
-								"Deletion of dir fialed", null); //$NON-NLS-1$
-					} else {
-						_dataStore.deleteObjects(subject);
-						DataElement parent = subject.getParent();
-						_dataStore.deleteObject(parent, subject);
-						_dataStore.refresh(parent);
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-					}
-				} else {
-					UniversalServerUtilities
-							.logError(
-									CLASSNAME,
-									"The object to delete is neither a File or Folder! in handleDelete", //$NON-NLS-1$
-									null);
-				}
-			} catch (Exception e) {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXCEPTION + "|" + deleteObj.getAbsolutePath()); //$NON-NLS-1$
-				status.setAttribute(DE.A_VALUE, e.getLocalizedMessage());
-				UniversalServerUtilities.logError(CLASSNAME,
-						"Delete of the object failed", e); //$NON-NLS-1$
-			}
-		}
-		_dataStore.refresh(subject);
-		return statusDone(status);
+		updateCancellableThreads(status.getParent(), deleteThread);
+		
+		return status;
 	}
 	
 	private DataElement handleDeleteBatch(DataElement theElement, DataElement status)
 	{
-		DataElement substatus = _dataStore.createObject(null, "status", "substatus"); //$NON-NLS-1$ //$NON-NLS-2$
-		int numOfSources = theElement.getNestedSize() - 2;
-		for (int i = 0; i < numOfSources; i++)
-		{
-			DataElement subject = getCommandArgument(theElement, i+1);
-			handleDelete(subject, substatus, false);
-			/*
-			if (!substatus.getSource().startsWith(IServiceConstants.SUCCESS)) 
-			{
-				status.setAttribute(DE.A_SOURCE, substatus.getSource());
-				return statusDone(status);
-			}
-			*/
-		}
-		status.setAttribute(DE.A_SOURCE, substatus.getSource());
-		return statusDone(status);
+		DeleteThread deleteThread = new DeleteThread(theElement,  this, _dataStore, true, status);
+		deleteThread.start();
+
+		updateCancellableThreads(status.getParent(), deleteThread);
+		
+		return status;
 	}
 
 	/**
 	 * Method to Rename a file or folder.
 	 */
 	public DataElement handleRename(DataElement subject, DataElement status) {
-		File fileoldname = new File(subject.getAttribute(DE.A_VALUE)
-				+ File.separatorChar + subject.getName());
-		File filerename = new File(subject.getAttribute(DE.A_SOURCE));
+		
+		RenameThread renameThread = new RenameThread(subject,  this, _dataStore, status);
+		renameThread.start();
 
-	//	System.out.println(ArchiveHandlerManager.isVirtual(fileoldname
-		//		.getAbsolutePath()));
-		if (ArchiveHandlerManager.isVirtual(fileoldname.getAbsolutePath())) {
-			AbsoluteVirtualPath oldAbsPath = new AbsoluteVirtualPath(
-					fileoldname.getAbsolutePath());
-			AbsoluteVirtualPath newAbsPath = new AbsoluteVirtualPath(filerename
-					.getAbsolutePath());
-			ISystemArchiveHandler handler = _archiveHandlerManager
-					.getRegisteredHandler(new File(oldAbsPath
-							.getContainingArchiveString()));
-			boolean success = !(handler == null)
-					&& handler.fullRename(oldAbsPath.getVirtualPart(),
-							newAbsPath.getVirtualPart(), null);
-			if (success && handler != null) {
-				subject.setAttribute(DE.A_NAME, filerename.getName());
-				subject.setAttribute(DE.A_SOURCE, setProperties(handler
-						.getVirtualFile(newAbsPath.getVirtualPart(), null)));
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-				_dataStore.update(subject);
-			} else {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			}
-			_dataStore.refresh(subject);
-			return statusDone(status);
-		}
-		if (filerename.exists())
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXIST);
-		else {
-			try {
-				boolean done = fileoldname.renameTo(filerename);
-				if (done) {
-					subject.setAttribute(DE.A_NAME, filerename.getName());
-					subject
-							.setAttribute(DE.A_SOURCE,
-									setProperties(filerename));
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-
-					if (filerename.isDirectory()) {
-						// update children's properties
-						updateChildProperties(subject, filerename);
-					}
-					_dataStore.update(subject);
-				} else
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			} catch (Exception e) {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-				UniversalServerUtilities.logError(CLASSNAME,
-						"handleRename failed", e); //$NON-NLS-1$
-			}
-		}
-		_dataStore.refresh(subject);
-		return statusDone(status);
-	}
-
-	// DKM: during folder rename we need to recursively update all the parent
-	// paths
-	private void updateChildProperties(DataElement subject, File filerename) {
-
-		int nestedSize = subject.getNestedSize();
-		for (int i = 0; i < nestedSize; i++) {
-			DataElement child = subject.get(i);
-			child.setAttribute(DE.A_VALUE, filerename.getAbsolutePath());
-
-			if (child.getNestedSize() > 0) {
-				File childFile = new File(filerename, child.getName());
-				updateChildProperties(child, childFile);
-			}
-		}
+		updateCancellableThreads(status.getParent(), renameThread);
+		
+		return status;
 	}
 
 	/**
@@ -1073,74 +611,13 @@ public class UniversalFileSystemMiner extends Miner {
 	 */
 	public DataElement handleCreateFile(DataElement subject,
 			DataElement status, String queryType) {
-		boolean wasFilter = queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
-		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)) {
-			return handleCreateVirtualFile(subject, status, queryType);
-		}
+		
+		CreateFileThread createFileThread = new CreateFileThread(subject,  queryType, this, _dataStore, status);
+		createFileThread.start();
 
-		File filename = null;
-		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
-			if (subject.getName().indexOf(
-					ArchiveHandlerManager.VIRTUAL_SEPARATOR) > 0) {
-				subject.setAttribute(DE.A_TYPE,
-						IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
-				return handleCreateVirtualFile(subject, status, queryType);
-			} else {
-				filename = new File(subject.getValue());
-				subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR);
-				subject.setAttribute(DE.A_SOURCE, setProperties(filename));
-			}
-		} else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))
-			filename = new File(subject.getAttribute(DE.A_VALUE)
-					+ File.separatorChar + subject.getName());
-		else
-			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleCreateFile", null); //$NON-NLS-1$
-
-		if (filename != null)
-		{
-			if (filename.exists())
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXIST);
-			else {
-				try {
-					boolean done = filename.createNewFile();
-					if (ArchiveHandlerManager.getInstance().isArchive(filename)) {
-						done = ArchiveHandlerManager.getInstance()
-								.createEmptyArchive(filename);
-						if (done)
-							subject.setAttribute(DE.A_TYPE,
-									IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR);
-					} else {
-						if (done)
-						{
-							subject.setAttribute(DE.A_TYPE,
-									IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR);
-						}
-					}
-					subject.setAttribute(DE.A_SOURCE, setProperties(filename));
-					if (done) {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-						if (wasFilter) {
-							String fullName = subject.getValue();
-							String name = fullName.substring(fullName
-									.lastIndexOf(File.separatorChar) + 1, fullName
-									.length());
-							String path = fullName.substring(0, fullName
-									.lastIndexOf(File.separatorChar));
-							subject.setAttribute(DE.A_NAME, name);
-							subject.setAttribute(DE.A_VALUE, path);
-						}
-					} else
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-				} catch (Exception e) {
-					UniversalServerUtilities.logError(CLASSNAME,
-							"handleCreateFile failed", e); //$NON-NLS-1$
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-				}
-			}
-		}
-		_dataStore.refresh(subject);
-		return statusDone(status);
+		updateCancellableThreads(status.getParent(), createFileThread);
+		
+		return status;
 	}
 
 	/**
@@ -1148,65 +625,12 @@ public class UniversalFileSystemMiner extends Miner {
 	 */
 	public DataElement handleCreateFolder(DataElement subject,
 			DataElement status, String queryType) {
-		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-			return handleCreateVirtualFolder(subject, status, queryType);
-		}
+		CreateFolderThread createFolderThread = new CreateFolderThread(subject,  queryType, this, _dataStore, status);
+		createFolderThread.start();
 
-		File filename = null;
-		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) 
-		{
-			if (subject.getName().indexOf(
-					ArchiveHandlerManager.VIRTUAL_SEPARATOR) > 0) 
-			{
-				subject.setAttribute(DE.A_TYPE,
-						IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR);
-				return handleCreateVirtualFolder(subject, status, queryType);
-			} 
-			else 
-			{
-				filename = new File(subject.getValue());
-				subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
-				subject.setAttribute(DE.A_SOURCE, setProperties(filename));
-			}
-		} 
-		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
-		{
-			filename = new File(subject.getValue());
-		}
-		else
-			UniversalServerUtilities.logError(CLASSNAME,
-					"Invalid query type to handleCreateFolder", null); //$NON-NLS-1$
-
-		if (filename != null)
-		{
-			if (filename.exists())
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED_WITH_EXIST);
-			else 
-			{
-				try {
-					boolean done = filename.mkdirs();
-					if (done) 
-					{
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-						subject.setAttribute(DE.A_SOURCE, setProperties(filename));
-						subject.setAttribute(DE.A_TYPE,IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR);
-						subject.setAttribute(DE.A_NAME, filename.getName());
-						subject.setAttribute(DE.A_VALUE, filename.getParentFile().getAbsolutePath());
-					} 
-					else
-					{
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-					}
-					
-				} catch (Exception e) {
-					UniversalServerUtilities.logError(CLASSNAME,
-							"handleCreateFolder failed", e); //$NON-NLS-1$
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-				}
-			}
-		}
-		_dataStore.refresh(subject);
-		return statusDone(status);
+		updateCancellableThreads(status.getParent(), createFolderThread);
+		
+		return status;
 	}
 
 	/**
@@ -2009,8 +1433,10 @@ public class UniversalFileSystemMiner extends Miner {
 		createCommandDescriptor(UniversalFilter, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$ 
 		createCommandDescriptor(UniversalFilter, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$ 
 		createCommandDescriptor(UniversalFilter, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
-		createCommandDescriptor(UniversalFilter, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
-		createCommandDescriptor(UniversalFilter, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		DataElement createNewFileFromFilterDescriptor = createCommandDescriptor(UniversalFilter, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, createNewFileFromFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		DataElement createNewFolderFromFilterDescriptor = createCommandDescriptor(UniversalFilter, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, createNewFolderFromFilterDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		createCommandDescriptor(UniversalFilter, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
 
 
@@ -2030,11 +1456,21 @@ public class UniversalFileSystemMiner extends Miner {
 
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
 		createCommandDescriptor(tempnode, "Filter", IUniversalDataStoreConstants.C_CREATE_TEMP); //$NON-NLS-1$ 
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$ 
+		//create deleteDescriptor and make it cancelable
+		DataElement deleteFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, deleteFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create deleteBatchDescriptor and make it cancelable
+		DataElement deleteBatchFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, deleteBatchFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create createNewFileDescriptor and make it cancelable
+		DataElement createNewFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, createNewFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create createNewFolderDescriptor and make it cancelable
+		DataElement createNewFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, createNewFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create renameDescriptor and make it cancelable
+		DataElement renameFileDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, renameFileDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetAdvanceProperty", IUniversalDataStoreConstants.C_QUERY_ADVANCE_PROPERTY); //$NON-NLS-1$
@@ -2042,13 +1478,22 @@ public class UniversalFileSystemMiner extends Miner {
 
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetcanWriteProperty", IUniversalDataStoreConstants.C_QUERY_CAN_WRITE_PROPERTY); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
-
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$ 
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Copy", IUniversalDataStoreConstants.C_COPY); //$NON-NLS-1$ 
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CopyBatch", IUniversalDataStoreConstants.C_COPY_BATCH); //$NON-NLS-1$ 
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		
+		//create deleteDescriptor and make it cancelable
+		DataElement deleteFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Delete", IUniversalDataStoreConstants.C_DELETE); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, deleteFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create deleteBatchDescriptor and make it cancelable
+		DataElement deleteBatchFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "DeleteBatch", IUniversalDataStoreConstants.C_DELETE_BATCH); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, deleteBatchFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create renameDescriptor and make it cancelable
+		DataElement renameFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Rename", IUniversalDataStoreConstants.C_RENAME); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, renameFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create copyDescriptor and make it cancelable
+		DataElement copyFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Copy", IUniversalDataStoreConstants.C_COPY); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, copyFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create copyFolderBatchDescriptor and make it cancelable
+		DataElement copyBatchFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CopyBatch", IUniversalDataStoreConstants.C_COPY_BATCH); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, copyBatchFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetReadOnly", IUniversalDataStoreConstants.C_SET_READONLY); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetLastModified", IUniversalDataStoreConstants.C_SET_LASTMODIFIED); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetBasicProperty", IUniversalDataStoreConstants.C_QUERY_BASIC_PROPERTY); //$NON-NLS-1$
@@ -2057,8 +1502,12 @@ public class UniversalFileSystemMiner extends Miner {
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetFileClassifications", IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATIONS); //$NON-NLS-1$ 
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetFolderClassifications", IUniversalDataStoreConstants.C_QUERY_FILE_CLASSIFICATION); //$NON-NLS-1$ 
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "Exists", IUniversalDataStoreConstants.C_QUERY_EXISTS); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
-		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		//create createFolderDescriptor and make it cancelable
+		DataElement createNewFileInFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFile", IUniversalDataStoreConstants.C_CREATE_FILE); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, createNewFileInFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
+		//create createFolderDescriptor and make it cancelable
+		DataElement createNewFolderInFolderDescriptor = createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "CreateNewFolder", IUniversalDataStoreConstants.C_CREATE_FOLDER); //$NON-NLS-1$
+		_dataStore.createReference(cancellable, createNewFolderInFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
 
@@ -2087,7 +1536,7 @@ public class UniversalFileSystemMiner extends Miner {
 				IUniversalDataStoreConstants.C_QUERY_QUALIFIED_CLASSNAME);
 	}
 
-	private AbsoluteVirtualPath getAbsoluteVirtualPath(DataElement subject) {
+	public AbsoluteVirtualPath getAbsoluteVirtualPath(DataElement subject) {
 		StringBuffer path = new StringBuffer(subject.getAttribute(DE.A_VALUE));
 		if (ArchiveHandlerManager.getInstance().isArchive(
 				new File(path.toString()))) {
@@ -2104,39 +1553,7 @@ public class UniversalFileSystemMiner extends Miner {
 		return vp;
 	}
 
-	public DataElement handleDeleteFromArchive(DataElement subject,
-			DataElement status) {
-		String type = subject.getType();
-		DataElement deObj = null;
 
-		AbsoluteVirtualPath vpath = getAbsoluteVirtualPath(subject);
-		if (vpath != null) {
-			ISystemArchiveHandler handler = _archiveHandlerManager
-					.getRegisteredHandler(new File(vpath
-							.getContainingArchiveString()));
-			if (handler == null || !handler.delete(vpath.getVirtualPart(), null)) {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED + "|" + vpath.toString()); //$NON-NLS-1$
-				_dataStore.refresh(subject);
-				return statusDone(status);
-			}
-
-			if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)) {
-				deObj = _dataStore.find(subject, DE.A_NAME, subject.getName(),
-						1);
-				_dataStore.deleteObject(subject, deObj);
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-			} else if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-				_dataStore.deleteObjects(subject);
-				DataElement parent = subject.getParent();
-				_dataStore.deleteObject(parent, subject);
-				_dataStore.refresh(parent);
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-			}
-		}
-
-		_dataStore.refresh(subject);
-		return statusDone(status);
-	}
 
 	public DataElement handleQueryAllArchive(DataElement subject, DataElement attributes, 
 			DataElement status, boolean caseSensitive, boolean foldersOnly) 
@@ -2156,230 +1573,15 @@ public class UniversalFileSystemMiner extends Miner {
 		return _archiveHandlerManager.getRegisteredHandler(file);
 	}
 
-	public DataElement handleCreateVirtualFile(DataElement subject,
-			DataElement status, String type) {
-
-		AbsoluteVirtualPath vpath = null;
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
-			vpath = getAbsoluteVirtualPath(subject.getValue());
-		} else {
-			vpath = getAbsoluteVirtualPath(subject);
-		}
-		ISystemArchiveHandler handler = getArchiveHandlerFor(vpath
-				.getContainingArchiveString());
-		if (handler == null) {
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			return statusDone(status);
-		}
-//		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
-		handler.getVirtualFile(vpath.getVirtualPart(), null);
-		handler.createFile(vpath.getVirtualPart(), null);
-
-		status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
-			String fullName = subject.getValue();
-			String name = fullName.substring(fullName
-					.lastIndexOf(File.separatorChar) + 1, fullName.length());
-			String path = fullName.substring(0, fullName
-					.lastIndexOf(File.separatorChar));
-			subject.setAttribute(DE.A_NAME, name);
-			subject.setAttribute(DE.A_VALUE, path);
-			subject.setAttribute(DE.A_TYPE, IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
-		}
-		_dataStore.refresh(subject);
-		return statusDone(status);
-	}
-
-	public DataElement handleCreateVirtualFolder(DataElement subject,
-			DataElement status, String type) {
-
-		AbsoluteVirtualPath vpath = null;
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
-			vpath = getAbsoluteVirtualPath(subject.getValue());
-		} else {
-			vpath = getAbsoluteVirtualPath(subject);
-		}
-		ISystemArchiveHandler handler = getArchiveHandlerFor(vpath
-				.getContainingArchiveString());
-		if (handler == null) {
-			status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			return statusDone(status);
-		}
-//		VirtualChild child = handler.getVirtualFile(vpath.getVirtualPart());
-		handler.getVirtualFile(vpath.getVirtualPart(), null);
-		handler.createFolder(vpath.getVirtualPart(), null);
-
-		status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
-			String fullName = subject.getValue();
-			String name = fullName.substring(fullName
-					.lastIndexOf(File.separatorChar) + 1, fullName.length());
-			String path = fullName.substring(0, fullName
-					.lastIndexOf(File.separatorChar));
-			subject.setAttribute(DE.A_NAME, name);
-			subject.setAttribute(DE.A_VALUE, path);
-			subject
-					.setAttribute(DE.A_TYPE,
-							IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR);
-		}
-		_dataStore.refresh(subject);
-		return statusDone(status);
-	}
-
-	private File getFileFor(DataElement element) {
-		File result = null;
-		String type = element.getType();
-		if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) {
-			result = new File(element.getName());
-		} else if (type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)
-				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
-				|| type.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) {
-			StringBuffer buf = new StringBuffer(element
-					.getAttribute(DE.A_VALUE));
-			buf.append(File.separatorChar);
-			buf.append(element.getName());
-			result = new File(buf.toString());
-		}
-
-		return result;
-	}
 
 	public DataElement handleCopy(DataElement targetFolder, DataElement sourceFile, DataElement nameObj, DataElement status) {
 		
-	    String newName = nameObj.getName();
-		String targetType = targetFolder.getType();
-		String srcType = sourceFile.getType();
-		//In the case of super transfer, the source file is a virtual file/folder inside the temporary zip file, and its type information is set to 
-		//default UNIVERSAL_FILTER_DESCRIPTOR since its information never been cached before.
-		//We need to find out its real type first before going to different if statement.
-		File srcFile = null;
-		VirtualChild child = null;
-		if (IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR == srcType)
-		{
-			if (ArchiveHandlerManager.isVirtual(sourceFile.getValue()))
-			{
-				String goodFullName = ArchiveHandlerManager.cleanUpVirtualPath(sourceFile.getValue());
-				child = _archiveHandlerManager.getVirtualObject(goodFullName);
-				if (child.exists()) 
-				{
-					if (child.isDirectory) 
-					{
-						srcType = IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR;
-					} else 
-					{
-						srcType = IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR;
-					}
-				}
-			}
-		}
+		CopySingleThread copySingleThread = new CopySingleThread(targetFolder, sourceFile, nameObj, this, _isWindows, status);
+		copySingleThread.start();
+
+		updateCancellableThreads(status.getParent(), copySingleThread);
 		
-		if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR) || targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-			
-		    // insert into an archive
-			AbsoluteVirtualPath vpath = getAbsoluteVirtualPath(targetFolder);
-			ISystemArchiveHandler handler = getArchiveHandlerFor(vpath.getContainingArchiveString());
-			
-			if (handler == null) {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-				return statusDone(status);
-			}
-
-			if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)
-					|| srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) {
-				
-			    srcFile = getFileFor(sourceFile);
-			}
-			else if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-				ISystemArchiveHandler shandler = null;
-				if (null == child)
-				{
-					AbsoluteVirtualPath svpath = getAbsoluteVirtualPath(sourceFile);
-					shandler = getArchiveHandlerFor(svpath.getContainingArchiveString());
-				
-					if (shandler == null) {
-						status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-						return statusDone(status);
-					}
-					child = shandler.getVirtualFile(svpath.getVirtualPart(), null);
-				}
-				else
-				{
-					//If child is not null, it means the sourceFile is a type of UNIVERSAL_FILTER_DESCRIPTOR, and has already been handled
-					shandler = child.getHandler();
-				}
-				srcFile = child.getExtractedFile();
-			}
-
-			String virtualContainer = ""; //$NON-NLS-1$
-			
-			if (targetType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-				virtualContainer = vpath.getVirtualPart();
-			}
-
-			boolean result = handler.add(srcFile, virtualContainer, newName, null);
-			
-			if (result) {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
-			}
-			else {
-				status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-			}
-		}
-		else if (srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || srcType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
-			ISystemArchiveHandler shandler = null;
-			AbsoluteVirtualPath svpath = null;
-			if (null == child)
-			{
-				svpath = getAbsoluteVirtualPath(sourceFile);
-				shandler = getArchiveHandlerFor(svpath.getContainingArchiveString());
-			
-				if (shandler == null) {
-					status.setAttribute(DE.A_SOURCE, IServiceConstants.FAILED);
-					return statusDone(status);
-				}
-				child = shandler.getVirtualFile(svpath.getVirtualPart(), null);
-			}
-			else
-			{
-				//If child is not null, it means the sourceFile is a type of UNIVERSAL_FILTER_DESCRIPTOR, and has already been handled
-				shandler = child.getHandler();
-				svpath = getAbsoluteVirtualPath(sourceFile.getValue());
-			}
-
-			File parentDir = getFileFor(targetFolder);
-			File destination = new File(parentDir, newName);
-			
-			if (child.isDirectory) {
-				shandler.extractVirtualDirectory(svpath.getVirtualPart(), parentDir, destination, null);
-			}
-			else {
-				shandler.extractVirtualFile(svpath.getVirtualPart(), destination, null);
-			}
-		}
-		else {
-			File tgtFolder = getFileFor(targetFolder);
-			srcFile = getFileFor(sourceFile);
-
-			// regular copy
-			boolean folderCopy = srcFile.isDirectory();
-			String src = srcFile.getAbsolutePath();
-			String tgt = tgtFolder.getAbsolutePath() + File.separatorChar + newName;
-			File tgtFile = new File(tgt);
-			
-			if (tgtFile.exists() && tgtFile.isDirectory())
-			{
-				//For Windows, we need to use xcopy command, which require the new directory
-				//name be part of the target.
-				if (newName.equals(srcFile.getName()) && !_isWindows)
-				{
-					tgt =  tgtFolder.getAbsolutePath();
-				}
-			}
-			
-			doCopyCommand(enQuote(src), enQuote(tgt), folderCopy, status);
-		}
-		
-		return statusDone(status);
+		return status;
 	}
 	
 	/**
@@ -2479,21 +1681,6 @@ public class UniversalFileSystemMiner extends Miner {
 		return setProperties(fileObj, false);
 	}
 
-	
-	
-	/**
-	 * Quote a file name such that it is valid in a shell
-	 * @param s file name to quote
-	 * @return quoted file name
-	 */
-	protected String enQuote(String s)
-	{
-		if(_isWindows) {
-			return '"' + s + '"';
-		} else {
-			return PathUtility.enQuoteUnix(s);
-		}
-	}
 
 	public String getVersion()
 	{

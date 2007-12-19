@@ -18,6 +18,7 @@
  * Kevin Doyle (IBM) - [160769] Move Resource dialog allows user to continue on invalid destination
  * Kevin Doyle (IBM) - [199324] [nls] Move dialog SystemMessages should be added/updated
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -56,6 +57,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 	private SystemMessage targetDescendsFromSrcMsg = null;
 	private SystemMessage invalidFilterMsg = null;
 	protected Vector movedFiles = new Vector();
+	protected Vector movedFileNames = new Vector();
 
 	private class MoveRemoteFileJob extends WorkspaceJob
 	{
@@ -97,6 +99,7 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			        copiedOk = doCopy(targetContainer, oldObject, newName, monitor);
 			      newNames[idx] = newName;
 			      monitor.worked(1);
+			      movedFileNames.add(oldName); //remember the old name, in case we need it later.
 		       }
 	           monitor.done();
 	        }
@@ -104,16 +107,16 @@ public class SystemMoveRemoteFileAction extends SystemCopyRemoteFileAction
 			{
 				copiedOk = false;
 				//If this operation is canceled, need to display a proper message to the user.
-				if (monitor.isCanceled() && movedFiles.size() > 0)
+				if (monitor.isCanceled() && movedFileNames.size() > 0)
 				{
 					//Get the moved file names
-					String movedFileName = ((IRemoteFile)movedFiles.get(0)).getName();
-					for (int i=1; i<(movedFiles.size()); i++)
+					String movedFileNamesList = (String)(movedFileNames.get(0));
+					for (int i=1; i<(movedFileNames.size()); i++)
 					{
-						movedFileName = movedFileName + "\n" + ((IRemoteFile)movedFiles.get(i)).getName(); //$NON-NLS-1$
+						movedFileNamesList = movedFileNamesList + "\n" + (String)(movedFileNames.get(i)); //$NON-NLS-1$
 					}
 					SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_MOVE_INTERRUPTED);
-					thisMessage.makeSubstitution(movedFileName);
+					thisMessage.makeSubstitution(movedFileNamesList);
 					SystemMessageDialog.displayErrorMessage(shell, thisMessage);
 					status = Status.CANCEL_STATUS;
 				}

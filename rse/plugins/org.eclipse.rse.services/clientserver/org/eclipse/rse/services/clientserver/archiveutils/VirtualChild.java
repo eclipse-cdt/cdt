@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -161,7 +162,14 @@ public final class VirtualChild {
 	 */
 	public void setComment(String value) 
 	{
-		comment = value;
+		if (null != value)
+		{
+			comment = value;
+		}
+		else
+		{
+			comment = "";  //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -202,7 +210,14 @@ public final class VirtualChild {
 	 */
 	public void setCompressionMethod(String value) 
 	{
-		compressionMethod = value;
+		if (null != value)
+		{
+			compressionMethod = value;
+		}
+		else
+		{
+			compressionMethod = "";  //$NON-NLS-1$
+		}
 	}
 	
 	/**

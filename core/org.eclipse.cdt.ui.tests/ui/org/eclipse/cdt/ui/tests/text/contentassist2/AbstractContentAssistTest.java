@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -30,6 +31,7 @@ import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
@@ -78,9 +80,10 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 		}
 		fCFile= setUpProjectContent(fCProject.getProject());
 		assertNotNull(fCFile);
+		CCorePlugin.getIndexManager().joinIndexer(8000, new NullProgressMonitor());
 		fEditor= (ITextEditor)EditorTestHelper.openInEditor(fCFile, true);
 		assertNotNull(fEditor);
-		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor)fEditor);
+//		EditorTestHelper.joinBackgroundActivities((AbstractTextEditor)fEditor);
 	}
 
 	/**

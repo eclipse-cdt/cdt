@@ -14,6 +14,7 @@ Eclipse-LazyStart: true
 Export-Package: org.eclipse.dd.dsf.ui.concurrent,
  org.eclipse.dd.dsf.ui.viewmodel,
  org.eclipse.dd.dsf.ui.viewmodel.dm,
+ org.eclipse.dd.dsf.ui.viewmodel.properties,
  org.eclipse.dd.dsf.ui.viewmodel.update,
  org.eclipse.dd.dsf.ui.viewmodel.update.actions
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

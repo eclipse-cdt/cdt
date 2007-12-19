@@ -394,9 +394,9 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
                 dmc = DMContexts.getAncestorOfType(vmcdmc, IModuleDMContext.class);
             }
             
-            if (dmc == null) return null;
+            if (dmc == null) return Status.OK_STATUS;
             DsfSession session = DsfSession.getSession(dmc.getSessionId());
-            if (session == null) return null;
+            if (session == null) return Status.OK_STATUS;
             
             /*
              * Create the query to write the value to the service. Note: no need to
@@ -415,9 +415,9 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
                 detailComputed(getModuleDetail((IModuleDMData) query.get()));
             } catch (InterruptedException e) {
                 assert false;
-                return null;
+                return Status.OK_STATUS;
             } catch (ExecutionException e) {
-                return null;
+                return Status.OK_STATUS;
             }
             return Status.OK_STATUS;
         }

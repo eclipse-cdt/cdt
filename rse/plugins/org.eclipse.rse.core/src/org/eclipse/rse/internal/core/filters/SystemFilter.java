@@ -47,9 +47,6 @@ import org.eclipse.rse.internal.references.SystemReferencedObject;
  * A filter is an encapsulation of a unique name, and a list of filter strings.
  * Filters can be referenced.
  */
-/** 
- * @lastgen class SystemFilterImpl extends SystemReferencedObjectImpl implements SystemFilter, SystemReferencedObject, SystemFilterContainer, IAdaptable {}
- */
 public class SystemFilter extends SystemReferencedObject implements ISystemFilter, IAdaptable {
 
 	private SystemFilterContainerCommonMethods helpers = null;
@@ -70,7 +67,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	private int release = 0;
 	private boolean singleFilterStringOnly = false;
 	private List nestedFilters = new ArrayList(3);
-//	private List strings = null;
 	private ISystemFilter _parentFilter;
 
 	/**
@@ -105,20 +101,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	public String getTypeGen() {
 		return type;
 	}
-
-	/*
-	 * Creates a new nested system filter within this filter
-	 * @param parentPool the SystemFilterPool that owns the root filter.
-	 * @param data Optional transient data to be stored in the new filter. Can be null.
-	 * @param aliasName The name to give the new filter. Must be unique for this pool.
-	 * @param filterStrings The list of String objects that represent the filter strings.
-	 *
-	public SystemFilter createSystemFilter(SystemFilterPool parentPool, Object data, String aliasName, Vector filterStrings)
-	{    	
-		SystemFilter newFilter = helpers.createSystemFilter(internalGetFilters(), parentPool, data, aliasName, filterStrings);
-		newFilter.setSupportsNestedFilters(true); // presumably it does since it is nested itself.
-		return newFilter;
-	}*/
 
 	/**
 	 * Creates a new nested system filter within this filter. 
@@ -157,7 +139,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 */
 	public void clone(ISystemFilter targetFilter) {
 		// clone attributes
-		//targetFilter.setName(getName());
+		// targetFilter.setName(getName()); name is not cloned, we assume the target filter already has a name
 		targetFilter.setDefault(isDefault());
 		targetFilter.setType(getType());
 		targetFilter.setPromptable(isPromptable());
@@ -373,9 +355,11 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	public void setParentFilterPool(ISystemFilterPool parentPool) {
 		this.parentPool = parentPool;
 		ISystemFilter[] filters = getSystemFilters();
-		if (filters != null) for (int idx = 0; idx < filters.length; idx++)
-			filters[idx].setParentFilterPool(parentPool);
-		// todo: decide if SystemFilterString objects need it too
+		if (filters != null) {
+			for (int idx = 0; idx < filters.length; idx++) {
+				filters[idx].setParentFilterPool(parentPool);
+			}
+		}
 	}
 
 	/**
@@ -387,24 +371,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		return (parentFilter != null) ? (ISystemFilterContainer) parentFilter : (ISystemFilterContainer) getParentFilterPool();
 	}
 
-	/**
-	 * Internal way to return emf-modelled list of filter strings.
-	 * We use this so we can easily change to non-mof if we decide to.
-	 */
-//    private List internalGetFilterStrings()
-//    {
-//    	return getStrings();
-//    }
-	/**
-	 * Clear internal cache so it will be rebuilt on next request.
-	 */
-//    protected void invalidateCache()
-//    {
-//    	filterStringArray = null;
-//    	filterStringObjectArray = null;
-//    	filterStringVector = null;
-//    	setDirty(true);
-//    }
 	/**
 	 * Returns the filter strings of this filter as an array of String objects.
 	 * The array may be empty but will not be null.
@@ -419,20 +385,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		return result;
 	}
 
-//    public String[] getFilterStrings()
-//    {
-//    	if (filterStringArray == null)
-//    	{
-//    	  List el = internalGetFilterStrings();
-//    	  filterStringArray = new String[el.size()];
-//    	  Iterator i = el.iterator();
-//    	  int idx = 0;
-//    	  while (i.hasNext())
-//    	    filterStringArray[idx++] = ((ISystemFilterString)(i.next())).getString();
-//    	}
-//    	return filterStringArray;
-//    }
-
 	/**
 	 * Return filter strings as a Vector of String objects.
 	 * This vector may be empty but will never be null.
@@ -444,19 +396,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		return result;
 	}
 
-//    public Vector getFilterStringsVector()
-//    {
-//    	if (filterStringVector == null)
-//    	{
-//    	  List el = internalGetFilterStrings();
-//    	  Iterator i = el.iterator();
-//    	  filterStringVector = new Vector();
-//    	  while (i.hasNext())
-//    	    filterStringVector.addElement(((ISystemFilterString)(i.next())).getString());
-//    	}
-//    	return filterStringVector;
-//    }
-
 	/**
 	 * Get this filter's filter strings as a Vector of FilterString objects
 	 */
@@ -464,13 +403,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		Vector result = new Vector(filterStrings.size());
 		result.addAll(filterStrings);
 		return result;
-//		
-//		List el = internalGetFilterStrings();
-//		Iterator i = el.iterator();
-//		Vector filterStringVector = new Vector();
-//		while (i.hasNext())
-//		  filterStringVector.addElement(i.next());		
-//		return filterStringVector;
 	}
 
 	/**
@@ -478,7 +410,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 */
 	public int getFilterStringCount() {
 		return filterStrings.size();
-//    	return internalGetFilterStrings().size();
 	}
 
 	/**
@@ -514,38 +445,15 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 			filterStrings.add(filterString);
 		}
 		setDirty(true);
-//    	List strings = internalGetFilterStrings();
-//    	strings.clear();
-//    	for (int idx=0; idx<newStrings.size(); idx++)
-//    	{
-//           String currString = (String)newStrings.elementAt(idx);
-//           ISystemFilterString string = new SystemFilterString();
-//        	   // FIXME initMOF().createSystemFilterString();
-//           string.setString(currString);
-//           string.setParentSystemFilter(this);
-//           strings.add(string);               
-//    	}    	
-//    	invalidateCache();
 	}
 
 	/**
 	 * Get this filter's filter string objects as an array
 	 */
 	public ISystemFilterString[] getSystemFilterStrings() {
-//    	List strings = internalGetFilterStrings();
 		ISystemFilterString[] result = new ISystemFilterString[filterStrings.size()];
 		filterStrings.toArray(result);
 		return result;
-//    	if (filterStrings == null)
-//    	{
-//    	  List el = internalGetFilterStrings();
-//    	  filterStrings = new ISystemFilterString[el.size()];
-//    	  Iterator i = el.iterator();
-//    	  int idx = 0;
-//    	  while (i.hasNext())
-//    	    filterStrings[idx++] = (ISystemFilterString)(i.next());
-//    	}
-//    	return filterStrings;    	
 	}
 
 	/**
@@ -553,21 +461,21 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * @param newStrings array of String objects
 	 */
 	public void setFilterStrings(String newStrings[]) {
-//    	List strings = internalGetFilterStrings();
 		filterStrings.clear();
 		for (int idx = 0; idx < newStrings.length; idx++) {
 			ISystemFilterString filterString = createFilterString(newStrings[idx]);
 			filterStrings.add(filterString);
-//           addFilterString(newStrings[idx]);
 		}
 		setDirty(true);
-		//invalidateCache(); already done
 	}
 
+	/**
+	 * Returns a system filter string created from a string.
+	 * @param string
+	 * @return
+	 */
 	private ISystemFilterString createFilterString(String string) {
 		ISystemFilterString filterstring = new SystemFilterString();
-
-		// FIXME initMOF().createSystemFilterString();
 		filterstring.setString(string);
 		filterstring.setParentSystemFilter(this);
 		return filterstring;
@@ -578,10 +486,8 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 */
 	public ISystemFilterString addFilterString(String newString) {
 		ISystemFilterString newFilterString = createFilterString(newString);
-//    	List strings = internalGetFilterStrings();
 		filterStrings.add(newFilterString);
 		setDirty(true);
-//    	invalidateCache();    	
 		return newFilterString;
 	}
 
@@ -589,11 +495,9 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * Insert a new filter string to this filter's list, at the given zero-based position
 	 */
 	public ISystemFilterString addFilterString(String newString, int position) {
-//    	List strings = internalGetFilterStrings();
 		ISystemFilterString newFilterString = createFilterString(newString);
 		filterStrings.add(position, newFilterString);
 		setDirty(true);
-//    	invalidateCache();    	
 		return newFilterString;
 	}
 
@@ -609,7 +513,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * @return the SystemFilterString object deleted, or null if not found
 	 */
 	public ISystemFilterString removeFilterString(String oldString) {
-//    	List strings = internalGetFilterStrings();
 		ISystemFilterString match = null;
 		Iterator i = filterStrings.iterator();
 		while ((match == null) && (i.hasNext())) {
@@ -618,7 +521,6 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		}
 		if (match != null) {
 			filterStrings.remove(match);
-//    	  invalidateCache();
 			setDirty(true);
 		}
 		return match;
@@ -629,13 +531,11 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * @return the SystemFilterString object deleted, or null if not found
 	 */
 	public ISystemFilterString removeFilterString(int position) {
-//    	List strings = internalGetFilterStrings();
 		ISystemFilterString filterString = null;
 		if (position < filterStrings.size()) {
 			filterString = (ISystemFilterString) filterStrings.remove(position);
 			setDirty(true);
 		}
-//    	invalidateCache();    	
 		return filterString;
 	}
 
@@ -644,34 +544,22 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * @return true if the given string existed and hence was deleted.
 	 */
 	public boolean removeFilterString(ISystemFilterString filterString) {
-//    	List strings = internalGetFilterStrings();
 		boolean removed = filterStrings.remove(filterString);
 		if (removed) {
 			setDirty(true);
 		}
 		return removed;
-//    	if (strings.contains(filterString))
-//    	{
-//    	  strings.remove(filterString);
-////    	  invalidateCache();
-//    	  return true;
-//    	}
-//    	else
-//    	  return false;
 	}
 
 	/**
 	 * Move a given filter string to a given zero-based location
 	 */
 	public void moveSystemFilterString(int pos, ISystemFilterString filterString) {
-//    	List strings = internalGetFilterStrings();
 		boolean removed = filterStrings.remove(filterString);
 		if (removed) {
 			filterStrings.add(pos, filterString);
 			setDirty(true);
 		}
-		//FIXME internalGetFilterStrings().move(pos,filterString);    	
-//    	invalidateCache();
 	}
 
 	/**
@@ -753,9 +641,10 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 	 * @param parentPool the SystemFilterPool that is the parent of this filter. Will be perpetuated to nested filters.
 	 * @param namingPolicy Tells us how to derive file name from filter name. Can be null for default prefix name.
 	 * @return SystemFilter object if restored ok, null if error encountered. If null, call getLastException().
+	 * @deprecated no longer used
 	 */
 	public static ISystemFilter restore(IFolder folder, String name, ISystemFilterPool parentPool, IRSEFilterNamingPolicy namingPolicy) throws Exception {
-		/* FIXME
+		/* code no longer needed since restore is done by importers, not by MOF/EMF
 		String fileName = getRootSaveFileName(namingPolicy, name);
 		
 		List ext = mofHelpers.restore(folder,fileName);
@@ -773,6 +662,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 
 	/**
 	 * Return the root save file name without the extension .xmi
+	 * @deprecated no longer used
 	 */
 	protected static String getRootSaveFileName(ISystemFilter filter) {
 		return getRootSaveFileName(getNamingPolicy(filter), filter.getName());
@@ -780,6 +670,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 
 	/**
 	 * Return the root save file name without the extension .xmi
+	 * @deprecated no longer used
 	 */
 	protected static String getRootSaveFileName(IRSEFilterNamingPolicy namingPolicy, String name) {
 		return namingPolicy.getFilterSaveFileName(name);
@@ -787,6 +678,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 
 	/**
 	 * Return naming policy
+	 * @deprecated no longer used
 	 */
 	protected static IRSEFilterNamingPolicy getNamingPolicy(ISystemFilter filter) {
 		return filter.getParentFilterPool().getNamingPolicy();
@@ -794,6 +686,7 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 
 	/**
 	 * Ensure given path ends with path separator.
+	 * @deprecated no longer used
 	 */
 	public static String addPathTerminator(String path) {
 		if (!path.endsWith(File.separator)) path = path + File.separatorChar;
@@ -802,48 +695,55 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		return path;
 	}
 
-	/**
-	 * Return string identifying this filter
+	/*-------------------
+	 * Attribute getters and setters
+	 *-------------------*/
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		return getName();
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEModelObject#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.RSEModelObject#getDescription()
+	 */
 	public String getDescription() {
 		return RSECoreMessages.RESID_MODELOBJECTS_FILTER_DESCRIPTION;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setName(java.lang.String)
 	 */
 	public void setName(String newName) {
 		name = newName;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setType(java.lang.String)
 	 */
 	public void setType(String newType) {
 		type = newType;
 		setDirty(true);
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isSupportsNestedFilters()
 	 */
 	public boolean isSupportsNestedFilters() {
 		return supportsNestedFilters;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setSupportsNestedFilters(boolean)
 	 */
 	public void setSupportsNestedFilters(boolean newSupportsNestedFilters) {
 		boolean oldSupportsNestedFilters = supportsNestedFilters;
@@ -853,39 +753,36 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		}
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * When saving one filter per file, this captures this filter's relative order
-	 * within the pool, as the file system cannot capture this.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#getRelativeOrder()
 	 */
 	public int getRelativeOrder() {
 		return relativeOrder;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setRelativeOrder(int)
 	 */
 	public void setRelativeOrder(int newRelativeOrder) {
 		relativeOrder = newRelativeOrder;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * Is this a vendor-supplied filter versus a user-defined filter
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isDefault()
 	 */
 	public boolean isDefault() {
 		return default_;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setDefault(boolean)
 	 */
 	public void setDefault(boolean newDefault) {
 		default_ = newDefault;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setStringsCaseSensitive(boolean)
 	 */
 	public void setStringsCaseSensitive(boolean newStringsCaseSensitive) {
 		boolean oldStringsCaseSensitive = stringsCaseSensitive;
@@ -896,109 +793,77 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#unsetStringsCaseSensitive()
 	 */
 	public void unsetStringsCaseSensitive() {
 		if (stringsCaseSensitive) {
 			stringsCaseSensitive = false;
 			setDirty(true);
 		}
-//		boolean oldStringsCaseSensitive = stringsCaseSensitive;
-//		if (oldStringsCaseSensitive != STRINGS_CASE_SENSITIVE_EDEFAULT)
-//		{
-//			stringsCaseSensitive = STRINGS_CASE_SENSITIVE_EDEFAULT;
-//			setDirty(true);
-//		}
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isSetStringsCaseSensitive()
 	 */
 	public boolean isSetStringsCaseSensitive() {
 		return stringsCaseSensitive;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * If true, the user is prompted when this filter is expanded
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isPromptable()
 	 */
 	public boolean isPromptable() {
 		return promptable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setPromptable(boolean)
 	 */
 	public void setPromptable(boolean newPromptable) {
 		promptable = newPromptable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#getParentFilter()
 	 */
 	public ISystemFilter getParentFilter() {
-		//FIXME
 		return _parentFilter;
-		//if (eContainerFeatureID != FiltersPackage.SYSTEM_FILTER__PARENT_FILTER) return null;
-		//return (SystemFilter)eContainer;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setParentFilter(org.eclipse.rse.core.filters.ISystemFilter)
 	 */
 	public void setParentFilter(ISystemFilter newParentFilter) {
 		_parentFilter = newParentFilter;
-		/* FIXME
-		if (newParentFilter != eContainer || (eContainerFeatureID != FiltersPackage.SYSTEM_FILTER__PARENT_FILTER && newParentFilter != null))
-		{
-			if (EcoreUtil.isAncestor(this, newParentFilter))
-				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
-			NotificationChain msgs = null;
-			if (eContainer != null)
-				msgs = eBasicRemoveFromContainer(msgs);
-			if (newParentFilter != null)
-				msgs = ((InternalEObject)newParentFilter).eInverseAdd(this, FiltersPackage.SYSTEM_FILTER__NESTED_FILTERS, SystemFilter.class, msgs);
-			msgs = eBasicSetContainer((InternalEObject)newParentFilter, FiltersPackage.SYSTEM_FILTER__PARENT_FILTER, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, FiltersPackage.SYSTEM_FILTER__PARENT_FILTER, newParentFilter, newParentFilter));
-			*/
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#getNestedFilters()
 	 */
 	public List getNestedFilters() {
 		if (nestedFilters == null) {
 			nestedFilters = new ArrayList();
-			//FIXME new EObjectContainmentWithInversejava.util.List(SystemFilter.class, this, FiltersPackage.SYSTEM_FILTER__NESTED_FILTERS, FiltersPackage.SYSTEM_FILTER__PARENT_FILTER);
 		}
 		return nestedFilters;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#getStrings()
 	 */
 	public List getStrings() {
-//		if (filterStrings == null)
-//		{
-//			filterStrings = new ArrayList();
-//			//FIXME new EObjectContainmenteList(SystemFilterString.class, this, FiltersPackage.SYSTEM_FILTER__STRINGS);
-//		}
 		return filterStrings;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isSupportsDuplicateFilterStrings()
 	 */
 	public boolean isSupportsDuplicateFilterStrings() {
 		return supportsDuplicateFilterStrings;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setSupportsDuplicateFilterStrings(boolean)
 	 */
 	public void setSupportsDuplicateFilterStrings(boolean newSupportsDuplicateFilterStrings) {
 		boolean oldSupportsDuplicateFilterStrings = supportsDuplicateFilterStrings;
@@ -1008,59 +873,57 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		}
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isNonDeletable()
 	 */
 	public boolean isNonDeletable() {
 		return nonDeletable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setNonDeletable(boolean)
 	 */
 	public void setNonDeletable(boolean newNonDeletable) {
 		nonDeletable = newNonDeletable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isNonRenamable()
 	 */
 	public boolean isNonRenamable() {
 		return nonRenamable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setNonRenamable(boolean)
 	 */
 	public void setNonRenamable(boolean newNonRenamable) {
 		nonRenamable = newNonRenamable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isNonChangable()
 	 */
 	public boolean isNonChangable() {
 		return nonChangable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setNonChangable(boolean)
 	 */
 	public void setNonChangable(boolean newNonChangable) {
 		nonChangable = newNonChangable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * Are the filter strings within this filter non-changable by the user. If true,
-	 * strings can be deleted, added, edited or reordered.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isStringsNonChangable()
 	 */
 	public boolean isStringsNonChangable() {
 		return stringsNonChangable;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setStringsNonChangable(boolean)
 	 */
 	public void setStringsNonChangable(boolean newStringsNonChangable) {
 		boolean oldStringsNonChangable = stringsNonChangable;
@@ -1070,25 +933,22 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		}
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * In what release was this created? Typically, will be the version and release
-	 * times 10, as in 40 or 51.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#getRelease()
 	 */
 	public int getRelease() {
 		return release;
 	}
 
-	/**
-	 * @generated This field/method will be replaced during code generation.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setRelease(int)
 	 */
 	public void setRelease(int newRelease) {
 		release = newRelease;
 	}
 
-	/**
-	 * Returns true if this filter is limited to a single filter string. If not set here,
-	 *  it is queried from the parent pool.
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isSingleFilterStringOnly()
 	 */
 	public boolean isSingleFilterStringOnly() {
 		if (isSetSingleFilterStringOnly())
@@ -1097,10 +957,16 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 			return getSystemFilterPool().isSingleFilterStringOnly();
 	}
 
+	/**
+	 * @deprecated - no longer used
+	 */
 	public boolean isSingleFilterStringOnlyGen() {
 		return singleFilterStringOnly;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#setSingleFilterStringOnly(boolean)
+	 */
 	public void setSingleFilterStringOnly(boolean newSingleFilterStringOnly) {
 		boolean oldSingleFilterStringOnly = singleFilterStringOnly;
 		if (oldSingleFilterStringOnly != newSingleFilterStringOnly) {
@@ -1109,35 +975,43 @@ public class SystemFilter extends SystemReferencedObject implements ISystemFilte
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#unsetSingleFilterStringOnly()
+	 */
 	public void unsetSingleFilterStringOnly() {
 		if (singleFilterStringOnly) {
 			singleFilterStringOnly = false;
 			setDirty(true);
 		}
-//		boolean oldSingleFilterStringOnly = singleFilterStringOnly;
-//		if (oldSingleFilterStringOnly != SINGLE_FILTER_STRING_ONLY_EDEFAULT)
-//		{
-//			singleFilterStringOnly = SINGLE_FILTER_STRING_ONLY_EDEFAULT;
-//			setDirty(true);
-//		}
-//
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.filters.ISystemFilter#isSetSingleFilterStringOnly()
+	 */
 	public boolean isSetSingleFilterStringOnly() {
 		return singleFilterStringOnly;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#commit()
+	 */
 	public boolean commit() {
 		ISystemProfile profile = getSystemFilterPoolManager().getSystemProfile();
 		boolean result = profile.commit();
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableParent()
+	 */
 	public IRSEPersistableContainer getPersistableParent() {
 		IRSEPersistableContainer result = getParentFilterContainer();
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.core.model.IRSEPersistableContainer#getPersistableChildren()
+	 */
 	public IRSEPersistableContainer[] getPersistableChildren() {
 		List children = new ArrayList(20);
 		List nf = getNestedFilters(); // guaranteed to not be null, none of these should be simple filters

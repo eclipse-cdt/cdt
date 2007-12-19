@@ -194,19 +194,20 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	void setDefault(boolean value);
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
+	 * Sets the attribute for this filter pool that determines whether strings of 
+	 * filters contained in this pool are case sensitive or not. If not set
+	 * this attribute is inherited from the containing filter pool manager.
 	 * @param value The new value of the StringsCaseSensitive attribute
 	 */
 	void setStringsCaseSensitive(boolean value);
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
-	 * Unsets the StringsCaseSensitive attribute
+	 * Unsets the StringsCaseSensitive attribute. Causes the case sensitivity of the
+	 * filter pool to be determined by its filter pool manager.
 	 */
 	void unsetStringsCaseSensitive();
 
 	/**
-	 * @generated This field/method will be replaced during code generation 
 	 * @return <b>true</b> if the StringsCaseSensitive attribute has been set
 	 */
 	boolean isSetStringsCaseSensitive();
@@ -247,8 +248,8 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	 * Returns the value of the '<em><b>Single Filter String Only</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Single Filter String Only</em>' attribute isn't clear,
-	 * there really should be more of a description here...
+	 * If true then filters in this filter pool can have only a single filter string unless the
+	 * filter has overriden this attribute.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Single Filter String Only</em>' attribute.
@@ -261,6 +262,8 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilterPool#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute.
 	 * <!-- begin-user-doc -->
+	 * If set to true filters in this filter pool can hold only a single filter string unless overridden by the filter itself.
+	 * If false then the filter may hold more than one filter string.
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Single Filter String Only</em>' attribute.
 	 * @see #isSetSingleFilterStringOnly()
@@ -273,6 +276,7 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	/**
 	 * Unsets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilterPool#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute.
 	 * <!-- begin-user-doc -->
+	 * Causes the value of the single filter string attribute to be inherited from the containing filter pool manager.
 	 * <!-- end-user-doc -->
 	 * @see #isSetSingleFilterStringOnly()
 	 * @see #isSingleFilterStringOnly()
@@ -284,6 +288,8 @@ public interface ISystemFilterPool extends IRSEPersistableReferencedObject, ISys
 	/**
 	 * Returns whether the value of the '{@link org.eclipse.rse.core.filters.ISystemFilterPool#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute is set.
 	 * <!-- begin-user-doc -->
+	 * This will be true if this attribute has been set for this filter pool. It will be false if this
+	 * attribute is inherited from the filter pool manager.
 	 * <!-- end-user-doc -->
 	 * @return whether the value of the '<em>Single Filter String Only</em>' attribute is set.
 	 * @see #unsetSingleFilterStringOnly()

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David Dykstal (IBM) - cleanup format and javadoc
  *******************************************************************************/
 
 package org.eclipse.rse.core.filters;
@@ -24,40 +24,15 @@ import org.eclipse.rse.core.model.IRSEModelObject;
 import org.eclipse.rse.core.references.IRSEReferencedObject;
 
 /**
- * A representation of the model object '<em><b>System Filter</b></em>'.
  * A filter consists of filter strings and may be contained in a filter pool.
- * Filter pools will be referenced by subsystems.
+ * Filter pools are referenced by subsystems.
  * Subsystems are responsible for interpreting the filters. Filters, in and 
  * of themselves, provide no interpretation of themselves when applied 
  * to the resources managed by a subsystem.
- * <p>
- * The following features are supported:
- * <ul>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#getName <em>Name</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#getType <em>Type</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isSupportsNestedFilters <em>Supports Nested Filters</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#getRelativeOrder <em>Relative Order</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isDefault <em>Default</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isStringsCaseSensitive <em>Strings Case Sensitive</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isPromptable <em>Promptable</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isSupportsDuplicateFilterStrings <em>Supports Duplicate Filter Strings</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isNonDeletable <em>Non Deletable</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isNonRenamable <em>Non Renamable</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isNonChangable <em>Non Changable</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isStringsNonChangable <em>Strings Non Changable</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#getRelease <em>Release</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#isSingleFilterStringOnly <em>Single Filter String Only</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#getNestedFilters <em>Nested Filters</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#getParentFilter <em>Parent Filter</em>}</li>
- *   <li>{@link org.eclipse.rse.filters.ISystemFilter#getStrings <em>Strings</em>}</li>
- * </ul>
- * </p>
- *
  */
-/**
- * @lastgen interface SystemFilterPool extends SystemReferencedObject, SystemFilterContainer {}
- */
+
 public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContainer, IRSEModelObject {
+
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -138,8 +113,11 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * Returns the value of the '<em><b>Relative Order</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Relative Order</em>' attribute isn't clear,
-	 * there really should be more of a description here...
+	 * The relative order of a filter is intended to be used
+	 * by a persistence mechanism to keep the filters in a particular order
+	 * when restoring them into a filter pool. Filters with higher numbers should
+	 * occur later in the pool. It may be employed in the absence of another
+	 * mechanism for maintaining order.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Relative Order</em>' attribute.
@@ -150,6 +128,11 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#getRelativeOrder <em>Relative Order</em>}' attribute.
 	 * <!-- begin-user-doc -->
+	 * The relative order of a filter is intended to be used
+	 * by a persistence mechanism to keep the filters in a particular order
+	 * when restoring them into a filter pool. Filters with higher numbers should
+	 * occur later in the pool. It may be employed in the absence of another
+	 * mechanism for maintaining order.
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Relative Order</em>' attribute.
 	 * @see #getRelativeOrder()
@@ -160,8 +143,11 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * Returns the value of the '<em><b>Default</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Default</em>' attribute isn't clear,
-	 * there really should be more of a description here...
+	 * This filter is a "default" filter in this filter pool.
+	 * The meaning of "default" is determined by the subsystem in which it is deployed.
+	 * It typically means that the filter is supplied by the subsystem at the time the subsystem is created.
+	 * That is, the filter is "vendor supplied".
+	 * There is no restriction on the number of default filters in a pool.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Default</em>' attribute.
@@ -172,6 +158,11 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Sets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isDefault <em>Default</em>}' attribute.
 	 * <!-- begin-user-doc -->
+	 * Make this filter is a "default" filter in this filter pool.
+	 * The meaning of "default" is determined by the subsystem in which it is deployed.
+	 * It typically means that the filter is supplied by the subsystem at the time the subsystem is created.
+	 * That is, the filter is "vendor supplied".
+	 * There is no restriction on the number of default filters in a pool.
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Default</em>' attribute.
 	 * @see #isDefault()
@@ -186,6 +177,10 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * to indicate whether or not comparisons involving the filter should be considered
 	 * case sensitive.
 	 * This attribute is optional and may be known (set) or unknown (unset).
+	 * </p>
+	 * <p>
+	 * If unset the value
+	 * returned is from the parent filter pool.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Strings Case Sensitive</em>' attribute.
@@ -204,6 +199,9 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * case sensitive.
 	 * This attribute is optional and may be known (set) or unknown (unset).
 	 * </p>
+	 * <p>
+	 * This will cause this attribute to be set in this filter.
+	 * </p>
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Strings Case Sensitive</em>' attribute.
 	 * @see #isSetStringsCaseSensitive()
@@ -220,6 +218,8 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * to indicate whether or not comparisons involving the filter should be considered
 	 * case sensitive.
 	 * This attribute is optional and may be known (set) or unknown (unset).
+	 * </p><p>
+	 * Causes this filter to use the value specified by the parent filter pool.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @see #isSetStringsCaseSensitive()
@@ -236,6 +236,9 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * to indicate whether or not comparisons involving the filter should be considered
 	 * case sensitive.
 	 * This attribute is optional and may be known (set) or unknown (unset).
+	 * </p><p>
+	 * This will be true if this attribute is explicitly specified for this filter. It will be false if this
+	 * is being inherited from the parent filter pool.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return whether the value of the '<em>Strings Case Sensitive</em>' attribute is set.
@@ -452,8 +455,8 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * filter contains only one string. May, alternatively, be enforced
 	 * by the filter implementation.
 	 * </p><p>
-	 * This attribute may be set or unset. If unset then this value must not be
-	 * relied upon.
+	 * This attribute may be set or unset. If unset this value will be inherited
+	 * from the parent filter pool.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Single Filter String Only</em>' attribute.
@@ -472,8 +475,8 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * filter contains only one string. May, alternatively, be enforced
 	 * by the filter implementation.
 	 * </p><p>
-	 * This attribute may be set or unset. If unset then this value must not be
-	 * relied upon.
+	 * This causes the attribute to be set for this filter, ignoring the value 
+	 * specified for the parent filter pool.
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Single Filter String Only</em>' attribute.
@@ -486,6 +489,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Unsets the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute.
 	 * <!-- begin-user-doc -->
+	 * This causes the value of this attribute to be inherited from the parent filter pool.
 	 * <!-- end-user-doc -->
 	 * @see #isSetSingleFilterStringOnly()
 	 * @see #isSingleFilterStringOnly()
@@ -496,6 +500,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	/**
 	 * Returns whether the value of the '{@link org.eclipse.rse.core.filters.ISystemFilter#isSingleFilterStringOnly <em>Single Filter String Only</em>}' attribute is set.
 	 * <!-- begin-user-doc -->
+	 * If true then the value of this attribute is set in this filter. If false it is inherited from the parent filter pool.
 	 * <!-- end-user-doc -->
 	 * @return whether the value of the '<em>Single Filter String Only</em>' attribute is set.
 	 * @see #unsetSingleFilterStringOnly()
@@ -550,7 +555,7 @@ public interface ISystemFilter extends IRSEReferencedObject, ISystemFilterContai
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Strings</em>' containment reference list.
 	 */
-	java.util.List getStrings();
+	List getStrings();
 
 	/**
 	 * @return the parent pool of this filter. For nested filters, this will walk up the parent chain

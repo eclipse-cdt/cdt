@@ -31,13 +31,11 @@ import org.eclipse.rse.core.model.ISystemContentsType;
 import org.eclipse.rse.internal.core.filters.SystemFilter;
 
 /**
- * A lightweight override of the full-fledged persistable implementation of SystemFilter.
- * This class replaces the heavy-weight MOF implementations with simple non-MOF 
- * implementations.
+ * A lightweight implementation of ISystemFilter.
  * <p>
- * This flavour of SystemFilter implementation is for those cases where a simple in-memory
- * SystemFilter is needed temporarily, perhaps to populate a GUI widget say, and the filter
- * does not need to be savable/restorable. As a result there is no mof, and no need for a
+ * This flavor  is for those cases where a simple in-memory
+ * ISystemFilter is needed temporarily, perhaps to populate a GUI widget say, and the filter
+ * does not need to be savable/restorable. As a result there is no need for a
  * parent SystemFilterPool or SystemFilterPoolManager. The class is small, simple and 
  * directly instantiable.
  * <p>
@@ -56,43 +54,27 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	private String type = null;
 	private boolean caseSensitive = false;
 	private boolean promptable = false;
-	private Object parent;
-	private boolean isStale;
+	private boolean isStale = true;
+	private Object parent = null;
 	private List filterStrings = new ArrayList(3);
-	private HashMap cachedContents;
+	private HashMap cachedContents = new HashMap();
 
 	/**
-	 * Constructor for SystemFilterSimpleImpl
+	 * Constructor for SystemFilterSimple
 	 */
 	public SystemFilterSimple(String name) {
-		//super();
 		this.name = name;
-//		filterStringVector = new Vector();
-		isStale = true;
-		cachedContents = new HashMap();
 	}
 
-//    protected void invalidateCache()
-//    {
-//    	filterStringArray = null;
-//    	filterStringObjectArray = null;
-//    	//filterStringVector = null;
-//    }
-
-	/**
-	 * Return true if this a transient or simple filter that is only created temporary "on the fly"
-	 *  and not intended to be saved or part of the filter framework. Eg it has no manager or provider.
-	 * <p>
-	 * We always return true
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.internal.core.filters.SystemFilter#isTransient()
 	 */
 	public boolean isTransient() {
 		return true;
 	}
 
-	/**
-	 * Clones a given filter to the given target filter.
-	 * All filter strings, and all nested filters, are copied.
-	 * @param targetFilter new filter into which we copy all our data
+	/* (non-Javadoc)
+	 * @see org.eclipse.rse.internal.core.filters.SystemFilter#clone(org.eclipse.rse.core.filters.ISystemFilter)
 	 */
 	public void clone(ISystemFilter targetFilter) {
 		super.clone(targetFilter);
@@ -104,15 +86,13 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	//  contains a single filter string so these methods 
 	//  make it easier to set/get that filter string
 	// -------------------------------------------------------
+
 	/**
 	 * Set the single filter string
 	 */
 	public void setFilterString(String filterString) {
 		filterStrings.clear();
 		filterStrings.add(filterString);
-//    	filterStringVector.clear();
-//    	filterStringVector.addElement(filterString);
-//    	invalidateCache();
 	}
 
 	/**
@@ -122,10 +102,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	public String getFilterString() {
 		String result = filterStrings.isEmpty() ? null : (String) filterStrings.get(0);
 		return result;
-//    	if (filterStringVector.size() == 0)
-//    	  return null;
-//    	else
-//    	  return (String)filterStringVector.elementAt(0);
 	}
 
 	/**
@@ -219,13 +195,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 		String[] result = new String[filterStrings.size()];
 		filterStrings.toArray(result);
 		return result;
-//    	if (filterStringArray == null)
-//    	{
-//    	  filterStringArray = new String[filterStringVector.size()];
-//          for (int idx=0; idx<filterStringArray.length; idx++)
-//    	    filterStringArray[idx] = (String)filterStringVector.elementAt(idx);
-//    	}
-//    	return filterStringArray;
 	}
 
 	/**
@@ -235,7 +204,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 		Vector result = new Vector(filterStrings.size());
 		result.addAll(filterStrings);
 		return result;
-//    	return filterStringVector;
 	}
 
 	/**
@@ -243,7 +211,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 */
 	public int getFilterStringCount() {
 		return filterStrings.size();
-//   	return filterStringVector.size();
 	}
 
 	/**
@@ -253,12 +220,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	public void setFilterStrings(Vector newStrings) {
 		filterStrings.clear();
 		filterStrings.addAll(newStrings);
-//    	filterStringVector.clear();
-//    	for (int idx=0; idx<newStrings.size(); idx++)
-//    	{
-//    	   filterStringVector.addElement(newStrings.elementAt(idx));
-//    	}    	
-//    	invalidateCache();
 	}
 
 	/**
@@ -268,12 +229,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	public void setFilterStrings(String newStrings[]) {
 		filterStrings.clear();
 		filterStrings.addAll(Arrays.asList(newStrings)); // cannot just set since asList returns a fixed-size array
-//    	filterStringVector.clear();
-//    	for (int idx=0; idx<newStrings.length; idx++)
-//    	{
-//           filterStringVector.addElement(newStrings[idx]);
-//    	}
-//    	invalidateCache(); 
 	}
 
 	/**
@@ -282,8 +237,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 */
 	public ISystemFilterString addFilterString(String newString) {
 		filterStrings.add(newString);
-//    	filterStringVector.addElement(newString);
-//    	invalidateCache();    	
 		return null;
 	}
 
@@ -293,8 +246,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 */
 	public ISystemFilterString addFilterString(String newString, int position) {
 		filterStrings.add(position, newString);
-//    	filterStringVector.insertElementAt(newString,position);
-//    	invalidateCache();    	
 		return null;
 	}
 
@@ -304,8 +255,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 */
 	public ISystemFilterString removeFilterString(String oldString) {
 		filterStrings.remove(oldString);
-//    	filterStringVector.removeElement(oldString);    	
-//    	invalidateCache();
 		return null;
 	}
 
@@ -315,8 +264,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 */
 	public ISystemFilterString removeFilterString(int position) {
 		filterStrings.remove(position);
-//    	filterStringVector.removeElementAt(position);
-//    	invalidateCache();
 		return null;
 	}
 
@@ -333,7 +280,6 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 	 */
 	public boolean hasChildren() {
 		return filterStrings.size() > 0;
-//    	return (filterStringVector.size() > 0);
 	}
 
 	// ---------------------
@@ -528,14 +474,14 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 		isStale = false;
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.rse.core.model.ISystemContainer#getContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
 	public Object[] getContents(ISystemContentsType contentsType) {
 		return (Object[]) cachedContents.get(contentsType);
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.rse.core.model.ISystemContainer#hasContents(org.eclipse.rse.core.model.ISystemContentsType)
 	 */
 	public boolean hasContents(ISystemContentsType contentsType) {
@@ -545,21 +491,21 @@ public class SystemFilterSimple extends SystemFilter implements ISystemContainer
 		return false;
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.rse.core.model.ISystemContainer#isStale()
 	 */
 	public boolean isStale() {
 		return isStale;
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.rse.core.model.ISystemContainer#markStale(boolean)
 	 */
 	public void markStale(boolean isStale) {
 		markStale(isStale, true);
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.rse.core.model.ISystemContainer#markStale(boolean)
 	 */
 	public void markStale(boolean isStale, boolean clearCache) {

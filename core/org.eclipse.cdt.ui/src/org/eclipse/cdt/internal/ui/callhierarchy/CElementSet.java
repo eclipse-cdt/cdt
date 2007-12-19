@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@ package org.eclipse.cdt.internal.ui.callhierarchy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.model.ICElement;
@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 public class CElementSet {
-	private Set fSet= new HashSet();
+	private Set fSet= new LinkedHashSet();
 	private int fHashCode;
 	
 	CElementSet( ICElement[] elements) {

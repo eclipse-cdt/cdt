@@ -16,6 +16,7 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
 import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 
 public class CallHierarchyBugs extends CallHierarchyBaseTest {
@@ -143,9 +145,108 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 		CallHierarchyUI.open(workbenchWindow, (ICElement) obj);
 	}
 
-	private void openEditor(IFile file) throws WorkbenchException {
+	private CEditor openEditor(IFile file) throws WorkbenchException {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IDE.openEditor(page, file, true);
+		IEditorPart editor= IDE.openEditor(page, file, true);
 		runEventQueue(0);
+		return (CEditor) editor;
+	}
+	
+	// class Base {
+	// public:
+	//    virtual void vmethod();
+	//    void method();
+	// };
+	// class Derived : public Base {
+	// public:
+	//    void vmethod();
+	//    void method();
+	// }
+	// void vrefs() {
+	//    Base* b= 0;
+	//    b->vmethod(); b->method();
+	// }
+	// void regRefs() {
+	//    Base* b= 0;
+	//    b->Base::vmethod(); b->Base::method(); 
+	// }
+	public void testPolyMorphicMethodCalls_156689() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "SomeClass.cpp", content);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
+
+		// open editor, check outline
+		CEditor editor= openEditor(file);
+		int idx = content.indexOf("vmethod");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor);
+
+		Tree chTree= checkTreeNode(ch, 0, "Base::vmethod()").getParent();
+		checkTreeNode(chTree, 0, 0, "regRefs()");
+		checkTreeNode(chTree, 0, 1, "vrefs()");
+		checkTreeNode(chTree, 0, 2, null);
+
+		idx = content.indexOf("vmethod", idx+1);
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor);
+
+		chTree= checkTreeNode(ch, 0, "Derived::vmethod()").getParent();
+		checkTreeNode(chTree, 0, 0, "vrefs()");
+		checkTreeNode(chTree, 0, 1, null);
+
+		idx = content.indexOf(" method")+1;
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor);
+
+		chTree= checkTreeNode(ch, 0, "Base::method()").getParent();
+		checkTreeNode(chTree, 0, 0, "regRefs()");
+		checkTreeNode(chTree, 0, 1, "vrefs()");
+		checkTreeNode(chTree, 0, 2, null);
+
+		idx = content.indexOf(" method", idx+1)+1;
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor);
+
+		chTree= checkTreeNode(ch, 0, "Derived::method()").getParent();
+		checkTreeNode(chTree, 0, 0, null);
+	}
+
+	// class Base {
+	// public:
+	//    virtual void vmethod();
+	// };
+	// class Derived : public Base {
+	// public:
+	//    void vmethod();
+	// }
+	// void vrefs() {
+	//    Base* b= 0;
+	//    b->vmethod();
+	// }
+	public void testReversePolyMorphicMethodCalls_156689() throws Exception {
+		String content= getContentsForTest(1)[0].toString();
+		IFile file= createFile(getProject(), "SomeClass.cpp", content);
+		waitForIndexer(fIndex, file, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
+
+		final CHViewPart ch= (CHViewPart) activateView(CUIPlugin.ID_CALL_HIERARCHY);
+		final IWorkbenchWindow workbenchWindow = ch.getSite().getWorkbenchWindow();
+
+		// open editor, check outline
+		CEditor editor= openEditor(file);
+		int idx = content.indexOf("vrefs");
+		editor.selectAndReveal(idx, 0);
+		openCallHierarchy(editor, false);
+
+		Tree chTree= checkTreeNode(ch, 0, "vrefs()").getParent();
+		TreeItem item= checkTreeNode(chTree, 0, 0, "Base::vmethod()");
+		checkTreeNode(chTree, 0, 1, null);
+
+		expandTreeItem(item);
+		checkTreeNode(item, 0, "Base::vmethod()");
+		checkTreeNode(item, 1, "Derived::vmethod()");
+		checkTreeNode(item, 2, null);
 	}
 }

@@ -65,9 +65,9 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile headerFile= createFile(getProject(), "testMethods.h", header);
 		IFile sourceFile= createFile(getProject(), "testMethods.cpp", source);
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		CEditor editor= (CEditor) IDE.openEditor(page, sourceFile);
 		waitForIndexer(fIndex, sourceFile, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
+		CEditor editor= (CEditor) IDE.openEditor(page, sourceFile);
 		editor.selectAndReveal(source.indexOf("method"), 2);
 		openCallHierarchy(editor);
 		Tree tree = getCHTreeViewer().getTree();
@@ -188,10 +188,9 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		IFile sourceFile1= createFile(getProject(), "testMethods1.cpp", source1);
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
-		CEditor editor= openFile(sourceFile1);
-		CCorePlugin.getIndexManager().reindex(fCProject);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
+		CEditor editor= openFile(sourceFile1);
 		editor.selectAndReveal(source1.indexOf("method3"), 2);
 		openCallHierarchy(editor);
 		TreeViewer tv = getCHTreeViewer();
@@ -380,5 +379,4 @@ public class CppCallHierarchyTest extends CallHierarchyBaseTest {
 		checkTreeNode(node, 0, "cfunc()");
 		checkTreeNode(node, 1, null);
 	}
-
 }

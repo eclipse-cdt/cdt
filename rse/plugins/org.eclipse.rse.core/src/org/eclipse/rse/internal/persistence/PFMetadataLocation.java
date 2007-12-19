@@ -49,6 +49,7 @@ class PFMetadataLocation implements PFPersistenceLocation {
 	
 	public PFPersistenceLocation[] getChildren() {
 		File[] members = _baseFolder.listFiles();
+		if (members == null)  members = new File[0];
 		List children = new ArrayList(members.length);
 		for (int i = 0; i < members.length; i++) {
 			File member = members[i];
@@ -87,6 +88,7 @@ class PFMetadataLocation implements PFPersistenceLocation {
 	
 	public void keepChildren(Set keepSet) {
 		File[] children = _baseFolder.listFiles();
+		if (children == null) children = new File[0];
 		for (int i = 0; i < children.length; i++) {
 			File child = children[i];
 			if (!keepSet.contains(child.getName())) {
@@ -96,6 +98,7 @@ class PFMetadataLocation implements PFPersistenceLocation {
 	}
 	
 	public void setContents(InputStream stream) {
+		ensure();
 		OutputStream out = null;
 		try {
 			out = new FileOutputStream(getContentsFile());
@@ -130,14 +133,16 @@ class PFMetadataLocation implements PFPersistenceLocation {
 	 * @param file the file to delete.
 	 */
 	private void deleteFile(File file) {
-		if (file.isDirectory()) {
-			File[] children = file.listFiles();
-			for (int i = 0; i < children.length; i++) {
-				File child = children[i];
-				deleteFile(child);
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				File[] children = file.listFiles();
+				for (int i = 0; i < children.length; i++) {
+					File child = children[i];
+					deleteFile(child);
+				}
 			}
+			file.delete();
 		}
-		file.delete();
 	}
 	
 	private File getContentsFile() {

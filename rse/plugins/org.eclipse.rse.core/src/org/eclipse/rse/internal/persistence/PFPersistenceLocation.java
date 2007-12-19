@@ -42,7 +42,8 @@ interface PFPersistenceLocation {
 
 	/**
 	 * @return the locations of the children of this location. It is possible
-	 * for a location to have both contents and children.
+	 * for a location to have both contents and children. Since this location
+	 * is a handle it may not exist, in which case this returns an empty array.
 	 */
 	PFPersistenceLocation[] getChildren();
 	
@@ -63,6 +64,7 @@ interface PFPersistenceLocation {
 	/**
 	 * Keeps only those children from this location that are in the keep set.
 	 * Typically used to clean renamed nodes from the tree on a save operation.
+	 * If the location does not yet exist, this does nothing.
 	 * @param keepSet The names of the children that should be kept. Others are discarded.
 	 */
 	void keepChildren(Set keepSet);
@@ -70,6 +72,7 @@ interface PFPersistenceLocation {
 	/**
 	 * Sets the contents of this location to a particular stream.
 	 * Implementations must close this stream when finished.
+	 * This forces the location to come into existence if it does not already exist.
 	 * @param stream the stream from which to read the new contents of this location.
 	 */
 	void setContents(InputStream stream);
@@ -77,6 +80,7 @@ interface PFPersistenceLocation {
 	/**
 	 * Returns an open stream which can be read to retrieve the contents of this
 	 * location. The client is responsible for closing this stream.
+	 * If the location does not yet exist this will return null and log the attempt.
 	 * @return a stream that will retrieve the contents of this location.
 	 */
 	InputStream getContents();

@@ -33,17 +33,26 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -64,9 +73,91 @@ import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 	/**
+	 * AST visitor to test whether a node is a leaf node.
+	 */
+	public static final class LeafNodeTester extends CPPASTVisitor {
+		{
+			shouldVisitNames= true;
+			shouldVisitDeclarations= true;
+			shouldVisitInitializers= true;
+			shouldVisitParameterDeclarations= true;
+			shouldVisitDeclarators= true;
+			shouldVisitDeclSpecifiers= true;
+			shouldVisitExpressions= true;
+			shouldVisitStatements= true;
+			shouldVisitTypeIds= true;
+			shouldVisitEnumerators= true;
+			shouldVisitTranslationUnit= false;
+			shouldVisitProblems= true;
+			shouldVisitComments= false;
+			shouldVisitBaseSpecifiers= true;
+			shouldVisitNamespaces= true;
+			shouldVisitTemplateParameters= true;
+		}
+		private int fVisits;
+
+		private int processNode(IASTNode node) {
+			if (++fVisits > 1) 
+				return PROCESS_ABORT;
+			return PROCESS_CONTINUE;
+		}
+		public int visit(ICPPASTBaseSpecifier specifier) {
+			return processNode(specifier);
+		}
+		public int visit(ICPPASTNamespaceDefinition namespace) {
+			return processNode(namespace);
+		}
+		public int visit(ICPPASTTemplateParameter parameter) {
+			return processNode(parameter);
+		}
+		public int visit(IASTDeclaration declaration) {
+			return processNode(declaration);
+		}
+		public int visit(IASTDeclarator declarator) {
+			return processNode(declarator);
+		}
+		public int visit(IASTDeclSpecifier declSpec) {
+			return processNode(declSpec);
+		}
+		public int visit(IASTEnumerator enumerator) {
+			return processNode(enumerator);
+		}
+		public int visit(IASTExpression expression) {
+			return processNode(expression);
+		}
+		public int visit(IASTInitializer initializer) {
+			return processNode(initializer);
+		}
+		public int visit(IASTName name) {
+			return processNode(name);
+		}
+		public int visit(IASTParameterDeclaration parameterDeclaration) {
+			return processNode(parameterDeclaration);
+		}
+		public int visit(IASTProblem problem) {
+			return processNode(problem);
+		}
+		public int visit(IASTStatement statement) {
+			return processNode(statement);
+		}
+		public int visit(IASTTranslationUnit tu) {
+			return processNode(tu);
+		}
+		public int visit(IASTTypeId typeId) {
+			return processNode(typeId);
+		}
+		public boolean isLeafNode(IASTNode node) {
+			fVisits= 0;
+			node.accept(this);
+			return fVisits <= 1;
+		}
+	}
+
+	/**
 	 * Collects positions from the AST.
 	 */
 	private class PositionCollector extends CPPASTVisitor {
+
 		{
 			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
@@ -77,11 +168,13 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitDeclarators= true;
 			shouldVisitNamespaces= true;
 		}
+		private boolean shouldVisitCatchHandlers= true;
 		
 		/** The semantic token */
 		private SemanticToken fToken= new SemanticToken();
 		private String fFilePath;
 		private int fMinLocation;
+		private final LeafNodeTester fgLeafNodeTester= new LeafNodeTester();
 		
 		/**
 		 * @param filePath
@@ -100,7 +193,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			for (int i= 0; i < macroDefs.length; i++) {
 				IASTPreprocessorMacroDefinition macroDef= macroDefs[i];
 				if (fFilePath.equals(macroDef.getContainingFilename())) {
-					visit(macroDef.getName());
+					visitNode(macroDef.getName());
 				}
 			}
 			// TODO visit macro expansions
@@ -127,6 +220,22 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			return PROCESS_CONTINUE;
 		}
 
+		/*
+		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#leave(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
+		 */
+		public int leave(IASTDeclaration declaration) {
+			if (!shouldVisitCatchHandlers && declaration instanceof IASTFunctionDefinition) {
+				shouldVisitCatchHandlers= true;
+				IASTFunctionDefinition functionDef= (IASTFunctionDefinition) declaration;
+				ICPPASTFunctionTryBlockDeclarator declarator= (ICPPASTFunctionTryBlockDeclarator) functionDef.getDeclarator();
+				ICPPASTCatchHandler[] catchHandlers= declarator.getCatchHandlers();
+				for (int i = 0; i < catchHandlers.length; i++) {
+					catchHandlers[i].accept(this);
+				}
+			}
+			return PROCESS_CONTINUE;
+		}
+		
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 		 */
@@ -157,9 +266,12 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (checkForMacro(declarator)) {
 				return PROCESS_SKIP;
 			}
+			if (declarator instanceof ICPPASTFunctionTryBlockDeclarator) {
+				shouldVisitCatchHandlers= false;
+			}
 			return PROCESS_CONTINUE;
 		}
-		
+
 		/*
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
@@ -174,6 +286,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
 		public int visit(IASTStatement statement) {
+			if (!shouldVisitCatchHandlers && statement instanceof ICPPASTCatchHandler) {
+				return PROCESS_SKIP;
+			}
 			if (checkForMacro(statement)) {
 				return PROCESS_SKIP;
 			}
@@ -194,33 +309,40 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 		
 		private boolean checkForMacro(IASTNode node) {
+			boolean isLeafNode= isLeafNode(node);
 			IASTNodeLocation[] nodeLocations= node.getNodeLocations();
-			if (nodeLocations.length == 1 && nodeLocations[0] instanceof IASTMacroExpansion) {
-				IASTNodeLocation useLocation= getMinFileLocation(nodeLocations);
-				if (useLocation != null) {
-					final int useOffset = useLocation.getNodeOffset();
-					if (useOffset <= fMinLocation) {
-						// performance: we had that macro expansion already
-						return false;
+			for (int i= 0; i < nodeLocations.length; i++) {
+				IASTNodeLocation nodeLocation= nodeLocations[i];
+				if (nodeLocation instanceof IASTMacroExpansion) {
+					IASTNodeLocation useLocation= nodeLocation.asFileLocation();
+					if (useLocation != null) {
+						final int useOffset = useLocation.getNodeOffset();
+						if (useOffset > fMinLocation) {
+							fMinLocation= useOffset;
+							IASTPreprocessorMacroDefinition macroDef= ((IASTMacroExpansion)nodeLocation).getMacroDefinition();
+							final int macroLength;
+							IASTNodeLocation defLocation= macroDef.getName().getFileLocation();
+							if (defLocation != null) {
+								macroLength= defLocation.getNodeLength();
+							} else {
+								macroLength= macroDef.getName().toCharArray().length;
+							}
+							IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useOffset, macroLength);
+							if (macroNode != null && visitMacro(macroNode, macroLength)) {
+								fMinLocation= useOffset + macroLength;
+							}
+						}
 					}
-					fMinLocation= useOffset;
-					// TLETODO This does not work correctly for nested macro substitutions
-					IASTPreprocessorMacroDefinition macroDef= ((IASTMacroExpansion)nodeLocations[0]).getMacroDefinition();
-					final int macroLength;
-					IASTNodeLocation defLocation= macroDef.getName().getFileLocation();
-					if (defLocation != null) {
-						macroLength= defLocation.getNodeLength();
-					} else {
-						macroLength= macroDef.getName().toCharArray().length;
-					}
-					IASTNode macroNode= node.getTranslationUnit().selectNodeForLocation(fFilePath, useOffset, macroLength);
-					if (macroNode != null && visitMacro(macroNode, macroLength)) {
-						fMinLocation= useOffset + macroLength;
-						return false;
-					}
+				}
+				if (!isLeafNode) {
+					break;
 				}
 			}
 			return false;
+		}
+
+		private boolean isLeafNode(IASTNode node) {
+			return fgLeafNodeTester.isLeafNode(node);
 		}
 
 		private boolean visitMacro(IASTNode node, int macroLength) {
@@ -316,14 +438,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (offset > -1 && length > 0) {
 				addPosition(offset, length, highlighting);
 			}
-		}
-
-		private IASTFileLocation getMinFileLocation(IASTNodeLocation[] locations) {
-			if (locations == null || locations.length == 0) {
-				return null;
-			}
-			final IASTNodeLocation nodeLocation= locations[0];
-			return nodeLocation.asFileLocation();
 		}
 
 		/**

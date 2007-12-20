@@ -92,6 +92,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
@@ -112,6 +113,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
@@ -202,8 +204,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 	private String fTranslationUnitFile;
 
 	private boolean fInsideFor;
+	private boolean fExpectSemicolonAfterDeclaration= true;
 
 	private MultiStatus fStatus;
+
 
 	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, Map settings, int offset, int length) {
 		localScanner = new Scanner() {
@@ -465,9 +469,7 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 
 		if (node instanceof ICPPASTFunctionTryBlockDeclarator) {
-			visit((IASTStandardFunctionDeclarator)node);
-			skipNode(node);
-			return PROCESS_SKIP;
+			visit((ICPPASTFunctionTryBlockDeclarator)node);
 		} else if (node instanceof ICPPASTFunctionDeclarator) {
 			return visit((ICPPASTFunctionDeclarator)node);
 		} else if (node instanceof IASTStandardFunctionDeclarator) {
@@ -586,6 +588,10 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
     		} else if (node instanceof ICPPASTWhileStatement) {
     			// TLETODO [formatter] handle C++ specifics
     			visit((IASTWhileStatement)node);
+    		} else if (node instanceof ICPPASTCatchHandler) {
+    			visit((ICPPASTCatchHandler)node);
+    		} else if (node instanceof ICPPASTTryBlockStatement) {
+    			visit((ICPPASTTryBlockStatement)node);
     		} else if (node instanceof IASTWhileStatement) {
     			visit((IASTWhileStatement)node);
     		} else if (node instanceof IASTDoStatement) {
@@ -858,6 +864,16 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 		}
 		scribe.printTrailingComment();
 		scribe.startNewLine();
+
+		// hack: catch handlers are part of declarator
+		if (decl instanceof ICPPASTFunctionTryBlockDeclarator) {
+			ICPPASTCatchHandler[] catchHandlers= ((ICPPASTFunctionTryBlockDeclarator)decl).getCatchHandlers();
+			for (int i= 0; i < catchHandlers.length; i++) {
+				catchHandlers[i].accept(this);
+				scribe.printTrailingComment();
+				scribe.startNewLine();
+			}
+		}
 		return PROCESS_SKIP;
 	}
 
@@ -878,6 +894,13 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 		}
 
+		if (node instanceof ICPPASTFunctionTryBlockDeclarator) {
+			scribe.startNewLine();
+			scribe.printNextToken(Token.t_try, false);
+			scribe.printTrailingComment();
+			// for catch handlers @see #visit(IASTFunctionDefinition)
+		}
+		
 		final ICPPASTConstructorChainInitializer[] constructorChain= node.getConstructorChain();
 		if (constructorChain != null && constructorChain.length > 0) {
 			// TLETODO [formatter] need special constructor chain alignment
@@ -1044,11 +1067,13 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			final ListAlignment align= new ListAlignment(Alignment.M_COMPACT_SPLIT);
 			formatList(declarators, align, false, false);
 		}
-		if (peekNextToken() != Token.tSEMI) {
-			scribe.skipToToken(Token.tSEMI);
+		if (fExpectSemicolonAfterDeclaration) {
+			if (peekNextToken() != Token.tSEMI) {
+				scribe.skipToToken(Token.tSEMI);
+			}
+			scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
+			scribe.printTrailingComment();
 		}
-		scribe.printNextToken(Token.tSEMI, preferences.insert_space_before_semicolon);
-		scribe.printTrailingComment();
 		return PROCESS_SKIP;
 	}
 
@@ -1353,6 +1378,49 @@ public class CodeFormatterVisitor extends CPPASTVisitor {
 			}
 			scribe.printNextToken(Token.tRPAREN, align.fSpaceBeforeClosingParen);
 		}
+	}
+
+	private int visit(ICPPASTTryBlockStatement node) {
+		scribe.printNextToken(Token.t_try, scribe.printComment());
+		final IASTStatement tryBody= node.getTryBody();
+		if (tryBody != null) {
+			tryBody.accept(this);
+		}
+		scribe.printTrailingComment();
+		ICPPASTCatchHandler[] catchHandlers= node.getCatchHandlers();
+		for (int i= 0; i < catchHandlers.length; i++) {
+			catchHandlers[i].accept(this);
+			scribe.printTrailingComment();
+		}
+		return PROCESS_SKIP;
+	}
+
+	private int visit(ICPPASTCatchHandler node) {
+		scribe.printNextToken(Token.t_catch, true);
+		scribe.printNextToken(Token.tLPAREN, /* preferences.insert_space_before_opening_paren_in_catch */ true);
+		if (/* preferences.insert_space_after_opening_paren_in_catch */ false) {
+			scribe.space();
+		}
+		final IASTDeclaration decl= node.getDeclaration();
+		if (decl != null) {
+			fExpectSemicolonAfterDeclaration= false;
+			try {
+				decl.accept(this);
+			} finally {
+				fExpectSemicolonAfterDeclaration= true;
+			}
+		} else if (node.isCatchAll()) {
+			scribe.printNextToken(Token.tELIPSE);
+		}
+		scribe.printNextToken(Token.tRPAREN, /* preferences.insert_space_before_closing_paren_in_catch */ false);
+		if (/* preferences.insert_space_after_closing_paren_in_catch */ true) {
+			scribe.space();
+		}
+		final IASTStatement catchBody= node.getCatchBody();
+		if (catchBody != null) {
+			catchBody.accept(this);
+		}
+		return PROCESS_SKIP;
 	}
 
 	private int visit(IASTCompoundStatement node) {

@@ -129,7 +129,25 @@ public class CodeFormatterUtil {
 	}
 	
 	public static TextEdit format(int kind, String source, int indentationLevel, String lineSeparator, Map options) {
-		return format(kind, source, 0, source.length(), indentationLevel, lineSeparator, options);
+		String prefix= ""; //$NON-NLS-1$
+		String suffix= ""; //$NON-NLS-1$
+		switch (kind) {
+		case CodeFormatter.K_EXPRESSION:
+			prefix= "int __dummy__="; //$NON-NLS-1$
+			suffix= ";"; //$NON-NLS-1$
+			break;
+		case CodeFormatter.K_STATEMENTS:
+			prefix= "void __dummy__() {"; //$NON-NLS-1$
+			suffix= "}"; //$NON-NLS-1$
+			--indentationLevel;
+			break;
+		}
+		String tuSource= prefix + source + suffix;
+		TextEdit edit= format(CodeFormatter.K_TRANSLATION_UNIT, tuSource, prefix.length(), source.length(), indentationLevel, lineSeparator, options);
+		if (edit != null && prefix.length() > 0) {
+			edit.moveTree(-prefix.length());
+		}
+		return edit;
 	}
 	
 	/**

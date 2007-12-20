@@ -179,6 +179,12 @@
             class="org.eclipse.cdt.internal.ui.text.c.hover.CSourceHover"
             id="org.eclipse.cdt.ui.CSourceHover">
       </hover>
+      <hover
+            label="%macroExpansionHover"
+            description="%macroExpansionHoverDescription"
+            class="org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionHover"
+            id="org.eclipse.cdt.ui.CMacroExpansionHover">
+      </hover>
       <!--hover
             label="%problemHover"
             description="%problemHoverDescription"
@@ -1287,7 +1293,14 @@
             id="org.eclipse.cdt.ui.cViewScope" 
             parentId="org.eclipse.ui.contexts.window"
       />
-   </extension>   
+      <context
+            name="%macroExpansionHoverScope.name" 
+            description="%macroExpansionHoverScope.description" 
+            id="org.eclipse.cdt.ui.macroExpansionHoverScope" 
+            parentId="org.eclipse.ui.contexts.dialogAndWindow"
+      />
+   </extension>
+
    <extension point="org.eclipse.ui.bindings">
       <!--  win32:  M1=CTRL,    M2=SHIFT, M3=ALT, M4=-
             carbon: M1=COMMAND, M2=SHIFT, M3=ALT, M4=CTRL -->
@@ -1437,6 +1450,16 @@
             contextId="org.eclipse.cdt.ui.cEditorScope"
             commandId="org.eclipse.cdt.ui.edit.text.c.toggle.source.header"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="M3+ARROW_LEFT"
+            contextId="org.eclipse.cdt.ui.macroExpansionHoverScope"
+            commandId="org.eclipse.cdt.ui.hover.backwardMacroExpansion"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+            sequence="M3+ARROW_RIGHT"
+            contextId="org.eclipse.cdt.ui.macroExpansionHoverScope"
+            commandId="org.eclipse.cdt.ui.hover.forwardMacroExpansion"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -1580,6 +1603,16 @@
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.text.c.toggle.source.header">
       </command>
+      <command
+            name="%ActionDefinition.backwardMacroExpansion.name"
+            description="%ActionDefinition.backwardMacroExpansion.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.hover.backwardMacroExpansion"/>
+      <command
+            name="%ActionDefinition.forwardMacroExpansion.name"
+            description="%ActionDefinition.forwardMacroExpansion.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.hover.forwardMacroExpansion"/>
    </extension>
    <extension
          id="pdomSearchPage"

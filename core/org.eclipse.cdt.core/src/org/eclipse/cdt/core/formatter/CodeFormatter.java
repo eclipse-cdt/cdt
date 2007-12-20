@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.formatter;
 
@@ -24,22 +25,22 @@ public abstract class CodeFormatter {
   public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
-	 * Unknown kind
+	 * Unknown kind.
 	 */
 	public static final int K_UNKNOWN = 0x00;
 
 	/**
-	 * Kind used to format an expression
+	 * Kind used to format an expression.
 	 */
 	public static final int K_EXPRESSION = 0x01;
 	
 	/**
-	 * Kind used to format a set of statements
+	 * Kind used to format a set of statements.
 	 */
 	public static final int K_STATEMENTS = 0x02;
 	
 	/**
-	 * Kind used to format a set of class body declarations
+	 * Kind used to format a set of class body declarations.
 	 */
 	public static final int K_CLASS_BODY_DECLARATIONS = 0x04;
 	
@@ -54,11 +55,11 @@ public abstract class CodeFormatter {
 	public static final int K_TRANSLATION_UNIT = 0x08;
 
 	/**
-	 * Kind used to format a single-line comment
+	 * Kind used to format a single-line comment.
 	 */
 	public static final int K_SINGLE_LINE_COMMENT = 0x10;
 	/**
-	 * Kind used to format a multi-line comment
+	 * Kind used to format a multi-line comment.
 	 */
 	public static final int K_MULTI_LINE_COMMENT = 0x20;
 
@@ -71,7 +72,7 @@ public abstract class CodeFormatter {
 	 * caller to get rid of preceeding whitespaces.
 	 * 
 	 * @param kind Use to specify the kind of the code snippet to format. It can be any of these:
-	 * 		  K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_COMPILATION_UNIT, K_UNKNOWN
+	 * 		  K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_TRANSLATION_UNIT, K_UNKNOWN
 	 * @param file - file associated with this source (null if no file is associated)
 	 * @param source the document to format
 	 * @param offset the given offset to start recording the edits (inclusive).

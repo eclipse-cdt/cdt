@@ -193,7 +193,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
 			fStatusTextFont= new Font(fStatusField.getDisplay(), fontDatas);
 			fStatusField.setFont(fStatusTextFont);
-			GridData gd2= new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
+			GridData gd2= new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 			fStatusField.setLayoutData(gd2);
 
 			// Regarding the color see bug 41128
@@ -245,7 +245,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 *                         or <code>null</code> if the status field should be hidden
 	 * @since 3.0
 	 */
-	public SourceViewerInformationControl(Shell parent,int style, String statusFieldText) {
+	public SourceViewerInformationControl(Shell parent, int style, String statusFieldText) {
 		this(parent, SWT.NO_TRIM | SWT.TOOL, style, statusFieldText);
 	}
 
@@ -313,7 +313,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	 * @see IInformationControl#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-			fShell.setVisible(visible);
+		fShell.setVisible(visible);
 	}
 
 	/**

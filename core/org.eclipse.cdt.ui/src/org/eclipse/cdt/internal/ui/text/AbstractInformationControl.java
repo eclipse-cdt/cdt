@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -48,7 +46,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -112,8 +109,6 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	private TreeViewer fTreeViewer;
 	/** The current string matcher */
 	protected StringMatcher fStringMatcher;
-//	private ICommand fInvokingCommand;
-//	private KeySequence[] fInvokingCommandKeySequences;
 
 	/**
 	 * Fields that support the dialog menu
@@ -122,11 +117,6 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	private Composite fViewMenuButtonComposite;
 
 	private CustomFiltersActionGroup fCustomFiltersActionGroup;
-
-//	private IKeyBindingService fKeyBindingService;
-//	private String[] fKeyBindingScopes;
-	private IAction fShowViewMenuAction;
-//	private HandlerSubmission fShowViewMenuHandlerSubmission;
 
 	/**
 	 * Field for tree style since it must be remembered by the instance.
@@ -145,15 +135,6 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 */
 	public AbstractInformationControl(Shell parent, int shellStyle, int treeStyle, String invokingCommandId, boolean showStatusField) {
 		super(parent, shellStyle, true, true, true, true, null, null);
-		if (invokingCommandId != null) {
-//			ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-//			fInvokingCommand= commandManager.getCommand(invokingCommandId);
-//			if (fInvokingCommand != null && !fInvokingCommand.isDefined())
-//				fInvokingCommand= null;
-//			else
-//				// Pre-fetch key sequence - do not change because scope will change later.
-//				getInvokingCommandKeySequences();
-		}
 		fTreeStyle= treeStyle;
 		// Title and status text must be set to get the title label created, so force empty values here. 
 		if (hasHeader())
@@ -329,24 +310,6 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		return fFilterText;
 	}
 
-	protected void createHorizontalSeparator(Composite parent) {
-		Label separator= new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	}
-
-	protected void updateStatusFieldText() {
-		setInfoText(getStatusFieldText());
-	}
-
-	/**
-	 * Handles click in status field.
-	 * <p>
-	 * Default does nothing.
-	 * </p>
-	 */
-	protected void handleStatusFieldClicked() {
-	}
-
 	protected String getStatusFieldText() {
 		return ""; //$NON-NLS-1$
 	}
@@ -514,13 +477,10 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 */
 	public void setVisible(boolean visible) {
 		if (visible) {
-			addHandlerAndKeyBindingSupport();
 			open();
 		} else {
-			removeHandlerAndKeyBindingSupport();
 			saveDialogBounds(getShell());
 			getShell().setVisible(false);
-			removeHandlerAndKeyBindingSupport();
 		}
 	}
 
@@ -539,42 +499,8 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 	 * </p>
 	 */
 	public void widgetDisposed(DisposeEvent event) {
-		removeHandlerAndKeyBindingSupport();
 		fTreeViewer= null;
 		fFilterText= null;
-//		fKeyBindingService= null;
-	}
-
-	/**
-	 * Adds handler and key binding support.
-	 */
-	protected void addHandlerAndKeyBindingSupport() {
-//		// Remember current scope and then set window context.
-//		if (fKeyBindingScopes == null && fKeyBindingService != null) {
-//			fKeyBindingScopes= fKeyBindingService.getScopes();
-//			fKeyBindingService.setScopes(new String[] { IWorkbenchContextSupport.CONTEXT_ID_WINDOW });
-//		}
-//
-//		// Register action with command support
-//		if (fShowViewMenuHandlerSubmission == null) {
-//			fShowViewMenuHandlerSubmission= new HandlerSubmission(null, getShell(), null, fShowViewMenuAction.getActionDefinitionId(), new ActionHandler(fShowViewMenuAction), Priority.MEDIUM);
-//			PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(fShowViewMenuHandlerSubmission);
-//		}
-	}
-
-	/**
-	 * Removes handler and key binding support.
-	 */
-	protected void removeHandlerAndKeyBindingSupport() {
-//		// Remove handler submission
-//		if (fShowViewMenuHandlerSubmission != null)
-//			PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(fShowViewMenuHandlerSubmission);
-//
-//		// Restore editor's key binding scope
-//		if (fKeyBindingService != null && fKeyBindingScopes != null) {
-//			fKeyBindingService.setScopes(fKeyBindingScopes);
-//			fKeyBindingScopes= null;
-//		}
 	}
 
 	/**
@@ -683,26 +609,6 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		getShell().removeFocusListener(listener);
 	}
 
-//	final protected ICommand getInvokingCommand() {
-//		return fInvokingCommand;
-//	}
-
-//	final protected KeySequence[] getInvokingCommandKeySequences() {
-//		if (fInvokingCommandKeySequences == null) {
-//			if (getInvokingCommand() != null) {
-//				List list= getInvokingCommand().getKeySequenceBindings();
-//				if (!list.isEmpty()) {
-//					fInvokingCommandKeySequences= new KeySequence[list.size()];
-//					for (int i= 0; i < fInvokingCommandKeySequences.length; i++) {
-//						fInvokingCommandKeySequences[i]= ((IKeySequenceBinding) list.get(i)).getKeySequence();
-//					}
-//					return fInvokingCommandKeySequences;
-//				}
-//			}
-//		}
-//		return fInvokingCommandKeySequences;
-//	}
-
 	/*
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getDialogSettings()
 	 */
@@ -728,26 +634,6 @@ public abstract class AbstractInformationControl extends PopupDialog implements 
 		if (hasHeader()) {
 			fFilterText= createFilterText(parent);
 		}
-
-		// Create a key binding for showing the dialog menu
-		// Key binding service
-//		IWorkbenchPart part= CUIPlugin.getActivePage().getActivePart();
-//		IWorkbenchPartSite site= part.getSite();
-//		fKeyBindingService= site.getKeyBindingService();
-
-		// Create show view menu action
-		fShowViewMenuAction= new Action("showViewMenu") { //$NON-NLS-1$
-			/*
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				showDialogMenu();
-			}
-		};
-		fShowViewMenuAction.setEnabled(true);
-		fShowViewMenuAction.setActionDefinitionId("org.eclipse.ui.window.showViewMenu"); //$NON-NLS-1$
-
-		addHandlerAndKeyBindingSupport();
 
 		return fViewMenuButtonComposite;
 	}

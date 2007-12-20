@@ -398,7 +398,7 @@ public final class IndentUtil {
 		int minIndent= Integer.MAX_VALUE;
 		for (int line= 0; line < numberOfLines; line++) {
 			int length= computeVisualLength(getCurrentIndent(document, line + first, indentInsideLineComments), tabSize);
-			if (length < minIndent) {
+			if (length < minIndent && document.getLineLength(line + first) > 0) {
 				minIndent= length;
 				minLine= line;
 			}

@@ -46,6 +46,11 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
      */
     private String fName;
     
+    /**
+     * Instance number of this executor, used with the executor name.
+     */
+    private int fInstanceNumber;
+    
     /** Thread factory that creates the single thread to be used for this executor */
     static class DsfThreadFactory implements ThreadFactory {
         private String fThreadName; 
@@ -70,8 +75,9 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
      * @param name Name used to create executor's thread.
      */
     public DefaultDsfExecutor(String name) {
-        super(1, new DsfThreadFactory(name + " - " + fgInstanceCounter++)); //$NON-NLS-1$
+        super(1, new DsfThreadFactory(name + " - " + fgInstanceCounter)); //$NON-NLS-1$
         fName = name;
+        fInstanceNumber = fgInstanceCounter++;
         
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             // If tracing, pre-start the dispatch thread, and add it to the map.
@@ -179,8 +185,15 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
                 // Record the executor #
                 traceBuilder.append('#');
                 traceBuilder.append(fSequenceNumber);
+
+                // Record the executor name
+                traceBuilder.append('(');
+                traceBuilder.append(fName);
+                traceBuilder.append(" - "); //$NON-NLS-1$
+                traceBuilder.append(fInstanceNumber);
+                traceBuilder.append(')');
                 traceBuilder.append(' ');
-    
+
                 // Append executable class name
                 traceBuilder.append(getExecutable().getClass().getName());
                 

@@ -296,11 +296,10 @@ public class UniversalFileSystemMiner extends Miner {
 	public DataElement handleCancel(DataElement subject, DataElement status) {
 		ICancellableHandler thread = (ICancellableHandler) _cancellableThreads
 				.get(subject);
-		System.out.println("Inside handleCancel(), and the thread is " + thread);
+
 		
 		if (thread != null) {
 			if (!thread.isDone()) {
-				System.out.println("Inside handleCancel(), and will call thread.cancel");
 				thread.cancel();
 			}
 		}
@@ -414,7 +413,6 @@ public class UniversalFileSystemMiner extends Miner {
 			_dataStore.trace(e);
 		}
 		// save find thread in hashmap for retrieval during cancel
-		System.out.println("put thread into the _cancellableThreads hashmap. " + thread.getClass());
 		_cancellableThreads.put(command, thread);
 	}
 	

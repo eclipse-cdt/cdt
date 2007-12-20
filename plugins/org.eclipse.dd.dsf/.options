@@ -1,2 +1,3 @@
 org.eclipse.dd.dsf/debug = false
 org.eclipse.dd.dsf/debug/executor = false
+org.eclipse.dd.dsf/debug/executorName = 

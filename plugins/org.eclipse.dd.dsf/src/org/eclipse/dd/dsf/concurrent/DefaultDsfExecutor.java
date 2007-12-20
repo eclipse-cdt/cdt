@@ -36,18 +36,43 @@ import org.eclipse.dd.dsf.DsfPlugin;
 public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor 
     implements DsfExecutor 
 {
+    /**
+     * Instance counter for DSF executors.  Used in the executor's thread name.
+     */
+    private static int fgInstanceCounter = 0;
+    
+    /**
+     * Name of the executor, used in the executor's thread name.
+     */
+    private String fName;
+    
     /** Thread factory that creates the single thread to be used for this executor */
     static class DsfThreadFactory implements ThreadFactory {
+        private String fThreadName; 
+        DsfThreadFactory(String name) {
+            fThreadName = name;
+        }
+        
         Thread fThread;
         public Thread newThread(Runnable r) {
             assert fThread == null;  // Should be called only once.
-            fThread = new Thread(new ThreadGroup("DSF Thread Group"), r, "DSF Dispatch Thread", 0);   //$NON-NLS-1$//$NON-NLS-2$
+            fThread = new Thread(new ThreadGroup(fThreadName), r, fThreadName, 0); 
             return fThread;
         }
     }
 
     public DefaultDsfExecutor() {
-        super(1, new DsfThreadFactory());
+        this("DSF Executor"); //$NON-NLS-1$
+    }
+    
+    /** 
+     * Creates a new DSF Executor with the given name.
+     * @param name Name used to create executor's thread.
+     */
+    public DefaultDsfExecutor(String name) {
+        super(1, new DsfThreadFactory(name + " - " + fgInstanceCounter++)); //$NON-NLS-1$
+        fName = name;
+        
         if(DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
             // If tracing, pre-start the dispatch thread, and add it to the map.
             prestartAllCoreThreads();
@@ -84,10 +109,13 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     // Utilities used for tracing.
     //
     static boolean DEBUG_EXECUTOR = false;
+    static String DEBUG_EXECUTOR_NAME = "";
     static boolean ASSERTIONS_ENABLED = false;
     static {
         DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
             Platform.getDebugOption("org.eclipse.dd.dsf/debug/executor")); //$NON-NLS-1$
+        DEBUG_EXECUTOR_NAME = DsfPlugin.DEBUG 
+            ? Platform.getDebugOption("org.eclipse.dd.dsf/debug/executorName") : ""; //$NON-NLS-1$
         assert (ASSERTIONS_ENABLED = true) == true;
     }  
 
@@ -141,7 +169,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             fCurrentlyExecuting = this;
 
             // Write to console only if tracing is enabled (as opposed to tracing or assertions).
-            if (DEBUG_EXECUTOR) {
+            if (DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$
                 StringBuilder traceBuilder = new StringBuilder();
     
                 // Record the time
@@ -212,7 +240,9 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             fRunnable = runnable;
 
             // Check if executable wasn't executed already.
-            if (DEBUG_EXECUTOR && fRunnable instanceof DsfExecutable) {
+            if (fRunnable instanceof DsfExecutable &&
+                DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) //$NON-NLS-1$
+            {
                 assert !((DsfExecutable)fRunnable).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
                 ((DsfExecutable)fRunnable).setSubmitted();
             }

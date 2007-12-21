@@ -3588,7 +3588,7 @@ public class AST2Tests extends AST2BaseTest {
     	assertEquals("1", macroDefinitions[0].getExpansion());
     	assertEquals("1", macroDefinitions[1].getExpansion());
     	// regression test for #64268 and #71733 which also handle comments
-    	String expectExpansion= fUsesCPreprocessor ? "1 + 2" : "1   + 2";
+    	String expectExpansion= "1 + 2";
     	assertEquals(expectExpansion, macroDefinitions[2].getExpansion());
     	assertEquals("(KDebugNum(x))", macroDefinitions[3].getExpansion());
     	assertEquals("{if((DEBUGNUM(a)))p;}", macroDefinitions[4].getExpansion());

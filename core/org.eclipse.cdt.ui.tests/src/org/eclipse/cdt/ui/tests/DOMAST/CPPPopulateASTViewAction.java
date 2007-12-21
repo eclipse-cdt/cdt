@@ -42,7 +42,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
 
 /**
  * @author dsteffle
@@ -360,23 +359,19 @@ public class CPPPopulateASTViewAction extends CPPASTVisitor implements IPopulate
 	public void groupIncludes(DOMASTNodeLeaf[] treeIncludes) {
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)
-		DOMASTNodeLeaf child = null;
 		for (int i=treeIncludes.length - 1; i >= 0; i-- ) {
-			if (treeIncludes[i] == null) continue;
+			final DOMASTNodeLeaf nodeLeaf = treeIncludes[i];
+			if (nodeLeaf == null || !(nodeLeaf.getNode() instanceof IASTPreprocessorIncludeStatement)) continue;
 
-			IASTNode node = null;
-			for(int j=0; j < root.getChildren(false).length; j++) {
+			final String path= ((IASTPreprocessorIncludeStatement) nodeLeaf.getNode()).getPath();
+			final DOMASTNodeLeaf[] children = root.getChildren(false);
+			for(int j=0; j < children.length; j++) {
 //				if (monitor != null && monitor.isCanceled()) return; // this causes a deadlock when checked here
-				child = root.getChildren(false)[j];
-				
-				node = treeIncludes[i].getNode();
-				if (child != null && treeIncludes[i] != child &&
-						node instanceof ASTInclusionStatement &&
-						((ASTNode)child.getNode()).getOffset() >= ((ASTInclusionStatement)node).startOffset &&
-						((ASTNode)child.getNode()).getOffset() <= ((ASTInclusionStatement)node).endOffset) 
-				{
+				final DOMASTNodeLeaf child = children[j];
+				if (child != null && child != nodeLeaf && 
+						child.getNode().getContainingFilename().equals(path)) {
 					root.removeChild(child);
-					((DOMASTNodeParent)treeIncludes[i]).addChild(child);
+					((DOMASTNodeParent)nodeLeaf).addChild(child);
 				}
 			}
 		}

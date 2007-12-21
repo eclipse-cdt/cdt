@@ -6,10 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Bryan Wilkinson (QNX)
- * Anton Leherbauer (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Bryan Wilkinson (QNX)
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -99,8 +100,8 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
 			ICPPASTElaboratedTypeSpecifier specifier = (ICPPASTElaboratedTypeSpecifier) parent;
 			int kind = specifier.getKind();
 			switch (kind) {
-			case ICPPASTElaboratedTypeSpecifier.k_struct:
-			case ICPPASTElaboratedTypeSpecifier.k_union:
+			case ICompositeType.k_struct:
+			case ICompositeType.k_union:
 			case ICPPASTElaboratedTypeSpecifier.k_class:
 				break;
 			default:
@@ -129,13 +130,13 @@ public class CPPASTName extends CPPASTNode implements IASTName, IASTCompletionCo
 				ICPPClassType type = (ICPPClassType) bindings[i];
 				try {
 					switch (type.getKey()) {
-					case ICPPClassType.k_struct:
-						if (kind != ICPPASTElaboratedTypeSpecifier.k_struct) {
+					case ICompositeType.k_struct:
+						if (kind != ICompositeType.k_struct) {
 							bindings[i] = null;
 						}
 						break;
-					case ICPPClassType.k_union:
-						if (kind != ICPPASTElaboratedTypeSpecifier.k_union) {
+					case ICompositeType.k_union:
+						if (kind != ICompositeType.k_union) {
 							bindings[i] = null;
 						}
 						break;

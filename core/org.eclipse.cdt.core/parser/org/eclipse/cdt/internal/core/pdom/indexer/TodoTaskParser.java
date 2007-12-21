@@ -57,8 +57,10 @@ public class TodoTaskParser {
 		for (int i = 0; i < comments.length; i++) {
 			IASTComment comment = comments[i];
 			IASTFileLocation location = comment.getFileLocation();
-			parse(comment.getComment(), location.getFileName(), location.getNodeOffset(),
-					location.getStartingLineNumber(), tasks);
+			if (location != null) { // be defensive, bug 213307
+				parse(comment.getComment(), location.getFileName(), location.getNodeOffset(),
+				location.getStartingLineNumber(), tasks);
+			}
 		}
 		if (tasks.isEmpty()) {
 			return EMPTY_TASK_ARRAY;

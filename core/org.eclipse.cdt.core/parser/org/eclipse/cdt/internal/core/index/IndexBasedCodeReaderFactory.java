@@ -30,12 +30,10 @@ import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.internal.core.parser.scanner2.IIndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.parser.scanner.IIndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -100,9 +98,9 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 					for (Iterator iterator = macroMap.entrySet().iterator(); iterator.hasNext();) {
 						Map.Entry entry = (Map.Entry) iterator.next();
 						IIndexFileLocation includedIFL = (IIndexFileLocation) entry.getKey();
-						IMacro[] macros = (IMacro[]) entry.getValue();
+						IIndexMacro[] macros = (IIndexMacro[]) entry.getValue();
 						for (int i = 0; i < macros.length; ++i) {
-							scanner.addDefinition(macros[i]);
+							scanner.addMacroDefinition(macros[i]);
 						}
 						fIncludedFiles.add(includedIFL);
 					}
@@ -132,7 +130,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 		if (macroMap.containsKey(ifl) || (checkIncluded && fIncludedFiles.contains(ifl))) {
 			return;
 		}
-		IMacro[] converted;
+		IIndexMacro[] converted;
 		if (fRelatedIndexerTask != null) {
 			converted= fRelatedIndexerTask.getConvertedMacros(fLinkage, ifl);
 			if (converted == null) {
@@ -140,12 +138,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 			}
 		}
 		else {
-			IIndexMacro[] macros= file.getMacros();
-			converted= new IMacro[macros.length];
-			for (int i = 0; i < macros.length; i++) {
-				IIndexMacro macro = macros[i];
-				converted[i]= ((PDOMMacro)macro).getMacro();
-			}
+			converted= file.getMacros();
 		}
 		macroMap.put(ifl, converted); // prevent recursion
 		

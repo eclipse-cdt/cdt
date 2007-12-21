@@ -17,12 +17,13 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 /**
  * Utility to parse macro definitions and create the macro objects for the preprocessor.
  * @since 5.0
  */
-class MacroDefinitionParser {
+public class MacroDefinitionParser {
 	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
 
 	/**
@@ -58,12 +59,42 @@ class MacroDefinitionParser {
 			return "[" + fIndex + "]";  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
+	
+	public static char[] getExpansion(char[] expansionImage, int offset, int endOffset) {
+		TokenList tl= new TokenList();
+		Lexer lex= new Lexer(expansionImage, offset, endOffset, new LexerOptions(), ILexerLog.NULL, null);
+		try {
+			new MacroDefinitionParser().parseExpansion(lex, ILexerLog.NULL, null, new char[][]{}, tl);
+		} catch (OffsetLimitReachedException e) {
+		}
+
+		StringBuffer buf= new StringBuffer();
+		Token t= tl.first();
+		if (t == null) {
+			return CharArrayUtils.EMPTY;
+		}
+		endOffset= t.getOffset();
+		for (; t != null; t= (Token) t.getNext()) {
+			if (endOffset < t.getOffset()) {
+				buf.append(' ');
+			}
+			buf.append(t.getCharImage());
+			endOffset= t.getEndOffset();
+		}
+		final int length= buf.length(); 
+		final char[] expansion= new char[length];
+		buf.getChars(0, length, expansion, 0);
+		return expansion;
+	}
 
 	private int fHasVarArgs;
 	private int fExpansionOffset;
 	private int fExpansionEndOffset;
 	private Token fNameToken;
 		
+	MacroDefinitionParser() {
+	}
+	
 	/**
 	 * In case the name was successfully parsed, the name token is returned.
 	 * Otherwise the return value is undefined.

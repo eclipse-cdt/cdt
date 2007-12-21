@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
  * Interface between the ast and the location-resolver for resolving offsets.
  * @since 5.0
  */
-public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver {
+public interface ILocationResolver {
     
 	/**
 	 * Introduces the ast translation unit to the location resolver. Must be called before any tokens from the
@@ -75,9 +75,8 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
     
     /**
      * @see IASTTranslationUnit#getContainingFilename()
-     * mstodo- old location resolver, should be renamed
      */
-	String getContainingFilename(int sequenceNumber);
+	String getContainingFilePath(int sequenceNumber);
 	
     /**
      * @see IASTTranslationUnit#getDependencyTree()
@@ -140,4 +139,9 @@ public interface ILocationResolver extends org.eclipse.cdt.internal.core.parser.
 	 * @param offset
 	 */
 	boolean isPartOfTranslationUnitFile(int sequenceNumber);
+
+	/**
+	 * Same as {@link #getMappedFileLocation(int, int)} for the given array of consecutive node locations.
+	 */
+	IASTFileLocation flattenLocations(IASTNodeLocation[] nodeLocations);
 }

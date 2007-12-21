@@ -345,7 +345,7 @@ public class LocationMap implements ILocationResolver {
 		return fCurrentContext.getSequenceNumberForOffset(offset, offset < fLastChildInsertionOffset);
 	}
 
-	public String getContainingFilename(int sequenceNumber) {
+	public String getContainingFilePath(int sequenceNumber) {
 		LocationCtx ctx= fRootContext.findSurroundingContext(sequenceNumber, 1);
 		return new String(ctx.getFilePath());
 	}
@@ -552,15 +552,6 @@ public class LocationMap implements ILocationResolver {
 	}
 
 	public ASTPreprocessorSelectionResult getPreprocessorNode(String path, int offset, int length) {
-		throw new UnsupportedOperationException();
-	}
-
-	// mstodo- old location resolver
-	public char[] getUnpreprocessedSignature(IASTNodeLocation[] locations) {
-		throw new UnsupportedOperationException();
-	}	
-	// mstodo- old location resolver
-	public IASTName[] getMacroExpansions() {
 		throw new UnsupportedOperationException();
 	}
 }

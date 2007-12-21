@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 //no change for leave()
@@ -68,7 +69,7 @@ public abstract class CPPASTAmbiguity extends CPPASTNode {
                     IBinding b = names[j].resolveBinding();
                     if (b == null || b instanceof IProblemBinding)
                         ++issues[i];
-                } catch (Throwable t) {
+                } catch (Exception t) {
                     ++issues[i];
                 }
             }

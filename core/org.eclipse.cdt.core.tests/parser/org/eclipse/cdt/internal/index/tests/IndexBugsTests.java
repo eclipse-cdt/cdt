@@ -417,11 +417,11 @@ public class IndexBugsTests extends BaseTestCase {
 			IIndexMacro[] macros= ifile.getMacros();
 			assertEquals(2, macros.length);
 			IIndexMacro m= macros[0];
-			assertEquals("1", new String(m.getExpansion()));
+			assertEquals("1", new String(m.getExpansionImage()));
 			assertEquals("macro164500", new String(m.getName()));
 
 			m= macros[1];
-			assertEquals("2", new String(m.getExpansion()));
+			assertEquals("2", new String(m.getExpansionImage()));
 			assertEquals("macro164500", new String(m.getName()));
 		}
 		finally {

@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
-import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 
 public abstract class PreprocessorTestsBase extends BaseTestCase {
 
@@ -84,7 +83,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		initializeScanner(input[0].toString());
 	}
 
-	protected int fullyTokenize() throws Exception {
+	protected void fullyTokenize() throws Exception {
 		try	{
 			for(;;) {
 				IToken t= fScanner.nextToken();
@@ -92,7 +91,6 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 		}
 		catch ( EndOfFileException e){
 		}
-		return fScanner.getCount();
 	}
 
 	protected void validateToken(int tokenType) throws Exception {

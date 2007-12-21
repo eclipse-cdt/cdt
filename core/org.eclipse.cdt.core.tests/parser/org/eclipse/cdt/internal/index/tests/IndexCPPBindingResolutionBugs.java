@@ -98,13 +98,19 @@ public class IndexCPPBindingResolutionBugs extends IndexBindingResolutionTestBas
 		assertEquals("FUNC", new String(func.getName()));
 		assertEquals("FUNC2", new String(func2.getName()));
 		
-		assertEquals("void foo()", new String(obj.getExpansion()));
-		assertEquals("void bar()", new String(func.getExpansion()));
-		assertEquals("void baz()", new String(func2.getExpansion()));
+		assertEquals("void foo()", new String(obj.getExpansionImage()));
+		assertEquals("void bar()", new String(func.getExpansionImage()));
+		assertEquals("void baz()", new String(func2.getExpansionImage()));
 		
-		assertEquals("OBJ", new String(obj.getSignature()));
-		assertEquals("FUNC()", new String(func.getSignature()));
-		assertEquals("FUNC2(A)", new String(func2.getSignature()));
+		assertEquals("OBJ", new String(obj.getName()));
+		assertNull(obj.getParameterList());
+		
+		assertEquals("FUNC", new String(func.getName()));
+		assertEquals(0, func.getParameterList().length);
+
+		assertEquals("FUNC2", new String(func2.getName()));
+		assertEquals(1, func2.getParameterList().length);
+		assertEquals("A", new String(func2.getParameterList()[0]));
 		
 		IIndexBinding[] bindings= index.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, NPM);
 		assertEquals(3, bindings.length);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 /*
  * Created on Dec 10, 2004
@@ -22,10 +23,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
  * @author aniefer
  */
 public class GPPBasicType extends CPPBasicType implements IGPPBasicType {
-	public static final int IS_LONGLONG = LAST << 1;
-	public static final int IS_COMPLEX = LAST << 2;
-	public static final int IS_IMAGINARY = LAST << 3;
-	
 	private IType typeOf;
 	
 	public GPPBasicType( int type, int bits, IType typeOf ){
@@ -34,7 +31,7 @@ public class GPPBasicType extends CPPBasicType implements IGPPBasicType {
 		if( type == IBasicType.t_unspecified ){
 			if((qualifierBits & ( IS_COMPLEX | IS_IMAGINARY )) != 0 )
 				type = IBasicType.t_float;
-			else if( (qualifierBits & IS_LONGLONG) != 0 )
+			else if( (qualifierBits & IS_LONG_LONG) != 0 )
 				type = IBasicType.t_int;
 		}
 	}
@@ -43,7 +40,7 @@ public class GPPBasicType extends CPPBasicType implements IGPPBasicType {
 	 * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType#isLongLong()
 	 */
 	public boolean isLongLong() {
-		return ( qualifierBits & IS_LONGLONG ) != 0;
+		return ( qualifierBits & IS_LONG_LONG ) != 0;
 	}
 
 	/* (non-Javadoc)

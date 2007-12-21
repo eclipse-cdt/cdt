@@ -111,7 +111,7 @@ public class GCCCompleteParseExtensionsTest extends AST2BaseTest {
 		writer.write( "__signed__ int signedInt;\n"); //$NON-NLS-1$
 		IASTDeclaration[] decls = parseGCC( writer.toString() ).getDeclarations();
 		
-        assertEquals(((IASTASMDeclaration)decls[0]).getAssembly(), "CODE"); //$NON-NLS-1$
+        assertEquals(((IASTASMDeclaration)decls[0]).getAssembly(), "\"CODE\""); //$NON-NLS-1$
         assertTrue( ((IASTFunctionDefinition)decls[1]).getDeclSpecifier().isInline() );
         assertTrue( ((IASTSimpleDeclaration)decls[2]).getDeclSpecifier().isConst() );
         assertTrue( ((IASTSimpleDeclaration)decls[3]).getDeclSpecifier().isVolatile() );

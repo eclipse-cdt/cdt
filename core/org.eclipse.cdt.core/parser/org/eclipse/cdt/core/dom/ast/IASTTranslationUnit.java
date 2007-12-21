@@ -173,15 +173,6 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	public IASTProblem[] getPreprocessorProblems();
 
 	/**
-	 * For a given range of locations, return a String that represents what is there underneath the range.
-	 * 
-	 * @param locations A range of node locations
-	 * @return A String signature.
-	 * @deprecated was never fully implemented.
-	 */
-	public String getUnpreprocessedSignature(IASTNodeLocation[] locations);
-
-	/**
 	 * Get the translation unit's full path.  
 	 * @return String representation of path.
 	 */
@@ -246,13 +237,6 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
      */
     public void setIndex(IIndex index);
     
-    /**
-     * Set comments to translation unit.
-     *   
-     * @param comment
-     */
-    public void setComments(IASTComment[] comments);
-
 	/**
 	 * In case the ast was created in a way that supports comment parsing,
 	 * all comments of the translation unit are returned. Otherwise an

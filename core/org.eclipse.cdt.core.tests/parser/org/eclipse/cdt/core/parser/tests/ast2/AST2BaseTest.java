@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.tests.scanner.FileCodeReaderFactory;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
@@ -73,8 +74,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
-import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 
 /**
  * @author aniefer
@@ -82,7 +81,6 @@ import org.eclipse.cdt.internal.core.parser.scanner2.FileCodeReaderFactory;
 public class AST2BaseTest extends BaseTestCase {
 	
     private static final IParserLogService NULL_LOG = new NullLogService();
-    protected boolean fUsesCPreprocessor= false;
 
     public AST2BaseTest() {
     	super();
@@ -112,7 +110,6 @@ public class AST2BaseTest extends BaseTestCase {
     protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems , boolean parseComments) throws ParserException {
         IScanner scanner = createScanner(new CodeReader(code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
         		new ScannerInfo(), parseComments);
-        fUsesCPreprocessor= scanner instanceof CPreprocessor;
         ISourceCodeParser parser2 = null;
         if( lang == ParserLanguage.CPP )
         {
@@ -165,15 +162,8 @@ public class AST2BaseTest extends BaseTestCase {
         else
             configuration = new GPPScannerExtensionConfiguration();
         IScanner scanner;
-        if (!DOMScanner.PROP_VALUE.equals(System.getProperty("scanner"))) {
-        	scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
-        			FileCodeReaderFactory.getInstance());
-        }
-        else {
-        	scanner = new DOMScanner( codeReader, scannerInfo, mode, lang, NULL_LOG, configuration, 
-        			FileCodeReaderFactory.getInstance() );
-        	scanner.setScanComments(parseComments);
-        }
+        scanner= new CPreprocessor(codeReader, scannerInfo, lang, NULL_LOG, configuration, 
+        		FileCodeReaderFactory.getInstance());
 		return scanner;
 	}
 

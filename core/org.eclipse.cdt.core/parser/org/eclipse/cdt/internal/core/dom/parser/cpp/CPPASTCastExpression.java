@@ -6,11 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -48,7 +49,7 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
         // ICPPASTCastExpression.OPERAND
         if (expression != null) {
 			expression.setParent(this);
-			expression.setPropertyInParent(ICPPASTCastExpression.OPERAND);
+			expression.setPropertyInParent(IASTCastExpression.OPERAND);
 		}
     }
 

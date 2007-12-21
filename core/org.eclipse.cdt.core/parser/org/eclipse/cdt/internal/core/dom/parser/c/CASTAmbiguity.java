@@ -81,7 +81,7 @@ public abstract class CASTAmbiguity extends CASTNode  {
                         }
                     }
                 }
-                catch( Throwable t )
+                catch( Exception t )
                 {
                     ++issues[i];
                 }

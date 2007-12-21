@@ -121,7 +121,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	 * @since 4.0.1
 	 */
 	public static IndexTypeInfo create(IIndex index, IIndexMacro macro) {
-		final char[] name= macro.getName();
+		final char[] name= macro.getNameCharArray();
 		return new IndexTypeInfo(new String[] {new String(name)}, ICElement.C_MACRO, index);
 	}
 

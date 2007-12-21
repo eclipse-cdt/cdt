@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom;
 
-import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.cdt.core.index.IIndexMacro;
 
 /**
  * Allows an ICodeReaderFactory to retrieve macro definitions from the index, 
@@ -27,7 +27,8 @@ import org.eclipse.cdt.core.parser.IMacro;
  * @since 4.0
  *
  */
+// mstodo get rid of this interface
 public interface IMacroCollector {
 	
-	public void addDefinition(IMacro macro);
+	public void addMacroDefinition(IIndexMacro macro);
 }

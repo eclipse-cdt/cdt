@@ -7,8 +7,8 @@
  * http://www.eclipse.org/legal/epl-v10.html  
  * 
  * Contributors: 
- * Emanuel Graf - initial API and implementation 
- * Markus Schorn (Wind River Systems)
+ *    Emanuel Graf - initial API and implementation 
+ *    Markus Schorn (Wind River Systems)
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.FunctionMacroExpansionLocation;
 
 /**
  * @author Emanuel Graf
@@ -182,14 +181,6 @@ public class DOMPreprocessorInformationTest extends AST2BaseTest {
 		
 		IASTNodeLocation[] nodeLocations = init.getNodeLocations();
 		assertEquals(1, nodeLocations.length);
-		
-		if (!fUsesCPreprocessor) {
-			FunctionMacroExpansionLocation location = (FunctionMacroExpansionLocation) nodeLocations[0];
-			char[][] actualParameters = location.getActualParameters();
-
-			assertEquals("foo", new String(actualParameters[0]));
-			assertEquals("bar", new String(actualParameters[1]));
-		}
 	}
 	
 	// #ifdef xxx

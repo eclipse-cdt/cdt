@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * Andrew Ferguson (Symbian)
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -18,16 +18,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
-import org.eclipse.cdt.core.parser.IMacro;
-import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.Linkage;
+import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IString;
@@ -40,11 +44,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 
-	private final PDOM pdom;
-	private final int record;
-	private IIndexMacro macro;
-
-	private static final byte MACROSTYLE_UNKNOWN = 0; // for reading versions of PDOM <39
 	private static final byte MACROSTYLE_OBJECT  = 1;
 	private static final byte MACROSTYLE_FUNCTION= 2;
 	
@@ -58,7 +57,15 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	private static final int MACRO_STYLE = 26; // byte
 	
 	private static final int RECORD_SIZE = 27;
+	private static final char[][] UNINITIALIZED= {};
+
+	private final PDOM pdom;
+	private final int record;
 	
+	private char[][] fParameterList= UNINITIALIZED;
+	private char[] fName;
+	private char[] fExpansion;
+
 	public PDOMMacro(PDOM pdom, int record) {
 		this.pdom = pdom;
 		this.record = record;
@@ -138,142 +145,54 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		int rec = pdom.getDB().getInt(record + FIRST_PARAMETER);
 		return rec != 0 ? new PDOMMacroParameter(pdom, rec) : null;
 	}
-	
-	private class ObjectStylePDOMMacro extends ObjectStyleMacro implements IIndexMacro {
-		public ObjectStylePDOMMacro(char[] name) {
-			super(name, null);
-		}
-		public char[] getExpansion() {
-			if (expansion == null) {
-				expansion= getMacroExpansion();
-			}
-			return expansion;
-		}
-		public IASTFileLocation getFileLocation() {
-			return PDOMMacro.this;
-		}
-		public IIndexFile getFile() throws CoreException {
-			return PDOMMacro.this.getFile();
-		}
-		public int getNodeOffset() {
-			return PDOMMacro.this.getNodeOffset();
-		}
-		public int getNodeLength() {
-			return PDOMMacro.this.getNodeLength();
-		}
-		public char[][] getParameterList() {
-			return null;
-		}
-	}
-	
-	private class FunctionStylePDOMMacro extends FunctionStyleMacro implements IIndexMacro {
-		public FunctionStylePDOMMacro(char[] name, char[][] arglist) {
-			super(name, null, arglist);
-		}
-		public char[] getExpansion() {
-			if (expansion == null) {
-				expansion= getMacroExpansion();
-			}
-			return expansion;
-		}
-		public IASTFileLocation getFileLocation() {
-			return PDOMMacro.this;
-		}
-		public IIndexFile getFile() throws CoreException {
-			return PDOMMacro.this.getFile();
-		}
-		public int getNodeOffset() {
-			return PDOMMacro.this.getNodeOffset();
-		}
-		public int getNodeLength() {
-			return PDOMMacro.this.getNodeLength();
-		}
-		public char[][] getParameterList() {
-			return getOriginalParameters();
-		}
-	}
-	
-	private char[] getMacroExpansion() {
-		try {
-			return PDOMMacro.this.getExpansionInDB().getChars();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new char[] { ' ' };
-		}
-	}
-
-	public IMacro getMacro() throws CoreException {
-		rebuildMacro();
-		return macro;
-	}
-	
-	private void rebuildMacro() throws CoreException {
-		if (macro == null) {
-			char[] name = getNameInDB(pdom, record).getChars();
-			PDOMMacroParameter param= getFirstParameter();
-
-			byte style= pdom.getDB().getByte(record + MACRO_STYLE);
-			if(style == MACROSTYLE_UNKNOWN) {
-				/* PDOM formats < 39 do not store MACRO_STYLE (208558) */
-				style= param != null ? MACROSTYLE_FUNCTION : MACROSTYLE_OBJECT;
-			}
-
-			switch(style) {
-			case MACROSTYLE_OBJECT:
-				macro= new ObjectStylePDOMMacro(name);
-				break;
-			case MACROSTYLE_FUNCTION:
-				List paramList = new ArrayList();
-				while (param != null) {
-					paramList.add(param.getName().getChars());
-					param = param.getNextParameter();
-				}
-				char[][] params = (char[][])paramList.toArray(new char[paramList.size()][]);
-				macro= new FunctionStylePDOMMacro(name, params);
-				break;
-			default:
-				throw new PDOMNotImplementedError();
-			}
-		}
-	}
-
+			
 	public char[][] getParameterList() {
-		try {
-			rebuildMacro();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new char[][]{};
+		if (fParameterList == UNINITIALIZED) {
+			fParameterList= null;
+			try {
+				byte style= pdom.getDB().getByte(record + MACRO_STYLE);
+				if (style == MACROSTYLE_FUNCTION) {
+					List paramList = new ArrayList();
+					PDOMMacroParameter param= getFirstParameter();
+					while (param != null) {
+						paramList.add(param.getName().getChars());
+						param = param.getNextParameter();
+					}
+					fParameterList= (char[][])paramList.toArray(new char[paramList.size()][]);
+				}
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
 		}
-		return macro.getParameterList();
+		return fParameterList;
 	}
 
-	public char[] getSignature() {
-		try {
-			rebuildMacro();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new char[] { ' ' };
+	public char[] getExpansionImage() {
+		if (fExpansion == null) {
+			try {
+				fExpansion= getExpansionInDB().getChars();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fExpansion= new char[] { ' ' };
+			}
 		}
-		return macro.getSignature();
+		return fExpansion;
 	}
 
-	public char[] getExpansion() {
-		try {
-			rebuildMacro();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new char[] { ' ' };
+	public char[] getNameCharArray() {
+		if (fName == null) {
+			try {
+				fName= getNameInDB(pdom, record).getChars();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fName= new char[] { ' ' };
+			}
 		}
-		return macro.getExpansion();
+		return fName;
 	}
-
-	public char[] getName() {
-		try {
-			return getNameInDB(pdom, record).getChars();
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-			return new char[] { ' ' };
-		}
+	
+	public String getName() {
+		return new String(getNameCharArray());
 	}
 	
 	public IIndexFile getFile() throws CoreException {
@@ -334,4 +253,39 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		}
 	}
 
+	public char[] getExpansion() {
+		char[] expansionImage= getExpansionImage();
+		return MacroDefinitionParser.getExpansion(expansionImage, 0, expansionImage.length);
+	}
+
+	public char[][] getParameterPlaceholderList() {
+		char[][] params= getParameterList();
+		if (params != null && params.length > 0) {
+			char[] lastParam= params[params.length-1];
+			if (CharArrayUtils.equals(lastParam, 0, Keywords.cpELLIPSIS.length, Keywords.cpELLIPSIS)) {
+				char[][] result= new char[params.length][];
+				System.arraycopy(params, 0, result, 0, params.length-1);
+				result[params.length-1]= lastParam.length == Keywords.cpELLIPSIS.length ? Keywords.cVA_ARGS : 
+					CharArrayUtils.extract(lastParam, Keywords.cpELLIPSIS.length, lastParam.length-Keywords.cpELLIPSIS.length);
+				return result;
+			}
+		}
+		return params;
+	}
+
+	public boolean isFunctionStyle() {
+		return getParameterList() != null;
+	}
+
+	public ILinkage getLinkage() throws CoreException {
+		return Linkage.NO_LINKAGE;
+	}
+
+	public IScope getScope() throws DOMException {
+		return null;
+	}
+
+	public Object getAdapter(Class adapter) {
+		return null;
+	}
 }

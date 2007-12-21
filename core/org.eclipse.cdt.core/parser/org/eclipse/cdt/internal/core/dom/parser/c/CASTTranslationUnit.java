@@ -47,45 +47,29 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
-import org.eclipse.cdt.internal.core.dom.parser.ASTComment;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
-import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
-import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
-import org.eclipse.cdt.internal.core.parser.scanner2.InvalidPreprocessorNodeException;
+import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * @author jcamelon
  */
-public class CASTTranslationUnit extends CASTNode implements
-		IASTTranslationUnit, IRequiresLocationInformation {
-
-	private IASTDeclaration[] decls = null;
-	private int declsPos=-1;
-
-	// Binding
-	private CScope compilationUnit = null;
-
-	private ILocationResolver resolver;
-	
-	private IIndex index;
+public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit {
 
 	private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
-
 	private static final IASTNodeLocation[] EMPTY_PREPROCESSOR_LOCATION_ARRAY = new IASTNodeLocation[0];
-
 	private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
-
 	private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
-
 	private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = new IASTProblem[0];
-
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-
     private static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
-    
-    private IASTComment[] comments = new ASTComment[0];	
+
+    private IASTDeclaration[] decls = null;
+	private int declsPos=-1;
+
+	private CScope compilationUnit = null;
+	private ILocationResolver resolver;
+	private IIndex index;
 	private boolean fIsHeader;
 
     public IASTTranslationUnit getTranslationUnit() {
@@ -395,47 +379,21 @@ public class CASTTranslationUnit extends CASTNode implements
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
 	 */
 	public IASTNode selectNodeForLocation(String path, int realOffset, int realLength) {
-		if (resolver instanceof org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) {
-			org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver r2= (org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) resolver;
-	    	IASTNode result= null;
-	    	int start= r2.getSequenceNumberForFileOffset(path, realOffset);
+    	IASTNode result= null;
+		if (resolver != null) {
+	    	int start= resolver.getSequenceNumberForFileOffset(path, realOffset);
 	    	if (start >= 0) {
 	    		int length= realLength < 1 ? 0 : 
-	    			r2.getSequenceNumberForFileOffset(path, realOffset+realLength-1) + 1 - start;
-	    		result= r2.findSurroundingPreprocessorNode(start, length);
+	    			resolver.getSequenceNumberForFileOffset(path, realOffset+realLength-1) + 1 - start;
+	    		result= resolver.findSurroundingPreprocessorNode(start, length);
 	    		if (result == null) {
 	    			CFindNodeForOffsetAction nodeFinder = new CFindNodeForOffsetAction(start, length);
 	    			accept(nodeFinder);
 	    			result = nodeFinder.getNode();
 	    		}
 	    	}    	
-	        return result;
 		}
-		
-		// mstodo- old location resolver remove
-    	IASTNode node = null;
-		ASTPreprocessorSelectionResult result = null;
-		int globalOffset = 0;
-		
-		try {
-			result = resolver.getPreprocessorNode(path, realOffset, realLength);
-		} catch (InvalidPreprocessorNodeException ipne) {
-			globalOffset = ipne.getGlobalOffset(); 
-		}
-    	
-		if (result != null && result.getSelectedNode() != null) {
-			node = result.getSelectedNode();
-		} else {
-			// use the globalOffset to get the node from the AST if it's valid
-			globalOffset = result == null ? globalOffset : result.getGlobalOffset();
-    		if (globalOffset >= 0) {
-	    		CFindNodeForOffsetAction nodeFinder = new CFindNodeForOffsetAction(globalOffset, realLength);
-	    		accept(nodeFinder);
-	    		node = nodeFinder.getNode();
-    		}
-		}
-    	
-        return node;
+		return result;
 	}
 
 	/*
@@ -520,17 +478,6 @@ public class CASTTranslationUnit extends CASTNode implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getUnpreprocessedSignature(org.eclipse.cdt.core.dom.ast.IASTNodeLocation[])
-	 */
-	public String getUnpreprocessedSignature(IASTNodeLocation[] locations) {
-		if (resolver == null)
-			return EMPTY_STRING;
-		return new String(resolver.getUnpreprocessedSignature(locations));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getFilePath()
 	 */
 	public String getFilePath() {
@@ -567,12 +514,6 @@ public class CASTTranslationUnit extends CASTNode implements
         return resolver.flattenLocations( nodeLocations );
     }
 
-    public IASTName[] getMacroExpansions() {
-        if( resolver == null )
-            return EMPTY_NAME_ARRAY;
-        return resolver.getMacroExpansions();
-    }
-
     public IDependencyTree getDependencyTree() {
         if( resolver == null )
             return null;
@@ -582,7 +523,7 @@ public class CASTTranslationUnit extends CASTNode implements
 	public String getContainingFilename(int offset) {
 		if( resolver == null )
 			return EMPTY_STRING;
-		return resolver.getContainingFilename( offset );
+		return resolver.getContainingFilePath( offset );
 	}
 
     public ParserLanguage getParserLanguage() {
@@ -599,18 +540,12 @@ public class CASTTranslationUnit extends CASTNode implements
     }
 
 	public IASTComment[] getComments() {
-		if (resolver instanceof org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) {
-			org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver r2= (org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver) resolver;
-			return r2.getComments();
+		if (resolver != null) {
+			return resolver.getComments();
 		}
-		// support for old location resolver
-		return comments;
+		return new IASTComment[0];
 	}
 
-	public void setComments(IASTComment[] comments) {
-		this.comments = comments;
-	}
-  
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(resolver.getClass())) {
 			return resolver;

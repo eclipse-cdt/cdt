@@ -38,14 +38,12 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.AbstractLanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNotImplementedError;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -82,7 +80,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		boolean fRequestUpdate= false;
 		boolean fRequestIsCounted= true;
 		boolean fIsUpdated= false;
-		public IMacro[] fMacros;
+		public IIndexMacro[] fMacros;
 	}
 	
 	private int fUpdateFlags= IIndexManager.UPDATE_ALL;
@@ -456,10 +454,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 					}
 				}
 			}
-			catch (OutOfMemoryError e) {
-				throw e;
-			}
-			catch (Throwable e) {
+			catch (Exception e) {
 				swallowError(path, e); 
 			}
 		}
@@ -760,7 +755,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 		return result*31 + key.hashCode();
 	}
 
-	public final IMacro[] getConvertedMacros(int linkageID, IIndexFileLocation ifl) throws CoreException {
+	public final IIndexMacro[] getConvertedMacros(int linkageID, IIndexFileLocation ifl) throws CoreException {
 		if (!needToUpdateHeader(linkageID, ifl)) {
 			FileInfo info= getFileInfo(linkageID, ifl);
 			assert info != null;
@@ -771,14 +766,9 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 						return null;
 					}
 				}
-				IMacro[] result= info.fMacros;
+				IIndexMacro[] result= info.fMacros;
 				if (result == null) {
-					IIndexMacro[] macros= info.fIndexFile.getMacros();
-					result= new IMacro[macros.length];
-					for (int i = 0; i < macros.length; i++) {
-						IIndexMacro macro = macros[i];
-						result[i]= ((PDOMMacro)macro).getMacro();
-					}
+					result= info.fIndexFile.getMacros();
 					info.fMacros= result;
 				}
 				return result;

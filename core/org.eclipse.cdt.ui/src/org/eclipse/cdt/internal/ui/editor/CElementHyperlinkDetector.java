@@ -106,8 +106,7 @@ public class CElementHyperlinkDetector implements IHyperlinkDetector {
 								linkRegion = new Region(selection.getOffset(), selection.getLength());
 							}
 						}
-						else { // check if we are in an include statement
-							// mstodo- support for old scanner
+						else { 
 							linkRegion = matchIncludeStatement(ast, selection);
 						}
 

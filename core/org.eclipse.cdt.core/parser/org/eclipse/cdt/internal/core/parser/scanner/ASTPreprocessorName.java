@@ -137,7 +137,8 @@ class ASTMacroReferenceName extends ASTPreprocessorName {
 					return fImageLocationInfo.createLocation(lr, fImageLocationInfo);
 				}
 			}
+			return null;
 		}
-		return null;
+		return super.getImageLocation();
 	}	
 }

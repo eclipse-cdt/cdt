@@ -7,13 +7,12 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
+import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 
 /**
  * Abstract scanner extension configuration to help model C/C++ dialects.
@@ -28,6 +27,22 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
  * @since 4.0
  */
 public abstract class AbstractScannerExtensionConfiguration implements IScannerExtensionConfiguration {
+	protected static class MacroDefinition implements IMacro {
+		private char[] fSignature;
+		private char[] fExpansion;
+		
+		MacroDefinition(char[] signature, char[] expansion) {
+			fSignature= signature;
+			fExpansion= expansion;
+		}
+		
+		public char[] getSignature() {
+			return fSignature;
+		}
+		public char[] getExpansion() {
+			return fExpansion;
+		}
+	}
 
 	/*
 	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#initializeMacroValuesTo1()
@@ -64,10 +79,8 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#getAdditionalMacros()
-	 */
-	public CharArrayObjectMap getAdditionalMacros() {
+
+	public IMacro[] getAdditionalMacros() {
 		return null;
 	}
 
@@ -80,14 +93,11 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 
 	/**
 	 * Helper method to add an object style macro to the given map.
-	 * 
-	 * @param macros the macro map
-	 * @param name the macro name
+	 * @param signature the signature of the macro, see {@link IMacro#getSignature()}.
 	 * @param value the macro value
 	 */
-	protected void addObjectStyleMacro(CharArrayObjectMap macros, String name, String value) {
-		char[] nameChars= name.toCharArray();
-		macros.put(nameChars, new ObjectStyleMacro(nameChars, value.toCharArray()));
+	protected static IMacro createMacro(String signature, String value) {
+		return new MacroDefinition(signature.toCharArray(), value.toCharArray());
 	}
 
 	/**
@@ -98,13 +108,19 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 * @param value the macro value
 	 * @param arguments the macro arguments
 	 */
-	protected void addFunctionStyleMacro(CharArrayObjectMap macros, String name, String value, String[] arguments) {
-		char[] nameChars= name.toCharArray();
-		char[][] argumentsArray= new char[arguments.length][];
+	protected static IMacro createFunctionStyleMacro(String name, String value, String[] arguments) {
+		StringBuffer buf= new StringBuffer();
+		buf.append(name);
+		buf.append('(');
 		for (int i = 0; i < arguments.length; i++) {
-			argumentsArray[i]= arguments[i].toCharArray();
+			if (i>0) {
+				buf.append(',');
+			}
+			buf.append(arguments[i]);
 		}
-		macros.put(nameChars, new FunctionStyleMacro(nameChars, value.toCharArray(), argumentsArray));
+		buf.append(')');
+		char[] signature= new char[buf.length()];
+		buf.getChars(0, signature.length, signature, 0);
+		return new MacroDefinition(signature, value.toCharArray());
 	}
-
 }

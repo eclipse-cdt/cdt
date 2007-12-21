@@ -724,16 +724,7 @@ public class ASTSignatureUtil {
 	}
 	
 	private static String getLiteralExpression( IASTLiteralExpression expression ){
-		StringBuffer result = new StringBuffer();
-		result.append(expression.toString());
-		if (expression.getKind() == IASTLiteralExpression.lk_string_literal) {
-			// mstodo- old scanner, remove
-			if (result.length() == 0 || result.charAt(0) != '"') {
-				result.insert(0, '"');
-				result.append('"');
-			}
-		}
-		return result.toString();
+		return expression.toString();
 	}
 	
 	private static String getIdExpression( IASTIdExpression expression ){

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
+ *    Andrew Ferguson (Symbian) - Initial implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.index.composite;
@@ -31,7 +31,7 @@ public class CompositeTypeContainer extends CompositeType implements ITypeContai
 		try {
 			return ASTTypeUtil.getType(getType());
 		} catch (DOMException e) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 	}
 }

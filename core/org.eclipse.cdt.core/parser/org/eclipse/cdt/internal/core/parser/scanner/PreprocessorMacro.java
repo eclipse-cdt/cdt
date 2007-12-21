@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
@@ -145,24 +144,7 @@ class ObjectStyleMacro extends PreprocessorMacro {
 	}
 
 	public char[] getExpansion() {
-		TokenList tl= getTokens(new MacroDefinitionParser(), new LexerOptions());
-		StringBuffer buf= new StringBuffer();
-		Token t= tl.first();
-		if (t == null) {
-			return CharArrayUtils.EMPTY;
-		}
-		int endOffset= t.getOffset();
-		for (; t != null; t= (Token) t.getNext()) {
-			if (endOffset < t.getOffset()) {
-				buf.append(' ');
-			}
-			buf.append(t.getCharImage());
-			endOffset= t.getEndOffset();
-		}
-		final int length= buf.length(); 
-		final char[] expansion= new char[length];
-		buf.getChars(0, length, expansion, 0);
-		return expansion;
+		return MacroDefinitionParser.getExpansion(fExpansion, fExpansionOffset, fEndOffset);
 	}
 
 	public char[] getExpansionImage() {

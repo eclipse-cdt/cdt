@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 
-/*
- * Created on Sep 16, 2004
- */
 package org.eclipse.cdt.core.parser;
 
 /**
- * @author aniefer
+ * Interface to provide macro definitions in an IScannerExtensionConfiguration.
  */
 public interface IMacro {
-    //For object-like macros these will be the same, 
-    //for function-like macros, the signature includes the parameters
+	/**
+	 * Return the signature of a macro, which is the name for object style macros and 
+	 * the name followed by the comma-separated parameters put in parenthesis. For 
+	 * example: 'funcStyleMacro(par1, par2)'. 
+	 */
     public char[] getSignature();
-    public char[] getName();
+
+    /**
+     * Returns the expansion for this macro.
+     */
     public char[] getExpansion();
 }

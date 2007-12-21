@@ -12,7 +12,7 @@
 package org.eclipse.cdt.core.index;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -29,10 +29,7 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * @since 4.0
  */
-// mstodo scanner removal: IIndexMacro should extend IMacroBinding. However, the DOMScanner requires
-// the delivery of some internal representation of macros. That's what this interface seems to be
-// trimmed to.
-public interface IIndexMacro extends IMacro {
+public interface IIndexMacro extends IMacroBinding {
 	
 	IIndexMacro[] EMPTY_INDEX_MACRO_ARRAY = new IIndexMacro[0];
 
@@ -58,10 +55,4 @@ public interface IIndexMacro extends IMacro {
 	 * Returns the length of the name.
 	 */
 	public int getNodeLength();
-	
-	/**
-	 * Returns the parameter names or <code>null</code> if this is not a function style macro
-	 * @since 5.0
-	 */
-	char[][] getParameterList();
 }

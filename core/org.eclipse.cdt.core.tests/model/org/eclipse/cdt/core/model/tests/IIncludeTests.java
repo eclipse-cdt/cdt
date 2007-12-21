@@ -23,7 +23,6 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 
 /**
  * @author bnicolle
@@ -31,14 +30,11 @@ import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
  */
 public class IIncludeTests extends IntegratedCModelTest {
 
-	private boolean fUseCPreprocessor;
-
 	/**
 	 * @param string
 	 */
 	public IIncludeTests(String string) {
 		super( string );
-		fUseCPreprocessor= !DOMScanner.PROP_VALUE.equals(System.getProperty("scanner"));
 	}
 
 	/**
@@ -94,9 +90,6 @@ public class IIncludeTests extends IntegratedCModelTest {
 		expectIncludes.put("resync_after_bad_parse_2", Boolean.FALSE);
 		expectIncludes.put("one", Boolean.FALSE);  // C-spec does not allow this, gcc warns and includes, so we should include it, also.
 		expectIncludes.put("resync_after_bad_parse_3", Boolean.FALSE);
-		if (!fUseCPreprocessor) {
-			expectIncludes.put("invalid.h", Boolean.FALSE);  // C-spec does not allow this, but that's OK for our present purposes
-		}
 		expectIncludes.put("myInclude1.h", Boolean.FALSE);
 		expectIncludes.put("vers2.h", Boolean.FALSE);					
 

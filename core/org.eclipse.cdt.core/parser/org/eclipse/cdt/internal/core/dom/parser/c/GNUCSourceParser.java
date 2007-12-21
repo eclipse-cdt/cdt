@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
@@ -103,11 +102,9 @@ import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.dom.parser.ASTComment;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
@@ -606,18 +603,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 } catch (EndOfFileException e3) {
                     // nothing
                 }
-            } catch (ParseError perr) {
-                throw perr;
-            } catch (Throwable e) {
-                logThrowable("translationUnit", e); //$NON-NLS-1$
-                try {
-                    failParseWithErrorHandling();
-                } catch (EndOfFileException e3) {
-                    // break;
-                }
             }
         }
-        translationUnit.setComments((IASTComment[]) ArrayUtil.trim(IASTComment.class, comments));
     }
 
     /**
@@ -633,6 +620,12 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTExpression assignmentExpression() throws EndOfFileException,
             BacktrackException {
+        if (LT(1) == IToken.tLPAREN && LT(2) == IToken.tLBRACE && supportStatementsInExpressions) {
+            IASTExpression resultExpression = compoundStatementExpression();
+            if (resultExpression != null)
+                return resultExpression;
+        }
+
         IASTExpression conditionalExpression = conditionalExpression();
         // if the condition not taken, try assignment operators
         if (conditionalExpression != null
@@ -2672,11 +2665,4 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         }
         return for_statement;
     }
-
-	protected IASTComment createComment(IToken commentToken) throws EndOfFileException {
-		ASTComment comment = new ASTComment(commentToken);
-		comment.setParent(translationUnit);
-		return comment;
-	}
-
 }

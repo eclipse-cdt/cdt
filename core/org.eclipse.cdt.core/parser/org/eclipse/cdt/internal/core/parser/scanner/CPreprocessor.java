@@ -45,8 +45,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.InvalidMacroDefinitionException;
-import org.eclipse.cdt.internal.core.parser.scanner2.IIndexBasedCodeReaderFactory;
-import org.eclipse.cdt.internal.core.parser.scanner2.ScannerUtility;
 
 /**
  * C-Preprocessor providing tokens for the parsers. The class should not be used directly, rather than that 
@@ -181,7 +179,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
 
     /** Set of already included files */
     private final HashSet fAllIncludedFiles= new HashSet();
-    private int fTokenCount;
 
 	private final Lexer fRootLexer;
 	private final ScannerContext fRootContext;
@@ -287,10 +284,10 @@ public class CPreprocessor implements ILexerLog, IScanner {
             fMacroDictionary.put(__STDC_VERSION__.getNameCharArray(), __STDC_VERSION__);
         }
 
-        CharArrayObjectMap toAdd = config.getAdditionalMacros();
-        for (int i = 0; i < toAdd.size(); ++i) {
-        	addDefinition((IMacro) toAdd.getAt(i));
-        }
+        IMacro[] toAdd = config.getAdditionalMacros();
+        for (int i = 0; i < toAdd.length; i++) {
+        	addDefinition(toAdd[i]);
+		}
         
         // macros provided on command-line (-D)
         final boolean initEmptyMacros= config.initializeMacroValuesTo1();
@@ -376,10 +373,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	}
     }
   
-    public int getCount() {
-        return fTokenCount;
-    }
-
     public Map getDefinitions() {
         final CharArrayObjectMap objMap= fMacroDictionary;
         int size = objMap.size();
@@ -391,15 +384,11 @@ public class CPreprocessor implements ILexerLog, IScanner {
         return hashMap;
     }
 
-    public String[] getIncludePaths() {
-        return fIncludePaths;
-    }
-
     public boolean isOnTopContext() {
     	return fCurrentContext == fRootContext;
     }
 
-    public synchronized void cancel() {
+    public void cancel() {
     	isCancelled= true;
     }
 
@@ -549,7 +538,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
 
 	Token internalFetchToken(final boolean expandMacros, final boolean stopAtNewline, 
 			final boolean checkNumbers, final ScannerContext uptoEndOfCtx) throws OffsetLimitReachedException {
-        ++fTokenCount;
         Token ppToken= fCurrentContext.currentLexerToken();
         while(true) {
 			switch(ppToken.getType()) {
@@ -814,13 +802,13 @@ public class CPreprocessor implements ILexerLog, IScanner {
     
     public void addMacroDefinition(IIndexMacro macro) {
     	try {
-    		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(macro.getName(), macro.getParameterList(), macro.getExpansion());
+    		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(macro.getNameCharArray(), macro.getParameterList(), macro.getExpansionImage());
     		final IASTFileLocation loc= macro.getFileLocation();
     		fLocationMap.registerMacroFromIndex(result, loc, -1);
 	    	fMacroDictionary.put(result.getNameCharArray(), result);
     	}
     	catch (Exception e) {
-    		fLog.traceLog("Invalid macro definition: '" + String.valueOf(macro.getName()) + "'");     //$NON-NLS-1$//$NON-NLS-2$
+    		fLog.traceLog("Invalid macro definition: '" + macro.getName() + "'");     //$NON-NLS-1$//$NON-NLS-2$
     	}
     }
     
@@ -1404,15 +1392,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
     		addMacroDefinition(macro.getSignature(), macro.getExpansion());
     	}
     }
-	public IMacro addDefinition(char[] key, char[] value) {
-    	throw new UnsupportedOperationException();
-	}
 	public void setScanComments(boolean val) {
 	}
-	public IMacro addDefinition(char[] name, char[][] params, char[] expansion) {
-    	throw new UnsupportedOperationException();
-    }
-	public org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver getLocationResolver() {
+	public ILocationResolver getLocationResolver() {
 		return fLocationMap;
 	}
 }

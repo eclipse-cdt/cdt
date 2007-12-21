@@ -34,32 +34,11 @@ public class OffsetLimitReachedException extends EndOfFileException {
 	public static final int ORIGIN_INACTIVE_CODE = 3;
 	public static final int ORIGIN_MACRO_EXPANSION = 4;
 	
-	private final String prefix;
 	private final IToken finalToken;
 	private final int fOrigin;
-	
-	/**
-	 * mstodo- scanner removal
-	 * @deprecated
-	 * @param prefix
-	 */
-	public OffsetLimitReachedException( String prefix )
-	{
-		this.prefix= prefix;
-		finalToken = null;
-		fOrigin= ORIGIN_UNKNOWN;
-	}
-	
-	public OffsetLimitReachedException( IToken token ) 
-	{
-		fOrigin= ORIGIN_UNKNOWN;
-		prefix= token.getImage();
-		finalToken = token;
-	}
-	
+		
 	public OffsetLimitReachedException(int origin, IToken lastToken) {
 		fOrigin= origin;
-		prefix= lastToken.getImage();
 		finalToken= lastToken;
 	}
 	
@@ -75,14 +54,5 @@ public class OffsetLimitReachedException extends EndOfFileException {
 	 */
 	public IToken getFinalToken() {
 		return finalToken;
-	}
-	
-	/**
-	 * mstodo- scanner removal
-	 * @return returns the IASTCompletionNode
-	 * @deprecated
-	 */
-	public String getPrefix() {
-		return prefix;
 	}
 }

@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
-import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
@@ -93,16 +92,12 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected final boolean supportKnRC;
     
-	protected IASTComment[] comments = new ASTComment[0];
-
     protected final boolean supportAttributeSpecifiers;
     
     protected final boolean supportDeclspecSpecifiers;
 
 	protected final IBuiltinBindingsProvider builtinBindingsProvider;
 	
-	private IToken lastTokenFromScanner;
-
     protected AbstractGNUSourceCodeParser(IScanner scanner,
             IParserLogService logService, ParserMode parserMode,
             boolean supportStatementsInExpressions,
@@ -254,29 +249,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      *             thrown when the scanner.nextToken() yields no tokens
      */
     protected IToken fetchToken() throws EndOfFileException {
-    	IToken value= null;
-    	boolean adjustNextToken= false;
         try {
-            value= scanner.nextToken();
-            // Put the Comments in the Array for later processing
-            int type = value.getType();
-			while(type == IToken.tCOMMENT || type == IToken.tBLOCKCOMMENT){
-            	IASTComment comment = createComment(value);
-            	comments = ASTComment.addComment(comments, comment);
-            	value = scanner.nextToken();
-            	type= value.getType();
-            	adjustNextToken= true;
-            }
+            return scanner.nextToken();
         } catch (OffsetLimitReachedException olre) {
             handleOffsetLimitException(olre);
-            value= null;
+            // never returns, to make the java-compiler happy:
+            return null;
         }
-        
-        if (lastTokenFromScanner != null && adjustNextToken) {
-        	lastTokenFromScanner.setNext(value);
-        }
-        lastTokenFromScanner= value;
-        return value;
     }
 
     protected boolean isCancelled = false;
@@ -333,7 +312,6 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     public synchronized void cancel() {
         isCancelled = true;
-        scanner.cancel();
     }
 
     /**
@@ -1425,19 +1403,39 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected IASTDeclaration asmDeclaration() throws EndOfFileException,
             BacktrackException {
         IToken first = consume(); // t_asm
+        IToken next= LA(1);
+        if (next.getType() == IToken.t_volatile) {
+        	consume();
+        }
+        
         consume(IToken.tLPAREN);
-        char[] assemblyChars = consume(IToken.tSTRING).getCharImage();
-        String assembly;
-		if (assemblyChars.length > 2 && assemblyChars[0] == '"') {
-        	assembly= new String(assemblyChars, 1, assemblyChars.length-2);
+    	boolean needspace= false;
+		StringBuffer buffer= new StringBuffer();
+        int open= 1;
+        while (open > 0) {
+        	IToken t= consume();
+			switch(t.getType()) {
+			case IToken.tLPAREN:
+				open++;
+				break;
+        	case IToken.tRPAREN:
+        		open--;
+        		break;
+        	case IToken.tEOC:
+        		throw new EndOfFileException();
+        	
+        	default:
+        		if (needspace) {
+        			buffer.append(' ');
+        		}
+        		buffer.append(t.getCharImage());
+        		needspace= true;
+        		break;
+			}
         }
-        else {
-        	assembly= new String(assemblyChars);
-        }
-        consume(IToken.tRPAREN);
         int lastOffset = consume(IToken.tSEMI).getEndOffset();
 
-        return buildASMDirective(first.getOffset(), assembly, lastOffset);
+        return buildASMDirective(first.getOffset(), buffer.toString(), lastOffset);
     }
 
     /**
@@ -2266,10 +2264,4 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 		return false;
 	}
-	
-	/**
-	 * Creates the ast node for a comment.
-	 * @since 4.0
-	 */
-	protected abstract IASTComment createComment(IToken commentToken) throws EndOfFileException;
 }

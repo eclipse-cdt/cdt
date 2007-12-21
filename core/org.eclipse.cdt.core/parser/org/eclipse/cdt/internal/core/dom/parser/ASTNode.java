@@ -89,7 +89,7 @@ public abstract class ASTNode implements IASTNode {
         else {
         	final IASTTranslationUnit tu= getTranslationUnit();
         	if (tu != null) {
-        		org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver l= (org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver) tu.getAdapter(org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver.class);
+        		ILocationResolver l= (ILocationResolver) tu.getAdapter(ILocationResolver.class);
         		if (l != null) {
         			locations= l.getLocations(offset, length);
         		}
@@ -116,10 +116,6 @@ public abstract class ASTNode implements IASTNode {
         	ILocationResolver lr= (ILocationResolver) ast.getAdapter(ILocationResolver.class);
         	if (lr != null) {
         		return new String(lr.getUnpreprocessedSignature(getFileLocation()));
-        	}
-        	else {
-        		// mstodo- old location resolver, remove
-        		return ast.getUnpreprocessedSignature(getNodeLocations());
         	}
         }
         return ""; //$NON-NLS-1$

@@ -14,14 +14,21 @@ package org.eclipse.cdt.core.dom.parser.c;
 import org.eclipse.cdt.core.dom.parser.GNUScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IGCCToken;
+import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
 
 /**
  * @author jcamelon
  */
 public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfiguration {
+
+	private static IMacro[] sAdditionalMacros;
+	static {
+		final IMacro[] macros = GNUScannerExtensionConfiguration.getAdditionalGNUMacros();
+		sAdditionalMacros= new IMacro[macros.length+1];
+		System.arraycopy(macros, 0, sAdditionalMacros, 0, macros.length);
+		sAdditionalMacros[macros.length]= createMacro("_Pragma(arg)", "");  //$NON-NLS-1$//$NON-NLS-2$
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#supportMinAndMaxOperators()
@@ -30,19 +37,12 @@ public class GCCScannerExtensionConfiguration extends GNUScannerExtensionConfigu
         return false;
     }
     
-	private static final FunctionStyleMacro _Pragma = new FunctionStyleMacro( 
-			"_Pragma".toCharArray(),  //$NON-NLS-1$
-			emptyCharArray, 
-			new char[][] { "arg".toCharArray() } ); //$NON-NLS-1$
-
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#getAdditionalMacros()
      */
-    public CharArrayObjectMap getAdditionalMacros() {
-        CharArrayObjectMap result = super.getAdditionalMacros();
-        result.put(_Pragma.name, _Pragma );
-        return result;
+    public IMacro[] getAdditionalMacros() {
+    	return sAdditionalMacros;
     }
 
     /* (non-Javadoc)

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
@@ -39,7 +39,6 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -231,10 +230,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 	private IScanner createScanner(CodeReader reader, IScannerInfo scanInfo,
 			ParserMode mode, ParserLanguage lang, IParserLogService log,
 			IScannerExtensionConfiguration scanConfig, ICodeReaderFactory fileCreator) {
-		if (!DOMScanner.PROP_VALUE.equals(System.getProperty("scanner"))) { //$NON-NLS-1$
-			return new CPreprocessor(reader, scanInfo, lang, log, scanConfig, fileCreator);
-		}
-		return new DOMScanner(reader, scanInfo, mode, lang, log, scanConfig, fileCreator);
+		return new CPreprocessor(reader, scanInfo, lang, log, scanConfig, fileCreator);
 	}
 	
     /*

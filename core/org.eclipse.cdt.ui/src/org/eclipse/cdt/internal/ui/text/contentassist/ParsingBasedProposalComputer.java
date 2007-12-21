@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
+ *    QNX - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.contentassist;
@@ -52,7 +52,7 @@ public abstract class ParsingBasedProposalComputer implements ICompletionProposa
 
 				return computeCompletionProposals(cContext, completionNode, prefix);
 			}
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			fErrorMessage = e.toString();
 			CUIPlugin.getDefault().log(e);
 		}

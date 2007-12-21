@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import java.util.Iterator;
-import java.util.List;
-
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.IProblem;

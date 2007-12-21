@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * Andrew Ferguson (Symbian) - Initial implementation
- * Bryan Wilkinson (QNX)
+ *    Andrew Ferguson (Symbian) - Initial implementation
+ *    Bryan Wilkinson (QNX)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.composite.cpp;
 
@@ -57,7 +57,7 @@ public class InternalTemplateInstantiatorUtil {
 	public static IBinding instantiate(IType[] arguments, ICompositesFactory cf, IIndexBinding rbinding) {
 		IBinding ins= ((ICPPInternalTemplateInstantiator)rbinding).instantiate(arguments);
 		if (ins instanceof IIndexFragmentBinding) {
-			return (IBinding) cf.getCompositeBinding((IIndexFragmentBinding)ins);
+			return cf.getCompositeBinding((IIndexFragmentBinding)ins);
 		} else {
 			// can result in a non-index binding
 			return ins;

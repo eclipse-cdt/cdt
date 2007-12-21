@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation 
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -33,9 +35,8 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTInclusionStatement;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @author dsteffle
@@ -324,23 +325,19 @@ public class CPopulateASTViewAction extends CASTVisitor implements IPopulateDOMA
 	public void groupIncludes(DOMASTNodeLeaf[] treeIncludes) {
 		// loop through the includes and make sure that all of the nodes 
 		// that are children of the TU are in the proper include (based on offset)
-		DOMASTNodeLeaf child = null;
-		for (int i=treeIncludes.length-1; i>=0; i--) {
-			if (treeIncludes[i] == null) continue;
+		for (int i=treeIncludes.length - 1; i >= 0; i-- ) {
+			final DOMASTNodeLeaf nodeLeaf = treeIncludes[i];
+			if (nodeLeaf == null || !(nodeLeaf.getNode() instanceof IASTPreprocessorIncludeStatement)) continue;
 
-			IASTNode node = null;
-			for(int j=0; j < root.getChildren(false).length; j++) {
+			final String path= ((IASTPreprocessorIncludeStatement) nodeLeaf.getNode()).getPath();
+			final DOMASTNodeLeaf[] children = root.getChildren(false);
+			for(int j=0; j < children.length; j++) {
 //				if (monitor != null && monitor.isCanceled()) return; // this causes a deadlock when checked here
-				child = root.getChildren(false)[j];
-				
-				node = treeIncludes[i].getNode();
-				if (child != null && 
-						treeIncludes[i] != child &&
-						node instanceof ASTInclusionStatement &&
-						((ASTNode)child.getNode()).getOffset() >= ((ASTInclusionStatement)node).startOffset &&
-						((ASTNode)child.getNode()).getOffset() <= ((ASTInclusionStatement)node).endOffset) {
+				final DOMASTNodeLeaf child = children[j];
+				if (child != null && child != nodeLeaf && 
+						child.getNode().getContainingFilename().equals(path)) {
 					root.removeChild(child);
-					((DOMASTNodeParent)treeIncludes[i]).addChild(child);
+					((DOMASTNodeParent)nodeLeaf).addChild(child);
 				}
 			}
 		}

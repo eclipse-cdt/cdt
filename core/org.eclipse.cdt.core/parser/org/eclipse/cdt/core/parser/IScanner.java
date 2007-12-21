@@ -7,25 +7,25 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.IMacroCollector;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
+import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
 
 /**
- * @author jcamelon
- * 
+ * Interface between the parser and the preprocessor. 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will
  * work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
  * </p>
- *
  */
 public interface IScanner extends IMacroCollector {
 	
@@ -46,22 +46,33 @@ public interface IScanner extends IMacroCollector {
 	 * @since 5.0
 	 */
 	public void setComputeImageLocations(boolean val);
-
-	public IMacro addDefinition(char[] key, char[] value); 
-	public void addDefinition(IMacro macro);
 	
-	public Map 				getDefinitions();
-	public String[] getIncludePaths();
+	/**
+	 * Returns a map from {@link String} to {@link IMacroBinding} containing
+	 * all the definitions that are defined at the current point in the 
+	 * process of scanning.
+	 */
+	public Map getDefinitions();
 
+	/**
+     * Returns next token for the parser. String literals are concatenated.
+     * @throws EndOfFileException when the end of the translation unit has been reached.
+     * @throws OffsetLimitReachedException see {@link Lexer}.
+     */
 	public IToken nextToken() throws EndOfFileException;
 			
-	public int  getCount();
 	/**
 	 * Returns <code>true</code>, whenever we are processing the outermost file of the translation unit.
 	 */
 	public boolean isOnTopContext();
-	public CharArrayObjectMap getRealDefinitions();
+	
+	/**
+	 * Attempts to cancel the scanner.
+	 */
 	public void cancel();
 	
+	/**
+	 * Returns the location resolver associated with this scanner.
+	 */
 	public ILocationResolver getLocationResolver();
 }

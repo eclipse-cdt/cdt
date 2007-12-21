@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
@@ -59,10 +59,7 @@ public class ParserLogService extends AbstractParserLogService
 	}
 
 	public boolean isTracing(){
-		if( CCorePlugin.getDefault() == null )
-			return false;
-		
-		return ( CCorePlugin.getDefault().isDebugging() && Util.isActive( topic ) ); 
+		return fIsTracing;
 	}
 	
 	public boolean isTracingExceptions() {

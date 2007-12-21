@@ -1645,7 +1645,7 @@ public class CPPVisitor {
 				if( gspec.getTypeofExpression() != null ){
 					type = getExpressionType( gspec.getTypeofExpression() );
 				} else {
-					bits |= ( gspec.isLongLong() ? GPPBasicType.IS_LONGLONG : 0 );
+					bits |= ( gspec.isLongLong() ? ICPPBasicType.IS_LONG_LONG : 0 );
 					type = new GPPBasicType( spec.getType(), bits, getExpressionType(gspec.getTypeofExpression()) );
 				}
 			} else {

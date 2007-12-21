@@ -84,13 +84,13 @@ public final class CharArrayMap/*<V>*/ {
         public int hashCode() {
             int result = 17;
             for(int i = start; i < start+length; i++) {
-            	result = 37 * result + (int)buffer[i];
+            	result = 37 * result + buffer[i];
             }
             return result;
         }
         
         public String toString() {
-        	return "'" + new String(buffer, start, length) + "'@(" + start + "," + length + ")";
+        	return "'" + new String(buffer, start, length) + "'@(" + start + "," + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
         
     }

@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Markus Schorn (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -581,7 +581,7 @@ public class DOMLocationTests extends AST2BaseTest {
             assertEquals( 2, decls.length);
             assertEquals( 1, statements.length);
             assertEquals( 1, problems.length);
-            assertSoleLocation(problems[0], code, fUsesCPreprocessor ? "nix(y," : "z");
+            assertSoleLocation(problems[0], code, "nix(y,");
             assertSoleLocation( decls[1], code, "int x;"); 
         }
     }
@@ -600,7 +600,7 @@ public class DOMLocationTests extends AST2BaseTest {
             assertEquals( 1, decls.length);
             assertEquals( 2, problems.length);
             assertSoleLocation(problems[0], code, "#include \"\"");
-            assertSoleLocation(problems[1], code, fUsesCPreprocessor ? "#else" : "else");
+            assertSoleLocation(problems[1], code, "#else");
             assertSoleLocation( decls[0], code, "int x;"); 
         }
     }
@@ -721,7 +721,7 @@ public class DOMLocationTests extends AST2BaseTest {
         assertEquals(IASTProblem.PREPROCESSOR_INVALID_DIRECTIVE, problems[2].getID());
         assertSoleLocation(problems[0], code, "#import \"include_once.h\"");
         assertSoleLocation(problems[1], code, "\"deprecated include\"");
-        assertSoleLocation(problems[2], code, fUsesCPreprocessor ? "#invalid" : "invalid");        	
+        assertSoleLocation(problems[2], code, "#invalid");        	
     }
     
     // int main(void){	

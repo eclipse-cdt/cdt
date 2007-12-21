@@ -95,7 +95,7 @@ public class CPPClassTemplateSpecialization extends CPPClassSpecialization
 		ICPPTemplateDefinition template = null;
 		
 		try {
-			template = CPPTemplates.matchTemplatePartialSpecialization( (ICPPClassTemplate) this, arguments );
+			template = CPPTemplates.matchTemplatePartialSpecialization( this, arguments );
 		} catch (DOMException e) {
 			return e.getProblem();
 		}

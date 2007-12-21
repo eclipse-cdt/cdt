@@ -6,13 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.parser;
 
+import org.eclipse.cdt.core.parser.IMacro;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * Scanner extension configuration interface.
@@ -69,19 +71,15 @@ public interface IScannerExtensionConfiguration {
 	 * Support for additional keywords.
 	 * 
 	 * @return a mapping of keyword name to one of the constants defined in
-	 *         {@link org.eclipse.cdt.core.parser.IToken IToken} or
-	 *         <code>null</code> for no additional keywords.
+	 *         {@link IToken} or <code>null</code> for no additional keywords.
 	 */
 	public CharArrayIntMap getAdditionalKeywords();
 
 	/**
 	 * Support for additional macros.
-	 * 
-	 * @return a mapping of macro name to
-	 *         {@link org.eclipse.cdt.core.parser.IMacro IMacro} or
-	 *         <code>null</code> for no additional macros.
+	 * @return an array of macros or <code>null</code> for no additional macros.
 	 */
-	public CharArrayObjectMap getAdditionalMacros();
+	public IMacro[] getAdditionalMacros();
 
 	/**
 	 * Support for additional preprocessor directives.

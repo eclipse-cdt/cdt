@@ -263,19 +263,19 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		cpp_const_char_p_r = new GPPPointerType(new CPPQualifierType(cpp_char, true, false), false, false, true);
 		
 		cpp_double = new CPPBasicType(IBasicType.t_double, 0);
-		cpp_double_complex = new GPPBasicType(IBasicType.t_double, GPPBasicType.IS_COMPLEX, null);
+		cpp_double_complex = new GPPBasicType(IBasicType.t_double, ICPPBasicType.IS_COMPLEX, null);
 		cpp_float = new CPPBasicType(IBasicType.t_float, 0);
-		cpp_float_complex = new GPPBasicType(IBasicType.t_float, GPPBasicType.IS_COMPLEX, null);
+		cpp_float_complex = new GPPBasicType(IBasicType.t_float, ICPPBasicType.IS_COMPLEX, null);
 		cpp_int = new CPPBasicType(IBasicType.t_int, 0);
 		cpp_long_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG);
 		cpp_long_double = new CPPBasicType(IBasicType.t_double, ICPPBasicType.IS_LONG);
-		cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, ICPPBasicType.IS_LONG | GPPBasicType.IS_COMPLEX, null);
-		cpp_long_long_int = new CPPBasicType(IBasicType.t_int, GPPBasicType.IS_LONGLONG);
+		cpp_long_double_complex = new GPPBasicType(IBasicType.t_double, ICPPBasicType.IS_LONG | ICPPBasicType.IS_COMPLEX, null);
+		cpp_long_long_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG_LONG);
 		cpp_signed_long_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_LONG | ICPPBasicType.IS_SIGNED);
 		
 		cpp_unsigned_int = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_UNSIGNED);
 		cpp_unsigned_long = new CPPBasicType(IBasicType.t_int, ICPPBasicType.IS_UNSIGNED | ICPPBasicType.IS_LONG);
-		cpp_unsigned_long_long = new GPPBasicType(IBasicType.t_int, ICPPBasicType.IS_UNSIGNED | GPPBasicType.IS_LONGLONG, null);
+		cpp_unsigned_long_long = new GPPBasicType(IBasicType.t_int, ICPPBasicType.IS_UNSIGNED | ICPPBasicType.IS_LONG_LONG, null);
 		
 		cpp_size_t = cpp_unsigned_long; // assumed unsigned long int
 		cpp_va_list = new CPPFunctionType( cpp_char_p, new IType[0]); // assumed: char * va_list();

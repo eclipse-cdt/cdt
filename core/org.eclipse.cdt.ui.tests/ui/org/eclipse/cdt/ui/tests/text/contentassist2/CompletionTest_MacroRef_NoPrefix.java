@@ -51,7 +51,8 @@ public class CompletionTest_MacroRef_NoPrefix  extends CompletionProposalsBaseTe
 			"__restrict__",
 			"__signed__",
 			"__stdcall",
-			"__volatile__"
+			"__volatile__",
+			"__typeof__"
 	};
 	
 	public CompletionTest_MacroRef_NoPrefix(String name) {

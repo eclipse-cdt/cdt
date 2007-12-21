@@ -57,7 +57,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
              */
             if ((cur != null) && (cur.length > 0)) {
                 for (int i = 0; i < cur.length; i++) {
-                    int line = ((Integer) cur[i].getAttribute(IMarker.LOCATION)).intValue();
+                    int line = ((Integer) cur[i].getAttribute(IMarker.LINE_NUMBER)).intValue();
                     int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
                     String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
                     if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
@@ -67,7 +67,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
             }
 
             IMarker marker = problemMarkerInfo.file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
-            marker.setAttribute(IMarker.LOCATION, problemMarkerInfo.lineNumber);
+            marker.setAttribute(IMarker.LOCATION, String.valueOf(problemMarkerInfo.lineNumber));
             marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
             marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
             marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);
@@ -95,7 +95,7 @@ public class SCMarkerGenerator implements IMarkerGenerator {
                 List exactMarkers = new ArrayList();
                 for (int i = 0; i < markers.length; i++) {
                     IMarker marker = markers[i];
-                    int location = ((Integer) marker.getAttribute(IMarker.LOCATION)).intValue();
+                    int location = ((Integer) marker.getAttribute(IMarker.LINE_NUMBER)).intValue();
                     String error = (String) marker.getAttribute(IMarker.MESSAGE);
                     int sev = ((Integer) marker.getAttribute(IMarker.SEVERITY)).intValue();
                     if (location == lineNumber &&

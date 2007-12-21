@@ -49,7 +49,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			 */
 			if ((cur != null) && (cur.length > 0)) {
 				for (int i = 0; i < cur.length; i++) {
-					int line = ((Integer) cur[i].getAttribute(IMarker.LOCATION)).intValue();
+					int line = ((Integer) cur[i].getAttribute(IMarker.LINE_NUMBER)).intValue();
 					int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
 					String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
 					if (line == problemMarkerInfo.lineNumber && sev == mapMarkerSeverity(problemMarkerInfo.severity) && mesg.equals(problemMarkerInfo.description)) {
@@ -59,7 +59,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			}
 			
 			IMarker marker = markerResource.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
-			marker.setAttribute(IMarker.LOCATION, problemMarkerInfo.lineNumber);
+			marker.setAttribute(IMarker.LOCATION, String.valueOf(problemMarkerInfo.lineNumber));
 			marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
 			marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(problemMarkerInfo.severity));
 			marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);

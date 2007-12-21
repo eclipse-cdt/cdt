@@ -149,7 +149,7 @@ public class BreakpointProblems {
 			 */
 			if ((cur != null) && (cur.length > 0)) {
 				for (int i = 0; i < cur.length; i++) {
-					int line = ((Integer) cur[i].getAttribute(IMarker.LOCATION)).intValue();
+					int line = ((Integer) cur[i].getAttribute(IMarker.LINE_NUMBER)).intValue();
 					int sev = ((Integer) cur[i].getAttribute(IMarker.SEVERITY)).intValue();
 					String mesg = (String) cur[i].getAttribute(IMarker.MESSAGE);
 					if (line == problemMarkerInfo.lineNumber && sev == problemMarkerInfo.severity && mesg.equals(problemMarkerInfo.description)) {
@@ -159,7 +159,7 @@ public class BreakpointProblems {
 			}
 
 			IMarker marker = markerResource.createMarker(BREAKPOINT_PROBLEM_MARKER_ID);
-			marker.setAttribute(IMarker.LOCATION, problemMarkerInfo.lineNumber);
+			marker.setAttribute(IMarker.LOCATION, String.valueOf(problemMarkerInfo.lineNumber));
 			marker.setAttribute(IMarker.MESSAGE, problemMarkerInfo.description);
 			marker.setAttribute(IMarker.SEVERITY, problemMarkerInfo.severity);
 			marker.setAttribute(IMarker.LINE_NUMBER, problemMarkerInfo.lineNumber);

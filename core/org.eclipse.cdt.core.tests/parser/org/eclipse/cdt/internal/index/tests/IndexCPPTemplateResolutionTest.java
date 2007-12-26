@@ -813,4 +813,20 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b1, ICPPTemplateDefinition.class);
 		assertInstance(b1, ICPPClassType.class);
 	}
+
+	// template<typename T>
+	// class C {
+	// public:
+	//   typedef T value_type;
+	//   void m(value_type v) {}
+	// };
+
+	// void main() {
+	//   C<int> x;
+	//   x.m(0);
+	// }
+	public void _testTypedefInTemplateClass_213861() throws Exception {
+		IBinding b0= getBindingFromASTName("m(0)", 1);
+		assertInstance(b0, ICPPMethod.class);
+	}
 }

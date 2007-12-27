@@ -87,7 +87,6 @@ public class AST2TemplateTests extends AST2BaseTest {
         ICPPClassTemplate A = (ICPPClassTemplate) col.getName(1).resolveBinding();
         ICPPTemplateParameter T = (ICPPTemplateParameter) col.getName(0).resolveBinding();
         
-        
         ICPPTemplateScope scope = (ICPPTemplateScope) T.getScope();
         IScope s2 = A.getScope();
         assertSame( scope, s2 );
@@ -1205,7 +1204,7 @@ public class AST2TemplateTests extends AST2BaseTest {
 		assertTrue( x4 instanceof ICPPSpecialization );
 		assertEquals( ((ICPPSpecialization)x4).getSpecializedBinding(), x2 );
 	}
-	public void _testNestedTypeSpecializations() throws Exception {
+	public void testNestedTypeSpecializations() throws Exception {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("template <class T> class A {               \n"); //$NON-NLS-1$
 		buffer.append("   typedef T _T;                           \n"); //$NON-NLS-1$

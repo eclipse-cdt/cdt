@@ -2405,7 +2405,7 @@
       <filesystemContributor
             class="org.eclipse.cdt.internal.ui.ffs.FFSFileSystemContributor"
             label="Flexible File System"
-            scheme="ffs">
+            scheme="ecproj">
       </filesystemContributor>
    </extension>
  

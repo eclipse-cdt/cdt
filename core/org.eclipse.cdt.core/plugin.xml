@@ -707,7 +707,7 @@
    <extension
          point="org.eclipse.core.filesystem.filesystems">
       <filesystem
-            scheme="ffs">
+            scheme="ecproj">
          <run
                class="org.eclipse.cdt.internal.core.ffs.FFSFileSystem">
          </run>

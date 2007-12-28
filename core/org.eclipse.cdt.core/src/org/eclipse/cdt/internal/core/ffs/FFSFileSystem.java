@@ -14,6 +14,8 @@ package org.eclipse.cdt.internal.core.ffs;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.filesystem.EFS;
@@ -23,24 +25,54 @@ import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author Doug Schaefer
  *
- * This is the virtual file system. It maps URIs to files in underlying file systems.
- * In doing so, it allows the hierarchical structure of URIs to be different.
- * In particular, you can add files from one location to another and excludes files
- * and directories from the tree.
+ * This is the flexible file system. It allows you to add and exclude
+ * entries from from a given directory.
+ * 
+ * The URI's for this system are as follows:
+ * 
+ *    ecproj:///<ecproj file location>?<logical path>#<ecproj file schema>
+ * 
+ * For example:
+ * 
+ *    ecproj:///c:/Eclipse/workspace/s?.project
+ * 
  */
 public class FFSFileSystem extends FileSystem {
 
-	public FFSFileSystem() {
+	private Map<URI, FFSEcprojFile> ecprojFiles = new HashMap<URI, FFSEcprojFile>();
+
+	private synchronized FFSEcprojFile getEcprojFile(FFSFileSystem fileSystem, URI uri) throws CoreException {
+		uri.normalize();
+		FFSEcprojFile ecprojFile = ecprojFiles.get(uri);
+		if (ecprojFile == null) {
+			ecprojFile = new FFSEcprojFile(fileSystem, uri);
+			ecprojFiles.put(uri, ecprojFile);
+		}
+		return ecprojFile;
 	}
 	
 	public IFileStore getStore(URI uri) {
 		try {
-			URI realURI = new URI(getScheme(), uri.getSchemeSpecificPart(), uri.getFragment());
-			return EFS.getStore(realURI);
+			String ecprojScheme = uri.getFragment();
+			if (ecprojScheme == null)
+				ecprojScheme = EFS.SCHEME_FILE;
+
+			URI ecprojURI = new URI(ecprojScheme, uri.getAuthority(), uri.getPath(), null, null);
+			FFSEcprojFile ecprojFile = getEcprojFile(this, ecprojURI);
+			
+			IFileStore root = ecprojFile.getRoot();
+			String pathStr = uri.getQuery();
+			if (pathStr == null)
+				return root;
+			IPath path = new Path(pathStr);
+			if (path.segmentCount() == 0)
+				return root;
+			return root.getChild(path);
 		} catch (URISyntaxException e) {
 			CCorePlugin.log(e);
 		} catch (CoreException e) {

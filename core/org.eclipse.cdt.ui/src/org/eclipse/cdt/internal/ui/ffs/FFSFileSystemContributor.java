@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.ui.ffs;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
@@ -21,12 +22,22 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ide.fileSystem.FileSystemContributor;
 
+import org.eclipse.cdt.internal.core.ffs.FFSFileSystem;
+
 /**
  * @author Doug Schaefer
  *
  */
 public class FFSFileSystemContributor extends FileSystemContributor {
 
+	public URI getURI(String string) {
+		try {
+			return new URI(string);
+		} catch (URISyntaxException e) {
+			return super.getURI(string);
+		}
+	}
+	
 	public URI browseFileSystem(String initialPath, Shell shell) {
 		DirectoryDialog dialog = new DirectoryDialog(shell);
 		dialog.setMessage("Select Project Location");
@@ -42,7 +53,12 @@ public class FFSFileSystemContributor extends FileSystemContributor {
 		if (selectedDirectory == null) {
 			return null;
 		}
-		return new File(selectedDirectory).toURI();
+		URI rootURI = new File(selectedDirectory).toURI();
+		try {
+			return new URI("ecproj", rootURI.getAuthority(), rootURI.getPath(), null, rootURI.getScheme());
+		} catch (URISyntaxException e) {
+			return rootURI;
+		}
 	}
 
 }

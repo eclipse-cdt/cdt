@@ -290,12 +290,17 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (cProject != null)
 		{
 			config.setMappedResources(new IResource[] { cProject.getProject() });
-			ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
-			if (projDes != null)
-			{
-				String buildConfigID = projDes.getActiveConfiguration().getId();
-				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);			
-			}
+			try { // Only initialize the build config ID once.
+				if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, "").length() == 0)//$NON-NLS-1$
+				{
+					ICProjectDescription projDes = CCorePlugin.getDefault().getProjectDescription(cProject.getProject());
+					if (projDes != null)
+					{
+						String buildConfigID = projDes.getActiveConfiguration().getId();
+						config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_BUILD_CONFIG_ID, buildConfigID);			
+					}				
+				}
+			} catch (CoreException e) { e.printStackTrace(); }
 		}
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, fProjText.getText());
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, fProgText.getText());

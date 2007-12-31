@@ -12,11 +12,14 @@
 package org.eclipse.cdt.ui.wizards;
 
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +30,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -61,7 +63,7 @@ implements IExecutableExtension, IWizardWithMemory
 	
 	private boolean existingPath = false;
 	private String lastProjectName = null;
-	private IPath lastProjectLocation = null;
+	private URI lastProjectLocation = null;
 	private CWizardHandler savedHandler = null;
 
 	protected List localPages = new ArrayList(); // replacing Wizard.pages since we have to delete them
@@ -96,7 +98,7 @@ implements IExecutableExtension, IWizardWithMemory
 		if (!fMainPage.getProjectName().equals(lastProjectName))
 			return true;
 			
-		IPath projectLocation = fMainPage.getProjectLocation();
+		URI projectLocation = fMainPage.getProjectLocation();
 		if (projectLocation == null) {
 			if (lastProjectLocation != null)
 				return true;
@@ -115,23 +117,29 @@ implements IExecutableExtension, IWizardWithMemory
 			clearProject(); 
 		if (newProject == null)	{
             existingPath = false;
-			IPath p = fMainPage.getProjectLocation();
-		  	if (p == null) { 
-		  		p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-			    p = p.append(fMainPage.getProjectName());
-		  	}
-        	File f = p.toFile();
-        	if (f.exists() && f.isDirectory()) {
-                if (p.append(".project").toFile().exists()) { //$NON-NLS-1$
-                	if (!
-                		MessageDialog.openConfirm(getShell(), 
-        				UIMessages.getString("CDTCommonProjectWizard.0"),  //$NON-NLS-1$
-						UIMessages.getString("CDTCommonProjectWizard.1")) //$NON-NLS-1$
-						)
-                		return null;
-                }
-                existingPath = true;
-        	} 
+		  	try {
+		  		IFileStore fs;
+				URI p = fMainPage.getProjectLocation();
+			  	if (p == null) { 
+			  		fs = EFS.getStore(ResourcesPlugin.getWorkspace().getRoot().getLocationURI());
+				    fs = fs.getChild(fMainPage.getProjectName());
+			  	} else
+			  		fs = EFS.getStore(p);
+		  		IFileInfo f = fs.fetchInfo();
+		  		if (f.exists() && f.isDirectory()) {
+		  			if (fs.getChild(".project").fetchInfo().exists()) { //$NON-NLS-1$
+	                	if (!
+	                		MessageDialog.openConfirm(getShell(), 
+	        				UIMessages.getString("CDTCommonProjectWizard.0"),  //$NON-NLS-1$
+							UIMessages.getString("CDTCommonProjectWizard.1")) //$NON-NLS-1$
+							)
+	                		return null;
+	                }
+	                existingPath = true;
+		  		}
+        	} catch (CoreException e) {
+        		CUIPlugin.getDefault().log(e.getStatus());
+        	}
 			savedHandler = fMainPage.h_selected;
 			savedHandler.saveState();
 			lastProjectName = fMainPage.getProjectName();
@@ -229,7 +237,7 @@ implements IExecutableExtension, IWizardWithMemory
 	/**
 	 * 
 	 */	
-	public IProject createIProject(final String name, final IPath location) throws CoreException{
+	public IProject createIProject(final String name, final URI location) throws CoreException{
 		if (newProject != null)	return newProject;
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -242,7 +250,7 @@ implements IExecutableExtension, IWizardWithMemory
 //			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			if(location != null)
-				description.setLocation(location);
+				description.setLocationURI(location);
 			newProject = CCorePlugin.getDefault().createCDTProject(description, newProjectHandle, new NullProgressMonitor());
 		} else {
 			IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
@@ -285,7 +293,7 @@ implements IExecutableExtension, IWizardWithMemory
 		return lastProjectName;
 	}
 
-	public IPath getLastProjectLocation() {
+	public URI getLastProjectLocation() {
 		return lastProjectLocation;
 	}
 

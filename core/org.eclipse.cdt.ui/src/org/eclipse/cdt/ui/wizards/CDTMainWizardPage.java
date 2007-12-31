@@ -10,18 +10,20 @@
  *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
-	import java.io.File;
+	import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.DialogPage;
@@ -42,6 +44,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.cdt.ui.newui.PageLayout;
 import org.eclipse.cdt.ui.newui.UIMessages;
@@ -147,12 +150,8 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 			return (h_selected == null) ? null : h_selected.getSpecificPage();
 	    }		
 
-	    public IPath getProjectLocation() {
-	    	return useDefaults() ? null : getLocationPath();
-	    }
-
-	    public String getProjectLocationPath() {
-	    	return getLocationPath().toOSString();
+	    public URI getProjectLocation() {
+	    	return useDefaults() ? null : getLocationURI();
 	    }
 
 	    /**
@@ -188,20 +187,26 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 	        }
 
 	        if (bad) { // skip this check if project already created 
-	        	IPath p = getProjectLocation();
-	        	if (p == null) {
-	        		p = ResourcesPlugin.getWorkspace().getRoot().getLocation();
-	        		p = p.append(getProjectName());
-	        	}
-	        	File f = p.toFile();
-	        	if (f.exists()) {
-	        		if (f.isDirectory()) {
-	        			setMessage(UIMessages.getString("CMainWizardPage.7"), DialogPage.WARNING); //$NON-NLS-1$
-		        		return true;
-	        		} else {
-	        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
-		        		return false;
-	        		}
+	        	try {
+	        		IFileStore fs;
+		        	URI p = getProjectLocation();
+		        	if (p == null) {
+		        		fs = EFS.getStore(ResourcesPlugin.getWorkspace().getRoot().getLocationURI());
+		        		fs = fs.getChild(getProjectName());
+		        	} else
+		        		fs = EFS.getStore(p);
+	        		IFileInfo f = fs.fetchInfo();
+		        	if (f.exists()) {
+		        		if (f.isDirectory()) {
+		        			setMessage(UIMessages.getString("CMainWizardPage.7"), DialogPage.WARNING); //$NON-NLS-1$
+			        		return true;
+		        		} else {
+		        			setErrorMessage(UIMessages.getString("CMainWizardPage.6")); //$NON-NLS-1$
+			        		return false;
+		        		}
+		        	}
+	        	} catch (CoreException e) {
+	        		CUIPlugin.getDefault().log(e.getStatus());
 	        	}
 	        }
 	        

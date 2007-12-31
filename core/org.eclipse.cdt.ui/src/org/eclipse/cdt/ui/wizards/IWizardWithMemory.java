@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.core.runtime.IPath;
+import java.net.URI;
+
 import org.eclipse.jface.wizard.IWizard;
 
 public interface IWizardWithMemory extends IWizard {
@@ -18,6 +19,6 @@ public interface IWizardWithMemory extends IWizard {
 	// or null if no projects were created
 	public String getLastProjectName(); 
 
-	public IPath getLastProjectLocation(); 
+	public URI getLastProjectLocation(); 
 
 }

@@ -40,6 +40,7 @@
  * David McKnight   (IBM)        - [209660] need to check if remote encoding has changed before using cached file 
  * Xuan Chen        (IBM)        - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -1844,12 +1845,42 @@ public class SystemViewRemoteFileAdapter
 						    monitor.beginTask(_uploadMessage.getLevelOneText(), size);
 						}  
 						// back to hierarchy
-						return UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
+						resultSet = UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
 					}
 					else
 					{
-						return UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
+						resultSet = UniversalFileTransferUtility.uploadResourcesFromWorkspace((SystemWorkspaceResourceSet)fromSet, targetFolder, monitor, true);
 					}
+					if (resultSet.hasMessage())
+					{
+						SystemMessage msg = resultSet.getMessage();
+						if (monitor.isCanceled() && resultSet.size() > 0)
+						{
+							//Get the moved file names
+							Object thisObject = resultSet.get(0);
+							String copiedFileNames = null;
+							if (thisObject instanceof IRemoteFile)
+							{
+								copiedFileNames = ((IRemoteFile)thisObject).getName();
+								for (int i=1; i<(resultSet.size()); i++)
+								{
+									if (thisObject instanceof IRemoteFile)
+									{
+										copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)thisObject).getName();
+									}
+								}
+							}
+							//getMessage("RSEG1125").makeSubstitution(movedFileName));
+							if (copiedFileNames != null)
+							{
+								SystemMessage thisMessage = RSEUIPlugin.getPluginMessage(ISystemMessages.FILEMSG_COPY_INTERRUPTED);
+								thisMessage.makeSubstitution(copiedFileNames);
+								resultSet.setMessage(thisMessage);
+								//SystemMessageDialog.displayErrorMessage(shell, thisMessage);
+							}
+						}
+					}
+					return resultSet;
 				}
 				else if (fromSet instanceof SystemRemoteResourceSet)
 				{

@@ -18,6 +18,7 @@
  * Xuan Chen        (IBM)        - [181784] [archivehandlers] zipped text files have unexpected contents
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
+ * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -1008,6 +1009,12 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					int numFiles = files.length;
 					for (int i = 0; i < numFiles; i++)
 					{		
+						if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+						{
+							//the operation has been canceled
+							closeZipFile();
+							return false;
+						}
 						if (!files[i].exists() || !files[i].canRead()) return false;
 						String fullVirtualName = getFullVirtualName(virtualPath, names[i]);
 						if (exists(fullVirtualName, archiveOperationMonitor)) 
@@ -1043,6 +1050,13 @@ public class SystemZipHandler implements ISystemArchiveHandler
 					// Now for each new file to add
 					for (int i = 0; i < numFiles; i++)
 					{
+						if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+						{
+							//the operation has been canceled
+							dest.close();
+							closeZipFile();
+							return false;
+						}
 						// append the additional entry to the zip file.
 						ZipEntry newEntry = appendFile(files[i], dest, virtualPath, names[i], sourceEncodings[i], targetEncodings[i], isText[i]);
 						// Add the new entry to the virtual file system in memory

@@ -37,6 +37,7 @@
  * David Mcknight     (IBM)      - [203114] don't treat XML files specially (no hidden prefs for bin vs text)
  * David McKnight     (IBM)      - [209552] get rid of copy APIs to be clearer with download and upload  
  * David McKnight     (IBM)      - [143503] encoding and isBinary needs to be stored in the IFile properties
+ * Xuan Chen          (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1283,6 +1284,19 @@ public class UniversalFileTransferUtility
 		{
 			if (monitor != null && monitor.isCanceled())
 			{
+				try
+				{
+					IRemoteFile[] results = targetFS.getRemoteFileObjects((String[])newFilePathList.toArray(new String[newFilePathList.size()]), monitor);
+					resultSet = new SystemRemoteResourceSet(targetFS, results);
+					if (workspaceSet.hasMessage())
+					{
+						resultSet.setMessage(workspaceSet.getMessage());
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 				return resultSet;
 			}
 			
@@ -1450,7 +1464,7 @@ public class UniversalFileTransferUtility
 				}
 				catch (SystemMessageException e)
 				{
-					SystemMessageDialog.displayMessage(e);
+					workspaceSet.setMessage(e.getSystemMessage());
 				}
 				catch (CoreException e)
 				{
@@ -1468,6 +1482,10 @@ public class UniversalFileTransferUtility
 		{
 			IRemoteFile[] results = targetFS.getRemoteFileObjects((String[])newFilePathList.toArray(new String[newFilePathList.size()]), monitor);
 			resultSet = new SystemRemoteResourceSet(targetFS, results);
+			if (workspaceSet.hasMessage())
+			{
+				resultSet.setMessage(workspaceSet.getMessage());
+			}
 		}
 		catch (Exception e)
 		{
@@ -1730,6 +1748,9 @@ public class UniversalFileTransferUtility
 		}
 		IRemoteFile destinationArchive = null;
 		String newPath = null;
+		IRemoteFileSubSystem targetFS = null;
+		IRemoteFile remoteArchive = null;
+		
 		try
 		{
 			monitor.beginTask(FileResources.RESID_SUPERTRANSFER_PROGMON_MAIN,IProgressMonitor.UNKNOWN);
@@ -1757,7 +1778,7 @@ public class UniversalFileTransferUtility
 			IRemoteFile newTargetParent = newTargetFolder.getParentRemoteFile();
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_POPULATE);
 			IRemoteFile sourceDir = localSS.getRemoteFileObject(directory.getLocation().toOSString(), monitor);
-			IRemoteFileSubSystem targetFS = newTargetFolder.getParentRemoteFileSubSystem();
+			targetFS = newTargetFolder.getParentRemoteFileSubSystem();
 			
 			
 			// FIXME 
@@ -1769,7 +1790,7 @@ public class UniversalFileTransferUtility
 			
 			// copy local zip to remote
 			targetFS.upload(destinationArchive.getAbsolutePath(), SystemEncodingUtil.ENCODING_UTF_8, newPath, System.getProperty("file.encoding"), monitor); //$NON-NLS-1$
-			IRemoteFile remoteArchive = targetFS.getRemoteFileObject(newPath, monitor);
+			remoteArchive = targetFS.getRemoteFileObject(newPath, monitor);
 			
 			monitor.subTask(FileResources.RESID_SUPERTRANSFER_PROGMON_SUBTASK_EXTRACT);
 			String compressedFolderPath = newPath + ArchiveHandlerManager.VIRTUAL_SEPARATOR + directory.getName();
@@ -1777,20 +1798,21 @@ public class UniversalFileTransferUtility
 			
 			// extract the compressed folder from the temp archive on remote
 			targetFS.copy(compressedFolder, newTargetParent, newTargetFolder.getName(), monitor);
-			
-			// delete the temp remote archive
-			// now, DStoreFileService#getFile() (which is invoked by getRemoteFileObject() call)
-			// has been updated to also put the query object into the dstore file map,
-			// we don't need to do the query on the remoteArchive object before the 
-			// delete.
-			targetFS.delete(remoteArchive, monitor);
-			
-			monitor.done();
 	
 		}
 		catch (SystemMessageException e)
 		{
-			SystemMessageDialog.displayMessage(e);
+			if (monitor.isCanceled())
+			{
+				//If this operation if canceled, and if the destination has already been created (partially)
+				//in the host, we need to delete it.
+				if (newTargetFolder.exists())
+				{
+					targetFS.delete(newTargetFolder, null);
+				}
+			}
+			throw e;		
+			//SystemMessageDialog.displayMessage(e);
 		}
 		catch (Exception e)
 		{
@@ -1800,6 +1822,17 @@ public class UniversalFileTransferUtility
 		finally {
 			if (newPath == null) cleanup(destinationArchive, null);
 			else cleanup(destinationArchive, new File(newPath));
+			
+			// delete the temp remote archive
+			// now, DStoreFileService#getFile() (which is invoked by getRemoteFileObject() call)
+			// has been updated to also put the query object into the dstore file map,
+			// we don't need to do the query on the remoteArchive object before the 
+			// delete.
+			if (remoteArchive != null && remoteArchive.exists())
+			{
+				targetFS.delete(remoteArchive, null);
+			}
+			monitor.done();
 		}
 	}
 	

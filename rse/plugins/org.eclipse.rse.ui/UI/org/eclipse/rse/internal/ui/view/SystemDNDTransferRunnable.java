@@ -16,6 +16,7 @@
  * Rupen Mardirossian (IBM) - [187713] Check to see if target is null before attempting to retrieve targetAdapter in tranferRSEResources method (line 248)
  * Martin Oberhuber (Wind River) - [200682] Fix drag&drop for elements just adaptable to IResource, like CDT elements
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
+ * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -219,6 +220,15 @@ public class SystemDNDTransferRunnable extends WorkspaceJob
 						}
 						else if (droppedObjects.hasMessage())
 						{
+							//Even the droppedObject has message, it could still has
+							//dropped results.  (user cancels the operation, but some objects
+							//has already been copied.
+							//Need to make sure we refresh those copied object.
+							List results = droppedObjects.getResourceSet();
+							for (int d = 0; d < results.size(); d++)
+							{
+								_resultTgtObjects.add(results.get(d));
+							}
 							operationFailed(monitor);
 							showErrorMessage(droppedObjects.getMessage());
 						}

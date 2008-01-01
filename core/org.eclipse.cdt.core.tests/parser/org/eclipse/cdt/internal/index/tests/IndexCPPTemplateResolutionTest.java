@@ -829,4 +829,43 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b1, ICPPTemplateDefinition.class);
 		assertInstance(b1, ICPPClassType.class);
 	}
+
+    // template<typename _Tp>
+    // class Allocator {
+    // public:
+    //   typedef _Tp& alloc_reference;
+    //   template<typename _Tp1>
+    //   struct rebind {
+    //     typedef Allocator<_Tp1> other;
+    //   };
+    // };
+    //
+    // template<typename _Tp, typename _Alloc>
+    // class VecBase {
+    // public:
+    //   typedef typename _Alloc::template rebind<_Tp>::other _Tp_alloc_type;
+    // };
+    //
+    // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
+    // class Vec : protected VecBase<_Tp, _Alloc> {
+    // public:
+    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
+    //   reference at(int n) {
+    //     return array[n];
+    //   }
+    //   _Tp* array;
+    // };
+
+	// class A {
+    //   public: void m() {}
+    // };
+    //
+	// void main() {
+    //   Vec<A> a;
+    //   a.at(0).m();
+    // }
+    public void _testRebindPattern_214017() throws Exception {
+        IBinding b0= getBindingFromASTName("m();", 1);
+        assertInstance(b0, ICPPMethod.class);
+    }
 }

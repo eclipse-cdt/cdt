@@ -28,6 +28,7 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
  * David McKnight   (IBM)        - [212403] [apidoc][breaking] Fixing docs of SubSystem#getConnectorService() and making internalConnect() private
+ * David McKnight   (IBM)        - [187711] default implementation of doesFilterEncompass()
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -743,6 +744,30 @@ public abstract class SubSystem extends RSEModelObject
     {
     	return true;
     }
+    
+    public boolean doesFilterStringEncompass(String filter, String remoteObjectAbsoluteName, boolean caseSensitive)
+	{
+		return true;
+	}
+    
+	public boolean doesFilterEncompass(ISystemFilter filter, String remoteObjectAbsoluteName)
+	{
+		boolean would = false;
+		String[] strings = filter.getFilterStrings();
+    	if (strings != null){
+      	  for (int idx=0; !would && (idx<strings.length); idx++)
+    	  {
+    	  	 if (strings[idx].equals("*")) //$NON-NLS-1$
+    	  	   would = true;
+    	  	 else if (strings[idx].equals("./*")) //$NON-NLS-1$
+    	  	   would = true;
+    	  	 else
+    	       would = doesFilterStringEncompass(strings[idx], remoteObjectAbsoluteName, filter.areStringsCaseSensitive());    		
+    	  }
+    	}
+    	return would;
+	}
+	
 
 	// -------------------------------------
 	// GUI methods 

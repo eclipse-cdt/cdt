@@ -46,6 +46,7 @@
  * David McKnight   (IBM)        - [205819] Need to use input stream copy when EFS files are the src
  * Xuan Chen      (IBM)          - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [199424] api to create tree items after query complete
+ * David McKnight   (IBM)        - [187711] expandTo to handle filters specially
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -5709,8 +5710,22 @@ public class SystemView extends SafeTreeViewer
 					provider.setEnableDeferredQueries(true);
 					return;
 				}
-				else
+				else if (data instanceof ISystemFilterReference)
 				{
+					ISystemFilterReference ref = (ISystemFilterReference)data;
+					if (ss.doesFilterMatch(ref.getReferencedFilter(), remoteObjectName)){
+						expandTo(data, remoteObject);
+					}					
+					else if (ss.doesFilterListContentsOf(ref.getReferencedFilter(),remoteObjectName)){
+						expandTo(data, remoteObject);
+					}
+					else if (ss.doesFilterEncompass(ref.getReferencedFilter(), remoteObjectName))
+					{
+						expandTo(data, remoteObject);
+					}
+				}
+				else
+				{					
 					ISystemViewElementAdapter dataAdapter = (ISystemViewElementAdapter)((IAdaptable)data).getAdapter(ISystemViewElementAdapter.class);
 					String path = dataAdapter.getAbsoluteName(data);
 					if (remoteObjectName.startsWith(path))

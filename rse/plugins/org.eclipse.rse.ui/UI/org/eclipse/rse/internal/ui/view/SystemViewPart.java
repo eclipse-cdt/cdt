@@ -26,6 +26,7 @@
  * Martin Oberhuber (Wind River) - [197025] Wait for model complete before restoring initial state
  * Martin Oberhuber (Wind River) - [197025][197167] Improved wait for model complete
  * David McKnight   (IBM)        - [199424] restoring memento state asynchronously
+ * David McKnight   (IBM)        - [187711] Link with Editor handled by extension
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -44,7 +45,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -86,8 +86,8 @@ import org.eclipse.rse.internal.ui.actions.SystemPreferenceShowFilterPoolsAction
 import org.eclipse.rse.internal.ui.actions.SystemWorkWithProfilesAction;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
-import org.eclipse.rse.ui.ISystemIconConstants;
 import org.eclipse.rse.ui.ISystemPreferencesConstants;
+import org.eclipse.rse.ui.IViewLinker;
 import org.eclipse.rse.ui.RSESystemTypeAdapter;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -115,7 +115,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IElementFactory;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPersistableElement;
@@ -142,20 +141,7 @@ public class SystemViewPart
 	implements ISetSelectionTarget, IShellProvider, ISystemMessageLine, IElementFactory, IPersistableElement, IAdapterFactory, ISystemPreferenceChangeListener, ISelectionChangedListener, IRSEViewPart
 {
 
-	public class ToggleLinkingAction extends Action
-	{
-		public ToggleLinkingAction(SystemViewPart viewPart, String label)
-		{
-			super(label);
-			setChecked(isLinkingEnabled);
-		}
 
-		public void run()
-		{
-			toggleLinkingEnabled();
-			setChecked(isLinkingEnabled);
-		}
-	}
 
 	protected SystemView systemView;
 	protected ISystemViewInputProvider input = null;
@@ -163,11 +149,16 @@ public class SystemViewPart
 	protected SystemMessage sysErrorMessage;
 	protected IStatusLineManager statusLine = null;
 	protected boolean inputIsRoot = true;
-	protected boolean isLinkingEnabled = false;
+
 
 	protected FrameList frameList;
 	protected SystemViewPartGotoActionGroup gotoActionGroup;
-	protected ToggleLinkingAction toggleLinkingAction;
+	
+	// link with editor stuff
+	protected boolean _isLinkingEnabled = false;
+	
+	// view linker is used when a link with editor is required
+	protected IViewLinker _viewLinker;
 
 	// remember-state variables...
 
@@ -251,11 +242,17 @@ public class SystemViewPart
 		return ((ILabelProvider) getSystemView().getLabelProvider()).getText(element);
 	}
 
-	public void toggleLinkingEnabled()
+	public boolean isLinkingEnabled()
 	{
-		isLinkingEnabled = !isLinkingEnabled;
-		if (isLinkingEnabled)
+		return _isLinkingEnabled;
+	}
+	
+	public void setLinkingEnabled(boolean flag, IViewLinker viewLinker)
+	{
+		_isLinkingEnabled = flag;
+		if (_isLinkingEnabled)
 		{
+			_viewLinker = viewLinker;
 			IWorkbenchWindow activeWindow = SystemBasePlugin.getActiveWorkbenchWindow();
 			IWorkbenchPage activePage = activeWindow.getActivePage();
 			IEditorPart editor = activePage.getActiveEditor();
@@ -274,59 +271,11 @@ public class SystemViewPart
 		  */
 	protected void editorActivated(IEditorPart editor)
 	{
-		if (!isLinkingEnabled)
+		if (!_isLinkingEnabled)
 			return;
 
-		IEditorInput input = editor.getEditorInput();
-		if (input instanceof IFileEditorInput)
-		{
-			IFileEditorInput fileInput = (IFileEditorInput) input;
-			fileInput.getFile();
-			/* FIXME - can't couple this view to files ui
-			IFile file = fileInput.getFile();
-			SystemIFileProperties properties = new SystemIFileProperties(file);
-			Object rmtEditable = properties.getRemoteFileObject();
-			Object remoteObj = null;
-			if (rmtEditable != null && rmtEditable instanceof ISystemEditableRemoteObject)
-			{
-				ISystemEditableRemoteObject editable = (ISystemEditableRemoteObject) rmtEditable;
-				remoteObj = editable.getRemoteObject();
-
-			}
-			else
-			{
-				String subsystemId = properties.getRemoteFileSubSystem();
-				String path = properties.getRemoteFilePath();
-				if (subsystemId != null && path != null)
-				{
-					ISubSystem subSystem = RSECorePlugin.getTheSystemRegistry().getSubSystem(subsystemId);
-					if (subSystem != null)
-					{
-						if (subSystem.isConnected())
-						{
-							try
-							{
-								remoteObj = subSystem.getObjectWithAbsoluteName(path);
-							}
-							catch (Exception e)
-							{
-								return;
-							}
-						}
-					}
-				}
-			}
-			
-
-			if (remoteObj != null)
-			{
-				// DKM - causes editor to loose focus
-				//systemView.refreshRemoteObject(path, remoteObj, true);
-
-				SystemResourceChangeEvent event = new SystemResourceChangeEvent(remoteObj, ISystemResourceChangeEvents.EVENT_SELECT_REMOTE, null);
-				systemView.systemResourceChanged(event);
-			}
-			*/
+		if (_viewLinker != null){
+			_viewLinker.link(editor, systemView);
 		}
 	}
 	/** 
@@ -614,7 +563,7 @@ public class SystemViewPart
 		_copyAction.setEnabled(_copyAction.updateSelection(sel));
 		_pasteAction.setEnabled(_pasteAction.updateSelection(sel));
 		//systemView.getPropertyDialogAction();
-		if (isLinkingEnabled)
+		if (_isLinkingEnabled)
 		{
 			linkToEditor(sel);
 		}
@@ -714,13 +663,6 @@ public class SystemViewPart
 		SystemCollapseAllAction collapseAllAction = new SystemCollapseAllAction(getShell());
 		collapseAllAction.setSelectionProvider(systemView);
 		toolBarMgr.add(collapseAllAction);
-
-		toolBarMgr.add(new GroupMarker(ISystemContextMenuConstants.GROUP_VIEWER_SETUP));
-		toggleLinkingAction = new ToggleLinkingAction(this, SystemViewResources.RESID_PROPERTY_LINKINGACTION_TEXT); 
-		toggleLinkingAction.setToolTipText(SystemViewResources.RESID_PROPERTY_LINKINGACTION_TOOLTIP); 
-		toggleLinkingAction.setImageDescriptor(getNavigatorImageDescriptor(ISystemIconConstants.ICON_IDE_LINKTOEDITOR_ID)); 
-		toggleLinkingAction.setHoverImageDescriptor(getNavigatorImageDescriptor(ISystemIconConstants.ICON_IDE_LINKTOEDITOR_ID)); 
-		toolBarMgr.add(toggleLinkingAction);
 
 		IMenuManager menuMgr = actionBars.getMenuManager();
 		populateSystemViewPulldownMenu(menuMgr, getShell(), showConnectionActions, this, systemView);
@@ -1038,7 +980,7 @@ public class SystemViewPart
 			return;
 		}
 
-		if (isLinkingEnabled)
+		if (_isLinkingEnabled)
 		{
 			memento.putString(TAG_LINKWITHEDITOR, "t"); //$NON-NLS-1$
 		}
@@ -1797,21 +1739,7 @@ public class SystemViewPart
 			// restore the show filter pools and show filter strings settings as they were when this was saved
 			boolean showFilterPools = false;
 			boolean showFilterStrings = false;
-			String linkWithEditor = memento.getString(TAG_LINKWITHEDITOR);
-			if (linkWithEditor != null)
-			{
-				if (linkWithEditor.equals("t")) //$NON-NLS-1$
-				{
-					isLinkingEnabled = true;
-					toggleLinkingAction.setChecked(true);
-				}
-				else
-					isLinkingEnabled = false;
-			}
-			else
-			{
-				isLinkingEnabled = false;
-			}
+
 
 			String savedValue = memento.getString(TAG_SHOWFILTERPOOLS);
 			if (savedValue != null)

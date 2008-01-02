@@ -83,6 +83,8 @@ public class SystemPreferencesManager {
 	}
 
 	private static void initDefaultsUI() {
+		
+		String showProp = System.getProperty("rse.showNewConnectionPrompt");
 		RSEUIPlugin ui = RSEUIPlugin.getDefault();
 		Preferences store = ui.getPluginPreferences();
 		showNewConnectionPrompt= getBooleanProperty("rse.showNewConnectionPrompt", ISystemPreferencesConstants.DEFAULT_SHOWNEWCONNECTIONPROMPT); //$NON-NLS-1$

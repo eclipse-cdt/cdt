@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
+ * David McKnight   (IBM)        - [187711] doestFilterEncompass api
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -404,6 +405,52 @@ public abstract class RemoteFileSubSystem extends SubSystem implements IRemoteFi
 		//    "Univ Filter String Testing '" + container + "' versus '" + remoteObjectAbsoluteName + "' => " + affected);
 		return affected;
 	}
+	
+	/**
+	 * Return true if the remote remote object would be a descendent of the result of this filter
+	 * @param filterString
+	 * @param remoteObjectAbsoluteName
+	 * @param caseSensitive
+	 * @return
+	 */
+	public boolean doesFilterStringEncompass(String filterString, String remoteObjectAbsoluteName, boolean caseSensitive)
+	{
+		RemoteFileFilterString rffs = new RemoteFileFilterString(getParentRemoteFileSubSystemConfiguration(), filterString);
+		// ok, this is a tweak: if the absolute name has " -folder" at the end, that means it is a folder...
+		if (remoteObjectAbsoluteName.endsWith(" -folder")) //$NON-NLS-1$
+		{
+			if (!rffs.getShowSubDirs())
+				return false;
+			remoteObjectAbsoluteName = remoteObjectAbsoluteName.substring(0, remoteObjectAbsoluteName.indexOf(" -folder")); //$NON-NLS-1$
+		}
+		// problem 1: we don't know if the given remote object name represents a file or folder. We have to assume a file,
+		//  since we don't support filtering by folder names.
+		if (!rffs.getShowFiles())
+			return false;
+
+		// step 1: verify the path of the remote object matches the path of the filter string
+		String container = rffs.getPath();
+		if (container == null)
+			return false;
+		
+		if (container.equals(".")) //$NON-NLS-1$
+		{
+		    try 
+		    {
+		    container = getRemoteFileObject(container, new NullProgressMonitor()).getAbsolutePath();
+		    }
+		    catch (Exception e)
+		    {		        
+		    }
+		}
+		
+		if (container.indexOf(remoteObjectAbsoluteName) > -1){
+			return true;
+		}
+		
+		return false;
+	}
+	
 
 	// -------------------------------
 	// SubSystem METHODS ...

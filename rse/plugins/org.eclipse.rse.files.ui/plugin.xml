@@ -15,6 +15,7 @@ Contributors:
 Martin Oberhuber (Wind River) - [180519] declaratively register adapter factories
 Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
+David McKnight   (IBM)        - [187711] Link with Editor action for System View
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -434,5 +435,21 @@ Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter fro
          </action>
       </objectContribution>
       </extension>
+      
+      <extension
+         point="org.eclipse.ui.viewActions">   
+    	 <viewContribution
+            targetID="org.eclipse.rse.ui.view.systemView"
+            id="org.eclipse.rse.ui.view.systemView.toolbar">
+        	 <action
+               id="org.eclipse.rse.ui.view.systemView.toolbar.linkWithSystemView"
+               toolbarPath="navigationGroup"
+               class="org.eclipse.rse.internal.files.ui.actions.LinkWithSystemViewAction"
+               icon="$nl$/icons/full/elcl16/synced.gif"
+               helpContextId="link_editor_with_system_view_action_context"
+               label="%LinkWithSystemView.label">
+        	 </action>
+	     </viewContribution>
+	   </extension>
 </plugin>
  

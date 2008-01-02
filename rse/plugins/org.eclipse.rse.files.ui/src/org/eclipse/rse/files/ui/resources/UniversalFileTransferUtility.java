@@ -38,6 +38,7 @@
  * David McKnight     (IBM)      - [209552] get rid of copy APIs to be clearer with download and upload  
  * David McKnight     (IBM)      - [143503] encoding and isBinary needs to be stored in the IFile properties
  * Xuan Chen          (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
+ * Xuan Chen          (IBM)      - [210816] Archive testcases throw ResourceException if they are run in batch
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -246,6 +247,10 @@ public class UniversalFileTransferUtility
 				{
 					try
 					{
+						if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+						{
+							tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+						}
 						String cset = tempFile.getCharset();
 						if (!cset.equals(remoteEncoding))
 						{
@@ -517,6 +522,10 @@ public class UniversalFileTransferUtility
 						{
 							try
 							{
+								if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+								{
+									tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+								}
 								String cset = tempFile.getCharset();
 								if (!cset.equals(remoteEncoding))
 								{
@@ -843,6 +852,10 @@ public class UniversalFileTransferUtility
 				{
 					try
 					{
+						if (!tempFile.isSynchronized(IResource.DEPTH_ZERO))
+						{
+							tempFile.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+						}
 						String cset = tempFile.getCharset();
 						if (!cset.equals(encoding))
 						{

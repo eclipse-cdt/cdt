@@ -23,6 +23,7 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  * David McKnight   (IBM)        - [209660] check for changed encoding before using cached file
  * David McKnight   (IBM)        - [210812] for text transfer, need to tell editor to use local encoding
+ * Xuan Chen        (IBM)        - [210816] Archive testcases throw ResourceException if they are run in batch
  ********************************************************************************/
 
 package org.eclipse.rse.files.ui.resources;
@@ -1484,6 +1485,10 @@ public class SystemEditableRemoteFile implements ISystemEditableRemoteObject, IP
 			if (encoding != null) 
 			{
 				if (remoteFile.isBinary()){
+					if (!file.isSynchronized(IResource.DEPTH_ZERO))
+					{
+						file.refreshLocal(IResource.DEPTH_ZERO, null/*monitor*/);
+					}
 					if (!file.getCharset().equals(encoding))
 					{
 						file.setCharset(encoding, null);

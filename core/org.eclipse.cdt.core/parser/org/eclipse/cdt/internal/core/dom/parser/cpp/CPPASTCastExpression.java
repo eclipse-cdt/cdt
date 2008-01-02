@@ -26,7 +26,8 @@ public class CPPASTCastExpression extends CPPASTUnaryExpression implements ICPPA
     public CPPASTCastExpression() {
 	}
     
-    public CPPASTCastExpression(IASTTypeId typeId) {
+    public CPPASTCastExpression(int operator, IASTTypeId typeId, IASTExpression operand) {
+    	super(operator, operand);
 		setTypeId(typeId);
 	}
 

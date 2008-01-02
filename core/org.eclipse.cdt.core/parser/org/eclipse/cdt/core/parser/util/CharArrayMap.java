@@ -22,7 +22,7 @@ import java.util.Map;
  * section of a char[] as the key (a slice), and one that uses
  * the entire char[] as the key.
  * 
- * ex)
+ * ex:
  * char[] key = "one two three".toCharArray();
  * map.put(key, 4, 3, new Integer(99));
  * map.get(key, 4, 3); // returns 99
@@ -31,7 +31,7 @@ import java.util.Map;
  * 
  * @author Mike Kucera
  */
-public final class CharArrayMap/*<V>*/ {
+public final class CharArrayMap<V> implements ICharArrayMap<V> {
 
 	/**
 	 * Wrapper class used as keys in the map. The purpose
@@ -63,7 +63,7 @@ public final class CharArrayMap/*<V>*/ {
         	this.start = 0;
         }
         
-        public boolean equals(Object x) {
+        @Override public boolean equals(Object x) {
         	if(this == x) 
         		return true;
         	if(!(x instanceof Key))  
@@ -81,7 +81,7 @@ public final class CharArrayMap/*<V>*/ {
             return true;
         }
         
-        public int hashCode() {
+        @Override public int hashCode() {
             int result = 17;
             for(int i = start; i < start+length; i++) {
             	result = 37 * result + buffer[i];
@@ -89,7 +89,7 @@ public final class CharArrayMap/*<V>*/ {
             return result;
         }
         
-        public String toString() {
+        @Override public String toString() {
         	return "'" + new String(buffer, start, length) + "'@(" + start + "," + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
         
@@ -97,29 +97,28 @@ public final class CharArrayMap/*<V>*/ {
     
 
     /**
-     * Used to enforce preconditions. Note that the NPE thats thrown by
-     * mutator methods is thrown from the Key constructor.
+     * Used to enforce preconditions. 
+     * 
+     * Note that the NPE thrown by mutator methods is thrown from the Key constructor.
+     * 
+     * @throws IndexOutOfBoundsException if boundaries are wrong in any way
      */
     private static void checkBoundaries(char[] chars, int start, int length) {
-    	if(start < 0)
-    		throw new IndexOutOfBoundsException("start must be non-negative, got: " + start);//$NON-NLS-1$
-    	if(length < 0)
-    		throw new IndexOutOfBoundsException("length must be non-negative, got: " + length);//$NON-NLS-1$
-    	if(start >= chars.length)
-    		throw new IndexOutOfBoundsException("start is out of bounds, got: " + start);//$NON-NLS-1$
-    	if(start + length > chars.length)
-    		throw new IndexOutOfBoundsException("end is out of bounds, got: " + (start+length));//$NON-NLS-1$
+    	if(start < 0 || length < 0 || start >= chars.length || start + length > chars.length)
+    		throw new IndexOutOfBoundsException("Buffer length: " + chars.length + //$NON-NLS-1$
+    				                          ", Start index: " + start + //$NON-NLS-1$
+    				                          ", Length: " + length); //$NON-NLS-1$
     }
     
     
-    private final Map/*<Key,V>*/ map;
+    private final Map<Key,V> map;
 
     
     /**
      * Constructs an empty CharArrayMap with default initial capacity.
      */
     public CharArrayMap() {
-    	map = new HashMap/*<Key,V>*/();
+    	map = new HashMap<Key,V>();
     }
     
     /**
@@ -127,127 +126,74 @@ public final class CharArrayMap/*<V>*/ {
      * @throws IllegalArgumentException if the initial capacity is negative
      */
     public CharArrayMap(int initialCapacity) {
-    	map = new HashMap/*<Key,V>*/(initialCapacity);
+    	map = new HashMap<Key,V>(initialCapacity);
     }
     
     
-    /**
-     * Creates a new mapping in this map, uses the given array slice as the key.
-     * If the map previously contained a mapping for this key, the old value is replaced.
-     * @throws NullPointerException if chars is null
-     * @throws IllegalArgumentException if the boundaries specified by start and length are out of range
-     */
-    public void put(char[] chars, int start, int length, /*V*/Object value) {
+    public void put(char[] chars, int start, int length, V value) {
     	checkBoundaries(chars, start, length);
         map.put(new Key(chars, start, length), value);
     }
 
-    /**
-     * Creates a new mapping in this map, uses all of the given array as the key.
-     * If the map previously contained a mapping for this key, the old value is replaced.
-     * @throws NullPointerException if chars is null
-     */
-    public void put(char[] chars, /*V*/Object value) {
+    
+    public void put(char[] chars, V value) {
         map.put(new Key(chars), value);
     }
 
-    /**
-     * Returns the value to which the specified array slice is mapped in this map, 
-     * or null if the map contains no mapping for this key. 
-     * @throws NullPointerException if chars is null
-     * @throws IllegalArgumentException if the boundaries specified by start and length are out of range
-     */
-    public /*V*/Object get(char[] chars, int start, int length) {
+    
+    public V get(char[] chars, int start, int length) {
     	checkBoundaries(chars, start, length);
         return map.get(new Key(chars, start, length));
     }
 
-    /**
-     * Returns the value to which the specified array is mapped in this map, 
-     * or null if the map contains no mapping for this key. 
-     * @throws NullPointerException if chars is null
-     */
-    public /*V*/Object get(char[] chars) {
+    
+    public V get(char[] chars) {
         return map.get(new Key(chars));
     }
 
     
-    /**
-     * Removes the mapping for the given array slice if present.
-     * Returns the value object that corresponded to the key
-     * or null if the key was not in the map.
-     * @throws NullPointerException if chars is null
-     * @throws IllegalArgumentException if the boundaries specified by start and length are out of range
-     */
-    public /*V*/Object remove(char[] chars, int start, int length) {
+    public V remove(char[] chars, int start, int length) {
     	checkBoundaries(chars, start, length);
     	return map.remove(new Key(chars, start, length));
     }
     
     
-    /**
-     * Removes the mapping for the given array if present.
-     * Returns the value object that corresponded to the key
-     * or null if the key was not in the map.
-     * @throws NullPointerException if chars is null
-     * @throws IllegalArgumentException if the boundaries specified by start and length are out of range
-     */
-    public /*V*/Object remove(char[] chars) {
+    public V remove(char[] chars) {
     	return map.remove(new Key(chars));
     }
+
     
-    /**
-     * Returns true if the given key has a value associated with it in the map.
-     * @throws NullPointerException if chars is null
-     * @throws IllegalArgumentException if the boundaries specified by start and length are out of range
-     */
     public boolean containsKey(char[] chars, int start, int length) {
     	checkBoundaries(chars, start, length);
     	return map.containsKey(new Key(chars, start, length));
     }
+
     
-    /**
-     * Returns true if the given key has a value associated with it in the map.
-     * @throws NullPointerException if chars is null
-     * @throws IllegalArgumentException if the boundaries specified by start and length are out of range
-     */
     public boolean containsKey(char[] chars) {
     	return map.containsKey(new Key(chars));
     }
     
-    /**
-     * Returns true if the given value is contained in the map.
-     */
-    public boolean containsValue(/*V*/Object value) {
+    
+    public boolean containsValue(V value) {
     	return map.containsValue(value);
     }
+
     
-    /** 
-     * Use this in a foreach loop.
-     */
-    public Collection/*<V>*/ values() {
+    public Collection<V> values() {
         return map.values();
     }
+
     
-    /**
-     * Removes all mappings from the map.
-     */
     public void clear() {
     	map.clear();
     }
+
     
-    
-    /**
-     * Returns the number of mappings.
-     */
     public int size() {
     	return map.size();
     }
 
-    
-    /**
-     * Returns true if the map is empty.
-     */
+
     public boolean isEmpty() {
     	return map.isEmpty();
     }
@@ -256,7 +202,7 @@ public final class CharArrayMap/*<V>*/ {
     /**
      * Returns a String representation of the map.
      */
-    public String toString() {
+    @Override public String toString() {
     	return map.toString();
     }
    

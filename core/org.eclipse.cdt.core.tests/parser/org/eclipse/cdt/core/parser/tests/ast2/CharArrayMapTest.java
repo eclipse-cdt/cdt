@@ -64,9 +64,9 @@ public class CharArrayMapTest extends TestCase {
 	
 	private static long timeMap(char[][] keys) {
 		long start = System.currentTimeMillis();
-		CharArrayMap/*<Integer>*/ map = new CharArrayMap/*<Integer>*/(keys.length);
+		CharArrayMap<Integer> map = new CharArrayMap<Integer>(keys.length);
 		for(int i = 0; i < keys.length; i++) {
-			map.put(keys[i], new Integer(i));
+			map.put(keys[i], i);
 		}
 		assertEquals(keys.length, map.size());
 		for(int i = 0; i < keys.length; i++) {
@@ -96,14 +96,14 @@ public class CharArrayMapTest extends TestCase {
 		char[] key3 = "third key".toCharArray();
 		char[] key4 = "forth key".toCharArray();
 		
-		CharArrayMap/*<Integer>*/ map = new CharArrayMap/*<Integer>*/();
+		CharArrayMap<Integer> map = new CharArrayMap<Integer>();
 		assertTrue(map.isEmpty());
 		assertEquals(0, map.size());
 		
-		map.put(key1, new Integer(1));
-		map.put(key2, new Integer(2));
-		map.put(key3, new Integer(3));
-		map.put(key4, new Integer(4));
+		map.put(key1, 1);
+		map.put(key2, 2);
+		map.put(key3, 3);
+		map.put(key4, 4);
 		
 		assertFalse(map.isEmpty());
 		assertEquals(4, map.size());
@@ -118,19 +118,19 @@ public class CharArrayMapTest extends TestCase {
 		assertTrue(map.containsKey(key3));
 		assertTrue(map.containsKey(key4));
 		
-		assertTrue(map.containsValue(new Integer(1)));
-		assertTrue(map.containsValue(new Integer(2)));
-		assertTrue(map.containsValue(new Integer(3)));
-		assertTrue(map.containsValue(new Integer(4)));
+		assertTrue(map.containsValue(1));
+		assertTrue(map.containsValue(2));
+		assertTrue(map.containsValue(3));
+		assertTrue(map.containsValue(4));
 		
-		Set/*<Integer>*/ values = new HashSet/*<Integer>*/();
-		values.add(new Integer(1));
-		values.add(new Integer(2));
-		values.add(new Integer(3));
-		values.add(new Integer(4));
-		Collection c = map.values();
-		for(Iterator iter = c.iterator(); iter.hasNext();) {
-			assertTrue(values.remove(iter.next()));
+		Set<Integer> values = new HashSet<Integer>();
+		values.add(1);
+		values.add(2);
+		values.add(3);
+		values.add(4);
+		
+		for(int i : map.values()) {
+			assertTrue(values.remove(i));
 		}
 		
 		// remove a mapping
@@ -138,7 +138,7 @@ public class CharArrayMapTest extends TestCase {
 		assertEquals(3, map.size());
 	    assertNull(map.get(key1));
 	    assertFalse(map.containsKey(key1));
-	    assertFalse(map.containsValue(new Integer(1)));
+	    assertFalse(map.containsValue(1));
 	    assertNull(map.remove(key1)); // its already removed
 		
 		map.clear();
@@ -153,17 +153,17 @@ public class CharArrayMapTest extends TestCase {
 		assertTrue(map.containsValue(null));
 		
 		// overrideing values should
-		map.put(key1, new Integer(100));
+		map.put(key1, 100);
 		assertEquals(1, map.size());
 		assertEquals(new Integer(100), map.get(key1));
-		assertTrue(map.containsValue(new Integer(100)));
+		assertTrue(map.containsValue(100));
 		assertFalse(map.containsValue(null));
 		// override the value
-		map.put(key1, new Integer(200));
+		map.put(key1, 200);
 		assertEquals(1, map.size());
 		assertEquals(new Integer(200), map.get(key1));
-		assertTrue(map.containsValue(new Integer(200)));
-		assertFalse(map.containsValue(new Integer(100)));
+		assertTrue(map.containsValue(200));
+		assertFalse(map.containsValue(100));
 	}
 	
 	
@@ -189,13 +189,13 @@ public class CharArrayMapTest extends TestCase {
 		keys[6] = "carcass".toCharArray();
 		
 		
-		CharArrayMap/*<Integer>*/ map = new CharArrayMap/*<Integer>*/();
+		CharArrayMap<Integer> map = new CharArrayMap<Integer>();
 		assertTrue(map.isEmpty());
 		assertEquals(0, map.size());
 		
 		for(int i = 0; i < slices.length; i++) {
 			Slice slice = slices[i];
-			map.put(slice.chars, slice.start, slice.length, new Integer(i));
+			map.put(slice.chars, slice.start, slice.length, i);
 		}
 		
 		assertFalse(map.isEmpty());
@@ -208,16 +208,16 @@ public class CharArrayMapTest extends TestCase {
 			assertEquals(new Integer(i), map.get(keys[i]));
 			assertTrue(map.containsKey(slice.chars, slice.start, slice.length));
 			assertTrue(map.containsKey(keys[i]));
-			assertTrue(map.containsValue(new Integer(i)));
+			assertTrue(map.containsValue(i));
 		}
 
-		Set/*<Integer>*/ values = new HashSet/*<Integer>*/();
+		Set<Integer> values = new HashSet<Integer>();
 		for(int i = 0; i < keys.length; i++) {
-			values.add(new Integer(i));
+			values.add(i);
 		}
-		Collection c = map.values();
-		for(Iterator iter = c.iterator(); iter.hasNext();) {
-			assertTrue(values.remove(iter.next()));
+		
+		for(int i : map.values()) {
+			assertTrue(values.remove(i));
 		}
 		
 		// remove the last two keys
@@ -233,7 +233,7 @@ public class CharArrayMapTest extends TestCase {
 			assertEquals(new Integer(i), map.get(keys[i]));
 			assertTrue(map.containsKey(slice.chars, slice.start, slice.length));
 			assertTrue(map.containsKey(keys[i]));
-			assertTrue(map.containsValue(new Integer(i)));
+			assertTrue(map.containsValue(i));
 		}
 		
 		map.clear();
@@ -244,7 +244,7 @@ public class CharArrayMapTest extends TestCase {
 	
 	public void testProperFail() {
 		char[] hello = "hello".toCharArray();
-		CharArrayMap/*<Integer>*/ map = new CharArrayMap/*<Integer>*/();
+		CharArrayMap<Integer> map = new CharArrayMap<Integer>();
 		Integer value = new Integer(9);
 		
 		
@@ -333,7 +333,7 @@ public class CharArrayMapTest extends TestCase {
 		
 		
 		try {
-			new CharArrayMap/*<Integer>*/(-1);
+			new CharArrayMap<Integer>(-1);
 		} catch(IllegalArgumentException _) {}
 	}
 }

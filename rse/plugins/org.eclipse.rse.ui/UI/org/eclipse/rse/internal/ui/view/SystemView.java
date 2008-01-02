@@ -5724,6 +5724,10 @@ public class SystemView extends SafeTreeViewer
 						expandTo(data, remoteObject);
 					}
 				}
+				else if (data instanceof ISystemFilterPoolReference)
+				{
+					expandTo(data, remoteObject);
+				}				
 				else
 				{					
 					ISystemViewElementAdapter dataAdapter = (ISystemViewElementAdapter)((IAdaptable)data).getAdapter(ISystemViewElementAdapter.class);

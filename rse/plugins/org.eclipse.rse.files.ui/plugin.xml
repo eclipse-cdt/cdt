@@ -446,6 +446,7 @@ David McKnight   (IBM)        - [187711] Link with Editor action for System View
                toolbarPath="navigationGroup"
                class="org.eclipse.rse.internal.files.ui.actions.LinkWithSystemViewAction"
                icon="$nl$/icons/full/elcl16/synced.gif"
+               style="toggle"
                helpContextId="link_editor_with_system_view_action_context"
                label="%LinkWithSystemView.label">
         	 </action>

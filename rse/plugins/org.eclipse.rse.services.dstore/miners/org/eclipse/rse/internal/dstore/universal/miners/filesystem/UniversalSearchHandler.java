@@ -171,7 +171,17 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 		// is it an archive?
 		boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);
 		
-		String absPath = theFile.getAbsolutePath();
+		// use canonical path since sometimes we have symbolic links
+		String absPath = null;
+		try
+		{
+			absPath = theFile.getCanonicalPath();
+		}
+		catch (Exception e)
+		{
+			absPath = theFile.getAbsolutePath();
+		}
+		
 		String compareStr = theFile.getName();
 		
 		// is it a virtual file?

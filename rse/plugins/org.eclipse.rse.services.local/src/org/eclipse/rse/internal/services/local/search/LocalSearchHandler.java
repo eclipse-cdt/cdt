@@ -15,6 +15,7 @@
  * Michael Berger (IBM) - Bug 147791 - symbolic links can cause circular search.
  * Xuan Chen      (IBM) - [160775] [api] rename (at least within a zip) blocks UI threadj
  * Xuan Chen      (IBM) - [194865] [local][Archives] Searching contents of a file in an Archive doesn't work
+ * Xuan Chen      (IBM) - [205448] [search]All the files are listed as in the Remote Search view even only found one match in a file
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.search;
@@ -288,10 +289,6 @@ public class LocalSearchHandler implements ISearchHandler
 				{
 					_searchConfig.addResult(file);
 				}
-				else
-				{
-					_searchConfig.addResult(file);
-				}
 			}
 
 			// indicate that we have found a file
@@ -442,12 +439,14 @@ public class LocalSearchHandler implements ISearchHandler
 			}
 
 			IHostSearchResult[] results = convert(remoteFile, matches);
-			_searchConfig.addResults(remoteFile, results);
-
-			// TODO - how to store results related to files
-			//remoteFile.setContents(IHostSearchResultsContentsType.getInstance(), _searchString.toString(), results);
-
-			return true;
+			if (results != null && results.length > 0)
+			{
+				_searchConfig.addResults(remoteFile, results);
+			    // TODO - how to store results related to files
+			    //remoteFile.setContents(IHostSearchResultsContentsType.getInstance(), _searchString.toString(), results);
+				return true;
+			}
+			return false;
 		}
 		catch (IOException e)
 		{

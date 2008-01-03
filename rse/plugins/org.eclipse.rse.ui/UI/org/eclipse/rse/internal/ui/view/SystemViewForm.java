@@ -14,9 +14,10 @@
  * Contributors:
  * Kevin Doyle (IBM) - [187553] - Removed code and related methods for toolbar/button bar.
  * Martin Oberhuber (Wind River) - [190271] Move ISystemViewInputProvider to Core
+ * David McKnight    (IBM)   - [187711] select SystemView APIs exposed by the ISystemTree interface
  *******************************************************************************/
-
 package org.eclipse.rse.internal.ui.view;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.jface.action.ToolBarManager;
@@ -24,7 +25,10 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.ISystemViewInputProvider;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.ui.dialogs.SystemPromptDialog;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.ISystemLongRunningRequestListener;
@@ -42,6 +46,7 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 
 /**
@@ -470,4 +475,44 @@ public class SystemViewForm extends Composite implements  ISystemTree
     	}
     }
 
+    
+
+    /**
+     * wrapper method to satisfy the ISystemTree interface
+     */
+	public void createTreeItems(TreeItem widget, Object[] children)
+	{
+		tree.createTreeItems(widget, children);
+	}
+	
+    /**
+     * wrapper method to satisfy the ISystemTree interface
+     */
+	public List findAllRemoteItemReferences(Object element,
+			Object elementObject, List matches) {
+		return tree.findAllRemoteItemReferences(element, elementObject, matches);
+	}
+	
+    /**
+     * wrapper method to satisfy the ISystemTree interface
+     */
+	public Item findFirstRemoteItemReference(Object remoteObject,
+			Item parentItem) {
+		return tree.findFirstRemoteItemReference(remoteObject, parentItem);
+	}
+	
+    /**
+     * wrapper method to satisfy the ISystemTree interface
+     */
+	public Tree getTree() {
+		return tree.getTree();
+	}
+	
+    /**
+     * wrapper method to satisfy the ISystemTree interface
+     */
+	public ISystemFilterReference revealAndExpand(ISubSystem parentSubSystem,
+			ISystemFilter filter) {
+		return tree.revealAndExpand(parentSubSystem, filter);
+	}
 }

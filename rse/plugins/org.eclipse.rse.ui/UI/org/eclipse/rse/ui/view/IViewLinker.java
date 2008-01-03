@@ -11,9 +11,8 @@
  * Contributors:
  * David McKnight   (IBM)   - [187711] IViewLinker to be API that system view part calls when link with editor
  ********************************************************************************/
-package org.eclipse.rse.ui;
+package org.eclipse.rse.ui.view;
 
-import org.eclipse.rse.internal.ui.view.SystemView;
 import org.eclipse.ui.IEditorPart;
 
 public interface IViewLinker {
@@ -21,7 +20,7 @@ public interface IViewLinker {
 	/**
 	 * System View part calls link when using Link With Editor.  Provider of action supplies this implementation.
 	 * @param editor the active editor 
-	 * @param systemView the view to link
+	 * @param systemTree the view to link
 	 */
-	public void link(IEditorPart editor, SystemView systemView);
+	public void link(IEditorPart editor, ISystemTree systemTree);
 }

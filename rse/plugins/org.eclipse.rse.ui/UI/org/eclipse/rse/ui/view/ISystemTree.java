@@ -11,12 +11,19 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight    (IBM)   - [187711] Select SystemView APIs exposed by the ISystemTree interface
  ********************************************************************************/
 
 package org.eclipse.rse.ui.view;
 
+import java.util.List;
+
+import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * To drive our GUI we find ourselves adding additional useful methods on top of the
@@ -116,4 +123,55 @@ public interface ISystemTree {
 	 * @return true if any of the selected items are expandable but not yet expanded
 	 */
 	public boolean areAnySelectedItemsExpandable();
+	
+	/**
+	 * Find the first binary-match or name-match of a remote object, given its binary object.
+	 * @param remoteObject - The remote object to find.
+	 * @param parentItem - Optionally, the parent item to start the search at
+	 * @return TreeItem hit if found
+	 */
+	public Item findFirstRemoteItemReference(Object remoteObject, Item parentItem);
+	
+	/**
+	 * Expand a given filter, given a subsystem that contains a reference to the filter's pool.
+	 * This will expand down to the filter if needed
+	 * @param parentSubSystem - the subsystem containing a reference to the filter's parent pool
+	 * @param filter - the filter to find, reveal, and expand within the subsystem context
+	 * @return the filter reference to the filter if found and expanded. This is a unique binary address 
+	 *   within the object's in this tree, so can be used in the viewer methods to affect this particular
+	 *   node.
+	 */
+	public ISystemFilterReference revealAndExpand(ISubSystem parentSubSystem, ISystemFilter filter);
+	
+	/**
+	 * Return the Tree widget
+	 * @return tree widget
+	 */
+	public Tree getTree();
+	
+	/**
+	 * Create tree items for the specified children
+	 * 
+	 * @param widget the parent item for the items to create
+	 * @param children the children to create items for
+	 */
+	public void createTreeItems(TreeItem widget, Object[] children);
+	
+	/**
+	 * Recursively tries to find a given remote object. Since the object memory object 
+	 *  for a remote object is not dependable we call getAbsoluteName() on the adapter to
+	 *  do the comparisons. Note this does not take into account the parent connection or 
+	 *  subsystem or filter, hence you must know where to start the search, else you risk
+	 *  finding the wrong one.
+	 *
+	 * @param element the remote object to which we want to find a tree item which references it. Can be a string or an object
+	 * @param elementObject the actual remote element to find, for binary matching, optionally for cases when element is a string
+	 * @param matches the List to populate with hits, or <code>null</code> to
+	 *    get a new List created and returned with the hits.
+	 * @return the List populated with hits, or <code>null</code> if <code>null</code>
+	 *    was passed in as the List to populate and no hits were found.
+	 */
+	public List findAllRemoteItemReferences(Object element, Object elementObject, List matches);
+	
+	
 }

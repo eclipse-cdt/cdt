@@ -4273,7 +4273,7 @@ public class SystemView extends SafeTreeViewer
 	 * @return the List populated with hits, or <code>null</code> if <code>null</code>
 	 *    was passed in as the List to populate and no hits were found.
 	 */
-	protected List findAllRemoteItemReferences(Object element, Object elementObject, List matches) {
+	public List findAllRemoteItemReferences(Object element, Object elementObject, List matches) {
 		String searchString = null;
 		ISubSystem subsystem = null;
 		if (element instanceof String)
@@ -5689,7 +5689,11 @@ public class SystemView extends SafeTreeViewer
 		ISystemViewElementAdapter adapter = getViewAdapter(parentObject);
 		ISystemViewElementAdapter targetAdapter = getViewAdapter(remoteObject);
 		
-		
+		if (adapter == null)
+		{
+			System.out.println("adapter is null for "+parentObject);
+			return;
+		}
 		ISubSystem ss = adapter.getSubSystem(parentObject);
 		String parentName = adapter.getAbsoluteName(parentObject);
 		String remoteObjectName = targetAdapter.getAbsoluteName(remoteObject);
@@ -5953,6 +5957,7 @@ public class SystemView extends SafeTreeViewer
 		
 
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
+		
 		assertElementsNotNull(childElements);
 		
 		ISystemFilterReference originalFilter = null;

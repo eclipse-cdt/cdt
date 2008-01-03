@@ -260,6 +260,13 @@ public class FileResources extends NLS
 	public static String MESSAGE_ERROR_CACHING_REMOTE_FILES;
 	public static String MESSAGE_SYNCHRONIZING_REMOTE_FILE_CACHE;
 	
+	// link with editor
+	public static String MESSAGE_EXPANDING_FOLDER;
+	public static String MESSAGE_EXPANDING_FILTER;
+	public static String MESSSAGE_QUERYING_FILE;
+
+	
+	
 	static 
 	{
 		// load message values from bundle file

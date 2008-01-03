@@ -5723,10 +5723,6 @@ public class SystemView extends SafeTreeViewer
 					else if (ss.doesFilterListContentsOf(ref.getReferencedFilter(),remoteObjectName)){
 						expandTo(data, remoteObject);
 					}
-					else if (ss.doesFilterEncompass(ref.getReferencedFilter(), remoteObjectName))
-					{
-						expandTo(data, remoteObject);
-					}
 				}
 				else if (data instanceof ISystemFilterPoolReference)
 				{

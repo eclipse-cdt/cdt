@@ -16,7 +16,7 @@
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * David McKnight   (IBM)        - [207095] Implicit connect needs to run in the same job as caller
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
- * David McKnight   (IBM)        - [187711] new doesFilterEncompass apis
+ * David McKnight   (IBM)        - [187711] new doesFilterEncompass apis - now unneeded
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;
@@ -272,23 +272,8 @@ public interface ISubSystem extends ISystemFilterPoolReferenceManagerProvider, I
 	 */
 	public boolean doesFilterStringMatch(String filterString, String remoteObjectAbsoluteName, boolean caseSensitive);
 
-	/**
-	 * Return true if the remote remote object would be a descendent of the result of this filter
-	 * @param filter
-	 * @param remoteObjectAbsoluteName
-	 * @return
-	 */
-	public boolean doesFilterEncompass(ISystemFilter filter, String remoteObjectAbsoluteName);
-	
-	/**
-	 * Return true if the remote remote object would be a descendent of the result of this filter
-	 * @param filterString
-	 * @param remoteObjectAbsoluteName
-	 * @param caseSensitive
-	 * @return
-	 */
-	public boolean doesFilterStringEncompass(String filterString, String remoteObjectAbsoluteName, boolean caseSensitive);
-	
+
+
 	// -------------------------
 	// Filter Pool References...
 	// -------------------------

@@ -19,16 +19,19 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.internal.files.ui.FileResources;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
+import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.view.ContextObject;
@@ -212,27 +215,83 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 		{
 			String remoteObjectName = _targetRemoteFile.getAbsolutePath();
 	    	ISystemFilterPoolReferenceManager refmgr = _subSystem.getFilterPoolReferenceManager();
-	    	if (refmgr != null)
-	    	{
+	    	if (refmgr != null){
 			    ISystemFilterReference[] refs = refmgr.getSystemFilterReferences(_subSystem);
-			    for (int i = 0; i < refs.length; i++)
-			    {
+			    for (int i = 0; i < refs.length; i++) {
 			        ISystemFilterReference ref = refs[i];
 
-			        {
-			        	if (_subSystem.doesFilterMatch(ref.getReferencedFilter(), remoteObjectName)){
-							return ref;
-						}					
-						else if (_subSystem.doesFilterListContentsOf(ref.getReferencedFilter(),remoteObjectName)){
-							return ref;
-						}
-						else if (_subSystem.doesFilterEncompass(ref.getReferencedFilter(), remoteObjectName)){
-							return ref;
-						}
+			        if (doesFilterEncompass(ref.getReferencedFilter(), remoteObjectName)){
+			        	return ref;
 			        }
 			    }
 	    	}
 	    	return null;
+		}
+		
+		private boolean doesFilterEncompass(ISystemFilter filter, String remoteObjectAbsoluteName)
+		{
+			boolean would = false;
+			String[] strings = filter.getFilterStrings();
+	    	if (strings != null){
+	      	  for (int idx=0; !would && (idx<strings.length); idx++)
+	    	  {
+	    	  	 if (strings[idx].equals("/*")) //$NON-NLS-1$
+	    	  	   would = true;
+	    	  	 else if (strings[idx].equals("./*")) //$NON-NLS-1$
+	    	  	 {
+	    	  		 // my home filter - will encompass iff remoteObjectAbsoluteName is within the home dir	    	  		 	    	  		
+	    	  		 try
+	    	  		 {	    	  			
+	    	  			 IRemoteFile homeDir = _subSystem.getRemoteFileObject(".", new NullProgressMonitor());
+	    	  			 String homePath = homeDir.getAbsolutePath();
+	    	  			 would = remoteObjectAbsoluteName.startsWith(homePath);
+	    	  		 }
+	    	  		 catch (Exception e){	    	  			 
+	    	  		 }
+	    	  	 }
+	    	  	 else
+	    	       would = doesFilterStringEncompass(strings[idx], remoteObjectAbsoluteName);    		
+	    	  }
+	    	}
+	    	return would;
+		}
+		
+		private boolean doesFilterStringEncompass(String filterString, String remoteObjectAbsoluteName)
+		{
+			RemoteFileFilterString rffs = new RemoteFileFilterString(_subSystem.getParentRemoteFileSubSystemConfiguration(), filterString);
+			// ok, this is a tweak: if the absolute name has " -folder" at the end, that means it is a folder...
+			if (remoteObjectAbsoluteName.endsWith(" -folder")) //$NON-NLS-1$
+			{
+				if (!rffs.getShowSubDirs())
+					return false;
+				remoteObjectAbsoluteName = remoteObjectAbsoluteName.substring(0, remoteObjectAbsoluteName.indexOf(" -folder")); //$NON-NLS-1$
+			}
+			// problem 1: we don't know if the given remote object name represents a file or folder. We have to assume a file,
+			//  since we don't support filtering by folder names.
+			if (!rffs.getShowFiles())
+				return false;
+
+			// step 1: verify the path of the remote object matches the path of the filter string
+			String container = rffs.getPath();
+			if (container == null)
+				return false;
+			
+			if (container.equals(".")) //$NON-NLS-1$
+			{
+			    try 
+			    {
+			    container = _subSystem.getRemoteFileObject(container, new NullProgressMonitor()).getAbsolutePath();
+			    }
+			    catch (Exception e)
+			    {		        
+			    }
+			}
+			
+			if (container.indexOf(remoteObjectAbsoluteName) > -1){
+				return true;
+			}
+			
+			return false;
 		}
 		
 	}

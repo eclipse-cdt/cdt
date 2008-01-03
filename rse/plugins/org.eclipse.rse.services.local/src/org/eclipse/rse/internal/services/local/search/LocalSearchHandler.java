@@ -13,7 +13,8 @@
  * 
  * Contributors:
  * Michael Berger (IBM) - Bug 147791 - symbolic links can cause circular search.
- * Xuan Chen      (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Xuan Chen      (IBM) - [160775] [api] rename (at least within a zip) blocks UI threadj
+ * Xuan Chen      (IBM) - [194865] [local][Archives] Searching contents of a file in an Archive doesn't work
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.search;
@@ -29,7 +30,6 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.local.files.LocalHostFile;
 import org.eclipse.rse.internal.services.local.files.LocalVirtualHostFile;
-import org.eclipse.rse.internal.services.local.search.LocalSearchResult;
 import org.eclipse.rse.services.clientserver.StringCompare;
 import org.eclipse.rse.services.clientserver.SystemFileClassifier;
 import org.eclipse.rse.services.clientserver.SystemSearchString;
@@ -243,15 +243,19 @@ public class LocalSearchHandler implements ISearchHandler
 					/** TODO - how to store search results related to files
 					// if there is at least one match, then add the file to the
 					// search results
+					 **/
 					if (results != null && results.length > 0)
 					{
+						/*
 						file.setContents(IHostSearchResultsContentsType.getInstance(), _searchString.toString(),
 								results);
+						*/
 						_searchConfig.addResult(file);
+						_searchConfig.addResults(file, results);
 					}
 					
-					**/
-					_searchConfig.addResults(file, results);
+					
+					//_searchConfig.addResult(file);
 				}
 				// otherwise add the file to the search results
 				else

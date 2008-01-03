@@ -100,7 +100,6 @@ import org.eclipse.rse.ui.actions.SystemRefreshAllAction;
 import org.eclipse.rse.ui.messages.ISystemMessageLine;
 import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.IRSEViewPart;
-import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.IViewLinker;
 import org.eclipse.swt.dnd.Clipboard;
@@ -111,9 +110,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
@@ -127,7 +124,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.CellEditorActionHandler;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
@@ -275,7 +271,7 @@ public class SystemViewPart
 			return;
 
 		if (_viewLinker != null){
-			_viewLinker.link(editor, systemView);
+			_viewLinker.linkEditorToView(editor, systemView);
 		}
 	}
 	/** 
@@ -573,54 +569,12 @@ public class SystemViewPart
 	// link back to editor
 	protected void linkToEditor(IStructuredSelection selection) 
 	{
-		Object obj = selection.getFirstElement();
-		if (obj instanceof IAdaptable)
+		if (_viewLinker != null)
 		{
-			try
-			{
-				ISystemRemoteElementAdapter adapter = (ISystemRemoteElementAdapter)((IAdaptable)obj).getAdapter(ISystemRemoteElementAdapter.class);
-				if (adapter != null)
-				{
-					
-					if (adapter.canEdit(obj))
-					{
-						IWorkbenchPage page = getSite().getPage();
-						IEditorReference[] editorRefs = page.getEditorReferences();
-						for (int i = 0; i < editorRefs.length; i++)
-						{
-							IEditorReference editorRef = editorRefs[i];
-						
-							IEditorPart editor = editorRef.getEditor(false);
-							if (editor != null)
-							{
-							IEditorInput input = editor.getEditorInput();
-							if (input instanceof FileEditorInput)
-							{
-								((FileEditorInput)input).getFile();				
-								/** FIXME - can't couple this view to files ui
-								IFile file = ((FileEditorInput)input).getFile();				
-								if (file.getProject().getName().equals(SystemRemoteEditManager.REMOTE_EDIT_PROJECT_NAME))
-								{
-									SystemIFileProperties properties = new SystemIFileProperties(file);
-									String path = properties.getRemoteFilePath();
-									if (path != null && path.equals(adapter.getAbsoluteName(obj)))
-									{
-										page.bringToTop(editor);
-										return;
-									}
-								}
-								*/
-							}
-							}											
-						}
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}			
-		}		
+			Object obj = selection.getFirstElement();
+			IWorkbenchPage page = getSite().getPage();
+			_viewLinker.linkViewToEditor(obj, page);
+		}
 	}
 
 
@@ -1888,6 +1842,23 @@ public class SystemViewPart
 				{
 				}
 			}
+			
+			
+			String linkWithEditor = memento.getString(TAG_LINKWITHEDITOR);
+			if (linkWithEditor != null)
+			{
+				if (linkWithEditor.equals("t")) //$NON-NLS-1$
+					_isLinkingEnabled = true;
+				else
+					_isLinkingEnabled = false;
+			}
+			else
+			{
+				_isLinkingEnabled = false;
+			}
+
+			
+			
 			return Status.OK_STATUS;
 		}
 		

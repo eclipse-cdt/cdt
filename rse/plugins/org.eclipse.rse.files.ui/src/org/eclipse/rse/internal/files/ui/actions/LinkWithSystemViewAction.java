@@ -29,6 +29,7 @@ import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReferenceManager;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.resources.SystemRemoteEditManager;
 import org.eclipse.rse.internal.ui.view.SystemViewPart;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
@@ -36,6 +37,7 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
 import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
+import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemTree;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.IViewLinker;
@@ -43,9 +45,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.part.FileEditorInput;
 
 public class LinkWithSystemViewAction implements IViewActionDelegate {
 
@@ -345,7 +350,56 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 	
 	public class ViewLinker implements IViewLinker
 	{
-		public void link(IEditorPart editor, ISystemTree systemTree)
+		public void linkViewToEditor(Object remoteObject, IWorkbenchPage page)
+		{
+			Object obj = remoteObject;
+			if (obj instanceof IAdaptable)
+			{
+				try
+				{
+					ISystemRemoteElementAdapter adapter = (ISystemRemoteElementAdapter)((IAdaptable)obj).getAdapter(ISystemRemoteElementAdapter.class);
+					if (adapter != null)
+					{
+						
+						if (adapter.canEdit(obj))
+						{
+							IEditorReference[] editorRefs = page.getEditorReferences();
+							for (int i = 0; i < editorRefs.length; i++)
+							{
+								IEditorReference editorRef = editorRefs[i];
+							
+								IEditorPart editor = editorRef.getEditor(false);
+								if (editor != null)
+								{
+									IEditorInput input = editor.getEditorInput();
+									if (input instanceof FileEditorInput)
+									{
+										((FileEditorInput)input).getFile();				
+										IFile file = ((FileEditorInput)input).getFile();				
+										if (file.getProject().getName().equals(SystemRemoteEditManager.REMOTE_EDIT_PROJECT_NAME))
+										{
+											SystemIFileProperties properties = new SystemIFileProperties(file);
+											String path = properties.getRemoteFilePath();
+											if (path != null && path.equals(adapter.getAbsoluteName(obj)))
+											{
+												page.bringToTop(editor);
+												return;
+											}
+										}								
+									}											
+								}
+							}
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}						
+			}	
+		}
+		
+		public void linkEditorToView(IEditorPart editor, ISystemTree systemTree)
 		{
 			IEditorInput input = editor.getEditorInput();
 			if (input instanceof IFileEditorInput)
@@ -425,6 +479,10 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 		if (_action == null) {
 			_action= action;
 			_action.setChecked(_systemViewPart.isLinkingEnabled());
+		}
+		if (_systemViewPart.isLinkingEnabled() && !_action.isChecked()){ // if restored from memento
+			_action.setChecked(true);
+			_systemViewPart.setLinkingEnabled(true, _linker);
 		}
 	}
 }

@@ -14,6 +14,7 @@
 package org.eclipse.rse.ui.view;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 
 public interface IViewLinker {
 	
@@ -22,5 +23,13 @@ public interface IViewLinker {
 	 * @param editor the active editor 
 	 * @param systemTree the view to link
 	 */
-	public void link(IEditorPart editor, ISystemTree systemTree);
+	public void linkEditorToView(IEditorPart editor, ISystemTree systemTree);
+	
+	
+	/**
+	 * System View part calls link when using Link With Editor.  Provider of action supplies this implementation.
+	 * @param editor the active editor 
+	 * @param page the active workbench page
+	 */
+	public void linkViewToEditor(Object remoteObject, IWorkbenchPage page);
 }

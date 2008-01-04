@@ -19,6 +19,7 @@
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
+ * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -140,6 +141,26 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			fillBranch(next);
 		}
 	}
+	
+	/**
+	 * Builds the virtual file system tree out of the entries in
+	 * the zipfile.
+	 *
+	 */
+	protected void updateTreeAfterRename(HashMap newOldName)
+	{
+		Enumeration entries = _zipfile.entries();
+		while (entries.hasMoreElements())
+		{
+			ZipEntry next = (ZipEntry) entries.nextElement();
+			String oldName = null;
+			if (newOldName.containsKey(next.getName()))
+			{
+				oldName = (String)newOldName.get(next.getName());
+			}
+			fillBranch(next, oldName);
+		}
+	}
 
 	/**
 	 * Populates an entire branch of the tree that comprises the
@@ -150,24 +171,79 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 */
 	protected void fillBranch(ZipEntry next)
 	{
-		VirtualChild nextChild;
+		fillBranch(next, null);
+	}
+	/**
+	 * Populates an entire branch of the tree that comprises the
+	 * virtual file system. The parameter is the leaf node, and from
+	 * the virtual path of the parameter, we can deduce what the ancestors
+	 * of the leaves are, and populate the tree from there.
+	 * @param next The ZipEntry from which the branch will be built.
+	 */
+	protected void fillBranch(ZipEntry next, String oldName)
+	{
 		if (next.getName().equals("/")) return; // dummy entry //$NON-NLS-1$
-		if (!next.isDirectory())
+		VirtualChild nextChild = null;
+		
+		//We need to search this entry in the virtual file system tree.
+		//If oldName is passed in, we use the old name.
+		//otherwise, we use the entry name.
+		String pathNameToSearchInVFS = null;
+		String nameToSearchInVFS = null;
+		
+		SystemUniversalZipEntry nextEntry = new SystemUniversalZipEntry(next);
+		
+		if (null != oldName)
 		{
-			SystemUniversalZipEntry nextEntry = new SystemUniversalZipEntry(next);
+			int endOfPathPosition = oldName.lastIndexOf("/"); //$NON-NLS-1$
+			if (endOfPathPosition != -1) 
+			{
+				pathNameToSearchInVFS = oldName.substring(0,endOfPathPosition);
+				nameToSearchInVFS = oldName.substring(endOfPathPosition+1);
+			}
+			else 
+			{
+				pathNameToSearchInVFS = ""; //$NON-NLS-1$
+				nameToSearchInVFS = oldName;
+			}
+		}
+		else
+		{
+			pathNameToSearchInVFS = nextEntry.getFullPath();
+			nameToSearchInVFS = nextEntry.getName();
+		}
+		
+		//try to find the virtual child from the memory tree
+		if (_virtualFS.containsKey(pathNameToSearchInVFS))
+		{
+			HashMap itsDirectory = (HashMap)_virtualFS.get(pathNameToSearchInVFS);
+			if (itsDirectory.containsKey(nameToSearchInVFS))
+			{
+				nextChild = (VirtualChild)itsDirectory.get(nameToSearchInVFS);
+				//We also need to remove this virtual child from VFS tree first, since we need to 
+				//put it back any way later.
+				itsDirectory.remove(nameToSearchInVFS);
+			}
+		}
+		
+		if (null == nextChild)
+		{
 			nextChild = new VirtualChild(this, nextEntry.getFullName());
 		}
-		else // it is a directory
+		else
 		{
-			SystemUniversalZipEntry nextEntry = new SystemUniversalZipEntry(next);
-			nextChild = new VirtualChild(this, nextEntry.getFullName());
+			//We found the virtual child, but its name could also been changed.  So need to update it 
+			nextChild.renameTo(nextEntry.getFullName());
+		}
+		
+		if (next.isDirectory())
+		{
 			nextChild.isDirectory = true;
 				
 			if (!_virtualFS.containsKey(nextChild.fullName))
 			{
 				_virtualFS.put(nextChild.fullName, new HashMap());
-			}
-				
+			}	
 		}
 		//Now, update other properties
 		nextChild.setComment(next.getComment());
@@ -1574,7 +1650,14 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				{
 					virtualPath = fullVirtualName.substring(0,i);
 				}
-				appendFile(file, dest, virtualPath, name, SystemEncodingUtil.ENCODING_UTF_8, SystemEncodingUtil.ENCODING_UTF_8, false);
+				
+				
+				// append the additional entry to the zip file.
+				ZipEntry newEntry = appendFile(file, dest, virtualPath, name, SystemEncodingUtil.ENCODING_UTF_8, SystemEncodingUtil.ENCODING_UTF_8, false);
+				
+				// Add the new entry to the virtual file system in memory
+				fillBranch(newEntry);
+				
 				dest.close();
 				
 				// Now replace the old zip file with the new one
@@ -1700,7 +1783,8 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				// get all the entries in the old zip				  
 				VirtualChild[] vcList = getVirtualChildrenList(false, archiveOperationMonitor);
 				VirtualChild[] renameList;
-				HashMap names = new HashMap();
+				HashMap oldNewNames = new HashMap();
+				HashMap newOldNames = new HashMap();
 				// if the entry to rename is a directory, we must then rename
 				// all files and directories below it en masse.
 				if (vc.isDirectory)
@@ -1714,14 +1798,17 @@ public class SystemZipHandler implements ISystemArchiveHandler
 						if (renameList[i].isDirectory) 
 						{
 							newName = newName + "/"; //$NON-NLS-1$
-							names.put(renameList[i].fullName + "/", newName); //$NON-NLS-1$
+							oldNewNames.put(renameList[i].fullName + "/", newName); //$NON-NLS-1$
+							newOldNames.put(newName, renameList[i].fullName + "/"); //$NON-NLS-1$
 						}
 						else
 						{
-							names.put(renameList[i].fullName, newName);
+							oldNewNames.put(renameList[i].fullName, newName);
+							newOldNames.put(newName, renameList[i].fullName);
 						}
 					}
-					names.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+					oldNewNames.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+					newOldNames.put(newFullVirtualName + "/", fullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					/*
 					try 
 					{
@@ -1733,10 +1820,11 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				}
 				else
 				{
-					names.put(fullVirtualName, newFullVirtualName);
+					oldNewNames.put(fullVirtualName, newFullVirtualName);
+					newOldNames.put(newFullVirtualName, fullVirtualName);
 				}
 				// find the entry to rename and rename it
-				boolean isCanceled = recreateZipRenameEntries(vcList, dest, names, archiveOperationMonitor);
+				boolean isCanceled = recreateZipRenameEntries(vcList, dest, oldNewNames, archiveOperationMonitor);
 				
 				dest.close();
 				
@@ -1750,7 +1838,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				replaceOldZip(outputTempFile);
 				
 				// Now rebuild the tree
-				buildTree();
+				updateTreeAfterRename(newOldNames);
 				if (closeZipFile) closeZipFile();
 				return true;
 			}

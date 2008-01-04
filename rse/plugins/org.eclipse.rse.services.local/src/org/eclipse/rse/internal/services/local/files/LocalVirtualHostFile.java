@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Kevin Doyle (IBM) - [189828] renameTo() now passes proper name to _child.renameTo()
+ * Xuan Chen   (IBM) - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -99,5 +100,17 @@ public class LocalVirtualHostFile extends LocalHostFile
 		if (i != -1)
 			newName = newAbsolutePath.substring(i + ArchiveHandlerManager.VIRTUAL_SEPARATOR.length());
 		_child.renameTo(newName);
+	}
+	
+	public long getModifiedDate()
+	{
+		if (null != _child)
+		{
+			return _child.getTimeStamp();
+		}
+		else
+		{
+			return super.getModifiedDate();
+		}
 	}
 }

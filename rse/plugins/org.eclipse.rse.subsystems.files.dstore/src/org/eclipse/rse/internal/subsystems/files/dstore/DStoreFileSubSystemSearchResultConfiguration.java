@@ -204,7 +204,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		{
 			try
 			{
-				sleep(1000);
+				sleep(5000);
 			}
 			catch (Exception e)
 			{				

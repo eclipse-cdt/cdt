@@ -384,9 +384,11 @@ public class CMemoryBlockExtension extends CDebugElement implements IMemoryBlock
 				saveChanges( addresses );
 				for ( int i = 0; i < addresses.length; ++i ) {
 					fChanges.add( addresses[i] );
-					if ( addresses[i].compareTo( start ) >= 0 && addresses[i].compareTo( start.add( BigInteger.valueOf( length ) ) ) < 0 ) {
-						int index = addresses[i].subtract( start ).intValue();
-						if ( index >= 0 && index < memBytes.length && index < newBytes.length ) {
+					int addressableSize = fCDIBlock.getWordSize(); // # of bytes per address
+					if ( addresses[i].compareTo( start ) >= 0 && addresses[i].compareTo( start.add( BigInteger.valueOf( length / addressableSize ) ) ) < 0 ) {
+						int index = addressableSize * addresses[i].subtract( start ).intValue();
+						int end = Math.min(Math.min(index + addressableSize, memBytes.length), newBytes.length);
+						for (index = Math.max(index, 0) ; index < end; index++ ) {
 							memBytes[index].setChanged( true );
 							memBytes[index].setValue( newBytes[index] );
 						}

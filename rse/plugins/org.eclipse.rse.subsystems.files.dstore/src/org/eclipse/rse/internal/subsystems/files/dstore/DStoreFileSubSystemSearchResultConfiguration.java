@@ -17,6 +17,7 @@
  * Kevin Doyle (IBM) - [190010] Added cancel() method that will call the search service to cancel
  * David McKnight   (IBM)        - [190010] performance improvement to use caching for dstore search
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
+ * David McKnight   (IBM)        - [214378] [dstore] remote search doesn't display results sometimes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.dstore;
@@ -167,8 +168,10 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
 			setStatus(IHostSearchConstants.FINISHED);
-			
-			_status.getDataStore().getDomainNotifier().removeDomainListener(this);
+			// need to wait for the results though
+			DelayedDomainListenerRemover remover = new DelayedDomainListenerRemover(this, _status);
+			remover.start();
+		//	_status.getDataStore().getDomainNotifier().removeDomainListener(this);
 		}
 		else if (_status.getValue().equals("cancelled")) //$NON-NLS-1$
 		{
@@ -184,6 +187,29 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 		if (getStatus() == IHostSearchConstants.RUNNING) 
 		{
 			getSearchService().cancelSearch(this, new NullProgressMonitor());
+		}
+	}
+	
+	private class DelayedDomainListenerRemover extends Thread
+	{
+		private DStoreFileSubSystemSearchResultConfiguration _config;
+		private DataElement _status;
+		public DelayedDomainListenerRemover(DStoreFileSubSystemSearchResultConfiguration config, DataElement status)
+		{
+			_status = status;
+			_config = config;
+		}
+		
+		public void run()
+		{
+			try
+			{
+				sleep(1000);
+			}
+			catch (Exception e)
+			{				
+			}
+			_status.getDataStore().getDomainNotifier().removeDomainListener(_config);
 		}
 	}
 }

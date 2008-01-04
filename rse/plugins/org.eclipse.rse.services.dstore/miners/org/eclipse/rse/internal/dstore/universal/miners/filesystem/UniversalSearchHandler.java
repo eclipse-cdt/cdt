@@ -15,6 +15,7 @@
  * Michael Berger   (IBM) - Bug 147791 - symbolic links can cause circular search.
  * David McKnight   (IBM)  - [190010] cancelling search
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)  - [214378] canonical path not required - problem is in the client
  *******************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -133,8 +134,9 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 			// to status refresh. As a result client thinks
 			// search isn't finished.
 			// _miner.statusDone(_status); 
-	        _status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
+			_status.setAttribute(DE.A_NAME, "done"); //$NON-NLS-1$
 	        _dataStore.refresh(_status, true);	// true indicates refresh immediately
+	        
 		}
 	}
 
@@ -171,16 +173,8 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 		// is it an archive?
 		boolean isArchive = ArchiveHandlerManager.getInstance().isArchive(theFile);
 		
-		// use canonical path since sometimes we have symbolic links
-		String absPath = null;
-		try
-		{
-			absPath = theFile.getCanonicalPath();
-		}
-		catch (Exception e)
-		{
-			absPath = theFile.getAbsolutePath();
-		}
+		String absPath = absPath = theFile.getAbsolutePath();
+	
 		
 		String compareStr = theFile.getName();
 		
@@ -247,7 +241,6 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 			}
 			// otherwise, search the file
 			else {
-				
 				if (!isArchive) {
 					deObj = _dataStore.createObject(null, _deFile, compareStr);
 				}
@@ -343,7 +336,6 @@ public class UniversalSearchHandler extends Thread implements ICancellableHandle
 	}
 
 	protected boolean internalSearchWithinFile(DataElement remoteFile, String absPath, File theFile) {
-		
 		// if search string is empty, no need to look for matches within file
 		if (_isFileSearch) {
 			return true;

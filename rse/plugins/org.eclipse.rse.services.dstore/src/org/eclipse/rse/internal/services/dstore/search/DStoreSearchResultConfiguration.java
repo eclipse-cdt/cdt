@@ -14,6 +14,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * David McKnight  (IBM)  [190010] commented why we don't need status monitor
+ * David McKnight   (IBM)        - [214378] [dstore] remote search doesn't display results sometimes
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;
@@ -38,7 +39,7 @@ public abstract class DStoreSearchResultConfiguration extends AbstractSearchResu
 	{
 		_status = status;
 		// no need for a domain listner because we check the status via status monitor
-		//	_status.getDataStore().getDomainNotifier().addDomainListener(this);
+		_status.getDataStore().getDomainNotifier().addDomainListener(this);
 	}
 	
 	public DataElement getStatusObject()

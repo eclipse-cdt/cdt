@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
+import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
@@ -50,6 +51,7 @@ import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -976,5 +978,53 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			// ignore
 		}
 		setCurrent( cdiThread.equals( currentThread ) );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(org.eclipse.core.resources.IFile, int)
+	 */
+	public boolean canRunToLine(IFile file, int lineNumber) {
+		return canRunToLine( file.getLocation().lastSegment(), lineNumber );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(java.lang.String, int)
+	 */
+	public boolean canRunToLine(String fileName, int lineNumber) {
+		return canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#runToLine(org.eclipse.core.resources.IFile, int, boolean)
+	 */
+	public void runToLine(IFile file, int lineNumber, boolean skipBreakpoints)
+			throws DebugException {
+		runToLine( file.getLocation().lastSegment(), lineNumber, skipBreakpoints );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#runToLine(java.lang.String, int, boolean)
+	 */
+	public void runToLine(String fileName, int lineNumber,
+			boolean skipBreakpoints) throws DebugException {
+		if ( !canRunToLine( fileName, lineNumber ) )
+			return;
+		if ( skipBreakpoints ) {
+			((CDebugTarget)getDebugTarget()).skipBreakpoints( true );
+		}
+		
+		CDebugElementState oldState = getState();
+		setState( CDebugElementState.RESUMING );
+		ICDILocation location = getCDITarget().createLineLocation( fileName, lineNumber );
+		try {
+			getCDIThread().stepUntil( location );
+		}
+		catch( CDIException e ) {
+			setState( oldState );
+			if ( skipBreakpoints ) {
+				((CDebugTarget)getDebugTarget()).skipBreakpoints( false );
+			}
+			targetRequestFailed( e.getMessage(), e );
+		}
 	}
 }

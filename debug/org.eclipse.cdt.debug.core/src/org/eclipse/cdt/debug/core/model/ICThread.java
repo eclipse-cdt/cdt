@@ -15,5 +15,5 @@ import org.eclipse.debug.core.model.IThread;
 /**
  * C/C++ extension of <code>IThread</code>.
  */
-public interface ICThread extends IThread, ICDebugElement {
+public interface ICThread extends IThread, IRunToLine, ICDebugElement {
 }

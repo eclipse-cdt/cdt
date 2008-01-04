@@ -782,7 +782,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(org.eclipse.core.resources.IFile, int)
 	 */
 	public boolean canRunToLine( IFile file, int lineNumber ) {
-		return getThread().canResume();
+		return ((CThread)getThread()).canRunToLine( file, lineNumber );
 	}
 
 	/* (non-Javadoc)
@@ -791,14 +791,14 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	public void runToLine( IFile file, int lineNumber, boolean skipBreakpoints ) throws DebugException {
 		if ( !canRunToLine( file, lineNumber ) )
 			return;
-		runToLine( file.getLocation().lastSegment(), lineNumber, skipBreakpoints );
+		((CThread)getThread()).runToLine( file, lineNumber, skipBreakpoints );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IRunToLine#canRunToLine(java.lang.String, int)
 	 */
 	public boolean canRunToLine( String fileName, int lineNumber ) {
-		return getThread().canResume();
+		return ((CThread)getThread()).canRunToLine( fileName, lineNumber );
 	}
 
 	/* (non-Javadoc)
@@ -807,19 +807,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	public void runToLine( String fileName, int lineNumber, boolean skipBreakpoints ) throws DebugException {
 		if ( !canRunToLine( fileName, lineNumber ) )
 			return;
-		if ( skipBreakpoints ) {
-			((CDebugTarget)getDebugTarget()).skipBreakpoints( true );
-		}
-		ICDILocation location = getCDITarget().createLineLocation( fileName, lineNumber );
-		try {
-			getCDIThread().stepUntil( location );
-		}
-		catch( CDIException e ) {
-			if ( skipBreakpoints ) {
-				((CDebugTarget)getDebugTarget()).skipBreakpoints( false );
-			}
-			targetRequestFailed( e.getMessage(), e );
-		}
+		((CThread)getThread()).runToLine( fileName, lineNumber, skipBreakpoints );
 	}
 
 	/* (non-Javadoc)

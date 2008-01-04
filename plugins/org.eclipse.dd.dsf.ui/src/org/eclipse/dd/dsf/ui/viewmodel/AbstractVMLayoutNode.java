@@ -444,12 +444,7 @@ abstract public class AbstractVMLayoutNode implements IVMLayoutNode {
             fTreePath = path;
         }
 
-        public Object getElement(TreePath path) { 
-            // If not asking for root, just return the last segment in path.
-            if (path.getSegmentCount() > 0) {
-                return path.getLastSegment();
-            }
-            // Calculate the root of the viewer.
+        public Object getViewerInput() {
             return getVMProvider().getRootElement();
         }
 

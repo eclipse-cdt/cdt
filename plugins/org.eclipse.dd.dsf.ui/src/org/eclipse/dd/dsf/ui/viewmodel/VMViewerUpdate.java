@@ -35,6 +35,7 @@ public class VMViewerUpdate implements IViewerUpdate {
         fClientUpdate = clientUpdate;
     }
 
+    public Object getViewerInput() { return fClientUpdate.getViewerInput(); }
     public Object getElement() { return fClientUpdate.getElement(); }
     public TreePath getElementPath() { return fClientUpdate.getElementPath(); }
     public IPresentationContext getPresentationContext() { return fClientUpdate.getPresentationContext(); }

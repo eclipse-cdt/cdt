@@ -498,7 +498,7 @@ abstract public class AbstractVMProvider implements IVMProvider
      * @see IViewerInputProvider
      */
     public void update(IViewerInputUpdate update) {
-        update.setViewerInput(update.getElement());
+        update.setInputElement(update.getElement());
         update.done();
     }
     

@@ -470,7 +470,7 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 	public void run(IAction action) {
 		if (_systemViewPart != null){
 			boolean isToggled = action.isChecked();
-			_systemViewPart.setLinkingEnabled(!isToggled, _linker);
+			_systemViewPart.setLinkingEnabled(isToggled, _linker);
 			
 		}
 	}

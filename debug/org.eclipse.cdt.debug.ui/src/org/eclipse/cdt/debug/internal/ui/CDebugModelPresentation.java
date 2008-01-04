@@ -147,16 +147,18 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			IFile file = null;
 			try {
 				String handle = b.getSourceHandle();
-				IPath path = new Path( handle );
-				if ( path.isValidPath( handle ) ) {
-					IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
-					if ( files.length > 0 ) {
-						file = files[0];
-					}
-					else {
-						File fsfile = new File( handle );
-						if ( fsfile.isFile() && fsfile.exists() ) {
-							return new ExternalEditorInput( new LocalFileStorage( fsfile ) );
+				if ( handle != null ) {
+					IPath path = new Path( handle );
+					if ( path.isValidPath( handle ) ) {
+						IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation( path );
+						if ( files.length > 0 ) {
+							file = files[0];
+						}
+						else {
+							File fsfile = new File( handle );
+							if ( fsfile.isFile() && fsfile.exists() ) {
+								return new ExternalEditorInput( new LocalFileStorage( fsfile ) );
+							}
 						}
 					}
 				}

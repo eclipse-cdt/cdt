@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -847,9 +848,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	}
 
 	private ICFunctionBreakpoint createFunctionBreakpoint( ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
-		IPath execFile = getExecFilePath();
-		String sourceHandle = execFile.toOSString();
-		ICFunctionBreakpoint breakpoint = CDIDebugModel.createFunctionBreakpoint( sourceHandle, 
+		ICFunctionBreakpoint breakpoint = CDIDebugModel.createFunctionBreakpoint( getExecFileHandle(), 
 																				  getProject(), 
 																				  cdiBreakpoint.getLocator().getFunction(),
 																				  -1,
@@ -863,8 +862,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	}
 
 	private ICAddressBreakpoint createAddressBreakpoint( ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
-		IPath execFile = getExecFilePath();
-		String sourceHandle = execFile.toOSString();
+		String sourceHandle = getExecFileHandle();
 		IAddress address = getDebugTarget().getAddressFactory().createAddress( cdiBreakpoint.getLocator().getAddress() );
 		ICAddressBreakpoint breakpoint = CDIDebugModel.createAddressBreakpoint( sourceHandle,
 																				sourceHandle, 
@@ -878,8 +876,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	}
 
 	private ICWatchpoint createWatchpoint( ICDIWatchpoint cdiWatchpoint ) throws CDIException, CoreException {
-		IPath execFile = getExecFilePath();
-		String sourceHandle = execFile.toOSString();
+		String sourceHandle = getExecFileHandle();
 		ICWatchpoint watchpoint = null;
 		if ( cdiWatchpoint instanceof ICDIWatchpoint2 ){
 			watchpoint = CDIDebugModel.createWatchpoint( sourceHandle, 
@@ -1058,28 +1055,42 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		return s;
 	}
 
+	/**
+	 * Checks for a match between the symbolics referenced by the breakpoint
+	 * and the symbolics of the contained CDebugTarget.
+	 * @param breakpoint
+	 * @return true if the symbolics match or if the breakpoint has no symbolics
+	 */
 	public boolean supportsAddressBreakpoint( ICAddressBreakpoint breakpoint ) {
-		String module = null;
+		boolean sessionHasSymbols = getExecFileHandle() != null && getExecFileHandle().length() > 0;
+		boolean bpHasSymbols = false;
 		try {
-			module = breakpoint.getModule();
+			String module = breakpoint.getModule();
+			if ( module != null && module.length() > 0 ) {
+				bpHasSymbols = true;
+				if ( sessionHasSymbols ) {
+					return getExecFileHandle().equals( module );				
+				}
+			}
 		}
 		catch( CoreException e ) {
 		}
-		if ( module != null && getExecFilePath() != null )
-			return getExecFilePath().toOSString().equals( module );
 		
 		// supporting old breakpoints (> 3.0)
-		String sourceHandle = null;
 		try {
-			sourceHandle = breakpoint.getSourceHandle();
+			String sourceHandle = breakpoint.getSourceHandle();
+			if ( sourceHandle != null && sourceHandle.length() > 0 ) {
+				bpHasSymbols = true;
+				if ( sessionHasSymbols ) {
+					return getExecFileHandle().equals( sourceHandle );
+				}
+			}
 		}
 		catch( CoreException e ) {
 		}
-		if ( sourceHandle != null && getExecFilePath() != null )
-			return getExecFilePath().toOSString().equals( sourceHandle );
 		
-		return module != null && module.length() == 0 && 
-			   sourceHandle != null && sourceHandle.length() == 0;
+		// an address breakpoint can also be set in the absence of any symbols
+		return !bpHasSymbols;
 	}
 
 	public void skipBreakpoints( boolean enabled ) {
@@ -1131,10 +1142,18 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		return getDebugTarget().getProject();
 	}
 
-	private IPath getExecFilePath() {
-		if (getDebugTarget() == null || getDebugTarget().getExecFile() == null)
-			return null;
-		return getDebugTarget().getExecFile().getPath();
+	private String getExecFileHandle() {
+		CDebugTarget target = getDebugTarget();
+		if ( target != null ) {
+			IBinaryObject binary = target.getExecFile();
+			if ( binary != null ) {
+				IPath path = binary.getPath();
+				if ( path != null ) {
+					return path.toOSString();
+				}
+			}
+		}
+		return null;
 	}
 
 	private ISourceLocator getSourceLocator() {

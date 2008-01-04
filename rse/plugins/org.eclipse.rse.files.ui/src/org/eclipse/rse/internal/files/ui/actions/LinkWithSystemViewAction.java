@@ -292,7 +292,7 @@ public class LinkWithSystemViewAction implements IViewActionDelegate {
 			    }
 			}
 			
-			if (container.indexOf(remoteObjectAbsoluteName) > -1){
+			if (remoteObjectAbsoluteName.startsWith(container)){
 				return true;
 			}
 			

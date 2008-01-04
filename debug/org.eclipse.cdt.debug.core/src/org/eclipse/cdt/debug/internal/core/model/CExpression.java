@@ -55,6 +55,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 		fText = cdiExpression.getExpressionText();
 		fCDIExpression = cdiExpression;
 		fStackFrame = frame;
+		setInitialFormat();
 	}
 
 	/* (non-Javadoc)

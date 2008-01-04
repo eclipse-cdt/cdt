@@ -85,6 +85,7 @@ import org.eclipse.cdt.debug.core.model.IRegisterDescriptor;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceLookupChangeListener;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
+import org.eclipse.cdt.debug.internal.core.CSettingsManager;
 import org.eclipse.cdt.debug.internal.core.CGlobalVariableManager;
 import org.eclipse.cdt.debug.internal.core.CMemoryBlockRetrievalExtension;
 import org.eclipse.cdt.debug.internal.core.CRegisterManager;
@@ -198,6 +199,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	private CGlobalVariableManager fGlobalVariableManager;
 	
 	/**
+	 * container for Default format information
+	 */
+	private CSettingsManager fFormatManager; 
+
+	/**
 	 * The executable binary file associated with this target.
 	 */
 	private IBinaryObject fBinaryFile;
@@ -256,6 +262,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		setRegisterManager( new CRegisterManager( this ) );
 		setBreakpointManager( new CBreakpointManager( this ) );
 		setGlobalVariableManager( new CGlobalVariableManager( this ) );
+		setFormatManager( new CSettingsManager( this ) );
 		setMemoryBlockRetrieval( new CMemoryBlockRetrievalExtension( this ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
@@ -997,6 +1004,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		getCDISession().getEventManager().removeEventListener( this );
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
+		saveFormats();
 		saveGlobalVariables();
 		disposeGlobalVariableManager();
 		disposeModuleManager();
@@ -1436,6 +1444,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		fGlobalVariableManager.save();
 	}
 
+	protected void saveFormats() {
+		fFormatManager.save();
+	}
+
 	protected void disposeGlobalVariableManager() {
 		fGlobalVariableManager.dispose();
 	}
@@ -1633,6 +1645,14 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void setGlobalVariableManager( CGlobalVariableManager globalVariableManager ) {
 		fGlobalVariableManager = globalVariableManager;
+	}
+
+	protected CSettingsManager getFormatManager() {
+		return fFormatManager;
+	}
+
+	private void setFormatManager( CSettingsManager formatManager ) {
+		fFormatManager = formatManager;
 	}
 
 	/* (non-Javadoc)

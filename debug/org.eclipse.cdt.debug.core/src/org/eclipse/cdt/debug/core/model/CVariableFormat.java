@@ -16,35 +16,41 @@ package org.eclipse.cdt.debug.core.model;
 public class CVariableFormat {
 	
 	private final String fName;
+	private final int fNum;
 	
-	private CVariableFormat( String name ) {
+	private CVariableFormat( String name, int num ) {
 		this.fName = name;
+		this.fNum= num;
 	}
 	
 	public String toString() {
 		return this.fName;
 	}
+	
+	public int getFormatNumber() {
+		return this.fNum;
+	}
 
 	public static CVariableFormat getFormat( int code ) {
-		switch( code ) {
-			case 0:
-				return NATURAL;
-			case 1:
-				return DECIMAL;
-			case 2:
-				return BINARY;
-			case 3:
-				return OCTAL;
-			case 4:
-				return HEXADECIMAL;
-			default:
-				return NATURAL;
+		if ( code == NATURAL.getFormatNumber() ) {
+			return NATURAL;
+		} else if ( code == DECIMAL.getFormatNumber() ) {
+			return DECIMAL;
+		} else if ( code == BINARY.getFormatNumber() ) {
+			return BINARY;
+		} else if ( code == OCTAL.getFormatNumber() ) {
+			return OCTAL;
+		} else if ( code == HEXADECIMAL.getFormatNumber() ) {
+			return HEXADECIMAL;
+		} else {
+			// unexpected value, mapping to NATURAL
+			return NATURAL;
 		}
 	}
 
-	public static final CVariableFormat NATURAL = new CVariableFormat( "natural" ); //$NON-NLS-1$
-	public static final CVariableFormat DECIMAL = new CVariableFormat( "decimal" ); //$NON-NLS-1$
-	public static final CVariableFormat BINARY = new CVariableFormat( "binary" ); //$NON-NLS-1$
-	public static final CVariableFormat OCTAL = new CVariableFormat( "octal" ); //$NON-NLS-1$
-	public static final CVariableFormat HEXADECIMAL = new CVariableFormat( "hexadecimal" ); //$NON-NLS-1$
+	public static final CVariableFormat NATURAL = new CVariableFormat( "natural", 0 ); //$NON-NLS-1$
+	public static final CVariableFormat DECIMAL = new CVariableFormat( "decimal", 1 ); //$NON-NLS-1$
+	public static final CVariableFormat BINARY = new CVariableFormat( "binary", 2 ); //$NON-NLS-1$
+	public static final CVariableFormat OCTAL = new CVariableFormat( "octal", 3 ); //$NON-NLS-1$
+	public static final CVariableFormat HEXADECIMAL = new CVariableFormat( "hexadecimal", 4 ); //$NON-NLS-1$
 }

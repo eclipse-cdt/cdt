@@ -11,6 +11,7 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
@@ -30,9 +31,11 @@ import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
+import org.eclipse.cdt.debug.internal.core.CSettingsManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IValue;
 
 /**
@@ -101,6 +104,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		}
 		fIsEnabled = ( parent instanceof AbstractCValue ) ? ((AbstractCValue)parent).getParentVariable().isEnabled() : !isBookkeepingEnabled();
 		getCDISession().getEventManager().addEventListener( this );
+		setInitialFormat();
 	}
 
 	/**
@@ -115,6 +119,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		fIsEnabled = !isBookkeepingEnabled();
 		setStatus( ICDebugElementStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.1" ), new String[]{ errorMessage } ) ); //$NON-NLS-1$
 		getCDISession().getEventManager().addEventListener( this );
+		setInitialFormat();
 	}
 
 	/*
@@ -262,6 +267,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	 */
 	public void changeFormat( CVariableFormat format ) throws DebugException {
 		setFormat( format );
+		storeFormat( format );
 		resetValue();
 	}
 
@@ -297,6 +303,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 			// If casting of variable to a type or array causes an error, the status 
 			// of the variable is set to "error" and it can't be reset by subsequent castings.
 			resetValue();
+			storeCastToArray( startIndex, length );
 		}
 	}
 
@@ -393,6 +400,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 			// If casting of variable to a type or array causes an error, the status 
 			// of the variable is set to "error" and it can't be reset by subsequent castings.
 			resetValue();
+			storeCast(type);
 		}
 	}
 
@@ -412,6 +420,8 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		// If casting of variable to a type or array causes an error, the status 
 		// of the variable is set to "error" and it can't be reset by subsequent castings.
 		resetValue();
+		forgetCast();
+		forgetCastToArray();
 	}
 
 	/*
@@ -620,5 +630,182 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 	
 	protected void setName( String name ) {
 		fName = name;
+	}
+
+	protected CSettingsManager getFormatManager() {
+		return ((CDebugTarget) getDebugTarget()).getFormatManager();
+	}
+	
+	/**
+	 * used to concatenate multiple names to a single identifier 
+	 */
+	private final static String NAME_PART_SEPARATOR = "-"; //$NON-NLS-1$
+
+	/**
+	 * suffix used to identify format informations
+	 */
+	private final static String FORMAT_SUFFIX = NAME_PART_SEPARATOR + "(format)"; //$NON-NLS-1$
+
+	/**
+	 * suffix used to identify cast settings
+	 */
+	private final static String CAST_SUFFIX = NAME_PART_SEPARATOR + "(cast)"; //$NON-NLS-1$
+
+	/**
+	 * suffix used to identify cast to array settings
+	 */
+	private final static String CAST_TO_ARRAY_SUFFIX = NAME_PART_SEPARATOR + "(cast_to_array)"; 
+
+	/** retrieve the identification for this variable.
+	 * @return a string identifying this variable, to be used to store settings
+	 * @throws DebugException
+	 */
+	String getVariableID() throws DebugException {
+    	return getName(); // TODO: better identification if multiple variables have the same name
+    }
+   
+    /** helper to generate a string id used to persist the settings.
+     * @param next_obj next object to encode into the id
+     * @param buf contains the id of the part encoded so far.
+     * @throws DebugException
+     */
+    static private void buildPesistID( CDebugElement next_obj, StringBuffer buf ) throws DebugException {
+		if ( next_obj instanceof CVariable ) {
+			CVariable cVariableParent = (CVariable) next_obj;
+			buf.append( NAME_PART_SEPARATOR );
+			buf.append( cVariableParent.getVariableID() );
+			buildPesistID( cVariableParent.getParent(), buf );
+		} else if ( next_obj instanceof CStackFrame ) {
+			buf.append(NAME_PART_SEPARATOR);
+			// TODO: better identification if multiple functions have the same name (say for static functions)
+			buf.append( ((CStackFrame)next_obj ).getFunction() );
+		} else if ( next_obj instanceof CDebugTarget ) {
+			// global, we use a root NAME_PART_SEPARATOR as indicator of that
+			buf.append( NAME_PART_SEPARATOR );
+		} else if ( next_obj instanceof AbstractCValue ) {
+			// index or indirection.
+			AbstractCValue av = (AbstractCValue) next_obj;
+			buildPesistID( av.getParentVariable(), buf );			
+		}
+	}
+	
+    /** returns an string used to identify this variable  
+	 * @return
+	 * @throws DebugException
+	 */
+	private final String getPersistID() throws DebugException {
+		StringBuffer id = new StringBuffer();
+		id.append( getVariableID() );
+		buildPesistID( getParent(), id );
+		return id.toString();
+	}
+
+	/** stores the given format
+	 * @param format the format to be used for this variable
+	 */
+	protected void storeFormat( CVariableFormat format ) {
+		try {
+			String formatString = Integer.toString( format.getFormatNumber() );
+
+			getFormatManager().putValue( getPersistID() + FORMAT_SUFFIX, formatString );
+		} catch ( DebugException e ) {
+			// if we do not get the name, we use the default format, no reason for the creation to fail too.
+			DebugPlugin.log( e );
+		}
+	}
+	
+	/** stores the cast information.
+	 * @param type the type to be displayed instead
+	 */
+	protected void storeCast( String type ) {
+		try {
+			String id = getPersistID() + CAST_SUFFIX;
+			getFormatManager().putValue( id, type );
+		} catch ( DebugException e ) {
+			DebugPlugin.log( e );
+		}
+	}
+
+	/** drops the cast information.
+	 */
+	protected void forgetCast() {
+		try {
+			String id = getPersistID() + CAST_SUFFIX;
+			getFormatManager().removeValue( id );
+		} catch ( DebugException e ) {
+			DebugPlugin.log( e );
+		}
+	}
+		
+	/** stores the cast array information.
+	 * @param startIndex the first item to be displayed in the cast array operation
+	 * @param length the number of elements to display
+	 */
+	protected void storeCastToArray(int startIndex, int length) {
+		try {
+			// we persist the information in a (startIndex):(Length) format.
+			String content = Integer.toString( startIndex ) + ":" + Integer.toString( length ); //$NON-NLS-1$
+			getFormatManager().putValue( getPersistID() + CAST_TO_ARRAY_SUFFIX, content );
+		} catch ( DebugException e ) {
+			DebugPlugin.log( e );
+		}
+	}
+
+	/** drops previously stored cast array information.
+	 */
+	protected void forgetCastToArray() {
+		try {
+			String id = getPersistID() + CAST_TO_ARRAY_SUFFIX;
+			getFormatManager().removeValue( id );
+		} catch ( DebugException e ) {
+			DebugPlugin.log( e );
+		}
+	}
+		
+	/**
+	 * restore the format stored previously for this variable.
+	 * Only sets explictly retrieved formats in order to maintain defaults. 
+	 */
+	protected void setInitialFormat() {
+		try {
+			String persistID= getPersistID();
+			String stringFormat = getFormatManager().getValue( persistID + FORMAT_SUFFIX );
+			if ( stringFormat != null ) {
+				try {
+					CVariableFormat format = CVariableFormat.getFormat( Integer.parseInt( stringFormat ) );
+					setFormat( format );
+				} catch ( NumberFormatException e ) {
+					DebugPlugin.log( e );
+				}
+			}
+			
+			if ( canCast() ) {
+				String castString = getFormatManager().getValue( persistID + CAST_SUFFIX );
+				if ( castString != null ) {
+					cast( castString );
+				}
+			}
+			if ( canCastToArray() ) {
+				String castToArrayString = getFormatManager().getValue( persistID + CAST_TO_ARRAY_SUFFIX );
+				if (castToArrayString != null) {
+					int index = castToArrayString.indexOf( ':' );
+					if ( index > 0 ) {
+						try {
+							int beg = Integer.parseInt( castToArrayString.substring( 0, index ) );
+							int num = Integer.parseInt( castToArrayString.substring( index + 1 ) );
+							castToArray( beg, num );
+						} catch ( NumberFormatException e ) {
+							DebugPlugin.log( e );
+						}
+					} else {
+						DebugPlugin.logMessage( "did not find expected : for cast to array", null ); //$NON-NLS-1$
+					}
+				}
+			}
+		} catch ( DebugException e ) {
+			DebugPlugin.log( e );
+			// we drop (and log) the exception here.
+			// even if the initial setup fails, we still want the complete creation to be successful
+		}
 	}
 }

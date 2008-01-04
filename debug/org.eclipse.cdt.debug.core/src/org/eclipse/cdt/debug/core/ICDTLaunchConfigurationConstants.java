@@ -174,6 +174,12 @@ public interface ICDTLaunchConfigurationConstants {
 	 * memento.
 	 */
 	public static final String ATTR_DEBUGGER_GLOBAL_VARIABLES = CDT_LAUNCH_ID + ".GLOBAL_VARIABLES"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key. The value is a format list'
+	 * memento.
+	 */
+	public static final String ATTR_DEBUGGER_FORMAT = CDT_LAUNCH_ID + ".FORMAT"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a memory blocks' memento.

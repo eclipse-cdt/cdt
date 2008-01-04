@@ -209,18 +209,30 @@ public class CDebugUtils {
 	 * Serializes a XML document into a string - encoded in UTF8 format, with platform line separators.
 	 * 
 	 * @param doc document to serialize
+	 * @param indent if the xml text should be indented.
+	 * 
 	 * @return the document as a string
 	 */
-	public static String serializeDocument( Document doc ) throws IOException, TransformerException {
+	public static String serializeDocument( Document doc, boolean indent ) throws IOException, TransformerException {
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer = factory.newTransformer();
 		transformer.setOutputProperty( OutputKeys.METHOD, "xml" ); //$NON-NLS-1$
-		transformer.setOutputProperty( OutputKeys.INDENT, "yes" ); //$NON-NLS-1$
+		transformer.setOutputProperty( OutputKeys.INDENT, indent ? "yes" : "no" ); //$NON-NLS-1$
 		DOMSource source = new DOMSource( doc );
 		StreamResult outputTarget = new StreamResult( s );
 		transformer.transform( source, outputTarget );
 		return s.toString( "UTF8" ); //$NON-NLS-1$			
+	}
+
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format, with platform line separators.
+	 * 
+	 * @param doc document to serialize
+	 * @return the document as a string
+	 */
+	public static String serializeDocument( Document doc ) throws IOException, TransformerException {
+		return serializeDocument(doc, true);
 	}
 
 	public static Number getFloatingPointValue( ICValue value ) {

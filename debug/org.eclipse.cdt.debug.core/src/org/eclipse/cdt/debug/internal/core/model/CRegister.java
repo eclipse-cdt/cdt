@@ -326,6 +326,7 @@ public class CRegister extends CVariable implements ICRegister {
 	protected CRegister( CRegisterGroup parent, IRegisterDescriptor descriptor ) {
 		super( parent, ((CRegisterDescriptor)descriptor).getCDIDescriptor() );
 		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
+		setInitialFormat();		
 	}
 
 	/**
@@ -334,6 +335,7 @@ public class CRegister extends CVariable implements ICRegister {
 	protected CRegister( CRegisterGroup parent, IRegisterDescriptor descriptor, String message ) {
 		super( parent, ((CRegisterDescriptor)descriptor).getCDIDescriptor(), message );
 		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
+		setInitialFormat();		
 	}
 
 	/* (non-Javadoc)

@@ -143,8 +143,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	}
 	
 	/**
-	 * Builds the virtual file system tree out of the entries in
-	 * the zipfile.
+	 * Update the virtual file system tree after rename operation
 	 *
 	 */
 	protected void updateTreeAfterRename(HashMap newOldName)

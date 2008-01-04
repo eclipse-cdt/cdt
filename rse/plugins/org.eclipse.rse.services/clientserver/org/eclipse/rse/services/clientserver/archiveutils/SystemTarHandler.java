@@ -20,6 +20,7 @@
  * Xuan Chen        (IBM)        - [209825] Update SystemTarHandler so that archive operations could be cancelable.
  * Xuan Chen        (IBM)        - [211551] NPE when moving multiple folders from one tar file to another tar file
  * Xuan Chen        (IBM)        - [211653] Copy virtual directory with nested directory of tar file did not work
+ * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -596,6 +597,46 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 	
 	/**
+	 * Update the virtual file system tree.
+	 * If newOldName HashMap is input, use the old name in the HashMap
+	 * to do the search in virtual file system tree.
+	 */
+	protected void updateTree(HashMap newOldNames)
+	{
+		TarFile tarFile = getTarFile();
+		Enumeration entries = tarFile.entries();
+		while (entries.hasMoreElements())
+		{
+			TarEntry entry = (TarEntry)entries.nextElement();
+			String searchName = null;
+			String entryName = entry.getName();
+			VirtualChild child = null;
+			if (newOldNames != null && newOldNames.containsKey(entryName))
+			{
+				searchName = (String)newOldNames.get(entryName);  //use its old name
+			}
+			else
+			{
+				searchName = entryName;
+			}
+			
+			child = vfs.getEntry(searchName);
+			
+			if (null == child)
+			{
+				child = getVirtualChild(entry);
+			}
+			else
+			{
+				vfs.removeEntry(searchName);
+				child = updateVirtualChild(entry, child);
+			}
+			
+			vfs.addEntry(child);
+		}
+	}
+	
+	/**
 	 * Gets a tar file from the underlying file.
 	 * @return the tar file, or <code>null</code> if the tar file does not exist.
 	 */
@@ -628,7 +669,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 		if (modTime != modTimeDuringCache) {
 			// reinitialize
 			init(newFile);
-			createCache();
+			updateTree(null);
 			modTimeDuringCache = newFile.lastModified();
 		}
 	}
@@ -1528,6 +1569,22 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 	}
 	
 	/**
+	 * update a virtual child given a tar entry.
+	 * @param entry a tar entry.
+	 * @return the virtual child that represents the tar entry.
+	 */
+	protected VirtualChild updateVirtualChild(TarEntry entry, VirtualChild child) {
+		child.renameTo(entry.getName());
+		child.isDirectory = entry.isDirectory();
+		child.setComment("");  //$NON-NLS-1$
+		child.setCompressedSize(entry.getSize());
+		child.setCompressionMethod(""); //$NON-NLS-1$;
+		child.setSize(entry.getSize());
+		child.setTimeStamp(entry.getModificationTime());
+		return child;	
+	}
+	
+	/**
 	 * Replaces the old tar file managed by the handler with the given file, and optionally update
 	 * the cache.
 	 * @param newFile the new tar file.
@@ -1647,11 +1704,11 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 			appendFile(file, entry, outStream);
 			
 			// remove old entry from cache
-			vfs.removeEntry(vfs.getEntry(fullVirtualName));
+			//vfs.removeEntry(vfs.getEntry(fullVirtualName));
 			
 			// add the new entry to cache
-			VirtualChild temp = getVirtualChild(entry);
-			vfs.addEntry(temp);
+			VirtualChild temp = updateVirtualChild(entry, vfs.getEntry(fullVirtualName));
+			//vfs.addEntry(temp);
 			
 			// close output stream
 			outStream.close();
@@ -1839,7 +1896,10 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				// the rename list
 				// a hashmap containing old name, new name associations for each
 				// child that has to be renamed
-				HashMap names = new HashMap();
+				HashMap oldNewNames = new HashMap();
+				// a hashmap containing new name, old name associations for each
+				// child that has to be renamed
+				HashMap newOldNames = new HashMap();
 				
 				// if the entry to rename is a directory, we need to rename all
 				// its children entries
@@ -1847,7 +1907,8 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 					
 					// add the entry itself to the rename list
 					// include '/' in both the old name and the new name since it is a directory
-					names.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+					oldNewNames.put(fullVirtualName + "/", newFullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+					newOldNames.put(newFullVirtualName + "/", fullVirtualName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					
 					// get all the children of the entry to be renamed
 					VirtualChild[] childrenArray = getVirtualChildrenList(fullVirtualName, archiveOperationMonitor);
@@ -1867,20 +1928,23 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 						// if a child is a directory, ensure that '/'s are added both for the old name
 						// and the new name
 						if (childrenArray[i].isDirectory) {
-							names.put(childrenArray[i].fullName + "/", newName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+							oldNewNames.put(childrenArray[i].fullName + "/", newName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+							newOldNames.put(newName + "/", childrenArray[i].fullName + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						else {
-							names.put(childrenArray[i].fullName, newName);
+							oldNewNames.put(childrenArray[i].fullName, newName);
+							newOldNames.put(newName, childrenArray[i].fullName);
 						}
 					}
 				}
 				// otherwise entry is not a directory, so simply add it to the rename list
 				else {
-					names.put(fullVirtualName, newFullVirtualName);
+					oldNewNames.put(fullVirtualName, newFullVirtualName);
+					newOldNames.put(newFullVirtualName, fullVirtualName);
 				}
 				
 				// create tar with renamed entries
-				boolean isCanceled = createTar(children, outStream, names, archiveOperationMonitor);
+				boolean isCanceled = createTar(children, outStream, oldNewNames, archiveOperationMonitor);
 				if (isCanceled)
 				{
 					outStream.close();
@@ -1904,7 +1968,7 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 				// to do the delta upgrade of the cache. But investigate this, since it will
 				// probably be more efficient
 				replaceFile(outputTempFile, true);
-				updateCache();
+				updateTree(newOldNames);
 				
 				return true;
 			}

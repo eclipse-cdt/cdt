@@ -9,6 +9,7 @@
  *    QNX - Initial API and implementation
  *    Markus Schorn (Wind River Systems)
  *    Andrew Ferguson (Symbian)
+ *    Sergey Prigogin (Google)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
@@ -224,18 +225,31 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (shouldUpdate(pdomBinding, fromName)) {
 				pdomBinding.update(this, fromName.getBinding());
 			}
-		}
-		else {
+		} else {
 			try {
 				PDOMNode parent = getAdaptedParent(binding, true, true);
 				if (parent == null)
 					return null;
 				pdomBinding = addBinding(parent, binding);
-			} catch(DOMException e) {
+				if (pdomBinding instanceof PDOMCPPClassInstance && binding instanceof ICPPClassType) {
+					// Add instantiated constructors to the index (bug 201174).
+					addConstructors(pdomBinding, (ICPPClassType) binding);
+				}
+			} catch (DOMException e) {
 				throw new CoreException(Util.createStatus(e));
 			}
 		}
 		return pdomBinding;
+	}
+
+	private void addConstructors(PDOMBinding pdomBinding, ICPPClassType binding)
+			throws DOMException, CoreException {
+		ICPPConstructor[] constructors = binding.getConstructors();
+		for (int i = 0; i < constructors.length; i++) {
+			if (adaptBinding(constructors[i]) == null) {
+				addBinding(pdomBinding, constructors[i]);
+			}
+		}
 	}
 
 	private boolean shouldUpdate(PDOMBinding pdomBinding, IASTName fromName) throws CoreException {

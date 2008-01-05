@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -91,7 +92,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	   c1.m1("aaa");  // OK
 	//	   c1.m2("aaa");  // problem
 	//  }
-	public void _testUnindexedConstructorInstanceImplicitReferenceToDeferred() throws Exception {
+	public void testUnindexedConstructorInstanceImplicitReferenceToDeferred() throws Exception {
 		IBinding b0= getBindingFromASTName("C1<char> c1", 8);
 		IBinding b1= getBindingFromASTName("m1(\"aaa\")", 2);
     	IBinding b2= getBindingFromASTName("m2(\"aaa\")", 2);
@@ -115,6 +116,25 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 		assertInstance(b0, ICPPMethod.class);
 	}
 	
+	// template<typename T>
+	// class StrT {
+	//   public: void assign(const T* s) {}
+	// };
+	
+	// void main() {
+	//   StrT<char> x;
+	//   x.assign("aaa");
+	// }
+	public void testUnindexedMethodInstance2() throws Exception {
+		IBinding b0= getBindingFromASTName("assign(\"aaa\")", 6);
+		assertInstance(b0, ICPPMethod.class);
+    	assertEquals(1, getIndex().findNames(b0, IIndex.FIND_REFERENCES).length);
+		IParameter[] parameters = ((ICPPMethod) b0).getParameters();
+		System.out.println(String.valueOf(parameters));
+		IFunctionType type = ((ICPPMethod) b0).getType();
+		System.out.println(String.valueOf(type));
+	}
+
 	// template<typename T>
 	// class X {};
 	
@@ -188,7 +208,7 @@ public class IndexCPPTemplateResolutionTest extends IndexBindingResolutionTestBa
 	//	   m1("aaa");  // OK
 	//	   m2("aaa");  // problem
 	//  }
-	public void _testUnindexedConstructorInstanceImplicitReference() throws Exception {
+	public void testUnindexedConstructorInstanceImplicitReference() throws Exception {
 		IBinding b0= getBindingFromASTName("m1(\"aaa\")", 2);
     	IBinding b1= getBindingFromASTName("m2(\"aaa\")", 2);
     	

@@ -179,7 +179,7 @@ public abstract class CPPSelectionTestsAnyIndexer extends BaseSelectionTestsInde
 	//   C<char> a;
 	//   a.assign("aaa");
 	// }
-	public void _testTemplateClassMethod_207320() throws Exception {
+	public void testTemplateClassMethod_207320() throws Exception {
 		StringBuffer[] buffers= getContents(2);
         String hcode= buffers[0].toString();
         String scode= buffers[1].toString();

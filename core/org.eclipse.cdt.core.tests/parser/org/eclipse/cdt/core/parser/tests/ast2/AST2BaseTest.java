@@ -289,15 +289,15 @@ public class AST2BaseTest extends BaseTestCase {
         {
             shouldVisitNames = true;
         }
-        public List nameList = new ArrayList();
-        public int visit( IASTName name ){
-            nameList.add( name );
+        public List<IASTName> nameList = new ArrayList<IASTName>();
+        public int visit(IASTName name) {
+            nameList.add(name);
             return PROCESS_CONTINUE;
         }
-        public IASTName getName( int idx ){
-            if( idx < 0 || idx >= nameList.size() )
+        public IASTName getName(int idx) {
+            if (idx < 0 || idx >= nameList.size())
                 return null;
-            return (IASTName) nameList.get( idx );
+            return nameList.get(idx);
         }
         public int size() { return nameList.size(); } 
     }

@@ -339,4 +339,17 @@ public class CodeFormatterTest extends BaseUITestCase {
 		assertFormatterResult();
 	}
 
+	//void f() {
+	//#define I 0
+	//    int i = I;
+	//}
+
+	//void f() {
+	//#define I 0
+	//	int i = I;
+	//}
+	public void testMacroAsInitializer_Bug214354() throws Exception {
+		assertFormatterResult();
+	}
+	
 }

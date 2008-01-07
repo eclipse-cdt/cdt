@@ -54,7 +54,7 @@ mv package.count.orig package.count
 --------------------------------
 After S-build has been prepared (on signedUpdates)
 On local Eclipse client, checkout Europa projects according to
-    http://wiki.eclipse.org/index.php/Europa_Build
+    http://wiki.eclipse.org/Europa_Build
 Open file 
     org.eclipse.europa.tools/build-home/features-dsdp-tm.xml
 ssh build.eclipse.org

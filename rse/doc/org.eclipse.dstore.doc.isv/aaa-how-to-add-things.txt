@@ -2,7 +2,7 @@ Last revised July 27, 2006
 (This file is for information only; it is not included in the release.)
 
 See also
-  http://wiki.eclipse.org/index.php/How_to_add_things_to_the_Eclipse_doc
+  http://wiki.eclipse.org/How_to_add_things_to_the_Eclipse_doc
 with the following exceptions:
 - platformOptions.txt    -> options.txt
 - overview-platform.html -> /reference/misc/overview-rse.html

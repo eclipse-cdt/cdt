@@ -77,9 +77,9 @@
   <a href="http://download.eclipse.org/dsdp/tm/downloads/drops/N-changelog/core/index.html">
   TM Core CVS changelog</a>.</li>
 <li>For other questions, please check the
-  <a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
+  <a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
   as well as the
-  <a href="http://wiki.eclipse.org/index.php/TM_3.0_Known_Issues_and_Workarounds">
+  <a href="http://wiki.eclipse.org/TM_3.0_Known_Issues_and_Workarounds">
   TM 3.0 Known Issues and Workarounds</a>.</li>
 </ul>
 </td></tr></tbody></table>
@@ -101,7 +101,7 @@ Project, developer documents, architecture or how to get involved,<br/>
 the online
 <a href="http://www.eclipse.org/dsdp/tm/tutorial/index.php">Getting Started page</a>
 as well as the
-<a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
+<a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
 are the best places for you to get started.
 </p>
 </td></tr></tbody></table>
@@ -235,11 +235,11 @@ Use
 for an up-to-date list of major or critical bugs.</p>
 
 <p>The 
-<a href="http://wiki.eclipse.org/index.php/TM_3.0_Known_Issues_and_Workarounds">
+<a href="http://wiki.eclipse.org/TM_3.0_Known_Issues_and_Workarounds">
 TM 3.0 Known Issues and Workarounds</a> Wiki page gives an up-to-date list
 of the most frequent and obvious problems, and describes workarounds for them.<br/>
 If you have other questions regarding TM or RSE, please check the
-<a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">TM and RSE FAQ</a>
+<a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">TM and RSE FAQ</a>
 </p>
 
 <p>Click 

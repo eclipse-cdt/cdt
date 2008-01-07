@@ -38,7 +38,7 @@ If you have problems downloading the drops, contact the
 <font face="arial,helvetica,geneva" size="-1"><a href="mailto:webmaster@eclipse.org">webmaster</a></font>.
 If you have problems installing or getting the workbench to run, 
 check out the 
-<a href="http://wiki.eclipse.org/index.php/TM_and_RSE_FAQ">Target Management FAQ</a>,
+<a href="http://wiki.eclipse.org/TM_and_RSE_FAQ">Target Management FAQ</a>,
 or try posting a question to the 
 <a href="http://www.eclipse.org/newsgroups">newsgroup</a>,
 <a href="news://news.eclipse.org/eclipse.dsdp.tm">eclipse.dsdp.tm</a>.

@@ -1627,33 +1627,15 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-    	remoteParent = checkEncoding(remoteParent);
-    	remoteFile = checkEncoding(remoteFile);
-				
-		if (monitor != null && monitor.isCanceled()){
-			throw new RemoteFileCancelledException();
-		}
-		
-		OutputStream stream = null;
-		
-		try {
-			FTPClient ftpClient = cloneFTPClient(isBinary);
-			clearCache(remoteParent);
-			ftpClient.changeWorkingDirectory(remoteParent);
-			stream = new FTPBufferedOutputStream(ftpClient.storeFileStream(remoteFile), ftpClient);
-		}
-		catch (Exception e) {
-			throw new RemoteFileIOException(e);
-		}
-		
-		return stream;
+		int options = isBinary ? IFileService.NONE : IFileService.TEXT_MODE;
+    	return getOutputStream(remoteParent, remoteFile, options, monitor);
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException {
     	remoteParent = checkEncoding(remoteParent);
     	remoteFile = checkEncoding(remoteFile);
 				
@@ -1664,6 +1646,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		OutputStream stream = null;
 		
 		try {
+			boolean isBinary = (options & IFileService.TEXT_MODE) == 0 ? true : false;
 			FTPClient ftpClient = cloneFTPClient(isBinary);
 			clearCache(remoteParent);
 			ftpClient.changeWorkingDirectory(remoteParent);

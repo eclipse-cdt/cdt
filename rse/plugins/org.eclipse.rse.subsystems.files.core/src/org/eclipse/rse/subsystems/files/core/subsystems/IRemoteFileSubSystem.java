@@ -659,8 +659,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param monitor the progress monitor.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since 2.0
-	 * @deprecated  As of 3.0M4, replaced by
-	 *              {@link #getOutputStream(String, String, boolean, int, IProgressMonitor)}
+	 * @deprecated  Use {@link #getOutputStream(String, String, boolean, IProgressMonitor)} instead
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
 
@@ -668,14 +667,13 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * Gets the output stream to write/append to a remote file. Clients should close the output stream when done. Implementations should not return <code>null</code>.
 	 * @param remoteParent the absolute path of the parent.
 	 * @param remoteFile the name of the remote file.
-	 * @param isBinary <code>true</code> if the file is a binary file, <code>false</code> otherwise.
-	 * @param options bit wise or of option constants.  Valid constants are {@link IFileService#APPEND} and {@link IFileService#NONE}
+	 * @param options bit wise or of option constants.  Valid constants are {@link IFileService#APPEND}, {@link IFileService#TEXT_MODE}, and {@link IFileService#NONE}
 	 * @return the input stream to access the contents of the remote file.
 	 * @param monitor the progress monitor.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since 3.0
 	 */
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException;
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException;
 
 	/**
 	 * Indicates whether this file subsystem supports code page conversion using

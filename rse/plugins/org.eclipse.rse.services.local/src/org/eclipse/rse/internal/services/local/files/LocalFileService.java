@@ -1641,24 +1641,15 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(String, String, boolean, IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		File file = new File(remoteParent, remoteFile);
-		OutputStream stream = null;
-		
-		try {
-			stream = new FileOutputStream(file);
-		}
-		catch (Exception e) {
-			throw new RemoteFileIOException(e);
-		}
-		
-		return stream;
+		int options = isBinary ? IFileService.NONE : IFileService.TEXT_MODE;
+		return getOutputStream(remoteParent, remoteFile, options, monitor);
 	}	
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException {
 		File file = new File(remoteParent, remoteFile);
 		OutputStream stream = null;
 		

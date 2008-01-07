@@ -678,7 +678,7 @@ public class RSEFileStoreImpl extends FileStore
 				} else {
 					options = IFileService.NONE;
 				}
-				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), true, options, monitor);
+				return subSys.getOutputStream(remoteFile.getParentPath(), remoteFile.getName(), options, monitor);
 			}
 			catch (SystemMessageException e) {
 				throw new CoreException(new Status(IStatus.ERROR,

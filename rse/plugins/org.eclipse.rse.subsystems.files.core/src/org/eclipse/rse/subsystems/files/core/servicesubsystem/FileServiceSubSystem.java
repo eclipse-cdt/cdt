@@ -1030,8 +1030,8 @@ public final class FileServiceSubSystem extends RemoteFileSubSystem implements I
 		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, isBinary, monitor), remoteParent, remoteFile, this);			
 	}
 
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
-		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, isBinary, options, monitor), remoteParent, remoteFile, this);			
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException {
+		return new FileSubSystemOutputStream(getFileService().getOutputStream(remoteParent, remoteFile, options, monitor), remoteParent, remoteFile, this);			
 	}
 	
 	/**

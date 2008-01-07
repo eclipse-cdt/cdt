@@ -1031,8 +1031,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				if (permNew != permOld) {
 					//getChannel("SftpFileService.setReadOnly").chmod(permNew, path); //$NON-NLS-1$
 					attr.setPERMISSIONS(permNew); 
-					getChannel("SftpFileService.setReadOnly").setStat(recode(path), attr); //$NON-NLS-1$
-					ok=true;
+					getChannel("SftpFileService.setReadOnly").setStat(recode(path), attr); //$NON-NLS-1$					ok=true;
 					Activator.trace("SftpFileService.setReadOnly ok"); //$NON-NLS-1$
 				} else {
 					ok=true;
@@ -1080,41 +1079,15 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(String, String, boolean, IProgressMonitor)
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException {
-		
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		
-		OutputStream stream = null;
-		String dst = remoteParent;
-		if (remoteFile!=null) {
-			dst = concat(remoteParent, remoteFile);
-		}
-		
-		try {
-			SftpProgressMonitor sftpMonitor = new MyProgressMonitor(monitor);
-			int mode = ChannelSftp.OVERWRITE;
-			getChannel("SftpFileService.getOutputStream " + remoteFile); //check the session is healthy //$NON-NLS-1$
-			ChannelSftp channel = (ChannelSftp)fSessionProvider.getSession().openChannel("sftp"); //$NON-NLS-1$
-		    channel.connect();
-			stream = new SftpBufferedOutputStream(channel.put(recodeSafe(dst), sftpMonitor, mode), channel); 
-			Activator.trace("SftpFileService.getOutputStream " + remoteFile + " ok"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		catch (Exception e) {
-			Activator.trace("SftpFileService.getOutputStream " + dst + " failed: " + e.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			throw makeSystemMessageException(e);
-		}
-		if (monitor.isCanceled()) {
-			throw new RemoteFileCancelledException();
-		}
-		return stream;
+		int options = isBinary ? IFileService.NONE : IFileService.TEXT_MODE;
+		return getOutputStream(remoteParent, remoteFile, options, monitor);
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.rse.services.files.AbstractFileService#getOutputStream(java.lang.String, java.lang.String, boolean, int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, int options, IProgressMonitor monitor) throws SystemMessageException {
+	public OutputStream getOutputStream(String remoteParent, String remoteFile, int options, IProgressMonitor monitor) throws SystemMessageException {
 		
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();

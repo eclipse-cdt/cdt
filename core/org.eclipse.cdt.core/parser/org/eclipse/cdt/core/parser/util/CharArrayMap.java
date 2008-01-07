@@ -18,17 +18,7 @@ import java.util.Map;
 /**
  * A facade for a Map that allows char[] slices to be used as keys.
  * 
- * Most methods are overloaded with two versions, one that uses a
- * section of a char[] as the key (a slice), and one that uses
- * the entire char[] as the key.
- * 
- * ex:
- * char[] key = "one two three".toCharArray();
- * map.put(key, 4, 3, new Integer(99));
- * map.get(key, 4, 3); // returns 99
- * map.get("two".toCharArray()); // returns 99
- * 
- * 
+ * @see ICharArrayMap for API docs
  * @author Mike Kucera
  */
 public final class CharArrayMap<V> implements ICharArrayMap<V> {
@@ -40,8 +30,6 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
 	 * 
 	 * This class is private so it is assumed that the arguments
 	 * passed to the constructor are legal.
-	 * 
-	 * TODO: implement compareTo() so that the map may be sorted
 	 */
     private static final class Key {
         private final char[] buffer;
@@ -63,7 +51,8 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
         	this.start = 0;
         }
         
-        @Override public boolean equals(Object x) {
+        @Override 
+        public boolean equals(Object x) {
         	if(this == x) 
         		return true;
         	if(!(x instanceof Key))  
@@ -81,7 +70,8 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
             return true;
         }
         
-        @Override public int hashCode() {
+        @Override 
+        public int hashCode() {
             int result = 17;
             for(int i = start; i < start+length; i++) {
             	result = 37 * result + buffer[i];
@@ -89,8 +79,10 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
             return result;
         }
         
-        @Override public String toString() {
-        	return "'" + new String(buffer, start, length) + "'@(" + start + "," + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        @Override 
+        public String toString() {
+        	String slice = new String(buffer, start, length);
+        	return "'" + slice + "'@(" + start + "," + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
         
     }
@@ -98,7 +90,6 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
 
     /**
      * Used to enforce preconditions. 
-     * 
      * Note that the NPE thrown by mutator methods is thrown from the Key constructor.
      * 
      * @throws IndexOutOfBoundsException if boundaries are wrong in any way
@@ -202,7 +193,8 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
     /**
      * Returns a String representation of the map.
      */
-    @Override public String toString() {
+    @Override 
+    public String toString() {
     	return map.toString();
     }
    

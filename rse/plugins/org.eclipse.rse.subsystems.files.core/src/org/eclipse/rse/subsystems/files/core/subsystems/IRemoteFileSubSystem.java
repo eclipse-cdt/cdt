@@ -659,7 +659,7 @@ public interface IRemoteFileSubSystem extends ISubSystem {
 	 * @param monitor the progress monitor.
 	 * @throws SystemMessageException if an error occurs.
 	 * @since 2.0
-	 * @deprecated  Use {@link #getOutputStream(String, String, boolean, IProgressMonitor)} instead
+	 * @deprecated  Use {@link #getOutputStream(String, String, int, IProgressMonitor)} instead
 	 */
 	public OutputStream getOutputStream(String remoteParent, String remoteFile, boolean isBinary, IProgressMonitor monitor) throws SystemMessageException;
 

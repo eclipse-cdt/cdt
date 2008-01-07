@@ -1,11 +1,11 @@
-feature@org.eclipse.rse=v20080104,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
-feature@org.eclipse.rse.core=v20080102,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
+feature@org.eclipse.rse=v20080107,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse-feature
+feature@org.eclipse.rse.core=v20080107,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.core-feature
 feature@org.eclipse.rse.dstore=v20080102,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.dstore-feature
 feature@org.eclipse.rse.examples=v20071121,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/examples/org.eclipse.rse.examples-feature
-feature@org.eclipse.rse.ftp=v20071206,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature
+feature@org.eclipse.rse.ftp=v20080107,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ftp-feature
 feature@org.eclipse.rse.local=v20080104,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.local-feature
 feature@org.eclipse.rse.remotecdt=v20071031,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.remotecdt-feature
-feature@org.eclipse.rse.sdk=v20080104,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.sdk-feature
+feature@org.eclipse.rse.sdk=v20080107,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.sdk-feature
 feature@org.eclipse.rse.ssh=v20071206,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.ssh-feature
 feature@org.eclipse.rse.telnet=v20071121,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/features/org.eclipse.rse.telnet-feature
 feature@org.eclipse.rse.tests=v20071206,:pserver:anonymous:none@dev.eclipse.org:/cvsroot/dsdp,,org.eclipse.tm.rse/tests/org.eclipse.rse.tests-feature

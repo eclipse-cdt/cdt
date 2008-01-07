@@ -21,6 +21,7 @@
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
  * David McKnight   (IBM)        - [196842] Don't have open menu for folders
  * Xuan Chen        (IBM)        - [160775] [api] rename (at least within a zip) blocks UI thread
+ * David McKnight   (IBM)        - [189873] Improve remote shell editor open action with background jobs
  ********************************************************************************/
 
 package org.eclipse.rse.shells.ui.view;
@@ -31,9 +32,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -44,6 +43,7 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISystemDragDropAdapter;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.internal.files.ui.actions.SystemRemoteFileLineOpenWithMenu;
+import org.eclipse.rse.internal.files.ui.view.DownloadAndOpenJob;
 import org.eclipse.rse.internal.shells.ui.ShellResources;
 import org.eclipse.rse.internal.shells.ui.ShellsUIPlugin;
 import org.eclipse.rse.internal.shells.ui.actions.SystemShowInShellViewAction;
@@ -74,17 +74,10 @@ import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.rse.ui.view.ISystemPropertyConstants;
 import org.eclipse.rse.ui.view.ISystemRemoteElementAdapter;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
@@ -406,7 +399,7 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 				Object obj = null;
 				try
 				{
-					obj = fs.getObjectWithAbsoluteName(path);
+					obj = fs.getObjectWithAbsoluteName(path, new NullProgressMonitor());
 				}
 				catch (Exception e)
 				{
@@ -438,113 +431,6 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 	}
 	
 	/**
-	 * Open workspace file associated with IRemoteCommandShell.  If there is no associated project
-	 * return.
-	 * @param remoteFile
-	 * @param output
-	 * @return
-	 */
-	// DKM - this is should no longer used.  Used to be for opening corresponding workspace IFile from remote error
-	//       but remote error as is will not be the project integration point for this.
-//	protected boolean openWorkspaceFile(IRemoteFile remoteFile, IRemoteOutput output)
-//	{
-//		IRemoteCommandShell cmd = (IRemoteCommandShell)(output.getParent());
-//		IProject associatedProject = cmd.getAssociatedProject();
-//		if (associatedProject != null)
-//		{
-//			ProjectSourceContainer container = new ProjectSourceContainer(associatedProject, false);
-//			ISourceLookupDirector director = new RemoteSourceLookupDirector(); 
-//			container.init(director);
-//			try
-//			{
-//				Object[] matches = container.findSourceElements(remoteFile.getName());
-//				for (int i = 0; i < matches.length; i++)
-//				{
-//					//System.out.println("match="+matches[i]);
-//				}
-//				
-//				if (matches.length == 1)
-//				{
-//					IFile localMatch = (IFile)matches[0];
-//				
-//					
-//					
-//					IWorkbenchPage activePage = SystemBasePlugin.getActiveWorkbenchWindow().getActivePage();
-//	
-//					FileEditorInput finput = new FileEditorInput(localMatch);						
-//				
-//				
-//					IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(remoteFile.getName());
-//					if (desc == null)
-//					{
-//						desc = getDefaultTextEditor();
-//					}
-//					String editorid = desc.getId();
-//					IEditorPart editor = activePage.openEditor(finput, editorid);
-//					
-//					int line = output.getLine();
-//					int charStart = output.getCharStart();
-//					int charEnd = output.getCharEnd();
-//					
-//					try
-//					{
-//						IMarker marker = null;
-//						
-//						// DKM - should we?  this will populate the Problems view..but resources are actually remote
-//						if (output instanceof IRemoteError)
-//						{
-//							IRemoteError error = (IRemoteError)output;
-//							String type = error.getType();
-//							
-//							marker = localMatch.createMarker(IMarker.TEXT);
-//					
-//							if (type.equals(ISystemOutputRemoteTypes.TYPE_ERROR))
-//							{
-//								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-//							}
-//							else if (type.equals(ISystemOutputRemoteTypes.TYPE_WARNING))
-//							{
-//								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-//							}
-//							else if (type.equals(ISystemOutputRemoteTypes.TYPE_INFORMATIONAL))
-//							{
-//								marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-//							}
-//							
-//							marker.setAttribute(IMarker.MESSAGE, output.getText());
-//							marker.setAttribute(IMarker.LINE_NUMBER, line);
-//							marker.setAttribute(IMarker.CHAR_START, charStart);
-//							marker.setAttribute(IMarker.CHAR_END, charEnd);
-//							
-//						}
-//						else
-//						{
-//							marker = localMatch.createMarker(IMarker.TEXT);						
-//							marker.setAttribute(IMarker.LINE_NUMBER, line);
-//							marker.setAttribute(IMarker.CHAR_START, charStart);
-//							marker.setAttribute(IMarker.CHAR_END, charEnd);
-//						}
-//						IDE.gotoMarker(editor, marker);
-//					
-//						
-//					}
-//					catch (CoreException e)
-//					{
-//						e.printStackTrace();
-//					}
-//					return true;
-//				}
-//			}
-//			catch(Exception e)
-//			{				
-//				e.printStackTrace();
-//			}
-//		}	
-//		
-//		return false;
-//	}
-
-	/**
 	 * Opens the appropriate editor for a remote output object
 	 */
 	public boolean handleDoubleClick(Object element)
@@ -557,127 +443,116 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			IRemoteFile file = outputToFile(output);
 			if (file != null && file.isFile())
 			{									
-				// no longer doing opening of workspace files here
-				//if (!openWorkspaceFile(file, output))
-				{
-					ISystemViewElementAdapter adapter = (ISystemViewElementAdapter) ((IAdaptable) file).getAdapter(ISystemViewElementAdapter.class);
-					result = adapter.handleDoubleClick(file);
-					int line = output.getLine();
-	
-					if (result)
-					{
-						DelayedGotoLine dgoto = new DelayedGotoLine(file, line, output.getCharStart(), output.getCharEnd());
-						Display.getDefault().asyncExec(dgoto);
-						/*
-						//if (line > 0)
-						{
-							SystemRemoteFileLineOpenWithMenu.handleGotoLine(file, line, output.getCharStart(), output.getCharEnd());
-						}
-						*/
-						return true;
-					}
-				}
+					doOpen(file, output);
+					return true;
 			}
-		}
-		else if (element instanceof IRemoteCommandShell)
-		{
-			IRemoteCommandShell cmdshell = (IRemoteCommandShell) element;
-			if (cmdshell.getType().equals(ShellResources.RESID_SHELLS_COMMAND_SHELL_LABEL))
+			else if (element instanceof IRemoteCommandShell)
 			{
-				SystemCommandsViewPart viewPart = SystemCommandsUI.getInstance().activateCommandsView();
-				viewPart.updateOutput(cmdshell);
-				viewPart.showPageFor(cmdshell); //196584
-				result = true;
+				IRemoteCommandShell cmdshell = (IRemoteCommandShell) element;
+				if (cmdshell.getType().equals(ShellResources.RESID_SHELLS_COMMAND_SHELL_LABEL))
+				{
+					SystemCommandsViewPart viewPart = SystemCommandsUI.getInstance().activateCommandsView();
+					viewPart.updateOutput(cmdshell);
+					viewPart.showPageFor(cmdshell); //196584
+					result = true;
+				}
 			}
 		}
 		return result;
 	}
-
-	public class DelayedGotoLineJob extends Job
-	{
-		private DelayedGotoLine _gotoLine;
-		public DelayedGotoLineJob(DelayedGotoLine gotoLine)
-		{
-			super("Goto Line");
-			_gotoLine = gotoLine;
-		}
-		
-		public IStatus run(IProgressMonitor monitor)
-		{
-			try
-			{
-				// wait for a bit so that download can complete - otherwise
-				// we could end up spawning this job too frequently
-				Thread.sleep(1000);
-			}
-			catch (Exception e)
-			{				
-			}
-			PlatformUI.getWorkbench().getDisplay().asyncExec(_gotoLine);
-			return Status.OK_STATUS;
-		}
-	}
 	
-	public class DelayedGotoLine implements Runnable
+	
+	private void doOpen(IRemoteFile remoteFile, IRemoteOutput output)
 	{
-		private IRemoteFile _file;
-		private int _line;
-		private int _charStart;
-		private int _charEnd;
-		
-		public DelayedGotoLine(IRemoteFile file, int line, int charStart, int charEnd)
+		if (!remoteFile.isArchive() || !remoteFile.getParentRemoteFileSubSystem().getParentRemoteFileSubSystemConfiguration().supportsArchiveManagement())
 		{
-			_file = file;
-			_line = line;
-			_charStart = charStart;
-			_charEnd = charEnd;
-		}
-		
-		public void run()
-		{
-			if (checkEditorOpen())
+			// only handle double click if object is a file
+			ISystemEditableRemoteObject editable = getEditableRemoteObject(remoteFile);
+			if (editable != null)
 			{
-				SystemRemoteFileLineOpenWithMenu.handleGotoLine(_file, _line, _charStart, _charEnd);
-			}
-			else
-			{
-				DelayedGotoLineJob job = new DelayedGotoLineJob(this);
-				job.schedule();
-				//Display.getDefault().asyncExec(this);
-			}
-		}
-		
-		private boolean checkEditorOpen()
-		{
-			IWorkbench desktop = PlatformUI.getWorkbench();
-			IWorkbenchPage persp = desktop.getActiveWorkbenchWindow().getActivePage();
-			String fileName = _file.getAbsolutePath();
-			IEditorReference[] editors = persp.getEditorReferences();
-			for (int i = 0; i < editors.length; i++)
-			{
-				IEditorReference ref = editors[i];
-				IEditorPart editorp = ref.getEditor(false);
-				if (editorp != null)
+				int line = output.getLine();
+				int charStart = output.getCharStart();
+				int charEnd = output.getCharEnd();
+				
+				try
 				{
-					IEditorInput einput = editorp.getEditorInput();
-					if (einput instanceof IFileEditorInput)
+					boolean isOpen = editable.checkOpenInEditor() != ISystemEditableRemoteObject.NOT_OPEN;
+					boolean isFileCached = isFileCached(editable, remoteFile);
+					if (isFileCached)
 					{
-						IFileEditorInput input = (IFileEditorInput) einput;
-						IFile efile = input.getFile();
-
-						SystemIFileProperties properties = new SystemIFileProperties(efile);
-						String comparePath = properties.getRemoteFilePath();
-
-						if (comparePath != null && (comparePath.replace('\\','/').equals(fileName.replace('\\','/'))))
-						{
-							return true;
+						if (!isOpen) {
+							editable.setLocalResourceProperties();
+							editable.addAsListener();
 						}
+						editable.openEditor();
+						SystemRemoteFileLineOpenWithMenu.handleGotoLine(remoteFile, line, charStart, charEnd);
 					}
+					else
+					{
+						DownloadAndOpenJob oJob = new DownloadAndOpenJob(editable, false, line, charStart, charEnd);
+						oJob.schedule();
+					}					
+				}
+				catch (Exception e)
+				{
 				}
 			}
-			return false;
 		}
 	}
+			
+	private boolean isFileCached(ISystemEditableRemoteObject editable, IRemoteFile remoteFile)
+	{
+		// DY:  check if the file exists and is read-only (because it was previously opened
+		// in the system editor)
+		IFile file = editable.getLocalResource();
+		SystemIFileProperties properties = new SystemIFileProperties(file);
+		boolean newFile = !file.exists();
+	
+		// detect whether there exists a temp copy already
+		if (!newFile && file.exists())
+		{
+			// we have a local copy of this file, so we need to compare timestamps
+	
+			// get stored modification stamp
+			long storedModifiedStamp = properties.getRemoteFileTimeStamp();
+	
+			// get updated remoteFile so we get the current remote timestamp
+			//remoteFile.markStale(true);
+			IRemoteFileSubSystem subsystem = remoteFile.getParentRemoteFileSubSystem();
+			try
+			{
+				remoteFile = subsystem.getRemoteFileObject(remoteFile.getAbsolutePath(), new NullProgressMonitor());
+			}
+			catch (Exception e)
+			{
+				
+			}
+	
+			// get the remote modified stamp
+			long remoteModifiedStamp = remoteFile.getLastModified();
+	
+			// get dirty flag
+			boolean dirty = properties.getDirty();
+	
+			boolean remoteNewer = (storedModifiedStamp != remoteModifiedStamp);
+			
+			String remoteEncoding = remoteFile.getEncoding();
+			String storedEncoding = properties.getEncoding();
+			
+			boolean encodingChanged = storedEncoding == null || !(remoteEncoding.equals(storedEncoding));
+
+			boolean usedBinary = properties.getUsedBinaryTransfer();
+			boolean isBinary = remoteFile.isBinary();
+			
+			return (!dirty && 
+					!remoteNewer && 
+					usedBinary == isBinary &&
+					!encodingChanged);
+		}
+		return false;
+	}
+	
+
 	
 	
 	/**
@@ -1174,6 +1049,11 @@ implements  ISystemViewElementAdapter, ISystemRemoteElementAdapter
 			{
 				return new SystemEditableRemoteFile(file);
 			}
+		}
+		else if (element instanceof IRemoteFile)
+		{
+			IRemoteFile file = (IRemoteFile)element;
+			return new SystemEditableRemoteFile(file);
 		}
 		return null;
 	}

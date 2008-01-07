@@ -41,6 +41,7 @@
  * Xuan Chen        (IBM)        - [160775] [api] [breaking] [nl] rename (at least within a zip) blocks UI thread
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
+ * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -3015,7 +3016,7 @@ public class SystemViewRemoteFileAdapter
 					}
 					else
 					{
-						DownloadJob oJob = new DownloadJob(editable, false);
+						DownloadAndOpenJob oJob = new DownloadAndOpenJob(editable, false);
 						oJob.schedule();
 					}
 					

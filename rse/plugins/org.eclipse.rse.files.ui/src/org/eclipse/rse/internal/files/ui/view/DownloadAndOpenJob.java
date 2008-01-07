@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Kevin Doyle (IBM) - [194463] Use the result of _editable.download() to decide if file is to be opened
+ * David McKnight (IBM)  - [189873] Improve remote shell editor open action with background jobs
  *******************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -25,20 +26,39 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
 import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.internal.files.ui.actions.SystemRemoteFileLineOpenWithMenu;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.ui.view.ISystemEditableRemoteObject;
 import org.eclipse.swt.widgets.Display;
 
-public class DownloadJob extends Job
+public class DownloadAndOpenJob extends Job
 {
-	public static class OpenEditorRunnable implements Runnable
+	private static class OpenEditorRunnable implements Runnable
 	{
 		private ISystemEditableRemoteObject _editable;
 		private boolean _systemEditor;
+		private int _line;
+		private int _charStart;
+		private int _charEnd;
+		
 		public OpenEditorRunnable(ISystemEditableRemoteObject editable, boolean systemEditor)
 		{
 			_editable = editable;
 			_systemEditor = systemEditor;
+			_line = -1;
+			_charStart = -1;
+			_charEnd = -1;
 		}
+		
+		public OpenEditorRunnable(ISystemEditableRemoteObject editable, boolean systemEditor, int line, int charStart, int charEnd)
+		{
+			_editable = editable;
+			_systemEditor = systemEditor;
+			_line = line;
+			_charStart = charStart;
+			_charEnd = charEnd;
+		}
+		
 		
 		public void run()
 		{
@@ -54,10 +74,13 @@ public class DownloadJob extends Job
 				{
 					_editable.openEditor();
 				}
+				
+				if (_line > -1 || (_charStart > -1 && _charEnd > -1)){						
+					SystemRemoteFileLineOpenWithMenu.handleGotoLine((IRemoteFile)_editable.getRemoteObject(), _line, _charStart, _charEnd);
+				}
 			}
 			catch (Exception e)
-			{
-				
+			{				
 			}			
 		}
 		
@@ -65,17 +88,39 @@ public class DownloadJob extends Job
 
 	private ISystemEditableRemoteObject _editable;
 	private boolean _systemEditor;
+	private int _line;
+	private int _charStart;
+	private int _charEnd;
 	
 	/**
 	 * Download job.
 	 * @param editable the editable remote object.
 	 * @param systemEditor whether to use the system editor.
 	 */
-	public DownloadJob(ISystemEditableRemoteObject editable, boolean systemEditor)
+	public DownloadAndOpenJob(ISystemEditableRemoteObject editable, boolean systemEditor)
 	{
 		super(FileResources.RESID_FILES_DOWNLOAD);
 		_editable = editable;
 		_systemEditor = systemEditor;
+		_line = -1;
+		_charStart = -1;
+		_charEnd = -1;
+	}
+	
+	/**
+	 * Download job
+	 * @param editable the editable remote object
+	 * @param systemEditor whether to use the system editor
+	 * @param line the line to jump to after opening
+	 */
+	public DownloadAndOpenJob(ISystemEditableRemoteObject editable, boolean systemEditor, int line, int charStart, int charEnd)
+	{
+		super(FileResources.RESID_FILES_DOWNLOAD);
+		_editable = editable;
+		_systemEditor = systemEditor;
+		_line = line;
+		_charStart = charStart;
+		_charEnd = charEnd;
 	}
 
 	public IStatus run(IProgressMonitor monitor) 
@@ -94,7 +139,13 @@ public class DownloadJob extends Job
 		}
 		if (downloadSuccessful)
 		{
-			OpenEditorRunnable oe = new OpenEditorRunnable(_editable, _systemEditor);
+			OpenEditorRunnable oe = null;
+			if (_line > -1 || (_charStart > -1 && _charEnd > -1)){	
+				oe = new OpenEditorRunnable(_editable, _systemEditor, _line, _charStart, _charEnd);
+			}
+			else{
+				oe = new OpenEditorRunnable(_editable, _systemEditor);
+			}
 			Display.getDefault().asyncExec(oe);
 		}
 

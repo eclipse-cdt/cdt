@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [189130] Move SystemIFileProperties from UI to Core
+ * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.actions;
@@ -21,7 +22,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.files.ui.resources.SystemEditableRemoteFile;
-import org.eclipse.rse.internal.files.ui.view.DownloadJob;
+import org.eclipse.rse.internal.files.ui.view.DownloadAndOpenJob;
 import org.eclipse.rse.subsystems.files.core.SystemIFileProperties;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystem;
@@ -156,7 +157,7 @@ public class SystemEditFileAction extends SystemBaseAction {
 					}
 					else
 					{
-						DownloadJob oJob = new DownloadJob(editable, false);
+						DownloadAndOpenJob oJob = new DownloadAndOpenJob(editable, false);
 						oJob.schedule();
 					}
 				}

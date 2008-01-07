@@ -216,7 +216,6 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension#getExtendedMemoryBlock(java.lang.String,
 	 *      java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
 	public IMemoryBlockExtension getExtendedMemoryBlock(String expression, Object context) throws DebugException {
 
 		// The block start address (supports 64-bit processors)

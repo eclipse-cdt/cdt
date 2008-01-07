@@ -10,34 +10,54 @@
  *    Markus Schorn (Wind River Systems)
  *    IBM Corporation
  *    Anton Leherbauer (Wind River Systems)
+ *    Mike Kucera - IBM
  *******************************************************************************/
 
 package org.eclipse.cdt.core.dom.ast.gnu.c;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c.AbstractCLanguage;
+import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.c.GCCParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c.ICParserExtensionConfiguration;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 
 /**
- * @author Doug Schaefer
- *
+ * Concrete ILanguage implementation for the DOM C parser.
+ * 
  */
-public class GCCLanguage extends AbstractCLanguage {
+public class GCCLanguage extends AbstractCLikeLanguage {
 
 	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = new GCCScannerExtensionConfiguration();
 	protected static final GCCParserExtensionConfiguration C_GNU_PARSER_EXTENSION = new GCCParserExtensionConfiguration();
 	// Must match the id in the extension
 	public static final String ID = CCorePlugin.PLUGIN_ID + ".gcc"; //$NON-NLS-1$ 
 
-	private static final GCCLanguage myDefault = new GCCLanguage();
+	private static final GCCLanguage DEFAULT_INSTANCE = new GCCLanguage();
 	
 	public static GCCLanguage getDefault() {
-		return myDefault;
+		return DEFAULT_INSTANCE;
 	}
+	
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter) {
+		if (adapter == IPDOMLinkageFactory.class) {
+			return new PDOMCLinkageFactory();
+		}
+		return super.getAdapter(adapter);
+	}
+	
 	
 	public String getId() {
 		return ID; 
@@ -47,18 +67,26 @@ public class GCCLanguage extends AbstractCLanguage {
 		return ILinkage.C_LINKAGE_ID;
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCLanguage#getScannerExtensionConfiguration()
-	 */
+
+	@Override
 	protected IScannerExtensionConfiguration getScannerExtensionConfiguration() {
 		return C_GNU_SCANNER_EXTENSION;
 	}
-	
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.c.AbstractCLanguage#getParserExtensionConfiguration()
-	 */
-	protected ICParserExtensionConfiguration getParserExtensionConfiguration() {
-		return C_GNU_PARSER_EXTENSION;
+
+
+	@Override
+	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService, IIndex index) {
+		return new GNUCSourceParser(scanner, parserMode, logService, C_GNU_PARSER_EXTENSION, index);
 	}
+
+
+	@Override
+	protected ParserLanguage getParserLanguage() {
+		return ParserLanguage.C;
+	}
+
+
+	
+
 
 }

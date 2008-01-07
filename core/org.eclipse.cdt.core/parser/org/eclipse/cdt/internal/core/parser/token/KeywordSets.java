@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.token;
 
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -25,16 +26,16 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  */
 public class KeywordSets {
 
-	public static Set getKeywords( KeywordSetKey kind, ParserLanguage language )
+	public static Set<String> getKeywords( KeywordSetKey kind, ParserLanguage language )
 	{
 		if( kind == KeywordSetKey.EMPTY )
 			return EMPTY_TABLE;
 		if( kind == KeywordSetKey.DECL_SPECIFIER_SEQUENCE )
-			return (Set) DECL_SPECIFIER_SEQUENCE_TABLE.get( language );
+			return DECL_SPECIFIER_SEQUENCE_TABLE.get( language );
 		if( kind == KeywordSetKey.DECLARATION )
-			return (Set) DECLARATION_TABLE.get( language );
+			return DECLARATION_TABLE.get( language );
 		if( kind == KeywordSetKey.STATEMENT )
-			return (Set) STATEMENT_TABLE.get( language );
+			return STATEMENT_TABLE.get( language );
 		if( kind == KeywordSetKey.BASE_SPECIFIER )
 			return BASE_SPECIFIER_CPP;
 		if( kind == KeywordSetKey.MEMBER )
@@ -46,46 +47,46 @@ public class KeywordSets {
 		if( kind == KeywordSetKey.POST_USING )
 			return POST_USING_CPP;
 		if( kind == KeywordSetKey.FUNCTION_MODIFIER )
-			return (Set) FUNCTION_MODIFIER_TABLE.get( language );
+			return FUNCTION_MODIFIER_TABLE.get( language );
 		if( kind == KeywordSetKey.NAMESPACE_ONLY )	
 			return NAMESPACE_ONLY_SET;
 		if( kind == KeywordSetKey.MACRO )
 			return MACRO_ONLY;
 		if( kind == KeywordSetKey.PP_DIRECTIVE )
-			return (Set) PP_DIRECTIVES_TABLE.get( language );
+			return PP_DIRECTIVES_TABLE.get( language );
 		if( kind == KeywordSetKey.EXPRESSION )
-			return (Set) EXPRESSION_TABLE.get( language );
+			return EXPRESSION_TABLE.get( language );
 		if( kind == KeywordSetKey.ALL )
-			return (Set) ALL_TABLE.get( language );
+			return ALL_TABLE.get( language );
 		if( kind == KeywordSetKey.KEYWORDS )
-			return (Set) KEYWORDS_TABLE.get( language );
+			return KEYWORDS_TABLE.get( language );
 		if( kind == KeywordSetKey.TYPES )
-			return (Set) TYPES_TABLE.get( language );
+			return TYPES_TABLE.get( language );
 		//TODO finish this
 		return null;
 	}
 	
-	private static final Set EMPTY_TABLE = new HashSet(0);
+	private static final Set<String> EMPTY_TABLE = new HashSet<String>(0);
 	
-	private static final Set NAMESPACE_ONLY_SET;
+	private static final Set<String> NAMESPACE_ONLY_SET;
 	static 
 	{
-		NAMESPACE_ONLY_SET = new HashSet(1);
+		NAMESPACE_ONLY_SET = new HashSet<String>(1);
 		NAMESPACE_ONLY_SET.add(Keywords.NAMESPACE );
 	}
 	
-	private static final Set MACRO_ONLY;
+	private static final Set<String> MACRO_ONLY;
 	static 
 	{
-		MACRO_ONLY = new HashSet(1);
+		MACRO_ONLY = new HashSet<String>(1);
 		MACRO_ONLY.add("defined()" ); //$NON-NLS-1$
 	}
 	
 	
-	private static final Set DECL_SPECIFIER_SEQUENCE_C;
+	private static final Set<String> DECL_SPECIFIER_SEQUENCE_C;
 	static
 	{
-		DECL_SPECIFIER_SEQUENCE_C = new TreeSet();
+		DECL_SPECIFIER_SEQUENCE_C = new TreeSet<String>();
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords.INLINE );
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords.AUTO);
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords.REGISTER);
@@ -113,10 +114,10 @@ public class KeywordSets {
 		DECL_SPECIFIER_SEQUENCE_C.add( Keywords.ENUM);
 	}
 	
-	private static final Set DECL_SPECIFIER_SEQUENCE_CPP;
+	private static final Set<String> DECL_SPECIFIER_SEQUENCE_CPP;
 	static
 	{
-		DECL_SPECIFIER_SEQUENCE_CPP = new TreeSet();
+		DECL_SPECIFIER_SEQUENCE_CPP = new TreeSet<String>();
 		// add all of C then remove the ones we don't need
 		DECL_SPECIFIER_SEQUENCE_CPP.addAll( DECL_SPECIFIER_SEQUENCE_C );
 		DECL_SPECIFIER_SEQUENCE_CPP.remove( Keywords._COMPLEX);
@@ -132,18 +133,18 @@ public class KeywordSets {
 		DECL_SPECIFIER_SEQUENCE_CPP.add( Keywords.CLASS);
 	}
 	
-	private static final Hashtable DECL_SPECIFIER_SEQUENCE_TABLE; 
+	private static final Map<ParserLanguage,Set<String>> DECL_SPECIFIER_SEQUENCE_TABLE; 
 	static
 	{
-		DECL_SPECIFIER_SEQUENCE_TABLE = new Hashtable(); 
+		DECL_SPECIFIER_SEQUENCE_TABLE = new HashMap<ParserLanguage,Set<String>>(); 
 		DECL_SPECIFIER_SEQUENCE_TABLE.put( ParserLanguage.CPP, DECL_SPECIFIER_SEQUENCE_CPP );
 		DECL_SPECIFIER_SEQUENCE_TABLE.put( ParserLanguage.C, DECL_SPECIFIER_SEQUENCE_C );
 	}
 	
-	private static final Set DECLARATION_CPP; 
+	private static final Set<String> DECLARATION_CPP; 
 	static
 	{
-		DECLARATION_CPP = new TreeSet();
+		DECLARATION_CPP = new TreeSet<String>();
 		DECLARATION_CPP.addAll( DECL_SPECIFIER_SEQUENCE_CPP );
 		DECLARATION_CPP.add( Keywords.ASM );
 		DECLARATION_CPP.add( Keywords.TEMPLATE );
@@ -152,26 +153,26 @@ public class KeywordSets {
 		DECLARATION_CPP.add( Keywords.EXPORT );
 	}
 	
-	private static final Set DECLARATION_C; 
+	private static final Set<String> DECLARATION_C; 
 	static
 	{
-		DECLARATION_C = new TreeSet();
+		DECLARATION_C = new TreeSet<String>();
 		DECLARATION_C.addAll(DECL_SPECIFIER_SEQUENCE_C );
 		DECLARATION_C.add(Keywords.ASM );
 	}
 	
-	private static final Hashtable DECLARATION_TABLE; 
+	private static final Map<ParserLanguage,Set<String>> DECLARATION_TABLE; 
 	static
 	{
-		DECLARATION_TABLE = new Hashtable();
+		DECLARATION_TABLE = new HashMap<ParserLanguage,Set<String>>();
 		DECLARATION_TABLE.put( ParserLanguage.CPP, DECLARATION_CPP );
 		DECLARATION_TABLE.put( ParserLanguage.C, DECLARATION_C );
 	}
 	
-	private static final Set EXPRESSION_C;
+	private static final Set<String> EXPRESSION_C;
 	static
 	{
-		EXPRESSION_C = new TreeSet();
+		EXPRESSION_C = new TreeSet<String>();
 		EXPRESSION_C.add( Keywords.CHAR );
 		EXPRESSION_C.add( Keywords.WCHAR_T);
 		EXPRESSION_C.add( Keywords.SHORT);		
@@ -185,10 +186,10 @@ public class KeywordSets {
 		
 	}
 	
-	private static final Set EXPRESSION_CPP;
+	private static final Set<String> EXPRESSION_CPP;
 	static
 	{
-		EXPRESSION_CPP = new TreeSet(EXPRESSION_C);
+		EXPRESSION_CPP = new TreeSet<String>(EXPRESSION_C);
 		EXPRESSION_CPP.add( Keywords.BOOL );
 		EXPRESSION_CPP.add( Keywords.NEW );
 		EXPRESSION_CPP.add( Keywords.DELETE );
@@ -205,18 +206,18 @@ public class KeywordSets {
 		EXPRESSION_CPP.add( Keywords.THROW );
 	}
 	
-	private static final Hashtable EXPRESSION_TABLE;
+	private static final Map<ParserLanguage,Set<String>> EXPRESSION_TABLE;
 	static
 	{
-		EXPRESSION_TABLE = new Hashtable();
+		EXPRESSION_TABLE = new HashMap<ParserLanguage,Set<String>>();
 		EXPRESSION_TABLE.put( ParserLanguage.CPP, EXPRESSION_CPP );
 		EXPRESSION_TABLE.put( ParserLanguage.C, EXPRESSION_C );
 	}
 	
-	private static final Set STATEMENT_C;
+	private static final Set<String> STATEMENT_C;
 	static 
 	{
-		STATEMENT_C= new TreeSet(); 
+		STATEMENT_C= new TreeSet<String>(); 
 		STATEMENT_C.addAll( DECLARATION_C );
 		STATEMENT_C.addAll( EXPRESSION_C );
 		STATEMENT_C.add( Keywords.FOR );
@@ -233,10 +234,10 @@ public class KeywordSets {
 		STATEMENT_C.add( Keywords.DO);
 	}
 	
-	private static final Set STATEMENT_CPP; 
+	private static final Set<String> STATEMENT_CPP; 
 	static 
 	{
-		STATEMENT_CPP = new TreeSet( DECLARATION_CPP );
+		STATEMENT_CPP = new TreeSet<String>( DECLARATION_CPP );
 		STATEMENT_CPP.addAll( EXPRESSION_CPP );
 		STATEMENT_CPP.add( Keywords.TRY );
 		STATEMENT_CPP.add( Keywords.FOR );
@@ -254,65 +255,65 @@ public class KeywordSets {
 		STATEMENT_CPP.add( Keywords.DO);
 	}
 	
-	private static final Hashtable STATEMENT_TABLE;
+	private static final Map<ParserLanguage,Set<String>> STATEMENT_TABLE;
 	static
 	{
-		STATEMENT_TABLE = new Hashtable(); 
+		STATEMENT_TABLE = new HashMap<ParserLanguage,Set<String>>(); 
 		STATEMENT_TABLE.put( ParserLanguage.CPP, STATEMENT_CPP);
 		STATEMENT_TABLE.put( ParserLanguage.C, STATEMENT_C );
 	}
 	
-	private static final Set BASE_SPECIFIER_CPP;
+	private static final Set<String> BASE_SPECIFIER_CPP;
 	static
 	{
-		BASE_SPECIFIER_CPP = new TreeSet();
+		BASE_SPECIFIER_CPP = new TreeSet<String>();
 		BASE_SPECIFIER_CPP.add(Keywords.PUBLIC);
 		BASE_SPECIFIER_CPP.add(Keywords.PROTECTED);
 		BASE_SPECIFIER_CPP.add(Keywords.PRIVATE);
 		BASE_SPECIFIER_CPP.add(Keywords.VIRTUAL);
 	}
 	
-	private static final Set CLASS_MEMBER;
+	private static final Set<String> CLASS_MEMBER;
 	static
 	{
-		CLASS_MEMBER = new TreeSet(DECL_SPECIFIER_SEQUENCE_CPP);
+		CLASS_MEMBER = new TreeSet<String>(DECL_SPECIFIER_SEQUENCE_CPP);
 		CLASS_MEMBER.add(Keywords.PUBLIC);
 		CLASS_MEMBER.add(Keywords.PROTECTED);
 		CLASS_MEMBER.add(Keywords.PRIVATE);
 	}
 	
-	private static final Set POST_USING_CPP;
+	private static final Set<String> POST_USING_CPP;
 	static
 	{
-		POST_USING_CPP = new TreeSet();
+		POST_USING_CPP = new TreeSet<String>();
 		POST_USING_CPP.add(Keywords.NAMESPACE);
 		POST_USING_CPP.add(Keywords.TYPENAME);
 	}
 	
-	private static final Set FUNCTION_MODIFIER_C = EMPTY_TABLE; 
+	private static final Set<String> FUNCTION_MODIFIER_C = EMPTY_TABLE; 
 
-	private static final Set FUNCTION_MODIFIER_CPP;
+	private static final Set<String> FUNCTION_MODIFIER_CPP;
 	static
 	{
-		FUNCTION_MODIFIER_CPP = new TreeSet( FUNCTION_MODIFIER_C );
+		FUNCTION_MODIFIER_CPP = new TreeSet<String>( FUNCTION_MODIFIER_C );
 		
 		FUNCTION_MODIFIER_CPP.add( Keywords.THROW);
 		FUNCTION_MODIFIER_CPP.add( Keywords.TRY );
 		FUNCTION_MODIFIER_CPP.add( Keywords.VOLATILE );
 	}
 	
-	private static final Hashtable FUNCTION_MODIFIER_TABLE;
+	private static final Map<ParserLanguage,Set<String>> FUNCTION_MODIFIER_TABLE;
 	static
 	{
-		FUNCTION_MODIFIER_TABLE= new Hashtable(2);
+		FUNCTION_MODIFIER_TABLE= new HashMap<ParserLanguage,Set<String>>(2);
 		FUNCTION_MODIFIER_TABLE.put( ParserLanguage.CPP, FUNCTION_MODIFIER_CPP );
 		FUNCTION_MODIFIER_TABLE.put( ParserLanguage.C, FUNCTION_MODIFIER_C );
 	}
 
-	private static final Set PP_DIRECTIVES_C;
+	private static final Set<String> PP_DIRECTIVES_C;
 	static
 	{
-		PP_DIRECTIVES_C = new TreeSet();
+		PP_DIRECTIVES_C = new TreeSet<String>();
 		PP_DIRECTIVES_C.add(Directives.POUND_BLANK);
 		PP_DIRECTIVES_C.add(Directives.POUND_DEFINE);
 		PP_DIRECTIVES_C.add(Directives.POUND_UNDEF);
@@ -330,10 +331,10 @@ public class KeywordSets {
 	}
 
 	
-	private static final Set PP_DIRECTIVES_CPP;
+	private static final Set<String> PP_DIRECTIVES_CPP;
 	static
 	{
-		PP_DIRECTIVES_CPP = new TreeSet();
+		PP_DIRECTIVES_CPP = new TreeSet<String>();
 		PP_DIRECTIVES_CPP.add(Directives.POUND_BLANK);
 		PP_DIRECTIVES_CPP.add(Directives.POUND_DEFINE);
 		PP_DIRECTIVES_CPP.add(Directives.POUND_UNDEF);
@@ -349,10 +350,10 @@ public class KeywordSets {
 		PP_DIRECTIVES_CPP.add(Directives.POUND_ELIF);
 	}
 	
-	private static final Set ALL_C;
+	private static final Set<String> ALL_C;
 	static
 	{
-		ALL_C = new TreeSet(PP_DIRECTIVES_CPP);
+		ALL_C = new TreeSet<String>(PP_DIRECTIVES_CPP);
 		ALL_C.add( Keywords.AUTO);
 		ALL_C.add( Keywords.BREAK);
 		ALL_C.add( Keywords.CASE);
@@ -393,10 +394,10 @@ public class KeywordSets {
 		ALL_C.add( Keywords._IMAGINARY);
 	}
 	
-	private static final Set ALL_CPP;
+	private static final Set<String> ALL_CPP;
 	static
 	{
-		ALL_CPP = new TreeSet(PP_DIRECTIVES_CPP);
+		ALL_CPP = new TreeSet<String>(PP_DIRECTIVES_CPP);
 		ALL_CPP.add( Keywords.AND );
 		ALL_CPP.add( Keywords.AND_EQ);
 		ALL_CPP.add( Keywords.ASM);
@@ -473,18 +474,18 @@ public class KeywordSets {
 		ALL_CPP.add( Keywords.XOR_EQ);
 
 	}
-	private static final Hashtable ALL_TABLE;
+	private static final Map<ParserLanguage,Set<String>> ALL_TABLE;
 	static
 	{
-		ALL_TABLE = new Hashtable( 2 );
+		ALL_TABLE = new HashMap<ParserLanguage,Set<String>>( 2 );
 		ALL_TABLE.put( ParserLanguage.C, ALL_C );
 		ALL_TABLE.put( ParserLanguage.CPP, ALL_CPP );
 	}
 	
-	private static final Set KEYWORDS_CPP;
+	private static final Set<String> KEYWORDS_CPP;
 	static
 	{
-		KEYWORDS_CPP = new TreeSet();
+		KEYWORDS_CPP = new TreeSet<String>();
 		KEYWORDS_CPP.add( Keywords.AND );
 		KEYWORDS_CPP.add( Keywords.AND_EQ );
 		KEYWORDS_CPP.add( Keywords.ASM );
@@ -552,10 +553,10 @@ public class KeywordSets {
 
 	}
 	
-	private static Set KEYWORDS_C;
+	private static Set<String> KEYWORDS_C;
 	static
 	{
-		KEYWORDS_C = new TreeSet();
+		KEYWORDS_C = new TreeSet<String>();
 		KEYWORDS_C.add( Keywords.ASM );
 		KEYWORDS_C.add( Keywords.AUTO );
 		KEYWORDS_C.add( Keywords.BREAK );
@@ -586,18 +587,18 @@ public class KeywordSets {
 	
 	
 
-	private static final Hashtable KEYWORDS_TABLE;
+	private static final Map<ParserLanguage,Set<String>> KEYWORDS_TABLE;
 	static
 	{
-		KEYWORDS_TABLE = new Hashtable(2);
+		KEYWORDS_TABLE = new HashMap<ParserLanguage,Set<String>>(2);
 		KEYWORDS_TABLE.put( ParserLanguage.C, KEYWORDS_C );
 		KEYWORDS_TABLE.put( ParserLanguage.CPP, KEYWORDS_CPP );
 	}
 
-	private static final Set TYPES_C;
+	private static final Set<String> TYPES_C;
 	static
 	{
-		TYPES_C = new TreeSet();
+		TYPES_C = new TreeSet<String>();
 		TYPES_C.add( Keywords.CHAR );
 		TYPES_C.add( Keywords.DOUBLE );
 		TYPES_C.add( Keywords.FLOAT );
@@ -611,10 +612,10 @@ public class KeywordSets {
 		TYPES_C.add( Keywords._COMPLEX );
 		TYPES_C.add( Keywords._IMAGINARY );
 	}
-	private static final Set TYPES_CPP;
+	private static final Set<String> TYPES_CPP;
 	static
 	{
-		TYPES_CPP = new TreeSet();
+		TYPES_CPP = new TreeSet<String>();
 		TYPES_CPP.add( Keywords.BOOL );
 		TYPES_CPP.add( Keywords.CHAR );
 		TYPES_CPP.add( Keywords.DOUBLE );
@@ -628,18 +629,18 @@ public class KeywordSets {
 		TYPES_CPP.add( Keywords.WCHAR_T );
 	}	
 	
-	private static Hashtable TYPES_TABLE;
+	private static Map<ParserLanguage,Set<String>> TYPES_TABLE;
 	static
 	{
-		TYPES_TABLE = new Hashtable( 2 );
+		TYPES_TABLE = new HashMap<ParserLanguage, Set<String>>( 2 );
 		TYPES_TABLE.put( ParserLanguage.C, TYPES_C );
 		TYPES_TABLE.put( ParserLanguage.CPP, TYPES_CPP );
 	}
 	
-	private static Hashtable PP_DIRECTIVES_TABLE;
+	private static Map<ParserLanguage,Set<String>> PP_DIRECTIVES_TABLE;
 	static
 	{
-		PP_DIRECTIVES_TABLE = new Hashtable( 2 );
+		PP_DIRECTIVES_TABLE = new HashMap<ParserLanguage,Set<String>>( 2 );
 		PP_DIRECTIVES_TABLE.put( ParserLanguage.C, PP_DIRECTIVES_C );
 		PP_DIRECTIVES_TABLE.put( ParserLanguage.CPP, PP_DIRECTIVES_CPP );
 	}

@@ -40,9 +40,15 @@ public class CPPASTFieldReference extends CPPASTNode implements
     public CPPASTFieldReference() {
 	}
 
-	public CPPASTFieldReference(IASTName name, IASTExpression owner) {
+	public CPPASTFieldReference(IASTName name, IASTExpression owner, boolean isTemplate, boolean isDeref) {
 		setFieldName(name);
 		setFieldOwner(owner);
+		this.isTemplate = isTemplate;
+		this.isDeref = isDeref;
+	}
+	
+	public CPPASTFieldReference(IASTName name, IASTExpression owner) {
+		this(name, owner, false, false);
 	}
 
 	public boolean isTemplate() {

@@ -33,8 +33,13 @@ public class CPPASTTypenameExpression extends CPPASTNode implements
 	}
 
 	public CPPASTTypenameExpression(IASTName name, IASTExpression init) {
+		this(name, init, false);
+	}
+	
+	public CPPASTTypenameExpression(IASTName name, IASTExpression init, boolean isTemplate) {
 		setName(name);
 		setInitialValue(init);
+		this.isTemplate = isTemplate;
 	}
 
 	public void setIsTemplate(boolean templateTokenConsumed) {

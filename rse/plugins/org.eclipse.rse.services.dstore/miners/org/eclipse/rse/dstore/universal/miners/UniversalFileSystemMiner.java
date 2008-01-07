@@ -26,7 +26,8 @@
  * Xuan Chen (IBM)        - [202949] [archives] copy a folder from one connection to an archive file in a different connection does not work
  * Xuan Chen (IBM) - [160775] [api] rename (at least within a zip) blocks UI thread
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
- * * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
+ * Xuan Chen (IBM) - [194481] [dstore][Archive] Save Conflict After Renaming a File that is Open
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -858,9 +859,11 @@ public class UniversalFileSystemMiner extends Miner {
 			DataElement status, String queryType) {
 		File fileobj = null;
 		boolean isVirtual = false;
+		boolean isFilter = false;
 		String fullName = subject.getValue();
 		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) 
 		{
+			isFilter = true;
 			isVirtual = ArchiveHandlerManager.isVirtual(fullName);
 			String filterValue = subject.getValue();
 			// . translates to home dir
@@ -890,6 +893,10 @@ public class UniversalFileSystemMiner extends Miner {
 			{
 				fileobj = new File(path, name);		
 			}
+		}
+		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR) || queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR))
+		{
+			isVirtual = true;
 		}
 		else {
 			UniversalServerUtilities.logError(CLASSNAME,
@@ -962,8 +969,17 @@ public class UniversalFileSystemMiner extends Miner {
 			status.setAttribute(DE.A_SOURCE, IServiceConstants.SUCCESS);
 		} else if (isVirtual) {
 			try {
-				String goodFullName = ArchiveHandlerManager
+				String goodFullPath = ArchiveHandlerManager
 						.cleanUpVirtualPath(fullName);
+				String goodFullName = null;
+				if (isFilter)
+				{
+					goodFullName = goodFullPath;
+				}
+				else
+				{
+					goodFullName = goodFullPath + "/" + subject.getName();  //$NON-NLS-1$
+				}
 				AbsoluteVirtualPath avp = new AbsoluteVirtualPath(goodFullName);
 				VirtualChild child = _archiveHandlerManager
 						.getVirtualObject(goodFullName);
@@ -988,11 +1004,11 @@ public class UniversalFileSystemMiner extends Miner {
 								IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR);
 						String name = child.name;
 						String path = avp.getContainingArchiveString();
-						if (!child.path.equals("")) { //$NON-NLS-1$
+						
 							path = path
 									+ ArchiveHandlerManager.VIRTUAL_SEPARATOR
 									+ child.path;
-						}
+						
 
 						subject.setAttribute(DE.A_NAME, name);
 						subject.setAttribute(DE.A_VALUE, path);
@@ -1508,7 +1524,13 @@ public class UniversalFileSystemMiner extends Miner {
 		_dataStore.createReference(cancellable, createNewFolderInFolderDescriptor, DataStoreResources.model_abstracts, DataStoreResources.model_abstracted_by);
 		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
 		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetOSType", IUniversalDataStoreConstants.C_GET_OSTYPE); //$NON-NLS-1$
-
+        //make sure C_QUERY_GET_REMOTE_OBJECT command also available for file and folder objects
+		createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "GetRemoteObject", IUniversalDataStoreConstants.C_QUERY_GET_REMOTE_OBJECT); //$NON-NLS-1$
+		
 		// create a download command descriptor and make it cancelable
 		DataElement downloadDescriptor = createCommandDescriptor(
 				FileDescriptors._deUniversalFileObject, "DownloadFile", IUniversalDataStoreConstants.C_DOWNLOAD_FILE); //$NON-NLS-1$

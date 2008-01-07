@@ -232,7 +232,6 @@ public class CopyThread extends Thread implements ICancellableHandler {
 
 	public void cancel() {
 		_isCancelled = true;
-		System.out.println("Inside cancel() of thread " + CLASSNAME);
 		if (null != systemOperationMonitor)
 		{
 			systemOperationMonitor.setCanceled(true);

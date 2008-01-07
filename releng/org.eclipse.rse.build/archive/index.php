@@ -1,6 +1,6 @@
 <html><head>
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css">
-<title>Target Management Project RSE Downloads</title></head>
+<title>Target Management Project Archived Downloads</title></head>
 <body>
 
 <table border=0 cellspacing=5 cellpadding=2 width="100%" >

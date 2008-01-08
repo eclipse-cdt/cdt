@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
-import org.eclipse.cdt.core.dom.IMacroCollector;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
@@ -27,7 +26,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
  * consulting with the CDT team.
  * </p>
  */
-public interface IScanner extends IMacroCollector {
+public interface IScanner {
 	
 	/**
 	 * Puts the scanner into content assist mode.
@@ -52,7 +51,7 @@ public interface IScanner extends IMacroCollector {
 	 * all the definitions that are defined at the current point in the 
 	 * process of scanning.
 	 */
-	public Map getDefinitions();
+	public Map<String, IMacroBinding> getMacroDefinitions();
 
 	/**
      * Returns next token for the parser. String literals are concatenated.

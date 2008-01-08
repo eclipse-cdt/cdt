@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ *    IBM - Initial API and implementation
  *******************************************************************************/
  
 package org.eclipse.cdt.internal.core.indexer;
@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.IMacroCollector;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 
@@ -33,7 +32,7 @@ import org.eclipse.cdt.core.parser.ICodeReaderCache;
  */
 public class StandaloneIndexerFallbackReaderFactory implements ICodeReaderFactory {
 
-	public CodeReader createCodeReaderForInclusion(IMacroCollector callback, String path) {
+	public CodeReader createCodeReaderForInclusion(String path) {
 		try {
 			if (!new File(path).exists())
 				return null;

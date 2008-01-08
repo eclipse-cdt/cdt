@@ -1,20 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
 /**
- * @author jcamelon
- *
+ * Implementation for the {@link IExtendedScannerInfo} interface. Allows to configure
+ * the preprocessor.
  */
 public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScannerInfo {
 
@@ -25,12 +26,12 @@ public class ExtendedScannerInfo extends ScannerInfo implements IExtendedScanner
 	{
 	}
 	
-	public ExtendedScannerInfo( Map d, String [] incs )
+	public ExtendedScannerInfo( Map<String, String> d, String [] incs )
 	{
 		super(d,incs);
 	}
 	
-	public ExtendedScannerInfo( Map d, String [] incs, String [] macros, String [] includes )
+	public ExtendedScannerInfo( Map<String, String> d, String [] incs, String [] macros, String [] includes )
 	{
 		super(d,incs);
 		m = macros;

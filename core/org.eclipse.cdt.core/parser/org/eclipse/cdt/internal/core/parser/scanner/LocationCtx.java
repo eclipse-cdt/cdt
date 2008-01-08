@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 
 /**
  * Various location contexts which are suitable for interpreting local offsets. These offsets are
@@ -116,12 +118,12 @@ abstract class LocationCtx implements ILocationCtx {
 	 * Returns the sequence of file locations spanning the given range. 
 	 * Assumes that the range starts within this context. 
 	 */
-	public abstract boolean collectLocations(int sequenceNumber, int length, ArrayList sofar);
+	public abstract boolean collectLocations(int sequenceNumber, int length, ArrayList<IASTNodeLocation> sofar);
 
 	/**
 	 * Support for the dependency tree, add inclusion statements found in this context.
 	 */
-	public void getInclusions(ArrayList target) {
+	public void getInclusions(ArrayList<IASTInclusionNode> result) {
 	}
 
 	/**
@@ -131,7 +133,7 @@ abstract class LocationCtx implements ILocationCtx {
 		return null;
 	}
 
-	public Collection getChildren() {
-		return Collections.EMPTY_SET;
+	public Collection<LocationCtx> getChildren() {
+		return Collections.emptySet();
 	}
 }

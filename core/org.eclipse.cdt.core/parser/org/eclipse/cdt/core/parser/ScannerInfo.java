@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *    IBM Rational Software - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -15,39 +16,35 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * @author jcamelon
- *
+ * Implementation of the {@link IScannerInfo} interface. Allows to configure the preprocessor.
  */
 public class ScannerInfo implements IScannerInfo
 {
-	private Map definedSymbols = Collections.EMPTY_MAP; 
+	private Map<String, String> definedSymbols = Collections.emptyMap(); 
 	private String [] includePaths = {}; 
 	
 	public ScannerInfo()
 	{
 	}
 	
-	public ScannerInfo( Map d, String [] incs )
+	public ScannerInfo(Map<String, String> macroDefinitions, String[] includeSearchPath)
 	{
-		if (d != null) {
-			definedSymbols = d;
+		if (macroDefinitions != null) {
+			definedSymbols = macroDefinitions;
 		}
-		if (incs != null) {
-			includePaths = incs;
+		if (includeSearchPath != null) {
+			includePaths = includeSearchPath;
 		}
 	}
 		
-    /**
-	 * @param definitions
-	 */
-	public ScannerInfo(Map definitions) {
-		this(definitions, (String [])null);
+	public ScannerInfo(Map<String, String> macroDefinitions) {
+		this(macroDefinitions, null);
 	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.IScannerInfo#getDefinedSymbols()
      */
-    public Map getDefinedSymbols()
+    public Map<String, String> getDefinedSymbols()
     {
         return definedSymbols;
     }

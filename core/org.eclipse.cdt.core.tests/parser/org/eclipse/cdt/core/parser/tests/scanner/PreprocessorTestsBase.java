@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	    }
 	    
 		fScanner= new CPreprocessor(input, scannerInfo, lang, NULL_LOG, scannerConfig, readerFactory);
-		fLocationResolver= (ILocationResolver) fScanner.getAdapter(ILocationResolver.class);
+		fLocationResolver= fScanner.getLocationMap();
 	}
 
 	protected void initializeScanner() throws Exception {
@@ -147,10 +147,9 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	protected void validateDefinition(String name, String value) {
-		Object expObject = fScanner.getDefinitions().get(name);
+		IMacroBinding expObject = fScanner.getMacroDefinitions().get(name);
 		assertNotNull(expObject);
-		assertTrue(expObject instanceof IMacroBinding);
-		assertCharArrayEquals(value.toCharArray(), ((IMacroBinding)expObject).getExpansion());
+		assertCharArrayEquals(value.toCharArray(), expObject.getExpansion());
 	}
 
 	protected void validateDefinition(String name, int value) {
@@ -158,7 +157,7 @@ public abstract class PreprocessorTestsBase extends BaseTestCase {
 	}
 
 	protected void validateAsUndefined(String name) {
-		assertNull(fScanner.getDefinitions().get(name.toCharArray()));
+		assertNull(fScanner.getMacroDefinitions().get(name.toCharArray()));
 	}
 
 	protected void validateProblemCount(int count) throws Exception {

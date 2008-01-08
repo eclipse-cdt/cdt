@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
-
-
 
 /**
  * Represents part of the input to the preprocessor. This may be a file or the result of a macro expansion.
@@ -32,7 +30,7 @@ final class ScannerContext {
 	private final ILocationCtx fLocationCtx;
 	private final ScannerContext fParent;
 	private final Lexer fLexer;
-	private ArrayList fBranches= null;
+	private ArrayList<Integer> fBranches= null;
 
 	private Token fTokens;
 
@@ -81,7 +79,7 @@ final class ScannerContext {
 	 */
 	public final boolean changeBranch(Integer branchKind) {
 		if (fBranches == null) {
-			fBranches= new ArrayList();
+			fBranches= new ArrayList<Integer>();
 		}
 		
 		// an if starts a new conditional construct

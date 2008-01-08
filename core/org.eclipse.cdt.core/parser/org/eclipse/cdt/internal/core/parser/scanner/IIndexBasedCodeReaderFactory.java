@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,4 +23,10 @@ public interface IIndexBasedCodeReaderFactory extends ICodeReaderFactory {
 	 * Returns whether or not the file has been included.
 	 */
 	boolean hasFileBeenIncludedInCurrentTranslationUnit(String path);
+	
+	/**
+	 * Create include information object for the given location.
+	 * @see FileInclusionHandling
+	 */
+	public FileInclusionHandling getInclusionHandling(String fileLocation);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1853,19 +1853,19 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		fullyTokenize();
 		validateProblemCount(0);
 
-		Map defs = fScanner.getDefinitions();
+		Map<String, IMacroBinding> defs = fScanner.getMacroDefinitions();
 		assertTrue(defs.containsKey("debug")); 
 		assertTrue(defs.containsKey("showlist")); 
 		assertTrue(defs.containsKey("report")); 
-		IMacroBinding debug = (IMacroBinding) defs.get("debug"); 
+		IMacroBinding debug = defs.get("debug"); 
 		assertTrue(new String(debug.getParameterPlaceholderList()[0]).equals("__VA_ARGS__")); 
 		assertEquals("fprintf(stderr, __VA_ARGS__)", new String(debug.getExpansion())); 
 		
-		IMacroBinding showlist = (IMacroBinding) defs.get("showlist"); 
+		IMacroBinding showlist = defs.get("showlist"); 
 		assertTrue(new String(showlist.getParameterPlaceholderList()[0]).equals("__VA_ARGS__")); 
 		assertTrue(new String(showlist.getExpansion())
 				.equals("puts(#__VA_ARGS__)")); 
-		IMacroBinding report = (IMacroBinding) defs.get("report"); 
+		IMacroBinding report = defs.get("report"); 
 		assertTrue(new String(report.getParameterPlaceholderList()[0]).equals("test")); 
 		assertTrue(new String(report.getParameterPlaceholderList()[1]).equals("__VA_ARGS__")); 
 		assertTrue(new String(report.getExpansion())
@@ -1891,7 +1891,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		fullyTokenize();
 		validateProblemCount(0);
 
-		Map defs = fScanner.getDefinitions();
+		Map defs = fScanner.getMacroDefinitions();
 		assertTrue(defs.containsKey("debug")); 
 		assertTrue(defs.containsKey("showlist")); 
 		assertTrue(defs.containsKey("report")); 

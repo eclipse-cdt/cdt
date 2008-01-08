@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,7 +200,7 @@ public class MacroDefinitionParser {
 		if (lparen.getType() != IToken.tLPAREN || name.getEndOffset() != lparen.getOffset()) { 
 			return null;
 		}
-		ArrayList paramList= new ArrayList();
+		ArrayList<char[]> paramList= new ArrayList<char[]>();
 		IToken next= null;
 		do {
 			final Token param= lex.nextToken();
@@ -239,7 +239,7 @@ public class MacroDefinitionParser {
 		}
 		next= lex.nextToken(); // consume the closing parenthesis
 
-		return (char[][]) paramList.toArray(new char[paramList.size()][]);
+		return paramList.toArray(new char[paramList.size()][]);
 	}
 
 	public void parseExpansion(final Lexer lexer, final ILexerLog log, final char[] name, final char[][] paramList,

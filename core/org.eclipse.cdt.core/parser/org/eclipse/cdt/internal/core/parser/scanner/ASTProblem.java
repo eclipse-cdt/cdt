@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
- * Anton Leherbauer (Wind River Systems)
+ *    IBM - Initial API and implementation
+ *    Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
@@ -53,7 +53,7 @@ class ASTProblem extends ASTPreprocessorNode implements IASTProblem {
         if (message != null)
             return message;
 
-        String msg = (String) errorMessages.get(new Integer(id));
+        String msg = errorMessages.get(new Integer(id));
         if (msg == null)
             msg = ""; //$NON-NLS-1$
 
@@ -85,9 +85,9 @@ class ASTProblem extends ASTPreprocessorNode implements IASTProblem {
     }
 
 
-    protected static final Map errorMessages;
+    protected static final Map<Integer, String> errorMessages;
     static {
-        errorMessages = new HashMap();
+        errorMessages = new HashMap<Integer, String>();
         errorMessages
                 .put(
                         new Integer(IASTProblem.PREPROCESSOR_POUND_ERROR),

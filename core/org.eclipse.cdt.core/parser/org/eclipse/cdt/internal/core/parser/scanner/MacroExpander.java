@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class MacroExpander {
 			return "{" + (fIsStart ? '+' : '-') + fMacro.getName() + '}';  //$NON-NLS-1$
 		}
 
-		public void execute(IdentityHashMap forbidden) {
+		public void execute(IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden) {
 			if (fIsStart) {
 				forbidden.put(fMacro, fMacro);
 			}
@@ -128,8 +128,8 @@ public class MacroExpander {
 	private final CharArrayObjectMap fDictionary;
 	private final LocationMap fLocationMap;
 	private final LexerOptions fLexOptions;
-	private ArrayList fImplicitMacroExpansions= new ArrayList();
-	private ArrayList fImageLocationInfos= new ArrayList();
+	private ArrayList<IASTName> fImplicitMacroExpansions= new ArrayList<IASTName>();
+	private ArrayList<ImageLocationInfo> fImageLocationInfos= new ArrayList<ImageLocationInfo>();
 	private boolean fCompletionMode;
 	private int fStartOffset;
 	private int fEndOffset;
@@ -153,7 +153,7 @@ public class MacroExpander {
 		fEndOffset= identifier.getEndOffset();
 		fCompletionMode= completionMode;
 		
-		IdentityHashMap forbidden= new IdentityHashMap();
+		IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden= new IdentityHashMap<PreprocessorMacro, PreprocessorMacro>();
 		
 		// setup input sequence
 		TokenSource input= new TokenSource(lexer, stopAtNewline);
@@ -173,7 +173,7 @@ public class MacroExpander {
 	 * with boundary markers in the result token list.
 	 * Returns the last token of the expansion.
 	 */
-	private Token expandOne(Token lastConsumed, PreprocessorMacro macro, IdentityHashMap forbidden, TokenSource input, TokenList result) 
+	private Token expandOne(Token lastConsumed, PreprocessorMacro macro, IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource input, TokenList result) 
 			throws OffsetLimitReachedException {
 		result.append(new ExpansionBoundary(macro, true));
 		if (macro.isFunctionStyle()) {
@@ -196,7 +196,7 @@ public class MacroExpander {
 		return lastConsumed;
 	}
 
-	private TokenList expandAll(TokenSource input, IdentityHashMap forbidden) throws OffsetLimitReachedException {
+	private TokenList expandAll(TokenSource input, IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden) throws OffsetLimitReachedException {
 		final TokenList result= new TokenList();
 		Token l= null;
 		Token t= input.removeFirst();
@@ -275,7 +275,7 @@ public class MacroExpander {
 	 * @param forbidden 
 	 * @throws OffsetLimitReachedException 
 	 */
-	private Token parseArguments(TokenSource input, FunctionStyleMacro macro, IdentityHashMap forbidden, TokenSource[] result) throws OffsetLimitReachedException {
+	private Token parseArguments(TokenSource input, FunctionStyleMacro macro, IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource[] result) throws OffsetLimitReachedException {
 		final int argCount= macro.getParameterPlaceholderList().length;
 		final boolean hasVarargs= macro.hasVarArgs() != FunctionStyleMacro.NO_VAARGS;
 		final int requiredArgs= hasVarargs ? argCount-1 : argCount;
@@ -645,13 +645,13 @@ public class MacroExpander {
 	}
 	
 	public IASTName[] clearImplicitExpansions() {
-		IASTName[] result= (IASTName[]) fImplicitMacroExpansions.toArray(new IASTName[fImplicitMacroExpansions.size()]);
+		IASTName[] result= fImplicitMacroExpansions.toArray(new IASTName[fImplicitMacroExpansions.size()]);
 		fImplicitMacroExpansions.clear();
 		return result;
 	}
 
 	public ImageLocationInfo[] clearImageLocationInfos() {
-		ImageLocationInfo[] result= (ImageLocationInfo[]) fImageLocationInfos.toArray(new ImageLocationInfo[fImageLocationInfos.size()]);
+		ImageLocationInfo[] result= fImageLocationInfos.toArray(new ImageLocationInfo[fImageLocationInfos.size()]);
 		fImageLocationInfos.clear();
 		return result;
 	}

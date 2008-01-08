@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 
 /**
  * Base class for all location contexts that can contain children. 
@@ -29,7 +31,7 @@ class LocationCtxContainer extends LocationCtx {
 	 */
 	private int fChildSequenceLength;
 
-	private ArrayList fChildren;
+	private ArrayList<LocationCtx> fChildren;
 	private char[] fSource;
 	private int[] fLineOffsets;
 	
@@ -38,13 +40,18 @@ class LocationCtxContainer extends LocationCtx {
 		fSource= source;
 	}
 	
-	public Collection getChildren() {
-		return fChildren == null ? Collections.EMPTY_LIST : fChildren;
+	public Collection<LocationCtx> getChildren() {
+		if (fChildren == null) {
+			return Collections.emptyList();
+		}
+		else {
+			return fChildren;
+		}
 	}
 
 	public void addChild(LocationCtx locationCtx) {
 		if (fChildren == null) {
-			fChildren= new ArrayList();
+			fChildren= new ArrayList<LocationCtx>();
 		}
 		fChildren.add(locationCtx);
 	}
@@ -65,7 +72,7 @@ class LocationCtxContainer extends LocationCtx {
 		int result= fSequenceNumber + fChildSequenceLength + offset;
 		if (checkChildren && fChildren != null) {
 			for (int i= fChildren.size()-1; i >= 0; i--) {
-				final LocationCtx child= (LocationCtx) fChildren.get(i);
+				final LocationCtx child= fChildren.get(i);
 				if (child.fEndOffsetInParent > offset) {	// child was inserted behind the offset, adjust sequence number
 					result-= child.getSequenceLength();
 				}
@@ -109,12 +116,12 @@ class LocationCtxContainer extends LocationCtx {
 		return super.findMappedFileLocation(sequenceNumber, length);
 	}
 
-	public boolean collectLocations(int sequenceNumber, final int length, ArrayList locations) {
+	public boolean collectLocations(int sequenceNumber, final int length, ArrayList<IASTNodeLocation> locations) {
 		final int endSequenceNumber= sequenceNumber+length;
 		if (fChildren != null) {
 			int childIdx= Math.max(0, findChildIdxLessOrEqualThan(sequenceNumber, false));
 			for (; childIdx < fChildren.size(); childIdx++) {
-				final LocationCtx child= (LocationCtx) fChildren.get(childIdx);
+				final LocationCtx child= fChildren.get(childIdx);
 
 				// create the location between start and the child
 				if (sequenceNumber < child.fSequenceNumber) {
@@ -151,7 +158,7 @@ class LocationCtxContainer extends LocationCtx {
 		return false;
 	}
 	
-	private ArrayList addFileLocation(int offset, int length, ArrayList sofar) {
+	private ArrayList<IASTNodeLocation> addFileLocation(int offset, int length, ArrayList<IASTNodeLocation> sofar) {
 		IASTFileLocation loc= createFileLocation(offset, length);
 		if (loc != null) {
 			sofar.add(loc);
@@ -171,7 +178,7 @@ class LocationCtxContainer extends LocationCtx {
 		int lower= 0;
 		while (upper > lower) {
 			int middle= (upper+lower)/2;
-			LocationCtx child= (LocationCtx) fChildren.get(middle);
+			LocationCtx child= fChildren.get(middle);
 			int childSequenceNumber= child.fSequenceNumber;
 			if (beforeReplacedChars) {
 				childSequenceNumber-= child.fEndOffsetInParent-child.fOffsetInParent; 
@@ -188,13 +195,13 @@ class LocationCtxContainer extends LocationCtx {
 
 	final LocationCtx findChildLessOrEqualThan(final int sequenceNumber, boolean beforeReplacedChars) {
 		final int idx= findChildIdxLessOrEqualThan(sequenceNumber, beforeReplacedChars);
-		return idx >= 0 ? (LocationCtx) fChildren.get(idx) : null;
+		return idx >= 0 ? fChildren.get(idx) : null;
 	}
 
-	public void getInclusions(ArrayList result) {
+	public void getInclusions(ArrayList<IASTInclusionNode> result) {
 		if (fChildren != null) {
-			for (Iterator iterator = fChildren.iterator(); iterator.hasNext();) {
-				LocationCtx ctx= (LocationCtx) iterator.next();
+			for (Iterator<LocationCtx> iterator = fChildren.iterator(); iterator.hasNext();) {
+				LocationCtx ctx= iterator.next();
 				if (ctx.getInclusionStatement() != null) {
 					result.add(new ASTInclusionNode(ctx));
 				}
@@ -217,7 +224,7 @@ class LocationCtxContainer extends LocationCtx {
 	}
 
 	private int[] computeLineOffsets() {
-		ArrayList offsets= new ArrayList();
+		ArrayList<Integer> offsets= new ArrayList<Integer>();
 		for (int i = 0; i < fSource.length; i++) {
 			if (fSource[i] == '\n') {
 				offsets.add(new Integer(i));
@@ -225,7 +232,7 @@ class LocationCtxContainer extends LocationCtx {
 		}
 		int[] result= new int[offsets.size()];
 		for (int i = 0; i < result.length; i++) {
-			result[i]= ((Integer) offsets.get(i)).intValue();
+			result[i]= offsets.get(i).intValue();
 			
 		}
 		return result;

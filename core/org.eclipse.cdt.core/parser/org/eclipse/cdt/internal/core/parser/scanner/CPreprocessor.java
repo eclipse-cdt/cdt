@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,19 +14,21 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -156,7 +158,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     };
 
     final private IParserLogService fLog;
-    final private ICodeReaderFactory fCodeReaderFactory;
+    final private IIndexBasedCodeReaderFactory fCodeReaderFactory;
     private final ExpressionEvaluator fExpressionEvaluator;
 	private final MacroDefinitionParser fMacroDefinitionParser;
 	private final MacroExpander fMacroExpander;
@@ -178,7 +180,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     private final LocationMap fLocationMap = new LocationMap();
 
     /** Set of already included files */
-    private final HashSet fAllIncludedFiles= new HashSet();
+    private final HashSet<String> fAllIncludedFiles= new HashSet<String>();
 
 	private final Lexer fRootLexer;
 	private final ScannerContext fRootContext;
@@ -205,7 +207,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
         fExpressionEvaluator= new ExpressionEvaluator();
         fMacroDefinitionParser= new MacroDefinitionParser();
         fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fMacroDefinitionParser, fLexOptions);
-        fCodeReaderFactory= readerFactory;
+        fCodeReaderFactory= wrapReaderFactory(readerFactory);
 
         setupMacroDictionary(configuration, info, language);		
                 
@@ -220,13 +222,50 @@ public class CPreprocessor implements ILexerLog, IScanner {
         }
     }
     
-    public void setComputeImageLocations(boolean val) {
+    private IIndexBasedCodeReaderFactory wrapReaderFactory(final ICodeReaderFactory readerFactory) {
+    	if (readerFactory instanceof IIndexBasedCodeReaderFactory) {
+    		return (IIndexBasedCodeReaderFactory) readerFactory;
+    	}
+		return new IIndexBasedCodeReaderFactory() {
+			public CodeReader createCodeReaderForTranslationUnit(String path) {
+				return readerFactory.createCodeReaderForTranslationUnit(path);
+			}
+			public CodeReader createCodeReaderForInclusion(String path) {
+				return readerFactory.createCodeReaderForInclusion(path);
+			}
+			public FileInclusionHandling getInclusionHandling(String path) {
+				CodeReader reader= readerFactory.createCodeReaderForInclusion(path);
+				if (reader != null) {
+					return new FileInclusionHandling(reader);
+				}
+				return null;
+			}
+			public boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
+				return fAllIncludedFiles.contains(path);
+			}
+			public ICodeReaderCache getCodeReaderCache() {
+				return readerFactory.getCodeReaderCache();
+			}
+			public int getUniqueIdentifier() {
+				return readerFactory.getUniqueIdentifier();
+			}
+		};
+	}
+
+	public void setComputeImageLocations(boolean val) {
     	fLexOptions.fCreateImageLocations= val;
     }
     
 	public void setContentAssistMode(int offset) {
 		fContentAssistLimit= offset;
 		fRootLexer.setContentAssistMode(offset);
+	}
+
+	public void setScanComments(boolean val) {
+	}
+
+	public ILocationResolver getLocationResolver() {
+		return fLocationMap;
 	}
 
 	private void configureKeywords(ParserLanguage language,	IScannerExtensionConfiguration configuration) {
@@ -286,17 +325,17 @@ public class CPreprocessor implements ILexerLog, IScanner {
 
         IMacro[] toAdd = config.getAdditionalMacros();
         for (int i = 0; i < toAdd.length; i++) {
-        	addDefinition(toAdd[i]);
+        	final IMacro macro = toAdd[i];
+			addMacroDefinition(macro.getSignature(), macro.getExpansion());
 		}
         
         // macros provided on command-line (-D)
         final boolean initEmptyMacros= config.initializeMacroValuesTo1();
-        final Map macroDict= info.getDefinedSymbols();
+        final Map<String, String> macroDict= info.getDefinedSymbols();
         if (macroDict != null) {
-        	for (Iterator iterator = macroDict.entrySet().iterator(); iterator.hasNext();) {
-				final Map.Entry entry = (Map.Entry) iterator.next();
-				final String key= (String) entry.getKey();
-				final String value= ((String) entry.getValue()).trim();
+        	for (Map.Entry<String, String> entry : macroDict.entrySet()) {
+				final String key= entry.getKey();
+				final String value= entry.getValue().trim();
 				if (initEmptyMacros && value.length() == 0) {
 					addMacroDefinition(key.toCharArray(), ONE);
 				}
@@ -373,12 +412,12 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	}
     }
   
-    public Map getDefinitions() {
+    public Map<String, IMacroBinding> getMacroDefinitions() {
         final CharArrayObjectMap objMap= fMacroDictionary;
         int size = objMap.size();
-        Map hashMap = new HashMap(size);
+        Map<String, IMacroBinding> hashMap = new HashMap<String, IMacroBinding>(size);
         for (int i = 0; i < size; i++) {
-            hashMap.put(String.valueOf(objMap.keyAt(i)), objMap.getAt(i));
+            hashMap.put(String.valueOf(objMap.keyAt(i)), (IMacroBinding) objMap.getAt(i));
         }
 
         return hashMap;
@@ -738,9 +777,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
         }
     }
 
-    private CodeReader findInclusion(final String filename, final boolean quoteInclude, 
+    private FileInclusionHandling findInclusion(final String filename, final boolean quoteInclude, 
     		final boolean includeNext, final File currentDir) {
-    	return (CodeReader) findInclusion(filename, quoteInclude, includeNext, currentDir, createCodeReaderTester);
+    	return (FileInclusionHandling) findInclusion(filename, quoteInclude, includeNext, currentDir, createCodeReaderTester);
     }
 
     private Object findInclusion(final String filename, final boolean quoteInclude, 
@@ -800,7 +839,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     }
 	
     
-    public void addMacroDefinition(IIndexMacro macro) {
+    private void addMacroDefinition(IIndexMacro macro) {
     	try {
     		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(macro.getNameCharArray(), macro.getParameterList(), macro.getExpansionImage());
     		final IASTFileLocation loc= macro.getFileLocation();
@@ -824,10 +863,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
         fLocationMap.encounterProblem(id, arg, offset, endOffset);
     }
 
-    private CodeReader createReader(String path, String fileName){
+    private FileInclusionHandling createReader(String path, String fileName){
         String finalPath = ScannerUtility.createReconciledPath(path, fileName);
-        CodeReader reader = fCodeReaderFactory.createCodeReaderForInclusion(this, finalPath);
-        return reader;
+        return fCodeReaderFactory.getInclusionHandling(finalPath);
     }
     
 	
@@ -1019,44 +1057,53 @@ public class CPreprocessor implements ILexerLog, IScanner {
 
 		String path= null;
 		boolean reported= false;
-		if (active) {
+		
+		if (!active) {
+			// test if the include is inactive just because it was included before (bug 167100)
 			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
-			final CodeReader reader= findInclusion(new String(headerName), userInclude, include_next, currentDir);
-			if (reader != null) {
-				path= new String(reader.filename);
-				if (!isCircularInclusion(path)) {
-					reported= true;
-					fAllIncludedFiles.add(path);
-					ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, reader.buffer, path, headerName, userInclude);
-					ScannerContext fctx= new ScannerContext(ctx, fCurrentContext, new Lexer(reader.buffer, fLexOptions, this, this));
-					fCurrentContext= fctx;
+			final String resolved= (String) findInclusion(new String(headerName), userInclude, include_next, currentDir, createPathTester);
+			if (resolved != null && fCodeReaderFactory.hasFileBeenIncludedInCurrentTranslationUnit(resolved)) {
+				path= resolved;
+			}
+		}
+		else {
+			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
+			final FileInclusionHandling fi= findInclusion(new String(headerName), userInclude, include_next, currentDir);
+			if (fi != null) {
+				path= fi.getFileLocation();
+				switch(fi.getKind()) {
+				case FOUND_IN_INDEX:
+					processInclusionFromIndex(path, fi);
+					break;
+				case USE_CODE_READER:
+					CodeReader reader= fi.getCodeReader();
+					if (reader != null && !isCircularInclusion(path)) {
+						reported= true;
+						fAllIncludedFiles.add(path);
+						ILocationCtx ctx= fLocationMap.pushInclusion(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, reader.buffer, path, headerName, userInclude);
+						ScannerContext fctx= new ScannerContext(ctx, fCurrentContext, new Lexer(reader.buffer, fLexOptions, this, this));
+						fCurrentContext= fctx;
+					}
+					break;
+					
+				case SKIP_FILE:
+					break;
 				}
 			}
 			else {
 				handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, headerName, poundOffset, condEndOffset);
 			}
 		}
-		else {
-			// test if the include is inactive just because it was included before (bug 167100)
-			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
-			path= (String) findInclusion(new String(headerName), userInclude, include_next, currentDir, createPathTester);
-			if (path != null) {
-				if (fCodeReaderFactory instanceof IIndexBasedCodeReaderFactory) {
-					// fast indexer
-					if (!((IIndexBasedCodeReaderFactory) fCodeReaderFactory).hasFileBeenIncludedInCurrentTranslationUnit(path)) {
-						path= null;
-					}
-				}
-				else {
-					// full indexer
-					if (!fAllIncludedFiles.contains(path)) {
-						path= null;
-					}
-				}
-			}
-		}
+
 		if (!reported) {
 			fLocationMap.encounterPoundInclude(poundOffset, nameOffsets[0], nameOffsets[1], condEndOffset, headerName, path, userInclude, active); 
+		}
+	}
+
+	private void processInclusionFromIndex(String path, FileInclusionHandling fi) {
+		ArrayList<IIndexMacro> mdefs= fi.getMacroDefinitions();
+		for (IIndexMacro macro : mdefs) {
+			addMacroDefinition(macro);
 		}
 	}
 
@@ -1371,30 +1418,5 @@ public class CPreprocessor implements ILexerLog, IScanner {
     			identifier.getOffset(), identifier.getEndOffset(), lexer.getLastEndOffset(), length, macro, expansions, ili);
         fCurrentContext= new ScannerContext(ctx, fCurrentContext, replacement);
         return true;
-	}
-
-	public Object getAdapter(Class adapter) {
-		if (adapter.isAssignableFrom(fLocationMap.getClass())) {
-			return fLocationMap;
-		}
-		return null;
-	}
-
-	// old scanner, remove this.
-    public CharArrayObjectMap getRealDefinitions() {
-    	throw new UnsupportedOperationException();
-    }
-    public void addDefinition(IMacro macro) {
-    	if (macro instanceof IIndexMacro) {
-    		addMacroDefinition((IIndexMacro) macro);
-    	}
-    	else {
-    		addMacroDefinition(macro.getSignature(), macro.getExpansion());
-    	}
-    }
-	public void setScanComments(boolean val) {
-	}
-	public ILocationResolver getLocationResolver() {
-		return fLocationMap;
 	}
 }

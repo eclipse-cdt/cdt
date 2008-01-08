@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -26,7 +27,7 @@ public interface IScannerInfo {
 	 *  
 	 * @return
 	 */
-	public Map getDefinedSymbols();
+	public Map<String, String> getDefinedSymbols();
 
 	/**
 	 * Answers a <code>String</code> array containing the union of all the 

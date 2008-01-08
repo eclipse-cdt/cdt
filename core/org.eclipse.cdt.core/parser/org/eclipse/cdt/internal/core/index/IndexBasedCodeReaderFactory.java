@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,15 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
-import org.eclipse.cdt.core.dom.IMacroCollector;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -31,7 +31,9 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.internal.core.parser.scanner.FileInclusionHandling;
 import org.eclipse.cdt.internal.core.parser.scanner.IIndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.parser.scanner.FileInclusionHandling.InclusionKind;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.core.runtime.CoreException;
@@ -42,21 +44,17 @@ import org.eclipse.core.runtime.CoreException;
  */
 public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderFactory {
 	private static final class NeedToParseException extends Exception {}
-	private final static char[] EMPTY_CHARS = new char[0];
 
 	private final IIndex fIndex;
 	private int fLinkage;
-	private Set fIncludedFiles= new HashSet();
+	private Set<IIndexFileLocation> fIncludedFiles= new HashSet<IIndexFileLocation>();
 	/** The fall-back code reader factory used in case a header file is not indexed */
 	private final ICodeReaderFactory fFallBackFactory;
 	private final ASTFilePathResolver fPathResolver;
 	private final AbstractIndexerTask fRelatedIndexerTask;
 	
-	public IndexBasedCodeReaderFactory(IIndex index, ASTFilePathResolver pathResolver, int linkage) {
-		this(index, pathResolver, linkage, null);
-	}
-
-	public IndexBasedCodeReaderFactory(IIndex index, ASTFilePathResolver pathResolver, int linkage, ICodeReaderFactory fallbackFactory) {
+	public IndexBasedCodeReaderFactory(IIndex index, ASTFilePathResolver pathResolver, int linkage, 
+			ICodeReaderFactory fallbackFactory) {
 		this(index, pathResolver, linkage, fallbackFactory, null);
 	}
 
@@ -74,10 +72,20 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 	}
 
 	public CodeReader createCodeReaderForTranslationUnit(String path) {
+		if (fFallBackFactory != null) {
+			return fFallBackFactory.createCodeReaderForTranslationUnit(path);
+		}
 		return ParserUtil.createReader(path, null);
 	}
-	
-	public CodeReader createCodeReaderForInclusion(IMacroCollector scanner, String path) {
+
+	public CodeReader createCodeReaderForInclusion(String path) {
+		if (fFallBackFactory != null) {
+			return fFallBackFactory.createCodeReaderForInclusion(path);
+		}
+		return ParserUtil.createReader(path, null);
+	}
+
+	public FileInclusionHandling getInclusionHandling(String path) {
 		IIndexFileLocation ifl= fPathResolver.resolveIncludeFile(path);
 		if (ifl == null) {
 			return null;
@@ -86,25 +94,21 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 		
 		// include files once, only.
 		if (!fIncludedFiles.add(ifl)) {
-			return new CodeReader(path, EMPTY_CHARS);
+			return new FileInclusionHandling(path, InclusionKind.SKIP_FILE);
 		}
 		
 		try {
 			IIndexFile file= fIndex.getFile(fLinkage, ifl);
 			if (file != null) {
 				try {
-					LinkedHashMap macroMap= new LinkedHashMap();
+					LinkedHashMap<IIndexFileLocation, IIndexMacro[]> macroMap= new LinkedHashMap<IIndexFileLocation, IIndexMacro[]>();
 					collectMacros(file, macroMap, false);
-					for (Iterator iterator = macroMap.entrySet().iterator(); iterator.hasNext();) {
-						Map.Entry entry = (Map.Entry) iterator.next();
-						IIndexFileLocation includedIFL = (IIndexFileLocation) entry.getKey();
-						IIndexMacro[] macros = (IIndexMacro[]) entry.getValue();
-						for (int i = 0; i < macros.length; ++i) {
-							scanner.addMacroDefinition(macros[i]);
-						}
-						fIncludedFiles.add(includedIFL);
+					ArrayList<IIndexMacro> allMacros= new ArrayList<IIndexMacro>();
+					for (Map.Entry<IIndexFileLocation,IIndexMacro[]> entry : macroMap.entrySet()) {
+						allMacros.addAll(Arrays.asList(entry.getValue()));
+						fIncludedFiles.add(entry.getKey());
 					}
-					return new CodeReader(path, EMPTY_CHARS);
+					return new FileInclusionHandling(path, allMacros);
 				}
 				catch (NeedToParseException e) {
 				}
@@ -114,10 +118,11 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 			CCorePlugin.log(e);
 		}
 
-		if (fFallBackFactory != null) {
-			return fFallBackFactory.createCodeReaderForInclusion(scanner, path);
+		CodeReader codeReader= createCodeReaderForInclusion(path);
+		if (codeReader != null) {
+			return new FileInclusionHandling(codeReader);
 		}
-		return ParserUtil.createReader(path, null);
+		return null;
 	}
 
 	public boolean hasFileBeenIncludedInCurrentTranslationUnit(String path) {
@@ -125,7 +130,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 		return fIncludedFiles.contains(ifl);
 	}
 	
-	private void collectMacros(IIndexFile file, LinkedHashMap macroMap, boolean checkIncluded) throws CoreException, NeedToParseException {
+	private void collectMacros(IIndexFile file, LinkedHashMap<IIndexFileLocation, IIndexMacro[]> macroMap, boolean checkIncluded) throws CoreException, NeedToParseException {
 		IIndexFileLocation ifl= file.getLocation();
 		if (macroMap.containsKey(ifl) || (checkIncluded && fIncludedFiles.contains(ifl))) {
 			return;

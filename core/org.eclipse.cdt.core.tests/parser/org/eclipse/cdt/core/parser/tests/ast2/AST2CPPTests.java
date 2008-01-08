@@ -5527,4 +5527,55 @@ public class AST2CPPTests extends AST2BaseTest {
 		buffer.append( "void zot (void *p) throw () __attribute__ (( __nonnull__(1) )); \n"); //$NON-NLS-1$
 		parse( buffer.toString(), ParserLanguage.CPP, true, true );
     }
+    
+	//	class C {
+	//	public:
+	//		int i;
+	//	};
+	//
+	//	void problem1(int x) {}
+	//	void problem2(const int *x) {}
+	//	void problem3(int* x) {}
+	//
+	//	void nonproblem1(bool x) {}
+	//	void problem4(bool* x) {}
+	//	void problem5(const bool* x) {}
+	//
+	//	void f() {
+	//		int C::* ptm;
+	//
+	//		problem1("p");
+	//		problem2("p");
+	//		problem3("p");
+	//		nonproblem1("p");
+	//		problem4("p");
+	//		problem5("p");
+	//
+	//		problem1(ptm);
+	//		problem2(ptm);
+	//		problem3(ptm);
+	//		nonproblem1(ptm);
+	//		problem4(ptm);
+	//		problem5(ptm);
+	//	}
+    public void testBug214335() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	
+    	IBinding b00= bh.assertProblem("problem1(\"", 8);
+    	IBinding b01= bh.assertProblem("problem2(\"", 8);
+    	IBinding b02= bh.assertProblem("problem3(\"", 8);
+    	IBinding b03= bh.assertNonProblem("nonproblem1(\"", 11);
+    	IBinding b04= bh.assertProblem("problem4(\"", 8);
+    	IBinding b05= bh.assertProblem("problem5(\"", 8);
+    	
+    	IBinding b06= bh.assertProblem("problem1(ptm", 8);
+    	IBinding b07= bh.assertProblem("problem2(ptm", 8);
+    	IBinding b08= bh.assertProblem("problem3(ptm", 8);
+    	IBinding b09= bh.assertNonProblem("nonproblem1(ptm", 11);
+    	IBinding b10= bh.assertProblem("problem4(ptm", 8);
+    	IBinding b11= bh.assertProblem("problem5(ptm", 8);
+    	
+    	assertInstance(b03, ICPPFunction.class);
+    	assertInstance(b09, ICPPFunction.class);
+    }
 }

@@ -3019,6 +3019,14 @@ public class CPPSemantics {
 			 if( op1 == null && op2 == null )
 			 	break;
 			 else if( op1 == null ^ op2 == null) {
+			    // 4.12 - pointer types can be converted to bool
+				if(t instanceof ICPPBasicType) {
+					if(((ICPPBasicType)t).getType() == ICPPBasicType.t_bool) {
+						canConvert= true;
+						requiredConversion = Cost.CONVERSION_RANK;
+						break;
+					}
+				}
 			 	canConvert = false; 
 			 	break;
 			 } else if( op1 instanceof ICPPPointerToMemberType ^ op2 instanceof ICPPPointerToMemberType ){
@@ -3129,8 +3137,8 @@ public class CPPSemantics {
 	 * @throws DOMException
 	 */
 	static private void promotion( Cost cost ) throws DOMException{
-		IType src = getUltimateType( cost.source, true );
-		IType trg = getUltimateType( cost.target, true );
+		IType src = cost.source;
+		IType trg = cost.target;
 		 
 		if( src.isSameType( trg ) )
 			return;
@@ -3203,13 +3211,18 @@ public class CPPSemantics {
 				cost.detail= 1;
 				return;
 			}
-		} 
+			// 4.12 if the target is a bool, we can still convert
+			else if(!(trg instanceof IBasicType && ((IBasicType)trg).getType() == ICPPBasicType.t_bool)) {
+				return;
+			}
+		}
+		
 		if( t instanceof IBasicType && s instanceof IBasicType || s instanceof IEnumeration ){
 			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
 			cost.rank = Cost.CONVERSION_RANK;
 			cost.conversion = 1;	
-		} else if( t instanceof IBasicType && ((IBasicType)t).getType() == ICPPBasicType.t_bool && s instanceof IPointerType ){
+		} else if( trg instanceof IBasicType && ((IBasicType)trg).getType() == ICPPBasicType.t_bool && s instanceof IPointerType ){
 			//4.12 pointer or pointer to member type can be converted to an rvalue of type bool
 			cost.rank = Cost.CONVERSION_RANK;
 			cost.conversion = 1;

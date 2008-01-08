@@ -17,7 +17,9 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.cdt.core.dom.ast.ASTSignatureUtil;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -46,6 +48,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -56,6 +60,7 @@ import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -90,11 +95,11 @@ public class AST2BaseTest extends BaseTestCase {
     	super(name);
     }
     
-    protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
+    static protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
     	return parse(code, lang, false, true );
     }
     
-    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions ) throws ParserException {
+    static protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions ) throws ParserException {
     	return parse( code, lang, useGNUExtensions, true );
     }
     /**
@@ -103,11 +108,11 @@ public class AST2BaseTest extends BaseTestCase {
      * @return
      * @throws ParserException
      */
-    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException{
+    static protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException{
     	return parse(code, lang, useGNUExtensions, expectNoProblems, false);
     }
     
-    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems , boolean parseComments) throws ParserException {
+    static protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems , boolean parseComments) throws ParserException {
         IScanner scanner = createScanner(new CodeReader(code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
         		new ScannerInfo(), parseComments);
         ISourceCodeParser parser2 = null;
@@ -412,5 +417,48 @@ public class AST2BaseTest extends BaseTestCase {
     	assertEquals(fieldName, binding.getName());
     	ICompositeType struct = ((IField) binding).getCompositeTypeOwner();
     	assertEquals(ownerName, struct.getName());
+    }
+	
+	static protected class BindingAssertionHelper {
+		protected IASTTranslationUnit tu;
+		protected String contents;
+		protected boolean isCPP;
+    	
+    	public BindingAssertionHelper(String contents, boolean isCPP) throws ParserException {
+    		this.contents= contents;
+    		this.isCPP= isCPP;
+    		this.tu= parse(contents, isCPP ? ParserLanguage.CPP : ParserLanguage.C, true, false );
+		}
+    	
+    	public IBinding assertProblem(String section, int len) {
+    		IBinding binding= binding(section, len);
+    		assertTrue("Binding is not a ProblemBinding for name: "+section, binding instanceof IProblemBinding);
+    		return binding;
+    	}
+    	
+    	public IBinding assertNonProblem(String section, int len) {
+    		IBinding binding= binding(section, len);
+    		assertTrue("Binding is a ProblemBinding for name: "+section, !(binding instanceof IProblemBinding));
+    		return binding;
+    	}
+    	
+    	private IBinding binding(String section, int len) {
+    		ILanguage language = isCPP ? GPPLanguage.getDefault() : GCCLanguage.getDefault();
+    		IASTName[] names= language.getSelectedNames(tu, contents.indexOf(section), len);
+    		List lnames= new ArrayList(Arrays.asList(names));
+    		for(ListIterator li= lnames.listIterator(); li.hasNext(); ) {
+    			IASTName name= (IASTName) li.next();
+    			if(name.getRawSignature().length()!=len) {
+    				li.remove();
+    			}
+    		}
+    		names= (IASTName[]) lnames.toArray(new IASTName[lnames.size()]);
+    		assertEquals("<>1 name found for \""+section+"\"", 1, names.length);
+    			
+    		IBinding binding = names[0].resolveBinding();
+    		assertNotNull("No binding for "+names[0].getRawSignature(), binding);
+    		
+    		return names[0].resolveBinding();
+    	}
     }
 }

@@ -143,7 +143,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 		// void operator delete(void*);
         temp = null;
         IType[] deleteParms = new IType[1];
-        deleteParms[0] = cpp_size_t;
+        deleteParms[0] = cpp_void_p;
         IFunctionType deleteFunctionType = new CPPFunctionType(cpp_void, deleteParms);
         IParameter[] deleteTheParms = new IParameter[1];
         deleteTheParms[0] = new CPPBuiltinParameter(deleteParms[0]);

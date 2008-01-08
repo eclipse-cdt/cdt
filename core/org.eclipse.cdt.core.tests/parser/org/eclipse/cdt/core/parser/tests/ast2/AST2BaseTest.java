@@ -95,11 +95,11 @@ public class AST2BaseTest extends BaseTestCase {
     	super(name);
     }
     
-    static protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
     	return parse(code, lang, false, true );
     }
     
-    static protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions ) throws ParserException {
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions ) throws ParserException {
     	return parse( code, lang, useGNUExtensions, true );
     }
     /**
@@ -108,11 +108,11 @@ public class AST2BaseTest extends BaseTestCase {
      * @return
      * @throws ParserException
      */
-    static protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException{
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException{
     	return parse(code, lang, useGNUExtensions, expectNoProblems, false);
     }
     
-    static protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems , boolean parseComments) throws ParserException {
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems , boolean parseComments) throws ParserException {
         IScanner scanner = createScanner(new CodeReader(code.toCharArray()), lang, ParserMode.COMPLETE_PARSE, 
         		new ScannerInfo(), parseComments);
         ISourceCodeParser parser2 = null;
@@ -419,7 +419,7 @@ public class AST2BaseTest extends BaseTestCase {
     	assertEquals(ownerName, struct.getName());
     }
 	
-	static protected class BindingAssertionHelper {
+	protected class BindingAssertionHelper {
 		protected IASTTranslationUnit tu;
 		protected String contents;
 		protected boolean isCPP;

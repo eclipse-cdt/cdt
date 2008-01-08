@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,7 +82,6 @@ import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.CustomBufferFactory;
-import org.eclipse.cdt.internal.ui.editor.ExternalSearchDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
@@ -345,7 +344,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	private CoreModel fCoreModel;
 	private CDocumentProvider fDocumentProvider;
-	private ExternalSearchDocumentProvider fExternalDocumentProvider;
 	private IBufferFactory fBufferFactory;
 	private WorkingCopyManager fWorkingCopyManager;
 	private CTextTools fTextTools;
@@ -402,15 +400,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fDocumentProvider;
 	}
 	
-	/**
-	 * Returns the used external search document provider
-	 */
-	public synchronized ExternalSearchDocumentProvider getExternalSearchDocumentProvider() {
-		if (fExternalDocumentProvider == null) {
-			fExternalDocumentProvider = new ExternalSearchDocumentProvider();
-		}
-		return fExternalDocumentProvider;
-	}
 	/**
 	 * Returns the working copy manager
 	 * @return IWorkingCopyManager

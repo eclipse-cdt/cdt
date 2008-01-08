@@ -17,7 +17,6 @@
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName" schema="schema/textHovers.exsd"/>
    <extension-point id="IndexerPage" name="%indexerPage.name" schema="schema/IndexerPage.exsd"/>
-   <extension-point id="completionContributors" name="%completionContributors" schema="schema/completionContributors.exsd"/>
    <extension-point id="ProposalFilter" name="%proposalFilter.name" schema="schema/ProposalFilter.exsd"/>
    <extension-point id="completionProposalComputer" name="%completionProposalComputer" schema="schema/completionProposalComputer.exsd"/>
    <extension-point id="newCfgDialog" name="%NewCfgDialog.name" schema="schema/newCfgDialog.exsd"/>
@@ -561,13 +560,6 @@
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor">
             <contentTypeBinding contentTypeId="org.eclipse.cdt.core.asmSource"/>
       </editor>
-      <!-- deprecated -->
-      <editor
-            symbolicFontName="org.eclipse.cdt.ui.editors.textfont"
-            class="org.eclipse.cdt.internal.ui.editor.ExternalSearchEditor"
-            icon="icons/obj16/c_file_obj.gif"
-            name="%ExternalSearchEditor.name"
-            id="org.eclipse.cdt.ui.editor.ExternalSearchEditor"/>
       <editor
             class="org.eclipse.cdt.internal.ui.editor.DefaultBinaryFileEditor"
             default="false"
@@ -603,21 +595,21 @@
          </description>
       </fontDefinition>
             <fontDefinition
-            label="%cCompareFontDefiniton.label"
+            label="%cCompareFontDefinition.label"
             defaultsTo="org.eclipse.cdt.ui.editors.textfont"
             categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
             id="org.eclipse.cdt.internal.ui.compare.CMergeViewer">
          <description>
-            %cCompareFontDefiniton.description
+            %cCompareFontDefinition.description
          </description>
       </fontDefinition>
             <fontDefinition
-            label="%asmCompareFontDefiniton.label"
+            label="%asmCompareFontDefinition.label"
             defaultsTo="org.eclipse.cdt.ui.editors.textfont"
             categoryId="org.eclipse.compare.contentmergeviewer.TextMergeViewer"
             id="org.eclipse.cdt.internal.ui.compare.AsmMergeViewer">
          <description>
-            %asmCompareFontDefiniton.description
+            %asmCompareFontDefinition.description
          </description>
       </fontDefinition>
       <colorDefinition
@@ -1947,17 +1939,6 @@
        </completionProposalComputer>
     </extension>
      
-    <!-- legacy completions (completionContributors) -->   
-    <extension
-        point="org.eclipse.cdt.ui.completionProposalComputer"
-        id="LegacyCompletionProposalComputer">
-        <completionProposalComputer 
-            class="org.eclipse.cdt.internal.ui.text.contentassist.LegacyCompletionProposalComputer"
-            categoryId="org.eclipse.cdt.ui.parserProposalCategory">
-            <partition type="__dftl_partition_content_type"/>
-            <partition type="__c_preprocessor"/>
-        </completionProposalComputer>
-    </extension>
     <extension
           id="KeywordCompletionProposalComputer"
           point="org.eclipse.cdt.ui.completionProposalComputer">

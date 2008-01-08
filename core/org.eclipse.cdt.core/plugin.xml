@@ -32,12 +32,6 @@
 <!-- =================================================================================== -->
    <extension-point id="ScannerInfoProvider" name="%ScannerInfoProvider.name"/>
 <!-- =================================================================================== -->
-<!-- Extension Point: CFileType and CFileTypeAssociation for translation unit ident      -->
-<!-- =================================================================================== -->
-   <extension-point id="CLanguage" name="%CLanguage.name" schema="schema/CLanguage.exsd"/>
-   <extension-point id="CFileType" name="%CFileType.name" />
-   <extension-point id="CFileTypeAssociation" name="%CFileTypeAssociation.name" />
-<!-- =================================================================================== -->
 <!-- PathEntryContainer initialization, this is part of the IPathEntry framework         -->
 <!-- =================================================================================== -->
    <extension-point id="PathEntryContainerInitializer" name="%PathEntryContainerInitializer" schema="schema/PathEntryContainerInitializer.exsd"/>
@@ -236,81 +230,6 @@
       </application>
    </extension>
 <!-- =================================================================================== -->
-<!-- CDT file type mappings                                                              -->
-<!-- =================================================================================== -->
-   <!--extension
-         point="org.eclipse.cdt.core.CLanguage">
-      <language
-            name="C"
-            id="org.eclipse.cdt.core.language.c">
-      </language>
-      <language
-            name="C++"
-            id="org.eclipse.cdt.core.language.cxx">
-      </language>
-      <language
-            name="%fileTypeMapping.AssemblyLanguage"
-            id="org.eclipse.cdt.core.language.asm">
-      </language>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CFileType">
-      <fileType
-            name="%fileTypeMapping.cSourceFile"
-            type="source"
-            id="org.eclipse.cdt.core.fileType.c_source"
-            language="org.eclipse.cdt.core.language.c">
-      </fileType>
-      <fileType
-            name="%fileTypeMapping.cHeaderFile"
-            type="header"
-            id="org.eclipse.cdt.core.fileType.c_header"
-            language="org.eclipse.cdt.core.language.c">
-      </fileType>
-      <fileType
-            name="%fileTypeMapping.cppSourceFile"
-            type="source"
-            id="org.eclipse.cdt.core.fileType.cxx_source"
-            language="org.eclipse.cdt.core.language.cxx">
-      </fileType>
-      <fileType
-            name="%fileTypeMapping.cppHeaderFile"
-            type="header"
-            id="org.eclipse.cdt.core.fileType.cxx_header"
-            language="org.eclipse.cdt.core.language.cxx">
-      </fileType>
-      <fileType
-            name="%fileTypeMapping.assemblySourceFile"
-            type="source"
-            id="org.eclipse.cdt.core.fileType.asm_source"
-            language="org.eclipse.cdt.core.language.asm">
-      </fileType>
-   </extension>
-   <extension
-         point="org.eclipse.cdt.core.CFileTypeAssociation">
-      <association
-            type="org.eclipse.cdt.core.fileType.c_source"
-            pattern="*.c">
-      </association>
-      <association
-            type="org.eclipse.cdt.core.fileType.c_header"
-            pattern="*.h">
-      </association>
-      <association
-            type="org.eclipse.cdt.core.fileType.cxx_source"
-            pattern="*.cpp,*.cxx,*.cc,*.C">
-      </association>
-      <association
-            file="template/cpp_headers"
-            type="org.eclipse.cdt.core.fileType.cxx_header"
-            pattern="*.hpp,*.hxx,*.hh,*.H">
-      </association>
-      <association
-            type="org.eclipse.cdt.core.fileType.asm_source"
-            pattern="*.asm,*.s,*.S">
-      </association>
-   </extension-->
-<!-- =================================================================================== -->
 <!-- Some well known C file extensions override for the team plugins                     -->
 <!-- =================================================================================== -->
    <extension
@@ -449,19 +368,6 @@
             type="org.eclipse.core.resources.problemmarker">
       </super>
    </extension>
-
-<!-- =================================================================================== -->
-<!-- Code Formatter extension point                                                      -->
-<!-- =================================================================================== -->
-   <!--extension
-         id="codeFormatters"
-         name="%CodeFormatters.name"
-         point="org.eclipse.cdt.core.CodeFormatter">
-      <codeFormatter
-            class="org.eclipse.cdt.internal.formatter.DefaultCodeFormatter"
-            name="%DefaultCodeFormatter.name"
-            id="org.eclipse.cdt.core.defaultCodeFormatter"/>
-   </extension-->
 
 <!-- =================================================================================== -->
 <!-- Define C/C++ files ContentTypes                                                     -->

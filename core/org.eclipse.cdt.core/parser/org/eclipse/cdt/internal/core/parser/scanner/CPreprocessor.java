@@ -14,10 +14,10 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
@@ -1101,7 +1101,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	}
 
 	private void processInclusionFromIndex(String path, FileInclusionHandling fi) {
-		ArrayList<IIndexMacro> mdefs= fi.getMacroDefinitions();
+		List<IIndexMacro> mdefs= fi.getMacroDefinitions();
 		for (IIndexMacro macro : mdefs) {
 			addMacroDefinition(macro);
 		}

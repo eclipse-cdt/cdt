@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -81,7 +82,7 @@ public class FileInclusionHandling {
 	 * Valid with {@link InclusionKind#FOUND_IN_INDEX}.
 	 * @return the macroDefinitions
 	 */
-	public ArrayList<IIndexMacro> getMacroDefinitions() {
+	public List<IIndexMacro> getMacroDefinitions() {
 		return fMacroDefinitions;
 	}
 

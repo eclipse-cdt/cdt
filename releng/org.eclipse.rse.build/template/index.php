@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="http://www.eclipse.org/default_style.css" type="text/css">
-<title>DSDP-TM Downloads</title>
+<title>DSDP-TM @buildTypeLong@ Build: @buildId@</title>
 </head>
 
 <body>

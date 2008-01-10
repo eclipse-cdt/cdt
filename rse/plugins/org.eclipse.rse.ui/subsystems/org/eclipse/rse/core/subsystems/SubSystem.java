@@ -28,7 +28,6 @@
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to SubSystem.connect()
  * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
  * David McKnight   (IBM)        - [212403] [apidoc][breaking] Fixing docs of SubSystem#getConnectorService() and making internalConnect() private
- * David McKnight   (IBM)        - [187711] default implementation of doesFilterEncompass() - now taken unneeded
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;

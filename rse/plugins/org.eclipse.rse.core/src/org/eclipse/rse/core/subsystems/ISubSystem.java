@@ -16,7 +16,6 @@
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
  * David McKnight   (IBM)        - [207095] Implicit connect needs to run in the same job as caller
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
- * David McKnight   (IBM)        - [187711] new doesFilterEncompass apis - now unneeded
  ********************************************************************************/
 
 package org.eclipse.rse.core.subsystems;

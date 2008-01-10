@@ -23,7 +23,6 @@
  * David McKnight   (IBM)        - [207178] changing list APIs for file service and subsystems
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * David McKnight   (IBM)        - [211472] [api][breaking] IRemoteObjectResolver.getObjectWithAbsoluteName() needs a progress monitor
- * David McKnight   (IBM)        - [187711] doestFilterEncompass api - now unneeded so taken out
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;

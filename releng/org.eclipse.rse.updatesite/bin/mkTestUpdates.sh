@@ -312,7 +312,7 @@ awk 'BEGIN {doit=1}
 mv -f site.xml.tmp site.xml
 
 # optimize the site
-# see http://wiki.eclipse.org/index.php/Platform-releng-faq
+# see http://wiki.eclipse.org/Platform-releng-faq
 case ${TYPE} in test*)
   echo "Packing the site... $SITE"
   # Workaround for downgrading effort of pack200 to avoid VM bug

@@ -15,6 +15,7 @@
  * Kevin Doyle (IBM) - [187640] Removed setting status to finish when search not finished
  * David McKnight      [190010] Set the status to finish or canceled depending on dstore status.  
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
+ * David McKnight   (IBM)        - [214378] don't mark as finished until we have the results - sleep instead of wait
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.dstore.search;

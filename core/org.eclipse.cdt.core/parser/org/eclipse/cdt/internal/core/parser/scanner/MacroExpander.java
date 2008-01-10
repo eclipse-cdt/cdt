@@ -134,10 +134,10 @@ public class MacroExpander {
 	private int fStartOffset;
 	private int fEndOffset;
 
-	public MacroExpander(ILexerLog log, CharArrayObjectMap dict, LocationMap locationMap, MacroDefinitionParser mdp, LexerOptions lexOptions) {
+	public MacroExpander(ILexerLog log, CharArrayObjectMap dict, LocationMap locationMap, LexerOptions lexOptions) {
 		fDictionary= dict;
 		fLocationMap= locationMap;
-		fDefinitionParser= mdp;
+		fDefinitionParser= new MacroDefinitionParser();
 		fLexOptions= lexOptions;
 		fLog= log;
 	}
@@ -217,12 +217,13 @@ public class MacroExpander {
 					result.append(t);
 				}
 				else {
-					ImageLocationInfo info= null;
-					if (fLexOptions.fCreateImageLocations) {
-						info = createImageLocationInfo(t);
+					if (fLocationMap != null) {
+						ImageLocationInfo info= null;
+						if (fLexOptions.fCreateImageLocations) {
+							info = createImageLocationInfo(t);
+						}
+						fImplicitMacroExpansions.add(fLocationMap.encounterImplicitMacroExpansion(macro, info));
 					}
-					fImplicitMacroExpansions.add(fLocationMap.encounterImplicitMacroExpansion(macro, info));
-
 					TokenList replacement= new TokenList();
 
 					addSpacemarker(l, t, replacement); // start expansion
@@ -243,14 +244,16 @@ public class MacroExpander {
 	}
 
 	private ImageLocationInfo createImageLocationInfo(Token t) {
-		final Object s= t.fSource;
-		if (s instanceof ObjectStyleMacro) {
-			return new MacroImageLocationInfo((ObjectStyleMacro) s, t.getOffset(), t.getEndOffset());
-		}
-		else if (s instanceof CPreprocessor) {
-			int sequenceNumber= fLocationMap.getSequenceNumberForOffset(t.getOffset());
-			int sequenceEndNumber= fLocationMap.getSequenceNumberForOffset(t.getEndOffset());
-			return new ParameterImageLocationInfo(sequenceNumber, sequenceEndNumber);
+		if (fLocationMap != null) {
+			final Object s= t.fSource;
+			if (s instanceof ObjectStyleMacro) {
+				return new MacroImageLocationInfo((ObjectStyleMacro) s, t.getOffset(), t.getEndOffset());
+			}
+			else if (s instanceof CPreprocessor) {
+				int sequenceNumber= fLocationMap.getSequenceNumberForOffset(t.getOffset());
+				int sequenceEndNumber= fLocationMap.getSequenceNumberForOffset(t.getEndOffset());
+				return new ParameterImageLocationInfo(sequenceNumber, sequenceEndNumber);
+			}
 		}
 		return null;
 	}

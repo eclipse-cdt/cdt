@@ -206,7 +206,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     	
         fExpressionEvaluator= new ExpressionEvaluator();
         fMacroDefinitionParser= new MacroDefinitionParser();
-        fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fMacroDefinitionParser, fLexOptions);
+        fMacroExpander= new MacroExpander(this, fMacroDictionary, fLocationMap, fLexOptions);
         fCodeReaderFactory= wrapReaderFactory(readerFactory);
 
         setupMacroDictionary(configuration, info, language);		
@@ -233,10 +233,10 @@ public class CPreprocessor implements ILexerLog, IScanner {
 			public CodeReader createCodeReaderForInclusion(String path) {
 				return readerFactory.createCodeReaderForInclusion(path);
 			}
-			public FileInclusionHandling getInclusionHandling(String path) {
+			public IncludeFileContent getContentForInclusion(String path) {
 				CodeReader reader= readerFactory.createCodeReaderForInclusion(path);
 				if (reader != null) {
-					return new FileInclusionHandling(reader);
+					return new IncludeFileContent(reader);
 				}
 				return null;
 			}
@@ -777,9 +777,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
         }
     }
 
-    private FileInclusionHandling findInclusion(final String filename, final boolean quoteInclude, 
+    private IncludeFileContent findInclusion(final String filename, final boolean quoteInclude, 
     		final boolean includeNext, final File currentDir) {
-    	return (FileInclusionHandling) findInclusion(filename, quoteInclude, includeNext, currentDir, createCodeReaderTester);
+    	return (IncludeFileContent) findInclusion(filename, quoteInclude, includeNext, currentDir, createCodeReaderTester);
     }
 
     private Object findInclusion(final String filename, final boolean quoteInclude, 
@@ -863,9 +863,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
         fLocationMap.encounterProblem(id, arg, offset, endOffset);
     }
 
-    private FileInclusionHandling createReader(String path, String fileName){
+    private IncludeFileContent createReader(String path, String fileName){
         String finalPath = ScannerUtility.createReconciledPath(path, fileName);
-        return fCodeReaderFactory.getInclusionHandling(finalPath);
+        return fCodeReaderFactory.getContentForInclusion(finalPath);
     }
     
 	
@@ -1068,7 +1068,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 		}
 		else {
 			final File currentDir= userInclude || include_next ? new File(String.valueOf(getCurrentFilename())).getParentFile() : null;
-			final FileInclusionHandling fi= findInclusion(new String(headerName), userInclude, include_next, currentDir);
+			final IncludeFileContent fi= findInclusion(new String(headerName), userInclude, include_next, currentDir);
 			if (fi != null) {
 				path= fi.getFileLocation();
 				switch(fi.getKind()) {
@@ -1100,7 +1100,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 		}
 	}
 
-	private void processInclusionFromIndex(String path, FileInclusionHandling fi) {
+	private void processInclusionFromIndex(String path, IncludeFileContent fi) {
 		List<IIndexMacro> mdefs= fi.getMacroDefinitions();
 		for (IIndexMacro macro : mdefs) {
 			addMacroDefinition(macro);

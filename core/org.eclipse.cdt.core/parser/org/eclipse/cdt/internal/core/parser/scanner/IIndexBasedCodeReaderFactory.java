@@ -25,8 +25,9 @@ public interface IIndexBasedCodeReaderFactory extends ICodeReaderFactory {
 	boolean hasFileBeenIncludedInCurrentTranslationUnit(String path);
 	
 	/**
-	 * Create include information object for the given location.
-	 * @see FileInclusionHandling
+	 * Create an InclusionContent object for the given location.
+     * return an inclusion content or <code>null</code> if the location does not exist.
+	 * @see IncludeFileContent
 	 */
-	public FileInclusionHandling getInclusionHandling(String fileLocation);
+	public IncludeFileContent getContentForInclusion(String fileLocation);
 }

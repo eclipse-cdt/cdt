@@ -31,9 +31,9 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.internal.core.parser.scanner.FileInclusionHandling;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.IIndexBasedCodeReaderFactory;
-import org.eclipse.cdt.internal.core.parser.scanner.FileInclusionHandling.InclusionKind;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
 import org.eclipse.core.runtime.CoreException;
@@ -85,7 +85,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 		return ParserUtil.createReader(path, null);
 	}
 
-	public FileInclusionHandling getInclusionHandling(String path) {
+	public IncludeFileContent getContentForInclusion(String path) {
 		IIndexFileLocation ifl= fPathResolver.resolveIncludeFile(path);
 		if (ifl == null) {
 			return null;
@@ -94,7 +94,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 		
 		// include files once, only.
 		if (!fIncludedFiles.add(ifl)) {
-			return new FileInclusionHandling(path, InclusionKind.SKIP_FILE);
+			return new IncludeFileContent(path, InclusionKind.SKIP_FILE);
 		}
 		
 		try {
@@ -108,7 +108,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 						allMacros.addAll(Arrays.asList(entry.getValue()));
 						fIncludedFiles.add(entry.getKey());
 					}
-					return new FileInclusionHandling(path, allMacros);
+					return new IncludeFileContent(path, allMacros);
 				}
 				catch (NeedToParseException e) {
 				}
@@ -120,7 +120,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 
 		CodeReader codeReader= createCodeReaderForInclusion(path);
 		if (codeReader != null) {
-			return new FileInclusionHandling(codeReader);
+			return new IncludeFileContent(codeReader);
 		}
 		return null;
 	}

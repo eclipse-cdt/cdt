@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.parser.CodeReader;
  * Instructs the preprocessor on how to handle a file-inclusion.
  * @since 5.0
  */
-public class FileInclusionHandling {
+public class IncludeFileContent {
 	public enum InclusionKind {
 		/**
 		 * Instruct the preprocessor to skip this inclusion. 
@@ -48,7 +48,7 @@ public class FileInclusionHandling {
 	 * @throws IllegalArgumentException if fileLocation is <code>null</code> or the kind value is illegal for
 	 * this constructor.
 	 */
-	public FileInclusionHandling(String fileLocation, InclusionKind kind) throws IllegalArgumentException {
+	public IncludeFileContent(String fileLocation, InclusionKind kind) throws IllegalArgumentException {
 		if (fileLocation == null || kind != InclusionKind.SKIP_FILE) {
 			throw new IllegalArgumentException();
 		}
@@ -63,7 +63,7 @@ public class FileInclusionHandling {
 	 * @param codeReader the code reader for the inclusion.
 	 * @throws IllegalArgumentException in case the codeReader or its location is <code>null</code>.
 	 */
-	public FileInclusionHandling(CodeReader codeReader) throws IllegalArgumentException {
+	public IncludeFileContent(CodeReader codeReader) throws IllegalArgumentException {
 		if (codeReader == null) {
 			throw new IllegalArgumentException();
 		}
@@ -82,7 +82,7 @@ public class FileInclusionHandling {
 	 * @param macroDefinitions a list of macro definitions
 	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
 	 */
-	public FileInclusionHandling(String fileLocation, List<IIndexMacro> macroDefinitions) {
+	public IncludeFileContent(String fileLocation, List<IIndexMacro> macroDefinitions) {
 		fKind= InclusionKind.FOUND_IN_INDEX;
 		fFileLocation= fileLocation;
 		fCodeReader= null;

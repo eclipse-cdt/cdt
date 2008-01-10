@@ -10,7 +10,6 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -37,29 +36,56 @@ public class FileInclusionHandling {
 		USE_CODE_READER
 	}
 
-	private InclusionKind fKind;
-	private CodeReader fCodeReader;
-	private ArrayList<IIndexMacro> fMacroDefinitions;
-	private String fFileLocation;
+	private final InclusionKind fKind;
+	private final CodeReader fCodeReader;
+	private final List<IIndexMacro> fMacroDefinitions;
+	private final String fFileLocation;
 	
-	public FileInclusionHandling(String fileLocation, InclusionKind kind) {
-		assert kind == InclusionKind.SKIP_FILE;
-		fFileLocation= fileLocation;
+	/**
+	 * For skipping include files.
+	 * @param fileLocation the location of the file.
+	 * @param kind must be {@link InclusionKind#SKIP_FILE}.
+	 * @throws IllegalArgumentException if fileLocation is <code>null</code> or the kind value is illegal for
+	 * this constructor.
+	 */
+	public FileInclusionHandling(String fileLocation, InclusionKind kind) throws IllegalArgumentException {
+		if (fileLocation == null || kind != InclusionKind.SKIP_FILE) {
+			throw new IllegalArgumentException();
+		}
 		fKind= kind;
+		fFileLocation= fileLocation;
+		fMacroDefinitions= null;
+		fCodeReader= null;
 	}
 
-	public FileInclusionHandling(CodeReader codeReader) {
-		assert codeReader != null;
+	/**
+	 * For reading include files from disk.
+	 * @param codeReader the code reader for the inclusion.
+	 * @throws IllegalArgumentException in case the codeReader or its location is <code>null</code>.
+	 */
+	public FileInclusionHandling(CodeReader codeReader) throws IllegalArgumentException {
+		if (codeReader == null) {
+			throw new IllegalArgumentException();
+		}
 		fKind= InclusionKind.USE_CODE_READER;
+		fFileLocation= codeReader.getPath();
 		fCodeReader= codeReader;
-		if (codeReader != null) {
-			fFileLocation= codeReader.getPath();
+		fMacroDefinitions= null;
+		if (fFileLocation == null) {
+			throw new IllegalArgumentException();
 		}
 	}
 
-	public FileInclusionHandling(String fileLocation, ArrayList<IIndexMacro> macroDefinitions) {
+	/**
+	 * For using information about an include file from the index.
+	 * @param fileLocation the location of the file
+	 * @param macroDefinitions a list of macro definitions
+	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
+	 */
+	public FileInclusionHandling(String fileLocation, List<IIndexMacro> macroDefinitions) {
 		fKind= InclusionKind.FOUND_IN_INDEX;
 		fFileLocation= fileLocation;
+		fCodeReader= null;
 		fMacroDefinitions= macroDefinitions;
 	}
 
@@ -71,8 +97,15 @@ public class FileInclusionHandling {
 	}
 
 	/**
+	 * Returns the location of the file to be included.
+	 */
+	public String getFileLocation() {
+		return fFileLocation;
+	}
+
+	/**
 	 * Valid with {@link InclusionKind#USE_CODE_READER}.
-	 * @return the codeReader
+	 * @return the codeReader or <code>null</code> if kind is different to {@link InclusionKind#USE_CODE_READER}.
 	 */
 	public CodeReader getCodeReader() {
 		return fCodeReader;
@@ -80,16 +113,9 @@ public class FileInclusionHandling {
 
 	/**
 	 * Valid with {@link InclusionKind#FOUND_IN_INDEX}.
-	 * @return the macroDefinitions
+	 * @return the macroDefinitions or <code>null</code> if kind is different to {@link InclusionKind#FOUND_IN_INDEX}.
 	 */
 	public List<IIndexMacro> getMacroDefinitions() {
 		return fMacroDefinitions;
-	}
-
-	/**
-	 * Returns the location of the file to be included.
-	 */
-	public String getFileLocation() {
-		return fFileLocation;
 	}
 }

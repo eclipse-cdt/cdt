@@ -95,7 +95,7 @@ public class DStoreSearchService extends AbstractDStoreService implements ISearc
 					else { // need to wait until we have all results on client
 						try
 						{
-							wait(2000);
+							Thread.sleep(2000);
 						}
 						catch (Exception e)
 						{				

@@ -167,11 +167,10 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 	{
 		if (_status.getValue().equals("done")) //$NON-NLS-1$
 		{
-			setStatus(IHostSearchConstants.FINISHED);
+			//setStatus(IHostSearchConstants.FINISHED); // moved to within DelayedDomainListenerRemover
 			// need to wait for the results though
 			DelayedDomainListenerRemover remover = new DelayedDomainListenerRemover(this, _status);
 			remover.start();
-		//	_status.getDataStore().getDomainNotifier().removeDomainListener(this);
 		}
 		else if (_status.getValue().equals("cancelled")) //$NON-NLS-1$
 		{
@@ -210,6 +209,7 @@ public class DStoreFileSubSystemSearchResultConfiguration extends DStoreSearchRe
 			{				
 			}
 			_status.getDataStore().getDomainNotifier().removeDomainListener(_config);
+			_config.setStatus(IHostSearchConstants.FINISHED);
 		}
 	}
 }

@@ -104,7 +104,9 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		}
 		fIsEnabled = ( parent instanceof AbstractCValue ) ? ((AbstractCValue)parent).getParentVariable().isEnabled() : !isBookkeepingEnabled();
 		getCDISession().getEventManager().addEventListener( this );
-		setInitialFormat();
+		if ( cdiVariableObject != null ) {
+			setInitialFormat();
+		}
 	}
 
 	/**
@@ -119,7 +121,9 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		fIsEnabled = !isBookkeepingEnabled();
 		setStatus( ICDebugElementStatus.ERROR, MessageFormat.format( CoreModelMessages.getString( "CVariable.1" ), new String[]{ errorMessage } ) ); //$NON-NLS-1$
 		getCDISession().getEventManager().addEventListener( this );
-		setInitialFormat();
+		if ( cdiVariableObject != null ) {
+			setInitialFormat();
+		}		
 	}
 
 	/*
@@ -764,7 +768,7 @@ public abstract class CVariable extends AbstractCVariable implements ICDIEventLi
 		
 	/**
 	 * restore the format stored previously for this variable.
-	 * Only sets explictly retrieved formats in order to maintain defaults. 
+	 * Only sets explicitly retrieved formats in order to maintain defaults. 
 	 */
 	protected void setInitialFormat() {
 		try {

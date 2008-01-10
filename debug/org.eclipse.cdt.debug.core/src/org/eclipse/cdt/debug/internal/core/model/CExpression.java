@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.model.CVariableFormat;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICType;
+import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -55,7 +56,6 @@ public class CExpression extends CLocalVariable implements IExpression {
 		fText = cdiExpression.getExpressionText();
 		fCDIExpression = cdiExpression;
 		fStackFrame = frame;
-		setInitialFormat();
 	}
 
 	/* (non-Javadoc)
@@ -220,7 +220,7 @@ public class CExpression extends CLocalVariable implements IExpression {
 		if ( fType == null ) {
 			synchronized( this ) {
 				if ( fType == null ) {
-					fType = ((AbstractCValue)fValue).getType();
+					fType = ((ICValue)fValue).getType();
 				}
 			}
 		}

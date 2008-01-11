@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,10 +52,10 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		int fCount;
 	}
 
-	private static final Map fgDirectives;
+	private static final Map<String, AsmDirective> fgDirectives;
 	
 	static {
-		fgDirectives= new HashMap();
+		fgDirectives= new HashMap<String, AsmDirective>();
 		fgDirectives.put("globl", AsmDirective.GLOBAL); //$NON-NLS-1$
 		fgDirectives.put("global", AsmDirective.GLOBAL); //$NON-NLS-1$
 		fgDirectives.put("ascii", AsmDirective.DATA); //$NON-NLS-1$
@@ -67,8 +67,8 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	
 	private TranslationUnit fTranslationUnit;
 	private char fLineSeparatorChar;
-	private Map fGlobals;
-	private Map fLabels;
+	private Map<String, Counter> fGlobals;
+	private Map<String, Counter> fLabels;
 	
 	private int fLastLabelEndOffset;
 	private AsmLabel fLastGlobalLabel;
@@ -116,11 +116,10 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	 * 
 	 * @param source
 	 * @throws CModelException
-	 * @throws OffsetLimitReachedException 
 	 */
 	private void buildModel(final char[] source) throws CModelException {
-		fGlobals= new HashMap();
-		fLabels= new HashMap();
+		fGlobals= new HashMap<String, Counter>();
+		fLabels= new HashMap<String, Counter>();
 		fLastLabel= null;
 		fLastGlobalLabel= null;
 		fLastLabelEndOffset= 0;
@@ -152,7 +151,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 					if (token != null && token.getType() == IToken.tIDENTIFIER) {
 						String text= token.getImage();
 						if (isGlobalDirective(text)) {
-							firstTokenOnLine= parseGlobalDirective(token);
+							firstTokenOnLine= parseGlobalDirective();
 						} else if (isDataDirective(text)) {
 							inInstruction= true;
 						}
@@ -211,6 +210,9 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		}
 	}
 	
+	/**
+	 * @return the next token from the scanner or <code>null</code> on end-of-input.
+	 */
 	protected IToken nextToken() {
 		Token token;
 		try {
@@ -224,7 +226,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 		return token;
 	}
 
-	private boolean parseGlobalDirective(IToken token) {
+	private boolean parseGlobalDirective() {
 		boolean eol= false;
 		do {
 			IToken t= nextToken();
@@ -240,7 +242,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 				break;
 			default:
 				if (fLineSeparatorChar != 0) {
-					if (token.getLength() == 1 && token.getCharImage()[0] == fLineSeparatorChar) {
+					if (t.getLength() == 1 && t.getCharImage()[0] == fLineSeparatorChar) {
 						eol= true;
 					}
 				}
@@ -258,7 +260,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	}
 
 	protected void registerGlobalLabel(String labelName) {
-		Counter counter= (Counter) fGlobals.get(labelName);
+		Counter counter= fGlobals.get(labelName);
 		if (counter == null) {
 			fGlobals.put(labelName, counter= new Counter());
 		}
@@ -266,7 +268,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	}
 
 	private int getGlobalLabelIndex(String labelName) {
-		Counter counter= (Counter) fGlobals.get(labelName);
+		Counter counter= fGlobals.get(labelName);
 		if (counter == null) {
 			return 0;
 		}
@@ -274,7 +276,7 @@ public class AsmModelBuilder implements IContributedModelBuilder {
 	}
 
 	protected int registerLabel(String labelName) {
-		Counter counter= (Counter) fLabels.get(labelName);
+		Counter counter= fLabels.get(labelName);
 		if (counter == null) {
 			fLabels.put(labelName, counter= new Counter());
 		}

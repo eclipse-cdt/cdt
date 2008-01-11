@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
@@ -301,7 +302,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 				} else if (bindings[i] instanceof ICPPClassType) {
 					ICPPClassType type = (ICPPClassType) bindings[i];
 					if (type.isSameType(classType)) continue;
-				} else if (!(bindings[i] instanceof IEnumerator) || isDeclaration) {
+				} else if (!(bindings[i] instanceof IEnumerator || bindings[i] instanceof IEnumeration) || isDeclaration) {
 					continue;
 				}
 				

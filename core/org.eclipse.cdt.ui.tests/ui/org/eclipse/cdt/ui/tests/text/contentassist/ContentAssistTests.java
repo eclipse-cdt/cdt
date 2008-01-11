@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -221,10 +221,13 @@ public class ContentAssistTests extends BaseUITestCase {
         cu = importFile( "strategy.cpp", c2 ); //$NON-NLS-1$
         
         results = getResults( cu, c2.indexOf( "::" ) + 2 ); //$NON-NLS-1$
-        assertEquals( 3, results.length );
+        assertEquals( 4, results.length );
         assertEquals( "CHEAT", results[0].getDisplayString()  ); //$NON-NLS-1$
         assertEquals( "IDIOT", results[1].getDisplayString()  ); //$NON-NLS-1$
         assertEquals( "NORMAL", results[2].getDisplayString()  ); //$NON-NLS-1$
+        // "_Ability" is here due to fix for bug 199598 
+        // Difficult to differentiate between declaration and expression context
+        assertEquals( "_Ability", results[3].getDisplayString()  ); //$NON-NLS-1$
 
         // in a method definition context, constructors and methods should be proposed
         

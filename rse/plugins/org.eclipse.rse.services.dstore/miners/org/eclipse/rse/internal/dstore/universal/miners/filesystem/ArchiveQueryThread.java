@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2007 IBM Corporation. All rights reserved.
+ * Copyright (c) 2007, 2008  IBM Corporation. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@
  * Contributors:
  * {Name} (company) - description of contribution.
  * Kevin Doyle (IBM) - [191548] Deleting Read-Only directory removes it from view and displays no error
+ * Xuan Chen (IBM) -   [200417] [regression][dstore] Rename an expanded folder in an Archive displays no children
  ********************************************************************************/
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
 
@@ -65,26 +66,42 @@ public class ArchiveQueryThread extends QueryThread {
 	protected void doQueryAll() {
 		{
 			File fileobj = null;
+			String queryType = _subject.getType();
+			boolean isTypeFilter = queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR);
+			boolean isArchiveFile = false;
+			String pathValue = _subject.getValue();
+			String path = pathValue;
+			if (isTypeFilter)
+			{
+				if (ArchiveHandlerManager.getInstance().isArchive(new File(pathValue.toString())))
+				{
+					isArchiveFile = true;
+				}
+			}
+			else
+			{
+				if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) 
+				{
+					isArchiveFile = true;
+				}
+			}
+			
 			try {
 				ArchiveHandlerManager mgr = ArchiveHandlerManager.getInstance();
-				char separatorChar = File.separatorChar;
-				if (ArchiveHandlerManager.isVirtual(_subject
-						.getAttribute(DE.A_VALUE))) {
-					separatorChar = '/';
-				}
-
-				String path = _subject.getAttribute(DE.A_VALUE) + separatorChar
-						+ _subject.getName();
+				
 				String rootPath = path;
 				String virtualPath = ""; //$NON-NLS-1$
 
 				VirtualChild[] children = null;
 
-				if (_subject
-						.getType()
-						.equals(
-								IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)) {
+				if (isArchiveFile) {
 					// it's an archive file (i.e. file.zip)
+					if (!isTypeFilter)
+					{
+						char separatorChar = File.separatorChar;
+						path = pathValue + separatorChar + _subject.getName();
+						rootPath = path;
+					}
 					fileobj = new File(rootPath);
 					_subject.setAttribute(DE.A_SOURCE, setProperties(fileobj,
 							true));
@@ -97,10 +114,23 @@ public class ArchiveQueryThread extends QueryThread {
 					if (isCancelled())
 						return;
 
-				} else if (_subject
-						.getType()
-						.equals(
-								IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
+				} 
+				else  //This method could only be called because the subject is a filter (which can be interpreted as archive file or virtual folder,
+					  //a virtual file/folder object.
+				{
+					if (!isTypeFilter)
+					{
+						//if it is not a filter, then must be a virtual file or folder.
+						char separatorChar = File.separatorChar;
+						if (ArchiveHandlerManager.isVirtual(_subject
+								.getAttribute(DE.A_VALUE))) {
+							separatorChar = '/';
+						}
+	
+						path = pathValue + separatorChar
+								+ _subject.getName();
+					}
+					
 					// it's a virtual folder (i.e. a folder within zip)
 					// need to determine the associate File object
 					AbsoluteVirtualPath avp = new AbsoluteVirtualPath(path);

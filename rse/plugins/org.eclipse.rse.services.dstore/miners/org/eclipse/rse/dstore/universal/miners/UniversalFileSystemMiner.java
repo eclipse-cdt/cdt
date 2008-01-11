@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@
  * David McKnight   (IBM)        - [196624] dstore miner IDs should be String constants rather than dynamic lookup
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Xuan Chen (IBM) - [194481] [dstore][Archive] Save Conflict After Renaming a File that is Open
+ * Xuan Chen (IBM) - [200417] [regression][dstore] Rename an expanded folder in an Archive displays no children
  *******************************************************************************/
 
 package org.eclipse.rse.dstore.universal.miners;
@@ -319,9 +320,28 @@ public class UniversalFileSystemMiner extends Miner {
 	public DataElement handleQueryAll(DataElement subject, DataElement attributes, DataElement status,
 			String queryType, boolean caseSensitive) 
 	{
-		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)
+		boolean isArchive = false;
+		String fullName = subject.getValue();
+		
+		if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_FILTER_DESCRIPTOR)) 
+		{
+			//check if it is a archive file
+			if (ArchiveHandlerManager.getInstance().isArchive(new File(fullName)))
+			{
+				isArchive = true;
+			}
+			else
+			{
+				isArchive = ArchiveHandlerManager.isVirtual(fullName);
+			}
+		} 
+		else if (queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_ARCHIVE_FILE_DESCRIPTOR)
 				|| queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FILE_DESCRIPTOR)
 				|| queryType.equals(IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR)) {
+			isArchive = true;
+		}
+		if (isArchive)
+		{
 			return handleQueryAllArchive(subject, attributes, status, caseSensitive, false);
 		}
 
@@ -989,15 +1009,12 @@ public class UniversalFileSystemMiner extends Miner {
 						subject.setAttribute(DE.A_TYPE,
 								IUniversalDataStoreConstants.UNIVERSAL_VIRTUAL_FOLDER_DESCRIPTOR);
 						subject.setAttribute(DE.A_NAME, child.name);
-						if (child.path.equals("")) { //$NON-NLS-1$
-							subject.setAttribute(DE.A_VALUE, avp
-									.getContainingArchiveString());
-						} else {
-							subject.setAttribute(DE.A_VALUE, avp
+						
+						subject.setAttribute(DE.A_VALUE, avp
 									.getContainingArchiveString()
 									+ ArchiveHandlerManager.VIRTUAL_SEPARATOR
 									+ child.path);
-						}
+						
 
 					} else {
 						subject.setAttribute(DE.A_TYPE,

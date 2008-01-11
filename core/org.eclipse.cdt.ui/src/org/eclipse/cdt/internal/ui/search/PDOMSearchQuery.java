@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,11 +79,11 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	public String getLabel() {
 		String type;
 		if ((flags & FIND_REFERENCES) != 0)
-			type = CSearchMessages.getString("PDOMSearch.query.refs.label"); //$NON-NLS-1$
+			type = CSearchMessages.PDOMSearch_query_refs_label; 
 		else if ((flags & FIND_DECLARATIONS) != 0)
-			type = CSearchMessages.getString("PDOMSearch.query.decls.label"); //$NON-NLS-1$
+			type = CSearchMessages.PDOMSearch_query_decls_label; 
 		else
- 			type = CSearchMessages.getString("PDOMSearch.query.defs.label"); //$NON-NLS-1$
+ 			type = CSearchMessages.PDOMSearch_query_defs_label; 
 		return type;
 	}
 

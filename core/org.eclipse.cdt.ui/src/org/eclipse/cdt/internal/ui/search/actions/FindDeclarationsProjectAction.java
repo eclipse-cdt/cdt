@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,14 +31,14 @@ public class FindDeclarationsProjectAction extends FindAction {
 	
 	public FindDeclarationsProjectAction(CEditor editor){
 		this(editor,
-			CSearchMessages.getString("CSearch.FindDeclarationsProjectAction.label"), //$NON-NLS-1$
-			CSearchMessages.getString("CSearch.FindDeclarationsProjectAction.tooltip")); //$NON-NLS-1$
+			CSearchMessages.CSearch_FindDeclarationsProjectAction_label, 
+			CSearchMessages.CSearch_FindDeclarationsProjectAction_tooltip); 
 	}
 	
 	public FindDeclarationsProjectAction(IWorkbenchSite site){
 		this(site,
-			CSearchMessages.getString("CSearch.FindDeclarationsProjectAction.label"), //$NON-NLS-1$
-			CSearchMessages.getString("CSearch.FindDeclarationsProjectAction.tooltip")); //$NON-NLS-1$
+			CSearchMessages.CSearch_FindDeclarationsProjectAction_label, 
+			CSearchMessages.CSearch_FindDeclarationsProjectAction_tooltip); 
 	}
 
 	public FindDeclarationsProjectAction(IWorkbenchSite site, String label, String tooltip) {
@@ -66,7 +66,7 @@ public class FindDeclarationsProjectAction extends FindAction {
 	}
 
 	protected String getScopeDescription() {
-		return CSearchMessages.getString("ProjectScope"); //$NON-NLS-1$
+		return CSearchMessages.ProjectScope; 
 	}
 
 	protected int getLimitTo() {

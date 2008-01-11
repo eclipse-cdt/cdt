@@ -73,7 +73,7 @@ public class DeclarationsSearchGroup extends ActionGroup {
 		
 		IMenuManager incomingMenu = menu;
 	
-		IMenuManager declarationsMenu = new MenuManager(CSearchMessages.getString("group.declarations"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
+		IMenuManager declarationsMenu = new MenuManager(CSearchMessages.group_declarations, IContextMenuConstants.GROUP_SEARCH); 
 		
 		if (fEditor != null){
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, declarationsMenu);	

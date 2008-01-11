@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.cdt.core.model.ICProject;
 
 import org.eclipse.cdt.internal.ui.ICThemeConstants;
+import org.eclipse.cdt.internal.ui.preferences.formatter.FormatterProfileManager;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
 
@@ -1241,6 +1242,27 @@ public class PreferenceConstants {
 	public final static String EDITOR_SOURCE_HOVER_BACKGROUND_COLOR_SYSTEM_DEFAULT= "sourceHoverBackgroundColor.SystemDefault"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that controls whether occurrences are marked in the editor.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String EDITOR_MARK_OCCURRENCES= "markOccurrences"; //$NON-NLS-1$
+
+
+	/**
+	 * A named preference that controls whether occurrences are sticky in the editor.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 5.0
+	 */
+	public static final String EDITOR_STICKY_OCCURRENCES= "stickyOccurrences"; //$NON-NLS-1$
+
+	/**
 	 * Returns the CDT-UI preference store.
 	 *
 	 * @return the CDT-UI preference store
@@ -1357,6 +1379,9 @@ public class PreferenceConstants {
 
 		store.setDefault(PreferenceConstants.ENSURE_NEWLINE_AT_EOF, false);
 
+		// formatter profile
+		store.setDefault(PreferenceConstants.FORMATTER_PROFILE, FormatterProfileManager.DEFAULT_PROFILE);
+		
 		// content assist
 		store.setDefault(PreferenceConstants.CODEASSIST_EXCLUDED_CATEGORIES, "org.eclipse.cdt.ui.textProposalCategory\0"); //$NON-NLS-1$
 		store.setDefault(PreferenceConstants.CODEASSIST_CATEGORY_ORDER, "org.eclipse.cdt.ui.parserProposalCategory:65539\0org.eclipse.cdt.ui.textProposalCategory:65541\0org.eclipse.cdt.ui.templateProposalCategory:2\0"); //$NON-NLS-1$
@@ -1411,6 +1436,10 @@ public class PreferenceConstants {
 
 		// codegen
 		store.setDefault(PreferenceConstants.CODEGEN_ADD_COMMENTS, false);
+		
+		// mark occurrences
+		store.setDefault(PreferenceConstants.EDITOR_MARK_OCCURRENCES, true);
+		store.setDefault(PreferenceConstants.EDITOR_STICKY_OCCURRENCES, true);
     }
 
 

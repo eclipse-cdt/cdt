@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,75 +7,85 @@
  *
  * Contributors:
  *     IBM Corp. - Rational Software - initial implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
-/*
- * Created on Jun 11, 2003
- */
 package org.eclipse.cdt.internal.ui.search;
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import org.eclipse.osgi.util.NLS;
 
-/**
- * @author aniefer
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
-public class CSearchMessages {
-	private static final String RESOURCE_BUNDLE= CSearchMessages.class.getName();
+public final class CSearchMessages extends NLS {
 
-	private static ResourceBundle fgResourceBundle;
-	static {
-		try {
-			fgResourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
-		} catch (MissingResourceException x) {
-			fgResourceBundle = null;
-		}
-	}
-	
+	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.ui.search.CSearchMessages";//$NON-NLS-1$
+
 	private CSearchMessages() {
+		// Do not instantiate
 	}
 
-	public static String getString(String key) {
-		try {
-			return fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		} catch (NullPointerException e) {
-			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object[] args) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		return MessageFormat.format(format, args);
-	}
+	public static String group_declarations;
+	public static String group_references;
+	public static String CSearchResultCollector_matches;
+	public static String CSearchPage_searchFor_label;
+	public static String CSearchPage_searchFor_type;
+	public static String CSearchPage_searchFor_namespace;
+	public static String CSearchPage_searchFor_method;
+	public static String CSearchPage_searchFor_function;
+	public static String CSearchPage_searchFor_field;
+	public static String CSearchPage_searchFor_variable;
+	public static String CSearchPage_searchFor_class;
+	public static String CSearchPage_searchFor_struct;
+	public static String CSearchPage_searchFor_union;
+	public static String CSearchPage_searchFor_enum;
+	public static String CSearchPage_searchFor_enumr;
+	public static String CSearchPage_searchFor_derived;
+	public static String CSearchPage_searchFor_friend;
+	public static String CSearchPage_searchFor_typedef;
+	public static String CSearchPage_searchFor_macro;
+	public static String CSearchPage_searchFor_any;
+	public static String CSearchPage_searchFor_classStruct;
+	public static String CSearchPage_limitTo_label;
+	public static String CSearchPage_limitTo_declarations;
+	public static String CSearchPage_limitTo_definitions;
+	public static String CSearchPage_limitTo_references;
+	public static String CSearchPage_limitTo_allOccurrences;
+	public static String CSearchPage_expression_label;
+	public static String CSearchPage_expression_caseSensitive;
+	public static String CSearch_FindDeclarationAction_label;
+	public static String CSearch_FindDeclarationAction_tooltip;
+	public static String CSearch_FindDeclarationsProjectAction_label;
+	public static String CSearch_FindDeclarationsProjectAction_tooltip;
+	public static String CSearch_FindDeclarationsInWorkingSetAction_label;
+	public static String CSearch_FindDeclarationsInWorkingSetAction_tooltip;
+	public static String CSearch_FindReferencesAction_label;
+	public static String CSearch_FindReferencesAction_tooltip;
+	public static String CSearch_FindReferencesProjectAction_label;
+	public static String CSearch_FindReferencesProjectAction_tooltip;
+	public static String CSearch_FindReferencesInWorkingSetAction_label;
+	public static String CSearch_FindReferencesInWorkingSetAction_tooltip;
+	public static String CSearchOperation_operationUnavailable_message;
+	public static String WorkspaceScope;
+	public static String WorkingSetScope;
+	public static String SelectionScope;
+	public static String HierarchyScope;
+	public static String ProjectScope;
+	public static String PDOMSearch_query_refs_label;
+	public static String PDOMSearch_query_defs_label;
+	public static String PDOMSearch_query_decls_label;
+	public static String PDOMSearchPatternQuery_PatternQuery_labelPatternInScope;
+	public static String PDOMSearch_query_pattern_error;
+	public static String SelectionParseAction_FileOpenFailure_format;
+	public static String SelectionParseAction_SelectedTextNotSymbol_message;
+	public static String SelectionParseAction_SymbolNotFoundInIndex_format;
+	public static String SelectionParseAction_IncludeNotFound_format;
 
-	/**
-	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
-	 * @param key	the string used to get the bundle value, must not be null
-	 */
-	public static String getFormattedString(String key, Object arg) {
-		String format= null;
-		try {
-			format= fgResourceBundle.getString(key);
-		} catch (MissingResourceException e) {
-			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
-		}
-		if (arg == null)
-			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
+	public static String OccurrencesFinder_no_element;
+	public static String OccurrencesFinder_no_binding;
+	public static String OccurrencesFinder_searchfor;
+	public static String OccurrencesFinder_label_singular;
+	public static String OccurrencesFinder_label_plural;
+	public static String OccurrencesFinder_occurrence_description;
+	public static String OccurrencesFinder_occurrence_write_description;
+
+	static {
+		NLS.initializeMessages(BUNDLE_NAME, CSearchMessages.class);
 	}
 }

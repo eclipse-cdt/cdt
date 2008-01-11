@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	private RetargetTextEditorAction fToggleInsertModeAction;
 	private RetargetTextEditorAction fShowOutline;
 	private RetargetTextEditorAction fToggleSourceHeader;
+	private ToggleMarkOccurrencesAction fToggleMarkOccurrencesAction;
 	
 	public CEditorActionContributor() {
 		super();
@@ -81,8 +82,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 		// actions that are "contributed" to editors, they are considered belonging to the active editor
 		fTogglePresentation= new TogglePresentationAction();
-		fTogglePresentation.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY);
-		
+
+		fToggleMarkOccurrencesAction= new ToggleMarkOccurrencesAction();
+
 		fPreviousAnnotation= new GotoAnnotationAction("PreviousAnnotation.", false); //$NON-NLS-1$
 		fNextAnnotation= new GotoAnnotationAction("NextAnnotation.", true); //$NON-NLS-1$
 
@@ -102,7 +104,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 		fToggleSourceHeader= new RetargetTextEditorAction(bundle, "ToggleSourceHeader."); //$NON-NLS-1$
 		fToggleSourceHeader.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_SOURCE_HEADER);
-	}	
+
+	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.BasicTextEditorActionContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
@@ -156,6 +159,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		bars.setGlobalActionHandler(ITextEditorActionConstants.NEXT, fNextAnnotation);
 		bars.setGlobalActionHandler(ITextEditorActionConstants.PREVIOUS, fPreviousAnnotation);
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
+		bars.setGlobalActionHandler(ICEditorActionDefinitionIds.TOGGLE_MARK_OCCURRENCES, fToggleMarkOccurrencesAction);
 	}
 
 	/*
@@ -173,6 +177,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fShiftLeft.setAction(getAction(textEditor, ITextEditorActionConstants.SHIFT_LEFT));
 
 		fTogglePresentation.setEditor(textEditor);
+		fToggleMarkOccurrencesAction.setEditor(textEditor);
 		fPreviousAnnotation.setEditor(textEditor);
 		fNextAnnotation.setEditor(textEditor);
 

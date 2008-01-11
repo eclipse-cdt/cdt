@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     IBM Corporation
  *     Markus Schorn (Wind River Systems)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -185,4 +186,11 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	 * @since 4.0
 	 */
 	public static final String TOGGLE_SOURCE_HEADER = "org.eclipse.cdt.ui.edit.text.c.toggle.source.header"; //$NON-NLS-1$
+
+	/**
+	 * Action definition id of toggle mark occurrences action
+	 * (value: <code>"org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"</code>).
+	 * @since 5.0
+	 */
+	public static final String TOGGLE_MARK_OCCURRENCES= "org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"; //$NON-NLS-1$
 }

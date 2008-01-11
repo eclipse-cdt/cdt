@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corp. - Rational Software - initial implementation
  *     Markus Schorn (Wind River Systems)
  *     Ed Swartz (Nokia)
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search.actions;
@@ -43,10 +44,6 @@ import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
  * Created on Jun 2, 2004
  */
 public class SelectionParseAction extends Action {
-	protected static final String CSEARCH_OPERATION_NO_NAMES_SELECTED_MESSAGE = "CSearchOperation.noNamesSelected.message"; //$NON-NLS-1$
-	protected static final String CSEARCH_OPERATION_OPERATION_UNAVAILABLE_MESSAGE = "CSearchOperation.operationUnavailable.message"; //$NON-NLS-1$
-    protected static final String CSEARCH_OPERATION_NO_DEFINITION_MESSAGE = "CSearchOperation.noDefinitionFound.message"; //$NON-NLS-1$
-    protected static final String CSEARCH_OPERATION_NO_DECLARATION_MESSAGE = "CSearchOperation.noDeclarationFound.message"; //$NON-NLS-1$
         
 	protected IWorkbenchSite fSite;
 	protected CEditor fEditor;
@@ -230,23 +227,23 @@ public class SelectionParseAction extends Action {
 
     protected void reportSourceFileOpenFailure(IPath path) {
     	showStatusLineMessage(MessageFormat.format(
-    			CSearchMessages.getString("SelectionParseAction.FileOpenFailure.format"), //$NON-NLS-1$
+    			CSearchMessages.SelectionParseAction_FileOpenFailure_format, 
     			new String[] { path.toOSString() }));
     }
     
     protected void reportSelectionMatchFailure() {
-    	showStatusLineMessage(CSearchMessages.getString("SelectionParseAction.SelectedTextNotSymbol.message")); //$NON-NLS-1$
+    	showStatusLineMessage(CSearchMessages.SelectionParseAction_SelectedTextNotSymbol_message); 
     }
     
     protected void reportSymbolLookupFailure(String symbol) {
     	showStatusLineMessage(MessageFormat.format(
-    			CSearchMessages.getString("SelectionParseAction.SymbolNotFoundInIndex.format"), //$NON-NLS-1$
+    			CSearchMessages.SelectionParseAction_SymbolNotFoundInIndex_format, 
     			new String[] { symbol }));
     }
     
     protected void reportIncludeLookupFailure(String filename) {
     	showStatusLineMessage(MessageFormat.format(
-    			CSearchMessages.getString("SelectionParseAction.IncludeNotFound.format"), //$NON-NLS-1$
+    			CSearchMessages.SelectionParseAction_IncludeNotFound_format, 
     			new String[] { filename }));
     }
 

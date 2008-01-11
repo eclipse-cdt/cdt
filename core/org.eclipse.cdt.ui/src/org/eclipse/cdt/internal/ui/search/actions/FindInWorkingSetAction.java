@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.search.CSearchMessages;
 import org.eclipse.cdt.internal.ui.search.CSearchUtil;
+import org.eclipse.cdt.internal.ui.util.Messages;
 
 public abstract class FindInWorkingSetAction extends FindAction {
 	
@@ -52,7 +53,7 @@ public abstract class FindInWorkingSetAction extends FindAction {
 			fWorkingSets= askForWorkingSets();
 		}
 		if (fWorkingSets != null) {
-			scopeDescription = CSearchMessages.getFormattedString("WorkingSetScope", new String[] {CSearchUtil.toString(fWorkingSets)}); //$NON-NLS-1$
+			scopeDescription = Messages.format(CSearchMessages.WorkingSetScope, new String[] {CSearchUtil.toString(fWorkingSets)}); 
 			super.run();
 		}
 		fWorkingSets= initial;

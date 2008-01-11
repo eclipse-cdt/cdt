@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -423,17 +423,26 @@ public class CVisitor {
 					return PROCESS_CONTINUE;
 			}
 			
-			if( CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) && 
-					name.resolveBinding() == binding ){
-				if( refs.length == idx ){
-					IASTName [] temp = new IASTName[ refs.length * 2 ];
-					System.arraycopy( refs, 0, temp, 0, refs.length );
-					refs = temp;
+			if( CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) )
+				if (sameBinding(name.resolveBinding(), binding)){
+					if( refs.length == idx ){
+						IASTName [] temp = new IASTName[ refs.length * 2 ];
+						System.arraycopy( refs, 0, temp, 0, refs.length );
+						refs = temp;
+					}
+					refs[idx++] = name;
 				}
-				refs[idx++] = name;
-			}
 			return PROCESS_CONTINUE;
 		}
+		
+		private boolean sameBinding(IBinding binding1, IBinding binding2) {
+			if (binding1 == binding2)
+				return true;
+			if (binding1.equals(binding2))
+				return true;
+			return false;
+		}
+
 		public IASTName[] getReferences(){
 			if( idx < refs.length ){
 				IASTName [] temp = new IASTName[ idx ];
@@ -2024,7 +2033,7 @@ public class CVisitor {
 	    }
         
         //label names
-        List b3 = new ArrayList();
+        List<ILabel> b3 = new ArrayList<ILabel>();
         do{
             char [] n = name.toCharArray();
             if( scope instanceof ICFunctionScope ){

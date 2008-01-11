@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,14 +20,14 @@ public class FindRefsAction extends FindAction {
 
 	public FindRefsAction(CEditor editor) {
 		this(editor,
-		CSearchMessages.getString("CSearch.FindReferencesAction.label"), //$NON-NLS-1$
-		CSearchMessages.getString("CSearch.FindReferencesAction.tooltip")); //$NON-NLS-1$
+		CSearchMessages.CSearch_FindReferencesAction_label, 
+		CSearchMessages.CSearch_FindReferencesAction_tooltip); 
 	}
 	
 	public FindRefsAction(IWorkbenchSite site){
 		this(site,
-		CSearchMessages.getString("CSearch.FindReferencesAction.label"), //$NON-NLS-1$
-		CSearchMessages.getString("CSearch.FindReferencesAction.tooltip")); //$NON-NLS-1$
+		CSearchMessages.CSearch_FindReferencesAction_label, 
+		CSearchMessages.CSearch_FindReferencesAction_tooltip); 
 	} 
 
 	public FindRefsAction(CEditor editor, String label, String tooltip) {
@@ -43,7 +43,7 @@ public class FindRefsAction extends FindAction {
 	}
 
 	protected String getScopeDescription() {
-		return CSearchMessages.getString("WorkspaceScope"); //$NON-NLS-1$
+		return CSearchMessages.WorkspaceScope; 
 	}
 
 	protected ICElement[] getScope() {

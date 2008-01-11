@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * @author bgheorgh
@@ -52,7 +54,7 @@ public class CountLabelProvider extends LabelProvider {
 		if (c == 0)
 			return text;
 		Integer matchCount= new Integer(c);
-		return fLabelProvider.getText(element) + " "+ CSearchMessages.getFormattedString("CSearchResultCollector.matches", matchCount); //$NON-NLS-1$ //$NON-NLS-2$
+		return fLabelProvider.getText(element) + " "+ Messages.format(CSearchMessages.CSearchResultCollector_matches, matchCount);  //$NON-NLS-1$
 	}
 
 	public void dispose() {

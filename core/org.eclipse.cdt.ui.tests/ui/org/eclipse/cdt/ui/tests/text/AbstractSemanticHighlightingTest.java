@@ -175,7 +175,7 @@ public class AbstractSemanticHighlightingTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		disableAllSemanticHighlightings();
-		EditorTestHelper.runEventQueue(1000);
+		EditorTestHelper.runEventQueue(500);
 	}
 	
 	protected void assertEqualPositions(Position[] expected, Position[] actual) {

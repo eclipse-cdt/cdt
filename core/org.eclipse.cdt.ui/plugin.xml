@@ -750,10 +750,15 @@
             id="org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage"
             name="%todoTaskPrefName"/>
       <page
-            name="%codeTemplatePreferencePageName"
+            name="%codeTemplatePreferencePage.name"
             category="org.eclipse.cdt.ui.preferences.CodeFormatterPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.CodeTemplatePreferencePage"
             id="org.eclipse.cdt.ui.preferences.CodeTemplatePreferencePage"/>
+      <page
+            name="%markOccurrencesPreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CEditorPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.MarkOccurrencesPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.MarkOccurrencesPreferencePage"/>
       <!--page
             name="%WorkInProgress.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
@@ -1256,6 +1261,24 @@
                tooltip="%NewProjectDropDownAction.tooltip">
          </action>
       </actionSet>
+      <actionSet
+            label="%CEditorPresentationActionSet.label"
+            visible="false"
+            id="org.eclipse.cdt.ui.text.c.actionSet.presentation">
+         <action
+               allowLabelUpdate="true"
+               style="toggle"
+               toolbarPath="org.eclipse.ui.edit.text.actionSet.presentation/Presentation"
+               id="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"
+               definitionId="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"
+               disabledIcon="$nl$/icons/dtool16/mark_occurrences.gif"
+               icon="$nl$/icons/etool16/mark_occurrences.gif"
+               helpContextId="toggle_mark_occurrences_action"
+               label="%toggleMarkOccurrences.label"
+               retarget="true"
+               tooltip="%toggleMarkOccurrences.tooltip">
+         </action>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
@@ -1452,6 +1475,11 @@
             contextId="org.eclipse.cdt.ui.macroExpansionHoverScope"
             commandId="org.eclipse.cdt.ui.hover.forwardMacroExpansion"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        sequence="M2+M3+O"
+	        contextId="org.eclipse.cdt.ui.cEditorScope"
+	        commandId="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"
+	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -1605,6 +1633,11 @@
             description="%ActionDefinition.forwardMacroExpansion.description"
             categoryId="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.hover.forwardMacroExpansion"/>
+      <command
+            name="%toggleMarkOccurrences.label"
+            description="%toggleMarkOccurrences.description"
+            categoryId="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"/>
    </extension>
    <extension
          id="pdomSearchPage"
@@ -1637,6 +1670,12 @@
       </actionSetPartAssociation>
       <actionSetPartAssociation
             targetID="org.eclipse.ui.edit.text.actionSet.annotationNavigation">
+         <part
+               id="org.eclipse.cdt.ui.editor.CEditor">
+         </part>
+      </actionSetPartAssociation>      
+      <actionSetPartAssociation
+            targetID="org.eclipse.cdt.ui.text.c.actionSet.presentation">
          <part
                id="org.eclipse.cdt.ui.editor.CEditor">
          </part>
@@ -1681,6 +1720,7 @@
       </workingSet>
    </extension>
    <extension
+         id="org.eclipse.cdt.ui.annotations"
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
       		colorPreferenceValue="254,155,0"
@@ -1705,6 +1745,31 @@
             isGoToPreviousNavigationTargetKey="isIndexResultGoToPreviousNavigationTarget"
 	        isGoToPreviousNavigationTarget="false">
       </specification>
+	  <specification
+            annotationType="org.eclipse.cdt.ui.occurrences"
+            label="%OccurrenceAnnotation.label"
+            icon="$nl$/icons/obj16/searchm_obj.gif"
+            textPreferenceKey="org.eclipse.cdt.ui.occurrenceIndication"
+            textPreferenceValue="false"
+            highlightPreferenceKey="org.eclipse.cdt.ui.occurrenceHighlighting"
+            highlightPreferenceValue="true"
+            contributesToHeader="false"
+            overviewRulerPreferenceKey="org.eclipse.cdt.ui.occurrenceIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            verticalRulerPreferenceKey="org.eclipse.cdt.ui.occurrenceIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="org.eclipse.cdt.ui.occurrenceIndicationColor"
+            colorPreferenceValue="212,212,212"
+            presentationLayer="4"
+            showInNextPrevDropdownToolbarActionKey="org.eclipse.cdt.ui.showOccurrenceInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="org.eclipse.cdt.ui.isOccurrenceGoToNextNavigationTarget"
+	        isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="org.eclipse.cdt.ui.isOccurrenceGoToPreviousNavigationTarget"
+	        isGoToPreviousNavigationTarget="false"
+            textStylePreferenceKey="org.eclipse.cdt.ui.occurrenceTextStyle"
+            textStylePreferenceValue="NONE">
+	  </specification>
    </extension>
    <extension
          point="org.eclipse.search.searchResultViewPages">
@@ -1828,6 +1893,9 @@
       <type
          markerType="org.eclipse.cdt.core.indexermarker"
          name="org.eclipse.cdt.ui.indexmarker">
+      </type>
+      <type
+         name="org.eclipse.cdt.ui.occurrences">
       </type>
    </extension>
    <extension point="org.eclipse.ui.workbench.texteditor.spellingEngine">

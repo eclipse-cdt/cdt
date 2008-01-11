@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class ReferencesSearchGroup extends ActionGroup {
 		
 		IMenuManager incomingMenu = menu;
 		
-		IMenuManager refsMenu = new MenuManager(CSearchMessages.getString("group.references"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$
+		IMenuManager refsMenu = new MenuManager(CSearchMessages.group_references, IContextMenuConstants.GROUP_SEARCH); 
 		
 		if (fEditor != null){
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_FIND, refsMenu);	

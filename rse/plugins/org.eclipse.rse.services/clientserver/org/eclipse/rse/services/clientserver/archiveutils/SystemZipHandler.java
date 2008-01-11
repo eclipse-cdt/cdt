@@ -20,6 +20,7 @@
  * Xuan Chen        (IBM)        - [209828] Need to move the Create operation to a job.
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
+ * Xuan Chen        (IBM)        - [214786] [regression][archive]rename a virtual directory does not work properly
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -146,7 +147,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 * Update the virtual file system tree after rename operation
 	 *
 	 */
-	protected void updateTreeAfterRename(HashMap newOldName)
+	protected void updateTreeAfterRename(HashMap newOldName, VirtualChild[] renameList)
 	{
 		Enumeration entries = _zipfile.entries();
 		while (entries.hasMoreElements())
@@ -157,8 +158,27 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			{
 				oldName = (String)newOldName.get(next.getName());
 			}
-			fillBranch(next, oldName);
+			fillBranchAfterRename(next, oldName);
 		}
+		
+		//also make sure all the directory affected by rename, we need to remove those hashmap from the
+		//virtual file system.
+		if (renameList == null)
+		{
+			return;
+		}
+		for (int i = 0; i < renameList.length; i++)
+		{
+			if (renameList[i].isDirectory)
+			{
+				String fullName = renameList[i].fullName;
+				if (_virtualFS.containsKey(fullName))
+				{
+					_virtualFS.remove(fullName);
+				}
+			}
+		}
+		
 	}
 
 	/**
@@ -169,17 +189,6 @@ public class SystemZipHandler implements ISystemArchiveHandler
 	 * @param next The ZipEntry from which the branch will be built.
 	 */
 	protected void fillBranch(ZipEntry next)
-	{
-		fillBranch(next, null);
-	}
-	/**
-	 * Populates an entire branch of the tree that comprises the
-	 * virtual file system. The parameter is the leaf node, and from
-	 * the virtual path of the parameter, we can deduce what the ancestors
-	 * of the leaves are, and populate the tree from there.
-	 * @param next The ZipEntry from which the branch will be built.
-	 */
-	protected void fillBranch(ZipEntry next, String oldName)
 	{
 		if (next.getName().equals("/")) return; // dummy entry //$NON-NLS-1$
 		VirtualChild nextChild = null;
@@ -192,25 +201,9 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		
 		SystemUniversalZipEntry nextEntry = new SystemUniversalZipEntry(next);
 		
-		if (null != oldName)
-		{
-			int endOfPathPosition = oldName.lastIndexOf("/"); //$NON-NLS-1$
-			if (endOfPathPosition != -1) 
-			{
-				pathNameToSearchInVFS = oldName.substring(0,endOfPathPosition);
-				nameToSearchInVFS = oldName.substring(endOfPathPosition+1);
-			}
-			else 
-			{
-				pathNameToSearchInVFS = ""; //$NON-NLS-1$
-				nameToSearchInVFS = oldName;
-			}
-		}
-		else
-		{
-			pathNameToSearchInVFS = nextEntry.getFullPath();
-			nameToSearchInVFS = nextEntry.getName();
-		}
+		
+		pathNameToSearchInVFS = nextEntry.getFullPath();
+		nameToSearchInVFS = nextEntry.getName();
 		
 		//try to find the virtual child from the memory tree
 		if (_virtualFS.containsKey(pathNameToSearchInVFS))
@@ -219,9 +212,6 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			if (itsDirectory.containsKey(nameToSearchInVFS))
 			{
 				nextChild = (VirtualChild)itsDirectory.get(nameToSearchInVFS);
-				//We also need to remove this virtual child from VFS tree first, since we need to 
-				//put it back any way later.
-				itsDirectory.remove(nameToSearchInVFS);
 			}
 		}
 		
@@ -256,6 +246,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		// element in the virtualFS.
 		if (!_virtualFS.containsKey(nextChild.path))
 		{
+			//Do we really need to recursively create? yes for this case
 			recursivePopulate(nextChild.path, nextChild);
 		}
 		else // key has been encountered before, no need to recursively
@@ -265,6 +256,137 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			hm.put(nextChild.name, nextChild);
 		}		
 	}
+	
+	/**
+	 * Populates an entire branch of the tree that comprises the
+	 * virtual file system. The parameter is the leaf node, and from
+	 * the virtual path of the parameter, we can deduce what the ancestors
+	 * of the leaves are, and populate the tree from there.
+	 * @param next The ZipEntry from which the branch will be built.
+	 */
+	protected void fillBranchAfterRename(ZipEntry next, String oldName)
+	{
+		if (next.getName().equals("/")) return; // dummy entry //$NON-NLS-1$
+		VirtualChild nextChild = null;
+		
+		//We need to search this entry in the virtual file system tree.
+		//If oldName is passed in, we use the old name.
+		//otherwise, we use the entry name.
+		String pathNameToSearchInVFS = null;
+		String nameToSearchInVFS = null;
+		boolean replace = (oldName != null);
+		
+		SystemUniversalZipEntry nextEntry = new SystemUniversalZipEntry(next);
+		
+		if (null != oldName)
+		{
+			int endOfPathPosition = oldName.lastIndexOf("/"); //$NON-NLS-1$
+			if (endOfPathPosition != -1) 
+			{
+				if (endOfPathPosition == (oldName.length() - 1))
+				{
+					//It is a directory, then we need to use its parent fullname as the its path.
+					String nameWithoutLastSlash = oldName.substring(0, endOfPathPosition);
+					int endOfPathPosNameWithoutLastSlash = nameWithoutLastSlash.lastIndexOf("/"); //$NON-NLS-1$
+					if (endOfPathPosNameWithoutLastSlash != -1)
+					{
+						//example for this case is: 
+						//fullpath folder1/folder12/
+						//Int this case, pathNameToSearchInVFS should be "folder1", and nameToSearchInVFS should be "folder12"
+						pathNameToSearchInVFS = oldName.substring(0, endOfPathPosNameWithoutLastSlash);
+						nameToSearchInVFS = oldName.substring(endOfPathPosNameWithoutLastSlash + 1, endOfPathPosition);
+					}
+					else
+					{
+						//It is the case of something where its full path is "folder1/"
+						//In this case, pathNameToSearchInVFS should be "", and nameToSearchInVFS should be "folder"
+						pathNameToSearchInVFS = "";  //$NON-NLS-1$
+						nameToSearchInVFS = oldName.substring(0, endOfPathPosition);
+					}
+				}
+				else 
+				{
+					pathNameToSearchInVFS = oldName.substring(0,endOfPathPosition);
+					nameToSearchInVFS = oldName.substring(endOfPathPosition+1);
+				}
+			}
+			else 
+			{
+				pathNameToSearchInVFS = ""; //$NON-NLS-1$
+				nameToSearchInVFS = oldName;
+			}
+		}
+		else
+		{
+			pathNameToSearchInVFS = nextEntry.getFullPath();
+			nameToSearchInVFS = nextEntry.getName();
+		}
+		
+		//try to find the virtual child from the memory tree
+		if (_virtualFS.containsKey(pathNameToSearchInVFS))
+		{
+			HashMap itsDirectory = (HashMap)_virtualFS.get(pathNameToSearchInVFS);
+			if (itsDirectory.containsKey(nameToSearchInVFS))
+			{
+				nextChild = (VirtualChild)itsDirectory.get(nameToSearchInVFS);
+				//We also need to remove this virtual child from VFS tree first, since we need to 
+				//put it back any way later.
+				if (replace)
+				{
+					itsDirectory.remove(nameToSearchInVFS);
+				}
+			}
+			/*
+			if (nameToSearchInVFS.equals(""))
+			{
+				//It is the directory itself, remove the hashmap.
+				_virtualFS.remove(pathNameToSearchInVFS);
+			}
+			*/
+		}
+		
+		if (null == nextChild)
+		{
+			nextChild = new VirtualChild(this, nextEntry.getFullName());
+		}
+		else
+		{
+			//We found the virtual child, but its name could also been changed.  So need to update it 
+			nextChild.renameTo(nextEntry.getFullName());
+		}
+		
+		if (next.isDirectory())
+		{
+			nextChild.isDirectory = true;
+				
+			if (!_virtualFS.containsKey(nextChild.fullName))
+			{
+				_virtualFS.put(nextChild.fullName, new HashMap());
+			}	
+		}
+		//Now, update other properties
+		nextChild.setComment(next.getComment());
+		nextChild.setCompressedSize(next.getCompressedSize());
+		Integer methodIntValue = new Integer(next.getMethod());
+		nextChild.setCompressionMethod(methodIntValue.toString());
+		nextChild.setSize(next.getSize());
+		nextChild.setTimeStamp(next.getTime());
+		
+		//	key has not been encountered before, create a new 
+		// element in the virtualFS.
+		if (!_virtualFS.containsKey(nextChild.path))
+		{
+			//Do we really need to recursively create? no in this case
+			populate(nextChild.path, nextChild);
+		}
+		else // key has been encountered before, no need to recursively
+			 // populate the subdirectories
+		{
+			HashMap hm = (HashMap) _virtualFS.get(nextChild.path);
+			hm.put(nextChild.name, nextChild);
+		}		
+	}
+
 
 	/**
 	 * Actually does the work for the fillBranch method. Recursively
@@ -286,6 +408,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 		HashMap newValue = new HashMap();
 		newValue.put(value.name, value);
 		_virtualFS.put(key, newValue);
+		
 		
 		// base case 2
 		if (key.equals("")) //$NON-NLS-1$
@@ -312,6 +435,52 @@ public class SystemZipHandler implements ISystemArchiveHandler
 			}
 				
 		}
+		
+		
+	}
+	
+	protected void populate(String key, VirtualChild value)
+	{
+		// base case 1: key has been encountered before, finish recursing
+		if (_virtualFS.containsKey(key))
+		{
+			HashMap hm = (HashMap) _virtualFS.get(key);
+			hm.put(value.name, value);
+			return;
+		}
+		
+		// else
+		HashMap newValue = new HashMap();
+		newValue.put(value.name, value);
+		_virtualFS.put(key, newValue);
+		
+		
+		// base case 2
+		if (key.equals("")) //$NON-NLS-1$
+		{
+			return;
+		}
+		else
+		{
+			int i = key.lastIndexOf("/"); //$NON-NLS-1$
+			if (i == -1) // recursive last step
+			{
+				VirtualChild nextValue = new VirtualChild(this, key);
+				nextValue.isDirectory = true;
+				recursivePopulate("", nextValue); //$NON-NLS-1$
+				return;
+			}
+			else // recursive step
+			{
+				String newKey = key.substring(0, i);
+				VirtualChild nextValue = new VirtualChild(this, key);
+				nextValue.isDirectory = true;
+				recursivePopulate(newKey, nextValue);
+				return;
+			}
+				
+		}
+		
 		
 	}
 
@@ -1781,7 +1950,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				dest.setMethod(ZipOutputStream.DEFLATED);
 				// get all the entries in the old zip				  
 				VirtualChild[] vcList = getVirtualChildrenList(false, archiveOperationMonitor);
-				VirtualChild[] renameList;
+				VirtualChild[] renameList = null;
 				HashMap oldNewNames = new HashMap();
 				HashMap newOldNames = new HashMap();
 				// if the entry to rename is a directory, we must then rename
@@ -1837,7 +2006,7 @@ public class SystemZipHandler implements ISystemArchiveHandler
 				replaceOldZip(outputTempFile);
 				
 				// Now rebuild the tree
-				updateTreeAfterRename(newOldNames);
+				updateTreeAfterRename(newOldNames, renameList); 
 				if (closeZipFile) closeZipFile();
 				return true;
 			}

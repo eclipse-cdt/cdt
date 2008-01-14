@@ -23,7 +23,16 @@ public class CPPASTNamespaceAlias extends CPPASTNode implements ICPPASTNamespace
     private IASTName qualifiedName;
 
     
-    public IASTName getAlias() {
+    public CPPASTNamespaceAlias() {
+    	// default constructor
+	}
+
+	public CPPASTNamespaceAlias(IASTName alias, IASTName qualifiedName) {
+		setAlias(alias);
+		setMappingName(qualifiedName);
+	}
+
+	public IASTName getAlias() {
         return alias;
     }
 

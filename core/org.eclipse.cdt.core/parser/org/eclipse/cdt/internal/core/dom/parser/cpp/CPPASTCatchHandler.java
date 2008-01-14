@@ -29,8 +29,7 @@ public class CPPASTCatchHandler extends CPPASTNode implements ICPPASTCatchHandle
     public CPPASTCatchHandler() {
 	}
 
-	public CPPASTCatchHandler(boolean isCatchAll, IASTStatement body, IASTDeclaration declaration) {
-		this.isCatchAll = isCatchAll;
+	public CPPASTCatchHandler(IASTDeclaration declaration, IASTStatement body) {
 		setCatchBody(body);
 		setDeclaration(declaration);
 	}

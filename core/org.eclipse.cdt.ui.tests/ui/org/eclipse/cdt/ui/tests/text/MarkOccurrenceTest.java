@@ -187,7 +187,7 @@ public class MarkOccurrenceTest extends TestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(3);
+		assertOccurrences(5);
 		assertOccurrencesInWidget();
 	}
 
@@ -201,7 +201,7 @@ public class MarkOccurrenceTest extends TestCase {
 
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
-		assertOccurrences(2);
+		assertOccurrences(3);
 		assertOccurrencesInWidget();
 	}
 
@@ -291,6 +291,36 @@ public class MarkOccurrenceTest extends TestCase {
 		assertOccurrencesInWidget();
 	}
 	
+	public void testMarkConstructorOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "Base1(", true, true, false, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(2);
+		assertOccurrencesInWidget();
+	}
+	
+
+	public void testMarkDestructorOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "~Base1", true, true, false, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fMatch= new Region(fMatch.getOffset() + 1, fMatch.getLength() - 1);
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(2);
+		assertOccurrencesInWidget();
+	}
+	
 	public void testMarkLocalOccurrences() {
 		try {
 			fMatch= fFindReplaceDocumentAdapter.find(0, "localVar", true, true, true, false);
@@ -316,6 +346,20 @@ public class MarkOccurrenceTest extends TestCase {
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
 		assertOccurrences(5);
+		assertOccurrencesInWidget();
+	}
+
+	public void testMarkEmptyMacroOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "EMPTY_MACRO", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(3);
 		assertOccurrencesInWidget();
 	}
 

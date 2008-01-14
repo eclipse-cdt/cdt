@@ -119,6 +119,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
@@ -1295,6 +1296,9 @@ public class CPPVisitor {
 		
 		
 		public CollectReferencesAction( IBinding binding ){
+			if (binding instanceof ICPPDeferredTemplateInstance) {
+				binding= ((ICPPDeferredTemplateInstance) binding).getSpecializedBinding();
+			}
 			this.binding = binding;
 			this.refs = new IASTName[ DEFAULT_LIST_SIZE ];
 			
@@ -1317,7 +1321,7 @@ public class CPPVisitor {
 		}
 		
 		public int visit( IASTName name ){
-			if( name instanceof ICPPASTQualifiedName ) return PROCESS_CONTINUE;
+			if( name instanceof ICPPASTQualifiedName || name instanceof ICPPASTTemplateId ) return PROCESS_CONTINUE;
 			
 			ASTNodeProperty prop = name.getPropertyInParent();
 			ASTNodeProperty p2 = null;
@@ -1394,6 +1398,8 @@ public class CPPVisitor {
                         candidate = null;
                     else
                         candidate = bs[ ++n ];
+			    } else if (potential instanceof ICPPDeferredTemplateInstance) {
+			    	candidate= ((ICPPDeferredTemplateInstance) potential).getSpecializedBinding();
 			    } else {
 			        candidate = potential;
 			    }

@@ -154,6 +154,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.CModelException;
@@ -2942,13 +2943,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		OccurrenceLocation[] locations= null;
 
 		IASTNode selectedNode= astRoot.selectNodeForLocation(astRoot.getFilePath(), wordRegion.getOffset(), wordRegion.getLength());
-
+		if (selectedNode == null && astRoot instanceof ICPPASTTranslationUnit && wordRegion.getOffset() > 0) {
+			// destructor?
+			 try {
+				if (document.getChar(wordRegion.getOffset() - 1) == '~') {
+					 selectedNode= astRoot.selectNodeForLocation(astRoot.getFilePath(), wordRegion.getOffset() - 1, wordRegion.getLength() + 1);
+				 }
+			} catch (BadLocationException exc) {
+				// should not happen
+			}
+		}
 		final class NameFinder extends ASTVisitor {
-			{
+			private IASTName fName;
+
+			public NameFinder() {
 				shouldVisitNames= true;
 			}
-			IASTName fName;
-
 			public int visit(IASTName name) {
 				fName= name;
 				return PROCESS_ABORT;

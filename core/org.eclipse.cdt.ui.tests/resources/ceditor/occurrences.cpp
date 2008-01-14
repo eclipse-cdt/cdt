@@ -1,5 +1,6 @@
 #define INT      int
 #define FUNCTION_MACRO(arg) globalFunc(arg)
+#define EMPTY_MACRO(arg) 
 
 enum Enumeration {
 	ONE, TWO, THREE
@@ -11,14 +12,21 @@ static int globalStaticVariable = 0;
 
 void globalFunc(int a);
 static void globalStaticFunc() {
+    EMPTY_MACRO(n);
 	globalVariable = 1;
+    EMPTY_MACRO(1);
+    return 0;
 }
-;
 
 class Base1 {
+	Base1();
+	~Base1();
 };
 class Base2 {
 };
+
+Base1::~Base1() {}
+Base1::Base1() {}
 
 class ClassContainer : Base1, Base2 {
 public:
@@ -47,6 +55,7 @@ template<class T1, class T2> class TemplateClass {
 		tArg1 = arg1;
 		tArg2 = arg2;
 	}
+	void m(TemplateClass&);
 };
 
 template<class T1> class PartialInstantiatedClass : TemplateClass<T1, Base1> {

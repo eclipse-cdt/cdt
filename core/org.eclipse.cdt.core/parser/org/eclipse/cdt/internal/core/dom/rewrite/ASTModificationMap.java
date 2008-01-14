@@ -73,10 +73,14 @@ public class ASTModificationMap {
 	 * Returns the list of modifications for a given node. The list can contain different modifications.
 	 * It is guaranteed that INSERT_BEFORE modifications appear first. Furthermore, if there is a 
 	 * REPLACE modification the list will not contain any other REPLACE or APPEND_CHILD modifications.
-	 * @return the modification list or <code>null</code>.
+	 * @return the modification list, which may be empty.
 	 */
 	public List<ASTModification> getModificationsForNode(IASTNode node) {
-		return Collections.unmodifiableList(fModifications.get(node));
+		List<ASTModification> modList = fModifications.get(node);
+		if (modList == null) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(modList);
 	}
 	
 	/**

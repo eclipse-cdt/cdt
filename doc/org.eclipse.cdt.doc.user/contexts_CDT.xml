@@ -346,5 +346,8 @@
     <description>Specify the templates used for code generation and new files.</description>
     <topic label="Code Templates Preferences" href="reference/cdt_u_c_code_templates_pref.htm"/>
 </context>
+<context id="toggle_mark_occurrences_action_context">
+    <description>Allows you to switch mark occurrences on and off.</description>
+</context>
 
 </contexts>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,7 +34,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for 
- * creating SharedDefaults and initializing the SharedDefaults. Template instances
+ * creating SharedDefaults and initialising the SharedDefaults. Template instances
  * are obtained from TemplateEngine.
  * 
  * @since 4.0
@@ -53,13 +52,13 @@ public class TemplateEngine {
 	/**
 	 * This is a Map <WizardID, TemplateInfo>.
 	 */
-	private Map/*<String, List<TemplateInfo>>*/ templateInfoMap;
+	private Map<String, List<TemplateInfo>> templateInfoMap;
 
 	/**
 	 * TemplateEngine constructor, create and initialise SharedDefaults.
 	 */
 	private TemplateEngine() {
-		templateInfoMap = new LinkedHashMap/*<String, List<TemplateInfo>>*/();
+		templateInfoMap = new LinkedHashMap<String, List<TemplateInfo>>();
 		initializeTemplateInfoMap();
 	}
 
@@ -68,7 +67,7 @@ public class TemplateEngine {
 	 */
 	public TemplateCore[] getTemplates() {
 		TemplateInfo[] templateInfoArray = getTemplateInfos();
-		List/*<TemplateCore>*/ tcores = new ArrayList/*<TemplateCore>*/();
+		List<TemplateCore> tcores = new ArrayList<TemplateCore>();
 		for (int i=0; i<templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
@@ -77,7 +76,7 @@ public class TemplateEngine {
 				CCorePlugin.log(CCorePlugin.createStatus(e.getMessage(), e));
 			}
 		}
-		return (TemplateCore[]) tcores.toArray(new TemplateCore[tcores.size()]);
+		return tcores.toArray(new TemplateCore[tcores.size()]);
 	}
 
 	/**
@@ -120,7 +119,7 @@ public class TemplateEngine {
 	 */
 	public TemplateCore[] getTemplates(String projectType, String toolChain, String usageFilter) {
 		TemplateInfo[] templateInfoArray = getTemplateInfos(projectType, toolChain, usageFilter);
-		List/*<Template>*/ templatesList = new ArrayList/*<Template>*/();
+		List<TemplateCore> templatesList = new ArrayList<TemplateCore>();
 		for (int i=0; i<templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
@@ -129,7 +128,7 @@ public class TemplateEngine {
 				CCorePlugin.log(tie);
 			}
 		}
-		return (TemplateCore[]) templatesList.toArray(new TemplateCore[templatesList.size()]);
+		return templatesList.toArray(new TemplateCore[templatesList.size()]);
 	}
 	
 	public TemplateCore[] getTemplates(String projectType, String toolChain) {
@@ -157,7 +156,7 @@ public class TemplateEngine {
 	 * 
 	 * @return
 	 */
-	public static Map/*<String, String>*/ getSharedDefaults() {
+	public static Map<String, String> getSharedDefaults() {
 		return SharedDefaults.getInstance().getSharedDefaultsMap();
 	}
 
@@ -173,11 +172,9 @@ public class TemplateEngine {
 	 * @param aSharedValue
 	 */
 	public void updateSharedDefaults(TemplateCore template) {
-		Map/*<String, String>*/ tobePersisted = new HashMap/*<String, String>*/();
-		Map/*<String, String>*/ valueStore = template.getValueStore();
-		
-		for (Iterator i = template.getPersistTrueIDs().iterator(); i.hasNext();) {
-			String key = (String) i.next();
+		Map<String, String> tobePersisted = new HashMap<String, String>();
+		Map<String, String> valueStore = template.getValueStore();
+		for(String key : template.getPersistTrueIDs()) {
 			tobePersisted.put(key, valueStore.get(key));
 		}
 		SharedDefaults.getInstance().updateShareDefaultsMap(tobePersisted);
@@ -236,7 +233,7 @@ public class TemplateEngine {
 				}
 
 				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
-				Set toolChainIdSet = new LinkedHashSet();
+				Set<String> toolChainIdSet = new LinkedHashSet<String>();
 				for (int k=0; k < toolChainConfigs.length; k++) {
 					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
 				}
@@ -245,9 +242,9 @@ public class TemplateEngine {
 														pluginId, toolChainIdSet,
 														extraPagesProvider, isCategory);
 				if (!templateInfoMap.containsKey(projectType)) {
-					templateInfoMap.put(projectType, new ArrayList/*<TemplateInfo>*/());
+					templateInfoMap.put(projectType, new ArrayList<TemplateInfo>());
 				}
-				((List/*<TemplateInfo>*/)templateInfoMap.get(projectType)).add(templateInfo);
+				(templateInfoMap.get(projectType)).add(templateInfo);
 			}
 		}
 		// Check for tool Chains added to the templates outside template info definition
@@ -267,7 +264,7 @@ public class TemplateEngine {
 				templateId = config.getAttribute(TemplateEngineHelper.ID);
 				
 				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
-				Set toolChainIdSet = new LinkedHashSet();
+				Set<String> toolChainIdSet = new LinkedHashSet<String>();
 				for (int k=0; k < toolChainConfigs.length; k++) {
 					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
 				}
@@ -295,12 +292,11 @@ public class TemplateEngine {
 	 * @return an array of TemplateInfo objects (never null)
 	 */
 	public TemplateInfo[] getTemplateInfos(String projectType, String toolChain, String usageFilter) {
-		List/*<TemplateInfo>*/ templateInfoList = (List/*<TemplateInfo*/) templateInfoMap.get(projectType.trim());
-		List/*<TemplateInfo>*/ matchedTemplateInfoList = new ArrayList/*<TemplateInfo>*/();
+		List<TemplateInfo> templateInfoList = templateInfoMap.get(projectType.trim());
+		List<TemplateInfo> matchedTemplateInfoList = new ArrayList<TemplateInfo>();
 		
 		if (templateInfoList != null) {
-			for (Iterator i = templateInfoList.iterator(); i.hasNext(); ) {
-				TemplateInfo templateInfo = (TemplateInfo) i.next();
+			for(TemplateInfo templateInfo : templateInfoList) {
 				String filterPattern = templateInfo.getFilterPattern();
 				String[] toolChains = templateInfo.getToolChainIds();
 
@@ -324,7 +320,7 @@ public class TemplateEngine {
 				}
 			}
 		}
-		return (TemplateInfo[]) matchedTemplateInfoList.toArray(new TemplateInfo[matchedTemplateInfoList.size()]);
+		return matchedTemplateInfoList.toArray(new TemplateInfo[matchedTemplateInfoList.size()]);
 	}
 
 	public TemplateInfo[] getTemplateInfos(String projectType, String toolChain) {
@@ -340,12 +336,11 @@ public class TemplateEngine {
 	 * @return
 	 */
 	public TemplateInfo[] getTemplateInfos() {
-		List/*<TemplateInfo>*/ infoList = new ArrayList/*<TemplateInfo>*/();
-		for (Iterator i = templateInfoMap.values().iterator(); i.hasNext();) {
-			infoList.addAll((List/*<TemplateInfo>*/)i.next());
+		List<TemplateInfo> infoList = new ArrayList<TemplateInfo>();
+		for(List<TemplateInfo> infos : templateInfoMap.values()) {
+			infoList.addAll(infos);
 		}
-
-		return (TemplateInfo[]) infoList.toArray(new TemplateInfo[infoList.size()]);
+		return infoList.toArray(new TemplateInfo[infoList.size()]);
 	}
 
 
@@ -354,7 +349,7 @@ public class TemplateEngine {
 	 * 
 	 * @return
 	 */
-	public Map/*<String, List<TemplateInfo>>*/ getTemplateInfoMap() {
+	public Map<String, List<TemplateInfo>> getTemplateInfoMap() {
 		return templateInfoMap;
 	}
 
@@ -375,13 +370,13 @@ public class TemplateEngine {
      * 
      * @since 4.0
 	 */
-	public static List/*<Element>*/ getChildrenOfElement(Element element) {
-		List/*<Element>*/ list = new ArrayList/*<Element>*/();
+	public static List<Element> getChildrenOfElement(Element element) {
+		List<Element> list = new ArrayList<Element>();
 		NodeList children = element.getChildNodes();
 		for (int i = 0, l = children.getLength(); i < l; i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				list.add(child);
+				list.add((Element) child);
 			}
 		}
 		return list;
@@ -396,13 +391,13 @@ public class TemplateEngine {
      * 
      * @since 4.0
 	 */
-	public static List/*<Element>*/ getChildrenOfElementByTag(Element element, String tag) {
-		List/*<Element>*/ list = new ArrayList/*<Element>*/();
+	public static List<Element> getChildrenOfElementByTag(Element element, String tag) {
+		List<Element> list = new ArrayList<Element>();
 		NodeList children = element.getChildNodes();
 		for (int i = 0, l = children.getLength(); i < l; i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE && child.getNodeName().equals(tag)) {
-				list.add(child);
+				list.add((Element) child);
 			}
 		}
 		return list;

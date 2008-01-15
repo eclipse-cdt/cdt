@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +34,7 @@ import org.w3c.dom.Node;
 /**
  * Processes the shared default values. Updates and Persists new key - value (default) pair
  */
-
-public class SharedDefaults extends HashMap/*<String, String>*/ {
+public class SharedDefaults extends HashMap<String, String> {
 	private static final long serialVersionUID = 0000000000L;
 
 	public Document document;
@@ -46,9 +44,9 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 	/**
 	 * HashMap's for persistence
 	 */
-	private HashMap/*<String, String>*/ sharedDefaultsMap;
-	private HashMap/*<String, String>*/ persistDataMap;
-	private HashMap/*<String, String>*/ tableDataMap;
+	private HashMap<String, String> sharedDefaultsMap;
+	private HashMap<String, String> persistDataMap;
+	private HashMap<String, String> tableDataMap;
 
 	/**
 	 * Two XML files here supports to provide consistent writing of data into
@@ -96,9 +94,9 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 	 */
 
 	public SharedDefaults() {
-		sharedDefaultsMap = new HashMap/*<String, String>*/();
-		persistDataMap = new HashMap/*<String, String>*/();
-		tableDataMap = new HashMap/*<String, String>*/();
+		sharedDefaultsMap = new HashMap<String, String>();
+		persistDataMap = new HashMap<String, String>();
+		tableDataMap = new HashMap<String, String>();
 
 		// The conditional controls here is provided to have consistent
 		// data storage in the file during System crash or
@@ -129,15 +127,15 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 			if (length == 0) {
 				parsedXML = createDefaultXMLFormat(parsedXML);
 			}
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURL().openStream());
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
 		}
 
-		List/*<Element>*/ sharedElementList = TemplateEngine.getChildrenOfElement(document.getDocumentElement());
+		List<Element> sharedElementList = TemplateEngine.getChildrenOfElement(document.getDocumentElement());
 		int listSize = sharedElementList.size();
 		for (int i = 0; i < listSize; i++) {
-			Element xmlElement = (Element) sharedElementList.get(i);
+			Element xmlElement = sharedElementList.get(i);
 			key = xmlElement.getAttribute(TemplateEngineHelper.ID);
 			value = xmlElement.getAttribute(TemplateEngineHelper.VALUE);
 			if (key != null && !key.trim().equals("")) { //$NON-NLS-1$
@@ -152,7 +150,7 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 	 * @param sharedMap
 	 */
 
-	public void updateShareDefaultsMap(Map/*<String, String>*/ sharedMap) {
+	public void updateShareDefaultsMap(Map<String, String> sharedMap) {
 		sharedDefaultsMap.putAll(sharedMap);
 		persistSharedValueMap();
 	}
@@ -174,7 +172,7 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 	 * @return HashMap
 	 */
 
-	public Map/*<String, String>*/ getSharedDefaultsMap() {
+	public Map<String, String> getSharedDefaultsMap() {
 		return sharedDefaultsMap;
 	}
 
@@ -198,20 +196,19 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 	 * @param updateName
 	 * @param updateValue
 	 */
-
 	public void updateToBackEndStorage(String updateName, String updateValue) {
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURL().openStream());
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
 		}
 
 		persistDataMap.putAll(sharedDefaultsMap);
-		List/*<Element>*/ sharedElementList = TemplateEngine.getChildrenOfElement(document.getDocumentElement());
+		List<Element> sharedElementList = TemplateEngine.getChildrenOfElement(document.getDocumentElement());
 		int elementListSize = sharedElementList.size();
 
 		for (int i = 0; i < elementListSize; i++) {
-			Element xmlElement = (Element) sharedElementList.get(i);
+			Element xmlElement = sharedElementList.get(i);
 			String name = xmlElement.getAttribute(TemplateEngineHelper.ID);
 
 			if (updateName.equals(name)) {
@@ -228,18 +225,17 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 	 * @param deleteName
 	 */
 	public void deleteBackEndStorage(String[] deleteName) {
-
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURL().openStream());
+			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
 		}
 
-		List/*<Element>*/ sharedElementList = TemplateEngine.getChildrenOfElement(document.getDocumentElement());
+		List<Element> sharedElementList = TemplateEngine.getChildrenOfElement(document.getDocumentElement());
 		int elementListSize = sharedElementList.size();
 		for (int i = 0; i < elementListSize; i++) {
 
-			Element xmlElement = (Element) sharedElementList.get(i);
+			Element xmlElement = sharedElementList.get(i);
 			String name = xmlElement.getAttribute(TemplateEngineHelper.ID);
 
 			for (int k = 0; k < deleteName.length; k++) {
@@ -312,11 +308,10 @@ public class SharedDefaults extends HashMap/*<String, String>*/ {
 		}
 		Node rootElement = d.appendChild(d.createElement("SharedRoot"));  //$NON-NLS-1$
 		
-		for(Iterator i = sharedDefaultsMap.keySet().iterator(); i.hasNext(); ) {
-			String key = (String) i.next();
+		for(String key : sharedDefaultsMap.keySet()) {		
 			Element element = (Element) rootElement.appendChild(d.createElement("SharedProperty"));  //$NON-NLS-1$
 			element.setAttribute(TemplateEngineHelper.ID, key);
-			element.setAttribute(TemplateEngineHelper.VALUE, (String) sharedDefaultsMap.get(key));
+			element.setAttribute(TemplateEngineHelper.VALUE, sharedDefaultsMap.get(key));
 		}
 
 		DOMSource domSource = new DOMSource(d);

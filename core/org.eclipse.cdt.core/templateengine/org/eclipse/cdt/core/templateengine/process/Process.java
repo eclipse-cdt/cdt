@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,14 +61,14 @@ public class Process {
 	 * @param element
 	 */
 	private void buildArgs(TemplateCore template, Element element) {
-		List/*<Element>*/ children = TemplateEngine.getChildrenOfElement(element);
+		List<Element> children = TemplateEngine.getChildrenOfElement(element);
 		ProcessParameter[] params = processRunner.getProcessParameters();
-		List/*<ProcessArgument>*/ list = new ArrayList/*<ProcessArgument>*/(params.length);
+		List<ProcessArgument> list = new ArrayList<ProcessArgument>(params.length);
 		int childIndex = 0;
 		for(int i=0; i<params.length; i++) {
 			ProcessParameter param = params[i];
 			boolean childrenRemain = childIndex < children.size();
-			Element child = (Element) (childrenRemain ? children.get(childIndex) : null);
+			Element child = (childrenRemain ? children.get(childIndex) : null);
 			if (param.isExternal() && (!childrenRemain || !param.getName().equals(child.getAttribute(ProcessArgument.ELEM_NAME)))) {
 				list.add(new ProcessArgument(template, param));
 			} else if (childrenRemain) {
@@ -77,9 +77,9 @@ public class Process {
 			}
 		}
 		while (childIndex < children.size()) {
-			list.add(new ProcessArgument(template, (Element) children.get(childIndex++)));
+			list.add(new ProcessArgument(template, children.get(childIndex++)));
 		}
-		args = (ProcessArgument[]) list.toArray(new ProcessArgument[list.size()]);
+		args = list.toArray(new ProcessArgument[list.size()]);
 	}
 
 	/**
@@ -178,15 +178,15 @@ public class Process {
 	 * Returns the Macros.
 	 * @return
 	 */
-	public Set/*<String>*/ getMacros() {
-		Set/*<String>*/ set = null;
+	public Set<String> getMacros() {
+		Set<String> set = null;
 		if (args != null) {
 			for(int i=0; i<args.length; i++) {
 				ProcessArgument arg = args[i];
-				Set/*<String>*/ subSet = arg.getMacros();
+				Set<String> subSet = arg.getMacros();
 				if (subSet != null) {
 					if (set == null) {
-						set = new HashSet/*<String>*/();
+						set = new HashSet<String>();
 					}
 					set.addAll(subSet);
 				}

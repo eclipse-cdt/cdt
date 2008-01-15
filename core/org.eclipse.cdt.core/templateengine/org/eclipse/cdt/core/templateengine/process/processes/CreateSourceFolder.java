@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,14 +104,14 @@ public class CreateSourceFolder extends ProcessRunner {
 		for(int i=0; i < configs.length; i++){
 			ICConfigurationDescription config = configs[i];
 			ICSourceEntry[] entries = config.getSourceEntries();
-			Set set = new HashSet();
+			Set<ICSourceEntry> set = new HashSet<ICSourceEntry>();
 			for (int j=0; j < entries.length; j++) {
 				if(new Path(entries[j].getValue()).segmentCount() == 1)
 					continue;
 				set.add(entries[j]);
 			}
 			set.add(newEntry);
-			config.setSourceEntries((ICSourceEntry[])set.toArray(new ICSourceEntry[set.size()]));
+			config.setSourceEntries(set.toArray(new ICSourceEntry[set.size()]));
 		}
 
 		CCorePlugin.getDefault().setProjectDescription(projectHandle, description, false, monitor);
@@ -126,7 +126,7 @@ public class CreateSourceFolder extends ProcessRunner {
 	 */
 	private void createFolder(String targetPath, IProgressMonitor monitor, IPath projPath, ICProject cProject) throws CModelException {
 		IPathEntry[] entries = cProject.getRawPathEntries();
-		List/*<IPathEntry>*/ newEntries = new ArrayList/*<IPathEntry>*/(entries.length + 1);
+		List<IPathEntry> newEntries = new ArrayList<IPathEntry>(entries.length + 1);
 
 		int projectEntryIndex= -1;
 		IPath path = projPath.append(targetPath);
@@ -151,7 +151,7 @@ public class CreateSourceFolder extends ProcessRunner {
 			newEntries.add(CoreModel.newSourceEntry(path));
 		}
 
-		cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
+		cProject.setRawPathEntries(newEntries.toArray(new IPathEntry[newEntries.size()]), monitor);
 	}
 	
 }

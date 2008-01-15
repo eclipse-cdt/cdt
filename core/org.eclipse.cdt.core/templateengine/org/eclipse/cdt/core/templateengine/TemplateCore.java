@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.templateengine;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,18 +44,18 @@ public class TemplateCore {
 	private static final String ID = "id"; //$NON-NLS-1$
 	private static final String TYPE = "type"; //$NON-NLS-1$
 	
-	private static Map/*<TemplateInfo, Template>*/ templateCache = new HashMap/*<TemplateInfo, Template>*/();
+	private static Map<TemplateInfo, TemplateCore> templateCache = new HashMap<TemplateInfo, TemplateCore>();
 
-	public static final Comparator/*<Template>*/ TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR = new Comparator/*<Template>*/() {
-		public int compare(Object/*Template*/ t1, Object/*Template*/ t2) {
-			return String.CASE_INSENSITIVE_ORDER.compare(((TemplateCore)t1).getTemplateId(), ((TemplateCore)t2).getTemplateId());
+	public static final Comparator<TemplateCore> TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR = new Comparator<TemplateCore>() {
+		public int compare(TemplateCore t1, TemplateCore t2) {
+			return String.CASE_INSENSITIVE_ORDER.compare(t1.getTemplateId(), t2.getTemplateId());
 		}		
 	};
 
 	private TemplateDescriptor templateDescriptor;
-	private Map/*<String, String>*/ valueStore;
+	private Map<String, String> valueStore;
 	private TemplateInfo templateInfo;
-	private Set/*<String>*/ allMacrosInProcesses;
+	private Set<String> allMacrosInProcesses;
 	private TemplateProcessHandler processHandler;
 	private String description;
 	private String label;
@@ -80,7 +79,7 @@ public class TemplateCore {
 		if(descriptorURL==null)
 			throw new TemplateInitializationException("Unable to load project template. Location URL is null for "+templateInfo.getTemplateId()); //$NON-NLS-1$
 		templateDescriptor = new TemplateDescriptor(descriptorURL, templateInfo.getPluginId());
-		valueStore = new ValueStore/*<String, String>*/(this);
+		valueStore = new ValueStore<String>(this);
 		valueStore.putAll(templateDescriptor.getTemplateDefaults(templateDescriptor.getRootElement()));
 		valueStore.putAll(TemplateEngine.getSharedDefaults());
 		valueStore.put("projectType", templateInfo.getProjectType()); //$NON-NLS-1$
@@ -95,9 +94,9 @@ public class TemplateCore {
 	 * Returns All Missing Macros In Processes.
 	 * @return Set
 	 */
-	public Set/*<String>*/ getAllMissingMacrosInProcesses() {
-		Set/*<String>*/ set = new TreeSet/*<String>*/(allMacrosInProcesses);
-		for (Iterator iter = set.iterator(); iter.hasNext();) {
+	public Set<String> getAllMissingMacrosInProcesses() {
+		Set<String> set = new TreeSet<String>(allMacrosInProcesses);
+		for (Iterator<String> iter = set.iterator(); iter.hasNext();) {
 			if (valueStore.get(iter.next()) != null) {
 				iter.remove();
 			}
@@ -109,7 +108,7 @@ public class TemplateCore {
 	 * return the ValueStore maintained by this Template.
 	 * @return   ValueStore.
 	 */
-	public Map/*<String, String>*/ getValueStore() {
+	public Map<String, String> getValueStore() {
 		return valueStore;
 	}
 
@@ -119,7 +118,7 @@ public class TemplateCore {
 	 * 
 	 * @return Vector of IDs.
 	 */
-	public List/*<String>*/ getPersistTrueIDs() {
+	public List<String> getPersistTrueIDs() {
 		return templateDescriptor.getPersistTrueIDs();
 	}
 
@@ -229,7 +228,7 @@ public class TemplateCore {
 	 */
 	public static TemplateCore getTemplate(TemplateInfo templateInfo) throws TemplateInitializationException {
 		synchronized (templateCache) {
-			TemplateCore template = (TemplateCore) templateCache.get(templateInfo);
+			TemplateCore template = templateCache.get(templateInfo);
 			if (template == null) {
 				template = new TemplateCore(templateInfo);
 				templateCache.put(templateInfo, template);
@@ -238,7 +237,7 @@ public class TemplateCore {
 		}
 	}
 	
-	private static class ValueStore/*<K, V>*/ extends HashMap/*<K, V>*/ {
+	private static class ValueStore<K> extends HashMap<K,String> {
 		private static final long serialVersionUID = -4523467333437879406L;
 		private TemplateCore template;
 
@@ -246,26 +245,24 @@ public class TemplateCore {
 			this.template = template;
 		}
 		
-		public Object/*V*/ put(Object/*K*/ key, Object/*V*/ value) {
-			value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), (String)value);
-			Object/*V*/ v = super.put(key, value);
+		public String put(K key, String value) {
+			value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), value);
+			String v = super.put(key, value);
 			template.setDirty();
 			return v;
 		}
 
-		public void putAll(Map/*<? extends K, ? extends V>*/ map) {
-			Collection keys = map.keySet();
-			for (Iterator iterator = keys.iterator(); iterator.hasNext();) {
-				Object key = iterator.next();
-				Object value = map.get(key);
-				value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), (String) value);
+		public void putAll(Map<? extends K, ? extends String> map) {
+			for(K key : map.keySet()) {
+				String value = map.get(key);
+				value = TemplateEngineHelper.externalizeTemplateString(template.getTemplateInfo(), value);
 				super.put(key, value);
 			}
 			template.setDirty();
 		}
 
-		public Object/*V*/ remove(Object key) {
-			Object/*V*/ v = super.remove(key);
+		public String remove(Object key) {
+			String v = super.remove(key);
 			template.setDirty();
 			return v;
 		}

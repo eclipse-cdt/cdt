@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.templateengine.process;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,12 +39,12 @@ import org.w3c.dom.Element;
 public class ConditionalProcessGroup {
 	
 	private TemplateCore template;
-	private Set/*<String>*/ macros;
+	private Set<String> macros;
 	private String conditionString;
 	private String lValue;
 	private String rValue;
 	private Operator op;
-	private List/*<Process>*/ processes;
+	private List<Process> processes;
 	private String id;
 	
 	/**
@@ -106,7 +105,7 @@ public class ConditionalProcessGroup {
 	private void collectMacros(String value) {
 		if (value != null) {
 			if (macros == null) {
-				macros = new HashSet/*<String>*/();
+				macros = new HashSet<String>();
 			}
 			macros.addAll(ProcessHelper.getReplaceKeys(value));
 		}
@@ -125,15 +124,15 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * Creates the Proccess from the process Elements.
+	 * Creates the Process from the process Elements.
 	 * @param template
 	 * @param processElements
 	 */
-	private void createProcessObjects(TemplateCore template, List/*<Element>*/ processElements) {
+	private void createProcessObjects(TemplateCore template, List<Element> processElements) {
 		this.template = template;
-		this.processes = new ArrayList/*<Process>*/(processElements.size());
+		this.processes = new ArrayList<Process>(processElements.size());
 		for (int j = 0, l = processElements.size(); j < l; j++) {
-			Element processElem = (Element) processElements.get(j);
+			Element processElem = processElements.get(j);
 			if (processElem.getNodeName().equals(TemplateDescriptor.PROCESS)) {
 				String processId = id + "--> Process " + (j + 1) + " (" + processElem.getAttribute(Process.ELEM_TYPE) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				processes.add(new Process(template, processElem, processId));
@@ -153,8 +152,7 @@ public class ConditionalProcessGroup {
 	 * @return boolean, as true if the Processes are ready to process
 	 */
 	private boolean areProcessesReady() {
-		for(Iterator i = processes.iterator(); i.hasNext(); ) {
-			Process process = (Process) i.next();
+		for(Process process : processes) {
 			if (!process.isReadyToProcess()) {
 				return false;
 			}
@@ -168,9 +166,8 @@ public class ConditionalProcessGroup {
 	 */
 	private boolean areMacrosForConditionEvaluationExpandable() {
 		if (macros != null) {
-			Map/*<String, String>*/ valueStore = template.getValueStore();
-			for(Iterator i = macros.iterator(); i.hasNext(); ) {
-				String value = (String) i.next();
+			Map<String, String> valueStore = template.getValueStore();
+			for(String value : macros) {
 				if (valueStore.get(value) == null) {
 					return false;
 				}
@@ -190,13 +187,12 @@ public class ConditionalProcessGroup {
 		if (!areMacrosForConditionEvaluationExpandable()) {
 			return false;
 		}
-		Map/*<String, String>*/ valueStore = template.getValueStore();
+		Map<String, String> valueStore = template.getValueStore();
 		String lValue = this.lValue;
 		String rValue = this.rValue;
-		for(Iterator i = macros.iterator(); i.hasNext(); ) {
-			String value = (String) i.next();
-			lValue = lValue.replaceAll(ProcessHelper.START_PATTERN + value + ProcessHelper.END_PATTERN, (String) valueStore.get(value));
-			rValue = rValue.replaceAll(ProcessHelper.START_PATTERN + value + ProcessHelper.END_PATTERN, (String) valueStore.get(value));
+		for(String value : macros) {
+			lValue = lValue.replaceAll(ProcessHelper.START_PATTERN + value + ProcessHelper.END_PATTERN, valueStore.get(value));
+			rValue = rValue.replaceAll(ProcessHelper.START_PATTERN + value + ProcessHelper.END_PATTERN, valueStore.get(value));
 		}
 		if(op.equals(Operator.EQUALS)) {
 			return lValue.equals(rValue);
@@ -213,18 +209,17 @@ public class ConditionalProcessGroup {
 	 * @return List contains the IStatus. 
 	 * @throws ProcessFailureException
 	 */
-	public List/*<IStatus>*/ process(IProgressMonitor monitor) throws ProcessFailureException {
+	public List<IStatus> process(IProgressMonitor monitor) throws ProcessFailureException {
 		if (!areMacrosForConditionEvaluationExpandable()) {
 			throw new ProcessFailureException(getUnexpandableMacroMessage());
 		}
 		if (!isConditionValueTrue()) {
-			List/*<IStatus>*/ statuses = new ArrayList/*<IStatus>*/(1);
+			List<IStatus> statuses = new ArrayList<IStatus>(1);
 			statuses.add(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.INFO, TemplateEngineMessages.getString("ConditionalProcessGroup.notExecuting") + id, null)); //$NON-NLS-1$
 			return statuses;
 		}
-		List/*<IStatus>*/ statuses = new ArrayList/*<IStatus>*/(processes.size());
-		for(Iterator i = processes.iterator(); i.hasNext(); ) {
-			Process process = (Process) i.next();
+		List<IStatus> statuses = new ArrayList<IStatus>(processes.size());
+		for(Process process : processes) {
 			try {
 				statuses.add(process.process(monitor));
 			} catch (ProcessFailureException e) {
@@ -240,9 +235,8 @@ public class ConditionalProcessGroup {
 	 */
 	private String getUnexpandableMacroMessage() {
 		if (macros != null) {
-			Map/*<String, String>*/ valueStore = template.getValueStore();
-			for(Iterator i = macros.iterator(); i.hasNext(); ) { 
-				String value = (String) i.next();
+			Map<String, String> valueStore = template.getValueStore();
+			for(String value : macros) {			
 				if (valueStore.get(value) == null) {
 					return TemplateEngineMessages.getString("ConditionalProcessGroup.unexpandableMacro") + value; //$NON-NLS-1$
 				}
@@ -255,7 +249,7 @@ public class ConditionalProcessGroup {
 	 * Returns the Macros as a Set.
 	 * @return   Set, contains macros
 	 */
-	public Set/*<String>*/ getMacros() {
+	public Set<String> getMacros() {
 		return macros;
 	}
 
@@ -263,18 +257,17 @@ public class ConditionalProcessGroup {
 	 * Returns All Macros as a Set.
 	 * @return Set, contains macros
 	 */
-	public Set/*<String>*/ getAllMacros() {
-		Set/*<String>*/ set = null;
+	public Set<String> getAllMacros() {
+		Set<String> set = null;
 		if (macros != null) {
-			set = new HashSet/*<String>*/();
+			set = new HashSet<String>();
 			set.addAll(macros);
 		}
-		for(Iterator i = processes.iterator(); i.hasNext(); ) {
-			Process process = (Process) i.next();
-			Set/*<String>*/ subSet = process.getMacros();
+		for(Process process : processes) {
+			Set<String> subSet = process.getMacros();
 			if (subSet != null) {
 				if (set == null) {
-					set = new HashSet/*<String>*/();
+					set = new HashSet<String>();
 				}
 				set.addAll(subSet);
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class TemplateDescriptor {
 
     private Document document;
 	private Element rootElement;
-	private List/*<String>*/ persistVector;
+	private List<String> persistVector;
 	private String pluginId;
 
 	/**
@@ -61,7 +61,7 @@ public class TemplateDescriptor {
 			throw new TemplateInitializationException(msg, se);
 		}
 		this.rootElement = document.getDocumentElement();
-		this.persistVector = new ArrayList/*<String>*/();
+		this.persistVector = new ArrayList<String>();
 		this.pluginId = pluginId;
 	}
 
@@ -71,12 +71,12 @@ public class TemplateDescriptor {
 	 * 
 	 * @return default values with keys
 	 */
-	public Map/*<String, String>*/ getTemplateDefaults(Element rootElement) {
-		Map/*<String, String>*/ templateDefaults = new HashMap/*<String, String>*/();
+	public Map<String, String> getTemplateDefaults(Element rootElement) {
+		Map<String, String> templateDefaults = new HashMap<String, String>();
 		Element propertyGroupElement;
-		List/*<Element>*/ children = TemplateEngine.getChildrenOfElement(rootElement);
+		List<Element> children = TemplateEngine.getChildrenOfElement(rootElement);
 		for (int i = 0, l = children.size(); i < l; i++) {
-			propertyGroupElement = (Element) children.get(i);
+			propertyGroupElement = children.get(i);
 			if (isNestedElement(propertyGroupElement)) {
 				templateDefaults = getTemplateDefaults(propertyGroupElement);
 			}
@@ -93,12 +93,12 @@ public class TemplateDescriptor {
 	private boolean isNestedElement(Element element){
 		boolean result=false;
 		if (element!=null){
-			List/*<Element>*/ children = TemplateEngine.getChildrenOfElement(element);
+			List<Element> children = TemplateEngine.getChildrenOfElement(element);
 			String elementName = element.getNodeName();
 			Element testElement;
 			String testElementName = null;
 			if (children.size() > 0){
-				testElement = (Element) children.get(0);
+				testElement = children.get(0);
 				testElementName=testElement.getNodeName();
 			}
 			if(elementName.equals(testElementName))
@@ -116,14 +116,14 @@ public class TemplateDescriptor {
 	 *            root element of type JDOM Element
 	 * @return list of property-group elements
 	 */
-	public List getPropertyGroupList() {
-		List resultList = null;
-		List/*<Element>*/ list = new ArrayList/*<Element>*/();
+	public List<Element> getPropertyGroupList() {
+		List<Element> resultList = null;
+		List<Element> list = new ArrayList<Element>();
 		resultList = list;
 		if (rootElement != null) {
-			List/*<Element>*/ tempList = TemplateEngine.getChildrenOfElement(rootElement);
+			List<Element> tempList = TemplateEngine.getChildrenOfElement(rootElement);
 			for (int i = 0, l = tempList.size(); i < l; i++) {
-				Element nextPropertyGroup = (Element) tempList.get(i);
+				Element nextPropertyGroup = tempList.get(i);
 				String nextPGName = nextPropertyGroup.getNodeName();
 				if (nextPGName.equalsIgnoreCase(PROPERTY_GROUP)) {
 					list.add(nextPropertyGroup);
@@ -151,9 +151,9 @@ public class TemplateDescriptor {
 			return rootElement;
 		} else {
 			String nextPGElementName = null;
-			List/*<Element>*/ propertyGroupList = TemplateEngine.getChildrenOfElement(rootElement);
+			List<Element> propertyGroupList = TemplateEngine.getChildrenOfElement(rootElement);
 			for (int i = 0, l = propertyGroupList.size(); i < l; i++) {
-				Element nextPGElement = (Element) propertyGroupList.get(i);
+				Element nextPGElement = propertyGroupList.get(i);
 				if (isNestedElement(nextPGElement))
 					nextPGElementName = nextPGElement.getNodeName();
 				if (nextPGElementName.equalsIgnoreCase(PROPERTY_GROUP) && isNestedElement(nextPGElement)) {
@@ -173,10 +173,10 @@ public class TemplateDescriptor {
 	 * @param propertyGroupElement
 	 *            traverse the complex property-group element
 	 */
-	private void propertyElements(Map/*<String, String>*/ defaults, Element propertyGroupElement) {
-		List/*<Element>*/ children = TemplateEngine.getChildrenOfElement(propertyGroupElement);
+	private void propertyElements(Map<String, String> defaults, Element propertyGroupElement) {
+		List<Element> children = TemplateEngine.getChildrenOfElement(propertyGroupElement);
 		for (int i = 0, l = children.size(); i < l; i++) {
-			Element propertyElement = (Element) children.get(i);
+			Element propertyElement = children.get(i);
 			String key = propertyElement.getAttribute(ID);
 			String value = propertyElement.getAttribute(DEFAULT);
 			if (key != null && !key.equals("")) { //$NON-NLS-1$
@@ -202,7 +202,7 @@ public class TemplateDescriptor {
 	 * 
 	 * @return Vector.
 	 */
-	public List/*<String>*/ getPersistTrueIDs() {
+	public List<String> getPersistTrueIDs() {
 		return persistVector;
 	}
 	

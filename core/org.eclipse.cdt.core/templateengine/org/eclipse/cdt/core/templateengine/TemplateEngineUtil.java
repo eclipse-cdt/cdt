@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.templateengine;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -22,7 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 public class TemplateEngineUtil {
-
 	public static void log(Throwable t) {
 		if (t == null) {
 			return;
@@ -34,10 +32,9 @@ public class TemplateEngineUtil {
 			ResourcesPlugin.getPlugin().getLog().log(((CoreException) t).getStatus());
 		} if (t instanceof ProcessFailureException) {
 			do {
-				List/*<IStatus>*/ statuses = ((ProcessFailureException) t).getStatuses();
+				List<IStatus> statuses = ((ProcessFailureException) t).getStatuses();
 				if (statuses != null) {
-					for(Iterator i = statuses.iterator(); i.hasNext(); ) {
-						IStatus status = (IStatus) i.next();
+					for(IStatus status : statuses) {
 						ResourcesPlugin.getPlugin().getLog().log(status);
 					}
 				}
@@ -47,5 +44,4 @@ public class TemplateEngineUtil {
 			ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.OK, t.getMessage() == null ? t.toString() : t.getMessage() , t));
 		}
 	}
-
 }

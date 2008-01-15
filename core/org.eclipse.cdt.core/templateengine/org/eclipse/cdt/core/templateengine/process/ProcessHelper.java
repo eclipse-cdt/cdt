@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Bala Torati (Symbian) - Initial API and implementation
+ * Mark Espiritu (VastSystems) - bug 215283
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
 
@@ -71,24 +72,18 @@ public class ProcessHelper {
 	 * $(item), vector contains 'item' as one item. , ) is the end pattern.
 	 * 
 	 * @param str,
-	 *            A given string may contains replace markers.
-	 * @param pattern
-	 *            start pattern (e.g., $( is the start pattern)
-	 * @param endPat
-	 *            end pattern (e.g., ) is the end pattern)
-	 * @return a set of all replace marker strings.
-     * 
+	 *            A given string possibly containing markers.
+	 * @return the set of names occurring within markers
      * @since 4.0
 	 */
-	public static Set/*<String>*/ getReplaceKeys(String str) {
-		int start = 0;
-		int end = 0;
-		Set/*<String>*/ replaceStrings = new HashSet/*<String>*/();
+	public static Set<String> getReplaceKeys(String str) {
+		Set<String> replaceStrings = new HashSet<String>();
+		int start= 0, end= 0;
 		while ((start = str.indexOf(START_PATTERN, start)) >= 0) {
 			end = str.indexOf(END_PATTERN, start);
 			if (end != -1) {
 				replaceStrings.add(str.substring(start + START_PATTERN.length(), end));
-				start = end + START_PATTERN.length();
+				start = end + END_PATTERN.length();
 			} else
 				start++;
 		}
@@ -177,7 +172,7 @@ public class ProcessHelper {
 
 
 	/**
-	 * Returns the Macro Value after Exanding the Macros.
+	 * Returns the Macro Value after expanding the Macros.
 	 * @param string
 	 * @param macros
 	 * @param valueStore
@@ -185,41 +180,19 @@ public class ProcessHelper {
      * 
      * @since 4.0
 	 */
-	public static String getValueAfterExpandingMacros(String string, Set/*<String>*/ macros, Map/*<String, String>*/ valueStore) {
-		for (Iterator i = macros.iterator(); i.hasNext();) {
-			String key = (String) i.next();
-			String value = (String) valueStore.get(key);
+	public static String getValueAfterExpandingMacros(String string, Set<String> macros, Map<String, String> valueStore) {
+		for (Iterator<String> i = macros.iterator(); i.hasNext();) {
+			String key = i.next();
+			String value = valueStore.get(key);
 			if (value != null) {
-				string = replace(START_PATTERN + key + END_PATTERN, value, string);
+				string = string.replace(START_PATTERN + key + END_PATTERN, value);
 			}
 		}
 		return string;
 	}
-	
-	/**
-	 * This is equivalent to Java 5.0 version of 
-	 * String.replace(CharSequence target, CharSequence replacement) method.
-	 * @since 4.0
-	 */
-	private static String replace(String target, String replacement, String string) {
-		try {
-			StringBuffer stringBuffer = new StringBuffer(string);
-
-			int index = string.length();
-			int offset = target.length();
-
-			while ((index=string.lastIndexOf(target, index-1)) != -1) {
-				stringBuffer.replace(index, index+offset, replacement);
-			}
-
-			return stringBuffer.toString();
-		} catch (StringIndexOutOfBoundsException e) {
-			return string;
-		}
-	}
 
 	/**
-	 * Consturct and Return the Replacment Markers 
+	 * Construct and return the replacement markers 
 	 * after adding the patterns to the macro.
 	 * @param macro
 	 * @return

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
-
 /**
  * Factory class for creating the Process Runners.
  */
@@ -37,18 +36,18 @@ public class ProcessRunnerFactory {
 		instance = new ProcessRunnerFactory();
 	}
 	
-	private Map/*<String, ProcessRunner>*/ processRunnerMap;
+	private Map<String, ProcessRunner> processRunnerMap;
 	
 	private ProcessRunnerFactory() {
 		initializeProcessRunners();
 	}
 	
 	/**
-	 * initializes the process runners.
+	 * Initialises the process runners.
 	 *
 	 */
 	private synchronized void initializeProcessRunners() {
-		processRunnerMap = new HashMap/*<String, ProcessRunner>*/();
+		processRunnerMap = new HashMap<String, ProcessRunner>();
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_PROCESSES);
 		IExtension[] extensions = point.getExtensions();
 		for(int i=0; i<extensions.length; i++) {
@@ -61,21 +60,20 @@ public class ProcessRunnerFactory {
 				if (processType != null) {
 					try {
 						ProcessRunner runner = (ProcessRunner) element.createExecutableExtension(ELEM_PROCESS_RUNNER);
-						List/*<ProcessParameter>*/ params = null;
+						List<ProcessParameter> params = null;
 						IConfigurationElement[] elementChildren = element.getChildren();
 						for (int k=0; k<elementChildren.length; k++) {
 							if (params == null) {
-								params = new ArrayList/*<ProcessParameter>*/();
+								params = new ArrayList<ProcessParameter>();
 							}
 							params.add(new ProcessParameter(elementChildren[k]));
 						}
 						if (params != null) {
-							runner.setProcessParameters((ProcessParameter[])params.toArray(new ProcessParameter[params.size()]));
+							runner.setProcessParameters(params.toArray(new ProcessParameter[params.size()]));
 						}
 						processRunnerMap.put(prefix + processType, runner);
 					} catch (CoreException e) {
 						TemplateEngineUtil.log(e);
-//						TemplateEngine.showError(e.getMessage(), e);
 					}
 				}
 			}
@@ -83,7 +81,7 @@ public class ProcessRunnerFactory {
 	}
 	
 	/**
-	 * Process Runners Factory instace.
+	 * Process Runners Factory instance.
 	 * @return
 	 */
 	public static ProcessRunnerFactory getDefault() {
@@ -96,6 +94,6 @@ public class ProcessRunnerFactory {
 	 * @return
 	 */
 	public ProcessRunner getProcessRunner(String processType) {
-		return (ProcessRunner) processRunnerMap.get(processType);
+		return processRunnerMap.get(processType);
 	}
 }

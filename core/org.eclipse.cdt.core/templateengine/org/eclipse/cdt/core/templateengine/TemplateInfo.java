@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,12 +21,12 @@ public class TemplateInfo {
 	private String filterPattern;
 	private String templatePath;
 	private String pluginId;
-	private Set toolChainIdSet;
-	private Object pagesProvider; /* IPagesAfterTemplateSelectionProvider */
+	private Set<String> toolChainIdSet;
+	private Object pagesProvider; /*IPagesAfterTemplateSelectionProvider*/
 	private boolean isCategory;
 	private String icon;
 	private String templateId;
-	private List configs;
+	private List<?> configs; /*This seems to be used for storing build-system specific configurations*/
 	
 	/**
 	 * 
@@ -40,7 +40,7 @@ public class TemplateInfo {
 	 * @param isCategory
 	 */
 	public TemplateInfo(String templateId, String projectTypeId, String filterPattern, String templatePath, 
-			String pluginId, Set toolChainIdSet, 
+			String pluginId, Set<String> toolChainIdSet, 
 			Object extraPagesProvider, boolean isCategory) {
 		this.templateId = templateId;
 		this.filterPattern = filterPattern;
@@ -99,18 +99,18 @@ public class TemplateInfo {
 	 * @return the toolChainIds
 	 */
 	public String[] getToolChainIds() {
-		return (String[]) toolChainIdSet.toArray(new String[toolChainIdSet.size()]);
+		return toolChainIdSet.toArray(new String[toolChainIdSet.size()]);
 	}
 
-	public void setToolChainSet(Set toolChainIdSet) {
+	public void setToolChainSet(Set<String> toolChainIdSet) {
 		this.toolChainIdSet = toolChainIdSet;
 	}
 	
-	public List getConfigurations() {
+	public List<?> getConfigurations() {
 		return configs;
 	}
 	
-	public void setConfigurations(List configs) {
+	public void setConfigurations(List<?> configs) {
 		this.configs = configs;
 	}
 	
@@ -144,7 +144,6 @@ public class TemplateInfo {
 	}
 
 	/*
-	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {

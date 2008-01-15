@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 STMicroelectronics.
+ * Copyright (c) 2006, 2008 STMicroelectronics and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * STMicroelectronics - Process console enhancements
+ * Alena Laskavaia (QNX) - Fix for 186172
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.ui.console;
 
@@ -14,6 +15,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.cdt.debug.mi.core.GDBProcess;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.ui.console.actions.MiConsoleSaveAction;
 import org.eclipse.cdt.debug.mi.ui.console.actions.MiConsoleVerboseModeAction;
 import org.eclipse.debug.core.DebugEvent;
@@ -44,7 +46,7 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 	}
 
 	public void dispose() {
-		if(GDBProcess != null) {
+		if (GDBProcess != null) {
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
 		fSaveConsole = null;
@@ -73,9 +75,13 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 
 				// add a debug event listener
 				DebugPlugin.getDefault().addDebugEventListener(this);
-
-				// register this object as MISession observer
-				GDBProcess.getTarget().getMISession().addObserver(this);
+				// if we miss change event update enablement manually
+				fVerboseMode.updateStateAndEnablement();
+				Target target = GDBProcess.getTarget();
+				if (target != null) {
+					// register this object as MISession observer
+					target.getMISession().addObserver(this);
+				}
 			}
 		}
 	}
@@ -89,7 +95,12 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 			DebugEvent event = events[i];
 			if (event.getSource().equals(GDBProcess)) {
 				if (fVerboseMode != null) {
-					fVerboseMode.setEnabled(!GDBProcess.isTerminated());
+					fVerboseMode.updateStateAndEnablement();
+					Target target = GDBProcess.getTarget();
+					if (target != null) {
+						// register this object as MISession observer
+						target.getMISession().addObserver(this);
+					}
 				}
 			}
 		}
@@ -101,9 +112,9 @@ public class MiConsolePageParticipant implements IConsolePageParticipant, IDebug
 	 public void update(Observable arg0, Object arg1) {
 		 if((arg1!=null) && (arg1 instanceof VerboseModeChangedEvent) && (fVerboseMode != null)) {
 			 try {
-				 fVerboseMode.setChecked(GDBProcess.getTarget().isVerboseModeEnabled());
-			 } catch (Exception e) {
-			 }          
+				fVerboseMode.updateStateAndEnablement();
+			} catch (Exception e) {
+			}          
 		 }
 	 }
 

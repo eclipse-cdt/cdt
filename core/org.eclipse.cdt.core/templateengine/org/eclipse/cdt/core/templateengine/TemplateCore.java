@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.Status;
  * @since 4.0
  */
 public class TemplateCore {
-
 	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String LABEL = "label"; //$NON-NLS-1$
 	private static final String ID = "id"; //$NON-NLS-1$

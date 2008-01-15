@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Limited and others.
+ * Copyright (c) 2007, 2008 Symbian Software Limited and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class AllTemplateEngineTests extends TestSuite {
 	 * Since the TemplateEngine consists of UI(Wizard).
 	 * A TestWizard is created to which the dynamically generated
 	 * UIPages are added.  The Wizard is launched from here.
-	 * The TestCases created to test the TemplateEngine is initialized here.
+	 * The TestCases created to test the TemplateEngine is initialised here.
 	 * @return
      * 
      * @since 4.0
@@ -45,6 +45,7 @@ public class AllTemplateEngineTests extends TestSuite {
 		suite.addTestSuite(TestValueStore.class);
 		suite.addTestSuite(TestSharedDefaults.class);
 		suite.addTestSuite(TestProcesses.class);
+		suite.addTestSuite(TestTemplateEngineBugs.class);
         
 		//$JUnit-END$
 		return suite;

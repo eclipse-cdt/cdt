@@ -7,6 +7,7 @@
  *
  * Contributors:
  * Bala Torati (Symbian) - Initial API and implementation
+ * Mark Espiritu (VaST Systems) - bug 215283
  *******************************************************************************/
 package org.eclipse.cdt.core.templateengine.process;
 
@@ -88,7 +89,7 @@ public class ProcessHelper {
 			end = str.indexOf(END_PATTERN, start);
 			if (end != -1) {
 				replaceStrings.add(str.substring(start + START_PATTERN.length(), end));
-				start = end + START_PATTERN.length();
+				start = end + END_PATTERN.length();
 			} else
 				start++;
 		}

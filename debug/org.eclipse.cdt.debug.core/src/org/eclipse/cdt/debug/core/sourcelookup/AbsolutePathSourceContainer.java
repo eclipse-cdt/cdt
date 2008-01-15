@@ -55,7 +55,7 @@ public class AbsolutePathSourceContainer extends AbstractSourceContainer {
 				{
 					IPath path = Path.fromOSString(file.getCanonicalPath());
 					String id = CoreModel.getRegistedContentTypeId(project.getProject(), path.lastSegment());
-					return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, new Path(file.getCanonicalPath()), id) };
+					return new ExternalTranslationUnit[] { new ExternalTranslationUnit(project, file.toURI(), id) };
 				}
 			}
 		} catch (IOException e) { // ignore if getCanonicalPath throws

@@ -28,6 +28,7 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -328,7 +329,9 @@ public class CSourceNotFoundEditor extends CommonSourceNotFoundEditor {
 						{
 							ITranslationUnit remappedTU = tu;
 							if (tu instanceof ExternalTranslationUnit)
-								remappedTU = new ExternalTranslationUnit(tu.getParent(), newLocation.getFullPath(), tu.getContentTypeId());										
+								
+								// TODO:  source lookup needs to be modified to use URIs
+								remappedTU = new ExternalTranslationUnit(tu.getParent(), URIUtil.toURI(newLocation.getFullPath()), tu.getContentTypeId());										
 							EditorUtility.openInEditor(remappedTU);
 							return true;
 						}

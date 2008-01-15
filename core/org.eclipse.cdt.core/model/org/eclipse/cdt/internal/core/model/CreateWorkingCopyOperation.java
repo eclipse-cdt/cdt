@@ -47,7 +47,7 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 		if (tu.getResource() != null) {
 			workingCopy= new WorkingCopy(tu.getParent(), (IFile)tu.getResource(), tu.getContentTypeId(), this.factory, this.problemRequestor);
 		} else {
-			workingCopy= new WorkingCopy(tu.getParent(), tu.getLocation(), tu.getContentTypeId(), this.factory);
+			workingCopy= new WorkingCopy(tu.getParent(), tu.getLocationURI(), tu.getContentTypeId(), this.factory);
 		}
 		// open the working copy now to ensure contents are that of the current state of this element
 		// Alain: Actually no, delay the parsing 'till it is really needed.  Doing the parsing here

@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -323,7 +324,7 @@ public class Binary extends Openable implements IBinary {
 				// See if this source file is already in the project.
 				// We check this to determine if we should create a TranslationUnit or ExternalTranslationUnit
 				IFile sourceFile = getCProject().getProject().getFile(filename);
-				IPath path = new Path(filename);
+				URI uri = sourceFile.getLocationURI();
 
 				IFile wkspFile = null;
 				if (sourceFile.exists())
@@ -331,7 +332,7 @@ public class Binary extends Openable implements IBinary {
 				else {
 					IFile[] filesInWP = ResourcesPlugin
 					.getWorkspace().getRoot()
-							.findFilesForLocation(path);
+							.findFilesForLocationURI(uri);
 
 					for (int j = 0; j < filesInWP.length; j++) {
 						if (filesInWP[j].isAccessible()) {
@@ -351,7 +352,7 @@ public class Binary extends Openable implements IBinary {
 					if (wkspFile != null)
 						tu = new TranslationUnit(this, wkspFile, id);
 					else
-						tu = new ExternalTranslationUnit(this, path, id);
+						tu = new ExternalTranslationUnit(this, uri, id);
 
 					if (! info.includesChild(tu))
 						info.addChild(tu);					

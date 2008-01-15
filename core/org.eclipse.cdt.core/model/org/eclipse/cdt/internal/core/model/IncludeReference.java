@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.utils.PathUtil;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -113,7 +114,8 @@ public class IncludeReference extends Openable implements IIncludeReference {
 					} else if (child.isFile()){
 						String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), names[i]);
 						if (id != null) {
-							celement = new ExternalTranslationUnit(this, path.append(names[i]), id);
+							// TODO:  should use URI
+							celement = new ExternalTranslationUnit(this, URIUtil.toURI(path.append(names[i])), id);
 						}
 					}
 					if (celement != null) {

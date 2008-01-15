@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.LocalProjectScope;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -394,7 +395,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						if (headerContentTypeId == null) {
 							headerContentTypeId= CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
 						}
-						return new ExternalTranslationUnit(includeReferences[i], path, headerContentTypeId);
+						
+						// TODO:  use URI
+						return new ExternalTranslationUnit(includeReferences[i], URIUtil.toURI(path), headerContentTypeId);
 					}
 				}
 			} catch (CModelException e) {
@@ -403,7 +406,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			// if the file exists and it has a known C/C++ file extension then just create
 			// an external translation unit for it.
 			if (contentTypeId != null && path.toFile().exists()) {
-				return new ExternalTranslationUnit(cproject, path, contentTypeId);
+				// TODO:  use URI
+				return new ExternalTranslationUnit(cproject, URIUtil.toURI(path), contentTypeId);
 			}
 		} else {
 			// !path.isAbsolute()
@@ -416,7 +420,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						if (headerContentTypeId == null) {
 							headerContentTypeId= CoreModel.hasCCNature(project) ? CCorePlugin.CONTENT_TYPE_CXXHEADER : CCorePlugin.CONTENT_TYPE_CHEADER;
 						}
-						return new ExternalTranslationUnit(includeReferences[i], includePath, headerContentTypeId);
+						
+						// TODO:  use URI
+						return new ExternalTranslationUnit(includeReferences[i], URIUtil.toURI(includePath), headerContentTypeId);
 					}
 				}
 			} catch (CModelException e) {

@@ -12,6 +12,8 @@
 package org.eclipse.cdt.core.model;
 
  
+import java.net.URI;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -350,6 +352,14 @@ public interface ICElement extends IAdaptable {
 	 * 
 	 */
 	IPath getPath();
+	
+	/**
+	 * Returns an absolute URI corresponding to the innermost file enclosing this element.
+	 * 
+	 * @since 5.0
+	 * @return the URI corresponding to the location
+	 */
+	URI getLocationURI();
 
 	/**
 	 * Returns the underlying resource that contains

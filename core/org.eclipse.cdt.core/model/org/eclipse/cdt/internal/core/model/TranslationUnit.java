@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,6 +64,10 @@ import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.index.IndexBasedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -77,7 +82,7 @@ import org.eclipse.core.runtime.content.IContentType;
  */
 public class TranslationUnit extends Openable implements ITranslationUnit {
 
-	private IPath location = null;
+	private URI location = null;
 	private String contentTypeId;
 
 	/**
@@ -94,10 +99,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		setContentTypeID(idType);
 	}
 
-	public TranslationUnit(ICElement parent, IPath path, String idType) {
-		super(parent, (IResource)null, path.toString(), ICElement.C_UNIT);
+	public TranslationUnit(ICElement parent, URI uri, String idType) {
+		super(parent, (IResource)null, uri.toString(), ICElement.C_UNIT);
 		setContentTypeID(idType);
-		setLocation(path);
 	}
 
 	public ITranslationUnit getTranslationUnit() {
@@ -290,7 +294,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return (INamespace[]) aList.toArray(new INamespace[0]);
 	}
 
-	protected void setLocation(IPath loc) {
+	protected void setLocationURI(URI loc) {
 		location = loc;
 	}
 
@@ -298,9 +302,21 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (location == null) {
 			IFile file = getFile();
 			if (file != null) {
-				location = file.getLocation();
+				return file.getLocation();
 			} else {
-				return getPath();
+				return null;
+			}
+		}
+		return URIUtil.toPath(location);
+	}
+	
+	public URI getLocationURI() {
+		if (location == null) {
+			IFile file = getFile();
+			if (file != null) {
+				location = file.getLocationURI();
+			} else {
+				return null;
 			}
 		}
 		return location;
@@ -465,7 +481,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (file != null) {
 			workingCopy= new WorkingCopy(getParent(), file, getContentTypeId(), factory);
 		} else {
-			workingCopy= new WorkingCopy(getParent(), getLocation(), getContentTypeId(), factory);
+			workingCopy= new WorkingCopy(getParent(), getLocationURI(), getContentTypeId(), factory);
 		}
 		// open the working copy now to ensure contents are that of the current state of this element
 		workingCopy.open(monitor);
@@ -678,7 +694,16 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (res != null)
 			return res.exists();
 		if (location != null) {
-			return location.toFile().exists();
+			try {
+				IFileStore fileStore = EFS.getStore(location);
+				IFileInfo info = fileStore.fetchInfo();
+				
+				return info.exists();
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		return false;
 	}
@@ -909,4 +934,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		final ILanguage result= fLanguageOfContext;
 		return result != null ? result : getLanguage();
 	}
+
+
 }

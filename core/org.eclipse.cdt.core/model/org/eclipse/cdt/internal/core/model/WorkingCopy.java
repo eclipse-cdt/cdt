@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -69,8 +70,8 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		problemRequestor = requestor;
 	}
 
-	public WorkingCopy(ICElement parent, IPath path, String id, IBufferFactory bufferFactory) {
-		super(parent, path, id);
+	public WorkingCopy(ICElement parent, URI uri, String id, IBufferFactory bufferFactory) {
+		super(parent, uri, id);
 		this.bufferFactory = 
 			bufferFactory == null ? 
 				getBufferManager() :
@@ -224,7 +225,7 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 		if (file != null) {
 			return new TranslationUnit(getParent(), getFile(), getContentTypeId());
 		}
-		return new ExternalTranslationUnit(getParent(), getLocation(), getContentTypeId());
+		return new ExternalTranslationUnit(getParent(), getLocationURI(), getContentTypeId());
 	}
 
 	/**

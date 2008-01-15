@@ -112,7 +112,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 	}
 
 	private void setUpEditor(File file) throws PartInitException, CModelException {
-		IEditorPart editor= EditorUtility.openInEditor(new ExternalTranslationUnit(fCProject, Path.fromOSString(file.toString()), CCorePlugin.CONTENT_TYPE_CXXSOURCE));
+		IEditorPart editor= EditorUtility.openInEditor(new ExternalTranslationUnit(fCProject, file.toURI(), CCorePlugin.CONTENT_TYPE_CXXSOURCE));
 		assertNotNull(editor);
 		assertTrue(editor instanceof CEditor);
 		fEditor= (CEditor) editor;

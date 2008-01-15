@@ -12,6 +12,7 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -101,6 +102,18 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		if (res != null)
 			return res.getFullPath();
 		return new Path(getElementName());
+	}
+	
+	public URI getLocationURI() {
+		IResource res = getUnderlyingResource();
+		
+		if(res != null) {
+			return res.getLocationURI();
+		}
+		
+		else {
+			return null;
+		}
 	}
 
 	public boolean exists() {

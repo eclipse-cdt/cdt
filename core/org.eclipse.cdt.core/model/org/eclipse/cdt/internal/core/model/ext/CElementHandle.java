@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.model.ext;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
@@ -150,6 +151,10 @@ abstract class CElementHandle implements ICElementHandle, ISourceReference {
 		return getTranslationUnit().getPath();
 	}
 
+	public URI getLocationURI() {
+		return getTranslationUnit().getLocationURI();
+	}
+	
 	public IResource getResource() {
 		return getTranslationUnit().getResource();
 	}

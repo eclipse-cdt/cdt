@@ -12,6 +12,8 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.net.URI;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.runtime.IPath;
 
@@ -24,8 +26,8 @@ public class ExternalTranslationUnit extends TranslationUnit {
 	 * @param parent
 	 * @param path
 	 */
-	public ExternalTranslationUnit(ICElement parent, IPath path, String contentTypeID) {
-		super(parent, path, contentTypeID);
+	public ExternalTranslationUnit(ICElement parent, URI uri, String contentTypeID) {
+		super(parent, uri, contentTypeID);
 	}
 	
 	public IPath getPath() {

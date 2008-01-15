@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -75,7 +76,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	/**
 	 * AST visitor to test whether a node is a leaf node.
 	 */
-	public static final class LeafNodeTester extends CPPASTVisitor {
+	public static final class ChildNodeFinder extends CPPASTVisitor {
 		{
 			shouldVisitNames= true;
 			shouldVisitDeclarations= true;
@@ -95,10 +96,16 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			shouldVisitTemplateParameters= true;
 		}
 		private int fVisits;
+		private int fFirstChildOffset;
 
 		private int processNode(IASTNode node) {
-			if (++fVisits > 1) 
-				return PROCESS_ABORT;
+			if (++fVisits > 1)  {
+				final IASTFileLocation fileLocation = node.getFileLocation();
+				if (fileLocation != null) {
+					fFirstChildOffset= fileLocation.getNodeOffset();
+					return PROCESS_ABORT;
+				}
+			}
 			return PROCESS_CONTINUE;
 		}
 		public int visit(ICPPASTBaseSpecifier specifier) {
@@ -146,10 +153,11 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		public int visit(IASTTypeId typeId) {
 			return processNode(typeId);
 		}
-		public boolean isLeafNode(IASTNode node) {
+		public int getFirstChildOffset(IASTNode node) {
 			fVisits= 0;
+			fFirstChildOffset= Integer.MAX_VALUE;
 			node.accept(this);
-			return fVisits <= 1;
+			return fFirstChildOffset;
 		}
 	}
 
@@ -157,7 +165,6 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	 * Collects positions from the AST.
 	 */
 	private class PositionCollector extends CPPASTVisitor {
-
 		{
 			shouldVisitTranslationUnit= true;
 			shouldVisitNames= true;
@@ -174,13 +181,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		private SemanticToken fToken= new SemanticToken();
 		private String fFilePath;
 		private int fMinLocation;
-		private final LeafNodeTester fgLeafNodeTester= new LeafNodeTester();
+		private final ChildNodeFinder fgChildNodeFinder= new ChildNodeFinder();
 		
-		/**
-		 * @param filePath
-		 */
-		public PositionCollector(String filePath) {
-			fFilePath= filePath;
+		public PositionCollector() {
 			fMinLocation= -1;
 		}
 
@@ -188,11 +191,13 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTTranslationUnit)
 		 */
 		public int visit(IASTTranslationUnit tu) {
+			fFilePath= tu.getFilePath();
+			
 			// visit macro definitions
 			IASTPreprocessorMacroDefinition[] macroDefs= tu.getMacroDefinitions();
 			for (int i= 0; i < macroDefs.length; i++) {
 				IASTPreprocessorMacroDefinition macroDef= macroDefs[i];
-				if (fFilePath.equals(macroDef.getContainingFilename())) {
+				if (macroDef.isPartOfTranslationUnitFile()) {
 					visitNode(macroDef.getName());
 				}
 			}
@@ -200,7 +205,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 //			IASTName[] macroExps= tu.getMacroExpansions();
 //			for (int i= 0; i < macroExps.length; i++) {
 //				IASTName macroExp= macroExps[i];
-//				if (fFilePath.equals(macroExp.getContainingFilename())) {
+//				if (macroExp.isPartOfTranslationUnitFile()) {
 //					visitMacroExpansion(macroExp);
 //				}
 //			}
@@ -211,7 +216,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @see org.eclipse.cdt.core.dom.ast.ASTVisitor#visit(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
 		public int visit(IASTDeclaration declaration) {
-			if (!fFilePath.equals(declaration.getContainingFilename())) {
+			if (!declaration.isPartOfTranslationUnitFile()) {
 				return PROCESS_SKIP;
 			}
 			if (checkForMacro(declaration)) {
@@ -240,7 +245,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 * @see org.eclipse.cdt.core.dom.ast.cpp.CPPASTVisitor#visit(org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition)
 		 */
 		public int visit(ICPPASTNamespaceDefinition namespace) {
-			if (!fFilePath.equals(namespace.getContainingFilename())) {
+			if (!namespace.isPartOfTranslationUnitFile()) {
 				return PROCESS_SKIP;
 			}
 			if (checkForMacro(namespace)) {
@@ -309,7 +314,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		}
 		
 		private boolean checkForMacro(IASTNode node) {
-			boolean isLeafNode= isLeafNode(node);
+			int firstChildOffset= fgChildNodeFinder.getFirstChildOffset(node);
 			IASTNodeLocation[] nodeLocations= node.getNodeLocations();
 			for (int i= 0; i < nodeLocations.length; i++) {
 				IASTNodeLocation nodeLocation= nodeLocations[i];
@@ -317,6 +322,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 					IASTNodeLocation useLocation= nodeLocation.asFileLocation();
 					if (useLocation != null) {
 						final int useOffset = useLocation.getNodeOffset();
+						if (useOffset > firstChildOffset) {
+							break;
+						}
 						if (useOffset > fMinLocation) {
 							fMinLocation= useOffset;
 							IASTPreprocessorMacroDefinition macroDef= ((IASTMacroExpansion)nodeLocation).getMacroDefinition();
@@ -334,15 +342,8 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 						}
 					}
 				}
-				if (!isLeafNode) {
-					break;
-				}
 			}
 			return false;
-		}
-
-		private boolean isLeafNode(IASTNode node) {
-			return fgLeafNodeTester.isLeafNode(node);
 		}
 
 		private boolean visitMacro(IASTNode node, int macroLength) {
@@ -536,7 +537,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			if (ast == null || fJobPresenter.isCanceled())
 				return;
 			
-			PositionCollector collector= new PositionCollector(ast.getFilePath());
+			PositionCollector collector= new PositionCollector();
 
 			startReconcilingPositions();
 			

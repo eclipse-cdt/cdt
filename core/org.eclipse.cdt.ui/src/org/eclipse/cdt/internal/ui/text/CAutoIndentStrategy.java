@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -546,6 +546,8 @@ public class CAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
 				return;
 			int peerOffset= getPeerPosition(document, command);
 			peerOffset= indenter.findReferencePosition(peerOffset);
+			if (peerOffset == CHeuristicScanner.NOT_FOUND)
+				return;
 			refOffset= Math.min(refOffset, peerOffset);
 
 			// eat any WS before the insertion to the beginning of the line

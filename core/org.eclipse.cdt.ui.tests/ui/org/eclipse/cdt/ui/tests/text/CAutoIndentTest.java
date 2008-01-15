@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,18 @@
 
 package org.eclipse.cdt.ui.tests.text;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentCommand;
@@ -28,6 +33,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
@@ -40,7 +46,7 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 /**
  * Testing the auto indent strategies.
  */
-public class CAutoIndentTest extends TestCase {
+public class CAutoIndentTest extends BaseTestCase {
 
 	/**
 	 * Helper class to test the auto-edit strategies on a document.
@@ -230,6 +236,8 @@ public class CAutoIndentTest extends TestCase {
 	}
 
 	private HashMap fOptions;
+	private List fStatusLog;
+	private ILogListener fLogListener;
 
 	
 	/**
@@ -249,12 +257,29 @@ public class CAutoIndentTest extends TestCase {
 //		shell.forceActive();
 //		shell.forceFocus();
 		fOptions= CCorePlugin.getOptions();
-	}
+
+		fStatusLog= Collections.synchronizedList(new ArrayList());
+		fLogListener= new ILogListener() {
+			public void logging(IStatus status, String plugin) {
+				if(!status.isOK()) {
+					fStatusLog.add(status);
+				}
+			}
+		};
+		final Plugin plugin = CUIPlugin.getDefault();
+		if (plugin != null) {
+			plugin.getLog().addLogListener(fLogListener);
+		}
+}
 	
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
+		final Plugin plugin = CUIPlugin.getDefault();
+		if (plugin != null) {
+			plugin.getLog().removeLogListener(fLogListener);
+		}
 		CCorePlugin.setOptions(fOptions);
 		super.tearDown();
 	}
@@ -551,6 +576,26 @@ public class CAutoIndentTest extends TestCase {
 		tester.type("namespace ns {\n");
 		assertEquals("\t", tester.getLine());
 		assertEquals(1, tester.getCaretColumn());
+	}
+	
+	public void testSmartPaste_Bug215310() throws Exception  {
+		AutoEditTester tester = createAutoEditTester(); //$NON-NLS-1$
+		
+		tester.type("#define S \\ \n");
+		tester.type("d\n");
+		tester.paste(
+			"class B : private A \n" + 
+			"{\n" + 
+			"};\n"
+		);
+		
+		assertNoError();
+	}
+
+	private void assertNoError() {
+		if (!fStatusLog.isEmpty()) {
+			fail(fStatusLog.get(0).toString());
+		}
 	}
 }
 

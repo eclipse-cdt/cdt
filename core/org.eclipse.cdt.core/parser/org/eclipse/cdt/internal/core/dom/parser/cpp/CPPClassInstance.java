@@ -8,10 +8,8 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Bryan Wilkinson (QNX)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
-/*
- * Created on Mar 28, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -32,14 +30,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 
 /**
  * @author aniefer
  */
-public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPPInternalBinding {
+public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPPInternalClassType {
 	private CPPClassSpecializationScope instanceScope;
-	
+
 	/**
 	 * @param decl
 	 * @param args
@@ -59,15 +58,15 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 			ICPPBase [] bindings = cls.getBases();
 			for (int i = 0; i < bindings.length; i++) {
 				ICPPBase specBinding = (ICPPBase) ((ICPPInternalBase)bindings[i]).clone();
-    		    IBinding base = bindings[i].getBaseClass();
-    		    if (base instanceof IType) {
-    		    	IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
-    		    	specBase = CPPSemantics.getUltimateType(specBase, false);
-    		    	if (specBase instanceof IBinding) {
-    		    		((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
-    		    	}
-    		    	result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBinding);
-    		    }
+				IBinding base = bindings[i].getBaseClass();
+				if (base instanceof IType) {
+					IType specBase = CPPTemplates.instantiateType((IType) base, argumentMap);
+					specBase = CPPSemantics.getUltimateType(specBase, false);
+					if (specBase instanceof IBinding) {
+						((ICPPInternalBase)specBinding).setBaseClass((IBinding)specBase);
+					}
+					result = (ICPPBase[]) ArrayUtil.append(ICPPBase.class, result, specBinding);
+				}
 			}
 			return (ICPPBase[]) ArrayUtil.trim(ICPPBase.class, result);
 		}
@@ -172,42 +171,51 @@ public class CPPClassInstance extends CPPInstance implements ICPPClassType, ICPP
 		return new CPPClassType.CPPClassTypeDelegate( name, this );
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
-     */
-    public boolean isSameType( IType type ) {
-        if( type == this )
-            return true;
-        if( type instanceof ITypedef || type instanceof IIndexType )
-            return type.isSameType( this );
-        if( type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType )
-        	return type.isSameType( this );  //the CPPDeferredClassInstance has some fuzziness
-        
-        if( type instanceof ICPPTemplateInstance ){
-        	ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();
-        	ICPPClassType ct2= (ICPPClassType) ((ICPPTemplateInstance)type).getTemplateDefinition();
-        	if(!ct1.isSameType(ct2))
-        		return false;
-        	
-        	ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)type).getArgumentMap();
-        	if( m1 == null || m2 == null || m1.size() != m2.size())
-        		return false;
-        	for( int i = 0; i < m1.size(); i++ ){
-        		IType t1 = (IType) m1.getAt( i );
-        		IType t2 = (IType) m2.getAt( i );
-        		if( t1 == null || ! t1.isSameType( t2 ) )
-        			return false;
-        	}
-        	return true;
-        }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IType#isSameType(org.eclipse.cdt.core.dom.ast.IType)
+	 */
+	public boolean isSameType( IType type ) {
+		if( type == this )
+			return true;
+		if( type instanceof ITypedef || type instanceof IIndexType )
+			return type.isSameType( this );
+		if( type instanceof ICPPDeferredTemplateInstance && type instanceof ICPPClassType )
+			return type.isSameType( this );  //the CPPDeferredClassInstance has some fuzziness
 
-        return false;
-    }
+		if( type instanceof ICPPTemplateInstance ){
+			ICPPClassType ct1= (ICPPClassType) getSpecializedBinding();
+			ICPPClassType ct2= (ICPPClassType) ((ICPPTemplateInstance)type).getTemplateDefinition();
+			if(!ct1.isSameType(ct2))
+				return false;
+
+			ObjectMap m1 = getArgumentMap(), m2 = ((ICPPTemplateInstance)type).getArgumentMap();
+			if( m1 == null || m2 == null || m1.size() != m2.size())
+				return false;
+			for( int i = 0; i < m1.size(); i++ ){
+				IType t1 = (IType) m1.getAt( i );
+				IType t2 = (IType) m2.getAt( i );
+				if( t1 == null || ! t1.isSameType( t2 ) )
+					return false;
+			}
+			return true;
+		}
+
+		return false;
+	}
 
 	public ICPPClassType[] getNestedClasses() throws DOMException {
 		return ICPPClassType.EMPTY_CLASS_ARRAY;
 	}
-	
+
+	public ICPPMethod[] getConversionOperators() throws DOMException {
+		IScope scope = getCompositeScope();
+		if (scope instanceof CPPClassSpecializationScope) {
+			if (ASTInternal.isFullyCached(scope))
+				return ((CPPClassSpecializationScope)scope).getConversionOperators();
+		}
+		return ICPPMethod.EMPTY_CPPMETHOD_ARRAY;
+	}
+
 	public boolean equals(Object obj) {
 		return obj instanceof ICPPClassType ? isSameType((ICPPClassType)obj) : false;
 	}

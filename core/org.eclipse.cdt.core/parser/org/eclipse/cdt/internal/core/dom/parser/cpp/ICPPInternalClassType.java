@@ -13,11 +13,12 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 
 /**
  * @author aniefer
  */
 public interface ICPPInternalClassType extends ICPPInternalBinding {
-	public ICPPMethod [] getConversionOperators();
+	public ICPPMethod [] getConversionOperators() throws DOMException;
 }

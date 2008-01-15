@@ -9,6 +9,7 @@
  * IBM - Initial API and implementation
  * Markus Schorn (Wind River Systems)
  * Bryan Wilkinson (QNX)
+ * Andrew Ferguson (Symbian)
  *******************************************************************************/
 /*
  * Created on Mar 11, 2005
@@ -52,6 +53,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
@@ -2141,5 +2143,43 @@ public class AST2TemplateTests extends AST2BaseTest {
    				assertEquals("A", ((ICPPClassType) type).getName());
    			}
 		}
+    }
+    
+	//    class A {};
+	//
+	//    template <class T> class C {
+	//    public:
+	//    	inline C(T& aRef) {}
+	//    	inline operator T&() {}
+	//    };
+	//
+	//    void foo(A a) {}
+	//    void bar(C<const A> ca) {}
+	//
+	//    void main2() {
+	//    	const A a= *new A();
+	//    	const C<const A> ca= *new C<const A>(*new A());
+	//
+	//    	foo(a); 
+	//    	bar(ca);
+	//    }
+    public void testBug214646() throws Exception {
+    	BindingAssertionHelper bh= new BindingAssertionHelper(getContents(1)[0].toString(), true);
+    	
+    	IBinding b0= bh.assertNonProblem("foo(a)", 3);
+    	IBinding b1= bh.assertNonProblem("bar(ca)", 3);
+    	
+    	assertInstance(b0, ICPPFunction.class);
+    	assertInstance(b1, ICPPFunction.class);
+    	
+    	ICPPFunction f0= (ICPPFunction) b0, f1= (ICPPFunction) b1;
+    	assertEquals(1, f0.getParameters().length);
+    	assertEquals(1, f1.getParameters().length);
+    	
+    	assertInstance(f0.getParameters()[0].getType(), ICPPClassType.class);
+    	assertFalse(f0 instanceof ICPPTemplateInstance);
+    	assertFalse(f0 instanceof ICPPTemplateDefinition);
+    	assertInstance(f1.getParameters()[0].getType(), ICPPClassType.class);
+    	assertInstance(f1.getParameters()[0].getType(), ICPPTemplateInstance.class);
     }
 }

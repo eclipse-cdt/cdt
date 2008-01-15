@@ -405,7 +405,7 @@ class ImplicitsAnalysis {
 			ICPPASTFunctionDeclarator dcltor= ctors[i];
 			IASTParameterDeclaration [] ps = dcltor.getParameters();
         	if( ps.length >= 1 ){
-        		if(paramHasTypeReferenceToTheAssociatedClassType(ps[0])) {
+        		if(paramHasTypeReferenceToTheAssociatedClassType(ps[0], compSpec.getName().getRawSignature())) {
             		// and all remaining arguments have initialisers
         			for(int j=1; j<ps.length; j++) {
             			if( ps[j].getDeclarator().getInitializer() == null ) {
@@ -429,7 +429,7 @@ class ImplicitsAnalysis {
 	}
 	
 	private static ICPPASTFunctionDeclarator[] getUserDeclaredCtorOrDtor( ICPPASTCompositeTypeSpecifier compSpec, boolean constructor ) {
-		List result= new ArrayList();
+		List<ICPPASTFunctionDeclarator> result= new ArrayList<ICPPASTFunctionDeclarator>();
 		IASTDeclaration [] members = compSpec.getMembers();
 		char [] name = compSpec.getName().toCharArray();
 		IASTDeclarator dcltor = null;
@@ -466,13 +466,13 @@ class ImplicitsAnalysis {
 			if(!nameEquals)
 				continue;
 			
-			result.add(dcltor);
+			result.add((ICPPASTFunctionDeclarator) dcltor);
         }
-        return (ICPPASTFunctionDeclarator[]) result.toArray(new ICPPASTFunctionDeclarator[result.size()]);
+        return result.toArray(new ICPPASTFunctionDeclarator[result.size()]);
 	}
 	
 	private static ICPPASTFunctionDeclarator[] getUserDeclaredCopyAssignmentOperators( ICPPASTCompositeTypeSpecifier compSpec ) {
-		List result= new ArrayList();
+		List<ICPPASTFunctionDeclarator> result= new ArrayList<ICPPASTFunctionDeclarator>();
 		IASTDeclaration [] members = compSpec.getMembers();
 		IASTDeclarator dcltor = null;
         for( int i = 0; i < members.length; i++ ){
@@ -491,20 +491,29 @@ class ImplicitsAnalysis {
 			}
 			
 			IASTParameterDeclaration [] ps = ((ICPPASTFunctionDeclarator)dcltor).getParameters();
-        	if( ps.length != 1 || !paramHasTypeReferenceToTheAssociatedClassType(ps[0]) )
+        	if(ps.length != 1 || !paramHasTypeReferenceToTheAssociatedClassType(ps[0], null))
         		continue;
         	
-			result.add(dcltor);
+			result.add((ICPPASTFunctionDeclarator)dcltor);
         }
-        return (ICPPASTFunctionDeclarator[]) result.toArray(new ICPPASTFunctionDeclarator[result.size()]);
+        return result.toArray(new ICPPASTFunctionDeclarator[result.size()]);
 	}
 	
-	private static boolean paramHasTypeReferenceToTheAssociatedClassType(IASTParameterDeclaration dec) {
+	/**
+	 * @param compSpec the name the parameter must have in order to match, or null for any name
+	 * @param dec
+	 * @return whether the specified parameter is a reference to the associated class type, and
+     * (optionally) if it has the specified name
+	 */
+	private static boolean paramHasTypeReferenceToTheAssociatedClassType(IASTParameterDeclaration dec, String name) {
 		boolean result= false;
 		IASTDeclarator pdtor= dec.getDeclarator();
 		if(pdtor.getPointerOperators().length==1 && pdtor.getPointerOperators()[0] instanceof ICPPASTReferenceOperator) {
 			if(dec.getDeclSpecifier() instanceof ICPPASTNamedTypeSpecifier) {
-				result= true;
+				ICPPASTNamedTypeSpecifier nts= (ICPPASTNamedTypeSpecifier) dec.getDeclSpecifier();
+				if(name==null || name.equals(nts.getName().getRawSignature())) {
+					result= true;
+				}
 			}
 		}
 		return result;

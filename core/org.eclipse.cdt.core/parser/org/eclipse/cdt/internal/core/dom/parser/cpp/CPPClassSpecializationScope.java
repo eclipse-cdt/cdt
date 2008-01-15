@@ -10,9 +10,6 @@
  * Markus Schorn (Wind River Systems)
  * Bryan Wilkinson (QNX)
  *******************************************************************************/
-/*
- * Created on Mar 28, 2005
- */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -145,7 +142,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		return (ICPPConstructor[]) ArrayUtil.trim(ICPPConstructor.class, specs);
 	}
 	
-	protected ICPPMethod[] getConversionOperators() {
+	protected ICPPMethod[] getConversionOperators() throws DOMException {
 		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
 		
 		if (!(specialized instanceof ICPPInternalClassType)) {

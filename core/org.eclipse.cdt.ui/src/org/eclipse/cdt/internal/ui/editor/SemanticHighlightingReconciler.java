@@ -391,7 +391,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 		 */
 		private void addNameLocation(IASTName name, HighlightingStyle highlightingStyle) {
 			IASTImageLocation imageLocation= name.getImageLocation();
-			if (imageLocation == null) {
+			if (imageLocation == null || !fFilePath.equals(imageLocation.getFileName())) {
 				addNodeLocation(name.getFileLocation(), highlightingStyle);
 			} else {
 				int offset= imageLocation.getNodeOffset();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -192,7 +192,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	private final TranslationUnit fTranslationUnit;
 	private String fTranslationUnitFileName;
 	private ASTAccessVisibility fCurrentVisibility;
-	private Stack fVisibilityStack;
+	private Stack<ASTAccessVisibility> fVisibilityStack;
 	private IProgressMonitor fProgressMonitor;
 
 	/**
@@ -282,11 +282,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 */
 	private void buildModel(IASTTranslationUnit ast) throws CModelException, DOMException {
 		fTranslationUnitFileName= ast.getFilePath();
-		fVisibilityStack= new Stack();
+		fVisibilityStack= new Stack<ASTAccessVisibility>();
 
 		// includes
 		final IASTPreprocessorIncludeStatement[] includeDirectives= ast.getIncludeDirectives();
-		Set allIncludes= new HashSet();
+		Set<Include> allIncludes= new HashSet<Include>();
 		for (int i= 0; i < includeDirectives.length; i++) {
 			IASTPreprocessorIncludeStatement includeDirective= includeDirectives[i];
 			if (isLocalToFile(includeDirective)) {
@@ -311,12 +311,12 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		}
 
 		// sort by offset
-		final List children= fTranslationUnit.getElementInfo().internalGetChildren();
-		Collections.sort(children, new Comparator() {
-			public int compare(Object o1, Object o2) {
+		final List<SourceManipulation> children= fTranslationUnit.getElementInfo().internalGetChildren();
+		Collections.sort(children, new Comparator<SourceManipulation>() {
+			public int compare(SourceManipulation o1, SourceManipulation o2) {
 				try {
-					final SourceManipulationInfo info1= ((SourceManipulation)o1).getSourceManipulationInfo();
-					final SourceManipulationInfo info2= ((SourceManipulation)o2).getSourceManipulationInfo();
+					final SourceManipulationInfo info1= o1.getSourceManipulationInfo();
+					final SourceManipulationInfo info2= o2.getSourceManipulationInfo();
 					int delta= info1.getStartPos() - info2.getStartPos();
 					if (delta == 0) {
 						delta= info1.getIdStartPos() - info2.getIdStartPos();
@@ -358,7 +358,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		return fTranslationUnitFileName.equals(node.getContainingFilename());
 	}
 
-	private Include createInclusion(Parent parent, IASTPreprocessorIncludeStatement inclusion, Set allIncludes) throws CModelException{
+	private Include createInclusion(Parent parent, IASTPreprocessorIncludeStatement inclusion, Set<Include> allIncludes) throws CModelException{
 		// create element
 		final IASTName name= inclusion.getName();
 		Include element= new Include(parent, ASTStringUtil.getSimpleName(name), inclusion.isSystemInclude());
@@ -1212,12 +1212,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * @param astName
 	 */
 	private void setIdentifierPosition(SourceManipulationInfo info, IASTNode astName) {
-		final IASTFileLocation location;
-		if (astName instanceof IASTName) {
-			location= ((IASTName)astName).getImageLocation();
-		} else {
-			location= astName.getFileLocation();
-		}
+		final IASTFileLocation location= astName.getFileLocation();
 		if (location != null) {
 			info.setIdPos(location.getNodeOffset(), location.getNodeLength());
 		} else {
@@ -1293,7 +1288,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 */
 	private void popDefaultVisibility() {
 		if (!fVisibilityStack.isEmpty()) {
-			setCurrentVisibility((ASTAccessVisibility)fVisibilityStack.pop());
+			setCurrentVisibility(fVisibilityStack.pop());
 		}
 	}
 

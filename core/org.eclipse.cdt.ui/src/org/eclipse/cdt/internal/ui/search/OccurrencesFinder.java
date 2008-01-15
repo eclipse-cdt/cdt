@@ -14,9 +14,9 @@ package org.eclipse.cdt.internal.ui.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
@@ -107,13 +107,13 @@ public class OccurrencesFinder implements IOccurrencesFinder {
 		if (binding != null /* && Bindings.equals(binding, fTarget) */) {
 			int flag= 0;
 			String description= fDescription;
-			IASTNodeLocation nodeLocation= node.getImageLocation();
-			if (nodeLocation == null) {
-				nodeLocation= node.getFileLocation();
+			IASTFileLocation fileLocation= node.getImageLocation();
+			if (fileLocation == null || !fRoot.getFilePath().equals(fileLocation.getFileName())) {
+				fileLocation= node.getFileLocation();
 			}
-			if (nodeLocation != null) {
-				final int offset= nodeLocation.getNodeOffset();
-				final int length= nodeLocation.getNodeLength();
+			if (fileLocation != null) {
+				final int offset= fileLocation.getNodeOffset();
+				final int length= fileLocation.getNodeLength();
 				if (offset >= 0 && length > 0) {
 					fResult.add(new OccurrenceLocation(offset, length, flag, description));
 				}

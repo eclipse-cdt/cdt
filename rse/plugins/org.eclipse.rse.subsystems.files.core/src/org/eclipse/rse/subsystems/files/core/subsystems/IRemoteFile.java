@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -23,6 +23,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.IRemoteContainer;
 import org.eclipse.rse.core.subsystems.IRemotePropertyHolder;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 
 /**
@@ -334,4 +335,23 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      * @since 2.0
      */
     public String getEncoding();
+    
+    /**
+     * Returns the permissions for this file if they exist
+     * @return the permissions
+     */
+    public IHostFilePermissions getPermissions();
+    
+    /**
+     * Returns the owner for this file if it exists
+     * @return the owner
+     */
+    public String getOwner();
+    
+    /**
+     * Returns the group for this file if it exists
+     * @return the group
+     */
+    public String getGroup();
+    
 }

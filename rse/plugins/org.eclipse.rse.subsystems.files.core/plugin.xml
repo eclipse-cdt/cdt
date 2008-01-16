@@ -46,4 +46,18 @@
 
 </extension>
 
+<!-- ================================================================= -->
+<!-- 		Adapter factory for permissions services                   -->
+<!-- ================================================================= -->
+	<extension point="org.eclipse.core.runtime.adapters">
+		<!-- Remote Files --> 
+		<factory 
+			class="org.eclipse.rse.internal.subsystems.files.core.RemoteFilePermissionsAdapterFactory" 
+			adaptableType="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
+
+			<adapter type="org.eclipse.rse.services.files.IFilePermissionsService"/>
+			<adapter type="org.eclipse.rse.services.files.IFileOwnerService"/>			
+		</factory> 
+	</extension>
+
 </plugin>

@@ -16,6 +16,7 @@
  * David McKnight   (IBM)        - [173518] [refresh] Read only changes are not shown in RSE until the parent folder is refreshed
  * David McKnight   (IBM)        - [186363] get rid of obsolete calls to ISubSystem.connect()
  * David McKnight   (IBM)        - [209660] use parent encoding as default, rather than system encoding
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  *******************************************************************************/
 
 package org.eclipse.rse.subsystems.files.core.subsystems;
@@ -43,6 +44,7 @@ import org.eclipse.rse.core.subsystems.RemoteChildrenContentsType;
 import org.eclipse.rse.services.clientserver.StringComparePatternMatcher;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.subsystems.files.core.model.RemoteFileFilterString;
 import org.eclipse.rse.subsystems.files.core.model.SystemFileTransferModeRegistry;
 import org.eclipse.rse.ui.SystemBasePlugin;
@@ -75,7 +77,8 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 {
 	
 
-    protected IRemoteFileContext _context;    
+
+	protected IRemoteFileContext _context;    
     protected String fullyQualifiedName;
 
     protected String _label;
@@ -96,6 +99,11 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
     // properties
     protected HashMap properties = new HashMap();
     protected HashMap propertyStates = new HashMap();
+    
+    // permissions
+    protected IHostFilePermissions _permissions;
+    protected String _owner;
+    protected String _group;
   
     /**
      * Constructor that takes a context object containing important information.
@@ -899,6 +907,9 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	public void markStale(boolean isStale, boolean clearCache) 
 	{
 		_isStale = isStale;
+		_owner = null;
+		_group = null;
+		_permissions = null;
 		
 		if (isStale && clearCache) 
 		{		
@@ -1196,4 +1207,32 @@ public abstract class RemoteFile implements IRemoteFile,  IAdaptable, Comparable
 	public void setEncoding(String encoding) {
 		RemoteFileEncodingManager.getInstance().setEncoding(getHostName(), getAbsolutePath(), encoding);
 	}
+	
+	public void setGroup(String group) {
+		_group = group;
+	}
+	
+	public void setOwner(String owner) {
+		_owner = owner;
+	}
+	
+	public void setPermissions(IHostFilePermissions permissions) {
+		_permissions = permissions;
+	}
+	
+	
+    public String getGroup() {
+		return _group;
+	}
+
+
+	public String getOwner() {
+		return _owner;
+	}
+
+
+	public IHostFilePermissions getPermissions() {
+		return _permissions;
+	}
+	
 }

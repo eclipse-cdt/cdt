@@ -42,6 +42,7 @@
  * Xuan Chen (IBM) - [209827] Update DStore command implementation to enable cancelation of archive operations
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  * David McKnight   (IBM)        - [189873] DownloadJob changed to DownloadAndOpenJob
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.view;
@@ -58,9 +59,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -68,6 +72,8 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
+import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
@@ -110,6 +116,9 @@ import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.files.IFileOwnerService;
+import org.eclipse.rse.services.files.IFilePermissionsService;
+import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.search.HostSearchResultSet;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
@@ -885,7 +894,7 @@ public class SystemViewRemoteFileAdapter
 				
 				int nbrOfArchiveProperties = 2;
 				int nbrOfVirtualProperties = 4;
-				int nbrOfProperties = 5;
+				int nbrOfProperties = 8;
 				if (isVirtual) nbrOfProperties += nbrOfVirtualProperties;
 				else if (isArchive) nbrOfProperties += nbrOfArchiveProperties; 
 	
@@ -924,7 +933,22 @@ public class SystemViewRemoteFileAdapter
 				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
 				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
 		
-	
+				// file permissions
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+
+				// file owner
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+				
+				// file group
+				if (isRegular) uniquePropertyDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+				else if (isVirtual) uniqueVirtualDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+				else if (isArchive) uniqueArchiveDescriptorArray[++i] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+
+				
 				if (isVirtual)
 				{
 					// add virtual property descriptors...
@@ -988,7 +1012,7 @@ public class SystemViewRemoteFileAdapter
 		{	
 			int nbrOfArchiveProperties = 2;
 			int nbrOfVirtualProperties = 4;
-			int nbrOfProperties = 9;
+			int nbrOfProperties = 12;
 			int nbrOfBriefProperties = 2;
 			if (debug)
 				nbrOfProperties += 7;
@@ -1050,7 +1074,22 @@ public class SystemViewRemoteFileAdapter
 			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
 			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
 			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_EXTENSION, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_LABEL, SystemViewResources.RESID_PROPERTY_FILE_EXTENSION_TOOLTIP);
-	
+
+			// file permissions
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_PERMISSIONS, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_LABEL, SystemViewResources.RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP);
+
+			// file owner
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_OWNER, SystemViewResources.RESID_PROPERTY_FILE_OWNER_LABEL, SystemViewResources.RESID_PROPERTY_FILE_OWNER_TOOLTIP);
+			
+			// file group
+			if (isRegular) propertyDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+			else if (isVirtual) virtualDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+			else if (isArchive) archiveDescriptorArray[++idx] = createSimplePropertyDescriptor(ISystemPropertyConstants.P_FILE_GROUP, SystemViewResources.RESID_PROPERTY_FILE_GROUP_LABEL, SystemViewResources.RESID_PROPERTY_FILE_GROUP_TOOLTIP);
+
 			
 			if (debug)
 			{
@@ -1266,10 +1305,130 @@ public class SystemViewRemoteFileAdapter
 		{
 			if(!file.isDirectory()) {
 				String ext = file.getExtension();
-				return ext == null?"":ext;
+				return ext == null?"":ext; //$NON-NLS-1$
 			}
 			else
-				return "";
+				return ""; //$NON-NLS-1$
+		}
+		else if (name.equals(ISystemPropertyConstants.P_FILE_PERMISSIONS))
+		{
+			IHostFilePermissions permissions = file.getPermissions();
+			if (permissions == null){
+				
+				if (file instanceof IAdaptable){
+					final IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)file).getAdapter(IFilePermissionsService.class);
+					if (service != null){
+						final IRemoteFile rFile = file;
+						
+						
+						Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_PERMISSIONS)
+						{
+							public IStatus run(IProgressMonitor monitor){
+								try
+								{
+									String remoteParent = rFile.getParentPath();
+									String fname = rFile.getName();
+									IHostFilePermissions perm = service.getFilePermissions(remoteParent, fname, monitor);
+									if (perm != null && rFile instanceof RemoteFile){
+										((RemoteFile)rFile).setPermissions(perm);
+										// notify change to property sheet
+										
+										ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+										registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));
+									}
+								}
+								catch (Exception e)
+								{						
+								}
+								return Status.OK_STATUS;
+							}
+						};
+						deferredFetch.schedule();
+						return FileResources.MESSAGE_PENDING;
+					}
+				}
+				return FileResources.MESSAGE_NOT_SUPPORTED;
+			}
+			return permissions.toUserString();
+		}
+		else if (name.equals(ISystemPropertyConstants.P_FILE_OWNER))
+		{
+			String owner = file.getOwner();
+			if (owner == null){
+				if (file instanceof IAdaptable){
+					
+					final IFileOwnerService service = (IFileOwnerService)((IAdaptable)file).getAdapter(IFileOwnerService.class);
+					if (service != null){
+						
+						final IRemoteFile rFile = file;
+						
+						Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_OWNER)
+						{
+							public IStatus run(IProgressMonitor monitor){
+								try
+								{
+									String remoteParent = rFile.getParentPath();
+									String fname = rFile.getName();
+									String uowner = service.getFileUserOwner(remoteParent, fname, monitor);
+									if (uowner != null && rFile instanceof RemoteFile){
+										((RemoteFile)rFile).setOwner(uowner);
+									}
+									
+									// notify change to property sheet
+									ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+									registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));								
+								}
+								catch (Exception e)
+								{						
+								}
+								return Status.OK_STATUS;
+							}
+						};
+						deferredFetch.schedule();														
+						return FileResources.MESSAGE_PENDING;
+					}
+				}
+				return FileResources.MESSAGE_NOT_SUPPORTED;
+			}
+			return owner;
+		}
+		else if (name.equals(ISystemPropertyConstants.P_FILE_GROUP))
+		{
+			String group = file.getGroup();
+			if (group == null){
+				if (file instanceof IAdaptable){
+					final IFileOwnerService service = (IFileOwnerService)((IAdaptable)file).getAdapter(IFileOwnerService.class);
+					if (service != null){
+						final IRemoteFile rFile = file;
+												
+						Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_GROUP)
+						{
+							public IStatus run(IProgressMonitor monitor){
+								try
+								{
+									String remoteParent = rFile.getParentPath();
+									String fname = rFile.getName();
+									String ugroup = service.getFileGroupOwner(remoteParent, fname, monitor);
+									if (ugroup != null && rFile instanceof RemoteFile){
+										((RemoteFile)rFile).setGroup(ugroup);
+									}
+									// notify change to property sheet
+									ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+									registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));
+								}
+								catch (Exception e)
+								{						
+								}
+								return Status.OK_STATUS;
+							}
+						};
+						deferredFetch.schedule();
+						return FileResources.MESSAGE_PENDING;
+					}
+				}
+				return FileResources.MESSAGE_NOT_SUPPORTED;
+			}
+			return group;
 		}
 		else if (name.equals(ISystemPropertyConstants.P_FILE_CLASSIFICATION))
 		{
@@ -1665,6 +1824,13 @@ public class SystemViewRemoteFileAdapter
 				if (submonitor != null)
 					submonitor.worked(1);
 				Object[] results = config.getResults();
+				if (results == null || results.length == 0){
+					// make sure search is really done
+					System.out.println("waiting for results"); //$NON-NLS-1$
+					
+				}
+					
+				
 				for (int m = 0; m < results.length; m++)
 				{
 					Object result = results[m];
@@ -1867,7 +2033,7 @@ public class SystemViewRemoteFileAdapter
 								{
 									if (thisObject instanceof IRemoteFile)
 									{
-										copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)thisObject).getName();
+										copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)thisObject).getName(); //$NON-NLS-1$
 									}
 								}
 							}
@@ -2052,7 +2218,7 @@ public class SystemViewRemoteFileAdapter
 										{
 											if (thisObject instanceof IRemoteFile)
 											{
-												copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)thisObject).getName();
+												copiedFileNames = copiedFileNames + "\n" + ((IRemoteFile)thisObject).getName(); //$NON-NLS-1$
 											}
 										}
 									}
@@ -3370,6 +3536,19 @@ public class SystemViewRemoteFileAdapter
 			{		
 				return tgt.isLink() && value.equals("true") || //$NON-NLS-1$
 				 !tgt.isLink() && value.equals("false"); //$NON-NLS-1$
+			}
+			else if (inName.equals("supportspermissions")) //$NON-NLS-1$
+			{
+				if (value.equals("true")){ //$NON-NLS-1$
+					// check service
+					if (tgt instanceof IAdaptable){
+						IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)tgt).getAdapter(IFilePermissionsService.class);
+						if (service != null){
+							return service.canGetFilePermissions(tgt.getParentPath(), tgt.getName());
+						}
+					}				
+				}
+				return false;
 			}
 			else if (inName.equals("iscommandsubsystemexists")) { //$NON-NLS-1$
 				

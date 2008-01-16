@@ -16,6 +16,8 @@ Martin Oberhuber (Wind River) - [180519] declaratively register adapter factorie
 Martin Oberhuber (Wind River) - [168975] Move RSE Events API to Core
 Martin Oberhuber (Wind River) - [186748] Move ISubSystemConfigurationAdapter from UI/rse.core.subsystems.util
 David McKnight   (IBM)        - [187711] Link with Editor action for System View
+David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+
 -->
 <?eclipse version="3.0"?>
 <plugin>
@@ -109,9 +111,8 @@ David McKnight   (IBM)        - [187711] Link with Editor action for System View
 <!-- ============================================ -->
 <!-- Define Remote Object Properties Pages        -->
 <!-- ============================================ -->
-  
-      <extension 
-         point="org.eclipse.ui.propertyPages">
+  <extension 
+       point="org.eclipse.ui.propertyPages">
       <page 
             name="%RemotePropertyPage.File.Info"
             class="org.eclipse.rse.internal.files.ui.propertypages.SystemFilePropertyPage"
@@ -119,8 +120,19 @@ David McKnight   (IBM)        - [187711] Link with Editor action for System View
            <enabledWhen>
              <instanceof value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
          </enabledWhen>
-      </page>
+      </page>     
+      <page 
+            name="%RemotePropertyPage.File.Permissions"
+            class="org.eclipse.rse.internal.files.ui.propertypages.SystemFilePermissionsPropertyPage"
+            id="org.eclipse.rse.files.PermissionsPropertyPage">
+           <enabledWhen>
+             <instanceof value="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile"/>
+   			</enabledWhen>
+   			  <filter name="supportspermissions" value="true"/>
+   
+      </page>      
    </extension>
+   
    
 <!-- ============================================ -->
 <!-- Define Workbench Properties Pages            -->

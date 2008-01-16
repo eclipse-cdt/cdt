@@ -96,8 +96,16 @@ public interface IUniversalDataStoreConstants
 	public static final String C_QUERY_QUALIFIED_CLASSNAME = "C_QUERY_QUALIFIED_CLASSNAME"; //$NON-NLS-1$
 	public static final String TYPE_QUALIFIED_CLASSNAME = "fullClassName"; //$NON-NLS-1$
 	
-
-    	
+	// permissions commands
+	public static final String C_QUERY_FILE_PERMISSIONS = "C_QUERY_FILE_PERMISSIONS";
+	public static final String C_SET_FILE_PERMISSIONS = "C_SET_FILE_PERMISSIONS";
+	
+	// ownership commands
+    public static final String C_QUERY_FILE_USER_OWNER = "C_QUERY_FILE_USER_OWNER";	
+    public static final String C_SET_FILE_USER_OWNER = "C_SET_FILE_USER_OWNER";
+    public static final String C_QUERY_FILE_GROUP_OWNER = "C_QUERY_FILE_GROUP_OWNER";	
+    public static final String C_SET_FILE_GROUP_OWNER = "C_SET_FILE_GROUP_OWNER";
+	
 	// Mode of transfer: text or binary
 	public static final int TEXT_MODE = -1;
 	public static final int BINARY_MODE = -2;

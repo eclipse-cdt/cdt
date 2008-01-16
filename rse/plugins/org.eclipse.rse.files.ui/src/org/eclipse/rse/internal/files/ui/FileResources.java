@@ -13,6 +13,7 @@
  * Contributors:
  * David Dykstal (IBM) - 176488: adding some text for the cache limit checkbox
  * David McKnight(IBM) - [210142] for accessibility need transfer mode toggle button
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui;
@@ -265,7 +266,24 @@ public class FileResources extends NLS
 	public static String MESSAGE_EXPANDING_FILTER;
 	public static String MESSSAGE_QUERYING_FILE;
 
+	// file permisssions property page
+	public static String MESSAGE_FILE_PERMISSIONS_NOT_SUPPORTED;
+	public static String RESID_PREF_PERMISSIONS_PERMISSIONS_LABEL;
+	public static String RESID_PREF_PERMISSIONS_TYPE_LABEL;
+	public static String RESID_PREF_PERMISSIONS_READ_LABEL;
+	public static String RESID_PREF_PERMISSIONS_WRITE_LABEL;
+	public static String RESID_PREF_PERMISSIONS_EXECUTE_LABEL;
+	public static String RESID_PREF_PERMISSIONS_USER_LABEL;
+	public static String RESID_PREF_PERMISSIONS_GROUP_LABEL;
+	public static String RESID_PREF_PERMISSIONS_OTHERS_LABEL;
+	public static String RESID_PREF_PERMISSIONS_OWNERSHIP_LABEL;
 	
+	// file permissions messages
+	public static String MESSAGE_PENDING;
+	public static String MESSAGE_NOT_SUPPORTED;
+	public static String MESSAGE_GETTING_PERMISSIONS;
+	public static String MESSAGE_GETTING_OWNER;
+	public static String MESSAGE_GETTING_GROUP;
 	
 	static 
 	{

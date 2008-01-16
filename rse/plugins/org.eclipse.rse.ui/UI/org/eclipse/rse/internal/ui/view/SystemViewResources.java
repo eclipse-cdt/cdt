@@ -12,7 +12,7 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -170,6 +170,15 @@ public class SystemViewResources extends NLS {
 
 	public static String	RESID_PROPERTY_FILE_EXTENSION_LABEL;
 	public static String	RESID_PROPERTY_FILE_EXTENSION_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_FILE_PERMISSIONS_LABEL;
+	public static String	RESID_PROPERTY_FILE_PERMISSIONS_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_FILE_OWNER_LABEL;
+	public static String	RESID_PROPERTY_FILE_OWNER_TOOLTIP;
+	
+	public static String	RESID_PROPERTY_FILE_GROUP_LABEL;
+	public static String	RESID_PROPERTY_FILE_GROUP_TOOLTIP;
 	
 	public static String	RESID_PROPERTY_FILE_CLASSIFICATION_LABEL;
 	public static String	RESID_PROPERTY_FILE_CLASSIFICATION_TOOLTIP;

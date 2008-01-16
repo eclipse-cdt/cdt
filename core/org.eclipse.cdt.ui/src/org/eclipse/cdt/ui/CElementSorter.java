@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -43,6 +44,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -104,7 +106,22 @@ public class CElementSorter extends ViewerSorter {
 	protected static final int RESOURCES= 201;
 	protected static final int STORAGE= 202;
 	protected static final int OTHERS= 500;
+	
+	/**
+	 * Flag indicating whether header files and source files should be separated.
+	 * If <code>true</code>, header files will be sorted before source files,
+	 * otherwise header and source files will be sorted by name.
+	 */
+	private boolean fSeparateHeaderAndSource;
 
+	/**
+	 * Default constructor for use as executable extension.
+	 */
+	public CElementSorter() {
+		final IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
+		fSeparateHeaderAndSource= store.getBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE);
+	}
+	
 	public int category (Object element) {
 		if (element instanceof ICModel) {
 			return CMODEL;
@@ -120,11 +137,13 @@ public class CElementSorter extends ViewerSorter {
 			return CCONTAINERS;
 		} else if (element instanceof ITranslationUnit) {
 			ITranslationUnit tu = (ITranslationUnit)element;
-			if (CoreModel.isValidHeaderUnitName(tu.getCProject().getProject(), tu.getElementName())) {
-				return TRANSLATIONUNIT_HEADERS;
-			}
-			if (CoreModel.isValidSourceUnitName(tu.getCProject().getProject(), tu.getElementName())) {
-				return TRANSLATIONUNIT_SOURCE;
+			if (fSeparateHeaderAndSource) {
+				if (CoreModel.isValidHeaderUnitName(tu.getCProject().getProject(), tu.getElementName())) {
+					return TRANSLATIONUNIT_HEADERS;
+				}
+				if (CoreModel.isValidSourceUnitName(tu.getCProject().getProject(), tu.getElementName())) {
+					return TRANSLATIONUNIT_SOURCE;
+				}
 			}
 			return TRANSLATIONUNITS;
 		} else if (element instanceof IInclude) {

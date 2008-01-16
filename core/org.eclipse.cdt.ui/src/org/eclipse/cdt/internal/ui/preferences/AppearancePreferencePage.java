@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
@@ -41,15 +42,11 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 
 public class AppearancePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private static final String SHOW_TU_CHILDREN= PreferenceConstants.PREF_SHOW_CU_CHILDREN;
-	private static final String OUTLINE_GROUP_INCLUDES = PreferenceConstants.OUTLINE_GROUP_INCLUDES;
-	private static final String OUTLINE_GROUP_NAMESPACES = PreferenceConstants.OUTLINE_GROUP_NAMESPACES;
-	private static final String CVIEW_GROUP_INCLUDES = PreferenceConstants.CVIEW_GROUP_INCLUDES;
-
 	private SelectionButtonDialogField fShowTUChildren;
 	private SelectionButtonDialogField fOutlineGroupIncludes;
 	private SelectionButtonDialogField fOutlineGroupNamespaces;
 	private SelectionButtonDialogField fCViewGroupIncludes;
+	private SelectionButtonDialogField fCViewSeparateHeaderAndSource;
 	
 	public AppearancePreferencePage() {
 		setPreferenceStore(PreferenceConstants.getPreferenceStore());
@@ -77,14 +74,18 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		fCViewGroupIncludes.setDialogFieldListener(listener);
 		fCViewGroupIncludes.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewGroupIncludes_label); 
 		
-	}	
+		fCViewSeparateHeaderAndSource= new SelectionButtonDialogField(SWT.CHECK);
+		fCViewSeparateHeaderAndSource.setDialogFieldListener(listener);
+		fCViewSeparateHeaderAndSource.setLabelText(PreferencesMessages.AppearancePreferencePage_cviewSeparateHeaderAndSource_label); 
+	}
 
 	private void initFields() {
 		IPreferenceStore prefs= getPreferenceStore();
-		fShowTUChildren.setSelection(prefs.getBoolean(SHOW_TU_CHILDREN));
-		fCViewGroupIncludes.setSelection(prefs.getBoolean(CVIEW_GROUP_INCLUDES));
-		fOutlineGroupIncludes.setSelection(prefs.getBoolean(OUTLINE_GROUP_INCLUDES));
-		fOutlineGroupNamespaces.setSelection(prefs.getBoolean(OUTLINE_GROUP_NAMESPACES));
+		fShowTUChildren.setSelection(prefs.getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN));
+		fCViewGroupIncludes.setSelection(prefs.getBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES));
+		fCViewSeparateHeaderAndSource.setSelection(prefs.getBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE));
+		fOutlineGroupIncludes.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
+		fOutlineGroupNamespaces.setSelection(prefs.getBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 	}
 	
 	/*
@@ -110,17 +111,16 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 		result.setLayout(layout);
 				
 		fShowTUChildren.doFillIntoGrid(result, nColumns);
-		fCViewGroupIncludes.doFillIntoGrid(result, nColumns);				
+		fCViewGroupIncludes.doFillIntoGrid(result, nColumns);
 		fOutlineGroupIncludes.doFillIntoGrid(result, nColumns);
 		fOutlineGroupNamespaces.doFillIntoGrid(result, nColumns);
 
 		new Separator().doFillIntoGrid(result, nColumns);
 		
+		fCViewSeparateHeaderAndSource.doFillIntoGrid(result, nColumns);
 		
-		new Separator().doFillIntoGrid(result, nColumns);
-		
-		String noteTitle= PreferencesMessages.AppearancePreferencePage_note; 
-		String noteMessage= PreferencesMessages.AppearancePreferencePage_preferenceOnlyEffectiveForNewPerspectives; 
+		String noteTitle= PreferencesMessages.AppearancePreferencePage_note;
+		String noteMessage= PreferencesMessages.AppearancePreferencePage_preferenceOnlyForNewViews; 
 		Composite noteControl= createNoteComposite(JFaceResources.getDialogFont(), result, noteTitle, noteMessage);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
@@ -156,10 +156,11 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	 */
 	public boolean performOk() {
 		IPreferenceStore prefs= getPreferenceStore();
-		prefs.setValue(SHOW_TU_CHILDREN, fShowTUChildren.isSelected());
-		prefs.setValue(CVIEW_GROUP_INCLUDES, fCViewGroupIncludes.isSelected());
-		prefs.setValue(OUTLINE_GROUP_INCLUDES, fOutlineGroupIncludes.isSelected());
-		prefs.setValue(OUTLINE_GROUP_NAMESPACES, fOutlineGroupNamespaces.isSelected());
+		prefs.setValue(PreferenceConstants.PREF_SHOW_CU_CHILDREN, fShowTUChildren.isSelected());
+		prefs.setValue(PreferenceConstants.CVIEW_GROUP_INCLUDES, fCViewGroupIncludes.isSelected());
+		prefs.setValue(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE, fCViewSeparateHeaderAndSource.isSelected());
+		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_INCLUDES, fOutlineGroupIncludes.isSelected());
+		prefs.setValue(PreferenceConstants.OUTLINE_GROUP_NAMESPACES, fOutlineGroupNamespaces.isSelected());
 		CUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}	
@@ -169,10 +170,11 @@ public class AppearancePreferencePage extends PreferencePage implements IWorkben
 	 */
 	protected void performDefaults() {
 		IPreferenceStore prefs= getPreferenceStore();
-		fShowTUChildren.setSelection(prefs.getDefaultBoolean(SHOW_TU_CHILDREN));
-		fCViewGroupIncludes.setSelection(prefs.getDefaultBoolean(CVIEW_GROUP_INCLUDES));
-		fOutlineGroupIncludes.setSelection(prefs.getDefaultBoolean(OUTLINE_GROUP_INCLUDES));
-		fOutlineGroupNamespaces.setSelection(prefs.getDefaultBoolean(OUTLINE_GROUP_NAMESPACES));
+		fShowTUChildren.setSelection(prefs.getDefaultBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN));
+		fCViewGroupIncludes.setSelection(prefs.getDefaultBoolean(PreferenceConstants.CVIEW_GROUP_INCLUDES));
+		fCViewSeparateHeaderAndSource.setSelection(prefs.getDefaultBoolean(PreferenceConstants.CVIEW_SEPARATE_HEADER_AND_SOURCE));
+		fOutlineGroupIncludes.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
+		fOutlineGroupNamespaces.setSelection(prefs.getDefaultBoolean(PreferenceConstants.OUTLINE_GROUP_NAMESPACES));
 		super.performDefaults();
 	}
 }

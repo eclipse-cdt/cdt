@@ -718,7 +718,7 @@ public class PreferenceConstants {
 	public static final String ID_BESTMATCH_HOVER= "org.eclipse.cdt.ui.BestMatchHover"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if the Outline view.
+	 * A named preference that controls whether the Outline view should group include directives.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -726,7 +726,7 @@ public class PreferenceConstants {
 	public static final String OUTLINE_GROUP_INCLUDES= "org.eclipse.cdt.ui.outline.groupincludes"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if the Outline view.
+	 * A named preference that controls whether the Outline view should group namespaces.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
@@ -735,7 +735,7 @@ public class PreferenceConstants {
 
 
 	/**
-	 * A named preference that controls whether the outline view
+	 * A named preference that controls whether the Outline view
 	 * selection should stay in sync with with the element at the current cursor position.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -744,12 +744,24 @@ public class PreferenceConstants {
 	public static final String OUTLINE_LINK_TO_EDITOR = "org.eclipse.cdt.ui.outline.linktoeditor"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if the CView.
+	 * A named preference that controls whether include directives should be grouped in the 
+	 * C/C++ Projects view and the Project Explorer view.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
 	 */
 	public static final String CVIEW_GROUP_INCLUDES= "org.eclipse.cdt.ui.cview.groupincludes"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls whether header and source files should be separated in the 
+	 * C/C++ Projects view and the Project Explorer view.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 5.0
+	 */
+	public static final String CVIEW_SEPARATE_HEADER_AND_SOURCE= "org.eclipse.cdt.ui.cview.separateheaderandsource"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls which completion proposal categories

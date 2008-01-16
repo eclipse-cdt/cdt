@@ -657,7 +657,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		final ICDITarget cdiTarget = getCDITarget();
 		
 		// Clean up the target filter to avoid that the CDebugTarget remains referenced by the breakpoint.
-		// Note that while we're "removing" breakpoints from a debug session, the breakpoint objects in the 
+		// Note that though we're "removing" breakpoints from a debug session, the breakpoint objects in the 
 		// platform aren't going anywhere. They are "global" model elements. They go away only when the user
 		// deletes them. 
 		CDebugTarget target = getDebugTarget();

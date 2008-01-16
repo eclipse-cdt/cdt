@@ -21,9 +21,10 @@ import org.eclipse.cdt.launch.ui.CLaunchConfigurationTab;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -264,14 +265,16 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		dlabel.setText(LaunchMessages.getString("Launch.common.DebuggerColon")); //$NON-NLS-1$
 		fDCombo = new Combo(comboComp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		fDCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fDCombo.addModifyListener(new ModifyListener() {
+		fDCombo.addSelectionListener(new SelectionListener() {
+		    public void widgetSelected(SelectionEvent e) {
+		        if (!isInitializing()) {
+		            setInitializeDefault(true);
+		            updateComboFromSelection();
+		        }
+		    }
 
-			public void modifyText(ModifyEvent e) {
-				if (!isInitializing()) {
-					setInitializeDefault(true);
-					updateComboFromSelection();
-				}
-			}
+		    public void widgetDefaultSelected(SelectionEvent e) {
+		    }
 		});
 	}
 

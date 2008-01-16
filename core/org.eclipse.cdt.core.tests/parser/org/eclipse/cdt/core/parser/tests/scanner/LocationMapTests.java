@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -464,17 +464,18 @@ public class LocationMapTests extends BaseTestCase {
 		fLocationMap.encounteredComment(12, 23, false);
 		checkComment(fLocationMap.getComments()[0], new String(LONGDIGITS, 110, 15), false, FN, 110, 15, 2, 2);
 		
-		IASTName[] refs= fLocationMap.getReferences(macro1);
+		IASTName[] refs= fLocationMap.getReferences(macro3);
 		assertEquals(1, refs.length);
-		checkName(refs[0], macro1, "n1", fTu, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
+		IASTName macro3ref= refs[0];
+		checkName(refs[0], macro3, "n3", fTu, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 5, 2, 2, new String(LONGDIGITS, 110, 5));
+
+		refs= fLocationMap.getReferences(macro1);
+		assertEquals(1, refs.length);
+		checkName(refs[0], macro1, "n1", macro3ref, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
 
 		refs= fLocationMap.getReferences(macro2);
 		assertEquals(1, refs.length);
-		checkName(refs[0], macro2, "n2", fTu, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
-	
-		refs= fLocationMap.getReferences(macro3);
-		assertEquals(1, refs.length);
-		checkName(refs[0], macro3, "n3", fTu, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 5, 2, 2, new String(LONGDIGITS, 110, 5));
+		checkName(refs[0], macro2, "n2", macro3ref, IASTTranslationUnit.EXPANSION_NAME, ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
 	}
 	
 	public void testContexts() {

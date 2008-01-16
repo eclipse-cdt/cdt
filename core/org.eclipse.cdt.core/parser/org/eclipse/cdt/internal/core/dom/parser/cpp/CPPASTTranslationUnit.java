@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,6 @@ import org.eclipse.core.runtime.CoreException;
 public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslationUnit, IASTAmbiguityParent {
     
     private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
-    private static final IASTNodeLocation[] EMPTY_PREPROCESSOR_LOCATION_ARRAY = new IASTNodeLocation[0];
     private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
     private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
     private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -225,13 +224,6 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
         return CPPVisitor.getReferences(this, b);
     }
     
-
-    public IASTNodeLocation[] getLocationInfo(int offset, int length) {
-        if (resolver == null)
-            return EMPTY_PREPROCESSOR_LOCATION_ARRAY;
-        return resolver.getLocations(offset, length);
-    }
-
     private class CPPFindNodeForOffsetAction extends CPPASTVisitor {
     	{
     		shouldVisitNames          = true;
@@ -512,6 +504,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 		return new IASTComment[0];
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(resolver.getClass())) {
 			return resolver;

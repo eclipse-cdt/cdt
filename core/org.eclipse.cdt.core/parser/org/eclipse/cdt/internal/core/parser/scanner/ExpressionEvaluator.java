@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayMap;
 
 /**
  * Used to evaluate expressions in preprocessor directives.
@@ -40,11 +40,11 @@ class ExpressionEvaluator {
     }
 
 	private Token fTokens;
-	private CharArrayObjectMap fDictionary;
+	private CharArrayMap<PreprocessorMacro> fDictionary;
 
-	public boolean evaluate(TokenList condition, CharArrayObjectMap dictionary) throws EvalException {
+	public boolean evaluate(TokenList condition, CharArrayMap<PreprocessorMacro> macroDictionary) throws EvalException {
 		fTokens= condition.first();
-		fDictionary= dictionary;
+		fDictionary= macroDictionary;
 		return expression() != 0;
 	}
 

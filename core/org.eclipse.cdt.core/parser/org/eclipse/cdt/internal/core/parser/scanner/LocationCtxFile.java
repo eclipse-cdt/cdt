@@ -10,7 +10,10 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 
 /**
  * A location context representing a file.
@@ -26,15 +29,18 @@ class LocationCtxFile extends LocationCtxContainer {
 		fASTInclude= inclusionStatement;
 	}
 	
+	@Override
 	public final void addChildSequenceLength(int childLength) {
 		super.addChildSequenceLength(childLength);
 	}
 
+	@Override
 	public final String getFilePath() {
 		return fFilename;
 	}
 
-	public IASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
+	@Override
+	public ASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
 		// try to delegate to a child.
 		final int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
 		final int sequenceEnd= sequenceNumber+length;
@@ -76,14 +82,17 @@ class LocationCtxFile extends LocationCtxContainer {
 		return new ASTFileLocation(this, startOffset, endOffset-startOffset);
 	}
 	
-	public IASTFileLocation createMappedFileLocation(int offset, int length) {
+	@Override
+	public ASTFileLocation createMappedFileLocation(int offset, int length) {
 		return new ASTFileLocation(this, offset, length);
 	}
 
+	@Override
 	public ASTInclusionStatement getInclusionStatement() {
 		return fASTInclude;
 	}
 
+	@Override
 	ASTFileLocation createFileLocation(int start, int length) {
 		return new ASTFileLocation(this, start, length);
 	}
@@ -94,5 +103,21 @@ class LocationCtxFile extends LocationCtxContainer {
 			return true;
 		}
 		return sequenceNumber >= child.fSequenceNumber + child.getSequenceLength();
+	}
+
+	public void collectExplicitMacroExpansions(int offset, int length, ArrayList<IASTMacroExpansion> result) {
+		Collection<LocationCtx> children= getChildren();
+		for (LocationCtx ctx : children) {
+			// context must start before the end of the search range
+			if (ctx.fOffsetInParent >= offset+length) {
+				break;
+			}
+			if (ctx instanceof LocationCtxMacroExpansion) {
+				// expansion must end after the search start
+				if (ctx.fEndOffsetInParent > offset) {
+					result.add(new ASTMacroExpansionLocation(((LocationCtxMacroExpansion) ctx), 0, ctx.getSequenceLength()));
+				}
+			}
+		}
 	}
 }

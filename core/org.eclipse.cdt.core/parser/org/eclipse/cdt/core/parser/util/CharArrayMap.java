@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -172,6 +174,15 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
     
     public Collection<V> values() {
         return map.values();
+    }
+
+    public Collection<char[]> keys() {
+    	Set<Key> keys= map.keySet();
+    	ArrayList<char[]> r= new ArrayList<char[]>(keys.size());
+    	for (Key key : keys) {
+    		r.add(CharArrayUtils.extract(key.buffer, key.start, key.length));
+		}
+        return r;
     }
 
     

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,12 @@ public interface IASTMacroExpansion extends IASTNodeLocation {
 	 * @return
 	 */
 	public IASTPreprocessorMacroDefinition getMacroDefinition();
+
+	/**
+	 * The macro reference for the explicit macro expansion containing this expansion.
+	 * @since 5.0
+	 */
+	public IASTName getMacroReference();
 
 	/**
 	 * Returns an offset within the macro-expansion. The offset can be used to compare

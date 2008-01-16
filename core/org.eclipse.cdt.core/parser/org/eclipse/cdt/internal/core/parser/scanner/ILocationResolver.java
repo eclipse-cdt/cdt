@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -103,9 +104,12 @@ public interface ILocationResolver {
 	 */
 	IASTFileLocation getMappedFileLocation(int offset, int length);
 
-    /**
-     * @see IASTTranslationUnit#getLocationInfo(int, int).
-     */
+	/**
+	  * Returns an array of locations. This is a sequence of file locations and macro-expansion locations.
+	  * @param offset sequence number as stored in the ast nodes.
+	  * @param length
+	  * @return and array of locations.
+	  */	
 	IASTNodeLocation[] getLocations(int sequenceNumber, int length);
 
 	/**
@@ -122,7 +126,7 @@ public interface ILocationResolver {
 	int getSequenceNumberForFileOffset(String filePath, int fileOffset);
 
 	/**
-	 * @see IASTTranslationUnit#getUnpreprocessedSignature(IASTFileLocation).
+	 * @see IASTNode#getRawSignature().
 	 */
 	char[] getUnpreprocessedSignature(IASTFileLocation loc);
 	
@@ -144,4 +148,21 @@ public interface ILocationResolver {
 	 * Same as {@link #getMappedFileLocation(int, int)} for the given array of consecutive node locations.
 	 */
 	IASTFileLocation flattenLocations(IASTNodeLocation[] nodeLocations);
+
+	/**
+	 * Returns all explicit macro expansions that intersect with the given file location.
+	 * Include files that may be included within the given location are not examined. 
+	 * @param loc the file-location to search for macro references
+	 * @return an array of macro expansions.
+	 * @since 5.0
+	 */
+	IASTMacroExpansion[] getMacroExpansions(IASTFileLocation loc);
+
+	/**
+	 * Returns all implicit macro references related to an explicit one.
+	 * @param ref an explicit macro expansion.
+	 * @return an array of names representing implicit macro expansions.
+	 * @since 5.0
+	 */
+	IASTName[] getImplicitMacroReferences(IASTName ref);
 }

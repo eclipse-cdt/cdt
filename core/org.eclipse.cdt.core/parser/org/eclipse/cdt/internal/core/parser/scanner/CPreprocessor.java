@@ -14,7 +14,9 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,18 +44,19 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator.EvalException;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroDefinitionParser.InvalidMacroDefinitionException;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * C-Preprocessor providing tokens for the parsers. The class should not be used directly, rather than that 
  * you should be using the {@link IScanner} interface.
  * @since 5.0
  */
-public class CPreprocessor implements ILexerLog, IScanner {
+public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	public static final String PROP_VALUE = "CPreprocessor"; //$NON-NLS-1$
 
 	public static final int tDEFINED= IToken.FIRST_RESERVED_PREPROCESSOR;
@@ -62,7 +65,6 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	public static final int tSPACE= IToken.FIRST_RESERVED_PREPROCESSOR+3;
 	public static final int tNOSPACE= IToken.FIRST_RESERVED_PREPROCESSOR+4;
 	public static final int tMACRO_PARAMETER= IToken.FIRST_RESERVED_PREPROCESSOR+5;
-	public static final int tEMPTY_TOKEN = IToken.FIRST_RESERVED_PREPROCESSOR+6;
 
     
 
@@ -80,6 +82,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
     private static final ObjectStyleMacro __STDC__ = new ObjectStyleMacro("__STDC__".toCharArray(), ONE);  //$NON-NLS-1$
     private static final ObjectStyleMacro __STDC_HOSTED__ = new ObjectStyleMacro("__STDC_HOSTED_".toCharArray(), ONE);  //$NON-NLS-1$
     private static final ObjectStyleMacro __STDC_VERSION__ = new ObjectStyleMacro("__STDC_VERSION_".toCharArray(), "199901L".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+
 
 	private interface IIncludeFileTester {
     	Object checkFile(String path, String fileName);
@@ -120,7 +123,8 @@ public class CPreprocessor implements ILexerLog, IScanner {
         public Token execute() {
             StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
             Calendar cal = Calendar.getInstance();
-            buffer.append(cal.get(Calendar.MONTH));
+            DateFormatSymbols dfs= new DateFormatSymbols();
+            buffer.append(dfs.getShortMonths()[cal.get(Calendar.MONTH)]);
             buffer.append(" "); //$NON-NLS-1$
             append(buffer, cal.get(Calendar.DAY_OF_MONTH));
             buffer.append(" "); //$NON-NLS-1$
@@ -140,7 +144,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
         public Token execute() {
             StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
             Calendar cal = Calendar.getInstance();
-            append(buffer, cal.get(Calendar.HOUR));
+            append(buffer, cal.get(Calendar.HOUR_OF_DAY));
             buffer.append(":"); //$NON-NLS-1$
             append(buffer, cal.get(Calendar.MINUTE));
             buffer.append(":"); //$NON-NLS-1$
@@ -176,7 +180,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	private boolean fHandledCompletion= false;
 
     // state information
-    private final CharArrayObjectMap fMacroDictionary = new CharArrayObjectMap(512);
+    private final CharArrayMap<PreprocessorMacro> fMacroDictionary = new CharArrayMap<PreprocessorMacro>(512);
     private final LocationMap fLocationMap = new LocationMap();
 
     /** Set of already included files */
@@ -345,9 +349,9 @@ public class CPreprocessor implements ILexerLog, IScanner {
             }
         }
         
-        Object[] predefined= fMacroDictionary.valueArray();
-        for (int i = 0; i < predefined.length; i++) {
-        	fLocationMap.registerPredefinedMacro((PreprocessorMacro) predefined[i]);
+        Collection<PreprocessorMacro> predefined= fMacroDictionary.values();
+        for (PreprocessorMacro macro : predefined) {
+        	fLocationMap.registerPredefinedMacro(macro);
 		}
     }
 
@@ -413,13 +417,10 @@ public class CPreprocessor implements ILexerLog, IScanner {
     }
   
     public Map<String, IMacroBinding> getMacroDefinitions() {
-        final CharArrayObjectMap objMap= fMacroDictionary;
-        int size = objMap.size();
-        Map<String, IMacroBinding> hashMap = new HashMap<String, IMacroBinding>(size);
-        for (int i = 0; i < size; i++) {
-            hashMap.put(String.valueOf(objMap.keyAt(i)), (IMacroBinding) objMap.getAt(i));
-        }
-
+        Map<String, IMacroBinding> hashMap = new HashMap<String, IMacroBinding>(fMacroDictionary.size());
+        for (char[] key : fMacroDictionary.keys()) {
+            hashMap.put(String.valueOf(key), fMacroDictionary.get(key));
+		}
         return hashMap;
     }
 
@@ -1165,7 +1166,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 		lexer.consumeLine(ORIGIN_PREPROCESSOR_DIRECTIVE);
     	final int endOffset= lexer.currentToken().getEndOffset();
     	final char[] namechars= name.getCharImage();
-    	PreprocessorMacro definition= (PreprocessorMacro) fMacroDictionary.remove(namechars, 0, namechars.length);
+    	PreprocessorMacro definition= fMacroDictionary.remove(namechars, 0, namechars.length);
     	fLocationMap.encounterPoundUndef(definition, startOffset, name.getOffset(), name.getEndOffset(), endOffset, namechars);
     }
 
@@ -1392,7 +1393,7 @@ public class CPreprocessor implements ILexerLog, IScanner {
 	 */
 	private boolean expandMacro(final Token identifier, Lexer lexer, boolean stopAtNewline) throws OffsetLimitReachedException {
 		final char[] name= identifier.getCharImage();
-        PreprocessorMacro macro= (PreprocessorMacro) fMacroDictionary.get(name);
+        PreprocessorMacro macro= fMacroDictionary.get(name);
         if (macro == null) {
         	return false;
         }
@@ -1418,5 +1419,13 @@ public class CPreprocessor implements ILexerLog, IScanner {
     			identifier.getOffset(), identifier.getEndOffset(), lexer.getLastEndOffset(), length, macro, expansions, ili);
         fCurrentContext= new ScannerContext(ctx, fCurrentContext, replacement);
         return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter) {
+		if (adapter.isAssignableFrom(fMacroExpander.getClass())) {
+			return fMacroExpander;
+		}
+		return null;
 	}
 }

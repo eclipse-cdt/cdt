@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTInclusionNode;
 
@@ -103,14 +102,14 @@ abstract class LocationCtx implements ILocationCtx {
 	 * Returns the minimal file location containing the specified sequence number range, assuming 
 	 * that it is contained in this context.
 	 */
-	public IASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
+	public ASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
 		return fParent.createMappedFileLocation(fOffsetInParent, fEndOffsetInParent-fOffsetInParent);
 	}
 
 	/**
 	 * Returns the file location containing the specified offset range in this context.
 	 */
-	public IASTFileLocation createMappedFileLocation(int offset, int length) {
+	public ASTFileLocation createMappedFileLocation(int offset, int length) {
 		return fParent.createMappedFileLocation(fOffsetInParent, fEndOffsetInParent-fOffsetInParent);
 	}
 

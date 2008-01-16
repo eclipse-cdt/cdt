@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,18 +115,9 @@ public interface IASTTranslationUnit extends IASTNode, IAdaptable {
 	 * @return List of IASTName nodes representing uses of the binding
 	 */
 	public IASTName[] getReferences(IBinding binding);
-
-	/**
-	 * Returns an array of locations. This is a sequence of file locations and macro-expansion locations.
-	 * @param offset sequence number as stored in the ast nodes.
-	 * @param length
-	 * @return and array of locations.
-	 * @deprecated the offsets needed for this method are not accessible via public API.
-	 */
-	public IASTNodeLocation[] getLocationInfo(int offset, int length);
  
 	/**
-	 * Select the node in the treet that best fits the offset/length/file path. 
+	 * Select the node in the treat that best fits the offset/length/file path. 
 	 * 
 	 * @param path - file name specified through path
 	 * @param offset - location in the file as an offset

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -152,13 +152,13 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 			try {
 				byte style= pdom.getDB().getByte(record + MACRO_STYLE);
 				if (style == MACROSTYLE_FUNCTION) {
-					List paramList = new ArrayList();
+					List<char[]> paramList = new ArrayList<char[]>();
 					PDOMMacroParameter param= getFirstParameter();
 					while (param != null) {
 						paramList.add(param.getName().getChars());
 						param = param.getNextParameter();
 					}
-					fParameterList= (char[][])paramList.toArray(new char[paramList.size()][]);
+					fParameterList= paramList.toArray(new char[paramList.size()][]);
 				}
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -285,6 +285,7 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

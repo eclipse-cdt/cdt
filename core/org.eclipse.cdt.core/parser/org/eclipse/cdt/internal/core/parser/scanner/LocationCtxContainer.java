@@ -40,6 +40,7 @@ class LocationCtxContainer extends LocationCtx {
 		fSource= source;
 	}
 	
+	@Override
 	public Collection<LocationCtx> getChildren() {
 		if (fChildren == null) {
 			return Collections.emptyList();
@@ -84,10 +85,12 @@ class LocationCtxContainer extends LocationCtx {
 		return result;
 	}
 	
+	@Override
 	public void addChildSequenceLength(int childLength) {
 		fChildSequenceLength+= childLength;
 	}
 
+	@Override
 	public final LocationCtx findSurroundingContext(int sequenceNumber, int length) {
 		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
@@ -97,6 +100,7 @@ class LocationCtxContainer extends LocationCtx {
 		return this;
 	}
 
+	@Override
 	public final LocationCtxMacroExpansion findSurroundingMacroExpansion(int sequenceNumber, int length) {
 		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, true);
@@ -106,7 +110,8 @@ class LocationCtxContainer extends LocationCtx {
 		return null;
 	}
 
-	public IASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
+	@Override
+	public ASTFileLocation findMappedFileLocation(int sequenceNumber, int length) {
 		// try to delegate to a child.
 		int testEnd= length > 1 ? sequenceNumber+length-1 : sequenceNumber;
 		final LocationCtx child= findChildLessOrEqualThan(sequenceNumber, false);
@@ -198,6 +203,7 @@ class LocationCtxContainer extends LocationCtx {
 		return idx >= 0 ? fChildren.get(idx) : null;
 	}
 
+	@Override
 	public void getInclusions(ArrayList<IASTInclusionNode> result) {
 		if (fChildren != null) {
 			for (Iterator<LocationCtx> iterator = fChildren.iterator(); iterator.hasNext();) {
@@ -212,6 +218,7 @@ class LocationCtxContainer extends LocationCtx {
 		}
 	}
 	
+	@Override
 	public int getLineNumber(int offset) {
 		if (fLineOffsets == null) {
 			fLineOffsets= computeLineOffsets();

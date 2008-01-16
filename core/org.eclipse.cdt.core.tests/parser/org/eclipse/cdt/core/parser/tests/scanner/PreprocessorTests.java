@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -282,6 +282,69 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateIdentifier("d");
 		validateToken(IToken.tRPAREN);
 		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+
+	// #define variadic(x...) (a, ##x)
+	// #define _c c
+	// variadic();
+	// variadic(_c);
+	// variadic(_c,_c);
+	public void testGccVariadicMacroExtensions2() throws Exception {
+		initializeScanner();
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("a");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("a");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("c");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("a");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("c");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("c");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		validateEOF();
+		validateProblemCount(0);
+	}
+
+	// #define variadic(y, x...) (a, ##x)
+	// #define _c c
+	// variadic(1);
+	// variadic(,_c);
+	// variadic(,_c,_c);
+	public void testGccVariadicMacroExtensions3() throws Exception {
+		initializeScanner();
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("a");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("a");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("c");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("a");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("c");
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("c");
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+
 		validateEOF();
 		validateProblemCount(0);
 	}
@@ -810,14 +873,14 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	}
 	
 	
-	public void _testSpecExample3_2() throws Exception {
+	public void testSpecExample3_2() throws Exception {
 		StringBuffer sb = getExample3Defines();
 		sb.append("g(x+(3,4)-w) | h 5) & m (f)^m(m); \n");
 		
 		// f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1); //47
 		initializeScanner(sb.toString());
 		
-		validateIdentifier("g");
+		validateIdentifier("f");
 		validateToken(IToken.tLPAREN);
 		validateInteger("2");
 		validateToken(IToken.tSTAR);
@@ -849,7 +912,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateIdentifier("f");
 		validateToken(IToken.tLPAREN);
 		validateInteger("2");
-		validateToken(IToken.tLPAREN);
+		validateToken(IToken.tSTAR);
 		validateToken(IToken.tLPAREN);
 		validateInteger("0");
 		validateToken(IToken.tCOMMA);

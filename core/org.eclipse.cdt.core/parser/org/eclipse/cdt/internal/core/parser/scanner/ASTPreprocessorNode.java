@@ -467,6 +467,10 @@ class ASTFileLocation implements IASTFileLocation {
 	public int getSequenceEndNumber() {
 		return fLocationCtx.getSequenceNumberForOffset(fOffset+fLength, true);
 	}
+	
+	public LocationCtxFile getLocationContext() {
+		return fLocationCtx;
+	}
 }
 
 class ASTMacroExpansionLocation implements IASTMacroExpansion {
@@ -488,6 +492,10 @@ class ASTMacroExpansionLocation implements IASTMacroExpansion {
 
 	public IASTPreprocessorMacroDefinition getMacroDefinition() {
 		return fContext.getMacroDefinition();
+	}
+	
+	public IASTName getMacroReference() {
+		return fContext.getMacroReference();
 	}
 
 	public IASTFileLocation asFileLocation() {

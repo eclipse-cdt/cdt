@@ -19,6 +19,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
+import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -48,7 +49,7 @@ public class LocationMap implements ILocationResolver {
     private ArrayList<ASTProblem> fProblems= new ArrayList<ASTProblem>();
     private ArrayList<ASTComment> fComments= new ArrayList<ASTComment>();
     private ArrayList<ASTObjectStyleMacroDefinition> fBuiltinMacros= new ArrayList<ASTObjectStyleMacroDefinition>();
-	private IdentityHashMap<IMacroBinding, List<IASTName>> fMacroReferences= new IdentityHashMap<IMacroBinding, List<IASTName>>();
+	private ArrayList<IASTName> fMacroReferences= new ArrayList<IASTName>();
 	
     private LocationCtxFile fRootContext= null;
     private LocationCtx fCurrentContext= null;
@@ -157,27 +158,22 @@ public class LocationMap implements ILocationResolver {
 		int endNumber= getSequenceNumberForOffset(endOffset);
 		final int length= endNumber-nameNumber;
 		
+		ASTMacroReferenceName expansion= new ASTMacroReferenceName(fTranslationUnit, nameNumber, nameEndNumber, macro, null);
 		for (int i = 0; i < implicitMacroReferences.length; i++) {
 			ASTMacroReferenceName name = (ASTMacroReferenceName) implicitMacroReferences[i];
 			name.setOffsetAndLength(nameNumber, length);
-			addMacroReference((IMacroBinding) name.getBinding(), name);
+			name.setParent(expansion);
+			addMacroReference(name);
 		}
-		
-		ASTMacroReferenceName expansion= new ASTMacroReferenceName(fTranslationUnit, nameNumber, nameEndNumber, macro, null);
-		addMacroReference(macro, expansion);
+		addMacroReference(expansion);
 		
 		fCurrentContext= new LocationCtxMacroExpansion(this, (LocationCtxContainer) fCurrentContext, nameOffset, endOffset, endNumber, contextLength, imageLocations, expansion);
 		fLastChildInsertionOffset= 0;
 		return fCurrentContext;
 	}
 	
-	private void addMacroReference(IMacroBinding macro, IASTName name) {
-		List<IASTName> list= fMacroReferences.get(macro);
-		if (list == null) {
-			list= new ArrayList<IASTName>();
-			fMacroReferences.put(macro, list);
-		}
-		list.add(name);
+	private void addMacroReference(IASTName name) {
+		fMacroReferences.add(name);
 	}
 
 	/**
@@ -310,7 +306,7 @@ public class LocationMap implements ILocationResolver {
 		// not using endOffset, compatible with 4.0: endOffset= getSequenceNumberForOffset(endOffset);
 		final ASTUndef undef = new ASTUndef(fTranslationUnit, name, startOffset, nameOffset, nameEndOffset, definition);
 		fDirectives.add(undef);
-		addMacroReference(definition, undef.getMacroName());
+		addMacroReference(undef.getMacroName());
 	}
 
 	public void setRootNode(IASTTranslationUnit root) {
@@ -351,15 +347,54 @@ public class LocationMap implements ILocationResolver {
 		return new String(ctx.getFilePath());
 	}
 
-	public IASTFileLocation getMappedFileLocation(int sequenceNumber, int length) {
+	public ASTFileLocation getMappedFileLocation(int sequenceNumber, int length) {
 		return fRootContext.findMappedFileLocation(sequenceNumber, length);
 	}
 	
     public char[] getUnpreprocessedSignature(IASTFileLocation loc) {
-    	if (loc instanceof ASTFileLocation) {
-    		return ((ASTFileLocation) loc).getSource();
-    	}
-    	return CharArrayUtils.EMPTY;
+		ASTFileLocation floc= convertFileLocation(loc);
+		if (floc == null) {
+			return CharArrayUtils.EMPTY;
+		}
+		return floc.getSource();
+	}
+    
+	public IASTMacroExpansion[] getMacroExpansions(IASTFileLocation loc) {
+		ASTFileLocation floc= convertFileLocation(loc);
+		if (floc == null) {
+			return new IASTMacroExpansion[0];
+		}
+		
+		LocationCtxFile ctx= floc.getLocationContext();
+		ArrayList<IASTMacroExpansion> list= new ArrayList<IASTMacroExpansion>();
+		
+		ctx.collectExplicitMacroExpansions(floc.getNodeOffset(), floc.getNodeLength(), list);
+		return list.toArray(new IASTMacroExpansion[list.size()]);
+	}
+
+	private ASTFileLocation convertFileLocation(IASTFileLocation loc) {
+		if (loc == null) {
+			return null;
+		}
+		if (loc instanceof ASTFileLocation) {
+			return (ASTFileLocation) loc;
+		}
+		final String fileName = loc.getFileName();
+		final int nodeOffset = loc.getNodeOffset();
+		final int nodeLength = loc.getNodeLength();
+		int sequenceNumber= getSequenceNumberForFileOffset(fileName, nodeOffset);
+		if (sequenceNumber < 0) {
+			return null;
+		}
+		
+		int length= 0;
+		if (nodeLength > 0) {
+			length= getSequenceNumberForFileOffset(fileName, nodeOffset + nodeLength-1)+1 - sequenceNumber;
+			if (length < 0) {
+				return null;
+			}
+		}
+		return getMappedFileLocation(sequenceNumber, length);
 	}
 
 	public IASTNodeLocation[] getLocations(int sequenceNumber, int length) {
@@ -538,13 +573,25 @@ public class LocationMap implements ILocationResolver {
 	}
 
 	public IASTName[] getReferences(IMacroBinding binding) {
-		List<IASTName> list= fMacroReferences.get(binding);
-		if (list == null) {
-			return EMPTY_NAMES;
+		List<IASTName> result= new ArrayList<IASTName>();
+		for (IASTName name : fMacroReferences) {
+			if (name.getBinding() == binding) {
+				result.add(name);
+			}
 		}
-		return list.toArray(new IASTName[list.size()]);
+		return result.toArray(new IASTName[result.size()]);
 	}
 	
+	public IASTName[] getImplicitMacroReferences(IASTName ref) {
+		List<IASTName> result= new ArrayList<IASTName>();
+		for (IASTName name : fMacroReferences) {
+			if (name.getParent() == ref) {
+				result.add(name);
+			}
+		}
+		return result.toArray(new IASTName[result.size()]);
+	}
+
 	public IDependencyTree getDependencyTree() {
         return new DependencyTree(fRootContext);
 	}

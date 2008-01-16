@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.templateengine.tests;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -60,23 +60,6 @@ public class TestProcesses extends TestCase {
 				fail(e.getMessage());
 			}
 		}
-	}
-
-	/**
-	 * @return a sensible number of arbitrary IConfiguration objects
-	 */
-	private List/*<IConfiguration>*/ getConfigurations() {
-		List/*<IConfiguration>*/ result= new ArrayList/*<IConfiguration>*/();
-		IConfiguration[] configs= ManagedBuildManager.getExtensionConfigurations();
-		for(int i=0; i<configs.length; i++) {
-			if(configs[i].getToolChain()!=null && configs[i].getBuilder()!=null) {
-				result.add(configs[i]);
-			}
-		}
-		if(result.size()>5) {
-			result= result.subList(0, 4);
-		}
-		return result;
 	}
 
 	public void testCreateIncludeFolder() {
@@ -306,22 +289,26 @@ public class TestProcesses extends TestCase {
 	private void assertSetMBSOptionValues(IProject project, String id, int optionType, boolean append) throws BuildException {
 		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(project).getManagedProject().getConfigurations();
 
+		boolean foundCandidate= false;
 		for(int i=0; i<projectConfigs.length; i++) {
 			IConfiguration config = projectConfigs[i];
 			IOption[] globalOptions = config.getToolChain().getOptions();
-			assertMBSOptionValues(id.toLowerCase(), globalOptions, optionType, append);
+			foundCandidate |= assertMBSOptionValues(id.toLowerCase(), globalOptions, optionType, append);
 
 			ITool[] tools = config.getTools();
 			for(int j=0; j<tools.length; j++) {
-				assertMBSOptionValues(id.toLowerCase(), tools[j].getOptions(), optionType, append);
+				foundCandidate |= assertMBSOptionValues(id.toLowerCase(), tools[j].getOptions(), optionType, append);
 			}
 		}
+		assertTrue(foundCandidate);
 	}
 
-	public void assertMBSOptionValues(String id, IOption[] options, int optionType, boolean append) throws BuildException {
+	public boolean assertMBSOptionValues(String id, IOption[] options, int optionType, boolean append) throws BuildException {
+		boolean foundCandidate= false;
 		for (int i = 0; i < options.length; i++) {
 			IOption option = options[i];
 			if (option.getId().toLowerCase().matches(id)) {
+				foundCandidate= true;
 				if (option.getValueType() == optionType) {
 					switch (optionType) {
 					case IOption.BOOLEAN:
@@ -360,6 +347,14 @@ public class TestProcesses extends TestCase {
 				}
 			}
 		}
+		return foundCandidate;
 	}
 
+	/**
+	 * @return the gnu mingw exe debug configuration
+	 */
+	private List/*<IConfiguration>*/ getConfigurations() {
+		IConfiguration config= ManagedBuildManager.getExtensionConfiguration("cdt.managedbuild.config.gnu.mingw.exe.debug");
+		return Collections.singletonList(config);
+	}
 }

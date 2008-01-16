@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIAddressLocation;
@@ -655,6 +656,23 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		final ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])installedCDIBplist.toArray( new ICDIBreakpoint[installedCDIBplist.size()] );
 		final ICDITarget cdiTarget = getCDITarget();
 		
+		// Clean up the target filter to avoid that the CDebugTarget remains referenced by the breakpoint.
+		// Note that while we're "removing" breakpoints from a debug session, the breakpoint objects in the 
+		// platform aren't going anywhere. They are "global" model elements. They go away only when the user
+		// deletes them. 
+		CDebugTarget target = getDebugTarget();
+		for (Iterator iter = installedCBplist.iterator(); iter.hasNext();) {
+			ICBreakpoint breakpoint = (ICBreakpoint) iter.next();
+			if ( isFilteredByTarget( breakpoint, target ) ) {
+				try {
+					breakpoint.removeTargetFilter( target );
+				}
+				catch( CoreException e ) {
+					CDebugCorePlugin.log( e.getStatus() );					
+				}
+			}
+		}
+			
 		DebugPlugin.getDefault().asyncExec( new Runnable() {				
 			public void run() {
 				try {

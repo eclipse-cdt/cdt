@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.templateengine.processes;
 
-import org.eclipse.cdt.core.templateengine.process.processes.Messages;
+import java.util.List;
+
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.process.ProcessArgument;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.core.templateengine.process.ProcessRunner;
+import org.eclipse.cdt.core.templateengine.process.processes.Messages;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
@@ -36,7 +38,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * This class Appends contents to Managed Build System StringList Option Values.
  */
 public class AppendToMBSStringListOptionValues extends ProcessRunner {
-	
+
 	/**
 	 * This method Appends contents to Managed Build System StringList Option Values.
 	 */
@@ -51,7 +53,7 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 			workspace.setDescription(workspaceDesc);
 		} catch (CoreException e) {//ignore
 		}
-		
+
 		ProcessArgument[][] resourcePathObjects = args[1].getComplexArrayValue();
 		boolean modified = false;
 		for(int i=0; i<resourcePathObjects.length; i++) {
@@ -75,13 +77,13 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 		} catch (CoreException e) {//ignore
 		}
 	}
-	
+
 	private boolean setOptionValue(IProject projectHandle, String id, String[] value, String path) throws BuildException, ProcessFailureException {
 		IConfiguration[] projectConfigs = ManagedBuildManager.getBuildInfo(projectHandle).getManagedProject().getConfigurations();
-		
+
 		boolean resource = !(path == null || path.equals("") || path.equals("/")); //$NON-NLS-1$ //$NON-NLS-2$
 		boolean modified = false;
-		
+
 		for(int i=0; i<projectConfigs.length; i++) {
 			IConfiguration config = projectConfigs[i];
 			IResourceConfiguration resourceConfig = null;
@@ -101,14 +103,14 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 			} else {
 				IToolChain toolChain = config.getToolChain();
 				modified |= setOptionForConfig(id, value, config, toolChain.getOptions(), toolChain);
-				
+
 				ITool[] tools = config.getTools();
 				for(int j=0; j<tools.length; j++) {
 					modified |= setOptionForConfig(id, value, config, tools[j].getOptions(), tools[j]);
 				}
 			}
 		}
-		
+
 		return modified;
 	}
 
@@ -118,34 +120,23 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 		for (int i = 0; i < options.length; i++) {
 			IOption option = options[i];
 			if (option.getId().toLowerCase().matches(lowerId)) {
-				String[] oldValue;
-				switch (option.getValueType()) {
+				switch(options[i].getValueType()) {
 				case IOption.STRING_LIST:
-					oldValue = option.getStringListValue();
-					break;
 				case IOption.INCLUDE_PATH:
-					oldValue = option.getIncludePaths();
-					break;
 				case IOption.PREPROCESSOR_SYMBOLS:
-					oldValue = option.getDefinedSymbols();
-					break;
 				case IOption.LIBRARIES:
-					oldValue = option.getLibraries();
-					break;
 				case IOption.OBJECTS:
-					oldValue = option.getUserObjects();
-					break;
+				case IOption.INCLUDE_FILES:
+				case IOption.LIBRARY_PATHS:
+				case IOption.LIBRARY_FILES:
+				case IOption.MACRO_FILES:
+					List list= (List) option.getValue();
+					String[] newValue= concat((String[]) list.toArray(new String[list.size()]), value);
+					ManagedBuildManager.setOption(resourceConfig, optionHolder, option, newValue);
+					modified = true;
 				default:
 					continue;
 				}
-				String[] newValue = new String[oldValue.length + value.length];
-				System.arraycopy(oldValue, 0, newValue, 0, oldValue.length);
-				System.arraycopy(value, 0, newValue, oldValue.length, value.length);
-				IOption setOption = ManagedBuildManager.setOption(resourceConfig, optionHolder, option, newValue);
-				if (setOption == null) {
-					setOption = option;
-				}
-				modified = true;
 			}
 		}
 		return modified;
@@ -157,36 +148,37 @@ public class AppendToMBSStringListOptionValues extends ProcessRunner {
 		for (int i = 0; i < options.length; i++) {
 			IOption option = options[i];
 			if (option.getId().toLowerCase().matches(lowerId)) {
-				String[] oldValue;
-				switch (option.getValueType()) {
+				switch(options[i].getValueType()) {
 				case IOption.STRING_LIST:
-					oldValue = option.getStringListValue();
-					break;
 				case IOption.INCLUDE_PATH:
-					oldValue = option.getIncludePaths();
-					break;
 				case IOption.PREPROCESSOR_SYMBOLS:
-					oldValue = option.getDefinedSymbols();
-					break;
 				case IOption.LIBRARIES:
-					oldValue = option.getLibraries();
-					break;
 				case IOption.OBJECTS:
-					oldValue = option.getUserObjects();
-					break;
+				case IOption.INCLUDE_FILES:
+				case IOption.LIBRARY_PATHS:
+				case IOption.LIBRARY_FILES:
+				case IOption.MACRO_FILES:
+					List list= (List) option.getValue();
+					String[] newValue= concat((String[]) list.toArray(new String[list.size()]), value);
+					ManagedBuildManager.setOption(config, optionHolder, option, newValue);
+					modified = true;
 				default:
 					continue;
 				}
-				String[] newValue = new String[oldValue.length + value.length];
-				System.arraycopy(oldValue, 0, newValue, 0, oldValue.length);
-				System.arraycopy(value, 0, newValue, oldValue.length, value.length);
-				IOption setOption = ManagedBuildManager.setOption(config, optionHolder, option, newValue);
-				if (setOption == null) {
-					setOption = option;
-				}
-				modified = true;
 			}
 		}
 		return modified;
+	}
+
+	/**
+	 * @param a non-null array to form start of resulting array
+	 * @param b non-null array to from end of resulting array
+	 * @return return an array with the contents of a followed by the contents of b
+	 */
+	private static String[] concat(String[] a, String[] b) {
+		String[] result = new String[a.length + b.length];
+		System.arraycopy(a, 0, result, 0, a.length);
+		System.arraycopy(b, 0, result, a.length, b.length);
+		return result;
 	}
 }

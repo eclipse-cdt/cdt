@@ -5,7 +5,9 @@
 
 	<process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
 		<simple name="name" value="$(projectName)" /> 
-		<simple name="targetType" value="exe" /> 
+		<simple name="location" value="$(location)" />
+		<simple name="artifactExtension" value="exe" />
+		<simple name="isCProject" value="false" />
 	</process>
 
 	<process type="org.eclipse.cdt.managedbuilder.core.SetMBSStringListOptionValues">
@@ -39,6 +41,38 @@
 			</element>
 		</complex-array>
 	</process>
+	
+	<process type="org.eclipse.cdt.managedbuilder.core.SetMBSStringListOptionValues">
+		<simple name="projectName" value="$(projectName)" />		
+		<complex-array name="resourcePaths">
+			<element>
+				<simple name="id" value=".*gnu.c.link.category.libs.*" />
+				<simple-array name="values">
+					<element value="$(StringListValue0)" />
+					<element value="$(StringListValue1)" />
+					<element value="$(StringListValue2)" />
+					<element value="$(StringListValue3)" />
+				</simple-array>
+				<simple name="path" value="" />
+			</element>
+		</complex-array>
+	</process>
+	
+	 <process type="org.eclipse.cdt.managedbuilder.core.AppendToMBSStringListOptionValues">
+        <simple name="projectName" value= "$(projectName)"/>      
+        <complex-array name="resourcePaths">
+            <element>
+                <simple name="id" value=".*gnu.c.link.category.libs.*" />
+               <simple-array name="values">
+					<element value="$(AppendStringListValue0)" />
+					<element value="$(AppendStringListValue1)" />
+					<element value="$(AppendStringListValue2)" />
+					<element value="$(AppendStringListValue3)" />
+				</simple-array>
+                <simple name="path" value="" />
+            </element>                                    
+        </complex-array>
+    </process>
 
 </template>
 

@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
@@ -628,6 +629,44 @@ public class ManagedBuildTestHelper {
 				}
 			}
 		}
+	}
+	
+	/*
+	 * Cloned from core CProjectHelper
+	 */
+	public static void delete(ICProject cproject) {
+		try {
+			cproject.getProject().delete(true, true, null);
+		} catch (CoreException e) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+			} finally {
+				try {
+					System.gc();
+					System.runFinalization();
+					cproject.getProject().delete(true, true, null);
+				} catch (CoreException e2) {
+					Assert.fail(getMessage(e2.getStatus()));
+				}
+			}
+		}
+	}
+	
+	/*
+	 * Cloned from core CProjectHelper
+	 */
+	private static String getMessage(IStatus status) {
+		StringBuffer message = new StringBuffer("[");
+		message.append(status.getMessage());
+		if (status.isMultiStatus()) {
+			IStatus children[] = status.getChildren();
+			for( int i = 0; i < children.length; i++) {
+				message.append(getMessage(children[i]));
+			}
+		}
+		message.append("]");
+		return message.toString();
 	}
 
 	static private void deleteDirectory(File dir) {

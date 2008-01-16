@@ -5,7 +5,9 @@
 
 	<process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
 		<simple name="name" value="$(projectName)" /> 
-		<simple name="targetType" value="exe" /> 
+		<simple name="location" value="$(location)" />
+		<simple name="artifactExtension" value="exe" />
+		<simple name="isCProject" value="false" />
 	</process>
 
 	<process type="org.eclipse.cdt.core.AddFiles">

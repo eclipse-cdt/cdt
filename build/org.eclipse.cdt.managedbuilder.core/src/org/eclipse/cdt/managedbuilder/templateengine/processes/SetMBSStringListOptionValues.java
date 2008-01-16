@@ -122,6 +122,10 @@ public class SetMBSStringListOptionValues extends ProcessRunner {
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
 				case IOption.OBJECTS:
+				case IOption.INCLUDE_FILES:
+				case IOption.LIBRARY_PATHS:
+				case IOption.LIBRARY_FILES:
+				case IOption.MACRO_FILES:
 					setOption = ManagedBuildManager.setOption(resourceConfig, optionHolder, option, value);
 					break;
 				default:
@@ -149,6 +153,10 @@ public class SetMBSStringListOptionValues extends ProcessRunner {
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
 				case IOption.OBJECTS:
+				case IOption.INCLUDE_FILES:
+				case IOption.LIBRARY_PATHS:
+				case IOption.LIBRARY_FILES:
+				case IOption.MACRO_FILES:
 					setOption = ManagedBuildManager.setOption(config, optionHolder, option, value);
 					break;
 				default:

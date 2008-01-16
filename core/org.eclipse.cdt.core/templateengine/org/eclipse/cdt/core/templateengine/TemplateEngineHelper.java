@@ -56,7 +56,6 @@ public class TemplateEngineHelper {
 	public static final String TOOL_CHAIN = "toolChain"; //$NON-NLS-1$
 	public static final String EXTRA_PAGES_PROVIDER = "pagesAfterTemplateSelectionProvider"; //$NON-NLS-1$
 	public static final String IS_CATEGORY = "isCategory"; //$NON-NLS-1$
-	public static final String CONFIGURATIONS = "Configurations"; //$NON-NLS-1$
 
 	/**
 	 * Gets the backup shareddefaults XML file. Presence of the file indicates

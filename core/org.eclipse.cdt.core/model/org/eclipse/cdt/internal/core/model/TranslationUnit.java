@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 
 	public TranslationUnit(ICElement parent, URI uri, String idType) {
 		super(parent, (IResource)null, uri.toString(), ICElement.C_UNIT);
+		location= uri;
 		setContentTypeID(idType);
 	}
 

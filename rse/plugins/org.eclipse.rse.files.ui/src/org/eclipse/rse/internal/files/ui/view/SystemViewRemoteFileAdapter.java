@@ -119,6 +119,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileOwnerService;
 import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.PendingHostFilePermissions;
 import org.eclipse.rse.services.search.HostSearchResultSet;
 import org.eclipse.rse.services.search.IHostSearchConstants;
 import org.eclipse.rse.services.search.IHostSearchResultConfiguration;
@@ -1344,6 +1345,10 @@ public class SystemViewRemoteFileAdapter
 							}
 						};
 						deferredFetch.schedule();
+						if (file instanceof RemoteFile){
+							// using pending host file permssions as dummy until we have the real thing
+							((RemoteFile)file).setPermissions(new PendingHostFilePermissions());
+						}
 						return FileResources.MESSAGE_PENDING;
 					}
 				}
@@ -1384,7 +1389,12 @@ public class SystemViewRemoteFileAdapter
 								return Status.OK_STATUS;
 							}
 						};
-						deferredFetch.schedule();														
+						deferredFetch.schedule();
+						
+						if (file instanceof RemoteFile){
+							// using pending host file owner as dummy until we have the real thing
+							((RemoteFile)file).setOwner("Pending");  //pending for now
+						}
 						return FileResources.MESSAGE_PENDING;
 					}
 				}
@@ -1423,6 +1433,10 @@ public class SystemViewRemoteFileAdapter
 							}
 						};
 						deferredFetch.schedule();
+						if (file instanceof RemoteFile){
+							// using pending host file owner as dummy until we have the real thing
+							((RemoteFile)file).setGroup("Pending");  //pending for now
+						}
 						return FileResources.MESSAGE_PENDING;
 					}
 				}

@@ -81,7 +81,8 @@ public class PDOMSearchPatternQuery extends PDOMSearchQuery {
 		super(scope, flags);
 		this.scopeDesc = scopeDesc;
 		
-		this.patternStr = patternStr;
+		// remove spurious whitespace, which will make the search fail 100% of the time
+		this.patternStr = patternStr.trim();
 		
 		// Parse the pattern string
 		List patternList = new ArrayList();

@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * QNX - Initial API and implementation
- * Markus Schorn (Wind River Systems)
- * IBM Corporation
+ *    QNX - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
+ *    IBM Corporation
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.core.pdom.dom;
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.index.QualifierTypeClone;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -38,6 +39,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 	private static final int FLAGS = PDOMNode.RECORD_SIZE;
 	private static final int TYPE = PDOMNode.RECORD_SIZE + 1;
 	
+	@SuppressWarnings("hiding")
 	private static final int RECORD_SIZE = PDOMNode.RECORD_SIZE + 5;
 	
 	private static final int CONST = 0x1;
@@ -55,7 +57,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 		
 		// type
 		try {
-			IType targetType = ((ITypeContainer)type).getType();
+			IType targetType = type.getType();
 			if (type != null) {
 				PDOMNode targetTypeNode = getLinkageImpl().addType(this, targetType);
 				if (targetTypeNode != null) {
@@ -83,7 +85,7 @@ public class PDOMQualifierType extends PDOMNode implements IQualifierType, ICQua
 	}
 
 	public int getNodeType() {
-		return PDOMLinkage.QUALIFIER_TYPE;
+		return IIndexBindingConstants.QUALIFIER_TYPE;
 	}
 
 	public IType getType() {

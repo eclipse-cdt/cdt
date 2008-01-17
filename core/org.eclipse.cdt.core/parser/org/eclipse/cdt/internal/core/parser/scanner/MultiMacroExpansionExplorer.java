@@ -49,6 +49,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	private final char[] fSource;
 	private final int[] fBoundaries;
 	private final SingleMacroExpansionExplorer[] fDelegates;
+	private String fFilePath;
 
 	public MultiMacroExpansionExplorer(IASTTranslationUnit tu, IASTFileLocation loc) {
 		if (tu == null || loc == null || loc.getNodeLength() == 0) {
@@ -75,6 +76,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 			}
 		}
 		
+		fFilePath= tu.getFilePath();
 		fSource= resolver.getUnpreprocessedSignature(loc);
 		fBoundaries= new int[count*2+1];
 		fDelegates= new SingleMacroExpansionExplorer[count];
@@ -91,7 +93,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 				fBoundaries[++bidx]= from;
 				fBoundaries[++bidx]= to;
 				fDelegates[++didx]= new SingleMacroExpansionExplorer(new String(fSource, from, to-from), ref, 
-						resolver.getImplicitMacroReferences(ref));
+						resolver.getImplicitMacroReferences(ref), fFilePath, refLoc.getStartingLineNumber());
 			}
 		}
 		fBoundaries[++bidx]= fSource.length;

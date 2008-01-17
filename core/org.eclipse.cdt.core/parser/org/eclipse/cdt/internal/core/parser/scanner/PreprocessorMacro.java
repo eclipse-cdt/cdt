@@ -10,9 +10,13 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
+
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -83,27 +87,7 @@ abstract class PreprocessorMacro implements IMacroBinding {
 		buf.append(')');
 		return buf.toString();
 	}
-	public abstract TokenList getTokens(MacroDefinitionParser parser, LexerOptions lexOptions);
-}
-
-abstract class DynamicStyleMacro extends PreprocessorMacro {
-
-	public DynamicStyleMacro(char[] name) {
-		super(name);
-	}
-	public char[] getExpansion() {
-		return getExpansionImage();
-	}
-	public char[] getExpansionImage() {
-		return execute().getCharImage();
-	}
-	public abstract Token execute();
-
-	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions) {
-		TokenList result= new TokenList();
-		result.append(execute());
-		return result;
-	}
+	public abstract TokenList getTokens(MacroDefinitionParser parser, LexerOptions lexOptions, MacroExpander expander);
 }
 
 class ObjectStyleMacro extends PreprocessorMacro {
@@ -158,7 +142,7 @@ class ObjectStyleMacro extends PreprocessorMacro {
 		return result;
 	}
 	
-	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions) {
+	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions, MacroExpander expander) {
 		if (fExpansionTokens == null) {
 			fExpansionTokens= new TokenList();
 			Lexer lex= new Lexer(fExpansion, fExpansionOffset, fEndOffset, lexOptions, ILexerLog.NULL, this);
@@ -267,3 +251,90 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 		return true;
 	}
 }
+
+abstract class DynamicStyleMacro extends PreprocessorMacro {
+
+	public DynamicStyleMacro(char[] name) {
+		super(name);
+	}
+	public char[] getExpansion() {
+		return null;
+	}
+	public char[] getExpansionImage() {
+		return null;
+	}
+	public abstract Token execute(MacroExpander expander);
+
+	public TokenList getTokens(MacroDefinitionParser mdp, LexerOptions lexOptions, MacroExpander expander) {
+		TokenList result= new TokenList();
+		result.append(execute(expander));
+		return result;
+	}
+	
+	final protected void append(StringBuffer buffer, int value) {
+        if (value < 10)
+            buffer.append("0"); //$NON-NLS-1$
+        buffer.append(value);
+    }
+}
+
+final class DateMacro extends DynamicStyleMacro {
+	DateMacro(char[] name) {
+		super(name);
+	}
+
+	public Token execute(MacroExpander expander) {
+        StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
+        Calendar cal = Calendar.getInstance();
+        DateFormatSymbols dfs= new DateFormatSymbols();
+        buffer.append(dfs.getShortMonths()[cal.get(Calendar.MONTH)]);
+        buffer.append(" "); //$NON-NLS-1$
+        append(buffer, cal.get(Calendar.DAY_OF_MONTH));
+        buffer.append(" "); //$NON-NLS-1$
+        buffer.append(cal.get(Calendar.YEAR));
+        buffer.append("\""); //$NON-NLS-1$
+        return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
+    }
+}
+
+final class FileMacro extends DynamicStyleMacro {
+	FileMacro(char[] name) {
+		super(name);
+	}
+
+	public Token execute(MacroExpander expander) {
+        StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
+        buffer.append(expander.getCurrentFilename());
+        buffer.append('\"');
+        return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
+    }
+}
+
+final class LineMacro extends DynamicStyleMacro {
+	LineMacro(char[] name) {
+		super(name);
+	}
+	public Token execute(MacroExpander expander) {
+    	int lineNumber= expander.getCurrentLineNumber();
+        return new TokenWithImage(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
+    }
+}
+
+final class TimeMacro extends DynamicStyleMacro {
+	TimeMacro(char[] name) {
+		super(name);
+	}
+
+	public Token execute(MacroExpander expander) {
+        StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
+        Calendar cal = Calendar.getInstance();
+        append(buffer, cal.get(Calendar.HOUR_OF_DAY));
+        buffer.append(":"); //$NON-NLS-1$
+        append(buffer, cal.get(Calendar.MINUTE));
+        buffer.append(":"); //$NON-NLS-1$
+        append(buffer, cal.get(Calendar.SECOND));
+        buffer.append("\""); //$NON-NLS-1$
+        return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
+    }
+}
+

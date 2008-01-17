@@ -173,7 +173,7 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 				fExpansion= getExpansionInDB().getChars();
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
-				fExpansion= new char[] { ' ' };
+				fExpansion= new char[] {};
 			}
 		}
 		return fExpansion;

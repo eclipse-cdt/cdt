@@ -136,6 +136,11 @@ public class MacroExpander {
 	private int fStartOffset;
 	private int fEndOffset;
 	
+	// for using the expander to track expansions
+	private String fFixedCurrentFilename;
+	private int fFixedLineNumber;
+	private char[] fFixedInput;
+	
 	public MacroExpander(ILexerLog log, CharArrayMap<PreprocessorMacro> macroDictionary, LocationMap locationMap, LexerOptions lexOptions) {
 		fDictionary= macroDictionary;
 		fLocationMap= locationMap;
@@ -173,10 +178,13 @@ public class MacroExpander {
 	 * Method for tracking macro expansions.
 	 * @since 5.0
 	 */
-	public void expand(String beforeExpansion, MacroExpansionTracker tracker) {
-		Lexer lexer= new Lexer(beforeExpansion.toCharArray(), fLexOptions, fLog, this);
+	public void expand(String beforeExpansion, MacroExpansionTracker tracker, String filePath, int lineNumber) {
 		fImplicitMacroExpansions.clear();
 		fImageLocationInfos.clear();
+		fFixedInput= beforeExpansion.toCharArray();
+		fFixedCurrentFilename= filePath;
+		fFixedLineNumber= lineNumber;
+		Lexer lexer= new Lexer(fFixedInput, fLexOptions, fLog, this);
 		
 		try {
 			tracker.start(lexer);
@@ -362,17 +370,28 @@ public class MacroExpander {
 		return null;
 	}
 
-	private void addSpacemarker(Token l, Token t, TokenList target) {
+	private static boolean isNeighborInSource(Token l, Token t) {
 		if (l != null && t != null) {
 			final Object s1= l.fSource;
 			final Object s2= t.fSource;
-			if (s1 == s2 && s1 != null && l.getType() != CPreprocessor.tSPACE) {
-				if (l.getEndOffset() == t.getOffset()) {
-					target.append(new Token(CPreprocessor.tNOSPACE, null, 0, 0));
-				}
-				else {
-					target.append(new Token(CPreprocessor.tSPACE, s1, l.getEndOffset(), t.getOffset()));				
-				}
+			return  s1 == s2 && s1 != null &&
+					l.getType() != CPreprocessor.tSPACE && t.getType() != CPreprocessor.tSPACE;
+		}
+		return false;
+
+	}
+
+	static boolean hasImplicitSpace(Token l, Token t) {
+		return isNeighborInSource(l, t) && l.getEndOffset() != t.getOffset();
+	}
+
+	static void addSpacemarker(Token l, Token t, TokenList target) {
+		if (isNeighborInSource(l, t)) {
+			if (l.getEndOffset() == t.getOffset()) {
+				target.append(new Token(CPreprocessor.tNOSPACE, null, 0, 0));
+			}
+			else {
+				target.append(new Token(CPreprocessor.tSPACE, l.fSource, l.getEndOffset(), t.getOffset()));				
 			}
 		}
 	}
@@ -397,7 +416,7 @@ public class MacroExpander {
 		boolean complete= false;
 		boolean isFirstOfArg= true;
 		Token lastToken= null;
-		Token spaceMarker= null;
+		TokenList spaceMarkers= new TokenList();
         loop: while (true) {
     		Token t= input.fetchFirst();
     		if (t == null) {
@@ -408,6 +427,7 @@ public class MacroExpander {
     			case IToken.tEND_OF_INPUT:        	
     			case IToken.tCOMPLETION:
     			case CPreprocessor.tSCOPE_MARKER:
+    			case Lexer.tNEWLINE:
     				break;
     			default:
     				tracker.addFunctionStyleMacroExpansionToken((Token) t.clone());
@@ -449,7 +469,7 @@ public class MacroExpander {
         		if (nesting == 0) {
         			if (idx < argCount-1) { // next argument
         				isFirstOfArg= true;
-        				spaceMarker= null;
+        				spaceMarkers.clear();
         				idx++;
             			continue loop;
         			}
@@ -471,7 +491,7 @@ public class MacroExpander {
         	case CPreprocessor.tSPACE:
         	case CPreprocessor.tNOSPACE:
         		if (!isFirstOfArg) {
-        			spaceMarker= t;
+        			spaceMarkers.append(t);
         		}
         		continue loop;
         		
@@ -481,10 +501,7 @@ public class MacroExpander {
     		if (argCount == 0) {
     			break loop;
     		}
-    		if (spaceMarker != null) {
-    			result[idx].append(spaceMarker);
-    			spaceMarker= null;
-    		}
+    		result[idx].appendAll(spaceMarkers);
     		result[idx].append(t);
     		isFirstOfArg= false;
         }
@@ -500,7 +517,7 @@ public class MacroExpander {
 	}
 
 	private void replaceArgs(PreprocessorMacro macro, TokenList[] args, TokenList[] expandedArgs, TokenList result) {
-		TokenList replacement= clone(macro.getTokens(fDefinitionParser, fLexOptions));
+		TokenList replacement= clone(macro.getTokens(fDefinitionParser, fLexOptions, this));
 		
 		Token l= null;
 		Token n;       
@@ -638,7 +655,7 @@ public class MacroExpander {
 
 	private BitSet getParamUsage(PreprocessorMacro macro) {
 		final BitSet result= new BitSet();
-		final TokenList replacement= macro.getTokens(fDefinitionParser, fLexOptions);
+		final TokenList replacement= macro.getTokens(fDefinitionParser, fLexOptions, this);
 		
 		Token l= null;
 		Token n;       
@@ -684,7 +701,7 @@ public class MacroExpander {
 	}
 
 	private void objStyleTokenPaste(PreprocessorMacro macro, TokenList result) {
-		TokenList replacement= clone(macro.getTokens(fDefinitionParser, fLexOptions));
+		TokenList replacement= clone(macro.getTokens(fDefinitionParser, fLexOptions, this));
 		
 		Token l= null;
 		Token n;       
@@ -862,9 +879,33 @@ public class MacroExpander {
 		}
 	}
 	
-	static boolean hasImplicitSpace(Token l, Token t) {
-		return l != null && 
-			l.fSource != null && l.fSource == t.fSource && 
-			l.getEndOffset() != t.getOffset() && t.getType() != CPreprocessor.tSPACE;
+	int getCurrentLineNumber() {
+		if (fFixedInput != null) {
+			return fFixedLineNumber + countNewlines(fFixedInput);
+		}
+		if (fLocationMap != null) {
+			return fLocationMap.getCurrentLineNumber(fEndOffset);
+		}
+		return 0;
+	}
+
+	private int countNewlines(char[] input) {
+		int nl= 0;
+		for (int i = 0; i < input.length && i<fEndOffset; i++) {
+			if (input[i] == '\n') {
+				nl++;
+			}
+		}
+		return nl;
+	}
+
+	String getCurrentFilename() {
+		if (fFixedCurrentFilename != null) {
+			return fFixedCurrentFilename;
+		}
+		if (fLocationMap != null) {
+			return fLocationMap.getCurrentFilePath();
+		}
+		return ""; //$NON-NLS-1$
 	}
 }

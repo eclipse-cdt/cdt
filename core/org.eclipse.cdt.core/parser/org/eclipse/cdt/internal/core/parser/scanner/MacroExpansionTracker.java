@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -252,7 +252,9 @@ public class MacroExpansionTracker {
 						TokenList p = minfo.fArguments.get(pcount);
 						if (p != null) {
 							active = false;
-							addSpacemarker(t, n, result);
+							if (n != null && n.getType() != IToken.tCOMMA && n.getType() != IToken.tRPAREN) {
+								MacroExpander.addSpacemarker(t, n, result);
+							}
 							result.appendAll(p);
 						}
 					}
@@ -261,7 +263,7 @@ public class MacroExpansionTracker {
 
 			case IToken.tRPAREN:
 				if (!active && nesting == 0) {
-					addSpacemarker(l, t, result);
+					MacroExpander.addSpacemarker(l, t, result);
 					active= true;
 				}
 				if (active) {
@@ -276,13 +278,15 @@ public class MacroExpansionTracker {
 				if (nesting == 0) {
 					if (++pcount < minfo.fArguments.size()) {
 						if (!active) {
-							addSpacemarker(l, t, result);
+							MacroExpander.addSpacemarker(l, t, result);
 						}
 						result.append(t);
 						TokenList p = minfo.fArguments.get(pcount);
 						active = p == null;
 						if (!active) {
-							addSpacemarker(t, n, result);
+							if (n != null && n.getType() != IToken.tCOMMA && n.getType() != IToken.tRPAREN) {
+								MacroExpander.addSpacemarker(t, n, result);
+							}
 							result.appendAll(p);
 						}
 					}
@@ -294,22 +298,6 @@ public class MacroExpansionTracker {
 			default:
 				if (active) {
 					result.append(t);
-				}
-			}
-		}
-	}
-
-	private void addSpacemarker(Token l, Token t, TokenList target) {
-		Token tl= target.last();
-		if (tl != null && tl.getType() == CPreprocessor.tSPACE) {
-			return;
-		}
-		if (l != null && t != null) {
-			final Object s1= l.fSource;
-			final Object s2= t.fSource;
-			if (s1 == s2 && s1 != null && l.getType() != CPreprocessor.tSPACE) {
-				if (l.getEndOffset() != t.getOffset()) {
-					target.append(new Token(CPreprocessor.tSPACE, s1, l.getEndOffset(), t.getOffset()));				
 				}
 			}
 		}

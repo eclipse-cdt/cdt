@@ -230,7 +230,7 @@ class ASTInclusionStatement extends ASTPreprocessorNode implements IASTPreproces
 	}
 }
 
-class ASTObjectStyleMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessorObjectStyleMacroDefinition {
+class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessorObjectStyleMacroDefinition {
 	private final ASTPreprocessorName fName;
 	private final int fExpansionNumber;
 	private final int fExpansionOffset;
@@ -238,7 +238,7 @@ class ASTObjectStyleMacroDefinition extends ASTPreprocessorNode implements IASTP
 	/**
 	 * Regular constructor.
 	 */
-	public ASTObjectStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
+	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, 
 			int startNumber, int nameNumber, int nameEndNumber, int expansionNumber, int endNumber) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, startNumber, endNumber);
 		fExpansionNumber= expansionNumber;
@@ -250,7 +250,7 @@ class ASTObjectStyleMacroDefinition extends ASTPreprocessorNode implements IASTP
 	 * Constructor for built-in macros
 	 * @param expansionOffset 
 	 */
-	public ASTObjectStyleMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IASTFileLocation floc, int expansionOffset) {
+	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IASTFileLocation floc, int expansionOffset) {
 		super(parent, IASTTranslationUnit.PREPROCESSOR_STATEMENT, -1, -1);
 		fName= new ASTBuiltinName(this, IASTPreprocessorMacroDefinition.MACRO_NAME, floc, macro.getNameCharArray(), macro);
 		fExpansionNumber= -1;
@@ -270,7 +270,12 @@ class ASTObjectStyleMacroDefinition extends ASTPreprocessorNode implements IASTP
 	}
 	
 	public String getExpansion() {
-		return new String(getMacro().getExpansion());
+		final char[] expansion = getMacro().getExpansion();
+		// for dynamic style macros return an empty string
+		if (expansion == null) {
+			return ""; //$NON-NLS-1$ 
+		}
+		return new String(expansion);
 	}
 
 	public IASTName getName() {
@@ -306,7 +311,10 @@ class ASTObjectStyleMacroDefinition extends ASTPreprocessorNode implements IASTP
 		if (fExpansionOffset >= 0) {
 			String fileName= fName.getContainingFilename();
 			if (fileName != null) {
-				return new ASTFileLocationForBuiltins(fileName, fExpansionOffset, getMacro().getExpansionImage().length);
+				final char[] expansionImage = getMacro().getExpansionImage();
+				if (expansionImage != null) {
+					return new ASTFileLocationForBuiltins(fileName, fExpansionOffset, expansionImage.length);
+				}
 			}
 		}
 		return null;
@@ -328,7 +336,7 @@ class ASTMacroParameter extends ASTPreprocessorNode implements IASTFunctionStyle
 	public void setParameter(String value) {assert false;}
 }
 
-class ASTFunctionStyleMacroDefinition extends ASTObjectStyleMacroDefinition implements IASTPreprocessorFunctionStyleMacroDefinition {
+class ASTFunctionStyleMacroDefinition extends ASTMacroDefinition implements IASTPreprocessorFunctionStyleMacroDefinition {
 	/**
 	 * Regular constructor.
 	 */

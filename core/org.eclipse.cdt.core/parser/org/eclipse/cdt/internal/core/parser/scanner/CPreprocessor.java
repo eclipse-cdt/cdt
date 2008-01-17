@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,8 +64,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	public static final int tNOSPACE= IToken.FIRST_RESERVED_PREPROCESSOR+4;
 	public static final int tMACRO_PARAMETER= IToken.FIRST_RESERVED_PREPROCESSOR+5;
 
-    
-
 	private static final int ORIGIN_PREPROCESSOR_DIRECTIVE = OffsetLimitReachedException.ORIGIN_PREPROCESSOR_DIRECTIVE;
 	private static final int ORIGIN_INACTIVE_CODE = OffsetLimitReachedException.ORIGIN_INACTIVE_CODE;
 //	private static final int ORIGIN_MACRO_EXPANSION = OffsetLimitReachedException.ORIGIN_MACRO_EXPANSION;
@@ -83,6 +79,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private static final ObjectStyleMacro __STDC_HOSTED__ = new ObjectStyleMacro("__STDC_HOSTED_".toCharArray(), ONE);  //$NON-NLS-1$
     private static final ObjectStyleMacro __STDC_VERSION__ = new ObjectStyleMacro("__STDC_VERSION_".toCharArray(), "199901L".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 
+    private static final DynamicStyleMacro __FILE__= new FileMacro("__FILE__".toCharArray()); //$NON-NLS-1$
+    private static final DynamicStyleMacro __DATE__= new DateMacro("__DATE__".toCharArray()); //$NON-NLS-1$
+    private static final DynamicStyleMacro __TIME__ = new TimeMacro("__TIME__".toCharArray()); //$NON-NLS-1$
+    private static final DynamicStyleMacro __LINE__ = new LineMacro("__LINE__".toCharArray()); //$NON-NLS-1$
 
 	private interface IIncludeFileTester {
     	Object checkFile(String path, String fileName);
@@ -102,63 +102,6 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     		}
     		return null;
     	}
-    };
-
-    // standard built-ins
-    final private DynamicStyleMacro __FILE__= new DynamicStyleMacro("__FILE__".toCharArray()) { //$NON-NLS-1$
-        public Token execute() {
-            StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
-            buffer.append(getCurrentFilename());
-            buffer.append('\"');
-            return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
-        }
-    };
-    final private DynamicStyleMacro __DATE__= new DynamicStyleMacro("__DATE__".toCharArray()) { //$NON-NLS-1$
-        final private void append(StringBuffer buffer, int value) {
-            if (value < 10)
-                buffer.append("0"); //$NON-NLS-1$
-            buffer.append(value);
-        }
-
-        public Token execute() {
-            StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
-            Calendar cal = Calendar.getInstance();
-            DateFormatSymbols dfs= new DateFormatSymbols();
-            buffer.append(dfs.getShortMonths()[cal.get(Calendar.MONTH)]);
-            buffer.append(" "); //$NON-NLS-1$
-            append(buffer, cal.get(Calendar.DAY_OF_MONTH));
-            buffer.append(" "); //$NON-NLS-1$
-            buffer.append(cal.get(Calendar.YEAR));
-            buffer.append("\""); //$NON-NLS-1$
-            return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
-        }
-    };
-
-    final private DynamicStyleMacro __TIME__ = new DynamicStyleMacro("__TIME__".toCharArray()) { //$NON-NLS-1$
-        final private void append(StringBuffer buffer, int value) {
-            if (value < 10)
-                buffer.append("0"); //$NON-NLS-1$
-            buffer.append(value);
-        }
-
-        public Token execute() {
-            StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
-            Calendar cal = Calendar.getInstance();
-            append(buffer, cal.get(Calendar.HOUR_OF_DAY));
-            buffer.append(":"); //$NON-NLS-1$
-            append(buffer, cal.get(Calendar.MINUTE));
-            buffer.append(":"); //$NON-NLS-1$
-            append(buffer, cal.get(Calendar.SECOND));
-            buffer.append("\""); //$NON-NLS-1$
-            return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
-        }
-    };
-
-    final private DynamicStyleMacro __LINE__ = new DynamicStyleMacro("__LINE__".toCharArray()) { //$NON-NLS-1$
-        public Token execute() {
-            int lineNumber= fLocationMap.getCurrentLineNumber(fCurrentContext.currentLexerToken().getOffset());
-            return new TokenWithImage(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
-        }
     };
 
     final private IParserLogService fLog;

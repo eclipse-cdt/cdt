@@ -32,15 +32,17 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	private final CharArrayMap<PreprocessorMacro> fDictionary;
 	private MacroExpansionStep fFullExpansion;
 	private int fExpansionCount;
+	private String fFilePath;
+	private int fLineNumber;
 
-	public SingleMacroExpansionExplorer(String input, IASTName ref, IASTName[] implicitRefs) {
+	public SingleMacroExpansionExplorer(String input, IASTName ref, IASTName[] implicitRefs, String filePath, int lineNumber) {
 		fInput= input;
 		fDictionary= createDictionary(ref, implicitRefs);
+		fFilePath= filePath;
+		fLineNumber= lineNumber;
 	}
 
 	private CharArrayMap<PreprocessorMacro> createDictionary(IASTName ref, IASTName[] implicitRefs) {
-		// mstodo handle dynamic style macros
-		// mstodo clone index-macros
 		CharArrayMap<PreprocessorMacro> map= new CharArrayMap<PreprocessorMacro>(implicitRefs.length+1);
 		addMacroDefinition(map, ref);
 		for (IASTName name : implicitRefs) {
@@ -71,7 +73,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	private void computeExpansion() {
 		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, LEX_OPTIONS);
 		MacroExpansionTracker tracker= new MacroExpansionTracker(Integer.MAX_VALUE);
-		expander.expand(fInput, tracker);
+		expander.expand(fInput, tracker, fFilePath, fLineNumber);
 		
 		fExpansionCount= tracker.getStepCount();
 		ReplaceEdit r= tracker.getReplacement();
@@ -87,7 +89,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 		}
 		MacroExpander expander= new MacroExpander(ILexerLog.NULL, fDictionary, null, LEX_OPTIONS);
 		MacroExpansionTracker tracker= new MacroExpansionTracker(step);
-		expander.expand(fInput, tracker);
+		expander.expand(fInput, tracker, fFilePath, fLineNumber);
 		
 		fExpansionCount= tracker.getStepCount();
 		ReplaceEdit r= tracker.getReplacement();

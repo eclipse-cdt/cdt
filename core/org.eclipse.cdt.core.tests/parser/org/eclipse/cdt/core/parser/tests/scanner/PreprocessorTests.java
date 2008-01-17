@@ -639,6 +639,19 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);    	    	
     }
     
+    
+	// #define A(x,y,z) x + y + z
+	// #define _t t
+	// A ( _t , , _t )
+    public void testEmptyToken() throws Exception {
+    	initializeScanner();
+    	validateIdentifier("t");
+		validateToken(IToken.tPLUS);
+		validateToken(IToken.tPLUS);
+    	validateIdentifier("t");
+    }
+
+    
     // #define FOO 5
     // # define BAR 10
     // int x = FOO + BAR;

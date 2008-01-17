@@ -48,7 +48,7 @@ public class LocationMap implements ILocationResolver {
     private ArrayList<ASTPreprocessorNode> fDirectives= new ArrayList<ASTPreprocessorNode>();
     private ArrayList<ASTProblem> fProblems= new ArrayList<ASTProblem>();
     private ArrayList<ASTComment> fComments= new ArrayList<ASTComment>();
-    private ArrayList<ASTObjectStyleMacroDefinition> fBuiltinMacros= new ArrayList<ASTObjectStyleMacroDefinition>();
+    private ArrayList<ASTMacroDefinition> fBuiltinMacros= new ArrayList<ASTMacroDefinition>();
 	private ArrayList<IASTName> fMacroReferences= new ArrayList<IASTName>();
 	
     private LocationCtxFile fRootContext= null;
@@ -69,12 +69,12 @@ public class LocationMap implements ILocationResolver {
 	}
 	
 	private void registerPredefinedMacro(IMacroBinding macro, IASTFileLocation nameloc, int expansionOffset) {
-		ASTObjectStyleMacroDefinition astmacro;
+		ASTMacroDefinition astmacro;
 		if (macro.isFunctionStyle()) {
 			astmacro= new ASTFunctionStyleMacroDefinition(fTranslationUnit, macro, nameloc, expansionOffset);
 		}
 		else {
-			astmacro= new ASTObjectStyleMacroDefinition(fTranslationUnit, macro, nameloc, expansionOffset);
+			astmacro= new ASTMacroDefinition(fTranslationUnit, macro, nameloc, expansionOffset);
 		}
 		fBuiltinMacros.add(astmacro);
 	}
@@ -291,7 +291,7 @@ public class LocationMap implements ILocationResolver {
 		endOffset= getSequenceNumberForOffset(endOffset);
 		ASTPreprocessorNode astMacro;
 		if (!macrodef.isFunctionStyle()) {
-			astMacro= new ASTObjectStyleMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);
+			astMacro= new ASTMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);
 		}
 		else {
 			astMacro= new ASTFunctionStyleMacroDefinition(fTranslationUnit, macrodef, startOffset, nameOffset, nameEndOffset, expansionOffset, endOffset);

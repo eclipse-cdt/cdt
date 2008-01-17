@@ -45,6 +45,8 @@ public class ExpansionExplorerTests extends BaseTestCase {
 		}
 		final MacroExpander expander= createExpander(input[0]);
 		final String original= input[1];
+		
+		verifyStepCount(expander, original, steps);
 
 		verifyStep(expander, original, Integer.MAX_VALUE, original, input[steps+1]);
 		for (i= 0; i < steps; i++) {
@@ -52,18 +54,24 @@ public class ExpansionExplorerTests extends BaseTestCase {
 		}
 	}
 
+	private void verifyStepCount(MacroExpander expander, String original, int steps) {
+		MacroExpansionTracker tracker= new MacroExpansionTracker(Integer.MAX_VALUE);
+		expander.expand(original, tracker, "", 1);
+		assertEquals(steps, tracker.getStepCount());
+	}
+
 	private void verifyStep(MacroExpander expander, String original, int step, String expectedPre,
 			String expectedPost) {
 		MacroExpansionTracker tracker= new MacroExpansionTracker(step);
-		expander.expand(original, tracker);
+		expander.expand(original, tracker, "", 1);
 		String pre = tracker.getCodeBeforeStep();
 		ReplaceEdit replacement = tracker.getReplacement();
 		assertNotNull(pre);
 		assertNotNull(replacement);
 		String post= apply(pre, replacement);
 		
-		assertEquals(expectedPre, pre);
-		assertEquals(expectedPost, post);
+		assertEquals("incorrect value pre " + step, expectedPre, pre);
+		assertEquals("incorrect value post " + step, expectedPost, post);
 	}
 
 	private String apply(String pre, ReplaceEdit replacement) {
@@ -91,7 +99,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	
 	// B
 	public void testNoOp() throws Exception {
-		performTest(1);
+		performTest(0);
 	}
 	
 	// #define A B
@@ -208,6 +216,69 @@ public class ExpansionExplorerTests extends BaseTestCase {
     	performTest(7);
     }
     
+    // #define id(x) x
+    
+    // id(
+    //    id(a))
+    
+    // id(
+    //    a)
+    
+    // a
+    public void testNewline() throws Exception {
+    	performTest(2);
+    }
+    
+    // #define f x  _a  _b  x
+    // #define _a a
+    // #define _b b
+    
+    // f
+     
+    // x  _a  _b  x
+    
+    // x  a  _b  x
+    
+    // x  a  b  x
+    public void testSpace() throws Exception {
+    	performTest(3);
+    }
+    
+    // #define L __LINE__
+    // #define x(a) a
+    
+    // x(L)
 
+    // x(__LINE__)
+
+    // x(1)
+    
+    // 1
+    public void testLineNumber() throws Exception {
+    	performTest(3);
+    }
+    
+    // #define L __LINE__
+    // #define x(a,b) a,b
+    
+    // x(L,
+    //   L)
+
+    // x(__LINE__,
+    //   L)
+
+    // x(2,
+    //   L)
+
+    // x(2,
+    //   __LINE__)
+
+    // x(2,
+    //   2)
+    
+    // 2,2
+    public void testLineNumber2() throws Exception {
+    	performTest(5);
+    }
 
 }

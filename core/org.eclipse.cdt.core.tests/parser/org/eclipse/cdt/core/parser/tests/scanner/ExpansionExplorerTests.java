@@ -281,4 +281,17 @@ public class ExpansionExplorerTests extends BaseTestCase {
     	performTest(5);
     }
 
+    // #define str(x) #x
+    // #define xstr(x) str(x)
+    
+    // xstr(__LINE__)
+    
+    // xstr(1)
+    
+    // str(1)
+    
+    // "1"
+    public void testStringify() throws Exception {
+    	performTest(3);
+    }
 }

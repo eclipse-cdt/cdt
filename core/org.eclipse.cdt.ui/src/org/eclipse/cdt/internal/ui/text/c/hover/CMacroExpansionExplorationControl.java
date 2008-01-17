@@ -40,6 +40,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -48,6 +49,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
 
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer.IMacroExpansionStep;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
@@ -331,7 +333,8 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	private String getMacroText(int index) {
 		final String text;
 		if (index < fInput.fExplorer.getExpansionStepCount()) {
-			IMacroBinding binding= fInput.fExplorer.getExpansionStep(index).getExpandedMacro();
+			final IMacroExpansionStep expansionStep= fInput.fExplorer.getExpansionStep(index);
+			IMacroBinding binding= expansionStep.getExpandedMacro();
 			StringBuffer buffer= new StringBuffer();
 			buffer.append("#define ").append(binding.getName()); //$NON-NLS-1$
 			char[][] params= binding.getParameterList();
@@ -348,7 +351,16 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 				buffer.append(')');
 			}
 			buffer.append(' ');
-			buffer.append(binding.getExpansionImage());
+			final char[] expansionImage = binding.getExpansionImage();
+			if (expansionImage != null) {
+				buffer.append(expansionImage);
+			}
+			else {
+				ReplaceEdit[] replacements= expansionStep.getReplacements();
+				if (replacements.length == 1) {
+					buffer.append(replacements[0].getText());
+				}
+			}
 			text= buffer.toString();
 		} else {
 			text= ""; //$NON-NLS-1$

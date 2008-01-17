@@ -1317,7 +1317,7 @@ public class SystemViewRemoteFileAdapter
 				
 				if (file instanceof IAdaptable){
 					final IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)file).getAdapter(IFilePermissionsService.class);
-					if (service != null){
+					if (service != null && service.canGetFilePermissions(file.getParentPath(), file.getName())){
 						final IRemoteFile rFile = file;
 						
 						
@@ -1358,7 +1358,7 @@ public class SystemViewRemoteFileAdapter
 				if (file instanceof IAdaptable){
 					
 					final IFileOwnerService service = (IFileOwnerService)((IAdaptable)file).getAdapter(IFileOwnerService.class);
-					if (service != null){
+					if (service != null && service.canGetFileOwner(file.getParentPath(), file.getName())){
 						
 						final IRemoteFile rFile = file;
 						
@@ -1398,7 +1398,7 @@ public class SystemViewRemoteFileAdapter
 			if (group == null){
 				if (file instanceof IAdaptable){
 					final IFileOwnerService service = (IFileOwnerService)((IAdaptable)file).getAdapter(IFileOwnerService.class);
-					if (service != null){
+					if (service != null && service.canGetFileOwner(file.getParentPath(), file.getName())){
 						final IRemoteFile rFile = file;
 												
 						Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_GROUP)

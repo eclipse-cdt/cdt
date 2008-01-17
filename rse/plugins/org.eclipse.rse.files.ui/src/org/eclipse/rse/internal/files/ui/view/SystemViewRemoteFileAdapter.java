@@ -47,6 +47,7 @@
 
 package org.eclipse.rse.internal.files.ui.view;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -1322,7 +1323,7 @@ public class SystemViewRemoteFileAdapter
 						final IRemoteFile rFile = file;
 						
 						
-						Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_PERMISSIONS)
+						Job deferredFetch = new Job(MessageFormat.format(FileResources.MESSAGE_GETTING_PERMISSIONS, new Object[] {file.getAbsolutePath()}))
 						{
 							public IStatus run(IProgressMonitor monitor){
 								try
@@ -1367,7 +1368,7 @@ public class SystemViewRemoteFileAdapter
 						
 						final IRemoteFile rFile = file;
 						
-						Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_OWNER)
+						Job deferredFetch = new Job(MessageFormat.format(FileResources.MESSAGE_GETTING_OWNER, new Object[] {file.getAbsolutePath()}))
 						{
 							public IStatus run(IProgressMonitor monitor){
 								try
@@ -1411,7 +1412,7 @@ public class SystemViewRemoteFileAdapter
 					if (service != null && service.canGetFileOwner(file.getParentPath(), file.getName())){
 						final IRemoteFile rFile = file;
 												
-						Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_GROUP)
+						Job deferredFetch = new Job(MessageFormat.format(FileResources.MESSAGE_GETTING_GROUP, new Object[] {file.getAbsolutePath()}))
 						{
 							public IStatus run(IProgressMonitor monitor){
 								try

@@ -33,8 +33,9 @@ import org.eclipse.cdt.internal.ui.text.HTMLTextPresenter;
 
 
 /**
- * Provides information for the current word under the cursor based on available hovers.
+ * Provides information for the current word under the cursor based on the documentation hover.
  * 
+ * @see CDocHover
  * @since 5.0
  */
 public class CInformationProvider implements IInformationProvider, IInformationProviderExtension2 {
@@ -91,7 +92,7 @@ public class CInformationProvider implements IInformationProvider, IInformationP
 			fPartListener= new EditorWatcher();
 			IWorkbenchWindow window= fEditor.getSite().getWorkbenchWindow();
 			window.getPartService().addPartListener(fPartListener);
-			fImplementation= new BestMatchHover();
+			fImplementation= new CDocHover();
 			fImplementation.setEditor(fEditor);
 		}
 	}

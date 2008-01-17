@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,33 +11,31 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import java.lang.ref.WeakReference;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.text.edits.MalformedTreeException;
-import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -46,40 +44,22 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
-import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
-import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.EndOfFileException;
-import org.eclipse.cdt.core.parser.IGCCToken;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 
-import org.eclipse.cdt.internal.core.dom.NullCodeReaderFactory;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 
@@ -226,16 +206,14 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 	 */
 	private static class ComputeExpansionRegionRunnable implements ASTRunnable {
 		private final Position fTextRegion;
+		private final boolean fAllowSelection;
 		private IASTNode fEnclosingNode;
-		private Map fMacroDict;
 		private List fExpansionNodes= new ArrayList();
+		private MacroExpansionExplorer fExplorer;
 
-		/**
-		 * @param tUnit
-		 * @param textRegion
-		 */
-		private ComputeExpansionRegionRunnable(ITranslationUnit tUnit, IRegion textRegion) {
+		private ComputeExpansionRegionRunnable(ITranslationUnit tUnit, IRegion textRegion, boolean allowSelection) {
 			fTextRegion= new Position(textRegion.getOffset(), textRegion.getLength());
+			fAllowSelection= allowSelection;
 		}
 
 		/*
@@ -243,79 +221,56 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 		 */
 		public IStatus runOnAST(ILanguage lang, IASTTranslationUnit ast) {
 			if (ast != null) {
-				// try object style macro expansion first
+				// try macro name match first
 				IASTNode node= ast.selectNodeForLocation(ast.getFilePath(), fTextRegion.getOffset(), fTextRegion.getLength());
 				if (node instanceof IASTName) {
 					IASTName macroName= (IASTName) node;
 					IBinding binding= macroName.getBinding();
 					if (binding instanceof IMacroBinding) {
-						IMacroBinding macroBinding= (IMacroBinding) binding;
-						if (!macroBinding.isFunctionStyle()) {
-							addExpansionNode(node);
-							buildMacroDictionary(ast);
-							return Status.OK_STATUS;
-						}
+						addExpansionNode(node);
+						createMacroExpansionExplorer(ast, getExpansionRegion());
+						return Status.OK_STATUS;
 					}
 				}
-				// function style macro or selection
-				FindEnclosingNodeAction nodeFinder= new FindEnclosingNodeAction(ast.getFilePath(), fTextRegion.getOffset(), fTextRegion.getLength());
-				ast.accept(nodeFinder);
-				fEnclosingNode= nodeFinder.getNode();
-				if (fEnclosingNode != null) {
-					boolean macroOccurrence= false;
-					IASTNodeLocation[] locations= fEnclosingNode.getNodeLocations();
-					for (int i = 0; i < locations.length; i++) {
-						IASTNodeLocation location= locations[i];
-						if (location instanceof IASTMacroExpansion) {
-							IASTFileLocation fileLocation= location.asFileLocation();
-							if (fileLocation != null && ast.getFilePath().equals(fileLocation.getFileName())) {
-								if (fTextRegion.overlapsWith(fileLocation.getNodeOffset(), fileLocation.getNodeLength())) {
-									nodeFinder= new FindEnclosingNodeAction(ast.getFilePath(), fileLocation.getNodeOffset(), fileLocation.getNodeLength());
-									ast.accept(nodeFinder);
-									addExpansionNode(nodeFinder.getNode());
-									macroOccurrence= true;
+				if (fAllowSelection) {
+					// selection
+					FindEnclosingNodeAction nodeFinder= new FindEnclosingNodeAction(ast.getFilePath(), fTextRegion.getOffset(), fTextRegion.getLength());
+					ast.accept(nodeFinder);
+					fEnclosingNode= nodeFinder.getNode();
+					if (fEnclosingNode != null) {
+						boolean macroOccurrence= false;
+						IASTNodeLocation[] locations= fEnclosingNode.getNodeLocations();
+						for (int i = 0; i < locations.length; i++) {
+							IASTNodeLocation location= locations[i];
+							if (location instanceof IASTMacroExpansion) {
+								IASTFileLocation fileLocation= location.asFileLocation();
+								if (fileLocation != null && ast.getFilePath().equals(fileLocation.getFileName())) {
+									if (fTextRegion.overlapsWith(fileLocation.getNodeOffset(), fileLocation.getNodeLength())) {
+										nodeFinder= new FindEnclosingNodeAction(ast.getFilePath(), fileLocation.getNodeOffset(), fileLocation.getNodeLength());
+										ast.accept(nodeFinder);
+										addExpansionNode(nodeFinder.getNode());
+										macroOccurrence= true;
+									}
 								}
 							}
 						}
-					}
-					if (macroOccurrence) {
-						CollectEnclosedNodesAction nodeCollector= new CollectEnclosedNodesAction(ast.getFilePath(), fTextRegion.getOffset(), fTextRegion.getLength());
-						ast.accept(nodeCollector);
-						fExpansionNodes.addAll(nodeCollector.getNodes());
-						buildMacroDictionary(ast);
-						return Status.OK_STATUS;
+						if (macroOccurrence) {
+							CollectEnclosedNodesAction nodeCollector= new CollectEnclosedNodesAction(ast.getFilePath(), fTextRegion.getOffset(), fTextRegion.getLength());
+							ast.accept(nodeCollector);
+							fExpansionNodes.addAll(nodeCollector.getNodes());
+							createMacroExpansionExplorer(ast, getExpansionRegion());
+							return Status.OK_STATUS;
+						}
 					}
 				}
 			}
 			return Status.CANCEL_STATUS;
 		}
 
-		private void buildMacroDictionary(IASTTranslationUnit ast) {
-			Map macroDict= new HashMap(500);
-			IASTPreprocessorMacroDefinition[] macroDefs;
-			final IASTPreprocessorMacroDefinition[] localMacroDefs= ast.getMacroDefinitions();
-			for (macroDefs= localMacroDefs; macroDefs != null; macroDefs= (macroDefs == localMacroDefs) ? ast.getBuiltinMacroDefinitions() : null) {
-				for (int i = 0; i < macroDefs.length; i++) {
-					IASTPreprocessorMacroDefinition macroDef= macroDefs[i];
-					StringBuffer macroName= new StringBuffer();
-					macroName.append(macroDef.getName().toCharArray());
-					if (macroDef instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
-						macroName.append('(');
-						IASTPreprocessorFunctionStyleMacroDefinition functionMacro= (IASTPreprocessorFunctionStyleMacroDefinition)macroDef;
-						IASTFunctionStyleMacroParameter[] macroParams= functionMacro.getParameters();
-						for (int j = 0; j < macroParams.length; j++) {
-							if (j > 0) {
-								macroName.append(',');
-							}
-							IASTFunctionStyleMacroParameter param= macroParams[j];
-							macroName.append(param.getParameter());
-						}
-						macroName.append(')');
-					}
-					macroDict.put(macroName.toString(), macroDef.getExpansion());
-				}
+		private void createMacroExpansionExplorer(IASTTranslationUnit ast, IRegion region) {
+			if (region != null) {
+				fExplorer= MacroExpansionExplorer.create(ast, region);
 			}
-			fMacroDict= macroDict;
 		}
 
 		private void addExpansionNode(IASTNode node) {
@@ -375,41 +330,42 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 			return null;
 		}
 		
-		Map getMacroDictionary() {
-			return fMacroDict;
-		}
-
 		IASTNode getEnclosingNode() {
 			return fEnclosingNode;
 		}
+
+		MacroExpansionExplorer getMacroExpansionExplorer() {
+			return fExplorer;
+		}
 	}
 
-	private static class Cache {
-		ComputeExpansionRegionRunnable fComputer;
-		IWorkingCopy fTranslationUnit;
-		String fExpansionText;
-		String fExpandedText;
-	}
-	
-	private WeakReference fCache;
+	private Reference fCache;
 
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.c.hover.AbstractCEditorTextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
-		IEditorPart editor = getEditor();
+		CMacroExpansionInput input= createMacroExpansionInput(getEditor(), hoverRegion, true);
+		if (input == null) {
+			return null;
+		}
+		fCache= new SoftReference(input);
+		return input.fExplorer.getFullExpansion().getCodeAfterStep();
+	}
+	
+	public static CMacroExpansionInput createMacroExpansionInput(IEditorPart editor, IRegion hoverRegion, boolean allowSelection) {
 		if (editor == null || !(editor instanceof ITextEditor)) {
 			return null;
 		}
-		IEditorInput input= editor.getEditorInput();
+		IEditorInput editorInput= editor.getEditorInput();
 		IWorkingCopyManager manager= CUIPlugin.getDefault().getWorkingCopyManager();
-		IWorkingCopy tu = manager.getWorkingCopy(input);
+		IWorkingCopy tu = manager.getWorkingCopy(editorInput);
 		if (tu == null) {
 			return null;
 		}
-
+		
 		IProgressMonitor monitor= new NullProgressMonitor();
-		ComputeExpansionRegionRunnable computer= new ComputeExpansionRegionRunnable(tu, hoverRegion);
+		ComputeExpansionRegionRunnable computer= new ComputeExpansionRegionRunnable(tu, hoverRegion, allowSelection);
 		IStatus status= ASTProvider.getASTProvider().runOnAST(tu, ASTProvider.WAIT_ACTIVE_ONLY, monitor, computer);
 		if (!status.isOK()) {
 			return null;
@@ -418,49 +374,19 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 		if (region == null) {
 			return null;
 		}
-		ITextEditor textEditor= (ITextEditor)editor;
-		IDocument document= textEditor.getDocumentProvider().getDocument(input);
-		region= alignRegion(region, document);
-		
-		String expansionText;
-		try {
-			expansionText= document.get(region.getOffset(), region.getLength());
-		} catch (BadLocationException exc) {
-			CUIPlugin.getDefault().log(exc);
+		MacroExpansionExplorer explorer= computer.getMacroExpansionExplorer();
+		if (explorer == null) {
 			return null;
 		}
-		// expand
-		String expandedText= expandMacros(computer.getMacroDictionary(), expansionText, tu.isCXXLanguage());
-
-		// format
-		final String lineDelimiter= TextUtilities.getDefaultLineDelimiter(document);
-		final int nodeKind = getNodeKind(computer.getEnclosingNode());
-		String formattedText= formatSource(nodeKind, expandedText, lineDelimiter, tu.getCProject());
-
-		// cache objects for later macro exploration
-		Cache cache= new Cache();
-		cache.fComputer= computer;
-		cache.fExpansionText= expansionText;
-		cache.fTranslationUnit= tu;
-		cache.fExpandedText= formattedText;
-		fCache= new WeakReference(cache);
-		return formattedText;
-	}
-
-	private static int getNodeKind(IASTNode node) {
-		if (node instanceof IASTDeclaration) {
-			return CodeFormatter.K_TRANSLATION_UNIT;
-		}
-		if (node instanceof IASTStatement) {
-			return CodeFormatter.K_STATEMENTS;
-		}
-		if (node instanceof IASTExpression) {
-			return CodeFormatter.K_EXPRESSION;
-		}
-		if (node instanceof IASTTranslationUnit) {
-			return CodeFormatter.K_TRANSLATION_UNIT;
-		}
-		return CodeFormatter.K_UNKNOWN;
+		ITextEditor textEditor= (ITextEditor)editor;
+		IDocument document= textEditor.getDocumentProvider().getDocument(editorInput);
+		region= alignRegion(region, document);
+		
+		CMacroExpansionInput input= new CMacroExpansionInput();
+		input.fExplorer= explorer;
+		input.fDocument= document;
+		input.fRegion= region;
+		return input;
 	}
 
 	private static final IRegion alignRegion(IRegion region, IDocument document) {
@@ -491,151 +417,6 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 		}
 	}
 
-	/**
-	 * Format given source content according given options.
-	 * 
-	 * @param kind
-	 *            one of {@link CodeFormatter#K_TRANSLATION_UNIT},
-	 *            {@link CodeFormatter#K_STATEMENTS},
-	 *            {@link CodeFormatter#K_EXPRESSION}
-	 * @param content
-	 *            the source content
-	 * @param lineDelimiter
-	 *            the line delimiter to be used
-	 * @param project
-	 * @return the formatted source text or the original if the text could not
-	 *         be formatted successfully
-	 */
-	private static String formatSource(int kind, String content, String lineDelimiter, ICProject project) {
-        TextEdit edit= CodeFormatterUtil.format(kind, content, 0, lineDelimiter, project.getOptions(true));
-        if (edit != null) {
-        	IDocument doc= new Document(content);
-        	try {
-				edit.apply(doc);
-            	content= doc.get().trim();
-			} catch (MalformedTreeException exc) {
-				CUIPlugin.getDefault().log(exc);
-			} catch (BadLocationException exc) {
-				CUIPlugin.getDefault().log(exc);
-			}
-        }
-        return content;
-	}
-
-	private String expandMacros(Map macroDict, String expansionText, boolean isCpp) {
-        final IScannerInfo scannerInfo= new ScannerInfo(macroDict);
-		final CodeReader codeReader= new CodeReader(expansionText.toCharArray());
-		final IScannerExtensionConfiguration configuration;
-		final ParserLanguage parserLanguage;
-		if (isCpp) {
-			configuration= new GPPScannerExtensionConfiguration();
-			parserLanguage= ParserLanguage.CPP;
-		} else {
-			configuration= new GCCScannerExtensionConfiguration();
-			parserLanguage= ParserLanguage.C;
-		}
-		CPreprocessor preprocessor= new CPreprocessor(codeReader, scannerInfo, parserLanguage, ParserUtil.getParserLogService(), configuration, NullCodeReaderFactory.getInstance());
-		StringBuffer expandedText= new StringBuffer(expansionText.length());
-		IToken token= null;
-		IToken prevToken;
-		while (true) {
-			try {
-				prevToken= token;
-				token= preprocessor.nextToken();
-			} catch (EndOfFileException exc) {
-				break;
-			}
-			if (requireSpace(prevToken, token)) {
-				expandedText.append(' ');
-			}
-			expandedText.append(token.getImage());
-		}
-		return expandedText.toString();
-	}
-
-	private static boolean requireSpace(IToken prevToken, IToken token) {
-		if (prevToken == null) {
-			return false;
-		}
-		if (prevToken.isOperator() && token.isOperator()) {
-			return true;
-		}
-		switch (prevToken.getType()) {
-		case IToken.tLPAREN: case IToken.tLBRACKET:
-			return false;
-			
-		// bit operations
-		case IToken.tAMPERASSIGN:
-		case IToken.tBITOR: case IToken.tBITORASSIGN:
-		case IToken.tSHIFTL: case IToken.tSHIFTLASSIGN:
-		case IToken.tSHIFTR: case IToken.tSHIFTRASSIGN:
-		case IToken.tXOR: case IToken.tXORASSIGN:
-		
-        // logical operations
-		case IToken.tAND: case IToken.tOR:
-
-		// arithmetic
-		case IToken.tDIV: case IToken.tDIVASSIGN:
-		case IToken.tMINUS: case IToken.tMINUSASSIGN:
-		case IToken.tMOD: case IToken.tMODASSIGN:
-		case IToken.tPLUS: case IToken.tPLUSASSIGN:
-		case IToken.tSTARASSIGN:
-		case IGCCToken.tMAX: case IGCCToken.tMIN:
-			
-		// comparison
-		case IToken.tEQUAL: case IToken.tNOTEQUAL:
-		case IToken.tGT: case IToken.tGTEQUAL:
-		case IToken.tLT: case IToken.tLTEQUAL:
-
-			// other
-		case IToken.tASSIGN: case IToken.tCOMMA:
-			return true;
-		}
-		
-		switch (token.getType()) {
-		case IToken.tRPAREN: case IToken.tRBRACKET:
-			return false;
-
-		// bit operations
-		case IToken.tAMPER: case IToken.tAMPERASSIGN:
-		case IToken.tBITOR: case IToken.tBITORASSIGN:
-		case IToken.tSHIFTL: case IToken.tSHIFTLASSIGN:
-		case IToken.tSHIFTR: case IToken.tSHIFTRASSIGN:
-		case IToken.tXOR: case IToken.tXORASSIGN:
-		
-        // logical operations
-		case IToken.tAND: case IToken.tOR:
-
-		// arithmetic
-		case IToken.tDIV: case IToken.tDIVASSIGN:
-		case IToken.tMINUS: case IToken.tMINUSASSIGN:
-		case IToken.tMOD: case IToken.tMODASSIGN:
-		case IToken.tPLUS: case IToken.tPLUSASSIGN:
-		case IToken.tSTAR: case IToken.tSTARASSIGN:
-		case IGCCToken.tMAX: case IGCCToken.tMIN:
-			
-		// comparison
-		case IToken.tEQUAL: case IToken.tNOTEQUAL:
-		case IToken.tGT: case IToken.tGTEQUAL:
-		case IToken.tLT: case IToken.tLTEQUAL:
-			return true;
-
-		// other
-		case IToken.tASSIGN:
-			return true;
-			
-		case IToken.tCOMMA:
-			return false;
-		}
-
-		char lastChar= prevToken.getCharImage()[prevToken.getLength() - 1];
-		char nextChar= token.getCharImage()[0];
-		if (Character.isJavaIdentifierPart(lastChar) && Character.isJavaIdentifierPart(nextChar)) {
-			return true;
-		}
-		return false;
-	}
-
 	/*
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
@@ -655,21 +436,30 @@ public class CMacroExpansionHover extends AbstractCEditorTextHover implements II
 			public IInformationControl createInformationControl(Shell parent) {
 				int shellStyle= SWT.RESIZE;
 				int style= SWT.V_SCROLL | SWT.H_SCROLL;
-				return new CMacroExpansionControl(parent, shellStyle, style, createMacroExpansionInput());
+				return new CMacroExpansionExplorationControl(parent, shellStyle, style, getMacroExpansionInput());
 			}
 		};
 	}
 
-	protected CMacroExpansionInput createMacroExpansionInput() {
-		// TODO compute all expansion steps
-		Cache cache= (Cache) fCache.get();
-		fCache= null;
-		if (cache != null) {
-			CMacroExpansionInput input= new CMacroExpansionInput();
-			input.fExpansions= new String[] { cache.fExpansionText, cache.fExpandedText };
-			return input;
+	protected CMacroExpansionInput getMacroExpansionInput() {
+		if (fCache == null) {
+			return null;
 		}
-		return null;
+		CMacroExpansionInput input= (CMacroExpansionInput) fCache.get();
+		fCache= null;
+		if (input == null) {
+			IEditorPart editor= getEditor();
+			if (editor != null) {
+				ISelectionProvider provider= editor.getSite().getSelectionProvider();
+				ISelection selection= provider.getSelection();
+				if (selection instanceof ITextSelection) {
+					ITextSelection textSelection= (ITextSelection) selection;
+					IRegion region= new Region(textSelection.getOffset(), textSelection.getLength());
+					input= createMacroExpansionInput(editor, region, true);
+				}
+			}
+		}
+		return input;
 	}
 
 }

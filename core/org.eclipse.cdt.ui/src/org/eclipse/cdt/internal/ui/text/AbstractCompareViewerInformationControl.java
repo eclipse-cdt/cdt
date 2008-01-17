@@ -10,68 +10,77 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension2;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
 
 /**
- * Abstract class for "quick" source views in light-weight controls.
+ * Abstract class for "quick" compare views in light-weight controls.
  *
  * @since 5.0
  */
-public abstract class AbstractSourceViewerInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, DisposeListener {
+public abstract class AbstractCompareViewerInformationControl extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, DisposeListener {
 
-	private int fTextStyle;
+	protected class CompareViewerControl extends ViewForm {
+		private CompareConfiguration fCompareConfiguration;
+		private Viewer fViewer;
+		public CompareViewerControl(Composite parent, int styles, CompareConfiguration cc) {
+			super(parent, styles & ~SWT.BORDER);
+			verticalSpacing= 0;
+			fCompareConfiguration= cc;
+		}
+		public CompareConfiguration getCompareConfiguration() {
+			return fCompareConfiguration;
+		}
+		public void setInput(ICompareInput input) {
+			if (fViewer == null) {
+				fViewer= createContentViewer(this, input, fCompareConfiguration);
+				applyBackgroundColor(fBackgroundColor, fViewer.getControl());
+				setContent(fViewer.getControl());
+			}
+			fViewer.setInput(input);
+		}
+	}
+
+	private final int fStyle;
 	
-	private ISourceViewer fSourceViewer;
+	private CompareViewerControl fCompareViewerControl;
+	private ICompareInput fCompareInput;
 
 	private Color fBackgroundColor;
-
 	private boolean fIsSystemBackgroundColor;
 
 	private int fMaxWidth;
-
 	private int fMaxHeight;
 
-	private List fColorExclusionControls= new ArrayList();
-	
+	private boolean fUseDefaultBounds;
+
 	/**
 	 * Creates a source viewer information control with the given shell as parent. The given
 	 * styles are applied to the shell and the source viewer.
@@ -83,9 +92,9 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * @param showViewMenu  flag indicating whether to show the "view" menu
 	 * @param persistBounds  flag indicating whether control size and location should be persisted
 	 */
-	public AbstractSourceViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds) {
+	public AbstractCompareViewerInformationControl(Shell parent, int shellStyle, int textStyle, boolean takeFocus, boolean showViewMenu, boolean persistBounds) {
 		super(parent, shellStyle, takeFocus, persistBounds, showViewMenu, false, null, null);
-		fTextStyle= textStyle;
+		fStyle= textStyle & ~(SWT.V_SCROLL | SWT.H_SCROLL);
 		// Title and status text must be set to get the title label created, so force empty values here. 
 		if (hasHeader())
 			setTitleText(""); //$NON-NLS-1$
@@ -117,14 +126,16 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * @see org.eclipse.jface.dialogs.PopupDialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		initializeColors();
 		Control contents= super.createContents(parent);
-		for (Iterator it= fColorExclusionControls.iterator(); it.hasNext(); ) {
-			Control ctrl = (Control) it.next();
-			ctrl.setBackground(fBackgroundColor);
-		}
+		applyBackgroundColor(fBackgroundColor, contents);
 		return contents;
 	}
 	
+	protected void applyBackgroundColor(Color color, Control control) {
+		super.applyBackgroundColor(fBackgroundColor, control);
+	}
+
 	/**
 	 * Create the main content for this information control.
 	 * 
@@ -133,10 +144,13 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * 
 	 */
 	protected Control createDialogArea(Composite parent) {
-		fSourceViewer= createSourceViewer(parent, fTextStyle);
+		CompareConfiguration compareConfig= new CompareConfiguration();
+		compareConfig.setLeftEditable(false);
+		compareConfig.setRightEditable(false);
+		fCompareViewerControl= createCompareViewerControl(parent, fStyle, compareConfig);
 
-		final StyledText text= fSourceViewer.getTextWidget();
-		text.addKeyListener(new KeyListener() {
+		final Control control= fCompareViewerControl;
+		control.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e)  {
 				if (e.character == 0x1B) // ESC
 					dispose();
@@ -147,66 +161,18 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 		});
 
 		addDisposeListener(this);
-		return ((Viewer)fSourceViewer).getControl();
+		return fCompareViewerControl;
 	}
 	
-	protected ISourceViewer createSourceViewer(Composite parent, int style) {
-		IPreferenceStore store= CUIPlugin.getDefault().getCombinedPreferenceStore();
-		SourceViewer sourceViewer= new CSourceViewer(parent, null, null, false, style, store);
-		CTextTools tools= CUIPlugin.getDefault().getTextTools();
-		sourceViewer.configure(new SimpleCSourceViewerConfiguration(tools.getColorManager(), store, null, ICPartitions.C_PARTITIONING, false));
-		sourceViewer.setEditable(false);
-
-		StyledText styledText= sourceViewer.getTextWidget();
-		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
-		styledText.setLayoutData(gd);
-		initializeColors();
-		styledText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-		styledText.setBackground(fBackgroundColor);
-		fColorExclusionControls.add(styledText);
-		
-		Font font= JFaceResources.getFont(PreferenceConstants.EDITOR_TEXT_FONT);
-		styledText.setFont(font);
-
-		return sourceViewer;
+	protected CompareViewerControl createCompareViewerControl(Composite parent, int style, CompareConfiguration compareConfig) {
+		CompareViewerControl compareViewer= new CompareViewerControl(parent, style, compareConfig);
+		return compareViewer;
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#createInfoTextArea(org.eclipse.swt.widgets.Composite)
-	 */
-	protected Control createInfoTextArea(Composite parent) {
-		Control infoText= super.createInfoTextArea(parent);
-		fColorExclusionControls.add(infoText);
-		return infoText;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#createTitleControl(org.eclipse.swt.widgets.Composite)
-	 */
-	protected Control createTitleControl(Composite parent) {
-		Control titleText= super.createTitleControl(parent);
-		fColorExclusionControls.add(titleText);
-		return titleText;
+	protected Viewer createContentViewer(Composite parent, ICompareInput input, CompareConfiguration cc) {
+		return CompareUI.findContentViewer(null, input, parent, cc);
 	}
 
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#getBackgroundColorExclusions()
-	 */
-	protected List getBackgroundColorExclusions() {
-		List exclusions= super.getBackgroundColorExclusions();
-		exclusions.addAll(fColorExclusionControls);
-		return exclusions;
-	}
-
-	/*
-	 * @see org.eclipse.jface.dialogs.PopupDialog#getForegroundColorExclusions()
-	 */
-	protected List getForegroundColorExclusions() {
-		List exclusions= super.getForegroundColorExclusions();
-		exclusions.addAll(fColorExclusionControls);
-		return exclusions;
-	}
-	
 	/**
 	 * Returns the name of the dialog settings section.
 	 * <p>
@@ -220,12 +186,21 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	}
 
 	/**
-	 * Returns the source viewer.
+	 * Returns the compare viewer.
 	 * 
-	 * @return the source viewer.
+	 * @return the compare viewer.
 	 */
-	protected final ISourceViewer getSourceViewer() {
-		return fSourceViewer;
+	protected final CompareViewerControl getCompareViewer() {
+		return fCompareViewerControl;
+	}
+
+	/**
+	 * Returns the compare configuration.
+	 * 
+	 * @return the compare configuration.
+	 */
+	protected final CompareConfiguration getCompareConfiguration() {
+		return fCompareViewerControl.getCompareConfiguration();
 	}
 
 	/**
@@ -245,24 +220,25 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * {@inheritDoc}
 	 */
 	public void setInformation(String content) {
-		if (content == null) {
-			fSourceViewer.setDocument(null);
-			return;
-		}
-
-		IDocument doc= new Document(content);
-		CUIPlugin.getDefault().getTextTools().setupCDocument(doc);
-		fSourceViewer.setDocument(doc);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setInput(Object input) {
-		if (input instanceof String)
-			setInformation((String)input);
-		else
-			setInformation(null);
+		if (input instanceof ICompareInput) {
+			fCompareInput= (ICompareInput) input;
+			if (fCompareViewerControl != null) {
+				fCompareViewerControl.setInput(fCompareInput);
+			}
+		} else if (input instanceof String) {
+			// do nothing
+		} else {
+			fCompareInput= null;
+			if (fCompareViewerControl != null) {
+				fCompareViewerControl.setInput(fCompareInput);
+			}
+		}
 	}
 
 	/**
@@ -323,14 +299,14 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * </p>
 	 */
 	public void widgetDisposed(DisposeEvent event) {
-		fSourceViewer= null;
+		fCompareViewerControl= null;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean hasContents() {
-		return fSourceViewer != null && fSourceViewer.getDocument() != null;
+		return fCompareViewerControl != null && fCompareInput != null;
 	}
 
 	/**
@@ -359,14 +335,13 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 			size= getShell().computeSize(x, y, false);
 
 		return size;
-//		return getShell().getSize();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setLocation(Point location) {
-		if (!getPersistBounds() || getDialogSettings() == null)
+		if (!getPersistBounds() || getDialogSettings() == null || fUseDefaultBounds)
 			getShell().setLocation(location);
 	}
 
@@ -374,7 +349,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * {@inheritDoc}
 	 */
 	public void setSize(int width, int height) {
-		if (!getPersistBounds() || getDialogSettings() == null) {
+		if (!getPersistBounds() || getDialogSettings() == null || fUseDefaultBounds) {
 			getShell().setSize(width, height);
 		}
 	}
@@ -411,14 +386,14 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 * @see org.eclipse.jface.dialogs.PopupDialog#getFocusControl()
 	 */
 	protected Control getFocusControl() {
-		return fSourceViewer.getTextWidget();
+		return fCompareViewerControl;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isFocusControl() {
-		return fSourceViewer.getTextWidget().isFocusControl();
+		return fCompareViewerControl.isFocusControl();
 	}
 
 	/**
@@ -426,7 +401,7 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 	 */
 	public void setFocus() {
 		getShell().forceFocus();
-		fSourceViewer.getTextWidget().setFocus();
+		fCompareViewerControl.setFocus();
 	}
 
 	/**
@@ -452,9 +427,10 @@ public abstract class AbstractSourceViewerInformationControl extends PopupDialog
 			return null;
 		}
 		IDialogSettings settings= CUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
-		if (settings == null)
+		if (settings == null) {
+			fUseDefaultBounds= true;
 			settings= CUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
-
+		}
 		return settings;
 	}
 }

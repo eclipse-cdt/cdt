@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,10 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
 
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+
 /**
- * An (readonly) editor to view binary files. This default implementation displays
+ * A readonly editor to view binary files. This default implementation displays
  * the GNU objdump output of the binary as plain text. If no objdump output can be
  * obtained, the binary content is displayed.
  */
@@ -122,8 +124,12 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 					}
 				}
 				if (fStorage == null) {
-					// fall back to binary content
-					fStorage= (IFile)fBinary.getResource();
+					// backwards compatibility
+					fStorage= EditorUtility.getStorage(fBinary);
+					if (fStorage == null) {
+						// fall back to binary content
+						fStorage= (IFile)fBinary.getResource();
+					}
 				}
 			}
 			return fStorage;
@@ -132,7 +138,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor {
 	}
 
 	/**
-	 * A storage docment provider for binary files.
+	 * A storage document provider for binary files.
 	 */
 	public static class BinaryFileDocumentProvider extends StorageDocumentProvider {
 		

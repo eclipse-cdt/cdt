@@ -16,6 +16,7 @@ import org.eclipse.cdt.make.core.makefile.IDirective;
 import org.eclipse.cdt.make.core.makefile.gnu.IInclude;
 import org.eclipse.cdt.make.internal.core.makefile.Directive;
 import org.eclipse.cdt.make.internal.core.makefile.Parent;
+import org.eclipse.core.runtime.Path;
 
 public class Include extends Parent implements IInclude {
 
@@ -51,7 +52,21 @@ public class Include extends Parent implements IInclude {
 				continue;
 			} catch (IOException e) {
 			}
-			if (!filenames[i].startsWith(GNUMakefile.FILE_SEPARATOR) && dirs != null) {
+			if (filenames[i].startsWith(GNUMakefile.FILE_SEPARATOR)) {
+				// Try to set the device to that of the parent makefile.
+				String filename = getFileName();
+				if (filename != null) {
+					String device = new Path(filename).getDevice();
+					if (device != null) {
+						try {
+							gnu.parse(new Path(filenames[i]).setDevice(device).toOSString());
+							addDirective(gnu);
+							continue;
+						} catch (IOException e) {
+						}
+					}
+				}
+			} else if (dirs != null) {
 				for (int j = 0; j < dirs.length; j++) {
 					try {
 						String filename =  dirs[j] + GNUMakefile.FILE_SEPARATOR + filenames[i];

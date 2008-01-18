@@ -85,7 +85,8 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		CSearchMessages.getString("CSearchPage.searchFor.enumr"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.namespace"),	//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.typedef"),	//$NON-NLS-1$
-		CSearchMessages.getString("CSearchPage.searchFor.macro"),	//$NON-NLS-1$
+		// hide macro checkbox until 156561 is fixed
+		//CSearchMessages.getString("CSearchPage.searchFor.macro"),	//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.any") 		//$NON-NLS-1$
 	};
 
@@ -101,7 +102,8 @@ public class PDOMSearchPage extends DialogPage implements ISearchPage {
 		new Integer(PDOMSearchPatternQuery.FIND_ENUMERATOR),
 		new Integer(PDOMSearchPatternQuery.FIND_NAMESPACE),
 		new Integer(PDOMSearchPatternQuery.FIND_TYPEDEF),
-		new Integer(PDOMSearchPatternQuery.FIND_MACRO),
+		// hide macro checkbox until 156561 is fixed
+		//new Integer(PDOMSearchPatternQuery.FIND_MACRO),
 		new Integer(PDOMSearchPatternQuery.FIND_ALL_TYPES)
 	};
 	

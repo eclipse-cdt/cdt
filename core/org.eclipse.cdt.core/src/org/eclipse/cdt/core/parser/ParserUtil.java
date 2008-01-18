@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM Rational Software - Initial API and implementation
+ *    IBM Rational Software - Initial API and implementation
+ *    Markus Schorn (Wind River Systems)
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
@@ -49,7 +50,7 @@ public class ParserUtil
 		return scannerLogService;
 	}
 	
-	public static char [] findWorkingCopyBuffer( String path, Iterator workingCopies )
+	public static char [] findWorkingCopyBuffer( String path, Iterator<IWorkingCopy> workingCopies )
 	{
 		IResource resultingResource = getResourceForFilename(path);
 			
@@ -63,7 +64,7 @@ public class ParserUtil
 		return null;
 	}
 	
-	public static CodeReader createReader( String finalPath, Iterator workingCopies )
+	public static CodeReader createReader( String finalPath, Iterator<IWorkingCopy> workingCopies )
 	{
 		// check to see if the file which this path points to points to an 
 		// IResource in the workspace
@@ -153,15 +154,13 @@ public class ParserUtil
 	 * @param workingCopies
 	 * @return
 	 */
-	protected static char[] findWorkingCopy(IResource resultingResource, Iterator workingCopies) {
+	protected static char[] findWorkingCopy(IResource resultingResource, Iterator<IWorkingCopy> workingCopies) {
 		if( parserLogService.isTracing() )
 			parserLogService.traceLog( "Attempting to find the working copy for " + resultingResource.getName() ); //$NON-NLS-1$
 		while( workingCopies.hasNext() )
 		{
-			Object next = workingCopies.next();
-			if( !( next instanceof IWorkingCopy)) continue;
-			IWorkingCopy copy = (IWorkingCopy) next;
-			if( copy.getResource().equals(resultingResource ))
+			IWorkingCopy copy = workingCopies.next();
+			if (resultingResource.equals(copy.getResource()))
 			{
 				if( parserLogService.isTracing() )
 					parserLogService.traceLog( "Working copy found!!" ); //$NON-NLS-1$

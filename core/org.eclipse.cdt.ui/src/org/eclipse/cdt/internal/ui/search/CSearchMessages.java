@@ -85,6 +85,10 @@ public final class CSearchMessages extends NLS {
 	public static String OccurrencesFinder_occurrence_description;
 	public static String OccurrencesFinder_occurrence_write_description;
 
+	public static String PDOMSearchListContentProvider_IndexerNotEnabledMessageFormat;
+	public static String PDOMSearchListContentProvider_ProjectClosedMessageFormat;
+	public static String CSearchMessages_IndexRunningIncompleteWarning;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CSearchMessages.class);
 	}

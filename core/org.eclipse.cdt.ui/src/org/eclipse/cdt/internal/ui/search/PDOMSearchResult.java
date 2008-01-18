@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -40,6 +41,7 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * @author Doug Schaefer
@@ -48,6 +50,7 @@ import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 public class PDOMSearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter, IFileMatchAdapter {
 
 	private PDOMSearchQuery query;
+	private boolean indexerBusy;
 	
 	public PDOMSearchResult(PDOMSearchQuery query) {
 		super();
@@ -152,7 +155,10 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 	}
 
 	public String getLabel() {
-		return query.getLabel();
+		// report pattern and number of matches
+		String label = query.getLabel();
+		String countLabel = Messages.format(CSearchMessages.CSearchResultCollector_matches, new Integer(getElements().length));
+		return label + " " + countLabel; //$NON-NLS-1$
 	}
 
 	public String getTooltip() {
@@ -165,6 +171,21 @@ public class PDOMSearchResult extends AbstractTextSearchResult implements IEdito
 
 	public ISearchQuery getQuery() {
 		return query;
+	}
+
+	/**
+	 * Remember whether the indexer was busy when the search was performed.
+	 * @param b
+	 */
+	public void setIndexerBusy(boolean b) {
+		this.indexerBusy = b;
+	}
+	
+	/**
+	 * Tell if the indexer was busy when search results were gathered.
+	 */
+	public boolean wasIndexerBusy() {
+		return indexerBusy;
 	}
 
 }

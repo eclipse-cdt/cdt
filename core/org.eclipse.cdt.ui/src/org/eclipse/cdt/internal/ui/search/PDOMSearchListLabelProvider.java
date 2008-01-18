@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;

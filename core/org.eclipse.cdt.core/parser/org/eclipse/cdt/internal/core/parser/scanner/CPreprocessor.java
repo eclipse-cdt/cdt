@@ -79,10 +79,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     private static final ObjectStyleMacro __STDC_HOSTED__ = new ObjectStyleMacro("__STDC_HOSTED_".toCharArray(), ONE);  //$NON-NLS-1$
     private static final ObjectStyleMacro __STDC_VERSION__ = new ObjectStyleMacro("__STDC_VERSION_".toCharArray(), "199901L".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 
-    private static final DynamicStyleMacro __FILE__= new FileMacro("__FILE__".toCharArray()); //$NON-NLS-1$
-    private static final DynamicStyleMacro __DATE__= new DateMacro("__DATE__".toCharArray()); //$NON-NLS-1$
-    private static final DynamicStyleMacro __TIME__ = new TimeMacro("__TIME__".toCharArray()); //$NON-NLS-1$
-    private static final DynamicStyleMacro __LINE__ = new LineMacro("__LINE__".toCharArray()); //$NON-NLS-1$
+    private static final DynamicMacro __FILE__= new FileMacro("__FILE__".toCharArray()); //$NON-NLS-1$
+    private static final DynamicMacro __DATE__= new DateMacro("__DATE__".toCharArray()); //$NON-NLS-1$
+    private static final DynamicMacro __TIME__ = new TimeMacro("__TIME__".toCharArray()); //$NON-NLS-1$
+    private static final DynamicMacro __LINE__ = new LineMacro("__LINE__".toCharArray()); //$NON-NLS-1$
 
 	private interface IIncludeFileTester {
     	Object checkFile(String path, String fileName);

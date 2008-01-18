@@ -270,12 +270,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 	}
 	
 	public String getExpansion() {
-		final char[] expansion = getMacro().getExpansion();
-		// for dynamic style macros return an empty string
-		if (expansion == null) {
-			return ""; //$NON-NLS-1$ 
-		}
-		return new String(expansion);
+		return new String(getMacro().getExpansion());
 	}
 
 	public IASTName getName() {
@@ -312,9 +307,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 			String fileName= fName.getContainingFilename();
 			if (fileName != null) {
 				final char[] expansionImage = getMacro().getExpansionImage();
-				if (expansionImage != null) {
-					return new ASTFileLocationForBuiltins(fileName, fExpansionOffset, expansionImage.length);
-				}
+				return new ASTFileLocationForBuiltins(fileName, fExpansionOffset, expansionImage.length);
 			}
 		}
 		return null;

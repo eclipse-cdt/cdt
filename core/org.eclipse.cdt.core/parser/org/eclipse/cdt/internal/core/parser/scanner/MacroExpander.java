@@ -165,7 +165,11 @@ public class MacroExpander {
 		// setup input sequence
 		TokenSource input= new TokenSource(lexer, stopAtNewline);
 		TokenList firstExpansion= new TokenList();
+
+		firstExpansion.append(new ExpansionBoundary(macro, true));
 		expandOne(identifier, macro, forbidden, input, firstExpansion, null);
+		firstExpansion.append(new ExpansionBoundary(macro, false));
+
 		input.prepend(firstExpansion);
 		
 		TokenList result= expandAll(input, forbidden, null);
@@ -208,7 +212,10 @@ public class MacroExpander {
 			// setup input sequence
 			TokenSource input= new TokenSource(lexer, false);
 			TokenList firstExpansion= new TokenList();
+
+			firstExpansion.append(new ExpansionBoundary(macro, true));
 			expandOne(identifier, macro, forbidden, input, firstExpansion, tracker);
+			firstExpansion.append(new ExpansionBoundary(macro, false));
 			input.prepend(firstExpansion);
 
 			TokenList result= expandAll(input, forbidden, tracker);
@@ -227,7 +234,6 @@ public class MacroExpander {
 			IdentityHashMap<PreprocessorMacro, PreprocessorMacro> forbidden, TokenSource input, TokenList result,
 			MacroExpansionTracker tracker) 
 			throws OffsetLimitReachedException {
-		result.append(new ExpansionBoundary(macro, true));
 		if (macro.isFunctionStyle()) {
 			final int paramCount = macro.getParameterPlaceholderList().length;
 			final TokenSource[] argInputs= new TokenSource[paramCount];
@@ -290,7 +296,6 @@ public class MacroExpander {
 				tracker.endObjectStyleMacro();
 			}
 		}
-		result.append(new ExpansionBoundary(macro, false));
 		return lastConsumed;
 	}
 
@@ -313,8 +318,7 @@ public class MacroExpander {
 			switch(t.getType()) {
 			case CPreprocessor.tSCOPE_MARKER:
 				((ExpansionBoundary) t).execute(forbidden);
-				t= input.removeFirst(); // don't change l
-				continue;
+				break;
 			case IToken.tIDENTIFIER:
 				PreprocessorMacro macro= fDictionary.get(t.getCharImage());
 				if (tracker != null && tracker.isDone()) {
@@ -339,7 +343,9 @@ public class MacroExpander {
 					TokenList replacement= new TokenList();
 
 					addSpacemarker(l, t, replacement); // start expansion
+					replacement.append(new ExpansionBoundary(macro, true));
 					Token last= expandOne(t, macro, forbidden, input, replacement, tracker); 
+					replacement.append(new ExpansionBoundary(macro, false));
 					addSpacemarker(last, input.first(), replacement); // end expansion
 
 					input.prepend(replacement);
@@ -371,14 +377,7 @@ public class MacroExpander {
 	}
 
 	private static boolean isNeighborInSource(Token l, Token t) {
-		if (l != null && t != null) {
-			final Object s1= l.fSource;
-			final Object s2= t.fSource;
-			return  s1 == s2 && s1 != null &&
-					l.getType() != CPreprocessor.tSPACE && t.getType() != CPreprocessor.tSPACE;
-		}
-		return false;
-
+		return l != null && t != null && l.fSource != null && l.fSource == t.fSource;
 	}
 
 	static boolean hasImplicitSpace(Token l, Token t) {
@@ -387,15 +386,15 @@ public class MacroExpander {
 
 	static void addSpacemarker(Token l, Token t, TokenList target) {
 		if (isNeighborInSource(l, t)) {
-			if (l.getEndOffset() == t.getOffset()) {
-				target.append(new Token(CPreprocessor.tNOSPACE, null, 0, 0));
-			}
-			else {
-				target.append(new Token(CPreprocessor.tSPACE, l.fSource, l.getEndOffset(), t.getOffset()));				
+			final int from= l.getEndOffset();
+			final int to= t.getOffset();
+			if (from != to) {
+				target.append(new Token(CPreprocessor.tSPACE, l.fSource, from, to));
 			}
 		}
+		target.append(new Token(CPreprocessor.tNOSPACE, null, 0, 0));
 	}
-
+	
 	/**
 	 * Expects that the identifier has been consumed.
 	 * @param forbidden 

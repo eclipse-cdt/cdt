@@ -125,4 +125,8 @@ class TokenList {
 	public void clear() {
 		fFirst= fLast= null;
 	}
+
+	public boolean isEmpty() {
+		return fFirst==null;
+	}
 }

@@ -276,6 +276,10 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 	public boolean isFunctionStyle() {
 		return getParameterList() != null;
 	}
+	
+	public boolean isDynamic() {
+		return false;
+	}
 
 	public ILinkage getLinkage() throws CoreException {
 		return Linkage.NO_LINKAGE;

@@ -153,6 +153,10 @@ class ObjectStyleMacro extends PreprocessorMacro {
 		}
 		return fExpansionTokens;
 	}
+
+	public final boolean isDynamic() {
+		return false;
+	}
 }
 
 
@@ -252,16 +256,13 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	}
 }
 
-abstract class DynamicStyleMacro extends PreprocessorMacro {
+abstract class DynamicMacro extends PreprocessorMacro {
 
-	public DynamicStyleMacro(char[] name) {
+	public DynamicMacro(char[] name) {
 		super(name);
 	}
-	public char[] getExpansion() {
-		return null;
-	}
-	public char[] getExpansionImage() {
-		return null;
+	public final char[] getExpansion() {
+		return getExpansionImage();
 	}
 	public abstract Token execute(MacroExpander expander);
 
@@ -271,20 +272,29 @@ abstract class DynamicStyleMacro extends PreprocessorMacro {
 		return result;
 	}
 	
-	final protected void append(StringBuffer buffer, int value) {
+	final protected void append(StringBuilder buffer, int value) {
         if (value < 10)
             buffer.append("0"); //$NON-NLS-1$
         buffer.append(value);
     }
+
+	public final boolean isDynamic() {
+		return true;
+	}
 }
 
-final class DateMacro extends DynamicStyleMacro {
+final class DateMacro extends DynamicMacro {
 	DateMacro(char[] name) {
 		super(name);
 	}
 
 	public Token execute(MacroExpander expander) {
-        StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
+		return new TokenWithImage(IToken.tSTRING, null, 0, 0, createDate());
+    }
+
+	private char[] createDate() {
+		char[] charArray;
+		StringBuilder buffer = new StringBuilder("\""); //$NON-NLS-1$
         Calendar cal = Calendar.getInstance();
         DateFormatSymbols dfs= new DateFormatSymbols();
         buffer.append(dfs.getShortMonths()[cal.get(Calendar.MONTH)]);
@@ -293,11 +303,16 @@ final class DateMacro extends DynamicStyleMacro {
         buffer.append(" "); //$NON-NLS-1$
         buffer.append(cal.get(Calendar.YEAR));
         buffer.append("\""); //$NON-NLS-1$
-        return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
-    }
+        charArray = buffer.toString().toCharArray();
+		return charArray;
+	}
+
+	public char[] getExpansionImage() {
+		return createDate();
+	}
 }
 
-final class FileMacro extends DynamicStyleMacro {
+final class FileMacro extends DynamicMacro {
 	FileMacro(char[] name) {
 		super(name);
 	}
@@ -308,9 +323,13 @@ final class FileMacro extends DynamicStyleMacro {
         buffer.append('\"');
         return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
     }
+
+	public char[] getExpansionImage() {
+		return "\"file\"".toCharArray(); //$NON-NLS-1$
+	}
 }
 
-final class LineMacro extends DynamicStyleMacro {
+final class LineMacro extends DynamicMacro {
 	LineMacro(char[] name) {
 		super(name);
 	}
@@ -318,15 +337,22 @@ final class LineMacro extends DynamicStyleMacro {
     	int lineNumber= expander.getCurrentLineNumber();
         return new TokenWithImage(IToken.tINTEGER, null, 0, 0, Long.toString(lineNumber).toCharArray());
     }
+	public char[] getExpansionImage() {
+		return new char[] {'1'};
+	}
 }
 
-final class TimeMacro extends DynamicStyleMacro {
+final class TimeMacro extends DynamicMacro {
 	TimeMacro(char[] name) {
 		super(name);
 	}
 
 	public Token execute(MacroExpander expander) {
-        StringBuffer buffer = new StringBuffer("\""); //$NON-NLS-1$
+		return new TokenWithImage(IToken.tSTRING, null, 0, 0, createDate());
+	}
+	
+	private char[] createDate() {
+        StringBuilder buffer = new StringBuilder("\""); //$NON-NLS-1$
         Calendar cal = Calendar.getInstance();
         append(buffer, cal.get(Calendar.HOUR_OF_DAY));
         buffer.append(":"); //$NON-NLS-1$
@@ -334,7 +360,11 @@ final class TimeMacro extends DynamicStyleMacro {
         buffer.append(":"); //$NON-NLS-1$
         append(buffer, cal.get(Calendar.SECOND));
         buffer.append("\""); //$NON-NLS-1$
-        return new TokenWithImage(IToken.tSTRING, null, 0, 0, buffer.toString().toCharArray());
+        return buffer.toString().toCharArray();
     }
+
+	public char[] getExpansionImage() {
+		return createDate();
+	}
 }
 

@@ -351,9 +351,8 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 				buffer.append(')');
 			}
 			buffer.append(' ');
-			final char[] expansionImage = binding.getExpansionImage();
-			if (expansionImage != null) {
-				buffer.append(expansionImage);
+			if (!binding.isDynamic()) {
+				buffer.append(binding.getExpansionImage());
 			}
 			else {
 				ReplaceEdit[] replacements= expansionStep.getReplacements();

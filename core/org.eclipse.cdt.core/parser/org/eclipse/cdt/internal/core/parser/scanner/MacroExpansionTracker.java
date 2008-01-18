@@ -181,7 +181,10 @@ public class MacroExpansionTracker {
 			return rootInput;
 		}
 		if (source instanceof PreprocessorMacro) {
-			return ((PreprocessorMacro) source).getExpansionImage();
+			final PreprocessorMacro pm = (PreprocessorMacro) source;
+			if (!pm.isDynamic()) {
+				return pm.getExpansionImage();
+			}
 		}
 		return null;
 	}
@@ -254,8 +257,8 @@ public class MacroExpansionTracker {
 							active = false;
 							if (n != null && n.getType() != IToken.tCOMMA && n.getType() != IToken.tRPAREN) {
 								MacroExpander.addSpacemarker(t, n, result);
+								result.appendAll(p);
 							}
-							result.appendAll(p);
 						}
 					}
 				}
@@ -286,8 +289,8 @@ public class MacroExpansionTracker {
 						if (!active) {
 							if (n != null && n.getType() != IToken.tCOMMA && n.getType() != IToken.tRPAREN) {
 								MacroExpander.addSpacemarker(t, n, result);
+								result.appendAll(p);
 							}
-							result.appendAll(p);
 						}
 					}
 				} else if (active) {

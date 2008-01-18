@@ -192,6 +192,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			CConfigurationDescriptionCache cache = (CConfigurationDescriptionCache)iter.next();
 			try {
 				cache.loadData(factory);
+				factory.clear();
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				iter.remove();
@@ -199,8 +200,6 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		}
 		
 //		doneInitializing();
-		
-		factory.clear();
 		
 //		fIsLoadding = false;
 	}
@@ -216,6 +215,7 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 			try {
 				if(cache.applyData(factory, context))
 					modified = true;
+				factory.clear();
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
 				e.printStackTrace();
@@ -224,8 +224,6 @@ public class CProjectDescription implements ICProjectDescription, ICDataProxyCon
 		}
 		
 //		doneInitializing();
-		
-		factory.clear();
 		
 //		fIsApplying = false;
 		

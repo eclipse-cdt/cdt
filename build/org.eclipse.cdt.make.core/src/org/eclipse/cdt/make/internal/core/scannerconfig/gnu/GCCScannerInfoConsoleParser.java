@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Path;
 public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 
 	private ScannerInfoConsoleParserUtility fUtil = null;
+	private String fDefaultMacroDefinitionValue= "1"; //$NON-NLS-1$
 	
     /* (non-Javadoc)
      * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject, org.eclipse.core.runtime.IPath, org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector, org.eclipse.cdt.core.IMarkerGenerator)
@@ -111,6 +112,9 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 					}
 				}
         		if (candidate != null && candidate.length() > 0) {
+        			if (candidate.indexOf('=') == -1) {
+        				candidate+= '='+ fDefaultMacroDefinitionValue;
+        			}
         			if (!symbols.contains(candidate)) {
         				symbols.add(candidate);
         			}
@@ -199,5 +203,11 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
         			"Include paths", includes, translatedIncludes, "Defined symbols", symbols);	//$NON-NLS-1$ //$NON-NLS-2$
         }
 		return true;
+	}
+    
+    public void setDefaultMacroDefinitionValue(String val) {
+    	if (val != null) {
+    		fDefaultMacroDefinitionValue= val;
+    	}
 	}
 }

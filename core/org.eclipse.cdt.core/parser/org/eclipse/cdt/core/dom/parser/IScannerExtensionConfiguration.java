@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,8 @@ public interface IScannerExtensionConfiguration {
 
 	/**
 	 * @return <code>true</code>, if macros should be initialized to 1
+	 * @deprecated empty macros are taken as they are. It is the task of configuration to provide the correct values.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=215789
 	 */
 	public boolean initializeMacroValuesTo1();
 

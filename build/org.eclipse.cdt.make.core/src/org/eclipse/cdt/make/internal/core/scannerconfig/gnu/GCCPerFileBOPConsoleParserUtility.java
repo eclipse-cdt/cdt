@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
     private int workingDirsN = 0;
     private int commandsN = 0;
     private int filesN = 0;
+	private String fDefaultMacroDefinitionValue= "1"; //$NON-NLS-1$
 
 
     /**
@@ -160,13 +161,14 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 				continue;
         	}
             for (int j = SCDOptionsEnum.MIN; j <= SCDOptionsEnum.MAX; ++j) {
-                if (token.startsWith(SCDOptionsEnum.getSCDOptionsEnum(j).toString())) {
+                final SCDOptionsEnum optionKind = SCDOptionsEnum.getSCDOptionsEnum(j);
+				if (token.startsWith(optionKind.toString())) {
                     String option = token.substring(
-                            SCDOptionsEnum.getSCDOptionsEnum(j).toString().length()).trim();
+                            optionKind.toString().length()).trim();
                     if (option.length() > 0) {
                         // ex. -I/dir
                     }
-                    else if (SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IDASH)) {
+                    else if (optionKind.equals(SCDOptionsEnum.IDASH)) {
                     	for (Iterator iter=includes.iterator(); iter.hasNext(); ) {
                     		option = (String)iter.next();
                             KVStringPair pair = new KVStringPair(SCDOptionsEnum.IQUOTE.toString(), option);
@@ -183,24 +185,31 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                         }
                         else break;
                     }
+                    
                     if (option.length() > 0 && (
-                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.INCLUDE) ||
-                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.INCLUDE_FILE) ||
-                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IMACROS_FILE) ||
-                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IDIRAFTER) ||
-                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.ISYSTEM) || 
-                            SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IQUOTE) )) {
+                            optionKind.equals(SCDOptionsEnum.INCLUDE) ||
+                            optionKind.equals(SCDOptionsEnum.INCLUDE_FILE) ||
+                            optionKind.equals(SCDOptionsEnum.IMACROS_FILE) ||
+                            optionKind.equals(SCDOptionsEnum.IDIRAFTER) ||
+                            optionKind.equals(SCDOptionsEnum.ISYSTEM) || 
+                            optionKind.equals(SCDOptionsEnum.IQUOTE) )) {
                         option = (getAbsolutePath(option)).toString();
                     }
-                    if (SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.IDIRAFTER)) {
+                    
+                    if (optionKind.equals(SCDOptionsEnum.IDIRAFTER)) {
                         KVStringPair pair = new KVStringPair(SCDOptionsEnum.INCLUDE.toString(), option);
                     	dirafter.add(pair);
                     }
-                    else if (SCDOptionsEnum.getSCDOptionsEnum(j).equals(SCDOptionsEnum.INCLUDE)) {
+                    else if (optionKind.equals(SCDOptionsEnum.INCLUDE)) {
                     	includes.add(option);
                     }
                     else { // add the pair
-                        KVStringPair pair = new KVStringPair(SCDOptionsEnum.getSCDOptionsEnum(j).toString(), option);
+                    	if (optionKind.equals(SCDOptionsEnum.DEFINE)) {
+                        	if (option.indexOf('=') == -1) {
+                        		option += '='+ fDefaultMacroDefinitionValue;
+                        	}
+                    	}
+                        KVStringPair pair = new KVStringPair(optionKind.toString(), option);
                     	command.addSCOption(pair);
                     }
                     break;
@@ -219,7 +228,13 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
         return command;
     }
 
-    /**
+    public void setDefaultMacroDefinitionValue(String val) {
+    	if (val != null) {
+    		fDefaultMacroDefinitionValue= val;
+    	}
+	}
+
+	/**
      * @param filePath : String
      * @return filePath : IPath - not <code>null</code>
      */

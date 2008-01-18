@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *    Markus Schorn - initial API and implementation
  *******************************************************************************/ 
-
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
 import junit.framework.Test;
@@ -214,6 +213,7 @@ public class CallHierarchyAcrossProjectsTest extends CallHierarchyBaseTest {
 		IFile sourceFile2= createFile(getProject(), "testMethods2.cpp", source2);
 
 		CEditor editor= openFile(sourceFile1);
+		waitForIndexer(fIndex, sourceFile1, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		waitForIndexer(fIndex, sourceFile2, CallHierarchyBaseTest.INDEXER_WAIT_TIME);
 		
 		editor.selectAndReveal(source1.indexOf("method3"), 2);

@@ -1,6 +1,5 @@
-package org.eclipse.cdt.make.builder.tests;
 /*******************************************************************************
- * Copyright (c) 2002, 2007 QNX Software Systems and others.
+ * Copyright (c) 2002, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +9,7 @@ package org.eclipse.cdt.make.builder.tests;
  *     QNX Software Systems - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *******************************************************************************/
+package org.eclipse.cdt.make.builder.tests;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

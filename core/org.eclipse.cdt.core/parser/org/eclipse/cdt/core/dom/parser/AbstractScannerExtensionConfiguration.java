@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,8 +44,8 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 		}
 	}
 
-	/*
-	 * @see org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration#initializeMacroValuesTo1()
+	/**
+	 * @deprecated see {@link IScannerExtensionConfiguration#initializeMacroValuesTo1()}
 	 */
 	public boolean initializeMacroValuesTo1() {
 		return false;

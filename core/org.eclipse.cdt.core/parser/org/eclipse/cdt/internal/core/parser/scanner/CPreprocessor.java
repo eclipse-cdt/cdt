@@ -276,19 +276,12 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			addMacroDefinition(macro.getSignature(), macro.getExpansion());
 		}
         
-        // macros provided on command-line (-D)
-        final boolean initEmptyMacros= config.initializeMacroValuesTo1();
         final Map<String, String> macroDict= info.getDefinedSymbols();
         if (macroDict != null) {
         	for (Map.Entry<String, String> entry : macroDict.entrySet()) {
 				final String key= entry.getKey();
 				final String value= entry.getValue().trim();
-				if (initEmptyMacros && value.length() == 0) {
-					addMacroDefinition(key.toCharArray(), ONE);
-				}
-				else {
-					addMacroDefinition(key.toCharArray(), value.toCharArray());
-                }
+				addMacroDefinition(key.toCharArray(), value.toCharArray());
             }
         }
         

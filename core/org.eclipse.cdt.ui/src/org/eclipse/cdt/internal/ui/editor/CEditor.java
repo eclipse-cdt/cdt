@@ -1182,7 +1182,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
 
-		fMarkOccurrenceAnnotations= store.getBoolean(PreferenceConstants.EDITOR_MARK_OCCURRENCES);
 		fStickyOccurrenceAnnotations= store.getBoolean(PreferenceConstants.EDITOR_STICKY_OCCURRENCES);
 	}
 
@@ -1939,6 +1938,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
         action.setActionDefinitionId(ICEditorActionDefinitionIds.TOGGLE_SOURCE_HEADER);
         setAction("ToggleSourceHeader", action); //$NON-NLS-1$
 
+        action = new TextOperationAction(CEditorMessages.getResourceBundle(), "OpenMacroExplorer.", this, CSourceViewer.SHOW_MACRO_EXPLORER, true); //$NON-NLS-1$
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_QUICK_MACRO_EXPLORER);
+        setAction("OpenMacroExplorer", action); //$NON-NLS-1$*/
+
         //Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fTextSearchGroup= new TextSearchGroup(this);
@@ -1985,6 +1988,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 
 			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenOutline"); //$NON-NLS-1$
 			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenHierarchy"); //$NON-NLS-1$
+			addAction(menu, IContextMenuConstants.GROUP_OPEN, "OpenMacroExplorer"); //$NON-NLS-1$
 			addAction(menu, IContextMenuConstants.GROUP_OPEN, "ToggleSourceHeader"); //$NON-NLS-1$
 		}
 
@@ -2078,8 +2082,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		if (sourceViewer instanceof ITextViewerExtension)
 			((ITextViewerExtension) sourceViewer).prependVerifyKeyListener(fBracketInserter);
 
-		if (isMarkingOccurrences())
-			installOccurrencesFinder(false);
 	}
 
 	/*
@@ -2642,6 +2644,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 			((ICReconcilingListener)listeners[i]).reconciled(ast, force, progressMonitor);
 		}
 
+		// delayed installation of mark occurrences
+		if (isMarkingOccurrences() && !fMarkOccurrenceAnnotations)
+			getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					installOccurrencesFinder(true);
+				}});
 	}
 
 	/**

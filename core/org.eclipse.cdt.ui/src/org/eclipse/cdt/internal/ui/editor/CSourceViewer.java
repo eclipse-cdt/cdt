@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,12 +52,17 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
     /** Show outline operation id. */
     public static final int SHOW_OUTLINE = 101;
+    /** Show type hierarchy operation id. */
     public static final int SHOW_HIERARCHY = 102;
+    /** Show macro explorer operation id. */
+    public static final int SHOW_MACRO_EXPLORER = 103;
     
     /** Presents outline. */
     private IInformationPresenter fOutlinePresenter;
     /** Presents type hierarchy. */
     private IInformationPresenter fHierarchyPresenter;
+    /** Presents macro explorer. */
+    private IInformationPresenter fMacroExplorationPresenter;
 
 	/**
 	 * This viewer's foreground color.
@@ -155,6 +160,10 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 			fHierarchyPresenter= cConfiguration.getHierarchyPresenter(this);
 			if (fHierarchyPresenter != null) 
 				fHierarchyPresenter.install(this);
+			fMacroExplorationPresenter= cConfiguration.getMacroExplorationPresenter(this);
+			if (fMacroExplorationPresenter != null) {
+				fMacroExplorationPresenter.install(this);
+			}
 		}
 		if (fPreferenceStore != null) {
 			fPreferenceStore.addPropertyChangeListener(this);
@@ -256,6 +265,10 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
         	fHierarchyPresenter.uninstall();  
         	fHierarchyPresenter= null;
         }
+        if (fMacroExplorationPresenter != null) {
+        	fMacroExplorationPresenter.uninstall();  
+        	fMacroExplorationPresenter= null;
+        }
 		if (fForegroundColor != null) {
 			fForegroundColor.dispose();
 			fForegroundColor= null;
@@ -337,6 +350,8 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
             case SHOW_HIERARCHY:
             	fHierarchyPresenter.showInformation();
             	return;
+            case SHOW_MACRO_EXPLORER:
+            	fMacroExplorationPresenter.showInformation();
 		}
 		super.doOperation(operation);
 	}
@@ -345,12 +360,14 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
      * @see org.eclipse.jface.text.source.projection.ProjectionViewer#canDoOperation(int)
      */
     public boolean canDoOperation(int operation) {
-        if (operation == SHOW_OUTLINE) {
+		switch (operation) {
+        case SHOW_OUTLINE:
             return fOutlinePresenter != null;
-        }
-        else if (operation == SHOW_HIERARCHY) {
+        case SHOW_HIERARCHY:
         	return fHierarchyPresenter != null;
-        }
+        case SHOW_MACRO_EXPLORER:
+        	return fMacroExplorationPresenter != null;
+		}
         return super.canDoOperation(operation);
     }
 

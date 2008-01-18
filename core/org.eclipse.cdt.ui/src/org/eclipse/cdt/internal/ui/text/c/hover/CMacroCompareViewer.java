@@ -51,20 +51,17 @@ class CMacroCompareViewer extends CMergeViewer {
 			fBefore= before;
 		}
 
-		public void setReplaceEdits(ReplaceEdit[] edits) {
-			int[] deltas= new int[edits.length];
-			if (fBefore) {
-				for (int i= 1; i < edits.length; i++) {
-					ReplaceEdit edit= edits[i-1];
-					deltas[i]= deltas[i-1] + (edit.getText().length() - edit.getLength());
-				}
-			}
+		public void setReplaceEdits(int prefixLength, ReplaceEdit[] edits) {
 			fStarts= new int[edits.length];
 			fLengths= new int[edits.length];
+			int delta= 0;
 			for (int i= 0; i < edits.length; i++) {
 				ReplaceEdit edit= edits[i];
-				fStarts[i]= edit.getOffset() + deltas[i];
+				fStarts[i]= prefixLength + edit.getOffset() + delta;
 				fLengths[i]= fBefore ? edit.getLength() : edit.getText().length();
+				if (!fBefore) {
+					delta += edit.getText().length() - edit.getLength();
+				}
 			}
 		}
 		
@@ -78,81 +75,6 @@ class CMacroCompareViewer extends CMergeViewer {
 		}
 
 	}
-
-//	private class MacroExpansionComparator implements ITokenComparator {
-//
-//		private final int[] fStarts;
-//		private final int[] fLengths;
-//		private int fCount;
-//
-//		public MacroExpansionComparator(String text, ReplaceEdit[] edits, boolean before) {
-//			int[] deltas= new int[edits.length];
-//			if (before) {
-//				for (int i= 1; i < edits.length; i++) {
-//					ReplaceEdit edit= edits[i-1];
-//					deltas[i]= deltas[i-1] + (edit.getText().length() - edit.getLength());
-//				}
-//			}
-//			fStarts= new int[edits.length * 2 + 1];
-//			fLengths= new int[edits.length * 2 + 1];
-//			int offset= 0;
-//			int i= 0;
-//			for (; i < edits.length; i++) {
-//				if (offset >= text.length()) {
-//					break;
-//				}
-//				fStarts[2*i]= offset;
-//				ReplaceEdit edit= edits[i];
-//				fLengths[2*i]= edit.getOffset() + deltas[i] - offset;
-//				fStarts[2*i+1]= edit.getOffset() + deltas[i];
-//				fLengths[2*i+1]= before ? edit.getLength() : edit.getText().length();
-//				offset= fStarts[2*i+1] + fLengths[2*i+1];
-//			}
-//			fCount= 2*i;
-//			
-//			if (offset < text.length()) {
-//				fStarts[fCount]= offset;
-//				fLengths[fCount]= text.length() - offset;
-//				fCount++;
-//			}
-//		}
-//
-//		/*
-//		 * @see org.eclipse.compare.contentmergeviewer.ITokenComparator#getTokenLength(int)
-//		 */
-//		public int getTokenLength(int index) {
-//			return fLengths[index];
-//		}
-//
-//		/*
-//		 * @see org.eclipse.compare.contentmergeviewer.ITokenComparator#getTokenStart(int)
-//		 */
-//		public int getTokenStart(int index) {
-//			return fStarts[index];
-//		}
-//
-//		/*
-//		 * @see org.eclipse.compare.rangedifferencer.IRangeComparator#getRangeCount()
-//		 */
-//		public int getRangeCount() {
-//			return fCount;
-//		}
-//
-//		/*
-//		 * @see org.eclipse.compare.rangedifferencer.IRangeComparator#rangesEqual(int, org.eclipse.compare.rangedifferencer.IRangeComparator, int)
-//		 */
-//		public boolean rangesEqual(int thisIndex, IRangeComparator other, int otherIndex) {
-//			return thisIndex == otherIndex && thisIndex % 2 == 0;
-//		}
-//
-//		/*
-//		 * @see org.eclipse.compare.rangedifferencer.IRangeComparator#skipRangeComparison(int, int, org.eclipse.compare.rangedifferencer.IRangeComparator)
-//		 */
-//		public boolean skipRangeComparison(int length, int maxLength, IRangeComparator other) {
-//			return false;
-//		}
-//
-//	}
 
 	/**
 	 * A dummy {@link ITokenComparator}.
@@ -175,16 +97,19 @@ class CMacroCompareViewer extends CMergeViewer {
 		}
 	}
 
-	TextViewer fLeftViewer;
-	TextViewer fRightViewer;
-	TextViewer fTopViewer;
+	private final ReplaceEditsHighlighter fLeftHighlighter;
+	private final ReplaceEditsHighlighter fRightHighlighter;
+	private Color fChangeBackground;
+
+	private TextViewer fLeftViewer;
+	private TextViewer fRightViewer;
+	private TextViewer fTopViewer;
 	
-	int fIndex;
+	private int fViewerIndex;
+
 	private CMacroExpansionInput fInput;
 	private int fStepIndex;
-	private ReplaceEditsHighlighter fLeftHighlighter;
-	private ReplaceEditsHighlighter fRightHighlighter;
-	private Color fChangeBackground;
+	private int fPrefixLength;
 	
 	public CMacroCompareViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(parent, styles, mp);
@@ -196,7 +121,7 @@ class CMacroCompareViewer extends CMergeViewer {
 		fChangeBackground= new Color(parent.getDisplay(), CHANGE_COLOR);
 		fLeftViewer.addTextPresentationListener(fLeftHighlighter= new ReplaceEditsHighlighter(fChangeBackground, true));
 		fRightViewer.addTextPresentationListener(fRightHighlighter= new ReplaceEditsHighlighter(fChangeBackground, false));
-		fIndex= 0;
+		fViewerIndex= 0;
 	}
 
 	/*
@@ -221,7 +146,7 @@ class CMacroCompareViewer extends CMergeViewer {
 		super.configureTextViewer(textViewer);
 		
 		// hack: gain access to text viewers
-		switch (fIndex++) {
+		switch (fViewerIndex++) {
 		case 0:
 			fTopViewer= textViewer;
 			break;
@@ -237,20 +162,17 @@ class CMacroCompareViewer extends CMergeViewer {
 	 * @see org.eclipse.compare.contentmergeviewer.TextMergeViewer#createTokenComparator(java.lang.String)
 	 */
 	protected ITokenComparator createTokenComparator(String line) {
-//		boolean before= fIndex++ % 2 != 0;
-//		final IMacroExpansionStep step;
-//		if (fStepIndex < fInput.fExplorer.getExpansionStepCount()) {
-//			step= fInput.fExplorer.getExpansionStep(fStepIndex);
-//		} else {
-//			before= !before;
-//			step= fInput.fExplorer.getFullExpansion();
-//		}
-//		return new MacroExpansionComparator(line, step.getReplacements(), before);
 		return new NullTokenComparator();
 	}
 
+	/**
+	 * Set the macro expansion input.
+	 * 
+	 * @param input
+	 */
 	public void setMacroExpansionInput(CMacroExpansionInput input) {
 		fInput= input;
+		fPrefixLength= fInput.getPrefix().length();
 	}
 
 	/*
@@ -261,25 +183,29 @@ class CMacroCompareViewer extends CMergeViewer {
 		fRightViewer.setRedraw(false);
 
 		final ReplaceEdit[] edits;
+		
 		try {
+			final IMacroExpansionStep step;
 			if (fStepIndex < fInput.fExplorer.getExpansionStepCount()) {
-				final IMacroExpansionStep step;
 				step= fInput.fExplorer.getExpansionStep(fStepIndex);
-				edits= step.getReplacements();
 			} else {
-				edits= new ReplaceEdit[0];
+				step= fInput.fExplorer.getFullExpansion();
 			}
-			fLeftHighlighter.setReplaceEdits(edits);
-			fRightHighlighter.setReplaceEdits(edits);
+			edits= step.getReplacements();
+
+			fLeftHighlighter.setReplaceEdits(fPrefixLength, edits);
+			fRightHighlighter.setReplaceEdits(fPrefixLength, edits);
 	
 			super.setInput(input);
+			
 		} finally {
 			fLeftViewer.setRedraw(true);
 			fRightViewer.setRedraw(true);
 		}
 		if (edits.length > 0) {
-			fLeftViewer.revealRange(edits[0].getOffset(), edits[0].getLength());
-			fRightViewer.revealRange(edits[0].getOffset(), edits[0].getText().length());
+			final int firstDiffOffset= fPrefixLength + edits[0].getOffset();
+			fLeftViewer.revealRange(firstDiffOffset, edits[0].getLength());
+			fRightViewer.revealRange(firstDiffOffset, edits[0].getText().length());
 		}
 	}
 

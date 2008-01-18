@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl;
 
 /**
- * Information control for macro expansion exploration.
+ * Information control for macro expansion.
  *
  * @since 5.0
  */

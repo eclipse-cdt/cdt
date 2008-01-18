@@ -110,6 +110,17 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		setMacroExpansionInput(input);
 	}
 
+	/**
+	 * Creates a new control for use as a "quick view" where the control immediately takes the focus.
+	 * 
+	 * @param parent  parent shell
+	 * @param shellStyle  shell style bits
+	 * @param textStyle  text viewer style bits
+	 */
+	public CMacroExpansionExplorationControl(Shell parent, int shellStyle, int textStyle) {
+		this(parent, shellStyle, textStyle, null);
+	}
+
 	/*
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractSourceViewerInformationControl#hasHeader()
 	 */
@@ -171,13 +182,13 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		int result= super.open();
 
 		if (fInput != null) {
-	        IHandler fBackwardHandler= new AbstractHandler() {
+	        IHandler backwardHandler= new AbstractHandler() {
 	            public Object execute(ExecutionEvent event) throws ExecutionException {
 	                backward();
 	                return null;
 	            }
 	        };
-	        IHandler fForwardHandler= new AbstractHandler() {
+	        IHandler forwardHandler= new AbstractHandler() {
 	            public Object execute(ExecutionEvent event) throws ExecutionException {
 	                forward();
 	                return null;
@@ -189,8 +200,8 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	        fContextService= (IContextService) workbench.getService(IContextService.class);
 	        fContextActivation= fContextService.activateContext(CONTEXT_ID_MACRO_EXPANSION_HOVER);
 	        fHandlerActivations= new ArrayList();
-	        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, fBackwardHandler));
-	        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_FORWARD, fForwardHandler));
+	        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, backwardHandler));
+	        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_FORWARD, forwardHandler));
 
 	        String infoText= getInfoText();
 	        if (infoText != null) {
@@ -202,8 +213,8 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	}
 
 	protected void forward() {
-		++fIndex;
-		if (fIndex > fInput.fExplorer.getExpansionStepCount()) {
+		fIndex= fixIndex(fIndex + 1);
+		if (fIndex > getStepCount()) {
 			fIndex= 0;
 		}
 		showExpansion();
@@ -212,7 +223,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	protected void backward() {
 		--fIndex;
 		if (fIndex < 0) {
-			fIndex = fInput.fExplorer.getExpansionStepCount();
+			fIndex= fixIndex(getStepCount());
 		}
 		showExpansion();
 	}
@@ -278,37 +289,45 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 */
 	private void setMacroExpansionInput(CMacroExpansionInput input) {
 		fInput= input;
-		fIndex= 0;
-		if (fMacroCompareViewer != null) {
-			fMacroCompareViewer.setMacroExpansionInput(fInput);
+		if (fInput != null) {
+			fIndex= fixIndex(input.fStartWithFullExpansion ? getStepCount() : 0);
+			showExpansion();
 		}
-		showExpansion();
+	}
+
+	private int fixIndex(int index) {
+		if (getStepCount() == 1 && index == 1) {
+			return 0;
+		}
+		return index;
+	}
+
+	private int getStepCount() {
+		return fInput.fExplorer.getExpansionStepCount();
 	}
 
 	private void showExpansion() {
-		final int idxLeft= fIndex;
-		final int idxRight= (fIndex + 1) % (fInput.fExplorer.getExpansionStepCount() + 1);
+		final int idxLeft= fIndex == getStepCount() ? 0 : fIndex;
+		final int idxRight= fIndex + 1;
 
 		CompareConfiguration config= getCompareConfiguration();
-		config.setAncestorLabel(getLabelForIndex(0));
 		config.setLeftLabel(getLabelForIndex(idxLeft));
 		config.setRightLabel(getLabelForIndex(idxRight));
 
-		final ITypedElement original= getContentForIndex(0);
-		final ITypedElement left= getContentForIndex(idxLeft);
-		final ITypedElement right= getContentForIndex(idxRight);
+		final ITypedElement left= getContentForIndex(fIndex, true);
+		final ITypedElement right= getContentForIndex(fIndex, false);
 		
 		setTitleText(CHoverMessages.CMacroExpansionControl_title_macroExpansion);
 		fMacroViewer.getDocument().set(getMacroText(fIndex));
-		setInput(createCompareInput(original, left, right));
+		setInput(createCompareInput(null, left, right));
 	}
 
 	private String getLabelForIndex(int index) {
 		if (index == 0) {
 			return CHoverMessages.CMacroExpansionControl_title_original;
-		} else if (index < fInput.fExplorer.getExpansionStepCount()) {
+		} else if (index < getStepCount()) {
 			return NLS.bind(CHoverMessages.CMacroExpansionControl_title_expansion, 
-					String.valueOf(index), String.valueOf(fInput.fExplorer.getExpansionStepCount()));
+					String.valueOf(index), String.valueOf(getStepCount()));
 		} else {
 			return CHoverMessages.CMacroExpansionControl_title_fullyExpanded;
 		}
@@ -318,12 +337,20 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		return d.findDifferences(false, new NullProgressMonitor(), null, original, left, right);
 	}
 
-	private ITypedElement getContentForIndex(int index) {
-		final String text;
-		if (index < fInput.fExplorer.getExpansionStepCount()) {
-			text= fInput.fExplorer.getExpansionStep(index).getCodeBeforeStep();
+	private ITypedElement getContentForIndex(int index, boolean before) {
+		final IMacroExpansionStep expansionStep;
+		if (index < getStepCount()) {
+			expansionStep= fInput.fExplorer.getExpansionStep(index);
 		} else {
-			text= fInput.fExplorer.getFullExpansion().getCodeAfterStep();
+			expansionStep= fInput.fExplorer.getFullExpansion();
+		}
+		final String text;
+		final String prefix = fInput.getPrefix();
+		final String postfix = fInput.getPostfix();
+		if (before) {
+			text= prefix + expansionStep.getCodeBeforeStep() + postfix;
+		} else {
+			text= prefix + expansionStep.getCodeAfterStep() + postfix;
 		}
 		final Document doc= new Document(text);
 		CUIPlugin.getDefault().getTextTools().setupCDocument(doc);
@@ -332,7 +359,8 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 
 	private String getMacroText(int index) {
 		final String text;
-		if (index < fInput.fExplorer.getExpansionStepCount()) {
+		final int count= getStepCount();
+		if (index < count) {
 			final IMacroExpansionStep expansionStep= fInput.fExplorer.getExpansionStep(index);
 			IMacroBinding binding= expansionStep.getExpandedMacro();
 			StringBuffer buffer= new StringBuffer();

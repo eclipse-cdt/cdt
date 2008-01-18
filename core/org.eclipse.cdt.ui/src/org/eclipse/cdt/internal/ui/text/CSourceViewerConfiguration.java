@@ -85,6 +85,8 @@ import org.eclipse.cdt.internal.ui.editor.CElementHyperlinkDetector;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
 import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
 import org.eclipse.cdt.internal.ui.text.c.hover.CInformationProvider;
+import org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionExplorationControl;
+import org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionInformationProvider;
 import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
 import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.correction.CCorrectionAssistant;
@@ -230,8 +232,8 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
     }
 
     /**
-     * Creates outline presenter. 
-     * @return Presenter with outline view.
+     * Creates type hierarchy presenter. 
+     * @return Presenter with type hierarchy view.
      */
     public IInformationPresenter getHierarchyPresenter(ISourceViewer sourceViewer) {
         final IInformationControlCreator hierarchyControlCreator = getHierarchyControlCreator();
@@ -833,4 +835,44 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 		fCodeScanner= null;
 		fPreprocessorScanner= null;
 	}
+
+	/**
+	 * Creates macro exploration presenter.
+	 * @param sourceViewer
+	 * @return Presenter with macro exploration view.
+	 * 
+	 * @since 5.0
+	 */
+	public IInformationPresenter getMacroExplorationPresenter(ISourceViewer sourceViewer) {
+        final IInformationControlCreator controlCreator= getMacroExplorationControlCreator();
+        final InformationPresenter presenter = new InformationPresenter(controlCreator);
+        presenter.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+		presenter.setAnchor(AbstractInformationControlManager.ANCHOR_GLOBAL);
+		final IInformationProvider provider = new CMacroExpansionInformationProvider(getEditor());
+        presenter.setInformationProvider(provider, IDocument.DEFAULT_CONTENT_TYPE);
+        presenter.setInformationProvider(provider, ICPartitions.C_MULTI_LINE_COMMENT);
+        presenter.setInformationProvider(provider, ICPartitions.C_SINGLE_LINE_COMMENT);
+        presenter.setInformationProvider(provider, ICPartitions.C_STRING);
+        presenter.setInformationProvider(provider, ICPartitions.C_CHARACTER);
+        presenter.setInformationProvider(provider, ICPartitions.C_PREPROCESSOR);
+        presenter.setSizeConstraints(50, 20, true, false);
+        return presenter;
+	}
+	
+	/**
+     * Creates control for macro exploration in editor.
+     * @return Control.
+     */
+    private IInformationControlCreator getMacroExplorationControlCreator() {
+        final IInformationControlCreator conrolCreator = new IInformationControlCreator() {
+            public IInformationControl createInformationControl(Shell parent) {
+                int shellStyle= SWT.RESIZE;
+                int textStyle= SWT.V_SCROLL | SWT.H_SCROLL;
+                return new CMacroExpansionExplorationControl(parent, shellStyle, textStyle);   
+            }
+        };
+        return conrolCreator;
+    }
+
+
 }

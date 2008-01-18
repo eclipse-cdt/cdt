@@ -12,7 +12,8 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * David McKnight   (IBM) [215847]SystemEncodingUtil needs to convert to unsigned when checking xml file
+ * 
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver;
@@ -116,12 +117,20 @@ public class SystemEncodingUtil {
 		if (encodingGuess == null) {
 			
 			stream = new FileInputStream(filePath);
-
-			byte[] temp = new byte[4];
+						
+			byte[] tempSigned = new byte[4];
 			
-			stream.read(temp);
+			stream.read(tempSigned);
 			
 			stream.close();
+			
+			
+			// convert to unsigned
+			int[] temp = new int[4];
+			for (int i = 0; i < 4; i++){
+				temp[i] = 0xFF & tempSigned[i];
+			}
+			
 			
 			// UTF-8, ISO 646, ASCII, some part of ISO 8859, Shift-JIS, EUC, or any other 7-bit,
 			// 8-bit, or mixed-width encoding which ensures that the characters of ASCII have their

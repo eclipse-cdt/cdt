@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
@@ -59,7 +60,16 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		try {
 			if (scope == null) {
 				// All CDT projects in workspace
-				projects = CoreModel.getDefault().getCModel().getCProjects();
+				ICProject[] allProjects = CoreModel.getDefault().getCModel().getCProjects();
+				
+				// Filter out closed projects for this case
+				for (int i = 0; i < allProjects.length; i++) {
+					if (!allProjects[i].isOpen()) { 
+						allProjects[i] = null;
+					}
+				}
+				
+				projects = (ICProject[]) ArrayUtil.removeNulls(ICProject.class, allProjects);
 			} else {
 				Map projectMap = new HashMap();
 				
@@ -131,6 +141,8 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 		PDOMSearchResult result= (PDOMSearchResult) getSearchResult();
 		result.removeAll();
 		
+		result.setIndexerBusy(!CCorePlugin.getIndexManager().isIndexerIdle());
+		
 		try {
 			IIndex index= CCorePlugin.getIndexManager().getIndex(projects, 0);
 			try {
@@ -150,4 +162,12 @@ public abstract class PDOMSearchQuery implements ISearchQuery {
 	}
 
 	abstract protected IStatus runWithIndex(IIndex index, IProgressMonitor monitor);
+
+	/**
+	 * Get the projects involved in the search.
+	 * @return array, never <code>null</code>
+	 */
+	public ICProject[] getProjects() {
+		return projects;
+	}
 }

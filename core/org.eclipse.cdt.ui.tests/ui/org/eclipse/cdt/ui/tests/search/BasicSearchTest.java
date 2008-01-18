@@ -9,6 +9,7 @@
  *    Andrew Ferguson (Symbian) - Initial implementation
  *    Markus Schorn (Wind River Systems)
  *    IBM Corporation
+ *    Ed Swartz (Nokia)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
@@ -21,6 +22,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -38,6 +40,7 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -114,24 +117,148 @@ public class BasicSearchTest extends BaseUITestCase {
 		StructuredViewer viewer= pdomsvp.getViewer();
 		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
 		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
-		
-		String label0= labpv.getText(scp.getElements(result)[0]);
-		String label1= labpv.getText(scp.getElements(result)[1]);
-		
-		// the content provider does not sort the result, so we have to do it:
-		if (label0.compareTo(label1) < 0) {
-			String h= label0; label0= label1; label1= h;
-		}
+
+		// project results are in a project node, containing directories and files
+		Object[] resultElements = scp.getElements(result);
+		String label0= labpv.getText(resultElements[0]);
+		// external results are in a tree, directory containing files
+		Object externalResult = resultElements[1];
+		String path1= labpv.getText(externalResult);
+		String file1= labpv.getText(scp.getElements(externalResult)[0]);
 		
 		// check the results are rendered
 		String expected0= fCProject.getProject().getName();
 		String expected1= new Path(externalFile.getAbsolutePath()).toString();
 		assertEquals(expected0,label0);
-		assertEquals(expected1,label1);
+		assertEquals(expected1,new Path(path1).append(file1).toString());
 	}
+
+	// int x, y, xx, yy;
 	
+	public void testNoIndexerEnabled_158955() throws Exception {
+		// rebuild the index with no indexer
+		CCorePlugin.getIndexManager().setIndexerId(fCProject, IIndexManager.ID_NO_INDEXER);
+		CCorePlugin.getIndexManager().reindex(fCProject);
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+		
+		// open a query
+		PDOMSearchQuery query= makeProjectQuery("x");
+		PDOMSearchResult result= runQuery(query);
+		assertEquals(0, result.getElements().length);
+		
+		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
+		ISearchResultPage page= vp.getActivePage();
+		assertTrue(""+page, page instanceof PDOMSearchViewPage);
+		
+		PDOMSearchViewPage pdomsvp= (PDOMSearchViewPage) page;
+		StructuredViewer viewer= pdomsvp.getViewer();
+		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
+		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
+
+		// first result is a project node
+		Object firstRootNode = scp.getElements(result)[0];
+		String label0= labpv.getText(firstRootNode);
+		// ... containing a status message
+		IStatus firstRootChildNode= (IStatus) scp.getElements(firstRootNode)[0];
+		
+		assertEquals(IStatus.WARNING, firstRootChildNode.getSeverity());
+		// can't really verify text in case message is localized...
+	}
+
+	final int INDEXER_IN_PROGRESS_FILE_COUNT = 10;
+	final int INDEXER_IN_PROGRESS_STRUCT_COUNT = 100;
+	
+	// #include "hugeHeader0.h"
+	
+	public void testIndexerInProgress() throws Exception {
+		// make an external file
+		File dir= CProjectHelper.freshDir();
+		
+		// make other project files so we can get incomplete results during indexing
+		for (int i = 1; i < 10; i++) {
+			TestSourceReader.createFile(fCProject.getProject(), new Path("references" + i + ".cpp"), 
+					"#include \"hugeHeader" + i + ".h\"\n");
+		}
+		
+		for (int f = 0; f < INDEXER_IN_PROGRESS_FILE_COUNT; f++) {
+			File externalFile= new File(dir, "hugeHeader" + f + ".h");
+			externalFile.deleteOnExit();
+			FileWriter fw= new FileWriter(externalFile);
+			for (int i = 0; i < INDEXER_IN_PROGRESS_STRUCT_COUNT; i++) {
+				fw.write("typedef struct confusingType_" + f + "_" + i + " {\n");
+				if (i == 0)
+					fw.write("   void *data" + i + ";\n");
+				else
+					fw.write("   myConfusingType_" + f + "_" + (i-1) +" *data" + i + ";\n");
+				fw.write("   int a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;\n");
+				fw.write("} myConfusingType_" + f + "_" + i + ";\n");
+			}
+			fw.close();
+		}
+		
+		// rebuild the index and DO NOT JOIN
+		TestScannerProvider.sIncludes= new String[] {dir.getAbsolutePath()};
+		CCorePlugin.getIndexManager().reindex(fCProject);
+
+		// immediate test, likely 0 matches
+		coreTestIndexerInProgress(false);
+		
+		// wait some amount of time to get non-zero and hopefully non-complete results
+		Thread.sleep(500);
+		if (!CCorePlugin.getIndexManager().isIndexerIdle())
+			coreTestIndexerInProgress(false);
+		
+		// now join and test again to get the full results
+		assertTrue(CCorePlugin.getIndexManager().joinIndexer(360000, new NullProgressMonitor()));
+
+		coreTestIndexerInProgress(true);
+	}
 	/**
-	 * Run the specified query, and return the result. When this method returns the
+	 * 
+	 */
+	private void coreTestIndexerInProgress(boolean expectComplete) {
+		// open a query
+		PDOMSearchQuery query= makeProjectQuery("data*");
+		PDOMSearchResult result= runQuery(query);
+		
+		final int maximumHits = INDEXER_IN_PROGRESS_FILE_COUNT * INDEXER_IN_PROGRESS_STRUCT_COUNT;
+		Object[] elements = result.getElements();
+		if (expectComplete)
+			assertEquals(maximumHits, elements.length);
+		else
+			assertTrue(maximumHits >= elements.length);	// >= because may still be done
+
+		ISearchResultViewPart vp= NewSearchUI.getSearchResultView();
+		ISearchResultPage page= vp.getActivePage();
+		assertTrue(""+page, page instanceof PDOMSearchViewPage);
+		
+		PDOMSearchViewPage pdomsvp= (PDOMSearchViewPage) page;
+		StructuredViewer viewer= pdomsvp.getViewer();
+		ILabelProvider labpv= (ILabelProvider) viewer.getLabelProvider();
+		IStructuredContentProvider scp= (IStructuredContentProvider) viewer.getContentProvider();
+
+		if (!expectComplete) {
+			// even if we don't think the indexer is complete, we can't be 100% sure
+			// the indexer didn't finish before the query started, so don't fail here
+			// if all the hits were found
+			if (elements.length < maximumHits) {
+				// first result is an IStatus indicating indexer was busy
+				IStatus firstRootNode = (IStatus) scp.getElements(result)[0];
+				
+				assertEquals(IStatus.WARNING, firstRootNode.getSeverity());
+				// can't really verify text in case message is localized...
+			}
+		} else {
+			// must NOT have the IStatus
+			Object firstRootNode = scp.getElements(result)[0];
+			
+			assertFalse(firstRootNode instanceof IStatus);
+		}
+		
+	}
+
+	/**
+	 * Run the specified query, and return the result. When tehis method returns the
 	 * search page will have been opened.
 	 * @param query
 	 * @return

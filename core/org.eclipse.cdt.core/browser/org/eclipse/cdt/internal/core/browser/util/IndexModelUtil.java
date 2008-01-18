@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -131,6 +132,9 @@ public class IndexModelUtil {
 		}
 		if (binding instanceof IVariable) {
 			elementType = ICElement.C_VARIABLE;
+		}
+		if (binding instanceof IEnumerator) {
+			elementType = ICElement.C_ENUMERATOR;
 		}
 		return elementType;
 	}

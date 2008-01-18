@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -25,8 +26,14 @@ public class PDOMSearchTreeLabelProvider extends PDOMSearchLabelProvider {
 	}
 	
 	public String getText(Object element) {
-		final String text= super.getText(element);
-		final int count= getMatchCount(element);
+		String text;
+		
+		if (element == IPDOMSearchContentProvider.URI_CONTAINER) {
+			text= CSearchMessages.getString("PDOMSearchTreeLabelProvider.URIContainerLabel"); //$NON-NLS-1$
+		} else {
+			text= super.getText(element);
+		}
+		int count= getMatchCount(element);
 		if (count == 0) {
 			return text;
 		}

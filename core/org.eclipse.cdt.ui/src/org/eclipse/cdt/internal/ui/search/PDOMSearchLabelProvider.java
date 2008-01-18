@@ -7,14 +7,20 @@
  *
  * Contributors:
  *    Markus Schorn - initial API and implementation
+ *    Ed Swartz (Nokia)
  *******************************************************************************/ 
 
 package org.eclipse.cdt.internal.ui.search;
 
+import java.net.URI;
+
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
@@ -25,7 +31,16 @@ import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 /**
+ * The content in the tree and list views may be either:
+ * <p>
+ * IStatus - warnings or errors from the search<br>
+ * ICElement - for C/C++ elements, including TUs, folders, projects<br>
+ * IPath - directory container, full path<br>
+ * 		IIndexFileLocation - for file entries inside IPath directory containers<br>
+ * {@link IPDOMSearchContentProvider#URI_CONTAINER} - container for URIs<br>
+ * 		URI - for IIndexFileLocations not resolvable to the local filesystem, under URI_CONTAINER<br>
  * @author Doug Schaefer
+ * @author Ed Swartz
  *
  */
 public class PDOMSearchLabelProvider extends LabelProvider {
@@ -44,8 +59,31 @@ public class PDOMSearchLabelProvider extends LabelProvider {
 		if (element instanceof PDOMSearchElement)
 			return fTypeInfoLabelProvider.getImage(((PDOMSearchElement)element).getTypeInfo());
 
-		if (element instanceof IIndexFileLocation) {
+		if (element instanceof IIndexFileLocation
+				|| element instanceof URI) {
 			return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDE);
+		}
+		
+		if (element == IPDOMSearchContentProvider.URI_CONTAINER) {
+			// TODO: perhaps a better icon?
+			return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_CONTAINER);
+		}
+
+		if (element instanceof IPath) {
+			return CPluginImages.get(CPluginImages.IMG_OBJS_INCLUDES_FOLDER);
+		}
+		
+		if (element instanceof IStatus) {
+			IStatus status = (IStatus) element;
+			ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+			switch (status.getSeverity()) {
+				case IStatus.WARNING:
+					return sharedImages.getImage(ISharedImages.IMG_OBJS_WARN_TSK);
+				case IStatus.ERROR:
+					return sharedImages.getImage(ISharedImages.IMG_OBJS_ERROR_TSK);
+				default:
+					return sharedImages.getImage(ISharedImages.IMG_OBJS_INFO_TSK);
+			}
 		}
 		
 		return fCElementLabelProvider.getImage(element);
@@ -56,11 +94,24 @@ public class PDOMSearchLabelProvider extends LabelProvider {
 			return fTypeInfoLabelProvider.getText(((PDOMSearchElement)element).getTypeInfo());
 		}
 		
+		if (element instanceof IPath) {
+			return ((IPath) element).toString();
+		}
+		
 		if (element instanceof IIndexFileLocation) {
 			IPath path= IndexLocationFactory.getPath((IIndexFileLocation)element); 
 			if(path!=null) {
-				return path.toString();
+				// these are categorized into directories already
+				return path.lastSegment();
 			}
+		}
+		
+		if (element instanceof URI) {
+			return ((URI)element).toString();
+		}
+		
+		if (element instanceof IStatus) {
+			return ((IStatus) element).getMessage();
 		}
 		
 		return fCElementLabelProvider.getText(element);

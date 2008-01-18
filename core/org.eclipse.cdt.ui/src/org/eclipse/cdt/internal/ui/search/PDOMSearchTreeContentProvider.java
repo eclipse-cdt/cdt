@@ -8,6 +8,7 @@
  * Contributors:
  * QNX - Initial API and implementation
  * Markus Schorn (Wind River Systems)
+ * Ed Swartz (Nokia)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.search;
@@ -45,7 +46,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	private TreeViewer viewer;
 	private PDOMSearchResult result;
 	private Map tree = new HashMap();
-	
+
 	public Object[] getChildren(Object parentElement) {
 		Set children = (Set)tree.get(parentElement);
 		if (children == null)
@@ -69,7 +70,7 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 	}
 
 	public Object[] getElements(Object inputElement) {
-		return getChildren(result);
+		return getChildren(inputElement);
 	}
 
 	public void dispose() {
@@ -117,8 +118,18 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 			}
 		} 
 		if (!handled) {
-			insertChild(element.getLocation(), element);
-			insertChild(result, element.getLocation());
+			// insert a folder and then the file under that
+			IPath path = IndexLocationFactory.getAbsolutePath(location);
+			if (path != null) {
+				IPath directory = path.removeLastSegments(1);
+				insertChild(location, element);
+				insertChild(directory, location);
+				insertChild(result, directory);
+			} else {
+				// URI not representable as a file
+				insertChild(IPDOMSearchContentProvider.URI_CONTAINER, location.getURI());
+				insertChild(result, IPDOMSearchContentProvider.URI_CONTAINER);
+			}
 		}
 	}
 	

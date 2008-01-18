@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
@@ -444,17 +443,17 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 */
 	private static final class CElementPosition extends Position implements IProjectionPosition {
 
-		private IMember fMember;
+		private ICElement fElement;
 
-		public CElementPosition(int offset, int length, IMember member) {
+		public CElementPosition(int offset, int length, ICElement element) {
 			super(offset, length);
-			Assert.isNotNull(member);
-			fMember= member;
+			Assert.isNotNull(element);
+			fElement= element;
 		}
 		
-		public void setMember(IMember member) {
+		public void setElement(ICElement member) {
 			Assert.isNotNull(member);
-			fMember= member;
+			fElement= member;
 		}
 		
 		/*
@@ -468,10 +467,11 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				 * lead to reentrant situations. Therefore, we optimistically
 				 * assume that the name range is correct, but double check the
 				 * received lines below. */
-				ISourceRange sourceRange= fMember.getSourceRange();
-				if (sourceRange != null)
-					nameStart= sourceRange.getIdStartPos();
-
+				if (fElement instanceof ISourceReference) {
+					ISourceRange sourceRange= ((ISourceReference) fElement).getSourceRange();
+					if (sourceRange != null)
+						nameStart= sourceRange.getIdStartPos();
+				}
 			} catch (CModelException e) {
 				// ignore and use default
 			}
@@ -521,9 +521,11 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			int nameStart= offset;
 			try {
 				// need a reconcile here?
-				ISourceRange sourceRange= fMember.getSourceRange();
-				if (sourceRange != null)
-					nameStart= sourceRange.getIdStartPos();
+				if (fElement instanceof ISourceReference) {
+					ISourceRange sourceRange= ((ISourceReference) fElement).getSourceRange();
+					if (sourceRange != null)
+						nameStart= sourceRange.getIdStartPos();
+				}
 			} catch (CModelException e) {
 				// ignore and use default
 			}
@@ -930,9 +932,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				Object element= match.annotation.getElement();
 				deleted.setElement(element);
 				deletedPosition.setLength(match.position.getLength());
-				if (deletedPosition instanceof CElementPosition && element instanceof IMember) {
-					CElementPosition jep= (CElementPosition) deletedPosition;
-					jep.setMember((IMember) element);
+				if (deletedPosition instanceof CElementPosition && element instanceof ICElement) {
+					CElementPosition cep= (CElementPosition) deletedPosition;
+					cep.setElement((ICElement) element);
 				}
 
 				deletionIterator.remove();
@@ -1333,7 +1335,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		if (regions.length > 0) {
 			IRegion normalized= alignRegion(regions[regions.length - 1], ctx, true);
 			if (normalized != null) {
-				Position position= element instanceof IMember ? createMemberPosition(normalized, (IMember) element) : createCommentPosition(normalized);
+				Position position= createElementPosition(normalized, element);
 				if (position != null) {
 					collapse= collapse && !position.includes(fCursorPosition);
 					ctx.addProjectionRange(new CProjectionAnnotation(collapse, element, false), position);
@@ -1384,16 +1386,16 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	}
 
 	/**
-	 * Creates a folding position that remembers its member from an
+	 * Creates a folding position that remembers its element from an
 	 * {@link #alignRegion(IRegion, DefaultCFoldingStructureProvider.FoldingStructureComputationContext, boolean) aligned}
 	 * region.
 	 * 
 	 * @param aligned an aligned region
-	 * @param member the member to remember
+	 * @param element the element to remember
 	 * @return a folding position corresponding to <code>aligned</code>
 	 */
-	protected final Position createMemberPosition(IRegion aligned, IMember member) {
-		return new CElementPosition(aligned.getOffset(), aligned.getLength(), member);
+	protected final Position createElementPosition(IRegion aligned, ICElement element) {
+		return new CElementPosition(aligned.getOffset(), aligned.getLength(), element);
 	}
 
 	/**

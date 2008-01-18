@@ -2713,8 +2713,11 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				generateCElementDeltasFromLanguageDelta(el, ld, list);
 			} else {
 				if(newRcDes.getType() == ICSettingBase.SETTING_FOLDER){
-					ICFolderDescription oldFoDes = oldRcDes.getType() == ICSettingBase.SETTING_FOLDER ?
-								(ICFolderDescription)oldRcDes : null;
+					ICFolderDescription oldFoDes = null;
+					if (oldRcDes != null) {
+						if (oldRcDes.getType() == ICSettingBase.SETTING_FOLDER)
+							oldFoDes = (ICFolderDescription)oldRcDes;
+					}
 					ICDescriptionDelta folderDelta = createDelta((ICFolderDescription)newRcDes, oldFoDes);
 					if(folderDelta != null){
 						ICDescriptionDelta children[] = folderDelta.getChildren();
@@ -3306,7 +3309,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			return null;
 		
 		ICResourceDescription rcDes = cfgDes.getResourceDescription(path, false);
-		if(!ignoreExcludeStatus && rcDes.isExcluded())
+		if(rcDes == null || (!ignoreExcludeStatus && rcDes.isExcluded()))
 			return null;
 		
 		if(rcDes.getType() == ICSettingBase.SETTING_FOLDER){

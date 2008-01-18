@@ -66,3 +66,11 @@ struct CppStruct {
 union CppUnion {
     int unionField;
 };
+
+// http://bugs.eclipse.org/214590
+int
+main(int argc,
+     char *argv[])
+{
+    return 0;
+}

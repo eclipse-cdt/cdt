@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,11 @@ import junit.framework.TestSuite;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.projection.IProjectionPosition;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 
 import org.eclipse.cdt.core.model.ICProject;
@@ -39,6 +41,20 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
  * Code folding tests.
  */
 public class FoldingTest extends TestCase {
+
+	private static class ProjectionPosition extends Position implements IProjectionPosition, IRegion {
+		private int fCaptionOffset;
+		ProjectionPosition(int offset, int length, int captionOffset) {
+			super(offset, length);
+			fCaptionOffset= captionOffset;
+		}
+		public int computeCaptionOffset(IDocument document) throws BadLocationException {
+			return fCaptionOffset;
+		}
+		public IRegion[] computeProjectionRegions(IDocument document) throws BadLocationException {
+			return new IRegion[] { this };
+		}
+	}
 
 	private static final String LINKED_FOLDER= "resources/folding";
 	private static final String PROJECT= "FoldingTest";
@@ -92,13 +108,24 @@ public class FoldingTest extends TestCase {
 		assertEquals(expected.length, actual.length);
 		IDocument document= fSourceViewer.getDocument();
 		for (int i= 0, n= expected.length; i < n; i++) {
-			int expectedStartLine= document.getLineOfOffset(expected[i].getOffset());
-			int expectedEndLine= document.getLineOfOffset(expected[i].getOffset()+expected[i].getLength());
-			int actualStartLine= document.getLineOfOffset(actual[i].getOffset());
-			int actualEndLine= document.getLineOfOffset(actual[i].getOffset()+expected[i].getLength());
-			assertEquals(expected[i].isDeleted(), actual[i].isDeleted());
+			final Position exp = expected[i];
+			int expectedStartLine= document.getLineOfOffset(exp.getOffset());
+			int expectedEndLine= document.getLineOfOffset(exp.getOffset()+exp.getLength());
+			final Position act = actual[i];
+			int actualStartLine= document.getLineOfOffset(act.getOffset());
+			int actualEndLine= document.getLineOfOffset(act.getOffset()+exp.getLength());
+			assertEquals(exp.isDeleted(), act.isDeleted());
 			assertEquals(expectedStartLine, actualStartLine);
 			assertEquals(expectedEndLine, actualEndLine);
+			if (exp instanceof IProjectionPosition) {
+				int expectedCaptionOffset= ((IProjectionPosition)exp).computeCaptionOffset(document);
+				if (act instanceof IProjectionPosition) {
+					int actualCaptionOffset= ((IProjectionPosition)act).computeCaptionOffset(document);
+					assertEquals(expectedCaptionOffset, actualCaptionOffset);
+				} else {
+					assertEquals(expectedCaptionOffset, 0);
+				}
+			}
 		}
 	}
 
@@ -107,6 +134,14 @@ public class FoldingTest extends TestCase {
 		int startOffset= document.getLineOffset(startLine);
 		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine);
 		return new Position(startOffset, endOffset - startOffset);
+	}
+
+	protected Position createPosition(int startLine, int endLine, int captionLine) throws BadLocationException {
+		IDocument document= fSourceViewer.getDocument();
+		int startOffset= document.getLineOffset(startLine);
+		int endOffset= document.getLineOffset(endLine) + document.getLineLength(endLine);
+		int captionOffset= document.getLineOffset(captionLine);
+		return new ProjectionPosition(startOffset, endOffset - startOffset, captionOffset - startOffset);
 	}
 
 	String toString(Position[] positions) throws BadLocationException {
@@ -165,8 +200,9 @@ public class FoldingTest extends TestCase {
 				createPosition(57, 59),
 				createPosition(61, 63),
 				createPosition(65, 67),
+				createPosition(70, 75, 71),
 		};
-		if (false) System.out.println(toString(actual));
+		if (true) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 	
@@ -188,8 +224,10 @@ public class FoldingTest extends TestCase {
 				createPosition(57, 59),
 				createPosition(61, 63),
 				createPosition(65, 67),
+				createPosition(70, 75, 71),
 		};
-		if (false) System.out.println(toString(actual));
+		if (true) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
 	}
+
 }

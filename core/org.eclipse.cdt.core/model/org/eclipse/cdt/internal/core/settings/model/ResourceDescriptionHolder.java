@@ -59,7 +59,7 @@ public class ResourceDescriptionHolder {
 			public boolean visit(PathSettingsContainer container) {
 				ICResourceDescription des = (ICResourceDescription)container.getValue();
 				if((container != fPathSettingContainer || fIncludeCurrent)
-						&& (kind & des.getType()) == des.getType()){
+						&& des != null && (kind & des.getType()) == des.getType()){
 					list.add(des);
 				}
 				return true;

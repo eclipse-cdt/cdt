@@ -35,7 +35,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterGroupDMData;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -154,8 +154,8 @@ public class SyncRegisterDataAccess {
     }
 
     public IBitFieldDMContext getBitFieldDMC(Object element) {
-        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+        if (element instanceof IDMVMContext) {
+            IDMContext dmc = ((IDMVMContext)element).getDMContext();
             return DMContexts.getAncestorOfType(dmc, IBitFieldDMContext.class);
         }
         return null;
@@ -410,24 +410,24 @@ public class SyncRegisterDataAccess {
     }
 
     public IRegisterGroupDMContext getRegisterGroupDMC(Object element) {
-        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+        if (element instanceof IDMVMContext) {
+            IDMContext dmc = ((IDMVMContext)element).getDMContext();
             return DMContexts.getAncestorOfType(dmc, IRegisterGroupDMContext.class);
         }
         return null;
     }
 
     public IRegisterDMContext getRegisterDMC(Object element) {
-        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+        if (element instanceof IDMVMContext) {
+            IDMContext dmc = ((IDMVMContext)element).getDMContext();
             return DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
         }
         return null;
     }
 
     public IFormattedDataDMContext getFormattedDMC(Object element) {
-        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext dmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+        if (element instanceof IDMVMContext) {
+            IDMContext dmc = ((IDMVMContext)element).getDMContext();
             IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(dmc, IRegisterDMContext.class);
             return DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
@@ -795,8 +795,8 @@ public class SyncRegisterDataAccess {
          * session is stale, then bail out.
          */
         IFormattedDataDMContext dmc = null;
-        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+        if (element instanceof IDMVMContext) {
+            IDMContext vmcdmc = ((IDMVMContext)element).getDMContext();
             IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
             dmc = DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
@@ -899,8 +899,8 @@ public class SyncRegisterDataAccess {
          * session is stale, then bail out.
          */
         IFormattedDataDMContext dmc = null;
-        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+        if (element instanceof IDMVMContext) {
+            IDMContext vmcdmc = ((IDMVMContext)element).getDMContext();
             IRegisterDMContext  regdmc = DMContexts.getAncestorOfType(vmcdmc, IRegisterDMContext.class);
             dmc = DMContexts.getAncestorOfType(regdmc, IFormattedDataDMContext.class);
         }
@@ -939,8 +939,8 @@ public class SyncRegisterDataAccess {
          * session is stale, then bail out.
          */
         IFormattedDataDMContext dmc = null;
-        if (element instanceof AbstractDMVMLayoutNode.DMVMContext) {
-            IDMContext vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)element).getDMC();
+        if (element instanceof IDMVMContext) {
+            IDMContext vmcdmc = ((IDMVMContext)element).getDMContext();
             IBitFieldDMContext  bitfielddmc = DMContexts.getAncestorOfType(vmcdmc, IBitFieldDMContext.class);
             dmc = DMContexts.getAncestorOfType(bitfielddmc, IFormattedDataDMContext.class);
         }

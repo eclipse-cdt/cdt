@@ -14,13 +14,16 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.concurrent.Immutable;
 
 /**
- * View Model element which is stored as the data object of nodes in the viewer.
+ * View model element which is stored as the data object of nodes in the viewer.  
+ * The implementation of this interface is usually a wrapper object for an object 
+ * from some data model, which is then used to correctly implement the 
+ * {@link #equals(Object)} and {@link #hashCode()} methods of this wrapper.
  */
 @Immutable
 public interface IVMContext extends IAdaptable {
     
     /**
-     * Returns the layout node that originated this element.
+     * Returns the view model node that originated this element.
      */
-    public IVMLayoutNode getLayoutNode();
+    public IVMNode getVMNode();
 }

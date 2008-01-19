@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.debug.service.IFormattedValues;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMAdapter;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode.DMVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -126,25 +123,6 @@ public class AbstractSetFormatStyle implements IViewActionDelegate, IDebugContex
                  *  Store the new style. So it will be picked up by the view when the view changes.
                  */
                 context.setProperty( IDebugVMConstants.CURRENT_FORMAT_STORAGE, getFormatStyle() );
-
-                /*
-                 *  Now go tell the view to update. We do so by finding the VM provider for this view
-                 *  and telling it to redraw the entire view.
-                 */
-                if (fViewInput instanceof IAdaptable) {
-                    IVMAdapter adapter = (IVMAdapter) ((IAdaptable)fViewInput).getAdapter(IVMAdapter.class);
-
-                    if ( adapter != null ) {
-                        IVMProvider provider = adapter.getVMProvider(context);
-
-                        if ( provider != null ) {
-                            /*
-                             *  "null" means redraw the entire view.
-                             */
-                            provider.refresh( null );
-                        }
-                    }
-                }
             }
         }
     }
@@ -169,7 +147,7 @@ public class AbstractSetFormatStyle implements IViewActionDelegate, IDebugContex
             
             Object element = ( (IStructuredSelection) selection ).getFirstElement();
             
-            if ( element instanceof DMVMContext ) { fViewInput = element; }
+            if (element instanceof IDMVMContext ) { fViewInput = element; }
             else {
                 /*
                  *  We deliberately do nothing here. A valid structured selection has already been
@@ -202,7 +180,7 @@ public class AbstractSetFormatStyle implements IViewActionDelegate, IDebugContex
             {
                 fAction.setEnabled(true);
             }
-            else if ( fViewInput instanceof DMVMContext ) 
+            else if ( fViewInput instanceof IDMVMContext ) 
             {
                 fAction.setEnabled(true);
             }

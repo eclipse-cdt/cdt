@@ -10,27 +10,36 @@
  *******************************************************************************/
 package org.eclipse.dd.dsf.debug.ui.viewmodel.register;
 
-import org.eclipse.dd.dsf.debug.ui.viewmodel.dm.AbstractDebugDMVMProviderWithCache;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.FormattedValuePreferenceStore;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.update.BreakpointHitUpdatePolicy;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.DMVMRootLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.RootDMVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
+import org.eclipse.dd.dsf.ui.viewmodel.update.IVMUpdatePolicy;
+import org.eclipse.dd.dsf.ui.viewmodel.update.ManualUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  *  Provides the VIEW MODEL for the DEBUG MODEL REGISTER view.
  */
 @SuppressWarnings("restriction")
-public class RegisterVMProvider extends AbstractDebugDMVMProviderWithCache
+public class RegisterVMProvider extends AbstractDMVMProvider
+    implements IPropertyChangeListener
 {
     /*
      *  Current default for register formatting.
      */
     public RegisterVMProvider(AbstractVMAdapter adapter, IPresentationContext context, DsfSession session) {
         super(adapter, context, session);
+
+        context.addPropertyChangeListener(this);
         
         /*
          *  Create the register data access routines.
@@ -40,30 +49,41 @@ public class RegisterVMProvider extends AbstractDebugDMVMProviderWithCache
         /*
          *  Create the top level node to deal with the root selection.
          */
-        IVMRootLayoutNode debugViewSelection = new DMVMRootLayoutNode(this);
+        IRootVMNode rootNode = new RootDMVMNode(this);
         
         /*
          *  Create the Group nodes next. They represent the first level shown in the view.
          */
-        IVMLayoutNode registerGroupNode = new RegisterGroupLayoutNode(this, getSession(), regAccess);
-        debugViewSelection.setChildNodes(new IVMLayoutNode[] { registerGroupNode });
+        IVMNode registerGroupNode = new RegisterGroupVMNode(this, getSession(), regAccess);
+        addChildNodes(rootNode, new IVMNode[] { registerGroupNode });
         
         /*
          * Create the next level which is the registers themselves.
          */
-        IVMLayoutNode registerNode = new RegisterLayoutNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), regAccess);
-        registerGroupNode.setChildNodes(new IVMLayoutNode[] { registerNode });
+        IVMNode registerNode = new RegisterVMNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), regAccess);
+        addChildNodes(registerGroupNode, new IVMNode[] { registerNode });
         
         /*
          * Create the next level which is the bitfield level.
          */
-        IVMLayoutNode bitFieldNode = new RegisterBitFieldLayoutNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), regAccess);
-        registerNode.setChildNodes(new IVMLayoutNode[] { bitFieldNode });
+        IVMNode bitFieldNode = new RegisterBitFieldVMNode(FormattedValuePreferenceStore.getDefault(), this, getSession(), regAccess);
+        addChildNodes(registerNode, new IVMNode[] { bitFieldNode });
         
         /*
          *  Now set this schema set as the layout set.
          */
-        setRootLayoutNode(debugViewSelection);
+        setRootNode(rootNode);
+    }
+
+    @Override
+    protected IVMUpdatePolicy[] createUpdateModes() {
+        return new IVMUpdatePolicy[] { new AutomaticUpdatePolicy(), new ManualUpdatePolicy(), new BreakpointHitUpdatePolicy() };
+    }
+    
+    @Override
+    public void dispose() {
+        getPresentationContext().removePropertyChangeListener(this);
+        super.dispose();
     }
 
     @Override
@@ -74,5 +94,9 @@ public class RegisterVMProvider extends AbstractDebugDMVMProviderWithCache
     @Override
     public String getColumnPresentationId(IPresentationContext context, Object element) {
         return RegisterColumnPresentation.ID;
+    }
+    
+    public void propertyChange(PropertyChangeEvent event) {
+        handleEvent(event);
     }
 }

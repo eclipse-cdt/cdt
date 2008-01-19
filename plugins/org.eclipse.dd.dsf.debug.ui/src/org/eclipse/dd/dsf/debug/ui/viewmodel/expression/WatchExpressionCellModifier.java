@@ -13,7 +13,7 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafeAndProhibitedFromDsfExecutor;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.IDebugVMConstants;
-import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.ExpressionManagerLayoutNode.NewExpressionVMC;
+import org.eclipse.dd.dsf.debug.ui.viewmodel.expression.ExpressionManagerVMNode.NewExpressionVMC;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IWatchExpression;
@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.ICellModifier;
 /**
  * 
  */
-@SuppressWarnings("restriction")
 @ThreadSafeAndProhibitedFromDsfExecutor("")
 public class WatchExpressionCellModifier implements ICellModifier {
 

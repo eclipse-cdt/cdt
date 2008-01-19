@@ -25,7 +25,6 @@ Export-Package:
  org.eclipse.dd.dsf.debug.ui.actions,
  org.eclipse.dd.dsf.debug.ui.sourcelookup,
  org.eclipse.dd.dsf.debug.ui.viewmodel,
- org.eclipse.dd.dsf.debug.ui.viewmodel.dm,
  org.eclipse.dd.dsf.debug.ui.viewmodel.expression,
  org.eclipse.dd.dsf.debug.ui.viewmodel.launch,
  org.eclipse.dd.dsf.debug.ui.viewmodel.modules,

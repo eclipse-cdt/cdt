@@ -38,7 +38,7 @@ import org.eclipse.dd.dsf.debug.service.IRegisters.IBitFieldDMContext;
 import org.eclipse.dd.dsf.debug.service.IRegisters.IRegisterDMContext;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode.DMVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;
@@ -53,6 +53,7 @@ import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneMaxLeng
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneWordWrapAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.variables.IndexedValuePartition;
+import org.eclipse.debug.internal.ui.views.variables.StatusLineContributionItem;
 import org.eclipse.debug.internal.ui.views.variables.details.DetailMessages;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -65,7 +66,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -315,7 +315,7 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                 /*
                  *  Make sure this is an element we want to deal with.
                  */
-                if ( element instanceof DMVMContext) {
+                if (element instanceof IDMVMContext) {
                     IFormattedValues service = null;
                     IFormattedDataDMContext dmc = null ;
                     
@@ -341,23 +341,23 @@ public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropert
                      *  register not the bit field.
                      */
                     
-                    DsfServicesTracker tracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), ((DMVMContext) element).getDMC().getSessionId());
+                    DsfServicesTracker tracker = new DsfServicesTracker(DsfDebugUIPlugin.getBundleContext(), ((IDMVMContext) element).getDMContext().getSessionId());
                     
-                    IBitFieldDMContext bitfieldDmc = DMContexts.getAncestorOfType(((DMVMContext) element).getDMC(), IBitFieldDMContext.class);
+                    IBitFieldDMContext bitfieldDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IBitFieldDMContext.class);
 
                     if ( bitfieldDmc != null ) {
                         dmc = bitfieldDmc ;
                         service = tracker.getService(IRegisters.class); 
                     }
                     else {
-                        IRegisterDMContext regDmc = DMContexts.getAncestorOfType(((DMVMContext) element).getDMC(), IRegisterDMContext.class);
+                        IRegisterDMContext regDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IRegisterDMContext.class);
 
                         if ( regDmc != null ) {
                             dmc = regDmc ;
                             service = tracker.getService(IRegisters.class); 
                         }
                         else {
-                            IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(((DMVMContext) element).getDMC(), IExpressionDMContext.class);
+                            IExpressionDMContext exprDmc = DMContexts.getAncestorOfType(((IDMVMContext) element).getDMContext(), IExpressionDMContext.class);
 
                             if ( exprDmc != null ) {
                                 dmc = exprDmc ;

@@ -61,7 +61,7 @@ public class DsfExecutable {
      * Flag indicating whether this executable was ever executed by an 
      * executor.  Used for tracing only.
      */
-    private boolean fSubmitted = false;
+    private volatile boolean fSubmitted = false;
     
     @SuppressWarnings("unchecked")
     public DsfExecutable() {
@@ -96,7 +96,7 @@ public class DsfExecutable {
         }
     }        
     
-    boolean getSubmitted() {
+    public boolean getSubmitted() {
         return fSubmitted;
     }
     
@@ -104,7 +104,7 @@ public class DsfExecutable {
      * Marks this executable to indicate that it has been executed by the 
      * executor.  To be invoked only by DsfExecutor.
      */
-    void setSubmitted() {
+    public void setSubmitted() {
         fSubmitted = true;
     }
     

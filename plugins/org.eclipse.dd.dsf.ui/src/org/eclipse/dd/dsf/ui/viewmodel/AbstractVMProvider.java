@@ -12,74 +12,108 @@ package org.eclipse.dd.dsf.ui.viewmodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.dd.dsf.concurrent.ConfinedToDsfExecutor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
-import org.eclipse.dd.dsf.concurrent.MultiRequestMonitor;
-import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.IDsfService;
-import org.eclipse.dd.dsf.ui.DsfUIPlugin;
+import org.eclipse.dd.dsf.ui.concurrent.DisplayDsfExecutor;
+import org.eclipse.dd.dsf.ui.concurrent.ViewerDataRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * View model provider implements the asynchronous view model functionality for 
  * a single view.  This provider is just a holder which further delegates the
- * model provider functionality to the view model layout nodes that need
+ * model provider functionality to the view model nodes that need
  * to be configured with each provider.
- * <p>
+ * 
+ * <p/>
  * The view model provider, often does not provide the model for the entire 
  * view.  Rather, it needs to be able to plug in at any level in the viewer's
  * content model and provide data for a sub-tree.
  * 
+ * <p/>
+ * Clients are intended to extend this class.
+ * 
  * @see IAsynchronousContentAdapter
  * @see IAsynchronousLabelAdapter
  * @see IModelProxy
- * @see IVMLayoutNode
+ * @see IVMNode
  */
-@ConfinedToDsfExecutor("getVMAdapter#getExecutor")
 @SuppressWarnings("restriction")
 abstract public class AbstractVMProvider implements IVMProvider
 {
+    
     /** Reference to the VM adapter that owns this provider */
     private final AbstractVMAdapter fVMAdapter;
     
     /** The presentation context that this provider is associated with */
     private final IPresentationContext fPresentationContext;
-    
-    /** 
-     * The current root element of this view model.  This element is obtained
-     * from the argument to {@link #createModelProxy(Object, IPresentationContext)}.
-     */ 
-    private Object fRootElement;
+
+    /**
+     * The executor that this VM provider operates in.  This executor will be 
+     * initialized properly when we can access the display from the 
+     * IPresentationContext object (bug 213629).  For now utilize the 
+     * assumption that there is only one display. 
+     */
+    private final DsfExecutor fExecutor = DisplayDsfExecutor.getDisplayDsfExecutor(Display.getDefault());
+
+    /**
+     * The element content provider implementation that this provider delegates to.
+     * Sub-classes may override the content strategy used for custom functionality.   
+     */
+    private final IElementContentProvider fContentStrategy;
     
     /**
-     * 
+     * The list of active model proxies in this provider.  A new model
+     * proxy is created when a viewer has a new input element 
+     * (see {@link #createModelProxy(Object, IPresentationContext)}).  
+     * Typically there will be only one active model proxy in a given
+     * provider.  However, if a view model provider fills only a sub-tree
+     * in a viewer, and there are several sub-trees active in the same viewer
+     * at the same time, each of these sub-trees will have it's own model 
+     * proxy.
      */
-    private ModelProxy fModelProxy = new ModelProxy();
+    private List<IVMModelProxy> fActiveModelProxies = new LinkedList<IVMModelProxy>();
+
+    /**
+     * Convencience constant.
+     */
+    private static final IVMNode[] EMPTY_NODES_ARRAY = new IVMNode[0];
+    
+    
+    /**
+     * The mapping of parent to child nodes.  
+     */
+    private Map<IVMNode,IVMNode[]> fChildNodesMap = 
+        new HashMap<IVMNode,IVMNode[]>();
+        
+    /** 
+     * Cached array of all the configued view model nodes.  It is generated 
+     * based on the child nodes map.
+     */
+    private IVMNode[] fNodesListCache = null;
+
+    /**
+     * Flag indicating that the provider is disposed.
+     */
     private boolean fDisposed = false;
 
     /**
@@ -87,7 +121,7 @@ abstract public class AbstractVMProvider implements IVMProvider
      * null when first created, to allow sub-classes to prorperly configure the 
      * root node in the sub-class constructor.  
      */
-    private AtomicReference<IVMRootLayoutNode> fRootLayoutNodeRef = new AtomicReference<IVMRootLayoutNode>();
+    private IRootVMNode fRootNode;
     
     /**
      * Constructs the view model provider for given DSF session.  The 
@@ -98,6 +132,7 @@ abstract public class AbstractVMProvider implements IVMProvider
     public AbstractVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext) {
         fVMAdapter = adapter;
         fPresentationContext = presentationContext;
+        fContentStrategy = createContentStrategy();
     }    
 
     public IPresentationContext getPresentationContext() {
@@ -109,345 +144,321 @@ abstract public class AbstractVMProvider implements IVMProvider
     }
 
     /**
-     * Sets the root node for this provider.  
+     * Creates the strategy class that will be used to implement the content 
+     * provider interface of this view model provider.  This method can be 
+     * overridden by sub-classes to provider custom content provider strategy.
+     * <p/>
+     * Note this method can be called by the base class constructor, therefore 
+     * it should not reference any fields initialized in the sub-class.
+     * 
+     * @return New content provider implementation.
      */
-    @ThreadSafe
-    protected void setRootLayoutNode(IVMRootLayoutNode rootLayoutNode) {
-        final IVMRootLayoutNode oldRootLayoutNode = fRootLayoutNodeRef.getAndSet(rootLayoutNode); 
-        if (oldRootLayoutNode != null) {
-            oldRootLayoutNode.dispose();
+    protected IElementContentProvider createContentStrategy() {
+        return new DefaultVMContentProviderStrategy(this);
+    }
+
+    /**
+     * Access method for the content provider strategy.
+     * 
+     * @return Content provider implementation currently being used by this 
+     * class.
+     */
+    protected IElementContentProvider getContentStrategy() {
+        return fContentStrategy;
+    }
+    
+    /**
+     * Creates the strategy class that will be used to implement the content 
+     * model proxy of this view model provider.  It is normally called by 
+     * {@link #createModelProxy(Object, IPresentationContext)} every time the 
+     * input in the viewer is updated. This method can be overridden by 
+     * sub-classes to provider custom model proxy strategy.
+     * 
+     * @return New model proxy implementation.
+     */
+    protected IVMModelProxy createModelProxyStrategy(Object rootElement) {
+        return new DefaultVMModelProxyStrategy(this, rootElement);
+    }
+    
+    /**
+     * Returns the list of active proxies in this provider.  The returned
+     * list is not a copy and if a sub-class modifies this list, it will
+     * modify the current list of active proxies.  This allows the 
+     * sub-classes to change how the active proxies are managed and 
+     * retained.  
+     */
+    protected List<IVMModelProxy> getActiveModelProxies() {
+        return fActiveModelProxies;
+    }
+    
+    /**
+     * Processes the given event in the given provider, sending model 
+     * deltas if necessary.
+     */
+    public void handleEvent(final Object event) {
+        for (final IVMModelProxy proxyStrategy : getActiveModelProxies()) {
+            if (proxyStrategy.isDeltaEvent(event)) {
+                proxyStrategy.createDelta(
+                    event, 
+                    new DataRequestMonitor<IModelDelta>(getExecutor(), null) {
+                        @Override
+                        public void handleCompleted() {
+                            if (getStatus().isOK()) {
+                                proxyStrategy.fireModelChanged(getData());
+                            }
+                        }
+                        @Override public String toString() {
+                            return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                        }   
+                    });
+            }
         }
     }
-    
-    @ThreadSafe
-    protected synchronized ModelProxy getModelProxy() {
-        return fModelProxy;
+
+
+    public IRootVMNode getRootVMNode() {
+        return fRootNode;
+    }
+
+    public IVMNode[] getAllVMNodes() {
+        if (fNodesListCache != null) {
+            return fNodesListCache;
+        }
+        List<IVMNode> list = new ArrayList<IVMNode>();
+        for (IVMNode node : fChildNodesMap.keySet()) {
+            if (node != null) {
+                list.add(node);
+            }
+        }
+        fNodesListCache = list.toArray(new IVMNode[list.size()]);; 
+        return fNodesListCache; 
+    }
+        
+    public IVMNode[] getChildVMNodes(IVMNode node) {
+        IVMNode[] retVal = fChildNodesMap.get(node);
+        if (retVal != null) {
+            return retVal;
+        }
+        return EMPTY_NODES_ARRAY;
+    }    
+
+    /**
+     * Configures the given array of nodes as children of the given parent node.
+     * Sub-classes should call this method to define the hierarchy of nodes.
+     */
+    protected void addChildNodes(IVMNode parentNode, IVMNode[] childNodes) {
+        // Add to the child nodes array.
+        IVMNode[] existingChildNodes = fChildNodesMap.get(parentNode);
+        if (existingChildNodes == null) {
+            fChildNodesMap.put(parentNode, childNodes);
+        } else {
+            IVMNode[] newNodes = new IVMNode[existingChildNodes.length + childNodes.length];
+            System.arraycopy(existingChildNodes, 0, newNodes, 0, existingChildNodes.length);
+            System.arraycopy(childNodes, 0, newNodes, existingChildNodes.length, childNodes.length);
+            fChildNodesMap.put(parentNode, newNodes);
+        }
+        
+        // Make sure that each new expression node has an entry of its own.
+        for (IVMNode childNode : childNodes) {
+            addNode(childNode);
+        }
+        
+        fNodesListCache = null;
     }
     
-    @ThreadSafe
-    public synchronized Object getRootElement() {
-        return fRootElement;
+    /**
+     * Adds the given node to configured nodes, without creating any 
+     * parent-child relationship for it.  It is useful for providers which do have 
+     * a strict tree hierarchy of ndoes.
+     */
+    protected void addNode(IVMNode node) {
+        if (!fChildNodesMap.containsKey(node)) {
+            fChildNodesMap.put(node, EMPTY_NODES_ARRAY);
+        }
     }
-    
-    @ThreadSafe
-    public IVMRootLayoutNode getRootLayoutNode() {
-        return fRootLayoutNodeRef.get();
+
+    /**
+     * Clears all configured nodes.  This allows a subclass to reset and 
+     * reconfigure its nodes.
+     */
+    protected void clearNodes() {
+        for (IVMNode node : fChildNodesMap.keySet()) {
+            node.dispose();
+        }
+        fChildNodesMap.clear();
+        fRootNode = null;
+    }
+
+    /**
+     * Sets the root node for this provider.  
+     */
+    protected void setRootNode(IRootVMNode rootNode) {
+        fRootNode = rootNode;
     }
     
     /** Called to dispose the provider. */ 
     public void dispose() {
-        fDisposed = true;
-        if (fRootLayoutNodeRef.get() != null) {
-            fRootLayoutNodeRef.get().dispose();
-        }
+        clearNodes();
+        fRootNode = null;
+    }
+    
+    public void update(final IHasChildrenUpdate[] updates) {
+        fContentStrategy.update(updates);
+    }
+    
+    public void update(final IChildrenCountUpdate[] updates) {
+        fContentStrategy.update(updates);
+    }
+    
+    public void update(final IChildrenUpdate[] updates) {
+        fContentStrategy.update(updates);
     }
     
     /**
-     * Allows other subsystems to force the layout mode associated with the specified
-     * VM context to refresh. If null is passed then the RootLayoutNode is told to refresh.
+     * Calls the given view model node to perform the given updates.  This 
+     * method is called by view model provider and it's helper classes instead
+     * of calling the IVMNode method directly, in order to allow additional
+     * processing of the udpate.  For example the AbstractCachingVMProvider 
+     * overrides this method to optionally return the results for an update from
+     * a cache. 
      */
-    public void refresh(final IVMContext element) {
-        try {
-            getExecutor().execute(new Runnable() {
-                public void run() {
-                    if (isDisposed()) return;
+    protected void updateNode(final IVMNode node, IHasChildrenUpdate[] updates) {
+        IHasChildrenUpdate[] updateProxies = new IHasChildrenUpdate[updates.length];
+        for (int i = 0; i < updates.length; i++) {
+            final IHasChildrenUpdate update = updates[i];
+            updateProxies[i] = new VMHasChildrenUpdate(
+                update,
+                new ViewerDataRequestMonitor<Boolean>(getExecutor(), updates[i]) {
+                    @Override
+                    protected void handleOK() {
+                        update.setHasChilren(getData());
+                        update.done();
+                    }
                     
-                    if ( element == null ) {
-                        VMDelta rootDelta = new VMDelta(getRootElement(), IModelDelta.CONTENT);
-                        getModelProxy().fireModelChangedNonDispatch(rootDelta);
+                    @Override
+                    protected void handleError() {
+                        if (getStatus().getCode() == IDsfService.NOT_SUPPORTED) {
+                            updateNode(
+                                node, 
+                                new VMChildrenUpdate[] { new VMChildrenUpdate(
+                                    update, -1, -1, 
+                                    new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update) {
+                                        @Override
+                                        protected void handleOK() {
+                                            update.setHasChilren( !getData().isEmpty() );
+                                            update.done();
+                                        }
+                                    })
+                                });
+                                    
+                        } else {
+                            update.setStatus(getStatus());
+                            update.done();
+                        }
                     }
-                    else {
-                        VMDelta elementDelta = new VMDelta(element, IModelDelta.CONTENT);
-                        getModelProxy().fireModelChangedNonDispatch(elementDelta);
-                    }
-    
-                }});
-        } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
-            // shut down.  
+                    
+                });
         }
-        return;
+        node.update(updateProxies);
     }
 
+    /**
+     * Calls the given view model node to perform the given updates.  This 
+     * method is called by view model provider and it's helper classes instead
+     * of calling the IVMNode method directly, in order to allow additional
+     * processing of the udpate.  For example the AbstractCachingVMProvider 
+     * overrides this method to optionally return the results for an update from
+     * a cache. 
+     */
+    protected void updateNode(final IVMNode node, IChildrenCountUpdate[] updates) {
+        IChildrenCountUpdate[] updateProxies = new IChildrenCountUpdate[updates.length];
+        for (int i = 0; i < updates.length; i++) {
+            final IChildrenCountUpdate update = updates[i];
+            updateProxies[i] = new VMChildrenCountUpdate(
+                update,
+                new ViewerDataRequestMonitor<Integer>(getExecutor(), updates[i]) {
+                    @Override
+                    protected void handleOK() {
+                        update.setChildCount(getData());
+                        update.done();
+                    }
+                    
+                    @Override
+                    protected void handleError() {
+                        if (getStatus().getCode() == IDsfService.NOT_SUPPORTED) {
+                            updateNode(
+                                node, 
+                                new VMChildrenUpdate[] { new VMChildrenUpdate(
+                                    update, -1, -1, 
+                                    new ViewerDataRequestMonitor<List<Object>>(getExecutor(), update) {
+                                        @Override
+                                        protected void handleOK() {
+                                            update.setChildCount( getData().size() );
+                                            update.done();
+                                        }
+                                    })
+                                });
+                                    
+                        }
+                    }
+                    
+                });
+        }
+        node.update(updateProxies);
+    }
+
+    /**
+     * Calls the given view model node to perform the given updates.  This 
+     * method is called by view model provider and it's helper classes instead
+     * of calling the IVMNode method directly, in order to allow additional
+     * processing of the udpate.  For example the AbstractCachingVMProvider 
+     * overrides this method to optionally return the results for an update from
+     * a cache. 
+     */
+    protected void updateNode(IVMNode node, IChildrenUpdate[] updates) {
+        node.update(updates);
+    }
+
+    
+    /**
+     * Returns whether this provider has been disposed.
+     */
     protected boolean isDisposed() {
         return fDisposed;
     }
-    
+
     /**
-     * Convenience method to access the View Model's executor.
+     * The abstract provider uses a the display-thread executor so that the 
+     * provider will operate on the same thread as the viewer.  This way no 
+     * synchronization is necessary when the provider is called by the viewer.
+     * Also, the display thread is likely to be shut down long after any of the 
+     * view models are disposed, so the users of this abstract provider do not 
+     * need to worry about the executor throwing the {@link RejectedExecutionException}
+     * exception. 
      */
-    public DsfExecutor getExecutor() { return fVMAdapter.getExecutor(); }
-    
-
-    public void update(IHasChildrenUpdate[] updates) {
-        // Sort the updates by the layout node.
-        Map<IVMLayoutNode,List<IHasChildrenUpdate>> nodeUpdatesMap = new HashMap<IVMLayoutNode,List<IHasChildrenUpdate>>();
-        for (IHasChildrenUpdate update : updates) {
-            // Get the VM Context for last element in path.  
-            IVMLayoutNode layoutNode = getLayoutNodeForElement(update.getElement());
-            if (layoutNode == null) {
-                // Stale update, most likely as a result of the layout nodes being
-                // changed.  Just ignore it.
-                update.done();
-                continue;
-            }        
-            if (!nodeUpdatesMap.containsKey(layoutNode)) {
-                nodeUpdatesMap.put(layoutNode, new ArrayList<IHasChildrenUpdate>());
-            }
-            nodeUpdatesMap.get(layoutNode).add(update);
-        }
-        
-        // Iterate through the nodes in the sorted map.
-        for (IVMLayoutNode node :  nodeUpdatesMap.keySet()) {
-            updateNode(node, nodeUpdatesMap.get(node).toArray(new IHasChildrenUpdate[nodeUpdatesMap.get(node).size()])); 
-        }
-    }
-
-    private void updateNode(IVMLayoutNode node, final IHasChildrenUpdate[] updates) {
-        // If parent element's layout node has no children, just set the 
-        // result and coninue to next element.
-        if (node.getChildLayoutNodes().length == 0) {
-            for (IHasChildrenUpdate update : updates) {
-                update.setHasChilren(false);
-                update.done();
-            }
-            return;
-        }
-
-        // Create a matrix of element updates:  
-        // The first dimension "i" is the list of children updates that came from the viewer.  
-        // For each of these updates, there are "j" number of elment updates corresponding
-        // to the number of child layout nodes in this node.  
-        // Each children update from the viewer is complete when all the child layout nodes
-        // fill in their elements update.
-        // Once the matrix is constructed, the child layout nodes are given the list of updates
-        // equal to the updates requested by the viewer.
-        VMHasElementsUpdate[][] elementsUpdates = 
-            new VMHasElementsUpdate[node.getChildLayoutNodes().length][updates.length];
-        for (int i = 0; i < updates.length; i ++) 
-        {
-            final IHasChildrenUpdate update = updates[i];
-            
-            final MultiRequestMonitor<DataRequestMonitor<Boolean>> hasChildrenMultiRequestMon = 
-                new MultiRequestMonitor<DataRequestMonitor<Boolean>>(getExecutor(), null) { 
-                    @Override
-                    protected void handleCompleted() {
-                        // Status is OK, only if all request monitors are OK. 
-                        if (getStatus().isOK()) { 
-                            boolean isContainer = false;
-                            for (DataRequestMonitor<Boolean> hasElementsDone : getRequestMonitors()) {
-                                isContainer |= hasElementsDone.getStatus().isOK() &&
-                                               hasElementsDone.getData().booleanValue();
-                            }
-                            update.setHasChilren(isContainer);
-                        } else {
-                            update.setStatus(getStatus());
-                        }
-                        update.done();
-                    }
-                };
-
-            for (int j = 0; j < node.getChildLayoutNodes().length; j++) 
-            {
-                elementsUpdates[j][i] = new VMHasElementsUpdate(
-                    update,
-                    hasChildrenMultiRequestMon.add(
-                        new DataRequestMonitor<Boolean>(getExecutor(), null) {
-                            @Override
-                            protected void handleCompleted() {
-                                hasChildrenMultiRequestMon.requestMonitorDone(this);
-                            }
-                        }));
-            }
-        }
-            
-        for (int j = 0; j < node.getChildLayoutNodes().length; j++) {
-            node.getChildLayoutNodes()[j].updateHasElements(elementsUpdates[j]);
-        }
+    public DsfExecutor getExecutor() { 
+        return fExecutor; 
     }
     
-
-    public void update(final IChildrenCountUpdate[] updates) {
-        for (final IChildrenCountUpdate update : updates) {
-            if (update.isCanceled()) {
-                update.done();
-                continue;
-            }
-
-            getChildrenCountsForNode(
-                update, 
-                new DataRequestMonitor<Integer[]>(getExecutor(), null) {
-                    @Override
-                    protected void handleCompleted() {
-                        if (getStatus().isOK()) {
-                            int numChildren = 0;
-                            for (Integer count : getData()) {
-                                numChildren += count.intValue();
-                            }
-                            update.setChildCount(numChildren);
-                        } else {
-                            update.setChildCount(0);
-                        }
-                        update.done();
-                    }
-                });
-        }
-    }
-
-    public void update(IChildrenUpdate[] updates) {
-        for (final IChildrenUpdate update : updates) {
-            getChildrenCountsForNode(
-                update,  
-                new DataRequestMonitor<Integer[]>(getExecutor(), null) {
-                    @Override
-                    protected void handleCompleted() {
-                        if (!getStatus().isOK()) {
-                            update.done();
-                            return;
-                        } 
-                        updateChildrenWithCounts(update, getData());
-                    }
-                });
-        }            
-    }
-    
-
-    private void getChildrenCountsForNode(IViewerUpdate update, final DataRequestMonitor<Integer[]> rm) {
-        if (isDisposed()) return;
+    public IModelProxy createModelProxy(Object element, IPresentationContext context) {
+        assert getExecutor().isInExecutorThread();
         
-        // Get the VM Context for last element in path.  
-        final IVMLayoutNode layoutNode = getLayoutNodeForElement(update.getElement());
-        if (layoutNode == null) {
-            // Stale update. Just ignore.
-            rm.setStatus(new Status(
-                IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INVALID_HANDLE, "Stale update.", null));   //$NON-NLS-1$
-            rm.done();
-            return;
-        }        
-
-        IVMLayoutNode[] childNodes = layoutNode.getChildLayoutNodes();
-
-        // If parent element's layout node has no children, just mark done and 
-        // return.
-        if (childNodes.length == 0) {
-            rm.setData(new Integer[0]);
-            rm.done();
-            return;
-        }
-
-        
-        // Get the mapping of all the counts.
-        final Integer[] counts = new Integer[childNodes.length]; 
-        final MultiRequestMonitor<RequestMonitor> childrenCountMultiReqMon = 
-            new MultiRequestMonitor<RequestMonitor>(getExecutor(), rm) { 
-                @Override
-                protected void handleCompleted() {
-                    if (!fDisposed) super.handleCompleted();
-                }
-
-                @Override
-                protected void handleOK() {
-                    rm.setData(counts);
-                    rm.done();
-                }
-            };
-        
-        for (int i = 0; i < childNodes.length; i++) {
-            final int nodeIndex = i;
-            childNodes[i].updateElementCount(
-                new VMElementsCountUpdate(
-                    update,  
-                    childrenCountMultiReqMon.add(
-                        new DataRequestMonitor<Integer>(getExecutor(), null) {
-                            @Override
-                            protected void handleOK() {
-                                counts[nodeIndex] = getData();
-                            }
-                            
-                            @Override
-                            protected void handleCompleted() {
-                                super.handleCompleted();
-                                childrenCountMultiReqMon.requestMonitorDone(this);
-                            }
-                        }))
-                );
-        }
-    }
-    
-    private void updateChildrenWithCounts(final IChildrenUpdate update, Integer[] nodeElementCounts) {
-        final IVMLayoutNode layoutNode = getLayoutNodeForElement(update.getElement());
-        if (layoutNode == null) {
-            // Stale update. Just ignore.
-            update.done();
-            return;
-        }        
-
-        // Create the multi request monitor to mark update when querying all 
-        // children nodes is finished.
-        final MultiRequestMonitor<RequestMonitor> elementsMultiRequestMon = 
-            new MultiRequestMonitor<RequestMonitor>(getExecutor(), null) { 
-                @Override
-                protected void handleCompleted() {
-                    update.done();
-                }
-            };
-
-        // Iterate through all child nodes and if requested range matches, call them to 
-        // get their elements.
-        int updateStartIdx = update.getOffset();
-        int updateEndIdx = update.getOffset() + update.getLength();
-        int idx = 0;
-        IVMLayoutNode[] layoutNodes = layoutNode.getChildLayoutNodes();
-        for (int i = 0; i < layoutNodes.length; i++) {
-            final int nodeStartIdx = idx;
-            final int nodeEndIdx = idx + nodeElementCounts[i];
-            idx = nodeEndIdx;
-
-            // Check if update range overlaps the node's range.
-            if (updateStartIdx <= nodeEndIdx && updateEndIdx > nodeStartIdx) {
-                final int elementsStartIdx = Math.max(updateStartIdx - nodeStartIdx, 0);
-                final int elementsEndIdx = Math.min(updateEndIdx - nodeStartIdx, nodeElementCounts[i]);
-                final int elementsLength = elementsEndIdx - elementsStartIdx;
-                if (elementsLength > 0) {
-                    layoutNodes[i].updateElements(
-                        new VMElementsUpdate(
-                            update, elementsStartIdx, elementsLength,   
-                            elementsMultiRequestMon.add(new DataRequestMonitor<List<Object>>(getExecutor(), null) { 
-                                @Override
-                                protected void handleCompleted() {
-                                    if (getStatus().isOK()) {
-                                        for (int i = 0; i < elementsLength; i++) {
-                                            update.setChild(getData().get(i), elementsStartIdx + nodeStartIdx + i);
-                                        }
-                                    }
-                                    elementsMultiRequestMon.requestMonitorDone(this);
-                                }
-                            }))
-                        ); 
-                }
+        // Iterate through the current active proxies to try to find a proxy with the same
+        // element and re-use it if found.  At the same time purge proxies that are no longer
+        IVMModelProxy proxy = null;
+        for (Iterator<IVMModelProxy> itr = getActiveModelProxies().iterator(); itr.hasNext();) {
+            IVMModelProxy next = itr.next();
+            if (next == null && next.getRootElement().equals(element)) {
+                proxy = next;
+            } else if (next.isDisposed()) {
+                itr.remove();
             }
         }
-        
-        // Guard against invalid queries.
-        if (elementsMultiRequestMon.getRequestMonitors().isEmpty()) {
-            update.done();
+        if (proxy == null) {
+            proxy = createModelProxyStrategy(element);
+            getActiveModelProxies().add(proxy);
         }
-
-    }
-    
-    public ModelProxy createModelProxy(Object element, IPresentationContext context) {
-        /*
-         * Model proxy is the object that correlates events from the data model 
-         * into view model deltas that the view can process.  This method is called 
-         * by the viewer when a new input object is set to the view.  We need to create
-         * a new instance of the ModelProxy object with every call, because the viewer
-         * disposes the old proxy before calling this method.  
-         */
-        synchronized(this) {
-            fRootElement = element;
-            fModelProxy = new ModelProxy();
-        }
-        return fModelProxy;
+        return proxy;
     }
 
     /**
@@ -466,6 +477,7 @@ abstract public class AbstractVMProvider implements IVMProvider
      * @see IColumnPresentationFactory#createColumnPresentation(IPresentationContext, Object)
      */
     public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
+        assert fExecutor.isInExecutorThread();
         return null;
     }
 
@@ -500,119 +512,5 @@ abstract public class AbstractVMProvider implements IVMProvider
     public void update(IViewerInputUpdate update) {
         update.setInputElement(update.getElement());
         update.done();
-    }
-    
-    
-    /**
-     * Convenience method that finds the VMC corresponding to given parent 
-     * argument given to isContainer() or retrieveChildren().  
-     * @param object Object to find the VMC for.
-     * @return parent VMC, if null it indicates that the object did not originate 
-     * from this view or is stale.
-     */
-    protected IVMLayoutNode getLayoutNodeForElement(Object element) {
-        /*
-         * First check to see if the parent object is the root object of the 
-         * hierarchy.  If that's the case, then retrieve the correcponding
-         * root VMC from the root node, and pass this root vmc to the root's 
-         * child layout nodes.
-         */
-        IVMRootLayoutNode rootLayoutNode = getRootLayoutNode();
-        if (rootLayoutNode == null) {
-            return null;
-        } 
-        else if (element.equals(getRootElement())) {
-            return rootLayoutNode;
-        } 
-        else if (element instanceof IVMContext){
-            /*
-             * The parent is a VMC.  Check to make sure that the VMC 
-             * originated from a node in this ViewModelProvider.  If it didn't
-             * it is most likely a result of a change in view layout, and this 
-             * request is a stale request.  So just ignore it.
-             */
-            if (isOurLayoutNode( ((IVMContext)element).getLayoutNode(), 
-                                 new IVMLayoutNode[] { rootLayoutNode } )) 
-            {
-                return ((IVMContext)element).getLayoutNode();
-            }
-        } 
-        return null;
-    }
-    
-    /**
-     * Convenience method which checks whether given layout node is a node 
-     * that is configured in this ViewModelProvider.  Implementation 
-     * recursively walks the layout hierarchy, and returns true if it finds
-     * the node. 
-     */
-    private boolean isOurLayoutNode(IVMLayoutNode layoutNode, IVMLayoutNode[] nodesToSearch) {
-        for (IVMLayoutNode node : nodesToSearch) {
-            if (node == layoutNode) return true;
-            if (isOurLayoutNode(layoutNode, node.getChildLayoutNodes())) return true;
-        }
-        return false;
-    }
-        
-    
-    protected void handleEvent(final Object event) {
-        // We're in session's executor thread.  Re-dispach to VM Adapter 
-        // executor thread and then call root layout node.
-        try {
-            getExecutor().execute(new Runnable() {
-                public void run() {
-                    if (isDisposed()) return;
-    
-                    IVMRootLayoutNode rootLayoutNode = getRootLayoutNode();
-                    if (rootLayoutNode != null && rootLayoutNode.getDeltaFlags(event) != 0) {
-                        rootLayoutNode.createDelta(
-                            event, 
-                            new DataRequestMonitor<IModelDelta>(getExecutor(), null) {
-                                @Override
-                                public void handleCompleted() {
-                                    if (getStatus().isOK()) {
-                                        getModelProxy().fireModelChangedNonDispatch(getData());
-                                    }
-                                }
-                                @Override public String toString() {
-                                    return "Result of a delta for event: '" + event.toString() + "' in VMP: '" + AbstractVMProvider.this + "'" + "\n" + getData().toString();  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                }
-                            });
-                    }
-                }});
-        } catch (RejectedExecutionException e) {
-            // Ignore.  This exception could be thrown if the provider is being 
-            // shut down.  
-        }
-    }
-    
-    @ThreadSafe
-    protected class ModelProxy extends AbstractModelProxy {
-        /** 
-         * Scheduling rule for running the update jobs.  
-         */
-        private ISchedulingRule fModelChangeRule = new ISchedulingRule() {
-            public boolean contains(ISchedulingRule rule) { return this == rule; }
-            public boolean isConflicting(ISchedulingRule rule) { return rule == this; }
-        };
-
-        /**
-         * Fires given delta using a job.  Processing the delta on the dispatch
-         * thread can lead to dead-locks.
-         * @param delta
-         */
-        public void fireModelChangedNonDispatch(final IModelDelta delta) {
-            Job job = new Job("Processing view model delta.") { //$NON-NLS-1$
-                @Override
-                protected IStatus run(IProgressMonitor monitor) {
-                    fireModelChanged(delta);
-                    return Status.OK_STATUS;
-                }
-            };
-            job.setPriority(Job.INTERACTIVE);
-            job.setRule(fModelChangeRule);
-            job.schedule();
-        }
-
-    }
+    }    
 }

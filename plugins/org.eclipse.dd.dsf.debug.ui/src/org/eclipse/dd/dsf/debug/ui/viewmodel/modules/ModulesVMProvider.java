@@ -12,10 +12,10 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.modules;
 
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMRootLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.DMVMRootLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.RootDMVMNode;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
@@ -32,17 +32,17 @@ public class ModulesVMProvider extends AbstractDMVMProvider {
         /*
          *  Create the top level node to deal with the root selection.
          */
-        IVMRootLayoutNode debugViewSelection = new DMVMRootLayoutNode(this);
+        IRootVMNode rootNode = new RootDMVMNode(this);
         
         /*
          *  Create the Group nodes next. They represent the first level shown in the view.
          */
-        IVMLayoutNode modulesNode = new ModulesLayoutNode(this, getSession());
-        debugViewSelection.setChildNodes(new IVMLayoutNode[] { modulesNode });
+        IVMNode modulesNode = new ModulesVMNode(this, getSession());
+        addChildNodes(rootNode, new IVMNode[] { modulesNode });
         
         /*
          *  Now set this schema set as the layout set.
          */
-        setRootLayoutNode(debugViewSelection);
+        setRootNode(rootNode);
     }
 }

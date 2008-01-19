@@ -90,6 +90,10 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
         return Thread.currentThread().equals( ((DsfThreadFactory)getThreadFactory()).fThread );
     }
 
+    protected String getName() { 
+        return fName;
+    }
+    
     static void logException(Throwable t) {
         DsfPlugin plugin = DsfPlugin.getDefault();
         if (plugin == null) return;
@@ -114,14 +118,14 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
     //
     // Utilities used for tracing.
     //
-    static boolean DEBUG_EXECUTOR = false;
-    static String DEBUG_EXECUTOR_NAME = "";
-    static boolean ASSERTIONS_ENABLED = false;
+    protected static boolean DEBUG_EXECUTOR = false;
+    protected static String DEBUG_EXECUTOR_NAME = ""; //$NON-NLS-1$
+    protected static boolean ASSERTIONS_ENABLED = false;
     static {
         DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
             Platform.getDebugOption("org.eclipse.dd.dsf/debug/executor")); //$NON-NLS-1$
         DEBUG_EXECUTOR_NAME = DsfPlugin.DEBUG 
-            ? Platform.getDebugOption("org.eclipse.dd.dsf/debug/executorName") : ""; //$NON-NLS-1$
+            ? Platform.getDebugOption("org.eclipse.dd.dsf/debug/executorName") : ""; //$NON-NLS-1$ //$NON-NLS-2$
         assert (ASSERTIONS_ENABLED = true) == true;
     }  
 
@@ -253,9 +257,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor
             fRunnable = runnable;
 
             // Check if executable wasn't executed already.
-            if (fRunnable instanceof DsfExecutable &&
-                DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) //$NON-NLS-1$
-            {
+            if (DEBUG_EXECUTOR && fRunnable instanceof DsfExecutable) {
                 assert !((DsfExecutable)fRunnable).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
                 ((DsfExecutable)fRunnable).setSubmitted();
             }

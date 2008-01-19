@@ -17,9 +17,6 @@ import java.util.concurrent.RejectedExecutionException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
-import org.eclipse.dd.dsf.concurrent.DsfExecutor;
-import org.eclipse.dd.dsf.concurrent.DsfRunnable;
 import org.eclipse.dd.dsf.concurrent.ThreadSafe;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.DsfUIPlugin;
@@ -41,7 +38,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 @SuppressWarnings("restriction")
 abstract public class AbstractVMAdapter implements IVMAdapter
 {
-    private final DsfExecutor fExecutor;
     private boolean fDisposed;
 
     private final Map<IPresentationContext, IVMProvider> fViewModelProviders = 
@@ -56,18 +52,8 @@ abstract public class AbstractVMAdapter implements IVMAdapter
      * @param session
      */
     public AbstractVMAdapter() {
-        fExecutor = new DefaultDsfExecutor();
     }    
 
-    /**
-     * Returns the executor that will be used to communicate with the providers
-     * and the layout nodes.
-     * @return
-     */
-    public DsfExecutor getExecutor() {
-        return fExecutor;
-    }
-    
     @ThreadSafe
     public IVMProvider getVMProvider(IPresentationContext context) {
         synchronized(fViewModelProviders) {
@@ -85,93 +71,84 @@ abstract public class AbstractVMAdapter implements IVMAdapter
     }
 
     public void dispose() {
-        // Execute the shutdown in adapter's dispatch thread.
-        getExecutor().execute(new DsfRunnable() {
-            public void run() {
-                synchronized(fViewModelProviders) {
-                    fDisposed = true;
-                    for (IVMProvider provider : fViewModelProviders.values()) {
+        IVMProvider[] providers = new IVMProvider[0]; 
+        synchronized(fViewModelProviders) {
+            providers = fViewModelProviders.values().toArray(new IVMProvider[fViewModelProviders.size()]);
+            fViewModelProviders.clear();            
+            fDisposed = true;
+        }
+        
+        for (final IVMProvider provider : providers) {
+            try {
+                provider.getExecutor().execute(new Runnable() {
+                    public void run() {
                         provider.dispose();
                     }
-                    fViewModelProviders.clear();
-                }
-                fExecutor.shutdown();
-            }
-        });
+                });
+            } catch (RejectedExecutionException e) {
+                // Not much we can do at this point.
+            }            
+        }
     }
     
     public void update(IHasChildrenUpdate[] updates) {
-        handleUpdates(updates);
+        IVMProvider provider = getVMProvider(updates[0].getPresentationContext());
+        if (provider != null) {
+            updateProvider(provider, updates);
+        } else {
+            for (IViewerUpdate update : updates) {
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
+                    "No model provider for update " + update, null)); //$NON-NLS-1$
+            }
+        }
     }
     
     public void update(IChildrenCountUpdate[] updates) {
-        handleUpdates(updates);
+        IVMProvider provider = getVMProvider(updates[0].getPresentationContext());
+        if (provider != null) {
+            updateProvider(provider, updates);
+        } else {
+            for (IViewerUpdate update : updates) {
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
+                    "No model provider for update " + update, null)); //$NON-NLS-1$
+            }
+        }
     }
     
     public void update(final IChildrenUpdate[] updates) {
-        handleUpdates(updates);
-    }
-    
-    private void handleUpdates(final IViewerUpdate[] updates) {
-        try {
-            getExecutor().execute(new DsfRunnable() {
-                public void run() {
-                    IPresentationContext context = null;
-                    int firstIdx = 0;
-                    int curIdx = 0;
-                    for (curIdx = 0; curIdx < updates.length; curIdx++) {
-                        if (!updates[curIdx].getPresentationContext().equals(context)) {
-                            if (context != null) {
-                                callProviderWithUpdate(updates, firstIdx, curIdx);
-                            }
-                            context = updates[curIdx].getPresentationContext();
-                            firstIdx = curIdx;
-                        }
-                    }
-                    callProviderWithUpdate(updates, firstIdx, curIdx);
-                }
-            });
-        } catch(RejectedExecutionException e) {
-            for (IViewerUpdate update : updates) {
-                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, "VM adapter executor not available", e)); //$NON-NLS-1$
-                update.done();
-            }
-        }
-    }
-    
-    private void callProviderWithUpdate(IViewerUpdate[] updates, int startIdx, int endIdx) {
-        final IVMProvider provider = getVMProvider(updates[0].getPresentationContext());
-        if (provider == null) {
+        IVMProvider provider = getVMProvider(updates[0].getPresentationContext());
+        if (provider != null) {
+            updateProvider(provider, updates);
+        } else {
             for (IViewerUpdate update : updates) {
                 update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
-                                            "No model provider for update " + update, null)); //$NON-NLS-1$
-                update.done();
-            }
-            return;
-        }
-        if (startIdx == 0 && endIdx == updates.length) {
-            if (updates instanceof IHasChildrenUpdate[]) provider.update((IHasChildrenUpdate[])updates);
-            else if (updates instanceof IChildrenCountUpdate[]) provider.update((IChildrenCountUpdate[])updates);
-            else if (updates instanceof IChildrenUpdate[]) provider.update((IChildrenUpdate[])updates);
-        } else {
-            if (updates instanceof IHasChildrenUpdate[]) {
-                IHasChildrenUpdate[] providerUpdates = new IHasChildrenUpdate[endIdx - startIdx];
-                System.arraycopy(updates, startIdx, providerUpdates, 0, endIdx - startIdx);
-                provider.update(providerUpdates);
-            }
-            else if (updates instanceof IChildrenCountUpdate[]) {
-                IChildrenCountUpdate[] providerUpdates = new IChildrenCountUpdate[endIdx - startIdx];
-                System.arraycopy(updates, startIdx, providerUpdates, 0, endIdx - startIdx);
-                provider.update(providerUpdates);
-            }
-            else if (updates instanceof IChildrenUpdate[]) {
-                IChildrenUpdate[] providerUpdates = new IChildrenUpdate[endIdx - startIdx];
-                System.arraycopy(updates, startIdx, providerUpdates, 0, endIdx - startIdx);
-                provider.update(providerUpdates);
+                    "No model provider for update " + update, null)); //$NON-NLS-1$
             }
         }
     }
-        
+            
+    private void updateProvider(final IVMProvider provider, final IViewerUpdate[] updates) {
+        try {
+            provider.getExecutor().execute(new Runnable() {
+                public void run() {
+                    if (updates instanceof IHasChildrenUpdate[]) {
+                        provider.update((IHasChildrenUpdate[])updates);
+                    } else if (updates instanceof IChildrenCountUpdate[]) {
+                        provider.update((IChildrenCountUpdate[])updates);
+                    } else if (updates instanceof IChildrenUpdate[]) {
+                        provider.update((IChildrenUpdate[])updates);
+                    }  
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            for (IViewerUpdate update : updates) {
+                update.setStatus(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, IDsfService.INTERNAL_ERROR, 
+                    "Display is disposed, cannot complete update " + update, null)); //$NON-NLS-1$
+                update.done();
+            }                
+        }            
+    }
+    
     public IModelProxy createModelProxy(Object element, IPresentationContext context) {
         IVMProvider provider = getVMProvider(context);
         if (provider != null) {

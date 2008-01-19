@@ -17,8 +17,8 @@ import org.eclipse.dd.dsf.datamodel.IDMEvent;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
-import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.update.AbstractCachingVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
@@ -27,7 +27,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
 /**
  * View model provider implements the asynchronous view model functionality for 
  * a single view.  This provider is just a holder which further delegates the
- * model provider functionality to the view model layout nodes that need
+ * model provider functionality to the view model nodes that need
  * to be configured with each provider.
  * <p>
  * The view model provider, often does not provide the model for the entire 
@@ -37,11 +37,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapt
  * @see IAsynchronousContentAdapter
  * @see IAsynchronousLabelAdapter
  * @see IModelProxy
- * @see IVMLayoutNode
+ * @see IVMNode
  */
 @ConfinedToDsfExecutor("fSession#getExecutor")
 @SuppressWarnings("restriction")
-abstract public class AbstractDMVMProvider extends AbstractVMProvider
+abstract public class AbstractDMVMProvider extends AbstractCachingVMProvider
 {
     private final DsfSession fSession;
 
@@ -93,10 +93,8 @@ abstract public class AbstractDMVMProvider extends AbstractVMProvider
         super.dispose();
     }
 
-    protected DsfSession getSession() { return fSession; }
+    public DsfSession getSession() { return fSession; }
 
-
-        
     /**
      * Handle "data model changed" event by generating a delta object for each 
      * view and passing it to the corresponding view model provider.  The view
@@ -106,8 +104,21 @@ abstract public class AbstractDMVMProvider extends AbstractVMProvider
      */
     @DsfServiceEventHandler
     public void eventDispatched(final IDMEvent<?> event) {
+        // We're in session's executor thread (session in which the event originated). 
+        // Re-dispach to the view model provider executor thread and then call the 
+        // model proxy strategy to handle the event.
         if (isDisposed()) return;
-        
-        handleEvent(event);
+
+        try {
+            getExecutor().execute(new Runnable() {
+                public void run() {
+                    if (isDisposed()) return;
+                    handleEvent(event);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            // Ignore.  This exception could be thrown if the provider is being 
+            // shut down.  
+        }
     }
 }

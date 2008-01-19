@@ -13,9 +13,9 @@ package org.eclipse.dd.dsf.ui.viewmodel.dm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dd.dsf.datamodel.IDMContext;
 import org.eclipse.dd.dsf.datamodel.CompositeDMContext;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode.DMVMContext;
+import org.eclipse.dd.dsf.datamodel.IDMContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.TreePath;
  * update.  This object allows the view model to pass complete data model context 
  * information found in the view to the services.  
  */
+@SuppressWarnings("restriction")
 public class CompositeDMVMContext extends CompositeDMContext {
     
     /**
@@ -37,19 +38,26 @@ public class CompositeDMVMContext extends CompositeDMContext {
      */
     private IDMContext[] fParents;
 
+    /**
+     * Creates a composite context based in a viewer update.
+     */
+    public CompositeDMVMContext(IViewerUpdate update) {
+        this(update.getViewerInput(), update.getElementPath());
+    }
+
     /** 
-     * Creates a composite context based on view model  
+     * Creates a composite context based on a viewer input and a tree path. 
      */
     public CompositeDMVMContext(Object viewerInputObject, TreePath treePath) {
         super(EMPTY_CONTEXTS_ARRAY);
         List<IDMContext> parentsList = new ArrayList<IDMContext>(treePath.getSegmentCount() + 1);
         for (int i = treePath.getSegmentCount() - 1; i >=0 ; i--) {
-            if (treePath.getSegment(i) instanceof DMVMContext) {
-                parentsList.add( ((DMVMContext)treePath.getSegment(i)).getDMC() );
+            if (treePath.getSegment(i) instanceof IDMVMContext) {
+                parentsList.add( ((IDMVMContext)treePath.getSegment(i)).getDMContext() );
             }
         }
-        if (viewerInputObject instanceof DMVMContext) {
-            parentsList.add( ((DMVMContext)viewerInputObject).getDMC() );
+        if (viewerInputObject instanceof IDMVMContext) {
+            parentsList.add( ((IDMVMContext)viewerInputObject).getDMContext() );
         }
         
         fParents = parentsList.toArray(new IDMContext[parentsList.size()]);

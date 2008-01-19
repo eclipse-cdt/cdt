@@ -77,7 +77,7 @@ public class PropertyBasedLabelProvider
         @Override
         public void done() {
             @SuppressWarnings("unchecked")
-            DataRequestMonitor<Map<String,Object>> rm = (DataRequestMonitor<Map<String,Object>>)fRequestMonitor;
+            DataRequestMonitor<Map<String,Object>> rm = (DataRequestMonitor<Map<String,Object>>)getRequestMonitor();
             if (fProperties == null || fValues.size() >= fProperties.length) {
                 rm.setData(fValues);
             } else {

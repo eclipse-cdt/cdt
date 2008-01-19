@@ -35,7 +35,7 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.detail.TextViewerActio
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -389,8 +389,8 @@ public class ModuleDetailPane extends AbstractDetailPane implements IAdaptable, 
 //                    service.getModuleData(modDmc, modData);
 //            }
             IModuleDMContext dmc = null;
-            if (fElement instanceof AbstractDMVMLayoutNode.DMVMContext) {
-                IDMContext vmcdmc = ((AbstractDMVMLayoutNode.DMVMContext)fElement).getDMC();
+            if (fElement instanceof IDMVMContext) {
+                IDMContext vmcdmc = ((IDMVMContext)fElement).getDMContext();
                 dmc = DMContexts.getAncestorOfType(vmcdmc, IModuleDMContext.class);
             }
             

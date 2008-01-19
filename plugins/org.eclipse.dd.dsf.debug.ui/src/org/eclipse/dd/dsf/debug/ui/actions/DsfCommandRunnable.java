@@ -20,11 +20,9 @@ import org.eclipse.dd.dsf.debug.service.IStepQueueManager;
 import org.eclipse.dd.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode.DMVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
 
-@SuppressWarnings("restriction")
 @Immutable
 public abstract class DsfCommandRunnable extends DsfRunnable {
     private final IExecutionDMContext fContext;
@@ -41,12 +39,9 @@ public abstract class DsfCommandRunnable extends DsfRunnable {
 
     public DsfCommandRunnable(DsfServicesTracker servicesTracker, Object element, IDebugCommandRequest request) {
         fTracker = servicesTracker;
-        if (element instanceof DMVMContext) {
-            // Javac doesn't like the cast to "(AbstractDMVMLayoutNode<?>.DMVMContext)" need to use the 
-            // construct below and suppress warnings.
-            @SuppressWarnings("unchecked")
-            AbstractDMVMLayoutNode.DMVMContext vmc = (AbstractDMVMLayoutNode.DMVMContext)element;
-            fContext = DMContexts.getAncestorOfType(vmc.getDMC(), IExecutionDMContext.class);
+        if (element instanceof IDMVMContext) {
+            IDMVMContext vmc = (IDMVMContext)element;
+            fContext = DMContexts.getAncestorOfType(vmc.getDMContext(), IExecutionDMContext.class);
         } else {
             fContext = null;
         }

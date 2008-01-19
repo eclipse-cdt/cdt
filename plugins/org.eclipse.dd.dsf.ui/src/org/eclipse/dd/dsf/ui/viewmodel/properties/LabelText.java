@@ -31,7 +31,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 @SuppressWarnings("restriction")
 public class LabelText extends LabelAttribute {
     
-    public static final MessageFormat DEFAULT_MESSAGE = new MessageFormat("<unknown>");
+    public static final MessageFormat DEFAULT_MESSAGE = new MessageFormat(MessagesForProperties.DefaultLabelMessage_label);
    
     /**
      * Message format used to generate the label text.

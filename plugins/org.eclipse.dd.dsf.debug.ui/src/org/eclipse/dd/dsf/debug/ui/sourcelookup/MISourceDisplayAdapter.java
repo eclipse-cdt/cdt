@@ -40,7 +40,7 @@ import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.service.DsfServiceEventHandler;
 import org.eclipse.dd.dsf.service.DsfServicesTracker;
 import org.eclipse.dd.dsf.service.DsfSession;
-import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMLayoutNode.DMVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -81,7 +81,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * dispatch thread to synchronize access to the state data of the running jobs.
  */
 @ThreadSafe
-@SuppressWarnings("restriction")
 public class MISourceDisplayAdapter implements ISourceDisplay 
 {
     /**
@@ -427,10 +426,8 @@ public class MISourceDisplayAdapter implements ISourceDisplay
 	 * @see org.eclipse.debug.ui.contexts.ISourceDisplayAdapter#displaySource(java.lang.Object, org.eclipse.ui.IWorkbenchPage, boolean)
 	 */
     public void displaySource(Object context, final IWorkbenchPage page, final boolean force) {
-        if (!(context instanceof DMVMContext)) return;
-        // Correct cast: (AbstractDMVMLayoutNode<?>.DMVMContext) breaks the javac compiler
-        @SuppressWarnings("unchecked")
-        final IDMContext dmc = ((DMVMContext)context).getDMC();
+        if (!(context instanceof IDMVMContext)) return;
+        final IDMContext dmc = ((IDMVMContext)context).getDMContext();
 
         // Quick test.  DMC is checked again in source lookup participant, but 
         // it's much quicker to test here. 

@@ -12,6 +12,9 @@ package org.eclipse.dd.dsf.concurrent;
 
 import java.util.concurrent.Executor;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.dd.dsf.DsfPlugin;
+
 /**
  * Executor that executes a runnable immediately as it is submitted.  This 
  * executor is useful for clients that need to create <code>RequestMonitor</code> 
@@ -20,6 +23,16 @@ import java.util.concurrent.Executor;
  */
 public class ImmediateExecutor implements Executor {
     
+    /**
+     * Debug flag used for tracking runnables that were never executed, 
+     * or executed multiple times.
+     */
+    protected static boolean DEBUG_EXECUTOR = false;
+    static {
+        DEBUG_EXECUTOR = DsfPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+            Platform.getDebugOption("org.eclipse.dd.dsf/debug/executor")); //$NON-NLS-1$
+    }  
+
     private static ImmediateExecutor fInstance = new ImmediateExecutor();
     
     /**
@@ -36,6 +49,11 @@ public class ImmediateExecutor implements Executor {
     }
     
     public void execute(Runnable command) {
+        // Check if executable wasn't executed already.
+        if (DEBUG_EXECUTOR && command instanceof DsfExecutable) {
+            assert !((DsfExecutable)command).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
+            ((DsfExecutable)command).setSubmitted();
+        }
         command.run();
     }
 }

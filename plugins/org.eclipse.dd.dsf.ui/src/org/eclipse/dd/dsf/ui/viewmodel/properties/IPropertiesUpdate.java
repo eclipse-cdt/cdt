@@ -5,6 +5,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 /**
  * Context sensitive properties update request for an element.
  */
+@SuppressWarnings("restriction")
 public interface IPropertiesUpdate extends IViewerUpdate {
     /**
      * Returns the list of element properties that the provider should set.

@@ -86,126 +86,23 @@
          </action>
       </viewContribution>
       <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
+            id="org.eclipse.dd.dsf.debug.ui.update.variable.updatePolicies"
             targetID="org.eclipse.debug.ui.VariableView">
-            <menu
-               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
-               label="Update Mode"
-               path="additions">
-            <groupMarker
-                  name="content">
-            </groupMarker>
-            <separator
-                  name="additions">
-            </separator>
-         </menu>
          <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
-               icon="icons/refreshmanual.gif"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
-               label="Manual"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio"
-               toolbarPath="additions">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
-               label="On Breakpoint Hit"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
-               icon="icons/refreshalways.gif"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
-               label="Always"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               state="true"
-               style="radio"
-               toolbarPath="additions">
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.SelectUpdatePolicyAction"
+               id="org.eclipse.dd.dsf.debug.ui.update.selectUpdatePolicy"
+               label="Update Policy"
+               menubarPath="additions">
          </action>
       </viewContribution>
       <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
-            targetID="org.eclipse.debug.ui.ExpressionView">
-            <menu
-               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
-               label="Update Mode"
-               path="additions">
-            <groupMarker
-                  name="content">
-            </groupMarker>
-            <separator
-                  name="additions">
-            </separator>
-         </menu>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
-               icon="icons/refreshmanual.gif"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
-               label="Manual"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio"
-               toolbarPath="additions">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
-               label="On Breakpoint Hit"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
-               icon="icons/refreshalways.gif"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
-               label="Always"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               state="true"
-               style="radio"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-      <viewContribution
-            id="org.eclipse.dd.dsf.debug.ui.update.UpdatePopup"
+            id="org.eclipse.dd.dsf.debug.ui.update.register.updatePolicies"
             targetID="org.eclipse.debug.ui.RegisterView">
-            <menu
-               id="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu"
-               label="Update Mode"
-               path="additions">
-            <groupMarker
-                  name="content">
-            </groupMarker>
-            <separator
-                  name="additions">
-            </separator>
-         </menu>
          <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshManualActionDelegate"
-               icon="icons/refreshmanual.gif"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshManual"
-               label="Manual"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio"
-               toolbarPath="additions">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshOnBreakActionDelegate"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshOnBreak"
-               label="On Breakpoint Hit"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               style="radio">
-         </action>
-         <action
-               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.RefreshAlwaysActionDelegate"
-               icon="icons/refreshalways.gif"
-               id="org.eclipse.dd.dsf.debug.ui.update.registers.RefreshAlways"
-               label="Always"
-               menubarPath="org.eclipse.dd.dsf.debug.ui.update.UpdateModeSubMenu/content"
-               state="true"
-               style="radio"
-               toolbarPath="additions">
+               class="org.eclipse.dd.dsf.debug.ui.viewmodel.update.actions.SelectUpdatePolicyAction"
+               id="org.eclipse.dd.dsf.debug.ui.update.selectUpdatePolicy"
+               label="Update Policy"
+               menubarPath="additions">
          </action>
       </viewContribution>
    </extension>

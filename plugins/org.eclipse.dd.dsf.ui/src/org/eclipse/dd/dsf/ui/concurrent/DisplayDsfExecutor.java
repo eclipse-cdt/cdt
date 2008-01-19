@@ -22,11 +22,18 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.dd.dsf.concurrent.DefaultDsfExecutor;
+import org.eclipse.dd.dsf.concurrent.DsfExecutable;
 import org.eclipse.dd.dsf.concurrent.DsfExecutor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * DSF executor which uses the display thread to run the submitted runnables 
+ * and callables.  The implementation is based on the default DSF executor 
+ * which still creates its own thread.  However this thread blocks when running
+ * each executable in the display thread.   
+ */
 public class DisplayDsfExecutor extends DefaultDsfExecutor 
 {
     /**
@@ -62,6 +69,15 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
 	}
 	
 	/**
+	 * Override to check if we're in the display thread rather than the helper
+	 * thread of the super-class.
+	 */
+	@Override
+	public boolean isInExecutorThread() {
+	    return Thread.currentThread().equals(fDisplay.getThread());
+	}
+	
+	/**
 	 * Creates a callable wrapper, which delegates to the display to perform the 
 	 * operation.  The callable blocks the executor thread while each call
 	 * is executed in the display thred.
@@ -70,7 +86,13 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
 	 * @return Wrapper callable.
 	 */
 	private <V> Callable<V> createSWTDispatchCallable(final Callable<V> callable) {
-		return new Callable<V>() {
+        // Check if executable wasn't executed already.
+        if (DEBUG_EXECUTOR && callable instanceof DsfExecutable) {
+            assert !((DsfExecutable)callable).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
+            ((DsfExecutable)callable).setSubmitted();
+        }
+
+	    return new Callable<V>() {
 			@SuppressWarnings("unchecked")
             public V call() throws Exception {
 				final Object[] v = new Object[1];
@@ -110,7 +132,14 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor
      * @return Wrapper runnable.
      */
 	private Runnable createSWTDispatchRunnable(final Runnable runnable) {
-		return new Runnable() {
+
+	    // Check if executable wasn't executed already.
+        if (DEBUG_EXECUTOR && runnable instanceof DsfExecutable) {
+            assert !((DsfExecutable)runnable).getSubmitted() : "Executable was previously executed."; //$NON-NLS-1$
+            ((DsfExecutable)runnable).setSubmitted();
+        }
+
+	    return new Runnable() {
 			public void run() {
 				final Throwable[] e = new Throwable[1];
 				try {

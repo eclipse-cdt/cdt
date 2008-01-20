@@ -60,22 +60,22 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 			name.setPropertyInParent(NAME);
 		}
     }
-    
-    public boolean accept( ASTVisitor action ){
-        if( action instanceof CPPASTVisitor &&
-            ((CPPASTVisitor)action).shouldVisitBaseSpecifiers ){
-		    switch( ((CPPASTVisitor)action).visit( this ) ){
+
+    public boolean accept(ASTVisitor action) {
+        if (action instanceof CPPASTVisitor &&
+            ((CPPASTVisitor)action).shouldVisitBaseSpecifiers) {
+		    switch (((CPPASTVisitor)action).visit(this)) {
 	            case ASTVisitor.PROCESS_ABORT : return false;
 	            case ASTVisitor.PROCESS_SKIP  : return true;
 	            default : break;
 	        }
 		}
-        
-        if( !name.accept( action ) ) return false;
-        
-        if( action instanceof CPPASTVisitor &&
-                ((CPPASTVisitor)action).shouldVisitBaseSpecifiers ){
-    		    switch( ((CPPASTVisitor)action).leave( this ) ){
+
+        if (!name.accept(action)) return false;
+
+        if (action instanceof CPPASTVisitor &&
+                ((CPPASTVisitor)action).shouldVisitBaseSpecifiers) {
+    		    switch (((CPPASTVisitor)action).leave(this)) {
     	            case ASTVisitor.PROCESS_ABORT : return false;
     	            case ASTVisitor.PROCESS_SKIP  : return true;
     	            default : break;
@@ -85,14 +85,14 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
     }
 
 	public int getRoleForName(IASTName n) {
-		if( name == n ) return r_reference;
+		if (name == n) return r_reference;
 		return r_unclear;
 	}
 
 	public IBinding[] findBindings(IASTName n, boolean isPrefix) {
 		IBinding[] bindings = CPPSemantics.findBindingsForContentAssist(n, isPrefix);
-		List filtered = new ArrayList();
-		
+		List<IBinding> filtered = new ArrayList<IBinding>();
+
 		ICPPClassType classType = null;
 		if (getParent() instanceof CPPASTCompositeTypeSpecifier) {
 			IASTName className = ((CPPASTCompositeTypeSpecifier) getParent()).getName();
@@ -101,8 +101,7 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 				classType = (ICPPClassType) binding;
 			}
 		}
-		
-		
+
 		for (int i = 0; i < bindings.length; i++) {
 			if (bindings[i] instanceof ICPPClassType) {
 				ICPPClassType base = (ICPPClassType) bindings[i];
@@ -116,7 +115,7 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
 				}
 			}
 		}
-		
-		return (IBinding[]) filtered.toArray(new IBinding[filtered.size()]);
+
+		return filtered.toArray(new IBinding[filtered.size()]);
 	}
 }

@@ -98,6 +98,11 @@ public interface ICharArrayMap<V> {
 	Collection<V> values();
 
 	/**
+	 * Returns the keys stored in the map.
+	 */
+	Collection<char[]> keys();
+	
+	/**
 	 * Removes all mappings from the map.
 	 */
 	void clear();

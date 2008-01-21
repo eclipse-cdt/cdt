@@ -657,8 +657,8 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		i0= checkTreeNode(tree, 0, "sf()");
 		assertEquals(1, tree.getItemCount());
 
-		i1= checkTreeNode(i0, 0, "gf()");	// sf()[f1] <- gf()
-		i2= checkTreeNode(i0, 1, "sf()");   // sf()[f1] <- sf()[f1]
+		i1= checkTreeNode(tree, 0, 0, "gf()");	// sf()[f1] <- gf()
+		i2= checkTreeNode(tree, 0, 1, "sf()");   // sf()[f1] <- sf()[f1]
 		checkTreeNode(i0, 2, null);
 
 		expandTreeItem(i1);
@@ -689,8 +689,8 @@ public class BasicCallHierarchyTest extends CallHierarchyBaseTest {
 		i0= checkTreeNode(tree, 0, "sf()");
 		assertEquals(1, tree.getItemCount());
 
-		i1= checkTreeNode(i0, 0, "sf()");	// sf()[f2] <- sf()[f2]
-		checkTreeNode(i0, 1, null);			// not called by gf()
+		i1= checkTreeNode(tree, 0, 0, "sf()");	// sf()[f2] <- sf()[f2]
+		checkTreeNode(tree, 0, 1, null);			// not called by gf()
 
 		expandTreeItem(i1);
 		checkTreeNode(i1, 0, null);

@@ -581,18 +581,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
     }
 
     
-    public int getExpressionLength(String expression) {
-        if (expression.charAt(0) == '.' && Character.isLetterOrDigit(expression.charAt(1))) {
-            int length = 1;
-            while( length < expression.length() && Character.isLetterOrDigit(expression.charAt(length)) ) {
-                length++;
-            }
-            return length;
-        } else {
-            return -1;
-        }
-    }
-    
     @Override
     protected void associateExpression(Object element, IExpression expression) {
         if (element instanceof BitFieldVMC) {

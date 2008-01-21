@@ -38,9 +38,9 @@ public class CPPASTNamedTypeSpecifier extends CPPASTBaseDeclSpecifier implements
     public CPPASTNamedTypeSpecifier() {
 	}
 
-	public CPPASTNamedTypeSpecifier(boolean typename, IASTName name) {
+	public CPPASTNamedTypeSpecifier(IASTName name, boolean typename) {
 		this.typename = typename;
-		this.name = name;
+		setName(name);
 	}
 
 	public boolean isTypename() {

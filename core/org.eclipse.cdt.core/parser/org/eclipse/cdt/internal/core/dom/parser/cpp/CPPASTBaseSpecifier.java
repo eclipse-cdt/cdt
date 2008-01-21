@@ -33,7 +33,17 @@ public class CPPASTBaseSpecifier extends CPPASTNode implements
     private int visibility;
     private IASTName name;
 
-    public boolean isVirtual() {
+    
+    public CPPASTBaseSpecifier() {
+	}
+
+	public CPPASTBaseSpecifier(IASTName name, int visibility, boolean isVirtual) {
+		this.isVirtual = isVirtual;
+		this.visibility = visibility;
+		setName(name);
+	}
+
+	public boolean isVirtual() {
         return isVirtual;
     }
 

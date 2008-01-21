@@ -21,7 +21,14 @@ public class CPPASTVisibilityLabel extends CPPASTNode implements ICPPASTVisiblit
     private int visibility;
 
 
-    public int getVisibility() {
+    public CPPASTVisibilityLabel() {
+	}
+
+	public CPPASTVisibilityLabel(int visibility) {
+		this.visibility = visibility;
+	}
+
+	public int getVisibility() {
         return visibility;
     }
 

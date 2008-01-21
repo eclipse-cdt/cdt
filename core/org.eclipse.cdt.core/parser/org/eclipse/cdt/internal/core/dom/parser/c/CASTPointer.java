@@ -22,16 +22,6 @@ public class CASTPointer extends CASTNode implements ICASTPointer {
     private boolean isVolatile;
     private boolean isConst;
 
-    
-    public CASTPointer() {
-	}
-
-	public CASTPointer(boolean isRestrict, boolean isVolatile, boolean isConst) {
-		this.isRestrict = isRestrict;
-		this.isVolatile = isVolatile;
-		this.isConst = isConst;
-	}
-
 	public boolean isRestrict() {
         return isRestrict;
     }

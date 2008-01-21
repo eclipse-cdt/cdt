@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
@@ -25,7 +26,20 @@ public class CPPASTArrayDeclarator extends CPPASTDeclarator implements
     private IASTArrayModifier [] arrayMods = null;
     private int arrayModsPos=-1;
 
-    public IASTArrayModifier[] getArrayModifiers() {
+    
+    public CPPASTArrayDeclarator(IASTName name, IASTInitializer initializer) {
+		super(name, initializer);
+	}
+
+	public CPPASTArrayDeclarator(IASTName name) {
+		super(name);
+	}
+	
+	
+    public CPPASTArrayDeclarator() {
+	}
+
+	public IASTArrayModifier[] getArrayModifiers() {
         if( arrayMods == null ) return IASTArrayModifier.EMPTY_ARRAY;
         arrayMods = (IASTArrayModifier[]) ArrayUtil.removeNullsAfter( IASTArrayModifier.class, arrayMods, arrayModsPos );
         return arrayMods;

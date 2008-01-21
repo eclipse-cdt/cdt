@@ -11,12 +11,18 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansion;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -49,17 +55,55 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	private final char[] fSource;
 	private final int[] fBoundaries;
 	private final SingleMacroExpansionExplorer[] fDelegates;
-	private String fFilePath;
+	private final String fFilePath;
+	private final Map<IMacroBinding, IASTFileLocation> fMacroLocations;
 
 	public MultiMacroExpansionExplorer(IASTTranslationUnit tu, IASTFileLocation loc) {
 		if (tu == null || loc == null || loc.getNodeLength() == 0) {
 			throw new IllegalArgumentException();
 		}
+		final ILocationResolver resolver = getResolver(tu);
+		final IASTMacroExpansion[] expansions= resolver.getMacroExpansions(loc);
+		final int count= expansions.length;
+
+		loc = extendLocation(loc, expansions);
+		fMacroLocations= getMacroLocations(resolver);
+		fFilePath= tu.getFilePath();
+		fSource= resolver.getUnpreprocessedSignature(loc);
+		fBoundaries= new int[count*2+1];
+		fDelegates= new SingleMacroExpansionExplorer[count];
+		
+		final int firstOffset= loc.getNodeOffset();
+		int bidx= -1;
+		int didx= -1;
+		for (IASTMacroExpansion expansion : expansions) {
+			IASTName ref= expansion.getMacroReference();
+			if (ref != null) {
+				ArrayList<IASTName> refs= new ArrayList<IASTName>();
+				refs.add(ref);
+				refs.addAll(Arrays.asList(resolver.getImplicitMacroReferences(ref)));
+				IASTFileLocation refLoc= expansion.asFileLocation();
+				int from= refLoc.getNodeOffset()-firstOffset;
+				int to= from+refLoc.getNodeLength();
+				fBoundaries[++bidx]= from;
+				fBoundaries[++bidx]= to;
+				fDelegates[++didx]= new SingleMacroExpansionExplorer(new String(fSource, from, to-from), 
+						refs.toArray(new IASTName[refs.size()]), fMacroLocations,
+						fFilePath, refLoc.getStartingLineNumber());
+			}
+		}
+		fBoundaries[++bidx]= fSource.length;
+	}
+
+	private ILocationResolver getResolver(IASTTranslationUnit tu) {
 		final ILocationResolver resolver = (ILocationResolver) tu.getAdapter(ILocationResolver.class);
 		if (resolver == null) {
 			throw new IllegalArgumentException();
 		}
-		final IASTMacroExpansion[] expansions = resolver.getMacroExpansions(loc);
+		return resolver;
+	}
+
+	private IASTFileLocation extendLocation(IASTFileLocation loc, final IASTMacroExpansion[] expansions) {
 		final int count= expansions.length;
 		if (count > 0) {
 			int from= loc.getNodeOffset();
@@ -75,28 +119,28 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 				loc= new ASTFileLocation(loc.getFileName(), from, to-from);
 			}
 		}
-		
-		fFilePath= tu.getFilePath();
-		fSource= resolver.getUnpreprocessedSignature(loc);
-		fBoundaries= new int[count*2+1];
-		fDelegates= new SingleMacroExpansionExplorer[count];
+		return loc;
+	}
 
-		final int firstOffset= loc.getNodeOffset();
-		int bidx= -1;
-		int didx= -1;
-		for (IASTMacroExpansion expansion : expansions) {
-			IASTName ref= expansion.getMacroReference();
-			if (ref != null) {
-				IASTFileLocation refLoc= expansion.asFileLocation();
-				int from= refLoc.getNodeOffset()-firstOffset;
-				int to= from+refLoc.getNodeLength();
-				fBoundaries[++bidx]= from;
-				fBoundaries[++bidx]= to;
-				fDelegates[++didx]= new SingleMacroExpansionExplorer(new String(fSource, from, to-from), ref, 
-						resolver.getImplicitMacroReferences(ref), fFilePath, refLoc.getStartingLineNumber());
+	private Map<IMacroBinding, IASTFileLocation> getMacroLocations(final ILocationResolver resolver) {
+		final Map<IMacroBinding, IASTFileLocation> result= new HashMap<IMacroBinding, IASTFileLocation>();
+		addLocations(resolver.getBuiltinMacroDefinitions(), result);
+		addLocations(resolver.getMacroDefinitions(), result);
+		return result;
+	}
+
+	private void addLocations(IASTPreprocessorMacroDefinition[] defs,
+			final Map<IMacroBinding, IASTFileLocation> result) {
+		for (IASTPreprocessorMacroDefinition def : defs) {
+			IASTFileLocation loc= def.getFileLocation();
+			if (loc != null) {
+				final IBinding binding= def.getName().getBinding();
+				if (binding instanceof IMacroBinding) {
+					loc= new ASTFileLocation(loc.getFileName(), loc.getNodeOffset(), loc.getNodeLength());
+					result.put((IMacroBinding) binding, loc);
+				}
 			}
 		}
-		fBoundaries[++bidx]= fSource.length;
 	}
 
 	public MultiMacroExpansionExplorer(final IASTTranslationUnit tu, final IRegion loc) {
@@ -106,7 +150,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	@Override
 	public IMacroExpansionStep getFullExpansion() {
 		List<ReplaceEdit> edits = combineReplaceEdits(fDelegates.length);
-		return new MacroExpansionStep(new String(fSource), null, edits.toArray(new ReplaceEdit[edits.size()]));
+		return new MacroExpansionStep(new String(fSource), null, null, edits.toArray(new ReplaceEdit[edits.size()]));
 	}
 
 	/**
@@ -174,7 +218,7 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		
 		List<ReplaceEdit> replacements= new ArrayList<ReplaceEdit>();
 		shiftAndAddEdits(shift, dresult.getReplacements(), replacements);
-		return new MacroExpansionStep(before.toString(), dresult.getExpandedMacro(), replacements.toArray(new ReplaceEdit[replacements.size()]));
+		return new MacroExpansionStep(before.toString(), dresult.getExpandedMacro(), dresult.getLocationOfExpandedMacroDefinition(), replacements.toArray(new ReplaceEdit[replacements.size()]));
 	}
 	
 	private void appendGap(StringBuilder result, int i) {

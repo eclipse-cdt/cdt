@@ -10,6 +10,7 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer.IMacroExpansionStep;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -21,11 +22,13 @@ public class MacroExpansionStep implements IMacroExpansionStep {
 	private final String fBefore;
 	private final IMacroBinding fMacroDefinition;
 	private final ReplaceEdit[] fReplacements;
+	private final IASTFileLocation fMacroLocation;
 
-	public MacroExpansionStep(String before, IMacroBinding def, ReplaceEdit[] replacements) {
+	public MacroExpansionStep(String before, IMacroBinding def, IASTFileLocation macroLoc, ReplaceEdit[] replacements) {
 		fBefore= before;
 		fReplacements= replacements;
 		fMacroDefinition= def;
+		fMacroLocation= macroLoc;
 	}
 	
 	public String getCodeBeforeStep() {
@@ -50,5 +53,8 @@ public class MacroExpansionStep implements IMacroExpansionStep {
 	}
 	public ReplaceEdit[] getReplacements() {
 		return fReplacements;
+	}
+	public IASTFileLocation getLocationOfExpandedMacroDefinition() {
+		return fMacroLocation;
 	}
 }

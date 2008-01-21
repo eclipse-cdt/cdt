@@ -10,8 +10,12 @@
  *******************************************************************************/ 
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import java.util.Map;
+
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer;
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
@@ -34,18 +38,20 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	private int fExpansionCount;
 	private String fFilePath;
 	private int fLineNumber;
+	private final Map<IMacroBinding, IASTFileLocation> fMacroLocationMap;
 
-	public SingleMacroExpansionExplorer(String input, IASTName ref, IASTName[] implicitRefs, String filePath, int lineNumber) {
+	public SingleMacroExpansionExplorer(String input, IASTName[] refs, 
+			Map<IMacroBinding, IASTFileLocation> macroDefinitionLocationMap, String filePath, int lineNumber) {
 		fInput= input;
-		fDictionary= createDictionary(ref, implicitRefs);
+		fDictionary= createDictionary(refs);
+		fMacroLocationMap= macroDefinitionLocationMap;
 		fFilePath= filePath;
 		fLineNumber= lineNumber;
 	}
 
-	private CharArrayMap<PreprocessorMacro> createDictionary(IASTName ref, IASTName[] implicitRefs) {
-		CharArrayMap<PreprocessorMacro> map= new CharArrayMap<PreprocessorMacro>(implicitRefs.length+1);
-		addMacroDefinition(map, ref);
-		for (IASTName name : implicitRefs) {
+	private CharArrayMap<PreprocessorMacro> createDictionary(IASTName[] refs) {
+		CharArrayMap<PreprocessorMacro> map= new CharArrayMap<PreprocessorMacro>(refs.length);
+		for (IASTName name : refs) {
 			addMacroDefinition(map, name);
 		}
 		return map;
@@ -78,7 +84,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 		fExpansionCount= tracker.getStepCount();
 		ReplaceEdit r= tracker.getReplacement();
 		ReplaceEdit[] replacements= r==null ? new ReplaceEdit[0] : new ReplaceEdit[]{r};
-		fFullExpansion= new MacroExpansionStep(fInput, null, replacements);
+		fFullExpansion= new MacroExpansionStep(fInput, null, null, replacements);
 	}
 
 	@Override
@@ -94,6 +100,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 		fExpansionCount= tracker.getStepCount();
 		ReplaceEdit r= tracker.getReplacement();
 		ReplaceEdit[] replacements= r==null ? new ReplaceEdit[0] : new ReplaceEdit[]{r};
-		return new MacroExpansionStep(tracker.getCodeBeforeStep(), tracker.getExpandedMacro(), replacements);
+		final IMacroBinding macro = tracker.getExpandedMacro();
+		return new MacroExpansionStep(tracker.getCodeBeforeStep(), macro, fMacroLocationMap.get(macro), replacements);
 	}
 }

@@ -47,6 +47,12 @@ public abstract class MacroExpansionExplorer {
 		 * a step representing a full expansion. 
 		 */
 		IMacroBinding getExpandedMacro();
+		
+		/**
+		 * Returns the location of the macro-definition that gets expanded in this step, 
+		 * or <code>null</code> for built-in macros or for a step representing a full expansion. 
+		 */
+		IASTFileLocation getLocationOfExpandedMacroDefinition();
 	}
 	
 	/**

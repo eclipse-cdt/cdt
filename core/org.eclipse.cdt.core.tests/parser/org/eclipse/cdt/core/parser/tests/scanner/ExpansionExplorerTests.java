@@ -294,4 +294,54 @@ public class ExpansionExplorerTests extends BaseTestCase {
     public void testStringify() throws Exception {
     	performTest(3);
     }
+    
+    // #define vararg(x, y...) bla(x, y)
+    // #define _p p
+    
+    // vararg( _p );
+
+    // vararg( p );
+
+    // bla(p, );
+    public void testVararg1() throws Exception {
+    	performTest(2);
+    }
+
+    // #define vararg(x, y...) bla(x, ##y)
+    // #define _p p
+    
+    // vararg( _p );
+
+    // vararg( p );
+
+    // bla(p);
+    public void testVararg1x() throws Exception {
+    	performTest(2);
+    }
+
+    // #define vararg(x, y...) bla(x, y)
+    // #define _p p
+    
+    // vararg( _p , _p );
+
+    // vararg( p , _p );
+
+    // vararg( p , p );
+
+    // bla(p, p);
+    public void testVararg2() throws Exception {
+    	performTest(3);
+    }
+    
+    // #define func2(x,y) (x,y)
+    // #define _p p
+    
+    // func2(_p);
+    
+    // func2(p);
+    
+    // (p,);
+    public void testTooFewArgs() throws Exception {
+    	performTest(2);
+    }
 }

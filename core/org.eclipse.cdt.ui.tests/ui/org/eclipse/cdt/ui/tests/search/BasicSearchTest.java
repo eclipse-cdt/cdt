@@ -248,10 +248,18 @@ public class BasicSearchTest extends BaseUITestCase {
 			// if all the hits were found
 			if (elements.length < maximumHits) {
 				// first result is an IStatus indicating indexer was busy
-				IStatus firstRootNode = (IStatus) scp.getElements(result)[0];
-				
-				assertEquals(IStatus.WARNING, firstRootNode.getSeverity());
-				// can't really verify text in case message is localized...
+				Object[] nodeElements = scp.getElements(result);
+				Object node = nodeElements[0];
+				if (!(node instanceof IStatus))
+					node = nodeElements[1];
+				if (node instanceof IStatus)
+				{
+					IStatus firstRootNode = (IStatus) node;				
+					assertEquals(IStatus.WARNING, firstRootNode.getSeverity());
+					// can't really verify text in case message is localized...
+				}
+				else
+					fail("can't get status");
 			}
 		} else {
 			// must NOT have the IStatus

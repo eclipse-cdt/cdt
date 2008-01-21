@@ -120,16 +120,21 @@ public class BasicSearchTest extends BaseUITestCase {
 		// project results are in a project node, containing directories and files
 		Object[] resultElements = scp.getElements(result);
 		String label0= labpv.getText(resultElements[0]);
+		String label1= labpv.getText(resultElements[1]);
 		// external results are in a tree, directory containing files
 		Object externalResult = resultElements[1];
 		String path1= labpv.getText(externalResult);
 		String file1= labpv.getText(scp.getElements(externalResult)[0]);
+
+		externalResult = resultElements[0];
+		String path2= labpv.getText(externalResult);
+		String file2= labpv.getText(scp.getElements(externalResult)[0]);
 		
 		// check the results are rendered
 		String expected0= fCProject.getProject().getName();
 		String expected1= new Path(externalFile.getAbsolutePath()).toString();
-		assertEquals(expected0,label0);
-		assertEquals(expected1,new Path(path1).append(file1).toString());
+		assertTrue(expected0.equals(label0) || expected0.equals(label1));
+		assertTrue(expected1.equals(new Path(path1).append(file1).toString()) || expected1.equals(new Path(path2).append(file2).toString()));
 	}
 
 	// int x, y, xx, yy;
@@ -242,10 +247,18 @@ public class BasicSearchTest extends BaseUITestCase {
 			// if all the hits were found
 			if (elements.length < maximumHits) {
 				// first result is an IStatus indicating indexer was busy
-				IStatus firstRootNode = (IStatus) scp.getElements(result)[0];
-				
-				assertEquals(IStatus.WARNING, firstRootNode.getSeverity());
-				// can't really verify text in case message is localized...
+				Object[] nodeElements = scp.getElements(result);
+				Object node = nodeElements[0];
+				if (!(node instanceof IStatus))
+					node = nodeElements[1];
+				if (node instanceof IStatus)
+				{
+					IStatus firstRootNode = (IStatus) node;				
+					assertEquals(IStatus.WARNING, firstRootNode.getSeverity());
+					// can't really verify text in case message is localized...
+				}
+				else
+					fail("can't get status");
 			}
 		} else {
 			// must NOT have the IStatus

@@ -34,6 +34,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.RGB;
@@ -115,6 +116,7 @@ public class MarkOccurrenceTest extends TestCase {
 		assertNotNull(fEditor);
 		fTextWidget= fEditor.getViewer().getTextWidget();
 		assertNotNull(fTextWidget);
+		EditorTestHelper.joinReconciler((SourceViewer)fEditor.getViewer(), 10, 200, 20);
 		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		assertNotNull(fDocument);
 		fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);

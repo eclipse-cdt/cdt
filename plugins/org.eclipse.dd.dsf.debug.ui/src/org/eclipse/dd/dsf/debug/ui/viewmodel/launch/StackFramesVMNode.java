@@ -31,6 +31,7 @@ import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.VMChildrenUpdate;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
@@ -40,7 +41,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdat
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -287,7 +287,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         return IModelDelta.NO_CHANGE;
     }
 
-    public void buildDelta(final Object e, final ModelDelta parent, final int nodeOffset, final RequestMonitor rm) {
+    public void buildDelta(final Object e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
         if (e instanceof IContainerSuspendedDMEvent) {
             IExecutionDMContext threadDmc = null;
             if (parent.getElement() instanceof IDMVMContext) {
@@ -306,7 +306,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
-    private void buildDeltaForSuspendedEvent(final ISuspendedDMEvent e, final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final ModelDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    private void buildDeltaForSuspendedEvent(final ISuspendedDMEvent e, final IExecutionDMContext executionCtx, final IExecutionDMContext triggeringCtx, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         IRunControl runControlService = getServicesTracker().getService(IRunControl.class); 
         IStack stackService = getServicesTracker().getService(IStack.class);
         if (stackService == null || runControlService == null) {
@@ -353,7 +353,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         }
     }
     
-    private void buildDeltaForResumedEvent(final IResumedDMEvent e, final ModelDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    private void buildDeltaForResumedEvent(final IResumedDMEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         IStack stackService = getServicesTracker().getService(IStack.class);
         if (stackService == null) {
             // Required services have not initialized yet.  Ignore the event.
@@ -371,7 +371,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
         rm.done();
     }
 
-    private void buildDeltaForSteppingTimedOutEvent(final IStepQueueManager.ISteppingTimedOutEvent e, final ModelDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
+    private void buildDeltaForSteppingTimedOutEvent(final IStepQueueManager.ISteppingTimedOutEvent e, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor rm) {
         // Repaint the stack frame images to have the running symbol.
         parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
         rm.done();

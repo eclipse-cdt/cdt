@@ -21,6 +21,7 @@ import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.RootVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -28,7 +29,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
  * Layout node for the standard ILaunch object.  This node can only be used at 
@@ -87,7 +87,7 @@ public class LaunchRootVMNode extends RootVMNode
     }
 
     @Override
-    public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<ModelDelta> rm) {
+    public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
         if (!(rootObject instanceof ILaunch)) {
             rm.setStatus(new Status(IStatus.ERROR, DsfDebugUIPlugin.PLUGIN_ID, IDsfService.INVALID_STATE, "Invalid root element configured with launch root node.", null)); //$NON-NLS-1$
             return;
@@ -101,8 +101,8 @@ public class LaunchRootVMNode extends RootVMNode
          */
         ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
         List<ILaunch> launchList = Arrays.asList(manager.getLaunches());
-        final ModelDelta viewRootDelta = new ModelDelta(manager, 0, IModelDelta.NO_CHANGE, launchList.size());
-        final ModelDelta rootDelta = viewRootDelta.addNode(rootLaunch, launchList.indexOf(rootLaunch), IModelDelta.NO_CHANGE);
+        final VMDelta viewRootDelta = new VMDelta(manager, 0, IModelDelta.NO_CHANGE, launchList.size());
+        final VMDelta rootDelta = viewRootDelta.addNode(rootLaunch, launchList.indexOf(rootLaunch), IModelDelta.NO_CHANGE);
 
         // Generate delta for launch node.
         if (event instanceof LaunchesEvent) {

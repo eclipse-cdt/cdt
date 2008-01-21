@@ -24,10 +24,11 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.SyncVariableDataAccess;
 import org.eclipse.dd.dsf.debug.ui.viewmodel.variable.VariableVMNode;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMAdapter;
+import org.eclipse.dd.dsf.ui.viewmodel.DefaultVMContentProviderStrategy;
 import org.eclipse.dd.dsf.ui.viewmodel.IRootVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMModelProxy;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
-import org.eclipse.dd.dsf.ui.viewmodel.DefaultVMContentProviderStrategy;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.RootDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.update.AutomaticUpdatePolicy;
@@ -143,7 +144,7 @@ public class ExpressionVMProvider extends AbstractDMVMProvider
      * methods.  
      */
     public void buildDeltaForExpression(final IExpression expression, final int expressionElementIdx, final Object event, 
-        final ModelDelta parentDelta, final TreePath path, final RequestMonitor rm) 
+        final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) 
     {
         // Workaround: find the first active proxy and use it.
         if (!getActiveModelProxies().isEmpty()) {

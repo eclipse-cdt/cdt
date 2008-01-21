@@ -16,7 +16,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpd
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
  * Default implementation of a root view model node.  This class may be sub-classed
@@ -53,8 +52,8 @@ public class RootVMNode extends AbstractVMNode implements IRootVMNode {
      * Default implementation creates a delta assuming that the root layout node
      * is the input object into the view.  
      */
-    public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<ModelDelta> rm) {
-        rm.setData(new ModelDelta(rootObject, 0, IModelDelta.NO_CHANGE));
+    public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {
+        rm.setData(new VMDelta(rootObject, 0, IModelDelta.NO_CHANGE));
         rm.done();
     }
     
@@ -63,7 +62,7 @@ public class RootVMNode extends AbstractVMNode implements IRootVMNode {
         return IModelDelta.NO_CHANGE;
     }
     
-    public void buildDelta(Object event, ModelDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
+    public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
         requestMonitor.done();
     }
 }

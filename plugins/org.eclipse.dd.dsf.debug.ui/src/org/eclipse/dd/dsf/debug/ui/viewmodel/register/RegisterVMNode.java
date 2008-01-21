@@ -37,6 +37,7 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMConte
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
@@ -55,7 +56,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -436,7 +436,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
-    public void buildDelta(Object e, ModelDelta parentDelta, int nodeOffset, RequestMonitor rm) {
+    public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that the whole register group has changed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
@@ -543,7 +543,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
     
-    public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, ModelDelta parentDelta, 
+    public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
         if (event instanceof IRunControl.ISuspendedDMEvent) {
@@ -553,7 +553,7 @@ public class RegisterVMNode extends AbstractExpressionVMNode
         rm.done();
     }
 
-    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, ModelDelta parentDelta, final RequestMonitor rm) 
+    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
         if (event instanceof IRegisters.IRegisterChangedDMEvent) {
             parentDelta.addNode(element, IModelDelta.STATE);

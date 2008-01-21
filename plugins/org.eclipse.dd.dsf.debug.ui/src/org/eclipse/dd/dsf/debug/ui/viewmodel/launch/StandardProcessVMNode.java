@@ -16,6 +16,7 @@ import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
@@ -184,7 +185,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
         return myFlags;
     }
     
-    public void buildDelta(Object e, ModelDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
+    public void buildDelta(Object e, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor) {
         if (e instanceof DebugEvent && ((DebugEvent)e).getSource() instanceof IProcess) {
             DebugEvent de = (DebugEvent)e;
             if (de.getKind() == DebugEvent.CHANGE) {

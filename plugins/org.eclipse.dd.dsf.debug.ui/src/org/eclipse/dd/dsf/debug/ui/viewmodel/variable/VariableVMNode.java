@@ -44,6 +44,7 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMConte
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.CompositeDMVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
@@ -62,7 +63,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
@@ -100,7 +100,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
-    public void buildDelta(final Object event, final ModelDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+    public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
     
         if (event instanceof IRunControl.ISuspendedDMEvent) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
@@ -527,13 +527,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
     
-    public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, ModelDelta parentDelta, 
+    public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm) 
     {
         rm.done();
     }
     
-    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, ModelDelta parentDelta,
+    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
         RequestMonitor rm) 
     {
         if (event instanceof IRunControl.ISuspendedDMEvent) {

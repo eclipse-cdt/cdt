@@ -41,6 +41,7 @@ import org.eclipse.dd.dsf.debug.ui.viewmodel.register.RegisterBitFieldCellModifi
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMContext;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.IDMVMContext;
 import org.eclipse.debug.core.DebugException;
@@ -55,7 +56,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CellEditor;
@@ -424,7 +424,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
 
-    public void buildDelta(Object e, ModelDelta parentDelta, int nodeOffset, RequestMonitor rm) {
+    public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that the whole register group has changed.
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
@@ -602,7 +602,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         return IModelDelta.NO_CHANGE;
     }
     
-    public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final Object event, final ModelDelta parentDelta, final TreePath path, final RequestMonitor rm) 
+    public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final Object event, final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) 
     {
         if (event instanceof ISuspendedDMEvent) {
             // Mark the parent delta indicating that elements were added and/or removed.
@@ -613,7 +613,7 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
         rm.done();
     }
 
-    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, ModelDelta parentDelta, final RequestMonitor rm) 
+    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm) 
     {
         if (event instanceof IBitFieldChangedDMEvent) {
             parentDelta.addNode(element, IModelDelta.STATE);

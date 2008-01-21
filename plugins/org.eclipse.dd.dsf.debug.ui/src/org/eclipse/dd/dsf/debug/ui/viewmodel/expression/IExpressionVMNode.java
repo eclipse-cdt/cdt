@@ -12,8 +12,8 @@ package org.eclipse.dd.dsf.debug.ui.viewmodel.expression;
 
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -49,12 +49,12 @@ public interface IExpressionVMNode extends IVMNode {
      * Adds delta flags to the given parent delta based on the expression object 
      * given.  
      */
-    public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, ModelDelta parentDelta, 
+    public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta, 
         TreePath path, RequestMonitor rm);
     
     /**
      * Adds delta to the given parent delta based on the given element which was created base on 
      * an expression parsed by this node.
      */
-    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, ModelDelta parentDelta, final RequestMonitor rm);
+    public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta, final RequestMonitor rm);
 }

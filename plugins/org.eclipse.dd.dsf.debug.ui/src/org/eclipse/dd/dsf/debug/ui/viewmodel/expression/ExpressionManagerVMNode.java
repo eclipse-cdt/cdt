@@ -22,6 +22,7 @@ import org.eclipse.dd.dsf.ui.concurrent.ViewerCountingRequestMonitor;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMContext;
 import org.eclipse.dd.dsf.ui.viewmodel.AbstractVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
@@ -34,7 +35,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdat
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -296,7 +296,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode
         return retVal;
     }
 
-    public void buildDelta(final Object event, final ModelDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
+    public void buildDelta(final Object event, final VMDelta parentDelta, final int nodeOffset, final RequestMonitor requestMonitor) {
         // Add a flag if the list of expressions has changed.
         if (event instanceof ExpressionsChangedEvent) {
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

@@ -11,7 +11,6 @@
 package org.eclipse.dd.dsf.ui.viewmodel;
 
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
  * Special type of the view model node, which can be used as a root node
@@ -42,5 +41,5 @@ public interface IRootVMNode extends IVMNode{
      * @param event Event to process.
      * @param rm Result notification, contains the root of the delta.
      */
-    public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<ModelDelta> rm);
+    public void createRootDelta(Object rootObject, Object event, DataRequestMonitor<VMDelta> rm);
 }

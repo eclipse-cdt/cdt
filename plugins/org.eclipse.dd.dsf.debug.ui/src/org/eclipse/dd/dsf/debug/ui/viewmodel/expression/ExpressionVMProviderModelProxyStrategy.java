@@ -15,11 +15,11 @@ import java.util.Map;
 import org.eclipse.dd.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.dd.dsf.concurrent.RequestMonitor;
-import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.DefaultVMModelProxyStrategy;
+import org.eclipse.dd.dsf.ui.viewmodel.IVMNode;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -59,7 +59,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
     }
 
     public void buildDeltaForExpression(IExpression expression, int expressionElementIdx, Object event, 
-        ModelDelta parentDelta, TreePath path, RequestMonitor rm) 
+        VMDelta parentDelta, TreePath path, RequestMonitor rm) 
     {
         final IExpressionVMNode matchingNode = getExpressionVMProvider().findNodeToParseExpression(null, expression);
 
@@ -72,7 +72,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
     }
     
     private void buildNodeDeltaForExpression(final IExpressionVMNode node, final IExpression expression, 
-        final int expressionElementIdx, final Object event, final ModelDelta parentDelta, final TreePath path, 
+        final int expressionElementIdx, final Object event, final VMDelta parentDelta, final TreePath path, 
         final RequestMonitor rm) 
     {
         node.buildDeltaForExpression(
@@ -108,7 +108,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
     }
     
     private void buildDeltaForExpressionElement(final IExpressionVMNode node, Object expressionElement, 
-        final int expressionElementIdx, final Object event, final ModelDelta parentDelta, final TreePath path, 
+        final int expressionElementIdx, final Object event, final VMDelta parentDelta, final TreePath path, 
         final RequestMonitor rm) 
     {
         CountingRequestMonitor multiRm = new CountingRequestMonitor(getVMProvider().getExecutor(), rm);

@@ -25,13 +25,13 @@ import org.eclipse.dd.dsf.debug.ui.DsfDebugUIPlugin;
 import org.eclipse.dd.dsf.debug.ui.IDsfDebugUIConstants;
 import org.eclipse.dd.dsf.service.DsfSession;
 import org.eclipse.dd.dsf.service.IDsfService;
+import org.eclipse.dd.dsf.ui.viewmodel.VMDelta;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMNode;
 import org.eclipse.dd.dsf.ui.viewmodel.dm.AbstractDMVMProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 @SuppressWarnings("restriction")
 public class ModulesVMNode extends AbstractDMVMNode
@@ -142,7 +142,7 @@ public class ModulesVMNode extends AbstractDMVMNode
         return IModelDelta.NO_CHANGE;
     }
 
-    public void buildDelta(Object e, ModelDelta parentDelta, int nodeOffset, RequestMonitor rm) {
+    public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
         if (e instanceof IRunControl.ISuspendedDMEvent) {
             // Create a delta that indicates all groups have changed
             parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

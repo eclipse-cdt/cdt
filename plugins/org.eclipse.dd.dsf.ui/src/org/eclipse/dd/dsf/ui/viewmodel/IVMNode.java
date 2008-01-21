@@ -19,7 +19,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
  * View model nodes are configured with a view model provider to collectively 
@@ -90,7 +89,7 @@ public interface IVMNode extends IElementContentProvider
      * @param requestMonitor Return token, which notifies the caller that the calculation is
      * complete.
      */
-    public void buildDelta(Object event, ModelDelta parent, int nodeOffset, RequestMonitor requestMonitor);
+    public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor);
 
     /**
      * Returns the view model element for the given data model event.  This method 

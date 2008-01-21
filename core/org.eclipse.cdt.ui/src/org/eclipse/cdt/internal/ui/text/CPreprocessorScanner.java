@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
@@ -36,8 +34,6 @@ public class CPreprocessorScanner extends AbstractCScanner {
 
     /** Properties for tokens. */
 	private static String[] fgTokenProperties= {
-		ICColorConstants.C_SINGLE_LINE_COMMENT,
-		ICColorConstants.C_MULTI_LINE_COMMENT,
 		ICColorConstants.C_KEYWORD,
 		ICColorConstants.PP_DIRECTIVE,
 		ICColorConstants.PP_DEFAULT,
@@ -102,14 +98,6 @@ public class CPreprocessorScanner extends AbstractCScanner {
         token = getToken(ICColorConstants.PP_HEADER);
         CHeaderRule headerRule = new CHeaderRule(token);
         rules.add(headerRule);
-
-        token = getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
-        IRule lineCommentRule = new EndOfLineRule("//", token, '\\', true); //$NON-NLS-1$
-        rules.add(lineCommentRule);
-
-        token = getToken(ICColorConstants.C_MULTI_LINE_COMMENT);
-        IRule blockCommentRule = new MultiLineRule("/*", "*/", token, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
-        rules.add(blockCommentRule);
 
         token = getToken(ICColorConstants.C_STRING);
         IRule stringRule = new PatternRule("\"", "\"", token, '\\', true, true, true); //$NON-NLS-1$ //$NON-NLS-2$

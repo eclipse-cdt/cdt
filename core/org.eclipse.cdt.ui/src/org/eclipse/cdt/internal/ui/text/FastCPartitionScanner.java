@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private static final int STRING= 4;
 	private static final int PREPROCESSOR= 5;
 	private static final int PREPROCESSOR_MULTI_LINE_COMMENT= 6;
+	private static final int PREPROCESSOR_STRING= 7;
 	
 	// beginning of prefixes and postfixes
 	private static final int NONE= 0;
@@ -46,6 +47,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private static final int STAR= 4; // postfix for MULTI_LINE_COMMENT
 	private static final int CARRIAGE_RETURN=5; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
 	private static final int BACKSLASH_CR= 6; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
+	private static final int BACKSLASH_BACKSLASH= 7; // postfix for STRING, CHARACTER
 	
 	/** The scanner. */
 	private final BufferedDocumentScanner fScanner= new BufferedDocumentScanner(1000);	// faster implementation
@@ -65,7 +67,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	private boolean fFirstCharOnLine= true;
 
 	// emulate CPartitionScanner
-	private boolean fEmulate= false;
+	private final boolean fEmulate;
 	private int fCCodeOffset;
 	private int fCCodeLength;
 	
@@ -76,7 +78,8 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 		new Token(C_CHARACTER),
 		new Token(C_STRING),
 		new Token(C_PREPROCESSOR),
-		new Token(C_PREPROCESSOR)
+		new Token(C_MULTI_LINE_COMMENT),
+		new Token(C_PREPROCESSOR),
 	};
 
 	public FastCPartitionScanner(boolean emulate) {
@@ -128,7 +131,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 
 	 		case '\r':
 	 			fFirstCharOnLine= true;
-	 			if (!fEmulate && fLast == BACKSLASH) {
+	 			if (!fEmulate && fLast == BACKSLASH || fLast == BACKSLASH_BACKSLASH) {
 	 				fLast= BACKSLASH_CR;
 					fTokenLength++;
  					continue;
@@ -171,11 +174,18 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 			}
 
 	 		case '\\':
-	 			if (fLast == BACKSLASH) {
-	 				consume();
-	 				continue;
+				switch (fState) {
+				case CHARACTER:
+				case STRING:
+				case PREPROCESSOR_STRING:
+					fTokenLength++;
+					fLast= fLast == BACKSLASH ? BACKSLASH_BACKSLASH : BACKSLASH;
+					continue;
+				default:
+					fTokenLength++;
+					fLast= BACKSLASH;
+					continue;
 	 			}
-	 			break;
 
 	 		case '\n':
 	 			fFirstCharOnLine= true;
@@ -184,9 +194,10 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 				case CHARACTER:
 				case STRING:
 				case PREPROCESSOR:
+				case PREPROCESSOR_STRING:
 					// assert(fTokenLength > 0);
-					// if last char was a backslash then we have an escaped line
-					if (fLast != BACKSLASH && fLast != BACKSLASH_CR) {
+					// if last char was a backslash then we have spliced line
+					if (fLast != BACKSLASH && fLast != BACKSLASH_CR && fLast != BACKSLASH_BACKSLASH) {
 						return postFix(fState);
 					}
 
@@ -202,6 +213,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 					case CHARACTER:
 					case STRING:
 					case PREPROCESSOR:
+					case PREPROCESSOR_STRING:
 
 						int last;
 						int newState;
@@ -352,44 +364,45 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 				break;
 
 	 		case SINGLE_LINE_COMMENT:
-	 			switch (ch) {
-	 			case '\\':
-					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
-					fTokenLength++;
-					break;
-					
-		 		default:
-					consume();
-	 				break;
-	 			}
-	 			break;
+				consume();
+ 				break;
 
 	 		case PREPROCESSOR:
 	 			switch (ch) {
-	 			case '\\':
-					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
-					fTokenLength++;
-					break;
-
 				case '/':
 					if (fLast == SLASH) {
-						consume();
-						break;
+						if (fTokenLength - getLastLength(fLast) > 0) {
+							return preFix(fState, SINGLE_LINE_COMMENT, SLASH, 2);
+						} else {
+							preFix(fState, SINGLE_LINE_COMMENT, SLASH, 2);
+							fTokenOffset += fTokenLength;
+							fTokenLength= fPrefixLength;
+							break;
+						}
 					} else {
-						fTokenLength++;
+						consume();
 						fLast= SLASH;
-						break;
 					}
+					break;
 	
 				case '*':
 					if (fLast == SLASH) {
-						fState= PREPROCESSOR_MULTI_LINE_COMMENT;
-						consume();
-						break;
-					} else {
-						consume();
-						break;
+						if (fTokenLength - getLastLength(fLast) > 0) {
+							return preFix(fState, PREPROCESSOR_MULTI_LINE_COMMENT, SLASH_STAR, 2);
+						} else {
+							preFix(fState, PREPROCESSOR_MULTI_LINE_COMMENT, SLASH_STAR, 2);
+							fTokenOffset += fTokenLength;
+							fTokenLength= fPrefixLength;
+							break;
+						}
 					}
+					
+				case '"':
+					if (fLast != BACKSLASH) {
+						fState= PREPROCESSOR_STRING;
+					}
+					consume();
+					break;
 					
 		 		default:
 					consume();
@@ -397,6 +410,21 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	 			}
 	 			break;
 
+	 		case PREPROCESSOR_STRING:
+				switch (ch) {
+				case '"':
+					if (fLast != BACKSLASH) {
+						fState= PREPROCESSOR;
+					}
+					consume();
+					break;
+					
+		 		default:
+					consume();
+	 				break;
+				}
+				break;
+				
 	 		case PREPROCESSOR_MULTI_LINE_COMMENT:
 				switch (ch) {
 				case '*':
@@ -406,7 +434,9 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	
 				case '/':
 					if (fLast == STAR) {
+						IToken token= postFix(fState);
 						fState= PREPROCESSOR;
+						return token;
 					}
 					consume();
 					break;
@@ -434,17 +464,12 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	
 				default:
 					consume();
-					break;			
+					break;
 				}
 				break;
 				
 	 		case STRING:
 	 			switch (ch) {
-	 			case '\\':
-					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
-					fTokenLength++;
-					break;
-					
 				case '\"':	 			 			
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(STRING);
@@ -462,11 +487,6 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 	
 	 		case CHARACTER:
 	 			switch (ch) {
-				case '\\':
-					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
-					fTokenLength++;
-					break;
-	
 	 			case '\'':
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(CHARACTER);
@@ -501,6 +521,7 @@ public final class FastCPartitionScanner implements IPartitionTokenScanner, ICPa
 
 		case SLASH_STAR:
 		case BACKSLASH_CR:
+		case BACKSLASH_BACKSLASH:
 			return 2;
 
 		}	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	private static final int STAR= 4; // postfix for MULTI_LINE_COMMENT
 	private static final int CARRIAGE_RETURN=5; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
 	private static final int BACKSLASH_CR= 6; // postfix for STRING, CHARACTER and SINGLE_LINE_COMMENT
+	private static final int BACKSLASH_BACKSLASH= 7; // postfix for STRING, CHARACTER
 	
 	/** The scanner. */
 	private final BufferedDocumentScanner fScanner= new BufferedDocumentScanner(1000);
@@ -185,7 +186,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 
 	 		case '\r':
 	 			fFirstCharOnLine= true;
-	 			if (fLast == BACKSLASH) {
+	 			if (fLast == BACKSLASH || fLast == BACKSLASH_BACKSLASH) {
 	 				fLast= BACKSLASH_CR;
 					fTokenLength++;
  					continue;
@@ -221,11 +222,17 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	 			}
 
 	 		case '\\':
-	 			if (fLast == BACKSLASH) {
-	 				consume();
-	 				continue;
+				switch (fState) {
+				case CHARACTER:
+				case STRING:
+					fTokenLength++;
+					fLast= fLast == BACKSLASH ? BACKSLASH_BACKSLASH : BACKSLASH;
+					continue;
+				default:
+					fTokenLength++;
+					fLast= BACKSLASH;
+					continue;
 	 			}
-	 			break;
 
 	 		case '\n':
 	 			fFirstCharOnLine= true;
@@ -236,7 +243,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 				case PREPROCESSOR:
 					// assert(fTokenLength > 0);
 					// if last char was a backslash then we have an escaped line
-					if (fLast != BACKSLASH && fLast != BACKSLASH_CR) {
+					if (fLast != BACKSLASH && fLast != BACKSLASH_CR && fLast != BACKSLASH_BACKSLASH) {
 						return postFix(fState);
 					}
 
@@ -431,25 +438,11 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 				break;
 
 	 		case SINGLE_LINE_COMMENT:
-	 			switch (ch) {
-	 			case '\\':
-					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
-					fTokenLength++;
-					break;
-					
-		 		default:
-					consume();
-	 				break;
-	 			}
-	 			break;
+				consume();
+ 				break;
 
 	 		case PREPROCESSOR:
 	 			switch (ch) {
-	 			case '\\':
-					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
-					fTokenLength++;
-					break;
-
 				case '/':
 					if (fLast == SLASH) {
 						consume();
@@ -525,11 +518,6 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 				
 	 		case STRING:
 	 			switch (ch) {
-	 			case '\\':
-					fLast= (fLast == BACKSLASH) ? NONE : BACKSLASH;
-					fTokenLength++;
-					break;
-					
 				case '\"':
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(STRING);
@@ -579,6 +567,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 
 		case SLASH_STAR:
 		case BACKSLASH_CR:
+		case BACKSLASH_BACKSLASH:
 			return 2;
 
 		}	

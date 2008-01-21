@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -993,7 +993,7 @@ public class CPartitionerTest extends TestCase {
 			fDocument.replace(fDocument.getLength(), 0, "#");
 			fDocument.replace(fDocument.getLength(), 0, " ");
 			fDocument.replace(fDocument.getLength(), 0, "\t");
-			fDocument.replace(fDocument.getLength(), 0, "include <float.h> /* */");
+			fDocument.replace(fDocument.getLength(), 0, "include <float.h> ");
 
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
@@ -1001,10 +1001,28 @@ public class CPartitionerTest extends TestCase {
 			};
 			checkPartitioning(expectation, result);
 
+			fDocument.replace(fDocument.getLength(), 0, "//   ");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  21,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(21, 5, ICPartitions.C_SINGLE_LINE_COMMENT),
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(21, 5, "/* */");
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  21,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(21, 5, ICPartitions.C_MULTI_LINE_COMMENT),
+			};
+			checkPartitioning(expectation, result);
+
 			fDocument.replace(fDocument.getLength(), 0, "\nz");
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
-				new TypedRegion(0,  27,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(0,  21,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(21, 5, ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(26, 1,  ICPartitions.C_PREPROCESSOR),
 				new TypedRegion(27, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
@@ -1013,7 +1031,9 @@ public class CPartitionerTest extends TestCase {
 			fDocument.replace(2, 0, "\\\\");
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
-				new TypedRegion(0,  29,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(0,  23,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(23, 5, ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(28, 1,  ICPartitions.C_PREPROCESSOR),
 				new TypedRegion(29, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
@@ -1022,7 +1042,9 @@ public class CPartitionerTest extends TestCase {
 			fDocument.replace(3, 1, "\n");
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
-				new TypedRegion(0,  29,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(0,  23,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(23, 5, ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(28, 1,  ICPartitions.C_PREPROCESSOR),
 				new TypedRegion(29, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
@@ -1031,7 +1053,9 @@ public class CPartitionerTest extends TestCase {
 			fDocument.replace(26, 0, "\\\r\n");
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
-				new TypedRegion(0,  32,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(0,  23,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(23, 8, ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(31, 1,  ICPartitions.C_PREPROCESSOR),
 				new TypedRegion(32, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
@@ -1040,7 +1064,9 @@ public class CPartitionerTest extends TestCase {
 			fDocument.replace(28, 1, "");
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
-				new TypedRegion(0,  31,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(0,  23,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(23, 7, ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(30, 1,  ICPartitions.C_PREPROCESSOR),
 				new TypedRegion(31, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
@@ -1049,7 +1075,9 @@ public class CPartitionerTest extends TestCase {
 			fDocument.replace(26, 1, "");
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
-				new TypedRegion(0,  30,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(0,  23,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(23, 6, ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(29, 1,  ICPartitions.C_PREPROCESSOR),
 				new TypedRegion(30, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
@@ -1058,7 +1086,9 @@ public class CPartitionerTest extends TestCase {
 			fDocument.replace(0, 0, "  \t");
 			result= fDocument.computePartitioning(0, fDocument.getLength());
 			expectation= new TypedRegion[] {
-				new TypedRegion(0,  33,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(0,  26,  ICPartitions.C_PREPROCESSOR),
+				new TypedRegion(26, 6, ICPartitions.C_MULTI_LINE_COMMENT),
+				new TypedRegion(32, 1,  ICPartitions.C_PREPROCESSOR),
 				new TypedRegion(33, 1, IDocument.DEFAULT_CONTENT_TYPE)
 			};
 			checkPartitioning(expectation, result);
@@ -1068,4 +1098,67 @@ public class CPartitionerTest extends TestCase {
 		}
 	}
 
+	public void testLineSplicing_Bug124113() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "// comment... \\\\\ncontinued");
+
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_SINGLE_LINE_COMMENT)
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "#define D \\\\\ncontinued");
+
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_PREPROCESSOR)
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "\"str\\\\\ncontinued\"");
+
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_STRING)
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "'\\\\\nc'");
+
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_CHARACTER)
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
+
+	public void testCommentInPreprocessorString() {
+		try {
+
+			fDocument.replace(0, fDocument.getLength(), "#define S \"http://www.foo.bar\"");
+
+			ITypedRegion[] result= fDocument.computePartitioning(0, fDocument.getLength());
+			TypedRegion[] expectation= {
+				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_PREPROCESSOR)
+			};
+			checkPartitioning(expectation, result);
+
+			fDocument.replace(0, fDocument.getLength(), "#define S \"http:/* */\"");
+
+			result= fDocument.computePartitioning(0, fDocument.getLength());
+			expectation= new TypedRegion[] {
+				new TypedRegion(0,  fDocument.getLength(),  ICPartitions.C_PREPROCESSOR)
+			};
+			checkPartitioning(expectation, result);
+
+		} catch (BadLocationException x) {
+			assertTrue(false);
+		}
+	}
 }

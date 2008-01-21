@@ -61,16 +61,16 @@ abstract class PDOMCPPInstance extends PDOMCPPSpecialization implements
 	}
 	
 	private static class TemplateArgumentCollector implements IPDOMVisitor {
-		private List args = new ArrayList();
+		private List<IType> args = new ArrayList<IType>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof IType)
-				args.add(node);
+				args.add((IType) node);
 			return false;
 		}
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public IType[] getTemplateArguments() {
-			return (IType[])args.toArray(new IType[args.size()]);
+			return args.toArray(new IType[args.size()]);
 		}
 	}
 	

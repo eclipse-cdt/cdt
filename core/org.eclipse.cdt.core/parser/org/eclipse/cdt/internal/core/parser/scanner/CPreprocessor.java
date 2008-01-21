@@ -778,7 +778,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
     
     private void addMacroDefinition(IIndexMacro macro) {
     	try {
-    		PreprocessorMacro result= fMacroDefinitionParser.parseMacroDefinition(macro.getNameCharArray(), macro.getParameterList(), macro.getExpansionImage());
+    		PreprocessorMacro result= MacroDefinitionParser.parseMacroDefinition(macro.getNameCharArray(), macro.getParameterList(), macro.getExpansionImage());
     		final IASTFileLocation loc= macro.getFileLocation();
     		fLocationMap.registerMacroFromIndex(result, loc, -1);
 	    	fMacroDictionary.put(result.getNameCharArray(), result);

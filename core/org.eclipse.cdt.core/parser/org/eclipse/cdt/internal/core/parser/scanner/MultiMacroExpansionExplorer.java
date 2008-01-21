@@ -57,6 +57,8 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 	private final SingleMacroExpansionExplorer[] fDelegates;
 	private final String fFilePath;
 	private final Map<IMacroBinding, IASTFileLocation> fMacroLocations;
+	private MacroExpansionStep fCachedStep;
+	private int fCachedStepID= -1;
 
 	public MultiMacroExpansionExplorer(IASTTranslationUnit tu, IASTFileLocation loc) {
 		if (tu == null || loc == null || loc.getNodeLength() == 0) {
@@ -191,6 +193,9 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		if (step < 0) {
 			throw new IndexOutOfBoundsException();
 		}
+		if (fCachedStep != null && fCachedStepID == step) {
+			return fCachedStep;
+		}
 		int i;
 		MacroExpansionStep dresult= null;
 		StringBuilder before= new StringBuilder();
@@ -218,7 +223,9 @@ public class MultiMacroExpansionExplorer extends MacroExpansionExplorer {
 		
 		List<ReplaceEdit> replacements= new ArrayList<ReplaceEdit>();
 		shiftAndAddEdits(shift, dresult.getReplacements(), replacements);
-		return new MacroExpansionStep(before.toString(), dresult.getExpandedMacro(), dresult.getLocationOfExpandedMacroDefinition(), replacements.toArray(new ReplaceEdit[replacements.size()]));
+		fCachedStep= new MacroExpansionStep(before.toString(), dresult.getExpandedMacro(), dresult.getLocationOfExpandedMacroDefinition(), replacements.toArray(new ReplaceEdit[replacements.size()]));
+		fCachedStepID= step;
+		return fCachedStep;
 	}
 	
 	private void appendGap(StringBuilder result, int i) {

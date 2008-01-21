@@ -156,7 +156,9 @@ public class CMacroExpansionInput {
 				if (node instanceof IASTName) {
 					IASTName macroName= (IASTName) node;
 					IBinding binding= macroName.getBinding();
-					if (binding instanceof IMacroBinding && !macroName.isDefinition()) {
+					// skip macro references that belong to a macro definition or an undef directive
+					if (binding instanceof IMacroBinding && !macroName.isDefinition() &&
+							macroName.getParent() instanceof IASTTranslationUnit) {
 						addExpansionNode(node);
 						createMacroExpansionExplorer(ast);
 						return Status.OK_STATUS;

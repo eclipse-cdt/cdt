@@ -35,7 +35,7 @@ public class PDOMMacroParameter {
 		this.record = record;
 	}
 	
-	public PDOMMacroParameter(PDOM pdom, String name) throws CoreException {
+	public PDOMMacroParameter(PDOM pdom, char[] name) throws CoreException {
 		Database db = pdom.getDB();
 		
 		this.pdom = pdom;

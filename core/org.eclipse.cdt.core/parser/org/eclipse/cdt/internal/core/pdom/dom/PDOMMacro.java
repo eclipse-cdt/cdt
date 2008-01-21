@@ -21,10 +21,9 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexMacro;
@@ -77,23 +76,23 @@ public class PDOMMacro implements IIndexMacro, IASTFileLocation {
 		Database db = pdom.getDB();
 		this.record = db.malloc(RECORD_SIZE);
 		IASTName name = macro.getName();
+		IMacroBinding binding= (IMacroBinding) name.getBinding();
+		
 		db.putInt(record + NAME, db.newString(name.toCharArray()).getRecord());
 		db.putInt(record + FILE, file.getRecord());
 		IASTFileLocation fileloc = name.getFileLocation();
 		db.putInt(record + NAME_OFFSET, fileloc.getNodeOffset());
 		db.putShort(record + NAME_LENGTH, (short) fileloc.getNodeLength());
-		db.putInt(record + EXPANSION, db.newString(macro.getExpansion()).getRecord());
+		db.putInt(record + EXPANSION, db.newString(binding.getExpansionImage()).getRecord());
 		setNextMacro(0);
 		
 		byte macroStyle= MACROSTYLE_OBJECT;
 		PDOMMacroParameter last = null;
-		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
+		char[][] params= binding.getParameterList();
+		if (params != null) {
 			macroStyle= MACROSTYLE_FUNCTION;
-			IASTPreprocessorFunctionStyleMacroDefinition func = (IASTPreprocessorFunctionStyleMacroDefinition)macro;
-			IASTFunctionStyleMacroParameter[] params = func.getParameters();
 			for (int i = params.length - 1; i >= 0; --i) {
-				IASTFunctionStyleMacroParameter param = params[i];
-				PDOMMacroParameter pdomParam = new PDOMMacroParameter(pdom, param.getParameter());
+				PDOMMacroParameter pdomParam = new PDOMMacroParameter(pdom, params[i]);
 				if (last != null)
 					pdomParam.setNextParameter(last);
 				last = pdomParam;

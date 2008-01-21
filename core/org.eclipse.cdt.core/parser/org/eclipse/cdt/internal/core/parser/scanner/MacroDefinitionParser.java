@@ -143,8 +143,8 @@ public class MacroDefinitionParser {
 	/** 
 	 * Parses a macro definition basically checking for var-args.
 	 */
-	public PreprocessorMacro parseMacroDefinition(final char[] name, char[][] paramList, final char[] replacement) {
-		fHasVarArgs= 0;
+	public static PreprocessorMacro parseMacroDefinition(final char[] name, char[][] paramList, final char[] replacement) {
+		int hasVarargs= 0;
 		if (paramList != null) {
 			final int length = paramList.length;
 			if (length > 0) {
@@ -155,7 +155,7 @@ public class MacroDefinitionParser {
 					break;
 				case 3:
 					if (CharArrayUtils.equals(lastParam, Keywords.cpELLIPSIS)) {
-						fHasVarArgs= FunctionStyleMacro.VAARGS;
+						hasVarargs= FunctionStyleMacro.VAARGS;
 						char[][] copy= new char[length][];
 						System.arraycopy(paramList, 0, copy, 0, length-1);
 						copy[length-1]= Keywords.cVA_ARGS;
@@ -164,7 +164,7 @@ public class MacroDefinitionParser {
 					break;
 				default:
 					if (CharArrayUtils.equals(lastParam, lpl-3, 3, Keywords.cpELLIPSIS)) {
-						fHasVarArgs= FunctionStyleMacro.NAMED_VAARGS;
+						hasVarargs= FunctionStyleMacro.NAMED_VAARGS;
 						char[][] copy= new char[length][];
 						System.arraycopy(paramList, 0, copy, 0, length-1);
 						copy[length-1]= CharArrayUtils.subarray(lastParam, 0, lpl-3);
@@ -178,7 +178,7 @@ public class MacroDefinitionParser {
 		if (paramList == null) { 
 			return new ObjectStyleMacro(name, replacement);
 		}
-		return new FunctionStyleMacro(name, paramList, fHasVarArgs, replacement);
+		return new FunctionStyleMacro(name, paramList, hasVarargs, replacement);
 	}
 
 	private Token parseName(final Lexer lexer) throws OffsetLimitReachedException,	InvalidMacroDefinitionException {

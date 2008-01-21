@@ -453,6 +453,7 @@
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.xlc.aix.AixConfigurationEnvironmentSupplier"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XlCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.exe.debug">
 			      <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.exe.debug"
@@ -518,6 +519,7 @@
                      osList="all"
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XlCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.exe.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.exe.release"
@@ -590,6 +592,7 @@
                <toolChain
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.so.debug;cdt.managedbuild.tool.xlc.cpp.linker.so.debug"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XlCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.so.debug">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.debug"
@@ -653,6 +656,7 @@
             <toolChain
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.so.release;cdt.managedbuild.tool.xlc.cpp.linker.so.release"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XlCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.so.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.release"
@@ -725,6 +729,7 @@
                <toolChain
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.xlc.archiver.lib.debug"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XlCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.lib.debug">
 				  <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.lib.debug"
@@ -784,6 +789,7 @@
             <toolChain
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.xlc.archiver.lib.release"
+                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XlCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.lib.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.lib.release"

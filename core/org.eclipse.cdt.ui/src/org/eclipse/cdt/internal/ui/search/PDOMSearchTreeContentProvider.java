@@ -23,19 +23,21 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @author Doug Schaefer
@@ -78,23 +80,40 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (TreeViewer)viewer;
-		result = (PDOMSearchResult)newInput;
-		tree.clear();
-		if (result != null) {
-			Object[] elements = result.getElements();
-			for (int i = 0; i < elements.length; ++i) {
-				insertSearchElement((PDOMSearchElement)elements[i]);
-			}
-		}
+		this.result = (PDOMSearchResult) newInput;
+		initialize(result);
+		viewer.refresh();
 	}
 
-	private void insertChild(Object parent, Object child) {
+	/**
+	 * Add a message to a project node indicating it has no results because indexer is disabled.
+	 * @param project
+	 */
+	private void insertUnindexedProjectWarningElement(ICProject project) {
+		insertCElement(project);
+		insertChild(project, 
+				new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+						CSearchMessages.getString("PDOMSearchTreeContentProvider.IndexerNotEnabledWarning"))); //$NON-NLS-1$
+	}
+
+	/**
+	 * Add a message to a project node indicating it has no results because project is closed
+	 * @param project
+	 */
+	private void insertClosedProjectWarningElement(ICProject project) {
+		insertCElement(project);
+		insertChild(project, 
+				new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,
+						CSearchMessages.getString("PDOMSearchTreeContentProvider.ProjectClosedWarning"))); //$NON-NLS-1$
+	}
+	
+	private boolean insertChild(Object parent, Object child) {
 		Set children = (Set)tree.get(parent);
 		if (children == null) {
 			children = new HashSet();
 			tree.put(parent, children);
 		}
-		children.add(child);
+		return children.add(child);
 	}
 	
 	private void insertSearchElement(PDOMSearchElement element) {
@@ -150,30 +169,66 @@ public class PDOMSearchTreeContentProvider implements ITreeContentProvider, IPDO
 		if (elements != null) {
 			for (int i = 0; i < elements.length; ++i) {
 				PDOMSearchElement element = (PDOMSearchElement)elements[i];
-				if (result.getMatchCount(element) > 0)
+				if (result.getMatchCount(element) > 0) {
 					insertSearchElement(element);
-				else
-					remove(element);
-			}
-		}
-		
-		Display d= PlatformUI.getWorkbench().getDisplay();
-		d.asyncExec(new Runnable() {
-			public void run() {
-				if (!viewer.getTree().isDisposed()) {
-					viewer.refresh();
+				} else {
+					boolean remove = true;
+					if (element instanceof ICProject) {
+						ICProject cProject = (ICProject) element;
+						remove = !addProjectWarningIfApplicable(cProject);
+					}
+					if (remove) {
+						remove(element);
+					}
 				}
 			}
-		});
+		}
+		if (!viewer.getTree().isDisposed()) {
+			viewer.refresh();
+		}
+	}
+
+	private boolean addProjectWarningIfApplicable(ICProject cProject) {
+		if (cProject.isOpen()) {
+			if (!CCorePlugin.getIndexManager().isProjectIndexed(cProject)) {
+				insertUnindexedProjectWarningElement(cProject);
+				return true;
+			}
+		} else {
+			insertClosedProjectWarningElement(cProject);
+			return true;
+		}
+		return false;
 	}
 	
 	public void clear() {
+		initialize(result);
+	}
+	
+	private void initialize(final PDOMSearchResult result) {
+		this.result = result;
 		tree.clear();
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				viewer.refresh();
+		if (result != null) {
+			// if indexer was busy, record that
+			if (result.wasIndexerBusy()) {
+				insertChild(result, IPDOMSearchContentProvider.INCOMPLETE_RESULTS_NODE); 
 			}
-		});
+			
+			Object[] elements = result.getElements();
+			for (int i = 0; i < elements.length; ++i) {
+				insertSearchElement((PDOMSearchElement)elements[i]);
+			}
+
+			// add all the projects which have no results
+			ICProject[] projects = ((PDOMSearchQuery)result.getQuery()).getProjects();
+			for (int i = 0; i < projects.length; ++i) {
+				ICProject project = projects[i];
+				Object projectResults = tree.get(project);
+				if (projectResults == null) {
+					addProjectWarningIfApplicable(project);
+				}
+			}
+		}
 	}
 	
 	protected void remove(Object element) {

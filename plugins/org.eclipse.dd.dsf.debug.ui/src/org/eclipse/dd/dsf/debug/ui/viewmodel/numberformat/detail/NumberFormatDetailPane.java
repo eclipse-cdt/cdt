@@ -53,7 +53,6 @@ import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneMaxLeng
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneWordWrapAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.variables.IndexedValuePartition;
-import org.eclipse.debug.internal.ui.views.variables.StatusLineContributionItem;
 import org.eclipse.debug.internal.ui.views.variables.details.DetailMessages;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -109,6 +108,7 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+import org.eclipse.ui.texteditor.StatusLineContributionItem;
 
 public class NumberFormatDetailPane implements IDetailPane, IAdaptable, IPropertyChangeListener {
 

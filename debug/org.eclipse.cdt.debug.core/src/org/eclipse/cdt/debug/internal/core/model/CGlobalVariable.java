@@ -351,7 +351,6 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 					ICDITarget cdiTarget = source.getTarget();
 					if (  getCDITarget().equals( cdiTarget ) ) {
 						setChanged( false );
-						resetValue(); // Reset the value cache so the display value will be updated.
 					}
 				}
 			}

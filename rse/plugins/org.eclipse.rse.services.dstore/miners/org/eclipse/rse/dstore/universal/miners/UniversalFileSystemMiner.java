@@ -1851,30 +1851,18 @@ public class UniversalFileSystemMiner extends Miner {
 	{
 		File file = getFileFor(subject);
 		
-		// permissions
-		String octalPermissions = null;
-		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-
-		if (os.startsWith("linux")){ //$NON-NLS-1$
-			// permissions in octal form
-			octalPermissions = simpleShellCommand("stat -c%a", file); //$NON-NLS-1$
-		}
-		else {
-			// permissions in form  "drwxrwxrwx ..."
-			String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
-			
-			int firstSpace = ldStr.indexOf(' ');
-			
-			// permissions in form "rwxrwxrwx"
-			String permString = ldStr.substring(1, firstSpace);
-			octalPermissions = alphaPermissionsToOctal(permString);
-		}
-
-		// user and group
+		
+		// permissions in form  "drwxrwxrwx ..."
 		String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
+				
 		StringTokenizer tokenizer = new StringTokenizer(ldStr, " \t"); //$NON-NLS-1$
-		tokenizer.nextToken();
-		tokenizer.nextToken();
+										
+		// permissions in form "rwxrwxrwx"
+		String permString = tokenizer.nextToken().substring(1); 
+		String octalPermissions = alphaPermissionsToOctal(permString);
+
+		// user and group	
+		tokenizer.nextToken(); // nothing important
 		String user = tokenizer.nextToken(); // 3rd
 		String group = tokenizer.nextToken(); // 4th
 

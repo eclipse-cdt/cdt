@@ -13,3 +13,4 @@ Require-Bundle: org.eclipse.cdt.managedbuilder.core,
  org.eclipse.cdt.make.core,
  org.eclipse.ui
 Eclipse-LazyStart: true
+Bundle-Activator: org.eclipse.cdt.managedbuilder.xlc.core.XLCCorePlugin

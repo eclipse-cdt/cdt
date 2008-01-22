@@ -332,7 +332,21 @@ public class ExpansionExplorerTests extends BaseTestCase {
     public void testVararg2() throws Exception {
     	performTest(3);
     }
+
+    // #define vararg(x, y...) bla(x,  ## y)
+    // #define _p p
     
+    // vararg( _p , _p );
+
+    // vararg( p , _p );
+
+    // vararg( p , p );
+
+    // bla(p,  p);
+    public void testVararg2x() throws Exception {
+    	performTest(3);
+    }
+
     // #define func2(x,y) (x,y)
     // #define _p p
     

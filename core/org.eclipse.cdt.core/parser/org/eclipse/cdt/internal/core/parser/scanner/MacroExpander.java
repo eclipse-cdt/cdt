@@ -523,15 +523,14 @@ public class MacroExpander {
 		Token pasteArg1= null;  
 		for (Token t= replacement.first(); t != null; l=t, t=n) {
 			n= (Token) t.getNext();
-			boolean pasteNext= n != null && n.getType() == IToken.tPOUNDPOUND;
 
 			switch(t.getType()) {
 			case CPreprocessor.tMACRO_PARAMETER:
 				int idx= ((TokenParameterReference) t).getIndex();
 				if (idx < args.length) { // be defensive
 					addSpacemarker(l, t, result); // start argument replacement
-					TokenList arg= clone(pasteNext ? args[idx] : expandedArgs[idx]);
-					if (pasteNext) {
+					if (isKind(n, IToken.tPOUNDPOUND)) {
+						TokenList arg= clone(args[idx]);
 						pasteArg1= arg.last();
 						if (pasteArg1 != null) {
 							result.appendAllButLast(arg);
@@ -539,6 +538,7 @@ public class MacroExpander {
 						}
 					}
 					else {
+						TokenList arg= clone(expandedArgs[idx]);
 						result.appendAll(arg);
 						addSpacemarker(t, n, result); // end argument replacement
 					}
@@ -549,14 +549,13 @@ public class MacroExpander {
 				addSpacemarker(l, t, result);	// start stringify
 				StringBuilder buf= new StringBuilder();
 				buf.append('"');
-				if (n != null && n.getType() == CPreprocessor.tMACRO_PARAMETER) {
+				if (isKind(n, CPreprocessor.tMACRO_PARAMETER)) {
 					idx= ((TokenParameterReference) n).getIndex();
 					if (idx < args.length) { // be defensive
 						stringify(args[idx], buf);
 					}
 					t= n;
 					n= (Token) n.getNext();
-					pasteNext= n != null && n.getType() == IToken.tPOUNDPOUND;
 				}
 				buf.append('"');
 				final int length= buf.length(); 
@@ -564,7 +563,7 @@ public class MacroExpander {
 				buf.getChars(0, length, image, 0);
 				
 				Token generated= new TokenWithImage(IToken.tSTRING, null, 0, 0, image);
-				if (pasteNext) {				   // start token paste, same as start stringify
+				if (isKind(n, IToken.tPOUNDPOUND)) {  // start token paste, same as start stringify
 					pasteArg1= generated;	
 				}
 				else {
@@ -581,23 +580,11 @@ public class MacroExpander {
 						TokenList arg;
 						idx= ((TokenParameterReference) n).getIndex();
 						if (idx < args.length) { // be defensive
-							// gcc-extension
-							if (idx == args.length-1 && macro.hasVarArgs() != FunctionStyleMacro.NO_VAARGS &&
-									pasteArg1 != null && pasteArg1.getType() == IToken.tCOMMA) { // no paste operation
-								arg= clone(expandedArgs[idx]);
-								if (arg.first() != null) {
-									result.append(pasteArg1);
-									rest= arg;
-								}
-								pasteArg1= pasteArg2= null;
-							}
-							else {
-								arg= clone(args[idx]);
-								pasteArg2= arg.first();
-								if (pasteArg2 != null && arg.first() != arg.last()) {
-									rest= arg;
-									rest.removeFirst();
-								}
+							arg= clone(args[idx]);
+							pasteArg2= arg.first();
+							if (pasteArg2 != null && arg.first() != arg.last()) {
+								rest= arg;
+								rest.removeFirst();
 							}
 						}
 					}
@@ -605,9 +592,10 @@ public class MacroExpander {
 						idx= -1;
 						pasteArg2= n;
 					}
+					
 					t= n;
 					n= (Token) n.getNext();
-					pasteNext= n != null && n.getType() == IToken.tPOUNDPOUND;
+					final boolean pasteNext= isKind(n, IToken.tPOUNDPOUND);
 
 					generated= tokenpaste(pasteArg1, pasteArg2, macro);
 					pasteArg1= null;
@@ -639,8 +627,43 @@ public class MacroExpander {
 				}
 				break;
 				
+			case IToken.tCOMMA:
+				if (isKind(n, IToken.tPOUNDPOUND)) {
+					final Token nn= (Token) n.getNext();
+					if (isKind(nn, CPreprocessor.tMACRO_PARAMETER)) {
+						idx= ((TokenParameterReference) nn).getIndex();
+						
+						// check for gcc-extension preventing the paste operation
+						if (idx == args.length-1 && macro.hasVarArgs() != FunctionStyleMacro.NO_VAARGS && 
+								!isKind(nn.getNext(), IToken.tPOUNDPOUND)) {
+							final Token nnn= (Token) nn.getNext();
+							TokenList arg= clone(expandedArgs[idx]);
+							if (arg.isEmpty()) {
+								addSpacemarker(l, t, result);
+								addSpacemarker(nn, nnn, result);
+							}
+							else {
+								result.append(t);
+								addSpacemarker(t, n, result);
+								result.appendAll(arg);
+								addSpacemarker(nn, nnn, result);
+							}
+							t= nn;
+							n= nnn;
+							break;
+						}
+					}
+					
+					addSpacemarker(l, t, result);
+					pasteArg1= t;
+				}
+				else {
+					result.append(t);
+				}
+				break;
+				
 			default:
-				if (pasteNext) {
+				if (isKind(n, IToken.tPOUNDPOUND)) {
 					addSpacemarker(l, t, result);	// start token paste
 					pasteArg1= t;
 				}
@@ -650,6 +673,10 @@ public class MacroExpander {
 				break;
 			}
 		}
+	}
+	
+	private boolean isKind(final IToken t, final int kind) {
+		return t!=null && t.getType() == kind;
 	}
 
 	private BitSet getParamUsage(PreprocessorMacro macro) {
@@ -663,14 +690,14 @@ public class MacroExpander {
 			switch(t.getType()) {
 			case CPreprocessor.tMACRO_PARAMETER:
 				int idx= 2*((TokenParameterReference) t).getIndex();
-				if (n == null || n.getType() != IToken.tPOUNDPOUND) {
+				if (!isKind(n, IToken.tPOUNDPOUND)) {
 					idx++;
 				}
 				result.set(idx);
 				break;
 				
 			case IToken.tPOUND:
-				if (n != null && n.getType() == CPreprocessor.tMACRO_PARAMETER) {
+				if (isKind(n, CPreprocessor.tMACRO_PARAMETER)) {
 					idx= ((TokenParameterReference) n).getIndex();
 					result.set(2*idx);
 					t= n; n= (Token) n.getNext();
@@ -678,18 +705,15 @@ public class MacroExpander {
 				break;
 				
 			case IToken.tPOUNDPOUND:
-				if (n != null) {
-					if (n.getType() == CPreprocessor.tMACRO_PARAMETER) {
-						idx= ((TokenParameterReference) n).getIndex();
-
-						// gcc-extension
-						if (l != null && l.getType() == IToken.tCOMMA && macro.hasVarArgs() != FunctionStyleMacro.NO_VAARGS
-								&& idx == macro.getParameterPlaceholderList().length-1) {
-							result.set(2*idx+1);
-						}
-						else {
-							result.set(2*idx);
-						}
+				if (isKind(n, CPreprocessor.tMACRO_PARAMETER)) {
+					idx= ((TokenParameterReference) n).getIndex();
+					// gcc-extension
+					if (isKind(l, IToken.tCOMMA) && macro.hasVarArgs() != FunctionStyleMacro.NO_VAARGS &&
+							idx == macro.getParameterPlaceholderList().length-1 && !isKind(n.getNext(), IToken.tPOUNDPOUND)) {
+						result.set(2*idx+1);
+					}
+					else {
+						result.set(2*idx);
 					}
 					t= n; n= (Token) n.getNext();
 				}
@@ -707,7 +731,6 @@ public class MacroExpander {
 		Token pasteArg1= null;  
 		for (Token t= replacement.first(); t != null; l=t, t=n) {
 			n= (Token) t.getNext();
-			boolean pasteNext= n != null && n.getType() == IToken.tPOUNDPOUND;
 
 			switch(t.getType()) {
 			case IToken.tPOUNDPOUND:
@@ -716,12 +739,11 @@ public class MacroExpander {
 					if (n != null) {
 						pasteArg2= n;
 						n= (Token) n.getNext();
-						pasteNext= n != null && n.getType() == IToken.tPOUNDPOUND;
 					}
 					
 					t= tokenpaste(pasteArg1, pasteArg2, macro);
 					if (t != null) {
-						if (pasteNext) {
+						if (isKind(n, IToken.tPOUNDPOUND)) {
 							pasteArg1= t;
 						}
 						else {
@@ -733,7 +755,7 @@ public class MacroExpander {
 				break;
 				
 			default:
-				if (pasteNext) {
+				if (isKind(n, IToken.tPOUNDPOUND)) {
 					addSpacemarker(l, t, result); // start token paste
 					pasteArg1= t;
 				}

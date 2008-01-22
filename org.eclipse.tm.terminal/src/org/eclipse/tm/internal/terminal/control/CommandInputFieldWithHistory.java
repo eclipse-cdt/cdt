@@ -211,8 +211,18 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		}
 		fInputField.setLayoutData(data);
 		fInputField.setFont(terminal.getFont());
+		// register the field assist
+		new ContentAssistCommandAdapter(
+				fInputField,
+				new TextContentAdapter(),
+				new FieldAssist(), 
+				null,
+				null,
+				installDecoration);
 		fInputField.addKeyListener(new KeyListener(){
 			public void keyPressed(KeyEvent e) {
+				if(!e.doit)
+					return;
 				if(e.keyCode=='\n' || e.keyCode=='\r') {
 					e.doit=false;
 					String line=fInputField.getText();
@@ -240,14 +250,6 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 			public void keyReleased(KeyEvent e) {
 			}
 		});
-		// register the field assist
-		new ContentAssistCommandAdapter(
-				fInputField,
-				new TextContentAdapter(),
-				new FieldAssist(), 
-				null,
-				null,
-				installDecoration);
 	}
 	public void setFont(Font font) {
 		fInputField.setFont(font);

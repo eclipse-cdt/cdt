@@ -154,4 +154,9 @@ public class HostFilePermissions implements
 	public void setUserOwner(String user) {
 		_user = user;
 	}
+
+	public IHostFilePermissions clone(IHostFilePermissions toClone) {
+		IHostFilePermissions clone = new HostFilePermissions(toClone.getPermissionBits(), toClone.getUserOwner(), toClone.getGroupOwner());
+		return clone;
+	}
 }

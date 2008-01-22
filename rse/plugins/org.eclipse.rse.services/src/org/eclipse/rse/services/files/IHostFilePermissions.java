@@ -144,4 +144,10 @@ public interface IHostFilePermissions {
 	 */
 	public void setGroupOwner(String group);
 	
+	/**
+	 * Create a duplicate of a set of permissions
+	 * @param toClone
+	 * @return the duplicate
+	 */
+	public IHostFilePermissions clone(IHostFilePermissions toClone);
 }

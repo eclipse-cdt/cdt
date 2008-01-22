@@ -81,6 +81,7 @@ import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IFileServiceCodePageConverter;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.PendingHostFilePermissions;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -2143,6 +2144,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		if (status != null)
 		{
 			// check status to make sure the file really changed
+			if (file instanceof IHostFilePermissionsContainer){
+				((IHostFilePermissionsContainer)file).setPermissions(permissions); // set to use new permissions
+			}
+			
 		}	
 	}
 

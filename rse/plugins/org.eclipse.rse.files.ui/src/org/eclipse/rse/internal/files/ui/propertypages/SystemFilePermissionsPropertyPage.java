@@ -351,57 +351,60 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			if ((capabilities & IFilePermissionsService.FS_CAN_SET_PERMISSIONS) != 0){
 				try
 				{
-					
+					IHostFilePermissions newPermissions = _permissions.clone(_permissions);
 					
 					if (_permissions.getPermission(IHostFilePermissions.PERM_USER_READ) != _userRead.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_USER_READ, _userRead.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_USER_READ, _userRead.getSelection());
 					}
 					if (_permissions.getPermission(IHostFilePermissions.PERM_USER_WRITE) != _userWrite.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_USER_WRITE, _userWrite.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_USER_WRITE, _userWrite.getSelection());
 					}
 					if (_permissions.getPermission(IHostFilePermissions.PERM_USER_EXECUTE) != _userExecute.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_USER_EXECUTE, _userExecute.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_USER_EXECUTE, _userExecute.getSelection());
 					}
 					if (_permissions.getPermission(IHostFilePermissions.PERM_GROUP_READ) != _groupRead.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_GROUP_READ, _groupRead.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_GROUP_READ, _groupRead.getSelection());
 					}
 					if (_permissions.getPermission(IHostFilePermissions.PERM_GROUP_WRITE) != _groupWrite.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_GROUP_WRITE, _groupWrite.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_GROUP_WRITE, _groupWrite.getSelection());
 					}
 					if (_permissions.getPermission(IHostFilePermissions.PERM_GROUP_EXECUTE) != _groupExecute.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_GROUP_EXECUTE, _groupExecute.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_GROUP_EXECUTE, _groupExecute.getSelection());
 					}
 					if (_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ) != _otherRead.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_OTHER_READ, _otherRead.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_OTHER_READ, _otherRead.getSelection());
 					}
 					if (_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE) != _otherWrite.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_OTHER_WRITE, _otherWrite.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_OTHER_WRITE, _otherWrite.getSelection());
 					}
 					if (_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE) != _otherExecute.getSelection()){
 						changed = true;
-						_permissions.setPermission(IHostFilePermissions.PERM_OTHER_EXECUTE, _otherExecute.getSelection());
+						newPermissions.setPermission(IHostFilePermissions.PERM_OTHER_EXECUTE, _otherExecute.getSelection());
 					}
 					
 					if (_owner != _userEntry.getText()){
 						changed = true;
-						_permissions.setUserOwner(_userEntry.getText());
+						newPermissions.setUserOwner(_userEntry.getText());
 					}
 					if (_group != _groupEntry.getText()){
 						changed = true;
-						_permissions.setGroupOwner(_groupEntry.getText());
+						newPermissions.setGroupOwner(_groupEntry.getText());
 					}
 					
 					
 					if (changed){
-						service.setFilePermissions(remoteFile.getHostFile(), _permissions, new NullProgressMonitor());
+						// assuming permissions are good
+						service.setFilePermissions(remoteFile.getHostFile(), newPermissions, new NullProgressMonitor());
+						
+						_permissions = newPermissions;
 					}
 				}
 				catch (Exception e){

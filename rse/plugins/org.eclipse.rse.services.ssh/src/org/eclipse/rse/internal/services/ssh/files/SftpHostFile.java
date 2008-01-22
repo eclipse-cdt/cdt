@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from FTPHostFile.
+ * David McKnight   (IBM)         - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -21,8 +22,10 @@ import java.io.File;
 
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 
-public class SftpHostFile implements IHostFile {
+public class SftpHostFile implements IHostFile, IHostFilePermissionsContainer {
 
 	private String fName;
 	private String fParentPath;
@@ -38,6 +41,8 @@ public class SftpHostFile implements IHostFile {
 	private boolean fIsLink = false;
 	private String fLinkTarget;
 	private String[] fExtended = null;
+	
+	private IHostFilePermissions _permissions = null;
 	
 	//TODO just re-use or extend FTPHostFile instead of copying here?
 	public SftpHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, boolean isLink, long lastModified, long size) {
@@ -214,5 +219,13 @@ public class SftpHostFile implements IHostFile {
 	}
 	public boolean canExecute() {
 		return fIsExecutable;
+	}
+	
+	public IHostFilePermissions getPermissions() {
+		return _permissions;
+	}
+
+	public void setPermissions(IHostFilePermissions permissions) {
+		_permissions = permissions;		
 	}
 }

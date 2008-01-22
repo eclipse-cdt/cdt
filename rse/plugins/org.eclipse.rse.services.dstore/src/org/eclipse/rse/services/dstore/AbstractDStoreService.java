@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186128][refactoring] Move IProgressMonitor last in public base classes
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout  
  * David McKnight   (IBM)        - [207095] check for null datastore
+ * David McKnight   (IBM)        - [209593] [api] check for existing query to avoid duplicates
  ********************************************************************************/
 
 package org.eclipse.rse.services.dstore;
@@ -102,11 +103,12 @@ public abstract class AbstractDStoreService implements IDStoreService
 		// query roots
 		DataElement queryCmd = getCommandDescriptor(subject, command);
 		DataStore ds = getDataStore();
-	
+		DStoreStatusMonitor smonitor = getStatusMonitor(ds);
+		
 		if (queryCmd != null && ds != null)
 		{
-			DataElement status = null;
-			
+			// check if there already is an active command for this query
+			DataElement status = smonitor.getCommandStatus(queryCmd, subject);
 			if (args != null)
 			{
 				status = ds.command(queryCmd, args, subject, true);
@@ -117,8 +119,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 			}
 			try
 			{
-				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
-				smon.waitForUpdate(status, monitor);
+				smonitor.waitForUpdate(status, monitor);
 				
 				int resultSize = subject.getNestedSize();
 
@@ -163,7 +164,7 @@ public abstract class AbstractDStoreService implements IDStoreService
 	{
 		List statuses = new ArrayList();
 		DataStore ds = getDataStore();	
-		DStoreStatusMonitor smon = getStatusMonitor(ds);
+		DStoreStatusMonitor smonitor = getStatusMonitor(ds);
 		
 	
 		for (int i = 0; i < subjects.length && !monitor.isCanceled(); i++)
@@ -172,15 +173,17 @@ public abstract class AbstractDStoreService implements IDStoreService
 			
 			DataElement queryCmd = getCommandDescriptor(subject, commands[i]);
 			if (queryCmd != null && ds != null)
-			{
-				DataElement status = null;
-				if (argses != null)
-				{
-					status = ds.command(queryCmd, argses[i], subject, true);
-				}
-				else
-				{
-					status = ds.command(queryCmd, subject, true);
+			{					
+				// check if there already is an active command for this query
+				DataElement status = smonitor.getCommandStatus(queryCmd, subject);
+				
+				if (status == null){
+					if (argses != null){
+						status = ds.command(queryCmd, argses[i], subject, true);
+					}
+					else{
+						status = ds.command(queryCmd, subject, true);
+					}
 				}
 				statuses.add(status);				
 			}
@@ -196,9 +199,9 @@ public abstract class AbstractDStoreService implements IDStoreService
 		    
 		    try
 		    {
-		    	smon.waitForUpdate(status, monitor);		 		    
+		    	smonitor.waitForUpdate(status, monitor);		 		    
 		    	
-			    if (!monitor.isCanceled() && smon.determineStatusDone(status))
+			    if (!monitor.isCanceled() && smonitor.determineStatusDone(status))
 			    {
 			    	List nested = deObj.getNestedData();
 			    	if (nested != null)
@@ -230,17 +233,22 @@ public abstract class AbstractDStoreService implements IDStoreService
 	
 	protected DataElement dsStatusCommand(DataElement subject, ArrayList args, String command, IProgressMonitor monitor)
 	{
-		// query roots
-		DataElement queryCmd = getCommandDescriptor(subject, command);
 		DataStore ds = getDataStore();
+		DStoreStatusMonitor smonitor = getStatusMonitor(ds);
+
+		DataElement queryCmd = getCommandDescriptor(subject, command);
 	
 		if (queryCmd != null && ds != null)
 		{
-			DataElement status = ds.command(queryCmd, args, subject, true);
+			// check if there already is an active command for this query
+			DataElement status = smonitor.getCommandStatus(queryCmd, subject);
+			
+			if (status == null){ 
+				status = ds.command(queryCmd, args, subject, true);
+			}
 			try
 			{
-				DStoreStatusMonitor smon = getStatusMonitor(getDataStore());
-				smon.waitForUpdate(status, monitor);
+				smonitor.waitForUpdate(status, monitor);
 			}
 			catch (InterruptedException e)
 			{				
@@ -261,16 +269,22 @@ public abstract class AbstractDStoreService implements IDStoreService
 	
 	protected DataElement dsStatusCommand(DataElement subject, String command, IProgressMonitor monitor)
 	{
-		// query roots
-		DataElement queryCmd = getCommandDescriptor(subject, command);	
 		DataStore ds = getDataStore();
+		DStoreStatusMonitor smonitor = getStatusMonitor(ds);
+
+		DataElement queryCmd = getCommandDescriptor(subject, command);	
 		
 		if (queryCmd != null && ds != null)
 		{			
-			DataElement status = ds.command(queryCmd, subject, true);
+			// check if there already is an active command for this query
+			DataElement status = smonitor.getCommandStatus(queryCmd, subject);
+			
+			if (status == null){ 
+				status = ds.command(queryCmd, subject, true);
+			}
 			try
 			{
-				getStatusMonitor(ds).waitForUpdate(status, monitor);
+				smonitor.waitForUpdate(status, monitor);
 			}
 			catch (InterruptedException e)
 			{				

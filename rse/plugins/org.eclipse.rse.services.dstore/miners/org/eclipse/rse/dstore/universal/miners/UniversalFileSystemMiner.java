@@ -216,16 +216,6 @@ public class UniversalFileSystemMiner extends Miner {
 		} else if (IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS.equals(name)) {
 				DataElement newPermissions = getCommandArgument(theElement, 1);
                 return handleSetFilePermissions(subject, newPermissions, status);			
-		} else if (IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER.equals(name)) {	
-				return handleQueryFileOwner(subject, status);
-		} else if (IUniversalDataStoreConstants.C_SET_FILE_USER_OWNER.equals(name)) {
-				DataElement newOwner = getCommandArgument(theElement, 1);
-				return handleSetFileOwner(subject, newOwner, status);
-		} else if (IUniversalDataStoreConstants.C_QUERY_FILE_GROUP_OWNER.equals(name)) {	
-			return handleQueryFileGroupOwner(subject, status);
-		} else if (IUniversalDataStoreConstants.C_SET_FILE_GROUP_OWNER.equals(name)) {
-			DataElement newOwner = getCommandArgument(theElement, 1);
-			return handleSetFileGroupOwner(subject, newOwner, status);
 		} else {
 			UniversalServerUtilities.logError(CLASSNAME,
 					"Invalid query to handlecommand", null); //$NON-NLS-1$
@@ -1608,37 +1598,6 @@ public class UniversalFileSystemMiner extends Miner {
 			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "SetPermissions",IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
-	
-			
-			// descriptors for ownership
-			createCommandDescriptor(UniversalFilter, "GetOwner", IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetOwner", IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetOwner", IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "GetOwner",IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "GetOwner", IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "GetOwner", IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER); //$NON-NLS-1$
-		
-			createCommandDescriptor(UniversalFilter, "SetOwner", IUniversalDataStoreConstants.C_SET_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetOwner", IUniversalDataStoreConstants.C_SET_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetOwner", IUniversalDataStoreConstants.C_SET_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "SetOwner",IUniversalDataStoreConstants.C_SET_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "SetOwner", IUniversalDataStoreConstants.C_SET_FILE_USER_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "SetOwner", IUniversalDataStoreConstants.C_SET_FILE_USER_OWNER); //$NON-NLS-1$
-			
-			createCommandDescriptor(UniversalFilter, "GetGroupOwner", IUniversalDataStoreConstants.C_QUERY_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetGroupOwner", IUniversalDataStoreConstants.C_QUERY_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetGroupOwner", IUniversalDataStoreConstants.C_QUERY_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "GetGroupOwner",IUniversalDataStoreConstants.C_QUERY_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "GetGroupOwner", IUniversalDataStoreConstants.C_QUERY_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "GetGroupOwner", IUniversalDataStoreConstants.C_QUERY_FILE_GROUP_OWNER); //$NON-NLS-1$
-		
-			createCommandDescriptor(UniversalFilter, "SetGroupOwner", IUniversalDataStoreConstants.C_SET_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetGroupOwner", IUniversalDataStoreConstants.C_SET_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetGroupOwner", IUniversalDataStoreConstants.C_SET_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "SetGroupOwner",IUniversalDataStoreConstants.C_SET_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "SetGroupOwner", IUniversalDataStoreConstants.C_SET_FILE_GROUP_OWNER); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "SetGroupOwner", IUniversalDataStoreConstants.C_SET_FILE_GROUP_OWNER); //$NON-NLS-1$
-
 		}
 	}
 	
@@ -1886,16 +1845,23 @@ public class UniversalFileSystemMiner extends Miner {
 	}
 	
 	
+	/**
+	 * Gets file permissions in the form <octal permissions>|<user>|<group>
+	 * @param subject
+	 * @param status
+	 * @return
+	 */
 	private DataElement handleQueryFilePermissions(DataElement subject, DataElement status)
 	{
 		File file = getFileFor(subject);
 		
-		String result = null;
+		// permissions
+		String octalPermissions = null;
 		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 
 		if (os.startsWith("linux")){ //$NON-NLS-1$
 			// permissions in octal form
-			result = simpleShellCommand("stat -c%a", file); //$NON-NLS-1$
+			octalPermissions = simpleShellCommand("stat -c%a", file); //$NON-NLS-1$
 		}
 		else {
 			// permissions in form  "drwxrwxrwx ..."
@@ -1905,95 +1871,53 @@ public class UniversalFileSystemMiner extends Miner {
 			
 			// permissions in form "rwxrwxrwx"
 			String permString = ldStr.substring(1, firstSpace);
-			result = alphaPermissionsToOctal(permString);
+			octalPermissions = alphaPermissionsToOctal(permString);
 		}
 
+		// user and group
+		String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
+		StringTokenizer tokenizer = new StringTokenizer(ldStr, " \t"); //$NON-NLS-1$
+		tokenizer.nextToken();
+		tokenizer.nextToken();
+		String user = tokenizer.nextToken(); // 3rd
+		String group = tokenizer.nextToken(); // 4th
+
+		String result = octalPermissions + '|' + user + '|' + group;		
         status.setAttribute(DE.A_SOURCE, result);
     	statusDone(status);
 	
 		return status;
 	}
 
+	/**
+	 * Set file permissions including user and group
+	 * @param subject
+	 * @param newPermissions permissions in the form <octal permissions>|<user>|<group>
+	 * @param status
+	 * @return
+	 */
 	private DataElement handleSetFilePermissions(DataElement subject, DataElement newPermissions, DataElement status)
 	{
 		File file = getFileFor(subject);
-		String result = simpleShellCommand("chmod " + newPermissions.getName(), file); //$NON-NLS-1$
 		
-        status.setAttribute(DE.A_SOURCE, result);
-    	statusDone(status);
-	
-		return status;
-	}
-	
-	private DataElement handleQueryFileOwner(DataElement subject, DataElement status)
-	{
-		File file = getFileFor(subject);
-		String result = null;
-		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+		String permissionsStr = newPermissions.getName();
+		String[] permAttributes = permissionsStr.split("\\"+IServiceConstants.TOKEN_SEPARATOR); //$NON-NLS-1$
 
-		if (os.startsWith("linux")){ //$NON-NLS-1$
-			result = simpleShellCommand("stat -c%U", file); //$NON-NLS-1$
-		}
-		else {
-			// in form  "<permissions> <n> <owner> <group> ..."
-			String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
-			StringTokenizer tokenizer = new StringTokenizer(ldStr, " \t"); //$NON-NLS-1$
-			tokenizer.nextToken();
-			tokenizer.nextToken();
-			result = tokenizer.nextToken(); // 3rd
-		}
+		// set the permissions
+		String result = simpleShellCommand("chmod " + permAttributes[0], file); //$NON-NLS-1$
+		
+		// set the user
+		simpleShellCommand("chown " + permAttributes[1], file); //$NON-NLS-1$
+		
+		// set the group
+		simpleShellCommand("chown :" + permAttributes[2], file); //$NON-NLS-1$
 		
         status.setAttribute(DE.A_SOURCE, result);
     	statusDone(status);
 	
 		return status;
 	}
-	
-	private DataElement handleSetFileOwner(DataElement subject, DataElement newOwner, DataElement status)
-	{
-		File file = getFileFor(subject);
-		String result = simpleShellCommand("chown " + newOwner.getName(), file); //$NON-NLS-1$
-		
-        status.setAttribute(DE.A_SOURCE, result);
-    	statusDone(status);
-		return status;
-	}
-	
-	private DataElement handleQueryFileGroupOwner(DataElement subject, DataElement status)
-	{
-		File file = getFileFor(subject);
-		String result = null;
-		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 
-		if (os.startsWith("linux")){ //$NON-NLS-1$
-			result = simpleShellCommand("stat -c%G", file); //$NON-NLS-1$
-		}
-		else {
-			// in form  "<permissions> <n> <owner> <group> ..."
-			String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
-			
-			StringTokenizer tokenizer = new StringTokenizer(ldStr, " \t"); //$NON-NLS-1$
-			tokenizer.nextToken();
-			tokenizer.nextToken();
-			tokenizer.nextToken();
-			result = tokenizer.nextToken(); // 4rd
-		}
-		
-        status.setAttribute(DE.A_SOURCE, result);
-    	statusDone(status);
-	
-		return status;
-	}
-	
-	private DataElement handleSetFileGroupOwner(DataElement subject, DataElement newGroup, DataElement status)
-	{
-		File file = getFileFor(subject);
-		String result = simpleShellCommand("chown :" + newGroup.getName(), file); //$NON-NLS-1$
-		
-        status.setAttribute(DE.A_SOURCE, result);
-    	statusDone(status);
-		return status;
-	}
 	
 	private String simpleShellCommand(String cmd)
 	{

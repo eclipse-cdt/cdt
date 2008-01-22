@@ -202,9 +202,4 @@ public class DStoreFile extends AbstractRemoteFile implements IRemoteFile
 		return _dstoreHostFile.getClassification();
 	}
 
-
-
-	
-
-
 }

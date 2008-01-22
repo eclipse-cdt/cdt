@@ -29,8 +29,10 @@ import org.eclipse.rse.services.clientserver.IServiceConstants;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 
-public class DStoreHostFile implements IHostFile
+public class DStoreHostFile implements IHostFile, IHostFilePermissionsContainer
 {
 	public static final int ATTRIBUTE_MODIFIED_DATE=1;
 	public static final int ATTRIBUTE_SIZE = 2;
@@ -43,6 +45,7 @@ public class DStoreHostFile implements IHostFile
 	protected DataElement _element;
 	protected boolean _isArchive;
 	protected String _absolutePath;
+	protected IHostFilePermissions _permissions;
 	
 	public DStoreHostFile(DataElement element)
 	{
@@ -414,6 +417,14 @@ public class DStoreHostFile implements IHostFile
 	public boolean canWrite() {
 		String str = getAttribute(_element.getSource(), ATTRIBUTE_CAN_WRITE);
 		return "true".equals(str); //$NON-NLS-1$
+	}
+	
+	public void setPermissions(IHostFilePermissions permissions){
+		_permissions = permissions;
+	}
+
+	public IHostFilePermissions getPermissions() {
+		return _permissions;
 	}
 	
 }

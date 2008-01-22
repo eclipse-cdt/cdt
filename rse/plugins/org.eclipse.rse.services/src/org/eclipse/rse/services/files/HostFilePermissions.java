@@ -21,13 +21,69 @@ public class HostFilePermissions implements
 		IHostFilePermissions {
 	
 	private int _permissions = 0;
-		
+	private String _user;
+	private String _group;
+			
+	
 	/**
-	 * Constructor that take the initial permissions as a bitmask
-	 * @param initialPermissions the intial permissions bitmask
+	 * Constructor without any intial values.  Users of this
+	 * need to set fields as appropriate
 	 */
-	public HostFilePermissions(int initialPermissions){
+	public HostFilePermissions(){
+	}
+	
+	/**
+	 * Constructor that takes the initial permissions in rwxrwxrwx form
+	 * @param alphaPermissions the initial permissions in alpha form
+	 */
+	public HostFilePermissions(String alphaPermissions, String user, String group){
+		String accessString = alphaPermissionsToOctal(alphaPermissions);
+		_permissions = Integer.parseInt(accessString, 8);
+		_user = user;
+		_group = group;
+	}
+	
+	/**
+	 * Constructor that takes the initial permissions as a bitmask
+	 * @param initialPermissions the initial permissions bitmask
+	 */
+	public HostFilePermissions(int initialPermissions, String user, String group){
 		_permissions = initialPermissions;
+		_user = user;
+		_group = group;
+	}
+	
+	/**
+	 * Convert permissions in rwxrwxrwx form to octal
+	 * @param userPermissions
+	 * @return
+	 */
+	private String alphaPermissionsToOctal(String alphaPermissions)
+	{
+		if (alphaPermissions.length() == 10){ // directory bit?
+			alphaPermissions = alphaPermissions.substring(1);
+		}
+		StringBuffer buf = new StringBuffer();
+		// permissions
+		char[] chars = alphaPermissions.toCharArray();
+		
+		int offset = -1;
+		for (int i = 0; i < 3; i++){
+			int value = 0;
+			
+			if (chars[++offset] == 'r'){
+				value = 4;
+			}
+			if (chars[++offset] == 'w'){
+				value += 2;
+			}
+			if (chars[++offset] == 'x'){
+				value += 1;
+			}		
+			buf.append(value);
+		}
+	
+		return buf.toString();		
 	}
 		
 	public void setPermission(int permission, boolean value) {
@@ -53,7 +109,6 @@ public class HostFilePermissions implements
 		return "" + _permissions;
 	}
 	
-	
 	private boolean isSet(long mask) {
 		return (_permissions & mask) != 0;
 	}
@@ -69,7 +124,7 @@ public class HostFilePermissions implements
 	/**
 	 * return permissions in rwxrwxrwx form
 	 */
-	public String toUserString(){
+	public String toAlphaString(){
 		StringBuffer buf = new StringBuffer();
 		
 		buf.append(getPermission(IHostFilePermissions.PERM_USER_READ) ? 'r' : '-');
@@ -82,5 +137,21 @@ public class HostFilePermissions implements
 		buf.append(getPermission(IHostFilePermissions.PERM_OTHER_WRITE) ? 'w' : '-');
 		buf.append(getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE) ? 'x' : '-');
 		return buf.toString();
+	}
+
+	public String getGroupOwner() {
+		return _group;
+	}
+
+	public String getUserOwner() {
+		return _user;
+	}
+
+	public void setGroupOwner(String group) {
+		_group = group;		
+	}
+
+	public void setUserOwner(String user) {
+		_user = user;
 	}
 }

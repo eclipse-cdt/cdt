@@ -24,11 +24,10 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.files.ui.FileResources;
-import org.eclipse.rse.services.files.IFileOwnerService;
 import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.PendingHostFilePermissions;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
-import org.eclipse.rse.subsystems.files.core.subsystems.RemoteFile;
 import org.eclipse.rse.ui.SystemWidgetHelpers;
 import org.eclipse.rse.ui.propertypages.SystemBasePropertyPage;
 import org.eclipse.swt.SWT;
@@ -81,7 +80,8 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		
 		IRemoteFile file = getRemoteFile();
 		IFilePermissionsService service = getPermissionsService(file);
-		if (service == null || !service.canGetFilePermissions(file.getParentPath(), file.getName())){
+		if (service == null ||  
+				(service.getCapabilities(file.getHostFile()) & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) == 0){
 			// not supported
 			SystemWidgetHelpers.createLabel(parent, FileResources.MESSAGE_FILE_PERMISSIONS_NOT_SUPPORTED);
 		}
@@ -227,14 +227,6 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 	}
 	
 
-	private IFileOwnerService getOwnerService(IRemoteFile remoteFile){
-
-		if (remoteFile instanceof IAdaptable){
-			return (IFileOwnerService)((IAdaptable)remoteFile).getAdapter(IFileOwnerService.class);
-		}
-
-		return null;
-	}
 	
 	
 	private void initFields() {
@@ -243,17 +235,10 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		IFilePermissionsService ps = getPermissionsService(remoteFile);
 		if (ps == null){
 			enablePermissionFields(false);
-		}
-		else {
-			initPermissionFields(remoteFile, ps);
-		}
-		
-		IFileOwnerService os = getOwnerService(remoteFile);
-		if (ps == null){
 			enableOwnershipFields(false);
 		}
 		else {
-			initOwnershipFields(remoteFile, os);
+			initPermissionFields(remoteFile, ps);
 		}
 	}
 	
@@ -262,26 +247,34 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		
 		final IRemoteFile rFile = file;
 		final IFilePermissionsService pService = service;
-		String remoteParent = file.getParentPath();
-		String name = file.getName();
-		
-		if (service.canGetFilePermissions(remoteParent, name)){
+
+		int capabilities = service.getCapabilities(file.getHostFile());
+		if ((capabilities & IFilePermissionsService.FS_CAN_SET_PERMISSIONS) != 0){
 			enablePermissionFields(true);
+		}
+		else {
+			enablePermissionFields(false);
+		}
+		
+		if ((capabilities & IFilePermissionsService.FS_CAN_SET_OWNER) != 0){
+			enableOwnershipFields(true);
+		}	
+		else {
+			enableOwnershipFields(false);
+		}
+		
+		if ((capabilities & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) != 0){
+				
 			try
 			{
 				_permissions = file.getPermissions();
-				if (_permissions == null){
+				if (_permissions == null || _permissions instanceof PendingHostFilePermissions){
 					Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_PERMISSIONS)
 					{
 						public IStatus run(IProgressMonitor monitor){
 							try
 							{
-								String remoteParent = rFile.getParentPath();
-								String fname = rFile.getName();
-								_permissions = pService.getFilePermissions(remoteParent, fname, monitor);
-								if (_permissions != null && rFile instanceof RemoteFile){
-									((RemoteFile)rFile).setPermissions(_permissions);
-								}
+								_permissions = pService.getFilePermissions(rFile.getHostFile(), monitor);
 									
 								// notify change 
 								Display.getDefault().asyncExec(new Runnable()
@@ -297,6 +290,13 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 										_otherRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ));
 										_otherWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE));
 										_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));	
+										
+										_owner = _permissions.getUserOwner();
+										_group = _permissions.getGroupOwner();
+										
+										_userEntry.setText(_owner);
+										_groupEntry.setText(_group);
+										
 									}
 								});
 							}
@@ -317,102 +317,12 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 					_groupExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_GROUP_EXECUTE));
 					_otherRead.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_READ));
 					_otherWrite.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_WRITE));
-					_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));				
-				}
-			}
-			catch (Exception e){
-				
-			}
-		}
-		else {
-			enablePermissionFields(false);
-		}
-	}
-
-	
-	private void initOwnershipFields(IRemoteFile file, IFileOwnerService service){
-		_owner = null;
-		_group = null;
-		
-		String remoteParent = file.getParentPath();
-		String name = file.getName();
-		final IRemoteFile rFile = file;
-		final IFileOwnerService oService = service;
-		
-		if (service.canGetFileOwner(remoteParent, name)){
-			enableOwnershipFields(true);
-			try
-			{
-				_owner = file.getOwner();
-				if (_owner == null){
-					Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_OWNER)
-					{
-						public IStatus run(IProgressMonitor monitor){
-							try
-							{
-								String remoteParent = rFile.getParentPath();
-								String fname = rFile.getName();
-								_owner = oService.getFileUserOwner(remoteParent, fname, monitor);
-								if (_owner != null && rFile instanceof RemoteFile){
-									((RemoteFile)rFile).setOwner(_owner);
-								}
-								
-								// notify change 
-								Display.getDefault().asyncExec(new Runnable()
-								{
-									public void run()
-									{
-										_userEntry.setText(_owner);
-									}
-								});							
-							}
-							catch (Exception e)
-							{						
-							}
-							return Status.OK_STATUS;
-						}
-					};
-					deferredFetch.schedule();
-					_userEntry.setText(FileResources.MESSAGE_PENDING);
-				}
-				else {
+					_otherExecute.setSelection(_permissions.getPermission(IHostFilePermissions.PERM_OTHER_EXECUTE));	
+					
+					_owner = _permissions.getUserOwner();
+					_group = _permissions.getGroupOwner();
+					
 					_userEntry.setText(_owner);
-				}
-				
-				_group = file.getGroup();
-				if (_group == null){
-					Job deferredFetch = new Job(FileResources.MESSAGE_GETTING_GROUP)
-					{
-						public IStatus run(IProgressMonitor monitor){
-							try
-							{
-								String remoteParent = rFile.getParentPath();
-								String fname = rFile.getName();
-								_group = oService.getFileGroupOwner(remoteParent, fname, monitor);
-								if (_group != null && rFile instanceof RemoteFile){
-									((RemoteFile)rFile).setGroup(_group);
-								}
-								
-								// notify change 
-								Display.getDefault().asyncExec(new Runnable()
-								{
-									public void run()
-									{
-										_groupEntry.setText(_group);
-									}
-								});
-							
-							}
-							catch (Exception e)
-							{						
-							}
-							return Status.OK_STATUS;
-						}
-					};
-					deferredFetch.schedule();
-					_groupEntry.setText(FileResources.MESSAGE_PENDING);
-				}
-				else {
 					_groupEntry.setText(_group);
 				}
 			}
@@ -421,9 +331,12 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			}
 		}
 		else {
+			enablePermissionFields(false);
 			enableOwnershipFields(false);
 		}
 	}
+
+	
 
 	public boolean performOk() {
 		IRemoteFile remoteFile = getRemoteFile();
@@ -434,11 +347,8 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		if (_permissions != null){
 			IFilePermissionsService service = getPermissionsService(remoteFile);
 			
-			String remoteParent = remoteFile.getParentPath();
-			String name = remoteFile.getName();
-			
-			
-			if (service.canSetFilePermissions(remoteParent, name)){
+			int capabilities = service.getCapabilities(remoteFile.getHostFile());
+			if ((capabilities & IFilePermissionsService.FS_CAN_SET_PERMISSIONS) != 0){
 				try
 				{
 					
@@ -479,9 +389,19 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 						changed = true;
 						_permissions.setPermission(IHostFilePermissions.PERM_OTHER_EXECUTE, _otherExecute.getSelection());
 					}
-
+					
+					if (_owner != _userEntry.getText()){
+						changed = true;
+						_permissions.setUserOwner(_userEntry.getText());
+					}
+					if (_group != _groupEntry.getText()){
+						changed = true;
+						_permissions.setGroupOwner(_groupEntry.getText());
+					}
+					
+					
 					if (changed){
-						service.setFilePermissions(remoteParent, name, _permissions, new NullProgressMonitor());
+						service.setFilePermissions(remoteFile.getHostFile(), _permissions, new NullProgressMonitor());
 					}
 				}
 				catch (Exception e){
@@ -489,37 +409,7 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 				}
 			}						
 		}
-		if (_owner != null){
-			IFileOwnerService service = getOwnerService(remoteFile);
-			
-			String remoteParent = remoteFile.getParentPath();
-			String name = remoteFile.getName();
-			
-			if (service.canSetFileOwner(remoteParent, name)){
-				try
-				{
-					if (_owner != _userEntry.getText()){
-						changed = true;
-						if (remoteFile instanceof RemoteFile){
-							((RemoteFile)remoteFile).setOwner(_owner);
-						}
-							
-						service.setFileUserOwner(remoteParent, name, _userEntry.getText(), new NullProgressMonitor());
-					}
-					if (_group != _groupEntry.getText()){
-						changed = true;
-						if (remoteFile instanceof RemoteFile){
-							((RemoteFile)remoteFile).setGroup(_group);
-						}
-						service.setFileGroupOwner(remoteParent, name, _groupEntry.getText(), new NullProgressMonitor());
-					}
-				}
-				catch (Exception e){
-					
-				}
-			}	
-		}
-		
+
 		if (changed){
 			// notify views of change
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();

@@ -13,7 +13,6 @@
  ********************************************************************************/
 package org.eclipse.rse.internal.subsystems.files.core;
 
-import org.eclipse.rse.services.files.IFileOwnerService;
 import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.subsystems.files.core.servicesubsystem.FileServiceSubSystem;
@@ -44,11 +43,6 @@ public class RemoteFilePermissionsAdapterFactory extends
 					return fileService;
 				}
 			}
-			else if (adapterType == IFileOwnerService.class){
-				if (fileService instanceof IFileOwnerService){
-					return fileService;
-				}
-			}
 			
 		}
 		
@@ -60,6 +54,6 @@ public class RemoteFilePermissionsAdapterFactory extends
 	 */
 	public Class[] getAdapterList()
 	{
-		return new Class[] {IFilePermissionsService.class, IFileOwnerService.class};		
+		return new Class[] {IFilePermissionsService.class};		
 	}
 }

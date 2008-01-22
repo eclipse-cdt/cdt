@@ -20,6 +20,7 @@
  * Javier Montalvo Orus (Symbian) - [198272] FTP should return classification for symbolic links so they show a link overlay
  * Martin Oberhuber (Wind River) - [204669] Fix ftp path concatenation on systems using backslash separator
  * Javier Montalvo Orus (Symbian) - [198692] FTP should mark files starting with "." as hidden
+ * David McKnight   (IBM)         - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -30,9 +31,12 @@ import java.io.File;
 import org.apache.commons.net.ftp.FTPFile;
 import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
+import org.eclipse.rse.services.files.HostFilePermissions;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 
-public class FTPHostFile implements IHostFile
+public class FTPHostFile implements IHostFile, IHostFilePermissionsContainer
 {
 	
 	private String _name;
@@ -46,6 +50,7 @@ public class FTPHostFile implements IHostFile
 	private boolean _canWrite = true;
 	private boolean _isRoot;
 	private boolean _exists;
+	private IHostFilePermissions _permissions;
 	private FTPFile _ftpFile;
 		
 	public FTPHostFile(String parentPath, String name, boolean isDirectory, boolean isRoot, long lastModified, long size, boolean exists)
@@ -80,7 +85,11 @@ public class FTPHostFile implements IHostFile
 		
 		_isRoot = false;
 		_exists = true;
+		
+		initPermissions(ftpFile);
 	}
+	
+
 	
 	
 	public long getSize()
@@ -282,6 +291,31 @@ public class FTPHostFile implements IHostFile
 			result = "unknown"; //default-fallback //$NON-NLS-1$
 		}
 		return result;
+	}
+
+	private void initPermissions(FTPFile ftpFile){
+		_permissions = new HostFilePermissions();
+		_permissions.setPermission(IHostFilePermissions.PERM_USER_READ, ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.READ_PERMISSION));
+		_permissions.setPermission(IHostFilePermissions.PERM_USER_WRITE, ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION));
+		_permissions.setPermission(IHostFilePermissions.PERM_USER_EXECUTE, ftpFile.hasPermission(FTPFile.USER_ACCESS, FTPFile.EXECUTE_PERMISSION));
+		_permissions.setPermission(IHostFilePermissions.PERM_GROUP_READ, ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.READ_PERMISSION));
+		_permissions.setPermission(IHostFilePermissions.PERM_GROUP_WRITE, ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.WRITE_PERMISSION));
+		_permissions.setPermission(IHostFilePermissions.PERM_GROUP_EXECUTE, ftpFile.hasPermission(FTPFile.GROUP_ACCESS, FTPFile.EXECUTE_PERMISSION));
+		_permissions.setPermission(IHostFilePermissions.PERM_OTHER_READ, ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.READ_PERMISSION));
+		_permissions.setPermission(IHostFilePermissions.PERM_OTHER_WRITE, ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.WRITE_PERMISSION));
+		_permissions.setPermission(IHostFilePermissions.PERM_OTHER_EXECUTE, ftpFile.hasPermission(FTPFile.WORLD_ACCESS, FTPFile.EXECUTE_PERMISSION));		
+
+
+		_permissions.setUserOwner(ftpFile.getUser());
+		_permissions.setGroupOwner(ftpFile.getGroup());
+	}
+	
+	public IHostFilePermissions getPermissions() {
+		return _permissions;
+	}
+
+	public void setPermissions(IHostFilePermissions permissions) {
+		_permissions = permissions;
 	}
 	
 }

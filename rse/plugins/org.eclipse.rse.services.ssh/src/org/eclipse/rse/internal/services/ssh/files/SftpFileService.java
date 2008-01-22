@@ -20,6 +20,7 @@
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * Kevin Doyle		(IBM)		 - [211374] [ssh] New File on SSH has unnecessary space in its contents
+ * David McKnight   (IBM)         - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;
@@ -65,13 +66,17 @@ import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
+import org.eclipse.rse.services.files.HostFilePermissions;
+import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
-public class SftpFileService extends AbstractFileService implements IFileService, ISshService
+public class SftpFileService extends AbstractFileService implements IFileService, ISshService, IFilePermissionsService
 {
 
 	private static class SftpBufferedInputStream extends BufferedInputStream {
@@ -462,7 +467,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			    		if (".".equals(fileName) || "..".equals(fileName)) { //$NON-NLS-1$ //$NON-NLS-2$
 			    			//don't show the trivial names
 			    			continue;
-			    		}
+			    		}			  
 			    		if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileService.FILE_TYPE_FOLDERS)) {
 							//get ALL directory names (unless looking for folders only)
 			    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
@@ -521,6 +526,8 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				}
 			}
 		}
+		
+
 		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrsTarget.isDir(), false, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
 		if (linkTarget!=null) {
 			node.setLinkTarget(linkTarget);
@@ -545,6 +552,12 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		if (attrs.getExtended()!=null) {
 			node.setExtendedData(attrs.getExtended());
 		}
+		
+		// permissions
+		// TODO get the user and owner from the uid and gid
+		HostFilePermissions permissions = new HostFilePermissions(perms, "" + attrs.getUId(), "" + attrs.getGId());
+		node.setPermissions(permissions);
+		
 		return node;
 	}
 	
@@ -1121,5 +1134,31 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			throw new RemoteFileCancelledException();
 		}
 		return stream;
+	}
+
+
+	/**
+	 * @see org.eclipse.rse.services.files.IFilePermissionsService#getFilePermissions(IHostFile, IProgressMonitor)
+	 */
+	public IHostFilePermissions getFilePermissions(IHostFile file,
+			IProgressMonitor monitor) throws SystemMessageException {
+		if (file instanceof IHostFilePermissionsContainer){		
+			return ((IHostFilePermissionsContainer)file).getPermissions();
+		}
+		return null;
+	}
+
+
+	/**
+	 * @see org.eclipse.rse.services.files.IFilePermissionsService#setFilePermissions(IHostFile, IHostFilePermissions, IProgressMonitor)
+	 */
+	public void setFilePermissions(IHostFile file,
+			IHostFilePermissions permissions, IProgressMonitor monitor)
+			throws SystemMessageException {
+		return;		
+	}
+	
+	public int getCapabilities(IHostFile file) {
+		return IFilePermissionsService.FS_CAN_GET_ALL;
 	}
 }

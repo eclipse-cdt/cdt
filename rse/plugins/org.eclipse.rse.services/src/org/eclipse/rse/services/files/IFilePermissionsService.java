@@ -22,43 +22,47 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
  */
 public interface IFilePermissionsService {
 
+    public static int FS_CAN_GET_OWNER       = 1 << 0;
+    public static int FS_CAN_GET_GROUP       = 1 << 1;
+    public static int FS_CAN_GET_PERMISSIONS = 1 << 2;
+    public static int FS_CAN_SET_OWNER       = 1 << 3;
+    public static int FS_CAN_SET_GROUP       = 1 << 4;
+    public static int FS_CAN_SET_PERMISSIONS = 1 << 5;
+    
+	public static final int FS_CAN_GET_ALL = FS_CAN_GET_OWNER | FS_CAN_GET_GROUP | FS_CAN_GET_PERMISSIONS;
+	public static final int FS_CAN_SET_ALL = FS_CAN_SET_OWNER | FS_CAN_SET_GROUP | FS_CAN_SET_PERMISSIONS;
+
+    
 	/**
-	 * @param remoteParent
-	 * @param name
+	 * Gets the permissions for a file including the user and group owner
+	 * 
+	 * @param file the remote file
 	 * @param monitor the monitor for this potentially long running operation
 	 * @return the host file permissions
 	 * @throws SystemMessageException if an error occurs. 
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */
-	public IHostFilePermissions getFilePermissions(String remoteParent, String name, IProgressMonitor monitor) throws SystemMessageException;
+	public IHostFilePermissions getFilePermissions(IHostFile file, IProgressMonitor monitor) throws SystemMessageException;
 	
 	/**
-	 * @param remoteParent
-	 * @param name
+	 * Sets the permissions for a file including the user and group owner as specified in the permissions
+	 * 
+	 * @param file the remote file
 	 * @param permissions the new permissions for this file
 	 * @param monitor the monitor for this potentially long running operation
 	 * @throws SystemMessageException if an error occurs. 
 	 * Typically this would be one of those in the RemoteFileException family.
 	 */
-	public void setFilePermissions(String remoteParent, String name, IHostFilePermissions permissions, IProgressMonitor monitor) throws SystemMessageException;
+	public void setFilePermissions(IHostFile file, IHostFilePermissions permissions, IProgressMonitor monitor) throws SystemMessageException;
 
-	/**
-	 * Indicates whether the file permissions can be retrieved for the specified file.  
-	 * In some cases the service will need to determine whether it supports permissions 
-	 * depending on the current server.
-	 * 
-	 * @param remoteParent
-	 * @param name  
-	 * @return whether the file permissions can be retrieved
-	 */
-	public boolean canGetFilePermissions(String remoteParent, String name);
 	
 	/**
-	 * Indicates whether the file permissions can be set for the specified file
+	 * Returns the capabilities of this file permissions service for the corresponding file.  If
+	 * null is specified, this returns the general capabilities of this service.
 	 * 
-	 * @param remoteParent
-	 * @param name  
-	 * @return whether the file permissions can be set
+	 * @param file the remote file
+	 * @return the capabilities of this service against this file
 	 */
-	public boolean canSetFilePermissions(String remoteParent, String name);
+	public int getCapabilities(IHostFile file);
+	
 }

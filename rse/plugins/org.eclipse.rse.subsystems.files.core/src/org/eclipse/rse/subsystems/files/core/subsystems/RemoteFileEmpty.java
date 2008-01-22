@@ -18,6 +18,7 @@
 package org.eclipse.rse.subsystems.files.core.subsystems;
 
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
 
 
 /**
@@ -200,7 +201,12 @@ public class RemoteFileEmpty extends RemoteFile
 		return null;
 	}
 
-
+	/**
+	 * Override this to provide permissions
+	 */
+	public IHostFilePermissions getPermissions() {
+		return null;
+	}
 
 
 }

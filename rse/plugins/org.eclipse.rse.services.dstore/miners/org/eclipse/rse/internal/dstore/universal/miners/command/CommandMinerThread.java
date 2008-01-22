@@ -177,6 +177,9 @@ public class CommandMinerThread extends MinerThread
 							else
 							{
 								isBash = true;
+								// no bash!
+								theShell = "sh";
+								
 							}
 						}
 						else if (theShell.endsWith("sh") && isZ)//$NON-NLS-1$

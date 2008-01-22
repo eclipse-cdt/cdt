@@ -342,16 +342,4 @@ public interface IRemoteFile extends IRemoteContainer, IRemotePropertyHolder, IS
      */
     public IHostFilePermissions getPermissions();
     
-    /**
-     * Returns the owner for this file if it exists
-     * @return the owner
-     */
-    public String getOwner();
-    
-    /**
-     * Returns the group for this file if it exists
-     * @return the group
-     */
-    public String getGroup();
-    
 }

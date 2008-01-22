@@ -68,6 +68,7 @@
  * Javier Montalvo Orus (Symbian) - [208912] Cannot expand /C on a VxWorks SSH Server
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
+ * David McKnight   (IBM)         - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -108,13 +109,16 @@ import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
+import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.RemoteFileCancelledException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
-public class FTPService extends AbstractFileService implements IFileService, IFTPService
+public class FTPService extends AbstractFileService implements IFileService, IFTPService, IFilePermissionsService
 {
 	private FTPClient _ftpClient;
 	private FTPFile[] _ftpFiles;
@@ -1708,6 +1712,25 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		}
 		path.append(fileName);
 		return path.toString();
+	}
+
+
+	public IHostFilePermissions getFilePermissions(IHostFile file,
+			IProgressMonitor monitor) throws SystemMessageException {
+		if (file instanceof IHostFilePermissionsContainer)
+		{
+			return ((IHostFilePermissionsContainer)file).getPermissions();
+		}
+		return null;
+	}
+
+	public void setFilePermissions(IHostFile file,
+			IHostFilePermissions permissions, IProgressMonitor monitor)
+			throws SystemMessageException {		
+	}
+
+	public int getCapabilities(IHostFile file) {
+		return IFilePermissionsService.FS_CAN_GET_ALL;
 	}
 	
 }

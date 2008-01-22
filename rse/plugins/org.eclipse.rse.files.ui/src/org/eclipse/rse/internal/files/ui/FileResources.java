@@ -282,8 +282,6 @@ public class FileResources extends NLS
 	public static String MESSAGE_PENDING;
 	public static String MESSAGE_NOT_SUPPORTED;
 	public static String MESSAGE_GETTING_PERMISSIONS;
-	public static String MESSAGE_GETTING_OWNER;
-	public static String MESSAGE_GETTING_GROUP;
 	
 	static 
 	{

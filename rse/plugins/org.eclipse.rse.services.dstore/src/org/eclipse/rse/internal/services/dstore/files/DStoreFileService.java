@@ -76,15 +76,15 @@ import org.eclipse.rse.services.dstore.util.DownloadListener;
 import org.eclipse.rse.services.dstore.util.FileSystemMessageUtil;
 import org.eclipse.rse.services.files.CodePageConverterManager;
 import org.eclipse.rse.services.files.HostFilePermissions;
-import org.eclipse.rse.services.files.IFileOwnerService;
 import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IFileServiceCodePageConverter;
 import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.PendingHostFilePermissions;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
-public class DStoreFileService extends AbstractDStoreService implements IFileService, IFilePermissionsService, IFileOwnerService
+public class DStoreFileService extends AbstractDStoreService implements IFileService, IFilePermissionsService
 {
 
 	protected org.eclipse.dstore.core.model.DataElement _uploadLogElement = null;
@@ -2076,10 +2076,8 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	
 	
 	
-	public boolean canGetFilePermissions(String remoteParent, String name) {
-		
-		String remotePath = remoteParent + getSeparator(remoteParent) + name;
-		DataElement remoteFile = getElementFor(remotePath);
+	public boolean canGetFilePermissions(IHostFile file) {
+		DataElement remoteFile = ((DStoreHostFile)file).getDataElement();
 		
 		DataElement queryCmd = getCommandDescriptor(remoteFile, IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS);	
 		if (queryCmd != null){
@@ -2088,68 +2086,76 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		return false;
 	}
 
-	public boolean canGetFileOwner(String remoteParent, String name) {
-		String remotePath = remoteParent + getSeparator(remoteParent) + name;
-		DataElement remoteFile = getElementFor(remotePath);
-		
-		DataElement queryCmd = getCommandDescriptor(remoteFile, IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER);	
-		if (queryCmd != null){
-			return true;
-		}
-		return false;
-	}	
 	
-	public boolean canSetFilePermissions(String remoteParent, String name) {
+	public boolean canSetFilePermissions(IHostFile file) {
 		// for now just falling back to the same as get
-		return canGetFilePermissions(remoteParent, name);
-	}
-	
-	public boolean canSetFileOwner(String remoteParent, String name) {
-		// for now just falling back to the same as get
-		return canGetFileOwner(remoteParent, name);
+		return canGetFilePermissions(file);
 	}
 
 	
-	public IHostFilePermissions getFilePermissions(String remoteParent,
-			String name, IProgressMonitor monitor)
+	public IHostFilePermissions getFilePermissions(IHostFile rfile, IProgressMonitor monitor)
 			throws SystemMessageException {
-		
-		String remotePath = remoteParent + getSeparator(remoteParent) + name;
-		DataElement remoteFile = getElementFor(remotePath);
-		
-		DataElement status = dsStatusCommand(remoteFile, IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS, monitor);
-		if (status != null) {					
-			int permissionsInt = 0;
-			String accessString = status.getSource(); // access string in octal
-			if (accessString != null && accessString.length() > 0) {
-				try
-				{
-					int accessInt = Integer.parseInt(accessString, 8);
-				    permissionsInt = accessInt; // leave permissions in decimal
-				}
-				catch (Exception e){
+		DStoreHostFile file = (DStoreHostFile)rfile;
+		IHostFilePermissions result = file.getPermissions();
+		if (result == null || result instanceof PendingHostFilePermissions){
+			/*
+			 *  // for now, leaving this to the adapter since it needs to prevent duplicate jobs
+			if (result == null) { // create a pending one
+				result = new PendingHostFilePermissions();
+				file.setPermissions(result);
+			}
+			*/
+			
+			DataElement remoteFile = file.getDataElement();
+									
+			DataElement status = dsStatusCommand(remoteFile, IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS, monitor);
+			if (status != null) {					
+				int permissionsInt = 0;
+				
+				// access string in the form <octal permissions>|<user>|<group>
+				String permissionsStr = status.getSource(); 
+										
+				if (permissionsStr != null && permissionsStr.length() > 0) {
+					String[] permAttributes = permissionsStr.split("\\"+IServiceConstants.TOKEN_SEPARATOR);	 //$NON-NLS-1$
 					
+					// permissions bits
+					String accessString = permAttributes[0];
+					try
+					{										
+						int accessInt = Integer.parseInt(accessString, 8);
+					    permissionsInt = accessInt; // leave permissions in decimal				    				    				    
+					}
+					catch (Exception e){					
+					}
+					
+					// user
+					String user = permAttributes[1];
+					
+					// group
+					String group = permAttributes[2];
+					
+					result = new HostFilePermissions(permissionsInt, user, group);
+					file.setPermissions(result);
 				}
-				HostFilePermissions permissions = new HostFilePermissions(permissionsInt);
-				return permissions;
 			}
 		}
-
-		// nothing - server may not be up-to-date - missing permissions and owner support		
-		return null;
+	
+		return result;
 	}
 
-	public void setFilePermissions(String remoteParent, String name,
+	public void setFilePermissions(IHostFile file,
 			IHostFilePermissions permissions, IProgressMonitor monitor)
 			throws SystemMessageException {
-		String remotePath = remoteParent + getSeparator(remoteParent) + name;
-		DataElement remoteFile = getElementFor(remotePath);
+		DataElement remoteFile = ((DStoreHostFile)file).getDataElement();
 		
 		ArrayList args = new ArrayList();
 		int bits = permissions.getPermissionBits();
 		String permissionsInOctal = Integer.toOctalString(bits); // from decimal to octal
+		String user = permissions.getUserOwner();
+		String group = permissions.getGroupOwner();
 		
-		DataElement newPermissionsElement = getDataStore().createObject(null, "permissions", permissionsInOctal); //$NON-NLS-1$
+		String permissionsStr = permissionsInOctal + '|' + user + '|' + group;
+		DataElement newPermissionsElement = getDataStore().createObject(null, "permissions", permissionsStr); //$NON-NLS-1$
 		args.add(newPermissionsElement);
 		
 		DataElement status = dsStatusCommand(remoteFile, args, IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS, monitor);
@@ -2159,78 +2165,28 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		}	
 	}
 
+	public int getCapabilities(IHostFile file) {
+		int capabilities = 0;
+		// dstore supports setting and getting
+		if (file == null){
+			capabilities = IFilePermissionsService.FS_CAN_GET_ALL | IFilePermissionsService.FS_CAN_SET_ALL;
+		}
+		else {
+			
+			DataElement remoteFile = ((DStoreHostFile)file).getDataElement();
+			DataElement getCmd = getCommandDescriptor(remoteFile, IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS);	
+			DataElement setCmd = getCommandDescriptor(remoteFile, IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS);
 	
-	public String getFileUserOwner(String remoteParent, String name,
-			IProgressMonitor monitor) throws SystemMessageException {
-		String remotePath = remoteParent + getSeparator(remoteParent) + name;
-		DataElement remoteFile = getElementFor(remotePath);
-		
-		DataElement status = dsStatusCommand(remoteFile, IUniversalDataStoreConstants.C_QUERY_FILE_USER_OWNER, monitor);
-		if (status != null)
-		{
-			String ownerString = status.getSource();
-			if (ownerString != null && ownerString.length() > 0){
-				return ownerString;
+			if (getCmd != null){
+				capabilities = capabilities | IFilePermissionsService.FS_CAN_GET_ALL;
+			}
+			if (setCmd != null){
+				capabilities = capabilities | IFilePermissionsService.FS_CAN_SET_ALL;
 			}
 		}
-		
-		// nothing - server may not be up-to-date - missing permissions and owner support
-		return null;						
+		return capabilities;
 	}
 
-	public void setFileUserOwner(String remoteParent, String name, String newOwner,
-			IProgressMonitor monitor) throws SystemMessageException {
-
-		String remotePath = remoteParent + getSeparator(remoteParent) + name;
-		DataElement remoteFile = getElementFor(remotePath);
-		
-		ArrayList args = new ArrayList();
-		DataElement newOwnerElement = getDataStore().createObject(null, "owner", newOwner); //$NON-NLS-1$
-		args.add(newOwnerElement);
-		
-		DataElement status = dsStatusCommand(remoteFile, args, IUniversalDataStoreConstants.C_SET_FILE_USER_OWNER, monitor);
-		if (status != null)
-		{
-			// check status to make sure the file really changed
-		}						
-	}
-
-	public String getFileGroupOwner(String remoteParent, String name,
-			IProgressMonitor monitor) throws SystemMessageException {
-		String remotePath = remoteParent + getSeparator(remoteParent) + name;
-		DataElement remoteFile = getElementFor(remotePath);
-		
-		DataElement status = dsStatusCommand(remoteFile, IUniversalDataStoreConstants.C_QUERY_FILE_GROUP_OWNER, monitor);
-		if (status != null)
-		{
-			String ownerString = status.getSource();
-			if (ownerString != null && ownerString.length() > 0){
-				return ownerString;
-			}
-		}
-		
-		// nothing - server may not be up-to-date - missing permissions and owner support
-		return null;						
-	}
-
-	public void setFileGroupOwner(String remoteParent, String name, String newOwner,
-			IProgressMonitor monitor) throws SystemMessageException {
-
-		String remotePath = remoteParent + getSeparator(remoteParent) + name;
-		DataElement remoteFile = getElementFor(remotePath);
-		
-		ArrayList args = new ArrayList();
-		DataElement newOwnerElement = getDataStore().createObject(null, "group", newOwner); //$NON-NLS-1$
-		args.add(newOwnerElement);
-		
-		DataElement status = dsStatusCommand(remoteFile, args, IUniversalDataStoreConstants.C_SET_FILE_GROUP_OWNER, monitor);
-		if (status != null)
-		{
-			// check status to make sure the file really changed
-		}						
-	}
-
-	
 	
 	
 }

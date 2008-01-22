@@ -114,9 +114,34 @@ public interface IHostFilePermissions {
 	 */
 	public void setPermissionBits(int bits);
 
-	
+
 	/**
 	 * return permissions in rwxrwxrwx form
 	 */
-	public String toUserString();
+	public String toAlphaString();
+	
+	/**
+	 * returns the user owner of the file
+	 * @return the user owner
+	 */
+	public String getUserOwner();
+	
+	/**
+	 * returns the group owner of the file
+	 * @return the group owner
+	 */
+	public String getGroupOwner();
+	
+	/**
+	 * Sets the user owner attribute
+	 * @param user the user owner attribute 
+	 */
+	public void setUserOwner(String user);
+	
+	/**
+	 * Sets the group owner attribute
+	 * @param group the group owner attribute
+	 */
+	public void setGroupOwner(String group);
+	
 }

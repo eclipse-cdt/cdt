@@ -18,6 +18,7 @@
 package org.eclipse.rse.subsystems.files.core.subsystems;
 
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
 
 /**
  * A root node used to drive a CheckboxTreeAndListGroup, or any viewer which
@@ -102,8 +103,7 @@ public class RemoteFileRoot extends RemoteFile
 	}
 	public String getRoot()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return rootFile.getAbsolutePath();
 	}
 	public String getParentName()
 	{
@@ -112,68 +112,71 @@ public class RemoteFileRoot extends RemoteFile
 	}
 	public boolean isRoot()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	public boolean isDirectory()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 	public boolean isFile()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
+	
 	public boolean isHidden()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
+	
 	public boolean canRead()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return rootFile.canRead();
 	}
+	
 	public boolean canWrite()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return rootFile.canWrite();
 	}
+	
 	public boolean exists()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return rootFile.exists();
 	}
+	
 	public long getLastModified()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return rootFile.getLastModified();
 	}
+	
 	public long getLength()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return rootFile.getLength();
 	}
+	
 	public boolean showReadOnlyProperty()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return rootFile.showReadOnlyProperty();
 	}
+	
 	public String getClassification()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return rootFile.getClassification();
 	}
+	
 	public String getCanonicalPath()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return rootFile.getCanonicalPath();
 	}
+	
 	public IHostFile getHostFile()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return rootFile.getHostFile();
 	}
 
+	/**
+	 * Override this to provide permissions
+	 */
+	public IHostFilePermissions getPermissions() {
+		return rootFile.getPermissions();
+	}
 }

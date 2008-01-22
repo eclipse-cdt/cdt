@@ -117,9 +117,9 @@ import org.eclipse.rse.services.clientserver.SystemSearchString;
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.services.files.IFileOwnerService;
 import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.PendingHostFilePermissions;
 import org.eclipse.rse.services.search.HostSearchResultSet;
 import org.eclipse.rse.services.search.IHostSearchConstants;
@@ -1317,133 +1317,45 @@ public class SystemViewRemoteFileAdapter
 			IHostFilePermissions permissions = file.getPermissions();
 			if (permissions == null){
 				
-				if (file instanceof IAdaptable){
-					final IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)file).getAdapter(IFilePermissionsService.class);
-					if (service != null && service.canGetFilePermissions(file.getParentPath(), file.getName())){
-						final IRemoteFile rFile = file;
-						
-						
-						Job deferredFetch = new Job(MessageFormat.format(FileResources.MESSAGE_GETTING_PERMISSIONS, new Object[] {file.getAbsolutePath()}))
-						{
-							public IStatus run(IProgressMonitor monitor){
-								try
-								{
-									String remoteParent = rFile.getParentPath();
-									String fname = rFile.getName();
-									IHostFilePermissions perm = service.getFilePermissions(remoteParent, fname, monitor);
-									if (perm != null && rFile instanceof RemoteFile){
-										((RemoteFile)rFile).setPermissions(perm);
-										// notify change to property sheet
-										
-										ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-										registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));
-									}
-								}
-								catch (Exception e)
-								{						
-								}
-								return Status.OK_STATUS;
-							}
-						};
-						deferredFetch.schedule();
-						if (file instanceof RemoteFile){
-							// using pending host file permssions as dummy until we have the real thing
-							((RemoteFile)file).setPermissions(new PendingHostFilePermissions());
-						}
-						return FileResources.MESSAGE_PENDING;
-					}
+				if (getFilePermissions(file)){
+					return FileResources.MESSAGE_PENDING;
 				}
 				return FileResources.MESSAGE_NOT_SUPPORTED;
 			}
-			return permissions.toUserString();
+			if (permissions instanceof PendingHostFilePermissions){
+				return FileResources.MESSAGE_PENDING;
+			}
+			return permissions.toAlphaString();
 		}
 		else if (name.equals(ISystemPropertyConstants.P_FILE_OWNER))
 		{
-			String owner = file.getOwner();
-			if (owner == null){
-				if (file instanceof IAdaptable){
-					
-					final IFileOwnerService service = (IFileOwnerService)((IAdaptable)file).getAdapter(IFileOwnerService.class);
-					if (service != null && service.canGetFileOwner(file.getParentPath(), file.getName())){
-						
-						final IRemoteFile rFile = file;
-						
-						Job deferredFetch = new Job(MessageFormat.format(FileResources.MESSAGE_GETTING_OWNER, new Object[] {file.getAbsolutePath()}))
-						{
-							public IStatus run(IProgressMonitor monitor){
-								try
-								{
-									String remoteParent = rFile.getParentPath();
-									String fname = rFile.getName();
-									String uowner = service.getFileUserOwner(remoteParent, fname, monitor);
-									if (uowner != null && rFile instanceof RemoteFile){
-										((RemoteFile)rFile).setOwner(uowner);
-									}
-									
-									// notify change to property sheet
-									ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-									registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));								
-								}
-								catch (Exception e)
-								{						
-								}
-								return Status.OK_STATUS;
-							}
-						};
-						deferredFetch.schedule();
-						
-						if (file instanceof RemoteFile){
-							// using pending host file owner as dummy until we have the real thing
-							((RemoteFile)file).setOwner("Pending");  //pending for now
-						}
-						return FileResources.MESSAGE_PENDING;
-					}
+			IHostFilePermissions permissions = file.getPermissions();
+			if (permissions == null){
+				
+				if (getFilePermissions(file)){
+					return FileResources.MESSAGE_PENDING;
 				}
 				return FileResources.MESSAGE_NOT_SUPPORTED;
 			}
-			return owner;
+			if (permissions instanceof PendingHostFilePermissions){
+				return FileResources.MESSAGE_PENDING;
+			}
+			return permissions.getUserOwner();
 		}
 		else if (name.equals(ISystemPropertyConstants.P_FILE_GROUP))
 		{
-			String group = file.getGroup();
-			if (group == null){
-				if (file instanceof IAdaptable){
-					final IFileOwnerService service = (IFileOwnerService)((IAdaptable)file).getAdapter(IFileOwnerService.class);
-					if (service != null && service.canGetFileOwner(file.getParentPath(), file.getName())){
-						final IRemoteFile rFile = file;
-												
-						Job deferredFetch = new Job(MessageFormat.format(FileResources.MESSAGE_GETTING_GROUP, new Object[] {file.getAbsolutePath()}))
-						{
-							public IStatus run(IProgressMonitor monitor){
-								try
-								{
-									String remoteParent = rFile.getParentPath();
-									String fname = rFile.getName();
-									String ugroup = service.getFileGroupOwner(remoteParent, fname, monitor);
-									if (ugroup != null && rFile instanceof RemoteFile){
-										((RemoteFile)rFile).setGroup(ugroup);
-									}
-									// notify change to property sheet
-									ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-									registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));
-								}
-								catch (Exception e)
-								{						
-								}
-								return Status.OK_STATUS;
-							}
-						};
-						deferredFetch.schedule();
-						if (file instanceof RemoteFile){
-							// using pending host file owner as dummy until we have the real thing
-							((RemoteFile)file).setGroup("Pending");  //pending for now
-						}
-						return FileResources.MESSAGE_PENDING;
-					}
+			IHostFilePermissions permissions = file.getPermissions();
+			if (permissions == null){
+				
+				if (getFilePermissions(file)){
+					return FileResources.MESSAGE_PENDING;
 				}
 				return FileResources.MESSAGE_NOT_SUPPORTED;
 			}
-			return group;
+			if (permissions instanceof PendingHostFilePermissions){
+				return FileResources.MESSAGE_PENDING;
+			}
+			return permissions.getGroupOwner();
 		}
 		else if (name.equals(ISystemPropertyConstants.P_FILE_CLASSIFICATION))
 		{
@@ -1498,6 +1410,43 @@ public class SystemViewRemoteFileAdapter
 		else
 			return null; //super.getPropertyValue(name);
 	}
+	
+	private boolean getFilePermissions(IRemoteFile file){
+		if (file instanceof IAdaptable){
+			final IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)file).getAdapter(IFilePermissionsService.class);
+			
+			if (service != null && (service.getCapabilities(file.getHostFile()) & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) != 0){
+				
+				final IRemoteFile rFile = file;
+				if (rFile.getHostFile() instanceof IHostFilePermissionsContainer){
+					((IHostFilePermissionsContainer)rFile.getHostFile()).setPermissions(new PendingHostFilePermissions());
+				}
+				
+				Job deferredFetch = new Job(MessageFormat.format(FileResources.MESSAGE_GETTING_PERMISSIONS, new Object[] {file.getAbsolutePath()}))
+				{
+					public IStatus run(IProgressMonitor monitor){
+						try
+						{
+							// service will take care of setting this on the host file
+							service.getFilePermissions(rFile.getHostFile(), monitor);
+							ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+							registry.fireEvent(new SystemResourceChangeEvent(rFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, rFile));
+						}								
+						catch (Exception e)
+						{						
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				deferredFetch.schedule();
+				
+				
+				return true; // query kicked off
+			}
+		}		
+		return false; // no query kicked off
+	}
+	
 
 	// Drag and Drop Implementation
 
@@ -3559,7 +3508,8 @@ public class SystemViewRemoteFileAdapter
 					if (tgt instanceof IAdaptable){
 						IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)tgt).getAdapter(IFilePermissionsService.class);
 						if (service != null){
-							return service.canGetFilePermissions(tgt.getParentPath(), tgt.getName());
+							
+							return (service.getCapabilities(tgt.getHostFile()) & IFilePermissionsService.FS_CAN_GET_PERMISSIONS) != 0;
 						}
 					}				
 				}

@@ -168,4 +168,5 @@ public interface IHostFile {
 	 * this file will be renamed to.
 	 */
 	public void renameTo(String newAbsolutePath);
+	
 }

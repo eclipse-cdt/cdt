@@ -17,7 +17,7 @@ public class PendingHostFilePermissions extends HostFilePermissions {
 
 	public PendingHostFilePermissions()
 	{
-		super(0);
+		super(0, "Pending", "Pending"); //$NON-NLS-2$
 	}	
 	
 }

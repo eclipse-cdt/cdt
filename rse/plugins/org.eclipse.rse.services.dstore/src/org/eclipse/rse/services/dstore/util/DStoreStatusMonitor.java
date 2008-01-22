@@ -15,6 +15,7 @@
  * David McKnight   (IBM)        - [190803] Canceling a long-running dstore job prints "InterruptedException" to stdout 
  * David McKnight   (IBM)        - [190010] When status is "cancelled" the wait should complete
  * David McKnight   (IBM)        - [197480] eliminating UI dependencies
+ * David McKnight   (IBM)        - [209593] [api] check for existing query to avoid duplicates
  *******************************************************************************/
 
 package org.eclipse.rse.services.dstore.util;
@@ -306,6 +307,31 @@ public class DStoreStatusMonitor implements IDomainListener
 	
 		return status;
 	}
+    
+    /**
+     * Returns the status of a running command for the specified cmd desciptor and subject.
+     * If there is no such command running, then null is returned.
+     * 
+     * @param cmdDescriptor
+     * @param subject
+     * @return the status of the command.
+     */
+    public DataElement getCommandStatus(DataElement cmdDescriptor, DataElement subject)
+    {
+    	synchronized (_workingStatuses){
+    		for (int i = 0; i < _workingStatuses.size(); i++){
+    			DataElement status = (DataElement)_workingStatuses.get(i);
+    			DataElement cmd = status.getParent();
+    			if (cmd.getDescriptor() == cmdDescriptor){
+    				DataElement cmdSubject = cmd.get(0).dereference();
+    				if (subject == cmdSubject){
+    					return status;
+    				}
+    			}
+    		}
+    	}
+    	return null;
+    }
 
 	private void wakeupServer(DataElement status)
 	{

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name.1
+Bundle-SymbolicName: org.eclipse.cdt.core.lrparser;singleton:=true
+Bundle-Version: 4.0.1.qualifier
+Bundle-ClassPath: .
+Require-Bundle: org.eclipse.cdt.core,
+ net.sourceforge.lpg.lpgjavaruntime;bundle-version="1.1.0";visibility:=reexport,
+ org.eclipse.core.runtime
+Export-Package: org.eclipse.cdt.core.dom.lrparser,
+ org.eclipse.cdt.core.dom.lrparser.action,
+ org.eclipse.cdt.core.dom.lrparser.action.c99,
+ org.eclipse.cdt.core.dom.lrparser.c99,
+ org.eclipse.cdt.internal.core.dom.lrparser.c99;x-internal:=true,
+ org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings
+Bundle-Localization: plugin
+Bundle-Vendor: %Bundle-Vendor.0

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -7,10 +7,10 @@
  * 
  * Contributors: 
  * Michael Scharf (Wind River) - initial implementation
+ * Michael Scharf (Wing River) - fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
-
-import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+
 
 
 /**
@@ -211,7 +212,10 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 		}
 		fInputField.setLayoutData(data);
 		fInputField.setFont(terminal.getFont());
-		// register the field assist
+		// Register field assist *before* the key listener.
+		// Else the ENTER key is sent *first* to the input field
+		// and then to the field assist popup.
+		// (https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659)
 		new ContentAssistCommandAdapter(
 				fInputField,
 				new TextContentAdapter(),
@@ -221,6 +225,8 @@ public class CommandInputFieldWithHistory implements ICommandInputField {
 				installDecoration);
 		fInputField.addKeyListener(new KeyListener(){
 			public void keyPressed(KeyEvent e) {
+				// if the field assist has handled the key already then
+				// ignore it (https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659)
 				if(!e.doit)
 					return;
 				if(e.keyCode=='\n' || e.keyCode=='\r') {

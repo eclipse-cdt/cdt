@@ -12,6 +12,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - [186128] Move IProgressMonitor last in all API
+ * David McKnight   (IBM)        - [216161] table view needs to handle context when filter reference is input
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -32,7 +33,10 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.ISystemContainer;
+import org.eclipse.rse.core.subsystems.ISubSystem;
+import org.eclipse.rse.ui.view.ContextObject;
 import org.eclipse.rse.ui.view.ISystemViewElementAdapter;
 import org.eclipse.rse.ui.view.SystemAdapterHelpers;
 import org.eclipse.swt.graphics.Image;
@@ -159,7 +163,18 @@ public class SystemTableViewProvider implements ILabelProvider, ITableLabelProvi
 				if (adapter != null)
 				{
 				    adapter.setViewer(_viewer);
-					results = adapter.getChildren((IAdaptable)object, new NullProgressMonitor());
+								    
+				    // do we have context?
+				    if (object instanceof ISystemFilterReference) {
+				    	ISubSystem ss = adapter.getSubSystem(object);
+				    	
+				    	ContextObject context = new ContextObject(object, ss, (ISystemFilterReference)object);
+				    	results = adapter.getChildren(context, new NullProgressMonitor());
+				    }
+				    else {
+				    	results = adapter.getChildren((IAdaptable)object, new NullProgressMonitor());
+				    	
+				    }
 					if (adapter instanceof SystemViewRootInputAdapter)
 					{
 						ArrayList filterredResults = new ArrayList();

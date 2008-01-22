@@ -55,8 +55,7 @@
 			class="org.eclipse.rse.internal.subsystems.files.core.RemoteFilePermissionsAdapterFactory" 
 			adaptableType="org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile">
 
-			<adapter type="org.eclipse.rse.services.files.IFilePermissionsService"/>
-			<adapter type="org.eclipse.rse.services.files.IFileOwnerService"/>			
+			<adapter type="org.eclipse.rse.services.files.IFilePermissionsService"/>		
 		</factory> 
 	</extension>
 

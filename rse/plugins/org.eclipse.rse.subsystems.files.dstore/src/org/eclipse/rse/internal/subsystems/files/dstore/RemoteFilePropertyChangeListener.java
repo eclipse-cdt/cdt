@@ -164,10 +164,11 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
         if (dataStore == parent.getDataStore())
         {
             String dataElementType = parent.getType();
-            if (dataElementType
+            if (dataElementType != null &&            		
+            		(dataElementType
                     .equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR) ||
                     dataElementType
-                    .equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR)	
+                    .equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR))	
             )
             {
                 return true;
@@ -209,9 +210,9 @@ public class RemoteFilePropertyChangeListener implements IDomainListener,
 	
 	            DataElement subject = (DataElement) children.get(i);
 	            String type = subject.getType();
-	            if (type
-	                    .equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) ||
-	                    type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR))
+	            if (type != null &&
+	            		(type.equals(IUniversalDataStoreConstants.UNIVERSAL_FILE_DESCRIPTOR) ||
+	                    type.equals(IUniversalDataStoreConstants.UNIVERSAL_FOLDER_DESCRIPTOR)))
 	                
 	            {
 	            	StringBuffer path = new StringBuffer(subject.getAttribute(DE.A_VALUE));

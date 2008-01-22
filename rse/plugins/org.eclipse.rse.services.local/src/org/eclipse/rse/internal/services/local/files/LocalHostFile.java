@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Fix [168591] LocalHostFile missing equals()
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
@@ -21,13 +22,16 @@ import java.io.File;
 
 import org.eclipse.rse.services.clientserver.archiveutils.ArchiveHandlerManager;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 
 
-public class LocalHostFile implements IHostFile 
+public class LocalHostFile implements IHostFile, IHostFilePermissionsContainer
 {
 	private File _file;
 	private boolean _isRoot = false;
 	private boolean _isArchive = false;
+	private IHostFilePermissions _permissions = null;
 	
 	public LocalHostFile(File file)
 	{
@@ -137,6 +141,14 @@ public class LocalHostFile implements IHostFile
 
 	public boolean canWrite() {
 		return _file.canWrite();
+	}
+
+	public IHostFilePermissions getPermissions() {
+		return _permissions;
+	}
+
+	public void setPermissions(IHostFilePermissions permissions) {
+		_permissions = permissions;
 	}
 
 }

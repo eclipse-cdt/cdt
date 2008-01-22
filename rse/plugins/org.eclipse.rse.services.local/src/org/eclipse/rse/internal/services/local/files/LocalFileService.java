@@ -28,12 +28,14 @@
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Xuan Chen        (IBM)        - [210555] [regression] NPE when deleting a file on SSH
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.local.files;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,11 +44,13 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.internal.services.local.ILocalService;
@@ -56,6 +60,7 @@ import org.eclipse.rse.services.clientserver.IMatcher;
 import org.eclipse.rse.services.clientserver.ISystemFileTypes;
 import org.eclipse.rse.services.clientserver.ISystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.NamePatternMatcher;
+import org.eclipse.rse.services.clientserver.PathUtility;
 import org.eclipse.rse.services.clientserver.SystemEncodingUtil;
 import org.eclipse.rse.services.clientserver.SystemOperationMonitor;
 import org.eclipse.rse.services.clientserver.archiveutils.AbsoluteVirtualPath;
@@ -66,13 +71,17 @@ import org.eclipse.rse.services.clientserver.messages.ISystemMessageProvider;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.AbstractFileService;
+import org.eclipse.rse.services.files.HostFilePermissions;
+import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.rse.services.files.IHostFile;
+import org.eclipse.rse.services.files.IHostFilePermissions;
+import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
-public class LocalFileService extends AbstractFileService implements IFileService, ILocalService
+public class LocalFileService extends AbstractFileService implements IFileService, ILocalService, IFilePermissionsService
 {
 	private static final String[] ALLDRIVES =
 	{
@@ -1670,4 +1679,97 @@ public class LocalFileService extends AbstractFileService implements IFileServic
 	public SystemMessage getMessage(String messageID) {
 		return (_msgProvider != null ? _msgProvider.getMessage(messageID) : super.getMessage(messageID));
 	}
+
+	public int getCapabilities(IHostFile file) {
+		int capabilities = 0;
+		if (_isWindows){
+			return capabilities; // no windows support
+		}
+		else if (file instanceof LocalVirtualHostFile) {
+			return capabilities; // no virtual file support
+		}
+		else {
+			return FS_CAN_GET_ALL | FS_CAN_SET_ALL;
+		}
+	}
+
+	public IHostFilePermissions getFilePermissions(IHostFile rfile,
+			IProgressMonitor monitor) throws SystemMessageException {
+		if (!_isWindows){		
+			
+			File file = new File(rfile.getParentPath(), rfile.getName());
+
+			// permissions in form  "drwxrwxrwx ..."
+			String ldStr = simpleShellCommand("ls -ld", file); //$NON-NLS-1$
+					
+			StringTokenizer tokenizer = new StringTokenizer(ldStr, " \t"); //$NON-NLS-1$
+											
+			// permissions in form "rwxrwxrwx"
+			String permString = tokenizer.nextToken().substring(1); 
+
+			// user and group	
+			tokenizer.nextToken(); // nothing important
+			String user = tokenizer.nextToken(); // 3rd
+			String group = tokenizer.nextToken(); // 4th
+
+			IHostFilePermissions permissions = new HostFilePermissions(permString, user, group);
+			if (rfile instanceof IHostFilePermissionsContainer)
+			{
+				((IHostFilePermissionsContainer)rfile).setPermissions(permissions);
+			}
+			return permissions;			
+		}
+		return null;
+	}
+
+	public void setFilePermissions(IHostFile rfile,
+			IHostFilePermissions newPermissions, IProgressMonitor monitor)
+			throws SystemMessageException {
+		if (!_isWindows){
+			File file = new File(rfile.getParentPath(), rfile.getName());
+		
+			int bits = newPermissions.getPermissionBits();
+			String permissionsInOctal = Integer.toOctalString(bits); // from decimal to octal
+			String user = newPermissions.getUserOwner();
+			String group = newPermissions.getGroupOwner();
+	
+			// set the permissions
+			String result = simpleShellCommand("chmod " + permissionsInOctal, file); //$NON-NLS-1$
+			
+			// set the user
+			simpleShellCommand("chown " + user, file); //$NON-NLS-1$
+			
+			// set the group
+			simpleShellCommand("chown :" + group, file); //$NON-NLS-1$
+		}
+	}
+	
+	
+	private String simpleShellCommand(String cmd, File file)
+	{
+		String result = null;
+	    String args[] = new String[3];
+        args[0] = "sh"; //$NON-NLS-1$
+        args[1] = "-c"; //$NON-NLS-1$
+        args[2] = cmd + " " + PathUtility.enQuoteUnix(file.getAbsolutePath()); //$NON-NLS-1$
+     
+        BufferedReader childReader = null;
+		try {
+        	Process childProcess = Runtime.getRuntime().exec(args);
+        	
+        	childReader = new BufferedReader(new InputStreamReader(childProcess.getInputStream()));
+
+        	result = childReader.readLine().trim();
+        	childReader.close();
+		}
+		catch (Exception e){
+			try {
+				childReader.close();
+			}
+			catch (IOException ex){}
+		}
+		return result;
+	        	
+	}
+	
 }

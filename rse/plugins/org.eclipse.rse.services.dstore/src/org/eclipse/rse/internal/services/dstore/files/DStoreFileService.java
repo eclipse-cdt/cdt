@@ -2074,25 +2074,6 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 	}
 
 	
-	
-	
-	public boolean canGetFilePermissions(IHostFile file) {
-		DataElement remoteFile = ((DStoreHostFile)file).getDataElement();
-		
-		DataElement queryCmd = getCommandDescriptor(remoteFile, IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS);	
-		if (queryCmd != null){
-			return true;
-		}
-		return false;
-	}
-
-	
-	public boolean canSetFilePermissions(IHostFile file) {
-		// for now just falling back to the same as get
-		return canGetFilePermissions(file);
-	}
-
-	
 	public IHostFilePermissions getFilePermissions(IHostFile rfile, IProgressMonitor monitor)
 			throws SystemMessageException {
 		DStoreHostFile file = (DStoreHostFile)rfile;
@@ -2170,6 +2151,10 @@ public class DStoreFileService extends AbstractDStoreService implements IFileSer
 		// dstore supports setting and getting
 		if (file == null){
 			capabilities = IFilePermissionsService.FS_CAN_GET_ALL | IFilePermissionsService.FS_CAN_SET_ALL;
+		}
+		else if (file instanceof DStoreVirtualHostFile){
+			// no virtual support right now
+			return capabilities;
 		}
 		else {
 			

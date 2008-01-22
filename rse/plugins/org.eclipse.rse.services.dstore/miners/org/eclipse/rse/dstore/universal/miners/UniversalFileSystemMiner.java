@@ -1589,16 +1589,12 @@ public class UniversalFileSystemMiner extends Miner {
 			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "GetPermissions",IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "GetPermissions", IUniversalDataStoreConstants.C_QUERY_FILE_PERMISSIONS); //$NON-NLS-1$
 	
 			createCommandDescriptor(UniversalFilter, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalFolderObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalFileObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
 			createCommandDescriptor(FileDescriptors._deUniversalArchiveFileObject, "SetPermissions",IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFileObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
-			createCommandDescriptor(FileDescriptors._deUniversalVirtualFolderObject, "SetPermissions", IUniversalDataStoreConstants.C_SET_FILE_PERMISSIONS); //$NON-NLS-1$
-		}
+	}
 	}
 	
 

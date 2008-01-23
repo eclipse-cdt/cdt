@@ -24,6 +24,7 @@ import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
 import org.eclipse.rse.core.events.SystemResourceChangeEvent;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.internal.files.ui.FileResources;
+import org.eclipse.rse.services.files.HostFilePermissions;
 import org.eclipse.rse.services.files.IFilePermissionsService;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.PendingHostFilePermissions;
@@ -351,7 +352,7 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			if ((capabilities & IFilePermissionsService.FS_CAN_SET_PERMISSIONS) != 0){
 				try
 				{
-					IHostFilePermissions newPermissions = _permissions.duplicate();
+					IHostFilePermissions newPermissions = (IHostFilePermissions)((HostFilePermissions)_permissions).clone();
 					
 					if (_permissions.getPermission(IHostFilePermissions.PERM_USER_READ) != _userRead.getSelection()){
 						changed = true;

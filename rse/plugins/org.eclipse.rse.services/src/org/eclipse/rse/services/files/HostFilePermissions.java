@@ -106,7 +106,7 @@ public class HostFilePermissions implements
 	}
 	
 	public String toString(){
-		return "" + _permissions;
+		return "" + _permissions; //$NON-NLS-1$
 	}
 	
 	private boolean isSet(long mask) {
@@ -155,8 +155,9 @@ public class HostFilePermissions implements
 		_user = user;
 	}
 
-	public IHostFilePermissions duplicate(){
-		IHostFilePermissions clone = new HostFilePermissions(getPermissionBits(), getUserOwner(), getGroupOwner());
-		return clone;
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
+	
+	
 }

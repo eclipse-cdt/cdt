@@ -14,7 +14,7 @@
 package org.eclipse.rse.services.files;
 
 
-public interface IHostFilePermissions {
+public interface IHostFilePermissions extends Cloneable {
 	
 	/**
 	 * Permission constant indicating that 
@@ -144,9 +144,4 @@ public interface IHostFilePermissions {
 	 */
 	public void setGroupOwner(String group);
 	
-	/**
-	 * Create a duplicate of a set of permissions
-	 * @return the duplicate
-	 */
-	public IHostFilePermissions duplicate();
 }

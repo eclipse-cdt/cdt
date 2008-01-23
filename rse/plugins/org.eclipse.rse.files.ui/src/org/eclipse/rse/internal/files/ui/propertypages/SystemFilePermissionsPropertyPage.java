@@ -351,7 +351,7 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 			if ((capabilities & IFilePermissionsService.FS_CAN_SET_PERMISSIONS) != 0){
 				try
 				{
-					IHostFilePermissions newPermissions = _permissions.clone(_permissions);
+					IHostFilePermissions newPermissions = _permissions.duplicate();
 					
 					if (_permissions.getPermission(IHostFilePermissions.PERM_USER_READ) != _userRead.getSelection()){
 						changed = true;

@@ -155,8 +155,8 @@ public class HostFilePermissions implements
 		_user = user;
 	}
 
-	public IHostFilePermissions clone(IHostFilePermissions toClone) {
-		IHostFilePermissions clone = new HostFilePermissions(toClone.getPermissionBits(), toClone.getUserOwner(), toClone.getGroupOwner());
+	public IHostFilePermissions duplicate(){
+		IHostFilePermissions clone = new HostFilePermissions(getPermissionBits(), getUserOwner(), getGroupOwner());
 		return clone;
 	}
 }

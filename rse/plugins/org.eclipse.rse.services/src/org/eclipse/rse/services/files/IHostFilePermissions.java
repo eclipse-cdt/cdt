@@ -146,8 +146,7 @@ public interface IHostFilePermissions {
 	
 	/**
 	 * Create a duplicate of a set of permissions
-	 * @param toClone
 	 * @return the duplicate
 	 */
-	public IHostFilePermissions clone(IHostFilePermissions toClone);
+	public IHostFilePermissions duplicate();
 }

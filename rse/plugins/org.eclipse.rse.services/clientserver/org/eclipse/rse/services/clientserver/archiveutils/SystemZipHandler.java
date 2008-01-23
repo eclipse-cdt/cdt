@@ -21,6 +21,7 @@
  * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
  * Xuan Chen        (IBM)        - [214786] [regression][archive]rename a virtual directory does not work properly
+ * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -1285,33 +1286,47 @@ public class SystemZipHandler implements ISystemArchiveHandler
 						if (isCanceled)
 						{
 							dest.close();
-							if (!(outputTempFile == null)) outputTempFile.delete();
+							if (!(outputTempFile == null)) 
+							{
+								outputTempFile.delete();
+							}
 							if (closeZipFile) closeZipFile();
 							return false;
 						}
 					}
 					
 					// Now for each new file to add
+					// We need to remember the entries added, and if this operation is not canceled, we
+					// will add them into Virtual File system.
+					ZipEntry[] newEntriesAdded = new ZipEntry[numFiles];
 					for (int i = 0; i < numFiles; i++)
-					{
-						if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+					{						
+					    if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
 						{
 							//the operation has been canceled
 							dest.close();
+							if (!(outputTempFile == null)) 
+							{
+								outputTempFile.delete();
+							}
 							closeZipFile();
 							return false;
 						}
 						// append the additional entry to the zip file.
 						ZipEntry newEntry = appendFile(files[i], dest, virtualPath, names[i], sourceEncodings[i], targetEncodings[i], isText[i]);
-						// Add the new entry to the virtual file system in memory
-						fillBranch(newEntry);
+						// Add the new entry to the array first.
+						newEntriesAdded[i] = newEntry;
 					}
 					
 					dest.close();
 					
 					// Now replace the old zip file with the new one
 					replaceOldZip(outputTempFile);
-						
+					//Also need to add the new entries into VFS
+					for (int i = 0; i < numFiles; i++)
+					{
+						fillBranch(newEntriesAdded[i]);	
+					}
 				
 					if (closeZipFile) closeZipFile();
 					return true;

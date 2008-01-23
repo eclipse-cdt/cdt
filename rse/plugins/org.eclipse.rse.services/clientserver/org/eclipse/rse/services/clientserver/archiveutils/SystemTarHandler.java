@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@
  * Xuan Chen        (IBM)        - [211551] NPE when moving multiple folders from one tar file to another tar file
  * Xuan Chen        (IBM)        - [211653] Copy virtual directory with nested directory of tar file did not work
  * Xuan Chen        (IBM)        - [214251] [archive] "Last Modified Time" changed for all virtual files/folders if rename/paste/delete of one virtual file.
+ * Xuan Chen        (IBM)        - [191370] [dstore] Supertransfer zip not deleted when cancelling copy
  *******************************************************************************/
 
 package org.eclipse.rse.services.clientserver.archiveutils;
@@ -1248,10 +1249,19 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 							
 						}
 					}
-						
+					VirtualChild[] newEntriesAdded = new VirtualChild[numFiles];	
 					// for each new file to add
 					for (int i = 0; i < numFiles; i++) {
 						
+						if (archiveOperationMonitor != null && archiveOperationMonitor.isCanceled())
+						{
+							outStream.close();
+							if (outputTempFile != null)
+							{
+								outputTempFile.delete();
+							}
+							return false;
+						}
 						String childVirtualPath = virtualPath + "/" + names[i]; //$NON-NLS-1$
 						
 						TarEntry newEntry = createTarEntry(files[i], childVirtualPath);
@@ -1261,8 +1271,9 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 						
 						// add the new entry to the cache, so that the cache is updated
 						VirtualChild temp = getVirtualChild(newEntry);
-						vfs.addEntry(temp);
+						newEntriesAdded[i] = temp;
 					}
+					
 					
 					// close output stream
 					outStream.close();
@@ -1270,6 +1281,12 @@ public class SystemTarHandler implements ISystemArchiveHandler {
 					// replace the current tar file with the new one, and do not update cache since
 					// we just did
 					replaceFile(outputTempFile, false);
+					
+					//Also need to add the new entries into VFS
+					for (int i = 0; i < numFiles; i++)
+					{
+						vfs.addEntry(newEntriesAdded[i]);
+					}
 			}
 			
 		}

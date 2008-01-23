@@ -40,12 +40,13 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	private CheckboxTableViewer tv;
 	private Button b_ok;
 	private Label message;
+	private static ICConfigurationDescription[] result = null;
 	
 	public static ICConfigurationDescription[] select(ICConfigurationDescription[] _cfgds) {
 		cfgds = _cfgds;
 		ConfigMultiSelectionDialog d = new ConfigMultiSelectionDialog(CUIPlugin.getActiveWorkbenchShell());
 		if (d.open() == OK)	
-			return (ICConfigurationDescription[])d.tv.getCheckedElements();
+			return result;
 		return null;
 	}
 	
@@ -104,6 +105,12 @@ public class ConfigMultiSelectionDialog extends Dialog {
 				boolean enabled = (tv.getCheckedElements().length > 1); 
 				if (b_ok != null) b_ok.setEnabled(enabled);
 				message.setVisible(!enabled);
+				if (enabled) {
+					Object[] ob = tv.getCheckedElements();
+					result = new ICConfigurationDescription[ob.length];
+					System.arraycopy(ob, 0, result, 0, ob.length);
+				} else
+					result = null;
 			}});
 		tv.setLabelProvider(new ITableLabelProvider() {
 			public Image getColumnImage(Object element, int columnIndex) { return null; }

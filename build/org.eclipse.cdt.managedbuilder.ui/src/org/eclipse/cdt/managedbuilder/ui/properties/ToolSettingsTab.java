@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
 import org.eclipse.cdt.managedbuilder.internal.macros.BuildMacroProvider;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.PageLayout;
@@ -592,14 +593,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 	
 	public void updateData(ICResourceDescription cfgd) {
-		if (page.isMultiCfg()) {
-			usercomp.setVisible(false);
-		} else {
-			usercomp.setVisible(true);
 			fInfo = getResCfg(cfgd);
 			setValues();
 			handleOptionSelection();
-		}
 	}
 
 	protected void performApply(ICResourceDescription src, ICResourceDescription dst) {
@@ -626,8 +622,10 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	public void updateTitle() {}
 
 	public boolean canBeVisible() {
-		if (page.isMultiCfg())
-			return false;
-		return getCfg().getBuilder().isManagedBuildOn();
+		IConfiguration cfg = getCfg();
+		if (cfg instanceof MultiConfiguration) 
+			return ((MultiConfiguration)cfg).isManagedBuildOn();
+		else	
+			return cfg.getBuilder().isManagedBuildOn();
 	}
 }

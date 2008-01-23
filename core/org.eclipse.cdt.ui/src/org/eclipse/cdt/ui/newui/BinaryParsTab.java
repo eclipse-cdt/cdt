@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
 import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -300,9 +301,13 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	}
 
 	public void performApply(ICResourceDescription src, ICResourceDescription dst) {
+		if (page.isMultiCfg()) {
+			src = ((ICResourceDescription[])((ICMultiResourceDescription)src).getItems())[0];
+			dst = ((ICResourceDescription[])((ICMultiResourceDescription)dst).getItems())[0];
+		} 
 		ICTargetPlatformSetting tps1 = src.getConfiguration().getTargetPlatformSetting();
 		ICTargetPlatformSetting tps2 = dst.getConfiguration().getTargetPlatformSetting();
-		if (tps1 != null && tps2 != null) { // temporary
+		if (tps1 != null && tps2 != null) { 
 			tps2.setBinaryParserIds(tps1.getBinaryParserIds());
 		}
 	}

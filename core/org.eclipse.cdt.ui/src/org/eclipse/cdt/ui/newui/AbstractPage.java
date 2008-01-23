@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,6 +113,7 @@ implements
 	private static ICResourceDescription resd = null;
 	private static ICConfigurationDescription[] cfgDescs = null;
 	private static int cfgIndex = -1;
+	private static ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
 	// tabs
 	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.cPropertyTab"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME = "tab"; //$NON-NLS-1$
@@ -212,7 +213,6 @@ implements
 			s = UIMessages.getString("AbstractPage.0"); //$NON-NLS-1$
 		} else if (!isApplicable()) {
 			return null;
-//			s = UIMessages.getString("AbstractPage.1"); //$NON-NLS-1$
 		} else if (!isCDTProject(getProject())) {
 			s = UIMessages.getString("AbstractPage.2"); //$NON-NLS-1$
 		}
@@ -380,24 +380,26 @@ implements
 
 		// Check if the user has selected the "all / multiple" configuration
 		if (selectionIndex >= cfgDescs.length) {
-			ICConfigurationDescription[] multiCfgs = null; // selected multi cfg
 			if ((selectionIndex - cfgDescs.length) == 0) {  // all
 				multiCfgs = cfgDescs;
 				cfgIndex = selectionIndex; 
-			} else {
-				ICConfigurationDescription[] mcfgs = ConfigMultiSelectionDialog.select(cfgDescs);
-				if (mcfgs == null || mcfgs.length == 0) {
-					// return back to previous selection
-					if (cfgIndex > configSelector.getItemCount()) {
-						cfgIndex = 0;
-						configSelector.select(0);
-						cfgChanged(cfgDescs[0]);
-					} else {
-						configSelector.select(cfgIndex);
+			} else { // multiple
+				if (cfgIndex != selectionIndex) { // to avoid re-request on page change 
+					ICConfigurationDescription[] mcfgs = ConfigMultiSelectionDialog.select(cfgDescs);
+					if (mcfgs == null || mcfgs.length == 0) {
+						// return back to previous selection
+						if (cfgIndex > configSelector.getItemCount()) {
+							cfgIndex = 0;
+							configSelector.select(0);
+							cfgChanged(cfgDescs[0]);
+						} else {
+							configSelector.select(cfgIndex);
+						}
+						return;
 					}
-					return;
+					multiCfgs = mcfgs;
+					cfgIndex = selectionIndex;
 				}
-				multiCfgs = mcfgs;
 			}
 			// TODO: avoid repeated update like for single cfg 
 			cfgChanged(MultiItemsHolder.createCDescription(multiCfgs, 

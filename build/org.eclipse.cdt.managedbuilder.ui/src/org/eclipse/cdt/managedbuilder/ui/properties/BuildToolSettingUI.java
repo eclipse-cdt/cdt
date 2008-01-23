@@ -22,6 +22,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
 import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.cdt.ui.newui.MultiLineTextFieldEditor;
 import org.eclipse.cdt.ui.newui.UIMessages;
@@ -472,118 +473,7 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		// Do the super-class thang
-		boolean result =  super.performOk();
-		/*
-		//parse and store all build options in the corresponding preference store
-		//parseAllOptions();
-
-		// Write the preference store values back to the build model
-		IOptionCategory clonedCategory = (IOptionCategory)fTool;
-		Object[][] clonedOptions;
-		clonedOptions = clonedCategory.getOptions(cfg, clonedTool);
-
-		if ( clonedOptions == null)
-			return true;
-		
-		for (int i = 0; i < clonedOptions.length; i++) {
-			ITool clonedTool = (ITool)clonedOptions[i][0];
-			if (clonedTool == null) break;	//  The array may not be full
-			IOption clonedOption = (IOption)clonedOptions[i][1];
-			
-			try {
-				// Transfer value from preference store to options
-				IOption setOption = null;
-				switch (clonedOption.getValueType()) {
-					case IOption.BOOLEAN :
-						boolean boolVal = clonedOption.getBooleanValue();;
-//						setOption = ManagedBuildManager.setOption(realCfg, realTool, realOption, boolVal);
-						// Reset the preference store since the Id may have changed
-//						if (setOption != option) {
-//							getToolSettingsPrefStore().setValue(setOption.getId(), boolVal);
-//						}
-						break;
-					case IOption.ENUMERATED :
-						String enumVal = clonedOption.getStringValue();
-						String enumId = clonedOption.getEnumeratedId(enumVal);
-//						setOption = ManagedBuildManager.setOption(realCfg, realTool, realOption, 
-//							(enumId != null && enumId.length() > 0) ? enumId : enumVal);
-						// Reset the preference store since the Id may have changed
-//						if (setOption != option) {
-//							getToolSettingsPrefStore().setValue(setOption.getId(), enumVal);
-//						}
-						break;
-					case IOption.STRING :
-						String strVal = clonedOption.getStringValue();
-//						setOption = ManagedBuildManager.setOption(realCfg, realTool, realOption, strVal);
-						// Reset the preference store since the Id may have changed
-//						if (setOption != option) {
-//							getToolSettingsPrefStore().setValue(setOption.getId(), strVal);
-//						}
-						break;
-					case IOption.STRING_LIST :
-					case IOption.INCLUDE_PATH :
-					case IOption.PREPROCESSOR_SYMBOLS :
-					case IOption.LIBRARIES :
-					case IOption.OBJECTS :
-//						String listStr = getToolSettingsPreferenceStore().getString(option.getId());
-						String[] listVal = (String[])((List)clonedOption.getValue()).toArray(new String[0]);
-//						setOption = ManagedBuildManager.setOption(realCfg, realTool, realOption, listVal);
-						// Reset the preference store since the Id may have changed
-//						if (setOption != option) {
-//							getToolSettingsPreferenceStore().setValue(setOption.getId(), listStr);
-//						}
-						break;
-					default :
-						break;
-				}
-
-				// Call an MBS CallBack function to inform that Settings related to Apply/OK button 
-				// press have been applied.
-				if (setOption == null)
-					setOption = realOption;
-// 				
-//				if (setOption.getValueHandler().handleValue(
-//						handler, 
-//						setOption.getOptionHolder(), 
-//						setOption,
-//						setOption.getValueHandlerExtraArgument(), 
-//						IManagedOptionValueHandler.EVENT_APPLY)) {
-//					// TODO : Event is handled successfully and returned true.
-//					// May need to do something here say log a message.
-//				} else {
-//					// Event handling Failed. 
-//				}
- 
-			} catch (BuildException e) {
-			} catch (ClassCastException e) {
-			}
-		}
-		
-		// Save the tool command if it has changed
-		// Get the actual value out of the field editor
-		String command = clonedTool.getToolCommand();
-		if (command.length() > 0 &&
-			(!command.equals(tool.getToolCommand()))) {
-			
-//			if ( isItResourceConfigPage ) {
-//				ManagedBuildManager.setToolCommand(realRcCfg, tool, command);
-//			} else {
-//				ManagedBuildManager.setToolCommand(realCfg, tool, command);
-//			}
-			
-		}
-		
-		// Save the tool command line pattern if it has changed
-		// Get the actual value out of the field editor
-		String commandLinePattern = clonedTool.getCommandLinePattern();
-		if (commandLinePattern.length() > 0 &&
-			(!commandLinePattern.equals(tool.getCommandLinePattern()))) {
-			tool.setCommandLinePattern(commandLinePattern);
-		}
-		*/
-		
-		return result;
+		return super.performOk();
 	}
 	
 	/**
@@ -603,12 +493,23 @@ public class BuildToolSettingUI extends AbstractToolSettingUI {
 		// allow superclass to handle as well
 		super.propertyChange(event);
 		
-		if(event.getSource() == commandStringField){
-			fTool.setToolCommand(commandStringField.getStringValue());
-			updateFields();
-		}
-		else if(event.getSource() == commandLinePatternField){
-			fTool.setCommandLinePattern(commandLinePatternField.getStringValue());
+		if (fInfo instanceof MultiResourceInfo) {
+			MultiResourceInfo mri = (MultiResourceInfo)fInfo;
+			if(event.getSource() == commandStringField){
+				mri.setToolsCommand(fTool, commandStringField.getStringValue());
+				updateFields();
+			}
+			else if(event.getSource() == commandLinePatternField){
+				mri.setCommandLinePattern(fTool, commandLinePatternField.getStringValue());
+			}
+		} else {
+			if(event.getSource() == commandStringField){
+				fTool.setToolCommand(commandStringField.getStringValue());
+				updateFields();
+			}
+			else if(event.getSource() == commandLinePatternField){
+				fTool.setCommandLinePattern(commandLinePatternField.getStringValue());
+			}
 		}
 	}
 }

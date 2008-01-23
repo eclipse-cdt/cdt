@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ public class MultiResourceDescription extends MultiItemsHolder implements ICMult
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#getParentFolderDescription()
 	 */
 	public ICFolderDescription getParentFolderDescription() {
-		System.out.println("Bad multi access: MultiResourceDescription.getParentFolderDescription()");
+		System.out.println("Bad multi access: MultiResourceDescription.getParentFolderDescription()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
 	}
 
@@ -60,7 +60,13 @@ public class MultiResourceDescription extends MultiItemsHolder implements ICMult
 	 * @see org.eclipse.cdt.core.settings.model.ICResourceDescription#getPath()
 	 */
 	public IPath getPath() {
-		System.out.println("Bad multi access: MultiResourceDescription.getPath()");
+		IPath p = fRess[0].getPath();
+		if (p != null) {
+			for (int i=1; i<fRess.length; i++)
+				if (!p.equals(fRess[i].getPath()))
+					throw new UnsupportedOperationException();
+			return p;
+		}
 		throw new UnsupportedOperationException();
 	}
 
@@ -94,7 +100,7 @@ public class MultiResourceDescription extends MultiItemsHolder implements ICMult
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingContainer#getChildSettings()
 	 */
 	public ICSettingObject[] getChildSettings() {
-		System.out.println("Bad multi access: MultiResourceDescription.getChildSettings()");
+		System.out.println("Bad multi access: MultiResourceDescription.getChildSettings()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
 	}
 
@@ -117,14 +123,14 @@ public class MultiResourceDescription extends MultiItemsHolder implements ICMult
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getId()
 	 */
 	public String getId() {
-		return fRess[0].getId() + "_etc";
+		return fRess[0].getId() + "_etc"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICSettingObject#getName()
 	 */
 	public String getName() {
-		return "Multiple Resource Description";
+		return "Multiple Resource Description"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -184,6 +190,7 @@ public class MultiResourceDescription extends MultiItemsHolder implements ICMult
 		return fRess;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void setSettingEntries(ICLanguageSetting lang, int kind, List incs, boolean toAll) {
 		for (int i=0; i<fRess.length; i++) {
 			if (fRess[i] instanceof ICFolderDescription) {

@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
@@ -81,6 +82,8 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedCommandLineGenerator;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.core.MultiResourceInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Option;
 import org.eclipse.cdt.managedbuilder.internal.core.OptionCategory;
 import org.eclipse.cdt.managedbuilder.internal.core.OutputType;
@@ -3892,6 +3895,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes, boolean checkConsistance){
 		if(cfgDes == null)
 			return null;
+		
+		if (cfgDes instanceof ICMultiConfigDescription) {
+			ICMultiConfigDescription mcd = (ICMultiConfigDescription)cfgDes;
+			ICConfigurationDescription[] cfds = (ICConfigurationDescription[])mcd.getItems();
+			return new MultiConfiguration(cfds, mcd.getStringListMode());
+		}
+		
 		CConfigurationData cfgData = cfgDes.getConfigurationData();
 		if(cfgData instanceof BuildConfigurationData){
 			IConfiguration cfg = ((BuildConfigurationData)cfgData).getConfiguration();

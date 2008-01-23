@@ -29,6 +29,7 @@
  * David McKnight    (IBM)       - [191288] Up To Action doesn't go all the way back to the connections
  * Uwe Stieber (Wind River)      - [199032] [api] Remove method acceptContextMenuActionContribution(...) from RSESystemTypeAdapter
  * Xuan Chen         (IBM)       - [160775] [api] rename (at least within a zip) blocks UI thread
+ * Martin Oberhuber (Wind River) - [216266] Consider stateless subsystems (supportsSubSystemConnect==false)
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.view;
@@ -592,13 +593,17 @@ public class SystemViewConnectionAdapter
 	{
 	    if (element instanceof IHost)
 	    {
+	    	IHost host = (IHost)element;
 	        ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
-	        if (((IHost)element).getSystemType().isLocal())
-	        {
-	        	// local is always connected so always allow delete
-	         	return true;
-	        }
-	    	return !sr.isAnySubSystemConnected((IHost)element);
+	    	//do not allow delete if any subsystem is connected but supports disconnect.
+	        //specifically, this allows deletion of "Local" which is always connected (but does not support disconnect)
+	        //need to get subsystems from registry instead of host in order to be lazy:
+	        //subsystems which are not yet instantiated do not need to be considered.
+        	ISubSystem[] ss = sr.getSubSystems(host, false);
+        	for (int i=0; i<ss.length; i++) {
+        		if (ss[i].isConnected() && ss[i].getSubSystemConfiguration().supportsSubSystemConnect())
+        			return false;
+        	}
 	    }
 		return true;
 	}

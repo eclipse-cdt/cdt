@@ -38,6 +38,7 @@
  * David McKnight   (IBM)        - [207100] adding ISystemRegistry.isRegisteredSystemRemoteChangeListener
  * Martin Oberhuber (Wind River) - [206742] Make SystemHostPool thread-safe
  * David Dykstal    (IBM)        - [210537] removed exception handling for SystemHostPool, no longer needed
+ * Martin Oberhuber (Wind River) - [216266] improved non-forced getSubSystems() code, removed getSubSystemsLazily()
  ********************************************************************************/
 
 package org.eclipse.rse.ui.internal.model;
@@ -912,30 +913,30 @@ public class SystemRegistry implements ISystemRegistry
 	public ISubSystem[] getSubSystems(IHost conn, boolean force)
 	{
 		ISubSystem[] subsystems = null;
-		Vector v = new Vector();
 
 		if (subsystemConfigurationProxies != null)
 		{
+			List v = new ArrayList();
 			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
 			{
-				// if (subsystemConfigurationProxies[idx].appliesToSystemType(conn.getSystemType()))
-				// {
+				if (!force && !subsystemConfigurationProxies[idx].isSubSystemConfigurationActive()) {
+					//avoid instantiation if not forced.
+					continue;
+				}
+
+				if (subsystemConfigurationProxies[idx].appliesToSystemType(conn.getSystemType()))
+				{
 					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
 					if (factory != null)
 					{
 						ISubSystem[] sss = factory.getSubSystems(conn, force);
 						if (sss != null)
 							for (int jdx = 0; jdx < sss.length; jdx++)
-								v.addElement(sss[jdx]);
+								v.add(sss[jdx]);
 					}
-				// }
+				}
 			}
-			//if (v.size() > 0)
-			//{
-			subsystems = new ISubSystem[v.size()];
-			for (int idx = 0; idx < v.size(); idx++)
-				subsystems[idx] = (ISubSystem) v.elementAt(idx);
-			//}
+			subsystems = (ISubSystem[])v.toArray(new ISubSystem[v.size()]);
 		}
 		return subsystems;
 	}
@@ -1148,44 +1149,6 @@ public class SystemRegistry implements ISystemRegistry
 		return dataStream.toString();
 	 }
 	 
-	 
-	/**
-	 * Return list of subsystem objects for a given connection, but does not force 
-	 *  as-yet-non-restored subsystems to come to life.
-	 * <p>
-	 * To protect against crashes, if there are no subsystems, an array of length zero is returned.
-	 */
-	public ISubSystem[] getSubSystemsLazily(IHost conn)
-	{
-		ISubSystem[] subsystems = null;
-		Vector v = new Vector();
-
-		if (subsystemConfigurationProxies != null)
-		{
-			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
-			{
-				if (subsystemConfigurationProxies[idx].appliesToSystemType(conn.getSystemType()) && subsystemConfigurationProxies[idx].isSubSystemConfigurationActive())
-				{
-					ISubSystemConfiguration factory = subsystemConfigurationProxies[idx].getSubSystemConfiguration();
-					if (factory != null)
-					{
-						ISubSystem[] sss = factory.getSubSystems(conn, ISubSystemConfiguration.LAZILY);
-						if (sss != null)
-							for (int jdx = 0; jdx < sss.length; jdx++)
-								v.addElement(sss[jdx]);
-					}
-				}
-			}
-			//if (v.size() > 0)
-			//{
-			subsystems = new ISubSystem[v.size()];
-			for (int idx = 0; idx < v.size(); idx++)
-				subsystems[idx] = (ISubSystem) v.elementAt(idx);
-			//}
-		}
-		return subsystems;
-	}
-
 	public ISubSystem[] getSubsystems(IHost connection, Class subsystemInterface)
 	{
 		List matches = new ArrayList();
@@ -2355,7 +2318,7 @@ public class SystemRegistry implements ISystemRegistry
 	public boolean isAnySubSystemConnected(IHost conn)
 	{
 		boolean any = false;
-		ISubSystem[] subsystems = getSubSystemsLazily(conn);
+		ISubSystem[] subsystems = getSubSystems(conn, false);
 		if (subsystems == null)
 			return false;
 		for (int idx = 0; !any && (idx < subsystems.length); idx++)
@@ -2366,6 +2329,29 @@ public class SystemRegistry implements ISystemRegistry
 		}
 		return any;
 	}
+
+	/**
+	 * Check if there are any subsystem configurations that have not yet been instantiated
+	 * and apply to the given system type. 
+	 * @param systemType the system type to check
+	 * @return <code>true</code> if there are any matching subsystem configurations not yet instantiated.
+	 */
+	public boolean hasInactiveSubsystemConfigurations(IRSESystemType systemType)
+	{
+		if (subsystemConfigurationProxies != null)
+		{
+			for (int idx = 0; idx < subsystemConfigurationProxies.length; idx++)
+			{
+				if (!subsystemConfigurationProxies[idx].isSubSystemConfigurationActive()
+				  && subsystemConfigurationProxies[idx].appliesToSystemType(systemType))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+		
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -2374,15 +2360,27 @@ public class SystemRegistry implements ISystemRegistry
 	public boolean areAllSubSystemsConnected(IHost conn)
 	{
 		boolean all = true;
-		ISubSystem[] subsystems = getSubSystemsLazily(conn);
-		if (subsystems == null)
+		if (hasInactiveSubsystemConfigurations(conn.getSystemType())) {
+			//any uninitialized subsystem configuration that applies to the system type can not be connected.
+			//TODO this may change in the future: We might want to have markup in the plugin.xml
+			//to check whether a subsystem configuration is actually connectable or not
 			return false;
+		}
+
+		//May force load subsystem configurations here because there are no inactive ones for our system type.
+		//Do we need to force load actual subsystems too, just to check if they are connected?
+		ISubSystem[] subsystems = getSubSystems(conn);
+		if (subsystems == null) {
+			//If there are no subsystems, they are all connected.
+			return true;
+		}
 		
 		for (int idx = 0; all && (idx < subsystems.length); idx++)
 		{
 			ISubSystem ss = subsystems[idx];
-			if (!ss.isConnected())
+			if (!ss.isConnected() && ss.getSubSystemConfiguration().supportsSubSystemConnect())
 			{
+				//we ignore unconnected subsystems that can not be connected anyways.
 			    return false;
 			}
 		}
@@ -2395,18 +2393,18 @@ public class SystemRegistry implements ISystemRegistry
 	 */
 	public void disconnectAllSubSystems(IHost conn)
 	{
-		
-		ISubSystem[] subsystems = getSubSystemsLazily(conn);
+		// get subsystems lazily, because not instantiated ones cannot be disconnected anyways.
+		ISubSystem[] subsystems = getSubSystems(conn, false);
 		if (subsystems == null)
 			return;
 
-		// dy:  defect 47281, user repeaetedly prompted to disconnect if there is an open file
+		// dy:  defect 47281, user repeatedly prompted to disconnect if there is an open file
 		// and they keep hitting cancel. 
 		boolean cancelled = false;
 		for (int idx = 0; idx < subsystems.length && !cancelled; idx++)
 		{
 			ISubSystem ss = subsystems[idx];
-			if (ss.isConnected())
+			if (ss.isConnected() && ss.getSubSystemConfiguration().supportsSubSystemConnect())
 			{
 				try
 				{
@@ -2415,7 +2413,7 @@ public class SystemRegistry implements ISystemRegistry
 				}
 				catch (InterruptedException exc)
 				{
-					System.out.println("Cacnelled"); //$NON-NLS-1$
+					System.out.println("Cancelled"); //$NON-NLS-1$
 					cancelled = true;
 				}
 				catch (Exception exc)

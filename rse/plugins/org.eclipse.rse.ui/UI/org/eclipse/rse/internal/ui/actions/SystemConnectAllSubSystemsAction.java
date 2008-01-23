@@ -13,6 +13,7 @@
  * Contributors:
  * Martin Oberhuber (Wind River) - [186773] split ISystemRegistryUI from ISystemRegistry
  * Martin Oberhuber (Wind River) - [187218] Fix error reporting for connect() 
+ * Martin Oberhuber (Wind River) - [216266] Consider stateless subsystems (supportsSubSystemConnect==false)
  ********************************************************************************/
 
 package org.eclipse.rse.internal.ui.actions;
@@ -57,12 +58,15 @@ public class SystemConnectAllSubSystemsAction extends SystemBaseAction
 		    List failedSystems = new ArrayList();
 			try 
 			{
+			    //forced instantiation of all subsystems
 			    ISubSystem[] subsystems = _connection.getSubSystems();
 			    for (int i = 0; i < subsystems.length; i++)
 			    {
 			        ISubSystem subsystem = subsystems[i];
 			        IConnectorService system = subsystem.getConnectorService();
-			        if (!subsystem.isConnected() && !failedSystems.contains(system))
+			        if (!subsystem.isConnected()
+			          && subsystem.getSubSystemConfiguration().supportsSubSystemConnect()
+			          && !failedSystems.contains(system))
 			        {
 			            try
 			            {

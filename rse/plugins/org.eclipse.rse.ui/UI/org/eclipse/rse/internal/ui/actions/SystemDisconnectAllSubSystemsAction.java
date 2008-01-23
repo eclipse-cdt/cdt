@@ -17,11 +17,14 @@
 
 package org.eclipse.rse.internal.ui.actions;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.internal.ui.SystemResources;
 import org.eclipse.rse.ui.ISystemContextMenuConstants;
 import org.eclipse.rse.ui.actions.SystemBaseAction;
@@ -29,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * This is the action forconnecting all subsystems for a given connection.
+ * This is the action for disconnecting all subsystems for a given connection.
  */
 public class SystemDisconnectAllSubSystemsAction extends SystemBaseAction
 {
@@ -49,6 +52,25 @@ public class SystemDisconnectAllSubSystemsAction extends SystemBaseAction
 	    // TODO help for connect all
   	    //setHelp(RSEUIPlugin.HELPPREFIX+"actn0022");
 	}
+	
+	private static ISubSystem[] getDisconnectableSubsystems(Object element)
+	{
+		ISubSystem[] result = null;
+		if (element instanceof IHost) {
+			IHost host = (IHost)element;
+			ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry();
+			ISubSystem[] ss = sr.getSubSystems(host, false);
+			List l = new ArrayList();
+			for (int i=0; i<ss.length; i++) {
+				if (ss[i].isConnected() && ss[i].getSubSystemConfiguration().supportsSubSystemConnect()) {
+					l.add(ss[i]);
+				}
+			}
+			result = (ISubSystem[])l.toArray(new ISubSystem[l.size()]);
+		}
+		return result;
+	}
+	
 	/**
 	 * Override of parent. Called when testing if action should be enabled base on current
 	 *  selection. We check the selected object is one of our subsystems, and if we are
@@ -59,8 +81,10 @@ public class SystemDisconnectAllSubSystemsAction extends SystemBaseAction
 		if ( !(obj instanceof IHost) ||
 		     !(sr.isAnySubSystemConnected((IHost)obj) ))
 		  return false;
-		else 
-		  return true;
+		else {
+			ISubSystem[] ss = getDisconnectableSubsystems(obj);
+			return (ss!=null && ss.length>0);
+		}
 	}
 	
 	/**

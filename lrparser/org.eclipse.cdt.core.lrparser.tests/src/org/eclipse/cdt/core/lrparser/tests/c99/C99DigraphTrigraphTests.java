@@ -170,6 +170,6 @@ public class C99DigraphTrigraphTests extends TestCase {
 		assertEquals("ab", declarator2.getName().toString());
 		IASTLiteralExpression expr2 = (IASTLiteralExpression)((IASTInitializerExpression)declarator2.getInitializer()).getExpression();
 		assertEquals(IASTLiteralExpression.lk_string_literal, expr2.getKind());
-		assertEquals("its still good", expr2.toString());
+		assertEquals("\"its still good\"", expr2.toString());
 	}
 }

@@ -1254,41 +1254,6 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      }
 
      
-     /**
-      * declarator
-      *     ::= <openscope-ast> ptr_operator_seq_opt direct_declarator
-      */
-     public void consumeDeclaratorWithPointer() {
-    	 if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-    	 
-    	 IASTDeclarator declarator = (IASTDeclarator) astStack.pop();
-    	 
-    	 for(Object ptr : astStack.closeScope()) {
-    		 declarator.addPointerOperator((IASTPointerOperator) ptr);
-    	 }
-    	 
-    	 setOffsetAndLength(declarator); // TODO is it correct to change the offset and length?
-		 astStack.push(declarator);
-    	 
-    	 if(TRACE_AST_STACK) System.out.println(astStack);
-     }
- 
-     
-     /**
-      * init_declarator
-      *     ::= declarator initializer
-      */
-     public void consumeDeclaratorWithInitializer() {
-    	 if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-    	 
-    	 IASTInitializer initializer = (IASTInitializer) astStack.pop();
- 		 IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
- 		 declarator.setInitializer(initializer);
- 		 setOffsetAndLength(declarator); // adjust the length to include the initializer
-    	 
-    	 if(TRACE_AST_STACK) System.out.println(astStack);
-     }
-     
      
      /**
       * initializer
@@ -1311,7 +1276,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
      *     ::= basic_direct_declarator '(' <openscope-ast> parameter_declaration_clause ')' 
      *         <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
  	 */
- 	public void consumeDirectDeclaratorFunctionDeclarator() {
+ 	public void consumeDirectDeclaratorFunctionDeclarator(boolean hasDeclarator) {
  		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
  		
  		IASTName name = nodeFactory.newName();
@@ -1320,6 +1285,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  		for(Object typeId : astStack.closeScope()) {
  			declarator.addExceptionSpecificationTypeId((IASTTypeId) typeId);
  		}
+ 		
  		for(Object token : astStack.closeScope()) {
  			switch(((IToken)token).getKind()) {
  				default: assert false;
@@ -1335,8 +1301,14 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  			declarator.addParameterDeclaration((IASTParameterDeclaration)o);
  		}
  		
- 		int endOffset = endOffset(parser.getRightIToken());
- 		consumeDirectDeclaratorFunctionDeclarator(declarator, endOffset);
+ 		if(hasDeclarator) {
+ 			int endOffset = endOffset(parser.getRightIToken());
+ 			addFunctionModifier(declarator, endOffset);
+ 		}
+ 		else {
+ 			setOffsetAndLength(declarator);
+			astStack.push(declarator);
+ 		}
  	}
  	
 }

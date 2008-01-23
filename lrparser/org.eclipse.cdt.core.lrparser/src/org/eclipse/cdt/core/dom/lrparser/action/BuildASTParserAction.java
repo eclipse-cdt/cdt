@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
@@ -61,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
@@ -750,6 +752,109 @@ public abstract class BuildASTParserAction {
 	
 	
 	/**
+	 * declarator
+     *     ::= <openscope-ast> ptr_operator_seq direct_declarator
+     *     
+     * abstract_declarator
+     *     ::= <openscope-ast> ptr_operator_seq
+     *       | <openscope-ast> ptr_operator_seq direct_declarator
+	 */
+	public void consumeDeclaratorWithPointer(boolean hasDeclarator) {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		IASTDeclarator decl;
+		if(hasDeclarator)
+			decl = (IASTDeclarator) astStack.pop();
+		else
+			decl = nodeFactory.newDeclarator(nodeFactory.newName());
+		
+		for(Object pointer : astStack.closeScope())
+			decl.addPointerOperator((ICASTPointer)pointer);
+		
+		setOffsetAndLength(decl);
+		astStack.push(decl);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+    
+    /**
+     * init_declarator
+     *     ::= declarator initializer
+     *     
+     * @param hasDeclarator in C++ its possible for a parameter declaration to specifiy
+     *        a default value without also specifying a named declarator
+     */
+    public void consumeDeclaratorWithInitializer(boolean hasDeclarator) {
+	   	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+	   	 
+	   	IASTInitializer initializer = (IASTInitializer) astStack.pop();
+	   	
+	   	IASTDeclarator declarator;
+	   	if(hasDeclarator) {
+	   		declarator = (IASTDeclarator) astStack.peek();
+	   	}
+	   	else {
+	   		IASTName emptyName = nodeFactory.newName();
+	   		declarator = nodeFactory.newDeclarator(emptyName);
+	   		setOffsetAndLength(emptyName);
+	   		astStack.push(declarator);
+	   	}
+	   	
+		declarator.setInitializer(initializer);
+		setOffsetAndLength(declarator); // adjust the length to include the initializer
+	   	 
+	   	if(TRACE_AST_STACK) System.out.println(astStack);
+    }
+	
+	
+    
+    /**
+	 * parameter_declaration ::= declaration_specifiers declarator
+     *                         | declaration_specifiers abstract_declarator
+	 */
+	public void consumeParameterDeclaration() {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		IASTDeclarator declarator  = (IASTDeclarator) astStack.pop();
+		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop();
+		IASTParameterDeclaration declaration = nodeFactory.newParameterDeclaration(declSpec, declarator);
+		setOffsetAndLength(declaration);
+		astStack.push(declaration);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+	/**
+	 * parameter_declaration ::= declaration_specifiers   
+	 */
+	public void consumeParameterDeclarationWithoutDeclarator(/*IBinding binding*/) {
+		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+		
+		// offsets need to be calculated differently in this case		
+		final int endOffset = parser.getRightIToken().getEndOffset() + 1;
+		
+		IASTName name = nodeFactory.newName();
+		setOffsetAndLength(name, endOffset, 0);
+		//name.setBinding(binding);
+		
+		// it appears that a declarator is always required in the AST here
+		IASTDeclarator declarator = nodeFactory.newDeclarator(name);
+		setOffsetAndLength(declarator, endOffset, 0);
+		
+		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop();
+		IASTParameterDeclaration declaration = nodeFactory.newParameterDeclaration(declSpec, declarator);
+		
+		setOffsetAndLength(declaration);
+		astStack.push(declaration);
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
+	}
+	
+	
+	/**
 	 * TODO: do I really want to share declaration rules between the two parsers.
 	 * Even if there is potential for reuse it still may be cleaner to leave the 
 	 * common stuff to just simple expressions and statements.
@@ -830,7 +935,7 @@ public abstract class BuildASTParserAction {
 	 * the additional array modifiers will need to be added to the array declarator.
 	 * Special care is taken for nested declarators.
 	 */
-	protected void consumeDeclaratorArray(IASTArrayModifier arrayModifier) {
+	protected void addArrayModifier(IASTArrayModifier arrayModifier) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTDeclarator node = (IASTDeclarator) astStack.pop();
@@ -877,8 +982,9 @@ public abstract class BuildASTParserAction {
 	 * Pops a simple declarator from the stack, converts it into 
 	 * a FunctionDeclator, then pushes it.
 	 * TODO: is this the best way of doing this?
+	 * TODO, rename this method, its an accidental overload
 	 */
-	protected void consumeDirectDeclaratorFunctionDeclarator(IASTFunctionDeclarator declarator, int endOffset) {
+	protected void addFunctionModifier(IASTFunctionDeclarator declarator, int endOffset) {
 		IASTDeclarator decl = (IASTDeclarator) astStack.pop();
 		 
 		if(decl.getNestedDeclarator() != null) { 
@@ -910,16 +1016,41 @@ public abstract class BuildASTParserAction {
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 	
+//	/**
+//	 * direct_declarator ::= direct_declarator array_modifier
+//	 * consume the direct_declarator part and add the array modifier
+//	 */
+//	public void consumeDirectDeclaratorArrayDeclarator() {
+//		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+//		
+//		IASTArrayModifier arrayModifier = (IASTArrayModifier) astStack.pop();
+//		addArrayModifier(arrayModifier);
+//	}
+	
 	/**
-	 * direct_declarator ::= direct_declarator array_modifier
-	 * consume the direct_declarator part and add the array modifier
+	 * direct_abstract_declarator   
+     *     ::= array_modifier
+     *       | direct_abstract_declarator array_modifier
 	 */
-	public void consumeDirectDeclaratorArrayDeclarator() {
+	public void consumeDirectDeclaratorArrayDeclarator(boolean hasDeclarator) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
 		IASTArrayModifier arrayModifier = (IASTArrayModifier) astStack.pop();
-		consumeDeclaratorArray(arrayModifier);
+		
+		if(hasDeclarator) {
+			addArrayModifier(arrayModifier);
+		}
+		else {
+			IASTArrayDeclarator decl = nodeFactory.newArrayDeclarator(nodeFactory.newName());
+			decl.addArrayModifier(arrayModifier);
+			setOffsetAndLength(decl);
+			astStack.push(decl);
+			
+			if(TRACE_AST_STACK) System.out.println(astStack);
+		}
 	}
+	
+	
 	
 	
 	/**

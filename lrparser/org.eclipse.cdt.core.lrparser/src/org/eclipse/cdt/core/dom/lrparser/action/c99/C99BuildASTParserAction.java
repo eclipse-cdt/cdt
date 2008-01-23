@@ -235,40 +235,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	}
 	
 	
-	/**
-	 * declarator ::= <openscope> pointer direct_declarator
-     *              
-     * abstract_declarator  -- a declarator that does not include an identifier
-     *     ::= <openscope> pointer
-     *       | <openscope> pointer direct_abstract_declarator 
-	 */
-	public void consumeDeclaratorWithPointer(boolean hasDeclarator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTDeclarator decl;
-		if(hasDeclarator)
-			decl = (IASTDeclarator) astStack.pop();
-		else
-			decl = nodeFactory.newDeclarator(nodeFactory.newName());
-		
-		// add all the pointers to the declarator
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		List<Object> scope = astStack.closeScope();
-		
-		for(Object o : scope) {
-			decl.addPointerOperator((ICASTPointer)o);
-		}
-
-		setOffsetAndLength(decl);
-		astStack.push(decl);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
-	
-	
-
-	
 	
 	/**
 	 * type_qualifier ::= const | restrict | volatile
@@ -328,49 +294,10 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
-	
-	
-	
-	/**
-	 * init_declarator ::= declarator '=' initializer
-	 */
-	public void consumeDeclaratorWithInitializer() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTInitializer initializer = (IASTInitializer) astStack.pop();
-		IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
-		declarator.setInitializer(initializer);
-		setOffsetAndLength(declarator); // adjust the length to include the initializer
-	}
-	
-	
+
 	@Deprecated public void consumeDeclaratorCompleteField(/*IBinding binding*/) {
 		//IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
 		//declarator.getName().setBinding(binding);
-	}
-	
-	
-	/**
-	 * direct_declarator ::= direct_declarator '(' <openscope> parameter_type_list ')'
-	 * direct_declarator ::= direct_declarator '(' ')'
-	 */
-	public void consumeDirectDeclaratorFunctionDeclarator(boolean hasParameters) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTName name = nodeFactory.newName();
-		IASTStandardFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
-
-		if(hasParameters) {
-			boolean isVarArgs = astStack.pop() == PLACE_HOLDER;
-			declarator.setVarArgs(isVarArgs);
-			
-			for(Object o : astStack.closeScope()) {
-				declarator.addParameterDeclaration((IASTParameterDeclaration)o);
-			}
-		}
-		
-		int endOffset = endOffset(parser.getRightIToken());
-		consumeDirectDeclaratorFunctionDeclarator(declarator, endOffset);
 	}
 	
 	
@@ -385,7 +312,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		declarator.setParameterNames(names);
 		astStack.closeScope();
 		int endOffset = endOffset(parser.getRightIToken());
-		consumeDirectDeclaratorFunctionDeclarator(declarator, endOffset);
+		addFunctionModifier(declarator, endOffset);
 	}
 	
 	
@@ -402,9 +329,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	}
 	
 
-	
-	
-	
+
 	
 	/**
 	 * pointer ::= '*'
@@ -448,48 +373,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	}
 	
 	
-	/**
-	 * parameter_declaration ::= declaration_specifiers declarator
-     *                         | declaration_specifiers abstract_declarator
-	 */
-	public void consumeParameterDeclaration() {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTDeclarator declarator  = (IASTDeclarator) astStack.pop();
-		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop();
-		IASTParameterDeclaration declaration = nodeFactory.newParameterDeclaration(declSpec, declarator);
-		setOffsetAndLength(declaration);
-		astStack.push(declaration);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
 	
-	
-	/**
-	 * parameter_declaration ::= declaration_specifiers   
-	 */
-	public void consumeParameterDeclarationWithoutDeclarator(/*IBinding binding*/) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		// offsets need to be calculated differently in this case		
-		final int endOffset = parser.getRightIToken().getEndOffset() + 1;
-		
-		IASTName name = nodeFactory.newName();
-		setOffsetAndLength(name, endOffset, 0);
-		//name.setBinding(binding);
-		
-		// it appears that a declarator is always required in the AST here
-		IASTDeclarator declarator = nodeFactory.newDeclarator(name);
-		setOffsetAndLength(declarator, endOffset, 0);
-		
-		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop();
-		IASTParameterDeclaration declaration = nodeFactory.newParameterDeclaration(declSpec, declarator);
-		
-		setOffsetAndLength(declaration);
-		astStack.push(declaration);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
 	
 	
 	@Deprecated public void consumeDeclaratorCompleteParameter(/*IBinding binding*/) {
@@ -500,28 +384,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 	}
 	
 	
-	/**
-	 * direct_abstract_declarator   
-     *     ::= array_modifier
-     *       | direct_abstract_declarator array_modifier
-	 */
-	public void consumeAbstractDeclaratorArrayModifier(boolean hasDeclarator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTArrayModifier arrayModifier = (IASTArrayModifier) astStack.pop();
-		
-		if(hasDeclarator) {
-			consumeDeclaratorArray(arrayModifier);
-		}
-		else {
-			IASTArrayDeclarator decl = nodeFactory.newArrayDeclarator(nodeFactory.newName());
-			decl.addArrayModifier(arrayModifier);
-			setOffsetAndLength(decl);
-			astStack.push(decl);
-			
-			if(TRACE_AST_STACK) System.out.println(astStack);
-		}
-	}
+	
 	
 	
 	/**
@@ -531,27 +394,29 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
      *       | '(' <openscope> parameter_type_list ')'
      *       | direct_abstract_declarator '(' <openscope> parameter_type_list ')'
 	 */
-	public void consumeAbstractDeclaratorFunctionDeclarator(boolean hasDeclarator, boolean hasParameters) {
+	public void consumeDirectDeclaratorFunctionDeclarator(boolean hasDeclarator, boolean hasParameters) {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		
-		IASTStandardFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(nodeFactory.newName());
+		IASTName name = nodeFactory.newName();
+		IASTStandardFunctionDeclarator declarator = nodeFactory.newFunctionDeclarator(name);
 		
 		if(hasParameters) {
-			if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-			for(Object o : astStack.closeScope()) {
-				declarator.addParameterDeclaration((IASTParameterDeclaration)o);
-			}
+			boolean isVarArgs = astStack.pop() == PLACE_HOLDER;
+			declarator.setVarArgs(isVarArgs);
+			
+			for(Object param : astStack.closeScope())
+				declarator.addParameterDeclaration((IASTParameterDeclaration)param);
 		}
 		
 		if(hasDeclarator) {
-			consumeDirectDeclaratorFunctionDeclarator(declarator, endOffset(parser.getRightIToken()));
+			addFunctionModifier(declarator, endOffset(parser.getRightIToken()));
 		}
 		else {
 			setOffsetAndLength(declarator);
 			astStack.push(declarator);
-			
-			if(TRACE_AST_STACK) System.out.println(astStack);
 		}
+		
+		if(TRACE_AST_STACK) System.out.println(astStack);
 	}
 
 	

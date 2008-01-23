@@ -685,7 +685,7 @@ init_declarator_list
 init_declarator 
     ::= complete_declarator
       | complete_declarator '=' initializer
-          /. $Build  consumeDeclaratorWithInitializer();  $EndBuild ./
+          /. $Build  consumeDeclaratorWithInitializer(true);  $EndBuild ./
 
 
 complete_declarator
@@ -886,7 +886,7 @@ function_specifier
 
 declarator
     ::= direct_declarator
-      | <openscope-ast> pointer direct_declarator
+      | <openscope-ast> pointer_seq direct_declarator
           /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
 
@@ -916,9 +916,9 @@ declarator_id_name
          
 array_direct_declarator
     ::= basic_direct_declarator array_modifier
-          /. $Build  consumeDirectDeclaratorArrayDeclarator();  $EndBuild ./
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./
       | array_direct_declarator array_modifier
-          /. $Build  consumeDirectDeclaratorArrayDeclarator();  $EndBuild ./
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./
 
 
 function_prototype_direct_declarator
@@ -928,14 +928,14 @@ function_prototype_direct_declarator
 
 function_direct_declarator
     ::= basic_direct_declarator '(' <openscope-symbol> <openscope-ast> parameter_type_list ')'
-          /. $Build  consumeDirectDeclaratorFunctionDeclarator(true);  $EndBuild ./
+          /. $Build  consumeDirectDeclaratorFunctionDeclarator(true, true);  $EndBuild ./
       | basic_direct_declarator '(' <openscope-symbol> ')'
-          /. $Build  consumeDirectDeclaratorFunctionDeclarator(false);  $EndBuild ./
+          /. $Build  consumeDirectDeclaratorFunctionDeclarator(true, false);  $EndBuild ./
 
 
 function_declarator
     ::= function_direct_declarator
-      | <openscope-ast> pointer function_direct_declarator
+      | <openscope-ast> pointer_seq function_direct_declarator
           /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
 
@@ -953,7 +953,7 @@ knr_direct_declarator
 
 knr_function_declarator
     ::= knr_direct_declarator
-      | <openscope-ast> pointer knr_direct_declarator
+      | <openscope-ast> pointer_seq knr_direct_declarator
           /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
 
@@ -989,14 +989,14 @@ array_modifier_type_qualifiers
     ::= type_qualifier_list
 
 
-pointer
+pointer_seq
     ::= '*'
           /. $Build  consumePointer();  $EndBuild ./
-      | pointer '*' 
+      | pointer_seq '*' 
           /. $Build  consumePointer();  $EndBuild ./
       | '*' <openscope-ast> type_qualifier_list
           /. $Build  consumePointerTypeQualifierList();  $EndBuild ./
-      | pointer '*' <openscope-ast> type_qualifier_list
+      | pointer_seq '*' <openscope-ast> type_qualifier_list
           /. $Build  consumePointerTypeQualifierList();  $EndBuild ./
 
 
@@ -1066,29 +1066,41 @@ type_name
 
 abstract_declarator  -- a declarator that does not include an identifier
     ::= direct_abstract_declarator
-      | <openscope-ast> pointer
+      | <openscope-ast> pointer_seq
           /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
-      | <openscope-ast> pointer direct_abstract_declarator
-          /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
+      | <openscope-ast> pointer_seq direct_abstract_declarator
+          /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
 
 
--- rewritten to use the more general array_modifier rule
 direct_abstract_declarator
+    ::= basic_direct_abstract_declarator
+      | array_direct_abstract_declarator
+      | function_direct_abstract_declarator
+
+
+basic_direct_abstract_declarator
     ::= '(' abstract_declarator ')'
           /. $Build  consumeDirectDeclaratorBracketed();  $EndBuild ./
-      | array_modifier
-          /. $Build  consumeAbstractDeclaratorArrayModifier(false);  $EndBuild ./
-      | direct_abstract_declarator array_modifier
-          /. $Build  consumeAbstractDeclaratorArrayModifier(true);  $EndBuild ./
-      | '(' ')'
-          /. $Build  consumeAbstractDeclaratorFunctionDeclarator(false, false);  $EndBuild  ./
-      | direct_abstract_declarator '(' ')'
-          /. $Build  consumeAbstractDeclaratorFunctionDeclarator(true, false);  $EndBuild ./
+          
+          
+array_direct_abstract_declarator
+    ::= array_modifier
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(false);  $EndBuild ./
+      | array_direct_abstract_declarator array_modifier
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./
+      | basic_direct_abstract_declarator array_modifier
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./    
+          
+          
+function_direct_abstract_declarator
+    ::= '(' ')'
+          /. $Build  consumeDirectDeclaratorFunctionDeclarator(false, false);  $EndBuild  ./
+      | basic_direct_abstract_declarator '(' ')'
+          /. $Build  consumeDirectDeclaratorFunctionDeclarator(true, false);  $EndBuild ./
       | '(' <openscope-ast> parameter_type_list ')'
-          /. $Build  consumeAbstractDeclaratorFunctionDeclarator(false, true);  $EndBuild ./
-      | direct_abstract_declarator '(' <openscope-ast> parameter_type_list ')'
-         /. $Build  consumeAbstractDeclaratorFunctionDeclarator(true, true);  $EndBuild ./
-
+          /. $Build  consumeDirectDeclaratorFunctionDeclarator(false, true);  $EndBuild ./
+      | basic_direct_abstract_declarator '(' <openscope-ast> parameter_type_list ')'
+          /. $Build  consumeDirectDeclaratorFunctionDeclarator(true, true);  $EndBuild ./
 
 
 initializer

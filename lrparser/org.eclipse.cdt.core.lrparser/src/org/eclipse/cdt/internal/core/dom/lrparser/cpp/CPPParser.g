@@ -923,6 +923,7 @@ declaration_specifiers_opt
 no_type_declaration_specifier
     ::= storage_class_specifier
       | function_specifier
+      | cv_qualifier
       | 'friend'
           /. $Build  consumeDeclSpecToken(); $EndBuild ./
       | 'typedef'
@@ -998,13 +999,12 @@ typedef_name
     ::= 'identifier'
 
 
-type_specifier
-    ::= simple_type_specifier  -- int, void etc...
-      | class_specifier  -- structs, unions, classes
-      | enum_specifier   -- enums
-      | elaborated_type_specifier  -- its elaborated, but this is different than c, includes typename
-      | cv_qualifier  -- the const and volatile keywords (separated because they can be applied to pointer modifiers)
-
+--type_specifier
+--    ::= simple_type_specifier  -- int, void etc...
+--      | class_specifier  -- structs, unions, classes
+--      | enum_specifier   -- enums
+--      | elaborated_type_specifier  -- its elaborated, but this is different than c, includes typename
+--      | cv_qualifier  -- the const and volatile keywords (separated because they can be applied to pointer modifiers)
 
 
 --simple_type_specifier
@@ -1191,12 +1191,13 @@ init_declarator_list_opt
 init_declarator
     ::= declarator 
       | declarator initializer
-          /. $Build  consumeDeclaratorWithInitializer();  $EndBuild ./
+          /. $Build  consumeDeclaratorWithInitializer(true);  $EndBuild ./
 
 
 declarator
-    ::= <openscope-ast> ptr_operator_seq_opt direct_declarator
-          /. $Build  consumeDeclaratorWithPointer();  $EndBuild ./
+    ::= direct_declarator 
+      | <openscope-ast> ptr_operator_seq direct_declarator
+          /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
 
 
 direct_declarator
@@ -1214,13 +1215,14 @@ basic_direct_declarator
 
 function_direct_declarator
     ::= basic_direct_declarator '(' <openscope-ast> parameter_declaration_clause ')' <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
-          /. $Build  consumeDirectDeclaratorFunctionDeclarator();  $EndBuild ./
+          /. $Build  consumeDirectDeclaratorFunctionDeclarator(true);  $EndBuild ./
+
 
 array_direct_declarator
     ::= array_direct_declarator array_modifier
-           /. $Build  consumeDirectDeclaratorArrayDeclarator();  $EndBuild ./
+           /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./
       | basic_direct_declarator array_modifier
-           /. $Build  consumeDirectDeclaratorArrayDeclarator();  $EndBuild ./
+           /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./
 
 
 array_modifier
@@ -1278,32 +1280,53 @@ type_id
           /. $Build  consumeTypeId(true);  $EndBuild ./
 
 
+--type_specifier_seq
+--    ::= type_specifier
+--      | type_specifier_seq type_specifier
+
+
+-- more lenient than spec, but easier to deal with
 type_specifier_seq
-    ::= type_specifier
-      | type_specifier_seq type_specifier
+    ::= declaration_specifiers
+
 
 
 abstract_declarator
-    ::= ptr_operator abstract_declarator_opt
-      | direct_abstract_declarator
-
-
-abstract_declarator_opt
-    ::= abstract_declarator
-      | $empty
+    ::= direct_abstract_declarator 
+      | <openscope-ast> ptr_operator_seq 
+          /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
+      | <openscope-ast> ptr_operator_seq direct_abstract_declarator
+          /. $Build  consumeDeclaratorWithPointer(true);  $EndBuild ./
       
-
+      
 direct_abstract_declarator
-    ::= direct_abstract_declarator_opt '(' <openscope-ast> parameter_declaration_clause ')' <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
-      | direct_abstract_declarator_opt '[' constant_expression_opt ']'
-      | '(' abstract_declarator ')'
-
-
-direct_abstract_declarator_opt
-    ::= direct_abstract_declarator
-      | $empty
+    ::= basic_direct_abstract_declarator
+      | array_direct_abstract_declarator
+      | function_direct_abstract_declarator
       
 
+basic_direct_abstract_declarator
+    ::= '(' abstract_declarator ')'
+          /. $Build  consumeDirectDeclaratorBracketed();  $EndBuild ./
+          
+
+array_direct_abstract_declarator
+    ::= array_modifier
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(false);  $EndBuild ./
+      | array_direct_abstract_declarator array_modifier
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./
+      | basic_direct_abstract_declarator array_modifier
+          /. $Build  consumeDirectDeclaratorArrayDeclarator(true);  $EndBuild ./    
+       
+
+function_direct_abstract_declarator                 
+     ::= basic_direct_abstract_declarator '(' <openscope-ast> parameter_declaration_clause ')' <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
+           /. $Build  consumeDirectDeclaratorFunctionDeclarator(true);  $EndBuild ./
+       | '(' <openscope-ast> parameter_declaration_clause ')' <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
+           /. $Build  consumeDirectDeclaratorFunctionDeclarator(false);  $EndBuild ./
+      
+
+-- actions just place a marker indicating if '...' was parsed
 parameter_declaration_clause
     ::= parameter_declaration_list_opt '...'
           /. $Build  consumePlaceHolder();  $EndBuild ./
@@ -1317,15 +1340,47 @@ parameter_declaration_list
      ::= parameter_declaration
        | parameter_declaration_list ',' parameter_declaration
 
+
 parameter_declaration_list_opt
     ::= parameter_declaration_list
       | $empty
 
+
+-- its just a declarator with an initializer
+--parameter_declaration
+--    ::= declaration_specifiers declarator
+--      | declaration_specifiers declarator = assignment_expression
+--      | declaration_specifiers abstract_declarator_opt
+--      | declaration_specifiers abstract_declarator_opt = assignment_expression
+
+
+abstract_declarator_opt
+    ::= abstract_declarator
+      | $empty
+          /. $Build  consumeEmpty();  $EndBuild ./
+          
+          
 parameter_declaration
-    ::= declaration_specifiers declarator
-      | declaration_specifiers declarator = assignment_expression
-      | declaration_specifiers abstract_declarator_opt
-      | declaration_specifiers abstract_declarator_opt = assignment_expression
+    ::= declaration_specifiers parameter_init_declarator
+          /. $Build  consumeParameterDeclaration();  $EndBuild ./
+      | declaration_specifiers
+          /. $Build  consumeParameterDeclarationWithoutDeclarator();  $EndBuild ./
+
+
+parameter_init_declarator
+	::= declarator
+	  | declarator '=' parameter_initializer
+	      /. $Build  consumeDeclaratorWithInitializer(true);  $EndBuild ./
+	  | abstract_declarator
+	  | abstract_declarator '=' parameter_initializer
+	      /. $Build  consumeDeclaratorWithInitializer(true);  $EndBuild ./
+	  | '=' parameter_initializer
+	      /. $Build  consumeDeclaratorWithInitializer(false);  $EndBuild ./
+	  
+	  
+parameter_initializer
+    ::= assignment_expression
+          /. $Build  consumeInitializer();  $EndBuild ./
 
 
 function_definition

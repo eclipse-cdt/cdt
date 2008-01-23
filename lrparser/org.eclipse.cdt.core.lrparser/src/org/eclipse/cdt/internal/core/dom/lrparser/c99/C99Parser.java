@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99ASTNodeFactory;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99TypedefTrackerParserAction;
-import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Scope;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
 
 public class C99Parser extends AbstractTrialUndoActionProvider< C99ParserAction ,  Object > implements IParserActionTokenProvider, IParser    {
@@ -181,7 +180,7 @@ public int getKind(int i) {
 	// Initialize ruleAction array.
 	//
 	static {
-		RULE_ACTIONS = new Action[305 + 1];
+		RULE_ACTIONS = new Action[309 + 1];
 		RULE_ACTIONS[0] = null;
 
 		RULE_ACTIONS[1] = new Action1();
@@ -334,29 +333,30 @@ public int getKind(int i) {
 		RULE_ACTIONS[266] = new Action266();
 		RULE_ACTIONS[268] = new Action268();
 		RULE_ACTIONS[269] = new Action269();
-		RULE_ACTIONS[270] = new Action270();
-		RULE_ACTIONS[271] = new Action271();
-		RULE_ACTIONS[272] = new Action272();
 		RULE_ACTIONS[273] = new Action273();
 		RULE_ACTIONS[274] = new Action274();
 		RULE_ACTIONS[275] = new Action275();
 		RULE_ACTIONS[276] = new Action276();
 		RULE_ACTIONS[277] = new Action277();
 		RULE_ACTIONS[278] = new Action278();
-		RULE_ACTIONS[283] = new Action283();
+		RULE_ACTIONS[279] = new Action279();
+		RULE_ACTIONS[280] = new Action280();
+		RULE_ACTIONS[281] = new Action281();
+		RULE_ACTIONS[282] = new Action282();
 		RULE_ACTIONS[287] = new Action287();
-		RULE_ACTIONS[288] = new Action288();
-		RULE_ACTIONS[289] = new Action289();
-		RULE_ACTIONS[290] = new Action290();
 		RULE_ACTIONS[291] = new Action291();
 		RULE_ACTIONS[292] = new Action292();
-		RULE_ACTIONS[297] = new Action297();
-		RULE_ACTIONS[298] = new Action298();
+		RULE_ACTIONS[293] = new Action293();
+		RULE_ACTIONS[294] = new Action294();
+		RULE_ACTIONS[295] = new Action295();
+		RULE_ACTIONS[296] = new Action296();
 		RULE_ACTIONS[301] = new Action301();
 		RULE_ACTIONS[302] = new Action302();
-		RULE_ACTIONS[303] = new Action303();
-		RULE_ACTIONS[304] = new Action304();
 		RULE_ACTIONS[305] = new Action305();
+		RULE_ACTIONS[306] = new Action306();
+		RULE_ACTIONS[307] = new Action307();
+		RULE_ACTIONS[308] = new Action308();
+		RULE_ACTIONS[309] = new Action309();
 
 
 		//
@@ -1345,7 +1345,7 @@ public int getKind(int i) {
 	static final class Action160 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDeclaratorWithInitializer();    /* action.builder.getASTStack().print();*/ 
+   consumeDeclaratorWithInitializer(true);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
 
@@ -1701,7 +1701,7 @@ public int getKind(int i) {
 	}
     
 	//
-	// Rule 220:  declarator ::= <openscope-ast> pointer direct_declarator
+	// Rule 220:  declarator ::= <openscope-ast> pointer_seq direct_declarator
 	//
 	static final class Action220 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
@@ -1759,7 +1759,7 @@ public int getKind(int i) {
 	static final class Action228 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDirectDeclaratorArrayDeclarator();    /* action.builder.getASTStack().print();*/ 
+   consumeDirectDeclaratorArrayDeclarator(true);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   
@@ -1769,7 +1769,7 @@ public int getKind(int i) {
 	static final class Action229 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDirectDeclaratorArrayDeclarator();    /* action.builder.getASTStack().print();*/ 
+   consumeDirectDeclaratorArrayDeclarator(true);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
  
@@ -1795,7 +1795,7 @@ public int getKind(int i) {
 	static final class Action231 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDirectDeclaratorFunctionDeclarator(true);    /* action.builder.getASTStack().print();*/ 
+   consumeDirectDeclaratorFunctionDeclarator(true, true);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   
@@ -1805,12 +1805,12 @@ public int getKind(int i) {
 	static final class Action232 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDirectDeclaratorFunctionDeclarator(false);    /* action.builder.getASTStack().print();*/ 
+   consumeDirectDeclaratorFunctionDeclarator(true, false);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   
 	//
-	// Rule 234:  function_declarator ::= <openscope-ast> pointer function_direct_declarator
+	// Rule 234:  function_declarator ::= <openscope-ast> pointer_seq function_direct_declarator
 	//
 	static final class Action234 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
@@ -1830,7 +1830,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 237:  knr_function_declarator ::= <openscope-ast> pointer knr_direct_declarator
+	// Rule 237:  knr_function_declarator ::= <openscope-ast> pointer_seq knr_direct_declarator
 	//
 	static final class Action237 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
@@ -1950,7 +1950,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 250:  pointer ::= *
+	// Rule 250:  pointer_seq ::= *
 	//
 	static final class Action250 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
@@ -1960,7 +1960,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 251:  pointer ::= pointer *
+	// Rule 251:  pointer_seq ::= pointer_seq *
 	//
 	static final class Action251 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
@@ -1970,7 +1970,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 252:  pointer ::= * <openscope-ast> type_qualifier_list
+	// Rule 252:  pointer_seq ::= * <openscope-ast> type_qualifier_list
 	//
 	static final class Action252 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
@@ -1980,7 +1980,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 253:  pointer ::= pointer * <openscope-ast> type_qualifier_list
+	// Rule 253:  pointer_seq ::= pointer_seq * <openscope-ast> type_qualifier_list
 	//
 	static final class Action253 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
@@ -2137,7 +2137,7 @@ public int getKind(int i) {
 	}
     
 	//
-	// Rule 268:  abstract_declarator ::= <openscope-ast> pointer
+	// Rule 268:  abstract_declarator ::= <openscope-ast> pointer_seq
 	//
 	static final class Action268 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
@@ -2147,19 +2147,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 269:  abstract_declarator ::= <openscope-ast> pointer direct_abstract_declarator
+	// Rule 269:  abstract_declarator ::= <openscope-ast> pointer_seq direct_abstract_declarator
 	//
 	static final class Action269 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDeclaratorWithPointer(true);    /* action.builder.getASTStack().print();*/ 
+   consumeDeclaratorWithPointer(false);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   
 	//
-	// Rule 270:  direct_abstract_declarator ::= ( abstract_declarator )
+	// Rule 273:  basic_direct_abstract_declarator ::= ( abstract_declarator )
 	//
-	static final class Action270 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action273 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeDirectDeclaratorBracketed();    /* action.builder.getASTStack().print();*/ 
@@ -2167,69 +2167,79 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 271:  direct_abstract_declarator ::= array_modifier
-	//
-	static final class Action271 extends DeclaredAction< C99ParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeAbstractDeclaratorArrayModifier(false);    /* action.builder.getASTStack().print();*/ 
-		}  
-	}  
-  
-	//
-	// Rule 272:  direct_abstract_declarator ::= direct_abstract_declarator array_modifier
-	//
-	static final class Action272 extends DeclaredAction< C99ParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeAbstractDeclaratorArrayModifier(true);    /* action.builder.getASTStack().print();*/ 
-		}  
-	}  
-  
-	//
-	// Rule 273:  direct_abstract_declarator ::= ( )
-	//
-	static final class Action273 extends DeclaredAction< C99ParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeAbstractDeclaratorFunctionDeclarator(false, false);    /* action.builder.getASTStack().print();*/ 
-		}  
-	}   
-  
-	//
-	// Rule 274:  direct_abstract_declarator ::= direct_abstract_declarator ( )
+	// Rule 274:  array_direct_abstract_declarator ::= array_modifier
 	//
 	static final class Action274 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeAbstractDeclaratorFunctionDeclarator(true, false);    /* action.builder.getASTStack().print();*/ 
+   consumeDirectDeclaratorArrayDeclarator(false);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   
 	//
-	// Rule 275:  direct_abstract_declarator ::= ( <openscope-ast> parameter_type_list )
+	// Rule 275:  array_direct_abstract_declarator ::= array_direct_abstract_declarator array_modifier
 	//
 	static final class Action275 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeAbstractDeclaratorFunctionDeclarator(false, true);    /* action.builder.getASTStack().print();*/ 
+   consumeDirectDeclaratorArrayDeclarator(true);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   
 	//
-	// Rule 276:  direct_abstract_declarator ::= direct_abstract_declarator ( <openscope-ast> parameter_type_list )
+	// Rule 276:  array_direct_abstract_declarator ::= basic_direct_abstract_declarator array_modifier
 	//
 	static final class Action276 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeAbstractDeclaratorFunctionDeclarator(true, true);    /* action.builder.getASTStack().print();*/ 
+   consumeDirectDeclaratorArrayDeclarator(true);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   
 	//
-	// Rule 277:  initializer ::= assignment_expression
+	// Rule 277:  function_direct_abstract_declarator ::= ( )
 	//
 	static final class Action277 extends DeclaredAction< C99ParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
+   consumeDirectDeclaratorFunctionDeclarator(false, false);    /* action.builder.getASTStack().print();*/ 
+		}  
+	}   
+  
+	//
+	// Rule 278:  function_direct_abstract_declarator ::= basic_direct_abstract_declarator ( )
+	//
+	static final class Action278 extends DeclaredAction< C99ParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
+   consumeDirectDeclaratorFunctionDeclarator(true, false);    /* action.builder.getASTStack().print();*/ 
+		}  
+	}  
+  
+	//
+	// Rule 279:  function_direct_abstract_declarator ::= ( <openscope-ast> parameter_type_list )
+	//
+	static final class Action279 extends DeclaredAction< C99ParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
+   consumeDirectDeclaratorFunctionDeclarator(false, true);    /* action.builder.getASTStack().print();*/ 
+		}  
+	}  
+  
+	//
+	// Rule 280:  function_direct_abstract_declarator ::= basic_direct_abstract_declarator ( <openscope-ast> parameter_type_list )
+	//
+	static final class Action280 extends DeclaredAction< C99ParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
+   consumeDirectDeclaratorFunctionDeclarator(true, true);    /* action.builder.getASTStack().print();*/ 
+		}  
+	}  
+  
+	//
+	// Rule 281:  initializer ::= assignment_expression
+	//
+	static final class Action281 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeInitializer();    /* action.builder.getASTStack().print();*/ 
@@ -2237,9 +2247,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 278:  initializer ::= { <openscope-ast> initializer_list comma_opt }
+	// Rule 282:  initializer ::= { <openscope-ast> initializer_list comma_opt }
 	//
-	static final class Action278 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action282 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeInitializerList();    /* action.builder.getASTStack().print();*/ 
@@ -2247,9 +2257,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 283:  designated_initializer ::= <openscope-ast> designation = initializer
+	// Rule 287:  designated_initializer ::= <openscope-ast> designation = initializer
 	//
-	static final class Action283 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action287 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeInitializerDesignated();    /* action.builder.getASTStack().print();*/ 
@@ -2257,49 +2267,49 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 287:  designator_base ::= [ constant_expression ]
-	//
-	static final class Action287 extends DeclaredAction< C99ParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDesignatorArray();    /* action.builder.getASTStack().print();*/ 
-		}  
-	}  
-  
-	//
-	// Rule 288:  designator_base ::= . identifier_or_typedefname
-	//
-	static final class Action288 extends DeclaredAction< C99ParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDesignatorField();    /* action.builder.getASTStack().print();*/ 
-		}  
-	}  
-  
-	//
-	// Rule 289:  designator ::= [ constant_expression ]
-	//
-	static final class Action289 extends DeclaredAction< C99ParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDesignatorArray();    /* action.builder.getASTStack().print();*/ 
-		}  
-	}  
-  
-	//
-	// Rule 290:  designator ::= . identifier_or_typedefname
-	//
-	static final class Action290 extends DeclaredAction< C99ParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeDesignatorField();    /* action.builder.getASTStack().print();*/ 
-		}  
-	}  
-  
-	//
-	// Rule 291:  translation_unit ::= external_declaration_list
+	// Rule 291:  designator_base ::= [ constant_expression ]
 	//
 	static final class Action291 extends DeclaredAction< C99ParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
+   consumeDesignatorArray();    /* action.builder.getASTStack().print();*/ 
+		}  
+	}  
+  
+	//
+	// Rule 292:  designator_base ::= . identifier_or_typedefname
+	//
+	static final class Action292 extends DeclaredAction< C99ParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
+   consumeDesignatorField();    /* action.builder.getASTStack().print();*/ 
+		}  
+	}  
+  
+	//
+	// Rule 293:  designator ::= [ constant_expression ]
+	//
+	static final class Action293 extends DeclaredAction< C99ParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
+   consumeDesignatorArray();    /* action.builder.getASTStack().print();*/ 
+		}  
+	}  
+  
+	//
+	// Rule 294:  designator ::= . identifier_or_typedefname
+	//
+	static final class Action294 extends DeclaredAction< C99ParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
+   consumeDesignatorField();    /* action.builder.getASTStack().print();*/ 
+		}  
+	}  
+  
+	//
+	// Rule 295:  translation_unit ::= external_declaration_list
+	//
+	static final class Action295 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeTranslationUnit();    /* action.builder.getASTStack().print();*/ 
@@ -2307,9 +2317,9 @@ public int getKind(int i) {
 	}   
   
 	//
-	// Rule 292:  translation_unit ::= $Empty
+	// Rule 296:  translation_unit ::= $Empty
 	//
-	static final class Action292 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action296 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeTranslationUnit();    /* action.builder.getASTStack().print();*/ 
@@ -2317,9 +2327,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 297:  external_declaration ::= ;
+	// Rule 301:  external_declaration ::= ;
 	//
-	static final class Action297 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action301 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeDeclarationEmpty();    /* action.builder.getASTStack().print();*/ 
@@ -2327,9 +2337,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 298:  external_declaration ::= ERROR_TOKEN
+	// Rule 302:  external_declaration ::= ERROR_TOKEN
 	//
-	static final class Action298 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action302 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeDeclarationProblem();    /* action.builder.getASTStack().print();*/ 
@@ -2338,9 +2348,9 @@ public int getKind(int i) {
 
      
 	//
-	// Rule 301:  function_definition ::= declaration_specifiers <openscope-ast> function_declarator function_body
+	// Rule 305:  function_definition ::= declaration_specifiers <openscope-ast> function_declarator function_body
 	//
-	static final class Action301 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action305 extends DeclaredAction< C99ParserAction ,  Object > {
 		
   	   
 		public boolean doTrial(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {  action.resolver.
@@ -2348,7 +2358,7 @@ public int getKind(int i) {
 		return hasUndo;
 		} 
 	
-		public Action301() { hasUndo = true; };
+		public Action305() { hasUndo = true; };
 		public void doUndo(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) { action.resolver.undo(); 
 		}
 
@@ -2361,9 +2371,9 @@ public int getKind(int i) {
   
      
 	//
-	// Rule 302:  function_definition ::= <openscope-declaration> <openscope-ast> function_declarator function_body
+	// Rule 306:  function_definition ::= <openscope-declaration> <openscope-ast> function_declarator function_body
 	//
-	static final class Action302 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action306 extends DeclaredAction< C99ParserAction ,  Object > {
 		
   	   
 		public boolean doTrial(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {  action.resolver.
@@ -2371,7 +2381,7 @@ public int getKind(int i) {
 		return hasUndo;
 		} 
 	
-		public Action302() { hasUndo = true; };
+		public Action306() { hasUndo = true; };
 		public void doUndo(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) { action.resolver.undo(); 
 		}
 
@@ -2384,9 +2394,9 @@ public int getKind(int i) {
   
      
 	//
-	// Rule 303:  function_definition ::= declaration_specifiers <openscope-ast> knr_function_declarator <openscope-ast> declaration_list compound_statement
+	// Rule 307:  function_definition ::= declaration_specifiers <openscope-ast> knr_function_declarator <openscope-ast> declaration_list compound_statement
 	//
-	static final class Action303 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action307 extends DeclaredAction< C99ParserAction ,  Object > {
 		
   	   
 		public boolean doTrial(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {  action.resolver.
@@ -2394,7 +2404,7 @@ public int getKind(int i) {
 		return hasUndo;
 		} 
 	
-		public Action303() { hasUndo = true; };
+		public Action307() { hasUndo = true; };
 		public void doUndo(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) { action.resolver.undo(); 
 		}
 
@@ -2406,9 +2416,9 @@ public int getKind(int i) {
 	}
     
 	//
-	// Rule 304:  function_body ::= { }
+	// Rule 308:  function_body ::= { }
 	//
-	static final class Action304 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action308 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeStatementCompoundStatement(false);    /* action.builder.getASTStack().print();*/ 
@@ -2416,9 +2426,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 305:  function_body ::= { <openscope-ast> block_item_list }
+	// Rule 309:  function_body ::= { <openscope-ast> block_item_list }
 	//
-	static final class Action305 extends DeclaredAction< C99ParserAction ,  Object > {
+	static final class Action309 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
    consumeStatementCompoundStatement(true);    /* action.builder.getASTStack().print();*/ 

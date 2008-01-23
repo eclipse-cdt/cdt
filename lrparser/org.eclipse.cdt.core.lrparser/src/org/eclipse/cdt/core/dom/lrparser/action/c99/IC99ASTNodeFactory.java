@@ -50,8 +50,6 @@ public interface IC99ASTNodeFactory extends IASTNodeFactory {
 
 	public ICASTPointer newCPointer();
 
-	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
-
 	public ICASTDesignatedInitializer newCDesignatedInitializer(IASTInitializer rhs);
 
 	public ICASTArrayDesignator newCArrayDesignator(IASTExpression exp);

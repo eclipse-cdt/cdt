@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
@@ -137,6 +138,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNewExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNullStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTOperatorName;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTPointerToMember;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTProblem;
@@ -164,12 +166,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTVisibilityLabel;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTWhileStatement;
 
-@SuppressWarnings("restriction") // all AST node constructors are internal
+
 /**
  * Abstract factory implementation that creates C++ AST nodes.
  * 
  * @author Mike Kucera
  */
+@SuppressWarnings("restriction") // all AST node constructors are internal
 public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 
 	public static final CPPASTNodeFactory DEFAULT_INSTANCE = new CPPASTNodeFactory();
@@ -493,6 +496,11 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 
 	public ICPPASTFunctionDeclarator newCPPFunctionDeclarator(IASTName name) {
 		return new CPPASTFunctionDeclarator(name);
+	}
+
+	public IASTParameterDeclaration newParameterDeclaration(
+			IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
+		return new CPPASTParameterDeclaration(declSpec, declarator);
 	}
 
 }

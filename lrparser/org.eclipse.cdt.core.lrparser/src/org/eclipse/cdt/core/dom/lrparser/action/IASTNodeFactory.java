@@ -45,6 +45,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
@@ -165,4 +166,6 @@ public interface IASTNodeFactory {
 	public IASTArrayModifier newArrayModifier(IASTExpression expr);
 	
 	public IASTArrayDeclarator newArrayDeclarator(IASTName name);
+	
+	public IASTParameterDeclaration newParameterDeclaration(IASTDeclSpecifier declSpec, IASTDeclarator declarator);
 }

@@ -38,7 +38,7 @@ public class SftpRemoteFile extends AbstractRemoteFile {
 	}
 
 	public String getCanonicalPath() {
-		return getAbsolutePath();
+		return getSftpHostFile().getCanonicalPath();
 	}
 
 	public String getClassification() {

@@ -40,6 +40,7 @@ public class SftpHostFile implements IHostFile, IHostFilePermissionsContainer {
 	private long fSize = 0;
 	private boolean fIsLink = false;
 	private String fLinkTarget;
+	private String fCanonicalPath;
 	private String[] fExtended = null;
 	
 	private IHostFilePermissions _permissions = null;
@@ -144,6 +145,18 @@ public class SftpHostFile implements IHostFile, IHostFilePermissionsContainer {
 		return fLinkTarget;
 	}
 	
+	public void setCanonicalPath(String canonicalPath) {
+		fCanonicalPath = canonicalPath;
+	}
+	
+	public String getCanonicalPath() {
+		if (fCanonicalPath==null) {
+			return getAbsolutePath();
+		} else {
+			return fCanonicalPath;
+		}
+	}
+	
 	/** 
 	 * Set Extended data as key,value pairs.
 	 * 
@@ -177,8 +190,9 @@ public class SftpHostFile implements IHostFile, IHostFilePermissionsContainer {
 		if (isLink()) {
 			result = "symbolic link"; //$NON-NLS-1$
 			if (fLinkTarget!=null) {
-				if (fLinkTarget.equals(":dangling link")) { //$NON-NLS-1$
-					result = "broken symbolic link to `unknown'"; //$NON-NLS-1$
+				if (fLinkTarget.startsWith(":dangling link")) { //$NON-NLS-1$
+					String linkTarget = (fLinkTarget.length()<=15) ? "unknown" : fLinkTarget.substring(15); //$NON-NLS-1$
+					result = "broken symbolic link to `" + linkTarget + "'"; //$NON-NLS-1$ //$NON-NLS-2$
 				} else if(isDirectory()) {
 					result += "(directory):" + fLinkTarget; //$NON-NLS-1$
 				} else if(canExecute()) {

@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
 import com.jcraft.jsch.Channel;
@@ -348,6 +349,15 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		return fChannelSftp;
 	}
 	
+	protected void progressTick(IProgressMonitor monitor, int ticks) throws RemoteFileCancelledException {
+		if (monitor!=null) {
+			if (monitor.isCanceled()) {
+				throw new RemoteFileCancelledException();
+			}
+			monitor.worked(ticks);
+		}
+	}
+	
 	public void disconnect() {
 		//disconnect-service may be called after the session is already
 		//disconnected (due to event handling). Therefore, don't try to
@@ -457,8 +467,14 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		}
 		List results = new ArrayList();
 		if (fDirChannelMutex.waitForLock(monitor, fDirChannelTimeout)) {
+		    boolean haveSubMonitor = false;
 			try {
 			    Vector vv=getChannel("SftpFileService.internalFetch: "+parentPath).ls(recodeSafe(parentPath)); //$NON-NLS-1$
+			    progressTick(monitor, 40);
+			    if (vv.size()>1 && monitor!=null) {
+			    	monitor = new SubProgressMonitor(monitor, 40);
+			    	monitor.beginTask(null, vv.size());
+			    }
 			    for(int ii=0; ii<vv.size(); ii++) {
 			    	Object obj=vv.elementAt(ii);
 			    	if(obj instanceof ChannelSftp.LsEntry){
@@ -471,6 +487,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 			    		if (filematcher.matches(fileName) || (lsEntry.getAttrs().isDir() && fileType!=IFileService.FILE_TYPE_FOLDERS)) {
 							//get ALL directory names (unless looking for folders only)
 			    			SftpHostFile node = makeHostFile(parentPath, fileName, lsEntry.getAttrs());
+			    			progressTick(monitor, 1);
 			    			if (isRightType(fileType, node)) {
 			    				results.add(node);
 			    			}
@@ -492,6 +509,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				//Probably not, since the session is going down anyways.  
 			} finally {
 				fDirChannelMutex.release();
+				if (haveSubMonitor) monitor.done(); else progressTick(monitor, 40);
 			}
 		} else {
 			throw new RemoteFileCancelledException();
@@ -502,27 +520,51 @@ public class SftpFileService extends AbstractFileService implements IFileService
 	private SftpHostFile makeHostFile(String parentPath, String fileName, SftpATTRS attrs) {
 		SftpATTRS attrsTarget = attrs;
 		String linkTarget=null;
+		String canonicalPath = null;
 		if (attrs.isLink()) {
-			//TODO remove comments as soon as jsch-0.1.29 is available 
-			//	try {
-			//		//Note: readlink() is supported only with jsch-0.1.29 or higher.
-			//		//By catching the exception we remain backward compatible.
-			//		linkTarget=getChannel("makeHostFile.readlink").readlink(recode(node.getAbsolutePath())); //$NON-NLS-1$
-			//		//TODO: Classify the type of resource linked to as file, folder or broken link
-			//	} catch(Exception e) {}
 			//check if the link points to a directory
 			try {
-				getChannel("makeHostFile.chdir").cd(recode(concat(parentPath, fileName))); //$NON-NLS-1$
-				linkTarget=decode(getChannel("makeHostFile.chdir").pwd()); //$NON-NLS-1$
+				boolean readlinkDone = false;
+				try {
+					linkTarget=decode(getChannel("makeHostFile.readlink").readlink(recode(concat(parentPath, fileName)))); //$NON-NLS-1$
+					readlinkDone = true;
+				} catch(Exception e) {
+					//readlink() is only supported on sftpv3 and later servers, and jsch-0.1.29 or higher.
+					//By catching the exception we remain backward compatible.
+					//Disadvantages of the cd/pwd approach:
+					// * _realpath() followed by _stat() might be one extra roundtrip compared to the readlink() approach
+					// * Immediate link target is not available, only the fully resolved link target (might be an advantage too!)
+					// *  -- but clients can also resolve the path with the 
+					// * Immediate link target is not available for broken symbolic links
+					getChannel("makeHostFile.chdir").cd(recode(concat(parentPath, fileName))); //$NON-NLS-1$
+					linkTarget=decode(getChannel("makeHostFile.pwd").pwd()); //$NON-NLS-1$
+					canonicalPath=linkTarget;
+				}
 				if (linkTarget!=null && !linkTarget.equals(concat(parentPath, fileName))) {
+					if (readlinkDone) {
+					    //linkTarget may be a relative path name that needs to be resolved for stat() to work properly
+						String curdir=decode(getChannel("makeHostFile.pwd").pwd()); //$NON-NLS-1$
+						if (!parentPath.equals(curdir)) {
+							getChannel("makeHostFile.chdir").cd(recode(parentPath)); //$NON-NLS-1$
+						}
+					}
 					attrsTarget = getChannel("SftpFileService.getFile").stat(recode(linkTarget)); //$NON-NLS-1$
+					if (readlinkDone && attrsTarget.isDir()) {
+						//TODO JSch should have realpath() API
+						getChannel("makeHostFile.chdir").cd(recode(concat(parentPath, fileName))); //$NON-NLS-1$
+						canonicalPath=decode(getChannel("makeHostFile.pwd").pwd()); //$NON-NLS-1$
+					}
 				} else {
 					linkTarget=null;
 				}
 			} catch(Exception e) {
 				//dangling link?
 				if (e instanceof SftpException && ((SftpException)e).id==ChannelSftp.SSH_FX_NO_SUCH_FILE) {
-					linkTarget=":dangling link"; //$NON-NLS-1$
+					if (linkTarget==null) {
+						linkTarget=":dangling link"; //$NON-NLS-1$
+					} else {
+						linkTarget=":dangling link:" + linkTarget; //$NON-NLS-1$
+					}
 				}
 			}
 		}
@@ -531,6 +573,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		SftpHostFile node = new SftpHostFile(parentPath, fileName, attrsTarget.isDir(), false, attrs.isLink(), 1000L * attrs.getMTime(), attrs.getSize());
 		if (linkTarget!=null) {
 			node.setLinkTarget(linkTarget);
+		}
+		if (canonicalPath!=null) {
+			node.setCanonicalPath(canonicalPath);
 		}
 		//Permissions: expect the current user to be the owner
 		String perms = attrsTarget.getPermissionsString();
@@ -555,7 +600,7 @@ public class SftpFileService extends AbstractFileService implements IFileService
 		
 		// permissions
 		// TODO get the user and owner from the uid and gid
-		HostFilePermissions permissions = new HostFilePermissions(perms, "" + attrs.getUId(), "" + attrs.getGId());
+		HostFilePermissions permissions = new HostFilePermissions(perms, "" + attrs.getUId(), "" + attrs.getGId()); //$NON-NLS-1$ //$NON-NLS-2$
 		node.setPermissions(permissions);
 		
 		return node;

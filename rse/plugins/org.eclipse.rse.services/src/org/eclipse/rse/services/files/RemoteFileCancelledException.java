@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,20 +12,19 @@
  * Emily Bruner, Mazen Faraj, Adrian Storisteanu, Li Ding, and Kent Hawley.
  * 
  * Contributors:
- * {Name} (company) - description of contribution.
+ * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
  *******************************************************************************/
 
 package org.eclipse.rse.services.files;
 
 import org.eclipse.rse.services.clientserver.messages.IndicatorException;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 /**
  * Exception thrown when attempting a file operation and the user
  * canceled it before it could be completed.
  */
-public class RemoteFileCancelledException extends RemoteFileIOException {
+public class RemoteFileCancelledException extends RemoteFileException {
 
 	/**
 	 * A serialVersionUID is recommended for all serializable classes.
@@ -39,7 +38,7 @@ public class RemoteFileCancelledException extends RemoteFileIOException {
 	 * Constructor 
 	 */
 	public RemoteFileCancelledException() {
-		super(new SystemMessageException(getMyMessage()));
+		super(getMyMessage());
 	}
 
 	/*

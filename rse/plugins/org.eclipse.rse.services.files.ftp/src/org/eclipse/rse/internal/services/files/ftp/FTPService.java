@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the terms
  * of the Eclipse Public License v1.0 which accompanies this distribution, and is 
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -68,7 +68,8 @@
  * Javier Montalvo Orus (Symbian) - [208912] Cannot expand /C on a VxWorks SSH Server
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
- * David McKnight   (IBM)         - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * Martin Oberhuber (Wind River) - [216351] Improve cancellation of SystemFetchOperation for files
  ********************************************************************************/
 
 package org.eclipse.rse.internal.services.files.ftp;
@@ -115,6 +116,7 @@ import org.eclipse.rse.services.files.IHostFile;
 import org.eclipse.rse.services.files.IHostFilePermissions;
 import org.eclipse.rse.services.files.IHostFilePermissionsContainer;
 import org.eclipse.rse.services.files.RemoteFileCancelledException;
+import org.eclipse.rse.services.files.RemoteFileException;
 import org.eclipse.rse.services.files.RemoteFileIOException;
 import org.eclipse.rse.services.files.RemoteFileSecurityException;
 
@@ -1066,7 +1068,7 @@ public class FTPService extends AbstractFileService implements IFileService, IFT
 		return hasSucceeded;
 	}
 	
-	private boolean internalDelete(FTPClient ftpClient, String parentPath, String fileName, boolean isFile, IProgressMonitor monitor) throws RemoteFileIOException, IOException 
+	private boolean internalDelete(FTPClient ftpClient, String parentPath, String fileName, boolean isFile, IProgressMonitor monitor) throws RemoteFileException, IOException 
 	{
 		if(monitor.isCanceled())
 		{

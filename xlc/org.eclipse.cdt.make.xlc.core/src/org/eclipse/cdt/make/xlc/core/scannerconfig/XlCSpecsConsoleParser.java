@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.xlc.core.scannerconfig.xl;
+package org.eclipse.cdt.make.xlc.core.scannerconfig;
 
 import java.util.List;
 import java.util.ArrayList;

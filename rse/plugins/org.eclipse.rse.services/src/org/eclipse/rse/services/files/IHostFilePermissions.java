@@ -145,9 +145,14 @@ public interface IHostFilePermissions {
 	public void setGroupOwner(String group);
 	
 	/**
-	 * Overriding Object.clone()
+	 * Creates and returns a copy of this object, as specified 
+	 * by the {@link Object#clone()} contract.
+	 * 
+	 * Each implementer of the IHostFilePermission API must properly implement
+	 * this method and implement the {@link Cloneable} interface.
 	 * @return the cloned object
 	 * @throws CloneNotSupportedException
+	 * @see Object#clone()
 	 */
 	public Object clone() throws CloneNotSupportedException;
 }

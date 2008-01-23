@@ -14,7 +14,7 @@
 package org.eclipse.rse.services.files;
 
 
-public interface IHostFilePermissions extends Cloneable {
+public interface IHostFilePermissions {
 	
 	/**
 	 * Permission constant indicating that 

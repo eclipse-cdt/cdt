@@ -18,7 +18,7 @@ package org.eclipse.rse.services.files;
  *
  */
 public class HostFilePermissions implements
-		IHostFilePermissions {
+		IHostFilePermissions, Cloneable  {
 	
 	private int _permissions = 0;
 	private String _user;

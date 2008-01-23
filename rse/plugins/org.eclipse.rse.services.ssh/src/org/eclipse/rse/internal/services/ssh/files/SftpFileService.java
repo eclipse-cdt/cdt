@@ -20,7 +20,8 @@
  * David McKnight   (IBM)        - [210109] store constants in IFileService rather than IFileServiceConstants
  * Kevin Doyle		(IBM)		 - [208778] [efs][api] RSEFileStore#getOutputStream() does not support EFS#APPEND
  * Kevin Doyle		(IBM)		 - [211374] [ssh] New File on SSH has unnecessary space in its contents
- * David McKnight   (IBM)         - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
+ * Martin Oberhuber (Wind River) - [216343] immediate link targets and canonical paths for Sftp
  *******************************************************************************/
 
 package org.eclipse.rse.internal.services.ssh.files;

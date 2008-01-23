@@ -13,6 +13,7 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - Adapted from FTPRemoteFile.
+ * Martin Oberhuber (Wind River) - [216343] immediate link targets and canonical paths for Sftp
  *******************************************************************************/
 
 package org.eclipse.rse.internal.subsystems.files.ssh;
@@ -38,7 +39,18 @@ public class SftpRemoteFile extends AbstractRemoteFile {
 	}
 
 	public String getCanonicalPath() {
-		return getSftpHostFile().getCanonicalPath();
+		String canPath = getSftpHostFile().getCanonicalPath();
+		if (canPath.equals(getAbsolutePath()) && _parentFile!=null) {
+			String parentCanPath = _parentFile.getCanonicalPath();
+			StringBuffer path = new StringBuffer(parentCanPath);
+			if (!parentCanPath.endsWith("/")) //$NON-NLS-1$
+			{
+				path.append('/');
+			}
+			path.append(getName());
+			canPath = path.toString();
+		}
+		return canPath;
 	}
 
 	public String getClassification() {

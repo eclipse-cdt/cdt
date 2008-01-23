@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -21,8 +22,16 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 public class CPPASTFunctionTryBlockDeclarator extends CPPASTFunctionDeclarator
         implements ICPPASTFunctionTryBlockDeclarator {
 
+	
 
-    public void addCatchHandler(ICPPASTCatchHandler statement) {
+    public CPPASTFunctionTryBlockDeclarator() {
+	}
+
+	public CPPASTFunctionTryBlockDeclarator(IASTName name) {
+		super(name);
+	}
+
+	public void addCatchHandler(ICPPASTCatchHandler statement) {
     	if (statement != null) {
     		catchHandlers = (ICPPASTCatchHandler[]) ArrayUtil.append( ICPPASTCatchHandler.class, catchHandlers, ++catchHandlersPos, statement );
     		statement.setParent(this);

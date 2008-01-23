@@ -528,9 +528,9 @@ public class SftpFileService extends AbstractFileService implements IFileService
 				try {
 					linkTarget=decode(getChannel("makeHostFile.readlink").readlink(recode(concat(parentPath, fileName)))); //$NON-NLS-1$
 					readlinkDone = true;
-				} catch(Exception e) {
+				} catch(Throwable t) {
 					//readlink() is only supported on sftpv3 and later servers, and jsch-0.1.29 or higher.
-					//By catching the exception we remain backward compatible.
+					//By catching the exception (UnsatisfiedLinkError) we remain backward compatible.
 					//Disadvantages of the cd/pwd approach:
 					// * _realpath() followed by _stat() might be one extra roundtrip compared to the readlink() approach
 					// * Immediate link target is not available, only the fully resolved link target (might be an advantage too!)

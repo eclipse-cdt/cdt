@@ -202,7 +202,7 @@ public class FoldingTest extends TestCase {
 				createPosition(65, 67),
 				createPosition(70, 75, 71),
 		};
-		if (true) System.out.println(toString(actual));
+		if (false) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 	
@@ -226,7 +226,7 @@ public class FoldingTest extends TestCase {
 				createPosition(65, 67),
 				createPosition(70, 75, 71),
 		};
-		if (true) System.out.println(toString(actual));
+		if (false) System.out.println(toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 

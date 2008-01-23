@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - Fix 154874 - handle files with space or $ in the name 
  * Martin Oberhuber (Wind River) - [186640] Fix case sensitive issue comparing z/OS
  * Xuan Chen        (IBM)        - [191280] [dstore] Expand fails for folder "/folk" with 3361 children 
+ * Xuan Chen        (IBM)        - [215863]] NPE when Expanding Empty Zip File
  ********************************************************************************/
 
 package org.eclipse.rse.internal.dstore.universal.miners.filesystem;
@@ -1003,6 +1004,10 @@ public class FileClassifier extends Thread
             // get the contents of the virtual path within the archive
             children = mgr.getContents(archiveFile, virtualPath);
 
+            if (null == children)
+            {
+            	return;
+            }
             // go through each virtual child, and set the classification type
             for (int i = 0; i < children.length; i++)
             {

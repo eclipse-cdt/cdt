@@ -200,7 +200,7 @@ public int getKind(int i) {
 	// Initialize ruleAction array.
 	//
 	static {
-		RULE_ACTIONS = new Action[526 + 1];
+		RULE_ACTIONS = new Action[525 + 1];
 		RULE_ACTIONS[0] = null;
 
 		RULE_ACTIONS[1] = new Action1();
@@ -421,6 +421,8 @@ public int getKind(int i) {
 		RULE_ACTIONS[423] = new Action423();
 		RULE_ACTIONS[424] = new Action424();
 		RULE_ACTIONS[430] = new Action430();
+		RULE_ACTIONS[440] = new Action440();
+		RULE_ACTIONS[441] = new Action441();
 		RULE_ACTIONS[444] = new Action444();
 		RULE_ACTIONS[445] = new Action445();
 		RULE_ACTIONS[488] = new Action488();
@@ -430,8 +432,8 @@ public int getKind(int i) {
 		RULE_ACTIONS[510] = new Action510();
 		RULE_ACTIONS[511] = new Action511();
 		RULE_ACTIONS[512] = new Action512();
+		RULE_ACTIONS[515] = new Action515();
 		RULE_ACTIONS[516] = new Action516();
-		RULE_ACTIONS[517] = new Action517();
 
 
 		//
@@ -2625,6 +2627,26 @@ public int getKind(int i) {
 	}  
   
 	//
+	// Rule 440:  mem_initializer ::= mem_initializer_name ( expression_list_opt )
+	//
+	static final class Action440 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeConstructorChainInitializer();    
+		}  
+	}  
+  
+	//
+	// Rule 441:  mem_initializer_name ::= dcolon_opt nested_name_specifier_opt class_name
+	//
+	static final class Action441 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeQualifiedId(false);    
+		}  
+	}  
+  
+	//
 	// Rule 444:  operator_function_id_name ::= operator_id_name < <openscope-ast> template_argument_list_opt >
 	//
 	static final class Action444 extends DeclaredAction< CPPParserAction ,  Object > {
@@ -2715,9 +2737,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 516:  handler ::= catch ( exception_declaration ) compound_statement
+	// Rule 515:  handler ::= catch ( exception_declaration ) compound_statement
 	//
-	static final class Action516 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action515 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementCatchHandler(false);    
@@ -2725,9 +2747,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 517:  handler ::= catch ( ... ) compound_statement
+	// Rule 516:  handler ::= catch ( ... ) compound_statement
 	//
-	static final class Action517 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action516 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementCatchHandler(true);    

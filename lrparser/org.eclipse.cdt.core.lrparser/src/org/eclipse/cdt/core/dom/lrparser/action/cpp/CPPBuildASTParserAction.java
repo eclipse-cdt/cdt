@@ -22,6 +22,7 @@ import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
@@ -46,12 +48,14 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -77,6 +81,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.lrparser.IParserActionTokenProvider;
 import org.eclipse.cdt.core.dom.lrparser.action.BuildASTParserAction;
 import org.eclipse.cdt.core.dom.lrparser.util.DebugUtil;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 
 /**
  * Semantic actions that build the AST during the parse. These are the actions
@@ -1310,7 +1315,76 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 			astStack.push(declarator);
  		}
  	}
+ 
  	
+ 	/**
+ 	 * mem_initializer
+     *     ::= mem_initializer_id '(' expression_list_opt ')'
+ 	 */
+ 	public void consumeConstructorChainInitializer() {
+ 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+ 		
+ 		IASTExpression expr = (IASTExpression) astStack.pop();
+ 		IASTName name = (IASTName) astStack.pop();
+ 		ICPPASTConstructorChainInitializer initializer = nodeFactory.newConstructorChainInitializer(name, expr);
+ 		setOffsetAndLength(initializer);
+		astStack.push(initializer);
+ 		
+ 		if(TRACE_AST_STACK) System.out.println(astStack);
+ 	}
+ 	
+ 	
+ 	
+ 	/**
+ 	 * function_definition
+     *     ::= declaration_specifiers_opt function_direct_declarator 
+     *         <openscope-ast> ctor_initializer_list_opt function_body
+     *         
+     *       | declaration_specifiers_opt function_direct_declarator 
+     *         'try' <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
+     *         
+ 	 */
+ 	public void consumeFunctionDefinition(boolean isTryBlockDeclarator) {
+ 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+
+ 		List<Object> handlers = isTryBlockDeclarator ? astStack.closeScope() : Collections.emptyList();
+ 		IASTCompoundStatement body = (IASTCompoundStatement) astStack.pop();
+ 		List<Object> initializers = astStack.closeScope();
+ 		ICPPASTFunctionDeclarator declarator = (ICPPASTFunctionDeclarator) astStack.pop();
+ 		IASTDeclSpecifier declSpec = (IASTDeclSpecifier) astStack.pop(); // may be null
+ 		
+ 		if(isTryBlockDeclarator) {
+ 		    // perform a shallow copy 
+ 			ICPPASTFunctionTryBlockDeclarator tryBlockDeclarator = nodeFactory.newFunctionTryBlockDeclarator(declarator.getName());
+ 			tryBlockDeclarator.setConst(declarator.isConst());
+ 			tryBlockDeclarator.setVolatile(declarator.isVolatile());
+ 			tryBlockDeclarator.setPureVirtual(declarator.isPureVirtual());
+ 			tryBlockDeclarator.setVarArgs(declarator.takesVarArgs());
+ 			for(IASTParameterDeclaration parameter : declarator.getParameters()) {
+ 				tryBlockDeclarator.addParameterDeclaration(parameter);
+ 			}
+ 			for(IASTTypeId exception : declarator.getExceptionSpecification()) {
+ 				tryBlockDeclarator.addExceptionSpecificationTypeId(exception);
+ 			}
+ 			
+ 			for(Object handler : handlers) {
+ 				tryBlockDeclarator.addCatchHandler((ICPPASTCatchHandler)handler);
+ 	 		}
+ 			
+ 			declarator = tryBlockDeclarator;
+ 		}
+ 		
+ 		for(Object initializer : initializers) {
+ 			declarator.addConstructorToChain((ICPPASTConstructorChainInitializer)initializer);
+ 		}
+
+ 		IASTFunctionDefinition definition = nodeFactory.newFunctionDefinition(declSpec, declarator, body);
+ 		
+ 		setOffsetAndLength(definition);
+		astStack.push(definition);
+ 			
+ 		if(TRACE_AST_STACK) System.out.println(astStack);
+ 	}
 }
 
 

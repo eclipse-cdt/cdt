@@ -65,11 +65,13 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
@@ -104,6 +106,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCatchHandler;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConditionalExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorChainInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTContinueStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConversionName;
@@ -123,6 +126,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTForStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTGotoStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIfStatement;
@@ -501,6 +505,14 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 	public IASTParameterDeclaration newParameterDeclaration(
 			IASTDeclSpecifier declSpec, IASTDeclarator declarator) {
 		return new CPPASTParameterDeclaration(declSpec, declarator);
+	}
+
+	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName name, IASTExpression expr) {
+		return new CPPASTConstructorChainInitializer(name, expr);
+	}
+
+	public ICPPASTFunctionTryBlockDeclarator newFunctionTryBlockDeclarator(IASTName name) {
+		return new CPPASTFunctionTryBlockDeclarator(name);
 	}
 
 }

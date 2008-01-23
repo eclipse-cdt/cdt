@@ -1346,14 +1346,6 @@ parameter_declaration_list_opt
       | $empty
 
 
--- its just a declarator with an initializer
---parameter_declaration
---    ::= declaration_specifiers declarator
---      | declaration_specifiers declarator = assignment_expression
---      | declaration_specifiers abstract_declarator_opt
---      | declaration_specifiers abstract_declarator_opt = assignment_expression
-
-
 abstract_declarator_opt
     ::= abstract_declarator
       | $empty
@@ -1384,10 +1376,12 @@ parameter_initializer
 
 
 function_definition
-    ::= declaration_specifiers_opt declarator ctor_initializer_opt function_body
-      | declaration_specifiers_opt declarator function_try_block
+    ::= declaration_specifiers_opt function_direct_declarator <openscope-ast> ctor_initializer_list_opt function_body
+           
+      | declaration_specifiers_opt function_direct_declarator 'try' <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
 
 
+    
 function_body
     ::= compound_statement
 
@@ -1563,12 +1557,12 @@ conversion_declarator_opt
       | $empty
       
     
-ctor_initializer
+ctor_initializer_list
     ::= ':' mem_initializer_list
 
 
-ctor_initializer_opt
-    ::= ctor_initializer
+ctor_initializer_list_opt
+    ::= ctor_initializer_list
       | $empty
       
 
@@ -1578,12 +1572,14 @@ mem_initializer_list
 
 
 mem_initializer
-    ::= mem_initializer_id '(' expression_list_opt ')'
+    ::= mem_initializer_name '(' expression_list_opt ')'
+          /. $Build  consumeConstructorChainInitializer();  $EndBuild ./
 
 
-mem_initializer_id
+mem_initializer_name
     ::= dcolon_opt nested_name_specifier_opt class_name
-      | 'identifier'
+          /. $Build  consumeQualifiedId(false);  $EndBuild ./
+      | identifier_name
 
 
 operator_function_id_name
@@ -1677,8 +1673,7 @@ try_block
           /. $Build  consumeStatementTryBlock();  $EndBuild ./
 
 
-function_try_block
-    ::= 'try' ctor_initializer_opt function_body handler_seq
+
 
 
 handler_seq

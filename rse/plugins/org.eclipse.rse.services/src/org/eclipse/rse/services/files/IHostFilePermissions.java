@@ -144,4 +144,10 @@ public interface IHostFilePermissions extends Cloneable {
 	 */
 	public void setGroupOwner(String group);
 	
+	/**
+	 * Overriding Object.clone()
+	 * @return the cloned object
+	 * @throws CloneNotSupportedException
+	 */
+	public Object clone() throws CloneNotSupportedException;
 }

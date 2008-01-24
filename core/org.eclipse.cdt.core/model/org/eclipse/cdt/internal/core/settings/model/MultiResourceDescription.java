@@ -62,9 +62,10 @@ public class MultiResourceDescription extends MultiItemsHolder implements ICMult
 	public IPath getPath() {
 		IPath p = fRess[0].getPath();
 		if (p != null) {
-			for (int i=1; i<fRess.length; i++)
+			for (int i=1; i<fRess.length; i++) {
 				if (!p.equals(fRess[i].getPath()))
 					throw new UnsupportedOperationException();
+			}
 			return p;
 		}
 		throw new UnsupportedOperationException();

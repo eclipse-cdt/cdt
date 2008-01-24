@@ -11,6 +11,8 @@
 
 package org.eclipse.cdt.internal.core.settings.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -165,8 +167,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getDescription()
 	 */
 	public String getDescription() {
-		System.out.println("Bad multi access: MultiConfigDescription.getDescription()");
-		return null;
+		return "Multi Configuration"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -189,16 +190,20 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getFileDescriptions()
 	 */
 	public ICFileDescription[] getFileDescriptions() {
-		System.out.println("Bad multi access: MultiConfigDescription.getFileDescriptions()");
-		return null;
+		ArrayList<ICFileDescription> lst = new ArrayList<ICFileDescription>();
+		for (int i=0; i<fCfgs.length; i++) 
+			lst.addAll(Arrays.asList(fCfgs[i].getFileDescriptions()));
+		return (ICFileDescription[])lst.toArray(new ICFileDescription[lst.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getFolderDescriptions()
 	 */
 	public ICFolderDescription[] getFolderDescriptions() {
-		System.out.println("Bad multi access: MultiConfigDescription.getFolderDescription()");
-		return null;
+		ArrayList<ICFolderDescription> lst = new ArrayList<ICFolderDescription>();
+		for (int i=0; i<fCfgs.length; i++) 
+			lst.addAll(Arrays.asList(fCfgs[i].getFolderDescriptions()));
+		return (ICFolderDescription[])lst.toArray(new ICFolderDescription[lst.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -242,17 +247,38 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getResourceDescription(org.eclipse.core.runtime.IPath, boolean)
 	 */
 	public ICResourceDescription getResourceDescription(IPath path,
-			boolean exactPath) {
-		System.out.println("Bad multi access: MultiConfigDescription.getResourceDescription()");
-		return null;
+			boolean isForFolder) {
+		ArrayList<ICResourceDescription> lst = new ArrayList<ICResourceDescription>();
+		for (int i=0; i<fCfgs.length; i++) {
+			ICResourceDescription rd = fCfgs[i].getResourceDescription(path, false);
+			if (! path.equals(rd.getPath()) ) {
+				try {
+					if (isForFolder)
+						rd = fCfgs[i].createFolderDescription(path, (ICFolderDescription)rd);
+					else
+						rd = fCfgs[i].createFileDescription(path, rd);
+				} catch (CoreException e) {}
+			}
+			if (rd != null)
+				lst.add(rd);
+		}
+		if (lst.size() == 0)
+			return null;
+		if (lst.size() == 1)
+			return (ICResourceDescription)lst.get(0);
+		return new MultiResourceDescription(
+				(ICResourceDescription[])lst.toArray(new ICResourceDescription[lst.size()]),
+ 				 getStringListMode());
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getResourceDescriptions()
 	 */
 	public ICResourceDescription[] getResourceDescriptions() {
-		System.out.println("Bad multi access: MultiConfigDescription.getResourceDescriptions()");
-		return null;
+		ArrayList<ICResourceDescription> lst = new ArrayList<ICResourceDescription>();
+		for (int i=0; i<fCfgs.length; i++) 
+			lst.addAll(Arrays.asList(fCfgs[i].getResourceDescriptions()));
+		return (ICResourceDescription[])lst.toArray(new ICResourceDescription[lst.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -269,7 +295,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#getSessionProperty(org.eclipse.core.runtime.QualifiedName)
 	 */
 	public Object getSessionProperty(QualifiedName name) {
-		System.out.println("Bad multi access: MultiConfigDescription.getSessionProperty()");
+		System.out.println("Bad multi access: MultiConfigDescription.getSessionProperty()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
 	}
 
@@ -369,7 +395,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 */
 	public void setConfigurationData(String buildSystemId,
 			CConfigurationData data) throws WriteAccessException {
-		System.out.println("Bad multi access: MultiConfigDescription.getConfigurationData()");
+		System.out.println("Bad multi access: MultiConfigDescription.getConfigurationData()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
 	}
 
@@ -377,7 +403,7 @@ public class MultiConfigDescription extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.core.settings.model.ICConfigurationDescription#setDescription(java.lang.String)
 	 */
 	public void setDescription(String des) throws WriteAccessException {
-		System.out.println("Bad multi access: MultiConfigDescription.setDescription()");
+		System.out.println("Bad multi access: MultiConfigDescription.setDescription()"); //$NON-NLS-1$
 		throw new UnsupportedOperationException();
 	}
 

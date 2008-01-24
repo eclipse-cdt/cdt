@@ -708,16 +708,20 @@ implements
 		IResource res = (IResource)ad; 
 		IPath p = res.getProjectRelativePath();
 		if (isForFolder() || isForFile()) {
-			out = cf.getResourceDescription(p, false);
-			if (! p.equals(out.getPath()) ) {
-				try {
-					if (isForFolder())
-						out = cf.createFolderDescription(p, (ICFolderDescription)out);
-					else
-						out = cf.createFileDescription(p, out);
-				} catch (CoreException e) {
-					System.out.println(UIMessages.getString("AbstractPage.10") + //$NON-NLS-1$
-							p.toOSString() + "\n" + e.getLocalizedMessage()); //$NON-NLS-1$
+			if (isMultiCfg()) {
+				out = cf.getResourceDescription(p, isForFolder()); // sic ! 
+			} else {
+				out = cf.getResourceDescription(p, false);
+				if (! p.equals(out.getPath()) ) {
+					try {
+						if (isForFolder())
+							out = cf.createFolderDescription(p, (ICFolderDescription)out);
+						else
+							out = cf.createFileDescription(p, out);
+					} catch (CoreException e) {
+						System.out.println(UIMessages.getString("AbstractPage.10") + //$NON-NLS-1$
+								p.toOSString() + "\n" + e.getLocalizedMessage()); //$NON-NLS-1$
+					}
 				}
 			}
 		}

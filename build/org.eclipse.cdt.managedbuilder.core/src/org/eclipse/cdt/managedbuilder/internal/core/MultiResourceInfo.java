@@ -38,9 +38,19 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	private static final int MODE_COMMAND  = 5;
 	
 	protected IResourceInfo[] fRis = null;
+	private int activeCfg = 0;
 	
 	public MultiResourceInfo(IResourceInfo[] ris) {
 		fRis = ris;
+		for (int i=0; i<fRis.length; i++) {
+			if (! (fRis[i].getParent() instanceof Configuration))
+				continue;
+			Configuration cfg = (Configuration)fRis[i].getParent();
+			if (cfg.getConfigurationDescription().isActive()) {
+				activeCfg = i;
+				break;
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -57,28 +67,28 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getCLanguageDatas()
 	 */
 	public CLanguageData[] getCLanguageDatas() {
-		return fRis[0].getCLanguageDatas();
+		return fRis[activeCfg].getCLanguageDatas();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getKind()
 	 */
 	public int getKind() {
-		return fRis[0].getKind();
+		return fRis[activeCfg].getKind();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getParent()
 	 */
 	public IConfiguration getParent() {
-		return fRis[0].getParent();
+		return fRis[activeCfg].getParent();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getPath()
 	 */
 	public IPath getPath() {
-		return fRis[0].getPath();
+		return fRis[activeCfg].getPath();
 	}
 
 	/* (non-Javadoc)
@@ -86,15 +96,14 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	 */
 	public CResourceData getResourceData() {
 		System.out.println("Strange call: MultiResourceInfo.getResourceData()"); //$NON-NLS-1$
-		return fRis[0].getResourceData();
+		return fRis[activeCfg].getResourceData();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#getTools()
 	 */
 	public ITool[] getTools() {
-		System.out.println("Strange call: MultiResourceInfo.getTools()"); //$NON-NLS-1$
-		return fRis[0].getTools();
+		return fRis[activeCfg].getTools();
 	}
 
 	/* (non-Javadoc)
@@ -295,42 +304,42 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	 * @see org.eclipse.cdt.managedbuilder.core.IResourceInfo#supportsBuild(boolean)
 	 */
 	public boolean supportsBuild(boolean managed) {
-		return fRis[0].supportsBuild(managed);
+		return fRis[activeCfg].supportsBuild(managed);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getBaseId()
 	 */
 	public String getBaseId() {
-		return fRis[0].getBaseId();
+		return fRis[activeCfg].getBaseId();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getId()
 	 */
 	public String getId() {
-		return fRis[0].getId();
+		return fRis[activeCfg].getId();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getManagedBuildRevision()
 	 */
 	public String getManagedBuildRevision() {
-		return fRis[0].getManagedBuildRevision();
+		return fRis[activeCfg].getManagedBuildRevision();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
 	 */
 	public String getName() {
-		return fRis[0].getName();
+		return fRis[activeCfg].getName();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getVersion()
 	 */
 	public PluginVersionIdentifier getVersion() {
-		return fRis[0].getVersion();
+		return fRis[activeCfg].getVersion();
 	}
 
 	/* (non-Javadoc)
@@ -346,7 +355,7 @@ public class MultiResourceInfo extends MultiItemsHolder implements
 	}
 
 	public boolean isRoot() {
-		return ((ResourceInfo)fRis[0]).isRoot();
+		return ((ResourceInfo)fRis[activeCfg]).isRoot();
 	}
 
 }

@@ -111,10 +111,16 @@ public class VMDelta extends ModelDelta {
 		return fFlags;
 	}
 
-    public void addFlags(int flags) {
-        fFlags |= flags;
+    /**
+     * Sets this delta's flags.
+     * 
+     * @param flags
+     */
+    @Override
+    public void setFlags(int flags) {
+        fFlags = flags;
     }
-    
+
     public void setChildCount(int count) {
         fChildCount = count;
     }

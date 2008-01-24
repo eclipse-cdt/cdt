@@ -1,0 +1,27 @@
+<project default="main">
+	<property name="pde.build.scripts" value="../org.eclipse.releng.basebuilder/plugins/org.eclipse.pde.build/scripts" />
+
+	<target name="init">
+		<tstamp/>
+		<touch file="${user.home}/.cvspass" />
+		<property name="timestamp" value="${DSTAMP}${TSTAMP}" />
+		<property name="buildDirectory" value="${basedir}/src/eclipse" />
+
+		<property name="buildType" value="I" />
+		<property name="buildId" value="${buildType}${timestamp}" />
+		
+		<!-- Verify buildDirectory ends in eclipse. -->
+		<property name="fullBuild" location="${buildDirectory}"/>
+		<basename file="${fullBuild}" property="lastSeg"/>
+		<condition property="endsInEclipse">
+			<equals arg1="${lastSeg}" arg2="eclipse"/>
+		</condition>
+		<fail message="buildDirectory's last segment is not eclipse." unless="endsInEclipse"/>
+	</target>
+
+	<target name="main" depends="init">
+		<ant antfile="build.xml" dir="${pde.build.scripts}">
+			<property name="builder" value="${basedir}/${component}" />
+		</ant>
+	</target>
+</project>

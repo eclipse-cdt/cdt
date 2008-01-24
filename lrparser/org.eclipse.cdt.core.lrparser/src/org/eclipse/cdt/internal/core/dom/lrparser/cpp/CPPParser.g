@@ -53,7 +53,7 @@ $Terminals
 	
 	integer  floating  charconst  stringlit
 	
-	zero  -- this is a special token used to disambiguate the the grammar rule for pure virtual functions
+	-- zero  -- this is a special token used to disambiguate the the grammar rule for pure virtual functions
 	      -- TODO is this really necessary? because it adds overhead in getKind()
 	
 	-- identifiers
@@ -230,9 +230,14 @@ $Headers
 
 	public int getKind(int i) {
 		int kind = super.getKind(i);
-		if(kind == CPPParsersym.TK_integer && "0".equals(getTokenText(i))) { //$NON-NLS-1$
-			kind = CPPParsersym.TK_zero;
-		}
+		
+		// There used to be a special token kind for zero used to parser pure virtual function declarations.
+		// But it turned out to be easier to just parse them as an init_declarator and programaticaly check
+		// for pure virtual, see consumeMemberDeclaratorWithInitializer().
+		
+		//if(kind == CPPParsersym.TK_integer && "0".equals(getTokenText(i))) { //$NON-NLS-1$
+		//	kind = CPPParsersym.TK_zero;
+		//}
 		
 		// lexer feedback hack!
 		//else if(kind == C99Parsersym.TK_identifier && action.resolver.isTypedef(getTokenText(i))) {
@@ -865,7 +870,7 @@ declaration_statement
 
 declaration
     ::= block_declaration
-      | function_definition
+      | function_definition         -- done
       | template_declaration        -- done
       | explicit_instantiation      -- done
       | explicit_specialization     -- done
@@ -874,7 +879,7 @@ declaration
 
 
 block_declaration
-    ::= simple_declaration
+    ::= simple_declaration          -- done
       | asm_definition              -- done
       | namespace_alias_definition  -- done
       | using_declaration           -- done
@@ -1377,9 +1382,9 @@ parameter_initializer
 
 function_definition
     ::= declaration_specifiers_opt function_direct_declarator <openscope-ast> ctor_initializer_list_opt function_body
-           
+           /. $Build  consumeFunctionDefinition(false);  $EndBuild ./
       | declaration_specifiers_opt function_direct_declarator 'try' <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
-
+           /. $Build  consumeFunctionDefinition(true);  $EndBuild ./
 
     
 function_body
@@ -1459,14 +1464,19 @@ visibility_label
 
 
 member_declaration
-    ::= declaration_specifiers_opt member_declarator_list ';'
+    ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ';'
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | declaration_specifiers_opt ';'
-      | function_definition ';'
-      | function_definition 
+          /. $Build  consumeDeclarationSimple(false);  $EndBuild ./
+      | function_definition ';'  -- done
+      | function_definition      -- done
       | dcolon_opt nested_name_specifier template_opt unqualified_id_name ';'
-      | using_declaration
+          /. $Build  consumeMemberDeclarationQualifiedId();  $EndBuild ./ 
+      | using_declaration  -- done
       | template_declaration
-      | visibility_label
+      | visibility_label  -- done
+
+
 
 
 member_declaration_list
@@ -1486,13 +1496,22 @@ member_declarator_list
 
 member_declarator
     ::= declarator
-      | declarator pure_specifier
+      -- | declarator pure_specifier  -- parse this as a constant initializer
       | declarator constant_initializer
-      | identifier_opt ':' constant_expression
+          /. $Build  consumeMemberDeclaratorWithInitializer();  $EndBuild ./
+      | bit_field_declarator ':' constant_expression
+          /. $Build  consumeBitField(true);  $EndBuild ./
+      | ':' constant_expression
+          /. $Build  consumeBitField(false);  $EndBuild ./
 
 
-pure_specifier
-    ::= '=' '0'
+bit_field_declarator
+    ::= identifier_name
+          /. $Build  consumeDirectDeclaratorIdentifier();  $EndBuild ./
+          
+
+--pure_specifier -- this leads to ambiguities
+--    ::= '=' '0'
 
 
 constant_initializer

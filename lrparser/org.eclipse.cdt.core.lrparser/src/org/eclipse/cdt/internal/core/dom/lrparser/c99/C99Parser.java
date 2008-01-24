@@ -1601,7 +1601,7 @@ public int getKind(int i) {
 	static final class Action204 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeStructBitField(false);    /* action.builder.getASTStack().print();*/ 
+   consumeBitField(false);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   
@@ -1611,7 +1611,7 @@ public int getKind(int i) {
 	static final class Action205 extends DeclaredAction< C99ParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  C99ParserAction  action) {   action.builder.
-   consumeStructBitField(true);    /* action.builder.getASTStack().print();*/ 
+   consumeBitField(true);    /* action.builder.getASTStack().print();*/ 
 		}  
 	}  
   

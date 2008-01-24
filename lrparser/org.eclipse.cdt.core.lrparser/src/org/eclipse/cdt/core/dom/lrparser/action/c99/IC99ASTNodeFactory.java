@@ -60,8 +60,6 @@ public interface IC99ASTNodeFactory extends IASTNodeFactory {
 
 	public ICASTTypedefNameSpecifier newCTypedefNameSpecifier();
 
-	public IASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize);
-	
 	public ICASTCompositeTypeSpecifier newCCompositeTypeSpecifier(int key, IASTName name);
 
 	

@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
@@ -1385,6 +1386,50 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
  			
  		if(TRACE_AST_STACK) System.out.println(astStack);
  	}
+ 	
+ 	
+ 	/**
+ 	 * member_declaration
+ 	 *     ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name ';'
+ 	 */
+ 	public void consumeMemberDeclarationQualifiedId() {
+ 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+ 		
+ 		IASTName qualifiedId = subRuleQualifiedName(true);
+ 		IASTDeclarator declarator = nodeFactory.newDeclarator(qualifiedId);
+ 		setOffsetAndLength(declarator);
+ 		IASTSimpleDeclaration declaration = nodeFactory.newSimpleDeclaration(null); // no decl spec
+ 		setOffsetAndLength(declaration);
+ 		declaration.addDeclarator(declarator);
+ 		astStack.push(declaration);
+ 		
+ 		if(TRACE_AST_STACK) System.out.println(astStack);
+ 	}
+ 	
+ 	
+ 	/**
+ 	 * member_declarator
+     *     ::= declarator constant_initializer
+ 	 */
+ 	
+    public void consumeMemberDeclaratorWithInitializer() {
+    	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+    	
+    	IASTInitializerExpression initializer = (IASTInitializerExpression) astStack.pop();
+    	IASTDeclarator declarator = (IASTDeclarator) astStack.peek();
+    	setOffsetAndLength(declarator);
+    	
+    	if(declarator instanceof ICPPASTFunctionDeclarator) {
+    		IASTExpression expr = initializer.getExpression();
+    		if(expr instanceof IASTLiteralExpression && "0".equals(expr.toString())) { //$NON-NLS-1$
+    			((ICPPASTFunctionDeclarator)declarator).setPureVirtual(true);
+    			return;
+    		}
+    	}
+    	
+    	declarator.setInitializer(initializer);
+    }
+
 }
 
 

@@ -830,9 +830,9 @@ complete_struct_declarator
 struct_declarator
     ::= declarator
       | ':' constant_expression  
-          /. $Build  consumeStructBitField(false);  $EndBuild ./
+          /. $Build  consumeBitField(false);  $EndBuild ./
       | declarator ':' constant_expression		
-          /. $Build  consumeStructBitField(true);  $EndBuild ./
+          /. $Build  consumeBitField(true);  $EndBuild ./
 		      
             
 enum_specifier

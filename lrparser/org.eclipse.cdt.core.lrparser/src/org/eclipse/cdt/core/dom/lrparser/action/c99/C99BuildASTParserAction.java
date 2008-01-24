@@ -38,8 +38,6 @@ import java.util.List;
 
 import lpg.lpgjavaruntime.IToken;
 
-import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -48,7 +46,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -575,30 +572,6 @@ public class C99BuildASTParserAction extends BuildASTParserAction  {
 		
 		consumeDeclarationSimple(hasDeclaration); // TODO this is ok as long as bit fields implement IASTDeclarator (see consumeDeclaration())
 	} 
-	
-	
-	/**
-	 * struct_declarator
-     *     ::= ':' constant_expression  
-     *       | declarator ':' constant_expression		
-	 */
-	public void consumeStructBitField(boolean hasDeclarator) {
-		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
-		
-		IASTExpression expr = (IASTExpression)astStack.pop();
-		
-		IASTName name;
-		if(hasDeclarator) // it should have been parsed into a regular declarator
-			name = ((IASTDeclarator) astStack.pop()).getName();
-		else
-			name = nodeFactory.newName();
-		
-		IASTFieldDeclarator fieldDecl = nodeFactory.newFieldDeclarator(name, expr);
-		setOffsetAndLength(fieldDecl);
-		astStack.push(fieldDecl);
-		
-		if(TRACE_AST_STACK) System.out.println(astStack);
-	}
 	
 	
 	/**

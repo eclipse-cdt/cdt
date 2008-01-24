@@ -229,11 +229,12 @@
          outputFlag="-o"
          superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
            <inputType
-              sourceContentType="org.eclipse.cdt.core.cxxSource"
-			  sources="c,C,cc,cxx,cpp"
-              dependencyContentType="org.eclipse.cdt.core.cxxHeader"
-			  dependencyExtensions="h,H,hpp"
-              id="cdt.managedbuild.tool.xlc.cpp.compiler.input">
+                 dependencyContentType="org.eclipse.cdt.core.cxxHeader"
+                 dependencyExtensions="h,H,hpp"
+                 id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
+                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+                 sourceContentType="org.eclipse.cdt.core.cxxSource"
+                 sources="c,C,cc,cxx,cpp">
           </inputType>
            <option
                  category="xlc.c.compiler.category.Input"
@@ -453,7 +454,6 @@
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.debug;cdt.managedbuild.tool.xlc.cpp.linker.exe.debug"
                      configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.xlc.aix.AixConfigurationEnvironmentSupplier"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.exe.debug">
 			      <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.exe.debug"
@@ -519,7 +519,6 @@
                      osList="all"
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.exe.release;cdt.managedbuild.tool.xlc.cpp.linker.exe.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.exe.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.exe.release"
@@ -592,7 +591,6 @@
                <toolChain
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.so.debug;cdt.managedbuild.tool.xlc.cpp.linker.so.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.so.debug">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.debug"
@@ -656,7 +654,6 @@
             <toolChain
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.xlc.c.linker.so.release;cdt.managedbuild.tool.xlc.cpp.linker.so.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.so.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.so.release"
@@ -729,7 +726,6 @@
                <toolChain
                      name="%ToolChainName.Dbg"
                      targetTool="cdt.managedbuild.tool.xlc.archiver.lib.debug"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.lib.debug">
 				  <targetPlatform
 					  id="cdt.managedbuild.target.xlc.platform.lib.debug"
@@ -789,7 +785,6 @@
             <toolChain
                      name="%ToolChainName.Rel"
                      targetTool="cdt.managedbuild.tool.xlc.archiver.lib.release"
-                     scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
                      id="cdt.managedbuild.toolchain.xlc.lib.release">
 		          <targetPlatform
 		              id="cdt.managedbuild.target.xlc.platform.lib.release"
@@ -2853,11 +2848,12 @@
 
 		  
           <inputType
-              sourceContentType="org.eclipse.cdt.core.cSource"
-		      sources="c"
-              dependencyContentType="org.eclipse.cdt.core.cHeader"
-			  dependencyExtensions="h"
-              id="cdt.managedbuild.tool.xlc.c.compiler.input">
+                dependencyContentType="org.eclipse.cdt.core.cHeader"
+                dependencyExtensions="h"
+                id="cdt.managedbuild.tool.xlc.c.compiler.input"
+                scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+                sourceContentType="org.eclipse.cdt.core.cSource"
+                sources="c">
           </inputType>
           <outputType
 			  outputs="o"

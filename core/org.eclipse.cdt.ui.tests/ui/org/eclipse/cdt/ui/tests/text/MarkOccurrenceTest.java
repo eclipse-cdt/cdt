@@ -244,6 +244,7 @@ public class MarkOccurrenceTest extends TestCase {
 		
 		SelectionListenerWithASTManager.getDefault().removeListener(fEditor, fSelWASTListener);
 		fEditor= openCEditor(new Path("/" + PROJECT + "/src/main.cpp"));
+		EditorTestHelper.joinReconciler((SourceViewer)fEditor.getViewer(), 10, 200, 20);
 		SelectionListenerWithASTManager.getDefault().addListener(fEditor, fSelWASTListener);
 		fDocument= fEditor.getDocumentProvider().getDocument(fEditor.getEditorInput());
 		assertNotNull(fDocument);

@@ -97,7 +97,8 @@ int MyI = 0,j = 0;
 		puts("tryagain");
 
 	} while (0);
-	if (MyI==0) {
+	if (MyI==0) 
+	{
 		return 1;
 	}
     return 0;

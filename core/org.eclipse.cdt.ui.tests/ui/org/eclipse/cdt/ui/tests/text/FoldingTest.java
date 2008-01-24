@@ -216,7 +216,7 @@ public class FoldingTest extends TestCase {
 				createPosition(57, 59),
 				createPosition(61, 63),
 				createPosition(65, 67),
-				createPosition(70, 103, 71),
+				createPosition(70, 104, 71),
 				createPosition(75, 76),
 				createPosition(77, 79),
 				createPosition(80, 82),
@@ -226,10 +226,10 @@ public class FoldingTest extends TestCase {
 				createPosition(90, 91),
 				createPosition(92, 93),
 				createPosition(95, 97),
-				createPosition(99, 101),
-				createPosition(105, 109),
+				createPosition(99, 102),
+				createPosition(106, 110),
 		};
-//		assertEquals(toString(expected), toString(actual));
+		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 	
@@ -251,7 +251,7 @@ public class FoldingTest extends TestCase {
 				createPosition(57, 59),
 				createPosition(61, 63),
 				createPosition(65, 67),
-				createPosition(70, 103, 71),
+				createPosition(70, 104, 71),
 				createPosition(75, 76),
 				createPosition(77, 79),
 				createPosition(80, 82),
@@ -261,10 +261,10 @@ public class FoldingTest extends TestCase {
 				createPosition(90, 91),
 				createPosition(92, 93),
 				createPosition(95, 97),
-				createPosition(99, 101),
-				createPosition(105, 109),
+				createPosition(99, 102),
+				createPosition(106, 110),
 		};
-//		assertEquals(toString(expected), toString(actual));
+		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 

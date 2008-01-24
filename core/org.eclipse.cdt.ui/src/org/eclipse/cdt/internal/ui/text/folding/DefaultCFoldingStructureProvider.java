@@ -51,7 +51,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -1127,13 +1126,16 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 					IASTFileLocation fl;
 					if (statement instanceof IASTIfStatement) {
 						IASTIfStatement ifstmt = (IASTIfStatement) statement;
+						fl = ifstmt.getFileLocation();
+						if (fl==null) return PROCESS_CONTINUE;
+						int ifOffset= fl.getNodeOffset();
 						IASTStatement tmp;
 						mr = new ModifiableRegionExtra();
 						tmp = ifstmt.getThenClause();
 						if (tmp==null) return PROCESS_CONTINUE;
 						fl = tmp.getFileLocation();
-						mr.setLength(fl.getNodeLength());
-						mr.setOffset(fl.getNodeOffset());
+						mr.setLength(fl.getNodeOffset() + fl.getNodeLength() - ifOffset);
+						mr.setOffset(ifOffset);
 						mr.inclusive = false;
 						tmp = ifstmt.getElseClause();
 						if (tmp==null) {
@@ -1148,6 +1150,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						mr.setOffset(fl.getNodeOffset());
 						mr.inclusive = true;
 						iral.push(mr);
+						return PROCESS_CONTINUE;
 					}
 					mr = new ModifiableRegionExtra();
 					mr.inclusive = true;
@@ -1186,7 +1189,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 								iral.push(tmpmr);
 								pushedMR = true;
 							}
-						}			
+						}
 					}
 					if (statement instanceof IASTForStatement ||
 							statement instanceof IASTWhileStatement ||
@@ -1198,9 +1201,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						iral.push(mr);
 					} 
 					return PROCESS_CONTINUE;
-				} catch (Throwable e) {
-					CCorePlugin.log(e);
-					return PROCESS_CONTINUE;
+				} catch (Exception e) {
+					CUIPlugin.getDefault().log(e);
+					return PROCESS_ABORT;
 				}
 			}
 		});

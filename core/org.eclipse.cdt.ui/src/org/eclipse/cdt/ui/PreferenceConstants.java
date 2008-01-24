@@ -10,6 +10,7 @@
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
  * 	   Sergey Prigogin (Google)
+ *     Elazar Leibovich (IDF) - Code folding of compound statements (bug 174597)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -812,6 +813,14 @@ public class PreferenceConstants {
 	 */
 	public static final String EDITOR_FOLDING_STRUCTURES= "editor_folding_default_structures"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that stores the value for statements folding (if/else, do/while, for, switch statements)
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public static final String EDITOR_FOLDING_STATEMENTS = "editor_folding_statements"; //$NON-NLS-1$
+	
 	/**
 	 * A named preference that stores the value for functions folding for the default folding provider.
 	 * <p>

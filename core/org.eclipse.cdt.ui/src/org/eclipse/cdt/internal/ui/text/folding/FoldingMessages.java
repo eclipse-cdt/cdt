@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Elazar Leibovich (IDF) - Code folding of compound statements (bug 174597)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.folding;
 
@@ -30,6 +31,7 @@ public final class FoldingMessages extends NLS {
 	public static String DefaultCFoldingPreferenceBlock_inactive_code;
 	public static String DefaultCFoldingPreferenceBlock_preprocessor_enabled;
 	public static String EmptyCFoldingPreferenceBlock_emptyCaption;
+	public static String DefaultCFoldingPreferenceBlock_statements_enabled;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, FoldingMessages.class);

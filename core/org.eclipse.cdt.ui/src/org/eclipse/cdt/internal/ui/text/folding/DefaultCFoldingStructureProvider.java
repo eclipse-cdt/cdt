@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
+ *     Elazar Leibovich (IDF) - Code folding of compound statements (bug 174597)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.folding;
@@ -50,6 +51,16 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
@@ -58,7 +69,10 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -647,6 +661,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	
 	private int fMinCommentLines= 1;
 	private boolean fPreprocessorBranchFoldingEnabled= true;
+	private boolean fStatementsFoldingEnabled= false;
 	private boolean fCommentFoldingEnabled= true;
 
 	private ICReconcilingListener fReconilingListener;
@@ -810,7 +825,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		fCollapseComments= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_COMMENTS);
 		fCollapseInactiveCode= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE);
 		fPreprocessorBranchFoldingEnabled= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED);
-		fCommentFoldingEnabled= true;
+		fStatementsFoldingEnabled= store.getBoolean(PreferenceConstants.EDITOR_FOLDING_STATEMENTS);
+		fCommentFoldingEnabled = true;
 	}
 
 	private void update(FoldingStructureComputationContext ctx) {
@@ -1041,7 +1057,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				// ignore
 			}
 		}
-		if (fPreprocessorBranchFoldingEnabled) {
+		if (fPreprocessorBranchFoldingEnabled || fStatementsFoldingEnabled) {
 			IASTTranslationUnit ast= ctx.getAST();
 			if (ast == null) {
 				final ASTProvider astProvider= CUIPlugin.getDefault().getASTProvider();
@@ -1080,9 +1096,129 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 		return false;
 	}
-	
+
+	private static class ModifiableRegionExtra extends ModifiableRegion {
+		/*
+		 * A modifiable region with extra information about the region it holds.
+		 * It tells us whether or not to include the last line of the region
+		 */
+		public boolean inclusive;
+	}
+
 	/**
-	 * Compute folding structure of the preprocessor branches for the given AST.
+	 * Computes folding structure for preprocessor branches for the given AST.
+	 * 
+	 * @param ast
+	 * @param ctx
+	 */
+	private void computeStatementFoldingStructure(IASTTranslationUnit ast, FoldingStructureComputationContext ctx) {
+		final Stack iral = new Stack();
+		ast.accept(new ASTVisitor() {
+			{
+				shouldVisitStatements = true;
+			}
+
+			public int visit(IASTStatement statement) {
+				// if it's not part of the displayed - file, we don't need it
+				if (!statement.isPartOfTranslationUnitFile())
+					return PROCESS_SKIP;// we neither need its descendants
+				try {
+					ModifiableRegionExtra mr;
+					IASTFileLocation fl;
+					if (statement instanceof IASTIfStatement) {
+						IASTIfStatement ifstmt = (IASTIfStatement) statement;
+						IASTStatement tmp;
+						mr = new ModifiableRegionExtra();
+						tmp = ifstmt.getThenClause();
+						if (tmp==null) return PROCESS_CONTINUE;
+						fl = tmp.getFileLocation();
+						mr.setLength(fl.getNodeLength());
+						mr.setOffset(fl.getNodeOffset());
+						mr.inclusive = false;
+						tmp = ifstmt.getElseClause();
+						if (tmp==null) {
+							mr.inclusive = true;
+							iral.push(mr);
+							return PROCESS_CONTINUE;
+						}
+						iral.push(mr);
+						mr = new ModifiableRegionExtra();
+						fl = tmp.getFileLocation();
+						mr.setLength(fl.getNodeLength());
+						mr.setOffset(fl.getNodeOffset());
+						mr.inclusive = true;
+						iral.push(mr);
+					}
+					mr = new ModifiableRegionExtra();
+					mr.inclusive = true;
+					if (statement instanceof IASTDoStatement)
+						mr.inclusive = false;
+					if (statement instanceof IASTSwitchStatement) {
+						IASTStatement switchstmt = ((IASTSwitchStatement)statement).getBody();
+						if (switchstmt instanceof IASTCompoundStatement) {
+							IASTStatement[] stmts = ((IASTCompoundStatement)switchstmt).getStatements();
+							boolean pushedMR = false;
+							for (int i = 0; i < stmts.length; i++) {
+								IASTStatement tmpstmt = stmts[i];
+								ModifiableRegionExtra tmpmr;
+								if (!(tmpstmt instanceof IASTCaseStatement || tmpstmt instanceof IASTDefaultStatement)) {
+									if (!pushedMR) return PROCESS_SKIP;
+									IASTFileLocation tmpfl = tmpstmt.getFileLocation();
+									tmpmr = (ModifiableRegionExtra) iral.peek();
+									tmpmr.setLength(tmpfl.getNodeLength()+tmpfl.getNodeOffset()-tmpmr.getOffset());
+									if (tmpstmt instanceof IASTBreakStatement) pushedMR = false;
+									continue;
+								}
+								IASTFileLocation tmpfl;
+								tmpmr = new ModifiableRegionExtra();
+								tmpmr.inclusive = true;
+								if (tmpstmt instanceof IASTCaseStatement) {
+									IASTCaseStatement casestmt = (IASTCaseStatement) tmpstmt;
+									tmpfl = casestmt.getExpression().getFileLocation();
+									tmpmr.setOffset(tmpfl.getNodeOffset());
+									tmpmr.setLength(tmpfl.getNodeLength());
+								} else if (tmpstmt instanceof IASTDefaultStatement) {
+									IASTDefaultStatement defstmt = (IASTDefaultStatement) tmpstmt;
+									tmpfl = defstmt.getFileLocation();
+									tmpmr.setOffset(tmpfl.getNodeOffset()+tmpfl.getNodeLength());
+									tmpmr.setLength(0);
+								}
+								iral.push(tmpmr);
+								pushedMR = true;
+							}
+						}			
+					}
+					if (statement instanceof IASTForStatement ||
+							statement instanceof IASTWhileStatement ||
+							statement instanceof IASTDoStatement ||
+							statement instanceof IASTSwitchStatement) {
+						fl = statement.getFileLocation();
+						mr.setLength(fl.getNodeLength());
+						mr.setOffset(fl.getNodeOffset());
+						iral.push(mr);
+					} 
+					return PROCESS_CONTINUE;
+				} catch (Throwable e) {
+					CCorePlugin.log(e);
+					return PROCESS_CONTINUE;
+				}
+			}
+		});
+		while (!iral.empty()) {
+			ModifiableRegionExtra mr = (ModifiableRegionExtra) iral.pop();
+			IRegion aligned = alignRegion(mr, ctx,mr.inclusive);
+			if (aligned != null) {
+				Position alignedPos= new Position(aligned.getOffset(), aligned.getLength());
+				ctx.addProjectionRange(new CProjectionAnnotation(false, computeKey(mr, ctx), false), alignedPos);
+			}
+		}
+	}
+
+	/**
+	 * Compute folding structure of things related to the AST tree. Currently it
+	 * computes the folding structure for: preprocessor branches for the given
+	 * AST. Also, it computes statements folding (if/else do/while for and
+	 * switch)
 	 * 
 	 * @param ast
 	 * @param ctx
@@ -1095,22 +1231,38 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		if (fileName == null) {
 			return;
 		}
-		List branches= new ArrayList();
+
+		if (fStatementsFoldingEnabled)
+			computeStatementFoldingStructure(ast, ctx);
+
+		if (fPreprocessorBranchFoldingEnabled)
+			computePreprocessorFoldingStructure(ast, ctx, fileName);
+	}
+
+	/**
+	 * Computes folding structure for preprocessor branches for the given AST.
+	 * 
+	 * @param ast
+	 * @param ctx
+	 * @param fileName
+	 */
+	private void computePreprocessorFoldingStructure(IASTTranslationUnit ast,
+			FoldingStructureComputationContext ctx, String fileName) {
+		List branches = new ArrayList();
 		Stack branchStack = new Stack();
 
 		IASTPreprocessorStatement[] preprocStmts = ast.getAllPreprocessorStatements();
 
 		for (int i = 0; i < preprocStmts.length; i++) {
 			IASTPreprocessorStatement statement = preprocStmts[i];
-			if (!fileName.equals(statement.getContainingFilename())) {
+			if (!statement.isPartOfTranslationUnitFile()) {
 				// preprocessor directive is from a different file
 				continue;
 			}
-			IASTNodeLocation[] nodeLocations = statement.getNodeLocations();
-			if (nodeLocations.length != 1) {
+			IASTNodeLocation stmtLocation= statement.getFileLocation();
+			if (stmtLocation == null) {
 				continue;
 			}
-			IASTNodeLocation stmtLocation= nodeLocations[0];
 			if (statement instanceof IASTPreprocessorIfStatement) {
 				IASTPreprocessorIfStatement ifStmt = (IASTPreprocessorIfStatement)statement;
 				branchStack.push(new Branch(stmtLocation.getNodeOffset(), ifStmt.taken()));
@@ -1311,6 +1463,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		case ICElement.C_STRUCT:
 		case ICElement.C_CLASS:
 		case ICElement.C_UNION:
+		case ICElement.C_ENUMERATION:
 		case ICElement.C_TEMPLATE_STRUCT:
 		case ICElement.C_TEMPLATE_CLASS:
 		case ICElement.C_TEMPLATE_UNION:

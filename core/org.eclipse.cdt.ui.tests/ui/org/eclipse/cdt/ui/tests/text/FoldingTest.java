@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     Elazar Leibovich (The Open University) - extra folding test
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
@@ -80,6 +81,7 @@ public class FoldingTest extends TestCase {
 
 		IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED, true);
+		store.setValue(PreferenceConstants.EDITOR_FOLDING_STATEMENTS, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, true);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, false);
 		store.setValue(PreferenceConstants.EDITOR_FOLDING_HEADERS, false);
@@ -119,12 +121,13 @@ public class FoldingTest extends TestCase {
 			assertEquals(expectedEndLine, actualEndLine);
 			if (exp instanceof IProjectionPosition) {
 				int expectedCaptionOffset= ((IProjectionPosition)exp).computeCaptionOffset(document);
+				int expectedCaptionLine= document.getLineOfOffset(exp.getOffset() + expectedCaptionOffset);
+				int actualCaptionLine= actualStartLine;
 				if (act instanceof IProjectionPosition) {
 					int actualCaptionOffset= ((IProjectionPosition)act).computeCaptionOffset(document);
-					assertEquals(expectedCaptionOffset, actualCaptionOffset);
-				} else {
-					assertEquals(expectedCaptionOffset, 0);
+					actualCaptionLine= document.getLineOfOffset(exp.getOffset() + actualCaptionOffset);
 				}
+				assertEquals(expectedCaptionLine, actualCaptionLine);
 			}
 		}
 	}
@@ -152,7 +155,20 @@ public class FoldingTest extends TestCase {
 			Position position= positions[i];
 			int startLine= document.getLineOfOffset(position.getOffset());
 			int endLine= document.getLineOfOffset(position.getOffset()+position.getLength()-1);
-			buf.append("\tcreatePosition(" + startLine + ", " + endLine + "),\n");
+			int captionLine= startLine;
+			if (position instanceof IProjectionPosition) {
+				final int captionOffset = ((IProjectionPosition)position).computeCaptionOffset(document);
+				captionLine= document.getLineOfOffset(position.getOffset() + captionOffset);
+			}
+			buf.append("\tcreatePosition(");
+			buf.append(startLine);
+			buf.append(", ");
+			buf.append(endLine);
+			if (captionLine != startLine) {
+				buf.append(", ");
+				buf.append(captionLine);
+			}
+			buf.append("),\n");
 		}
 		buf.append("};\n");
 		return buf.toString();
@@ -179,7 +195,7 @@ public class FoldingTest extends TestCase {
 	public void testInitialFolding() throws BadLocationException {
 		Position[] actual= getFoldingPositions();
 		Position[] expected= new Position[] {
-				createPosition(0, 2),
+				createPosition(0, 2, 1),
 				createPosition(4, 7),
 				createPosition(9, 12),
 				createPosition(10, 12),
@@ -190,7 +206,7 @@ public class FoldingTest extends TestCase {
 				createPosition(18, 20),
 				createPosition(21, 25),
 				createPosition(22, 24),
-				createPosition(29, 31),
+				createPosition(29, 31, 30),
 				createPosition(34, 35),
 				createPosition(35, 40),
 				createPosition(36, 38),
@@ -200,9 +216,20 @@ public class FoldingTest extends TestCase {
 				createPosition(57, 59),
 				createPosition(61, 63),
 				createPosition(65, 67),
-				createPosition(70, 75, 71),
+				createPosition(70, 103, 71),
+				createPosition(75, 76),
+				createPosition(77, 79),
+				createPosition(80, 82),
+				createPosition(83, 85),
+				createPosition(86, 94),
+				createPosition(87, 89),
+				createPosition(90, 91),
+				createPosition(92, 93),
+				createPosition(95, 97),
+				createPosition(99, 101),
+				createPosition(105, 109),
 		};
-		if (false) System.out.println(toString(actual));
+//		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 	
@@ -214,9 +241,9 @@ public class FoldingTest extends TestCase {
 		
 		Position[] actual= getFoldingPositions();
 		Position[] expected= new Position[] {
-				createPosition(0, 2),
+				createPosition(0, 2, 1),
 				createPosition(4, 7),
-				createPosition(29, 31),
+				createPosition(29, 31, 30),
 				createPosition(35, 40),
 				createPosition(42, 46),
 				createPosition(48, 55),
@@ -224,9 +251,20 @@ public class FoldingTest extends TestCase {
 				createPosition(57, 59),
 				createPosition(61, 63),
 				createPosition(65, 67),
-				createPosition(70, 75, 71),
+				createPosition(70, 103, 71),
+				createPosition(75, 76),
+				createPosition(77, 79),
+				createPosition(80, 82),
+				createPosition(83, 85),
+				createPosition(86, 94),
+				createPosition(87, 89),
+				createPosition(90, 91),
+				createPosition(92, 93),
+				createPosition(95, 97),
+				createPosition(99, 101),
+				createPosition(105, 109),
 		};
-		if (false) System.out.println(toString(actual));
+//		assertEquals(toString(expected), toString(actual));
 		assertEqualPositions(expected, actual);
 	}
 

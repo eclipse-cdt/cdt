@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     Elazar Leibovich (IDF) - Code folding of compound statements (bug 174597)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.text.folding;
@@ -74,6 +75,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_HEADERS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_FOLDING_STATEMENTS));
 		
 		return (OverlayKey[]) overlayKeys.toArray(new OverlayKey[overlayKeys.size()]);
 	}
@@ -92,6 +94,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		inner.setLayout(layout);
 
 		addCheckBox(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_preprocessor_enabled, PreferenceConstants.EDITOR_FOLDING_PREPROCESSOR_BRANCHES_ENABLED, 1);
+		addCheckBox(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_statements_enabled, PreferenceConstants.EDITOR_FOLDING_STATEMENTS, 1);
 		ControlFactory.createEmptySpace(inner);
 
 		Composite group= ControlFactory.createGroup(inner, FoldingMessages.DefaultCFoldingPreferenceBlock_title, 1);
@@ -101,7 +104,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_methods, PreferenceConstants.EDITOR_FOLDING_METHODS, 0); 
 		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_structures, PreferenceConstants.EDITOR_FOLDING_STRUCTURES, 0); 
 		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_comments, PreferenceConstants.EDITOR_FOLDING_COMMENTS, 0); 
-		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_headers, PreferenceConstants.EDITOR_FOLDING_HEADERS, 0); 
+		addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_headers, PreferenceConstants.EDITOR_FOLDING_HEADERS, 0);
 		fInactiveCodeFoldingCheckBox= addCheckBox(group, FoldingMessages.DefaultCFoldingPreferenceBlock_inactive_code, PreferenceConstants.EDITOR_FOLDING_INACTIVE_CODE, 0); 
 		
 		return inner;

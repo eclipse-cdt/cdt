@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 QNX Software Systems and others.
+ * Copyright (c) 2000, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -358,41 +357,46 @@ public class EditorUtility {
 	 * @return an <code>IFile</code> or <code>null</code>
 	 */
 	private static IFile getWorkspaceFileAtLocation(IPath location, ICElement context) {
-		// search non-linked resource
-		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
-		if (file == null || !CoreModel.hasCNature(file.getProject())) {
-			// try to find a linked resource
-			IProject project= null;
-			if (context != null) {
-				ICProject cProject= context.getCProject();
-				if (cProject != null) {
-					project= cProject.getProject();
-				}
+		IProject project= null;
+		if (context != null) {
+			ICProject cProject= context.getCProject();
+			if (cProject != null) {
+				project= cProject.getProject();
 			}
-			IFile bestMatch= null;
-			IFile secondBestMatch= null;
-			IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-			IFile[] files= root.findFilesForLocation(location);
-			for (int i= 0; i < files.length; i++) {
-				file= files[i];
-				if (file.isAccessible()) {
-					if (project != null && file.getProject().equals(project)) {
-						bestMatch= file;
-						break;
-					} else if (CoreModel.hasCNature(file.getProject())) {
-						bestMatch= file;
-						if (project == null) {
-							break;
-						}
-					} else {
-						// match in  non-CDT project
-						secondBestMatch= file;
-					}
-				}
-			}
-			return bestMatch != null ? bestMatch : secondBestMatch;
 		}
-		return file;
+		IFile bestMatch= null;
+		IFile secondBestMatch= null;
+		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
+		IFile[] files= root.findFilesForLocation(location);
+		for (int i= 0; i < files.length; i++) {
+			IFile file= files[i];
+			if (file.isAccessible()) {
+				if (project != null && file.getProject().equals(project)) {
+					bestMatch= file;
+					break;
+				} else if (CoreModel.hasCNature(file.getProject())) {
+					bestMatch= file;
+					if (project == null) {
+						break;
+					}
+				} else {
+					// match in  non-CDT project
+					secondBestMatch= file;
+				}
+			}
+		}
+		bestMatch=  bestMatch != null ? bestMatch : secondBestMatch;
+		if (bestMatch == null) {
+			// try workspace relative path
+			if (location.segmentCount() >= 2) {
+				// @see IContainer#getFile for the required number of segments
+				IFile file= root.getFile(location);
+				if  (file != null && file.isAccessible()) {
+					bestMatch= file;
+				}
+			}
+		}
+		return bestMatch;
 	}
 
 	/**

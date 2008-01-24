@@ -28,11 +28,19 @@
   Platform Runtime is the minimum requirement for core RSE and Terminal.
   Discovery needs EMF, and the RemoteCDT integration needs CDT.</li>
 <li>Important Bug Fixes, Enhancements and API changes:<ul>
-<li>The RSE "Link with Editor" action has been fixed. A new <tt>IViewLinker</tt>
+<li>The RSE "<b>Link with Editor</b>" action has been fixed. A new <tt>IViewLinker</tt>
   API as well as extensions to the <tt>ISystemTree</tt> API were made to get this done
   [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187711">187711</a>].</li>
+<li><b>Permissions, Owner and Group</b> of remote files on DStore, SSH and FTP connections 
+  can now be shown in the Property sheet and the Table view. There is also a new
+  Property page to modify Permissions, Owner and Group if that is supported by the
+  file service. New API was introduced to support this
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=209593">209593</a>].</li>
+<li>In the optional <b>Terminal Input Field</b>, field assist (Ctrl+Space) has been
+  added to easily access commands that were entered previously
+  [<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=211659">211659</a>].</li>
 </ul></li>
-<li>At least 4 bugs were fixed: Use 
+<li>At least 12 bugs were fixed: Use 
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-01-05&chfieldto=2008-02-18&chfield=resolution&cmdtype=doit"> -->
   <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&chfieldfrom=2008-01-05&chfieldto=2008-02-18&chfield=resolution&cmdtype=doit&negate0=1&field0-0-0=target_milestone&type0-0-0=substring&value0-0-0=2.0.&field0-0-1=target_milestone&type0-0-1=regexp&value0-0-1=3.0%20M%5B34%5D">
   <!-- <a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced&classification=DSDP&product=Target+Management&target_milestone=3.0+M5&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&resolution=FIXED&resolution=WONTFIX&resolution=INVALID&resolution=WORKSFORME&cmdtype=doit"> -->

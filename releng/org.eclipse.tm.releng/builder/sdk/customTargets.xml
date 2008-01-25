@@ -81,6 +81,20 @@
 			<property name="file" value="${emfFile}" />
 			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.emf.ecore/plugin.xml" />
 		</ant>
+		<!-- Important: This must be the last dependency downloaded, because the
+				getDependency target strips versions from all plug-ins -->
+		<echo message="Download Orbit Bundles ..." />
+		<ant target="getBundle" antfile="${buildDirectory}/../org.eclipse.modeling.common.releng/scripts/getDependenciesHelper.xml">
+			<property name="url" value="${orbitURL}"/>
+			<property name="file" value="${orbitFile}"/>
+		</ant>
+		<echo message="Unpack selected jars ..." />
+		<unzip dest="${buildDirectory}/.." src="${downloadsDir}/${orbitFile}">
+			<patternset>
+				<include name="**/org.apache.oro*.jar"/>
+				<include name="**/org.apache.commons.net*.jar"/>
+			</patternset>
+		</unzip>
 	</target>
 
 	<!-- ===================================================================== -->

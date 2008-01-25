@@ -24,7 +24,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
@@ -41,13 +44,19 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
+import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.rewrite.MacroExpansionExplorer.IMacroExpansionStep;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -55,9 +64,11 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 
 import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * Information control for macro expansion exploration.
@@ -136,7 +147,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		splitter.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fMacroViewer= createSourceViewer(splitter, style | SWT.V_SCROLL | SWT.H_SCROLL);
 		CompareViewerControl control= super.createCompareViewerControl(splitter, style, compareConfig);
-		splitter.setWeights(new int[] { 30, 70 });
+		splitter.setWeights(new int[] { 20, 80 });
 		return control;
 	}
 
@@ -194,6 +205,13 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	                return null;
 	            }
 	        };
+	        IHandler gotoDefinitionHandler= new AbstractHandler() {
+	            public Object execute(ExecutionEvent event) throws ExecutionException {
+	                gotoMacroDefinition();
+	                return null;
+	            }
+	        };
+	
 	
 	        IWorkbench workbench= PlatformUI.getWorkbench();
 	        fHandlerService= (IHandlerService) workbench.getService(IHandlerService.class);
@@ -202,6 +220,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	        fHandlerActivations= new ArrayList();
 	        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_BACK, backwardHandler));
 	        fHandlerActivations.add(fHandlerService.activateHandler(COMMAND_ID_EXPANSION_FORWARD, forwardHandler));
+	        fHandlerActivations.add(fHandlerService.activateHandler(ICEditorActionDefinitionIds.OPEN_DECL, gotoDefinitionHandler));
 
 	        String infoText= getInfoText();
 	        if (infoText != null) {
@@ -212,7 +231,40 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
         return result;
 	}
 
-	protected void forward() {
+	/*
+	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#fillViewMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void fillViewMenu(IMenuManager viewMenu) {
+		super.fillViewMenu(viewMenu);
+		final CommandContributionItemParameter params= new CommandContributionItemParameter(
+				PlatformUI.getWorkbench(), null, ICEditorActionDefinitionIds.OPEN_DECL, CommandContributionItem.STYLE_PUSH);
+		viewMenu.add(new CommandContributionItem(params));
+	}
+
+	protected final void gotoMacroDefinition() {
+		if (fIndex < getStepCount()) {
+			final IMacroExpansionStep step= fInput.fExplorer.getExpansionStep(fIndex);
+			IASTFileLocation fileLocation= step.getLocationOfExpandedMacroDefinition();
+			if (fileLocation != null) {
+				final IPath path= new Path(fileLocation.getFileName());
+				final int offset= fileLocation.getNodeOffset();
+				final int length= fileLocation.getNodeLength();
+				IEditorPart editor;
+				try {
+					editor = EditorUtility.openInEditor(path, null);
+					if (editor instanceof ITextEditor) {
+						ITextEditor textEditor = (ITextEditor)editor;
+						textEditor.selectAndReveal(offset, length);
+					}
+					dispose();
+				} catch (PartInitException exc) {
+					CUIPlugin.getDefault().log(exc);
+				}
+			}
+		}
+	}
+
+	protected final void forward() {
 		fIndex= fixIndex(fIndex + 1);
 		if (fIndex > getStepCount()) {
 			fIndex= 0;
@@ -220,7 +272,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 		showExpansion();
 	}
 
-	protected void backward() {
+	protected final void backward() {
 		--fIndex;
 		if (fIndex < 0) {
 			fIndex= fixIndex(getStepCount());
@@ -266,7 +318,7 @@ public class CMacroExpansionExplorationControl extends AbstractCompareViewerInfo
 	 * @see org.eclipse.cdt.internal.ui.text.AbstractCompareViewerInformationControl#getId()
 	 */
 	protected String getId() {
-		return "org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration"; //$NON-NLS-1$
+		return "org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration0"; //$NON-NLS-1$
 	}
 
 	/*

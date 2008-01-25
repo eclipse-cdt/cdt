@@ -89,7 +89,7 @@ public class CMacroExpansionInput {
     			final int startOffset = location.getNodeOffset();
 				if (startOffset <= fOffset) {
     				int endOffset= startOffset + location.getNodeLength();
-    				if (endOffset >= fEndOffset) {
+    				if (endOffset >= fEndOffset || node instanceof IASTTranslationUnit) {
     					if (startOffset > fBestOffset || endOffset < fBestEndOffset) {
 	    					fBestMatch= node;
 	    					fBestOffset= startOffset;

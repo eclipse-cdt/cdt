@@ -1480,7 +1480,12 @@
             contextId="org.eclipse.cdt.ui.macroExpansionHoverScope"
             commandId="org.eclipse.cdt.ui.hover.forwardMacroExpansion"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-	  <key
+     <key
+            sequence="F3"
+            contextId="org.eclipse.cdt.ui.macroExpansionHoverScope"
+            commandId="org.eclipse.cdt.ui.edit.opendecl"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	 <key
 	        sequence="M2+M3+O"
 	        contextId="org.eclipse.cdt.ui.cEditorScope"
 	        commandId="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"

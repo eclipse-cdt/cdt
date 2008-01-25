@@ -84,7 +84,7 @@ propertyName=propertyValue
 
 		<property name="buildAlias" value="${buildLabel}" />
 		<property name="buildId" value="${buildAlias}" />
-		<property name="forceContextQualifier" value="v${timestamp}"/>
+		<!-- <property name="forceContextQualifier" value="v${timestamp}"/> -->
 
 		<!--store the build label information in a file-->
 		<echo file="${buildDirectory}/label.properties" append="true" >
@@ -102,9 +102,11 @@ propertyName=propertyValue
 		<echo file="${buildDirectory}/label.properties" append="true">
 		buildAlias=${buildAlias}
 		</echo>
+		<!--
 		<echo file="${buildDirectory}/label.properties" append="true" >
 		forceContextQualifier=${forceContextQualifier}
 		</echo>
+		-->
 	</target>
 
 	<target name="run" depends="init">

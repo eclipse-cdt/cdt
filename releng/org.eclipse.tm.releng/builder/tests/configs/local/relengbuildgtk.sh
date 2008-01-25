@@ -64,7 +64,7 @@ execCmd ()
 	echo ""; echo "[relengbuild] [`date +%H\:%M\:%S`]"; 
 	echo "  $1" | perl -pe "s/ -/\n  -/g";
 	if [ "x$2" != "x" ]; then
-		$1 | tee $2;
+		$1 2>&1 | tee $2;
 	else
 		$1;
 	fi

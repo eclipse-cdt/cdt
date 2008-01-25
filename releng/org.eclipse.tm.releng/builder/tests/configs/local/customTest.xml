@@ -24,7 +24,8 @@
 		<!-- TODO: if your project requires more dependencies for testing, add them here -->
 		<echo message="Copy EMF SDK + Eclipse SDK to ${executionDir}..."/>
 		<copy todir="${executionDir}">
-			<fileset dir="${downloadsDir}" includes="${emfFile},${eclipseFile}"/>
+			<!--<fileset dir="${downloadsDir}" includes="${emfFile},${eclipseFile},${wtpFile},${orbitFile}"/>-->
+			<fileset dir="${downloadsDir}" includes="${emfFile},${eclipseFile},${orbitFile}"/>
 		</copy>
 		<property name="shell" value="relengbuildgtk.sh"/>
 	

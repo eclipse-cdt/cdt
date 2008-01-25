@@ -67,6 +67,28 @@
 <!-- Steps to do after setup but before starting the build proper -->
 <!-- ===================================================================== -->
 <target name="postSetup">
+		<ant target="getDependency" antfile="${buildDirectory}/../org.eclipse.modeling.common.releng/scripts/getDependencies.xml">
+			<property name="url" value="${eclipseURL}" />
+			<property name="file" value="${eclipseFile}" />
+			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.platform.doc.isv/plugin.xml" />
+		</ant>
+		<ant target="getDependency" antfile="${buildDirectory}/../org.eclipse.modeling.common.releng/scripts/getDependencies.xml">
+			<property name="url" value="${emfURL}" />
+			<property name="file" value="${emfFile}" />
+			<property name="isUnpackedFile" value="${buildDirectory}/plugins/org.eclipse.emf.ecore/plugin.xml" />
+		</ant>
+		<!-- Important: This must be the last dependency downloaded, because the
+					                getDependency target strips versions from all plug-ins -->
+		<ant target="getBundle" antfile="${buildDirectory}/../org.eclipse.modeling.common.releng/scripts/getDependenciesHelper.xml">
+			<property name="url" value="${orbitURL}" />
+			<property name="file" value="${orbitFile}" />
+		</ant>
+		<unzip dest="${buildDirectory}/.." src="${downloadsDir}/${orbitFile}">
+			<patternset>
+				<include name="**/org.apache.oro*.jar" />
+				<include name="**/org.apache.commons.net*.jar" />
+			</patternset>
+		</unzip>
 </target>
 
 <!-- ===================================================================== -->
@@ -167,7 +189,9 @@
 	<!--unzip the junit tests-->
     <mkdir dir="${workingDirectory}/eclipse" />
 	<unzip dest="${workingDirectory}" overwrite="true">
-		<fileset dir="${buildDirectory}/${buildLabel}"><include name="**/RSE-junit-tests*.zip"/></fileset>
+		<fileset dir="${buildDirectory}/${buildLabel}">
+			<include name="**/RSE-junit-tests*.zip"/>
+		</fileset>
 	</unzip>
 	
 	<!-- create top level testing directory-->    

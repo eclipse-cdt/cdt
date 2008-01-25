@@ -158,10 +158,11 @@ propertyName=propertyValue
 		</ant>
 
 		<!-- doc must be the last execution -->
-
+		<!-- we dont have a separate doc feature for TM/RSE, so leave that out for now
 		<ant antfile="build.xml" target="main">
 			<property name="component" value="builder/doc" />
 		</ant>
+		-->
 
 		<!-- TODO: if necessary, you can copy files from the SDK into the runtime or examples zips here  -->
 		<!-- for example, see validation/buildAll.xml or cdo/buildAll.xml -->

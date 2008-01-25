@@ -55,10 +55,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
@@ -1102,6 +1105,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * It tells us whether or not to include the last line of the region
 		 */
 		public boolean inclusive;
+		public String function;
+		public int level;
 	}
 
 	/**
@@ -1115,9 +1120,12 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		ast.accept(new ASTVisitor() {
 			{
 				shouldVisitStatements = true;
+				shouldVisitDeclarations = true;
 			}
-
+			int fLevel= 0;
+			String fFunction= ""; //$NON-NLS-1$
 			public int visit(IASTStatement statement) {
+				++fLevel;
 				// if it's not part of the displayed - file, we don't need it
 				if (!statement.isPartOfTranslationUnitFile())
 					return PROCESS_SKIP;// we neither need its descendants
@@ -1131,6 +1139,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						int ifOffset= fl.getNodeOffset();
 						IASTStatement tmp;
 						mr = new ModifiableRegionExtra();
+						mr.function= fFunction;
+						mr.level= fLevel;
 						tmp = ifstmt.getThenClause();
 						if (tmp==null) return PROCESS_CONTINUE;
 						fl = tmp.getFileLocation();
@@ -1145,6 +1155,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						}
 						iral.push(mr);
 						mr = new ModifiableRegionExtra();
+						mr.function= fFunction;
+						mr.level= fLevel;
 						fl = tmp.getFileLocation();
 						mr.setLength(fl.getNodeLength());
 						mr.setOffset(fl.getNodeOffset());
@@ -1153,6 +1165,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						return PROCESS_CONTINUE;
 					}
 					mr = new ModifiableRegionExtra();
+					mr.function= fFunction;
+					mr.level= fLevel;
 					mr.inclusive = true;
 					if (statement instanceof IASTDoStatement)
 						mr.inclusive = false;
@@ -1174,6 +1188,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 								}
 								IASTFileLocation tmpfl;
 								tmpmr = new ModifiableRegionExtra();
+								tmpmr.function= fFunction;
+								tmpmr.level= fLevel+1;
 								tmpmr.inclusive = true;
 								if (tmpstmt instanceof IASTCaseStatement) {
 									IASTCaseStatement casestmt = (IASTCaseStatement) tmpstmt;
@@ -1199,12 +1215,31 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 						mr.setLength(fl.getNodeLength());
 						mr.setOffset(fl.getNodeOffset());
 						iral.push(mr);
-					} 
+					}
 					return PROCESS_CONTINUE;
 				} catch (Exception e) {
 					CUIPlugin.getDefault().log(e);
 					return PROCESS_ABORT;
 				}
+			}
+			public int leave(IASTStatement statement) {
+				--fLevel;
+				return PROCESS_CONTINUE;
+			}
+			public int visit(IASTDeclaration declaration) {
+				if (!declaration.isPartOfTranslationUnitFile())
+					return PROCESS_SKIP;// we neither need its descendants
+				if (declaration instanceof IASTFunctionDefinition) {
+					final IASTFunctionDeclarator declarator = ((IASTFunctionDefinition)declaration).getDeclarator();
+					if (declarator != null) {
+						fFunction= new String(declarator.getName().toCharArray());
+					}
+				}
+				return PROCESS_CONTINUE;
+			}
+			public int leave(IASTDeclaration declaration) {
+				fFunction= ""; //$NON-NLS-1$
+				return PROCESS_CONTINUE;
 			}
 		});
 		while (!iral.empty()) {
@@ -1212,7 +1247,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			IRegion aligned = alignRegion(mr, ctx,mr.inclusive);
 			if (aligned != null) {
 				Position alignedPos= new Position(aligned.getOffset(), aligned.getLength());
-				ctx.addProjectionRange(new CProjectionAnnotation(false, computeKey(mr, ctx), false), alignedPos);
+				ctx.addProjectionRange(new CProjectionAnnotation(false, mr.function + mr.level + computeKey(mr, ctx), false), alignedPos);
 			}
 		}
 	}

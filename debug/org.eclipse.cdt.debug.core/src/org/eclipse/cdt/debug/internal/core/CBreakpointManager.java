@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -50,20 +51,21 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpointManagement2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration2;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpointFilterExtension;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint2;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.BreakpointProblems;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
@@ -329,7 +331,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				ICBreakpoint b = (ICBreakpoint)breakpoints[i];
 				boolean install = false;
 				try {
-					ICDebugTarget[] tfs = b.getTargetFilters();
+					ICDebugTarget[] tfs = getFilterExtension(b).getTargetFilters();
 					install = Arrays.asList( tfs ).contains( getDebugTarget() );
 				}
 				catch( CoreException e ) {
@@ -484,7 +486,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			
 			try {
 				BreakpointProblems.removeProblemsForResolvedBreakpoint(breakpoint, getDebugTarget().getInternalID());
-				breakpoint.setTargetFilter( getDebugTarget() );
+				getFilterExtension(breakpoint).setTargetFilter( getDebugTarget() );
 				((CBreakpoint)breakpoint).register( true );
 			}
 			catch( CoreException e ) {
@@ -513,7 +515,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 
 		if ( breakpoint != null ) {
 			try {
-				breakpoint.setTargetFilter( getDebugTarget() );
+			    getFilterExtension(breakpoint).setTargetFilter( getDebugTarget() );
 				((CBreakpoint)breakpoint).register( true );
 			}
 			catch( CoreException e ) {
@@ -532,8 +534,10 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				int newLineNumber = movedEvent.getNewLocation().getLineNumber();
 				int currLineNumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, newLineNumber);
 				breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, newLineNumber);
-				fBreakpointProblems.add(BreakpointProblems.reportBreakpointMoved(
-						breakpoint, currLineNumber, newLineNumber, getDebugTarget().getName(), getDebugTarget().getInternalID()));
+				IMarker marker = BreakpointProblems.reportBreakpointMoved(
+						breakpoint, currLineNumber, newLineNumber, getDebugTarget().getName(), getDebugTarget().getInternalID());
+				if (marker != null)
+					fBreakpointProblems.add(marker);
 			} catch (CoreException e) {}
 		}
 		
@@ -612,7 +616,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		if ( breakpoint != null ) {
 			if ( isFilteredByTarget( breakpoint, getDebugTarget() ) ) {
 				try {
-					breakpoint.removeTargetFilter( getDebugTarget() );
+				    getFilterExtension(breakpoint).removeTargetFilter( getDebugTarget() );
 				}
 				catch( CoreException e ) {
 				}
@@ -665,7 +669,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 			ICBreakpoint breakpoint = (ICBreakpoint) iter.next();
 			if ( isFilteredByTarget( breakpoint, target ) ) {
 				try {
-					breakpoint.removeTargetFilter( target );
+					getFilterExtension(breakpoint).removeTargetFilter( target );
 				}
 				catch( CoreException e ) {
 					CDebugCorePlugin.log( e.getStatus() );					
@@ -724,7 +728,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					String fileName = breakpoint.getFileName();
 					ICDIFunctionLocation location = cdiTarget.createFunctionLocation( fileName, function );
 					ICDICondition condition = createCondition( breakpoint );
-					fBreakpointProblems.add(BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID()));
+					IMarker marker = BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID());
+					if (marker != null)
+						fBreakpointProblems.add(marker);
 					if (bpManager2 != null)
 						b = bpManager2.setFunctionBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
 					else
@@ -798,7 +804,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 
 	private String[] getThreadNames( ICBreakpoint breakpoint ) {
 		try {
-			ICThread[] threads = breakpoint.getThreadFilters( getDebugTarget() );
+			ICThread[] threads = getFilterExtension(breakpoint).getThreadFilters( getDebugTarget() );
 			if ( threads == null )
 				return new String[0];				
 			String[] names = new String[threads.length];
@@ -1205,7 +1211,7 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 	private boolean isFilteredByTarget( ICBreakpoint breakpoint, ICDebugTarget target ) {
 		boolean result = false;
 		try {
-			ICDebugTarget[] tfs = breakpoint.getTargetFilters();
+			ICDebugTarget[] tfs = getFilterExtension(breakpoint).getTargetFilters();
 			result = Arrays.asList( tfs ).contains( target );
 		}
 		catch( CoreException e ) {
@@ -1229,5 +1235,10 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 		catch( CDIException e ) {
 		}
 		return false;
+	}
+	
+	private ICBreakpointFilterExtension getFilterExtension(ICBreakpoint bp) throws CoreException{
+	    return (ICBreakpointFilterExtension)bp.getExtension(
+	        CDIDebugModel.getPluginIdentifier(), ICBreakpointFilterExtension.class);
 	}
 }

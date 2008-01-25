@@ -11,47 +11,55 @@
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
-import org.eclipse.cdt.debug.core.model.ICDebugTarget;
-import org.eclipse.cdt.debug.core.model.ICThread;
+import org.eclipse.cdt.debug.core.model.ICBreakpointExtension;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.Breakpoint;
-import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
  * The base class for all C/C++ specific breakpoints.
  */
 public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, IDebugEventSetListener {
 
-	private Map fFilteredThreadsByTarget;
+    /**
+     * Map of breakpoint extensions.  The keys to the map are debug model IDs 
+     * and values are arrays of breakpoint extensions.
+     */
+	private Map fExtensions = new HashMap(1);
+	
+   /**
+     * Constructor for CBreakpoint.
+     */
+    public CBreakpoint() {
+    }
 
-	/**
-	 * Constructor for CBreakpoint.
-	 */
-	public CBreakpoint() {
-		fFilteredThreadsByTarget = new HashMap( 10 );
-	}
 
 	/**
 	 * Constructor for CBreakpoint.
 	 */
 	public CBreakpoint( final IResource resource, final String markerType, final Map attributes, final boolean add ) throws CoreException {
-		this();
+	    this();
 		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 
 			public void run( IProgressMonitor monitor ) throws CoreException {
@@ -282,64 +290,6 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 		return sb.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#getTargetFilters()
-	 */
-	public ICDebugTarget[] getTargetFilters() throws CoreException {
-		Set set = fFilteredThreadsByTarget.keySet();
-		return (ICDebugTarget[])set.toArray( new ICDebugTarget[set.size()] );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#getThreadFilters(org.eclipse.cdt.debug.core.model.ICDebugTarget)
-	 */
-	public ICThread[] getThreadFilters( ICDebugTarget target ) throws CoreException {
-		Set set = (Set)fFilteredThreadsByTarget.get( target );
-		return ( set != null ) ? (ICThread[])set.toArray( new ICThread[set.size()] ) : null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#removeTargetFilter(org.eclipse.cdt.debug.core.model.ICDebugTarget)
-	 */
-	public void removeTargetFilter( ICDebugTarget target ) throws CoreException {
-		if ( fFilteredThreadsByTarget.containsKey( target ) ) {
-			fFilteredThreadsByTarget.remove( target );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#removeThreadFilters(org.eclipse.cdt.debug.core.model.ICThread[])
-	 */
-	public void removeThreadFilters( ICThread[] threads ) throws CoreException {
-		if ( threads != null && threads.length > 0 ) {
-			IDebugTarget target = threads[0].getDebugTarget();
-			if ( fFilteredThreadsByTarget.containsKey( target ) ) {
-				Set set = (Set)fFilteredThreadsByTarget.get( target );
-				if ( set != null ) {
-					set.removeAll( Arrays.asList( threads ) );
-					if ( set.isEmpty() ) {
-						fFilteredThreadsByTarget.remove( target );
-					}
-				}
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#setTargetFilter(org.eclipse.cdt.debug.core.model.ICDebugTarget)
-	 */
-	public void setTargetFilter( ICDebugTarget target ) throws CoreException {
-		fFilteredThreadsByTarget.put( target, null );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICBreakpoint#setThreadFilters(org.eclipse.cdt.debug.core.model.ICThread[])
-	 */
-	public void setThreadFilters( ICThread[] threads ) throws CoreException {
-		if ( threads != null && threads.length > 0 ) {
-			fFilteredThreadsByTarget.put( threads[0].getDebugTarget(), new HashSet( Arrays.asList( threads ) ) );
-		}
-	}
 
 	/**
 	 * Change notification when there are no marker changes. If the marker
@@ -365,4 +315,65 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	public void setModule( String module ) throws CoreException {
 		setAttribute( MODULE, module );
 	}
+	
+	public ICBreakpointExtension getExtension(String debugModelId, Class extensionType) throws CoreException {
+	    ICBreakpointExtension[] extensions = getExtensionsForModelId(debugModelId);
+	    for (int i = 0; i < extensions.length; i++) {
+	        if ( extensionType.isAssignableFrom(extensions[i].getClass()) ) {
+	            return extensions[i];
+	        }
+	    }
+        throw new CoreException(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.ERROR, "Extension " + extensionType + " not defined for breakpoint " + this, null)); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	/**
+	 * Reads platform extension registry for breakpoint extensions registered 
+	 * for the given debug model.
+	 * @param debugModelId Requested debug model that the extensions were 
+	 * registerd for.
+	 * @return Breakpoint extensions.
+	 * @throws CoreException Throws exception in case the breakpoint marker 
+	 * cannot be accessed.
+	 */
+	private ICBreakpointExtension[] getExtensionsForModelId(String debugModelId) throws CoreException {
+        if (!fExtensions.containsKey(debugModelId)) {
+    	    // Check to make sure that a marker is present.  Extensions can only be created
+    	    // once the marker type is known.
+    	    IMarker marker = ensureMarker();
+    
+    	    // Read the extension registry and create applicable extensions.
+    	    List extensions = new ArrayList(4);
+            IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(CDebugCorePlugin.getUniqueIdentifier(), CDebugCorePlugin.BREAKPOINT_EXTENSION_EXTENSION_POINT_ID);
+            IConfigurationElement[] elements = ep.getConfigurationElements();
+            for (int i= 0; i < elements.length; i++) {
+                if ( elements[i].getName().equals(CDebugCorePlugin.BREAKPOINT_EXTENSION_ELEMENT) ) {
+                    String elementDebugModelId = elements[i].getAttribute("debugModelId");
+                    String elementMarkerType = elements[i].getAttribute("markerType");
+                    if (elementDebugModelId == null) {
+                        CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: markerType", null)); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    } else if (elementMarkerType == null){
+                        CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: debugModelId", null)); //$NON-NLS-1$ //$NON-NLS-2$
+                    } else if ( debugModelId.equals(elementDebugModelId) && marker.isSubtypeOf(elementMarkerType)) { 
+                        String className = elements[i].getAttribute("class");
+                        if (className == null){
+                            CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: className", null)); //$NON-NLS-1$ //$NON-NLS-2$
+                        } else {
+                            ICBreakpointExtension extension;
+                            try {
+                                extension = (ICBreakpointExtension)elements[i].createExecutableExtension("class");
+                                extension.initialize(this);
+                                extensions.add(extension);
+                            } catch (CoreException e) {
+                                CDebugCorePlugin.log(new Status(IStatus.ERROR, CDebugCorePlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " contains an invalid value for attribute: className", e)); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                        }
+                    }
+                }
+            }	
+            fExtensions.put(debugModelId, extensions.toArray(new ICBreakpointExtension[extensions.size()]));
+	    }        
+        return (ICBreakpointExtension[])fExtensions.get(debugModelId);
+	}
+	
+	
 }

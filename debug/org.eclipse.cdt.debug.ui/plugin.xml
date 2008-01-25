@@ -1033,14 +1033,12 @@
             </adapt>
          </enabledWhen>
       </page>
-      <page
-            class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointFilteringPage"
+      <page class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointFilteringPage"
             id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.filtering"
             name="%FilteringBreakpointPage.label">
+         <filter name="debugModelId" value="org.eclipse.cdt.debug.core"/>
          <enabledWhen>
-            <adapt
-                  type="org.eclipse.cdt.debug.core.model.ICBreakpoint">
-            </adapt>
+            <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
          </enabledWhen>
       </page>
       <page

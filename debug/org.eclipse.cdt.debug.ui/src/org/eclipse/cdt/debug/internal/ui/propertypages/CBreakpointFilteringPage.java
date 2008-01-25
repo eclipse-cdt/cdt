@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.propertypages; 
 
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpointFilterExtension;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,8 +39,19 @@ public class CBreakpointFilteringPage extends PropertyPage {
 		return mainComposite;
 	}
 
-	public ICBreakpoint getBreakpoint() {
-		return (ICBreakpoint)getElement();
+    public ICBreakpoint getBreakpoint() {
+        return (ICBreakpoint)getElement().getAdapter(ICBreakpoint.class);
+    }
+
+	public ICBreakpointFilterExtension getFilterExtension() {
+	    ICBreakpoint bp = getBreakpoint();
+	    if (bp != null) {
+	        try {
+    	        return (ICBreakpointFilterExtension)bp.getExtension(
+    	            CDIDebugModel.getPluginIdentifier(), ICBreakpointFilterExtension.class);
+	        } catch (CoreException e) {}
+	    }
+	    return null;
 	}
 
 	protected void createThreadFilterEditor( Composite parent ) {

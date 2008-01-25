@@ -51,6 +51,8 @@ public interface ICDebugHelpContextIds {
 	public static final String SHOW_DETAIL_PANE_ACTION = PREFIX + "show_detail_pane_action_context"; //$NON-NLS-1$
     public static final String CONFIGURE_COLUMNS_ACTION = PREFIX + "configure_columns_context"; //$NON-NLS-1$;
     public static final String SHOW_COLUMNS_ACTION = PREFIX + "show_columns_context"; //$NON-NLS-1$;
+    public static final String MODULE_DETAIL_PANE_SELECT_ALL_ACTION = PREFIX + "module_detail_pane_select_all_action_context"; //$NON-NLS-1$
+    public static final String MODULE_DETAIL_PANE_COPY_ACTION = PREFIX + "detail_pane_copy_action_context"; //$NON-NLS-1$
 
 	// Views & Editors
 	/** 
@@ -59,6 +61,7 @@ public interface ICDebugHelpContextIds {
 	public static final String MEMORY_VIEW = PREFIX + "MemoryView_context"; //$NON-NLS-1$
 	public static final String SHARED_LIBRARIES_VIEW = PREFIX + "shared_libraries_view_context"; //$NON-NLS-1$
 	public static final String MODULES_VIEW = PREFIX + "modules_view_context"; //$NON-NLS-1$
+    public static final String MODULES_DETAIL_PANE = PREFIX + "modules_detail_pane"; //$NON-NLS-1$
 	public static final String SIGNALS_VIEW = PREFIX + "signals_view_context"; //$NON-NLS-1$
 	public static final String DISASSEMBLY_VIEW = PREFIX + "disassembly_view_context"; //$NON-NLS-1$
 	public static final String SOURCE_NOT_FOUND = PREFIX + "source_not_found"; //$NON-NLS-1$

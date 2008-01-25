@@ -4,6 +4,7 @@
 
      <extension-point id="CDebugger" name="%CDebugger.name" schema="schema/CDebugger.exsd"/>
      <extension-point id="BreakpointActionType" name="%BreakpointAction" schema="schema/BreakpointAction.exsd"/>
+     <extension-point id="BreakpointExtension" name="%BreakpointAction" schema="schema/BreakpointExtension.exsd"/>
 
    <extension
          id="cBreakpointMarker"
@@ -200,6 +201,15 @@
          </adapter>
        </factory>
 
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.core.BreakpointExtension">
+      <breakpointExtension
+            class="org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpointFilterExtension"
+            debugModelId="org.eclipse.cdt.debug.core"
+            id="org.eclipse.cdt.debug.core.filter"
+            markerType="org.eclipse.cdt.debug.core.cBreakpointMarker">
+      </breakpointExtension>
    </extension>
  
 </plugin>

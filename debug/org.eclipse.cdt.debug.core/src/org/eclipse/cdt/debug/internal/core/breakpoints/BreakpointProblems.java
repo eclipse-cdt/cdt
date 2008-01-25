@@ -124,9 +124,12 @@ public class BreakpointProblems {
 							lineBreakpoint.getMarker().getResource(),
 							lineBreakpoint.getLineNumber(), description, severity,
 							"")); //$NON-NLS-1$
-					marker.setAttribute(BREAKPOINT_PROBLEM_TYPE, problemType);
-					marker.setAttribute(BREAKPOINT_CONTEXT_NAME, contextName);
-					marker.setAttribute(BREAKPOINT_CONTEXT_ID, contextID);
+					if (marker != null)
+					{
+						marker.setAttribute(BREAKPOINT_PROBLEM_TYPE, problemType);
+						marker.setAttribute(BREAKPOINT_CONTEXT_NAME, contextName);
+						marker.setAttribute(BREAKPOINT_CONTEXT_ID, contextID);						
+					}
 				}
 				return marker;
 			}

@@ -394,7 +394,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	protected ICBreakpoint getBreakpoint() {
 		IAdaptable element = getElement();
-		return ( element instanceof ICBreakpoint ) ? (ICBreakpoint)element : null;
+		return ( element instanceof ICBreakpoint ) ? (ICBreakpoint)element : (ICBreakpoint)element.getAdapter(ICBreakpoint.class);
 	}
 
 	/* (non-Javadoc)

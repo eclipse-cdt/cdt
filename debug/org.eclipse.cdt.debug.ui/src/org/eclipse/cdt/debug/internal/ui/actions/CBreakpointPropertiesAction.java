@@ -11,6 +11,8 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.CBreakpointContext;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -28,7 +30,7 @@ public class CBreakpointPropertiesAction implements IObjectActionDelegate {
 
 	private IWorkbenchPart fPart;
 
-	private ICBreakpoint fBreakpoint;
+	private ICBreakpoint fContext;
 
 	/**
 	 * Constructor for CBreakpointPropertiesAction.
@@ -54,7 +56,7 @@ public class CBreakpointPropertiesAction implements IObjectActionDelegate {
 			}
 
 			public ISelection getSelection() {
-				return new StructuredSelection( getBreakpoint() );
+				return new StructuredSelection( new CBreakpointContext(getBreakpoint(), getDebugContext()) );
 			}
 
 			public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
@@ -73,24 +75,30 @@ public class CBreakpointPropertiesAction implements IObjectActionDelegate {
 		if ( selection instanceof IStructuredSelection ) {
 			IStructuredSelection ss = (IStructuredSelection)selection;
 			if ( ss.isEmpty() || ss.size() > 1 ) {
+			    action.setEnabled(false);
 				return;
 			}
 			Object element = ss.getFirstElement();
 			if ( element instanceof ICBreakpoint ) {
+			    action.setEnabled(true);
 				setBreakpoint( (ICBreakpoint)element );
 			}
 		}
 	}
-
+	
 	protected IWorkbenchPart getActivePart() {
 		return fPart;
 	}
 
 	protected ICBreakpoint getBreakpoint() {
-		return fBreakpoint;
+		return fContext;
 	}
 
+    private ISelection getDebugContext() {
+        return DebugUITools.getDebugContextManager().getContextService(fPart.getSite().getWorkbenchWindow()).getActiveContext();
+    }
+
 	protected void setBreakpoint( ICBreakpoint breakpoint ) {
-		fBreakpoint = breakpoint;
+		fContext = breakpoint;
 	}
 }

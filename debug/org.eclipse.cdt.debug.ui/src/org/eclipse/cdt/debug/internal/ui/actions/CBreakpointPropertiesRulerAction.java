@@ -11,9 +11,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.internal.ui.CBreakpointContext;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -28,7 +31,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
  */
 public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAction {
 
-	private IBreakpoint fBreakpoint;
+	private Object fContext;
 
 	/**
 	 * Creates the action to modify the breakpoint properties.
@@ -44,14 +47,14 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	 * @see Action#run()
 	 */
 	public void run() {
-		if ( fBreakpoint != null ) {
+		if ( fContext != null ) {
 			PropertyDialogAction action = new PropertyDialogAction( getTargetPart().getSite(), new ISelectionProvider() {
 
 				public void addSelectionChangedListener( ISelectionChangedListener listener ) {
 				}
 
 				public ISelection getSelection() {
-					return new StructuredSelection( fBreakpoint );
+					return new StructuredSelection( fContext );
 				}
 
 				public void removeSelectionChangedListener( ISelectionChangedListener listener ) {
@@ -69,7 +72,16 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	 * @see IUpdate#update()
 	 */
 	public void update() {
-		fBreakpoint = getBreakpoint();
-		setEnabled( fBreakpoint != null );
+	    IBreakpoint breakpoint = getBreakpoint();
+	    if (breakpoint instanceof ICBreakpoint) {
+	        fContext = new CBreakpointContext((ICBreakpoint)breakpoint, getDebugContext());
+	    } else {
+	        fContext = breakpoint;
+	    }
+		setEnabled( fContext != null );
+	}
+	
+	private ISelection getDebugContext() {
+	    return DebugUITools.getDebugContextManager().getContextService(getTargetPart().getSite().getWorkbenchWindow()).getActiveContext();
 	}
 }

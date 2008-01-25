@@ -12,7 +12,8 @@ package org.eclipse.cdt.debug.internal.ui.propertypages;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+
+import org.eclipse.cdt.debug.core.model.ICBreakpointFilterExtension;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -282,11 +283,11 @@ public class ThreadFilterEditor {
 	 * checked.
 	 */
 	protected void setInitialCheckedState() {
-		ICBreakpoint breakpoint = fPage.getBreakpoint(); 
+	    ICBreakpointFilterExtension filterExtension = fPage.getFilterExtension(); 
 		try {
-			ICDebugTarget[] targets = breakpoint.getTargetFilters();
+			ICDebugTarget[] targets = filterExtension.getTargetFilters();
 			for( int i = 0; i < targets.length; i++ ) {
-				ICThread[] filteredThreads = breakpoint.getThreadFilters( targets[i] );
+				ICThread[] filteredThreads = filterExtension.getThreadFilters( targets[i] );
 				if ( filteredThreads != null ) {
 					for ( int j = 0; j < filteredThreads.length; ++j )
 						fCheckHandler.checkThread( filteredThreads[j], true );
@@ -302,7 +303,7 @@ public class ThreadFilterEditor {
 	}
 
 	protected void doStore() {
-		ICBreakpoint breakpoint = fPage.getBreakpoint();
+		ICBreakpointFilterExtension filterExtension = fPage.getFilterExtension();
 		IDebugTarget[] targets = getDebugTargets();
 		for ( int i = 0; i < targets.length; ++i ) {
 			if ( !(targets[i] instanceof ICDebugTarget) )
@@ -311,16 +312,16 @@ public class ThreadFilterEditor {
 				if ( getThreadViewer().getChecked( targets[i] ) ) {
 					if ( getThreadViewer().getGrayed( targets[i] ) ) {
 						ICThread[] threads = getTargetThreadFilters( (ICDebugTarget)targets[i] );
-						breakpoint.setThreadFilters( threads );
+						filterExtension.setThreadFilters( threads );
 					}
 					else {
-						breakpoint.setTargetFilter( (ICDebugTarget)targets[i] );
+						filterExtension.setTargetFilter( (ICDebugTarget)targets[i] );
 					}
 				}
 				else {
-					breakpoint.removeTargetFilter( (ICDebugTarget)targets[i] );
+					filterExtension.removeTargetFilter( (ICDebugTarget)targets[i] );
 				}
-				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoint );
+				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( fPage.getBreakpoint() );
 			}
 			catch( CoreException e ) {
 				CDebugUIPlugin.log( e );

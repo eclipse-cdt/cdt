@@ -83,6 +83,10 @@ public class CDebugCorePlugin extends Plugin {
 	public static final String BREAKPOINT_ACTION_EXTENSION_POINT_ID = "BreakpointActionType"; //$NON-NLS-1$
 	public static final String ACTION_TYPE_ELEMENT = "actionType"; //$NON-NLS-1$	
 	
+    public static final String BREAKPOINT_EXTENSION_EXTENSION_POINT_ID = "BreakpointExtension"; //$NON-NLS-1$
+    public static final String BREAKPOINT_EXTENSION_ELEMENT = "breakpointExtension"; //$NON-NLS-1$    
+	
+	
 	/**
 	 * Dummy source lookup director needed to manage common source containers.
 	 */

@@ -358,7 +358,11 @@ primary_expression
     ::= literal
       | '(' expression ')'
            /. $Build  consumeExpressionBracketed();  $EndBuild ./
-      | qualified_or_unqualified_name
+      | id_expression
+      
+      
+id_expression 
+    ::= qualified_or_unqualified_name
            /. $Build  consumeExpressionName();  $EndBuild ./
       
       
@@ -1251,9 +1255,9 @@ ptr_operator_seq
       | ptr_operator_seq ptr_operator
 
 
-ptr_operator_seq_opt
-    ::= ptr_operator_seq
-      | $empty
+--ptr_operator_seq_opt
+--    ::= ptr_operator_seq
+--      | $empty
 
 
 cv_qualifier_seq
@@ -1564,16 +1568,20 @@ conversion_function_id_name
 
 
 conversion_type_id
-    ::= type_specifier_seq conversion_declarator_opt
+    ::= type_specifier_seq conversion_declarator
+          /. $Build  consumeTypeId(true);  $EndBuild ./
+      | type_specifier_seq
+          /. $Build  consumeTypeId(false);  $EndBuild ./
 
 
 conversion_declarator
-    ::= ptr_operator conversion_declarator_opt
-    
+    ::= <openscope-ast> ptr_operator_seq
+          /. $Build  consumeDeclaratorWithPointer(false);  $EndBuild ./
+      
 
-conversion_declarator_opt
-    ::= conversion_declarator
-      | $empty
+--conversion_declarator_opt
+--    ::= conversion_declarator
+--      | $empty
       
     
 ctor_initializer_list
@@ -1622,7 +1630,7 @@ overloadable_operator
 
 
 template_declaration
-    ::= export_opt 'template' '<' template_parameter_list '>' declaration
+    ::= export_opt 'template' '<' <openscope-ast> template_parameter_list '>' declaration
           /. $Build  consumeTemplateDeclaration();  $EndBuild ./
 
 
@@ -1644,12 +1652,18 @@ template_parameter
 
 
 type_parameter
-    ::= 'class' identifier_opt
-      | 'class' identifier_opt '=' type_id
-      | 'typename' identifier_opt
-      | 'typename' identifier_opt '=' type_id
-      | 'template' '<' template_parameter_list '>' 'class' identifier_opt
-      | 'template' '<' template_parameter_list '>' 'class' identifier_opt '=' qualified_or_unqualified_name
+    ::= 'class' identifier_name_opt 
+          /. $Build  consumeSimpleTypeTemplateParameter(false);  $EndBuild ./
+      | 'class' identifier_name_opt '=' type_id
+          /. $Build  consumeSimpleTypeTemplateParameter(true);  $EndBuild ./
+      | 'typename' identifier_name_opt
+          /. $Build  consumeSimpleTypeTemplateParameter(false);  $EndBuild ./
+      | 'typename' identifier_name_opt '=' type_id
+          /. $Build  consumeSimpleTypeTemplateParameter(true);  $EndBuild ./
+      | 'template' '<' <openscope-ast> template_parameter_list '>' 'class' identifier_name_opt
+          /. $Build  consumeTemplatedTypeTemplateParameter(false);  $EndBuild ./
+      | 'template' '<' <openscope-ast> template_parameter_list '>' 'class' identifier_name_opt '=' id_expression
+          /. $Build  consumeTemplatedTypeTemplateParameter(true);  $EndBuild ./
 
 
 -- pushes name node on stack
@@ -1707,10 +1721,14 @@ handler
           /. $Build  consumeStatementCatchHandler(true);  $EndBuild ./
 
 
+-- open a scope just so that we can reuse consumeDeclarationSimple()
 exception_declaration
-    ::= type_specifier_seq declarator
-      | type_specifier_seq abstract_declarator
+    ::= type_specifier_seq <openscope-ast> declarator
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
+      | type_specifier_seq <openscope-ast> abstract_declarator
+          /. $Build  consumeDeclarationSimple(true);  $EndBuild ./
       | type_specifier_seq
+          /. $Build  consumeDeclarationSimple(false);  $EndBuild ./
 
 
 -- puts type ids on the stack

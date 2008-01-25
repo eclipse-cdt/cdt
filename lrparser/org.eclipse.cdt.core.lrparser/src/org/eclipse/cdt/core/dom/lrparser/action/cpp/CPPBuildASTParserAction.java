@@ -68,10 +68,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -582,7 +584,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 		 if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
 		 
 		 IASTStatement body = (IASTStatement) astStack.pop();
-		 IASTDeclaration decl = (hasEllipsis) ? (IASTDeclaration) astStack.pop() : null;
+		 IASTDeclaration decl = hasEllipsis ? null : (IASTDeclaration) astStack.pop();
 		 
 		 ICPPASTCatchHandler catchHandler = nodeFactory.newCatchHandler(decl, body);
 		 catchHandler.setIsCatchAll(hasEllipsis);
@@ -882,7 +884,7 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
 	
 	/**
 	 * template_declaration
-     *     ::= export_opt 'template' '<' template_parameter_list '>' declaration
+     *     ::= export_opt 'template' '<' <openscope-ast> template_parameter_list '>' declaration
 	 */
 	public void consumeTemplateDeclaration() {
 		if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
@@ -1428,8 +1430,66 @@ public class CPPBuildASTParserAction extends BuildASTParserAction {
     	}
     	
     	declarator.setInitializer(initializer);
+    	
+    	if(TRACE_AST_STACK) System.out.println(astStack);
     }
 
+    
+    /**
+     * type_parameter
+     *     ::= 'class' identifier_name_opt -- simple type template parameter     
+     *       | 'class' identifier_name_opt '=' type_id
+     *       | 'typename' identifier_name_opt
+     *       | 'typename' identifier_name_opt '=' type_id
+     */
+    public void consumeSimpleTypeTemplateParameter(boolean hasTypeId) {
+    	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+    	
+    	IASTTypeId typeId = hasTypeId ? (IASTTypeId)astStack.pop() : null;
+    	
+    	IASTName name = (IASTName)astStack.pop();
+    	int type = getTemplateParameterType(parser.getLeftIToken()); 
+    	
+    	ICPPASTSimpleTypeTemplateParameter templateParameter = nodeFactory.newSimpleTypeTemplateParameter(type, name, typeId);
+    	
+    	setOffsetAndLength(templateParameter);
+		astStack.push(templateParameter);
+		
+    	if(TRACE_AST_STACK) System.out.println(astStack);
+    }
+    
+    private static int getTemplateParameterType(IToken token) {
+    	switch(token.getKind()) {
+    		default: assert false;
+    		case TK_class:    return ICPPASTSimpleTypeTemplateParameter.st_class;
+    		case TK_typename: return ICPPASTSimpleTypeTemplateParameter.st_typename;
+    	}
+    }
+    
+    /**
+     * type_parameter
+     *     ::= 'template' '<' <openscope-ast> template_parameter_list '>' 'class' identifier_name_opt
+     *       | 'template' '<' <openscope-ast> template_parameter_list '>' 'class' identifier_name_opt '=' id_expression
+     * @param hasIdExpr
+     */
+    public void consumeTemplatedTypeTemplateParameter(boolean hasIdExpr) {
+    	if(TRACE_ACTIONS) DebugUtil.printMethodTrace();
+    	
+    	IASTExpression idExpression = hasIdExpr ? (IASTExpression)astStack.pop() : null;
+    	IASTName name = (IASTName) astStack.pop();
+    	
+    	ICPPASTTemplatedTypeTemplateParameter templateParameter = nodeFactory.newTemplatedTypeTemplateParameter(name, idExpression);
+    	
+    	for(Object param : astStack.closeScope())
+    		templateParameter.addTemplateParamter((ICPPASTTemplateParameter)param);
+    	
+    	setOffsetAndLength(templateParameter);
+		astStack.push(templateParameter);
+    	
+    	if(TRACE_AST_STACK) System.out.println(astStack);
+    }
+    
+    
 }
 
 

@@ -84,9 +84,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
@@ -157,10 +159,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSwitchStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateId;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplateSpecialization;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTryBlockStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
@@ -519,6 +523,14 @@ public class CPPASTNodeFactory implements ICPPASTNodeFactory {
 
 	public IASTFieldDeclarator newFieldDeclarator(IASTName name, IASTExpression bitFieldSize) {
 		return new CPPASTFieldDeclarator(name, bitFieldSize);
+	}
+
+	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId) {
+		return new CPPASTSimpleTypeTemplateParameter(type, name, typeId);
+	}
+
+	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression idExpression) {
+		return new CPPASTTemplatedTypeTemplateParameter(name, idExpression);
 	}
 
 }

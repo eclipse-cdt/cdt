@@ -40,9 +40,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
@@ -122,8 +124,11 @@ public interface ICPPASTNodeFactory extends IASTNodeFactory {
 
 	public ICPPASTFunctionDeclarator newCPPFunctionDeclarator(IASTName name);
 
-	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(
-			IASTName name, IASTExpression expr);
+	public ICPPASTConstructorChainInitializer newConstructorChainInitializer(IASTName name, IASTExpression expr);
 
 	public ICPPASTFunctionTryBlockDeclarator newFunctionTryBlockDeclarator(IASTName name);
+
+	public ICPPASTSimpleTypeTemplateParameter newSimpleTypeTemplateParameter(int type, IASTName name, IASTTypeId typeId);
+
+	public ICPPASTTemplatedTypeTemplateParameter newTemplatedTypeTemplateParameter(IASTName name, IASTExpression idExpression);
 }

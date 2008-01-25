@@ -222,8 +222,7 @@ public int getKind(int i) {
 		RULE_ACTIONS[18] = new Action18();
 		RULE_ACTIONS[19] = new Action19();
 		RULE_ACTIONS[21] = new Action21();
-		RULE_ACTIONS[22] = new Action22();
-		RULE_ACTIONS[29] = new Action29();
+		RULE_ACTIONS[23] = new Action23();
 		RULE_ACTIONS[30] = new Action30();
 		RULE_ACTIONS[31] = new Action31();
 		RULE_ACTIONS[32] = new Action32();
@@ -238,8 +237,8 @@ public int getKind(int i) {
 		RULE_ACTIONS[41] = new Action41();
 		RULE_ACTIONS[42] = new Action42();
 		RULE_ACTIONS[43] = new Action43();
-		RULE_ACTIONS[45] = new Action45();
-		RULE_ACTIONS[49] = new Action49();
+		RULE_ACTIONS[44] = new Action44();
+		RULE_ACTIONS[46] = new Action46();
 		RULE_ACTIONS[50] = new Action50();
 		RULE_ACTIONS[51] = new Action51();
 		RULE_ACTIONS[52] = new Action52();
@@ -261,7 +260,7 @@ public int getKind(int i) {
 		RULE_ACTIONS[68] = new Action68();
 		RULE_ACTIONS[69] = new Action69();
 		RULE_ACTIONS[70] = new Action70();
-		RULE_ACTIONS[74] = new Action74();
+		RULE_ACTIONS[71] = new Action71();
 		RULE_ACTIONS[75] = new Action75();
 		RULE_ACTIONS[76] = new Action76();
 		RULE_ACTIONS[77] = new Action77();
@@ -273,38 +272,38 @@ public int getKind(int i) {
 		RULE_ACTIONS[83] = new Action83();
 		RULE_ACTIONS[84] = new Action84();
 		RULE_ACTIONS[85] = new Action85();
-		RULE_ACTIONS[88] = new Action88();
+		RULE_ACTIONS[86] = new Action86();
 		RULE_ACTIONS[89] = new Action89();
 		RULE_ACTIONS[90] = new Action90();
 		RULE_ACTIONS[91] = new Action91();
-		RULE_ACTIONS[100] = new Action100();
+		RULE_ACTIONS[92] = new Action92();
 		RULE_ACTIONS[101] = new Action101();
 		RULE_ACTIONS[102] = new Action102();
-		RULE_ACTIONS[104] = new Action104();
-		RULE_ACTIONS[106] = new Action106();
+		RULE_ACTIONS[103] = new Action103();
+		RULE_ACTIONS[105] = new Action105();
 		RULE_ACTIONS[107] = new Action107();
-		RULE_ACTIONS[109] = new Action109();
+		RULE_ACTIONS[108] = new Action108();
 		RULE_ACTIONS[110] = new Action110();
 		RULE_ACTIONS[111] = new Action111();
-		RULE_ACTIONS[113] = new Action113();
+		RULE_ACTIONS[112] = new Action112();
 		RULE_ACTIONS[114] = new Action114();
-		RULE_ACTIONS[116] = new Action116();
+		RULE_ACTIONS[115] = new Action115();
 		RULE_ACTIONS[117] = new Action117();
-		RULE_ACTIONS[119] = new Action119();
+		RULE_ACTIONS[118] = new Action118();
 		RULE_ACTIONS[120] = new Action120();
 		RULE_ACTIONS[121] = new Action121();
 		RULE_ACTIONS[122] = new Action122();
-		RULE_ACTIONS[124] = new Action124();
+		RULE_ACTIONS[123] = new Action123();
 		RULE_ACTIONS[125] = new Action125();
-		RULE_ACTIONS[127] = new Action127();
-		RULE_ACTIONS[129] = new Action129();
-		RULE_ACTIONS[131] = new Action131();
-		RULE_ACTIONS[133] = new Action133();
-		RULE_ACTIONS[135] = new Action135();
-		RULE_ACTIONS[137] = new Action137();
+		RULE_ACTIONS[126] = new Action126();
+		RULE_ACTIONS[128] = new Action128();
+		RULE_ACTIONS[130] = new Action130();
+		RULE_ACTIONS[132] = new Action132();
+		RULE_ACTIONS[134] = new Action134();
+		RULE_ACTIONS[136] = new Action136();
 		RULE_ACTIONS[138] = new Action138();
 		RULE_ACTIONS[139] = new Action139();
-		RULE_ACTIONS[142] = new Action142();
+		RULE_ACTIONS[140] = new Action140();
 		RULE_ACTIONS[143] = new Action143();
 		RULE_ACTIONS[144] = new Action144();
 		RULE_ACTIONS[145] = new Action145();
@@ -315,12 +314,12 @@ public int getKind(int i) {
 		RULE_ACTIONS[150] = new Action150();
 		RULE_ACTIONS[151] = new Action151();
 		RULE_ACTIONS[152] = new Action152();
-		RULE_ACTIONS[154] = new Action154();
+		RULE_ACTIONS[153] = new Action153();
 		RULE_ACTIONS[155] = new Action155();
-		RULE_ACTIONS[159] = new Action159();
-		RULE_ACTIONS[161] = new Action161();
-		RULE_ACTIONS[164] = new Action164();
-		RULE_ACTIONS[173] = new Action173();
+		RULE_ACTIONS[156] = new Action156();
+		RULE_ACTIONS[160] = new Action160();
+		RULE_ACTIONS[162] = new Action162();
+		RULE_ACTIONS[165] = new Action165();
 		RULE_ACTIONS[174] = new Action174();
 		RULE_ACTIONS[175] = new Action175();
 		RULE_ACTIONS[176] = new Action176();
@@ -328,10 +327,10 @@ public int getKind(int i) {
 		RULE_ACTIONS[178] = new Action178();
 		RULE_ACTIONS[179] = new Action179();
 		RULE_ACTIONS[180] = new Action180();
-		RULE_ACTIONS[183] = new Action183();
+		RULE_ACTIONS[181] = new Action181();
 		RULE_ACTIONS[184] = new Action184();
 		RULE_ACTIONS[185] = new Action185();
-		RULE_ACTIONS[187] = new Action187();
+		RULE_ACTIONS[186] = new Action186();
 		RULE_ACTIONS[188] = new Action188();
 		RULE_ACTIONS[189] = new Action189();
 		RULE_ACTIONS[190] = new Action190();
@@ -342,31 +341,31 @@ public int getKind(int i) {
 		RULE_ACTIONS[195] = new Action195();
 		RULE_ACTIONS[196] = new Action196();
 		RULE_ACTIONS[197] = new Action197();
-		RULE_ACTIONS[214] = new Action214();
+		RULE_ACTIONS[198] = new Action198();
 		RULE_ACTIONS[215] = new Action215();
 		RULE_ACTIONS[216] = new Action216();
 		RULE_ACTIONS[217] = new Action217();
 		RULE_ACTIONS[218] = new Action218();
 		RULE_ACTIONS[219] = new Action219();
-		RULE_ACTIONS[221] = new Action221();
-		RULE_ACTIONS[225] = new Action225();
+		RULE_ACTIONS[220] = new Action220();
+		RULE_ACTIONS[222] = new Action222();
 		RULE_ACTIONS[226] = new Action226();
-		RULE_ACTIONS[254] = new Action254();
-		RULE_ACTIONS[270] = new Action270();
+		RULE_ACTIONS[227] = new Action227();
+		RULE_ACTIONS[255] = new Action255();
 		RULE_ACTIONS[271] = new Action271();
 		RULE_ACTIONS[272] = new Action272();
 		RULE_ACTIONS[273] = new Action273();
 		RULE_ACTIONS[274] = new Action274();
 		RULE_ACTIONS[275] = new Action275();
 		RULE_ACTIONS[276] = new Action276();
-		RULE_ACTIONS[278] = new Action278();
+		RULE_ACTIONS[277] = new Action277();
 		RULE_ACTIONS[279] = new Action279();
-		RULE_ACTIONS[284] = new Action284();
+		RULE_ACTIONS[280] = new Action280();
 		RULE_ACTIONS[285] = new Action285();
-		RULE_ACTIONS[294] = new Action294();
+		RULE_ACTIONS[286] = new Action286();
 		RULE_ACTIONS[295] = new Action295();
 		RULE_ACTIONS[296] = new Action296();
-		RULE_ACTIONS[298] = new Action298();
+		RULE_ACTIONS[297] = new Action297();
 		RULE_ACTIONS[299] = new Action299();
 		RULE_ACTIONS[300] = new Action300();
 		RULE_ACTIONS[301] = new Action301();
@@ -374,9 +373,9 @@ public int getKind(int i) {
 		RULE_ACTIONS[303] = new Action303();
 		RULE_ACTIONS[304] = new Action304();
 		RULE_ACTIONS[305] = new Action305();
-		RULE_ACTIONS[311] = new Action311();
-		RULE_ACTIONS[313] = new Action313();
-		RULE_ACTIONS[317] = new Action317();
+		RULE_ACTIONS[306] = new Action306();
+		RULE_ACTIONS[312] = new Action312();
+		RULE_ACTIONS[314] = new Action314();
 		RULE_ACTIONS[318] = new Action318();
 		RULE_ACTIONS[319] = new Action319();
 		RULE_ACTIONS[320] = new Action320();
@@ -386,13 +385,15 @@ public int getKind(int i) {
 		RULE_ACTIONS[324] = new Action324();
 		RULE_ACTIONS[325] = new Action325();
 		RULE_ACTIONS[326] = new Action326();
+		RULE_ACTIONS[327] = new Action327();
+		RULE_ACTIONS[333] = new Action333();
 		RULE_ACTIONS[334] = new Action334();
-		RULE_ACTIONS[335] = new Action335();
+		RULE_ACTIONS[336] = new Action336();
 		RULE_ACTIONS[337] = new Action337();
 		RULE_ACTIONS[338] = new Action338();
-		RULE_ACTIONS[339] = new Action339();
+		RULE_ACTIONS[341] = new Action341();
 		RULE_ACTIONS[342] = new Action342();
-		RULE_ACTIONS[343] = new Action343();
+		RULE_ACTIONS[346] = new Action346();
 		RULE_ACTIONS[347] = new Action347();
 		RULE_ACTIONS[348] = new Action348();
 		RULE_ACTIONS[349] = new Action349();
@@ -401,37 +402,42 @@ public int getKind(int i) {
 		RULE_ACTIONS[352] = new Action352();
 		RULE_ACTIONS[353] = new Action353();
 		RULE_ACTIONS[354] = new Action354();
-		RULE_ACTIONS[355] = new Action355();
+		RULE_ACTIONS[360] = new Action360();
 		RULE_ACTIONS[361] = new Action361();
 		RULE_ACTIONS[362] = new Action362();
-		RULE_ACTIONS[363] = new Action363();
-		RULE_ACTIONS[365] = new Action365();
+		RULE_ACTIONS[364] = new Action364();
+		RULE_ACTIONS[366] = new Action366();
 		RULE_ACTIONS[367] = new Action367();
 		RULE_ACTIONS[368] = new Action368();
 		RULE_ACTIONS[369] = new Action369();
 		RULE_ACTIONS[370] = new Action370();
-		RULE_ACTIONS[371] = new Action371();
+		RULE_ACTIONS[373] = new Action373();
 		RULE_ACTIONS[374] = new Action374();
 		RULE_ACTIONS[375] = new Action375();
 		RULE_ACTIONS[376] = new Action376();
 		RULE_ACTIONS[377] = new Action377();
-		RULE_ACTIONS[378] = new Action378();
+		RULE_ACTIONS[382] = new Action382();
 		RULE_ACTIONS[383] = new Action383();
 		RULE_ACTIONS[384] = new Action384();
 		RULE_ACTIONS[385] = new Action385();
 		RULE_ACTIONS[386] = new Action386();
-		RULE_ACTIONS[387] = new Action387();
-		RULE_ACTIONS[391] = new Action391();
+		RULE_ACTIONS[390] = new Action390();
+		RULE_ACTIONS[394] = new Action394();
 		RULE_ACTIONS[395] = new Action395();
 		RULE_ACTIONS[396] = new Action396();
-		RULE_ACTIONS[397] = new Action397();
-		RULE_ACTIONS[400] = new Action400();
+		RULE_ACTIONS[399] = new Action399();
+		RULE_ACTIONS[410] = new Action410();
 		RULE_ACTIONS[411] = new Action411();
-		RULE_ACTIONS[419] = new Action419();
+		RULE_ACTIONS[412] = new Action412();
+		RULE_ACTIONS[413] = new Action413();
 		RULE_ACTIONS[420] = new Action420();
 		RULE_ACTIONS[421] = new Action421();
 		RULE_ACTIONS[422] = new Action422();
-		RULE_ACTIONS[428] = new Action428();
+		RULE_ACTIONS[423] = new Action423();
+		RULE_ACTIONS[429] = new Action429();
+		RULE_ACTIONS[430] = new Action430();
+		RULE_ACTIONS[431] = new Action431();
+		RULE_ACTIONS[432] = new Action432();
 		RULE_ACTIONS[438] = new Action438();
 		RULE_ACTIONS[439] = new Action439();
 		RULE_ACTIONS[442] = new Action442();
@@ -439,12 +445,21 @@ public int getKind(int i) {
 		RULE_ACTIONS[486] = new Action486();
 		RULE_ACTIONS[487] = new Action487();
 		RULE_ACTIONS[488] = new Action488();
+		RULE_ACTIONS[493] = new Action493();
+		RULE_ACTIONS[494] = new Action494();
+		RULE_ACTIONS[495] = new Action495();
+		RULE_ACTIONS[496] = new Action496();
+		RULE_ACTIONS[497] = new Action497();
+		RULE_ACTIONS[498] = new Action498();
 		RULE_ACTIONS[499] = new Action499();
 		RULE_ACTIONS[508] = new Action508();
 		RULE_ACTIONS[509] = new Action509();
 		RULE_ACTIONS[510] = new Action510();
 		RULE_ACTIONS[513] = new Action513();
 		RULE_ACTIONS[514] = new Action514();
+		RULE_ACTIONS[515] = new Action515();
+		RULE_ACTIONS[516] = new Action516();
+		RULE_ACTIONS[517] = new Action517();
 
 
 		//
@@ -598,9 +613,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 22:  primary_expression ::= qualified_or_unqualified_name
+	// Rule 23:  id_expression ::= qualified_or_unqualified_name
 	//
-	static final class Action22 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action23 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionName();    
@@ -608,9 +623,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 29:  unqualified_id_name ::= ~ class_name
+	// Rule 30:  unqualified_id_name ::= ~ class_name
 	//
-	static final class Action29 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action30 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDestructorName();    
@@ -618,9 +633,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 30:  identifier_name ::= identifier
+	// Rule 31:  identifier_name ::= identifier
 	//
-	static final class Action30 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action31 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeIdentifierName();    
@@ -628,29 +643,29 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 31:  template_opt ::= template
-	//
-	static final class Action31 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumePlaceHolder();    
-		}  
-	}  
-  
-	//
-	// Rule 32:  template_opt ::= $Empty
+	// Rule 32:  template_opt ::= template
 	//
 	static final class Action32 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumePlaceHolder();    
+		}  
+	}  
+  
+	//
+	// Rule 33:  template_opt ::= $Empty
+	//
+	static final class Action33 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
 		}  
 	}  
   
 	//
-	// Rule 33:  dcolon_opt ::= ::
+	// Rule 34:  dcolon_opt ::= ::
 	//
-	static final class Action33 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action34 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumePlaceHolder();    
@@ -658,9 +673,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 34:  dcolon_opt ::= $Empty
+	// Rule 35:  dcolon_opt ::= $Empty
 	//
-	static final class Action34 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action35 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -668,9 +683,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 35:  qualified_id_name ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name
+	// Rule 36:  qualified_id_name ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name
 	//
-	static final class Action35 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action36 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeQualifiedId(true);    
@@ -678,17 +693,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 36:  qualified_id_name ::= :: identifier_name
-	//
-	static final class Action36 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeGlobalQualifiedId();    
-		}  
-	}  
-  
-	//
-	// Rule 37:  qualified_id_name ::= :: operator_function_id_name
+	// Rule 37:  qualified_id_name ::= :: identifier_name
 	//
 	static final class Action37 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -698,7 +703,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 38:  qualified_id_name ::= :: template_id_name
+	// Rule 38:  qualified_id_name ::= :: operator_function_id_name
 	//
 	static final class Action38 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -708,29 +713,39 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 39:  nested_name_specifier ::= class_or_namespace_name :: nested_name_specifier_with_template
+	// Rule 39:  qualified_id_name ::= :: template_id_name
 	//
 	static final class Action39 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeNestedNameSpecifier(true);    
+   consumeGlobalQualifiedId();    
 		}  
 	}  
   
 	//
-	// Rule 40:  nested_name_specifier ::= class_or_namespace_name ::
+	// Rule 40:  nested_name_specifier ::= class_or_namespace_name :: nested_name_specifier_with_template
 	//
 	static final class Action40 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeNestedNameSpecifier(true);    
+		}  
+	}  
+  
+	//
+	// Rule 41:  nested_name_specifier ::= class_or_namespace_name ::
+	//
+	static final class Action41 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeNestedNameSpecifier(false);    
 		}  
 	}  
   
 	//
-	// Rule 41:  nested_name_specifier_with_template ::= class_or_namespace_name_with_template :: nested_name_specifier_with_template
+	// Rule 42:  nested_name_specifier_with_template ::= class_or_namespace_name_with_template :: nested_name_specifier_with_template
 	//
-	static final class Action41 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action42 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeNestedNameSpecifier(true);    
@@ -738,9 +753,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 42:  nested_name_specifier_with_template ::= class_or_namespace_name_with_template ::
+	// Rule 43:  nested_name_specifier_with_template ::= class_or_namespace_name_with_template ::
 	//
-	static final class Action42 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action43 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeNestedNameSpecifier(false);    
@@ -748,9 +763,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 43:  class_or_namespace_name_with_template ::= template_opt class_or_namespace_name
+	// Rule 44:  class_or_namespace_name_with_template ::= template_opt class_or_namespace_name
 	//
-	static final class Action43 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action44 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeNameWithTemplateKeyword();    
@@ -758,9 +773,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 45:  nested_name_specifier_opt ::= $Empty
+	// Rule 46:  nested_name_specifier_opt ::= $Empty
 	//
-	static final class Action45 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action46 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeNestedNameSpecifierEmpty();    
@@ -768,9 +783,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 49:  postfix_expression ::= postfix_expression [ expression ]
+	// Rule 50:  postfix_expression ::= postfix_expression [ expression ]
 	//
-	static final class Action49 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action50 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionArraySubscript();    
@@ -778,9 +793,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 50:  postfix_expression ::= postfix_expression ( expression_list_opt )
+	// Rule 51:  postfix_expression ::= postfix_expression ( expression_list_opt )
 	//
-	static final class Action50 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action51 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionFunctionCall();    
@@ -788,9 +803,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 51:  postfix_expression ::= simple_type_specifier ( expression_list_opt )
+	// Rule 52:  postfix_expression ::= simple_type_specifier ( expression_list_opt )
 	//
-	static final class Action51 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action52 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionSimpleTypeConstructor();   
@@ -798,17 +813,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 52:  postfix_expression ::= typename dcolon_opt nested_name_specifier <empty> identifier_name ( expression_list_opt )
-	//
-	static final class Action52 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeExpressionTypeName();   
-		}  
-	}  
-  
-	//
-	// Rule 53:  postfix_expression ::= typename dcolon_opt nested_name_specifier template_opt template_id_name ( expression_list_opt )
+	// Rule 53:  postfix_expression ::= typename dcolon_opt nested_name_specifier <empty> identifier_name ( expression_list_opt )
 	//
 	static final class Action53 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -818,9 +823,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 54:  postfix_expression ::= postfix_expression . qualified_or_unqualified_name
+	// Rule 54:  postfix_expression ::= typename dcolon_opt nested_name_specifier template_opt template_id_name ( expression_list_opt )
 	//
 	static final class Action54 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeExpressionTypeName();   
+		}  
+	}  
+  
+	//
+	// Rule 55:  postfix_expression ::= postfix_expression . qualified_or_unqualified_name
+	//
+	static final class Action55 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionFieldReference(false, false);    
@@ -828,9 +843,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 55:  postfix_expression ::= postfix_expression -> qualified_or_unqualified_name
+	// Rule 56:  postfix_expression ::= postfix_expression -> qualified_or_unqualified_name
 	//
-	static final class Action55 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action56 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionFieldReference(true, false);    
@@ -838,9 +853,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 56:  postfix_expression ::= postfix_expression . template qualified_or_unqualified_name
+	// Rule 57:  postfix_expression ::= postfix_expression . template qualified_or_unqualified_name
 	//
-	static final class Action56 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action57 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionFieldReference(false, true);    
@@ -848,9 +863,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 57:  postfix_expression ::= postfix_expression -> template qualified_or_unqualified_name
+	// Rule 58:  postfix_expression ::= postfix_expression -> template qualified_or_unqualified_name
 	//
-	static final class Action57 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action58 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionFieldReference(true, true);    
@@ -858,9 +873,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 58:  postfix_expression ::= postfix_expression . pseudo_destructor_name
+	// Rule 59:  postfix_expression ::= postfix_expression . pseudo_destructor_name
 	//
-	static final class Action58 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action59 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionFieldReference(false, false);    
@@ -868,9 +883,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 59:  postfix_expression ::= postfix_expression -> pseudo_destructor_name
+	// Rule 60:  postfix_expression ::= postfix_expression -> pseudo_destructor_name
 	//
-	static final class Action59 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action60 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionFieldReference(true, false);    
@@ -878,9 +893,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 60:  postfix_expression ::= postfix_expression ++
+	// Rule 61:  postfix_expression ::= postfix_expression ++
 	//
-	static final class Action60 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action61 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_postFixIncr);    
@@ -888,9 +903,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 61:  postfix_expression ::= postfix_expression --
+	// Rule 62:  postfix_expression ::= postfix_expression --
 	//
-	static final class Action61 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action62 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_postFixDecr);    
@@ -898,9 +913,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 62:  postfix_expression ::= dynamic_cast < type_id > ( expression )
+	// Rule 63:  postfix_expression ::= dynamic_cast < type_id > ( expression )
 	//
-	static final class Action62 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action63 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionCast(ICPPASTCastExpression.op_dynamic_cast);    
@@ -908,9 +923,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 63:  postfix_expression ::= static_cast < type_id > ( expression )
+	// Rule 64:  postfix_expression ::= static_cast < type_id > ( expression )
 	//
-	static final class Action63 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action64 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionCast(ICPPASTCastExpression.op_static_cast);    
@@ -918,9 +933,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 64:  postfix_expression ::= reinterpret_cast < type_id > ( expression )
+	// Rule 65:  postfix_expression ::= reinterpret_cast < type_id > ( expression )
 	//
-	static final class Action64 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action65 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionCast(ICPPASTCastExpression.op_reinterpret_cast);    
@@ -928,9 +943,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 65:  postfix_expression ::= const_cast < type_id > ( expression )
+	// Rule 66:  postfix_expression ::= const_cast < type_id > ( expression )
 	//
-	static final class Action65 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action66 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionCast(ICPPASTCastExpression.op_const_cast);    
@@ -938,9 +953,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 66:  postfix_expression ::= typeid ( expression )
+	// Rule 67:  postfix_expression ::= typeid ( expression )
 	//
-	static final class Action66 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action67 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(ICPPASTUnaryExpression.op_typeid);    
@@ -948,9 +963,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 67:  postfix_expression ::= typeid ( type_id )
+	// Rule 68:  postfix_expression ::= typeid ( type_id )
 	//
-	static final class Action67 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action68 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionTypeId(ICPPASTTypeIdExpression.op_typeid);   
@@ -958,17 +973,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 68:  pseudo_destructor_name ::= dcolon_opt nested_name_specifier_opt type_name :: ~ type_name
-	//
-	static final class Action68 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumePsudoDestructorName(true);    
-		}  
-	}  
-  
-	//
-	// Rule 69:  pseudo_destructor_name ::= dcolon_opt nested_name_specifier template template_id_name :: ~ type_name
+	// Rule 69:  pseudo_destructor_name ::= dcolon_opt nested_name_specifier_opt type_name :: ~ type_name
 	//
 	static final class Action69 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -978,9 +983,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 70:  pseudo_destructor_name ::= dcolon_opt nested_name_specifier_opt ~ type_name
+	// Rule 70:  pseudo_destructor_name ::= dcolon_opt nested_name_specifier template template_id_name :: ~ type_name
 	//
 	static final class Action70 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumePsudoDestructorName(true);    
+		}  
+	}  
+  
+	//
+	// Rule 71:  pseudo_destructor_name ::= dcolon_opt nested_name_specifier_opt ~ type_name
+	//
+	static final class Action71 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumePsudoDestructorName(false);    
@@ -988,9 +1003,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 74:  unary_expression ::= ++ cast_expression
+	// Rule 75:  unary_expression ::= ++ cast_expression
 	//
-	static final class Action74 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action75 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_prefixIncr);    
@@ -998,9 +1013,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 75:  unary_expression ::= -- cast_expression
+	// Rule 76:  unary_expression ::= -- cast_expression
 	//
-	static final class Action75 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action76 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_prefixDecr);    
@@ -1008,9 +1023,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 76:  unary_expression ::= & cast_expression
+	// Rule 77:  unary_expression ::= & cast_expression
 	//
-	static final class Action76 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action77 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_amper);    
@@ -1018,9 +1033,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 77:  unary_expression ::= * cast_expression
+	// Rule 78:  unary_expression ::= * cast_expression
 	//
-	static final class Action77 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action78 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_star);    
@@ -1028,9 +1043,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 78:  unary_expression ::= + cast_expression
+	// Rule 79:  unary_expression ::= + cast_expression
 	//
-	static final class Action78 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action79 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_plus);    
@@ -1038,9 +1053,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 79:  unary_expression ::= - cast_expression
+	// Rule 80:  unary_expression ::= - cast_expression
 	//
-	static final class Action79 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action80 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_minus);    
@@ -1048,9 +1063,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 80:  unary_expression ::= ~ cast_expression
+	// Rule 81:  unary_expression ::= ~ cast_expression
 	//
-	static final class Action80 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action81 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_tilde);    
@@ -1058,9 +1073,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 81:  unary_expression ::= ! cast_expression
+	// Rule 82:  unary_expression ::= ! cast_expression
 	//
-	static final class Action81 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action82 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_not);    
@@ -1068,9 +1083,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 82:  unary_expression ::= sizeof unary_expression
+	// Rule 83:  unary_expression ::= sizeof unary_expression
 	//
-	static final class Action82 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action83 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionUnaryOperator(IASTUnaryExpression.op_sizeof);    
@@ -1078,9 +1093,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 83:  unary_expression ::= sizeof ( type_id )
+	// Rule 84:  unary_expression ::= sizeof ( type_id )
 	//
-	static final class Action83 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action84 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionTypeId(ICPPASTTypeIdExpression.op_sizeof);   
@@ -1088,9 +1103,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 84:  new_expression ::= dcolon_opt new new_placement_opt new_type_id <openscope-ast> new_array_expressions_opt new_initializer_opt
+	// Rule 85:  new_expression ::= dcolon_opt new new_placement_opt new_type_id <openscope-ast> new_array_expressions_opt new_initializer_opt
 	//
-	static final class Action84 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action85 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionNew(false);    
@@ -1098,9 +1113,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 85:  new_expression ::= dcolon_opt new new_placement_opt ( type_id ) new_initializer_opt
+	// Rule 86:  new_expression ::= dcolon_opt new new_placement_opt ( type_id ) new_initializer_opt
 	//
-	static final class Action85 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action86 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionNew(true);    
@@ -1108,9 +1123,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 88:  new_placement_opt ::= $Empty
+	// Rule 89:  new_placement_opt ::= $Empty
 	//
-	static final class Action88 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action89 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -1118,9 +1133,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 89:  new_type_id ::= type_specifier_seq
+	// Rule 90:  new_type_id ::= type_specifier_seq
 	//
-	static final class Action89 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action90 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeId(false);    
@@ -1128,9 +1143,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 90:  new_type_id ::= type_specifier_seq new_declarator
+	// Rule 91:  new_type_id ::= type_specifier_seq new_declarator
 	//
-	static final class Action90 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action91 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeId(true);    
@@ -1138,9 +1153,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 91:  new_declarator ::= <openscope-ast> new_pointer_operators
+	// Rule 92:  new_declarator ::= <openscope-ast> new_pointer_operators
 	//
-	static final class Action91 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action92 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeNewDeclarator();   
@@ -1148,9 +1163,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 100:  new_initializer_opt ::= $Empty
+	// Rule 101:  new_initializer_opt ::= $Empty
 	//
-	static final class Action100 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action101 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -1158,9 +1173,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 101:  delete_expression ::= dcolon_opt delete cast_expression
+	// Rule 102:  delete_expression ::= dcolon_opt delete cast_expression
 	//
-	static final class Action101 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action102 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionDelete(false);    
@@ -1168,9 +1183,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 102:  delete_expression ::= dcolon_opt delete [ ] cast_expression
+	// Rule 103:  delete_expression ::= dcolon_opt delete [ ] cast_expression
 	//
-	static final class Action102 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action103 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionDelete(true);    
@@ -1178,9 +1193,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 104:  cast_expression ::= ( type_id ) cast_expression
+	// Rule 105:  cast_expression ::= ( type_id ) cast_expression
 	//
-	static final class Action104 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action105 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionCast(ICPPASTCastExpression.op_cast);    
@@ -1188,9 +1203,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 106:  pm_expression ::= pm_expression .* cast_expression
+	// Rule 107:  pm_expression ::= pm_expression .* cast_expression
 	//
-	static final class Action106 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action107 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_pmdot);    
@@ -1198,9 +1213,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 107:  pm_expression ::= pm_expression ->* cast_expression
+	// Rule 108:  pm_expression ::= pm_expression ->* cast_expression
 	//
-	static final class Action107 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action108 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_pmarrow);    
@@ -1208,9 +1223,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 109:  multiplicative_expression ::= multiplicative_expression * pm_expression
+	// Rule 110:  multiplicative_expression ::= multiplicative_expression * pm_expression
 	//
-	static final class Action109 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action110 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_multiply);    
@@ -1218,9 +1233,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 110:  multiplicative_expression ::= multiplicative_expression / pm_expression
+	// Rule 111:  multiplicative_expression ::= multiplicative_expression / pm_expression
 	//
-	static final class Action110 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action111 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_divide);    
@@ -1228,9 +1243,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 111:  multiplicative_expression ::= multiplicative_expression % pm_expression
+	// Rule 112:  multiplicative_expression ::= multiplicative_expression % pm_expression
 	//
-	static final class Action111 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action112 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_modulo);    
@@ -1238,9 +1253,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 113:  additive_expression ::= additive_expression + multiplicative_expression
+	// Rule 114:  additive_expression ::= additive_expression + multiplicative_expression
 	//
-	static final class Action113 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action114 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_plus);    
@@ -1248,9 +1263,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 114:  additive_expression ::= additive_expression - multiplicative_expression
+	// Rule 115:  additive_expression ::= additive_expression - multiplicative_expression
 	//
-	static final class Action114 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action115 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_minus);    
@@ -1258,9 +1273,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 116:  shift_expression ::= shift_expression << additive_expression
+	// Rule 117:  shift_expression ::= shift_expression << additive_expression
 	//
-	static final class Action116 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action117 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_shiftLeft);    
@@ -1268,9 +1283,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 117:  shift_expression ::= shift_expression >> additive_expression
+	// Rule 118:  shift_expression ::= shift_expression >> additive_expression
 	//
-	static final class Action117 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action118 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_shiftRight);    
@@ -1278,9 +1293,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 119:  relational_expression ::= relational_expression < shift_expression
+	// Rule 120:  relational_expression ::= relational_expression < shift_expression
 	//
-	static final class Action119 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action120 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_lessThan);    
@@ -1288,9 +1303,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 120:  relational_expression ::= relational_expression > shift_expression
+	// Rule 121:  relational_expression ::= relational_expression > shift_expression
 	//
-	static final class Action120 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action121 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_greaterThan);    
@@ -1298,9 +1313,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 121:  relational_expression ::= relational_expression <= shift_expression
+	// Rule 122:  relational_expression ::= relational_expression <= shift_expression
 	//
-	static final class Action121 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action122 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_lessEqual);    
@@ -1308,9 +1323,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 122:  relational_expression ::= relational_expression >= shift_expression
+	// Rule 123:  relational_expression ::= relational_expression >= shift_expression
 	//
-	static final class Action122 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action123 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_greaterEqual);    
@@ -1318,9 +1333,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 124:  equality_expression ::= equality_expression == relational_expression
+	// Rule 125:  equality_expression ::= equality_expression == relational_expression
 	//
-	static final class Action124 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action125 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_equals);    
@@ -1328,9 +1343,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 125:  equality_expression ::= equality_expression != relational_expression
+	// Rule 126:  equality_expression ::= equality_expression != relational_expression
 	//
-	static final class Action125 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action126 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_notequals);    
@@ -1338,9 +1353,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 127:  and_expression ::= and_expression & equality_expression
+	// Rule 128:  and_expression ::= and_expression & equality_expression
 	//
-	static final class Action127 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action128 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryAnd);    
@@ -1348,9 +1363,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 129:  exclusive_or_expression ::= exclusive_or_expression ^ and_expression
+	// Rule 130:  exclusive_or_expression ::= exclusive_or_expression ^ and_expression
 	//
-	static final class Action129 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action130 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryXor);    
@@ -1358,9 +1373,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 131:  inclusive_or_expression ::= inclusive_or_expression | exclusive_or_expression
+	// Rule 132:  inclusive_or_expression ::= inclusive_or_expression | exclusive_or_expression
 	//
-	static final class Action131 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action132 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryOr);    
@@ -1368,9 +1383,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 133:  logical_and_expression ::= logical_and_expression && inclusive_or_expression
+	// Rule 134:  logical_and_expression ::= logical_and_expression && inclusive_or_expression
 	//
-	static final class Action133 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action134 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_logicalAnd);    
@@ -1378,9 +1393,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 135:  logical_or_expression ::= logical_or_expression || logical_and_expression
+	// Rule 136:  logical_or_expression ::= logical_or_expression || logical_and_expression
 	//
-	static final class Action135 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action136 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_logicalOr);    
@@ -1388,9 +1403,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 137:  conditional_expression ::= logical_or_expression ? expression : assignment_expression
+	// Rule 138:  conditional_expression ::= logical_or_expression ? expression : assignment_expression
 	//
-	static final class Action137 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action138 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionConditional();    
@@ -1398,9 +1413,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 138:  throw_expression ::= throw
+	// Rule 139:  throw_expression ::= throw
 	//
-	static final class Action138 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action139 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionThrow(false);    
@@ -1408,9 +1423,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 139:  throw_expression ::= throw assignment_expression
+	// Rule 140:  throw_expression ::= throw assignment_expression
 	//
-	static final class Action139 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action140 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionThrow(true);    
@@ -1418,9 +1433,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 142:  assignment_expression ::= logical_or_expression = assignment_expression
+	// Rule 143:  assignment_expression ::= logical_or_expression = assignment_expression
 	//
-	static final class Action142 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action143 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_assign);    
@@ -1428,9 +1443,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 143:  assignment_expression ::= logical_or_expression *= assignment_expression
+	// Rule 144:  assignment_expression ::= logical_or_expression *= assignment_expression
 	//
-	static final class Action143 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action144 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_multiplyAssign);    
@@ -1438,9 +1453,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 144:  assignment_expression ::= logical_or_expression /= assignment_expression
+	// Rule 145:  assignment_expression ::= logical_or_expression /= assignment_expression
 	//
-	static final class Action144 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action145 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_divideAssign);    
@@ -1448,9 +1463,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 145:  assignment_expression ::= logical_or_expression %= assignment_expression
+	// Rule 146:  assignment_expression ::= logical_or_expression %= assignment_expression
 	//
-	static final class Action145 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action146 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_moduloAssign);    
@@ -1458,9 +1473,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 146:  assignment_expression ::= logical_or_expression += assignment_expression
+	// Rule 147:  assignment_expression ::= logical_or_expression += assignment_expression
 	//
-	static final class Action146 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action147 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_plusAssign);    
@@ -1468,9 +1483,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 147:  assignment_expression ::= logical_or_expression -= assignment_expression
+	// Rule 148:  assignment_expression ::= logical_or_expression -= assignment_expression
 	//
-	static final class Action147 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action148 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_minusAssign);    
@@ -1478,9 +1493,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 148:  assignment_expression ::= logical_or_expression >>= assignment_expression
+	// Rule 149:  assignment_expression ::= logical_or_expression >>= assignment_expression
 	//
-	static final class Action148 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action149 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_shiftRightAssign);    
@@ -1488,9 +1503,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 149:  assignment_expression ::= logical_or_expression <<= assignment_expression
+	// Rule 150:  assignment_expression ::= logical_or_expression <<= assignment_expression
 	//
-	static final class Action149 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action150 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_shiftLeftAssign);    
@@ -1498,9 +1513,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 150:  assignment_expression ::= logical_or_expression &= assignment_expression
+	// Rule 151:  assignment_expression ::= logical_or_expression &= assignment_expression
 	//
-	static final class Action150 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action151 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryAndAssign);    
@@ -1508,9 +1523,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 151:  assignment_expression ::= logical_or_expression ^= assignment_expression
+	// Rule 152:  assignment_expression ::= logical_or_expression ^= assignment_expression
 	//
-	static final class Action151 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action152 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryXorAssign);    
@@ -1518,9 +1533,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 152:  assignment_expression ::= logical_or_expression |= assignment_expression
+	// Rule 153:  assignment_expression ::= logical_or_expression |= assignment_expression
 	//
-	static final class Action152 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action153 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionBinaryOperator(ICPPASTBinaryExpression.op_binaryOrAssign);    
@@ -1528,9 +1543,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 154:  expression ::= ERROR_TOKEN
+	// Rule 155:  expression ::= ERROR_TOKEN
 	//
-	static final class Action154 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action155 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionProblem();   
@@ -1538,9 +1553,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 155:  expression_list ::= <openscope-ast> expression_list_actual
+	// Rule 156:  expression_list ::= <openscope-ast> expression_list_actual
 	//
-	static final class Action155 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action156 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeExpressionList();    
@@ -1548,9 +1563,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 159:  expression_list_opt ::= $Empty
+	// Rule 160:  expression_list_opt ::= $Empty
 	//
-	static final class Action159 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action160 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -1558,9 +1573,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 161:  expression_opt ::= $Empty
+	// Rule 162:  expression_opt ::= $Empty
 	//
-	static final class Action161 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action162 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -1568,9 +1583,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 164:  constant_expression_opt ::= $Empty
+	// Rule 165:  constant_expression_opt ::= $Empty
 	//
-	static final class Action164 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action165 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -1578,9 +1593,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 173:  statement ::= ERROR_TOKEN
+	// Rule 174:  statement ::= ERROR_TOKEN
 	//
-	static final class Action173 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action174 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementProblem();    
@@ -1588,9 +1603,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 174:  labeled_statement ::= identifier : statement
+	// Rule 175:  labeled_statement ::= identifier : statement
 	//
-	static final class Action174 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action175 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementLabeled();    
@@ -1598,9 +1613,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 175:  labeled_statement ::= case constant_expression :
+	// Rule 176:  labeled_statement ::= case constant_expression :
 	//
-	static final class Action175 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action176 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementCase();    
@@ -1608,9 +1623,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 176:  labeled_statement ::= default :
+	// Rule 177:  labeled_statement ::= default :
 	//
-	static final class Action176 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action177 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementDefault();    
@@ -1618,9 +1633,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 177:  expression_statement ::= expression ;
+	// Rule 178:  expression_statement ::= expression ;
 	//
-	static final class Action177 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action178 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementExpression();    
@@ -1628,9 +1643,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 178:  expression_statement ::= ;
+	// Rule 179:  expression_statement ::= ;
 	//
-	static final class Action178 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action179 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementNull();    
@@ -1638,9 +1653,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 179:  compound_statement ::= { <openscope-ast> statement_seq }
+	// Rule 180:  compound_statement ::= { <openscope-ast> statement_seq }
 	//
-	static final class Action179 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action180 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementCompoundStatement(true);    
@@ -1648,9 +1663,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 180:  compound_statement ::= { }
+	// Rule 181:  compound_statement ::= { }
 	//
-	static final class Action180 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action181 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementCompoundStatement(false);    
@@ -1658,9 +1673,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 183:  selection_statement ::= if ( condition ) statement
+	// Rule 184:  selection_statement ::= if ( condition ) statement
 	//
-	static final class Action183 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action184 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementIf(false);    
@@ -1668,9 +1683,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 184:  selection_statement ::= if ( condition ) statement else statement
+	// Rule 185:  selection_statement ::= if ( condition ) statement else statement
 	//
-	static final class Action184 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action185 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementIf(true);    
@@ -1678,9 +1693,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 185:  selection_statement ::= switch ( condition ) statement
+	// Rule 186:  selection_statement ::= switch ( condition ) statement
 	//
-	static final class Action185 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action186 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementSwitch();    
@@ -1688,9 +1703,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 187:  condition ::= type_specifier_seq declarator = assignment_expression
+	// Rule 188:  condition ::= type_specifier_seq declarator = assignment_expression
 	//
-	static final class Action187 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action188 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeConditionDeclaration();    
@@ -1698,9 +1713,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 188:  iteration_statement ::= while ( condition ) statement
+	// Rule 189:  iteration_statement ::= while ( condition ) statement
 	//
-	static final class Action188 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action189 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementWhileLoop();    
@@ -1708,9 +1723,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 189:  iteration_statement ::= do statement while ( expression ) ;
+	// Rule 190:  iteration_statement ::= do statement while ( expression ) ;
 	//
-	static final class Action189 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action190 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementDoLoop();    
@@ -1718,17 +1733,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 190:  iteration_statement ::= for ( expression_opt ; expression_opt ; expression_opt ) statement
-	//
-	static final class Action190 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-  consumeStatementForLoop();   
-		}  
-	}  
-  
-	//
-	// Rule 191:  iteration_statement ::= for ( simple_declaration expression_opt ; expression_opt ) statement
+	// Rule 191:  iteration_statement ::= for ( expression_opt ; expression_opt ; expression_opt ) statement
 	//
 	static final class Action191 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -1738,9 +1743,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 192:  jump_statement ::= break ;
+	// Rule 192:  iteration_statement ::= for ( simple_declaration expression_opt ; expression_opt ) statement
 	//
 	static final class Action192 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+  consumeStatementForLoop();   
+		}  
+	}  
+  
+	//
+	// Rule 193:  jump_statement ::= break ;
+	//
+	static final class Action193 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementBreak();    
@@ -1748,9 +1763,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 193:  jump_statement ::= continue ;
+	// Rule 194:  jump_statement ::= continue ;
 	//
-	static final class Action193 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action194 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementContinue();    
@@ -1758,9 +1773,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 194:  jump_statement ::= return expression ;
+	// Rule 195:  jump_statement ::= return expression ;
 	//
-	static final class Action194 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action195 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementReturn(true);    
@@ -1768,9 +1783,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 195:  jump_statement ::= return ;
+	// Rule 196:  jump_statement ::= return ;
 	//
-	static final class Action195 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action196 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementReturn(false);    
@@ -1778,9 +1793,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 196:  jump_statement ::= goto identifier ;
+	// Rule 197:  jump_statement ::= goto identifier ;
 	//
-	static final class Action196 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action197 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementGoto();    
@@ -1788,9 +1803,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 197:  declaration_statement ::= block_declaration
+	// Rule 198:  declaration_statement ::= block_declaration
 	//
-	static final class Action197 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action198 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementDeclaration();    
@@ -1798,9 +1813,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 214:  simple_declaration ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ;
+	// Rule 215:  simple_declaration ::= declaration_specifiers_opt <openscope-ast> init_declarator_list_opt ;
 	//
-	static final class Action214 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action215 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclarationSimple(true);    
@@ -1808,9 +1823,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 215:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
+	// Rule 216:  declaration_specifiers ::= <openscope-ast> simple_declaration_specifiers
 	//
-	static final class Action215 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action216 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclarationSpecifiersSimple();    
@@ -1818,17 +1833,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 216:  declaration_specifiers ::= <openscope-ast> class_declaration_specifiers
-	//
-	static final class Action216 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeDeclarationSpecifiersComposite();    
-		}  
-	}  
-  
-	//
-	// Rule 217:  declaration_specifiers ::= <openscope-ast> elaborated_declaration_specifiers
+	// Rule 217:  declaration_specifiers ::= <openscope-ast> class_declaration_specifiers
 	//
 	static final class Action217 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -1838,7 +1843,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 218:  declaration_specifiers ::= <openscope-ast> enum_declaration_specifiers
+	// Rule 218:  declaration_specifiers ::= <openscope-ast> elaborated_declaration_specifiers
 	//
 	static final class Action218 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -1848,9 +1853,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 219:  declaration_specifiers ::= <openscope-ast> type_name_declaration_specifiers
+	// Rule 219:  declaration_specifiers ::= <openscope-ast> enum_declaration_specifiers
 	//
 	static final class Action219 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDeclarationSpecifiersComposite();    
+		}  
+	}  
+  
+	//
+	// Rule 220:  declaration_specifiers ::= <openscope-ast> type_name_declaration_specifiers
+	//
+	static final class Action220 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclarationSpecifiersTypeName();    
@@ -1858,9 +1873,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 221:  declaration_specifiers_opt ::= $Empty
+	// Rule 222:  declaration_specifiers_opt ::= $Empty
 	//
-	static final class Action221 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action222 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -1868,17 +1883,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 225:  no_type_declaration_specifier ::= friend
-	//
-	static final class Action225 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeDeclSpecToken();   
-		}  
-	}  
-  
-	//
-	// Rule 226:  no_type_declaration_specifier ::= typedef
+	// Rule 226:  no_type_declaration_specifier ::= friend
 	//
 	static final class Action226 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -1888,9 +1893,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 254:  simple_type_specifier ::= simple_type_specifier_token
+	// Rule 227:  no_type_declaration_specifier ::= typedef
 	//
-	static final class Action254 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action227 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclSpecToken();   
@@ -1898,17 +1903,17 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 270:  type_name_specifier ::= dcolon_opt nested_name_specifier_opt type_name
+	// Rule 255:  simple_type_specifier ::= simple_type_specifier_token
 	//
-	static final class Action270 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action255 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeQualifiedId(false);    
+   consumeDeclSpecToken();   
 		}  
 	}  
   
 	//
-	// Rule 271:  type_name_specifier ::= dcolon_opt nested_name_specifier template template_id_name
+	// Rule 271:  type_name_specifier ::= dcolon_opt nested_name_specifier_opt type_name
 	//
 	static final class Action271 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -1918,7 +1923,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 272:  type_name_specifier ::= typename dcolon_opt nested_name_specifier identifier_name
+	// Rule 272:  type_name_specifier ::= dcolon_opt nested_name_specifier template template_id_name
 	//
 	static final class Action272 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -1928,9 +1933,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 273:  type_name_specifier ::= typename dcolon_opt nested_name_specifier template_opt template_id_name
+	// Rule 273:  type_name_specifier ::= typename dcolon_opt nested_name_specifier identifier_name
 	//
 	static final class Action273 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeQualifiedId(false);    
+		}  
+	}  
+  
+	//
+	// Rule 274:  type_name_specifier ::= typename dcolon_opt nested_name_specifier template_opt template_id_name
+	//
+	static final class Action274 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeQualifiedId(true);    
@@ -1938,9 +1953,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 274:  elaborated_type_specifier ::= class_keyword dcolon_opt nested_name_specifier_opt identifier_name
+	// Rule 275:  elaborated_type_specifier ::= class_keyword dcolon_opt nested_name_specifier_opt identifier_name
 	//
-	static final class Action274 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action275 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeSpecifierElaborated(false);    
@@ -1948,9 +1963,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 275:  elaborated_type_specifier ::= class_keyword dcolon_opt nested_name_specifier_opt template_opt template_id_name
+	// Rule 276:  elaborated_type_specifier ::= class_keyword dcolon_opt nested_name_specifier_opt template_opt template_id_name
 	//
-	static final class Action275 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action276 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeSpecifierElaborated(true);     
@@ -1958,9 +1973,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 276:  elaborated_type_specifier ::= enum dcolon_opt nested_name_specifier_opt identifier_name
+	// Rule 277:  elaborated_type_specifier ::= enum dcolon_opt nested_name_specifier_opt identifier_name
 	//
-	static final class Action276 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action277 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeSpecifierElaborated(false);    
@@ -1968,9 +1983,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 278:  enum_specifier ::= enum { <openscope-ast> enumerator_list_opt }
+	// Rule 279:  enum_specifier ::= enum { <openscope-ast> enumerator_list_opt }
 	//
-	static final class Action278 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action279 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeSpecifierEnumeration(false);   
@@ -1978,9 +1993,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 279:  enum_specifier ::= enum identifier { <openscope-ast> enumerator_list_opt }
+	// Rule 280:  enum_specifier ::= enum identifier { <openscope-ast> enumerator_list_opt }
 	//
-	static final class Action279 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action280 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeSpecifierEnumeration(true);   
@@ -1988,9 +2003,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 284:  enumerator_definition ::= enumerator
+	// Rule 285:  enumerator_definition ::= enumerator
 	//
-	static final class Action284 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action285 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEnumerator(false);   
@@ -1998,9 +2013,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 285:  enumerator_definition ::= enumerator = constant_expression
+	// Rule 286:  enumerator_definition ::= enumerator = constant_expression
 	//
-	static final class Action285 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action286 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEnumerator(true);   
@@ -2008,17 +2023,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 294:  original_namespace_definition ::= namespace identifier_name { <openscope-ast> declaration_seq_opt }
-	//
-	static final class Action294 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeNamespaceDefinition(true);    
-		}  
-	}  
-  
-	//
-	// Rule 295:  extension_namespace_definition ::= namespace original_namespace_name { <openscope-ast> declaration_seq_opt }
+	// Rule 295:  original_namespace_definition ::= namespace identifier_name { <openscope-ast> declaration_seq_opt }
 	//
 	static final class Action295 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2028,9 +2033,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 296:  unnamed_namespace_definition ::= namespace { <openscope-ast> declaration_seq_opt }
+	// Rule 296:  extension_namespace_definition ::= namespace original_namespace_name { <openscope-ast> declaration_seq_opt }
 	//
 	static final class Action296 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeNamespaceDefinition(true);    
+		}  
+	}  
+  
+	//
+	// Rule 297:  unnamed_namespace_definition ::= namespace { <openscope-ast> declaration_seq_opt }
+	//
+	static final class Action297 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeNamespaceDefinition(false);    
@@ -2038,9 +2053,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 298:  namespace_alias_definition ::= namespace identifier = dcolon_opt nested_name_specifier_opt namespace_name ;
+	// Rule 299:  namespace_alias_definition ::= namespace identifier = dcolon_opt nested_name_specifier_opt namespace_name ;
 	//
-	static final class Action298 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action299 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeNamespaceAliasDefinition();   
@@ -2048,9 +2063,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 299:  using_declaration ::= using typename_opt dcolon_opt nested_name_specifier_opt unqualified_id_name ;
+	// Rule 300:  using_declaration ::= using typename_opt dcolon_opt nested_name_specifier_opt unqualified_id_name ;
 	//
-	static final class Action299 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action300 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeUsingDeclaration();    
@@ -2058,9 +2073,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 300:  typename_opt ::= typename
+	// Rule 301:  typename_opt ::= typename
 	//
-	static final class Action300 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action301 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumePlaceHolder();    
@@ -2068,9 +2083,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 301:  typename_opt ::= $Empty
+	// Rule 302:  typename_opt ::= $Empty
 	//
-	static final class Action301 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action302 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -2078,9 +2093,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 302:  using_directive ::= using namespace dcolon_opt nested_name_specifier_opt namespace_name ;
+	// Rule 303:  using_directive ::= using namespace dcolon_opt nested_name_specifier_opt namespace_name ;
 	//
-	static final class Action302 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action303 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeUsingDirective();    
@@ -2088,9 +2103,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 303:  asm_definition ::= asm ( stringlit ) ;
+	// Rule 304:  asm_definition ::= asm ( stringlit ) ;
 	//
-	static final class Action303 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action304 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclarationASM();   
@@ -2098,17 +2113,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 304:  linkage_specification ::= extern stringlit { <openscope-ast> declaration_seq_opt }
-	//
-	static final class Action304 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeLinkageSpecification();    
-		}  
-	}  
-  
-	//
-	// Rule 305:  linkage_specification ::= extern stringlit <openscope-ast> declaration
+	// Rule 305:  linkage_specification ::= extern stringlit { <openscope-ast> declaration_seq_opt }
 	//
 	static final class Action305 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2118,9 +2123,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 311:  init_declarator ::= declarator initializer
+	// Rule 306:  linkage_specification ::= extern stringlit <openscope-ast> declaration
 	//
-	static final class Action311 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action306 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeLinkageSpecification();    
+		}  
+	}  
+  
+	//
+	// Rule 312:  init_declarator ::= declarator initializer
+	//
+	static final class Action312 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclaratorWithInitializer(true);    
@@ -2128,9 +2143,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 313:  declarator ::= <openscope-ast> ptr_operator_seq direct_declarator
+	// Rule 314:  declarator ::= <openscope-ast> ptr_operator_seq direct_declarator
 	//
-	static final class Action313 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action314 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclaratorWithPointer(true);    
@@ -2138,9 +2153,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 317:  basic_direct_declarator ::= declarator_id_name
+	// Rule 318:  basic_direct_declarator ::= declarator_id_name
 	//
-	static final class Action317 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action318 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorIdentifier();    
@@ -2148,9 +2163,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 318:  basic_direct_declarator ::= ( declarator )
+	// Rule 319:  basic_direct_declarator ::= ( declarator )
 	//
-	static final class Action318 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action319 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorBracketed();    
@@ -2158,9 +2173,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 319:  function_direct_declarator ::= basic_direct_declarator ( <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
+	// Rule 320:  function_direct_declarator ::= basic_direct_declarator ( <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
 	//
-	static final class Action319 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action320 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorFunctionDeclarator(true);    
@@ -2168,17 +2183,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 320:  array_direct_declarator ::= array_direct_declarator array_modifier
-	//
-	static final class Action320 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeDirectDeclaratorArrayDeclarator(true);    
-		}  
-	}  
-  
-	//
-	// Rule 321:  array_direct_declarator ::= basic_direct_declarator array_modifier
+	// Rule 321:  array_direct_declarator ::= array_direct_declarator array_modifier
 	//
 	static final class Action321 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2188,9 +2193,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 322:  array_modifier ::= [ constant_expression ]
+	// Rule 322:  array_direct_declarator ::= basic_direct_declarator array_modifier
 	//
 	static final class Action322 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDirectDeclaratorArrayDeclarator(true);    
+		}  
+	}  
+  
+	//
+	// Rule 323:  array_modifier ::= [ constant_expression ]
+	//
+	static final class Action323 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorArrayModifier(true);    
@@ -2198,9 +2213,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 323:  array_modifier ::= [ ]
+	// Rule 324:  array_modifier ::= [ ]
 	//
-	static final class Action323 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action324 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorArrayModifier(false);    
@@ -2208,9 +2223,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 324:  ptr_operator ::= * <openscope-ast> cv_qualifier_seq_opt
+	// Rule 325:  ptr_operator ::= * <openscope-ast> cv_qualifier_seq_opt
 	//
-	static final class Action324 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action325 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumePointer();    
@@ -2218,9 +2233,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 325:  ptr_operator ::= &
+	// Rule 326:  ptr_operator ::= &
 	//
-	static final class Action325 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action326 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeReferenceOperator();    
@@ -2228,9 +2243,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 326:  ptr_operator ::= dcolon_opt nested_name_specifier * <openscope-ast> cv_qualifier_seq_opt
+	// Rule 327:  ptr_operator ::= dcolon_opt nested_name_specifier * <openscope-ast> cv_qualifier_seq_opt
 	//
-	static final class Action326 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action327 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumePointerToMember();    
@@ -2238,7 +2253,17 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 334:  cv_qualifier ::= const
+	// Rule 333:  cv_qualifier ::= const
+	//
+	static final class Action333 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDeclSpecToken();   
+		}  
+	}  
+  
+	//
+	// Rule 334:  cv_qualifier ::= volatile
 	//
 	static final class Action334 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2248,19 +2273,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 335:  cv_qualifier ::= volatile
+	// Rule 336:  declarator_id_name ::= dcolon_opt nested_name_specifier_opt type_name
 	//
-	static final class Action335 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeDeclSpecToken();   
-		}  
-	}  
-  
-	//
-	// Rule 337:  declarator_id_name ::= dcolon_opt nested_name_specifier_opt type_name
-	//
-	static final class Action337 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action336 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeQualifiedId(false);    
@@ -2268,9 +2283,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 338:  type_id ::= type_specifier_seq
+	// Rule 337:  type_id ::= type_specifier_seq
 	//
-	static final class Action338 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action337 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeId(false);    
@@ -2278,9 +2293,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 339:  type_id ::= type_specifier_seq abstract_declarator
+	// Rule 338:  type_id ::= type_specifier_seq abstract_declarator
 	//
-	static final class Action339 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action338 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeTypeId(true);    
@@ -2288,9 +2303,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 342:  abstract_declarator ::= <openscope-ast> ptr_operator_seq
+	// Rule 341:  abstract_declarator ::= <openscope-ast> ptr_operator_seq
 	//
-	static final class Action342 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action341 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclaratorWithPointer(false);    
@@ -2298,9 +2313,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 343:  abstract_declarator ::= <openscope-ast> ptr_operator_seq direct_abstract_declarator
+	// Rule 342:  abstract_declarator ::= <openscope-ast> ptr_operator_seq direct_abstract_declarator
 	//
-	static final class Action343 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action342 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclaratorWithPointer(true);    
@@ -2308,9 +2323,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 347:  basic_direct_abstract_declarator ::= ( abstract_declarator )
+	// Rule 346:  basic_direct_abstract_declarator ::= ( abstract_declarator )
 	//
-	static final class Action347 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action346 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorBracketed();    
@@ -2318,9 +2333,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 348:  array_direct_abstract_declarator ::= array_modifier
+	// Rule 347:  array_direct_abstract_declarator ::= array_modifier
 	//
-	static final class Action348 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action347 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorArrayDeclarator(false);    
@@ -2328,7 +2343,17 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 349:  array_direct_abstract_declarator ::= array_direct_abstract_declarator array_modifier
+	// Rule 348:  array_direct_abstract_declarator ::= array_direct_abstract_declarator array_modifier
+	//
+	static final class Action348 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDirectDeclaratorArrayDeclarator(true);    
+		}  
+	}  
+  
+	//
+	// Rule 349:  array_direct_abstract_declarator ::= basic_direct_abstract_declarator array_modifier
 	//
 	static final class Action349 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2338,19 +2363,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 350:  array_direct_abstract_declarator ::= basic_direct_abstract_declarator array_modifier
+	// Rule 350:  function_direct_abstract_declarator ::= basic_direct_abstract_declarator ( <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
 	//
 	static final class Action350 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeDirectDeclaratorArrayDeclarator(true);    
-		}  
-	}  
-  
-	//
-	// Rule 351:  function_direct_abstract_declarator ::= basic_direct_abstract_declarator ( <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
-	//
-	static final class Action351 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorFunctionDeclarator(true);    
@@ -2358,9 +2373,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 352:  function_direct_abstract_declarator ::= ( <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
+	// Rule 351:  function_direct_abstract_declarator ::= ( <openscope-ast> parameter_declaration_clause ) <openscope-ast> cv_qualifier_seq_opt <openscope-ast> exception_specification_opt
 	//
-	static final class Action352 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action351 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDirectDeclaratorFunctionDeclarator(false);    
@@ -2368,39 +2383,39 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 353:  parameter_declaration_clause ::= parameter_declaration_list_opt ...
+	// Rule 352:  parameter_declaration_clause ::= parameter_declaration_list_opt ...
+	//
+	static final class Action352 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumePlaceHolder();    
+		}  
+	}  
+  
+	//
+	// Rule 353:  parameter_declaration_clause ::= parameter_declaration_list_opt
 	//
 	static final class Action353 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumePlaceHolder();    
+   consumeEmpty();    
 		}  
 	}  
   
 	//
-	// Rule 354:  parameter_declaration_clause ::= parameter_declaration_list_opt
+	// Rule 354:  parameter_declaration_clause ::= parameter_declaration_list , ...
 	//
 	static final class Action354 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeEmpty();    
-		}  
-	}  
-  
-	//
-	// Rule 355:  parameter_declaration_clause ::= parameter_declaration_list , ...
-	//
-	static final class Action355 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumePlaceHolder();    
 		}  
 	}  
   
 	//
-	// Rule 361:  abstract_declarator_opt ::= $Empty
+	// Rule 360:  abstract_declarator_opt ::= $Empty
 	//
-	static final class Action361 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action360 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -2408,9 +2423,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 362:  parameter_declaration ::= declaration_specifiers parameter_init_declarator
+	// Rule 361:  parameter_declaration ::= declaration_specifiers parameter_init_declarator
 	//
-	static final class Action362 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action361 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeParameterDeclaration();    
@@ -2418,9 +2433,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 363:  parameter_declaration ::= declaration_specifiers
+	// Rule 362:  parameter_declaration ::= declaration_specifiers
 	//
-	static final class Action363 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action362 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeParameterDeclarationWithoutDeclarator();    
@@ -2428,9 +2443,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 365:  parameter_init_declarator ::= declarator = parameter_initializer
+	// Rule 364:  parameter_init_declarator ::= declarator = parameter_initializer
 	//
-	static final class Action365 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action364 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclaratorWithInitializer(true);    
@@ -2438,19 +2453,19 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 367:  parameter_init_declarator ::= abstract_declarator = parameter_initializer
+	// Rule 366:  parameter_init_declarator ::= abstract_declarator = parameter_initializer
+	//
+	static final class Action366 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDeclaratorWithInitializer(true);    
+		}  
+	}  
+  
+	//
+	// Rule 367:  parameter_init_declarator ::= = parameter_initializer
 	//
 	static final class Action367 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeDeclaratorWithInitializer(true);    
-		}  
-	}  
-  
-	//
-	// Rule 368:  parameter_init_declarator ::= = parameter_initializer
-	//
-	static final class Action368 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclaratorWithInitializer(false);    
@@ -2458,9 +2473,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 369:  parameter_initializer ::= assignment_expression
+	// Rule 368:  parameter_initializer ::= assignment_expression
 	//
-	static final class Action369 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action368 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeInitializer();    
@@ -2468,9 +2483,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 370:  function_definition ::= declaration_specifiers_opt function_direct_declarator <openscope-ast> ctor_initializer_list_opt function_body
+	// Rule 369:  function_definition ::= declaration_specifiers_opt function_direct_declarator <openscope-ast> ctor_initializer_list_opt function_body
 	//
-	static final class Action370 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action369 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeFunctionDefinition(false);    
@@ -2478,9 +2493,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 371:  function_definition ::= declaration_specifiers_opt function_direct_declarator try <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
+	// Rule 370:  function_definition ::= declaration_specifiers_opt function_direct_declarator try <openscope-ast> ctor_initializer_list_opt function_body <openscope-ast> handler_seq
 	//
-	static final class Action371 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action370 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeFunctionDefinition(true);    
@@ -2488,9 +2503,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 374:  initializer ::= ( expression_list )
+	// Rule 373:  initializer ::= ( expression_list )
 	//
-	static final class Action374 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action373 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeInitializerConstructor();    
@@ -2498,9 +2513,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 375:  initializer_clause ::= assignment_expression
+	// Rule 374:  initializer_clause ::= assignment_expression
 	//
-	static final class Action375 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action374 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeInitializer();    
@@ -2508,7 +2523,17 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 376:  initializer_clause ::= { <openscope-ast> initializer_list , }
+	// Rule 375:  initializer_clause ::= { <openscope-ast> initializer_list , }
+	//
+	static final class Action375 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeInitializerList();    
+		}  
+	}  
+  
+	//
+	// Rule 376:  initializer_clause ::= { <openscope-ast> initializer_list }
 	//
 	static final class Action376 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2518,7 +2543,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 377:  initializer_clause ::= { <openscope-ast> initializer_list }
+	// Rule 377:  initializer_clause ::= { <openscope-ast> }
 	//
 	static final class Action377 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2528,19 +2553,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 378:  initializer_clause ::= { <openscope-ast> }
+	// Rule 382:  class_specifier ::= class_head { <openscope-ast> member_declaration_list_opt }
 	//
-	static final class Action378 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeInitializerList();    
-		}  
-	}  
-  
-	//
-	// Rule 383:  class_specifier ::= class_head { <openscope-ast> member_declaration_list_opt }
-	//
-	static final class Action383 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action382 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeClassSpecifier();    
@@ -2548,7 +2563,17 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 384:  class_head ::= class_keyword identifier_name_opt <openscope-ast> base_clause_opt
+	// Rule 383:  class_head ::= class_keyword identifier_name_opt <openscope-ast> base_clause_opt
+	//
+	static final class Action383 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeClassHead(false);    
+		}  
+	}  
+  
+	//
+	// Rule 384:  class_head ::= class_keyword template_id_name <openscope-ast> base_clause_opt
 	//
 	static final class Action384 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2558,17 +2583,17 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 385:  class_head ::= class_keyword template_id_name <openscope-ast> base_clause_opt
+	// Rule 385:  class_head ::= class_keyword nested_name_specifier identifier_name <openscope-ast> base_clause_opt
 	//
 	static final class Action385 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeClassHead(false);    
+   consumeClassHead(true);    
 		}  
 	}  
   
 	//
-	// Rule 386:  class_head ::= class_keyword nested_name_specifier identifier_name <openscope-ast> base_clause_opt
+	// Rule 386:  class_head ::= class_keyword nested_name_specifier template_id_name <openscope-ast> base_clause_opt
 	//
 	static final class Action386 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2578,19 +2603,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 387:  class_head ::= class_keyword nested_name_specifier template_id_name <openscope-ast> base_clause_opt
+	// Rule 390:  identifier_name_opt ::= $Empty
 	//
-	static final class Action387 extends DeclaredAction< CPPParserAction ,  Object > {
-		  
-		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
-   consumeClassHead(true);    
-		}  
-	}  
-  
-	//
-	// Rule 391:  identifier_name_opt ::= $Empty
-	//
-	static final class Action391 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action390 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -2598,9 +2613,9 @@ public int getKind(int i) {
 	} 
   
 	//
-	// Rule 395:  visibility_label ::= access_specifier_keyword :
+	// Rule 394:  visibility_label ::= access_specifier_keyword :
 	//
-	static final class Action395 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action394 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeVisibilityLabel();    
@@ -2608,9 +2623,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 396:  member_declaration ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ;
+	// Rule 395:  member_declaration ::= declaration_specifiers_opt <openscope-ast> member_declarator_list ;
 	//
-	static final class Action396 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action395 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclarationSimple(true);    
@@ -2618,9 +2633,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 397:  member_declaration ::= declaration_specifiers_opt ;
+	// Rule 396:  member_declaration ::= declaration_specifiers_opt ;
 	//
-	static final class Action397 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action396 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeDeclarationSimple(false);    
@@ -2628,9 +2643,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 400:  member_declaration ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name ;
+	// Rule 399:  member_declaration ::= dcolon_opt nested_name_specifier template_opt unqualified_id_name ;
 	//
-	static final class Action400 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action399 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeMemberDeclarationQualifiedId();    
@@ -2638,9 +2653,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 411:  member_declarator ::= declarator constant_initializer
+	// Rule 410:  member_declarator ::= declarator constant_initializer
 	//
-	static final class Action411 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action410 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeMemberDeclaratorWithInitializer();    
@@ -2648,9 +2663,39 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 419:  base_specifier ::= dcolon_opt nested_name_specifier_opt class_name
+	// Rule 411:  member_declarator ::= bit_field_declarator : constant_expression
 	//
-	static final class Action419 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action411 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeBitField(true);    
+		}  
+	}  
+  
+	//
+	// Rule 412:  member_declarator ::= : constant_expression
+	//
+	static final class Action412 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeBitField(false);    
+		}  
+	}  
+  
+	//
+	// Rule 413:  bit_field_declarator ::= identifier_name
+	//
+	static final class Action413 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDirectDeclaratorIdentifier();    
+		}  
+	}  
+  
+	//
+	// Rule 420:  base_specifier ::= dcolon_opt nested_name_specifier_opt class_name
+	//
+	static final class Action420 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeBaseSpecifier(false);    
@@ -2658,9 +2703,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 420:  base_specifier ::= virtual_opt access_specifier_keyword virtual_opt dcolon_opt nested_name_specifier_opt class_name
+	// Rule 421:  base_specifier ::= virtual_opt access_specifier_keyword virtual_opt dcolon_opt nested_name_specifier_opt class_name
 	//
-	static final class Action420 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action421 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeBaseSpecifier(true);    
@@ -2668,9 +2713,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 421:  virtual_opt ::= virtual
+	// Rule 422:  virtual_opt ::= virtual
 	//
-	static final class Action421 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action422 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumePlaceHolder();    
@@ -2678,9 +2723,9 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 422:  virtual_opt ::= $Empty
+	// Rule 423:  virtual_opt ::= $Empty
 	//
-	static final class Action422 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action423 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
@@ -2688,12 +2733,42 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 428:  conversion_function_id_name ::= operator conversion_type_id
+	// Rule 429:  conversion_function_id_name ::= operator conversion_type_id
 	//
-	static final class Action428 extends DeclaredAction< CPPParserAction ,  Object > {
+	static final class Action429 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeConversionName();   
+		}  
+	}  
+  
+	//
+	// Rule 430:  conversion_type_id ::= type_specifier_seq conversion_declarator
+	//
+	static final class Action430 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeTypeId(true);    
+		}  
+	}  
+  
+	//
+	// Rule 431:  conversion_type_id ::= type_specifier_seq
+	//
+	static final class Action431 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeTypeId(false);    
+		}  
+	}  
+  
+	//
+	// Rule 432:  conversion_declarator ::= <openscope-ast> ptr_operator_seq
+	//
+	static final class Action432 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDeclaratorWithPointer(false);    
 		}  
 	}  
   
@@ -2738,7 +2813,7 @@ public int getKind(int i) {
 	}  
   
 	//
-	// Rule 486:  template_declaration ::= export_opt template < template_parameter_list > declaration
+	// Rule 486:  template_declaration ::= export_opt template < <openscope-ast> template_parameter_list > declaration
 	//
 	static final class Action486 extends DeclaredAction< CPPParserAction ,  Object > {
 		  
@@ -2764,6 +2839,66 @@ public int getKind(int i) {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeEmpty();    
+		}  
+	}  
+  
+	//
+	// Rule 493:  type_parameter ::= class identifier_name_opt
+	//
+	static final class Action493 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeSimpleTypeTemplateParameter(false);    
+		}  
+	}  
+  
+	//
+	// Rule 494:  type_parameter ::= class identifier_name_opt = type_id
+	//
+	static final class Action494 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeSimpleTypeTemplateParameter(true);    
+		}  
+	}  
+  
+	//
+	// Rule 495:  type_parameter ::= typename identifier_name_opt
+	//
+	static final class Action495 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeSimpleTypeTemplateParameter(false);    
+		}  
+	}  
+  
+	//
+	// Rule 496:  type_parameter ::= typename identifier_name_opt = type_id
+	//
+	static final class Action496 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeSimpleTypeTemplateParameter(true);    
+		}  
+	}  
+  
+	//
+	// Rule 497:  type_parameter ::= template < <openscope-ast> template_parameter_list > class identifier_name_opt
+	//
+	static final class Action497 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeTemplatedTypeTemplateParameter(false);    
+		}  
+	}  
+  
+	//
+	// Rule 498:  type_parameter ::= template < <openscope-ast> template_parameter_list > class identifier_name_opt = id_expression
+	//
+	static final class Action498 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeTemplatedTypeTemplateParameter(true);    
 		}  
 	}  
   
@@ -2824,6 +2959,36 @@ public int getKind(int i) {
 		  
 		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
    consumeStatementCatchHandler(true);    
+		}  
+	}  
+  
+	//
+	// Rule 515:  exception_declaration ::= type_specifier_seq <openscope-ast> declarator
+	//
+	static final class Action515 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDeclarationSimple(true);    
+		}  
+	}  
+  
+	//
+	// Rule 516:  exception_declaration ::= type_specifier_seq <openscope-ast> abstract_declarator
+	//
+	static final class Action516 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDeclarationSimple(true);    
+		}  
+	}  
+  
+	//
+	// Rule 517:  exception_declaration ::= type_specifier_seq
+	//
+	static final class Action517 extends DeclaredAction< CPPParserAction ,  Object > {
+		  
+		public void doFinal(ITrialUndoActionProvider< Object > provider,  CPPParserAction  action) {   action.builder.
+   consumeDeclarationSimple(false);    
 		}  
 	}  
 

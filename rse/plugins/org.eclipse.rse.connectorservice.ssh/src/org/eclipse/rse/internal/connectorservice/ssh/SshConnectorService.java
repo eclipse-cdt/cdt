@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -14,6 +14,7 @@
  * Martin Oberhuber (Wind River) - [186761] make the port setting configurable
  * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
  * Martin Oberhuber (Wind River) - [203500] Support encodings for SSH Sftp paths
+ * Martin Oberhuber (Wind River) - [155026] Add keepalives for SSH connection
  *******************************************************************************/
 
 package org.eclipse.rse.internal.connectorservice.ssh;
@@ -88,6 +89,8 @@ public class SshConnectorService extends StandardConnectorService implements ISs
         Session session = service.createSession(hostname, port, username);
         //session.setTimeout(getSshTimeoutInMillis());
         session.setTimeout(0); //never time out on the session
+        session.setServerAliveInterval(300000); //5 minutes
+        session.setServerAliveCountMax(6); //give up after 6 tries (remote will be dead after 30 min)
         if (password != null)
 			session.setPassword(password);
         session.setUserInfo(wrapperUI);

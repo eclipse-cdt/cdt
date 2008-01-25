@@ -3161,6 +3161,15 @@
          </projectType>
       </wizardPage>
    </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="%variableDescription"
+            name="XL_compiler_root"
+            resolver="org.eclipse.cdt.managedbuilder.xlc.ui.variables.DynamicVariableResolver"
+            supportsArgument="false">
+      </variable>
+   </extension>
 </plugin>
 
 

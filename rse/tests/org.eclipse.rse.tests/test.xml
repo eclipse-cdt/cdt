@@ -65,6 +65,7 @@ Needs to be updated and tested for org.eclipse.rse
       <property name="classname"
                 value="org.eclipse.jface.tests.viewers.AllTests"/>
     </ant>
+    -->
     
   </target>
   

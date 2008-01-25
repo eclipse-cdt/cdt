@@ -20,6 +20,7 @@
  * Kevin Doyle (IBM) - [197976] Changing a file to read-only when it is open doesn't update local copy
  * Kevin Doyle (IBM) - [186125] Changing encoding of a file is not reflected when it was opened before
  * David McKnight   (IBM)        - [209660] use parent encoding as default, rather than system encoding
+ * David McKnight   (IBM)        - [209703] apply encoding and updating remote file when apply on property page
  ********************************************************************************/
 
 package org.eclipse.rse.internal.files.ui.propertypages;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvents;
@@ -102,6 +104,8 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	{
 		super();
 	}
+	
+	
 	/**
 	 * Create the page's GUI contents.
 	 */
@@ -374,7 +378,9 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 	protected IRemoteFile getRemoteFile()
 	{
 		Object element = getElement();
-		return ((IRemoteFile)element);
+		IRemoteFile file = (IRemoteFile)element;
+		
+		return file;
 	}
 
 	/**
@@ -515,6 +521,8 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
            // refresh  
            ISystemRegistry sr = RSECorePlugin.getTheSystemRegistry(); 
            
+           remoteFile.markStale(true);
+           
            // oldCanWrite and updatedValue may not be the same depending on the underlying file service
            // If the file service updates the underlying object, then there is no need for a remote refresh
            if (oldCanWrite == updatedValue)
@@ -572,10 +580,25 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
 				} catch (CoreException e) {
 				}
 			}
+						
 		}
 		
 		return ok;
 	}
+	
+	protected boolean wantDefaultAndApplyButton()
+	{
+		return true;
+	}
+	
+	protected void performApply() {
+		performOk();
+	}
+
+	protected void performDefaults() {
+		doInitializeFields();		
+	}
+
 	
     /**
      * Validate all the widgets on the page
@@ -596,5 +619,25 @@ public class SystemFilePropertyPage extends SystemBasePropertyPage
     {
     	
     }
+
+
+	public void setVisible(boolean visible) {
+		if (visible){
+			IRemoteFile file = getRemoteFile();
+			if (file.isStale()){ // has file changed?
+				try
+				{
+					file = file.getParentRemoteFileSubSystem().getRemoteFileObject(file.getAbsolutePath(), new NullProgressMonitor());
+				}
+				catch (Exception e){				
+				}
+				setElement((IAdaptable)file);
+				
+				// reset according to the changed file
+				performDefaults();
+			}			
+		}
+		super.setVisible(visible);
+	}
 
 }

@@ -10,7 +10,8 @@
  * 
  * Contributors:
  * David McKnight   (IBM)        - [209593] [api] add support for "file permissions" and "owner" properties for unix files
- ********************************************************************************/
+ * David McKnight   (IBM)        - [209703] apply encoding and updating remote file when apply on property page 
+ * ********************************************************************************/
 package org.eclipse.rse.internal.files.ui.propertypages;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -69,7 +70,10 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 	protected IRemoteFile getRemoteFile()
 	{
 		Object element = getElement();
-		return ((IRemoteFile)element);
+		IRemoteFile file = (IRemoteFile)element;
+
+		
+		return file;
 	}
 	
 	protected Control createContentArea(Composite parent) {		
@@ -414,6 +418,7 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		}
 
 		if (changed){
+			remoteFile.markStale(true);
 			// notify views of change
 			ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
 			registry.fireEvent(new SystemResourceChangeEvent(remoteFile, ISystemResourceChangeEvents.EVENT_PROPERTY_CHANGE, remoteFile));
@@ -423,4 +428,37 @@ public class SystemFilePermissionsPropertyPage extends SystemBasePropertyPage {
 		return super.performOk();
 	}
 	
+	protected boolean wantDefaultAndApplyButton()
+	{
+		return true;
+	}
+	
+	protected void performApply() {
+		performOk();
+	}
+
+	protected void performDefaults() {
+		IRemoteFile file = getRemoteFile();
+		IFilePermissionsService service = (IFilePermissionsService)((IAdaptable)file).getAdapter(IFilePermissionsService.class);
+		initPermissionFields(file, service);		
+	}
+	
+	public void setVisible(boolean visible) {
+		if (visible){
+			IRemoteFile file = getRemoteFile();
+			if (file.isStale()){ // has file changed?
+				try
+				{
+					file = file.getParentRemoteFileSubSystem().getRemoteFileObject(file.getAbsolutePath(), new NullProgressMonitor());
+				}
+				catch (Exception e){				
+				}
+				setElement((IAdaptable)file);
+				
+				// reset according to the changed file
+				performDefaults();
+			}			
+		}
+		super.setVisible(visible);
+	}
 }

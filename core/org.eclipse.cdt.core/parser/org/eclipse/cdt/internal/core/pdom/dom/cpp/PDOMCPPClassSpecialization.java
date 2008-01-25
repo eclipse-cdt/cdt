@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,12 +34,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBase;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -64,6 +66,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	/**
 	 * The size in bytes of a PDOMCPPClassSpecialization record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPSpecialization.RECORD_SIZE + 8;
 	
 	public PDOMCPPClassSpecialization(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding specialized)
@@ -85,7 +88,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_CLASS_SPECIALIZATION;
+		return IIndexCPPBindingConstants.CPP_CLASS_SPECIALIZATION;
 	}
 
 	public PDOMCPPBase getFirstBase() throws CoreException {
@@ -135,11 +138,11 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 				getSpecializedBinding() instanceof ICPPTemplateDefinition) {
 			//this is an explicit specialization
 			try {
-				List list = new ArrayList();
+				List<PDOMCPPBase> list = new ArrayList<PDOMCPPBase>();
 				for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
 					list.add(base);
 				Collections.reverse(list);
-				ICPPBase[] bases = (ICPPBase[])list.toArray(new ICPPBase[list.size()]);
+				ICPPBase[] bases = list.toArray(new ICPPBase[list.size()]);
 				return bases;
 			} catch (CoreException e) {
 				CCorePlugin.log(e);
@@ -303,7 +306,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return CPPSemantics.findBindings( this, name, false );
 	}
 	
-	public IBinding getBinding(IASTName name, boolean resolve)
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
 			throws DOMException {
 		if (!(this instanceof ICPPTemplateDefinition) && 
 				getSpecializedBinding() instanceof ICPPTemplateDefinition) {
@@ -383,7 +386,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization implements
 		return result;
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		if (!(this instanceof ICPPTemplateDefinition)
 				&& getSpecializedBinding() instanceof ICPPTemplateDefinition) {

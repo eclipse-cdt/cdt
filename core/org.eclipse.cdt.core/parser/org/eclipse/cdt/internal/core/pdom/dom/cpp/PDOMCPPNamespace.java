@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
@@ -51,6 +52,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	private static final int INDEX_OFFSET = PDOMBinding.RECORD_SIZE + 0;
 
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 4;
 
 	public PDOMCPPNamespace(PDOM pdom, PDOMNode parent, ICPPNamespace namespace) throws CoreException {
@@ -119,9 +121,12 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return IIndexBinding.EMPTY_INDEX_BINDING_ARRAY;
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
 			IBinding[] bindings= getBindingsViaCache(name.toCharArray());
+			if (fileSet != null) {
+				bindings= fileSet.filterFileLocalBindings(bindings);
+			}
 			return CPPSemantics.resolveAmbiguities(name, bindings);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -129,7 +134,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 		return null;
 	}
 	
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
 			if (!prefixLookup) {
@@ -137,7 +142,11 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 			}
 			BindingCollector visitor= new BindingCollector(getLinkageImpl(), name.toCharArray(), IndexFilter.ALL_DECLARED_OR_IMPLICIT, prefixLookup, !prefixLookup);
 			getIndex().accept(visitor);
-			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, visitor.getBindings());
+			IBinding[] bindings = visitor.getBindings();
+			if (fileSet != null) {
+				bindings= fileSet.filterFileLocalBindings(bindings);
+			}
+			result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}
@@ -167,7 +176,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 
 	public IBinding[] getMemberBindings() throws DOMException {
 		IBinding[] result = null;
-		final List preresult = new ArrayList();
+		final List<PDOMNode> preresult = new ArrayList<PDOMNode>();
 		try {
 			getIndex().accept(new IBTreeVisitor() {
 				public int compare(int record) throws CoreException {
@@ -178,7 +187,7 @@ class PDOMCPPNamespace extends PDOMCPPBinding
 					return true;
 				}
 			});
-			result = (IBinding[]) preresult.toArray(new IBinding[preresult.size()]);
+			result = preresult.toArray(new IBinding[preresult.size()]);
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 		}

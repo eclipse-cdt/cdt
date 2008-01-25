@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,14 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -41,11 +45,11 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
-import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
+import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -67,6 +71,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	private static final int INDEX_OFFSET = PDOMNamedNode.RECORD_SIZE + 8;
 	private static final int NESTED_BINDINGS_INDEX = PDOMNamedNode.RECORD_SIZE + 12;
 	
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 16;
 	
 	// node types
@@ -159,8 +164,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			return new PDOMArrayType(pdom, record);
 		case QUALIFIER_TYPE:
 			return new PDOMQualifierType(pdom, record);
-		case FILE_LOCAL_SCOPE_TYPE:
-			return new PDOMFileLocalScope(pdom, record);
 		}
 		return null;
 	}
@@ -186,7 +189,51 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	public abstract PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException;
 	
-	public abstract PDOMBinding adaptBinding(IBinding binding) throws CoreException;
+	public final PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
+		if (inputBinding == null || inputBinding instanceof IProblemBinding) {
+			return null;
+		}
+		
+		boolean isFromAST= true;
+		IBinding binding= inputBinding;
+		if (binding instanceof PDOMBinding) {
+			// there is no guarantee, that the binding is from the same PDOM object.
+			PDOMBinding pdomBinding = (PDOMBinding) binding;
+			if (pdomBinding.getPDOM() == getPDOM()) {
+				return pdomBinding;
+			}
+			// if the binding is from another pdom it has to be adapted. However don't adapt file-local bindings
+			if (pdomBinding.isFileLocal()) {
+				return null;
+			}
+			isFromAST= false;
+		}
+		
+		PDOMBinding result= (PDOMBinding) pdom.getCachedResult(inputBinding);
+		if (result != null) {
+			return result;
+		}
+		
+		int fileLocalRec= 0;
+		if (isFromAST) {
+			// assign names to anonymous types.
+			binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
+			if (binding == null) {
+				return null;
+			}
+			PDOMFile lf= getLocalToFile(binding);
+			if (lf != null) {
+				fileLocalRec= lf.getRecord();
+			}
+		}
+		result= doAdaptBinding(binding, fileLocalRec);
+		if (result != null) {
+			pdom.putCachedResult(inputBinding, result);
+		}
+		return result;
+	}
+	
+	protected abstract PDOMBinding doAdaptBinding(IBinding binding, int fileLocalRec) throws CoreException;
 	
 	public final PDOMBinding resolveBinding(IASTName name) throws CoreException {
 		IBinding binding= name.resolveBinding();
@@ -199,15 +246,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	/**
 	 * 
 	 * @param binding
-	 * @param createFileLocalScope if <code>true</code> the creation of a file local
-	 *        scope object is allowed.
 	 * @return <ul><li> null - skip this binding (don't add to pdom)
 	 * <li>this - for filescope
 	 * <li>a PDOMBinding instance - parent adapted binding
 	 * </ul>
 	 * @throws CoreException
 	 */
-	protected PDOMNode getAdaptedParent(IBinding binding, boolean createFileLocalScope, boolean addParent) throws CoreException {
+	protected PDOMNode getAdaptedParent(IBinding binding, boolean addParent) throws CoreException {
 		try {
 			IBinding scopeBinding = null;
 			if (binding instanceof ICPPTemplateInstance) {
@@ -272,10 +317,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					return null;
 				}
 				else if (scopeNode instanceof IASTTranslationUnit) {
-					if (isFileLocalBinding(binding)) {
-						IASTTranslationUnit tu= (IASTTranslationUnit) scopeNode;
-						return findFileLocalScope(tu.getFilePath(), createFileLocalScope);
-					}
 					return this;
 				}
 				else {
@@ -306,8 +347,37 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		return null;
 	}
-	
-	protected abstract boolean isFileLocalBinding(IBinding binding) throws DOMException;
+
+	protected PDOMFile getLocalToFile(IBinding binding) throws CoreException {
+		if (pdom instanceof WritablePDOM) {
+			final WritablePDOM wpdom= (WritablePDOM) pdom;
+			try {
+				if (binding instanceof IField) {
+					return null;
+				}
+				boolean isFileLocal= false;
+				if (binding instanceof IVariable) {
+					if (!(binding instanceof IField)) {
+						isFileLocal= ASTInternal.isStatic((IVariable) binding);
+					}
+				}
+				else if (binding instanceof IFunction) {
+					IFunction f= (IFunction) binding;
+					isFileLocal= ASTInternal.isStatic(f, false);
+				}
+
+				if (isFileLocal) {
+					String path= ASTInternal.getDeclaredInSourceFileOnly(binding);
+					if (path != null) {
+						return wpdom.getFileForASTPath(getLinkageID(), path);
+					}
+				}
+			} catch (DOMException e) {
+			}
+		}
+		return null;
+	}
+
 	public abstract int getBindingType(IBinding binding);
 	
 	/**
@@ -363,34 +433,6 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		if (pdomBinding.getParentNodeRec() != record) {
 			getNestedBindingsIndex().delete(pdomBinding.getRecord());
 		}
-	}
-
-	/**
-	 * Searches for the a file local scope object. If none is found depending
-	 * on the value of the parameter 'create' such an object is created.
-	 * @param fileName
-	 * @param create
-	 * @since 4.0
-	 */
-	final protected PDOMFileLocalScope findFileLocalScope(String fileName, boolean create) throws CoreException {
-		char[] fname = CIndex.getFileLocalScopeQualifier(fileName);
-
-		final PDOMFileLocalScope[] fls= new PDOMFileLocalScope[] {null};
-		NamedNodeCollector collector= new NamedNodeCollector(this, fname) {
-			public boolean addNode(PDOMNamedNode node) {
-				if (node instanceof PDOMFileLocalScope) {
-					fls[0]= (PDOMFileLocalScope) node;
-					return false;	// done
-				}
-				return true;
-			}
-		};
-		getIndex().accept(collector);
-		if (fls[0] == null && create) {
-			fls[0]= new PDOMFileLocalScope(pdom, this, fname);
-			addChild(fls[0]);
-		}
-		return fls[0];
 	}
 	
 	public void deleteType(IType type, int ownerRec) throws CoreException {

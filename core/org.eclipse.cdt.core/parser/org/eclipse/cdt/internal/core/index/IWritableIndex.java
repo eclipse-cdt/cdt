@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -59,7 +60,7 @@ public interface IWritableIndex extends IIndex {
 	 * @param a collection that receives IndexFileLocation objects for files that
 	 *     had the cleared file as a context. May be <code>null</code>.
 	 */
-	void clearFile(IIndexFragmentFile file, Collection clearedContexts) throws CoreException;
+	void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> clearedContexts) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location or returns an existing one.
@@ -71,7 +72,8 @@ public interface IWritableIndex extends IIndex {
 	 */
 	void setFileContent(IIndexFragmentFile sourceFile, 
 			int linkageID, IncludeInformation[] includes, 
-			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
+			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names,
+			ASTFilePathResolver resolver) throws CoreException;
 
 	/**
 	 * Clears the entire index.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM.IListener;
@@ -38,7 +39,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class PDOMProxy implements IPDOM {
 	private PDOM fDelegate;
 	private int fReadLockCount;
-	private Set fListeners= new HashSet();
+	private Set<IListener> fListeners= new HashSet<IListener>();
 
 	public synchronized void acquireReadLock() throws InterruptedException {
 		if (fDelegate != null)
@@ -168,6 +169,7 @@ public class PDOMProxy implements IPDOM {
 			fDelegate.resetCacheCounters();
 	}
 
+	@SuppressWarnings("unchecked")
 	public synchronized Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(PDOMProxy.class)) {
 			return this;
@@ -204,17 +206,21 @@ public class PDOMProxy implements IPDOM {
 			while (fReadLockCount-- > 0) {
 				pdom.acquireReadLock();
 			} 
-			for (Iterator iterator = fListeners.iterator(); iterator.hasNext();) {
-				IListener listener = (IListener) iterator.next();
+			for (Iterator<IListener> iterator = fListeners.iterator(); iterator.hasNext();) {
+				IListener listener = iterator.next();
 				pdom.addListener(listener);
 			}
 		}
 		catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
-		for (Iterator iterator = fListeners.iterator(); iterator.hasNext();) {
-			IListener listener = (IListener) iterator.next();
+		for (Iterator<IListener> iterator = fListeners.iterator(); iterator.hasNext();) {
+			IListener listener = iterator.next();
 			listener.handleChange(fDelegate);
 		}
+	}
+
+	public IIndexFragmentFileSet createFileSet() {
+		return new PDOMFileSet();
 	}
 }

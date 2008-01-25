@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.pdom.dom.c;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -39,9 +40,10 @@ class PDOMCField extends PDOMCVariable implements IField {
 	}
 
 	public int getNodeType() {
-		return PDOMCLinkage.CFIELD;
+		return IIndexCBindingConstants.CFIELD;
 	}
 
+    @Override
 	public boolean isStatic() {
 		// ISO/IEC 9899:TC1 6.7.2.1
 		return false;

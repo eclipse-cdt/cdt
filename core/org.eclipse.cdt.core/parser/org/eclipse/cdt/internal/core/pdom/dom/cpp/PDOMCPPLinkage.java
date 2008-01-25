@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPBasicType;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBlockScope;
 import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
@@ -68,6 +67,7 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMMemberOwner;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMASTAdapter;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
@@ -94,10 +94,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return CPP_LINKAGE_ID;
 	}
 
+	@Override
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
 
+	@Override
 	public int getNodeType() {
 		return LINKAGE;
 	}
@@ -179,7 +181,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 	}
 	
-	List postProcesses = new ArrayList();
+	List<Runnable> postProcesses = new ArrayList<Runnable>();
 	
 	public PDOMBinding addBinding(IASTName name) throws CoreException {
 		if (name == null || name instanceof ICPPASTQualifiedName)
@@ -227,7 +229,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 		} else {
 			try {
-				PDOMNode parent = getAdaptedParent(binding, true, true);
+				PDOMNode parent = getAdaptedParent(binding, true);
 				if (parent == null)
 					return null;
 				pdomBinding = addBinding(parent, binding);
@@ -401,6 +403,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 
 		if(pdomBinding!=null) {
+			pdomBinding.setLocalToFile(getLocalToFile(binding));
 			parent.addChild(pdomBinding);
 			afterAddBinding(pdomBinding);
 		}
@@ -451,6 +454,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 	}
 
+	@Override
 	public int getBindingType(IBinding binding) {
 		if (binding instanceof ICPPSpecialization) {
 			if (binding instanceof ICPPDeferredTemplateInstance) {
@@ -543,32 +547,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	/**
 	 * Find the equivalent binding, or binding placeholder within this PDOM
 	 */
-	public PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
-		if (inputBinding == null || inputBinding instanceof IProblemBinding)
-			return null;
-
-		IBinding binding= inputBinding;
-		if (binding instanceof PDOMBinding) {
-			// there is no guarantee, that the binding is from the same PDOM object.
-			PDOMBinding pdomBinding = (PDOMBinding) binding;
-			if (pdomBinding.getPDOM() == getPDOM()) {
-				return pdomBinding;
-			}
-			// so if the binding is from another pdom it has to be adapted. 
-		}
-		else {
-			// assign names to anonymous types.
-			binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
-			if (binding == null) {
-				return null;
-			}
-		}
-		
-		PDOMBinding result= (PDOMBinding) pdom.getCachedResult(inputBinding);
-		if (result != null) {
-			return result;
-		}
-
+	@Override
+	public PDOMBinding doAdaptBinding(IBinding binding, int localToFileRec) throws CoreException {
 		if (binding instanceof ICPPUsingDeclaration) {
 			try {
 				ICPPDelegate[] delegates = ((ICPPUsingDeclaration)binding).getDelegates();
@@ -580,20 +560,20 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				return null;
 			}
 		}
-		PDOMNode parent = getAdaptedParent(binding, false, false);
+		PDOMNode parent = getAdaptedParent(binding, false);
 		if (parent == this) {
-			result= CPPFindBinding.findBinding(getIndex(), this, binding);
-		} else if (parent instanceof IPDOMMemberOwner) {
-			result= CPPFindBinding.findBinding(parent, this, binding);
-		} else if (parent instanceof PDOMCPPNamespace) {
-			result= CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding);
+			return CPPFindBinding.findBinding(getIndex(), this, binding, localToFileRec);
+		} 
+		if (parent instanceof PDOMCPPNamespace) {
+			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding, localToFileRec);
 		}
-		if (result != null) {
-			pdom.putCachedResult(inputBinding, result);
+		if (parent instanceof IPDOMMemberOwner) {
+			return CPPFindBinding.findBinding(parent, this, binding, localToFileRec);
 		}
-		return result;
+		return null;
 	}
 
+	@Override
 	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
 		if (type instanceof IProblemBinding) {
 			return null;
@@ -651,9 +631,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	}
 	
 	private Runnable popPostProcess() {
-		return (Runnable) postProcesses.remove(postProcesses.size() - 1);
+		return postProcesses.remove(postProcesses.size() - 1);
 	}
 	
+	@Override
 	public PDOMNode getNode(int record) throws CoreException {
 		if (record == 0)
 			return null;
@@ -753,6 +734,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		return new CPPFindBinding.CPPBindingBTreeComparator(pdom);
 	}
 
+	@Override
 	public void onCreateName(PDOMName pdomName, IASTName name) throws CoreException {
 		super.onCreateName(pdomName, name);
 		
@@ -785,6 +767,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 	}
 	
+	@Override
 	public void onDeleteName(PDOMName pdomName) throws CoreException {
 		super.onDeleteName(pdomName);
 		
@@ -803,22 +786,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		}
 	}
 
-	protected boolean isFileLocalBinding(IBinding binding) throws DOMException {
-		if (binding instanceof ICPPField) {
-			return false;
-		}
-		if (binding instanceof ICPPVariable) {
-			if (!(binding.getScope() instanceof CPPBlockScope)) {
-				return ASTInternal.isStatic((ICPPVariable) binding, false);
-			}
-			return false;
-		}
+	@Override
+	protected PDOMFile getLocalToFile(IBinding binding) throws CoreException {
 		if (binding instanceof ICPPMethod) {
-			return false;
+			return null;
 		}
-		if (binding instanceof ICPPFunction) {
-			return ASTInternal.isStatic((ICPPFunction) binding, false, false);
-		}
-		return false;
+		return super.getLocalToFile(binding);
 	}
 }

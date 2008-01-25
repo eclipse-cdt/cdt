@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
+import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -36,7 +37,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * @param a collection that receives IndexFileLocation objects for files that
 	 *     had the cleared file as a context.
 	 */
-	void clearFile(IIndexFragmentFile file, Collection contextsRemoved) throws CoreException;
+	void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved) throws CoreException;
 
 	/**
 	 * Creates a file object for the given location and linkage or returns an existing one.
@@ -51,7 +52,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 */
 	void addFileContent(IIndexFragmentFile sourceFile, 
 			IncludeInformation[] includes,  
-			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException;
+			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException;
 
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.

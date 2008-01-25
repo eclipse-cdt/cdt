@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,19 +104,19 @@ public class CPPFunctionSpecialization extends CPPSpecialization implements ICPP
 	}
 
 	public boolean isStatic() {
-		return isStatic(true, true);
+		return isStatic(true);
 	}
-	public boolean isStatic(boolean resolveAll, boolean checkHeaders) {
+	public boolean isStatic(boolean resolveAll) {
 		//TODO resolveAll
 		IBinding f = getSpecializedBinding();
 		if( f instanceof ICPPInternalFunction)
-			return ((ICPPInternalFunction)f).isStatic( resolveAll, checkHeaders);
+			return ((ICPPInternalFunction)f).isStatic( resolveAll);
 		if( f instanceof IIndexBinding && f instanceof ICPPFunction ) {
 			try {
 				return ((ICPPFunction) f).isStatic();
 			} catch(DOMException de) { /* cannot occur as we query the index */}
 		}
-		return CPPFunction.hasStorageClass( this, IASTDeclSpecifier.sc_static, checkHeaders);
+		return CPPFunction.hasStorageClass( this, IASTDeclSpecifier.sc_static);
 	}
 
 	public boolean isExtern() throws DOMException {

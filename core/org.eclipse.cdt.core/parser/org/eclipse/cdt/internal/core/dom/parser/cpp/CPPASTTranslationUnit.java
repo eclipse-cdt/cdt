@@ -56,6 +56,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
@@ -82,6 +83,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
     private ICPPScope scope = null;
     private ILocationResolver resolver;
     private IIndex index;
+    private IIndexFileSet fIndexFileSet;
 	private boolean fIsHeader;
     
     public IASTTranslationUnit getTranslationUnit() {
@@ -495,6 +497,9 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
     
     public void setIndex(IIndex pdom) {
     	this.index = pdom;
+    	if (index != null) {
+    		fIndexFileSet= index.createFileSet();
+    	}
     }
 
 	public IASTComment[] getComments() {
@@ -508,6 +513,9 @@ public class CPPASTTranslationUnit extends CPPASTNode implements ICPPASTTranslat
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(resolver.getClass())) {
 			return resolver;
+		}
+		if (adapter.isAssignableFrom(IIndexFileSet.class)) {
+			return fIndexFileSet;
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
@@ -65,6 +66,7 @@ class PDOMCPPParameter extends PDOMNamedNode
 	/**
 	 * The size in bytes of a PDOMCPPParameter record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 9;
 
 	private static final byte FLAG_DEFAULT_VALUE = 0x1;
@@ -192,6 +194,7 @@ class PDOMCPPParameter extends PDOMNamedNode
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
@@ -237,14 +240,6 @@ class PDOMCPPParameter extends PDOMNamedNode
 		throw new PDOMNotImplementedError();
 	}
 	
-	public boolean isFileLocal() throws CoreException {
-		return true;
-	}
-	
-	public String getFileLocalScopeQualifier() throws CoreException {
-		return null;
-	}
-	
 	public int getBindingConstant() {
 		return getNodeType();
 	}
@@ -260,5 +255,13 @@ class PDOMCPPParameter extends PDOMNamedNode
 			next.delete(linkage);
 		}
 		super.delete(linkage);
+	}
+
+	public boolean isFileLocal() throws CoreException {
+		return false;
+	}
+	
+	public IIndexFile getLocalToFile() throws CoreException {
+		return null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -90,7 +91,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public static final String FRAGMENT_PROPERTY_VALUE_FORMAT_ID= "org.eclipse.cdt.internal.core.pdom.PDOM"; //$NON-NLS-1$
 	
-	public static final int CURRENT_VERSION = 53;
+	public static final int CURRENT_VERSION = 55;
 	public static final int MIN_SUPPORTED_VERSION= CURRENT_VERSION;
 	
 	/**
@@ -136,9 +137,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  25 - change ordering of bindings (175275)
 	 *  26 - add properties storage
 	 *  27 - templates: classes, functions, limited nesting support, only template type parameters
-	 *  28 - templates: class instance/specialisation base classes
-	 *  29 - includes: fixed modelling of unresolved includes (180159)
-	 *  30 - templates: method/constructor templates, typedef specialisations
+	 *  28 - templates: class instance/specialization base classes
+	 *  29 - includes: fixed modeling of unresolved includes (180159)
+	 *  30 - templates: method/constructor templates, typedef specializations
 	 *  31 - macros: added file locations
 	 *  32 - support stand-alone function types (181936)
 	 *  33 - templates: constructor instances
@@ -154,6 +155,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 *  52 - files per linkage (bug 191989)
 	 *  53 - polymorphic method calls (bug 156691)
 	 *  54 - optimization of database size (bug 210392)
+	 *  55 - generalization of local bindings (bug 215783)
 	 */
 	
 	public static final int LINKAGES = Database.DATA_AREA;
@@ -169,18 +171,18 @@ public class PDOM extends PlatformObject implements IPDOM {
 	protected Database db;
 	private BTree fileIndex;
 	private BTree fMacroIndex= null;
-	private Map fLinkageIDCache = new HashMap();
+	private Map<String, PDOMLinkage> fLinkageIDCache = new HashMap<String, PDOMLinkage>();
 	private File fPath;
 	private IIndexLocationConverter locationConverter;
-	private Map fPDOMLinkageFactoryCache;
-	private HashMap fResultCache= new HashMap();
+	private Map<String, IPDOMLinkageFactory> fPDOMLinkageFactoryCache;
+	private HashMap<Object, Object> fResultCache= new HashMap<Object, Object>();
 
 	
-	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map linkageFactoryMappings) throws CoreException {
+	public PDOM(File dbPath, IIndexLocationConverter locationConverter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
 	
-	public PDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map linkageFactoryMappings) throws CoreException {
+	public PDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		fPDOMLinkageFactoryCache = linkageFactoryMappings;
 		loadDatabase(dbPath, cache);
 		this.locationConverter = locationConverter;
@@ -222,8 +224,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public void accept(IPDOMVisitor visitor) throws CoreException {
-		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage = (PDOMLinkage) iter.next();
+		for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage = iter.next();
 			linkage.accept(visitor);
 		}
 	}
@@ -232,11 +234,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 		public void handleChange(PDOM pdom);
 	}
 
-	private List listeners;
+	private List<IListener> listeners;
 
 	public void addListener(IListener listener) {
 		if (listeners == null)
-			listeners = new LinkedList();
+			listeners = new LinkedList<IListener>();
 		listeners.add(listener);
 	}
 
@@ -249,9 +251,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 	private void fireChange() {
 		if (listeners == null)
 			return;
-		Iterator i = listeners.iterator();
+		Iterator<IListener> i = listeners.iterator();
 		while (i.hasNext())
-			((IListener)i.next()).handleChange(this);
+			i.next().handleChange(this);
 	}
 
 	public Database getDB() {
@@ -264,7 +266,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return fileIndex;
 	}
 
-	public IIndexFragmentFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
+	public PDOMFile getFile(int linkageID, IIndexFileLocation location) throws CoreException {
 		return PDOMFile.findFile(this, getFileIndex(), location, linkageID, locationConverter);
 	}
 
@@ -273,7 +275,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public IIndexFragmentFile[] getAllFiles() throws CoreException {
-		final List locations = new ArrayList();
+		final List<PDOMFile> locations = new ArrayList<PDOMFile>();
 		getFileIndex().accept(new IBTreeVisitor(){
 			public int compare(int record) throws CoreException {
 				return 0;
@@ -284,7 +286,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 				return true;
 			}
 		});
-		return (IIndexFragmentFile[]) locations.toArray(new IIndexFragmentFile[locations.size()]);
+		return locations.toArray(new IIndexFragmentFile[locations.size()]);
 	}
 	
 	protected IIndexFragmentFile addFile(int linkageID, IIndexFileLocation location) throws CoreException {
@@ -333,12 +335,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public IName[] getDefinitions(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
-			List names = new ArrayList();
+			List<PDOMName> names = new ArrayList<PDOMName>();
 			for (PDOMName name = ((PDOMBinding)binding).getFirstDefinition();
 			name != null;
 			name = name.getNextInBinding())
 				names.add(name);
-			return (IName[]) names.toArray(new IIndexName[names.size()]);
+			return names.toArray(new IIndexName[names.size()]);
 		}
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
@@ -348,12 +350,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 	 */
 	public IName[] getReferences(IBinding binding) throws CoreException {
 		if (binding instanceof PDOMBinding) {
-			List names = new ArrayList();
+			List<PDOMName> names = new ArrayList<PDOMName>();
 			for (PDOMName name = ((PDOMBinding)binding).getFirstReference();
 			name != null;
 			name = name.getNextInBinding())
 				names.add(name);
-			return (IName[]) names.toArray(new IIndexName[names.size()]);
+			return names.toArray(new IIndexName[names.size()]);
 		}
 		return IIndexFragmentName.EMPTY_NAME_ARRAY;
 	}
@@ -370,9 +372,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 		private final Pattern[] pattern;
 		private final IProgressMonitor monitor;
 
-		private final ArrayList currentPath= new ArrayList();
-		private final ArrayList matchStack= new ArrayList();
-		private List bindings = new ArrayList();
+		private final ArrayList<PDOMNamedNode> currentPath= new ArrayList<PDOMNamedNode>();
+		private final ArrayList<BitSet> matchStack= new ArrayList<BitSet>();
+		private List<PDOMNamedNode> bindings = new ArrayList<PDOMNamedNode>();
 		private boolean isFullyQualified;
 		private BitSet matchesUpToLevel;
 		private IndexFilter filter;
@@ -433,12 +435,12 @@ public class PDOM extends PlatformObject implements IPDOM {
 			final int idx= currentPath.size()-1;
 			if (idx >= 0 && currentPath.get(idx) == node) {
 				currentPath.remove(idx);
-				matchesUpToLevel= (BitSet) matchStack.remove(matchStack.size()-1);
+				matchesUpToLevel= matchStack.remove(matchStack.size()-1);
 			}
 		}
 
 		public IIndexFragmentBinding[] getBindings() {
-			return (IIndexFragmentBinding[])bindings.toArray(new IIndexFragmentBinding[bindings.size()]);
+			return bindings.toArray(new IIndexFragmentBinding[bindings.size()]);
 		}
 	}
 
@@ -451,8 +453,8 @@ public class PDOM extends PlatformObject implements IPDOM {
 			monitor= new NullProgressMonitor();
 		}
 		BindingFinder finder = new BindingFinder(pattern, isFullyQualified, filter, monitor);
-		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage = (PDOMLinkage) iter.next();
+		for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage = iter.next();
 			if (filter.acceptLinkage(linkage)) {
 				try {
 					linkage.accept(finder);
@@ -471,17 +473,17 @@ public class PDOM extends PlatformObject implements IPDOM {
 		if (names.length == 0) {
 			return IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
 		}
-		ArrayList result= new ArrayList();
-		ArrayList nodes= new ArrayList();
-		for (Iterator iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage = (PDOMLinkage) iter.next();
+		ArrayList<PDOMBinding> result= new ArrayList<PDOMBinding>();
+		ArrayList<PDOMNamedNode> nodes= new ArrayList<PDOMNamedNode>();
+		for (Iterator<PDOMLinkage> iter = fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage = iter.next();
 			if (filter.acceptLinkage(linkage)) {
 				nodes.add(linkage);
 				for (int i=0; i < names.length-1; i++) {
 					char[] name= names[i];
 					NamedNodeCollector collector= new NamedNodeCollector(linkage, name, false, true);
-					for (Iterator in = nodes.iterator(); in.hasNext();) {
-						PDOMNode node= (PDOMNode) in.next();
+					for (Iterator<PDOMNamedNode> in = nodes.iterator(); in.hasNext();) {
+						PDOMNode node= in.next();
 						node.accept(collector);
 					}
 					nodes.clear();
@@ -489,15 +491,15 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 				char[] name= names[names.length-1];
 				BindingCollector collector= new BindingCollector(linkage, name, filter, false, true);
-				for (Iterator in = nodes.iterator(); in.hasNext();) {
-					PDOMNode node= (PDOMNode) in.next();
+				for (Iterator<PDOMNamedNode> in = nodes.iterator(); in.hasNext();) {
+					PDOMNode node= in.next();
 					node.accept(collector);
 				}
 				nodes.clear();
 				result.addAll(Arrays.asList(collector.getBindings()));
 			}
 		}
-		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
+		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
 	private void readLinkages() throws CoreException {
@@ -505,7 +507,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		int record= getFirstLinkageRecord();
 		while (record != 0) {
 			String linkageID= PDOMLinkage.getId(this, record).getString();
-			IPDOMLinkageFactory factory= (IPDOMLinkageFactory) fPDOMLinkageFactoryCache.get(linkageID);
+			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageID);
 			if (factory != null) {
 				PDOMLinkage linkage= factory.getLinkage(this, record);
 				fLinkageIDCache.put(linkageID, linkage);
@@ -515,14 +517,14 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public PDOMLinkage getLinkage(String linkageID) {
-		return (PDOMLinkage) fLinkageIDCache.get(linkageID);
+		return fLinkageIDCache.get(linkageID);
 	}
 
 	public PDOMLinkage createLinkage(String linkageID) throws CoreException {
-		PDOMLinkage pdomLinkage= (PDOMLinkage) fLinkageIDCache.get(linkageID);
+		PDOMLinkage pdomLinkage= fLinkageIDCache.get(linkageID);
 		if (pdomLinkage == null) {
 			// Need to create it
-			IPDOMLinkageFactory factory= (IPDOMLinkageFactory) fPDOMLinkageFactoryCache.get(linkageID);			
+			IPDOMLinkageFactory factory= fPDOMLinkageFactoryCache.get(linkageID);			
 			if (factory != null) {
 				return factory.createLinkage(this);
 			}
@@ -536,9 +538,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 		// First check the cache. We do a linear search since there will be very few linkages
 		// in a given database.
-		Iterator i = fLinkageIDCache.values().iterator();
+		Iterator<PDOMLinkage> i = fLinkageIDCache.values().iterator();
 		while (i.hasNext()) {
-			PDOMLinkage linkage = (PDOMLinkage)i.next();
+			PDOMLinkage linkage = i.next();
 			if (linkage.getRecord() == record)
 				return linkage;
 		}
@@ -552,13 +554,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public IIndexLinkage[] getLinkages() {
-		Collection values = fLinkageIDCache.values();
-		return (IIndexLinkage[]) values.toArray(new IIndexLinkage[values.size()]);
+		Collection<PDOMLinkage> values = fLinkageIDCache.values();
+		return values.toArray(new IIndexLinkage[values.size()]);
 	}
 	
 	public PDOMLinkage[] getLinkageImpls() {
-		Collection values = fLinkageIDCache.values();
-		return (PDOMLinkage[]) values.toArray(new PDOMLinkage[values.size()]);
+		Collection<PDOMLinkage> values = fLinkageIDCache.values();
+		return values.toArray(new PDOMLinkage[values.size()]);
 	}
 
 	public void insertLinkage(PDOMLinkage linkage) throws CoreException {
@@ -685,7 +687,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	protected PDOMLinkage adaptLinkage(ILinkage linkage) throws CoreException {
-		return (PDOMLinkage) fLinkageIDCache.get(linkage.getLinkageName());
+		return fLinkageIDCache.get(linkage.getLinkageName());
 	}
 
 	public IIndexFragmentBinding adaptBinding(IBinding binding) throws CoreException {
@@ -713,10 +715,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 
 	public IIndexFragmentName[] findNames(IBinding binding, int options) throws CoreException {
-		ArrayList names= new ArrayList();
+		ArrayList<PDOMName> names= new ArrayList<PDOMName>();
 		PDOMBinding pdomBinding = (PDOMBinding) adaptBinding(binding);
 		if (pdomBinding != null) {
-			names= new ArrayList();
+			names= new ArrayList<PDOMName>();
 			findNamesForMyBinding(pdomBinding, options, names);
 		}
 		if ((options & SEARCH_ACCROSS_LANGUAGE_BOUNDARIES) != 0) {
@@ -725,10 +727,10 @@ public class PDOM extends PlatformObject implements IPDOM {
 				findNamesForMyBinding(xlangBindings[j], options, names);
 			}
 		}
-		return (IIndexFragmentName[]) names.toArray(new IIndexFragmentName[names.size()]);
+		return names.toArray(new IIndexFragmentName[names.size()]);
 	}
 
-	private void findNamesForMyBinding(PDOMBinding pdomBinding, int options, ArrayList names)
+	private void findNamesForMyBinding(PDOMBinding pdomBinding, int options, ArrayList<PDOMName> names)
 			throws CoreException {
 		PDOMName name;
 		if ((options & FIND_DECLARATIONS) != 0) {
@@ -751,11 +753,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentInclude[] findIncludedBy(IIndexFragmentFile file) throws CoreException {
 		PDOMFile pdomFile= adaptFile(file);
 		if (pdomFile != null) {
-			List result = new ArrayList();
+			List<PDOMInclude> result = new ArrayList<PDOMInclude>();
 			for (PDOMInclude i= pdomFile.getFirstIncludedBy(); i != null; i= i.getNextInIncludedBy()) {
 				result.add(i);
 			}
-			return (IIndexFragmentInclude[]) result.toArray(new PDOMInclude[result.size()]);
+			return result.toArray(new PDOMInclude[result.size()]);
 		}
 		return new PDOMInclude[0];
 	}
@@ -765,7 +767,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 			return (PDOMFile) file;
 		}
 
-		return (PDOMFile) getFile(file.getLinkageID(), file.getLocation());
+		return getFile(file.getLinkageID(), file.getLocation());
 	}
 
 	public File getPath() {
@@ -773,11 +775,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 	}
 	
 	public IIndexFragmentBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		ArrayList result= new ArrayList();
-		for (Iterator iter= fLinkageIDCache.values().iterator(); iter.hasNext();) {
-			PDOMLinkage linkage= (PDOMLinkage) iter.next();
+		ArrayList<IIndexFragmentBinding> result= new ArrayList<IIndexFragmentBinding>();
+		for (Iterator<PDOMLinkage> iter= fLinkageIDCache.values().iterator(); iter.hasNext();) {
+			PDOMLinkage linkage= iter.next();
 			if (filter.acceptLinkage(linkage)) {
-				IBinding[] bindings;
+				PDOMBinding[] bindings;
 				BindingCollector visitor = new BindingCollector(linkage, prefix, filter, true, false);
 				visitor.setMonitor(monitor);
 				try {
@@ -795,11 +797,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 				}
 			}
 		}
-		return (IIndexFragmentBinding[]) result.toArray(new IIndexFragmentBinding[result.size()]);
+		return result.toArray(new IIndexFragmentBinding[result.size()]);
 	}
 
 	public IIndexMacro[] findMacros(char[] prefix, boolean isPrefix, boolean isCaseSensitive, IndexFilter filter, IProgressMonitor monitor) throws CoreException {
-		ArrayList result= new ArrayList();
+		ArrayList<IIndexMacro> result= new ArrayList<IIndexMacro>();
 		MacroCollector visitor = new MacroCollector(this, prefix, isPrefix, isCaseSensitive);
 		visitor.setMonitor(monitor);
 		try {
@@ -808,7 +810,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		}
 		catch (OperationCanceledException e) {
 		}
-		return (IIndexMacro[]) result.toArray(new IIndexMacro[result.size()]);
+		return result.toArray(new IIndexMacro[result.size()]);
 	}
 
 	private BTree getMacroIndex() {
@@ -907,13 +909,13 @@ public class PDOM extends PlatformObject implements IPDOM {
 				ICPPFunction func = (ICPPFunction) binding;
 				if (func.isExternC()) {
 					result = FindBinding.findBinding(c.getIndex(), this, func.getNameCharArray(),
-							new int[] { IIndexCBindingConstants.CFUNCTION });
+							new int[] { IIndexCBindingConstants.CFUNCTION }, 0);
 				}
 			} else if (binding instanceof ICPPVariable) {
 				ICPPVariable var = (ICPPVariable) binding;
 				if (var.isExternC()) {
 					result = FindBinding.findBinding(c.getIndex(), this, var.getNameCharArray(),
-							new int[] { IIndexCBindingConstants.CVARIABLE });
+							new int[] { IIndexCBindingConstants.CVARIABLE }, 0);
 				}
 			}
 		} catch (DOMException e) {
@@ -962,5 +964,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return PDOMBinding.EMPTY_PDOMBINDING_ARRAY;
 	}
 
-
+	public IIndexFragmentFileSet createFileSet() {
+		return new PDOMFileSet();
+	}
 }

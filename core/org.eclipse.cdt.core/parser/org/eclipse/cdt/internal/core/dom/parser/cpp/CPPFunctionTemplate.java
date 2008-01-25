@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -221,20 +221,12 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 		return type;
 	}
 
-	public boolean hasStorageClass( int storage, boolean checkHeaders){
+	public boolean hasStorageClass( int storage){
 	    IASTName name = (IASTName) getDefinition();
         IASTNode[] ns = getDeclarations();
         int i = -1;
-        boolean useDeclsInRoot= checkHeaders;
         do{
             if( name != null ){
-	            if (!useDeclsInRoot) {
-	            	if (name.getTranslationUnit().isHeaderUnit()) {
-	            		return false;
-	            	}
-	            	useDeclsInRoot= true;
-	            }
-            	
                 IASTNode parent = name.getParent();
 	            while( !(parent instanceof IASTDeclaration) )
 	                parent = parent.getParent();
@@ -245,9 +237,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	            else if( parent instanceof IASTFunctionDefinition )
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
 	            if( declSpec.getStorageClass() == storage ) {
-	            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
-	            		return true;
-	            	}
+	            	return true;
 	            }
             }
             if( ns != null && ++i < ns.length )
@@ -321,13 +311,13 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
 	 */
 	public boolean isStatic() {
-		return hasStorageClass( IASTDeclSpecifier.sc_static, true);
+		return hasStorageClass( IASTDeclSpecifier.sc_static);
 	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction#isMutable()
      */
     public boolean isMutable() {
-        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable, true);
+        return hasStorageClass( ICPPASTDeclSpecifier.sc_mutable);
     }
 
     /* (non-Javadoc)
@@ -379,21 +369,21 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_extern);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto, true );
+        return hasStorageClass( IASTDeclSpecifier.sc_auto );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_register);
     }
 
     /* (non-Javadoc)
@@ -430,8 +420,8 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction#isStatic(boolean)
      */
-    public boolean isStatic( boolean resolveAll, boolean checkHeaders ) {
-    	return hasStorageClass( IASTDeclSpecifier.sc_static, checkHeaders);
+    public boolean isStatic( boolean resolveAll ) {
+    	return hasStorageClass( IASTDeclSpecifier.sc_static );
     }
 
     /* (non-Javadoc)

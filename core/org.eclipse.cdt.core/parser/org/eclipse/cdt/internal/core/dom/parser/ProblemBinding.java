@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
@@ -169,11 +170,22 @@ public class ProblemBinding extends PlatformObject implements IProblemBinding, I
     public IBinding getBinding( IASTName name, boolean resolve ) throws DOMException {
         throw new DOMException( this );
     }
-    
+
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+        throw new DOMException( this );
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding[] getBindings( IASTName name, boolean resolve, boolean prefixLookup ) throws DOMException {
+    public IBinding getBinding( IASTName name, boolean resolve, IIndexFileSet fileSet ) throws DOMException {
+        throw new DOMException( this );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
+     */
+    public IBinding[] getBindings( IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet ) throws DOMException {
         throw new DOMException( this );
     }
 

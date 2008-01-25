@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -67,10 +68,13 @@ import org.eclipse.core.runtime.CoreException;
 class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		ICPPClassScope, IPDOMMemberOwner, IIndexType, IIndexScope, ICPPDelegateCreator {
 
+	@SuppressWarnings("static-access")
 	private static final int FIRSTBASE = PDOMCPPBinding.RECORD_SIZE + 0;
+	@SuppressWarnings("static-access")
 	private static final int KEY = PDOMCPPBinding.RECORD_SIZE + 4; // byte
+	@SuppressWarnings("static-access")
 	private static final int MEMBERLIST = PDOMCPPBinding.RECORD_SIZE + 8;
-
+	@SuppressWarnings({ "static-access", "hiding" })
 	protected static final int RECORD_SIZE = PDOMCPPBinding.RECORD_SIZE + 12;
 
 	public PDOMCPPClassType(PDOM pdom, PDOMNode parent, ICPPClassType classType)
@@ -159,11 +163,11 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 
 	public ICPPBase[] getBases() throws DOMException {
 		try {
-			List list = new ArrayList();
+			List<PDOMCPPBase> list = new ArrayList<PDOMCPPBase>();
 			for (PDOMCPPBase base = getFirstBase(); base != null; base = base.getNextBase())
 				list.add(base);
 			Collections.reverse(list);
-			ICPPBase[] bases = (ICPPBase[])list.toArray(new ICPPBase[list.size()]);
+			ICPPBase[] bases = list.toArray(new ICPPBase[list.size()]);
 			return bases;
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -190,7 +194,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public ICPPMethod[] getMethods() throws DOMException {
 		try {
 			PDOMClassUtil.MethodCollector methods = new PDOMClassUtil.MethodCollector(true);
-			acceptInHierarchy(new HashSet(), methods);
+			acceptInHierarchy(new HashSet<PDOMCPPClassType>(), methods);
 			return methods.getMethods();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -208,7 +212,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		}
 	}
 
-	private void acceptInHierarchy(Set visited, IPDOMVisitor visitor) throws CoreException {
+	private void acceptInHierarchy(Set<PDOMCPPClassType> visited, IPDOMVisitor visitor) throws CoreException {
 		if (visited.contains(this))
 			return;
 		visited.add(this);
@@ -229,7 +233,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 
 	public ICPPMethod[] getAllDeclaredMethods() throws DOMException {
 		PDOMClassUtil.MethodCollector myMethods = new PDOMClassUtil.MethodCollector(false, true);
-		Set visited = new HashSet();
+		Set<PDOMCPPClassType> visited = new HashSet<PDOMCPPClassType>();
 		try {
 			acceptInHierarchy(visited, myMethods);
 			return myMethods.getMethods();
@@ -242,7 +246,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	public IField[] getFields() throws DOMException {
 		try {
 			PDOMClassUtil.FieldCollector visitor = new PDOMClassUtil.FieldCollector();
-			acceptInHierarchy(new HashSet(), visitor);
+			acceptInHierarchy(new HashSet<PDOMCPPClassType>(), visitor);
 			return visitor.getFields();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
@@ -262,7 +266,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 	}
 	
 	private static class NestedClassCollector implements IPDOMVisitor {
-		private List nestedClasses = new ArrayList();
+		private List<IPDOMNode> nestedClasses = new ArrayList<IPDOMNode>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPClassType)
 				nestedClasses.add(node);
@@ -271,7 +275,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPClassType[] getNestedClasses() {
-			return (ICPPClassType[])nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);
+			return nestedClasses.toArray(new ICPPClassType[nestedClasses.size()]);
 		}
 	}
 
@@ -330,7 +334,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return true;
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
 		    final char[] nameChars = name.toCharArray();
 			if (getDBName().equals(nameChars)) {
@@ -349,7 +353,7 @@ class PDOMCPPClassType extends PDOMCPPBinding implements ICPPClassType,
 		return null;
 	}
 	
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
 			final char[] nameChars = name.toCharArray();

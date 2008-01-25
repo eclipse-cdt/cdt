@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,27 +94,16 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalVa
 		return CVisitor.getContainingScope( declarator.getParent() );
 	}
 
-    public boolean isStatic(boolean checkHeaders) {
-		return hasStorageClass(IASTDeclSpecifier.sc_static, checkHeaders);
+    public boolean isStatic() {
+		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}
 
-	public boolean isStatic() {
-		return isStatic(true);
-	}
-
-    public boolean hasStorageClass( int storage, boolean checkHeaders){
+    public boolean hasStorageClass( int storage){
         if( declarations == null )
             return false;
         
-	    boolean useDeclsInRoot= checkHeaders;
         for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
             final IASTName name = declarations[i];
-            if (!useDeclsInRoot) {
-            	if (name.getTranslationUnit().isHeaderUnit()) {
-            		return false;
-            	}
-            	useDeclsInRoot= true;
-            }
 
 			IASTNode parent = name.getParent();
             while( !(parent instanceof IASTDeclaration) )
@@ -123,9 +112,7 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalVa
             if( parent instanceof IASTSimpleDeclaration ){
                 IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
                 if( declSpec.getStorageClass() == storage ) {
-	            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
-	            		return true;
-	            	}
+                	return true;
                 }
             }
         }
@@ -135,22 +122,28 @@ public class CVariable extends PlatformObject implements IVariable, ICInternalVa
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_extern);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_auto);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_register);
     }
 	
     public ILinkage getLinkage() {
 		return Linkage.C_LINKAGE;
+	}
+	public IASTNode[] getDeclarations() {
+		return declarations;
+	}
+	public IASTNode getDefinition() {
+		return getPhysicalNode();
 	}
 }

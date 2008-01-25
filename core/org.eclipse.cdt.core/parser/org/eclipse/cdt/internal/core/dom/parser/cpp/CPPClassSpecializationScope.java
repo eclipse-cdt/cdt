@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -62,7 +63,15 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 		return null;
 	}
 	
-	public IBinding getBinding( IASTName name, boolean forceResolve ) throws DOMException {
+	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		return getBinding(name, resolve, IIndexFileSet.EMPTY);
+	}
+
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+	}
+
+	public IBinding getBinding( IASTName name, boolean forceResolve, IIndexFileSet fileSet) throws DOMException {
 		char [] c = name.toCharArray();
 		
 	    if( CharArrayUtils.equals( c, specialization.getNameCharArray() ) )
@@ -83,7 +92,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
     	return CPPSemantics.resolveAmbiguities( name, specs );
 	}
 
-	public IBinding[] getBindings( IASTName name, boolean forceResolve, boolean prefixLookup ) throws DOMException {
+	public IBinding[] getBindings( IASTName name, boolean forceResolve, boolean prefixLookup, IIndexFileSet fileSet ) throws DOMException {
 		char [] c = name.toCharArray();
 		IBinding[] result = null;
 		
@@ -93,7 +102,7 @@ public class CPPClassSpecializationScope implements ICPPClassScope, IASTInternal
 
 		ICPPClassType specialized = (ICPPClassType) specialization.getSpecializedBinding();
 		IScope classScope = specialized.getCompositeScope();
-		IBinding[] bindings = classScope != null ? classScope.getBindings(name, forceResolve, prefixLookup) : null;
+		IBinding[] bindings = classScope != null ? classScope.getBindings(name, forceResolve, prefixLookup, fileSet) : null;
 		
 		if (bindings != null) {
 			for (int i = 0; i < bindings.length; i++) {

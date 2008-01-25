@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -197,7 +198,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
-	public IBinding getBinding( IASTName name, boolean resolve ) throws DOMException {
+	public IBinding getBinding( IASTName name, boolean resolve, IIndexFileSet fileSet ) throws DOMException {
 	    char [] c = name.toCharArray();
 	
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
@@ -213,10 +214,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
             //9.2 ... The class-name is also inserted into the scope of the class itself
             return compName.resolveBinding();
 	    }
-	    return super.getBinding( name, resolve );
+	    return super.getBinding( name, resolve, fileSet);
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 	    char [] c = name.toCharArray();
 		
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
@@ -237,7 +238,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
             	return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	    }
 	    result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result,
-	    		super.getBindings( name, resolve, prefixLookup ));
+	    		super.getBindings( name, resolve, prefixLookup, fileSet ));
 	    return (IBinding[]) ArrayUtil.trim(IBinding.class, result);
 	}
 	

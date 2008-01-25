@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTPreprocessorSelectionResult;
 
@@ -601,5 +602,12 @@ public class LocationMap implements ILocationResolver {
 
 	public ASTPreprocessorSelectionResult getPreprocessorNode(String path, int offset, int length) {
 		throw new UnsupportedOperationException();
+	}
+
+	public IIndexFileSet getFileSet() {
+		if (fTranslationUnit != null) {
+			return (IIndexFileSet) fTranslationUnit.getAdapter(IIndexFileSet.class);
+		}
+		return null;
 	}
 }

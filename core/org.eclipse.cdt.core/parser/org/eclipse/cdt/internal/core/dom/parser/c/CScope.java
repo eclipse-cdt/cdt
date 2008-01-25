@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,13 +23,10 @@ import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -38,11 +35,11 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -193,7 +190,15 @@ public class CScope implements ICScope, IASTInternalScope {
         
         return NAMESPACE_TYPE_OTHER;
     }
-    public IBinding getBinding( IASTName name, boolean resolve ) {
+    public final IBinding getBinding( IASTName name, boolean resolve ) {
+    	return getBinding(name, resolve, IIndexFileSet.EMPTY);
+    }
+    
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+	}
+
+    public IBinding getBinding( IASTName name, boolean resolve, IIndexFileSet fileSet ) {
 	    char [] c = name.toCharArray();
 	    if( c.length == 0  ){
 	        return null;
@@ -205,10 +210,14 @@ public class CScope implements ICScope, IASTInternalScope {
 	    if( o == null || name == o) {
 	    	IBinding result= null;
 	    	if(physicalNode instanceof IASTTranslationUnit) {
-	    		IIndex index= ((IASTTranslationUnit)physicalNode).getIndex();
+	    		final IASTTranslationUnit tu = (IASTTranslationUnit)physicalNode;
+				IIndex index= tu.getIndex();
 	    		if(index!=null) {
 	    			try {
 	    				IBinding[] bindings= index.findBindings(name.toCharArray(), INDEX_FILTERS[type], new NullProgressMonitor());
+	    				if (fileSet != null) {
+	    					bindings= fileSet.filterFileLocalBindings(bindings);
+	    				}
 	    				result= processIndexResults(name, bindings);
 	    			} catch(CoreException ce) {
 	    				CCorePlugin.log(ce);
@@ -239,7 +248,7 @@ public class CScope implements ICScope, IASTInternalScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.c.ICScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding[] getBindings( IASTName name, boolean resolve, boolean prefixLookup ) {
+    public IBinding[] getBindings( IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet ) {
         char [] c = name.toCharArray();
         
         Object[] obj = null;
@@ -259,12 +268,17 @@ public class CScope implements ICScope, IASTInternalScope {
         }
 
        	if(physicalNode instanceof IASTTranslationUnit) {
-        	IIndex index= ((IASTTranslationUnit)physicalNode).getIndex();
+        	final IASTTranslationUnit tu = (IASTTranslationUnit)physicalNode;
+			IIndex index= tu.getIndex();
         	if(index!=null) {
         		try {
         			IBinding[] bindings = prefixLookup ?
 							index.findBindingsForPrefix(name.toCharArray(), true, INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null) :
 							index.findBindings(name.toCharArray(), INDEX_FILTERS[NAMESPACE_TYPE_BOTH], null);
+					if (fileSet != null) {
+						bindings= fileSet.filterFileLocalBindings(bindings);
+					}
+							
 					obj = ArrayUtil.addAll(Object.class, obj, bindings);
         		} catch(CoreException ce) {
         			CCorePlugin.log(ce);
@@ -295,28 +309,29 @@ public class CScope implements ICScope, IASTInternalScope {
     private IBinding processIndexResults(IASTName name, IBinding[] bindings) {
     	if(bindings.length!=1)
     		return null;
-
-    	IBinding candidate= bindings[0];
-    	if(candidate instanceof IFunction) {
-    		IASTNode parent= name.getParent();
-    		if(parent instanceof IASTFunctionDeclarator) {
-    			IASTNode parent2= parent.getParent();
-    			if(parent2 instanceof IASTFunctionDefinition) {
-    				IASTFunctionDefinition def= (IASTFunctionDefinition) parent2;
-    				if(def.getDeclSpecifier().getStorageClass()==IASTDeclSpecifier.sc_static) {
-    					try {
-    						if(!((IFunction)candidate).isStatic()) {
-    							return null;
-    						}
-    					} catch(DOMException de) {
-    						CCorePlugin.log(de);
-    					}
-    				}
-    			}
-    		}
-    	}
-
-    	return candidate;
+    	
+    	return bindings[0];
+//    	IBinding candidate= bindings[0];
+//    	if(candidate instanceof IFunction) {
+//    		IASTNode parent= name.getParent();
+//    		if(parent instanceof IASTFunctionDeclarator) {
+//    			IASTNode parent2= parent.getParent();
+//    			if(parent2 instanceof IASTFunctionDefinition) {
+//    				IASTFunctionDefinition def= (IASTFunctionDefinition) parent2;
+//    				if(def.getDeclSpecifier().getStorageClass()==IASTDeclSpecifier.sc_static) {
+//    					try {
+//    						if(!((IFunction)candidate).isStatic()) {
+//    							return null;
+//    						}
+//    					} catch(DOMException de) {
+//    						CCorePlugin.log(de);
+//    					}
+//    				}
+//    			}
+//    		}
+//    	}
+//
+//    	return candidate;
     }
         
     /* (non-Javadoc)

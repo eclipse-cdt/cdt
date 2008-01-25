@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -42,6 +43,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 	private static final int NEXT_PARAM = PDOMNamedNode.RECORD_SIZE + 0;
 	private static final int TYPE = PDOMNamedNode.RECORD_SIZE + 4;
 	
+	@SuppressWarnings("hiding")
 	public static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 8;
 
 	public PDOMCParameter(PDOM pdom, int record) {
@@ -128,6 +130,7 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 		throw new PDOMNotImplementedError();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
@@ -159,13 +162,6 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 		throw new PDOMNotImplementedError();
 	}
 	
-	public boolean isFileLocal() throws CoreException {
-		return true;
-	}
-	public String getFileLocalScopeQualifier() throws CoreException {
-		return null;
-	}
-	
 	public String[] getQualifiedName() {
 		throw new PDOMNotImplementedError();
 	}
@@ -189,5 +185,13 @@ class PDOMCParameter extends PDOMNamedNode implements IParameter, IIndexFragment
 			next.delete(linkage);
 		}
 		super.delete(linkage);
+	}
+	
+	public boolean isFileLocal() throws CoreException {
+		return false;
+	}
+	
+	public IIndexFile getLocalToFile() throws CoreException {
+		return null;
 	}
 }

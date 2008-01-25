@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -1041,6 +1043,13 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		List<IIndexMacro> mdefs= fi.getMacroDefinitions();
 		for (IIndexMacro macro : mdefs) {
 			addMacroDefinition(macro);
+		}
+		IIndexFileSet fileSet= fLocationMap.getFileSet();
+		if (fileSet != null) {
+			List<IIndexFile> files= fi.getFilesIncluded();
+			for (IIndexFile indexFile : files) {
+				fileSet.add(indexFile);
+			}
 		}
 	}
 

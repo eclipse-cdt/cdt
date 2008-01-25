@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,6 +62,11 @@ abstract public class PDOMWriter {
 	public static int SKIP_TYPE_REFERENCES= 1;
 	public static int SKIP_NO_REFERENCES= 0;
 	
+	private static class Symbols {
+		ArrayList<IASTName[]> fNames= new ArrayList<IASTName[]>();
+		ArrayList<IASTPreprocessorMacroDefinition> fMacros= new ArrayList<IASTPreprocessorMacroDefinition>();
+		ArrayList<IASTPreprocessorIncludeStatement> fIncludes= new ArrayList<IASTPreprocessorIncludeStatement>();
+	}
 	protected boolean fShowActivity;
 	protected boolean fShowProblems;
 	protected final IndexerStatistics fStatistics;
@@ -111,13 +115,13 @@ abstract public class PDOMWriter {
 	public void addSymbols(IASTTranslationUnit ast, IIndexFileLocation[] ifls, IWritableIndex index, 
 			int readlockCount, boolean flushIndex, int configHash, ITodoTaskUpdater taskUpdater, IProgressMonitor pm) 
 			throws InterruptedException, CoreException {
-		final Map symbolMap= new HashMap();
+		final Map<IIndexFileLocation, Symbols> symbolMap= new HashMap<IIndexFileLocation, Symbols>();
 		for (int i = 0; i < ifls.length; i++) {
 			prepareInMap(symbolMap, ifls[i]);
 		}
-		ArrayList stati= new ArrayList();
+		ArrayList<IStatus> stati= new ArrayList<IStatus>();
 
-		HashSet contextIncludes= new HashSet();
+		HashSet<IASTPreprocessorIncludeStatement> contextIncludes= new HashSet<IASTPreprocessorIncludeStatement>();
 		extractSymbols(ast, symbolMap, contextIncludes);
 			
 		// name resolution
@@ -139,7 +143,7 @@ abstract public class PDOMWriter {
 			}
 			String msg= NLS.bind(Messages.PDOMWriter_errorWhileParsing, path);
 			if (stati.size() == 1) {
-				IStatus status= (IStatus) stati.get(0);
+				IStatus status= stati.get(0);
 				if (msg.equals(status.getMessage())) {
 					throw new CoreException(status);
 				}
@@ -147,13 +151,13 @@ abstract public class PDOMWriter {
 						msg + ':' + status.getMessage(), status.getException()));
 			}
 			throw new CoreException(new MultiStatus(CCorePlugin.PLUGIN_ID, 0, 
-					(IStatus[]) stati.toArray(new IStatus[stati.size()]), msg, null));
+					stati.toArray(new IStatus[stati.size()]), msg, null));
 		}
 	}
 
-	private void storeSymbolsInIndex(final Map symbolMap, IIndexFileLocation[] ifls, int linkageID, int configHash,
-			HashSet contextIncludes, IWritableIndex index, int readlockCount, boolean flushIndex,
-			ArrayList stati, IProgressMonitor pm) throws InterruptedException, CoreException {
+	private void storeSymbolsInIndex(final Map<IIndexFileLocation, Symbols> symbolMap, IIndexFileLocation[] ifls, int linkageID, int configHash,
+			HashSet<IASTPreprocessorIncludeStatement> contextIncludes, IWritableIndex index, int readlockCount, boolean flushIndex,
+			ArrayList<IStatus> stati, IProgressMonitor pm) throws InterruptedException, CoreException {
 		index.acquireWriteLock(readlockCount);
 		long start= System.currentTimeMillis();
 		try {
@@ -188,19 +192,19 @@ abstract public class PDOMWriter {
 		fStatistics.fAddToIndexTime+= System.currentTimeMillis()-start;
 	}
 
-	private void resolveNames(final Map symbolMap, IIndexFileLocation[] ifls, ArrayList stati, IProgressMonitor pm) {
+	private void resolveNames(final Map<IIndexFileLocation, Symbols> symbolMap, IIndexFileLocation[] ifls, ArrayList<IStatus> stati, IProgressMonitor pm) {
 		long start= System.currentTimeMillis();
 		for (int i=0; i<ifls.length; i++) {
 			if (pm.isCanceled()) {
 				return;
 			}
 			IIndexFileLocation path= ifls[i];
-			ArrayList[] arrayLists = ((ArrayList[]) symbolMap.get(path));
+			Symbols symbols= symbolMap.get(path);
 
-			ArrayList names= arrayLists[2];
+			ArrayList<IASTName[]> names= symbols.fNames;
 			boolean reported= false;
-			for (Iterator j = names.iterator(); j.hasNext();) {
-				final IASTName[] na= (IASTName[]) j.next();
+			for (Iterator<IASTName[]> j = names.iterator(); j.hasNext();) {
+				final IASTName[] na= j.next();
 				final IASTName name = na[0];
 				try {
 					final IBinding binding = name.resolveBinding();
@@ -238,9 +242,9 @@ abstract public class PDOMWriter {
 		fStatistics.fResolutionTime += System.currentTimeMillis()-start;
 	}
 
-	private void extractSymbols(IASTTranslationUnit ast, final Map symbolMap, Collection contextIncludes) throws CoreException {
+	private void extractSymbols(IASTTranslationUnit ast, final Map<IIndexFileLocation, Symbols> symbolMap, Collection<IASTPreprocessorIncludeStatement> contextIncludes) throws CoreException {
 		
-		final HashSet contextIFLs= new HashSet();
+		final HashSet<IIndexFileLocation> contextIFLs= new HashSet<IIndexFileLocation>();
 		final IIndexFileLocation astIFL = fResolver.resolveASTPath(ast.getFilePath());
 		
 		// includes
@@ -251,7 +255,7 @@ abstract public class PDOMWriter {
 			final IIndexFileLocation sourceIFL= astLoc != null ? fResolver.resolveASTPath(astLoc.getFileName()) : astIFL; // command-line includes
 			final boolean updateSource= symbolMap.containsKey(sourceIFL);
 			if (updateSource) {
-				addToMap(symbolMap, 0, sourceIFL, include);
+				addToMap(symbolMap, sourceIFL, include);
 			}
 			if (include.isActive()) {
 				if (!include.isResolved()) {
@@ -274,7 +278,7 @@ abstract public class PDOMWriter {
 			IASTFileLocation sourceLoc = macro.getFileLocation();
 			if (sourceLoc != null) { // skip built-ins and command line macros
 				IIndexFileLocation path2 = fResolver.resolveASTPath(sourceLoc.getFileName());
-				addToMap(symbolMap, 1, path2, macro);
+				addToMap(symbolMap, path2, macro);
 			}
 		}
 
@@ -295,7 +299,7 @@ abstract public class PDOMWriter {
 					IASTFileLocation nameLoc = name.getFileLocation();
 					if (nameLoc != null) {
 						IIndexFileLocation location = fResolver.resolveASTPath(nameLoc.getFileName());
-						addToMap(symbolMap, 2, location, new IASTName[]{name, caller});
+						addToMap(symbolMap, location, new IASTName[]{name, caller});
 					}
 				}
 			}
@@ -350,38 +354,47 @@ abstract public class PDOMWriter {
 		}
 	}
 
-	private void addToMap(Map map, int idx, IIndexFileLocation location, Object thing) {
-		List[] lists= (List[]) map.get(location);
+	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location, IASTName[] thing) {
+		Symbols lists= map.get(location);
 		if (lists != null) 
-			lists[idx].add(thing);
+			lists.fNames.add(thing);
 	}		
 
-	private boolean prepareInMap(Map map, IIndexFileLocation location) {
+	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location, IASTPreprocessorIncludeStatement thing) {
+		Symbols lists= map.get(location);
+		if (lists != null) 
+			lists.fIncludes.add(thing);
+	}		
+
+	private void addToMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location, IASTPreprocessorMacroDefinition thing) {
+		Symbols lists= map.get(location);
+		if (lists != null) 
+			lists.fMacros.add(thing);
+	}		
+	
+	private boolean prepareInMap(Map<IIndexFileLocation, Symbols> map, IIndexFileLocation location) {
 		if (map.get(location) == null) {
-			Object lists= new ArrayList[]{new ArrayList(), new ArrayList(), new ArrayList()};
-			map.put(location, lists);
+			map.put(location, new Symbols());
 		}
 		return false;
 	}
 
-	private IIndexFragmentFile storeFileInIndex(IWritableIndex index, IIndexFileLocation location, Map symbolMap, 
-			int linkageID, int configHash, Set contextIncludes) throws CoreException {
-		Set clearedContexts= Collections.EMPTY_SET;
+	private IIndexFragmentFile storeFileInIndex(IWritableIndex index, IIndexFileLocation location, Map<IIndexFileLocation, Symbols> symbolMap, 
+			int linkageID, int configHash, Set<IASTPreprocessorIncludeStatement> contextIncludes) throws CoreException {
+		Set<IIndexFileLocation> clearedContexts= Collections.emptySet();
 		IIndexFragmentFile file= index.getWritableFile(linkageID, location);
 		if (file != null) {
-			clearedContexts= new HashSet();
+			clearedContexts= new HashSet<IIndexFileLocation>();
 			index.clearFile(file, clearedContexts);
 		} else {
 			file= index.addFile(linkageID, location);
 		}
 		file.setTimestamp(fResolver.getLastModified(location));
 		file.setScannerConfigurationHashcode(configHash);
-		ArrayList[] lists= (ArrayList[]) symbolMap.get(location);
+		Symbols lists= symbolMap.get(location);
 		if (lists != null) {
-			ArrayList list= lists[1];
-			IASTPreprocessorMacroDefinition[] macros= (IASTPreprocessorMacroDefinition[]) list.toArray(new IASTPreprocessorMacroDefinition[list.size()]);
-			list= lists[2];
-			IASTName[][] names= (IASTName[][]) list.toArray(new IASTName[list.size()][]);
+			IASTPreprocessorMacroDefinition[] macros= lists.fMacros.toArray(new IASTPreprocessorMacroDefinition[lists.fMacros.size()]);
+			IASTName[][] names= lists.fNames.toArray(new IASTName[lists.fNames.size()][]);
 			for (int j= 0; j<names.length; j++) {
 				final IASTName name= names[j][0];
 				if (name != null) {
@@ -389,10 +402,9 @@ abstract public class PDOMWriter {
 				}
 			}
 
-			list= lists[0];
-			IncludeInformation[] includeInfos= new IncludeInformation[list.size()];
-			for (int i=0; i<list.size(); i++) {
-				final IASTPreprocessorIncludeStatement include = (IASTPreprocessorIncludeStatement) list.get(i);
+			IncludeInformation[] includeInfos= new IncludeInformation[lists.fIncludes.size()];
+			for (int i=0; i<lists.fIncludes.size(); i++) {
+				final IASTPreprocessorIncludeStatement include = lists.fIncludes.get(i);
 				final IncludeInformation info= includeInfos[i]= new IncludeInformation();
 				info.fStatement= include;
 				if (include.isResolved()) {
@@ -401,7 +413,7 @@ abstract public class PDOMWriter {
 						(contextIncludes.contains(include) || clearedContexts.contains(info.fLocation));
 				}
 			}
-			index.setFileContent(file, linkageID, includeInfos, macros, names);
+			index.setFileContent(file, linkageID, includeInfos, macros, names, fResolver);
 		}
 		return file;
 	}

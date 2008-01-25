@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.CASTVisitor;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
@@ -70,6 +71,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	private ILocationResolver resolver;
 	private IIndex index;
 	private boolean fIsHeader;
+	private IIndexFileSet fIndexFileSet;
 
     public IASTTranslationUnit getTranslationUnit() {
     	return this;
@@ -524,6 +526,9 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     
     public void setIndex(IIndex index) {
     	this.index = index;
+    	if (index != null) {
+    		fIndexFileSet= index.createFileSet();
+    	}
     }
 
 	public IASTComment[] getComments() {
@@ -537,6 +542,9 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(resolver.getClass())) {
 			return resolver;
+		}
+		if (adapter.isAssignableFrom(IIndexFileSet.class)) {
+			return fIndexFileSet;
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeComparator;
@@ -75,7 +74,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			}
 		}
 		else {
-			PDOMNode parent = getAdaptedParent(binding, true, false);
+			PDOMNode parent = getAdaptedParent(binding, false);
 			if (parent == null)
 				return null;
 			
@@ -111,6 +110,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 				pdomBinding = new PDOMCTypedef(pdom, parent, (ITypedef)binding);
 
 			if (pdomBinding!=null) {
+				pdomBinding.setLocalToFile(getLocalToFile(binding));
 				parent.addChild(pdomBinding);
 				afterAddBinding(pdomBinding);
 			}
@@ -171,41 +171,15 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			return 0;
 	}
 
-	public PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
-		IBinding binding= inputBinding;
-		if (binding instanceof PDOMBinding) {
-			// there is no guarantee, that the binding is from the same PDOM object.
-			PDOMBinding pdomBinding = (PDOMBinding) binding;
-			if (pdomBinding.getPDOM() == getPDOM()) {
-				return pdomBinding;
-			}
-			// so if the binding is from another pdom it has to be adapted. 
-		}
-		else {
-			// assign names to anonymous types.
-			binding= PDOMASTAdapter.getAdapterIfAnonymous(binding);
-			if (binding == null) {
-				return null;
-			}
-		}
-		
-		PDOMBinding result= (PDOMBinding) pdom.getCachedResult(inputBinding);
-		if (result != null) {
-			return result;
-		}
-
-		PDOMNode parent = getAdaptedParent(binding, false, false);
-
+	public final PDOMBinding doAdaptBinding(final IBinding binding, int localToFileRec) throws CoreException {
+		PDOMNode parent = getAdaptedParent(binding, false);
 		if (parent == this) {
-			result= FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
-		} else if (parent instanceof IPDOMMemberOwner) {
-			result= FindBinding.findBinding(parent, getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)});
+			return FindBinding.findBinding(getIndex(), getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);
+		} 
+		if (parent instanceof IPDOMMemberOwner) {
+			return FindBinding.findBinding(parent, getPDOM(), binding.getNameCharArray(), new int[] {getBindingType(binding)}, localToFileRec);
 		}
-		
-		if (result != null) {
-			pdom.putCachedResult(inputBinding, result);
-		}
-		return result;
+		return null;
 	}
 
 	public PDOMNode getNode(int record) throws CoreException {
@@ -255,20 +229,5 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	
 	public IBTreeComparator getIndexComparator() {
 		return new FindBinding.DefaultBindingBTreeComparator(getPDOM());
-	}
-
-	protected boolean isFileLocalBinding(IBinding binding) throws DOMException {
-		if (binding instanceof IField) {
-			return false;
-		}
-		if (binding instanceof IVariable) {
-			IVariable var= (IVariable) binding;
-			return ASTInternal.isStatic(var, false);
-		}
-		if (binding instanceof IFunction) {
-			IFunction f= (IFunction) binding;
-			return ASTInternal.isStatic(f, false, false);
-		}
-		return false;
 	}
 }

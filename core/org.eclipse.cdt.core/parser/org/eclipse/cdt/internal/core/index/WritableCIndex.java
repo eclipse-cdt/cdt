@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.core.runtime.CoreException;
 
 public class WritableCIndex extends CIndex implements IWritableIndex {
@@ -59,7 +60,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 	public void setFileContent(IIndexFragmentFile file, int linkageID,
 			IncludeInformation[] includes,
-			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
+			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names, ASTFilePathResolver resolver) throws CoreException {
 
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
@@ -72,7 +73,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 					ii.fTargetFile= addFile(linkageID, ii.fLocation);
 				}
 			}
-			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names);
+			((IWritableIndexFragment) indexFragment).addFileContent(file, includes, macros, names, resolver);
 		}
 	}
 
@@ -85,7 +86,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 				isWritableFragment(((IIndexFragmentFile)file).getIndexFragment());
 	}
 	
-	public void clearFile(IIndexFragmentFile file, Collection clearedContexts) throws CoreException {
+	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> clearedContexts) throws CoreException {
 		IIndexFragment indexFragment = file.getIndexFragment();
 		if (!isWritableFragment(indexFragment)) {
 			assert false : "Attempt to clear file of read-only fragment"; //$NON-NLS-1$

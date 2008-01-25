@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,11 +33,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -59,6 +61,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	/**
 	 * The size in bytes of a PDOMCPPClassInstance record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPInstance.RECORD_SIZE + 4;
 	
 	public PDOMCPPClassInstance(PDOM pdom, PDOMNode parent, ICPPClassType classType, PDOMBinding instantiated)
@@ -75,7 +78,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_CLASS_INSTANCE;
+		return IIndexCPPBindingConstants.CPP_CLASS_INSTANCE;
 	}
 	
 	public ICPPBase[] getBases() throws DOMException {		
@@ -83,7 +86,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 	}
 	
 	private static class ConstructorCollector implements IPDOMVisitor {
-		private List fConstructors = new ArrayList();
+		private List<IPDOMNode> fConstructors = new ArrayList<IPDOMNode>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPConstructor)
 				fConstructors.add(node);
@@ -92,7 +95,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPConstructor[] getConstructors() {
-			return (ICPPConstructor[])fConstructors.toArray(new ICPPConstructor[fConstructors.size()]);
+			return fConstructors.toArray(new ICPPConstructor[fConstructors.size()]);
 		}
 	}
 
@@ -205,7 +208,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		return CPPSemantics.findBindings( this, name, false );
 	}
 	
-	public IBinding getBinding(IASTName name, boolean resolve)
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
 			throws DOMException {
 		try {			
 		    if (getDBName().equals(name.toCharArray())) {
@@ -226,8 +229,7 @@ class PDOMCPPClassInstance extends PDOMCPPInstance implements
 		return null;
 	}
 	
-	public IBinding[] getBindings(IASTName name, boolean resolve,
-			boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
 			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)

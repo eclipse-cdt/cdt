@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -265,8 +265,6 @@ public interface IIndex {
 	 * Searches for all bindings in global scope with a given name. In case a binding exists in multiple projects, no duplicate bindings are returned.
 	 * This method makes use of the BTree and is faster than the methods using patterns.
 	 * <p>
-	 * To find bindings for file-local (static) variables or functions you need to provide an additional qualifier. 
-	 * It can be obtained by calling {@link IIndexBinding#getFileLocalScopeQualifier()}.
 	 * @param names an array of names, which has to be matched by the qualified name of the bindings.
 	 * @param filter a filter that allows for skipping parts of the index 
 	 * @param monitor a monitor to report progress, may be <code>null</code>.
@@ -295,13 +293,13 @@ public interface IIndex {
 	/**
 	 * Searches for all bindings with names that start with the given prefix.
 	 * @param prefix the prefix with which all returned bindings must start
-	 * @param filescope if true, only bindings at file scope are returned
+	 * @param fileScopeOnly if true, only bindings at file scope are returned
 	 * @param filter a filter that allows for skipping parts of the index
 	 * @param monitor a monitor for progress reporting and cancellation, may be <code>null</code>
 	 * @return an array of bindings with the prefix
 	 * @throws CoreException
 	 */
-	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean filescope, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
+	public IIndexBinding[] findBindingsForPrefix(char[] prefix, boolean fileScopeOnly, IndexFilter filter, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Searches for all names that resolve to the given binding. You can limit the result to references, declarations
@@ -360,4 +358,9 @@ public interface IIndex {
 	 * @throws CoreException
 	 */
 	public IIndexBinding adaptBinding(IBinding binding);
+	
+	/**
+	 * Creates a file-set that can be used with this index as long as you hold a read-lock.
+	 */
+	public IIndexFileSet createFileSet();
 }

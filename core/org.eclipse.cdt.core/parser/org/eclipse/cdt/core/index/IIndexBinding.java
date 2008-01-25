@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,11 +43,12 @@ public interface IIndexBinding extends IBinding {
 	 * in another index.
 	 */
 	boolean isFileLocal() throws CoreException;
-
+	
 	/**
-	 * Returns the qualifier that can be used to search for file local bindings using
-	 * {@link IIndex#findBindings(char[][], IndexFilter, org.eclipse.core.runtime.IProgressMonitor)}. 
-	 * In case the binding is not file-local, <code>null</code> is returned.
+	 * Returns the file this binding is local to, or <code>null</code> for global
+	 * bindings.
+	 * A binding is local if a file has a separate instances of the binding. This
+	 * is used to model static files, static variables.
 	 */
-	String getFileLocalScopeQualifier() throws CoreException;
+	IIndexFile getLocalToFile() throws CoreException;
 }

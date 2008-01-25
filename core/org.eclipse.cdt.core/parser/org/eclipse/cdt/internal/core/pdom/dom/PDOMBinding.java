@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBindingComparator;
@@ -43,8 +44,10 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	private static final int FIRST_DECL_OFFSET   = PDOMNamedNode.RECORD_SIZE +  0; // size 4
 	private static final int FIRST_DEF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 4; // size 4
 	private static final int FIRST_REF_OFFSET    = PDOMNamedNode.RECORD_SIZE + 8; // size 4
+	private static final int LOCAL_TO_FILE		 = PDOMNamedNode.RECORD_SIZE + 12; // size 4
 	
-	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 12;
+	@SuppressWarnings("hiding")
+	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 16;
 	
 	protected PDOMBinding(PDOM pdom, PDOMNode parent, char[] name) throws CoreException {
 		super(pdom, parent, name);
@@ -54,6 +57,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		super(pdom, record);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		if (adapter.isAssignableFrom(PDOMBinding.class))
 			return this;
@@ -64,6 +68,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	/**
 	 * Is the binding as the record orphaned, i.e., has no declarations
 	 * or references.
+	 * Watch out, a binding may also be used in a type (e.g. pointer to class)
 	 * 
 	 * @param pdom
 	 * @param record
@@ -144,6 +149,24 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 		pdom.getDB().putInt(record + FIRST_REF_OFFSET, namerec);
 	}
 	
+	public final PDOMFile getLocalToFile() throws CoreException {
+		final int filerec = getLocalToFileRec(pdom, record);
+		return filerec == 0 ? null : new PDOMFile(pdom, filerec);
+	}
+
+	public final int getLocalToFileRec() throws CoreException {
+		return pdom.getDB().getInt(record + LOCAL_TO_FILE);
+	}
+
+	public static int getLocalToFileRec(PDOM pdom, int record) throws CoreException {
+		return pdom.getDB().getInt(record + LOCAL_TO_FILE);
+	}
+
+	public final void setLocalToFile(PDOMFile file) throws CoreException {
+		final int filerec= file == null ? 0 : file.getRecord();
+		pdom.getDB().putInt(record + LOCAL_TO_FILE, filerec);
+	}
+
 	public String getName() {
 		try {
 			return super.getDBName().getString();
@@ -219,7 +242,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	 * @return
 	 */
 	protected static String getConstantNameForValue(PDOMLinkage linkage, int value) {
-		Class c= linkage.getClass();
+		Class<? extends PDOMLinkage> c= linkage.getClass();
 		Field[] fields= c.getFields();
 		for(int i=0; i<fields.length; i++) {
 			try {
@@ -258,7 +281,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	}
 
 	final public String[] getQualifiedName() {
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		try {
 			PDOMNode node = this;
 			while (node != null) {
@@ -267,7 +290,7 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 				}
 				node = node.getParentNode();
 			}
-			return (String[]) result.toArray(new String[result.size()]);
+			return result.toArray(new String[result.size()]);
 		} catch(CoreException ce) {
 			CCorePlugin.log(ce);
 			return null;
@@ -275,17 +298,8 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	}
 	
 	final public boolean isFileLocal() throws CoreException {
-		return getParentNode() instanceof PDOMFileLocalScope;
+		return pdom.getDB().getInt(record + LOCAL_TO_FILE) != 0;
 	}
-
-	final public String getFileLocalScopeQualifier() throws CoreException {
-		final PDOMNode parentNode = getParentNode();
-		if (parentNode instanceof PDOMFileLocalScope) {
-			return ((PDOMFileLocalScope) parentNode).getDBName().getString();
-		}
-		return null;
-	}
-
 
 	public boolean hasDefinition() throws CoreException {
 		return getFirstDefinition()!=null;
@@ -372,5 +386,21 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IIndexFragmen
 	 */
 	public int getAdditionalNameFlags(int standardFlags, IASTName name) {
 		return 0;
+	}
+	
+	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		return getBinding(name, resolve, null);
+	}
+
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
+		return null;
+	}
+
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+		return getBindings(name, resolve, prefix, null);
+	}
+
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix, IIndexFileSet fileSet) throws DOMException {
+		return null;
 	}
 }

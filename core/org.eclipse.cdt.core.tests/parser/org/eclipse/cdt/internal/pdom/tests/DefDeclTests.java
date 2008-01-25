@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexName;
@@ -212,7 +213,24 @@ public class DefDeclTests extends PDOMTestBase {
 	}
 
 	public void testWrongMatchedStaticDefinition() throws Exception {
-		assertDefDeclRef("foo", "07", 0, 1, 1);
+		String elName = "foo" + "07";
+		IIndexBinding[] binds = pdom.findBindings(Pattern.compile(elName), true,	IndexFilter.ALL, new NullProgressMonitor());
+		assertEquals(2, binds.length);
+		assertTrue(binds[0].isFileLocal() != binds[1].isFileLocal());
+		if (binds[0].isFileLocal()) {
+			IIndexBinding b= binds[0]; binds[0]= binds[1]; binds[1]= b;
+		}
+			
+		assertEquals(elName, binds[0].getName());
+		checkDefinition(binds[0], "def" + "07", 0);
+		checkDeclaration(binds[0], "decl" + "07", 1);
+		checkReference(binds[0], "ref" + "07", 1);
+
+		assertEquals(elName, binds[1].getName());
+		assertTrue(binds[1].getLocalToFile().getLocation().getFullPath().endsWith("second.c"));
+		checkDefinition(binds[1], "def" + "07", 1);
+		checkDeclaration(binds[1], "decl" + "07", 0);
+		checkReference(binds[1], "ref" + "07", 0);
 	}
 
 	public void testStaticBindings_f08() throws Exception {

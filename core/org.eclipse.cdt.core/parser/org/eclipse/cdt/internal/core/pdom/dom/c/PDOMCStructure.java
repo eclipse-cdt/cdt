@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndexCBindingConstants;
@@ -52,6 +53,7 @@ import org.eclipse.core.runtime.Status;
 public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCompositeTypeScope, IPDOMMemberOwner, IIndexType, IIndexScope {
 	private static final int MEMBERLIST = PDOMBinding.RECORD_SIZE;
 	private static final int KEY = MEMBERLIST + 4; // byte
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMBinding.RECORD_SIZE + 8;
 	
 	public PDOMCStructure(PDOM pdom, PDOMNode parent, ICompositeType compType) throws CoreException {
@@ -107,7 +109,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 	}
 
 	private static class GetFields implements IPDOMVisitor {
-		private List fields = new ArrayList();
+		private List<IPDOMNode> fields = new ArrayList<IPDOMNode>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof IField) {
 				IField field= (IField) node;
@@ -120,7 +122,7 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public IField[] getFields() {
-			return (IField[])fields.toArray(new IField[fields.size()]);
+			return fields.toArray(new IField[fields.size()]);
 		}
 	}
 	public IField[] getFields() throws DOMException {
@@ -232,11 +234,11 @@ public class PDOMCStructure extends PDOMBinding implements ICompositeType, ICCom
 		fail(); return null;
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		fail(); return null;
 	}
 	
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		fail(); return null;
 	}
 	

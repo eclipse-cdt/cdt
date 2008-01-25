@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 QNX Software Systems and others.
+ * Copyright (c) 2006, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	}
 
 	private final String[] fqn;
-	private final String fileLocal;
+	private final IIndexFileLocation fileLocal;
 	private final int elementType;
 	private final IIndex index;
 	private final String[] params;
@@ -82,7 +82,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	public static IndexTypeInfo create(IIndex index, IIndexBinding binding) {
 		String[] fqn;
 		int elementType;
-		String flsq= null;
+		IIndexFileLocation flsq= null;
 		try {
 			elementType = IndexModelUtil.getElementType(binding);
 			if (binding instanceof ICPPBinding) {
@@ -97,7 +97,10 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				fqn= new String[] {binding.getName()};
 			}
 			try {
-				flsq = binding.getFileLocalScopeQualifier();
+				IIndexFile file= binding.getLocalToFile();
+				if (file != null) {
+					flsq= file.getLocation();
+				}
 			} catch (CoreException e) {
 			}
 			if (binding instanceof IFunction) {
@@ -125,7 +128,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		return new IndexTypeInfo(new String[] {new String(name)}, ICElement.C_MACRO, index);
 	}
 
-	private IndexTypeInfo(String[] fqn, String fileLocal, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
+	private IndexTypeInfo(String[] fqn, IIndexFileLocation fileLocal, int elementType, IIndex index, String[] params, String returnType, ITypeReference reference) {
 		Assert.isTrue(index != null);
 		this.fqn= fqn;
 		this.fileLocal= fileLocal;
@@ -229,24 +232,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			try {
 				index.acquireReadLock();
 
-				char[][] cfqn = new char[fqn.length][];
-				for(int i=0; i<fqn.length; i++)
-					cfqn[i] = fqn[i].toCharArray();
-
-				IIndexBinding[] ibs = index.findBindings(cfqn, new IndexFilter() {
-					public boolean acceptBinding(IBinding binding) {
-						boolean sameType= IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType});
-						if (sameType && binding instanceof IFunction && params != null) {
-							try {
-								String[]otherParams= IndexModelUtil.extractParameterTypes((IFunction)binding);
-								return Arrays.equals(params, otherParams);
-							} catch (DOMException exc) {
-								CCorePlugin.log(exc);				
-							}
-						}
-						return sameType;
-					}
-				}, new NullProgressMonitor());
+				IIndexBinding[] ibs = findBindings();
 				if(ibs.length>0) {
 					IIndexName[] names;
 					names= index.findNames(ibs[0], IIndex.FIND_DEFINITIONS);
@@ -269,6 +255,46 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			}
 		}
 		return reference;
+	}
+
+	private IIndexBinding[] findBindings() throws CoreException {
+		char[][] cfqn = new char[fqn.length][];
+		for(int i=0; i<fqn.length; i++)
+			cfqn[i] = fqn[i].toCharArray();
+
+		IIndexBinding[] ibs = index.findBindings(cfqn, new IndexFilter() {
+			@Override
+			public boolean acceptBinding(IBinding binding) {
+				if (!IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType})) {
+					return false;
+				}
+				try {
+					if (fileLocal == null) {
+						if (((IIndexBinding) binding).isFileLocal()) {
+							return false;
+						}
+					}
+					else {
+						IIndexFile localToFile= ((IIndexBinding) binding).getLocalToFile();
+						if (localToFile == null || !fileLocal.equals(localToFile.getLocation())) {
+							return false;
+						}
+					}
+					if (binding instanceof IFunction && params != null) {
+						String[]otherParams= IndexModelUtil.extractParameterTypes((IFunction)binding);
+						if (!Arrays.equals(params, otherParams)) {
+							return false;
+						}
+					}
+				} catch (CoreException e) {
+					CCorePlugin.log(e);
+				} catch (DOMException e) {
+					CCorePlugin.log(e);
+				}
+				return true;
+			}
+		}, new NullProgressMonitor());
+		return ibs;
 	}
 
 	private ITypeReference createMacroReference() {
@@ -341,39 +367,11 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			return getMacroReferences();
 		}
 		
-		List references= new ArrayList();
+		List<IndexTypeReference> references= new ArrayList<IndexTypeReference>();
 		try {
 			index.acquireReadLock();
-			int j= 0;
-			char[][] cfqn;
-			if (fileLocal != null) {
-				cfqn = new char[fqn.length+1][];
-				cfqn[j++]= fileLocal.toCharArray();
-			}
-			else {
-				cfqn = new char[fqn.length][];				
-			}
-			for(int i=0; i<fqn.length; i++) {
-				cfqn[j++] = fqn[i].toCharArray();
-			}
-			
-			IIndexBinding[] ibs = index.findBindings(cfqn, new IndexFilter() {
-				public boolean acceptBinding(IBinding binding) {
-					boolean sameType= IndexModelUtil.bindingHasCElementType(binding, new int[]{elementType});
-					if (sameType && binding instanceof IFunction && params != null) {
-						try {
-							String[]otherParams= IndexModelUtil.extractParameterTypes((IFunction)binding);
-							return Arrays.equals(params, otherParams);
-						} catch (DOMException exc) {
-							CCorePlugin.log(exc);				
-						}
-					}
-					return sameType;
-				}
-			}, new NullProgressMonitor());
-			// in case a file is represented multiple times in the index then we take references from
-			// one of those, only.
-			HashMap iflMap= new HashMap();
+			IIndexBinding[] ibs= findBindings();
+			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<IIndexFileLocation, IIndexFile>();
 			for (int i = 0; i < ibs.length; i++) {
 				IIndexBinding binding = ibs[i];
 				IIndexName[] names;
@@ -381,7 +379,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 				if (names.length == 0) {
 					names= index.findNames(binding, IIndex.FIND_DECLARATIONS);
 				}
-				for (j = 0; j < names.length; j++) {
+				for (int j= 0; j < names.length; j++) {
 					IIndexName indexName = names[j];
 					if (checkFile(iflMap, indexName.getFile())) {
 						IndexTypeReference ref= createReference(binding, indexName);
@@ -398,12 +396,12 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		} finally {
 			index.releaseReadLock();
 		}
-		return (IndexTypeReference[]) references.toArray(new IndexTypeReference[references.size()]);
+		return references.toArray(new IndexTypeReference[references.size()]);
 	}
 
 
 	private ITypeReference[] getMacroReferences() {
-		List references= new ArrayList();
+		List<IndexTypeReference> references= new ArrayList<IndexTypeReference>();
 		try {
 			index.acquireReadLock();
 
@@ -411,7 +409,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 			IIndexMacro[] ibs = index.findMacros(cfn, IndexFilter.ALL_DECLARED, new NullProgressMonitor());
 			// in case a file is represented multiple times in the index then we take references from
 			// one of those, only.
-			HashMap iflMap= new HashMap();
+			HashMap<IIndexFileLocation, IIndexFile> iflMap= new HashMap<IIndexFileLocation, IIndexFile>();
 			for (int i = 0; i < ibs.length; i++) {
 				IIndexMacro macro= ibs[i];
 				if (checkFile(iflMap, macro.getFile())) {
@@ -428,15 +426,15 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 		} finally {
 			index.releaseReadLock();
 		}
-		return (IndexTypeReference[]) references.toArray(new IndexTypeReference[references.size()]);
+		return references.toArray(new IndexTypeReference[references.size()]);
 	}
 
 	/**
 	 * Makes sure that per file only refs from one IIndexFile object are taken.
 	 */
-	private boolean checkFile(HashMap iflMap, IIndexFile file) throws CoreException {
+	private boolean checkFile(HashMap<IIndexFileLocation, IIndexFile> iflMap, IIndexFile file) throws CoreException {
 		IIndexFileLocation ifl= file.getLocation();
-		IIndexFile otherFile= (IIndexFile) iflMap.get(ifl);
+		IIndexFile otherFile= iflMap.get(ifl);
 		if (otherFile == null) {
 			iflMap.put(ifl, file);
 			return true;

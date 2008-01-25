@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.composite.CompositeScope;
@@ -40,21 +41,21 @@ class CompositeCPPNamespaceScope extends CompositeScope implements ICPPNamespace
 		return new IASTNode[0]; // same behaviour as PDOMCPPNamespace
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve)
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
 	throws DOMException {
 		IBinding preresult = null;
 		for(int i=0; preresult==null && i<namespaces.length; i++) {
-			preresult = namespaces[i].getNamespaceScope().getBinding(name, resolve);
+			preresult = namespaces[i].getNamespaceScope().getBinding(name, resolve, fileSet);
 		}
 		return processUncertainBinding(preresult);
 	}
 	
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup)
-	throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
+			throws DOMException {
 		IBinding[] preresult = null;
 		for(int i=0; i<namespaces.length; i++) {
 			preresult = (IBinding[]) ArrayUtil.addAll(IBinding.class, preresult,
-					namespaces[i].getNamespaceScope().getBindings(name, resolve, prefixLookup));
+					namespaces[i].getNamespaceScope().getBindings(name, resolve, prefixLookup, fileSet));
 		}
 		return processUncertainBindings(preresult);
 	}

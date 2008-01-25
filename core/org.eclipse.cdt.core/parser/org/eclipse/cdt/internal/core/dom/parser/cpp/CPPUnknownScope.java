@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -86,10 +87,18 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
 
     }
 
+	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		return getBinding(name, resolve, IIndexFileSet.EMPTY);
+	}
+
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#getBinding(org.eclipse.cdt.core.dom.ast.IASTName, boolean)
      */
-    public IBinding getBinding( IASTName name, boolean resolve ) {
+    public IBinding getBinding( IASTName name, boolean resolve, IIndexFileSet fileSet ) {
         if( map == null )
             map = new CharArrayObjectMap(2);
         
@@ -105,7 +114,7 @@ public class CPPUnknownScope implements ICPPScope, IASTInternalScope {
         return b;
     }
     
-    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) {
+    public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) {
         if( map == null )
             map = new CharArrayObjectMap(2);
         

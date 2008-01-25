@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -334,31 +334,23 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
      * @see org.eclipse.cdt.core.dom.ast.IFunction#isStatic()
      */
     public boolean isStatic() {
-    	return isStatic(true, true);
+    	return isStatic(true);
     }
     
-    public boolean isStatic(boolean resolveAll, boolean checkHeaders) {
+    public boolean isStatic(boolean resolveAll) {
         if( resolveAll && (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
-		return hasStorageClass( IASTDeclSpecifier.sc_static, checkHeaders );
+		return hasStorageClass( IASTDeclSpecifier.sc_static );
     }
 
-	public boolean hasStorageClass( int storage, boolean checkHeaders){
+	public boolean hasStorageClass( int storage){
 	    IASTDeclarator dtor = definition;
 	    IASTDeclarator[] ds = declarators;
 
-	    boolean useDeclsInRoot= checkHeaders;
         int i = -1;
         do{ 
             if( dtor != null ){
-	            if (!useDeclsInRoot) {
-	            	if (dtor.getTranslationUnit().isHeaderUnit()) {
-	            		return false;
-	            	}
-	            	useDeclsInRoot= true;
-	            }
-
 	            IASTNode parent = dtor.getParent();
 	            while( !(parent instanceof IASTDeclaration) )
 	                parent = parent.getParent();
@@ -370,9 +362,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 	                declSpec = ((IASTFunctionDefinition)parent).getDeclSpecifier();
 	            
 	            if( declSpec.getStorageClass() == storage ) {
-	            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
-	            		return true;
-	            	}
+	            	return true;
 	            }
             }
             
@@ -395,7 +385,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         if( resolveAll && (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
-        return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_extern);
     }
 
     /* (non-Javadoc)
@@ -405,7 +395,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
-        return hasStorageClass( IASTDeclSpecifier.sc_auto, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_auto);
     }
 
     /* (non-Javadoc)
@@ -415,7 +405,7 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
         if( (bits & FULLY_RESOLVED) == 0 ){
             resolveAllDeclarations();
         }
-        return hasStorageClass( IASTDeclSpecifier.sc_register, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_register);
     }
 
     /* (non-Javadoc)
@@ -481,5 +471,13 @@ public class CFunction extends PlatformObject implements IFunction, ICInternalFu
 
 	public ILinkage getLinkage() throws CoreException {
 		return Linkage.C_LINKAGE;
+	}
+
+	public IASTNode[] getDeclarations() {
+		return declarators;
+	}
+
+	public IASTNode getDefinition() {
+		return definition;
 	}
 }

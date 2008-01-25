@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
+import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMFile;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
@@ -40,12 +41,13 @@ import org.eclipse.core.runtime.CoreException;
 public class WritablePDOM extends PDOM implements IWritableIndexFragment {	
 	private boolean fClearedBecauseOfVersionMismatch= false;
 	private boolean fCreatedFromScratch= false;
+	private ASTFilePathResolver fPathResolver;
 
-	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, Map linkageFactoryMappings) throws CoreException {
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		this(dbPath, locationConverter, ChunkCache.getSharedInstance(), linkageFactoryMappings);
 	}
 	
-	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map linkageFactoryMappings) throws CoreException {
+	public WritablePDOM(File dbPath, IIndexLocationConverter locationConverter, ChunkCache cache, Map<String, IPDOMLinkageFactory> linkageFactoryMappings) throws CoreException {
 		super(dbPath, locationConverter, cache, linkageFactoryMappings);
 	}
 
@@ -53,18 +55,23 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		return super.addFile(linkageID, location);
 	}
 
-	public void addFileContent(IIndexFragmentFile sourceFile, 
-			IncludeInformation[] includes, 
-			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names) throws CoreException {
+	public void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes, 
+			IASTPreprocessorMacroDefinition[] macros, IASTName[][] names, ASTFilePathResolver pathResolver) throws CoreException {
 		assert sourceFile.getIndexFragment() == this;
 		
 		PDOMFile pdomFile = (PDOMFile) sourceFile;
 		pdomFile.addIncludesTo(includes);
 		pdomFile.addMacros(macros);
-		pdomFile.addNames(names);
+		fPathResolver= pathResolver;
+		try {
+			pdomFile.addNames(names);
+		}
+		finally {
+			fPathResolver= null;
+		}
 	}
 
-	public void clearFile(IIndexFragmentFile file, Collection contextsRemoved) throws CoreException {
+	public void clearFile(IIndexFragmentFile file, Collection<IIndexFileLocation> contextsRemoved) throws CoreException {
 		assert file.getIndexFragment() == this;
 		((PDOMFile) file).clear(contextsRemoved);		
 	}
@@ -113,7 +120,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	 * @throws CoreException
 	 */
 	public void rewriteLocations(final IIndexLocationConverter newConverter) throws CoreException {
-		final List pdomfiles = new ArrayList();
+		final List<PDOMFile> pdomfiles = new ArrayList<PDOMFile>();
 		getFileIndex().accept(new IBTreeVisitor(){
 			public int compare(int record) throws CoreException {
 				return 0;
@@ -126,9 +133,9 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		});
 
 		clearFileIndex();
-		final List notConverted = new ArrayList();
-		for(Iterator i= pdomfiles.iterator(); i.hasNext(); ) {
-			PDOMFile file= (PDOMFile) i.next();
+		final List<PDOMFile> notConverted = new ArrayList<PDOMFile>();
+		for(Iterator<PDOMFile> i= pdomfiles.iterator(); i.hasNext(); ) {
+			PDOMFile file= i.next();
 			String internalFormat = newConverter.toInternalFormat(file.getLocation());
 			if(internalFormat!=null) {
 				file.setInternalLocation(internalFormat);
@@ -140,8 +147,8 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 
 
 		// remove content where converter returns null
-		for(Iterator i = notConverted.iterator(); i.hasNext(); ) {
-			PDOMFile file = (PDOMFile) i.next();
+		for(Iterator<PDOMFile> i = notConverted.iterator(); i.hasNext(); ) {
+			PDOMFile file = i.next();
 			file.convertIncludersToUnresolved();
 			file.clear(null);
 		}
@@ -166,4 +173,15 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	protected final boolean isPermanentlyReadOnly() {
 		return false;
 	}
+
+	public PDOMFile getFileForASTPath(int linkageID, String astPath) throws CoreException {
+		if (fPathResolver != null) {
+			if (astPath != null) {
+				return getFile(linkageID, fPathResolver.resolveASTPath(astPath));
+			}
+		}
+		return null;
+	}
+	
+	
 }

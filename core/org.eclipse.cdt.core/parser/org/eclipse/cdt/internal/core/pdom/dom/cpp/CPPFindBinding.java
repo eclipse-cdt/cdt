@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Symbian Software Systems and others.
+ * Copyright (c) 2006, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,25 +11,18 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom.cpp;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMNode;
-import org.eclipse.cdt.core.dom.IPDOMVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
-import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
-import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.dom.FindBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMNamedNode;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Look up bindings in BTree objects and IPDOMNode objects. This additionally
@@ -37,96 +30,6 @@ import org.eclipse.core.runtime.Status;
  * specialization arguments for overloading, .
  */
 public class CPPFindBinding extends FindBinding {
-	public static PDOMBinding findBinding(BTree btree, final PDOM pdom, final char[]name, final int c2, final int ty2) throws CoreException {
-		final PDOMBinding[] result = new PDOMBinding[1];
-		
-		btree.accept(new IBTreeVisitor() {
-			public int compare(int record) throws CoreException {
-				IString nm1 = PDOMNamedNode.getDBName(pdom, record);
-
-				int cmp = nm1.compareCompatibleWithIgnoreCase(name);
-				if (cmp == 0) {
-					int c1 = PDOMNode.getNodeType(pdom, record);
-					cmp = c1 < c2 ? -1 : (c1 > c2 ? 1 : 0);
-					if (cmp == 0) {
-						PDOMBinding binding = pdom.getBinding(record);
-						if (binding instanceof IPDOMOverloader) {
-							int ty1 = ((IPDOMOverloader) binding)
-									.getSignatureMemento();
-							cmp = ty1 < ty2 ? -1 : (ty1 > ty2 ? 1 : 0);
-						}
-					}
-				}
-				return cmp;
-			}
-
-			public boolean visit(int record) throws CoreException {
-				result[0] = pdom.getBinding(record);
-				return false;
-			}
-		});
-			
-		return result[0];
-	}
-
-
-	public static PDOMBinding findBinding(PDOMNode node, final PDOM pdom, final char[]name, final int constant, final int ty2) {
-		final PDOMBinding[] result = new PDOMBinding[1];
-		try {
-			node.accept(new IPDOMVisitor() {
-				public boolean visit(IPDOMNode binding) throws CoreException {
-					if(binding instanceof PDOMNamedNode) {
-						PDOMNamedNode nnode = (PDOMNamedNode) binding;
-						if(nnode.hasName(name)) {
-							if(nnode.getNodeType() == constant) {
-								if(binding instanceof IPDOMOverloader) {
-									int ty1 = ((IPDOMOverloader)binding).getSignatureMemento();
-									if(ty1==ty2) {
-										result[0] = (PDOMBinding) binding;
-										throw new CoreException(Status.OK_STATUS);
-									}
-								}
-							}
-						}
-					}
-					return false;
-				}
-				public void leave(IPDOMNode node) throws CoreException {}					
-			});
-		} catch(CoreException ce) {
-			if(ce.getStatus().getCode()==IStatus.OK) {
-				return result[0];
-			} else {
-				CCorePlugin.log(ce);
-			}
-		}
-		return null;
-	}
-
-
-	public static PDOMBinding findBinding(BTree btree, PDOMLinkage linkage, IBinding binding) throws CoreException {	
-		Integer memento = null;
-		try {
-			memento = IndexCPPSignatureUtil.getSignatureMemento(binding);
-		} catch (DOMException e) {
-		}
-		if(memento != null) {
-			return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), memento.intValue());
-		}
-		return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), new int [] {linkage.getBindingType(binding)});
-	}
-
-	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding) throws CoreException {
-		Integer memento = null;
-		try {
-			memento = IndexCPPSignatureUtil.getSignatureMemento(binding);
-		} catch (DOMException e) {
-		}
-		if(memento != null) {
-			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), memento.intValue());
-		}
-		return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), new int[] {linkage.getBindingType(binding)});
-	}
 	
 	public static class CPPBindingBTreeComparator extends FindBinding.DefaultBindingBTreeComparator {
 		public CPPBindingBTreeComparator(PDOM pdom) {
@@ -145,5 +48,91 @@ public class CPPFindBinding extends FindBinding {
 			}
 			return cmp;
 		}
+	}
+
+	public static class CPPFindBindingVisitor extends FindBinding.DefaultFindBindingVisitor {
+		private final int fConstant;
+		private final int fSigMemento;
+		public CPPFindBindingVisitor(PDOM pdom, char[] name, int constant, int memento, int localToFile) {
+			super(pdom, name, new int[] {constant}, localToFile);
+			fConstant= constant;
+			fSigMemento= memento;
+		}
+		
+		public int compare(int record) throws CoreException {
+			int cmp= super.compare(record);
+			if (cmp == 0) {
+				int c1 = PDOMNode.getNodeType(fPdom, record);
+				int c2= fConstant;
+				if (c1 == c2) {
+					PDOMBinding binding = fPdom.getBinding(record);
+					if (binding instanceof IPDOMOverloader) {
+						c1 = ((IPDOMOverloader) binding).getSignatureMemento();
+						c2= fSigMemento;
+					}
+				}
+				cmp = c1 < c2 ? -1 : (c1 > c2 ? 1 : 0);
+			}
+			return cmp;
+		}
+
+		@Override
+		public boolean visit(int record) throws CoreException {
+			fResult= fPdom.getBinding(record);
+			return false;
+		}
+
+		@Override
+		protected boolean matches(PDOMBinding binding) throws CoreException {
+			if (super.matches(binding)) {
+				if (binding instanceof IPDOMOverloader) {
+					int ty1 = ((IPDOMOverloader)binding).getSignatureMemento();
+					return fSigMemento == ty1;
+				}
+			}
+			return false;
+		}
+	}
+
+	public static PDOMBinding findBinding(BTree btree, final PDOM pdom, final char[]name, final int c2, final int ty2, int localToFileRec) throws CoreException {
+		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, c2, ty2, localToFileRec);
+		btree.accept(visitor);
+		return visitor.getResult();
+	}
+
+
+	public static PDOMBinding findBinding(PDOMNode node, PDOM pdom, char[]name, int constant, int ty2, int localToFileRec) 
+			throws CoreException {
+		CPPFindBindingVisitor visitor= new CPPFindBindingVisitor(pdom, name, constant, ty2, localToFileRec);
+		try {
+			node.accept(visitor);
+		} catch(OperationCanceledException ce) {
+		}
+		return visitor.getResult();
+	}
+
+
+	public static PDOMBinding findBinding(BTree btree, PDOMLinkage linkage, IBinding binding, int localToFileRec) throws CoreException {	
+		Integer memento= 0;
+		try {
+			memento = IndexCPPSignatureUtil.getSignatureMemento(binding);
+		} catch (DOMException e) {
+		}
+		if(memento != null) {
+			return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), memento.intValue(), localToFileRec);
+		}
+		return findBinding(btree, linkage.getPDOM(), binding.getNameCharArray(), new int [] {linkage.getBindingType(binding)}, localToFileRec);
+	}
+
+	public static PDOMBinding findBinding(PDOMNode node, PDOMLinkage linkage, IBinding binding, int localToFileRec) throws CoreException {
+		Integer memento = null;
+		try {
+			memento = IndexCPPSignatureUtil.getSignatureMemento(binding);
+		} catch (DOMException e) {
+		}
+		if(memento != null) {
+			return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), linkage.getBindingType(binding), memento.intValue(), localToFileRec);
+		}
+		return findBinding(node, linkage.getPDOM(), binding.getNameCharArray(), new int[] {linkage.getBindingType(binding)}, localToFileRec);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
@@ -59,6 +60,7 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		return rbinding.getNameCharArray();
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		if (adapter.isInstance(rbinding)) {
 			return rbinding;
@@ -90,8 +92,8 @@ public abstract class CompositeIndexBinding implements IIndexBinding {
 		return rbinding != null ? rbinding.isFileLocal() : false;
 	}
 
-	public String getFileLocalScopeQualifier() throws CoreException {
-		return rbinding != null ? rbinding.getFileLocalScopeQualifier() : null;
+	public IIndexFile getLocalToFile() throws CoreException {
+		return rbinding != null ? rbinding.getLocalToFile() : null;
 	}
 
 	public boolean equals(Object obj) {

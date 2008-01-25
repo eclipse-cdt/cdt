@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,8 +32,8 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.IIndexBasedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.IncludeFileContent.InclusionKind;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask;
@@ -102,13 +103,14 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 			if (file != null) {
 				try {
 					LinkedHashMap<IIndexFileLocation, IIndexMacro[]> macroMap= new LinkedHashMap<IIndexFileLocation, IIndexMacro[]>();
-					collectMacros(file, macroMap, false);
+					List<IIndexFile> files= new ArrayList<IIndexFile>();
+					collectMacros(file, macroMap, files, false);
 					ArrayList<IIndexMacro> allMacros= new ArrayList<IIndexMacro>();
 					for (Map.Entry<IIndexFileLocation,IIndexMacro[]> entry : macroMap.entrySet()) {
 						allMacros.addAll(Arrays.asList(entry.getValue()));
 						fIncludedFiles.add(entry.getKey());
 					}
-					return new IncludeFileContent(path, allMacros);
+					return new IncludeFileContent(path, allMacros, files);
 				}
 				catch (NeedToParseException e) {
 				}
@@ -130,7 +132,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 		return fIncludedFiles.contains(ifl);
 	}
 	
-	private void collectMacros(IIndexFile file, LinkedHashMap<IIndexFileLocation, IIndexMacro[]> macroMap, boolean checkIncluded) throws CoreException, NeedToParseException {
+	private void collectMacros(IIndexFile file, Map<IIndexFileLocation, IIndexMacro[]> macroMap, List<IIndexFile> files, boolean checkIncluded) throws CoreException, NeedToParseException {
 		IIndexFileLocation ifl= file.getLocation();
 		if (macroMap.containsKey(ifl) || (checkIncluded && fIncludedFiles.contains(ifl))) {
 			return;
@@ -146,6 +148,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 			converted= file.getMacros();
 		}
 		macroMap.put(ifl, converted); // prevent recursion
+		files.add(file);
 		
 		// follow the includes
 		IIndexInclude[] includeDirectives= file.getIncludes();
@@ -153,7 +156,7 @@ public final class IndexBasedCodeReaderFactory implements IIndexBasedCodeReaderF
 			final IIndexInclude indexInclude = includeDirectives[i];
 			IIndexFile includedFile= fIndex.resolveInclude(indexInclude);
 			if (includedFile != null) {
-				collectMacros(includedFile, macroMap, true);
+				collectMacros(includedFile, macroMap, files, true);
 			}
 		}
 	}

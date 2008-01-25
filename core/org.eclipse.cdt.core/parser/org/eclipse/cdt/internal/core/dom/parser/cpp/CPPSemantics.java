@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,6 +117,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -1008,6 +1009,17 @@ public class CPPSemantics {
 	static protected void lookup( CPPSemantics.LookupData data, Object start ) throws DOMException{
 		IASTNode node = data.astName;
 
+		IIndexFileSet fileSet= IIndexFileSet.EMPTY;
+		if (node != null) {
+			final IASTTranslationUnit tu= node.getTranslationUnit();
+			if (tu != null) {
+				final IIndexFileSet fs= (IIndexFileSet) tu.getAdapter(IIndexFileSet.class);
+				if (fs != null) {
+					fileSet= fs;
+				}
+			}
+		}
+		
 		ICPPScope scope = null;
 		if( start instanceof ICPPScope )
 		    scope = (ICPPScope) start;
@@ -1032,7 +1044,7 @@ public class CPPSemantics {
 			if( !data.usingDirectivesOnly ){
 				if( ASTInternal.isFullyCached(scope) ){
 					if (!data.contentAssist && data.astName != null) {
-						IBinding binding = scope.getBinding( data.astName, true );
+						IBinding binding = scope.getBinding( data.astName, true, fileSet );
 						if( binding != null && 
 							( CPPSemantics.declaredBefore( binding, data.astName ) || 
 							  (scope instanceof ICPPClassScope && data.checkWholeClassScope) ) )
@@ -1040,19 +1052,19 @@ public class CPPSemantics {
 							mergeResults( data, binding, true );	
 						}
 					} else if (data.astName != null) {
-						IBinding[] bindings = scope.getBindings( data.astName, true, data.prefixLookup );
+						IBinding[] bindings = scope.getBindings( data.astName, true, data.prefixLookup, fileSet );
 						mergeResults(data, bindings, true);
 					}
 				} else if (data.astName != null) {
 					IBinding[] b = null;
 					if (!data.contentAssist) {
-						IBinding binding = scope.getBinding( data.astName, false );
+						IBinding binding = scope.getBinding( data.astName, false, fileSet );
 						if (binding instanceof CPPImplicitFunction || binding instanceof CPPImplicitTypedef) 
 							mergeResults( data, binding, true );
 						else
 							b = new IBinding[] { binding };
 					} else {
-						b = scope.getBindings( data.astName, false, data.prefixLookup );
+						b = scope.getBindings( data.astName, false, data.prefixLookup, fileSet );
 					}
 					
 					IASTName[] inScope = lookupInScope( data, scope, blockItem );
@@ -1352,7 +1364,7 @@ public class CPPSemantics {
 				}
 			    //it is not ambiguous if they are the same thing and it is static or an enumerator
 		        if( binding instanceof IEnumerator ||
-		           (binding instanceof IFunction && ASTInternal.isStatic((IFunction) binding, false, true)) ||
+		           (binding instanceof IFunction && ASTInternal.isStatic((IFunction) binding, false)) ||
 			       (binding instanceof IVariable && ((IVariable)binding).isStatic()) ) 
 		        {
 		        	ok = true;
@@ -2394,7 +2406,7 @@ public class CPPSemantics {
 				} else 
 					varArgs = true;
 				
-				if( useImplicitObj && j == 0 &&  ASTInternal.isStatic(currFn, false, true)) {
+				if( useImplicitObj && j == 0 &&  ASTInternal.isStatic(currFn, false)) {
 				    //13.3.1-4 for static member functions, the implicit object parameter is considered to match any object
 				    cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost

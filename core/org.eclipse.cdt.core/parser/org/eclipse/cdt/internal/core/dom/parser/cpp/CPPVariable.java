@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -298,21 +298,13 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 		addDeclaration( node );
 	}
 
-	public boolean hasStorageClass(int storage, boolean checkHeaders) {
+	public boolean hasStorageClass(int storage) {
 	    IASTName name = (IASTName) getDefinition();
         IASTNode[] ns = getDeclarations();
         
-	    boolean useDeclsInRoot= checkHeaders;
         int i = -1;
         do{
             if( name != null ){
-	            if (!useDeclsInRoot) {
-	            	if (name.getTranslationUnit().isHeaderUnit()) {
-	            		return false;
-	            	}
-	            	useDeclsInRoot= true;
-	            }
-
                 IASTNode parent = name.getParent();
 	            while( !(parent instanceof IASTDeclaration) )
 	                parent = parent.getParent();
@@ -320,9 +312,7 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
 	            if( parent instanceof IASTSimpleDeclaration ){
 	                IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 	                if (declSpec.getStorageClass() == storage) {
-		            	if (checkHeaders || declSpec.isPartOfTranslationUnitFile()) {
-		            		return true;
-		            	}
+	                	return true;
 	                }
 	            }
             }
@@ -343,19 +333,15 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
     }
 
     
-    public boolean isStatic(boolean checkHeaders) {
-		return hasStorageClass(IASTDeclSpecifier.sc_static, checkHeaders);
-	}
-
-	public boolean isStatic() {
-		return isStatic(true);
+    public boolean isStatic() {
+		return hasStorageClass(IASTDeclSpecifier.sc_static);
 	}
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isExtern()
      */
     public boolean isExtern() {
-        return hasStorageClass( IASTDeclSpecifier.sc_extern, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_extern);
     }
 
 	/* (non-Javadoc)
@@ -380,14 +366,14 @@ public class CPPVariable extends PlatformObject implements ICPPVariable, ICPPInt
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isAuto()
      */
     public boolean isAuto() {
-        return hasStorageClass( IASTDeclSpecifier.sc_auto, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_auto);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IVariable#isRegister()
      */
     public boolean isRegister() {
-        return hasStorageClass( IASTDeclSpecifier.sc_register, true);
+        return hasStorageClass( IASTDeclSpecifier.sc_register);
     }
     
 	public ILinkage getLinkage() {

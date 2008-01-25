@@ -96,6 +96,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -1212,6 +1213,17 @@ public class CVisitor {
 	 * otherwise returns IBinding
 	 */
 	protected static Object findBinding( IASTNode blockItem, IASTName name, int bits ) throws DOMException{
+		IIndexFileSet fileSet= IIndexFileSet.EMPTY;
+		if (blockItem != null) {
+			final IASTTranslationUnit tu= blockItem.getTranslationUnit();
+			if (tu != null) {
+				final IIndexFileSet fs= (IIndexFileSet) tu.getAdapter(IIndexFileSet.class);
+				if (fs != null) {
+					fileSet= fs;
+				}
+			}
+		}
+
 	    boolean prefix = ( bits & PREFIX_LOOKUP ) != 0;
 		Object binding =  prefix ? new ObjectSet( 2 ) : null;
 		IIndexBinding foundIndexBinding= null;
@@ -1264,7 +1276,7 @@ public class CVisitor {
 			
 			if( scope != null && ASTInternal.isFullyCached(scope) ){
 			    try {
-                    binding = scope.getBinding( name, true );
+                    binding = scope.getBinding( name, true, fileSet );
                 } catch ( DOMException e ) {
                     binding = null;
                 }
@@ -1272,7 +1284,7 @@ public class CVisitor {
 			        return binding;
 			} else {
 				if (!prefix && scope != null  && scope.getParent() == null) {
-					binding= scope.getBinding(name, false);
+					binding= scope.getBinding(name, false, fileSet);
 					if (binding != null) {
 						if (binding instanceof IIndexBinding) {
 							foundIndexBinding= (IIndexBinding) binding;
@@ -1379,7 +1391,7 @@ public class CVisitor {
 					IBinding[] bindings= prefix 
 						? index.findBindingsForPrefix(name.toCharArray(), true, filter, null) 
 						: index.findBindings(name.toCharArray(), filter, null);
-							
+					bindings= fileSet.filterFileLocalBindings(bindings);
 					result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
 				} catch (CoreException e) {
 					CCorePlugin.log(e);

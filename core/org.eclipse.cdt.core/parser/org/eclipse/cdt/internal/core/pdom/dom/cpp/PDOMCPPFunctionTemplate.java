@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunctionInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
@@ -37,6 +38,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
@@ -61,6 +63,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 	/**
 	 * The size in bytes of a PDOMCPPFunctionTemplate record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPFunction.RECORD_SIZE + 12;
 	
 	public PDOMCPPFunctionTemplate(PDOM pdom, PDOMNode parent,
@@ -81,11 +84,11 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_FUNCTION_TEMPLATE;
+		return IIndexCPPBindingConstants.CPP_FUNCTION_TEMPLATE;
 	}
 
 	private static class TemplateParameterCollector implements IPDOMVisitor {
-		private List params = new ArrayList();
+		private List<IPDOMNode> params = new ArrayList<IPDOMNode>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPTemplateParameter)
 				params.add(node);
@@ -94,7 +97,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPTemplateParameter[] getTemplateParameters() {
-			return (ICPPTemplateParameter[])params.toArray(new ICPPTemplateParameter[params.size()]);
+			return params.toArray(new ICPPTemplateParameter[params.size()]);
 		}
 	}
 	
@@ -199,7 +202,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		return CPPSemantics.findBindings( this, name, false );
 	}
 
-	public IBinding getBinding(IASTName name, boolean resolve)
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
 			throws DOMException {
 		try {
 			BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
@@ -213,7 +216,7 @@ class PDOMCPPFunctionTemplate extends PDOMCPPFunction implements
 		return null;
 	}
 	
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup)
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
 			throws DOMException {
 		IBinding[] result = null;
 		try {

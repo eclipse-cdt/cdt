@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2008 Symbian Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,5 @@ public interface IIndexBindingConstants {
 	 int POINTER_TYPE= 1;
 	 int ARRAY_TYPE= 2;
 	 int QUALIFIER_TYPE= 3;
-	 int FILE_LOCAL_SCOPE_TYPE= 4;
-	 int LAST_CONSTANT= FILE_LOCAL_SCOPE_TYPE;
+	 int LAST_CONSTANT= QUALIFIER_TYPE;
 }

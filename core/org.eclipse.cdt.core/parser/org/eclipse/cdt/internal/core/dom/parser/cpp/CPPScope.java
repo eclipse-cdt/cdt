@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -95,15 +96,19 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 		}
 	}
 
-	public IBinding getBinding(IASTName name, boolean forceResolve) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean forceResolve, IIndexFileSet fileSet) throws DOMException {
 		IBinding binding= getBindingInAST(name, forceResolve);
 		if (binding == null) {
-			IIndex index = name.getTranslationUnit().getIndex();
+			final IASTTranslationUnit tu = name.getTranslationUnit();
+			IIndex index = tu.getIndex();
 			if (index != null) {
 				// Try looking this up in the PDOM
 				if (physicalNode instanceof IASTTranslationUnit) {
 					try {
 						IBinding[] bindings= index.findBindings(name.toCharArray(), IndexFilter.CPP_DECLARED_OR_IMPLICIT, NPM);
+						if (fileSet != null) {
+							bindings= fileSet.filterFileLocalBindings(bindings);
+						}
 						binding= CPPSemantics.resolveAmbiguities(name, bindings);
 					} catch (CoreException e) {
 		        		CCorePlugin.log(e);
@@ -117,6 +122,9 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 						ICPPNamespace nsbindingAdapted = (ICPPNamespace) index.adaptBinding(nsbinding);
 						if(nsbindingAdapted!=null) {
 							IBinding[] bindings = nsbindingAdapted.getNamespaceScope().find(name.toString());
+							if (fileSet != null) {
+								bindings= fileSet.filterFileLocalBindings(bindings);
+							}
 							binding= CPPSemantics.resolveAmbiguities(name, bindings);
 						}
 					}
@@ -174,10 +182,11 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 	    return null;
 	}
 
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = getBindingsInAST(name, resolve, prefixLookup);
 
-		IIndex index = name.getTranslationUnit().getIndex();
+		final IASTTranslationUnit tu = name.getTranslationUnit();
+		IIndex index = tu.getIndex();
 		if (index != null) {
 			if (physicalNode instanceof IASTTranslationUnit) {
 				try {
@@ -185,6 +194,9 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 					IBinding[] bindings = prefixLookup ?
 							index.findBindingsForPrefix(name.toCharArray(), true, filter, null) :
 							index.findBindings(name.toCharArray(), filter, null);
+					if (fileSet != null) {
+						bindings= fileSet.filterFileLocalBindings(bindings);
+					}
 					result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
@@ -196,6 +208,9 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
 					if (binding instanceof ICPPNamespace) {
 						ICPPNamespaceScope indexNs = ((ICPPNamespace)binding).getNamespaceScope();
 						IBinding[] bindings = indexNs.getBindings(name, resolve, prefixLookup);
+						if (fileSet != null) {
+							bindings= fileSet.filterFileLocalBindings(bindings);
+						}
 						result = (IBinding[]) ArrayUtil.addAll(IBinding.class, result, bindings);
 					}
 				} catch (CoreException e) {
@@ -337,4 +352,12 @@ abstract public class CPPScope implements ICPPScope, IASTInternalScope {
             bindings.put( c, binding );
         }
     }
+
+	public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+		return getBinding(name, resolve, IIndexFileSet.EMPTY);
+	}
+	
+	public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+		return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+	}
 }

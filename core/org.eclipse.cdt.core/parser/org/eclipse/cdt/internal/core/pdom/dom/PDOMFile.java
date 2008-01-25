@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 QNX Software Systems and others.
+ * Copyright (c) 2005, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -221,12 +221,12 @@ public class PDOMFile implements IIndexFragmentFile {
 
 	public void addNames(IASTName[][] names) throws CoreException {
 		assert getFirstName() == null;
-		HashMap nameCache= new HashMap();
+		HashMap<IASTName, PDOMName> nameCache= new HashMap<IASTName, PDOMName>();
 		PDOMName lastName= null;
 		for (int i = 0; i < names.length; i++) {
 			IASTName[] name = names[i];
 			if (name[0] != null) {
-				PDOMName caller= (PDOMName) nameCache.get(name[1]);
+				PDOMName caller= nameCache.get(name[1]);
 				PDOMName pdomName = createPDOMName(name[0], caller);
 				if (pdomName != null) {
 					nameCache.put(name[0], pdomName);
@@ -256,7 +256,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		return result;
 	}
 
-	public void clear(Collection contextsRemoved) throws CoreException {
+	public void clear(Collection<IIndexFileLocation> contextsRemoved) throws CoreException {
 		// Remove the includes
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
@@ -280,7 +280,7 @@ public class PDOMFile implements IIndexFragmentFile {
 		setFirstMacro(null);
 
 		// Delete all the names in this file
-		ArrayList names= new ArrayList();
+		ArrayList<PDOMName> names= new ArrayList<PDOMName>();
 		PDOMName name = getFirstName();
 		while (name != null) {
 			names.add(name);
@@ -288,8 +288,8 @@ public class PDOMFile implements IIndexFragmentFile {
 			name= name.getNextInFile();
 		}
 		
-		for (Iterator iterator = names.iterator(); iterator.hasNext();) {
-			name = (PDOMName) iterator.next();
+		for (Iterator<PDOMName> iterator = names.iterator(); iterator.hasNext();) {
+			name = iterator.next();
 			name.delete();
 		}
 		setFirstName(null);
@@ -343,23 +343,23 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public IIndexInclude[] getIncludes() throws CoreException {
-		List result= new ArrayList();
+		List<PDOMInclude> result= new ArrayList<PDOMInclude>();
 		PDOMInclude include = getFirstInclude();
 		while (include != null) {
 			result.add(include);
 			include = include.getNextInIncludes();
 		}
-		return (IIndexInclude[]) result.toArray(new IIndexInclude[result.size()]);
+		return result.toArray(new IIndexInclude[result.size()]);
 	}
 
 	public IIndexMacro[] getMacros() throws CoreException {
-		List result= new ArrayList();
+		List<PDOMMacro> result= new ArrayList<PDOMMacro>();
 		PDOMMacro macro = getFirstMacro();
 		while (macro != null) {
 			result.add(macro);
 			macro = macro.getNextMacro();
 		}
-		return (IIndexMacro[]) result.toArray(new IIndexMacro[result.size()]);
+		return result.toArray(new IIndexMacro[result.size()]);
 	}
 
 	public IIndexFragment getIndexFragment() {
@@ -367,7 +367,7 @@ public class PDOMFile implements IIndexFragmentFile {
 	}
 
 	public IIndexName[] findNames(int offset, int length) throws CoreException {
-		ArrayList result= new ArrayList();
+		ArrayList<PDOMName> result= new ArrayList<PDOMName>();
 		for (PDOMName name= getFirstName(); name != null; name= name.getNextInFile()) {
 			int nameOffset=  name.getNodeOffset();
 			if (nameOffset >= offset) {
@@ -382,10 +382,10 @@ public class PDOMFile implements IIndexFragmentFile {
 			}
 
 		}
-		return (IIndexName[]) result.toArray(new IIndexName[result.size()]);
+		return result.toArray(new IIndexName[result.size()]);
 	}
 
-	public static IIndexFragmentFile findFile(PDOM pdom, BTree btree, IIndexFileLocation location, int linkageID, IIndexLocationConverter strategy)
+	public static PDOMFile findFile(PDOM pdom, BTree btree, IIndexFileLocation location, int linkageID, IIndexLocationConverter strategy)
 			throws CoreException {
 		String internalRepresentation= strategy.toInternalFormat(location);
 		int record= 0;

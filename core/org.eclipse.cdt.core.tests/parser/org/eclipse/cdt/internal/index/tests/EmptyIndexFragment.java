@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Symbian Software Ltd. and others.
+ * Copyright (c) 2007, 2008 Symbian Software Ltd. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentFile;
+import org.eclipse.cdt.internal.core.index.IIndexFragmentFileSet;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentInclude;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.core.runtime.CoreException;
@@ -113,4 +114,8 @@ public class EmptyIndexFragment implements IIndexFragment {
 
 	public void releaseReadLock() {}
 	public void resetCacheCounters() {}
+
+	public IIndexFragmentFileSet createFileSet() {
+		return null;
+	}
 }

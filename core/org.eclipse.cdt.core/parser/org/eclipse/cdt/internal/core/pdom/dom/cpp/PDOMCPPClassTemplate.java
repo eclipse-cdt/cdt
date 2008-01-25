@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 QNX Software Systems and others.
+ * Copyright (c) 2007, 2008 QNX Software Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -47,6 +48,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDelegateCreator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalTemplateInstantiator;
+import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMNodeLinkedList;
@@ -70,6 +72,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	/**
 	 * The size in bytes of a PDOMCPPClassTemplate record in the database.
 	 */
+	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMCPPClassType.RECORD_SIZE + 16;
 	
 	public PDOMCPPClassTemplate(PDOM pdom, PDOMNode parent, ICPPClassTemplate template)
@@ -86,11 +89,11 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 	}
 
 	public int getNodeType() {
-		return PDOMCPPLinkage.CPP_CLASS_TEMPLATE;
+		return IIndexCPPBindingConstants.CPP_CLASS_TEMPLATE;
 	}
 	
 	private static class TemplateParameterCollector implements IPDOMVisitor {
-		private List params = new ArrayList();
+		private List<IPDOMNode> params = new ArrayList<IPDOMNode>();
 		public boolean visit(IPDOMNode node) throws CoreException {
 			if (node instanceof ICPPTemplateParameter)
 				params.add(node);
@@ -99,7 +102,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		public void leave(IPDOMNode node) throws CoreException {
 		}
 		public ICPPTemplateParameter[] getTemplateParameters() {
-			return (ICPPTemplateParameter[])params.toArray(new ICPPTemplateParameter[params.size()]);
+			return params.toArray(new ICPPTemplateParameter[params.size()]);
 		}
 	}
 	
@@ -129,14 +132,14 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		
 	public ICPPClassTemplatePartialSpecialization[] getPartialSpecializations() throws DOMException {
 		try {
-			ArrayList partials = new ArrayList();
+			ArrayList<PDOMCPPClassTemplatePartialSpecialization> partials = new ArrayList<PDOMCPPClassTemplatePartialSpecialization>();
 			for (PDOMCPPClassTemplatePartialSpecialization partial = getFirstPartial();
 					partial != null;
 					partial = partial.getNextPartial()) {
 				partials.add(partial);
 			}
 			
-			return (ICPPClassTemplatePartialSpecialization[]) partials
+			return partials
 					.toArray(new ICPPClassTemplatePartialSpecialization[partials
 							.size()]);
 		} catch (CoreException e) {
@@ -149,7 +152,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		return null;
 	}
 	
-	public IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+	public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet) throws DOMException {
 		try {
 		    if (getDBName().equals(name.toCharArray())) {
 		        if (CPPClassScope.isConstructorReference(name)){
@@ -177,7 +180,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 		return null;
 	}
 	
-	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup) throws DOMException {
+	public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet) throws DOMException {
 		IBinding[] result = null;
 		try {
 			if ((!prefixLookup && getDBName().compare(name.toCharArray(), true) == 0)
@@ -209,7 +212,15 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return CPPSemantics.findBindings( this, name, false );
 		}
 
-		public IBinding getBinding(IASTName name, boolean resolve)
+		public final IBinding getBinding(IASTName name, boolean resolve) throws DOMException {
+			return getBinding(name, resolve, IIndexFileSet.EMPTY);
+		}
+
+		public final IBinding[] getBindings(IASTName name, boolean resolve, boolean prefix) throws DOMException {
+			return getBindings(name, resolve, prefix, IIndexFileSet.EMPTY);
+		}
+
+		public IBinding getBinding(IASTName name, boolean resolve, IIndexFileSet fileSet)
 				throws DOMException {
 			try {
 				BindingCollector visitor = new BindingCollector(getLinkageImpl(), name.toCharArray());
@@ -223,7 +234,7 @@ class PDOMCPPClassTemplate extends PDOMCPPClassType
 			return null;
 		}
 		
-		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup)
+		public IBinding[] getBindings(IASTName name, boolean resolve, boolean prefixLookup, IIndexFileSet fileSet)
 				throws DOMException {
 			IBinding[] result = null;
 			try {

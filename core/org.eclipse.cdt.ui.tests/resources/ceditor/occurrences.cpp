@@ -1,3 +1,5 @@
+#include "occurrences.h"
+
 #define INT      int
 #define FUNCTION_MACRO(arg) globalFunc(arg)
 #define EMPTY_MACRO(arg) 
@@ -22,18 +24,19 @@ class Base1 {
 	Base1();
 	~Base1();
 };
-class Base2 {
-};
 
 Base1::~Base1() {}
 Base1::Base1() {}
+
+Base2::Base2() {}
+void Base2::foo() {}
 
 class ClassContainer : Base1, Base2 {
 public:
 	static int staticPubField;
 	const int constPubField;
 	const static int constStaticPubField;
-	int pubField;
+	size_t pubField;
 
 	static INT staticPubMethod(int arg) {
 		FUNCTION_MACRO(arg);
@@ -82,6 +85,7 @@ int namespaceFunc() {
 	case ONE: case THREE:
 		return 1;
 	}
+	size_t size;
 	return namespaceVar;
 }
 }
@@ -92,9 +96,12 @@ INT ClassContainer::pubMethod() {
 	return pubField + localVar;
 }
 
+using namespace ns;
+//using ns::namespaceVar;
+
 INT ClassContainer::staticPrivMethod() {
 	CppStruct* st= new CppStruct();
-	st->structField= 1;
+	st->structField= namespaceVar;
 	CppUnion un;
 	un.unionField= 2;
 	staticPubMethod(staticPubField);
@@ -108,7 +115,7 @@ label:
 template<int X>
 class ConstantTemplate {
 public:
-	int foo(int y) {
+	size_t foo(size_t y) {
 		return X;
 	}
 };

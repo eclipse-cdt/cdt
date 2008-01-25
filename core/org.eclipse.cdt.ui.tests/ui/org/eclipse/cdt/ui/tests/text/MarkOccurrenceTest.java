@@ -16,7 +16,6 @@ import java.util.Iterator;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
@@ -50,6 +49,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
@@ -61,7 +61,7 @@ import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
  * 
  * @since 5.0
  */
-public class MarkOccurrenceTest extends TestCase {
+public class MarkOccurrenceTest extends BaseUITestCase {
 	
 	private static final String PROJECT = "MarkOccurrenceTest";
 
@@ -87,7 +87,7 @@ public class MarkOccurrenceTest extends TestCase {
 		}
 		protected void setUp() throws Exception {
 			super.setUp();
-			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/ceditor");
+			fCProject= EditorTestHelper.createCProject(PROJECT, "resources/ceditor", false, true);
 		}
 		protected void tearDown () throws Exception {
 			if (fCProject != null)
@@ -190,6 +190,34 @@ public class MarkOccurrenceTest extends TestCase {
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
 		assertOccurrences(5);
+		assertOccurrencesInWidget();
+	}
+
+	public void testMarkTypeOccurrences3() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "Base2", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(3);
+		assertOccurrencesInWidget();
+	}
+
+	public void testMarkTypedefOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "size_t", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(4);
 		assertOccurrencesInWidget();
 	}
 
@@ -377,6 +405,34 @@ public class MarkOccurrenceTest extends TestCase {
 		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
 		
 		assertOccurrences(2);
+		assertOccurrencesInWidget();
+	}
+
+	public void testMarkNamespaceOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "ns", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(3);
+		assertOccurrencesInWidget();
+	}
+
+	public void testMarkNamespaceVariableOccurrences() {
+		try {
+			fMatch= fFindReplaceDocumentAdapter.find(0, "namespaceVar", true, true, true, false);
+		} catch (BadLocationException e) {
+			fail();
+		}
+		assertNotNull(fMatch);
+
+		fEditor.selectAndReveal(fMatch.getOffset(), fMatch.getLength());
+		
+		assertOccurrences(4);
 		assertOccurrencesInWidget();
 	}
 

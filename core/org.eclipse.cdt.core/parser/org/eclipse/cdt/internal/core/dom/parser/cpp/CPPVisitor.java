@@ -1408,15 +1408,15 @@ public class CPPVisitor {
 			        boolean found = false;
 			        if( binding instanceof ICPPUsingDeclaration ){
 	                    try {
-	                        found = ArrayUtil.contains( ((ICPPUsingDeclaration)binding).getDelegates(), candidate ); 
+	                        found = ArrayUtil.containsEqual( ((ICPPUsingDeclaration)binding).getDelegates(), candidate ); 
 	                    } catch ( DOMException e ) {
 	                    }
 				    } else if( potential instanceof ICPPUsingDeclaration ){
-				        found = ( binding == ((ICPPDelegate)candidate).getBinding() );   
+				        found = sameBinding(binding, ((ICPPDelegate)candidate).getBinding());   
 				    } else {
-				    	found = (binding == candidate );
+				    	found = sameBinding(binding, candidate);
 				    }
-				        
+			        
 				    if( found ){
 						if( refs.length == idx ){
 							IASTName [] temp = new IASTName[ refs.length * 2 ];
@@ -1432,6 +1432,13 @@ public class CPPVisitor {
 			    }
 			}
 			return PROCESS_CONTINUE;
+		}
+		private boolean sameBinding(IBinding binding1, IBinding binding2) {
+			if (binding1 == binding2)
+				return true;
+			if (binding1.equals(binding2))
+				return true;
+			return false;
 		}
 		public IASTName[] getReferences(){
 			if( idx < refs.length ){

@@ -19,7 +19,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -125,7 +124,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 	public void testEditTranslationUnit() throws Exception {
 		final String file= "/ceditor/src/main.cpp";
-		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false);
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
 		IFile mainFile= ResourceTestHelper.findFile(file);
 		assertNotNull(mainFile);
 		setUpEditor(mainFile);
@@ -187,7 +186,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 	//	}
 	//}
 	public void testEditNewTranslationUnit() throws Exception {
-		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false);
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
 		IFile newFile= createFile(fCProject.getProject(), "Point.cpp", "");
 		assertNotNull(newFile);
 		setUpEditor(newFile);
@@ -261,7 +260,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 	public void testEditExternalTranslationUnit() throws Exception {
 		final String file= "/ceditor/src/main.cpp";
-		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false);
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
 		IFile mainFile= ResourceTestHelper.findFile(file);
 		assertNotNull(mainFile);
 		File tmpFile= File.createTempFile("tmp", ".cpp");
@@ -306,7 +305,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 		colorMgr.bindColor(ICColorConstants.PP_DIRECTIVE, new RGB(7,7,7));
 		final Color ppDirectiveColor= colorMgr.getColor(ICColorConstants.PP_DIRECTIVE);
 		final String file= "/ceditor/src/main.cpp";
-		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false);
+		fCProject= EditorTestHelper.createCProject("ceditor", "resources/ceditor", false, false);
 		setUpEditor(file);
 		fSourceViewer= EditorTestHelper.getSourceViewer(fEditor);
 		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));

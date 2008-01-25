@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,6 @@ import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
@@ -434,11 +433,15 @@ public class EditorTestHelper {
 	}
 	
 	public static ICProject createCProject(String project, String externalSourceFolder) throws CoreException {
-		return createCProject(project, externalSourceFolder, false);
+		return createCProject(project, externalSourceFolder, false, false);
 	}
 	
 	public static ICProject createCProject(String project, String externalSourceFolder, boolean linkSourceFolder) throws CoreException {
-		ICProject cProject= CProjectHelper.createCCProject(project, "bin", IPDOMManager.ID_NO_INDEXER);
+		return createCProject(project, externalSourceFolder, linkSourceFolder, false);
+	}
+
+	public static ICProject createCProject(String project, String externalSourceFolder, boolean linkSourceFolder, boolean useIndexer) throws CoreException {
+		ICProject cProject= CProjectHelper.createCCProject(project, "bin", useIndexer ? IIndexManager.ID_FAST_INDEXER : IIndexManager.ID_NO_INDEXER);
 		IFolder folder;
 		if (linkSourceFolder)
 			folder= ResourceHelper.createLinkedFolder((IProject) cProject.getUnderlyingResource(), new Path("src"), CTestPlugin.getDefault(), new Path(externalSourceFolder));
@@ -449,6 +452,10 @@ public class EditorTestHelper {
 		Assert.assertNotNull(folder);
 		Assert.assertTrue(folder.exists());
 		CProjectHelper.addCContainer(cProject, "src");
+		if (useIndexer) {
+			IIndexManager indexManager= CCorePlugin.getIndexManager();
+			indexManager.joinIndexer(5000, new NullProgressMonitor());
+		}
 		return cProject;
 	}
 

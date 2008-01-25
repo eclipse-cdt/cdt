@@ -1093,8 +1093,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	public static final String INACTIVE_CODE_ENABLE = "inactiveCodeEnable"; //$NON-NLS-1$
 	/** Preference key for inactive code painter color */
 	public static final String INACTIVE_CODE_COLOR = "inactiveCodeColor"; //$NON-NLS-1$
-	/** Preference key for code formatter tab size */
-	private final static String CODE_FORMATTER_TAB_SIZE = DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE;
 	/** Preference key for inserting spaces rather than tabs */
 	public final static String SPACES_FOR_TABS = DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR;
 	/** Preference key for automatically closing strings */
@@ -1383,11 +1381,6 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					return;
 				}
 
-				if (CODE_FORMATTER_TAB_SIZE.equals(property) && isTabsToSpacesConversionEnabled()) {
-					uninstallTabsToSpacesConverter();
-					installTabsToSpacesConverter();
-				}
-
 				if (DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE.equals(property)
 						|| DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE.equals(property)
 						|| DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR.equals(property)) {
@@ -1395,6 +1388,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 					int tabWidth= getSourceViewerConfiguration().getTabWidth(asv);
 					if (textWidget.getTabs() != tabWidth)
 						textWidget.setTabs(tabWidth);
+					if (isTabsToSpacesConversionEnabled()) {
+						uninstallTabsToSpacesConverter();
+						installTabsToSpacesConverter();
+					} else {
+						updateIndentPrefixes();
+					}
 					return;
 				}
 
@@ -2596,13 +2595,14 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 	protected String[] collectContextMenuPreferencePages() {
 		// Add C/C++ Editor relevant pages
 		String[] parentPrefPageIds = super.collectContextMenuPreferencePages();
-		String[] prefPageIds = new String[parentPrefPageIds.length + 9];
+		String[] prefPageIds = new String[parentPrefPageIds.length + 10];
 		int nIds = 0;
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CEditorPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeAssistPreferenceAdvanced"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.HoverPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.FoldingPreferencePage"; //$NON-NLS-1$
+		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.MarkOccurrencesPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.CodeColoringPreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.TemplatePreferencePage"; //$NON-NLS-1$
 		prefPageIds[nIds++] = "org.eclipse.cdt.ui.preferences.SmartTypingPreferencePage"; //$NON-NLS-1$
@@ -2645,7 +2645,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IC
 		}
 
 		// delayed installation of mark occurrences
-		if (isMarkingOccurrences() && !fMarkOccurrenceAnnotations)
+		if (!fMarkOccurrenceAnnotations && isMarkingOccurrences())
 			getSite().getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					installOccurrencesFinder(true);

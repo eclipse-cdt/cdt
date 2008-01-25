@@ -121,7 +121,15 @@ public class XlcErrorParser implements IErrorParser
 					/* The string that begins after "line " and ends
 					   before '.' operator is the line number. */
 					lineNum = token.substring(index + 5);
-					lineNumber = Integer.parseInt(lineNum);
+					
+					// the make utility might actually be the one outputting the error, in which case the string
+					// after the line number will be "make:".  In this case we'll get a NumberFormatException.
+					try {
+						lineNumber = Integer.parseInt(lineNum);
+					} catch (NumberFormatException e) {
+						// bail out
+						return false;
+					}
 				}
 				else
 				{

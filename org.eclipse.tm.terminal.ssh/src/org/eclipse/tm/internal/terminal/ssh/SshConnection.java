@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -12,6 +12,7 @@
  *    - copied code from org.eclipse.team.cvs.ssh2/JSchSession (Copyright IBM)
  * Martin Oberhuber (Wind River) - [198790] make SSH createSession() protected
  * Mikhail Kalugin <fourdman@xored.com> - [201864] Fix Terminal SSH keyboard interactive authentication
+ * Martin Oberhuber (Wind River) - [155026] Add keepalives for SSH connection
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.ssh;
 
@@ -67,6 +68,8 @@ class SshConnection extends Thread {
         Session session = service.createSession(hostname, port, username);
         //session.setTimeout(getSshTimeoutInMillis());
         session.setTimeout(0); //never time out on the session
+        session.setServerAliveInterval(300000); //5 minutes
+        session.setServerAliveCountMax(6); //give up after 6 tries (remote will be dead after 30 min)
         if (password != null)
 			session.setPassword(password);
         session.setUserInfo(wrapperUI);

@@ -147,7 +147,7 @@ public class BreakpointManager extends Manager {
 		// Stop the program
 		if (allowInterrupt && target.isRunning()) {
 			// Disable events.
-			((EventManager)getSession().getEventManager()).allowProcessingEvents(false);
+			((EventManager) getSession().getEventManager()).allowProcessingEvents(false);
 			target.suspend();
 			shouldRestart = true;
 		}
@@ -155,10 +155,9 @@ public class BreakpointManager extends Manager {
 	}
 
 	void resumeInferior(Target target, boolean shouldRestart) throws CDIException {
+		((EventManager) getSession().getEventManager()).allowProcessingEvents(true);
 		if (shouldRestart) {
 			target.resume();
-			// Enable events again.
-			((EventManager)getSession().getEventManager()).allowProcessingEvents(true);
 		}
 	}
 
@@ -239,18 +238,23 @@ public class BreakpointManager extends Manager {
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
+			for (int i = 0; i < miBreakpoints.length; i++) {
+				miBreakpoints[i].setEnabled(true);
+			}
+			breakpoint.setEnabled0(true);
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			// Resume the program and enable events.
-			resumeInferior(target, restart);
+			try {
+				// Resume the program and enable events.
+				resumeInferior(target, restart);
+			} finally {
+				// Fire a changed Event.
+				miSession.fireEvent(new MIBreakpointChangedEvent(miSession, numbers[0]));
+			}
 		}
-		for (int i = 0; i < miBreakpoints.length; i++) {
-			miBreakpoints[i].setEnabled(true);
-		}
-		breakpoint.setEnabled0(true);
-		// Fire a changed Event.
-		miSession.fireEvent(new MIBreakpointChangedEvent(miSession, numbers[0]));
+
+
 	}
 
 	/**
@@ -299,17 +303,20 @@ public class BreakpointManager extends Manager {
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 			}
+			for (int i = 0; i < miBreakpoints.length; i++) {
+				miBreakpoints[i].setEnabled(false);
+			}
+			breakpoint.setEnabled0(false);
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			resumeInferior(target, restart);
+			try {
+				resumeInferior(target, restart);
+			} finally {
+				// Fire a changed Event.
+				miSession.fireEvent(new MIBreakpointChangedEvent(miSession, numbers[0]));
+			}
 		}
-		for (int i = 0; i < miBreakpoints.length; i++) {
-			miBreakpoints[i].setEnabled(false);
-		}
-		breakpoint.setEnabled0(false);
-		// Fire a changed Event.
-		miSession.fireEvent(new MIBreakpointChangedEvent(miSession, numbers[0]));
 	}
 
 	/**

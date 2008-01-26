@@ -529,8 +529,10 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 				int newLineNumber = movedEvent.getNewLocation().getLineNumber();
 				int currLineNumber = breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, newLineNumber);
 				breakpoint.getMarker().setAttribute(IMarker.LINE_NUMBER, newLineNumber);
-				fBreakpointProblems.add(BreakpointProblems.reportBreakpointMoved(
-						breakpoint, currLineNumber, newLineNumber, getDebugTarget().getName(), getDebugTarget().getInternalID()));
+				IMarker marker = BreakpointProblems.reportBreakpointMoved(
+						breakpoint, currLineNumber, newLineNumber, getDebugTarget().getName(), getDebugTarget().getInternalID());
+				if (marker != null)
+					fBreakpointProblems.add(marker);
 			} catch (CoreException e) {}
 		}
 		
@@ -704,7 +706,9 @@ public class CBreakpointManager implements IBreakpointsListener, IBreakpointMana
 					String fileName = breakpoint.getFileName();
 					ICDIFunctionLocation location = cdiTarget.createFunctionLocation( fileName, function );
 					ICDICondition condition = createCondition( breakpoint );
-					fBreakpointProblems.add(BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID()));
+					IMarker marker = BreakpointProblems.reportUnresolvedBreakpoint(breakpoint, getDebugTarget().getName(), getDebugTarget().getInternalID());
+					if (marker != null)
+						fBreakpointProblems.add(marker);
 					if (bpManager2 != null)
 						b = bpManager2.setFunctionBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true, breakpoints[i].isEnabled() );
 					else

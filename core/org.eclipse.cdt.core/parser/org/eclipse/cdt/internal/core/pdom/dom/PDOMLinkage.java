@@ -72,13 +72,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	private static final int NEXT_OFFSET = PDOMNamedNode.RECORD_SIZE + 4;
 	private static final int INDEX_OFFSET = PDOMNamedNode.RECORD_SIZE + 8;
 	private static final int NESTED_BINDINGS_INDEX = PDOMNamedNode.RECORD_SIZE + 12;
-	
+
 	@SuppressWarnings("hiding")
 	protected static final int RECORD_SIZE = PDOMNamedNode.RECORD_SIZE + 16;
-	
+
 	// node types
 	protected static final int LINKAGE= 0; // special one for myself
-	
+
 	public PDOMLinkage(PDOM pdom, int record) {
 		super(pdom, record);
 	}
@@ -89,10 +89,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 		// id
 		db.putInt(record + ID_OFFSET, db.newString(languageId).getRecord());
-		
+
 		pdom.insertLinkage(this);
 	}
-	
+
 	protected int getRecordSize() {
 		return RECORD_SIZE;
 	}
@@ -106,19 +106,19 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		int namerec = db.getInt(record + ID_OFFSET);
 		return db.getString(namerec);
 	}
-	
+
 	public static int getNextLinkageRecord(PDOM pdom, int record) throws CoreException {
 		return pdom.getDB().getInt(record + NEXT_OFFSET);
 	}
-		
+
 	public void setNext(int nextrec) throws CoreException {
 		pdom.getDB().putInt(record + NEXT_OFFSET, nextrec);
 	}
-	
+
 	public BTree getIndex() throws CoreException {
 		return new BTree(pdom.getDB(), record + INDEX_OFFSET, getIndexComparator());
 	}
-	
+
 	/**
 	 * Returns the BTree for the nested bindings.
 	 * @return
@@ -127,7 +127,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public BTree getNestedBindingsIndex() throws CoreException {
 		return new BTree(getPDOM().getDB(), record + NESTED_BINDINGS_INDEX, getNestedBindingsComparator());
 	}
-	
+
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		if (visitor instanceof IBTreeVisitor) {
 			getIndex().accept((IBTreeVisitor) visitor);
@@ -148,7 +148,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			});
 		}
 	}
-	
+
 	public ILinkage getLinkage() throws CoreException {
 		return this;
 	}
@@ -156,7 +156,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public final void addChild(PDOMNode child) throws CoreException {
 		getIndex().insert(child.getRecord());
 	}
-	
+
 	public PDOMNode getNode(int record) throws CoreException {
 		switch (PDOMNode.getNodeType(pdom, record)) {
 		case POINTER_TYPE:
@@ -168,8 +168,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		return null;
 	}
-	
-	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {		
+
+	public PDOMNode addType(PDOMNode parent, IType type) throws CoreException {
 		if (type instanceof IPointerType)
 			return new PDOMPointerType(pdom, parent, (IPointerType)type);
 		else if (type instanceof IArrayType) 
@@ -185,16 +185,16 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public IBTreeComparator getNestedBindingsComparator() {
 		return new FindBinding.NestedBindingsBTreeComparator(this);
 	}
-	
+
 	public abstract PDOMBinding addBinding(IASTName name) throws CoreException;
-	
+
 	public abstract PDOMBinding addBinding(IBinding binding, IASTName fromName) throws CoreException;
-	
+
 	public final PDOMBinding adaptBinding(final IBinding inputBinding) throws CoreException {
 		if (inputBinding == null || inputBinding instanceof IProblemBinding) {
 			return null;
 		}
-		
+
 		boolean isFromAST= true;
 		IBinding binding= inputBinding;
 		if (binding instanceof PDOMBinding) {
@@ -209,12 +209,12 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			}
 			isFromAST= false;
 		}
-		
+
 		PDOMBinding result= (PDOMBinding) pdom.getCachedResult(inputBinding);
 		if (result != null) {
 			return result;
 		}
-		
+
 		int fileLocalRec= 0;
 		if (isFromAST) {
 			// assign names to anonymous types.
@@ -233,9 +233,9 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		return result;
 	}
-	
+
 	protected abstract PDOMBinding doAdaptBinding(IBinding binding, int fileLocalRec) throws CoreException;
-	
+
 	public final PDOMBinding resolveBinding(IASTName name) throws CoreException {
 		IBinding binding= name.resolveBinding();
 		if (binding != null) {
@@ -243,7 +243,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @param binding
@@ -321,13 +321,13 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					if (scope instanceof ICPPClassScope) {
 						scopeBinding = ((ICPPClassScope)scope).getClassType();
 					} else {
-						IName scopeName = scope.getScopeName();		
+						IName scopeName = scope.getScopeName();
 						if (scopeName instanceof IASTName) {
 							scopeBinding = ((IASTName) scopeName).resolveBinding();
-						}	
+						}
 					}
 				}
-			} 		
+			}
 			if (scopeBinding != null && scopeBinding != binding) {
 				PDOMBinding scopePDOMBinding = null;
 				if (addParent) {
@@ -359,8 +359,10 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				} else if (binding instanceof IFunction) {
 					IFunction f= (IFunction) binding;
 					isFileLocal= ASTInternal.isStatic(f, false);
-				} else if (binding instanceof ICPPUsingDeclaration ||
-						binding instanceof ICPPNamespaceAlias) {
+				} else if ((binding instanceof ICPPUsingDeclaration ||
+						binding instanceof ICPPNamespaceAlias) && binding.getScope() == null) {
+					// Using declarations and namespace aliases in global scope are restricted
+					// to the containing file.
 					isFileLocal= true;
 				}
 
@@ -377,7 +379,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	}
 
 	public abstract int getBindingType(IBinding binding);
-	
+
 	/**
 	 * Callback informing the linkage that a name has been added. This is
 	 * used to do additional processing, like establishing inheritance relationships.
@@ -408,7 +410,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 */
 	public void onDeleteName(PDOMName nextName) throws CoreException {
 	}
-	
+
 	/**
 	 * Callback informing the linkage that a binding has been added. Used to index nested bindings.
 	 * @param pdomBinding
@@ -432,7 +434,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			getNestedBindingsIndex().delete(pdomBinding.getRecord());
 		}
 	}
-	
+
 	public void deleteType(IType type, int ownerRec) throws CoreException {
 		if (type instanceof PDOMNode) {
 			PDOMNode node= (PDOMNode) type;
@@ -443,11 +445,11 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			}
 		}
 	}
-	
+
 	public void deleteBinding(IBinding binding) throws CoreException {
 		// no implementation, yet.
 	}
-	
+
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		assert false; // no need to delete linkages.
 	}

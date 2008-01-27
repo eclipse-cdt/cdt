@@ -35,12 +35,14 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexLinkage;
 import org.eclipse.cdt.internal.core.Util;
@@ -129,8 +131,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public void accept(final IPDOMVisitor visitor) throws CoreException {
 		if (visitor instanceof IBTreeVisitor) {
 			getIndex().accept((IBTreeVisitor) visitor);
-		}
-		else {
+		} else {
 			getIndex().accept(new IBTreeVisitor() {
 				public int compare(int record) throws CoreException {
 					return 0;
@@ -257,8 +258,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 			IBinding scopeBinding = null;
 			if (binding instanceof ICPPTemplateInstance) {
 				scopeBinding = ((ICPPTemplateInstance)binding).getTemplateDefinition();
-			} 
-			else {
+			} else {
 				IScope scope = binding.getScope();
 				if (scope == null) {
 					if (binding instanceof ICPPDeferredTemplateInstance) {
@@ -288,8 +288,8 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					return null;
 				}
 
-				if(scope instanceof IIndexScope) {
-					if(scope instanceof CompositeScope) { // we special case for performance
+				if (scope instanceof IIndexScope) {
+					if (scope instanceof CompositeScope) { // we special case for performance
 						return adaptBinding(((CompositeScope)scope).getRawScopeBinding());
 					} else {
 						return adaptBinding(((IIndexScope) scope).getScopeBinding());
@@ -315,15 +315,12 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				IASTNode scopeNode = ASTInternal.getPhysicalNodeOfScope(scope);
 				if (scopeNode instanceof IASTCompoundStatement) {
 					return null;
-				}
-				else if (scopeNode instanceof IASTTranslationUnit) {
+				} else if (scopeNode instanceof IASTTranslationUnit) {
 					return this;
-				}
-				else {
+				} else {
 					if (scope instanceof ICPPClassScope) {
 						scopeBinding = ((ICPPClassScope)scope).getClassType();
-					} 
-					else {
+					} else {
 						IName scopeName = scope.getScopeName();		
 						if (scopeName instanceof IASTName) {
 							scopeBinding = ((IASTName) scopeName).resolveBinding();
@@ -341,8 +338,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				if (scopePDOMBinding != null)
 					return scopePDOMBinding;
 			}
-		}
-		catch (DOMException e) {
+		} catch (DOMException e) {
 			throw new CoreException(Util.createStatus(e));
 		}
 		return null;
@@ -360,10 +356,12 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 					if (!(binding instanceof IField)) {
 						isFileLocal= ASTInternal.isStatic((IVariable) binding);
 					}
-				}
-				else if (binding instanceof IFunction) {
+				} else if (binding instanceof IFunction) {
 					IFunction f= (IFunction) binding;
 					isFileLocal= ASTInternal.isStatic(f, false);
+				} else if (binding instanceof ICPPUsingDeclaration ||
+						binding instanceof ICPPNamespaceAlias) {
+					isFileLocal= true;
 				}
 
 				if (isFileLocal) {
@@ -382,7 +380,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	
 	/**
 	 * Callback informing the linkage that a name has been added. This is
-	 * used to do addtional processing, like establishing inheritance relationships.
+	 * used to do additional processing, like establishing inheritance relationships.
 	 * @param pdomName the name that was inserted into the linkage
 	 * @param name the name that caused the insertion
 	 * @throws CoreException 
@@ -402,7 +400,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 
 	/**
 	 * Callback informing the linkage that a name is about to be deleted. This is
-	 * used to do addtional processing, like removing inheritance relationships.
+	 * used to do additional processing, like removing inheritance relationships.
 	 * @param pdomName the name that was inserted into the linkage
 	 * @param name the name that caused the insertion
 	 * @throws CoreException 
@@ -453,5 +451,4 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	public void delete(PDOMLinkage linkage) throws CoreException {
 		assert false; // no need to delete linkages.
 	}
-
 }

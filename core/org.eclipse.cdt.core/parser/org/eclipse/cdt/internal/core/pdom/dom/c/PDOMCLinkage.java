@@ -93,11 +93,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 			} else if (binding instanceof IFunction) {
 				IFunction func= (IFunction) binding;
 				pdomBinding = new PDOMCFunction(pdom, parent, func);
-			} else if (binding instanceof ICompositeType)
+			} else if (binding instanceof ICompositeType) {
 				pdomBinding = new PDOMCStructure(pdom, parent, (ICompositeType) binding);
-			else if (binding instanceof IEnumeration)
+			} else if (binding instanceof IEnumeration) {
 				pdomBinding = new PDOMCEnumeration(pdom, parent, (IEnumeration) binding);
-			else if (binding instanceof IEnumerator) {
+			} else if (binding instanceof IEnumerator) {
 				try {
 					IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
 					PDOMBinding pdomEnumeration = adaptBinding(enumeration);
@@ -106,10 +106,11 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 				} catch (DOMException e) {
 					throw new CoreException(Util.createStatus(e));
 				}
-			} else if (binding instanceof ITypedef)
+			} else if (binding instanceof ITypedef) {
 				pdomBinding = new PDOMCTypedef(pdom, parent, (ITypedef)binding);
+			}
 
-			if (pdomBinding!=null) {
+			if (pdomBinding != null) {
 				pdomBinding.setLocalToFile(getLocalToFile(binding));
 				parent.addChild(pdomBinding);
 				afterAddBinding(pdomBinding);

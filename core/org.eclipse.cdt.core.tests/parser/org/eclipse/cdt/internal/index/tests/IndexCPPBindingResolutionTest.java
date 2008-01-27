@@ -157,7 +157,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	// b::A aa;
 	// b::B bb;
-	public void _testUsingTypeDirective_177917_2() {
+	public void testUsingTypeDirective_177917_2() {
 		IBinding b0= getBindingFromASTName("A aa", 1);
 		IBinding b1= getBindingFromASTName("B bb", 1);
 	}

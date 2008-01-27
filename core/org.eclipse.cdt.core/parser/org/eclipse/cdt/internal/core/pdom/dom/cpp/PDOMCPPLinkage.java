@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -390,19 +389,22 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			pdomBinding = new PDOMCPPNamespaceAlias(pdom, parent, (ICPPNamespaceAlias) binding);
 		} else if (binding instanceof ICPPNamespace) {
 			pdomBinding = new PDOMCPPNamespace(pdom, parent, (ICPPNamespace) binding);
+		} else if (binding instanceof ICPPUsingDeclaration) {
+			pdomBinding = new PDOMCPPUsingDeclaration(pdom, parent, (ICPPUsingDeclaration) binding);
 		} else if (binding instanceof IEnumeration) {
 			pdomBinding = new PDOMCPPEnumeration(pdom, parent, (IEnumeration) binding);
 		} else if (binding instanceof IEnumerator) {
 			IEnumeration enumeration = (IEnumeration)((IEnumerator)binding).getType();
 			PDOMBinding pdomEnumeration = adaptBinding(enumeration);
-			if (pdomEnumeration instanceof PDOMCPPEnumeration)
+			if (pdomEnumeration instanceof PDOMCPPEnumeration) {
 				pdomBinding = new PDOMCPPEnumerator(pdom, parent, (IEnumerator) binding,
 						(PDOMCPPEnumeration)pdomEnumeration);
+			}
 		} else if (binding instanceof ITypedef) {
 			pdomBinding = new PDOMCPPTypedef(pdom, parent, (ITypedef)binding);
 		}
 
-		if(pdomBinding!=null) {
+		if (pdomBinding != null) {
 			pdomBinding.setLocalToFile(getLocalToFile(binding));
 			parent.addChild(pdomBinding);
 			afterAddBinding(pdomBinding);
@@ -441,8 +443,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					PDOMBinding pdomBinding= adaptBinding(method);
 					if (pdomBinding == null) {
 						addBinding(type, method);
-					}
-					else {
+					} else {
 						if (!pdomBinding.hasDefinition()) {
 							pdomBinding.update(this, method);
 						}
@@ -534,6 +535,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return CPPNAMESPACEALIAS;
 		else if (binding instanceof ICPPNamespace)
 			return CPPNAMESPACE;
+		else if (binding instanceof ICPPUsingDeclaration)
+			return CPP_USING_DECLARATION;
 		else if (binding instanceof IEnumeration)
 			return CPPENUMERATION;
 		else if (binding instanceof IEnumerator)
@@ -549,21 +552,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	 */
 	@Override
 	public PDOMBinding doAdaptBinding(IBinding binding, int localToFileRec) throws CoreException {
-		if (binding instanceof ICPPUsingDeclaration) {
-			try {
-				ICPPDelegate[] delegates = ((ICPPUsingDeclaration)binding).getDelegates();
-				if (delegates.length == 0)
-					return null;
-				// TODO - if there are more than one delegate, we have no way of knowing which one...
-				return adaptBinding(delegates[0].getBinding());
-			} catch (DOMException e) {
-				return null;
-			}
-		}
 		PDOMNode parent = getAdaptedParent(binding, false);
 		if (parent == this) {
 			return CPPFindBinding.findBinding(getIndex(), this, binding, localToFileRec);
-		} 
+		}
 		if (parent instanceof PDOMCPPNamespace) {
 			return CPPFindBinding.findBinding(((PDOMCPPNamespace)parent).getIndex(), this, binding, localToFileRec);
 		}
@@ -656,6 +648,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPNamespace(pdom, record);
 		case CPPNAMESPACEALIAS:
 			return new PDOMCPPNamespaceAlias(pdom, record);
+		case CPP_USING_DECLARATION:
+			return new PDOMCPPUsingDeclaration(pdom, record);
 		case GPPBASICTYPE:
 			return new PDOMGPPBasicType(pdom, record);
 		case CPPBASICTYPE:

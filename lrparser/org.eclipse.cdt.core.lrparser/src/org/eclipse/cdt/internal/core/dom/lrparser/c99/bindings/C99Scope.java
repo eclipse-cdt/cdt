@@ -11,11 +11,13 @@
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings;
 
 import org.eclipse.cdt.core.dom.IName;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99SymbolTable;
+import org.eclipse.cdt.core.index.IIndexFileSet;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalScope;
 
 /**
@@ -96,6 +98,19 @@ public class C99Scope implements IC99Scope, IASTInternalScope {
 
 	public void setFullyCached(boolean b) {
 		
+	}
+
+	public IBinding getBinding(IASTName name, boolean resolve,
+			IIndexFileSet acceptLocalBindings) throws DOMException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IBinding[] getBindings(IASTName name, boolean resolve,
+			boolean prefixLookup, IIndexFileSet acceptLocalBindings)
+			throws DOMException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

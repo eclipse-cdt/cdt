@@ -1618,6 +1618,10 @@ public class CPPTemplates {
 						if( map.containsKey( defaultType ) ){
 							arg = (IType) map.get( defaultType );
 						}
+					} else if (defaultType instanceof ICPPInternalDeferredClassInstance) {
+						// Default template parameter may be depend on a previously defined
+						// parameter: template<typename T1, typename T2 = A<T1> > class B {};
+						arg = ((ICPPInternalDeferredClassInstance) defaultType).instantiate(map);
 					} else {
 					    arg = defaultType;
 					}

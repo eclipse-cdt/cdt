@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -2101,32 +2102,23 @@ public class AST2TemplateTests extends AST2BaseTest {
     	assertTrue(name.resolveBinding() instanceof IParameter);
     }
 
-    // template<typename _Tp>
+    // template<typename _TpAllocator>
     // class Allocator {
     // public:
-    //   typedef _Tp& alloc_reference;
-    //   template<typename _Tp1>
+    //   typedef _TpAllocator& alloc_reference;
+    //   template<typename _TpRebind>
     //   struct rebind {
-    //     typedef Allocator<_Tp1> other;
+    //     typedef Allocator<_TpRebind> other;
     //   };
     // };
     //
-    // template<typename _Tp, typename _Alloc>
-    // class VecBase {
-    // public:
-    //   typedef typename _Alloc::template rebind<_Tp>::other _Tp_alloc_type;
-    // };
-    //
     // template<typename _Tp, typename _Alloc = Allocator<_Tp> >
-    // class Vec : protected VecBase<_Tp, _Alloc> {
+    // class Vec {
     // public:
-    //   typedef typename VecBase<_Tp, _Alloc>::_Tp_alloc_type::alloc_reference reference;
+    //   typedef typename _Alloc::template rebind<_Tp>::other::alloc_reference reference;
     // };
     //
-    // class A {};
-    //
-    // void f(Vec<A>::reference r) {
-    // }
+    // void f(Vec<int>::reference r) {}
     public void _testRebindPattern_214447() throws Exception {
     	StringBuffer buffer = getContents(1)[0];
     	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
@@ -2134,13 +2126,42 @@ public class AST2TemplateTests extends AST2BaseTest {
     	CPPNameCollector col = new CPPNameCollector();
     	tu.accept(col);
     	for (IASTName name : col.nameList) {
-    		IBinding b0 = name.resolveBinding();
-   			System.out.println(name.toString() + ": " + b0.getClass().getName());
    			if ("r".equals(String.valueOf(name))) {
+   	    		IBinding b0 = name.resolveBinding();
    				IType type = ((ICPPVariable) b0).getType();
    				type = CPPSemantics.getUltimateType(type, false);
-   				assertInstance(type, ICPPClassType.class);
-   				assertEquals("A", ((ICPPClassType) type).getName());
+   				assertInstance(type, IBasicType.class);
+				assertEquals("int", ASTTypeUtil.getType(type));
+   			}
+		}
+    }
+    
+    // template<typename _Tp>
+    // class A {
+    // public:
+    //   typedef _Tp a;
+    // };
+    //
+    // template<typename _Tp1, typename _Tp2 = A<_Tp1> >
+    // class B {
+    // public:
+    //   typedef _Tp2 b;
+    // };
+    //
+    // B<int>::b::a x;
+    public void testDefaultTemplateParameter() throws Exception {
+    	StringBuffer buffer = getContents(1)[0];
+    	IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, true, true);
+
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept(col);
+    	for (IASTName name : col.nameList) {
+    		if ("x".equals(String.valueOf(name))) {
+	    		IBinding b0 = name.resolveBinding();
+   				IType type = ((ICPPVariable) b0).getType();
+   				type = CPPSemantics.getUltimateType(type, false);
+   				assertInstance(type, IBasicType.class);
+				assertEquals("int", ASTTypeUtil.getType(type));
    			}
 		}
     }

@@ -32,15 +32,15 @@ import org.eclipse.core.runtime.PlatformObject;
 public class CPPTemplateParameter extends PlatformObject implements ICPPTemplateParameter, ICPPInternalBinding {
 	private IASTName [] declarations;
 	
-	public CPPTemplateParameter( IASTName name ){
+	public CPPTemplateParameter(IASTName name) {
 		declarations = new IASTName[] { name };
 	}
 
-	public Object clone(){
+	public Object clone() {
         IType t = null;
    		try {
             t = (IType) super.clone();
-        } catch ( CloneNotSupportedException e ) {
+        } catch (CloneNotSupportedException e) {
             //not going to happen
         }
         return t;
@@ -67,7 +67,7 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( getPrimaryDeclaration () );
+		return CPPVisitor.getContainingScope(getPrimaryDeclaration ());
 	}
 
 	/* (non-Javadoc)
@@ -103,7 +103,7 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
 	 */
 	public IASTNode getDefinition() {
-		if( declarations != null && declarations.length > 0 )
+		if (declarations != null && declarations.length > 0)
 			return declarations[0];
 		return null;
 	}
@@ -120,26 +120,26 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDefinition(IASTNode node) {
-		addDeclaration( node );
+		addDeclaration(node);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
 	 */
 	public void addDeclaration(IASTNode node) {
-		if( !(node instanceof IASTName) )
+		if (!(node instanceof IASTName))
 			return;
 		IASTName name = (IASTName) node;
-	   if( declarations == null )
+		if (declarations == null) {
 	        declarations = new IASTName[] { name };
-	    else {
-	        if( declarations.length > 0 && declarations[0] == node )
+		} else {
+	        if (declarations.length > 0 && declarations[0] == node)
 	            return;
 			//keep the lowest offset declaration in [0]
-			if( declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset() ){
-				declarations = (IASTName[]) ArrayUtil.prepend( IASTName.class, declarations, name );
+			if (declarations.length > 0 && ((ASTNode)node).getOffset() < ((ASTNode)declarations[0]).getOffset()) {
+				declarations = (IASTName[]) ArrayUtil.prepend(IASTName.class, declarations, name);
 			} else {
-				declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
+				declarations = (IASTName[]) ArrayUtil.append(IASTName.class, declarations, name);
 			}
 	    }
 	}
@@ -149,5 +149,9 @@ public class CPPTemplateParameter extends PlatformObject implements ICPPTemplate
 	
 	public ILinkage getLinkage() {
 		return Linkage.CPP_LINKAGE;
+	}
+	
+	public String toString() {
+		return getName();
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Intel Corporation and others.
+ * Copyright (c) 2007, 2008  Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -188,35 +188,30 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	 *    3: cfg.getInternalBuilderParallel()
 	 */
 	 static int[] calc3states(ICPropertyProvider p, 
-			 Button b3, 
 			 IConfiguration c,
 			 boolean p0) {
 		if (p.isMultiCfg() &&
 			c instanceof ICMultiItemsHolder) 
 		{ 
 			IConfiguration[] cfs = (IConfiguration[])((ICMultiItemsHolder)c).getItems();
-			IBuilder b = cfs[0].getEditableBuilder();
+			IBuilder b = cfs[0].getBuilder();
 			int[]   res = new int[TRI_STATES_SIZE];
 			boolean[] x = new boolean[TRI_STATES_SIZE];
-			x[0] = (p0) ? b.isManagedBuildOn() : b.isStopOnError();
-			x[1] = (p0) ? b.isDefaultBuildCmd(): b.supportsStopOnError(true);
-			x[2] = (p0) ? b.canKeepEnvironmentVariablesInBuildfile() : 
+			x[0] = p0 ? b.isManagedBuildOn() : b.isStopOnError();
+			x[1] = p0 ? b.isDefaultBuildCmd(): b.supportsStopOnError(true);
+			x[2] = p0 ? b.canKeepEnvironmentVariablesInBuildfile() : 
 								 b.supportsStopOnError(false);
-			x[3] = (p0) ? b.keepEnvironmentVariablesInBuildfile() : 
+			x[3] = p0 ? b.keepEnvironmentVariablesInBuildfile() : 
 				                 ((Configuration)cfs[0]).getInternalBuilderParallel();
 			for (int i=1; i<cfs.length; i++) {
-				b = cfs[i].getEditableBuilder();
-				if (res[0] != TRI_UNKNOWN && 
-						x[0] != (p0) ? b.isManagedBuildOn() : b.isStopOnError())
+				b = cfs[i].getBuilder();
+				if (x[0] != (p0 ? b.isManagedBuildOn() : b.isStopOnError()))
 					res[0] = TRI_UNKNOWN;
-				if (res[1] != TRI_UNKNOWN && 
-						x[1] != (p0) ? b.isDefaultBuildCmd() : b.supportsStopOnError(true))
+				if (x[1] != (p0 ? b.isDefaultBuildCmd() : b.supportsStopOnError(true)))
 					res[1] = TRI_UNKNOWN;
-				if (res[2] != TRI_UNKNOWN && 
-						x[2] != (p0) ? b.canKeepEnvironmentVariablesInBuildfile() : b.supportsStopOnError(false))
+				if (x[2] != (p0 ? b.canKeepEnvironmentVariablesInBuildfile() : b.supportsStopOnError(false)))
 					res[2] = TRI_UNKNOWN;
-				if (res[3] != TRI_UNKNOWN && 
-						x[3] != (p0) ? b.keepEnvironmentVariablesInBuildfile() : ((Configuration)cfs[i]).getInternalBuilderParallel())
+				if (x[3] != (p0 ? b.keepEnvironmentVariablesInBuildfile() : ((Configuration)cfs[i]).getInternalBuilderParallel()))
 					res[3] = TRI_UNKNOWN;
 			}
 			for (int i=0; i<TRI_STATES_SIZE; i++) {
@@ -234,7 +229,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	protected void updateButtons() {
 		bldr = icfg.getEditableBuilder();
 		
-		int[] extStates = calc3states(page, b_stopOnError, icfg, false);
+		int[] extStates = calc3states(page, icfg, false);
 		
 		if (extStates != null) {
 			setTriSelection(b_stopOnError, extStates[0]);

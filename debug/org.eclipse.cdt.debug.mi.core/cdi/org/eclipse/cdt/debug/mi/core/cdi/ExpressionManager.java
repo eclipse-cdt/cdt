@@ -203,9 +203,12 @@ public class ExpressionManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			target.setCurrentThread(currentThread, false);
-			currentThread.setCurrentStackFrame(currentFrame, false);
-			target.releaseTarget();
+			try {
+				target.setCurrentThread(currentThread, false);
+				currentThread.setCurrentStackFrame(currentFrame, false);
+			} finally {
+				target.releaseTarget();
+			}
 		}
 	}
 

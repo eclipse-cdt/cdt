@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -162,23 +165,25 @@ public class CharArrayMapTest extends TestCase {
 	public void testBasicUsage2() {
 		char[] chars = "pantera, megadeth, soulfly, metallica, in flames, lamb of god, carcass".toCharArray();
 
-		Slice[] slices = new Slice[7];
-		slices[0] = new Slice(chars, 0, 7);
-		slices[1] = new Slice(chars, 9, 8);
-		slices[2] = new Slice(chars, 19, 7);
-		slices[3] = new Slice(chars, 28, 9);
-		slices[4] = new Slice(chars, 39, 9);
-		slices[5] = new Slice(chars, 50, 11);
-		slices[6] = new Slice(chars, 63, 7);
+		Slice[] slices = {
+			new Slice(chars, 0, 7),
+			new Slice(chars, 9, 8),
+			new Slice(chars, 19, 7),
+			new Slice(chars, 28, 9),
+			new Slice(chars, 39, 9),
+			new Slice(chars, 50, 11),
+			new Slice(chars, 63, 7)
+		};
 
-		char[][] keys = new char[7][];
-		keys[0] = "pantera".toCharArray();
-		keys[1] = "megadeth".toCharArray();
-		keys[2] = "soulfly".toCharArray();
-		keys[3] = "metallica".toCharArray();
-		keys[4] = "in flames".toCharArray();
-		keys[5] = "lamb of god".toCharArray();
-		keys[6] = "carcass".toCharArray();
+		char[][] keys = {
+			"pantera".toCharArray(),
+			"megadeth".toCharArray(),
+			"soulfly".toCharArray(),
+			"metallica".toCharArray(),
+			"in flames".toCharArray(),
+			"lamb of god".toCharArray(),
+			"carcass".toCharArray()
+		};
 
 		CharArrayMap<Integer> map = new CharArrayMap<Integer>();
 		assertTrue(map.isEmpty());
@@ -232,6 +237,48 @@ public class CharArrayMapTest extends TestCase {
 		assertEquals(0, map.size());
 	}
 
+	
+	public void testOrderedMap() {
+		char[] chars = "alpha beta aaa cappa almost".toCharArray();
+		Slice[] slices = {
+			new Slice(chars, 0, 5),
+			new Slice(chars, 6, 4),
+			new Slice(chars, 11, 3),
+			new Slice(chars, 15, 5),
+			new Slice(chars, 21, 6)
+		};
+		int[] order = {3, 4, 1, 5, 2};
+		
+		CharArrayMap<Integer> map = CharArrayMap.createOrderedMap();
+		
+		for(int i = 0; i < slices.length; i++) {
+			Slice slice = slices[i];
+			map.put(slice.chars, slice.start, slice.length, order[i]);
+		}
+		
+		List<String> properOrder = Arrays.asList("aaa", "almost", "alpha", "beta", "cappa");
+		
+		Collection<char[]> keys = map.keys();
+		assertEquals(5, keys.size());
+		{
+			int i = 0;
+			for(char[] key : keys) {
+				assertEquals(properOrder.get(i), String.valueOf(key));
+				i++;
+			}
+		}
+		
+		Collection<Integer> values = map.values();
+		assertEquals(5, values.size());
+		{
+			int i = 1;
+			for(int value : values) {
+				assertEquals(i++, value);
+			}
+		}
+	}
+	
+	
 	public void testProperFail() {
 		char[] hello = "hello".toCharArray();
 		CharArrayMap<Integer> map = new CharArrayMap<Integer>();

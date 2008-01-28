@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 
 /**
@@ -33,7 +34,7 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
 	 * This class is private so it is assumed that the arguments
 	 * passed to the constructor are legal.
 	 */
-    private static final class Key {
+    private static final class Key implements Comparable<Key>{
         private final char[] buffer;
         private final int start;
         private final int length;
@@ -87,6 +88,16 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
         	return "'" + slice + "'@(" + start + "," + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
         
+        
+        public int compareTo(Key other) {
+        	char[] b1 = buffer, b2 = other.buffer;
+        	
+        	for(int i = start, j = other.start; i < b1.length && j < b2.length; i++, j++) {
+        		if(b1[i] != b2[j])
+        			return b1[i] < b2[j] ? -1 : 1;
+        	}
+        	return b1.length - b2.length;
+        }
     }
     
 
@@ -113,6 +124,25 @@ public final class CharArrayMap<V> implements ICharArrayMap<V> {
     public CharArrayMap() {
     	map = new HashMap<Key,V>();
     }
+    
+    
+    /**
+     * Static factory method that constructs an empty CharArrayMap with default initial capacity,
+     * and the map will be kept in ascending key order.
+     * 
+     * Characters are compared using a strictly numerical comparison; it is not locale-dependent.
+     */
+    public static <V> CharArrayMap<V> createOrderedMap() {
+    	// TreeMap does not have a constructor that takes an initial capacity
+    	return new CharArrayMap<V>(new TreeMap<Key, V>());
+    }
+    
+    
+    private CharArrayMap(Map<Key, V> map) {
+    	assert map != null;
+    	this.map = map;
+    }
+    
     
     /**
      * Constructs an empty CharArrayMap with the given initial capacity.

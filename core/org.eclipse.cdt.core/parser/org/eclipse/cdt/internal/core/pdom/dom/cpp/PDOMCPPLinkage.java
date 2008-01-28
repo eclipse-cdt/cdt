@@ -787,16 +787,20 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (binding instanceof ICPPMethod) {
 			return null;
 		}
-		if (binding instanceof ICPPUsingDeclaration || binding instanceof ICPPNamespaceAlias) {
-			if (pdom instanceof WritablePDOM) {
-				final WritablePDOM wpdom= (WritablePDOM) pdom;
+		if (pdom instanceof WritablePDOM) {
+			final WritablePDOM wpdom= (WritablePDOM) pdom;
+			if (binding instanceof ICPPUsingDeclaration) {
 				String path= ASTInternal.getDeclaredInOneFileOnly(binding);
 				if (path != null) {
 					return wpdom.getFileForASTPath(getLinkageID(), path);
 				}
+			} else if (binding instanceof ICPPNamespaceAlias) {
+				String path= ASTInternal.getDeclaredInSourceFileOnly(binding);
+				if (path != null) {
+					return wpdom.getFileForASTPath(getLinkageID(), path);
+				}
 			}
-			return null;
-		}
+		} 
 		return super.getLocalToFile(binding);
 	}
 }

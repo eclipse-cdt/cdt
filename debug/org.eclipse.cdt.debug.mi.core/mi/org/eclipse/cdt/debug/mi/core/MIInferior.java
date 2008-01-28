@@ -209,9 +209,10 @@ public class MIInferior extends Process {
 				session.postCommand(interrupt);
 				// call getMIInfo() even if we discard the value;
 				interrupt.getMIInfo();
-				// Allow (5 secs) for the interrupt to propagate.
+				// Allow MI command timeout for the interrupt to propagate.
+				long maxSec = session.getCommandTimeout()/1000 + 1;
 				synchronized(this) {
-					for (int i = 0;(state == RUNNING) && i < 5; i++) {
+					for (int i = 0;(state == RUNNING) && i < maxSec; i++) {
 						try {
 							wait(1000);
 						} catch (InterruptedException e) {

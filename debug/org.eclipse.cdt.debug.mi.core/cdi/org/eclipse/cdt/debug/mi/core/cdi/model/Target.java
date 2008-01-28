@@ -36,7 +36,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariableDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILineBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIMemorySpaceManagement;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
@@ -631,8 +630,9 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		try {
 			miSession.getMIInferior().interrupt();
 			// Wait till the EventManager tell us the go ahead
+			long maxSec = miSession.getCommandTimeout()/1000 + 1;
 			synchronized (this) {
-				for (int i = 0; !suspended && i < 6; i++) {
+				for (int i = 0; !suspended && i < maxSec; i++) {
 					try {
 						wait(1000);
 					} catch (InterruptedException e) {

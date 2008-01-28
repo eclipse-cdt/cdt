@@ -36,7 +36,7 @@ public class XlCSpecsRunSIProvider extends GCCSpecsRunSIProvider {
 
 		if (rc) {
 			try {
-				this.fCompileCommand = new Path(BuildMacroProvider.getDefault()
+				this.fCompileCommand = new Path(ManagedBuildManager.getBuildMacroProvider()
 						.resolveValue(
 								this.fCompileCommand.toString(),
 								EMPTY_STRING,

@@ -229,11 +229,12 @@
          outputFlag="-o"
          superClass="org.eclipse.cdt.managedbuilder.xlc.ui.tool.abstractCompiler">
            <inputType
-              sourceContentType="org.eclipse.cdt.core.cxxSource"
-			  sources="c,C,cc,cxx,cpp"
-              dependencyContentType="org.eclipse.cdt.core.cxxHeader"
-			  dependencyExtensions="h,H,hpp"
-              id="cdt.managedbuild.tool.xlc.cpp.compiler.input">
+                 dependencyContentType="org.eclipse.cdt.core.cxxHeader"
+                 dependencyExtensions="h,H,hpp"
+                 id="cdt.managedbuild.tool.xlc.cpp.compiler.input"
+                 scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfileCPP"
+                 sourceContentType="org.eclipse.cdt.core.cxxSource"
+                 sources="c,C,cc,cxx,cpp">
           </inputType>
            <option
                  category="xlc.c.compiler.category.Input"
@@ -2847,11 +2848,12 @@
 
 		  
           <inputType
-              sourceContentType="org.eclipse.cdt.core.cSource"
-		      sources="c"
-              dependencyContentType="org.eclipse.cdt.core.cHeader"
-			  dependencyExtensions="h"
-              id="cdt.managedbuild.tool.xlc.c.compiler.input">
+                dependencyContentType="org.eclipse.cdt.core.cHeader"
+                dependencyExtensions="h"
+                id="cdt.managedbuild.tool.xlc.c.compiler.input"
+                scannerConfigDiscoveryProfileId="org.eclipse.cdt.managedbuilder.xlc.core.XLCManagedMakePerProjectProfile"
+                sourceContentType="org.eclipse.cdt.core.cSource"
+                sources="c">
           </inputType>
           <outputType
 			  outputs="o"
@@ -3158,6 +3160,15 @@
                projectTypeID="cdt.managedbuild.target.xlc.lib">
          </projectType>
       </wizardPage>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            description="%variableDescription"
+            name="XL_compilerRoot"
+            resolver="org.eclipse.cdt.managedbuilder.xlc.ui.variables.DynamicVariableResolver"
+            supportsArgument="false">
+      </variable>
    </extension>
 </plugin>
 

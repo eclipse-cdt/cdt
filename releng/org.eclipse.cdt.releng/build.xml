@@ -378,10 +378,16 @@
 		</antcall>
 		-->
 		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.core"/>
+		</antcall>
+		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.managedbuilder.xlc.ui"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.errorparsers.xlc"/>
+		</antcall>
+		<antcall target="tagone">
+			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.make.xlc.core"/>
 		</antcall>
 		<antcall target="tagone">
 			<param name="tagmodule" value="org.eclipse.cdt/xlc/org.eclipse.cdt.xlc.feature"/>

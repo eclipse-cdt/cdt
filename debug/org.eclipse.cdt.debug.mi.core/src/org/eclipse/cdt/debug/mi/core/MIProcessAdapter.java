@@ -29,6 +29,7 @@ public class MIProcessAdapter implements MIProcess {
 
 	Process fGDBProcess;
 	private static final int ONE_SECOND = 1000;
+	private long commandTimeout;
 
 	public MIProcessAdapter(String[] args, IProgressMonitor monitor) throws IOException {
 		this(args, 0, monitor);
@@ -36,6 +37,7 @@ public class MIProcessAdapter implements MIProcess {
 
 	public MIProcessAdapter(String[] args, int launchTimeout, IProgressMonitor monitor) throws IOException {
 		fGDBProcess = getGDBProcess(args, launchTimeout, monitor);
+		commandTimeout = MIPlugin.getCommandTimeout();
 	}
 
 	/**
@@ -112,16 +114,10 @@ public class MIProcessAdapter implements MIProcess {
 
 	public void interrupt(MIInferior inferior) {
 		if (fGDBProcess instanceof Spawner) {
-			Spawner gdbSpawner = (Spawner) fGDBProcess;
-			gdbSpawner.interrupt();
-			synchronized (inferior) {
-				// Allow (5 secs) for the interrupt to propagate.
-				for (int i = 0; inferior.isRunning() && i < 5; i++) {
-					try {
-						inferior.wait(1000);
-					} catch (InterruptedException e) {
-					}
-				}
+			if (inferior.isRunning()) {
+				Spawner gdbSpawner = (Spawner) fGDBProcess;
+				gdbSpawner.interrupt();
+				waitForInterrupt(inferior);
 			}
 			// If we are still running try to drop the sig to the PID
 			if (inferior.isRunning() && inferior.getInferiorPID() > 0) {
@@ -132,6 +128,20 @@ public class MIProcessAdapter implements MIProcess {
 
 	}
 
+	protected boolean waitForInterrupt(MIInferior inferior) {
+	    synchronized (inferior) {
+	    	// Allow MI command timeout for the interrupt to propagate.
+	    	long maxSec = commandTimeout / ONE_SECOND + 1;
+	    	for (int i = 0; inferior.isRunning() && i < maxSec; i++) {
+	    		try {
+	    			inferior.wait(ONE_SECOND);
+	    		} catch (InterruptedException e) {
+	    		}
+	    	}
+	    	return inferior.isRunning();
+	    }
+    }
+
 	/**
 	 * Send an interrupt to the inferior process.
 	 * 
@@ -141,14 +151,7 @@ public class MIProcessAdapter implements MIProcess {
 		if (fGDBProcess instanceof Spawner) {
 			Spawner gdbSpawner = (Spawner) fGDBProcess;
 			gdbSpawner.raise(inferior.getInferiorPID(), gdbSpawner.INT);
-			synchronized (inferior) {
-				for (int i = 0; inferior.isRunning() && i < 5; i++) {
-					try {
-						inferior.wait(1000);
-					} catch (InterruptedException e) {
-					}
-				}
-			}
+			waitForInterrupt(inferior);
 		}
 	}
 	

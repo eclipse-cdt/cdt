@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Tianchao Li (tianchao.li@gmail.com) - arbitrary build directory (bug #136136)
+ * Gerhard Schaber (Wind River Systems) - bug 210125
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.core.scannerconfig2;
 
@@ -68,28 +69,38 @@ public class DefaultSIFileReader implements IExternalScannerInfoProvider {
         BufferedReader reader = getStreamReader(buildInfo.getBuildOutputFilePath());
         if (reader == null)
             return rc;
-        // output
-        IConsole console = CCorePlugin.getDefault().getConsole(EXTERNAL_SI_PROVIDER_CONSOLE_ID);
-        console.start(project);
-        OutputStream ostream;
+        
         try {
-            ostream = console.getOutputStream();
-        }
-        catch (CoreException e) {
-            ostream = null;
-        }
-        
-        // get build location
-        IPath buildDirectory = MakeBuilderUtil.getBuildDirectory(project, MakeBuilder.BUILDER_ID);
-        
-		ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.
-                getMakeBuilderOutputSniffer(ostream, null, project, context, buildDirectory, buildInfo, markerGenerator, collector);
-		if (sniffer != null) {
-			ostream = (sniffer == null ? null : sniffer.getOutputStream());
-		}
-        
-		rc = readFileToOutputStream(monitor, reader, ostream);
-        
+	        // output
+	        IConsole console = CCorePlugin.getDefault().getConsole(EXTERNAL_SI_PROVIDER_CONSOLE_ID);
+	        console.start(project);
+	        OutputStream ostream;
+	        try {
+	            ostream = console.getOutputStream();
+	        }
+	        catch (CoreException e) {
+	            ostream = null;
+	        }
+	        
+	        // get build location
+	        IPath buildDirectory = MakeBuilderUtil.getBuildDirectory(project, MakeBuilder.BUILDER_ID);
+	        
+			ConsoleOutputSniffer sniffer = ScannerInfoConsoleParserFactory.
+	                getMakeBuilderOutputSniffer(ostream, null, project, context, buildDirectory, buildInfo, markerGenerator, collector);
+			if (sniffer != null) {
+				ostream = (sniffer == null ? null : sniffer.getOutputStream());
+			}
+	        
+			if (ostream != null) {
+				rc = readFileToOutputStream(monitor, reader, ostream);
+			}
+        } finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+	            MakeCorePlugin.log(e);
+			}
+        }        
         return rc;
 	}
 

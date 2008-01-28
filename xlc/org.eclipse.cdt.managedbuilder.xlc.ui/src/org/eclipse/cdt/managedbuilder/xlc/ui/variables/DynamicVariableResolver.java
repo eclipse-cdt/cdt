@@ -27,9 +27,15 @@ public class DynamicVariableResolver implements IDynamicVariableResolver {
 	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument)
-			throws CoreException {	
-		IPreferenceStore prefStore = XLCUIPlugin.getDefault().getPreferenceStore();
-		return prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
+			throws CoreException {
+
+		if (variable.getName().equals((PreferenceConstants.P_XL_COMPILER_ROOT))) {
+			IPreferenceStore prefStore = XLCUIPlugin.getDefault()
+					.getPreferenceStore();
+			return prefStore.getString(PreferenceConstants.P_XL_COMPILER_ROOT);
+		}
+
+		return null;
 	}
 
 }

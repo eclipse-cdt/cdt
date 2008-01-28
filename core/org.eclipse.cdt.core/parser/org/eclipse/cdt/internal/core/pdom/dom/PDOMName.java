@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom.dom;
 
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -260,6 +262,9 @@ public class PDOMName implements IIndexFragmentName, IASTFileLocation {
 				URI uri = file.getLocation().getURI();
 				if ("file".equals(uri.getScheme())) //$NON-NLS-1$
 					return uri.getSchemeSpecificPart();
+				File f = EFS.getStore(uri).toLocalFile(0, null);
+				if( f != null )
+					return f.getAbsolutePath();
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -627,8 +627,9 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			
 		}
 		protected void valueChanged(boolean oldValue, boolean newValue) {
-			if (button.getGrayed())
-				button.setGrayed(false);
+			// TODO: uncomment before M5
+			//if (button.getGrayed())
+			//	button.setGrayed(false);
 			super.valueChanged(!newValue, newValue);
 		}
 		protected void doLoad() {
@@ -653,7 +654,8 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						if (vals[0] > 0)
 							gray = true;
 					}
-					button.setGrayed(gray);
+					// TODO: uncomment before M5	
+					// button.setGrayed(gray);
 					button.setSelection(value);
 					return;
 				}

@@ -322,7 +322,8 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		 setupControl(b, span, mode);
 		 b.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent event) {
-		    	((Button)event.widget).setGrayed(false);
+		    	// TODO: uncomment before M5
+		    	//((Button)event.widget).setGrayed(false);
 		    	checkPressed(event);
 		 }});
 		 return b;
@@ -534,17 +535,18 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	 */
 	public static void setTriSelection(Button b, int state) {
 		switch (state) {
+		// TODO: uncomment before M5
 		case TRI_NO:
-			b.setGrayed(false);
+		//	b.setGrayed(false);
 			b.setSelection(false);
 			break;
 		case TRI_YES:
-			b.setGrayed(false);
+		//	b.setGrayed(false);
 			b.setSelection(true);
 			break;
 		case TRI_UNKNOWN:
 			b.setSelection(true);
-			b.setGrayed(true);
+		//	b.setGrayed(true);
 			break;
 		}
 	}

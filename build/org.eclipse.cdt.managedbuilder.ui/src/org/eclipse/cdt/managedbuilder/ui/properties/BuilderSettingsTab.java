@@ -130,16 +130,23 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 
 		b_genMakefileAuto.setEnabled(icfg.supportsBuild(true));
 		if (extStates == null) { // no extended states available
-			b_genMakefileAuto.setGrayed(false);
-			b_genMakefileAuto.setSelection(bldr.isManagedBuildOn());
-			b_useDefault.setGrayed(false);
-			b_useDefault.setSelection(bldr.isDefaultBuildCmd());
-			b_expandVars.setGrayed(false);
+			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, 
+				bldr.isManagedBuildOn() ? 
+					BuildBehaviourTab.TRI_YES : 
+					BuildBehaviourTab.TRI_NO);
+			BuildBehaviourTab.setTriSelection(b_useDefault, 
+				bldr.isDefaultBuildCmd() ?
+					BuildBehaviourTab.TRI_YES : 
+					BuildBehaviourTab.TRI_NO);
+			// b_expandVars.setGrayed(false);
 			if(!bldr.canKeepEnvironmentVariablesInBuildfile())
 				b_expandVars.setEnabled(false);
 			else {
 				b_expandVars.setEnabled(true);
-				b_expandVars.setSelection(!bldr.keepEnvironmentVariablesInBuildfile());
+				BuildBehaviourTab.setTriSelection(b_expandVars, 
+					!bldr.keepEnvironmentVariablesInBuildfile() ?
+						BuildBehaviourTab.TRI_YES : 
+						BuildBehaviourTab.TRI_NO);
 			}
 		} else {
 			BuildBehaviourTab.setTriSelection(b_genMakefileAuto, extStates[0]);

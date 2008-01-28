@@ -131,8 +131,11 @@ public class Thread extends CObject implements ICDIThread {
 				//throw e;
 				//System.out.println(e);
 			} finally {
-				target.setCurrentThread(currentThread, false);
-				target.releaseTarget();
+				try {
+					target.setCurrentThread(currentThread, false);
+				} finally {
+					target.releaseTarget();
+				}
 			}
 			// assign the currentFrame if it was not done yet.
 			if (currentFrame == null) {
@@ -187,12 +190,13 @@ public class Thread extends CObject implements ICDIThread {
 				throw new MI2CDIException(e);
 			} finally {
 				try {
-				target.setCurrentThread(currentThread, false);
+					target.setCurrentThread(currentThread, false);
 				} catch (MI2CDIException e) {
 					target.releaseTarget();
 					throw e;
+				} finally {
+					target.releaseTarget();
 				}
-				target.releaseTarget();
 			}
 		}
 		return stackdepth;
@@ -239,8 +243,11 @@ public class Thread extends CObject implements ICDIThread {
 				//throw e;
 				//System.out.println(e);
 			} finally {
-				target.setCurrentThread(currentThread, false);
-				target.releaseTarget();
+				try {
+					target.setCurrentThread(currentThread, false);
+				} finally {
+					target.releaseTarget();
+				}
 			}
 			// take time to assign the currentFrame, if it is in the set
 			if (currentFrame == null) {

@@ -269,15 +269,15 @@ public class Target extends SessionObject implements ICDITarget, ICDIBreakpointM
 		// will be overwritten. However if we use -stack-list-threads
 		// it does not provide to the current thread
 		lockTarget();
-		currentThreadId = newThreadId;
-
-		// get the new Threads.
 		try {
+			// get the new Threads.
+			currentThreadId = newThreadId;
 			currentThreads = getCThreads();
 		} catch (CDIException e) {
 			currentThreads = noThreads;
+		} finally {
+			releaseTarget();
 		}
-		releaseTarget();
 
 		// Fire CreatedEvent for new threads.
 		// Replace the new threads with the old thread object

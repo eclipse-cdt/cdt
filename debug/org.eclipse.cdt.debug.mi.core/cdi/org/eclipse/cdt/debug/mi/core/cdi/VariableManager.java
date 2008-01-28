@@ -192,12 +192,15 @@ public class VariableManager extends Manager {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				MISession miSession = target.getMISession();
-				RxThread rxThread = miSession.getRxThread();
-				rxThread.setEnableConsole(true);
-				target.setCurrentThread(currentThread, false);
-				currentThread.setCurrentStackFrame(currentFrame, false);
-				target.releaseTarget();
+				try {
+					MISession miSession = target.getMISession();
+					RxThread rxThread = miSession.getRxThread();
+					rxThread.setEnableConsole(true);
+					target.setCurrentThread(currentThread, false);
+					currentThread.setCurrentStackFrame(currentFrame, false);
+				} finally {
+					target.releaseTarget();
+				}
 			}
 		} else {
 			throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_type")); //$NON-NLS-1$
@@ -389,9 +392,12 @@ public class VariableManager extends Manager {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				target.setCurrentThread(currentThread, false);
-				currentThread.setCurrentStackFrame(currentFrame, false);
-				target.releaseTarget();
+				try {
+					target.setCurrentThread(currentThread, false);
+					currentThread.setCurrentStackFrame(currentFrame, false);
+				} finally {
+					target.releaseTarget();
+				}
 			}
 		}
 		return argument;
@@ -432,9 +438,12 @@ public class VariableManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			target.setCurrentThread(currentThread, false);
-			currentThread.setCurrentStackFrame(currentFrame, false);
-			target.releaseTarget();
+			try {
+				target.setCurrentThread(currentThread, false);
+				currentThread.setCurrentStackFrame(currentFrame, false);
+			} finally {
+				target.releaseTarget();
+			}
 		}
 		return (ICDIArgumentDescriptor[]) argObjects.toArray(new ICDIArgumentDescriptor[0]);
 	}
@@ -519,9 +528,12 @@ public class VariableManager extends Manager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			target.setCurrentThread(currentThread, false);
-			currentThread.setCurrentStackFrame(currentFrame, false);
-			target.releaseTarget();
+			try {
+				target.setCurrentThread(currentThread, false);
+				currentThread.setCurrentStackFrame(currentFrame, false);
+			} finally {
+				target.releaseTarget();
+			}
 		}
 		return (ICDILocalVariableDescriptor[]) varObjects.toArray(new ICDILocalVariableDescriptor[0]);
 	}
@@ -558,9 +570,12 @@ public class VariableManager extends Manager {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				target.setCurrentThread(currentThread, false);
-				currentThread.setCurrentStackFrame(currentFrame, false);
-				target.releaseTarget();
+				try {
+					target.setCurrentThread(currentThread, false);
+					currentThread.setCurrentStackFrame(currentFrame, false);
+				} finally {
+					target.releaseTarget();
+				}
 			}
 		}
 		return local;

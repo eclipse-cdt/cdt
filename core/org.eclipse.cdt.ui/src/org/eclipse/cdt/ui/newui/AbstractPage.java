@@ -708,7 +708,7 @@ implements
 		IResource res = (IResource)ad; 
 		IPath p = res.getProjectRelativePath();
 		if (isForFolder() || isForFile()) {
-			if (isMultiCfg()) {
+			if (cf instanceof ICMultiItemsHolder) {
 				out = cf.getResourceDescription(p, isForFolder()); // sic ! 
 			} else {
 				out = cf.getResourceDescription(p, false);
